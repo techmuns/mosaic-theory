@@ -40,19 +40,21 @@ data/dossiers/*/llm_call.log
 # and diffable, because it is the standing record of which out-of-band names the fund covers and
 # why, and the reason it carries is printed in each such dossier's own main body.
 !data/followed.json
+# (f) data/facts/ — the FACT LAYER (docs/records/2026-11-04-fact-layer-adr.md): the schema contract,
+# one JSON manifest per snapshot, current.json, and — as a STOPGAP until the R2 bucket exists — the
+# immutable content-addressed Parquet objects themselves (7.2 MB for slice 1; committed only while
+# under 50 MB). Derived EDGAR facts, each with its accession; no licensed workbook content.
+!data/facts/
+# ...except a LOCAL snapshot's objects (slice 2a): the screen's universe is ~28M rows, far past the
+# 50 MB line, so its objects stay on the machine that ingested them until R2 exists, and only its
+# manifest (under data/facts/manifests) is committed.
+data/facts/local/
 # Monitor: the dated book history + the benchmark assignments. DERIVED analysis (returns and
 # excess-vs-benchmark computed from the committed ledger and EOD closes), and the AUDIT TRAIL of
 # how the book was marked on each date — a spread nobody can re-read is not evidence. Small,
 # diff-able, no licensed workbook content.
 !data/monitor/
 !data/scan_history/
-# (e) data/calls/ — the CALLS TAPE corpus, one directory per X account. Third-party PUBLIC posts
-# (text, engagement counts, cashtags), the machine + hand labels over them, and the fetched Polygon
-# bars. No licensed workbook content and no credential; committed so the authed deploy serves it
-# without a build step, and so the hand labels — the ground truth this tool exists to grow — are
-# diffable. `bars/` is regenerable from Polygon but committed for the same reason snapshots are:
-# the page is a static mirror and fetches nothing itself.
-!data/calls/
 
 # Frontend — generated mirrors from frontend/build.py. frontend/snapshots/ stays ignored (regenerate
 # via build.py). frontend/dossiers/ IS committed — the pre-built DERIVED dossier.json the authed

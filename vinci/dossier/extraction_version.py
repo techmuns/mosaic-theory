@@ -401,6 +401,80 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "its share count and its net debt read the same filings — the valuation-bases refresh, "
         "which hands it the uncut blob, no longer divides by the average of a later 10-Q",
     ),
+    (
+        "2026-11-04.trace-rank-and-duration",
+        "a synthesis figure traces as its cited fact's percentile rank and a duration label is no "
+        "figure: a whole number that a 0..1 percentile the cited fact states rounds to at x100 "
+        "traces (0.026 is the 3rd percentile; both neighbours at an exact half), and a duration "
+        "written hyphenated or abbreviated to y (5-year, 52-week, ~2y) is skipped like its spaced "
+        "form; every other figure still traces only to the fact its point cites",
+    ),
+    (
+        "2026-11-04.filed-ltm-tiebreak",
+        "a material annual-summary LTM that CIQ's annual and quarterly exports disagree on is "
+        "decided by the SEC filing (operator approval 2026-11-04): the filer's XBRL figure for the "
+        "same four quarters, as filed by the page's price date, on an explicit reviewed mapping, "
+        "is stated in the row's LTM cell with every accession named and a main-body caveat when "
+        "it reproduces one of CIQ's readings within 2%; where the item is filed only inside a "
+        "wider line (NFLX's merger fee, in its non-operating line), the page states CIQ's "
+        "quarterly reading when CIQ's breakdown of that line reproduces it in every quarter "
+        "within 0.5 $M (operator ruling 2026-11-04, NFLX: option B); a row the filing cannot "
+        "decide still refuses the build, saying why (`financial_summary.filed_ltm`)",
+    ),
+    (
+        "2026-11-04.amendment-recital",
+        "a covenant exhibit whose capitals heading is an amendment naming no contract (REPRICING "
+        "AMENDMENT, AMENDMENT NO 2.) is named for the first contract its recital names and marked "
+        "an amendment, so a credit-agreement amendment reaches the covenant extractor and any "
+        "other is refused for what it amends (an office lease); a CERTIFICATE or ARTICLES OF "
+        "AMENDMENT and a title-cased heading are not read this way",
+    ),
+    (
+        "2026-11-04.fiscal-year-change-marker",
+        "a fiscal-year change is no column: CIQ's 'Fiscal Year Change' period-header marker is "
+        "registered as a known non-period cell (`ciq_sheets.PERIOD_HEADER_MARKERS`, closed), so a "
+        "latest read skips it while any other undated header still places nothing; the summary "
+        "tables and the Ratios panel drop it as a column, and no growth, year-on-year, step or "
+        "order check "
+        "spans the two fiscal calendars it divides; a page with no EV bridge says why "
+        "(`ev_bridge_unbuilt`)",
+    ),
+    (
+        "2026-11-04.rank-written-as-rank",
+        "the #890 trace is narrowed (its cross-review): a percentile's rank traces only for a "
+        "figure written as a rank (a number, ordinal or not, before percentile / pctile / %ile; "
+        "never an ordinal alone or a percentile-point move) — '2.0x' or 'fell 2%' cited to a "
+        "percentile is a figure again — and only a whole-number "
+        "duration (5-year, 52-week, ~9y) is a label; a decimal one (2.3y, a 7.4-year payback) is "
+        "a figure the cited fact must state",
+    ),
+    (
+        "2026-11-04.footnote-every-figure",
+        "every synthesis figure is footnoted (item 29, operator ruling 2026-11-04 '1 + 4'): a "
+        "point carries one entry per figure of its claim, citing the one fact that states it or "
+        "naming an operation (difference, sum, ratio, premium, growth) on two cited inputs of "
+        "the claim, recomputed at their written precision; a figure with no entry is traced to "
+        "the point's own ref as before; and the blocks the assembler builds (consensus levels, "
+        "peer capital intensity, checked maturities, the EV/EBITDA bases, the EBITDA basis, "
+        "implied expectations, a filed LTM's two CIQ readings) carry a source_ref a point can "
+        "cite",
+    ),
+    (
+        "2026-11-04.anchored-drawdown",
+        "a name with an underwrite record, else a follow, keeps its drawdown at that date "
+        "(`drawdown_cause.anchor`): the gap-downs of the 180 days ending on it, each with its "
+        "move, its 8-K's item labels and the revised-outlook exhibit, read only from closes on or"
+        " before it and 8-Ks filed by it, so no later build changes it; and the gap-downs since "
+        "it to the price date, read the same way at the price date; a name with neither is "
+        "unchanged",
+    ),
+    (
+        "2026-11-04.drawdown-window-at-price-date",
+        "the rolling drawdown window ends on the page's price date, not the screen's reference "
+        "date: the screen's detector over the 180 days ending on the stored close the price box "
+        "shows, so a drop after the last screen run is classified, not only charted "
+        "(`drawdown_cause.gap_window_end`)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

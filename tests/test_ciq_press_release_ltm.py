@@ -337,19 +337,25 @@ def test_the_refusal_message_names_every_row() -> None:
 def test_assembly_checks_before_it_spends_and_refuses_on_the_19c_selection() -> None:
     """The CALL SITE (a helper-level test stays green when a call site is deleted): `assemble_one`
     runs the check, routes its flags, takes material from `_mark_material` +
-    `demanded_material_figures`, and raises — all before the first LLM call."""
+    `demanded_material_figures`, and raises — all before the first LLM call. Since 2026-11-04 the
+    raise is `_settle_ltm_refusals`, through the check's own message, for each row the SEC filing
+    cannot decide (`filed_tiebreak`, `tests/test_filed_tiebreak.py`)."""
     from vinci.dossier import assemble
 
-    src = textwrap.dedent(inspect.getsource(assemble.assemble_one))
-    tree = ast.parse(src)
-    calls = {(n.lineno, ast.unparse(n.func)) for n in ast.walk(tree) if isinstance(n, ast.Call)}
-    first = {name: min(ln for ln, f in calls if f == name) for _ln, name in calls}
+    def first_calls(fn: typing.Any) -> dict[str, int]:
+        tree = ast.parse(textwrap.dedent(inspect.getsource(fn)))
+        calls = {(n.lineno, ast.unparse(n.func)) for n in ast.walk(tree)
+                 if isinstance(n, ast.Call)}
+        return {name: min(ln for ln, f in calls if f == name) for _ln, name in calls}
+
+    first = first_calls(assemble.assemble_one)
     for name in ("ltm_quarters.check", "ltm_read.flags", "demanded_material_figures",
-                 "_mark_material", "ltm_read.refused", "ltm_quarters.refusal_message"):
+                 "_mark_material", "ltm_read.refused", "_settle_ltm_refusals"):
         assert name in first, name
+    assert "ltm_quarters.refusal_message" in first_calls(assemble._settle_ltm_refusals)
     assert first["ltm_quarters.check"] > first["assemble_mechanical"]
     for spend in ("extract_covenant_terms", "extract_transcript_drivers", "synthesize"):
-        assert first["ltm_quarters.refusal_message"] < first[spend], spend
+        assert first["_settle_ltm_refusals"] < first[spend], spend
 
 
 def test_mechanical_refuses_right_after_the_currency() -> None:

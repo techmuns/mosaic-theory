@@ -35,7 +35,10 @@ from vinci.dossier.extraction_version import (
 )
 from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
 from vinci.dossier.schemas import (
+    DRAWDOWN_ANCHOR_WORDS,
     Dossier,
+    DrawdownCause,
+    DrawdownWindow,
     FinancialSummary,
     ForwardMultiple,
     LeaseBasis,
@@ -134,6 +137,60 @@ def _cite_inline(source_ref: str | None) -> str:
     if _ENDNOTES.get() is None:
         return f"↳ `{source_ref}`"
     return f"[{_ref_n(source_ref)}]"
+
+
+#: (item 29) how a computed figure's operation reads beside it — display only; the check is the
+#: validator's (`synthesis._validate`), and the page computes nothing.
+_FIG_OP = {"difference": "−", "sum": "+", "ratio": "÷", "premium": "÷", "growth": "÷"}
+
+
+def _figure_expr(e: Any) -> str:
+    a, b = (list(e.inputs) + ["?", "?"])[:2]
+    core = f"{a} {_FIG_OP.get(e.derived, '?')} {b}"
+    return f"({core}) − 1" if e.derived in ("premium", "growth") else core
+
+
+def _find_figure(claim: str, lit: str, start: int) -> int:
+    """The literal at a figure boundary, never inside a longer number ("98" is not in "$1,098M",
+    "5" is not in "5.4%")."""
+    m = re.compile(rf"(?<![\d.,]){re.escape(lit)}(?![\d]|[.,]\d)").search(claim, start)
+    return m.start() if m else -1
+
+
+def _footnoted_claim(p: Any, between: str = "") -> str:
+    """(item 29) A point's claim with a marker after each footnoted figure — its fact's ``[n]`` in a
+    render, ‡ for a computed one — then ``between`` (a tag, a warning) and the point's own cite, in
+    the order an un-footnoted point prints them. A point with no ``figures`` renders exactly as
+    before (claim + between + its cite)."""
+    figs = getattr(p, "figures", None) or []
+    if not figs or _ENDNOTES.get() is None:
+        return f"{p.claim}{between}{_cite(p.source_ref)}"
+    marks: list[tuple[int, str]] = []
+    start: dict[str, int] = {}
+    for e in figs:
+        i = _find_figure(p.claim, e.figure, start.get(e.figure, 0))
+        if i < 0:
+            continue
+        start[e.figure] = i + len(e.figure)
+        marks.append((i + len(e.figure), "‡" if e.derived else f"[{_ref_n(e.source_ref)}]"))
+    claim: str = p.claim
+    out, pos = "", 0
+    for end, mark in sorted(marks):
+        out += claim[pos:end] + mark
+        pos = end
+    return out + claim[pos:] + between + _cite(p.source_ref)
+
+
+def _figure_sources_line(p: Any) -> str:
+    """(item 29) The Analysis tier's "how each figure is sourced" line under a footnoted point — a
+    computed figure's operation and inputs, each cited figure's fact. Empty for a point with
+    none."""
+    figs = getattr(p, "figures", None) or []
+    if not figs:
+        return ""
+    parts = [f"{e.figure} ‡ = {_figure_expr(e)}" if e.derived
+             else f"{e.figure} {_cite_inline(e.source_ref)}" for e in figs]
+    return "\n  - How each figure is sourced: " + " · ".join(parts)
 
 
 def _sources_section() -> list[str]:
@@ -473,6 +530,106 @@ def _clean_note(note: str) -> str:
     out = out.replace("Credit Health Panel: scale direction ambiguous — not rendered",
                       "credit-health panel scale is ambiguous in the export")
     return out
+
+#: How a drawdown anchor names its two dated parts on the page — `schemas.DRAWDOWN_ANCHOR_WORDS`,
+#: the one Python copy (its web twin is dossier.js `ANCHOR_WORDS`).
+_ANCHOR_WORDS = DRAWDOWN_ANCHOR_WORDS
+
+
+def _rolling_span(dc: DrawdownCause, ref: date | str | None) -> str | None:
+    """The rolling window's span in words, as the page actually read it: "last 180 days" when it
+    ends on the page's price date (`gap_window_end`), else "180 days to <reference date>" — a
+    page built before the window moved to the price date read the screen's, ending on its
+    reference date, and must not claim the later one (review of #906). None when the length is
+    not stated (a page built before `gap_window_days`): then nothing is claimed. Twin of
+    dossier.js ``rollingSpan``."""
+    days = dc.gap_window_days
+    if days is None:
+        return None
+    if dc.gap_window_end is not None:
+        return f"last {days} days"
+    end = ref.isoformat() if isinstance(ref, date) else ref
+    return f"{days} days to {end}" if end else f"{days} days"
+
+
+def _rolling(label: str, dc: DrawdownCause, ref: date | str | None) -> str:
+    """A label for a line that reads the ROLLING window, naming its span (operator, 2026-11-04:
+    "Approve + relabel") — so a page whose rolling window holds no drop no longer reads as
+    contradicting its "Drawdown at underwrite" rows. Twin of dossier.js ``rollingLabel``."""
+    span = _rolling_span(dc, ref)
+    return f"{label} ({span})" if span else label
+
+
+def _window_words(w: DrawdownWindow, threshold: float | None) -> str:
+    """A dated window's gap-downs in words, from its structured ``gaps`` — never its shape
+    string. Twin of dossier.js ``windowWords``."""
+    if w.gaps:
+        return "; ".join(f"{g.on} {g.move * 100:+.1f}% {_fmt_shape(g.cause) or 'cause unread'}"
+                         for g in w.gaps)
+    pct = f"{abs(threshold) * 100:.0f}" if threshold is not None else "10"
+    return f"no single day of -{pct}% or worse"
+
+
+def _window_fact(label: str, w: DrawdownWindow, threshold: float | None) -> str:
+    """One dated window as a fact line: its gap-downs and its cite, or its UNKNOWN note."""
+    if w.shape.status is not SourceStatus.PRESENT:
+        return (f"- **{label}:** _{w.shape.status.value.upper()}_ — "
+                f"{_clean_note(str(w.shape.note))}")
+    return f"- **{label}:** {_window_words(w, threshold)}{_cite(w.shape.source_ref)}"
+
+
+def _anchor_brief_lines(dc: DrawdownCause) -> list[str]:
+    """(2026-11-04) THE DRAWDOWN AT THE ANCHOR AND SINCE, on the Brief beside the current shape:
+    the event the thesis was written on stays on page 1 after it leaves the rolling window. None
+    of it on a page with no anchor. Twin of dossier.js ``anchorBrief``."""
+    a = dc.anchor
+    if a is None:
+        return []
+    at_label, since_label, word = _ANCHOR_WORDS[a.kind]
+    out = [_window_fact(f"{at_label} ({a.on})", a.at_anchor, dc.gap_threshold)]
+    if a.since is None:
+        out.append(f"- **{since_label}:** no session after the {word} yet")
+    else:
+        out.append(_window_fact(f"{since_label} ({a.since.start} → {a.since.end})", a.since,
+                                dc.gap_threshold))
+    return out
+
+
+def _anchor_analysis_lines(dc: DrawdownCause) -> list[str]:
+    """The dated parts in full, leading the Analysis drawdown section: each part's gap-downs, the
+    outlook its 8-K furnished, and the 8-Ks themselves. The original event first, what has happened
+    since second, the rolling window after — a thesis log. Twin of dossier.js ``anchorAnalysis``."""
+    a = dc.anchor
+    if a is None:
+        return []
+    at_label, since_label, word = _ANCHOR_WORDS[a.kind]
+    out = [f"_The record since the {word}, kept dated ({a.on}, `{a.source_ref}`):_"]
+    parts: list[tuple[str, DrawdownWindow | None]] = [
+        (f"{at_label} ({a.on})", a.at_anchor), (since_label, a.since)]
+    for label, w in parts:
+        if w is None:
+            out.append(f"- **{label}:** no session after the {word} yet")
+            continue
+        if w.shape.status is not SourceStatus.PRESENT or not w.gaps:
+            out.append(_window_fact(f"{label} · {w.start} → {w.end}", w, dc.gap_threshold))
+        else:
+            out.append(f"- **{label}** · {w.start} → {w.end}, as knowable on {w.end}:"
+                       f"{_cite(w.shape.source_ref)}")
+            out += [f"  - {g.on} **{g.move * 100:+.1f}%** → {_fmt_shape(g.cause)}" for g in w.gaps]
+        if w.revised_guidance.status is SourceStatus.PRESENT:
+            out.append(f"  - outlook then: {w.revised_guidance.value}"
+                       f"{_cite(w.revised_guidance.source_ref)}")
+        seen: set[str] = set()
+        for f in w.filings:
+            if not f.explanatory or f.accession in seen:
+                continue
+            seen.add(f.accession)
+            items = [t for t in f.item_types if not t.startswith("9.01")]
+            link = f"[`{f.accession}`]({f.url})" if f.url else f"`{f.accession}`"
+            out.append(f"  - 8-K filed {f.filing_date} · items: {', '.join(items) or '—'} {link}")
+    out.append("")
+    return out
+
 
 def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     if s.status is SourceStatus.PRESENT:
@@ -2535,6 +2692,8 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
 
     def cite(p: Any, tag: str = "") -> str:
         warn = "" if getattr(p, "cited", True) else " ⚠ uncited"
+        if getattr(p, "figures", None):   # (item 29) a marker after each figure, then the line
+            return f"- {_footnoted_claim(p, tag + warn)}{_figure_sources_line(p)}"
         return f"- {p.claim}{tag}{warn}{_cite(p.source_ref)}"
 
     driver_refs = _driver_refs_of(d.mechanical)
@@ -2704,7 +2863,7 @@ def _brief_case_lines(s: Any, mech: Any, *, sleeve: str = DEFAULT_SLEEVE) -> lis
     def top3(pts: list[Any], side: str) -> list[str]:
         ordered = _ordered_points(pts, side=side, crux_refs=_decisive_refs(s, side),
                                   driver_refs=driver_refs)
-        return [f"- {p.claim}{_cite(p.source_ref)}" for p, *_ in ordered[:3]]
+        return [f"- {_footnoted_claim(p)}" for p, *_ in ordered[:3]]
 
     _sl = BY_KEY[require_sleeve(sleeve, where="render._brief_case_lines")]
     out += [f"_{_sl.bull_label}:_", *(top3(s.bull_points, "bull") or ["- —"])]
@@ -3692,7 +3851,9 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # discriminator — but "What happened" described only the first half.
     out.append(f"## {BY_KEY[d.sleeve].survive_heading}")
     if m.drawdown_cause is not None:
-        out.append(_fact("Shape", m.drawdown_cause.shape, _fmt_shape))
+        out.append(_fact(_rolling("Shape", m.drawdown_cause, d.reference_date),
+                         m.drawdown_cause.shape, _fmt_shape))
+        out += _anchor_brief_lines(m.drawdown_cause)
     io = m.idiosyncratic_vs_shared
     if io is not None and io.name_180d_return.status is SourceStatus.PRESENT:
         out.append(_fact("Price (180d)", io.name_180d_return, _pct))
@@ -3870,7 +4031,8 @@ def _midcycle_section(mc: Any) -> list[str]:
     return out
 
 
-def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE) -> list[str]:
+def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE,
+                         ref: date | str | None = None) -> list[str]:
     """(D1·§1) The drawdown READ — per-gap ledger when the
     shape is discrete), the market comparison, the graph cohort, and the 8-K evidence grouped by
     accession. Extracted verbatim from render_markdown (2026-07-27) so the analysis tier
@@ -3885,6 +4047,7 @@ def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE) ->
     # about any name's price path; only the heading claimed something about the name.
     _row = BY_KEY[require_sleeve(sleeve, where="render._drawdown_idio_lines")]
     out.append(f"## {_row.drawdown_heading}")
+    out += _anchor_analysis_lines(m.drawdown_cause)
     # (event study) discrete gap-downs render as a scannable per-gap list — date, the TRUE 1-day
     # move (derived from the daily perf series; omitted, never estimated, when the committed series
     # can't carry it), cause. One gap / unparseable shape → the one-line fact.
@@ -3892,19 +4055,20 @@ def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE) ->
     _rows = (_gap_list(_fmt_shape(_shape.value))
              if _shape.status is SourceStatus.PRESENT and _shape.value is not None else None)
     if _rows is not None:  # ANY discrete-gap name — a 1-gap ledger still carries the true %
-        out.append(f"- **{_row.read_label}** · discrete gap-downs:{_cite(_shape.source_ref)}")
+        out.append(f"- **{_rolling(_row.read_label, m.drawdown_cause, ref)}** · discrete gap-downs:"
+                   f"{_cite(_shape.source_ref)}")
         for _gd, _cause in _rows:
             _gpct = _gap_pct_from_perf(m.stock_performance, _gd)
             _gpct_s = f" **{_gpct * 100:+.1f}%**" if _gpct is not None else ""
             out.append(f"  - {_gd}{_gpct_s} → {_cause}")
     else:
-        out.append(_fact(_row.read_label, _shape, _fmt_shape))
+        out.append(_fact(_rolling(_row.read_label, m.drawdown_cause, ref), _shape, _fmt_shape))
     # (declutter) the dates row repeats the shape line whenever every date already appears there
     gd = m.drawdown_cause.gap_down_dates
     shape_v = m.drawdown_cause.shape
     if not (gd.status is SourceStatus.PRESENT and shape_v.status is SourceStatus.PRESENT
             and all(str(d) in str(shape_v.value) for d in (gd.value or []))):
-        out.append(_fact("Gap-down dates", gd, _dates))
+        out.append(_fact(_rolling("Gap-down dates", m.drawdown_cause, ref), gd, _dates))
     # (buy-side restructure, twins the web) the alone-or-with-market comparison follows the READ
     # directly; the 8-K evidence closes the section as provenance. Revised guidance is a guidance
     # fact — it renders on the street section (legacy no-catalyst-path JSON keeps it here).
@@ -4494,7 +4658,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # never had it, per-fact source-binding already carries provenance precisely, and the
     # three tiers already separate decide/argue/prove), so the sequence below reads as the
     # questions a decision asks, in order. Twin: dossier.js analysisTier().
-    out += _drawdown_idio_lines(m, sleeve=d.sleeve)
+    out += _drawdown_idio_lines(m, sleeve=d.sleeve, ref=d.reference_date)
     out += _business_quality_lines(m)
     out += _argument_lines(d, dev=dev)
     out += _catalyst_calendar_lines(d, card)

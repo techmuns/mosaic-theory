@@ -55,6 +55,7 @@ from vinci.dossier.schemas import (
     EpsBasis,
     EpsLineFit,
     EvBridge,
+    EvBridgeUnbuilt,
     ExitClaims,
     FinRow,
     FinTable,
@@ -244,6 +245,43 @@ def _pct1(v: float | None) -> str:  # a fraction → "1.9%" (one decimal), or em
     return f"{v * 100:.1f}%" if v is not None else "—"
 
 
+#: CIQ'S NON-PERIOD HEADER MARKERS — a CLOSED registry, matched whitespace-normalised and EXACTLY
+#: (2026-11-04). A period-header cell that states no date is "unplaced" in :func:`latest_cell`,
+#: never guessed at; a cell registered here is KNOWN to name no period, so it is no column to every
+#: reader that walks a header (:func:`latest_cell`, :func:`_fin_periods`, the Capital Structure
+#: Summary). A new shape enters by a reviewed edit here, never by a pattern: an unregistered
+#: undated cell still places nothing — the 'Jun-30-2026A' step-back PR #872 closed stays closed.
+#: CENSUS, every Financials export on file (2026-11-04: 74 current in 37 folders, 26 archived in
+#: 13; the period and balance-sheet header rows of 909 sheets, 21,565 non-empty cells — Key Stats,
+#: whose headers CIQ suffixes 'A'/'E' and no reader reads, and the Capital Structure Details
+#: instrument table aside): 17 undated cells, ONE shape, 'Fiscal\nYear\nChange' (' Fiscal Year
+#: Change' on the Capital Structure Summary), all SMPL's — its 2026-11-04 export reaches back past
+#: its 2016–17 fiscal-year change. A corpus test re-runs it wherever the exports are on disk
+#: (`tests/test_fiscal_year_change_marker.py`).
+#: THE COLUMNS EITHER SIDE OF ONE ARE TWO FISCAL CALENDARS (:func:`calendar_segments`). CIQ prints
+#: the old calendar first, out of date order with the new one: SMPL's Dec-31-2016 (the Conyers
+#: Park SPAC's December year) sits before Aug-29-2015 (the Atkins predecessor's August year).
+PERIOD_HEADER_MARKERS: frozenset[str] = frozenset({"Fiscal Year Change"})
+
+
+def is_period_marker(cell: Any) -> bool:
+    """Is this period-header cell a registered non-period marker (:data:`PERIOD_HEADER_MARKERS`)?"""
+    return isinstance(cell, str) and " ".join(cell.split()) in PERIOD_HEADER_MARKERS
+
+
+def calendar_segments(header: list[Any]) -> list[int]:
+    """The fiscal calendar each column of a period header sits in, by position: the number of
+    registered markers at or to its left, so a marker opens the calendar after it (0 throughout a
+    header that carries none). A growth rate, a step or an order check never spans two of them —
+    the column the marker took out of a table leaves its break behind."""
+    out: list[int] = []
+    seg = 0
+    for cell in header:
+        seg += is_period_marker(cell)
+        out.append(seg)
+    return out
+
+
 #: What :func:`latest_cell` found: a number; a marker (or a blank) in the latest column; or no
 #: column it can place as the latest.
 LatestState = Literal["present", "unavailable", "unplaced"]
@@ -293,6 +331,11 @@ def latest_cell(rows: Rows, ri: int, hdr: int | None) -> LatestCell:
       (2026-10-30): 0 of any — 13,496 non-empty period-header cells in 615 header rows, every one
       dated (PR #872 round 2).
 
+    A REGISTERED MARKER IS NO COLUMN (:data:`PERIOD_HEADER_MARKERS`, 2026-11-04): SMPL's
+    'Fiscal\\nYear\\nChange' named a column with no date, so every latest read on its page was
+    unplaced. It is skipped; any other undated cell still places nothing. The latest column is
+    still the one stating the latest date, wherever the marker sits.
+
     THE PERIOD CARRIES THE COLUMN'S STATUS (#868's field), so a press-release column is visible to
     every caller: its label prints 'Press Release'. Whether a press-release statement is read at
     all is decided at assembly and in the anchor's CIQ bridge (:data:`PRESS_RELEASE_REFUSED`: all
@@ -312,7 +355,8 @@ def latest_cell(rows: Rows, ri: int, hdr: int | None) -> LatestCell:
         return none("unplaced", f"{what}: no period-header column states a date, so none can be "
                                 "placed as the latest")
     undated = [_period_text(c) for j, c in enumerate(rows[hdr]) if j >= 1
-               and str(c if c is not None else "").strip() and _column_date(c) is None]
+               and str(c if c is not None else "").strip() and _column_date(c) is None
+               and not is_period_marker(c)]
     if undated:
         return none("unplaced", f"{what}: the period header names {len(undated)} column(s) with no "
                     f"date it reads ({'; '.join(repr(u) for u in undated)}), so which column is "
@@ -1076,8 +1120,14 @@ def _quarterly_revenue_yoy(bundle: CiqBundle) -> str | None:
     # 1): a leftward search from the latest column never reached it on a right-to-left sheet. Two
     # columns naming that quarter are not guessed between (0 of the 52 non-held quarterly Income
     # Statements on file repeat one, current and archived, 2026-10-30).
+    # never across a fiscal-year change (:func:`calendar_segments`, 2026-11-04): the old calendar's
+    # quarter of the same number is not the same quarter a fiscal year earlier — so it is searched
+    # for only within the latest column's calendar, and an old-calendar column naming the same
+    # (quarter, fiscal year) is neither a match nor a second candidate (SMPL's Q1 Mar-31-2017 and
+    # FQ1/CQ4 Nov-26-2016 both read Q1 FY2017)
+    cal = calendar_segments(rows[hdr])
     want = (now.quarter, now.fiscal_year - 1)
-    prior = [j for j in range(1, len(rows[hdr])) if j != col
+    prior = [j for j in range(1, len(rows[hdr])) if j != col and cal[j] == cal[col]
              and ((p := header_period(rows[hdr][j])).quarter, p.fiscal_year) == want]
     if len(prior) != 1:
         return None
@@ -1491,6 +1541,16 @@ def _capital_summary(bundle: CiqBundle, *, freq: str = "annual") -> Sourced[str]
     # convention is exactly how `source_ref="Close (latest)"` came to sit on a months-old value in
     # three dossiers (item 20): the false-provenance shape, arriving through the data provider
     # rather than through the code. So check it, and refuse rather than mislabel.
+    # THE ORDER IS CHECKED WITHIN THE LATEST FISCAL CALENDAR (2026-11-04). CIQ prints the calendar
+    # before a fiscal-year change first and out of date order with the one after it (SMPL's
+    # Dec-31-2016 SPAC year, then ' Fiscal Year Change', then Aug-29-2015 onward), so the whole
+    # row never ascends. The last column's calendar must ascend, no earlier calendar may state a
+    # later date than it (the guarantee the whole-row check gave), and the step's other end is
+    # never taken across the change.
+    _cal = calendar_segments(hdrs[-1])
+    _older = [d for j in vcols if _cal[j] != _cal[vcols[-1]]
+              if (d := _cs_col_date(hdrs[-1][j])) is not None]
+    vcols = [j for j in vcols if _cal[j] == _cal[vcols[-1]]]
     _dates = [_cs_col_date(hdrs[-1][j]) for j in vcols]
     _known = [d for d in _dates if d is not None]
     if len(_known) > 1 and _known != sorted(_known):
@@ -1498,6 +1558,11 @@ def _capital_summary(bundle: CiqBundle, *, freq: str = "annual") -> Sourced[str]
             note="Capital Structure Summary: period columns are NOT in ascending date order, so "
                  "the last column is not the latest quarter — refusing rather than stamping "
                  "'(latest quarter)' on whichever column happens to sit last")
+    if _older and _known and max(_older) > max(_known):
+        return Sourced.unknown(
+            note="Capital Structure Summary: a column before the fiscal-year change states a "
+                 "later date than the last column, so the last column is not the latest quarter — "
+                 "refusing rather than stamping '(latest quarter)' on it")
 
     def at(prefix: str, col: int) -> float | None:
         i = _find_row_prefix(s, prefix)
@@ -2699,6 +2764,13 @@ def consensus_levels(bundle: CiqBundle) -> dict[str, list[ConsensusCell]]:
     return out
 
 
+def consensus_level_ref(metric: str, fy: str) -> str:
+    """The ref one forward-year consensus row is cited by (item 29, option 4) — ONE function, so
+    assembly and the refresh transform name a row alike. Before it the levels carried no ref, and a
+    point quoting a FY33 EBITDA median (LLY's $103,325.5M) could cite nothing that held it."""
+    return f"CIQ Estimates→Consensus {metric} FY{fy} (median, high, low, std dev, estimates)"
+
+
 def trends_fy_level(bundle: CiqBundle, *, metric: str, fy_label: str) -> float | None:
     """(H7) The LATEST Trends consensus snapshot for a metric at a SPECIFIC fiscal-year column —
     e.g. ``metric="EBITDA", fy_label="FY 2027"`` → the newest FY2027 EBITDA estimate. This is the
@@ -3377,31 +3449,45 @@ def _ciq_tev_claims(bundle: CiqBundle) -> tuple[float, str] | None:
 
 
 def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float | None = None,
-              edgar_source: str | None = None) -> EvBridge | None:
+              edgar_source: str | None = None) -> EvBridge | EvBridgeUnbuilt:
     """(EV bridge) THE ONE BUILDER for `Dossier.ev_bridge` — assembly and `ev_bridge_transform` both
-    call it. None when the balance sheet carries no Net Debt, Total Debt and cash at a dated column
-    (nothing is assumed when its source is missing)."""
+    call it. When the balance sheet carries no Net Debt, Total Debt and cash at its latest dated
+    column, nothing is assumed: the result is :class:`EvBridgeUnbuilt`, saying which (2026-11-04 —
+    it was a bare None in six places, so SMPL's page lost its bridge with nothing said)."""
+    wb = bundle.workbook("financials", freq="quarterly")
+
+    def unbuilt(reason: str) -> EvBridgeUnbuilt:
+        return EvBridgeUnbuilt(
+            reason=reason, source_file=wb.path.name if wb is not None else None,
+            source_sha256=file_provenance(wb.path)[0] if wb is not None else None)
+
     try:
         bs = bundle.sheet("financials", "Balance Sheet", freq="quarterly")
-    except CiqUnavailableError:
-        return None
+    except CiqUnavailableError as exc:
+        return unbuilt(f"no quarterly Balance Sheet to read the claims from ({exc})")
     hdr = _dated_header(bs)
     nd_i = _find_row(bs, "Net Debt")
     if hdr is None or nd_i is None:
-        return None
+        return unbuilt("the quarterly Balance Sheet carries no "
+                       + ("dated period header" if hdr is None else "'Net Debt' row"))
     # THE LATEST COLUMN BY DATE (`latest_cell`, PR #872 round 2): this took the highest dated
     # column INDEX, so a right-to-left sheet bridged its oldest balance sheet while `net_debt`, on
     # the same sheet, read the newest
     latest = latest_cell(bs, nd_i, hdr)
     col = latest.col
-    if col is None:
-        return None
+    if col is None or latest.value is None:
+        return unbuilt(f"quarterly Balance Sheet {latest.reason}")
     bs_date = _column_date(bs[hdr][col])
     nd = latest.value
-    td, cash = _row_at(bs, "Total Debt", col), _row_at(bs, "Total Cash & ST Investments", col)
-    if nd is None or td is None or cash is None:
-        return None
     period = _period_text(bs[hdr][col])
+    td, cash = _row_at(bs, "Total Debt", col), _row_at(bs, "Total Cash & ST Investments", col)
+    if td is None or cash is None:
+        unread = [lbl for lbl, v in (("Total Debt", td), ("Total Cash & ST Investments", cash))
+                  if v is None]
+        return unbuilt("the quarterly Balance Sheet states no "
+                       + " or ".join(repr(u) for u in unread)
+                       + f" at its latest column [{period}], where 'Net Debt' reads {nd:,.1f} — "
+                       "the bridge's legs are never taken from another column")
     as_of = bs_date.isoformat() if bs_date else None
     src = f"CIQ Financials→Balance Sheet [{period}]"
     # A CLAIM CIQ DOES NOT STATE IS UNREAD, NEVER 0 (audit A-D2, 2026-10-30): an absent row and a
@@ -3441,7 +3527,6 @@ def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float
         notes.append(f"DISAGREES with CIQ's current TEV less market cap (${ciq[0]:,.1f}M) by "
                      f"${claims - ciq[0]:,.1f}M — the Financials and comps exports sit on "
                      "different balance sheets; re-pull before an R4 record reads this")
-    wb = bundle.workbook("financials", freq="quarterly")
     est = bundle.workbook("estimates")
     return EvBridge(
         balance_sheet_date=as_of, lines=lines, claims=round(claims, 3), net_debt=round(nd, 3),
@@ -5907,10 +5992,13 @@ def _fin_short(cell: Any) -> str:
 
 def _fin_periods(hdr: list[Any]) -> list[tuple[int, str, bool, bool]]:
     """(col, short_label, is_ltm, is_reclassified) for each non-empty period column of a header —
-    the basis read off the header's STATUS field (:func:`header_period`), never off its label."""
+    the basis read off the header's STATUS field (:func:`header_period`), never off its label.
+    A registered marker (:func:`is_period_marker`) is no period column: SMPL's 'Fiscal Year
+    Change' printed as a column labelled 'Fiscal Y' in both summary tables and the Ratios panel.
+    Its break is kept by the callers that compare columns (:func:`calendar_segments`)."""
     return [
         (j, _fin_short(c), p.kind == "LTM", p.status == "reclassified")
-        for j, c in enumerate(hdr[1:], 1) if str(c).strip()
+        for j, c in enumerate(hdr[1:], 1) if str(c).strip() and not is_period_marker(c)
         for p in (header_period(c),)
     ]
 
@@ -6149,6 +6237,11 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     # (overlapping, non-successor) — it reads "— (basis)"; the estimate boundary names its base.
     bases = ([("ltm" if lt else ("recl" if r else "act")) for _c, _s, lt, r in disp]
              + ["est"] * len(est_pairs))
+    # the fiscal calendar of each actual column: growth never spans a fiscal-year change, as it did
+    # not while the marker sat between the two calendars as a column of its own (an estimate is
+    # compared to the last fiscal year by its own branch below, so it needs no entry here)
+    cal = calendar_segments(inc[hdr])
+    segs = [cal[c] for c in act_cols]
     columns = ([s + (" (R)" if r else "") for _c, s, _l, r in disp]
                + [display for _t, display in est_pairs])
     try:
@@ -6189,7 +6282,7 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
             v, prev = s[i], s[i - 1]
             if v is None or prev is None or not prev:
                 out.append("—")
-            elif bases[i] != bases[i - 1]:
+            elif bases[i] != bases[i - 1] or segs[i] != segs[i - 1]:
                 out.append("— (basis)")
             else:
                 out.append(f"{(v / prev - 1) * 100:+.0f}%")
@@ -6340,6 +6433,10 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
         return Sourced.unknown(note="Income Statement (quarterly): fewer than 2 quarters")
     cols = [c for c, _s, _l, _r in periods]
     recl = [r for _c, _s, _l, r in periods]
+    # the fiscal calendar of each column: QoQ and YoY never span a fiscal-year change, as they did
+    # not while the marker sat between the two calendars as a column of its own
+    cal = calendar_segments(rows[hdr])
+    segs = [cal[c] for c in cols]
     # (fiscal quarter, fiscal year) per column, for the same-quarter YoY
     qtoks = [(p.quarter, p.fiscal_year) for p in (header_period(rows[hdr][c]) for c in cols)]
     columns = [s + (" (R)" if r else "") for _c, s, _l, r in periods]
@@ -6369,7 +6466,7 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
         v, prev = rev[i], rev[i - 1]
         if v is None or prev is None or not prev:
             qoq.append("—")
-        elif recl[i] != recl[i - 1]:
+        elif recl[i] != recl[i - 1] or segs[i] != segs[i - 1]:
             qoq.append("— (basis)")
         else:
             qoq.append(f"{(v / prev - 1) * 100:+.0f}%")
@@ -6385,7 +6482,7 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
                   and qtoks[i - 4] == (q_now, fy_now - 1))
         if cur is None or prior is None or not prior or not same_q:
             yoy.append("—")
-        elif recl[i] != recl[i - 4]:
+        elif recl[i] != recl[i - 4] or segs[i] != segs[i - 4]:
             yoy.append("— (basis)")
         else:
             yoy.append(f"{(cur / prior - 1) * 100:+.0f}%")

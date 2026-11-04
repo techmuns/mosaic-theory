@@ -450,6 +450,11 @@ EXPOSURE into an investment view were not written down.
   is a missed refresh, not a publishable artifact. *(Benchmarks are cap-band per
   `vinci.monitor.benchmark_for_cap`; the dossier surface resolves the SAME policy at the reference
   date's cap, so MDY bars must exist for mid-band names like IT.)*
+- **PRE-SPEND CHECK (mandatory before any paid `vinci dossier --ticker <T>`, after the refresh):**
+  `python -m vinci.cli dossier precheck --ticker <T>` — the page built at $0 with no LLM call,
+  compared with the committed page; exit 1 lists every field or block the build would lose, and
+  every refusal the paid build would make only after its LLM calls, and the pass STOPS for the
+  operator. *(Source: §i step 4; SMPL 2026-11-04; MNST 2026-11-02.)*
 - **Browser-preview evidence (frontend PRs):** render from committed JSON on localhost; capture
   **screenshots** of the change and confirm **zero console errors**; render/layout PRs **STOP for
   operator approval** (PREVIEW RULE). *(Source: CLAUDE.md §PREVIEW RULE.)*
@@ -582,7 +587,49 @@ is the 3.9 system one).
    but that book's own question is unanswerable — a page, not an answer. **The raw workbooks land in `data/manual/ciq/` and are NEVER committed or
    logged** — git-ignored regardless of repo privacy; only the DERIVED per-ticker `dossier.json`
    is committable. *(Source: CLAUDE.md §Security & secrets.)*
-4. **Assemble** — the maintenance path builds the data record from the resolver + price store with
+4. **Pre-spend check — $0, before every paid build.** Build the page with NO LLM call, into a
+   temporary folder, and compare it with the committed page field by field:
+
+   ```
+   PYTHONPATH=$PWD $VENV/python -m vinci.cli dossier precheck --ticker <T>
+   ```
+
+   It **exits 1** when any Sourced field (a `value` + `status` dict) or any of the six top-level
+   blocks (`ev_bridge`, `forward_consensus`, `forward_multiple_history`,
+   `historical_forecast_error`, `valuation_basis`, `anchor`) is present on the committed page and
+   would not be present after the build, printing each with the note its reader gave. **STOP there:
+   the operator decides** — fix the reader, re-export, or accept the loss — before anything is
+   spent. It runs the paid build's own readers on the same exports, store and code, so a change of
+   export shape shows up here as a field regression. *(Source: SMPL, 2026-11-04: an undated
+   "Fiscal Year Change" column in the Financials export cost 12 fields and the EV bridge, found
+   only after a $2.27 build; the hand-written pre-spend checks had all passed —
+   `docs/records/2026-11-04-pre-spend-field-check.md`.)*
+
+   - It also **exits 1 on each refusal the paid build makes only AFTER its LLM calls** that needs
+     no synthesis, printed with its message under `POST-SPEND REFUSALS`: `_freshness_check` (a
+     missing cap input, an export panel past the 45-day ceiling, a share-basis mismatch),
+     `_materiality_check`'s "cannot look" refusal (no annual Income Statement, period header,
+     revenue row or unusual-items block) and `_write`'s refusal of a drawdown cause degraded over
+     the committed page's PRESENT one. A material unusual item the summary does not show is
+     listed as decided by the paid draw, not a stop: the synthesis must state it. The freshness
+     line gives the date from which a build is refused on panel age, since the age is measured on
+     the day the check runs. *(Source: MNST, 2026-11-02: run `373c8ffc` paid $3.33 for seven LLM
+     calls before `_freshness_check` refused a share basis its 2-for-1 split had moved —
+     `docs/records/2026-11-04-pre-spend-check-runs-post-spend-refusals.md`.)*
+   - It writes nothing to `data/dossiers/` and no `assembly_runs` line. A first assembly (no
+     committed page) has no field to compare, but its post-spend refusals still run, and any one
+     that fires exits 1.
+   - Its first lines are the count's BOUNDARY — both pages' `assembled_at` and extraction versions,
+     the export sha256s on disk against the ones the page stamps, and how many fields it compared.
+     Paste them into the pass's record.
+   - The three `capital_structure` fields only an LLM phase writes are FORECAST by running that
+     phase with a client that refuses every call: a phase that returns before calling the model is
+     deterministic and is compared; one that reaches the model is listed as decided by the paid
+     draw and is not.
+   - A regression can come from the export, the code or the store (a stale benchmark reads as a
+     lost market leg). It attributes nothing: read the note. Refresh the store first (step 2) so a
+     stale bar is not mistaken for an export problem.
+5. **Assemble** — the maintenance path builds the data record from the resolver + price store with
    no screen involved, and the page leads with a caveat stating the name is not a current screen
    candidate and why:
 
@@ -590,7 +637,7 @@ is the 3.9 system one).
    PYTHONPATH=$PWD $VENV/python -m vinci.cli dossier --ticker <T>
    ```
 
-5. **Regenerate the two fixtures** — the first takes the ticker (its own test-failure message
+6. **Regenerate the two fixtures** — the first takes the ticker (its own test-failure message
    instructs this); the second takes NO argument and DERIVES every maintained name once the
    dossier is committed:
 
@@ -599,7 +646,7 @@ is the 3.9 system one).
    PYTHONPATH=$PWD $VENV/python scripts/build_price_fixture.py
    ```
 
-6. **Artifact pass** — run the FULL offline suite green BEFORE pushing; tests read the committed
+7. **Artifact pass** — run the FULL offline suite green BEFORE pushing; tests read the committed
    artifacts, so a re-assembled dossier can turn a pinned test red:
 
    ```

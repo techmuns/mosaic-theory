@@ -22,7 +22,7 @@ from typing import Any, TypeVar
 from pydantic import ValidationError
 
 from vinci.config import Config, get_config
-from vinci.dossier import ciq_sheets, ltm_quarters, requirements, run_metrics
+from vinci.dossier import ciq_sheets, filed_tiebreak, ltm_quarters, requirements, run_metrics
 from vinci.dossier import flags as dossier_flags
 from vinci.dossier.anchor import (
     RECIPE_UNKNOWN,
@@ -45,12 +45,16 @@ from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import (
     COVENANT_SEARCH_FOUND_NOTHING,
     COVENANT_SEARCH_STOPPED_SHORT,
+    AnchorDate,
     assemble_mechanical,
+    drawdown_anchor_date,
 )
 from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import (
     CovenantPointer,
     Dossier,
+    EvBridge,
+    EvBridgeUnbuilt,
     MechanicalLayer,
     PriceStoreStamp,
     Sourced,
@@ -72,7 +76,7 @@ from vinci.finra import build_finra_http
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.llm import LlmClient, MeteredLlmClient
 from vinci.labels import resolve_label
-from vinci.netcache import SecRateLimitedError, sec_refusal
+from vinci.netcache import HttpError, SecRateLimitedError, sec_refusal
 from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
 from vinci.schemas.candidate import CandidateRecord
@@ -567,6 +571,20 @@ def _load_graph(cfg: Config) -> ExposureGraph:
     return ExposureGraph.from_edges(edges)
 
 
+def _drawdown_anchor_date(cfg: Config, ticker: str) -> AnchorDate | None:
+    """The date ``ticker``'s drawdown is anchored at — its underwrite record's, else its follow's
+    `followed_since` (`mechanical.drawdown_anchor_date`). The record through `_read_scenario_card`,
+    the one reader of it; the follow through `vinci.followed`, the dated reader of the follow list,
+    since `_follow_entry` reads no dates."""
+    from vinci.followed import follow_records
+
+    card = _read_scenario_card(ticker)
+    follow = next((r for r in follow_records(cfg.data_dir / "followed.json")
+                   if r.ticker == ticker.upper()), None)
+    return drawdown_anchor_date(card, follow.since if follow else None, ticker=ticker.upper(),
+                                follow_until=follow.until if follow else None)
+
+
 def _read_scenario_card(ticker: str) -> Any | None:
     """The committed underwrite record for ``ticker``, or None when the name is not underwritten.
 
@@ -645,9 +663,17 @@ def _refuse_degraded_drawdown_overwrite(dossier: Dossier, folder: Path) -> None:
 
     So the degrade-and-continue stands for a FRESH name (a present record marked UNKNOWN is
     auditable; an absent one is not), and is refused only where it would DESTROY an established
-    finding. Gated on the committed file, not on a mode, exactly as the synthesis guard is."""
+    finding. Gated on the committed file, not on a mode, exactly as the synthesis guard is.
+
+    THE AT-THE-ANCHOR PART TOO (2026-11-04, `DrawdownAnchor`): it is read as of its anchor so that
+    no later build can change it, and a degraded feed is the one thing that still could — its shape
+    goes UNKNOWN exactly as the current window's does. A build whose at-anchor shape is degraded
+    over a committed PRESENT one is refused the same way."""
     dc = dossier.mechanical.drawdown_cause if dossier.mechanical is not None else None
-    if dc is None or dc.shape.status is SourceStatus.PRESENT:
+    if dc is None:
+        return
+    _refuse_degraded_at_anchor_overwrite(dossier, dc, folder)
+    if dc.shape.status is SourceStatus.PRESENT:
         return  # this build read the index fine — nothing to protect against
     existing = folder / "dossier.json"
     if not existing.exists():
@@ -664,6 +690,29 @@ def _refuse_degraded_drawdown_overwrite(dossier: Dossier, folder: Path) -> None:
         "would replace an established finding with UNKNOWN. Re-assemble once the feed recovers. "
         "This refusal is also what keeps `vinci dossier` from exiting 0 on a degraded run and "
         "letting the artifact pass commit blank blocks over good ones.")
+
+
+def _refuse_degraded_at_anchor_overwrite(dossier: Dossier, dc: Any, folder: Path) -> None:
+    """`_refuse_degraded_drawdown_overwrite`'s rule for the at-the-anchor part: refused when this
+    build's at-anchor shape is not PRESENT and the committed page's is."""
+    anchor = getattr(dc, "anchor", None)
+    if anchor is None or anchor.at_anchor.shape.status is SourceStatus.PRESENT:
+        return
+    existing = folder / "dossier.json"
+    if not existing.exists():
+        return
+    try:
+        prior = (json.loads(existing.read_text())["mechanical"]["drawdown_cause"]["anchor"]
+                 ["at_anchor"]["shape"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return  # no committed at-anchor part: no finding of that part to protect
+    if prior.get("status") != SourceStatus.PRESENT.value:
+        return
+    raise DossierAssemblyError(
+        f"{dossier.ticker}: this build could not read the EDGAR filing index for the drawdown at "
+        f"the {anchor.kind} {anchor.on} ({anchor.at_anchor.shape.note}) and the committed dossier "
+        "HAS that part — writing would replace an established finding with UNKNOWN, in the one "
+        "part no later build is meant to change. Re-assemble once the feed recovers.")
 
 
 def _keep_committed_recipe(dossier: Dossier, folder: Path) -> Dossier:
@@ -917,6 +966,41 @@ def _price_store_stamp(cfg: Config) -> PriceStoreStamp:
                            frontier=frontier)
 
 
+def _filed_tiebreak(cfg: Config, cik: str | None, mech: MechanicalLayer,
+                    refused: list[ltm_quarters.LtmCheck], *, bundle: CiqBundle,
+                    reference_date: date) -> list[filed_tiebreak.Decision]:
+    """The filing's answer for each refused row, read as filed by the page's price date (the cut
+    every page reader takes, `vinci.edgar.asof.page_price_date`). No CIK, or companyfacts EDGAR
+    will not serve (`HttpError`: a 404, or a 5xx past its retries), reads no filing, so every row
+    stays refused, saying so — as `mechanical._companyfacts_or_none` degrades. A throttle is not
+    an `HttpError` and stops the run (`SecRateLimitedError`)."""
+    si = mech.stock_info
+    cut = page_price_date(si.as_of if si else None, reference_date)
+    if not cik:
+        return [filed_tiebreak.Decision(r, None, "the record carries no CIK, so no filing can be "
+                                                 "read") for r in refused]
+    try:
+        facts = EdgarClient.from_config(cfg).companyfacts(cik)
+    except HttpError as exc:
+        return [filed_tiebreak.Decision(r, None, f"EDGAR companyfacts could not be read "
+                                                 f"({type(exc).__name__}: {exc})")
+                for r in refused]
+    return [filed_tiebreak.decide(r, facts, as_filed_by=cut, bundle=bundle) for r in refused]
+
+
+def _settle_ltm_refusals(ticker: str, mech: MechanicalLayer,
+                         decided: list[filed_tiebreak.Decision],
+                         ) -> tuple[MechanicalLayer, list[str]]:
+    """(the layer with every filed figure stated, one main-body caveat per figure) — or RAISE
+    naming each row the filing could not decide. All or nothing: a page is never built with one
+    material row stated as filed and another still contradicted by CIQ's own exports."""
+    if unresolved := [d for d in decided if d.figure is None]:
+        raise DossierAssemblyError(ltm_quarters.refusal_message(
+            ticker, [d.row for d in unresolved], filed_tiebreak.refusal_detail(unresolved)))
+    mech = filed_tiebreak.apply(mech, [d.figure for d in decided if d.figure is not None])
+    return mech, [d.caveat() for d in decided]
+
+
 def _edgar_cross_check(mech: MechanicalLayer, facts: dict[str, Any], *,
                        reference_date: date) -> tuple[float | None, str | None]:
     """EDGAR's lease-inclusive net debt beside CIQ's TEV claims (`ev_bridge`), as filed by the
@@ -1032,6 +1116,8 @@ def assemble_one(
             # checked against what the fund already holds. Read-only, and the SAME reader the
             # renderer already uses — one definition of "the record", not two.
             card=_read_scenario_card(ticker),
+            # the drawdown's anchor: the underwrite, else the follow (`_drawdown_anchor_date`)
+            drawdown_anchor=_drawdown_anchor_date(cfg, ticker),
         )
     flags += mech_flags
     # (2026-10-30) EACH ANNUAL-SUMMARY LTM AGAINST ITS FOUR QUARTERS, before anything is spent: a
@@ -1043,7 +1129,14 @@ def assemble_one(
     flags += ltm_read.flags()
     material = {f.label for f in demanded_material_figures(_mark_material(mech))}
     if refused := ltm_read.refused(material):
-        raise DossierAssemblyError(ltm_quarters.refusal_message(ticker, refused))
+        # (2026-11-04, operator approval) THE SEC FILING IS THE TIEBREAKER: a material row CIQ
+        # disagrees with itself on is stated as filed, with a main-body caveat naming CIQ's two
+        # readings, when the filed figure reproduces one of them; any row the filing cannot decide
+        # refuses exactly as before, saying why (`filed_tiebreak`). Still before any spend.
+        mech, filed_caveats = _settle_ltm_refusals(
+            ticker, mech, _filed_tiebreak(cfg, rec.identity.cik, mech, refused, bundle=bundle,
+                                          reference_date=fin.reference_date))
+        flags += filed_caveats
     # (PR-B §3-now) transcript slice computed ONCE here so a fail-loud flag fires whether or not
     # the LLM runs — transcripts on file that don't parse (no LibreOffice) never vanish silently.
     transcript = ciq_sheets.transcript_for_synthesis(bundle)
@@ -1221,6 +1314,12 @@ def assemble_one(
     except Exception as exc:  # noqa: BLE001 — anchor is best-effort; it never blocks the dossier
         anchor = Anchor(recipe_hint=RECIPE_UNKNOWN, applicable=False, computed_at=datetime.now(UTC),
                         reason=f"anchor computation failed: {type(exc).__name__}")
+    # (EV bridge) CIQ's TEV claims and the exit default an enterprise recipe subtracts, built by the
+    # ONE builder with EDGAR's lease-inclusive net debt beside it as a cross-check — or, when it
+    # cannot be built, why not (2026-11-04)
+    bridge = ciq_sheets.ev_bridge(
+        bundle, fy_periods=(forward_consensus.periods if forward_consensus else []),
+        edgar_net_debt=edgar_nd[0], edgar_source=edgar_nd[1])
     dossier = Dossier(
         ticker=ticker, name=rec.identity.name, cik=rec.identity.cik,
         reference_date=fin.reference_date, rank=fin.rank, sleeve=fin.sleeve,
@@ -1239,11 +1338,9 @@ def assemble_one(
         forward_multiple_history=ciq_sheets.forward_multiple_history(bundle),
         # (historical forecast error) the final consensus's miss per fiscal year — same rules
         historical_forecast_error=ciq_sheets.historical_forecast_error(bundle),
-        # (EV bridge) CIQ's TEV claims and the exit default an enterprise recipe subtracts — same
-        # rules, with EDGAR's lease-inclusive net debt beside it as a cross-check
-        ev_bridge=ciq_sheets.ev_bridge(
-            bundle, fy_periods=(forward_consensus.periods if forward_consensus else []),
-            edgar_net_debt=edgar_nd[0], edgar_source=edgar_nd[1]),
+        # (EV bridge) same rules; the reason it is unbuilt sits beside it, never with it
+        ev_bridge=bridge if isinstance(bridge, EvBridge) else None,
+        ev_bridge_unbuilt=bridge if isinstance(bridge, EvBridgeUnbuilt) else None,
         # UTC-aware so the stamp is unambiguous and comparable across machines/timezones — it lets
         # the human tell two same-day re-assemblies apart (rendered with time + "UTC").
         llm_model=(llm.model if llm else None), assembled_at=built_at,

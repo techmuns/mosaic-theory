@@ -38,6 +38,27 @@ from vinci.sleeves import DEFAULT_SLEEVE, UnknownSleeveError, require_sleeve
 T = TypeVar("T")
 
 
+class SourceRefWhenBuilt(BaseModel):
+    """A block the assembler builds — from a source or by computation — names it in ``source_ref``
+    so a synthesis point can cite the block's figures (item 29, option 4, operator ruling
+    2026-11-04 "1 + 4"). Before it, 7,720 numbers on the 27 committed pages sat on a path with no
+    ref at all, and a point could not cite them however it tried (LLY's "$27,958M" acquired lived
+    only in `peer_capital_intensity.rows`).
+
+    ABSENT, never null, until built: a page assembled before this change carries no ref and
+    round-trips byte for byte (`dossier_json`). `tests/test_footnote_every_figure.py` refuses a new
+    block on the layer that states numbers without a ref unless it is on the not-a-fact list."""
+
+    source_ref: str | None = None
+
+    @model_serializer(mode="wrap")
+    def _source_ref_absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("source_ref") is None:
+            out.pop("source_ref", None)
+        return out
+
+
 class SourceStatus(enum.StrEnum):
     """Coverage of one mechanical fact."""
 
@@ -130,7 +151,7 @@ class CohortMember(BaseModel):
     model_config = {"frozen": True}
 
 
-class ImpliedExpectationRow(BaseModel):
+class ImpliedExpectationRow(SourceRefWhenBuilt):
     """(G) One row: a STATED multiple → the fundamental LEVEL price implies at it (implied_level =
     TEV ÷ multiple). FUNDAMENTALS-SPACE ONLY — this model carries NO price/equity/value/upside/
     discount field (the block-scoped no-conclusion check forbids those tokens). ``implied_level``
@@ -162,7 +183,7 @@ CHECK_DIFFER: CrossCheck = "differ"
 CHECK_NOT_RUN: CrossCheck = "not_run"
 
 
-class ImpliedExpectations(BaseModel):
+class ImpliedExpectations(SourceRefWhenBuilt):
     """(G) Price-inverted expectations, MULTIPLES-space. At a FIXED, declared multiple set the block
     reports the fundamental LEVEL price implies (``TEV ÷ multiple``), juxtaposed with the consensus
     path anchors — NEVER differenced (no %, gap, upside, or implied price/equity). The human judges
@@ -355,7 +376,7 @@ class ForwardMultiple(BaseModel):
     model_config = {"frozen": True}
 
 
-class EvEbitdaBasis(BaseModel, frozen=True):
+class EvEbitdaBasis(SourceRefWhenBuilt, frozen=True):
     """WHAT CIQ's headline TEV/LTM EBITDA IS STRUCK ON — measured on this page, never assumed.
 
     The multiple's own denominator is TEV ÷ the multiple; it is set against REPORTED LTM EBITDA
@@ -380,7 +401,7 @@ class EvEbitdaBasis(BaseModel, frozen=True):
     line: str
 
 
-class EvEbitdaAtPrice(BaseModel, frozen=True):
+class EvEbitdaAtPrice(SourceRefWhenBuilt, frozen=True):
     """The EX-LEASE EV/EBITDA at the PAGE'S price — R1's basis, today (2026-10-21).
 
     The ex-lease history's own `current` is the latest QUARTERLY close in CIQ's Historical
@@ -568,6 +589,75 @@ class Concentration(BaseModel):
     model_config = {"frozen": True}
 
 
+class GapDown(BaseModel):
+    """One gap-down in a dated window, as structure: the renderers read this, never the shape."""
+
+    on: str  # ISO — the session of the drop
+    move: float  # close-to-close from the prior session, the detector's own arithmetic (-0.181)
+    cause: str  # the 8-K's item-code label (`_gap_label`), or "no company filing"
+    accession: str | None = None  # the 8-K the cause is read from, when there is one
+
+    model_config = {"frozen": True}
+
+
+class DrawdownWindow(BaseModel):
+    """One DATED part of a drawdown's record: the gap-downs inside ``start``..``end`` (both
+    inclusive), the 8-Ks at them and the revised outlook they furnished — the same four facts the
+    current window carries on `DrawdownCause`, built by the same reader, over a stated window.
+    Its ``shape`` states each drop's move beside its cause, so a point citing it can state it."""
+
+    start: str  # ISO — the first session a gap-down in this window can fall on
+    end: str  # ISO — the last; also the date its inputs are cut at (bars on/before, filed by)
+    shape: Sourced[str]
+    gap_down_dates: Sourced[list[str]]
+    filings: list[FilingRef]
+    revised_guidance: Sourced[str]
+    # each gap-down as structure, from the same bars, so a renderer never has to find a move in a
+    # price series that may no longer reach back that far
+    gaps: list[GapDown] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
+#: How a drawdown anchor names its two dated parts and itself, per `DrawdownAnchor.kind` — the ONE
+#: Python copy, read by the renderer and the synthesis brief alike; its web twin is dossier.js
+#: `ANCHOR_WORDS`, bound by `test_anchored_drawdown.py::test_anchor_words_twin`.
+DRAWDOWN_ANCHOR_WORDS: dict[str, tuple[str, str, str]] = {
+    "underwrite": ("Drawdown at underwrite", "Since underwrite", "underwrite"),
+    "followed": ("Drawdown when followed", "Since followed", "follow"),
+}
+
+
+class DrawdownAnchor(BaseModel):
+    """THE DRAWDOWN AS IT STOOD WHEN THE FUND'S THESIS WAS WRITTEN, AND WHAT HAS HAPPENED SINCE.
+
+    The current window (`DrawdownCause`'s own fields) rolls with the page's date, so a page rebuilt
+    more than ``gap_window_days`` after a drop no longer names the event an underwrite was written
+    on: SMPL's rebuild at 2026-11-03 starts its window on 2026-05-07, after its 2026-04-09/10
+    gap-downs and the FY26 outlook 8-K its 2026-08-05 underwrite rests on. An expert keeps a
+    thesis log instead — the original event stays, dated, and what has happened since is added.
+
+    ``at_anchor`` is the window of the same length ending ON the anchor date, read only from what
+    was knowable then (bars on or before it, 8-Ks filed by it), so no later build can change it.
+    ``since`` runs from the day after the anchor to the page's price date; None when the page has
+    no session after the anchor."""
+
+    kind: Literal["underwrite", "followed"]
+    on: str  # ISO — the underwrite record's `underwrite_date`, else the follow's `followed_since`
+    source_ref: str  # where the date was read
+    at_anchor: DrawdownWindow
+    since: DrawdownWindow | None = None
+
+    model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("since") is None:
+            out.pop("since", None)
+        return out
+
+
 class DrawdownCause(BaseModel):
     """Why the name fell: shape (discrete event vs gradual bleed) + the 8-Ks at the gap-downs."""
 
@@ -581,9 +671,27 @@ class DrawdownCause(BaseModel):
     # ≤threshold drop BEFORE the window renders as an unclassified (hollow) marker, never silently
     # unmarked. None on pre-field committed JSON → the renderers skip the boundary/hollow marks.
     gap_threshold: float | None = None  # single-day close-to-close drop that fires the detector
-    gap_window_days: int | None = None  # how far back from the reference date the detector scans
+    gap_window_days: int | None = None  # how far back from ``gap_window_end`` the detector scans
+    # THE DATE THE CURRENT WINDOW ENDS ON — the page's price date (2026-11-04 item 3). ABSENT on a
+    # page built before it, whose window ended on the screen's reference date, which a renderer
+    # reads in its place.
+    gap_window_end: str | None = None
+    # (2026-11-04) the drawdown at the underwrite (or the follow) and since — ABSENT on a page with
+    # no anchor and on every page built before it, so those read, check and render as they did
+    anchor: DrawdownAnchor | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        """``anchor`` is ABSENT when None, never null: a key written as null would say the page was
+        built with one and found nothing."""
+        out = nxt(self)
+        if isinstance(out, dict):
+            for key in ("gap_window_end", "anchor"):
+                if out.get(key) is None:
+                    out.pop(key, None)
+        return out
 
 
 class IdiosyncraticVsShared(BaseModel):
@@ -638,7 +746,7 @@ class StockPerformance(BaseModel):
     model_config = {"frozen": True}
 
 
-class ConsensusLevel(BaseModel, frozen=True):
+class ConsensusLevel(SourceRefWhenBuilt, frozen=True):
     """(A1) One metric x one forward fiscal year, as the street reported it.
 
     RAW PAIR. `estimates` is CIQ's own `9/11` — never re-labelled "broker count", because the two
@@ -920,6 +1028,18 @@ class EvBridge(BaseModel, frozen=True):
     source_file: str | None = None   # the Financials export
     source_sha256: str | None = None
     estimates_sha256: str | None = None  # the Estimates export the consensus check read
+
+
+class EvBridgeUnbuilt(BaseModel, frozen=True):
+    """(EV bridge, 2026-11-04) WHY the bridge was not built, when the builder ran and could not —
+    the way an UNKNOWN field carries its note. Before this a page with no bridge said nothing:
+    `ev_bridge` was absent both on a page built before the layer existed and on SMPL's 2026-11-04
+    assembly, where every latest balance-sheet read was refused. Beside `ev_bridge`, never with it;
+    ABSENT on a page that carries a bridge or predates this field."""
+
+    reason: str                      # what the builder could not read, in words
+    source_file: str | None = None   # the quarterly Financials export it read, when there was one
+    source_sha256: str | None = None
 
 
 # --- (valuation basis, 2026-10-09) the ACTIVE recipe's basis, derived from the page -------------
@@ -1579,7 +1699,7 @@ class MaturitySource(BaseModel):
     model_config = {"frozen": True}
 
 
-class MaturityCheckRow(BaseModel):
+class MaturityCheckRow(SourceRefWhenBuilt):
     """One panel instrument's maturity against the newest filing that states it."""
 
     instrument: int  # index into `capital_structure.instruments`
@@ -1738,7 +1858,7 @@ class FinTable(BaseModel):
     model_config = {"frozen": True}
 
 
-class EbitdaBasis(BaseModel):
+class EbitdaBasis(SourceRefWhenBuilt):
     """Implied D&A either side of the annual table's actual→estimate boundary, and whether the two
     `EBITDA ($M)` readings agree.
 
@@ -1861,6 +1981,55 @@ class StatementReconciliation(BaseModel, frozen=True):
     source_ref: str
 
 
+class FiledLtmQuarter(BaseModel, frozen=True):
+    """One quarter of a filed LTM (`vinci.dossier.filed_tiebreak`): the filer's own 3-month fact,
+    or the longer period less the one a quarter shorter (Q4 = the 10-K's year − nine months)."""
+
+    end: str                                  # ISO — the quarter end CIQ's quarterly header states
+    value: float                              # $M, in CIQ's sign
+    derived: bool = False                     # True: a difference of two filed periods
+    source_ref: str                           # the tag, the period(s), each form + accession + day
+    #: the accession(s) the value was READ from, structured — the source_ref also names the first
+    #: filing a restated figure supersedes, which is not one of them
+    accessions: list[str] = Field(default_factory=list)
+    #: (kind "containing_line") the quarterly export's own breakdown of the filed line in this
+    #: quarter, $M — its component rows plus the row — set against ``value``, the filed line
+    ciq_breakdown: float | None = None
+
+
+#: Which CIQ reading a filed LTM reproduces (`FiledLtmFigure.supports`).
+Supports = Literal["annual", "quarterly", "both"]
+#: How the filing decided (`FiledLtmFigure.kind`): ``same_item`` — a filed concept states the row's
+#: own item and the page states the FILED figure; ``containing_line`` — the item is filed only
+#: inside a wider line, CIQ's quarterly breakdown of that line reproduces it in every quarter, and
+#: the page states CIQ's quarterly READING (operator ruling 2026-11-04, "NFLX: B").
+FiledKind = Literal["same_item", "containing_line"]
+
+
+class FiledLtmFigure(SourceRefWhenBuilt, frozen=True):
+    """A MATERIAL annual-summary LTM that CIQ's annual and quarterly exports disagree on, decided by
+    the SEC filings (2026-11-04, operator approval). The page's LTM cell for the row reads
+    ``value``; the two CIQ readings stay here, beside it. ``kind`` says whether ``value`` is the
+    filed figure itself or CIQ's quarterly reading that the filed containing line confirms.
+    ``source_ref`` (item 29, option 4) names the two CIQ readings, ``ciq_annual`` and
+    ``ciq_quarterly``, so a point can cite them (`filed_tiebreak.ciq_readings_ref`)."""
+
+    label: str                                # the annual summary's row label
+    ltm_end: str                              # ISO
+    value: Sourced[float]                     # $M, in CIQ's sign; source_ref names every accession
+    tag: str                                  # the us-gaap concept the reviewed mapping read
+    kind: FiledKind = "same_item"
+    #: (kind "containing_line") the quarterly export's component rows whose sum with the row is
+    #: set against the filed line, in the mapping's order
+    components: list[str] = Field(default_factory=list)
+    ciq_annual: float                         # $M — the annual export's LTM cell
+    ciq_quarterly: float                      # $M — the quarterly export's quarters carrying a
+    #                                           figure, summed (all four, or fewer on a '-')
+    supports: Supports
+    quarters: list[FiledLtmQuarter]
+    as_filed_by: str                          # ISO — the page's price date the facts were cut at
+
+
 class FinancialSummary(BaseModel):
     """The FINANCIAL-SUMMARY appendix (C1–C4): the fusion of CIQ Financials ACTUALS with Estimates
     CONSENSUS, rendered after the twins. ``annual`` = last-4-FY + LTM + FY26E/FY27E (E cols marked
@@ -1884,6 +2053,9 @@ class FinancialSummary(BaseModel):
     #: (2026-10-26) the annual table's Revenue and CFO against the filings
     #: (`vinci.dossier.statement_recon`). Absent until built (`DROP_WHEN_NONE`).
     statement_reconciliation: StatementReconciliation | None = None
+    #: (2026-11-04) the material LTMs CIQ disagreed with itself on, as the filings state them
+    #: (`vinci.dossier.filed_tiebreak`). Absent unless one decided a build (`DROP_WHEN_NONE`).
+    filed_ltm: list[FiledLtmFigure] | None = None
 
     model_config = {"frozen": True}
 
@@ -2457,7 +2629,7 @@ class PeerImpairment(BaseModel):
     model_config = {"frozen": True}
 
 
-class PeerCapitalRow(BaseModel):
+class PeerCapitalRow(SourceRefWhenBuilt):
     """One peer's acquired-asset intensity, or a STATED reason it has none."""
 
     ticker: str
@@ -2486,7 +2658,7 @@ class PeerCapitalRow(BaseModel):
     model_config = {"frozen": True}
 
 
-class PeerCapitalIntensity(BaseModel):
+class PeerCapitalIntensity(SourceRefWhenBuilt):
     """How acquisitive this balance sheet is versus its peer set — on BOTH denominators.
 
     TWO DENOMINATORS, AND THE CHOICE IS NOT COSMETIC. Against MARKET CAP a cheap stock shows a high
@@ -2654,17 +2826,77 @@ class MechanicalLayer(BaseModel):
 # --- synthesis layer (LLM, fenced; NO verdict/score/direction/probability field) --------------
 
 
+#: The operations a COMPUTED figure may declare (item 29, operator ruling 2026-11-04 "1 + 4"). A
+#: closed set, recomputed by `synthesis._validate` on the inputs as written; the model names one,
+#: the checker never searches for one (a search "derived" 111 of 326 flagged figures by
+#: coincidence, e.g. 15.1 = 49.0 ÷ 3).
+FIGURE_OPERATIONS: tuple[str, ...] = ("difference", "sum", "ratio", "premium", "growth")
+
+
+class FigureCite(BaseModel):
+    """ONE figure of a point's claim and where it comes from — the footnote an expert puts on every
+    number (item 29). Exactly one of: ``source_ref`` (the ONE fact that states it) or ``derived``
+    (an operation in `FIGURE_OPERATIONS` on two ``inputs``, each another figure of the same claim
+    with its own entry). ``figure`` is copied exactly as the claim writes it ("15.1x", "3rd").
+
+    Citation metadata only — no verdict, rating or score can be expressed here (`Synthesis` has no
+    verdict field and this adds none)."""
+
+    figure: str
+    source_ref: str | None = None
+    derived: Literal["difference", "sum", "ratio", "premium", "growth"] | None = None
+    inputs: list[str] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+    @model_validator(mode="after")
+    def _one_source(self) -> FigureCite:
+        if (self.source_ref is None) == (self.derived is None):
+            raise ValueError(f"figure {self.figure!r} must carry exactly one of source_ref or "
+                             "derived")
+        if self.derived is not None and len(self.inputs) != 2:
+            raise ValueError(f"computed figure {self.figure!r} names {len(self.inputs)} inputs; "
+                             f"{self.derived} takes exactly 2")
+        if self.derived is None and self.inputs:
+            raise ValueError(f"cited figure {self.figure!r} names inputs; only a computed one does")
+        return self
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict):
+            for key in ("source_ref", "derived"):
+                if out.get(key) is None:
+                    out.pop(key, None)
+            if not out.get("inputs"):
+                out.pop("inputs", None)
+        return out
+
+
 class SourcedPoint(BaseModel):
     """A bull or bear point. MUST cite a ``source_ref`` that exists in the mechanical layer.
 
     ``cited`` is set False by the post-LLM validator when the cited ref does not trace to input —
-    an uncited claim is flagged for the human, never silently presented as established."""
+    an uncited claim is flagged for the human, never silently presented as established.
+
+    ``figures`` (item 29) footnotes each figure of the claim to the fact that states it, or to the
+    operation and inputs that compute it. ABSENT when empty: every point drawn before 2026-11-04
+    carries none, round-trips byte for byte, and is checked against ``source_ref`` exactly as it
+    was."""
 
     claim: str
     source_ref: str
+    figures: list[FigureCite] = Field(default_factory=list)
     cited: bool = True  # validator flips to False (and flags) if source_ref doesn't trace
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and not out.get("figures"):
+            out.pop("figures", None)
+        return out
 
 
 class TwinCase(BaseModel):
@@ -2890,6 +3122,9 @@ class Dossier(BaseModel):
     # (EV bridge) CIQ's TEV claims and the exit default an enterprise recipe subtracts — the same
     # rules: outside `mechanical`, ABSENT until built, declared BEFORE `anchor`.
     ev_bridge: EvBridge | None = None
+    # (EV bridge, 2026-11-04) why the builder ran and built no bridge — ABSENT whenever `ev_bridge`
+    # is present, and on every page built before it, so those round-trip byte-identically
+    ev_bridge_unbuilt: EvBridgeUnbuilt | None = None
     # (valuation basis, date semantics — 2026-10-09) the ACTIVE recipe's basis and the page's dates,
     # NAMED. Pure functions of the page (`vinci.dossier.valuation_basis`), re-derived by
     # `dossier_json` on every write so they cannot go stale; ABSENT on a page not yet re-written.
@@ -2923,6 +3158,15 @@ class Dossier(BaseModel):
         except UnknownSleeveError as exc:
             raise ValueError(str(exc)) from exc
 
+    @model_validator(mode="after")
+    def _bridge_or_its_reason(self) -> Dossier:
+        """A page carries the EV bridge or why it is unbuilt, never both: a refresh that lands a
+        bridge clears the reason (`refresh.ev_bridge_transform`)."""
+        if self.ev_bridge is not None and self.ev_bridge_unbuilt is not None:
+            raise ValueError("a page carries both `ev_bridge` and `ev_bridge_unbuilt` — a built "
+                             "bridge is never beside the reason it was not built")
+        return self
+
     model_config = {"frozen": True}
 
 
@@ -2939,6 +3183,7 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("financial_summary", "ebitda_basis"),
     ("financial_summary", "ebitda_reconciliation"),
     ("financial_summary", "statement_reconciliation"),
+    ("financial_summary", "filed_ltm"),
     ("", "capital_allocation"),
     ("", "peer_capital_intensity"),
     ("", "dilution_pipeline"),
@@ -3030,6 +3275,8 @@ def dossier_json(doc: Dossier) -> str:
         excl["historical_forecast_error"] = True
     if doc.ev_bridge is None:
         excl["ev_bridge"] = True
+    if doc.ev_bridge_unbuilt is None:
+        excl["ev_bridge_unbuilt"] = True
     if doc.layer_refreshes is None:
         excl["layer_refreshes"] = True
     if doc.valuation_basis is None:

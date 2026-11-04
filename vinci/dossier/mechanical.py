@@ -20,7 +20,7 @@ import unicodedata
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
 from collections.abc import Callable, Sequence
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from datetime import UTC, date, datetime, timedelta
 from typing import Any, NamedTuple, TypeVar, cast
 
@@ -54,10 +54,13 @@ from vinci.dossier.schemas import (
     CovenantPointer,
     CrossCheck,
     DilutionPipeline,
+    DrawdownAnchor,
     DrawdownCause,
+    DrawdownWindow,
     FilingRef,
     FilingSectionExtract,
     FinancialSummary,
+    GapDown,
     GuidanceItem,
     IdiosyncraticVsShared,
     ImpliedExpectationRow,
@@ -123,6 +126,7 @@ from vinci.schemas.market import PriceBar
 from vinci.screens.assemble import (
     DECLINE_WINDOW_DAYS,
     GAP_DOWN_THRESHOLD,
+    detect_gap_downs,
     pe_current_and_percentile,
     share_basis_change,
 )
@@ -518,17 +522,45 @@ def _revised_guidance(http: CachedHttp, cik: str, filings: list[FilingRef]) -> S
     return Sourced.unknown(note="no results/Reg-FD/other-event 8-K at the gap-downs with a 99.1")
 
 
-def _drawdown_cause(
-    record: DataRecord, edgar: EdgarClient, http: CachedHttp
-) -> tuple[DrawdownCause, list[str]]:
-    """The drawdown block, plus any flags for the human-review channel.
+@dataclass(frozen=True)
+class _GapWords:
+    """The words one window's facts are stated in — the current window keeps the ones every
+    committed page carries; a dated window (`DrawdownAnchor`) names its own bounds."""
 
-    Returns flags rather than carrying them on `DrawdownCause` deliberately: a `qa_flags` field on
-    the model (the shape `CatalystCalendar` and `OperatingDriversExtract` use) would add a key to
-    every committed `dossier.json`, and this condition fires only on a degraded feed. A tuple keeps
-    the artifact untouched — there is exactly one production caller."""
-    gaps = sorted(e.event_date for e in record.events if e.event_type.value == "earnings_gap_down")
-    cik = record.identity.cik
+    dates_ref: str
+    no_dates_note: str
+    none_shape: str
+    none_ref: str
+    shape_ref: str = "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)"
+
+
+_CURRENT_WORDS = _GapWords(
+    dates_ref="EOD gap-down detector (screen events)",
+    no_dates_note="no gap-down events on the data-record",
+    none_shape="gradual bleed — no discrete gap-down detected",
+    none_ref="EOD gap-down detector (screen events): none",
+)
+
+
+@dataclass(frozen=True)
+class _GapRead:
+    """What one window's gap-downs yield: the four facts and any degraded-feed flags."""
+
+    shape: Sourced[str]
+    dates: Sourced[list[str]]
+    filings: list[FilingRef]
+    revised_guidance: Sourced[str]
+    flags: list[str]
+    labels: dict[str, str]  # each gap-down's cause label by ISO date; "" when unreadable
+
+
+def _read_gaps(gaps: list[date], cik: str | None, edgar: EdgarClient, http: CachedHttp,
+               words: _GapWords = _CURRENT_WORDS, *, flag_prefix: str = "drawdown-cause:",
+               moves: dict[date, float] | None = None) -> _GapRead:
+    """The shape, the dates, the 8-Ks at them and the revised outlook those furnished, for ONE
+    window's gap-downs — the reader every part of the drawdown block is built by. ``moves`` puts
+    each drop's move beside its date in the shape (a dated window's), so a point can cite it."""
+    cik = cik or None
     # AN UNREADABLE FILING INDEX IS NOT THE SAME FINDING AS "THE COMPANY FILED NOTHING".
     # This was the one submissions call site of 13 with no handler, and the FIRST to run, so a
     # degraded feed raised out of `assemble_mechanical` and `assemble_cohort`'s per-name `task`
@@ -554,6 +586,19 @@ def _drawdown_cause(
         except (HttpError, KeyError, ValueError, IndexError):
             filings, lookup_failed = [], True
     by_gap = {f.gap_date: f for f in filings}
+    labels = {
+        gd.isoformat(): "" if lookup_failed else
+        # state the WORLD, not our process: a hard fall on a day the company filed nothing is
+        # itself a finding (it points away from company news), not a tooling miss.
+        _gap_label(by_gap[gd.isoformat()].items, by_gap[gd.isoformat()].events)
+        if gd.isoformat() in by_gap else "no company filing"
+        for gd in gaps
+    }
+
+    def moved(gd: date) -> str:
+        m = (moves or {}).get(gd)
+        return "" if m is None else f" {m * 100:+.1f}%"
+
     shape: Sourced[str]
     if gaps and lookup_failed:
         shape = Sourced.unknown(
@@ -561,30 +606,15 @@ def _drawdown_cause(
             "read the filings at those dates by hand"
         )
     elif gaps:
-        parts = [
-            f"{gd.isoformat()} "
-            f"{_gap_label(by_gap[gd.isoformat()].items, by_gap[gd.isoformat()].events)}"
-            if gd.isoformat() in by_gap
-            # state the WORLD, not our process: a hard fall on a day the company filed nothing is
-            # itself a finding (it points away from company news), not a tooling miss.
-            else f"{gd.isoformat()} no company filing"
-            for gd in gaps
-        ]
-        shape = Sourced.present(
-            "discrete gap-downs — " + "; ".join(parts),
-            source_ref="EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
-        )
+        parts = [f"{gd.isoformat()}{moved(gd)} {labels[gd.isoformat()]}" for gd in gaps]
+        shape = Sourced.present("discrete gap-downs — " + "; ".join(parts),
+                                source_ref=words.shape_ref)
     else:
-        shape = Sourced.present(
-            "gradual bleed — no discrete gap-down detected",
-            source_ref="EOD gap-down detector (screen events): none",
-        )
+        shape = Sourced.present(words.none_shape, source_ref=words.none_ref)
     dates_field: Sourced[list[str]] = (
-        Sourced.present(
-            [g.isoformat() for g in gaps], source_ref="EOD gap-down detector (screen events)"
-        )
+        Sourced.present([g.isoformat() for g in gaps], source_ref=words.dates_ref)
         if gaps
-        else Sourced.unknown(note="no gap-down events on the data-record")
+        else Sourced.unknown(note=words.no_dates_note)
     )
     # THE MACHINE-TIER TWIN of the UNKNOWN note above. The human is told at the point of use
     # (`_fact` prints "_UNKNOWN_ — EDGAR filing index unavailable…"); this flag exists so a degraded
@@ -595,36 +625,218 @@ def _drawdown_cause(
     # both halves are pinned together in
     # tests/test_drawdown_filing_index_unavailable.py::
     # test_the_outage_flag_is_hidden_because_the_block_itself_already_says_so.
-    drawdown_flags: list[str] = []
+    flags: list[str] = []
     if gaps and lookup_failed:
         # DISTINCT dates, not events: `gaps` is not de-duplicated upstream, and this count is the
         # only number the machine tier reports about the outage.
         n_dates = len({g.isoformat() for g in gaps})
         fix = "re-assemble when the feed recovers" if cik else "resolve the CIK, then re-assemble"
-        drawdown_flags.append(
-            f"drawdown-cause: {why} — {n_dates} gap-down date(s) carry no attributed cause; {fix}"
+        flags.append(
+            f"{flag_prefix} {why} — {n_dates} gap-down date(s) carry no attributed cause; {fix}"
         )
+    guidance = (
+        _revised_guidance(http, cik, filings)
+        if cik and filings
+        # the same distinction as `shape`: "we could not look" must not read as "there was
+        # nothing to find", or a degraded run reports an absence it never established.
+        else Sourced.unknown(
+            note=f"{why} — no catalyst 8-K could be identified"
+            if lookup_failed
+            else "no catalyst 8-K to follow for a revised-guidance exhibit"
+        )
+    )
+    return _GapRead(shape, dates_field, filings, guidance, flags, labels)
+
+
+@dataclass(frozen=True)
+class AnchorDate:
+    """The date a name's drawdown is anchored at: its underwrite, else the day it was followed.
+
+    ``until`` is a follow's EXCLUSIVE end (`followed_until`): a follow that ended on or before the
+    page's price date anchors nothing on it."""
+
+    kind: str  # "underwrite" | "followed" — `DrawdownAnchor.kind`
+    on: date
+    source_ref: str
+    until: date | None = None
+
+
+def drawdown_anchor_date(card: Any | None, follow_since: date | None, *, ticker: str,
+                         follow_until: date | None = None) -> AnchorDate | None:
+    """The anchor: the underwrite record's `underwrite_date`, else the follow's
+    `followed_since`, else None — a name the fund neither holds a thesis on nor follows keeps the
+    rolling window alone. An underwrite wins over a follow: it is the later, stronger act, and its
+    date is the one the record's thesis was written on (GOOGL: followed 08-27, underwritten 09-01).
+    A REISSUED record (`supersedes`) anchors at its own date, the thesis now in force."""
+    uw = getattr(card, "underwrite_date", None) if card is not None else None
+    if uw:
+        return AnchorDate("underwrite", date.fromisoformat(str(uw)[:10]),
+                          f"scenarios/{ticker}.json underwrite_date")
+    if follow_since is not None:
+        return AnchorDate("followed", follow_since, f"data/followed.json {ticker} followed_since",
+                          until=follow_until)
+    return None
+
+
+def _gap_moves(bars: list[PriceBar], gaps: list[date]) -> dict[date, float]:
+    """Each gap-down's close-to-close move, by the detector's own arithmetic on the same bars."""
+    held = sorted(bars, key=lambda b: b.bar_date)
+    want = set(gaps)
+    return {cur.bar_date: cur.close / prev.close - 1.0
+            for prev, cur in zip(held, held[1:], strict=False)
+            if cur.bar_date in want and prev.close > 0}
+
+
+def _dated_words(start: date, end: date) -> _GapWords:
+    """A dated window's words: each fact names the window it was read over and the cut."""
+    span = f"{start.isoformat()} to {end.isoformat()}"
+    pct = round(abs(GAP_DOWN_THRESHOLD) * 100)
+    return _GapWords(
+        dates_ref=f"EOD gap-down detector, {span} (bars on or before {end.isoformat()})",
+        no_dates_note=f"no gap-down from {span}",
+        none_shape=f"no discrete gap-down — no single day of -{pct}% or worse from {span}",
+        none_ref=f"EOD gap-down detector, {span}: none",
+        # the shape states each move (the closes) beside its cause (the 8-K): both are cited
+        shape_ref=(f"EOD closes on or before {end.isoformat()} (each move, close to close) and "
+                   f"EDGAR 8-K item codes at the gap-down dates, filed by {end.isoformat()} "
+                   "(not blanket-labelled earnings)"),
+    )
+
+
+def _gap_window(bars: list[PriceBar], start: date, end: date, cik: str | None,
+                edgar: EdgarClient, http: CachedHttp, *, flag_prefix: str,
+                ) -> tuple[DrawdownWindow, list[str]]:
+    """One dated window, read from ``bars`` on or before ``end`` and from ``edgar`` as the caller
+    has cut it: the screen's own detector (`detect_gap_downs`, its threshold untouched) called at
+    another date.
+
+    A WINDOW THE STORED CLOSES DO NOT COVER IS NOT READ (review of this build). Its first move
+    needs the close BEFORE ``start``; a store whose history begins on or after it cannot see a drop
+    there, and "no single day of -10% or worse" would be an absence claimed from missing data —
+    which a later backfill would then change, in the part no later build is meant to change. So
+    the part is UNKNOWN, saying why, and flagged on the machine tier."""
+    held = [b for b in bars if b.bar_date <= end]
+    first = min((b.bar_date for b in held), default=None)
+    if first is None or first >= start:
+        note = (f"the stored closes begin on {first.isoformat()}, not before this window's start "
+                f"{start.isoformat()}, so a drop in it cannot be seen and it is not read — "
+                "backfill the name's stored history and rebuild" if first is not None else
+                f"no stored close on or before {end.isoformat()}, so this window is not read")
+        unread: Sourced[Any] = Sourced.unknown(note=note)
+        return DrawdownWindow(
+            start=start.isoformat(), end=end.isoformat(), shape=unread, gap_down_dates=unread,
+            filings=[], revised_guidance=unread), [f"{flag_prefix} {note}"]
+    gaps = detect_gap_downs(held, since=start)
+    moves = _gap_moves(held, gaps)
+    read = _read_gaps(gaps, cik, edgar, http, _dated_words(start, end), flag_prefix=flag_prefix,
+                      moves=moves)
+    acc = {f.gap_date: f.accession for f in read.filings}
+    return DrawdownWindow(
+        start=start.isoformat(), end=end.isoformat(), shape=read.shape,
+        gap_down_dates=read.dates, filings=read.filings, revised_guidance=read.revised_guidance,
+        gaps=[GapDown(on=gd.isoformat(), move=moves[gd], cause=read.labels[gd.isoformat()],
+                      accession=acc.get(gd.isoformat())) for gd in gaps]), read.flags
+
+
+def _drawdown_anchor(anchor: AnchorDate | None, bars: list[PriceBar], cik: str | None,
+                     edgar: EdgarClient, http: CachedHttp, cut: date,
+                     ) -> tuple[DrawdownAnchor | None, list[str]]:
+    """The drawdown at the anchor and since it, or None when the page has no anchor ON ITS DATE.
+
+    AT THE ANCHOR, READ AS OF THE ANCHOR — the price-date cut's discipline (#884, #885, #888)
+    applied at the anchor: bars on or before it, and EDGAR through a second `AsOfEdgar` cut at it,
+    so an 8-K filed after the anchor never enters this part, and no later build can change it.
+    SINCE runs from the day after the anchor to the page's price date, on the page's own cut.
+
+    An anchor AFTER the cut is the page's future — a page priced before its underwrite was written
+    has no underwrite to anchor at — and anchors nothing; so does a follow that had ended."""
+    if anchor is None or anchor.on > cut or (anchor.until is not None and anchor.until <= cut):
+        return None, []
+    start = anchor.on - timedelta(days=DECLINE_WINDOW_DAYS)
+    at_view = cast(EdgarClient, AsOfEdgar(edgar, anchor.on))
+    at, flags = _gap_window(bars, start, anchor.on, cik, at_view, http,
+                            # the rolling window's prefix: `flags._QA_MARKERS` hides it on the
+                            # same ruling, as the part's UNKNOWN note renders at the point of use
+                            flag_prefix=f"drawdown-cause: (at the {anchor.kind} {anchor.on})")
+    since: DrawdownWindow | None = None
+    after = anchor.on + timedelta(days=1)
+    if after <= cut:
+        since, since_flags = _gap_window(bars, after, cut, cik, edgar, http,
+                                         flag_prefix=f"drawdown-cause: (since the {anchor.kind})")
+        flags += since_flags
+    return DrawdownAnchor(kind=anchor.kind, on=anchor.on.isoformat(),
+                          source_ref=anchor.source_ref, at_anchor=at, since=since), flags
+
+
+def _drawdown_cause(
+    record: DataRecord, edgar: EdgarClient, http: CachedHttp, *,
+    bars: list[PriceBar] | None = None, cut: date | None = None,
+    anchor: AnchorDate | None = None, current_end: date | None = None,
+) -> tuple[DrawdownCause, list[str]]:
+    """The drawdown block, plus any flags for the human-review channel.
+
+    Returns flags rather than carrying them on `DrawdownCause` deliberately: a `qa_flags` field on
+    the model (the shape `CatalystCalendar` and `OperatingDriversExtract` use) would add a key to
+    every committed `dossier.json`, and this condition fires only on a degraded feed. A tuple keeps
+    the artifact untouched — there is exactly one production caller.
+
+    THE CURRENT WINDOW ENDS ON ``current_end`` when it is given with ``bars`` (the page's price
+    date, 2026-11-04 item 3): the screen's detector over the ``DECLINE_WINDOW_DAYS`` ending on it,
+    on the stored closes the price box and chart read, so a drop after the last screen run is
+    classified, not only charted. Otherwise it is the record's own events (the screen's window,
+    ending on its reference date) — and so it is when the stored closes do not reach back before
+    the window's start, flagged. ``anchor`` adds the dated parts (`_drawdown_anchor`).
+    """
+    cik = record.identity.cik
+    words = _CURRENT_WORDS
+    coverage_flags: list[str] = []
+    window_end: date | None = None
+    gaps: list[date] | None = None
+    if bars is not None and current_end is not None:
+        start = current_end - timedelta(days=DECLINE_WINDOW_DAYS)
+        held = [b for b in bars if b.bar_date <= current_end]
+        first = min((b.bar_date for b in held), default=None)
+        # A WINDOW THE STORED CLOSES DO NOT COVER IS NOT READ (`_gap_window`'s rule): an empty or
+        # short store would read "no discrete gap-down" — an absence claimed from missing data, and
+        # a PRESENT one, so `_refuse_degraded_drawdown_overwrite` would let it replace a committed
+        # finding. The screen record's own window stands instead, ending on its reference date.
+        if first is None or first >= start:
+            coverage_flags.append(
+                "drawdown-cause: the stored closes "
+                + (f"begin on {first.isoformat()}, not before" if first is not None
+                   else f"hold nothing on or before {current_end.isoformat()}, so not")
+                + f" the rolling window's start {start.isoformat()} — the window is the screen "
+                "record's, ending on its reference date; backfill the name's stored history")
+        else:
+            window_end = current_end
+            gaps = detect_gap_downs(held, since=start)
+            span = f"{start.isoformat()} to {current_end.isoformat()}"
+            words = _GapWords(dates_ref=f"EOD gap-down detector, {span}",
+                              no_dates_note=f"no gap-down from {span}",
+                              none_shape=_CURRENT_WORDS.none_shape,
+                              none_ref=f"EOD gap-down detector, {span}: none")
+    if gaps is None:
+        gaps = sorted(e.event_date for e in record.events
+                      if e.event_type.value == "earnings_gap_down")
+    read = _read_gaps(gaps, cik, edgar, http, words)
+    flags = coverage_flags + list(read.flags)
+    dated: DrawdownAnchor | None = None
+    if bars is not None and cut is not None:
+        dated, anchor_flags = _drawdown_anchor(anchor, bars, cik, edgar, http, cut)
+        flags += anchor_flags
     cause = DrawdownCause(
-        shape=shape,
-        gap_down_dates=dates_field,
-        filings=filings,
-        revised_guidance=(
-            _revised_guidance(http, cik, filings)
-            if cik and filings
-            # the same distinction as `shape`: "we could not look" must not read as "there was
-            # nothing to find", or a degraded run reports an absence it never established.
-            else Sourced.unknown(
-                note=f"{why} — no catalyst 8-K could be identified"
-                if lookup_failed
-                else "no catalyst 8-K to follow for a revised-guidance exhibit"
-            )
-        ),
+        shape=read.shape,
+        gap_down_dates=read.dates,
+        filings=read.filings,
+        revised_guidance=read.revised_guidance,
         # the detector's own params, copied from the screen constants (ONE source of truth) so the
         # renderers can mark coverage honestly (window boundary + pre-window drops).
         gap_threshold=GAP_DOWN_THRESHOLD,
         gap_window_days=DECLINE_WINDOW_DAYS,
+        gap_window_end=window_end.isoformat() if window_end is not None else None,
+        anchor=dated,
     )
-    return cause, drawdown_flags
+    return cause, flags
 
 
 # --- (B1) informative drawdown: join each gap-down's 8-K to its parsed EX-99.1 drivers -----------
@@ -2290,7 +2502,9 @@ def _consensus(bundle: CiqBundle) -> ConsensusContext:
     # HERE as well as in the refresh transform, through ONE builder: without it the first name
     # underwritten after A1 would carry no consensus data and A2 would render nothing for it.
     levels = {m: [ConsensusLevel(fy=c.fy, median=c.median, high=c.high, low=c.low,
-                                 std_dev=c.std_dev, estimates=c.estimates) for c in cells]
+                                 std_dev=c.std_dev, estimates=c.estimates,
+                                 source_ref=ciq_sheets.consensus_level_ref(m, c.fy))
+                  for c in cells]
               for m, cells in ciq_sheets.consensus_levels(bundle).items()}
     return ConsensusContext(
         consensus_levels=levels or None,
@@ -4867,11 +5081,13 @@ def _implied_expectations(
                     else "multiple absent from the assembled comps")
             rows.append(ImpliedExpectationRow(
                 label=label, metric=metric, multiple=mult, multiple_source=src,
-                implied_level=None, is_identity=(kind == "ladder"), note=note))
+                implied_level=None, is_identity=(kind == "ladder"), note=note,
+                source_ref=_ie_row_ref(label, metric, src)))
         else:
             rows.append(ImpliedExpectationRow(
                 label=label, metric=metric, multiple=mult, multiple_source=src,
-                implied_level=round(tev / mult, 1), is_identity=(kind == "ladder")))
+                implied_level=round(tev / mult, 1), is_identity=(kind == "ladder"),
+                source_ref=_ie_row_ref(label, metric, src)))
 
     # (H7/P8) BOTH the EBITDA and REVENUE consensus anchors are the DIRECT Estimates→Trends latest
     # levels (FY26E/FY27E), the SINGLE SOURCE OF TRUTH — NOT TEV ÷ ladder. The ladder FY26 (a26) is
@@ -4929,7 +5145,16 @@ def _implied_expectations(
         rev_anchors=rev_anchors, heterogeneity_gate=implied_val.comparability_gate.value or "",
         tev_as_of=tev_as_of, multiples_as_of=mult_as_of, vintage_coherent=coherent,
         vintage_check=vintage_check, coherence_note=coherence_note, net_debt_reconciled=nd_ok,
-        net_debt_check=net_debt_check)
+        net_debt_check=net_debt_check,
+        source_ref=(f"Assembler: implied expectations — the simple TEV (as of {tev_as_of}) over "
+                    f"each stated multiple (as of {mult_as_of}), the consensus anchors beside it "
+                    "and the peer-comparability gate"))
+
+
+def _ie_row_ref(label: str, metric: str, multiple_source: str) -> str:
+    """(item 29, option 4) The ref one implied-expectation row is cited by — a computation, TEV
+    over the multiple its own ``multiple_source`` names."""
+    return f"Assembler: implied {metric} — simple TEV ÷ {label} ({multiple_source})"
 
 
 def _vintage_probe(a26: float | None,
@@ -5817,10 +6042,13 @@ def assemble_mechanical(
     reference_date: date,
     screen_cap_usd: float | None = None,
     card: Any | None = None,
+    drawdown_anchor: AnchorDate | None = None,
 ) -> tuple[MechanicalLayer, list[str]]:
     """Assemble the source-bound mechanical layer (no LLM) + any flags for human review (e.g. a
     distorted-P/E-basis warning). No conclusions. ``screen_cap_usd`` is the ranker's frozen
-    screen-time cap — the benchmark-band fallback when the CIQ cap is absent (see below)."""
+    screen-time cap — the benchmark-band fallback when the CIQ cap is absent (see below).
+    ``drawdown_anchor`` dates the drawdown block's at-the-anchor and since parts
+    (`drawdown_anchor_date`); None leaves the current window alone."""
     # (2026-10-27) THE CURRENCY EVERY CIQ MONEY PANEL STATES, read before anything is fetched. A
     # panel stating another currency is refused here, so no page prints its figures as dollars
     # (`ciq_sheets.require_usd`); one stating none is stored not_run and flagged below
@@ -5846,7 +6074,12 @@ def assemble_mechanical(
     edgar = cast(EdgarClient, AsOfEdgar(edgar, cut))
     # the catalyst 8-K's 99.1 (revised guidance) is fetched first: its adjusted EBITDA/EPS feed the
     # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
-    drawdown, drawdown_flags = _drawdown_cause(record, edgar, http)
+    # the dated parts are read from the stored closes: at the anchor as of the anchor, and since
+    # it to the cut (`_drawdown_anchor`)
+    drawdown, drawdown_flags = _drawdown_cause(
+        # every name's closes: the rolling window ends on the cut for all of them (item 3)
+        record, edgar, http, bars=store.get_price_history(record.identity.internal_id), cut=cut,
+        anchor=drawdown_anchor, current_end=cut)
     adj_eps, adj_ev, adj_lev = _adjusted_facts(
         record, edgar, drawdown.revised_guidance, reference_date, http=http, cut=cut)
     pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)

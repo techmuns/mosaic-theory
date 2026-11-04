@@ -131,9 +131,16 @@ class LtmQuarterRead:
                 if r.label in material and r.outcome in ("differ", "not_run")]
 
 
-def refusal_message(ticker: str, rows: list[LtmCheck]) -> str:
+def refusal_message(ticker: str, rows: list[LtmCheck],
+                    filed: dict[str, str] | None = None) -> str:
+    """The refusal, every row named. ``filed`` is {row label: why the SEC filing could not decide
+    it} (`filed_tiebreak`), stated after the row's own disagreement."""
+    why = filed or {}
     return (f"{ticker}: {len(rows)} MATERIAL annual-summary row(s) whose LTM the quarterly export "
-            "does not support — " + "; ".join(r.flag()[len(FLAG_PREFIX) + 1:] for r in rows)
+            "does not support — " + "; ".join(
+                r.flag()[len(FLAG_PREFIX) + 1:]
+                + (f" — and the SEC filing cannot decide it: {why[r.label]}"
+                   if why.get(r.label) else "") for r in rows)
             + ". The page would print this LTM, and the synthesis is asked to state it; the "
             "quarterly side can be the wrong one (NKE's restructuring), so read both exports "
             "before re-exporting, and re-run once they agree")
@@ -246,14 +253,21 @@ def check(bundle: CiqBundle, table: FinTable | None) -> LtmQuarterRead:
     return LtmQuarterRead(tuple(out))
 
 
+def agrees(a: float, b: float) -> bool:
+    """Two $M figures are one figure: within :data:`TOLERANCE` of the larger, or within
+    :data:`PRINT_SLACK_MUSD`. The ONE definition — the filed tiebreak's band reads it too
+    (`filed_tiebreak`), so "CIQ agrees with itself" and "the filing reproduces CIQ" are the same
+    test."""
+    return abs(a - b) <= max(TOLERANCE * max(abs(a), abs(b)), PRINT_SLACK_MUSD)
+
+
 def _judge(label: str, ltm: float, end: date, cells: tuple[QuarterCell, ...]) -> LtmCheck:
     present = [c.value for c in cells if c.value is not None]
     if not present:
         return LtmCheck(label, ltm, end, cells, "not_run",
                         "no quarter carries a figure for it in the quarterly export")
     carried = sum(present)
-    gap = abs(ltm - carried)
-    if gap > max(TOLERANCE * max(abs(ltm), abs(carried)), PRINT_SLACK_MUSD):
+    if not agrees(ltm, carried):
         return LtmCheck(label, ltm, end, cells, "differ")
     if len(present) < len(cells):
         return LtmCheck(label, ltm, end, cells, "unverified")

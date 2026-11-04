@@ -54,7 +54,9 @@ stop covering a new extractor (`--repin` then pins it as watched). Three modules
 page fields and are watched too: vinci/verbatim.py (which quoted values a page keeps),
 vinci/finra.py (short interest) and vinci/eod/features.py (the price box's 52-week range, whose
 window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction, and
-vinci/ciq feeds only the git-ignored graph test.
+vinci/ciq builds no page field: its relationship parser is read only by tests/test_ciq.py (graph
+Test 0, its last caller, left in #905), and vinci/graph/extract.py takes just its
+SUPPLY_CHAIN_TYPES taxonomy.
 
     python -m tests.test_extraction_version_drift            # print every watched module's hash
     python -m tests.test_extraction_version_drift --repin    # re-pin this file in place
@@ -78,53 +80,53 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "7764559dc79c"
-PINNED_AT = "2026-11-03.ex-lease-share-cut"
+PINNED_TABLE = "3da583755b67"
+PINNED_AT = "2026-11-04.drawdown-window-at-price-date"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
-    "vinci/dossier/assemble.py": "369d2c388c1e",
+    "vinci/dossier/assemble.py": "748833cac9cf",
     "vinci/dossier/band_guards.py": "dceaef85746c",
-    "vinci/dossier/capital_allocation.py": "77def45663a9",
+    "vinci/dossier/capital_allocation.py": "ba165ad2af55",
     "vinci/dossier/ciq.py": "78815874ffce",
     "vinci/dossier/ciq_balance.py": "68c97913bf6e",
     "vinci/dossier/ciq_charting.py": "e25a753aae4f",
-    "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
-    "vinci/dossier/ciq_sheets.py": "20fecb026ed9",
-    "vinci/dossier/covenant_extract.py": "44efa996baea",
+    "vinci/dossier/ciq_sheets.py": "206db59412fc",
+    "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
-    "vinci/dossier/ebitda_basis.py": "7f9996f712e1",
+    "vinci/dossier/ebitda_basis.py": "812d1852f461",
     "vinci/dossier/ebitda_recon.py": "9befc99c437a",
     "vinci/dossier/edgar_fundamentals.py": "6054321e6ca4",
-    "vinci/dossier/ev_ebitda_basis.py": "232581813776",
+    "vinci/dossier/ev_ebitda_basis.py": "4acf3d7a1bde",
     "vinci/dossier/ev_gap.py": "c1cd503b7723",
-    "vinci/dossier/flags.py": "8466d404a234",
+    "vinci/dossier/filed_tiebreak.py": "b1b860e14190",
+    "vinci/dossier/flags.py": "8b849e6eac83",
     "vinci/dossier/freshness.py": "e5852b313d22",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
     "vinci/dossier/lease_basis.py": "a93d880597ba",
-    "vinci/dossier/ltm_quarters.py": "f6a3904e1011",
+    "vinci/dossier/ltm_quarters.py": "976073b15fc6",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
-    "vinci/dossier/mechanical.py": "c350252fe384",
+    "vinci/dossier/mechanical.py": "9ef74ecec108",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
-    "vinci/dossier/refresh.py": "459ea906d07c",
+    "vinci/dossier/refresh.py": "614e5530df26",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "fb5ba5b3c76d",
+    "vinci/dossier/schemas.py": "e5001a5cd972",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "9c732c86d48a",
+    "vinci/dossier/synthesis.py": "1a9bcf25def9",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
-    "vinci/dossier/valuation_basis.py": "a8870ba9ed91",
+    "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
     "vinci/dossier/verdict.py": "0b43167d2044",
     "vinci/edgar/asof.py": "b8166e456b80",
     "vinci/edgar/client.py": "49703bf31602",
     "vinci/edgar/commissioning.py": "dc2004432387",
     "vinci/edgar/concepts.py": "11278504f70c",
     "vinci/edgar/cover_count.py": "24d1e9a7d94a",
-    "vinci/edgar/debt_maturities.py": "6ffab9ec2574",
+    "vinci/edgar/debt_maturities.py": "a0b1d84be715",
     "vinci/edgar/filing_sections.py": "568c36df04a2",
     "vinci/edgar/going_concern.py": "feb938485fd0",
     "vinci/edgar/net_debt.py": "d60756329d18",
@@ -142,6 +144,8 @@ WATCHED: dict[str, str] = {
 NOT_EXTRACTION: dict[str, str] = {
     "vinci/dossier/__init__.py": "the package's docstring",
     "vinci/dossier/extraction_version.py": "the version table itself — editing it IS the bump",
+    "vinci/dossier/prespend.py": "the $0 pre-spend check: builds into a deleted folder and "
+                                 "compares, never writes a page",
     "vinci/dossier/propose.py": "writes scenario records from a committed page, never a page",
     "vinci/dossier/render.py": "renders a page's markdown from its JSON; re-rendered, never "
                                "re-extracted",

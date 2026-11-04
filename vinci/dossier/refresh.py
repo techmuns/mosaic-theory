@@ -39,7 +39,7 @@ from pathlib import Path
 from typing import Any
 
 from vinci.dossier.anchor import check_decision_write, committed_anchor_block
-from vinci.dossier.schemas import DROP_WHEN_NONE, Dossier, dossier_json
+from vinci.dossier.schemas import DROP_WHEN_NONE, Dossier, EvBridge, dossier_json
 from vinci.dossier.synthesis import (
     MATERIAL_FIGURE_FLOOR_MUSD,
     SYNTHESIS_CLAIM_LISTS,
@@ -55,8 +55,11 @@ Transform = Callable[[dict[str, Any]], dict[str, Any]]
 TopLevelTransform = Callable[[dict[str, Any]], dict[str, Any]]
 #: `caveats` since 2026-10-21, for ONE use: `leverage_caveat_transform` regenerates the leverage
 #: caveat from the page's stored ratio, and refuses if any other caveat would move.
+#: `ev_bridge_unbuilt` since 2026-11-04, for ONE use: `ev_bridge_transform` clears it when it lands
+#: a bridge, since a page never carries both.
 _TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_history",
-                                    "historical_forecast_error", "ev_bridge", "caveats"})
+                                    "historical_forecast_error", "ev_bridge",
+                                    "ev_bridge_unbuilt", "caveats"})
 
 
 class RefreshRefusedError(RuntimeError):
@@ -382,6 +385,7 @@ def consensus_transform(ticker: str) -> Transform:
     """
     from vinci.config import get_config
     from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import consensus_level_ref
     from vinci.dossier.ciq_sheets import consensus_levels as ciq_consensus_levels
     from vinci.dossier.manual_store import LocalFolderStore
 
@@ -400,7 +404,8 @@ def consensus_transform(ticker: str) -> Transform:
         # THE SAME BUILDER ASSEMBLY USES. Two call sites constructing this structure would be the
         # twin-drift class, and silent: nothing renders it until A2, so a divergence would surface
         # as a name whose numbers depend on which path last wrote it.
-        levels = {m: [{"fy": c.fy, "median": c.median, "high": c.high, "low": c.low,
+        levels = {m: [{"source_ref": consensus_level_ref(m, c.fy), "fy": c.fy,
+                       "median": c.median, "high": c.high, "low": c.low,
                        "std_dev": c.std_dev, "estimates": c.estimates} for c in cells]
                   for m, cells in ciq_consensus_levels(bundle).items()}
         if not levels:
@@ -1153,10 +1158,13 @@ def ev_bridge_transform(ticker: str) -> TopLevelTransform:
                                       date.fromisoformat(str(doc["reference_date"]))))
         built = ev_bridge(bundle, fy_periods=list(fc.get("periods") or []),
                           edgar_net_debt=edgar_nd[0], edgar_source=edgar_nd[1])
-        if (built is None or built.source_sha256 not in stamps
+        # an unbuilt bridge leaves the page alone, as an absent one always did: its reason is the
+        # assembly's to write (2026-11-04)
+        if (not isinstance(built, EvBridge) or built.source_sha256 not in stamps
                 or built.estimates_sha256 != fc.get("source_sha256")):
             return {}               # an export on disk is not the page's: re-assemble instead
-        return {"ev_bridge": json.loads(built.model_dump_json())}
+        # a landed bridge clears the reason a page once gave for having none — never both
+        return {"ev_bridge": json.loads(built.model_dump_json()), "ev_bridge_unbuilt": None}
 
     return _apply
 

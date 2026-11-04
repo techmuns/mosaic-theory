@@ -1,0 +1,139 @@
+{
+  "columns": [
+    {
+      "doc": "The writer that produced the row ('edgar'). One writer per source.",
+      "name": "source",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "SEC CIK, zero-padded to 10 digits.",
+      "name": "entity",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "XBRL namespace as the filer reported it ('us-gaap', 'dei').",
+      "name": "taxonomy",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "XBRL tag, verbatim.",
+      "name": "concept",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "Unit as reported ('USD', 'shares', 'USD/shares').",
+      "name": "unit",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "Start of a duration; null for an instant.",
+      "name": "period_start",
+      "nullable": true,
+      "type": "date32"
+    },
+    {
+      "doc": "End of a duration, or the instant.",
+      "name": "period_end",
+      "nullable": false,
+      "type": "date32"
+    },
+    {
+      "doc": "The value as filed. Never imputed: an absent fact has no row.",
+      "name": "value",
+      "nullable": false,
+      "type": "float64"
+    },
+    {
+      "doc": "The day the filing carrying this value was filed: the knowable date the cut reads.",
+      "name": "filed_date",
+      "nullable": false,
+      "type": "date32"
+    },
+    {
+      "doc": "The filing's accession number: the source_ref.",
+      "name": "accession",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "The filing's form type ('10-K', '10-Q/A').",
+      "name": "form",
+      "nullable": true,
+      "type": "string"
+    },
+    {
+      "doc": "The filing's fiscal year (companyfacts 'fy').",
+      "name": "fiscal_year",
+      "nullable": true,
+      "type": "int32"
+    },
+    {
+      "doc": "The filing's fiscal period (companyfacts 'fp').",
+      "name": "fiscal_period",
+      "nullable": true,
+      "type": "string"
+    },
+    {
+      "doc": "SEC's calendar frame, when SEC assigned one.",
+      "name": "frame",
+      "nullable": true,
+      "type": "string"
+    },
+    {
+      "doc": "Dimensional qualifiers as JSON; null when undimensioned (all of companyfacts).",
+      "name": "dimensions",
+      "nullable": true,
+      "type": "string"
+    },
+    {
+      "doc": "The module that wrote the row.",
+      "name": "extractor",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "That module's version when it wrote the row.",
+      "name": "extractor_version",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "'present' for a stated fact.",
+      "name": "status",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "Why a non-present status was recorded; null when present.",
+      "name": "reason",
+      "nullable": true,
+      "type": "string"
+    }
+  ],
+  "order_columns": [
+    {
+      "doc": "The row's position in the source response, so a replay reproduces the filer's order.",
+      "name": "source_position",
+      "nullable": false,
+      "type": "int64"
+    },
+    {
+      "doc": "The content id of the data object holding the row.",
+      "name": "object",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "The row's index in that object, in its stored order.",
+      "name": "row",
+      "nullable": false,
+      "type": "int32"
+    }
+  ],
+  "schema_version": 2
+}

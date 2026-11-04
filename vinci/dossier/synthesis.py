@@ -24,11 +24,14 @@ import warnings
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import date
+from decimal import ROUND_FLOOR, Decimal
 from typing import Any, cast
 
 from vinci.dossier.schemas import (
+    FIGURE_OPERATIONS,
     DecisiveQuestion,
     DrawAgreement,
+    FigureCite,
     ForwardConsensus,
     MechanicalLayer,
     OperatingDriversExtract,
@@ -52,7 +55,25 @@ _NUM = re.compile(r"-?\d[\d,]*\.?\d+|-?\d+")
 # are not CLAIMED values — skip a number whose immediate context is a fiscal/quarter prefix or a
 # time-unit suffix. (Bare 4-digit years are NOT skipped — they collide with real $ figures.)
 _CAL_BEFORE = re.compile(r"(?:\bFY|\bfiscal\s*|\bQ)\s*$", re.IGNORECASE)
-_CAL_AFTER = re.compile(r"^\s*(?:days?|weeks?|months?|quarters?|qtrs?|years?)\b", re.IGNORECASE)
+_TIME_UNIT = r"(?:days?|weeks?|months?|quarters?|qtrs?|years?)"
+_CAL_AFTER = re.compile(rf"^\s*{_TIME_UNIT}\b", re.IGNORECASE)
+# In a synthesis CLAIM a WHOLE-NUMBER duration is the same label hyphenated, or abbreviated to "y" —
+# "a 5-year window", "the 52-week low", "over ~9y". Time units only: "$5-billion" or "5-10%" still
+# states a figure, and "8q", "180d" and "12m" (a month or a million) are left as they were.
+# A DECIMAL ONE IS A FIGURE (cross-review of #890): "2.3y" is NCNO's band span, a fact the point
+# must cite — #890 skipped it, so "7.3y" traced as readily as the true span, and so did a
+# "7.4-year payback". The claim trace only — `driver_extract` keeps its `_CAL_AFTER` check, so a
+# transcript row's value still needs its quote to state a hyphenated duration.
+_DURATION_AFTER = re.compile(rf"^-{_TIME_UNIT}\b|^y\b", re.IGNORECASE)
+# A figure written as a percentile RANK — a number, ordinal or not ("3rd", "3"), before
+# "percentile" / "pctile" / "%ile". Only such a figure may trace as the rank of a percentile its
+# fact states (cross-review of #890: the rank traced in ANY context, so "2.0x", "2 turns" and "fell
+# 2%" cited to SMPL's 0.0183 P/E percentile all passed). An ordinal alone is no rank ("the 2nd
+# straight quarter", "its 2nd-largest customer"), nor is a percentile-POINT move ("rose 2
+# percentile points") — a change, which the fact's level does not state.
+_RANK_AFTER = re.compile(
+    r"^(?:st|nd|rd|th)?[\s-]*(?:percentile|pctile|%ile)\b(?![\s-]*(?:pts?|points?)\b)",
+    re.IGNORECASE)
 # Digits that state no figure: an EDGAR accession, a date (ISO; CIQ's "Aug-31-2026"; "May 07,
 # 2026"; "June 1 2026"; "Aug-6"; "Nov-2025") and a period label ("Q1-26", "FY2024-25"). A claim
 # that writes one is citing or dating, not claiming a number; a fact that carries one carries its
@@ -80,6 +101,14 @@ def _label_year(m: re.Match[str]) -> float | None:
 _BARE_YEAR = re.compile(r"(?<![\d$.,])(?:19|20)\d\d(?!\d|[.,]\d)")
 # Keys whose values identify a fact rather than state one of its numbers.
 _ID_KEYS = frozenset({"accession", "url", "cik", "id"})
+# The mechanical layer's fields that state a PERCENTILE as a 0..1 fraction (`Valuation.
+# pe_percentile_5y` / `ev_ebitda_percentile_5y`, `OwnHistoryBand.percentile`). A
+# percentile is written as its whole-number rank — 0.026 is "the 3rd percentile" — and the trace's
+# 2% tolerance cannot reach a rank from a fraction that small (2.6 vs 3). A closed set of field
+# NAMES, so a new name is a deliberate addition (`tests/test_untraceable_rank_and_duration.py`
+# checks the schema) — but a new layer model that reuses the name `percentile` is in without one.
+# (`ForwardHistoryBand.percentile` sits on the Dossier, outside the layer this trace reads.)
+_PERCENTILE_FIELDS = frozenset({"percentile", "pe_percentile_5y", "ev_ebitda_percentile_5y"})
 # A point's source_ref pointing at the earnings-call TRANSCRIPT (verbatim prose) rather than a
 # structured CIQ cell. A figure cited to the transcript is NOT in the mechanical layer's number
 # universe, so it earns a soft 'verify-against-the-call' note — NOT a hard UNTRACEABLE, which
@@ -283,6 +312,30 @@ _EARNED_DENIED = re.compile(
     r"\b(?:not|n['’]t|no)\b[^.]{0,14}?(?:earned|deserv\w*|value.?trap)", re.IGNORECASE
 )
 
+# (item 29, operator ruling 2026-11-04 "1 + 4") one footnote per figure of the claim
+_FIGURE = {
+    "type": "object",
+    "properties": {
+        "figure": {"type": "string",
+                   "description": "The figure exactly as the claim writes it, e.g. '15.1x'."},
+        "source_ref": {
+            "type": "string",
+            "description": "The ONE fact that states this figure — its source_ref copied VERBATIM. "
+                           "Omit for a computed figure.",
+        },
+        "derived": {
+            "type": "string", "enum": list(FIGURE_OPERATIONS),
+            "description": "A computed figure's operation. Omit for a cited figure.",
+        },
+        "inputs": {
+            "type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 2,
+            "description": "A computed figure's two inputs, each a figure this claim writes, "
+                           "exactly as written, with its own entry.",
+        },
+    },
+    "required": ["figure"],
+}
+
 _POINT = {
     "type": "object",
     "properties": {
@@ -291,8 +344,14 @@ _POINT = {
             "type": "string",
             "description": "Copy a source_ref VERBATIM from the supplied facts. No uncited claims.",
         },
+        "figures": {
+            "type": "array", "items": _FIGURE,
+            "description": "One entry per figure the claim writes: the fact that states it, or "
+                           "the operation and inputs that compute it. Empty when the claim "
+                           "writes no figure.",
+        },
     },
-    "required": ["claim", "source_ref"],
+    "required": ["claim", "source_ref", "figures"],
 }
 
 _TOOL_TEMPLATE: dict[str, Any] = {
@@ -450,7 +509,35 @@ _SYSTEM_TEMPLATE = (
     "guidance move), GROUND it in the specific driver and copy THAT driver's source_ref — a "
     "mechanism-bearing point beats a bare multiple/margin observation. The decisive question's "
     "evidence_for / evidence_against should name the load-bearing driver each side turns on. Never "
-    "invent a driver not in the digest, nor restate a driver's number as your own derivation."
+    "invent a driver not in the digest, nor restate a driver's number as your own derivation. "
+    "(13) FOOTNOTE EVERY FIGURE. Each bull/bear point and each piece of decisive evidence carries "
+    "`figures`: one entry per figure its claim writes, `figure` copied exactly as the claim writes "
+    "it. A figure a fact states takes THAT fact's source_ref, copied verbatim — the ONE fact that "
+    "states it, even when the point's own source_ref is another fact. A figure the claim presents "
+    "as a computation (a gap, a premium, a ratio, a change, '= …') may instead be `derived`: name "
+    "the operation (difference, sum, ratio, premium or growth) and its two `inputs`, each a figure "
+    "the same claim writes, exactly as written, with its own entry. Never cite a figure to a fact "
+    "that does not state it, and never write a figure you can neither cite nor compute from cited "
+    "figures. Dates, fiscal periods and durations ('FY25', '5-year', '52-week') are labels, not "
+    "figures. The shape, one entry per figure in claim order (figure → source_ref, or figure → "
+    "derived + inputs); one literal example: "
+    '{{"claim": "Reported FCF conversion is weak relative to earnings: LTM Levered FCF was '
+    "$9,343.7M against $46,489M EBITDA (CFO $30,645M less capex $10,984M = $19,661M), reflecting "
+    "heavy capex/IPR&D draw — genuine, but outweighed by 121.4x coverage and 0.9x net leverage "
+    'leaving reinvestment capacity intact.", "figures": ['
+    '{{"figure": "$9,343.7M", "source_ref": "CIQ Financials→Cash Flow \'Levered Free Cash Flow\' '
+    '[LTM 12 months Sep-30-2026]"}}, '
+    '{{"figure": "$46,489M", "source_ref": "CIQ Financials→Income Statement (margin % + absolute '
+    'EBITDA reconciler)"}}, '
+    '{{"figure": "$30,645M", "source_ref": "CIQ Financials→Cash Flow \'Levered Free Cash Flow\' '
+    '[LTM 12 months Sep-30-2026]"}}, '
+    '{{"figure": "$10,984M", "source_ref": "CIQ Financials→Cash Flow \'Levered Free Cash Flow\' '
+    '[LTM 12 months Sep-30-2026]"}}, '
+    '{{"figure": "$19,661M", "derived": "difference", "inputs": ["$30,645M", "$10,984M"]}}, '
+    '{{"figure": "121.4x", "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest '
+    'Expense [LTM 12 months Sep-30-2026]"}}, '
+    '{{"figure": "0.9x", "source_ref": "CIQ Net Debt $43,858M [Q3 Sep-30-2026] ÷ CIQ EBITDA '
+    '$46,489M [LTM 12 months Sep-30-2026]"}}]}}'
 )
 
 
@@ -516,7 +603,14 @@ def _claim_figures(text: str) -> list[float]:
     """Numbers a claim CLAIMS as figures, excluding calendar/period LABELS (FY21, Q1, "90 days")
     that _NUM extracts but the trace would wrongly flag. The number-trace runs over these, not
     raw _floats."""
-    out: list[float] = []
+    return [v for v, _ in _claim_figure_ends(text)]
+
+
+def _claim_figure_ends(text: str) -> list[tuple[float, int]]:
+    """`_claim_figures`, each with where its digits end — so the trace can read what is written
+    after a figure (a rank's "rd" / "percentile", `_RANK_AFTER`), and a footnote is matched to the
+    place the claim writes its figure (item 29), never to another figure of the same magnitude."""
+    out: list[tuple[float, int]] = []
     labels = [(d.start(), d.end()) for d in _DATE_OR_ID.finditer(text)]
     for m in _NUM.finditer(text):
         if any(lo <= m.start() < hi for lo, hi in labels):
@@ -528,11 +622,106 @@ def _claim_figures(text: str) -> list[float]:
             continue  # FY21 / Q1 / fiscal 2025
         if _CAL_AFTER.match(text[m.end():m.end() + 10]):
             continue  # 90 days ago / 8 quarters
+        if "." not in m.group() and _DURATION_AFTER.match(text[m.end():m.end() + 10]):
+            continue  # a 5-year window / the 52-week low / over ~9y — never "2.3y"
         try:
-            out.append(float(m.group().replace(",", "")))
+            out.append((float(m.group().replace(",", "")), m.end()))
         except ValueError:
             continue
     return out
+
+
+# --- item 29: every figure footnoted (operator ruling 2026-11-04, "1 + 4") ---------------------
+# A point carries `figures`: one entry per figure of its claim, citing the ONE fact that states it,
+# or naming an operation in `FIGURE_OPERATIONS` and two inputs (figures of the same claim, each with
+# its own entry) that compute it. Each cited figure is traced to its own fact by the per-fact rule
+# above (`_num_traces`, audit G-D6) — the universe a made-up figure meets is the one fact it names,
+# as before. A computed figure is RECOMPUTED from its inputs as written: each input stands for the
+# interval half a unit of its last written digit either side, and the figure's own interval must
+# meet the result's. No tolerance is chosen — the width is what the writing states. A figure with
+# no entry is traced to the point's own `source_ref`, exactly as before, so every point drawn
+# before 2026-11-04 is checked as it was.
+
+_WRITTEN = re.compile(
+    r"(?P<sign>[-−+])?\s*(?P<cur>\$)?\s*(?P<num>\d[\d,]*(?:\.(?P<dec>\d+))?)\s*"
+    r"(?P<scale>thousand|million|billion|trillion|mn|bn|tn|[kmbt](?![a-z]))?\s*"
+    r"(?P<unit>%|pts?\b|pp\b|bps?\b|basis\s+points?\b|x\b|st\b|nd\b|rd\b|th\b)?", re.IGNORECASE)
+_SCALE = {"k": 1e3, "thousand": 1e3, "m": 1e6, "mn": 1e6, "million": 1e6, "b": 1e9, "bn": 1e9,
+          "billion": 1e9, "t": 1e12, "tn": 1e12, "trillion": 1e12}
+
+
+@dataclass(frozen=True)
+class _Written:
+    """A figure as WRITTEN: its value and half a unit of its last digit (both in base units, the
+    scale word applied) and its unit — pct (incl. points, and basis points at a scale of 0.01), x,
+    money ($), rank (an ordinal) or plain."""
+
+    value: float
+    half: float
+    unit: str
+    scale: float = 1.0
+    signed: bool = False   # written with a sign (+, -, −): its direction is part of the figure
+
+
+def _written(lit: str) -> _Written | None:
+    m = _WRITTEN.search(lit)
+    if m is None:
+        return None
+    scale = _SCALE.get((m.group("scale") or "").lower(), 1.0)
+    u = " ".join((m.group("unit") or "").lower().split())
+    bps = u in ("bp", "bps", "basis point", "basis points")
+    if bps:   # a basis point is a hundredth of a percentage point (Codex, round 2)
+        scale *= 0.01
+    value = float(m.group("num").replace(",", "")) * scale
+    if m.group("sign") in ("-", "−"):
+        value = -value
+    half = 0.5 * 10.0 ** -len(m.group("dec") or "") * scale
+    unit = ("pct" if bps or u in ("%", "pt", "pts", "pp") else "x" if u == "x"
+            else "rank" if u in ("st", "nd", "rd", "th") else "money" if m.group("cur")
+            else "plain")
+    return _Written(value, half, unit, scale, m.group("sign") is not None)
+
+
+def _abs_interval(lo: float, hi: float) -> tuple[float, float]:
+    if lo <= 0 <= hi:
+        return 0.0, max(-lo, hi)
+    return min(abs(lo), abs(hi)), max(abs(lo), abs(hi))
+
+
+def _recompute(op: str, a: _Written, b: _Written, fig: _Written) -> str | None:
+    """None when ``op(a, b)`` as written can be the figure as written; else why not. A figure
+    written with a sign is compared signed, so "+45pt" is not -29% − +16% (Codex, round 1); an
+    unsigned one is compared on magnitudes, as the trace compares them (a fall written "fell 24%"
+    carries its sign in words)."""
+    if "rank" in (a.unit, b.unit):
+        return "a percentile rank is not an operand"
+    if a.unit != b.unit:
+        return f"the {op} of a {a.unit} figure and a {b.unit} figure"
+    want = {"ratio": ("x", "plain"), "premium": ("pct",), "growth": ("pct",)}.get(op, (a.unit,))
+    if fig.unit not in want:
+        return f"a {op} of {a.unit} figures is not written as {fig.unit}"
+    a0, a1, b0, b1 = a.value - a.half, a.value + a.half, b.value - b.half, b.value + b.half
+    if op == "difference":
+        lo, hi = a0 - b1, a1 - b0
+    elif op == "sum":
+        lo, hi = a0 + b0, a1 + b1
+    else:
+        if b0 <= 0 <= b1:
+            return "its divisor, as written, could be zero"
+        qs = [x / y for x in (a0, a1) for y in (b0, b1)]
+        lo, hi = min(qs), max(qs)
+        if op in ("premium", "growth"):
+            lo, hi = (lo - 1) * 100, (hi - 1) * 100
+    r0, r1, f0, f1 = lo, hi, fig.value - fig.half, fig.value + fig.half
+    if not fig.signed:
+        (r0, r1), (f0, f1) = _abs_interval(lo, hi), _abs_interval(f0, f1)
+    if r0 <= f1 and r1 >= f0:
+        return None
+
+    def shown(x: float) -> str:   # in the figure's own scale, as a reader writes it
+        v = x / fig.scale
+        return f"{v:,.0f}" if abs(v) >= 1000 else f"{v:,.2f}".rstrip("0").rstrip(".")
+    return f"{op} gives {shown(r0)} to {shown(r1)} as written"
 
 
 def _twin_numbers(text: str) -> set[str]:
@@ -565,20 +754,40 @@ def _traces(ref: str, universe: set[str]) -> bool:
 
 @dataclass
 class _FactNumbers:
-    """The numbers one citable fact STATES: its values, traced at any unit rendering, and the years
-    of its dates and labels, traced only as those years."""
+    """The numbers one citable fact STATES: its values, traced at any unit rendering; the years of
+    its dates and labels, traced only as those years; and the whole-number rank of each percentile
+    it states (`_PERCENTILE_FIELDS`), traced only as that rank."""
 
     values: list[float] = field(default_factory=list)
     years: set[float] = field(default_factory=set)
+    ranks: set[float] = field(default_factory=set)
 
 
-def _stated_numbers(o: Any, into: _FactNumbers) -> None:
+def _percentile_ranks(p: float) -> set[float]:
+    """The whole-number rank(s) a 0..1 percentile is written as: the nearest whole number to it
+    x100, read on its decimal as stored (0.026 -> 3) — and BOTH neighbours at an exact half. The
+    page itself has no one convention there: `render._pctile` rounds 0.025 to the 2nd (Python's
+    half-even), the web's `Math.round` to the 3rd, and in binary floats 0.145 x 100 is 14.4999…, so
+    a writer reading "0.145" says the 15th while the page shows the 14th."""
+    x = Decimal(repr(p)).scaleb(2)
+    lo = x.to_integral_value(rounding=ROUND_FLOOR)
+    frac = x - lo
+    if frac == Decimal("0.5"):
+        return {float(lo), float(lo + 1)}
+    return {float(lo + 1) if frac > Decimal("0.5") else float(lo)}
+
+
+def _stated_numbers(o: Any, into: _FactNumbers, name: str = "") -> None:
     """Every number ``o`` states, read from the values themselves — never from a JSON dump, whose
-    dates and ids are digit runs like any other (`_DATE_OR_ID`, `_ID_KEYS`)."""
+    dates and ids are digit runs like any other (`_DATE_OR_ID`, `_ID_KEYS`). ``name`` is the field
+    ``o`` sits in (a `Sourced` wrapper's ``value`` keeps its own field's name), read only to know
+    a percentile."""
     if o is None or isinstance(o, bool):
         return
     if isinstance(o, (int, float)):
         into.values.append(float(o))
+        if name in _PERCENTILE_FIELDS and 0 <= o <= 1:
+            into.ranks |= _percentile_ranks(float(o))
     elif isinstance(o, date):
         into.years.add(float(o.year))
     elif isinstance(o, str):
@@ -592,10 +801,10 @@ def _stated_numbers(o: Any, into: _FactNumbers) -> None:
     elif isinstance(o, dict):
         for k, v in o.items():
             if k not in _ID_KEYS and not str(k).endswith("_id"):
-                _stated_numbers(v, into)
+                _stated_numbers(v, into, name if k == "value" else str(k))
     elif isinstance(o, (list, tuple, set, frozenset)):
         for v in o:
-            _stated_numbers(v, into)
+            _stated_numbers(v, into, name)
 
 
 def _values_by_ref(mech: MechanicalLayer) -> dict[str, _FactNumbers]:
@@ -604,24 +813,25 @@ def _values_by_ref(mech: MechanicalLayer) -> dict[str, _FactNumbers]:
     filing cited by accession carries its guidance and reconciliation rows."""
     out: dict[str, _FactNumbers] = {}
 
-    def rec(o: Any) -> None:
+    def rec(o: Any, name: str) -> None:
         if isinstance(o, dict):
             keys = {comparison_key(str(o[k])) for k in ("source_ref", "accession", "url")
                     if o.get(k)}
             if keys:
                 nums = _FactNumbers()
-                _stated_numbers(o, nums)
+                _stated_numbers(o, nums, name)
                 for k in keys:
                     acc = out.setdefault(k, _FactNumbers())
                     acc.values.extend(nums.values)
                     acc.years |= nums.years
-            for v in o.values():
-                rec(v)
+                    acc.ranks |= nums.ranks
+            for k, v in o.items():
+                rec(v, str(k))
         elif isinstance(o, (list, tuple)):
             for v in o:
-                rec(v)
+                rec(v, name)
 
-    rec(mech.model_dump())
+    rec(mech.model_dump(), "")
     return out
 
 
@@ -680,7 +890,7 @@ def _validate(
     # cites ONE fact; its figures are checked against that fact.
     values_by_ref = _values_by_ref(mech)
 
-    def _num_traces(n: float, cited: _FactNumbers) -> bool:
+    def _num_traces(n: float, cited: _FactNumbers, *, as_rank: bool = False) -> bool:
         # Trace by MAGNITUDE at any standard financial unit rendering (%, thousands, millions,
         # billions): the LLM writes the stored −0.726 as "−72.6%", 29,643,500 shares as "29.6
         # million", and a stored −0.027 as "shrunk by 2.7%" (sign carried in words, not the digit).
@@ -688,6 +898,8 @@ def _validate(
         a = abs(n)
         if a in cited.years:
             return True  # the year of a date the fact carries — as that year, never rescaled
+        if as_rank and a in cited.ranks:
+            return True  # a figure WRITTEN as a rank, as the rank of a percentile the fact states
         for mf in cited.values:
             for s in _TRACE_SCALES:
                 target = abs(mf) * s
@@ -698,6 +910,106 @@ def _validate(
     # (signed value, type, cited ref) for decisive-mirror dedup — the ref since a figure traces or
     # not by the fact it cites, so the same figure cited to another fact is another finding
     flagged_figs: set[tuple[float, bool, str]] = set()
+    # the citable universe's comparison keys, built ONCE — `_traces` rebuilds them per call, and a
+    # footnoted point traces each figure and each input on its own
+    ref_keys = {comparison_key(u) for u in refs}
+
+    def _figure_entries(p: SourcedPoint, where: str) -> dict[int, FigureCite]:
+        """The point's footnotes by WHERE the claim writes each one's figure (the end of its
+        digits), at every place its literal is written — so a footnote checks its own figure, never
+        another of the same magnitude ("-16%" before a footnoted "$16M" is traced to the point's
+        own ref; Codex, round 1). The first entry for a place wins. An entry that names no figure
+        the claim writes (a label, a figure not written there, two figures) is a MISMATCH — an
+        extra the checker reads nothing from, never a figure left unchecked."""
+        ends = _claim_figure_ends(p.claim)
+        out: dict[int, FigureCite] = {}
+        for e in p.figures:
+            vals = _claim_figures(e.figure)
+            at = [end for m in re.finditer(
+                      rf"(?<![\d.,]){re.escape(e.figure)}(?![\d]|[.,]\d)", p.claim)
+                  for v, end in ends
+                  if m.start() < end <= m.end() and len(vals) == 1
+                  and round(abs(v), 6) == round(abs(vals[0]), 6)] if e.figure else []
+            if not at:
+                flags.append(f"MISMATCH {where}: figure entry {e.figure!r} names no single figure "
+                             f"the claim writes: '{_snip(p.claim, 55)}'")
+                continue
+            for end in at:
+                out.setdefault(end, e)
+        return out
+
+    def check_figure(n: float, e: FigureCite, p: SourcedPoint, where: str, *,
+                     dedup: bool, as_rank: bool = False) -> None:
+        """One footnoted figure: a cited one traces to the fact it names (as that fact's
+        percentile rank only when the claim writes it as one, ``as_rank``, #899); a computed one
+        has inputs that each trace to theirs, and recomputes to the figure as written."""
+        def direct(x: FigureCite, rank: bool = False) -> tuple[bool, bool]:
+            """(traces, cited to a transcript OF THE PAGE) for a cited entry's own figure. A ref
+            that only LOOKS like a transcript — 'transcript' in a ref the layer does not carry — is
+            no softer than any other unknown ref: the soft route is for a real call's prose."""
+            ref = x.source_ref or ""
+            key = comparison_key(ref)
+            nums = values_by_ref.get(key, _FactNumbers())
+            v = _claim_figures(x.figure)
+            known = bool(key) and key in ref_keys
+            ok = bool(v) and known and _num_traces(v[0], nums, as_rank=rank)
+            return ok, known and bool(_TRANSCRIPT_REF.search(ref))
+
+        if e.derived is None:
+            ok, tx = direct(e, as_rank)
+            fkey = comparison_key(e.source_ref or "")
+            if ok:
+                return
+            key = (round(n, 2), tx, fkey)
+            if dedup and key in flagged_figs:
+                return
+            flagged_figs.add(key)
+            if tx:
+                flags.append(
+                    f"TRANSCRIPT-FIGURE '{n:g}' in {where}: '{_snip(p.claim)}' — from the cited "
+                    "earnings call, not its validated facts; verify against the call")
+            else:
+                flags.append(f"UNTRACEABLE figure '{n:g}' in {where} [cited to {e.source_ref}]: "
+                             f"'{p.claim}'")
+            return
+        why: str | None = None
+        soft = False
+        operands: list[_Written] = []
+        for lit in e.inputs:
+            src = next((x for x in p.figures if x.derived is None and x.figure == lit), None)
+            if src is None or lit not in p.claim:
+                why = f"its input {lit!r} is not a cited figure of the claim"
+                break
+            ok, tx = direct(src)
+            if not ok and tx:
+                soft = True
+            elif not ok:
+                why = f"its input {lit!r} does not trace to the fact it cites ({src.source_ref})"
+                break
+            w = _written(lit)
+            if w is None:
+                why = f"its input {lit!r} is not a figure"
+                break
+            operands.append(w)
+        fig = _written(e.figure)
+        if why is None and fig is None:
+            why = f"{e.figure!r} is not a figure"
+        if why is None and fig is not None and len(operands) == 2:
+            why = _recompute(e.derived, operands[0], operands[1], fig)
+        key = (round(n, 2), soft and why is None, f"derived:{e.derived}:{'|'.join(e.inputs)}")
+        if why is None and not soft:
+            return
+        if dedup and key in flagged_figs:
+            return
+        flagged_figs.add(key)
+        if why is None:
+            flags.append(
+                f"TRANSCRIPT-FIGURE '{n:g}' in {where}: '{_snip(p.claim)}' — computed from a "
+                "figure of the cited earnings call, not its validated facts; verify against the "
+                "call")
+        else:
+            flags.append(f"UNDERIVED figure '{n:g}' in {where}: '{p.claim}' — {e.derived}("
+                         f"{', '.join(e.inputs)}): {why}, but the claim writes {e.figure}")
 
     def check_point(p: SourcedPoint, where: str, *, dedup: bool = False) -> SourcedPoint:
         cited = _traces(p.source_ref, refs)
@@ -714,8 +1026,14 @@ def _validate(
         ref_is_transcript = bool(_TRANSCRIPT_REF.search(p.source_ref))
         ref_key = comparison_key(p.source_ref)
         cited_nums = values_by_ref.get(ref_key, _FactNumbers()) if ref_key else _FactNumbers()
-        for n in _claim_figures(p.claim):
-            if _num_traces(n, cited_nums):
+        entries = _figure_entries(p, where)
+        for n, end in _claim_figure_ends(p.claim):
+            as_rank = bool(_RANK_AFTER.match(p.claim[end:end + 32]))
+            e = entries.get(end)
+            if e is not None:   # (item 29) this figure carries its own footnote
+                check_figure(n, e, p, where, dedup=dedup, as_rank=as_rank)
+                continue
+            if _num_traces(n, cited_nums, as_rank=as_rank):
                 continue
             # key on SIGNED value + flag-type: don't let abs() collapse +N/-N (distinct facts) and
             # don't let a soft TRANSCRIPT-FIGURE on one point suppress a hard UNTRACEABLE elsewhere.
@@ -936,10 +1254,35 @@ def _validate(
     return validated, flags
 
 
-def _parse(raw: dict[str, Any]) -> Synthesis:
+def _figure_cites(items: Any, notes: list[str] | None) -> list[FigureCite]:
+    """(item 29) The model's footnotes for one point. An entry that is not a well-formed footnote
+    (no figure, both or neither of a ref and an operation, an unknown operation, other than two
+    inputs) is DROPPED and named in ``notes`` — its figure is then checked against the point's own
+    ref, exactly as before footnotes existed, so a malformed entry can never loosen the check."""
+    out: list[FigureCite] = []
+    for i in items if isinstance(items, list) else []:
+        if not isinstance(i, dict):
+            continue
+        raw_inputs = i.get("inputs") or []
+        try:
+            if not isinstance(raw_inputs, list):   # a bare string/number would iterate or raise
+                raise ValueError(f"inputs is a {type(raw_inputs).__name__}, not a list")
+            out.append(FigureCite(
+                figure=str(i.get("figure", "")),
+                source_ref=str(i["source_ref"]) if i.get("source_ref") else None,
+                derived=i.get("derived") or None,
+                inputs=[str(x) for x in raw_inputs]))
+        except ValueError as exc:
+            if notes is not None:
+                notes.append(f"MISMATCH figures: entry {i!r} dropped — {exc}")
+    return out
+
+
+def _parse(raw: dict[str, Any], notes: list[str] | None = None) -> Synthesis:
     def pts(items: Any) -> list[SourcedPoint]:
         return [
-            SourcedPoint(claim=str(i.get("claim", "")), source_ref=str(i.get("source_ref", "")))
+            SourcedPoint(claim=str(i.get("claim", "")), source_ref=str(i.get("source_ref", "")),
+                         figures=_figure_cites(i.get("figures"), notes))
             for i in (items or [])
             if isinstance(i, dict)
         ]
@@ -1080,7 +1423,21 @@ def _mark_drawdown_guidance(dumped: dict[str, Any], ps: PrimarySource | None) ->
     release that carries one. No date ⇒ the UNDATED mark, never a guess.
     """
     dc = dumped.get("drawdown_cause")
-    rg = (dc or {}).get("revised_guidance")
+    _mark_guidance_field((dc or {}).get("revised_guidance"), ps)
+    # THE DATED PARTS CARRY THE SAME KIND OF FIELD, and the at-the-anchor one is by construction
+    # the OLDEST guide on the page — SMPL's is the April guide this mark exists for. Unmarked, it
+    # would reopen the incident one key deeper (`DrawdownAnchor`, 2026-11-04).
+    anchor = (dc or {}).get("anchor")
+    if isinstance(anchor, dict):
+        for part in ("at_anchor", "since"):
+            window = anchor.get(part)
+            if isinstance(window, dict):
+                _mark_guidance_field(window.get("revised_guidance"), ps)
+
+
+def _mark_guidance_field(rg: Any, ps: PrimarySource | None) -> None:
+    """One dumped revised-guidance field, marked with its vintage in place
+    (`_mark_drawdown_guidance`)."""
     if not isinstance(rg, dict) or not rg.get("value"):
         return
     filed = None
@@ -1387,6 +1744,10 @@ def synthesize(
     # prompt is then the one every earlier build sent.
     if (material := demanded_material_figures(mech)):
         user += "\n\n" + _material_figures_digest(material)
+    # (2026-11-04) THE DRAWDOWN AT THE ANCHOR, LAST — after the material figures, so a name with no
+    # anchor sends the prompt every earlier build sent
+    if (anchored := _drawdown_anchor_digest(_dumped)) is not None:
+        user += "\n\n" + anchored
     # PER-BOOK FRAMING, one prompt. `sleeve` defaults to overshoot so every existing caller keeps
     # the byte-identical live prompt; the followed route passes the name's own book.
     #
@@ -1474,7 +1835,9 @@ def synthesize(
     if agreement is not None:
         log_parts += ["", "=== DRAW AGREEMENT ===",
                       json.dumps(agreement.model_dump(), indent=2, sort_keys=True)]
-    synth, flags = _validate(_parse(chosen), mech, ticker=ticker, name=name)
+    parse_notes: list[str] = []
+    synth, flags = _validate(_parse(chosen, parse_notes), mech, ticker=ticker, name=name)
+    flags += parse_notes
     if synth is not None and agreement is not None:
         synth = synth.model_copy(update={"draw_agreement": agreement})
         if not agreement.unanimous:
@@ -1754,6 +2117,90 @@ def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[st
 
 #: Opens the prompt section that names the figures 19c demands — present only when one is.
 MATERIAL_FIGURES_HEADER = "=== MATERIAL FIGURES — STATE EACH ONE ==="
+
+DRAWDOWN_ANCHOR_HEADER = ("=== THE DRAWDOWN WHEN THE THESIS WAS WRITTEN, AND SINCE — the event "
+                          "kept dated ===")
+
+#: ONE literal example of the digest's shape: SMPL at its 2026-08-05 underwrite, as its at-anchor
+#: part reads on the 2026-11-03 store (the 8-K and exhibit are 0001702744-26-000010's).
+_DRAWDOWN_ANCHOR_EXAMPLE = (
+    "  at the underwrite (2026-02-06 to 2026-08-05): 2026-04-09 -18.1% earnings (2.02); "
+    "2026-04-10 -11.5% earnings (2.02) → source_ref: EOD closes on or before 2026-08-05 (each "
+    "move, close to close) and EDGAR 8-K item codes at the gap-down dates, filed by 2026-08-05 "
+    "(not blanket-labelled earnings)\n"
+    "    outlook then: [SUPERSEDED — filed 2026-04-09, replaced by the guide filed 2026-10-27; "
+    "this guide is history, not the current outlook] Updating Fiscal Year 2026 (4) Outlook: • Net "
+    "sales expected to range between $1.31 and $1.35 billion… → source_ref: EDGAR 8-K "
+    "0001702744-26-000010 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1702744/"
+    "000170274426000010/a991_pressreleasexq2x2026.htm\n"
+    "  since the underwrite (2026-08-06 to 2026-11-03): no discrete gap-down — no single day of "
+    "-10% or worse from 2026-08-06 to 2026-11-03 → source_ref: EOD gap-down detector, 2026-08-06 "
+    "to 2026-11-03: none")
+
+
+def _drawdown_anchor_digest(dumped: dict[str, Any]) -> str | None:
+    """The prompt section for a name with a drawdown anchor (`DrawdownAnchor`): both dated parts,
+    one line each (window → per-gap date, move and cause → source_ref, then the outlook it
+    furnished → source_ref), and the question the anchor exists to ask — has the original cause
+    played out. Read from ``dumped``, the facts as the prompt carries them, so the outlook here
+    wears the same vintage mark as there. None for a name with no anchor: its prompt is unchanged.
+
+    One literal example (`_DRAWDOWN_ANCHOR_EXAMPLE`, SMPL's), shape only:
+      at the underwrite (2026-02-06 to 2026-08-05): 2026-04-09 -18.1% earnings (2.02); … →
+      source_ref: EOD closes on or before 2026-08-05 (…) and EDGAR 8-K item codes … (…)
+    No direction is given: where the evidence bears is the model's to frame, and no verdict."""
+    from datetime import date as _date
+
+    from vinci.dossier.schemas import DRAWDOWN_ANCHOR_WORDS
+
+    anchor = (dumped.get("drawdown_cause") or {}).get("anchor")
+    if not isinstance(anchor, dict):
+        return None
+    kind, on = str(anchor.get("kind")), str(anchor.get("on"))
+    word = DRAWDOWN_ANCHOR_WORDS.get(kind, ("", "", kind))[2]
+    at = anchor.get("at_anchor") or {}
+    # the window's length from the part's own dates, never a restated constant
+    days = (_date.fromisoformat(str(at.get("end")))
+            - _date.fromisoformat(str(at.get("start")))).days
+
+    def part(label: str, w: Any) -> list[str]:
+        if not isinstance(w, dict):
+            return [f"  {label}: no session after the {word} yet"]
+        shape = w.get("shape") or {}
+        head = f"  {label} ({w.get('start')} to {w.get('end')}): "
+        lines = [head + (f"{shape.get('value')} → source_ref: {shape.get('source_ref')}"
+                         if shape.get("status") == "present"
+                         else f"UNKNOWN — {shape.get('note')}")]
+        rg = w.get("revised_guidance") or {}
+        if rg.get("status") == "present":
+            text = " ".join(str(rg.get("value")).split())
+            text = text if len(text) <= 360 else text[:357].rstrip() + "…"
+            lines.append(f"    outlook then: {text} → source_ref: {rg.get('source_ref')}")
+        return lines
+
+    lines = [
+        DRAWDOWN_ANCHOR_HEADER,
+        f"This name is anchored at its {word} ({on}; {anchor.get('source_ref')}). The current "
+        "window in the facts (`drawdown_cause.shape` and its siblings) ROLLS with the page's "
+        "date, so the event the thesis was written on can have left it. `drawdown_cause.anchor` "
+        f"keeps it, in two dated parts: `at_anchor`, the {days} days ending on the anchor date, "
+        "read only from what was knowable then (closes on or before it, 8-Ks filed by it); and "
+        "`since`, the day after the anchor to the page's price date.",
+        "SHAPE — one line per part: part (start to end): date move cause; … → source_ref, then "
+        "the outlook that part's 8-K furnished → source_ref. EXAMPLE (SMPL at its 2026-08-05 "
+        "underwrite) — the SHAPE only; cite only this name's lines:",
+        _DRAWDOWN_ANCHOR_EXAMPLE,
+        "THIS NAME:",
+        *part(f"at the {word}", anchor.get("at_anchor")),
+        *part(f"since the {word}", anchor.get("since")),
+        f"ASK: has the cause named at the {word} played out? Set the since part and the current "
+        "facts against it — did the outlook that came with the drop hold, get cut again, or "
+        "recover; did a later drop repeat the cause or name a new one. Answer inside your points "
+        "(a bull or bear point, or the decisive question's evidence), citing these source_refs "
+        "verbatim; where the facts cannot tell, say so in key_unknowns. An outlook marked "
+        "SUPERSEDED is history, never the current guide.",
+    ]
+    return "\n".join(lines)
 
 
 def _material_figures_digest(figs: list[MaterialFigure]) -> str:

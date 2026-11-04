@@ -285,7 +285,9 @@ def _fcf_sign_vs_edgar_ocf(page: dict[str, Any]) -> ItemResult:
 def _ev_bridge_vs_ciq_tev(page: dict[str, Any]) -> ItemResult:
     eb = page.get("ev_bridge")
     if not isinstance(eb, dict):
-        return ItemResult(not_run="no ev_bridge block on the page")
+        unbuilt = (page.get("ev_bridge_unbuilt") or {}).get("reason")
+        return ItemResult(not_run="no ev_bridge block on the page"
+                          + (f" — unbuilt: {unbuilt}" if unbuilt else ""))
     claims, ciq = _num(eb.get("claims")), _num(eb.get("ciq_tev_claims"))
     if claims is None or ciq is None:
         return one(UNCHECKED)
@@ -442,6 +444,9 @@ def _ciq_scale_vs_revenue(page: dict[str, Any]) -> ItemResult:
     if not isinstance(a, dict):
         return ItemResult(not_run="no anchor block on the page")
     if a.get("ciq_scale_check") is None:
+        # The back-fill this names was retired in #905 (restore from 481e82f7). The text stays: it
+        # is in every committed scorecard since 2026-10-28, and the latest must reproduce byte for
+        # byte (test_the_committed_snapshot_reproduces_from_the_pages_it_names).
         return ItemResult(not_run="no anchor.ciq_scale_check — it predates the field, or the "
                                   "back-fill could not prove the folder's Financials export the "
                                   "page's own (ciq_scale_backfill.scale_check_backfill); assembly "

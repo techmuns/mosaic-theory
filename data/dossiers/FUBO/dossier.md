@@ -17,7 +17,7 @@ _8 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Beginning September 2, sports fans will be able to subscribe to Fubo Sports, a standalone plan with 20+ sports and br… ~2026-09 `[stated]` — calendar in Analysis
 
 ## What happened — and can it survive?
-- **Shape:** discrete gap-downs — 2026-03-26 no company filing; 2026-05-06 earnings; 2026-08-06 earnings [4]
+- **Shape (180 days to 2026-08-14):** discrete gap-downs — 2026-03-26 no company filing; 2026-05-06 earnings; 2026-08-06 earnings [4]
 - **Price (180d):** -36.9% [5]
 - **Market (IWM) 180d:** 16.0% [6]
 - **vs market (180d):** -52.9% [7]
@@ -128,7 +128,7 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 # Analysis — full dossier
 
 ## What broke — and did it fall alone?
-- **Read — what broke** · discrete gap-downs: [4]
+- **Read — what broke (180 days to 2026-08-14)** · discrete gap-downs: [4]
   - 2026-03-26 **-11.0%** → no company filing
   - 2026-05-06 **-15.9%** → earnings
   - 2026-08-06 **-15.7%** → earnings

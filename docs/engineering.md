@@ -119,6 +119,16 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Filed tiebreak / filed LTM** (2026-11-04, operator approval). Plain words: *when a MATERIAL
+  annual-summary row's LTM in CIQ's annual export disagrees with its four quarters in CIQ's
+  quarterly export, the filer's own XBRL figure for the same four quarters (as filed by the page's
+  price date, on a hand-reviewed row→concept mapping) decides: if it matches either CIQ reading
+  within 2% the page states the filed figure with a caveat, otherwise the build refuses as before.*
+  A **containing line** (operator ruling 2026-11-04, "NFLX: B") is a filed line that holds the row
+  and more, such as NFLX's non-operating line. It never states the row. It picks CIQ's quarterly
+  reading only when CIQ's own breakdown of the line reproduces it in every quarter, within 0.5 $M.
+  Home: `vinci/dossier/filed_tiebreak.py` (`MAPPING`, `CONTAINING`, `decide`),
+  `financial_summary.filed_ltm`.
 - **Unread (a claim) / read_cell** (2026-10-30, audit RC1). Plain words: *a CIQ cell is read as
   (value, marker); a marker ('-', 'NA', 'NM', a blank) or a row the sheet lacks is NO value, never
   0 — an EV-bridge line with no figure carries `unread`, the reason it has none.* Home:
@@ -228,7 +238,8 @@ PR (CLAUDE.md: coin-time translation).
   calendar, the posts for a day, and a price chart for whichever cashtag is focused, on ONE screen,
   built to LABEL those posts rather than to present them. A research input only: it feeds no screen,
   ranker, ledger or spread and gates nothing. "Tape" is the trading sense — the running record of
-  what someone said, in order. Home: `vinci/calls/`, `frontend/views/calls/tape.js`.
+  what someone said, in order. RETIRED 2026-11-04 (operator; R1): it was home in `vinci/calls/`
+  and `frontend/views/calls/tape.js`, last held by `481e82f7`.
 - **cohort split / cohort / residual** (#501, 2026-08-25) — splitting a name's fall into its
   INDUSTRY's share and its own. **Cohort** = the same-SIC-industry names *inside the screened
   universe* (min 5), NOT the market benchmark — IWM is what each name is already measured against,
@@ -243,12 +254,14 @@ PR (CLAUDE.md: coin-time translation).
   waiting to buy, not a target the thesis predicts reaching. Kept and MARKED rather than refused:
   four of the eighty-three hand labels are this shape and all four are correct. It changes what
   "touched" means, so the touch test keys on the LEVEL's position rather than on the bias.
-  Home: `vinci/calls/targets.py` (`TargetStatus.COUNTER_DIRECTIONAL`), `score.py` (`touched`).
+  Was home in `vinci/calls/targets.py` (`TargetStatus.COUNTER_DIRECTIONAL`) and `score.py`
+  (`touched`); retired with the calls tape, 2026-11-04.
 - **implausible target** — a resolved target more than 10x above or 0.1x below the entry price
   (#499). Plain words: a number that cannot be the price target it was read as — usually an options
   FLOW amount ("$CVNA – $10.77M") or a dollar move parsed as a level. Refused, because the touch
   test would otherwise be satisfied by arithmetic. The band is set on face validity, never on what
-  it does to the hit-rate. Home: `vinci/calls/targets.py` (`TargetStatus.IMPLAUSIBLE`).
+  it does to the hit-rate. Was home in `vinci/calls/targets.py` (`TargetStatus.IMPLAUSIBLE`);
+  retired with the calls tape, 2026-11-04.
 - **gate regime / the tiered ladder / eligibility line** — the underwrite gate's threshold
   vocabulary (#487, ratified 2026-08-21). **Gate regime** = WHICH set of thresholds judged a
   record, stamped on it (`result.gate_regime`); an ABSENT stamp means the pre-2026-08-21
@@ -597,6 +610,19 @@ PR (CLAUDE.md: coin-time translation).
   *the one limit on requests to SEC's hosts that every client, thread and `vinci` process on the
   machine shares (8 a second, through a locked file); after SEC refuses one request, nobody on the
   machine sends to SEC for SEC's whole window.*
+- **Fact layer / snapshot** (2026-11-04, `vinci/facts/`, `data/facts/`) — plain words: *every
+  extracted fact stored once, point-in-time, as immutable Parquet files named by a hash of the rows
+  they hold (since slice 2a; slice 1 hashed the file's bytes); a snapshot is the committed JSON
+  manifest naming one set of those files, and "as of a date" is `filed_date <= date`.*
+- **Order object** (2026-11-04, slice 2a, `vinci/facts/store.py`) — plain words: *one file per
+  company and snapshot recording which stored row was which row of SEC's response, kept apart from
+  the facts so a year of facts no new filing touched keeps its name across refreshes.*
+- **Drawdown anchor / at-anchor part / since part** (2026-11-04, `DrawdownAnchor`,
+  `drawdown_cause.anchor`) — plain words: *the date a name's drawdown record is pinned to (its
+  underwrite, else the day it was followed); the at-anchor part is the gap-downs, 8-Ks and outlook
+  of the 180 days ending on that date, read only from what was knowable then, and the since part is
+  what has happened from the next day to the page's price date.* NOT the R1 screening `anchor`
+  (`vinci/dossier/anchor.py`), nor the price refresh's anchor session.
 
 ## Local setup (every laptop, every contributor)
 

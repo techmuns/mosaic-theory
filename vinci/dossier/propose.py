@@ -856,10 +856,12 @@ def r4_bridge_fact(doc: dict[str, Any]) -> dict[str, Any]:
     t = doc.get("ticker")
     eb = doc.get("ev_bridge")
     if not isinstance(eb, dict):
+        unbuilt = (doc.get("ev_bridge_unbuilt") or {}).get("reason")
         raise ProposalRefusedError(
             f"{t}: the page carries no `ev_bridge`, so an R4 template has no bridge from "
-            "enterprise value to equity. Land it (the ev_bridge pass) or re-assemble the page "
-            "first.")
+            "enterprise value to equity"
+            + (f" — its assembly could not build one: {unbuilt}" if unbuilt else "")
+            + ". Land it (the ev_bridge pass) or re-assemble the page first.")
     claims, ciq = eb.get("claims"), eb.get("ciq_tev_claims")
     if not isinstance(claims, (int, float)) or not isinstance(ciq, (int, float)):
         raise ProposalRefusedError(

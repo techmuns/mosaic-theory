@@ -511,6 +511,23 @@ def _build_peer_impairment(facts: dict[str, Any], acquired: float | None,
         tags=tags, note=note)
 
 
+#: (item 29, option 4) The refs a point cites this block's figures by. A peer row's numbers come
+#: from the CIQ comps grid (market cap) and that peer's EDGAR companyfacts (goodwill + intangibles,
+#: Assets, the impairment window); the block's medians and counts are computed over the rows.
+PEER_INTENSITY_REF = ("Assembler: acquired-asset intensity — EDGAR companyfacts goodwill + "
+                      "intangibles over Assets and over the CIQ comps market cap, for each name of "
+                      "the CIQ comps grid; medians and counts over the peers")
+
+
+def _peer_grid_ref(ticker: str) -> str:
+    return f"CIQ Comparable Analysis→Financial Data ({ticker} market cap)"
+
+
+def _peer_row_ref(ticker: str) -> str:
+    return (f"EDGAR companyfacts {ticker}: goodwill + intangibles and Assets at its latest balance "
+            f"date, impairment over its own window · CIQ Comparable Analysis ({ticker} market cap)")
+
+
 def build_peer_capital_intensity(
     grid: list[Any], *, resolve: Any, companyfacts: Any,
     floor: float = PEER_SIZE_FLOOR_MUSD,
@@ -540,7 +557,7 @@ def build_peer_capital_intensity(
         except Exception:                                        # noqa: BLE001
             rows.append(PeerCapitalRow(
                 ticker=tk, is_subject=bool(getattr(pr, "is_name", False)), market_cap=mcap,
-                note=f"unresolved — no CIK for {tk!r}"))
+                note=f"unresolved — no CIK for {tk!r}", source_ref=_peer_grid_ref(tk)))
             continue
         try:
             facts = companyfacts(cik)
@@ -548,7 +565,7 @@ def build_peer_capital_intensity(
             rows.append(PeerCapitalRow(
                 ticker=tk, is_subject=bool(getattr(pr, "is_name", False)), market_cap=mcap,
                 note="fetch-failed — EDGAR companyfacts unreachable; this is NOT a statement that "
-                     "the filer reports no goodwill"))
+                     "the filer reports no goodwill", source_ref=_peer_grid_ref(tk)))
             continue
         acquired, assets = _acquired_and_assets(facts)
         # THE WINDOW ENDS AT THIS FILER'S OWN BALANCE DATE, not at a fleet-wide clock. Fiscal
@@ -567,7 +584,8 @@ def build_peer_capital_intensity(
                   "no-tag — the filer reports neither goodwill nor intangibles (a real balance "
                   "sheet, not a data gap)"),
             impairment=(_build_peer_impairment(facts, acquired, anchor[0].period_end)
-                        if anchor is not None else None))
+                        if anchor is not None else None),
+            source_ref=_peer_row_ref(tk))
         if getattr(pr, "is_name", False):
             subject = row
         else:
@@ -606,4 +624,5 @@ def build_peer_capital_intensity(
         median_large_assets=_med([r.pct_assets for r in large if r.pct_assets is not None]),
         median_large_market_cap=_med(
             [r.pct_market_cap for r in large if r.pct_market_cap is not None]),
-        n_all=len(peers), n_large=len(large))
+        n_all=len(peers), n_large=len(large),
+        source_ref=PEER_INTENSITY_REF)
