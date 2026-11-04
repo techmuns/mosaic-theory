@@ -468,6 +468,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "it to the price date, read the same way at the price date; a name with neither is "
         "unchanged",
     ),
+    (
+        "2026-11-04.drawdown-window-at-price-date",
+        "the rolling drawdown window ends on the page's price date, not the screen's reference "
+        "date: the screen's detector over the 180 days ending on the stored close the price box "
+        "shows, so a drop after the last screen run is classified, not only charted "
+        "(`drawdown_cause.gap_window_end`)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

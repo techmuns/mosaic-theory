@@ -671,7 +671,11 @@ class DrawdownCause(BaseModel):
     # ≤threshold drop BEFORE the window renders as an unclassified (hollow) marker, never silently
     # unmarked. None on pre-field committed JSON → the renderers skip the boundary/hollow marks.
     gap_threshold: float | None = None  # single-day close-to-close drop that fires the detector
-    gap_window_days: int | None = None  # how far back from the reference date the detector scans
+    gap_window_days: int | None = None  # how far back from ``gap_window_end`` the detector scans
+    # THE DATE THE CURRENT WINDOW ENDS ON — the page's price date (2026-11-04 item 3). ABSENT on a
+    # page built before it, whose window ended on the screen's reference date, which a renderer
+    # reads in its place.
+    gap_window_end: str | None = None
     # (2026-11-04) the drawdown at the underwrite (or the follow) and since — ABSENT on a page with
     # no anchor and on every page built before it, so those read, check and render as they did
     anchor: DrawdownAnchor | None = None
@@ -683,8 +687,10 @@ class DrawdownCause(BaseModel):
         """``anchor`` is ABSENT when None, never null: a key written as null would say the page was
         built with one and found nothing."""
         out = nxt(self)
-        if isinstance(out, dict) and out.get("anchor") is None:
-            out.pop("anchor", None)
+        if isinstance(out, dict):
+            for key in ("gap_window_end", "anchor"):
+                if out.get(key) is None:
+                    out.pop(key, None)
         return out
 
 

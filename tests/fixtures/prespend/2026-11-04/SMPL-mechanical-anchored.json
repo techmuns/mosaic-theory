@@ -1426,7 +1426,7 @@
     "drawdown_cause": {
       "shape": {
         "value": "gradual bleed — no discrete gap-down detected",
-        "source_ref": "EOD gap-down detector (screen events): none",
+        "source_ref": "EOD gap-down detector, 2026-05-07 to 2026-11-03: none",
         "status": "present",
         "note": null
       },
@@ -1434,7 +1434,7 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "no gap-down events on the data-record"
+        "note": "no gap-down from 2026-05-07 to 2026-11-03"
       },
       "filings": [],
       "revised_guidance": {
@@ -1445,6 +1445,7 @@
       },
       "gap_threshold": -0.1,
       "gap_window_days": 180,
+      "gap_window_end": "2026-11-03",
       "anchor": {
         "kind": "underwrite",
         "on": "2026-08-05",
@@ -9524,12 +9525,13 @@
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "ciq-ltm-quarters: NOT RUN — the annual Income Statement carries no LTM column, so the summary's latest column is a fiscal year and there is no trailing figure to check",
+    "transcripts on file but unparseable — 1 of 2 call(s) on file are missing from the model's input for SMPL: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf (a failed read; LibreOffice also fails a conversion while another runs)",
     "LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only",
     "VALUATION_RECIPE_BASIS_CONFLICT: SMPL: the two share counts disagree by 3.54% — stock_info.shares_out 86,861,967 against anchor.diluted_shares 89,940,680 (diluted weighted-average). Beyond 2% that is a structural change (a conversion, a raise, a split), not the buyback pace. Resolve which count belongs in the denominator before writing a value per share."
   ],
   "llm_model": null,
-  "assembled_at": "2026-11-04T16:11:35.773573Z",
-  "extraction_version": "2026-11-04.anchored-drawdown",
+  "assembled_at": "2026-11-04T16:52:22.732497Z",
+  "extraction_version": "2026-11-04.drawdown-window-at-price-date",
   "price_store": {
     "declared_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/eager-mendel-4c6d33/data/vinci.db",
     "resolved_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/eager-mendel-4c6d33/data/vinci.db",
@@ -13585,7 +13587,7 @@
     "historical_multiple_latest_observation": "2026-11-03",
     "historical_multiple_history_through": "2026-09-30",
     "stock_performance_as_of": "2026-11-03",
-    "assembled_at": "2026-11-04T16:11:35.773573Z",
+    "assembled_at": "2026-11-04T16:52:22.732497Z",
     "valuation_snapshot_as_of": "2026-11-03",
     "price_days_after_valuation_snapshot": 0
   },
@@ -13593,7 +13595,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-11-04T16:11:41.618430Z",
+    "computed_at": "2026-11-04T16:52:28.798399Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [

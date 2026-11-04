@@ -30,13 +30,22 @@ superseded-by:
 - **A window the stored closes do not cover is not read**: when the store's history begins on or
   after a part's start, the part is UNKNOWN, saying so, never "no single day of -10% or worse"
   (an absence read from missing data, which a later backfill would change).
-- **The rolling window is unchanged**: `shape`, `gap_down_dates`, `filings`, `revised_guidance`
-  are still the screen record's events (the window ending on its reference date), and every
-  reader of them (adjusted facts, P/E reconciliation, catalyst path) reads what it read before.
+- **The rolling window ends on the page's price date** (brief item 3, kept on the operator's ruling
+  — "Fold into #906"): `shape`, `gap_down_dates`, `filings`, `revised_guidance` are the screen's
+  detector over the 180 days ending on the stored close the price box shows (`gap_window_end`),
+  no longer the screen record's events ending on its reference date, so a drop after the last
+  screen run is classified, not only charted. Every reader of them (adjusted facts, P/E
+  reconciliation, catalyst path) reads that window.
+- **Every line that reads the rolling window says so** (the operator's "Approve + relabel"):
+  "Shape (last 180 days)" on the Brief; on the Analysis tab the read beside the chart, its "No
+  discrete gap-downs · last 180 days" panel and "Gap-down dates (last 180 days)" — so a page whose
+  rolling window holds no drop no longer reads as contradicting its "Drawdown at underwrite" rows.
+  The length is read from `gap_window_days`; a page built before that field keeps the bare label.
 
 `anchor` is ABSENT when None (`DrawdownCause` serialiser), so the 27 committed pages read, check
-and render exactly as before until each is rebuilt. Extraction `2026-11-04.anchored-drawdown`
-(Python and JS twin).
+and check exactly as before until each is rebuilt; the relabel re-renders their `dossier.md`
+(an artifact commit). Extractions `2026-11-04.anchored-drawdown` and
+`2026-11-04.drawdown-window-at-price-date` (Python and JS twins).
 
 Around it: **the pre-spend check** (`prespend.compare`) lists a rolling-window field
 (`MOVABLE`: `gap_down_dates`, `revised_guidance`) that left the window as MOVED, not a regression,
@@ -68,16 +77,15 @@ already recorded (an underwrite or a follow), the detector and its −10% thresh
 screen's, unchanged, and the parts are read for every anchored name alike. No threshold,
 window or mapping was chosen or tuned on any outcome; the 180 days are `DECLINE_WINDOW_DAYS`.
 
-**THE ROLLING WINDOW AT THE PRICE DATE (brief item 3) — MEASURED, NOT KEPT, REPORTED.** The brief
-asked to end the rolling window on the page's price date instead of the screen's reference date,
-and to report before keeping it if it moved non-anchored pages. It does. On the 2026-11-03 store
-(reference 2026-10-16 → price date 2026-11-03 for every page), the gap-down set moves on two of
-the four non-anchored pages: **FUBO** loses 2026-05-06 (it falls before the new window start
-2026-05-07) and **VRRM** gains 2026-10-30 (a drop after the last screen run, charted and not
-classified today); CNXC and VITL do not move. Among anchored pages GOOGL gains 2026-10-29, IT
-2026-11-03, PARR 2026-10-27 — each already in its since part — and BRBR loses 2026-05-05, which its
-at-anchor part carries. So it is left out of this change: the switch is a ready patch, and the
-operator decides.
+**THE ROLLING WINDOW AT THE PRICE DATE (brief item 3).** First measured and left out, because the
+brief asked for a report before keeping it if it moved non-anchored pages, and it does (STATE §5.0
+row 46, opened and closed in this PR). The operator then ruled "Fold into #906". On the 2026-11-03
+store (window end 2026-10-16 → 2026-11-03 for all 27), **6 of 27 pages move**: the non-anchored
+**FUBO** loses 2026-05-06 (before the new start, 2026-05-07) and **VRRM** gains 2026-10-30 (a drop
+after the last screen run); CNXC and VITL do not move. Anchored: **BRBR** loses 2026-05-05 and its
+revised-outlook exhibit (8-K 0001628280-26-030115) with it — both carried by its at-anchor part —
+and **GOOGL** gains 2026-10-29, **IT** 2026-11-03, **PARR** 2026-10-27, each already in its since
+part. No other page moves, and against each committed page no page loses a field.
 
 **HOW VERIFIED.**
 
@@ -89,7 +97,8 @@ operator decides.
 - **The 27 committed pages, $0** (each page's block built twice on identical inputs — the code
   before (the record alone) and after (record + store closes + anchor), each page's record as
   `load_finalists` builds it at reference 2026-10-16, EDGAR cut at its price date 2026-11-03):
-  **the rolling window is byte-identical on all 27**. 23 are anchored (9 underwritten, 14 followed
+  before item 3 the rolling window was byte-identical on all 27 (the six that move with it are
+  listed above). 23 are anchored (9 underwritten, 14 followed
   only), 4 are not (CNXC, FUBO, VITL, VRRM). 11 gain dated gap-downs: AORT, BRBR, EPAM, IT, MVST,
   NCNO, NKE, PARR, SMPL and TECX at the anchor, GOOGL since it only (2026-10-29); IT and PARR also
   have one since (2026-11-03, 2026-10-27). Against each COMMITTED page's drawdown block, **no
@@ -97,7 +106,7 @@ operator decides.
   no other page loses one. The at-anchor parts name drops no committed page names: IT 2026-02-03
   (−20.9%), NCNO 2026-02-03 (−10.6%), NKE 2026-04-01 (−15.5%), EPAM 2026-02-19 (−17.0%), PARR
   2026-04-17 (−10.0%).
-- **Pins** (`tests/test_anchored_drawdown.py`, 25, on real fixtures — SMPL's Polygon closes,
+- **Pins** (`tests/test_anchored_drawdown.py`, 30, on real fixtures — SMPL's Polygon closes,
   its EDGAR 8-K rows and the three documents the reader fetches, cut after what each reader reads
   and checked identical): SMPL keeps 04-09/04-10 (−18.1%, −11.5%) and the outlook 8-K at today's
   dates; the at-anchor part is identical at price dates 2026-08-17, 10-16 and 11-03; a name with
@@ -107,17 +116,21 @@ operator decides.
   pin** — the real 8-K re-dated after the anchor never enters the at-anchor part while the
   rolling window, read at the price date, does find it; the precheck carries by value and the
   dated parts never lose; the paid write's refusal; the brief's vintage mark and digest; the
-  render end to end; the `windowWords` and label-table twins through node (the label table is
+  render end to end; the rolling window ending on the price date (positive), never reading a
+  close after it, and the record's own window when there are no closes (negatives), and the whole
+  assembly ending it there (LLY, `test_asof_cut`'s fixtures); the `windowWords`, label-table and
+  `rollingLabel` twins through node (the label table is
   on `test_duplicate_definitions.BASELINE`, bound by that pin); the committed corpus round-trips
   with no new key.
-- **Mutations the pins catch — 13 of 13**, each applied alone and the file restored: the
+- **Mutations the pins catch — 17 of 17**, each applied alone and the file restored: the
   at-anchor EDGAR left uncut at the anchor (the lookahead pin); its closes left uncut (a gap after
   the anchor leaks into the part); carried by presence instead of value; the dated parts not
   compared by value; the dated outlook not vintage-marked; `anchor` written as null; an anchor
   after the price date still anchoring; the follow winning over the underwrite; the paid write
   ignoring the at-anchor part; the Brief dropping the dated lines; the JS twin printing the move
   unsigned; a window the closes do not cover read anyway; the dated-part outage flag escaping the
-  hidden QA tier.
+  hidden QA tier; the rolling window not cut at the price date; the assembly dropping the
+  price-date window; the Brief's Shape losing its window label; the JS label dropping the length.
 - **Review** (`/code-review high --fix`, round 0): 10 findings, 8 fixed — the dated-part outage
   flag had escaped `flags._QA_MARKERS` and would have printed as a decision caveat; an uncovered
   window read as "no drop"; the round-trip pin would have gone red at the first anchored rebuild;
@@ -126,7 +139,8 @@ operator decides.
   nothing; a version-table row shared a line with the one before. 2 dismissed: a moved anchor
   stopping the precheck is deliberate (its message names the move, the operator decides), and the
   anchor helper's second read of the same committed record keeps the pinned call shape.
-- **Render preview** (PREVIEW RULE): SMPL's real $0 build, collapsed and force-open,
+- **Render preview** (PREVIEW RULE): SMPL's real $0 build, collapsed and force-open, approved by
+  the operator with the relabel; re-taken after it, with VRRM's (which item 3 moves) beside it,
   `docs/dossier/anchored-drawdown-2026-11-04/screenshots/`.
 
 **BOUNDARY.** Store: a copy of the primary's `data/vinci.db`, the 27 page names plus IWM, MDY and
@@ -151,4 +165,7 @@ Gap-down moves are close-to-close on the stored closes, rounded to 0.1 pt.
 - A reissued underwrite moves the anchor to the reissue's date, so its at-anchor part changes; the
   precheck stops on that change and names the moved anchor.
 - The rolling window's own 180-day return comparison (`idiosyncratic_vs_shared`) still ends on the
-  reference date; not touched (hold scope).
+  reference date; not touched (hold scope), so on a page priced after its screen run the two
+  180-day figures in that section end on different days.
+- BRBR's rolling `revised_guidance` leaves the window on its next rebuild, so the readers that take
+  the drawdown guide fall back to the newest release there; its pre-spend check shows the effect.

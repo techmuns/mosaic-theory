@@ -144,8 +144,8 @@ def test_no_later_build_changes_the_at_anchor_part() -> None:
 # ─── the negatives ─────────────────────────────────────────────────────────────────────────────
 
 def test_a_name_with_no_anchor_builds_exactly_as_before() -> None:
-    """A fresh candidate (no underwrite, no follow): the block is byte-identical to the one the
-    record alone gives — no `anchor` key."""
+    """With no anchor (no underwrite, no follow), the dated parts add nothing: the block is
+    byte-identical to the one the record alone gives — no `anchor` key."""
     ref = date(2026, 8, 14)
     edgar = cast(EdgarClient, AsOfEdgar(cast(EdgarClient, _Edgar(_ROWS)), date(2026, 8, 17)))
     before, _ = _drawdown_cause(_record(ref), edgar, cast(CachedHttp, _Http()))
@@ -438,6 +438,7 @@ def test_the_page_labels_both_parts_end_to_end() -> None:
     from vinci.dossier.render import render_markdown
 
     md = render_markdown(Dossier.model_validate(_built()))
+    assert "**Shape (last 180 days):** gradual bleed" in md  # the rolling window, labelled
     assert "**Drawdown at underwrite (2026-08-05):** 2026-04-09 -18.1% earnings; " in md
     assert "**Since underwrite (2026-08-06 → " in md
     assert "- **Drawdown at underwrite (2026-08-05)** · 2026-02-06 → 2026-08-05" in md
@@ -494,3 +495,77 @@ def test_the_frozen_build_is_this_codes_serialisation() -> None:
     """The fixture is what `dossier_json` writes for it — a hand edit would not round-trip."""
     raw = _BUILT.read_text() if _BUILT.exists() else pytest.skip("no frozen anchored build")
     assert dossier_json(Dossier.model_validate(json.loads(raw))) == raw
+
+
+def test_the_rolling_window_ends_on_the_price_date() -> None:
+    """(item 3) A screen run on 2026-04-01 and a page priced 2026-04-30: the record's window ends
+    before the 04-09/04-10 drops, the price-date window classifies them."""
+    edgar = cast(EdgarClient, AsOfEdgar(cast(EdgarClient, _Edgar(_ROWS)), date(2026, 4, 30)))
+    bars = [b for b in _BARS if b.bar_date <= date(2026, 4, 30)]
+    old, _ = _drawdown_cause(_record(date(2026, 4, 1)), edgar, cast(CachedHttp, _Http()))
+    new, _ = _drawdown_cause(_record(date(2026, 4, 1)), edgar, cast(CachedHttp, _Http()),
+                             bars=bars, cut=date(2026, 4, 30), current_end=date(2026, 4, 30))
+    assert "2026-04-09" not in (old.gap_down_dates.value or [])
+    assert new.gap_down_dates.value is not None
+    assert {"2026-04-09", "2026-04-10"} <= set(new.gap_down_dates.value)
+    assert new.gap_window_end == "2026-04-30" and old.gap_window_end is None
+    assert new.gap_down_dates.source_ref == "EOD gap-down detector, 2025-11-01 to 2026-04-30"
+
+
+def test_a_drop_after_the_price_date_never_enters_the_rolling_window() -> None:
+    """(item 3, NEGATIVE) The store holds closes past the page's price date (2026-04-08, the day
+    before the drop): the window is cut there, so 04-09/04-10 are not in it — the price-date cut's
+    discipline (#884), not "the latest bar the store happens to hold"."""
+    edgar = cast(EdgarClient, AsOfEdgar(cast(EdgarClient, _Edgar(_ROWS)), date(2026, 4, 8)))
+    dc, _ = _drawdown_cause(_record(date(2026, 4, 1)), edgar, cast(CachedHttp, _Http()),
+                            bars=_BARS, cut=date(2026, 4, 8), current_end=date(2026, 4, 8))
+    assert not {"2026-04-09", "2026-04-10"} & set(dc.gap_down_dates.value or [])
+    assert dc.gap_window_end == "2026-04-08"
+
+
+def test_with_no_closes_the_rolling_window_is_the_records_own() -> None:
+    """(item 3, NEGATIVE) A caller holding the record alone gets the screen's window, ending on
+    its reference date, with no `gap_window_end` key — what every page built before reads."""
+    edgar = cast(EdgarClient, AsOfEdgar(cast(EdgarClient, _Edgar(_ROWS)), date(2026, 4, 30)))
+    dc, _ = _drawdown_cause(_record(date(2026, 4, 1)), edgar, cast(CachedHttp, _Http()),
+                            current_end=date(2026, 4, 30))
+    assert dc.gap_window_end is None and "gap_window_end" not in _js(dc)
+    assert "2026-04-09" not in (dc.gap_down_dates.value or [])
+
+
+def test_the_assembly_ends_the_rolling_window_on_the_page_price_date() -> None:
+    """(item 3, END TO END) LLY's page assembled at a 2026-10-02 reference on closes that run to
+    its 2026-10-16 price date (`test_asof_cut`'s real fixtures): through the whole assembly the
+    rolling window is the 180 days ending on the price date — so dropping the call site's
+    `current_end` fails here, which no unit pin above can see."""
+    from tests.test_asof_cut import _assemble_lly, _LlySec
+
+    dc = _assemble_lly(_LlySec()).drawdown_cause
+    assert dc.gap_window_end == "2026-10-16"
+    stated = f"{dc.gap_down_dates.source_ref} {dc.gap_down_dates.note} {dc.shape.source_ref}"
+    assert "2026-04-19 to 2026-10-16" in stated
+    assert dc.anchor is None  # no anchor was passed: the rolling window alone
+
+
+def test_the_rolling_label_twin() -> None:
+    """render._rolling and dossier.js rollingLabel agree, with the window's length and without it
+    (a page built before `gap_window_days` keeps the bare label)."""
+    from vinci.dossier.render import _rolling
+
+    dc = Dossier.model_validate(_built()).mechanical.drawdown_cause  # type: ignore[union-attr]
+    bare = dc.model_copy(update={"gap_window_days": None})
+    py = [_rolling("Shape", dc), _rolling("Gap-down dates", bare)]
+    assert py == ["Shape (last 180 days)", "Gap-down dates"]
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    driver = """
+const handler = { get: () => stub, apply: () => stub, construct: () => ({}) };
+const stub = new Proxy(function(){}, handler);
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const { rollingLabel } = await import("__URI__");
+console.log(JSON.stringify([rollingLabel("Shape", {gap_window_days: 180}),
+                            rollingLabel("Gap-down dates", {gap_window_days: null})]));
+""".replace("__URI__", Path("frontend/views/shared/dossier.js").resolve().as_uri())
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    assert json.loads(out.stdout) == py

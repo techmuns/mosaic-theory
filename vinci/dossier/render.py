@@ -536,6 +536,16 @@ def _clean_note(note: str) -> str:
 _ANCHOR_WORDS = DRAWDOWN_ANCHOR_WORDS
 
 
+def _rolling(label: str, dc: DrawdownCause) -> str:
+    """A label for a line that reads the ROLLING window, naming its length (operator, 2026-11-04:
+    "Approve + relabel") — so a page whose rolling window holds no drop no longer reads as
+    contradicting its "Drawdown at underwrite" rows. A page built before `gap_window_days` keeps
+    the bare label: its length is not stated, so it is not claimed. Twin of dossier.js
+    ``rollingLabel``."""
+    days = dc.gap_window_days
+    return f"{label} (last {days} days)" if days is not None else label
+
+
 def _window_words(w: DrawdownWindow, threshold: float | None) -> str:
     """A dated window's gap-downs in words, from its structured ``gaps`` — never its shape
     string. Twin of dossier.js ``windowWords``."""
@@ -3827,7 +3837,7 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # discriminator — but "What happened" described only the first half.
     out.append(f"## {BY_KEY[d.sleeve].survive_heading}")
     if m.drawdown_cause is not None:
-        out.append(_fact("Shape", m.drawdown_cause.shape, _fmt_shape))
+        out.append(_fact(_rolling("Shape", m.drawdown_cause), m.drawdown_cause.shape, _fmt_shape))
         out += _anchor_brief_lines(m.drawdown_cause)
     io = m.idiosyncratic_vs_shared
     if io is not None and io.name_180d_return.status is SourceStatus.PRESENT:
@@ -4029,19 +4039,20 @@ def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE) ->
     _rows = (_gap_list(_fmt_shape(_shape.value))
              if _shape.status is SourceStatus.PRESENT and _shape.value is not None else None)
     if _rows is not None:  # ANY discrete-gap name — a 1-gap ledger still carries the true %
-        out.append(f"- **{_row.read_label}** · discrete gap-downs:{_cite(_shape.source_ref)}")
+        out.append(f"- **{_rolling(_row.read_label, m.drawdown_cause)}** · discrete gap-downs:"
+                   f"{_cite(_shape.source_ref)}")
         for _gd, _cause in _rows:
             _gpct = _gap_pct_from_perf(m.stock_performance, _gd)
             _gpct_s = f" **{_gpct * 100:+.1f}%**" if _gpct is not None else ""
             out.append(f"  - {_gd}{_gpct_s} → {_cause}")
     else:
-        out.append(_fact(_row.read_label, _shape, _fmt_shape))
+        out.append(_fact(_rolling(_row.read_label, m.drawdown_cause), _shape, _fmt_shape))
     # (declutter) the dates row repeats the shape line whenever every date already appears there
     gd = m.drawdown_cause.gap_down_dates
     shape_v = m.drawdown_cause.shape
     if not (gd.status is SourceStatus.PRESENT and shape_v.status is SourceStatus.PRESENT
             and all(str(d) in str(shape_v.value) for d in (gd.value or []))):
-        out.append(_fact("Gap-down dates", gd, _dates))
+        out.append(_fact(_rolling("Gap-down dates", m.drawdown_cause), gd, _dates))
     # (buy-side restructure, twins the web) the alone-or-with-market comparison follows the READ
     # directly; the 8-K evidence closes the section as provenance. Revised guidance is a guidance
     # fact — it renders on the street section (legacy no-catalyst-path JSON keeps it here).

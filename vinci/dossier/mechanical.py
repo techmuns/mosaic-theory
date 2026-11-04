@@ -771,7 +771,7 @@ def _drawdown_anchor(anchor: AnchorDate | None, bars: list[PriceBar], cik: str |
 def _drawdown_cause(
     record: DataRecord, edgar: EdgarClient, http: CachedHttp, *,
     bars: list[PriceBar] | None = None, cut: date | None = None,
-    anchor: AnchorDate | None = None,
+    anchor: AnchorDate | None = None, current_end: date | None = None,
 ) -> tuple[DrawdownCause, list[str]]:
     """The drawdown block, plus any flags for the human-review channel.
 
@@ -780,13 +780,26 @@ def _drawdown_cause(
     every committed `dossier.json`, and this condition fires only on a degraded feed. A tuple keeps
     the artifact untouched — there is exactly one production caller.
 
-    THE CURRENT WINDOW is the record's own events — the screen's, ending on its reference date.
-    ``anchor`` adds the dated parts (`_drawdown_anchor`), read from ``bars`` up to the page's
-    ``cut``; without them the block is the current window alone, as before.
+    THE CURRENT WINDOW ENDS ON ``current_end`` when it is given with ``bars`` (the page's price
+    date, 2026-11-04 item 3): the screen's detector over the ``DECLINE_WINDOW_DAYS`` ending on it,
+    on the stored closes the price box and chart read, so a drop after the last screen run is
+    classified, not only charted. Otherwise it is the record's own events (the screen's window,
+    ending on its reference date). ``anchor`` adds the dated parts (`_drawdown_anchor`).
     """
     cik = record.identity.cik
-    gaps = sorted(e.event_date for e in record.events if e.event_type.value == "earnings_gap_down")
-    read = _read_gaps(gaps, cik, edgar, http)
+    words = _CURRENT_WORDS
+    if bars is not None and current_end is not None:
+        start = current_end - timedelta(days=DECLINE_WINDOW_DAYS)
+        gaps = detect_gap_downs([b for b in bars if b.bar_date <= current_end], since=start)
+        span = f"{start.isoformat()} to {current_end.isoformat()}"
+        words = _GapWords(dates_ref=f"EOD gap-down detector, {span}",
+                          no_dates_note=f"no gap-down from {span}",
+                          none_shape=_CURRENT_WORDS.none_shape,
+                          none_ref=f"EOD gap-down detector, {span}: none")
+    else:
+        gaps = sorted(e.event_date for e in record.events
+                      if e.event_type.value == "earnings_gap_down")
+    read = _read_gaps(gaps, cik, edgar, http, words)
     flags = list(read.flags)
     dated: DrawdownAnchor | None = None
     if bars is not None and cut is not None:
@@ -801,6 +814,8 @@ def _drawdown_cause(
         # renderers can mark coverage honestly (window boundary + pre-window drops).
         gap_threshold=GAP_DOWN_THRESHOLD,
         gap_window_days=DECLINE_WINDOW_DAYS,
+        gap_window_end=(current_end.isoformat()
+                        if bars is not None and current_end is not None else None),
         anchor=dated,
     )
     return cause, flags
@@ -6044,10 +6059,9 @@ def assemble_mechanical(
     # the dated parts are read from the stored closes: at the anchor as of the anchor, and since
     # it to the cut (`_drawdown_anchor`)
     drawdown, drawdown_flags = _drawdown_cause(
-        record, edgar, http, cut=cut, anchor=drawdown_anchor,
-        # read only for a name with an anchor: an unanchored one builds the current window alone
-        bars=(store.get_price_history(record.identity.internal_id)
-              if drawdown_anchor is not None else None))
+        # every name's closes: the rolling window ends on the cut for all of them (item 3)
+        record, edgar, http, bars=store.get_price_history(record.identity.internal_id), cut=cut,
+        anchor=drawdown_anchor, current_end=cut)
     adj_eps, adj_ev, adj_lev = _adjusted_facts(
         record, edgar, drawdown.revised_guidance, reference_date, http=http, cut=cut)
     pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
