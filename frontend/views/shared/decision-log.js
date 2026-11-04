@@ -185,14 +185,15 @@ function entryCard(e, mark) {
   // CLOSE-AWARE (2026-07-27). The log had NO close handling at all: both closed positions read as
   // live BUYs. The verdict word and `resolved` are untouched — a call is scored at its horizon
   // whatever happened to the position, so exits can never launder the track record — but a closed
-  // row now says so, with its realized return derived from the two frozen prices (never stored).
+  // row now says so, with its realized return as the monitor day carries it (`getLedger`, on the
+  // exit's split basis) — or, before a monitor day carries the close, says it is not there yet.
   const cl = e.closed;
   const closedChip = cl
     ? `<span class="pill unresolved">closed ${fmtDate(cl.exitPriceAsOf)}${
         cl.exitPrice != null ? ` @ ${fmtPrice(cl.exitPrice)}` : ""}${
         cl.realizedReturn != null
           ? ` · ${cl.realizedReturn >= 0 ? "+" : "−"}${Math.abs(cl.realizedReturn * 100).toFixed(2)}%`
-          : ""}</span>`
+          : " · return not yet on a monitor day"}</span>`
     : "";
   const closeReason = cl && cl.reason
     ? `<div class="muted" style="font-size:11.5px; margin-top:6px;">Close reason — ${escapeHtml(cl.reason)}</div>`
