@@ -1,0 +1,52 @@
+{
+ "_provenance": "Polygon, read from a git-ignored worktree cache on 2026-11-04: the splits reference for MNST (/v3/reference/splits?ticker=MNST, every row as returned) and MNST's grouped-daily closes on 2026-08-07 and 2026-08-12 (adjusted=true, so on today's basis). The 2026-08-07 close as it printed that day is 2x the adjusted one, the 2-for-1 of 2026-08-11 the reference records; a position sealed then carries it.",
+ "splits": [
+  {
+   "execution_date": "2026-08-11",
+   "id": "E3bbed498c62db9fd36efa308cdd927111a399001673bccd4824d930794e8ba88",
+   "split_from": 1,
+   "split_to": 2,
+   "ticker": "MNST"
+  },
+  {
+   "execution_date": "2023-03-28",
+   "id": "Ee2b9ba17524e5eb95ab44c3c29ce7ee5d7e2ae4a6efc02672d0df282902070e7",
+   "split_from": 1,
+   "split_to": 2,
+   "ticker": "MNST"
+  },
+  {
+   "execution_date": "2016-11-10",
+   "id": "E3831db5f9dfa1222637b25753b18456c4b84ed50d8af5759d18e2709485e3cd0",
+   "split_from": 1,
+   "split_to": 3,
+   "ticker": "MNST"
+  },
+  {
+   "execution_date": "2012-02-16",
+   "id": "P9f66a7e9e421f4aa6c5b4ec619a44d916a10954a7130b1f94a4df6508db7894c",
+   "split_from": 1,
+   "split_to": 2,
+   "ticker": "MNST"
+  },
+  {
+   "execution_date": "2006-07-10",
+   "id": "Pf1c8af11ae38f0e8de424f6e20b14b6fe74b824d84d1c97acc5c74068449fb31",
+   "split_from": 1,
+   "split_to": 4,
+   "ticker": "MNST"
+  }
+ ],
+ "closes": {
+  "2026-08-12": {
+   "c": 45.98,
+   "v": 8544948.421167,
+   "adjusted": "true"
+  },
+  "2026-08-07": {
+   "c": 45.18,
+   "v": 17009688.18763,
+   "adjusted": "true"
+  }
+ }
+}

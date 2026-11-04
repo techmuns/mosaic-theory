@@ -148,3 +148,48 @@ def test_a_realized_row_naming_another_position_is_not_read() -> None:
     assert closed["V-SMPL-screen2-20260706"]["realizedReturn"] is None
     assert closed["V-IT-screen2-20260706"]["realizedReturn"] == _latest_realized()[
         "C-IT-screen2-20260706"]["realized_return"]
+
+
+def test_a_real_split_close_shows_what_pair_closes_derives() -> None:
+    """THE RED, ON REAL DATA. MNST split 2-for-1 on 2026-08-11 (Polygon's splits reference,
+    `tests/fixtures/realized_split/MNST.json`). A position sealed at the 2026-08-07 close as it
+    printed (90.36) and closed on 2026-08-12 (45.98) is the committed SMPL pair retargeted.
+    `vinci.monitor.pair_closes` puts the entry on the exit's basis (45.18) and derives +1.77%.
+    Main's web divided across the split: 45.98 / 90.36 − 1 = −49.1%. The monitor day carries
+    `pair_closes`' row, and the page now shows exactly that."""
+    from vinci.eod.splits import parse_splits
+    from vinci.monitor import pair_closes
+
+    fx = json.loads((ROOT / "tests" / "fixtures" / "realized_split" / "MNST.json").read_text())
+    sealed = round(fx["closes"]["2026-08-07"]["c"] * 2, 2)
+    exit_ = fx["closes"]["2026-08-12"]["c"]
+    rows = [json.loads(line) for line in LEDGER.read_text().splitlines()]
+
+    def retarget(entry_id: str, upd: dict[str, Any]) -> dict[str, Any]:
+        row = next(r for r in rows if json.loads(r["payload"])["entry_id"] == entry_id)
+        payload = {**json.loads(row["payload"]), **upd}
+        return {**row, **{k: v for k, v in upd.items() if k in row}, "payload": json.dumps(payload)}
+
+    who = {"ticker": "MNST", "internal_id": "SEC-0000865752-MNST", "candidate_id": "MNST-split",
+           "entry_price": sealed, "entry_price_as_of": "2026-08-07"}
+    ledger = rows + [
+        retarget("V-SMPL-screen2-20260706", {**who, "entry_id": "V-MNST-split"}),
+        retarget("C-SMPL-screen2-20260706", {
+            **who, "entry_id": "C-MNST-split", "closes_entry_id": "V-MNST-split",
+            "exit_price": exit_, "exit_price_as_of": "2026-08-12"}),
+    ]
+    splits = parse_splits(fx["splits"], symbol="MNST")
+    derived = next(r for r in pair_closes(ledger, splits=lambda s: splits if s == "MNST" else [])
+                   if r["ticker"] == "MNST")
+    assert round(derived["entry_price"], 2) == round(sealed / 2, 2), derived
+
+    index = json.loads((MONITOR / "index.json").read_text())
+    day = json.loads((MONITOR / f"{index['latest']}.json").read_text())
+    day["realized"] = [*day["realized"], {k: str(v) if k.endswith("_as_of") else v
+                                          for k, v in derived.items() if k != "split_note"}]
+    closed = _closed({"./snapshots/decision_ledger.jsonl":
+                      "\n".join(json.dumps(r) for r in ledger) + "\n",
+                      f"./monitor/{index['latest']}.json": json.dumps(day)})
+    got = closed["V-MNST-split"]["realizedReturn"]
+    assert got == derived["realized_return"], (got, derived["realized_return"])
+    assert abs(got - (exit_ / sealed - 1)) > 0.4, "the page still divides across the split"

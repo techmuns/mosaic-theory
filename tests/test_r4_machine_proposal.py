@@ -110,16 +110,20 @@ def test_the_count_and_the_prose_are_one_read() -> None:
 
 # --- the ruled selection, and each condition on the page that fails it --------------------------
 
-def test_the_rule_selects_amzn_and_uber_and_no_other_name() -> None:
+def test_the_rule_selects_amzn_googl_and_uber_and_no_other_name() -> None:
     """The ELIGIBILITY test the rule was ratified on, now run by the machine: AMZN and UBER — the
-    ratified table — and no other committed name."""
+    ratified table — and, since its 2026-11-02 page, GOOGL, whose FY P/E rows on that day's
+    EstimatesReport fit GAAP EPS (its committed R3 still wins: the proposal is shown, never
+    written). No other committed name."""
     proposed = [t for t in PAGES if (FIX / f"{t}.json").is_file()
                 and rp.propose(d := _with_count(t), _r1(d)).recipe_hint == rp.RECIPE_R4]
-    assert proposed == ["AMZN", "UBER"]
+    assert proposed == ["AMZN", "GOOGL", "UBER"]
 
 
 @pytest.mark.parametrize("ticker,failing,why", [
-    ("GOOGL", 2, "normalized"),          # FY P/E struck on normalized EPS
+    # FY P/E struck on normalized EPS, with conditions 1 and 2 met and 4 of 4 quarters material —
+    # the shape GOOGL's page carried until 2026-11-02
+    ("MVST", 2, "normalized"),
     ("AORT", 2, "0 of the trailing"),    # GAAP-struck, but no material quarter
     ("VRRM", 1, "R1 anchors"),           # R1 anchors and the EBITDA basis is not divergent
 ])

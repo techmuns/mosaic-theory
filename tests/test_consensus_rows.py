@@ -108,11 +108,14 @@ def test_revenue_resolves_on_every_name(ticker: str) -> None:
     and nothing in the suite noticed. Pinned per name so a regression names its own casualty.
 
     RESOLUTION IS THE REGRESSION THIS FILE EXISTS FOR, and it is asserted unconditionally: rows
-    resolve, the first forward FY is the pinned one, every cell is forward. None of that moves
-    when brokers revise, so none of it is gated.
+    resolve. That does not move when brokers revise, so it is not gated.
 
-    THE EXACT MEDIAN AND PAIR ARE GATED ON THE EXPORT'S VINTAGE, because they are a snapshot of a
-    quantity that legitimately moves. Without the gate this test fails the moment an operator
+    THE FIRST FORWARD FY, THE EXACT MEDIAN AND THE PAIR ARE GATED ON THE EXPORT'S VINTAGE, because
+    each is a snapshot of a quantity that legitimately moves. The first forward FY was asserted
+    unconditionally until 2026-11-04, on the reasoning that brokers do not move it — true, but the
+    CALENDAR does: SMPL's fiscal 2026 closed, its 2026-10-28 export opens at FY2027, and the pin
+    failed with nothing broken. Every name's pin moves at its next fiscal year-end the same way.
+    Without the gate this test fails the moment an operator
     re-pulls any one export — as BRBR's did after its Q3 print — and it fails ONLY on a machine
     holding licensed data, so CI can never see it and the red lands on whoever is doing unrelated
     work that day. A pin that reddens on someone else's data refresh is not measuring the code.
@@ -127,17 +130,19 @@ def test_revenue_resolves_on_every_name(ticker: str) -> None:
     cells = consensus_rows(bundle, metric="Revenue")
     assert cells, f"{ticker}: Revenue resolved no forward fiscal years"
     first = cells[0]
-    assert first.fy == fy, f"{ticker}: first forward year {first.fy}, expected {fy}"
 
     vintage = data_vintage(bundle)
     if vintage is not None and vintage > verified_at:
         pytest.skip(
             f"{ticker}: export re-pulled since this baseline was verified "
-            f"(data ≥{vintage} > pinned {verified_at}) — brokers revise, so median/pair are "
-            f"expected to move. Resolution and forward-year checks above still ran and passed. "
-            f"Reads now: median {first.median!r}, pair {first.estimates!r} — re-pin with "
-            f'("{fy}", {round(first.median, 1)}, "{first.estimates}", "{vintage}") once verified.')
+            f"(data ≥{vintage} > pinned {verified_at}) — brokers revise and fiscal years close, "
+            f"so the first forward FY, median and pair are expected to move. The resolution "
+            f"check above still ran and passed. Reads now: first FY {first.fy!r}, median "
+            f"{first.median!r}, pair {first.estimates!r} — re-pin with "
+            f'("{first.fy}", {round(first.median, 1)}, "{first.estimates}", "{vintage}") once '
+            f"verified.")
 
+    assert first.fy == fy, f"{ticker}: first forward year {first.fy}, expected {fy}"
     assert first.median == pytest.approx(median, rel=1e-3)
     assert first.estimates == pair, (
         f"{ticker}: estimate pair {first.estimates!r}, expected {pair!r}")
@@ -201,8 +206,19 @@ def test_an_unparseable_vintage_asserts_rather_than_disabling_the_baseline() -> 
 
 def test_the_block_is_selected_by_value_not_by_position() -> None:
     """SMPL's decisive case. Both annual blocks are titled `Company Level (USD)`; only the values
-    differ. FY2026 Revenue 1351.75 is the consensus block, 1324.66 is not."""
-    cells = consensus_rows(_bundle("SMPL"), metric="Revenue")
+    differ. FY2026 Revenue 1351.75 is the consensus block, 1324.66 is not.
+
+    THE TWO FIGURES ARE THE BASELINE'S EXPORT'S, so this runs under the baseline's own vintage rule
+    (`REVENUE_BASELINE`, `data_vintage`): on 2026-11-04 SMPL's 2026-10-28 export had closed fiscal
+    2026, so no FY2026 cell was left to select."""
+    bundle = _bundle("SMPL")
+    verified_at = REVENUE_BASELINE["SMPL"][3]
+    vintage = data_vintage(bundle)
+    if vintage is not None and vintage > verified_at:
+        pytest.skip(f"SMPL: export re-pulled since the baseline was verified (data ≥{vintage} > "
+                    f"pinned {verified_at}); the FY2026 figures this case names were that "
+                    "export's")
+    cells = consensus_rows(bundle, metric="Revenue")
     fy26 = next((c for c in cells if c.fy == "2026"), None)
     assert fy26 is not None
     assert fy26.median == pytest.approx(1351.7, rel=1e-3), (

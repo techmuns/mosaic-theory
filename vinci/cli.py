@@ -320,8 +320,14 @@ def _cmd_eod(args: argparse.Namespace) -> int:
     if not bars:
         print(f"no stored bars for {ident.ticker}; run `vinci refresh` first")
         return 1
-    f = compute_price_features(bars, reference_date=ref, staleness_days=cfg.price_staleness_days)
-    span = f"{bars[0].bar_date}..{bars[-1].bar_date} ({len(bars)} bars)"
+    # bounded at the date asked for: no later bar is read, and the 52-week window ends on the
+    # price date (audit F-D4)
+    f = compute_price_features(bars, reference_date=ref, staleness_days=cfg.price_staleness_days,
+                               frontier=ref)
+    # the span the features were computed over, not the whole store (review of #884)
+    read = [b for b in bars if b.bar_date <= ref]
+    span = (f"{read[0].bar_date}..{read[-1].bar_date} ({len(read)} bars)" if read
+            else f"no bar on or before {ref}")
     print(f"=== {ident.ticker} ({ident.name})  features as of {ref}  [{span}] ===")
     for label, field in [
         ("last close", f.last),
@@ -976,8 +982,10 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
         raise   # a money panel stating another currency is refused, as assembly refuses it
     except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
         print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
+    # cut at the page's price date, its reference date when there is no stored close (E2-D21)
     anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
-                            computed_at=datetime.now(UTC), ciq=ciq)
+                            computed_at=datetime.now(UTC), ciq=ciq,
+                            reference_date=d.reference_date)
     if scale is not None:
         anchor = anchor.model_copy(update={"ciq_scale_check": scale})
     # (2026-10-09) the machine's R4 proposal, on the page as committed — the same rule the

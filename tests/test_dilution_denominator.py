@@ -481,6 +481,13 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #:
 #: **NFLX and LLY LANDED** (2026-10-30): re-assembled on #865's code, their bases are the
 #: recompute's (NFLX 53.5401→54.435, LLY 699.6511→752.2356).
+#:
+#: **LLY IS NOT LISTED, ON PURPOSE** (audit E2-D21, 2026-11-03,
+#: `docs/records/2026-11-02-net-debt-is-read-as-filed-by-the-pages-price-date.md`). Its committed
+#: anchor (752.2356) read its Q3 10-Q, filed 2026-10-29, after the page's 2026-10-28 price date.
+#: Cut whole there, its base is None, not a different number: no EDGAR D&A covers the window to
+#: 2026-09-30. A recompute that values nothing is not a divergence; it lands in
+#: BRIDGE_ONLY_ANCHORS below, and listing LLY here would red this pin on an anchor nobody can value.
 ANCHORS_AWAITING_BACKFILL: set[str] = {
     "AORT", "BRBR", "BURL", "EPAM", "IT", "PARR", "SMPL", "TGT", "VRRM", "WLK"}
 

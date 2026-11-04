@@ -38,23 +38,35 @@ return is shown as none, never as a guess.
 - **`tests/test_web_realized_return.py`** executes the real module. Node imports `snapshots.js`
   with `fetch` stubbed onto the committed `data/snapshots/decision_ledger.jsonl` and
   `frontend/monitor/`, and reads `getLedger()` as both views do.
-  - **Red on `origin/main` a7e1214b:**
-    - **Across a split.** The committed SMPL close, its sealed entry put on a pre-split basis
-      (21.84, a 2-for-1 of 10.92). Main read −51.8%; the monitor day's row reads −3.57%.
+  - **Red on main's `snapshots.js`** (a7e1214b; unchanged through cfedcb39):
+    - **Across a REAL split.** MNST split 2-for-1 on 2026-08-11 (Polygon's splits reference,
+      frozen with MNST's two grouped-daily closes in `tests/fixtures/realized_split/MNST.json`).
+      A position sealed at the 2026-08-07 close as printed (90.36) closes at 45.98 on 2026-08-12;
+      it is the committed SMPL decision and close retargeted. The real `pair_closes` puts the
+      entry on the exit's basis (45.18) and derives +1.77%; the monitor day carries that row.
+      Main read −49.11%; the page now shows +1.77%.
+    - **Across a split, constructed.** The committed SMPL close, its sealed entry put on a
+      pre-split basis (21.84, a 2-for-1 of 10.92). Main read −51.8%; the monitor day's row reads
+      −3.57%.
     - **Not yet on a monitor day.** The latest day set to 2026-07-20, before both closes. Main
       computed IT 0 and SMPL −3.57%; now none, with the close's exit price kept.
     - **No monitor history.** Main computed both; now none.
-  - **The guard:** a realized row naming another position is not read. Red with the
-    `entry_id` check removed.
+  - **The guard:** a realized row naming another position is not read. Red on main, and red
+    with the `entry_id` check removed.
   - **The fence, green on both:** on the committed files, IT and SMPL show exactly the
-    2026-10-28 monitor day's rows.
-- **Real run**, the committed files through each version of `snapshots.js`:
+    latest monitor day's rows (2026-11-02 on the merged tree).
+- **Real run** on the tree merged with main at cfedcb39 (latest monitor day 2026-11-02): every
+  closed position through each version of `snapshots.js`, on the committed files and with the
+  MNST close above overlaid:
   ```
-  branch: IT   entry 141.06 -> exit 141.06 2026-07-21 | realizedReturn 0
-          SMPL entry 10.92  -> exit 10.53  2026-07-22 | realizedReturn -0.03571428571428581
-  main:   (identical)
+  main,   committed:  IT   sealed 141.06  exit 141.06 (2026-07-21)  realized 0.00%
+                      SMPL sealed 10.92   exit 10.53  (2026-07-22)  realized -3.57%
+  main,   + MNST:     MNST sealed 90.36   exit 45.98  (2026-08-12)  realized -49.11%
+  branch, committed:  IT 0.00%, SMPL -3.57% (identical)
+  branch, + MNST:     MNST sealed 90.36   exit 45.98  (2026-08-12)  realized 1.77%
   ```
-  No committed close spans a split, so the deployed page reads the same today.
+  No committed close spans a split, so the change moves no position on the deployed page today.
+  The only move is the split case, −49.11% → +1.77%.
 - `tests/test_sleeves.py::test_the_decision_log_page_actually_renders` still renders the real
   decision log over the committed snapshots.
 - One existing pin's message said the return "is derived here". It now says it is the monitor
@@ -63,9 +75,11 @@ return is shown as none, never as a guess.
   drift test's watched modules, and no dossier output moves.
 
 **BOUNDARY.**
-- **Code:** branch `claude/p2d-d5-realized-return` from `origin/main` a7e1214b.
+- **Code:** branch `claude/p2d-d5-realized-return` from `origin/main` a7e1214b, merged with
+  main at cfedcb39 (#884–#889) on 2026-11-04.
 - **Data:** the committed ledger (7 rows: 2 closes, IT and SMPL) and the committed monitor
-  history (7 days, latest 2026-10-28), read 2026-11-02.
+  history (9 days, latest 2026-11-02), read 2026-11-04. MNST's split row and two closes come from
+  Polygon, read from a git-ignored worktree cache on 2026-11-04.
 
 **FOUND, NOT FIXED.**
 - **E2-D14 extends to notes lists** (the coordinator's review of #883). `edgar.debt_maturities.
