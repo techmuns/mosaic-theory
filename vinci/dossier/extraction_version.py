@@ -422,6 +422,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "decide still refuses the build, saying why (`financial_summary.filed_ltm`)",
     ),
     (
+        "2026-11-04.amendment-recital",
+        "a covenant exhibit whose capitals heading is an amendment naming no contract (REPRICING "
+        "AMENDMENT, AMENDMENT NO 2.) is named for the first contract its recital names and marked "
+        "an amendment, so a credit-agreement amendment reaches the covenant extractor and any "
+        "other is refused for what it amends (an office lease); a CERTIFICATE or ARTICLES OF "
+        "AMENDMENT and a title-cased heading are not read this way",
+    ),
+    (
         "2026-11-04.rank-written-as-rank",
         "the #890 trace is narrowed (its cross-review): a percentile's rank traces only for a "
         "figure written as a rank (a number, ordinal or not, before percentile / pctile / %ile; "
