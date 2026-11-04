@@ -4396,8 +4396,9 @@ def test_revised_guidance_extracts_figures_block_not_lede() -> None:
         "of $380 million to $385 million; Adjusted EPS of $1.19 to $1.25; Free Cash Flow of $140 "
         "million to $150 million."
     )
-    block = dm._extract_revised_guidance(lede + filler + figures)
-    assert block is not None
+    found = dm._extract_revised_guidance(lede + filler + figures)
+    assert found is not None
+    block = found.text
     assert all(s in block for s in ("985", "380", "1.19", "140"))  # all four figures, verbatim
     assert "termination notice from Avis" not in block  # lede skipped (no figures in its window)
     assert dm._extract_revised_guidance("An earnings call. Revenue grew. No outlook given.") is None
@@ -4423,8 +4424,10 @@ def test_revised_guidance_updating_verb_matches_and_initial_does_not() -> None:
         "300 and 350 basis points year-over-year Adjusted EBITDA expected to range between $217 "
         "to $225 million, or -22% to -19% year-over-year"
     )
-    block = dm._extract_revised_guidance(smpl)
-    assert block is not None and "$1.31" in block and "$217" in block
+    found = dm._extract_revised_guidance(smpl)
+    assert found is not None
+    block = found.text
+    assert "$1.31" in block and "$217" in block
     assert "reported financial results" not in block  # the results-lede headline window lost
     initial = (
         "The Company provides its fiscal year 2027 outlook: Net sales expected between $1.40 "
@@ -4449,13 +4452,13 @@ def test_revised_guidance_note_honest_and_accessions_deduped(
             return "<p>An earnings call transcript. No outlook discussed.</p>"
 
     monkeypatch.setattr(dm, "_exhibit_991_url", lambda http, cik, acc: "http://x/ex991.htm")
-    got = dm._revised_guidance(_Http(), "1", [f, twin])  # type: ignore[arg-type]
-    assert got.status is ds.SourceStatus.UNKNOWN
+    got, cut = dm._revised_guidance(_Http(), "1", [f, twin])  # type: ignore[arg-type]
+    assert got.status is ds.SourceStatus.UNKNOWN and cut is None  # no quote, so nothing is cut
     note = str(got.note)
     assert "block matched" in note and note.count("A-1") == 1
     assert "exhibit parsed" not in note
     monkeypatch.setattr(dm, "_exhibit_991_url", lambda http, cik, acc: None)
-    got2 = dm._revised_guidance(_Http(), "1", [f])  # type: ignore[arg-type]
+    got2 = dm._revised_guidance(_Http(), "1", [f]).guidance  # type: ignore[arg-type]
     assert "no 99.1 exhibit located" in str(got2.note)
 
 

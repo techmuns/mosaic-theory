@@ -603,6 +603,12 @@ class DrawdownCause(BaseModel):
     # unmarked. None on pre-field committed JSON → the renderers skip the boundary/hollow marks.
     gap_threshold: float | None = None  # single-day close-to-close drop that fires the detector
     gap_window_days: int | None = None  # how far back from the reference date the detector scans
+    # (2026-11-04) `revised_guidance` is a WINDOW of the release, `mechanical._GUIDANCE_WINDOW`
+    # characters from its outlook heading: True = the release goes on past it, so the quote is cut
+    # and the renderers say so where it stops; False = the release ended inside the window. None —
+    # ABSENT (`DROP_WHEN_NONE`) — when the guidance is not PRESENT, or on a page built before the
+    # field, whose quote the renderers mark as possibly cut (it came from the same window).
+    revised_guidance_cut: bool | None = None
 
     model_config = {"frozen": True}
 
@@ -3119,6 +3125,8 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("stock_info", "ads_ratio"),
     # a ≤12m wall stated on a basis other than principal (`MaturityWall.basis`, audit E2-D15)
     ("primary_source.filing.maturity_wall", "basis"),
+    # whether the drawdown outlook quote is cut at its window (`DrawdownCause`, 2026-11-04)
+    ("drawdown_cause", "revised_guidance_cut"),
 )
 
 

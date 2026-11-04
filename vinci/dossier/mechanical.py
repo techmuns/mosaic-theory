@@ -455,7 +455,22 @@ def _exhibit_991_url(http: CachedHttp, cik: str, accession: str) -> str | None:
     return urls[0] if urls else None
 
 
-def _extract_revised_guidance(text: str) -> str | None:
+#: How much of the release the outlook quote takes, in raw characters from its anchor (whitespace is
+#: collapsed AFTER the cut, so the stored quote can be shorter: VITL's is 799).
+_GUIDANCE_WINDOW = 800
+
+
+class _OutlookWindow(NamedTuple):
+    """The outlook quote and whether the release goes on past it. ``cut`` is the extractor's own
+    knowledge, recorded because the quote cannot carry it: all four committed quotes (BRBR, SMPL,
+    VITL, VRRM at main ``481e82f7``) stop mid-word at the window and were printed as verbatim with
+    nothing saying so. A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION."""
+
+    text: str
+    cut: bool
+
+
+def _extract_revised_guidance(text: str) -> _OutlookWindow | None:
     """The REVISED full-year outlook block (figures verbatim) from a 99.1 press release. Anchored on
     'revis…/updat…(full-year|outlook|guidance)' so it surfaces a *changed* outlook, not an initial
     one ('updat' is load-bearing: SMPL's 2026-04-09 exhibit said 'Updating Fiscal Year 2026
@@ -468,19 +483,33 @@ def _extract_revised_guidance(text: str) -> str | None:
     anchor) wins over a bare headline: SMPL's top headline ('Updates Fiscal Year 2026 Outlook
     Denver, CO …') passes the money+metric test on the RESULTS lede behind it, while the actual
     outlook bullets sit under the later 'Updating Fiscal Year 2026 Outlook:' heading. The first
-    figures-bearing window stays as the fallback when no colon-introduced anchor exists."""
-    fallback: str | None = None
+    figures-bearing window stays as the fallback when no colon-introduced anchor exists.
+
+    The window is ``_GUIDANCE_WINDOW`` characters, so the quote is usually cut short of the
+    outlook's end; ``cut`` says whether any text follows it, and the quote is never extended or
+    completed."""
+    fallback: _OutlookWindow | None = None
     for m in _GUIDANCE_ANCHOR.finditer(text):  # skip the lede; take the anchor whose window has the
-        window = " ".join(text[m.start() : m.start() + 800].split())  # the figures window
+        end = m.start() + _GUIDANCE_WINDOW
+        window = " ".join(text[m.start() : end].split())  # the figures window
         if len(_MONEY.findall(window)) >= 2 and _METRIC.search(window):
+            found = _OutlookWindow(window, cut=bool(text[end:].strip()))
             if ":" in text[m.start() : m.end() + 40]:
-                return window
+                return found
             if fallback is None:
-                fallback = window
+                fallback = found
     return fallback
 
 
-def _revised_guidance(http: CachedHttp, cik: str, filings: list[FilingRef]) -> Sourced[str]:
+class _Outlook(NamedTuple):
+    """`_revised_guidance`'s answer: the guidance, and whether its quote is cut (None unless the
+    guidance is PRESENT) — the two `DrawdownCause` fields it fills."""
+
+    guidance: Sourced[str]
+    cut: bool | None = None
+
+
+def _revised_guidance(http: CachedHttp, cik: str, filings: list[FilingRef]) -> _Outlook:
     """Follow the furnished 99.1 exhibit on the drawdown 8-Ks (the body only *points* to it) and
     surface the company's revised full-year guidance — the verdict-relevant number. Source-bound to
     the exhibit; fail loud UNKNOWN naming the accession(s). The UNKNOWN note distinguishes 'a 99.1
@@ -504,18 +533,19 @@ def _revised_guidance(http: CachedHttp, cik: str, filings: list[FilingRef]) -> S
             continue
         parsed.append(f.accession)
         block = _extract_revised_guidance(text)
-        if block:
+        if block is not None:
             ref = f"EDGAR 8-K {f.accession} Ex-99.1 — {url}"
-            return Sourced.present(block, source_ref=ref)
+            return _Outlook(Sourced.present(block.text, source_ref=ref), cut=block.cut)
     if parsed:
-        return Sourced.unknown(
-            note=f"no revised-outlook block matched in the parsed 99.1 for 8-Ks {parsed}")
+        return _Outlook(Sourced.unknown(
+            note=f"no revised-outlook block matched in the parsed 99.1 for 8-Ks {parsed}"))
     if tried:
         # located/fetched: an accession lands here when no 99.1 URL was found OR the fetch
         # errored — the exhibit may exist unretrieved; never claim more precision than we have.
         # The "for 8-Ks ['…']" tail is the shape _clean_note/cleanNote singularize — keep it.
-        return Sourced.unknown(note=f"no 99.1 exhibit located/fetched for 8-Ks {tried}")
-    return Sourced.unknown(note="no results/Reg-FD/other-event 8-K at the gap-downs with a 99.1")
+        return _Outlook(Sourced.unknown(note=f"no 99.1 exhibit located/fetched for 8-Ks {tried}"))
+    return _Outlook(Sourced.unknown(
+        note="no results/Reg-FD/other-event 8-K at the gap-downs with a 99.1"))
 
 
 def _drawdown_cause(
@@ -604,21 +634,23 @@ def _drawdown_cause(
         drawdown_flags.append(
             f"drawdown-cause: {why} — {n_dates} gap-down date(s) carry no attributed cause; {fix}"
         )
+    outlook = (
+        _revised_guidance(http, cik, filings)
+        if cik and filings
+        # the same distinction as `shape`: "we could not look" must not read as "there was
+        # nothing to find", or a degraded run reports an absence it never established.
+        else _Outlook(Sourced.unknown(
+            note=f"{why} — no catalyst 8-K could be identified"
+            if lookup_failed
+            else "no catalyst 8-K to follow for a revised-guidance exhibit"
+        ))
+    )
     cause = DrawdownCause(
         shape=shape,
         gap_down_dates=dates_field,
         filings=filings,
-        revised_guidance=(
-            _revised_guidance(http, cik, filings)
-            if cik and filings
-            # the same distinction as `shape`: "we could not look" must not read as "there was
-            # nothing to find", or a degraded run reports an absence it never established.
-            else Sourced.unknown(
-                note=f"{why} — no catalyst 8-K could be identified"
-                if lookup_failed
-                else "no catalyst 8-K to follow for a revised-guidance exhibit"
-            )
-        ),
+        revised_guidance=outlook.guidance,
+        revised_guidance_cut=outlook.cut,
         # the detector's own params, copied from the screen constants (ONE source of truth) so the
         # renderers can mark coverage honestly (window boundary + pre-window drops).
         gap_threshold=GAP_DOWN_THRESHOLD,

@@ -78,8 +78,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "e6044a5abdc2"
-PINNED_AT = "2026-11-04.footnote-every-figure"
+PINNED_TABLE = "b1d41737a449"
+PINNED_AT = "2026-11-04.guidance-quote-cut"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -109,12 +109,12 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ltm_quarters.py": "976073b15fc6",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
-    "vinci/dossier/mechanical.py": "d66270befc43",
+    "vinci/dossier/mechanical.py": "c0cb5dba0607",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "614e5530df26",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "72b356b69117",
+    "vinci/dossier/schemas.py": "1d73e13d6eab",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
     "vinci/dossier/synthesis.py": "8b37b64d3e13",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",

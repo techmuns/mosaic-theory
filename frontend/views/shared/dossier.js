@@ -305,6 +305,12 @@ const EXTRACTION_VERSIONS = [
     "ref as before; and the blocks the assembler builds (consensus levels, peer capital intensity, " +
     "checked maturities, the EV/EBITDA bases, the EBITDA basis, implied expectations, a filed " +
     "LTM's two CIQ readings) carry a source_ref a point can cite"],
+  ["2026-11-04.guidance-quote-cut",
+    "the drawdown outlook quote says where it stops: `_extract_revised_guidance` quotes 800 " +
+    "raw characters of the 99.1 from its outlook heading and now records whether the release " +
+    "goes on past them (`drawdown_cause.revised_guidance_cut`, absent until built); the quote " +
+    "is unchanged, and the page marks it cut, or on a page built before the field, possibly " +
+    "cut"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
@@ -809,6 +815,19 @@ function fact(label, s, fmt, { hi = false } = {}) {
   const caveat = s.note ? `<div class="fact-caveat">⚠ ${escapeHtml(s.note)}</div>` : "";
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
     <div class="fact-val${hi ? " hi" : ""}">${val}${cite}${caveat}</div></div>`;
+}
+
+// (2026-11-04) where the drawdown outlook quote stops — twin of render.py GUIDANCE_CUT_MARK /
+// GUIDANCE_MAYBE_CUT_MARK (bound by tests/test_guidance_cut_mark.py). The quote is a WINDOW of the
+// release; `revised_guidance_cut` true = cut, false = the release ended inside it (no mark), absent
+// on a page built before the field = may be cut. The quote is printed as stored, never completed.
+const GUIDANCE_CUT_MARK = "… (quote cut — the outlook continues in the filing)";
+const GUIDANCE_MAYBE_CUT_MARK = "… (quote may be cut — see the filing)";
+function guidanceFact(label, dc) {
+  const cut = dc.revised_guidance_cut;
+  const mark = cut === false ? "" : (cut ? GUIDANCE_CUT_MARK : GUIDANCE_MAYBE_CUT_MARK);
+  return fact(label, dc.revised_guidance, (v) => escapeHtml(String(v))
+    + (mark ? `<span class="muted">${escapeHtml(mark)}</span>` : ""));
 }
 
 const sec = (title, sub, inner) => `<div class="card ds-section"><div class="ds-title">${escapeHtml(title)}</div>${sub ? `<div class="subtitle muted ds-sub">${escapeHtml(sub)}</div>` : ""}${inner}</div>`;
@@ -2705,7 +2724,7 @@ function drawdownIdio(m, refDate, sleeve) {
   const io = idioVsShared(m.idiosyncratic_vs_shared, m.stock_performance && m.stock_performance.name_symbol);
   // legacy no-street-card JSON: the guidance fact renders here so it is never dropped
   const legacyGuide = (!m.catalyst_path && m.drawdown_cause)
-    ? fact("Revised guidance", m.drawdown_cause.revised_guidance) : "";
+    ? guidanceFact("Revised guidance", m.drawdown_cause) : "";
   if (!dd.read && !dd.evidence && !io && !legacyGuide) return "";
   const divider = `<div class="ds-title" style="font-size:12px; margin-top:10px;">Company-specific or market-wide?</div>`;
   return sec(sleeveCopy(sleeve).drawdown,
@@ -4501,7 +4520,7 @@ function catalystPath(cp, cc, dc = null, ps = null) {
   // (item 1 clause (c)) THE SPLIT — twin of render.py. Two questions that were one field:
   // guidance AT THE DRAWDOWN (drawdown-vintage by construction) vs the guide that GOVERNS today.
   // They diverge exactly when guidance is revised after the gap, which is SMPL.
-  const revised = dc ? fact("Guidance at the drawdown (8-K 99.1)", dc.revised_guidance) : "";
+  const revised = dc ? guidanceFact("Guidance at the drawdown (8-K 99.1)", dc) : "";
   const curGuide = (ps || {}).current_guide;
   const current = curGuide ? fact("Current guide (latest results filing)", curGuide) : "";
   // (content relocation 2026-07-24) positioning (insider activity, short interest) moved OUT of
