@@ -74,7 +74,7 @@ console.log(JSON.stringify(Object.fromEntries(
 def _latest_realized() -> dict[str, dict[str, Any]]:
     latest = json.loads((MONITOR / "index.json").read_text())["latest"]
     day = json.loads((MONITOR / f"{latest}.json").read_text())
-    return {r["close_id"]: r for r in day["realized"]}
+    return {r["close_id"]: r for r in day.get("realized", [])}
 
 
 def _ledger_with_sealed_entry(entry_id: str, price: float) -> str:
@@ -141,7 +141,7 @@ def test_a_realized_row_naming_another_position_is_not_read() -> None:
     the close beside it, intact, still reads its own."""
     index = json.loads((MONITOR / "index.json").read_text())
     day = json.loads((MONITOR / f"{index['latest']}.json").read_text())
-    for r in day["realized"]:
+    for r in day.get("realized", []):
         if r["close_id"] == "C-SMPL-screen2-20260706":
             r["entry_id"] = "V-IT-screen2-20260706"
     closed = _closed({f"./monitor/{index['latest']}.json": json.dumps(day)})
@@ -161,7 +161,9 @@ def test_a_real_split_close_shows_what_pair_closes_derives() -> None:
     from vinci.monitor import pair_closes
 
     fx = json.loads((ROOT / "tests" / "fixtures" / "realized_split" / "MNST.json").read_text())
-    sealed = round(fx["closes"]["2026-08-07"]["c"] * 2, 2)
+    split = next(r for r in fx["splits"] if r["execution_date"] == "2026-08-11")
+    ratio = split["split_to"] / split["split_from"]          # 2-for-1: the bar is on today's basis
+    sealed = round(fx["closes"]["2026-08-07"]["c"] * ratio, 2)
     exit_ = fx["closes"]["2026-08-12"]["c"]
     rows = [json.loads(line) for line in LEDGER.read_text().splitlines()]
 
@@ -181,11 +183,11 @@ def test_a_real_split_close_shows_what_pair_closes_derives() -> None:
     splits = parse_splits(fx["splits"], symbol="MNST")
     derived = next(r for r in pair_closes(ledger, splits=lambda s: splits if s == "MNST" else [])
                    if r["ticker"] == "MNST")
-    assert round(derived["entry_price"], 2) == round(sealed / 2, 2), derived
+    assert round(derived["entry_price"], 2) == round(sealed / ratio, 2), derived
 
     index = json.loads((MONITOR / "index.json").read_text())
     day = json.loads((MONITOR / f"{index['latest']}.json").read_text())
-    day["realized"] = [*day["realized"], {k: str(v) if k.endswith("_as_of") else v
+    day["realized"] = [*day.get("realized", []), {k: str(v) if k.endswith("_as_of") else v
                                           for k, v in derived.items() if k != "split_note"}]
     closed = _closed({"./snapshots/decision_ledger.jsonl":
                       "\n".join(json.dumps(r) for r in ledger) + "\n",
