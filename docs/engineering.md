@@ -597,6 +597,10 @@ PR (CLAUDE.md: coin-time translation).
   *the one limit on requests to SEC's hosts that every client, thread and `vinci` process on the
   machine shares (8 a second, through a locked file); after SEC refuses one request, nobody on the
   machine sends to SEC for SEC's whole window.*
+- **Fact layer / snapshot** (2026-11-04, `vinci/facts/`, `data/facts/`) — plain words: *every
+  extracted fact stored once, point-in-time, as immutable Parquet files named by their own hash; a
+  snapshot is the committed JSON manifest naming one set of those files, and "as of a date" is
+  `filed_date <= date`.*
 
 ## Local setup (every laptop, every contributor)
 
