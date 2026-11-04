@@ -77,8 +77,8 @@ figure cited to the wrong single fact. That is a citation-shape problem, which o
 citation fixes without loosening the trace.
 
 **HOW VERIFIED.** All runs go through the real `_validate` / renderers with no model call.
-- **Committed pages unchanged** (the 27 pages, the same at 4a820016 and 8d2bb733; main's code at
-  each against this branch, the second after merging main):
+- **Committed pages unchanged** (the 27 pages, the same at 4a820016, 8d2bb733 and 865c8b5c; main's
+  code at each against this branch, the later two after merging main):
   - every `_validate` flag identical: 399 flags, 326 UNTRACEABLE;
   - the web render (`renderDossier`, node) byte-identical on all 27;
   - the Markdown render byte-identical on all 27;
@@ -96,6 +96,8 @@ citation fixes without loosening the trace.
   - The frozen G-D6 draw: 195 of 199 either way (pinned).
   - **Made-up COMPUTED figures** declared from two real, traced inputs: 1,564 of 1,564 and 1,408 of
     1,408 caught.
+  - Re-run on the code after the review round and the merge with main (c46310e3): every count above
+    reproduces, set for set.
 - **Pins.** `tests/test_footnote_every_figure.py`, 85 cases:
   - schema and serializer;
   - the per-figure check, positive and negative, on frozen SMPL;
@@ -116,7 +118,7 @@ citation fixes without loosening the trace.
 
 **BOUNDARY.**
 - The committed corpus is the 27 `data/dossiers/*/dossier.json` at 4a820016, measured 2026-11-04,
-  and unchanged at 8d2bb733 (`git diff 4a820016 8d2bb733 -- data/dossiers` is empty).
+  and unchanged at 8d2bb733 and 865c8b5c (`git diff 4a820016 865c8b5c -- data/dossiers` is empty).
   The 30-version population is 9e996d7f's 27 pages plus #886's three at 2746d0ef.
 - Mutations: one-point syntheses through the real `_validate`, seeded `20261104:<T>`, four per
   committed structured point.
