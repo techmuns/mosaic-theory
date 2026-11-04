@@ -32,7 +32,7 @@ from pathlib import Path
 from typing import Any
 
 from vinci.edgar.concepts import facts_as_of
-from vinci.facts.edgar_ingest import read_cached_companyfacts
+from vinci.facts.edgar_ingest import NotInCacheError, read_cached_companyfacts
 from vinci.facts.reader import FactAmbiguousError, FactStore, FactUnknownError, Period
 
 #: How many keys per page go through the public `get()` (the rest are compared in bulk).
@@ -107,10 +107,14 @@ class PageParity:
     #: the first EXAMPLES_SHOWN discrepancies; `discrepancies` is how many there were in all
     examples: list[str]
     discrepancies: int = 0
+    #: why this page could not be compared at all (its response is not cached, or its entity is
+    #: not in the snapshot); such a page is never zero-diff
+    unread: str | None = None
 
     @property
     def zero_diff(self) -> bool:
-        return (self.row_diffs == 0 and self.order_diffs == 0 and self.key_diffs == 0
+        return (self.unread is None and self.row_diffs == 0 and self.order_diffs == 0
+                and self.key_diffs == 0
                 and self.get_diffs == 0 and self.rows_compared == self.store_rows)
 
 
@@ -119,10 +123,19 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
     """``doc``'s page at its own price date, or at ``at`` when given."""
     entity = f"{int(doc['cik']):010d}"
     cut = at if at is not None else page_cut(doc)
-    resp = read_cached_companyfacts(entity, cache_dir)
-    blob = json.loads(resp.text)
-    reference = facts_as_of(blob, cut)
-    candidate = store.companyfacts_as_of(entity, cut)
+    try:
+        resp = read_cached_companyfacts(entity, cache_dir)
+        blob = json.loads(resp.text)
+        reference = facts_as_of(blob, cut)
+        candidate = store.companyfacts_as_of(entity, cut)
+    except (NotInCacheError, FactUnknownError) as exc:
+        # REPORTED, NOT RAISED: one page that cannot be read must not hide every other page's
+        # result, and it is never counted as a zero diff
+        return PageParity(ticker=ticker, entity=entity, cut=cut.isoformat(), fetched_at="",
+                          rows_in_response=0, rows_after_cut=0, rows_compared=0, store_rows=0,
+                          row_diffs=0, order_diffs=0, keys_compared=0, key_diffs=0,
+                          keys_restated=0, ambiguous_keys=0, get_sampled=0, get_diffs=0,
+                          examples=[], unread=str(exc))
     examples: list[str] = []
 
     # 1. ROWS — every field of every row, as a multiset per (taxonomy, tag, unit), then in order

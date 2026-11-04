@@ -230,6 +230,13 @@ def verify_manifest(manifest: dict[str, Any], root: Path, *,
             or totals.get("bytes") != sum(f["bytes"] for f in files) \
             or totals.get("entities") != len({f["entity"] for f in files}):
         problems.append(f"totals {totals} do not add up over {len(files)} files")
+    file_rows: dict[str, int] = {}
+    for f in files:
+        file_rows[f["entity"]] = file_rows.get(f["entity"], 0) + f["rows"]
+    for e in manifest.get("entities") or []:
+        if "rows_kept" in e and e["rows_kept"] != file_rows.get(e["entity"], 0):
+            problems.append(f"entity {e['entity']}: rows_kept {e['rows_kept']}, its files hold "
+                            f"{file_rows.get(e['entity'], 0)}")
     schema = arrow_schema()
     for f in files:
         if not _SHA.match(str(f.get("sha256"))) or f["path"] != object_path(

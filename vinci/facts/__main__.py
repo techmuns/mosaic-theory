@@ -108,6 +108,9 @@ def cmd_parity(a: argparse.Namespace) -> int:
             "keys restated", "ambiguous keys", "get() sample", "get() diffs")
     print("| " + " | ".join(head) + " |\n|" + "---|" * len(head))
     for r in results:
+        if r.unread:
+            print(f"| {r.ticker} | {r.cut} | UNREAD: {r.unread} |")
+            continue
         cells = (r.ticker, r.cut, r.fetched_at[:10], f"{r.rows_in_response:,}",
                  f"{r.rows_after_cut:,}", f"{r.rows_compared:,}", f"{r.store_rows:,}",
                  r.row_diffs, r.order_diffs, f"{r.keys_compared:,}", r.key_diffs,

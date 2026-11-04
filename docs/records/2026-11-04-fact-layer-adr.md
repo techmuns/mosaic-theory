@@ -220,3 +220,11 @@ in object storage with its manifest in git (the DVC / lakeFS pattern).
     cache.
   - `store.verify_manifest` raises `KeyError` on an entry missing a key, rather than naming it.
     The check still fails loud, so CI goes red either way.
+- **One finding DEFERRED from review round 1 (in-session `/code-review high`, Codex having
+  failed on its usage limit):** an object's name hashes its Parquet BYTES, and those embed the
+  writing pyarrow's version (`created_by`). Re-ingesting identical rows under a newer pyarrow
+  therefore writes a second copy of every partition under new names, and a new snapshot id, with
+  no change in the data. Naming objects by a canonical hash of their ROWS instead would change
+  the design's "content-addressed object names" from bytes to rows, so it is the operator's call.
+  Until then, the writer's pyarrow is pinned in practice by the one writer per source. *Falsifier:*
+  a re-ingest that changes `created_by` and nothing else.

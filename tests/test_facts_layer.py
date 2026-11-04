@@ -299,3 +299,24 @@ def test_a_tombstoned_follow_leaves_the_scope(tmp_path: Path) -> None:
     names, excluded = scope_names(pages, followed, tmp_path / "no-cache")
     assert [(n.ticker, n.cik, n.followed) for n in names] == [("FUBO", "0001484769", True)]
     assert excluded == 0
+
+
+# --- review round 1 ----------------------------------------------------------------------------
+
+def test_a_page_the_parity_cannot_read_is_reported_not_raised(store: FactStore,
+                                                              tmp_path: Path) -> None:
+    """One page whose companyfacts is not cached is reported as unread (and not zero-diff); it
+    does not abort the run for every other page."""
+    from vinci.facts.parity import compare_page
+    doc = {"cik": "0001484769", "reference_date": "2026-01-02", "mechanical": {}}
+    got = compare_page("FUBO", doc, store, tmp_path / "no-cache")
+    assert got.unread and "cache" in got.unread
+    assert not got.zero_diff
+
+
+def test_verify_names_an_entity_whose_rows_disagree_with_its_files(tmp_path: Path) -> None:
+    manifest = _publish(tmp_path, [_load("FUBO-companyfacts-slice.json")])
+    assert verify_manifest(manifest, tmp_path / "objects") == []
+    manifest["entities"][0]["rows_kept"] += 1
+    assert any("rows_kept" in p for p in verify_manifest(manifest, tmp_path / "objects",
+                                                         check_objects=False))
