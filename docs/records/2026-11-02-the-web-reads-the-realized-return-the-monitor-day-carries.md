@@ -1,8 +1,8 @@
 ---
 id: 2026-11-02-the-web-reads-the-realized-return-the-monitor-day-carries
-status: open
+status: shipped
 date: 2026-11-02
-prs: []
+prs: [892]
 supersedes:
 superseded-by:
 ---
