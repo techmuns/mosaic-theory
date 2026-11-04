@@ -70,45 +70,9 @@ export function escapeHtml(s) {
   ));
 }
 
-// The GRADE vocabulary — the classifier's real output + the analyst's working language. KEPT (never
-// renamed or collapsed — it is the source of truth), only rendered CLEAN from the short basis key.
-export const GRADE_LABEL = {
-  binding: "binding contract",
-  quantified: "quantified revenue",
-  committed: "committed capacity",
-  aspirational: "aspirational",
-  none: "no exposure",
-};
-// one-line definitions for the inline key/legend shown on any screen that uses grades
-export const GRADE_DEF = {
-  binding: "a signed agreement with binding terms",
-  quantified: "a $/% of revenue attributed to the driver",
-  committed: "committed capex / capacity, no paying customer yet",
-  aspirational: "stated intent — a mention, not exposure",
-  none: "no driver exposure disclosed",
-};
-export function gradeLabel(basis) {
-  return GRADE_LABEL[String(basis)] || String(basis || "");
-}
-// clean a RAW enum ("committed-capacity", "binding-contract", "stated-intent") for display — hyphens
-// to spaces, never shown as the raw string
-export function cleanGrade(s) {
-  return String(s || "").replace(/-/g, " ");
-}
-
-// magnitude bucket — the coarse firm/partial/early grouping of the fine basis (the machine's SCAN
-// read). firm = binding|quantified (contracted/quantified) · partial = committed · early = aspirational.
-// One source of truth for the bucketing shared by the Overview table + the watchlist firmness tag.
-export const GRADE_BUCKET = {
-  binding: "firm", quantified: "firm", committed: "partial", aspirational: "early", none: "none",
-};
-export function gradeBucket(basis) {
-  return GRADE_BUCKET[String(basis)] || "none";
-}
-
 // THE TIERED LADDER's display vocabulary (#487), living HERE and not in a view — `uw-card.js`
-// and `themes/portfolio.js` both render it, and a second copy is how the grade-bucket trio came
-// to need a three-way parity pin. Labels are the UI's pill caps; render.py carries the md-prose
+// renders it (`themes/portfolio.js` did too until 2026-11-04), and a second copy is how the
+// grade-bucket trio came to need a three-way parity pin. Labels are the UI's pill caps; render.py carries the md-prose
 // wording separately and deliberately (different register, same keys — pinned).
 export const TIER_LABEL = {
   poor: "POOR", below_target: "BELOW TARGET", target_met: "TARGET MET",

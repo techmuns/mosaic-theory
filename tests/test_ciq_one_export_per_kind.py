@@ -241,3 +241,19 @@ def test_two_customers_exports_refuse_and_the_supplier_pair_does_not(
     with pytest.raises(CiqAmbiguousError) as exc:
         CiqBundle.from_files("UBER", sorted(tmp_path.iterdir()))
     assert "Customers.xls" in str(exc.value) and "Suppliers" not in str(exc.value)
+
+
+#: The real CIQ Charting export name (WST, 2026-09-03), and a later pull of the same shape.
+CHARTING = ("WST_Peers_Charting Excel Export - Sep 3rd 2026 2_30_56 pm.xls",
+            "WST_Peers_Charting Excel Export - Oct 9th 2026 11_02_14 am.xls")
+
+
+def test_a_kind_nothing_reads_never_refuses_a_name(tmp_path: pathlib.Path) -> None:
+    """NEGATIVE (#908, round 2): the charting reader retired with `vinci.themes`, and the `charting`
+    kind stayed registered with no reader. Two charting pulls in one folder were then two exports of
+    a kind "read as one", so `from_files` refused the WHOLE name (`CiqAmbiguousError`) over a file
+    nothing reads. Unregistered, a charting export is an unrecognised file: kept, named in the
+    page's caveats by the assembler, and never a reason to stop."""
+    b = CiqBundle.from_files("WST", _folder(tmp_path, (*CHARTING, UBER_COMPS[1])))
+    assert sorted(b.unrecognised) == sorted(CHARTING)
+    assert [w.kind for w in b.workbooks] == ["comps"]

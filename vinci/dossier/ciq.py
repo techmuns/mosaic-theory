@@ -222,11 +222,10 @@ _WORKBOOK_KEYWORDS: dict[str, tuple[str, ...]] = {
     "key_developments": ("key development",),
     "profile": ("company profile", "tearsheet"),
     "comps": ("comparable", "comps"),  # "Company Comparable Analysis <name>.xls" (peer comps)
-    # CIQ Charting export (2026-09-03). Sheets are `Pane 1` / `Raw` / `Attributions` — NOT the
-    # Financials/Estimates layout — and the header row VARIES by chart type, so nothing here may
-    # hardcode a position (notes lines 72, 361). Unregistered until now, which meant
-    # `CiqBundle.from_files` DROPPED a charting export silently.
-    "charting": ("charting", "chart export"),
+    # NO `charting` KIND (2026-11-04, #908). It was registered 2026-09-03 for the CIQ charting
+    # reader, which retired with `vinci.themes`; registered with no reader, two charting pulls in
+    # one folder refused the whole name as ambiguous over a file nothing reads. A charting export
+    # is now an UNRECOGNISED file: the assembler names it in the page's caveats, never silently.
     # S&P-MI Credit Health Panel, exported ON ITS OWN (2026-10-05). The same relative score as the
     # comps workbook's "Credit Health Panel" sheet, ranked within the name's GICS INDUSTRY (21–40
     # public companies) instead of the 10–11-name comp set. Unregistered until now, so ten folders'

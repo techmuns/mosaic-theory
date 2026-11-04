@@ -346,8 +346,9 @@ def _cmd_eod(args: argparse.Namespace) -> int:
 def _cmd_build_universe(args: argparse.Namespace) -> int:
     """Build + snapshot a cap-band universe (market cap = close × XBRL shares).
 
-    ``--band theme`` builds the PARALLEL theme-altitude population into its own snapshot; the
-    default builds the primary forward-validation population exactly as before."""
+    ``--band theme`` builds the PARALLEL theme-altitude population into its own snapshot (its
+    only reader, the theme scan, retired 2026-11-04); the default builds the primary
+    forward-validation population exactly as before."""
     cfg = get_config()
     ref = date.fromisoformat(args.ref) if args.ref else date.today()
     band_name = getattr(args, "band", "primary")
@@ -3125,8 +3126,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_univ.add_argument("--ref", help="as-of date YYYY-MM-DD (default: today)")
     p_univ.add_argument("--band", choices=sorted(UNIVERSE_BANDS), default="primary",
                         help="which population to build: primary (the forward-validation band, "
-                             "default) or theme (the parallel larger band read only by theme "
-                             "scans)")
+                             "default) or theme (the parallel larger band; nothing reads it "
+                             "since the theme scans retired, 2026-11-04)")
     p_univ.set_defaults(func=_cmd_build_universe)
 
     p_screen = sub.add_parser("screen", help="run Screen 2 across the cap-band universe")

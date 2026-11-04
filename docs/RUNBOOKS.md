@@ -93,10 +93,10 @@ came to answer one question two ways.
 The monthly sweep (a), group-review recording (b), survivor checks (c) and the theme-advance loop
 (d) ran `vinci.themes`, which the operator retired on 2026-11-04 (R2; record
 `docs/records/2026-11-04-retire-themes-and-the-charting-reader.md`). Read the retired text with
-`git show 481e82f7:docs/RUNBOOKS.md`; restoring the loops means reverting #908's squash commit, never
-checking this file out whole. The letters below are kept so that citations such as "RUNBOOKS §j"
-still resolve. Theme intelligence (`vinci/theme_intelligence`) is a different
-package and keeps its own loop.
+`git show 481e82f7:docs/RUNBOOKS.md`; restoring the loops means reverting #908's squash commit,
+never checking this file out whole. The letters below are kept so that citations such as "RUNBOOKS §j"
+still resolve. The underwrite procedure §d held (steps 9–10) applies to every name and is now §m.
+Theme intelligence (`vinci/theme_intelligence`) is a different package and keeps its own loop.
 
 ---
 
@@ -155,6 +155,10 @@ merges** any change that touches them:
   `clear_ledger` / ledger-DELETE exists anywhere**, and the dossier package cannot import the ledger
   writer (AST guard: `vinci.schemas.ledger` ≠ `vinci.ledger`). The spread IS the accumulated ledger.
   *(Source: CLAUDE.md §Stack; STATE.md §ledger guard.)*
+- **`frontend/radar/reviews.json` reasons** — the single record of the 2026-07-13..15 group-review
+  reasons (46 dispositions), verbatim, never re-drafted. KEPT AS HISTORY when the Radar retired with
+  `vinci.themes` (2026-11-04, #908): nothing reads it now, and like the theme ledgers it is a human
+  record, so it stays. *(Source: `reviews.json` `_note`.)*
 - **Verdicts** — the Brief's verdict is a **deterministic** proposal derived from the committed lean;
   the LLM emits **no verdict field** (`Synthesis` no-conclusion schema pin stands). The machine
   proposes; the human decides. *(Source: CLAUDE.md §"The one thing this fund is"; STATE.md §verdict.)*
@@ -566,6 +570,82 @@ and it is the first outcome the spread will ever carry.
    `gate` runs on the PR, and the operator merges with "merge #N". Commit only the derived artifacts
    the run wrote — never code in the same commit (CLAUDE.md: derived artifacts may be committed; code
    may not ride with them).
+
+---
+
+## m. UNDERWRITE — every name, GOOGL's included
+
+These were steps 9 and 10 of the theme-advance loop (§d) until that loop retired with
+`vinci.themes` on 2026-11-04 (#908). They were never theme-specific: they are how ANY name is priced
+and turned into a BUY, so they live here. Text verbatim from `481e82f7` apart from two clauses that
+pointed into the retired loop (the shortlist step, and ratification of a theme basket).
+
+1. **CIQ pull — MANUAL, and the real gate. SIZING FIRST, VALUATION SECOND: it prices nothing that
+   has not already cleared sizing on PRIMARY SOURCES.** *Cause: the 2026-09-01 `glp1-drug-value-chain`
+   pull bought four workbook sets — consensus, multiple distributions, revision drift, all real
+   underwrite inputs — for four names of which four were later disqualified on PROSE the pull never
+   touched (three on calls, one on a 10-K). Two further names were settled from EDGAR filings already
+   in `data/cache/sec/` at zero marginal cost. The theme loop's shortlist was drawn on prose and its pull bought valuation
+   data; nothing between them tested the figure, which is how four unsized names reached a pull.* R3 underwrites as `EPS x forward P/E`; forward
+   estimates are in no API this repo holds. This is v6.2.1's S2.0 "PM action outside conversation".
+   Raw workbooks stay in `data/manual/ciq/` and are **never committed**.
+2. **Underwrite — the investment gate, and the step that makes a BUY.**
+   `python -m vinci.cli scenario-propose <TICKER> --out <T>-underwrite.json` emits the template;
+   the analyst fills assumptions and the bear/base/bull legs; `scenario-create <TICKER> --from <file>`
+   scores it. The ladder (regime `2026-08-21`, face-validity, never outcome-tuned):
+   **base-to-bear ratio** <1.0 poor · 1.0-1.75 below_target · 1.75-2.0 target_met · >=2.0 preferred;
+   **base IRR** <12% fails · 12-15% minimum_met · >=15% preferred. IRR NEVER replaces asymmetry.
+   A name that fails here is a WATCH with a re-underwrite trigger, not a BUY.
+   **THE STANDING R3 MULTIPLE METHOD IS ANCHOR-AND-DISPLACE** (ratified on GOOGL 2026-09-10):
+   every leg is a DISPLACEMENT from the name's VERIFIED CURRENT forward multiple — bull holds it,
+   base compresses on duration, bear de-rates — and **never a draw from a distribution**. Own-history
+   quartiles, an EV/EBIT cross-check and peer context CORROBORATE; per the `BASIS MATCH: LIMITED`
+   ruling none of them is load-bearing, because a historical `P/NTM EPS` row is not proven to share
+   the normalized denominator the current figure uses. *The tell that separates the two: on GOOGL,
+   bull 26.0x sits **0.03** from the current 26.03x and **0.75** from p75 26.75x — a
+   distribution-derived bull would sit at p75. Base landing near the median is coincidental
+   corroboration, and it is exactly the proximity that invites a reader to infer derivation.*
+   **THE ANCHOR NEEDS ITS OWN SANITY CHECK — not only the displacement a reason.** The method
+   makes TODAY'S multiple the reference for every leg, so it silently imports whatever the market
+   did that day. Before anchoring, state that current is UNDISTORTED, and use the corroborators to
+   say it: a reference that may not GENERATE a target can still DETECT a distorted anchor, and
+   that is what they are for. Three classes disqualify a bare current anchor —
+   **(a) a post-deal entity**, where the denominator changed under the history (WAT: 26.4x reads
+   63rd percentile, but the n=38 series is pre-BD-Biosciences, so the percentile itself is a
+   `BASIS MATCH: LIMITED` mismatch and the anchor is UNVERIFIABLE);
+   **(b) a one-off in the denominator**, where current EPS is not a run-rate;
+   **(c) a percentile extreme** (MCK: 19.9x against a 13.1x own median, **95th percentile** — an
+   anchor that assumes the extreme persists). Where current IS defensible, say why: GOOGL's 26.03x
+   sits between its own median 24.24x and p75 26.75x; WST's 36.9x is the **37th** percentile of its
+   own history, below median. **A distorted anchor is a reason to price off something else, or to
+   state the distortion as the binding assumption — never to anchor anyway and displace from it.**
+   **A LEG'S MULTIPLE IS STRUCK ONCE, AT A STATED PRICE, AND IS THEREAFTER FIXED IN TURNS —
+   never a standing rule like "holds current".** The two read identically at the striking moment and
+   diverge at every other price, and the difference decides whether a limit can exist at all.
+   *Under a floating "holds current", the exit multiple is `P / NTM_now`, so
+   `base / P = NTM_exit / NTM_now` — INDEPENDENT OF P. The base return collapses to the EPS growth
+   rate, the IRR gate passes at EVERY price or at NONE, and no limit price exists. On WST
+   (2026-09-11) that reading made a 13.13% IRR unimprovable by any entry, which is not a property
+   of the name.* So: strike the number, stamp the price it was struck at, and record it as turns.
+   GOOGL is the precedent read correctly — bull **26.0x** "holds today's ~26.03x" is a FIXED figure
+   struck as a displacement, not a rule that floats with the tape.
+   **THE BASE LEG GETS ITS OWN MECHANISM — never the residual between bear and bull.** If bear is
+   "the observed compression continues" and bull is "it stops", a base struck between them is an
+   INTERPOLATION, not a case: nothing in the world does half of two opposite things. State what
+   base ASSUMES — typically the RATE at which the multiple keeps absorbing earnings growth, which
+   is a number the history can speak to — and state it against a measured rate, not against the
+   other two legs. *`price return = earnings growth + multiple change` is the decomposition that
+   makes this writable: each leg is a position on how the two split, and base's position has to be
+   named like the others'.*
+   **AND THE TWO HALVES MUST SHARE A WINDOW.** A multiple change measured over 24 months beside a
+   consensus change measured over 18 is not a decomposition — it is two facts in one sentence.
+   (WST: the 24m compression is −18.4% and the +24.2% FY27 revision is an 18-MONTH figure because
+   `Trends` carries vintages no further; over the MATCHED 18 months the multiple is ~flat and
+   sign-unstable, so the compression and the revision are SEQUENTIAL, not simultaneous.)
+   **DISPLACEMENT MAGNITUDE IS ANALYST JUDGMENT, and where the memo gives no reason for a
+   displacement the record says so rather than supplying one** — authoring a justification for a
+   bear leg on a record already at PASS is manufacturing support for the outcome, the shape
+   `IRR_FLOOR`'s own docstring forbids.
 
 ---
 

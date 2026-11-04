@@ -196,15 +196,6 @@ def test_a_whole_search_that_found_nothing_still_says_so() -> None:
     assert out.status is SourceStatus.UNKNOWN and out.note == COVENANT_SEARCH_FOUND_NOTHING
 
 
-class _ShortPageEfts(_PagedEfts):
-    """efts serving 60 hits a page — the cap line must count what came back, not the offsets."""
-
-    def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
-        data = super().get_json(url, ttl_seconds=ttl_seconds)
-        data["hits"]["hits"] = data["hits"]["hits"][:60]
-        return data
-
-
 # ─── review round 2: a later page that fails, and reading only as far as the caller needs ─────
 
 class _FailingEfts(_PagedEfts):
@@ -292,16 +283,5 @@ def test_a_search_that_stopped_short_is_not_called_one_that_could_not_run() -> N
                                 mat_present=False) == (
         "no covenant terms extracted from located exhibits")
     assert covenant_fail_reason(short, gov_present=True, mat_present=False) is None
-
-
-class _CiklessEfts(_PagedEfts):
-    """efts whose every other hit carries no CIK (`parse_efts_ciks` keeps only the ones that do)."""
-
-    def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
-        data = super().get_json(url, ttl_seconds=ttl_seconds)
-        for i, h in enumerate(data["hits"]["hits"]):
-            if i % 2:
-                h["_source"].pop("ciks")
-        return data
 
 

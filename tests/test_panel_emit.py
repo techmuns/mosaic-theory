@@ -390,3 +390,101 @@ def test_the_corpus_actually_overflows_two_of_the_three_caps() -> None:
     assert newer_max > 4, (
         f"no committed name overflows the timeline dots (max {newer_max}) — the witness WERN "
         f"supplied on 2026-09-16 is gone, so the cap is proven by construction only again")
+
+
+# --------------------------------------------------------------------------------------------
+# THE PANEL VIEW'S TWO RENDER PINS, moved verbatim from `tests/test_panels_theme.py` when the
+# theme tier retired (#908, round 2). They guard `frontend/views/shared/panels.js` (a refusal's
+# `why` survives de-duplication; `tabTickers` offers only selectable names), which every committed
+# day still renders; they leave with that view in R3.
+# --------------------------------------------------------------------------------------------
+
+
+def test_a_refusal_whose_reason_omits_the_why_still_shows_it_node() -> None:
+    """`decide()`'s MISSING-CONFIG branch composes its own sentence and never mentions `why`, so an
+    unconditional de-dup would drop the explanation entirely — on exactly the refusal a
+    half-onboarded name hits. Latent on today's corpus; pinned so it stays that way."""
+    import shutil
+    import subprocess
+
+    import pytest
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    driver = r"""
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const { panelGridHtml } = await import(pathToFileURL(
+  path.resolve("frontend/views/shared/panels.js")).href);
+const html = panelGridHtml([{ ticker: "WERN", tier: "cohort", key: "commissioning",
+  title: "C", state: "refused", changes_the_call: "c", caveat: "", cadence: "event",
+  sources: [], value: {},
+  missing: [{ kind: "rfile_note", detail: "revenue equipment", why: "THE ONLY EXPLANATION" }],
+  reason: "rfile_note config 'note_name' is not set for this name, so the panel would probe the "
+        + "DEFAULT 'property and equipment'" }], { ticker: "WERN" });
+console.log(JSON.stringify({ explanationSurvives: /THE ONLY EXPLANATION/.test(html) }));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, cwd=ROOT)
+    assert out.returncode == 0, out.stderr
+    assert json.loads(out.stdout)["explanationSurvives"] is True
+
+
+def test_the_tab_strip_offers_no_tab_that_cannot_be_selected_node() -> None:
+    """A THEME ROW'S `ticker` IS A DRIVER KEY, and the tab strip is a NAME strip.
+
+    Deriving tabs from every row appended six driver tabs that could not be selected: clicking one
+    set the asked-for value to something not in the ticker list, so the view fell back to the first
+    ticker and NO tab highlighted. A control that looks live and does nothing is worse than an
+    absent one — the reader concludes the data is empty rather than that the link is dead.
+    """
+    import shutil
+    import subprocess
+
+    import pytest
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    driver = r"""
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const { panelGridHtml } = await import(pathToFileURL(
+  path.resolve("frontend/views/shared/panels.js")).href);
+const base = { changes_the_call: "c", caveat: "", cadence: "event", sources: [], value: {},
+  missing: [], reason: "" };
+const rows = [
+  { ...base, ticker: "AORT", tier: "universal", key: "sources", title: "S", state: "ready",
+    value: { refs: ["r"] } },
+  { ...base, ticker: "ai-datacenter", tier: "theme", key: "theme_thesis", title: "T",
+    state: "refused", missing: [{ kind: "metric_path", detail: "thesis_card", why: "W" }],
+    reason: "metric_path 'thesis_card' — W. no thesis card is declared" },
+];
+const html = panelGridHtml(rows, { ticker: "AORT" });
+const tabs = (await import(pathToFileURL(
+  path.resolve("frontend/views/shared/panels.js")).href)).tabTickers(rows);
+// A theme tile still renders on a name's page (the tier attaches to the driver)...
+const themeShown = /ai-datacenter/i.test(html);
+// ...and its subject is named correctly.
+const saysDriver = /applies to this driver/.test(html);
+const saysName = /applies to this name/.test(html);
+// The `why` appears ONCE, because `reason` already carries it.
+const whyCount = (html.match(/>W</g) || []).length + (html.match(/— W\./g) || []).length;
+console.log(JSON.stringify({ themeShown, saysDriver, saysName, whyCount, tabs,
+  tabsExcludeDrivers: !tabs.includes("ai-datacenter"),
+  tabsKeepNames: tabs.includes("AORT") }));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, cwd=ROOT)
+    assert out.returncode == 0, out.stderr
+    got = json.loads(out.stdout)
+    assert got["themeShown"] is True
+    assert got["saysDriver"] is True
+    assert got["saysName"] is False, "a theme tile's subject is a driver, not a name"
+    assert got["whyCount"] == 1, "the requirement's why must not be printed twice"
+    assert got["tabsExcludeDrivers"] is True, "a driver key must not become an unselectable tab"
+    assert got["tabsKeepNames"] is True
+    assert got["tabs"] == ["AORT"]

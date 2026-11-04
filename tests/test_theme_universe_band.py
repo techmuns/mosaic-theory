@@ -90,22 +90,6 @@ def test_the_theme_band_is_wider_and_otherwise_identical() -> None:
         p.exchanges, p.adv_floor_usd, p.excluded_sic_codes, p.allowed_security_types)
 
 
-def _write_snapshots(snaps: Path, *, theme_rows: list[dict[str, object]] | None) -> None:
-    snaps.mkdir(parents=True, exist_ok=True)
-    (snaps / "securities.jsonl").write_text("\n".join(json.dumps(r) for r in [
-        {"internal_id": "SEC-1", "eod_symbol": "AAA", "cik": "1", "name": "Small Co"},
-        {"internal_id": "SEC-2", "eod_symbol": "MEGA", "cik": "2", "name": "Mega Co"},
-    ]) + "\n")
-    (snaps / "universe_snapshot.jsonl").write_text(json.dumps(
-        {"as_of": "2026-08-31", "internal_id": "SEC-1", "in_universe": 1,
-         "market_cap": 1.0e9}) + "\n")
-    theme_file = snaps / "theme_universe_snapshot.jsonl"
-    if theme_rows is None:
-        theme_file.unlink(missing_ok=True)   # "band never built" must really remove it
-    else:
-        theme_file.write_text("\n".join(json.dumps(r) for r in theme_rows) + "\n")
-
-
 def test_no_decision_path_module_reads_the_theme_band() -> None:
     """THE CONTAMINATION SWEEP, at the source level: the screen / rank / ledger / scoring modules
     must never name the theme band. A grep-level pin is the honest layer here — the property is

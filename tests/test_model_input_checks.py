@@ -262,26 +262,6 @@ def test_an_empty_or_fragment_ref_leaves_the_point_uncited_and_the_twin_unverifi
 
 
 _ACC = "0001628280-26-013305"
-_EXPOSURE_STREAM = [
-    (f"8-K 2026-01-15 (accession {_ACC})",
-     "On January 10, 2026 we signed a 15-year lease with CoreWeave for 300 MW of capacity."),
-    ("10-K 2025-11-01 (accession 0001628280-25-000001)", "Our business ..."),
-]
-
-
-class _Exposure(LlmClient):
-    def __init__(self, ref: str, fact: str) -> None:
-        self._ref, self._fact = ref, fact
-
-    @property
-    def model(self) -> str:
-        return "fake-exposure"
-
-    def extract(self, *, system: str, user: str, tool: dict[str, typing.Any]
-                ) -> dict[str, typing.Any]:
-        return {"disclosed_facts": [{"fact": self._fact, "concreteness": "binding-contract",
-                                     "driver_tie": "driver-specific", "source_ref": self._ref}],
-                "primary_business": "datacenter host", "key_unknowns": []}
 
 
 # --- G-D6: a figure is traced to the fact its point cites -----------------------------------------

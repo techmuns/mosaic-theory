@@ -459,3 +459,19 @@ def test_the_monitor_command_writes_no_snapshot_when_the_price_source_fails(
     assert sorted(p.name for p in monitor.iterdir()) == before == ["benchmark_assignments.json"]
     assert not (scratch / "data" / "monitor").exists() or not any(
         (scratch / "data" / "monitor").iterdir())
+
+
+def test_scenario_passed_deadlines_now_render_in_the_terminal_view() -> None:
+    """THE ADJACENT FIX, pinned at the surface where the harm occurred: a FreshnessRow's passed
+    flags were persisted but invisible in the console.
+
+    Moved here from `tests/test_theme_falsifier_sweep.py` when the theme sweep retired (#908,
+    round 2): the flag line is the scenario calendar's, and this was its only render pin."""
+    fr = mon.FreshnessRow(ticker="SMPL", verdict="BUY",
+                          passed_trigger_deadlines=[
+                              "OWYN net sales turn negative — deadline 2026-08-01 PASSED "
+                              "→ re-underwrite due"])
+    md = mon.render_table(mon.MonitorSnapshot(as_of=date(2026, 8, 29),
+                                              spread=mon.SpreadDiagnostic(buy_n=0, avoid_n=0),
+                                              freshness=[fr]))
+    assert "⚑ OWYN net sales turn negative — deadline 2026-08-01 PASSED" in md
