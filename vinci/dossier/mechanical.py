@@ -2467,7 +2467,9 @@ def _consensus(bundle: CiqBundle) -> ConsensusContext:
     # HERE as well as in the refresh transform, through ONE builder: without it the first name
     # underwritten after A1 would carry no consensus data and A2 would render nothing for it.
     levels = {m: [ConsensusLevel(fy=c.fy, median=c.median, high=c.high, low=c.low,
-                                 std_dev=c.std_dev, estimates=c.estimates) for c in cells]
+                                 std_dev=c.std_dev, estimates=c.estimates,
+                                 source_ref=ciq_sheets.consensus_level_ref(m, c.fy))
+                  for c in cells]
               for m, cells in ciq_sheets.consensus_levels(bundle).items()}
     return ConsensusContext(
         consensus_levels=levels or None,
@@ -5044,11 +5046,13 @@ def _implied_expectations(
                     else "multiple absent from the assembled comps")
             rows.append(ImpliedExpectationRow(
                 label=label, metric=metric, multiple=mult, multiple_source=src,
-                implied_level=None, is_identity=(kind == "ladder"), note=note))
+                implied_level=None, is_identity=(kind == "ladder"), note=note,
+                source_ref=_ie_row_ref(label, metric, src)))
         else:
             rows.append(ImpliedExpectationRow(
                 label=label, metric=metric, multiple=mult, multiple_source=src,
-                implied_level=round(tev / mult, 1), is_identity=(kind == "ladder")))
+                implied_level=round(tev / mult, 1), is_identity=(kind == "ladder"),
+                source_ref=_ie_row_ref(label, metric, src)))
 
     # (H7/P8) BOTH the EBITDA and REVENUE consensus anchors are the DIRECT Estimates→Trends latest
     # levels (FY26E/FY27E), the SINGLE SOURCE OF TRUTH — NOT TEV ÷ ladder. The ladder FY26 (a26) is
@@ -5106,7 +5110,16 @@ def _implied_expectations(
         rev_anchors=rev_anchors, heterogeneity_gate=implied_val.comparability_gate.value or "",
         tev_as_of=tev_as_of, multiples_as_of=mult_as_of, vintage_coherent=coherent,
         vintage_check=vintage_check, coherence_note=coherence_note, net_debt_reconciled=nd_ok,
-        net_debt_check=net_debt_check)
+        net_debt_check=net_debt_check,
+        source_ref=(f"Assembler: implied expectations — the simple TEV (as of {tev_as_of}) over "
+                    f"each stated multiple (as of {mult_as_of}), the consensus anchors beside it "
+                    "and the peer-comparability gate"))
+
+
+def _ie_row_ref(label: str, metric: str, multiple_source: str) -> str:
+    """(item 29, option 4) The ref one implied-expectation row is cited by — a computation, TEV
+    over the multiple its own ``multiple_source`` names."""
+    return f"Assembler: implied {metric} — simple TEV ÷ {label} ({multiple_source})"
 
 
 def _vintage_probe(a26: float | None,

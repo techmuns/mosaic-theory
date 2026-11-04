@@ -107,12 +107,24 @@ def revoice(flag: str) -> str:
     the `pull CIQ …` incomplete-input notes match no token and pass through unchanged."""
     # UNTRACEABLE has an infix ("figure 'N' in {where}: …") so it needs its own re-voice, not the
     # simple TOKEN-{where} form below.
-    m = re.match(r"UNTRACEABLE figure '([^']*)' in (\S+?): (.*)", flag)
+    m = re.match(r"UNTRACEABLE figure '([^']*)' in (\S+?)(?: \[cited to (.*?)\])?: ('.*)",
+                 flag, re.DOTALL)
     if m:
-        n, where, rest = m.groups()
+        n, where, ref, rest = m.groups()
         human = _WHERE_HUMAN.get(where, where)
+        if ref is not None:   # (item 29) the figure carried its own footnote, to this fact
+            return (f"Untraceable figure {n} ({human}) — footnoted to {ref}, which does not "
+                    f"contain it; verify the source before relying on it: {rest}")
         return (f"Untraceable figure {n} ({human}) — cited to structured data that does not "
                 f"contain it; verify the source before relying on it: {rest}")
+    # (item 29) a COMPUTED figure whose inputs or arithmetic do not hold — the reason is the
+    # validator's own, kept whole after the claim
+    m = re.match(r"UNDERIVED figure '([^']*)' in (\S+?): ('.*') — (.*)", flag, re.DOTALL)
+    if m:
+        n, where, claim, why = m.groups()
+        human = _WHERE_HUMAN.get(where, where)
+        return (f"Unverified computed figure {n} ({human}) — {why}; check the arithmetic before "
+                f"relying on it: {claim}")
     for token, label in _REVOICE_WHERE.items():
         if flag.startswith(token):
             rest = flag[len(token):].lstrip()

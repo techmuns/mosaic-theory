@@ -2764,6 +2764,13 @@ def consensus_levels(bundle: CiqBundle) -> dict[str, list[ConsensusCell]]:
     return out
 
 
+def consensus_level_ref(metric: str, fy: str) -> str:
+    """The ref one forward-year consensus row is cited by (item 29, option 4) — ONE function, so
+    assembly and the refresh transform name a row alike. Before it the levels carried no ref, and a
+    point quoting a FY33 EBITDA median (LLY's $103,325.5M) could cite nothing that held it."""
+    return f"CIQ Estimates→Consensus {metric} FY{fy} (median, high, low, std dev, estimates)"
+
+
 def trends_fy_level(bundle: CiqBundle, *, metric: str, fy_label: str) -> float | None:
     """(H7) The LATEST Trends consensus snapshot for a metric at a SPECIFIC fiscal-year column —
     e.g. ``metric="EBITDA", fy_label="FY 2027"`` → the newest FY2027 EBITDA estimate. This is the

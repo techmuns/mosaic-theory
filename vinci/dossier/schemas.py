@@ -38,6 +38,27 @@ from vinci.sleeves import DEFAULT_SLEEVE, UnknownSleeveError, require_sleeve
 T = TypeVar("T")
 
 
+class SourceRefWhenBuilt(BaseModel):
+    """A block the assembler builds — from a source or by computation — names it in ``source_ref``
+    so a synthesis point can cite the block's figures (item 29, option 4, operator ruling
+    2026-11-04 "1 + 4"). Before it, 7,720 numbers on the 27 committed pages sat on a path with no
+    ref at all, and a point could not cite them however it tried (LLY's "$27,958M" acquired lived
+    only in `peer_capital_intensity.rows`).
+
+    ABSENT, never null, until built: a page assembled before this change carries no ref and
+    round-trips byte for byte (`dossier_json`). `tests/test_footnote_every_figure.py` refuses a new
+    block on the layer that states numbers without a ref unless it is on the not-a-fact list."""
+
+    source_ref: str | None = None
+
+    @model_serializer(mode="wrap")
+    def _source_ref_absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("source_ref") is None:
+            out.pop("source_ref", None)
+        return out
+
+
 class SourceStatus(enum.StrEnum):
     """Coverage of one mechanical fact."""
 
@@ -130,7 +151,7 @@ class CohortMember(BaseModel):
     model_config = {"frozen": True}
 
 
-class ImpliedExpectationRow(BaseModel):
+class ImpliedExpectationRow(SourceRefWhenBuilt):
     """(G) One row: a STATED multiple → the fundamental LEVEL price implies at it (implied_level =
     TEV ÷ multiple). FUNDAMENTALS-SPACE ONLY — this model carries NO price/equity/value/upside/
     discount field (the block-scoped no-conclusion check forbids those tokens). ``implied_level``
@@ -162,7 +183,7 @@ CHECK_DIFFER: CrossCheck = "differ"
 CHECK_NOT_RUN: CrossCheck = "not_run"
 
 
-class ImpliedExpectations(BaseModel):
+class ImpliedExpectations(SourceRefWhenBuilt):
     """(G) Price-inverted expectations, MULTIPLES-space. At a FIXED, declared multiple set the block
     reports the fundamental LEVEL price implies (``TEV ÷ multiple``), juxtaposed with the consensus
     path anchors — NEVER differenced (no %, gap, upside, or implied price/equity). The human judges
@@ -355,7 +376,7 @@ class ForwardMultiple(BaseModel):
     model_config = {"frozen": True}
 
 
-class EvEbitdaBasis(BaseModel, frozen=True):
+class EvEbitdaBasis(SourceRefWhenBuilt, frozen=True):
     """WHAT CIQ's headline TEV/LTM EBITDA IS STRUCK ON — measured on this page, never assumed.
 
     The multiple's own denominator is TEV ÷ the multiple; it is set against REPORTED LTM EBITDA
@@ -380,7 +401,7 @@ class EvEbitdaBasis(BaseModel, frozen=True):
     line: str
 
 
-class EvEbitdaAtPrice(BaseModel, frozen=True):
+class EvEbitdaAtPrice(SourceRefWhenBuilt, frozen=True):
     """The EX-LEASE EV/EBITDA at the PAGE'S price — R1's basis, today (2026-10-21).
 
     The ex-lease history's own `current` is the latest QUARTERLY close in CIQ's Historical
@@ -719,7 +740,7 @@ class StockPerformance(BaseModel):
     model_config = {"frozen": True}
 
 
-class ConsensusLevel(BaseModel, frozen=True):
+class ConsensusLevel(SourceRefWhenBuilt, frozen=True):
     """(A1) One metric x one forward fiscal year, as the street reported it.
 
     RAW PAIR. `estimates` is CIQ's own `9/11` — never re-labelled "broker count", because the two
@@ -1672,7 +1693,7 @@ class MaturitySource(BaseModel):
     model_config = {"frozen": True}
 
 
-class MaturityCheckRow(BaseModel):
+class MaturityCheckRow(SourceRefWhenBuilt):
     """One panel instrument's maturity against the newest filing that states it."""
 
     instrument: int  # index into `capital_structure.instruments`
@@ -1831,7 +1852,7 @@ class FinTable(BaseModel):
     model_config = {"frozen": True}
 
 
-class EbitdaBasis(BaseModel):
+class EbitdaBasis(SourceRefWhenBuilt):
     """Implied D&A either side of the annual table's actual→estimate boundary, and whether the two
     `EBITDA ($M)` readings agree.
 
@@ -1979,11 +2000,13 @@ Supports = Literal["annual", "quarterly", "both"]
 FiledKind = Literal["same_item", "containing_line"]
 
 
-class FiledLtmFigure(BaseModel, frozen=True):
+class FiledLtmFigure(SourceRefWhenBuilt, frozen=True):
     """A MATERIAL annual-summary LTM that CIQ's annual and quarterly exports disagree on, decided by
     the SEC filings (2026-11-04, operator approval). The page's LTM cell for the row reads
     ``value``; the two CIQ readings stay here, beside it. ``kind`` says whether ``value`` is the
-    filed figure itself or CIQ's quarterly reading that the filed containing line confirms."""
+    filed figure itself or CIQ's quarterly reading that the filed containing line confirms.
+    ``source_ref`` (item 29, option 4) names the two CIQ readings, ``ciq_annual`` and
+    ``ciq_quarterly``, so a point can cite them (`filed_tiebreak.ciq_readings_ref`)."""
 
     label: str                                # the annual summary's row label
     ltm_end: str                              # ISO
@@ -2600,7 +2623,7 @@ class PeerImpairment(BaseModel):
     model_config = {"frozen": True}
 
 
-class PeerCapitalRow(BaseModel):
+class PeerCapitalRow(SourceRefWhenBuilt):
     """One peer's acquired-asset intensity, or a STATED reason it has none."""
 
     ticker: str
@@ -2629,7 +2652,7 @@ class PeerCapitalRow(BaseModel):
     model_config = {"frozen": True}
 
 
-class PeerCapitalIntensity(BaseModel):
+class PeerCapitalIntensity(SourceRefWhenBuilt):
     """How acquisitive this balance sheet is versus its peer set — on BOTH denominators.
 
     TWO DENOMINATORS, AND THE CHOICE IS NOT COSMETIC. Against MARKET CAP a cheap stock shows a high
@@ -2797,17 +2820,77 @@ class MechanicalLayer(BaseModel):
 # --- synthesis layer (LLM, fenced; NO verdict/score/direction/probability field) --------------
 
 
+#: The operations a COMPUTED figure may declare (item 29, operator ruling 2026-11-04 "1 + 4"). A
+#: closed set, recomputed by `synthesis._validate` on the inputs as written; the model names one,
+#: the checker never searches for one (a search "derived" 111 of 326 flagged figures by
+#: coincidence, e.g. 15.1 = 49.0 ÷ 3).
+FIGURE_OPERATIONS: tuple[str, ...] = ("difference", "sum", "ratio", "premium", "growth")
+
+
+class FigureCite(BaseModel):
+    """ONE figure of a point's claim and where it comes from — the footnote an expert puts on every
+    number (item 29). Exactly one of: ``source_ref`` (the ONE fact that states it) or ``derived``
+    (an operation in `FIGURE_OPERATIONS` on two ``inputs``, each another figure of the same claim
+    with its own entry). ``figure`` is copied exactly as the claim writes it ("15.1x", "3rd").
+
+    Citation metadata only — no verdict, rating or score can be expressed here (`Synthesis` has no
+    verdict field and this adds none)."""
+
+    figure: str
+    source_ref: str | None = None
+    derived: Literal["difference", "sum", "ratio", "premium", "growth"] | None = None
+    inputs: list[str] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+    @model_validator(mode="after")
+    def _one_source(self) -> FigureCite:
+        if (self.source_ref is None) == (self.derived is None):
+            raise ValueError(f"figure {self.figure!r} must carry exactly one of source_ref or "
+                             "derived")
+        if self.derived is not None and len(self.inputs) != 2:
+            raise ValueError(f"computed figure {self.figure!r} names {len(self.inputs)} inputs; "
+                             f"{self.derived} takes exactly 2")
+        if self.derived is None and self.inputs:
+            raise ValueError(f"cited figure {self.figure!r} names inputs; only a computed one does")
+        return self
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict):
+            for key in ("source_ref", "derived"):
+                if out.get(key) is None:
+                    out.pop(key, None)
+            if not out.get("inputs"):
+                out.pop("inputs", None)
+        return out
+
+
 class SourcedPoint(BaseModel):
     """A bull or bear point. MUST cite a ``source_ref`` that exists in the mechanical layer.
 
     ``cited`` is set False by the post-LLM validator when the cited ref does not trace to input —
-    an uncited claim is flagged for the human, never silently presented as established."""
+    an uncited claim is flagged for the human, never silently presented as established.
+
+    ``figures`` (item 29) footnotes each figure of the claim to the fact that states it, or to the
+    operation and inputs that compute it. ABSENT when empty: every point drawn before 2026-11-04
+    carries none, round-trips byte for byte, and is checked against ``source_ref`` exactly as it
+    was."""
 
     claim: str
     source_ref: str
+    figures: list[FigureCite] = Field(default_factory=list)
     cited: bool = True  # validator flips to False (and flags) if source_ref doesn't trace
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and not out.get("figures"):
+            out.pop("figures", None)
+        return out
 
 
 class TwinCase(BaseModel):

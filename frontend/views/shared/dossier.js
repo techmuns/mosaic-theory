@@ -297,6 +297,14 @@ const EXTRACTION_VERSIONS = [
     "ordinal alone or a percentile-point move) — '2.0x' or 'fell 2%' cited to a percentile is a " +
     "figure again — and only a whole-number duration (5-year, 52-week, " +
     "~9y) is a label; a decimal one (2.3y, a 7.4-year payback) is a figure the cited fact must state"],
+  ["2026-11-04.footnote-every-figure",
+    "every synthesis figure is footnoted (item 29, operator ruling 2026-11-04 '1 + 4'): a point " +
+    "carries one entry per figure of its claim, citing the one fact that states it or naming an " +
+    "operation (difference, sum, ratio, premium, growth) on two cited inputs of the claim, " +
+    "recomputed at their written precision; a figure with no entry is traced to the point's own " +
+    "ref as before; and the blocks the assembler builds (consensus levels, peer capital intensity, " +
+    "checked maturities, the EV/EBITDA bases, the EBITDA basis, implied expectations, a filed " +
+    "LTM's two CIQ readings) carry a source_ref a point can cite"],
   ["2026-11-04.anchored-drawdown",
     "a name with an underwrite record, else a follow, keeps its drawdown at that date " +
     "(`drawdown_cause.anchor`): the gap-downs of the 180 days ending on it, each with its " +
@@ -1811,6 +1819,54 @@ function briefSnapshot(d, m) {
     ${kf}${table}${chart}</div>`;
 }
 
+// (item 29, operator ruling 2026-11-04 "1 + 4") A POINT THAT FOOTNOTES EVERY FIGURE. Each entry of
+// `p.figures` puts its own endnote marker right after its figure (the tier's Sources list, deduped
+// by ref); a COMPUTED figure takes ‡ and its operation in the on-demand block below the point,
+// which force-opens in print (T1). The check itself is the validator's (`synthesis._validate`): the
+// page shows the operation and its inputs as written and computes nothing. A point with no
+// `figures` — every page drawn before 2026-11-04 — renders exactly as it did.
+const _FIG_OP = { difference: "−", sum: "+", ratio: "÷", premium: "÷", growth: "÷" };
+function _figExpr(f) {
+  const [a, b] = f.inputs || [];
+  const core = `${a} ${_FIG_OP[f.derived] || "?"} ${b}`;
+  return f.derived === "premium" || f.derived === "growth" ? `(${core}) − 1` : core;
+}
+// the literal at a figure boundary — never inside a longer number, whole or decimal (the twin of
+// render._find_figure, whose docstring carries the examples)
+function _findFigure(claim, lit, from) {
+  const re = new RegExp(`(?<![\\d.,])${lit.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\d]|[.,]\\d)`, "g");
+  re.lastIndex = from;
+  const m = re.exec(claim);
+  return m ? m.index : -1;
+}
+function _figureMarks(p) {
+  const marks = []; const from = new Map();
+  for (const f of p.figures) {
+    const i = _findFigure(p.claim, String(f.figure || ""), from.get(f.figure) || 0);
+    if (i < 0) continue;
+    from.set(f.figure, i + f.figure.length);
+    marks.push({ end: i + f.figure.length, f });
+  }
+  return marks.sort((a, b) => a.end - b.end);
+}
+function footnotedClaim(p) {
+  if (!Array.isArray(p.figures) || !p.figures.length) return escapeHtml(p.claim) + citeMark(p.source_ref);
+  let html = "", pos = 0;
+  for (const m of _figureMarks(p)) {
+    html += escapeHtml(p.claim.slice(pos, m.end));
+    html += m.f.derived ? `<sup class="cite-d" title="computed — see how each figure is sourced">‡</sup>` : citeMark(m.f.source_ref);
+    pos = m.end;
+  }
+  return html + escapeHtml(p.claim.slice(pos)) + citeMark(p.source_ref);
+}
+function figureSources(p) {
+  if (!Array.isArray(p.figures) || !p.figures.length) return "";
+  const rows = p.figures.map((f) => f.derived
+    ? `<li><b>${escapeHtml(f.figure)}</b> ‡ computed: ${escapeHtml(_figExpr(f))} <span class="muted">(each input footnoted; checked against the figure as written)</span></li>`
+    : `<li><b>${escapeHtml(f.figure)}</b> — <span class="cite">${escapeHtml(f.source_ref || "")}</span></li>`).join("");
+  return `<details class="fig-cites" style="margin-top:4px;"><summary class="muted" style="font-size:11.5px;">How each figure is sourced (${p.figures.length})</summary><ul class="kv-list" style="font-size:11.5px; margin-top:4px;">${rows}</ul></details>`;
+}
+
 // (tier redesign) setupCard is GONE — one line does not earn a card; the decisive question now
 // leads "The case". companyCard is GONE — merged into companyInner above.
 
@@ -1822,7 +1878,7 @@ function briefCase(s, m, sleeve) {
   if (!s || (!(s.bull_points || []).length && !(s.bear_points || []).length)) return "";
   // (buy-side cover) the decisive question + key unknowns moved to the opener's CRUX block — this
   // card carries the condensed bull/bear alone, so the question renders once per tier.
-  const pt = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${citeMark(p.source_ref)}</div>`;
+  const pt = (p, cls) => `<div class="point ${cls}">${footnotedClaim(p)}</div>`;
   const dv = driverRefs(m);
   const bulls = orderPoints(s.bull_points, "bull", decisiveRefs(s, "bull"), dv).slice(0, 3).map((p) => pt(p, "bull")).join("") || `<div class="muted">—</div>`;
   const bears = orderPoints(s.bear_points, "bear", decisiveRefs(s, "bear"), dv).slice(0, 3).map((p) => pt(p, "bear")).join("") || `<div class="muted">—</div>`;
@@ -4689,7 +4745,7 @@ function synthesis(s, m, sleeve) {
     return `<div class="card ds-section"><div class="ds-title">The argument</div>${fence}
       <div class="notice">Synthesis not assembled (source inputs too thin, or the synthesis step was skipped). The mechanical evidence in this tier stands on its own.</div></div>`;
   }
-  const point = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${citeMark(p.source_ref)}${p.cited === false ? ` <span class="uncited">⚠ uncited — does not trace to a mechanical fact</span>` : ""}</div>`;
+  const point = (p, cls) => `<div class="point ${cls}">${footnotedClaim(p)}${p.cited === false ? ` <span class="uncited">⚠ uncited — does not trace to a mechanical fact</span>` : ""}${figureSources(p)}</div>`;
   const dq = s.decisive_question || {};
   // (H6) an '[LLM-suggested, unverified]' twin's outcome is the MODEL's claim → suffix "(LLM-claimed
   // — verify)"; a roster/self-sourced twin renders plain. Deterministic, render-side.
