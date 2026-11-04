@@ -38,7 +38,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2026-11-05 `[cadence-estimate]` — calendar in Analysis
 
 ## What happened — and can it survive?
-- **Shape:** discrete gap-downs — 2026-06-18 no company filing; 2026-08-06 earnings [4]
+- **Shape (180 days to 2026-08-24):** discrete gap-downs — 2026-06-18 no company filing; 2026-08-06 earnings [4]
 - **Price (180d):** -15.1% [5]
 - **Market (MDY) 180d:** 5.9% [6]
 - **vs market (180d):** -21.0% [7]
@@ -179,7 +179,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 # Analysis — full dossier
 
 ## What broke — and did it fall alone?
-- **Read — what broke** · discrete gap-downs: [4]
+- **Read — what broke (180 days to 2026-08-24)** · discrete gap-downs: [4]
   - 2026-06-18 **-12.6%** → no company filing
   - 2026-08-06 **-15.3%** → earnings
 

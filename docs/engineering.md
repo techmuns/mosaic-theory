@@ -619,6 +619,12 @@ PR (CLAUDE.md: coin-time translation).
 - **Order object** (2026-11-04, slice 2a, `vinci/facts/store.py`) — plain words: *one file per
   company and snapshot recording which stored row was which row of SEC's response, kept apart from
   the facts so a year of facts no new filing touched keeps its name across refreshes.*
+- **Drawdown anchor / at-anchor part / since part** (2026-11-04, `DrawdownAnchor`,
+  `drawdown_cause.anchor`) — plain words: *the date a name's drawdown record is pinned to (its
+  underwrite, else the day it was followed); the at-anchor part is the gap-downs, 8-Ks and outlook
+  of the 180 days ending on that date, read only from what was knowable then, and the since part is
+  what has happened from the next day to the page's price date.* NOT the R1 screening `anchor`
+  (`vinci/dossier/anchor.py`), nor the price refresh's anchor session.
 
 ## Local setup (every laptop, every contributor)
 

@@ -19,7 +19,7 @@ _10 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2027-01-21 `[cadence-estimate]` — calendar in Analysis
 
 ## What happened — and does it change the runway?
-- **Shape:** gradual bleed — no discrete gap-down detected [4]
+- **Shape (180 days to 2026-10-16):** gradual bleed — no discrete gap-down detected [4]
 - **Price (180d):** 35.6% [5]
 - **Market (SPY) 180d:** 7.5% [6]
 - **vs market (180d):** 28.1% [7]
@@ -139,8 +139,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 # Analysis — full dossier
 
 ## What moved the price — and did it move alone?
-- **Read — what moved:** gradual bleed — no discrete gap-down detected [4]
-- **Gap-down dates:** _UNKNOWN_ — no gap-down events on the data-record
+- **Read — what moved (180 days to 2026-10-16):** gradual bleed — no discrete gap-down detected [4]
+- **Gap-down dates (180 days to 2026-10-16):** _UNKNOWN_ — no gap-down events on the data-record
 
 _Company-specific or market-wide?_
 - **Name 180d return:** 35.6% [5]

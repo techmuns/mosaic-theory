@@ -868,4 +868,5 @@ def test_the_web_brief_renders_a_degraded_drawdown_shape_like_render_py() -> Non
     )
     # and the Python side must still be unconditional, or the parity claim is empty
     py = _src("vinci/dossier/render.py")
-    assert 'out.append(_fact("Shape", m.drawdown_cause.shape, _fmt_shape))' in py
+    # (2026-11-04) the label names the rolling window's length (`_rolling`); still unconditional
+    assert 'out.append(_fact(_rolling("Shape", m.drawdown_cause, d.reference_date),' in py

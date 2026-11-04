@@ -305,6 +305,18 @@ const EXTRACTION_VERSIONS = [
     "ref as before; and the blocks the assembler builds (consensus levels, peer capital intensity, " +
     "checked maturities, the EV/EBITDA bases, the EBITDA basis, implied expectations, a filed " +
     "LTM's two CIQ readings) carry a source_ref a point can cite"],
+  ["2026-11-04.anchored-drawdown",
+    "a name with an underwrite record, else a follow, keeps its drawdown at that date " +
+    "(`drawdown_cause.anchor`): the gap-downs of the 180 days ending on it, each with its " +
+    "move, its 8-K's item labels and the revised-outlook exhibit, read only from closes on or" +
+    " before it and 8-Ks filed by it, so no later build changes it; and the gap-downs since " +
+    "it to the price date, read the same way at the price date; a name with neither is " +
+    "unchanged"],
+  ["2026-11-04.drawdown-window-at-price-date",
+    "the rolling drawdown window ends on the page's price date, not the screen's reference " +
+    "date: the screen's detector over the 180 days ending on the stored close the price box " +
+    "shows, so a drop after the last screen run is classified, not only charted " +
+    "(`drawdown_cause.gap_window_end`)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
@@ -1321,7 +1333,7 @@ function briefTier(d, verdict, m, card, mark) {
   // (brief re-order 2026-07-27) WHAT HAPPENED precedes the underwrite detail — the reader met the
   // valuation grid before the problem it values. Setup, then what it is worth. Twin of render.py.
   const parts = openerCard(d, verdict, m, card, mark)
-    + whatHappened(m, d.sleeve)
+    + whatHappened(m, d.sleeve, d.reference_date)
     + underwriteDetail(d, verdict, m, card, mark)
     + briefCase(d.synthesis, m, d.sleeve)
     + financialSnapshot(m) + valuationCard(m);
@@ -1521,7 +1533,7 @@ function companyInner(d, m, card = null) {
 // drawdown % with no WHY — but the fund's whole question (overshoot vs terminal) starts from what
 // broke, so the shape belongs on page 1. The narrative names the EVENTS; the tiles carry the
 // NUMBERS (never both in one surface). Full event log + filings stay in Analysis.
-function whatHappened(m, sleeve) {
+function whatHappened(m, sleeve, refDate) {
   const dc = m.drawdown_cause || {};
   // RENDER AN UNKNOWN SHAPE TOO — `fact()` already prints "UNKNOWN — <note>", and the twin
   // `render.py::_brief_lines` appends this line unconditionally. The old `status === "present"`
@@ -1529,7 +1541,7 @@ function whatHappened(m, sleeve) {
   // unreadable filing index, and this gate then dropped exactly that state — leaving a degraded
   // drawdown SILENT on the web Brief and page 1 of the PDF while its qa flag is hidden by
   // `flags._QA_MARKERS`. That combination is what the hide-list entry's FALSIFIER forbids.
-  const shape = dc.shape ? fact("Shape", dc.shape, fmtShape) : "";
+  const shape = dc.shape ? fact(rollingLabel("Shape", dc, refDate), dc.shape, fmtShape) + anchorBrief(dc) : "";
   const tiles = briefTilesGrid(m);
   if (!shape && !tiles) return "";
   // (content relocation 2026-07-24) title matches the contents: the tiles carry survival triage
@@ -2624,7 +2636,10 @@ export function drawdownChart(sp, rows, det) {  // exported for the SVG-renderer
 // it. A repeat filing reads "same 8-K as №" instead of restating the cause.
 function readWhatBroke(s, sp, dc, refDate, sleeve) {
   const rows = gapList(fmtShape(s.value));
-  const det = { threshold: dc && dc.gap_threshold, windowDays: dc && dc.gap_window_days, refDate };
+  // the window ends on `gap_window_end` (the price date) where the page states one, else on the
+  // reference date, as every page built before it did
+  const det = { threshold: dc && dc.gap_threshold, windowDays: dc && dc.gap_window_days,
+    refDate: (dc && dc.gap_window_end) || refDate };
   // NO GAPS IS NOT NO PRICE PATH. A gradual-decline name used to render one line of text and
   // nothing else — but the section asks what MOVED the price and whether it moved alone, and both
   // halves are answerable whether or not the move arrived in discrete steps. UBER is the live
@@ -2641,16 +2656,16 @@ function readWhatBroke(s, sp, dc, refDate, sleeve) {
   // breaks. Today UBER is the only committed name with zero gaps, and it is the only quality name.
   if (!rows) {
     const { svg: plain } = drawdownChart(sp, [], det);
-    if (!plain) return factRead(sleeveCopy(sleeve).read, s, (v) => escapeHtml(fmtShape(v)));
+    if (!plain) return factRead(rollingLabel(sleeveCopy(sleeve).read, dc, refDate), s, (v) => escapeHtml(fmtShape(v)));
     const why = (det.threshold != null && det.windowDays != null)
       ? `No single day crossed the −${Math.round(Math.abs(det.threshold) * 100)}% detector inside the ${det.windowDays}d window, so there is nothing to mark — the path is the whole event.`
       : "No discrete gap-down was detected, so there is nothing to mark — the path is the whole event.";
     const note = `<div style="flex:0 1 236px; font-size:11.5px;">
-      <div style="font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); margin:2px 0 6px;">No discrete gap-downs</div>
+      <div style="font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); margin:2px 0 6px;">No discrete gap-downs${rollingSpan(dc, refDate) ? ` · ${rollingSpan(dc, refDate)}` : ""}</div>
       <div style="color:var(--ink-2); line-height:1.55;">${escapeHtml(fmtShape(s.value))}</div>
       <div style="color:var(--ink-3); margin-top:7px; line-height:1.55;">${escapeHtml(why)}</div>
       ${citeMark(s.source_ref)}</div>`;
-    return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(sleeveCopy(sleeve).read)}</div>
+    return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(rollingLabel(sleeveCopy(sleeve).read, dc, refDate))}</div>
       <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">${plain}${note}</div></div>`;
   }
   const { svg, preDrops } = drawdownChart(sp, rows, det);
@@ -2677,15 +2692,26 @@ function readWhatBroke(s, sp, dc, refDate, sleeve) {
       <span>${escapeHtml(causeTxt)}</span></div>`;
   }).join("");
   const hdr = (det.threshold != null && det.windowDays != null)
-    ? `Gap-downs · 1-day ≤ −${Math.round(Math.abs(det.threshold) * 100)}% · ${det.windowDays}d window`
+    ? `Gap-downs · 1-day ≤ −${Math.round(Math.abs(det.threshold) * 100)}% · ${rollingSpan(dc, refDate) || `${det.windowDays}d window`}`
     : "Gap-downs";
+  // a pre-window drop a DATED part classifies (`anchorAnalysis`, above) is said to be, never
+  // "not classified" beside the block that classifies it
+  const dated = new Set();
+  for (const w of [dc && dc.anchor && dc.anchor.at_anchor, dc && dc.anchor && dc.anchor.since]) {
+    for (const g of ((w && w.gaps) || [])) dated.add(g.on);
+  }
+  const preList = (qs) => qs.map((q) => `${escapeHtml(_monDay(q.date))} ${fmtGapPct(q.pct)}`).join(" · ");
+  const preNot = preDrops.filter((q) => !dated.has(q.date));
+  const preDated = preDrops.filter((q) => dated.has(q.date));
   const pre = preDrops.length
-    ? `<div style="color:var(--ink-3); font-size:10.5px; margin-top:7px; line-height:1.55;">○ before the ${det.windowDays}d detector window:<br>${preDrops.map((q) => `${escapeHtml(_monDay(q.date))} ${fmtGapPct(q.pct)}`).join(" · ")} (not classified)</div>`
+    ? `<div style="color:var(--ink-3); font-size:10.5px; margin-top:7px; line-height:1.55;">○ before the ${det.windowDays}d detector window:<br>${
+      preNot.length ? `${preList(preNot)} (not classified)` : ""}${preNot.length && preDated.length ? "<br>" : ""}${
+      preDated.length ? `${preList(preDated)} (classified in the dated record above)` : ""}</div>`
     : "";
   const key = `<div style="flex:0 1 236px; font-size:11.5px;">
     <div style="font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); margin:2px 0 6px;">${hdr}</div>
     ${items}${pre}${citeMark(s.source_ref)}</div>`;
-  return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(sleeveCopy(sleeve).read)}</div>
+  return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(rollingLabel(sleeveCopy(sleeve).read, dc, refDate))}</div>
     <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">${svg}${key}</div></div>`;
 }
 
@@ -2706,11 +2732,12 @@ function drawdownIdio(m, refDate, sleeve) {
   // legacy no-street-card JSON: the guidance fact renders here so it is never dropped
   const legacyGuide = (!m.catalyst_path && m.drawdown_cause)
     ? fact("Revised guidance", m.drawdown_cause.revised_guidance) : "";
-  if (!dd.read && !dd.evidence && !io && !legacyGuide) return "";
+  const dated = anchorAnalysis(m.drawdown_cause);
+  if (!dated && !dd.read && !dd.evidence && !io && !legacyGuide) return "";
   const divider = `<div class="ds-title" style="font-size:12px; margin-top:10px;">Company-specific or market-wide?</div>`;
   return sec(sleeveCopy(sleeve).drawdown,
     sleeveCopy(sleeve).subtitle,
-    dd.read + (io ? divider + io : "") + legacyGuide + dd.evidence);
+    dated + dd.read + (io ? divider + io : "") + legacyGuide + dd.evidence);
 }
 
 // (E2) $M principal → "$25.0M" / "–"
@@ -3797,6 +3824,102 @@ export function cleanItemEvent(ev) {  // exported for the py-twin equivalence te
   return title ? `${code} ${title}: ${body}` : `${code}: ${body}`;
 }
 
+// (2026-11-04) THE DRAWDOWN AT THE ANCHOR AND SINCE (`DrawdownAnchor`). The current window rolls
+// with the page's date, so the event an underwrite was written on leaves it; these two dated parts
+// keep it. How each part names itself — twin of schemas.DRAWDOWN_ANCHOR_WORDS.
+// exported for the parity pin that binds it to the python copy (test_anchored_drawdown)
+export const ANCHOR_WORDS = {
+  underwrite: ["Drawdown at underwrite", "Since underwrite", "underwrite"],
+  followed: ["Drawdown when followed", "Since followed", "follow"],
+};
+const _anchorWords = (kind) => ANCHOR_WORDS[kind] || [`Drawdown at ${kind}`, `Since ${kind}`, kind];
+const _move = (v) => `${v >= 0 ? "+" : "-"}${Math.abs(v * 100).toFixed(1)}%`;
+// The rolling window's span as the page read it: "last 180 days" when it ends on the price date
+// (`gap_window_end`), else "180 days to <reference date>" — a page built before read the screen's
+// window (review of #906); null when the length is not stated. Twin of render._rolling_span.
+export function rollingSpan(dc, refDate) {
+  const days = dc && dc.gap_window_days;
+  if (days == null) return null;
+  if (dc.gap_window_end) return `last ${days} days`;
+  return refDate ? `${days} days to ${refDate}` : `${days} days`;
+}
+// A label for a line that reads the ROLLING window, naming its span (operator, 2026-11-04:
+// "Approve + relabel"). Twin of render._rolling; exported for the py-twin equivalence test.
+export function rollingLabel(label, dc, refDate) {
+  const span = rollingSpan(dc, refDate);
+  return span ? `${label} (${span})` : label;
+}
+// A dated window's gap-downs in words, from its structured `gaps` — never its shape string. Twin of
+// render._window_words; exported for the py-twin equivalence test.
+export function windowWords(w, threshold) {
+  const gaps = (w && w.gaps) || [];
+  if (gaps.length) {
+    return gaps.map((g) => `${g.on} ${_move(g.move)} ${fmtShape(g.cause) || "cause unread"}`).join("; ");
+  }
+  const pct = threshold != null ? (Math.abs(threshold) * 100).toFixed(0) : "10";
+  return `no single day of -${pct}% or worse`;
+}
+// one dated window as a fact row: its gap-downs + cite, or its loud UNKNOWN (twin of _window_fact)
+function windowFact(label, w, threshold) {
+  const s = (w && w.shape) || {};
+  if (s.status !== "present") return fact(label, s);
+  return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
+    <div class="fact-val">${escapeHtml(windowWords(w, threshold))}${citeMark(s.source_ref)}</div></div>`;
+}
+// the Brief's two lines beside the current shape — twin of render._anchor_brief_lines
+function anchorBrief(dc) {
+  const a = dc && dc.anchor;
+  if (!a) return "";
+  const [atLabel, sinceLabel, word] = _anchorWords(a.kind);
+  const since = a.since
+    ? windowFact(`${sinceLabel} (${a.since.start} → ${a.since.end})`, a.since, dc.gap_threshold)
+    : `<div class="fact"><div class="fact-label">${escapeHtml(sinceLabel)}</div><div class="fact-val muted">no session after the ${escapeHtml(word)} yet</div></div>`;
+  return windowFact(`${atLabel} (${a.on})`, a.at_anchor, dc.gap_threshold) + since;
+}
+// The dated parts in full, LEADING the Analysis drawdown section: the original event, then what has
+// happened since, then the rolling window — a thesis log. Each part's verbatim outlook and its 8-Ks
+// are provenance: a collapsed <details> on the web, force-open in print. Twin of
+// render._anchor_analysis_lines.
+function anchorAnalysis(dc) {
+  const a = dc && dc.anchor;
+  if (!a) return "";
+  const [atLabel, sinceLabel, word] = _anchorWords(a.kind);
+  const part = (label, w) => {
+    if (!w) {
+      return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div><div class="fact-val muted">no session after the ${escapeHtml(word)} yet</div></div>`;
+    }
+    const span = `${w.start} → ${w.end}`;
+    const s = w.shape || {};
+    if (s.status !== "present" || !(w.gaps || []).length) {
+      return windowFact(`${label} · ${span}`, w, dc.gap_threshold) + anchorProvenance(w);
+    }
+    const rows = w.gaps.map((g) => `<div style="display:flex; gap:7px; align-items:baseline; padding:3.5px 0; border-bottom:1px solid var(--line);">
+      <span style="font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap;">${escapeHtml(g.on)}</span>
+      <span style="font-variant-numeric:tabular-nums; color:var(--danger); font-weight:600; white-space:nowrap;">${escapeHtml(_move(g.move))}</span>
+      <span>${escapeHtml(fmtShape(g.cause) || "cause unread")}</span></div>`).join("");
+    return `<div class="fact"><div class="fact-label">${escapeHtml(label)}<div class="muted" style="font-size:11px; font-weight:400;">${escapeHtml(span)} · as knowable on ${escapeHtml(w.end)}</div></div>
+      <div style="min-width:0; font-size:12.5px;">${rows}${citeMark(s.source_ref)}</div></div>` + anchorProvenance(w);
+  };
+  const lead = `<div class="fg-note" style="margin:2px 0 6px;">The record since the ${escapeHtml(word)} (${escapeHtml(a.on)}), kept dated: the part at the ${escapeHtml(word)} is read only from what was knowable then, so no later build changes it.${citeMark(a.source_ref)}</div>`;
+  return `<div style="margin-bottom:12px;">${lead}${part(`${atLabel} (${a.on})`, a.at_anchor)}${part(sinceLabel, a.since)}</div>`;
+}
+// one dated part's provenance: the outlook its 8-K furnished (verbatim) and the 8-Ks themselves
+function anchorProvenance(w) {
+  const rg = w.revised_guidance || {};
+  const seen = new Set();
+  const filings = (w.filings || []).filter((f) => f.explanatory !== false && !seen.has(f.accession) && seen.add(f.accession));
+  if (rg.status !== "present" && !filings.length) return "";
+  const outlook = rg.status === "present"
+    ? `<div style="margin-top:4px;"><b>outlook then:</b> ${escapeHtml(String(rg.value))}${citeMark(rg.source_ref)}</div>` : "";
+  const eights = filings.map((f) => {
+    const items = (f.item_types || f.items || []).filter((t) => !String(t).startsWith("9.01"));
+    return `<div style="margin-top:4px;">8-K filed ${fmtDate(f.filing_date)} · items: ${escapeHtml(items.join(" · ") || "—")}${f.url ? ` · <a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a>` : ""}</div>`;
+  }).join("");
+  return `<details style="margin:2px 0 8px; font-size:12px; color:var(--ink-2);">
+    <summary style="cursor:pointer; font-size:11.5px; color:var(--ink-3);">The 8-K${filings.length === 1 ? "" : "s"} and the outlook, ${escapeHtml(w.start)} → ${escapeHtml(w.end)} — verbatim</summary>
+    <div style="padding:2px 2px 4px;">${outlook}${eights}</div></details>`;
+}
+
 function drawdownCause(dc, sp, refDate, sleeve) {
   if (!dc) return { read: "", evidence: "" };
   // GROUP BY ACCESSION: two consecutive gap-downs can share ONE 8-K (SMPL 04-09/04-10, CNXC
@@ -3874,13 +3997,13 @@ function drawdownCause(dc, sp, refDate, sleeve) {
   // an absent shape stays a loud UNKNOWN row (fail-honest, never silently dropped)
   const shapeLead = (shapeV.status === "present" && shapeV.value != null)
     ? readWhatBroke(dc.shape, sp, dc, refDate, sleeve)
-    : fact("Shape", dc.shape, fmtShape);
+    : fact(rollingLabel("Shape", dc, refDate), dc.shape, fmtShape);
   // (restructure) read + evidence returned SEPARATELY: the idio comparison renders between them
   // (the card's question directly after its read; the 8-K callout closes as provenance). Revised
   // guidance is a street/guidance fact — it renders on the street card (catalystPath); the legacy
   // no-catalyst-path JSON keeps it here so the fact is never dropped.
   return {
-    read: shapeLead + (datesDup ? "" : fact("Gap-down dates", listFact(dc.gap_down_dates))),
+    read: shapeLead + (datesDup ? "" : fact(rollingLabel("Gap-down dates", dc, refDate), listFact(dc.gap_down_dates))),
     evidence: (driverCards || provenance)
       ? `<div style="margin-top:12px;">${driverCards}${provenance}</div>` : "",
   };

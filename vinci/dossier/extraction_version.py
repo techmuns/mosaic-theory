@@ -459,6 +459,22 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "implied expectations, a filed LTM's two CIQ readings) carry a source_ref a point can "
         "cite",
     ),
+    (
+        "2026-11-04.anchored-drawdown",
+        "a name with an underwrite record, else a follow, keeps its drawdown at that date "
+        "(`drawdown_cause.anchor`): the gap-downs of the 180 days ending on it, each with its "
+        "move, its 8-K's item labels and the revised-outlook exhibit, read only from closes on or"
+        " before it and 8-Ks filed by it, so no later build changes it; and the gap-downs since "
+        "it to the price date, read the same way at the price date; a name with neither is "
+        "unchanged",
+    ),
+    (
+        "2026-11-04.drawdown-window-at-price-date",
+        "the rolling drawdown window ends on the page's price date, not the screen's reference "
+        "date: the screen's detector over the 180 days ending on the stored close the price box "
+        "shows, so a drop after the last screen run is classified, not only charted "
+        "(`drawdown_cause.gap_window_end`)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
