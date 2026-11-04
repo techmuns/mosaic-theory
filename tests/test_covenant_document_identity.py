@@ -503,3 +503,141 @@ def test_no_published_covenant_heading_lost_its_day_count() -> None:
                 bad.append(f"{page.name}: {m.group(1)[:70]}")
     assert checked, "no covenant headings found — the pin would pass vacuously"
     assert not bad, "a tenor lost its number in a published heading:\n" + "\n".join(bad)
+
+
+# --- an amendment whose heading names no contract ----------------------------------------------
+# SMPL's two located credit exhibits open "REPRICING AMENDMENT, DATED AS OF MARCH 16, 2018, BY AND
+# AMONG ..." and "AMENDMENT NO 2. (INCREMENTAL FACILITY AMENDMENT) ...": an amendment heading that
+# names no contract. `_TITLE` wants a capitals title ending in a debt noun, found none, and the
+# guard refused both as "no agreement at all". SMPL's committed covenant table was extracted from
+# exactly these two exhibits (2026-08-18, before the guard), so its next paid build would have lost
+# it (the $0 pre-spend check, 2026-11-04). The contract an amendment amends is named in its own
+# recital — "reference is hereby made to the Credit Agreement, dated as of July 7, 2017". Every
+# head below is the real one from `tests/fixtures/covenant_heads/` (see its README).
+
+def _heads() -> dict[tuple[str, str], str]:
+    import json
+    import pathlib
+    path = pathlib.Path(__file__).resolve().parent / "fixtures" / "covenant_heads" / "heads.json"
+    return {(h["ticker"], h["exhibit"]): h["head"] for h in json.loads(path.read_text())}
+
+
+SMPL_REPRICING = ("SMPL", "f8k032018ex10-1_simplygood.htm")
+SMPL_INCREMENTAL = ("SMPL", "a19-22146_1ex10d1.htm")
+NCNO_FIRST = ("NCNO", "firstamendmenttocreditagre.htm")
+NCNO_LEASE = ("NCNO", "exhibit1035secondamendment.htm")
+TGT_8K_COVER = ("TGT", "form8-k_creditagreement105.htm")
+VRRM_AMENDMENT_4 = ("VRRM", "vrrm-ex10_1.htm")
+#: the letters, the confirmation and the plan amendment the guard was written to refuse
+NOT_AGREEMENTS = (("NKE", "nke-5312026exhibit1029.htm"), ("TGT", "tgt20260131-exhibit1018.htm"),
+                  ("UBER", "e23472_ex10-1.htm"), ("TJX", "tjx-20260131xexhibit1024.htm"))
+
+
+def test_an_amendment_heading_takes_its_contract_from_its_recital() -> None:
+    """(+) THE REAL DOCUMENTS. Each opens with an amendment heading in capitals and names its
+    contract only in the recital; each normalises to that contract, as a titled amendment does,
+    and so reaches the extractor marked as an amendment. NCNO's First Amendment has the same shape:
+    "FIRST AMENDMENT ... to the Credit Agreement referenced below"."""
+    heads = _heads()
+    for key in (SMPL_REPRICING, SMPL_INCREMENTAL, NCNO_FIRST):
+        got = agreement_title(heads[key])
+        assert got == "CREDIT AGREEMENT", (key, got)
+        assert is_debt_agreement(got), key
+        assert is_amendment(heads[key]), key
+
+
+def test_an_amendment_heading_admits_only_what_it_amends() -> None:
+    """(-) THE HEADING IS NOT THE PASS. NCNO's office-lease amendment opens with the same capitals
+    heading ("SECOND AMENDMENT TO OFFICE LEASE"); its recital names "that certain Office Lease",
+    and the gate refuses a lease whatever amends it."""
+    got = agreement_title(_heads()[NCNO_LEASE])
+    assert got == "OFFICE LEASE", got
+    assert not is_debt_agreement(got)
+
+
+def test_citing_a_credit_agreement_does_not_make_a_document_an_amendment() -> None:
+    """(-) THE CITATION IS NOT THE EVIDENCE; THE HEADING IS. TGT's 8-K cover document cites "the
+    Credit Agreement" as an amendment's recital does, and it is neither an amendment nor an
+    agreement. Reading the recital without the heading would admit it as one."""
+    assert agreement_title(_heads()[TGT_8K_COVER]) is None
+
+
+def test_a_capitals_amendment_past_the_start_is_not_a_heading() -> None:
+    """(-) THE HEADING IS ANCHORED. DERIVED, not drawn: no head in the 2026-11-04 corpus carries a
+    capitals AMENDMENT anywhere but its start, so this inserts one into TGT's real 8-K cover —
+    an 8-K/A's own label. Unanchored, the heading test would find it and read the recital."""
+    head = _heads()[TGT_8K_COVER].replace("FORM 8-K CURRENT REPORT", "FORM 8-K/A AMENDMENT NO. 1 "
+                                          "CURRENT REPORT", 1)
+    assert "AMENDMENT NO. 1" in head, "the derivation must have applied"
+    assert agreement_title(head) is None
+
+
+def test_the_letters_and_confirmations_the_guard_exists_for_stay_refused() -> None:
+    """(-) THE INCIDENTS THE GUARD SHIPPED FOR (#652), read from their real exhibits: NKE's CFO
+    offer letter, TGT's CEO transition letter, UBER's capped-call confirmation, and TJX's
+    amendment to a stock plan, whose "First Amendment" is title-case and not at its head."""
+    heads = _heads()
+    for key in NOT_AGREEMENTS:
+        got = agreement_title(heads[key])
+        assert not is_debt_agreement(got), (key, got)
+
+
+def test_a_title_cased_heading_is_not_renamed_by_its_recital() -> None:
+    """(-) A DIFFERENT SHAPE, LEFT FOR ITS OWN FIX. VRRM's Amendment No. 4 names its contract in its
+    own title-cased heading — "Revolving Credit Agreement" — and its recital's defined term is the
+    shorter "Credit Agreement". Read from the recital it would be named a contract VRRM's revolver
+    is not, and split from the "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT" it amends. The
+    heading must be in capitals, as an agreement's heading is (see `_IS_AMENDMENT`)."""
+    got = agreement_title(_heads()[VRRM_AMENDMENT_4])
+    assert got != "CREDIT AGREEMENT", got
+
+
+class _ServesHeads:
+    """SEC reads served from the real heads, by exhibit filename."""
+
+    def __init__(self) -> None:
+        self.heads = {exhibit: head for (_t, exhibit), head in _heads().items()}
+
+    def get_text(self, url: str, **_: object) -> str:
+        return self.heads[url.rsplit("/", 1)[-1]]
+
+    def get_json(self, url: str, **_: object) -> object:
+        raise OSError(f"offline: {url}")
+
+
+class _RecordsExhibits:
+    """An LLM client that answers each exhibit with no terms and records which it was sent."""
+
+    model = "none (test)"
+
+    def __init__(self) -> None:
+        self.sent: list[str] = []
+
+    def extract(self, *, system: str, user: str, tool: dict[str, object],
+                cache: bool = False) -> dict[str, object]:
+        self.sent.append(user.split("Exhibit: ", 1)[1].split(". Extract", 1)[0])
+        return {"terms": []}
+
+
+def test_smpl_page_sends_both_credit_amendments_to_the_extractor() -> None:
+    """(+) END-TO-END, ON THE PAGE THE PRE-SPEND CHECK SAW IT ON. SMPL's frozen 2026-08-18 page
+    (its pointer rows are the committed page's) through `extract_covenant_terms`, with SEC serving
+    the real exhibits: both located credit amendments reach the extractor and neither is refused.
+    Before the fix neither did, and the forecast read the covenant table as lost."""
+    import pathlib
+
+    from vinci.dossier.prespend import forecast_llm_fields
+    from vinci.dossier.schemas import Dossier
+    root = pathlib.Path(__file__).resolve().parent / "fixtures" / "frozen_pages" / "2026-08-18"
+    page = Dossier.model_validate_json((root / "SMPL" / "dossier.json").read_text())
+    assert page.mechanical is not None and page.mechanical.capital_structure is not None
+    llm = _RecordsExhibits()
+    _rows, _summary, flags, _log = covenant_extract.extract_covenant_terms(
+        page.mechanical.capital_structure, llm=llm, http=_ServesHeads(),  # type: ignore[arg-type]
+        cik=page.cik or "", ticker=page.ticker, name=page.name)
+    assert llm.sent == ["8-K 0001213900-18-003172 · f8k032018ex10-1_simplygood.htm",
+                        "8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm"], llm.sent
+    assert not [f for f in flags if "not a debt agreement" in f], flags
+    fc = forecast_llm_fields(page, http=_ServesHeads())
+    rows = fc["mechanical.capital_structure.covenant_term_rows"]
+    assert rows.status is None and "to the model" in rows.why, rows

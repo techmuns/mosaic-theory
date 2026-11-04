@@ -476,6 +476,20 @@ _BASE_REF = re.compile(
 #: A one-word self-declared title, anchored at the START of the cleaned head
 #: (see `agreement_title`).
 _BARE_NOUN = re.compile(r"^(INDENTURE|DEBENTURE)\b", re.I)
+#: AN AMENDMENT HEADING THAT NAMES NO CONTRACT (2026-11-04): "REPRICING AMENDMENT, DATED AS OF
+#: MARCH 16, 2018, BY AND AMONG ..." and "AMENDMENT NO 2. (INCREMENTAL FACILITY AMENDMENT)" (SMPL),
+#: "FIRST AMENDMENT THIS FIRST AMENDMENT ... to the Credit Agreement referenced below" (NCNO). Such
+#: a document names its contract only in the recital, so `agreement_title` reads it there
+#: (`_BASE_REF`). ANCHORED AT THE START of the cleaned head: TGT's 8-K cover document cites "the
+#: Credit Agreement" too, and only the heading says a document IS an amendment. CAPITALS ONLY, for
+#: `_IS_AMENDMENT`'s reason: a heading is set in capitals. A title-cased heading names its contract
+#: itself (VRRM's "Amendment No. 4 to REVOLVING CREDIT Agreement"), and its recital's defined term
+#: ("Credit Agreement") would mis-name it, so it is not read here. Measured at 4a820016 over the 184
+#: exhibits on the pointer rows of the 25 committed pages that have them: it names six, four of
+#: them a credit agreement (SMPL x2, NCNO's First Amendment, BURL's 2014 Amendment No. 4) and two an
+#: office lease (NCNO, refused). Three of those four newly reach the extractor; BURL's is past its
+#: cost bound.
+_AMEND_HEAD = re.compile(r"^(?:[A-Z][A-Z\-]*\s+){0,3}AMENDMENT\b")
 #: The capture ran past the heading into the body — a title, not a sentence.
 _PROSE = re.compile(r"\b(ENTERED|DATED|MADE|WHEREAS|BETWEEN|AMONG|BY\s+AND|HEREBY|PURSUANT|"
                     r"MEANING|ASCRIBED|THERETO|DEFINED|REFERRED)\b", re.I)
@@ -521,6 +535,12 @@ def is_amendment(text: str) -> bool:
     m = _TITLE.search(h[:1500])
     if m is not None and _AMEND_PREFIX.search(_clean_title(m.group(1))):
         return True
+    # A heading that is an amendment and names no contract (`_AMEND_HEAD`) — what `agreement_title`
+    # reads from the recital. SMPL's two read True below only because `_ORD.upper()` turns `\d`
+    # into `\D`, so `_IS_AMENDMENT` matches any capitals "<words> AMENDMENT"; they must not depend
+    # on that.
+    if m is None and _AMEND_HEAD.match(h):
+        return True
     return bool(_IS_AMENDMENT.search(h[:900]))
 
 
@@ -546,7 +566,15 @@ def agreement_title(text: str) -> str | None:
         # refused as "no agreement at all". Anchored at the head, so it cannot pick up a noun
         # from the body.
         b0 = _BARE_NOUN.match(h)
-        return b0.group(1).upper() if b0 else None
+        if b0:
+            return b0.group(1).upper()
+        # An amendment heading naming no contract: the contract is the one its recital names
+        # (`_AMEND_HEAD`). Whether that contract is debt is `is_debt_agreement`'s call, not this
+        # function's: an amendment to a lease is named for the lease, and refused for it.
+        b = _BASE_REF.search(h) if _AMEND_HEAD.match(h) else None
+        if b is None:
+            return None
+        return _as_title(_LEAD_NOISE.sub("", _clean_title(b.group(1) or b.group(2))))
     # CODES FIRST, THEN THE AMENDMENT PREFIX. `_AMEND_PREFIX` is anchored at ^, so while a filing
     # id still sits in front of the title it cannot match and the amendment INSTANCE survives
     # normalisation. WERN's Amendment No. 3 is the real case: its head begins
@@ -562,7 +590,12 @@ def agreement_title(text: str) -> str | None:
             cand = _LEAD_NOISE.sub("", _clean_title(b.group(1) or b.group(2))).strip(" .,-")
             if cand and _DEBT.search(cand):
                 t = cand
-    t = t.upper()
+    return _as_title(t)
+
+
+def _as_title(t: str) -> str | None:
+    """A captured name as a title: upper-cased, or None when it is a sentence or too short."""
+    t = t.strip(" .,-").upper()
     if _PROSE.search(t):
         return None
     return t if len(t.split()) >= 2 and len(t) >= 8 else None
