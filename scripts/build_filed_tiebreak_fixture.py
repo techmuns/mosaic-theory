@@ -40,7 +40,8 @@ CORE = ("Total Revenue", "EBITDA", "EBIT", "Net Income")
 #: Each name and the CIQ rows its pins read.
 #: The containing line's CIQ component rows (`filed_tiebreak.CONTAINING`), for the names whose
 #: merger row a pin sets against it.
-_NONOP = tuple(line.components for line in filed_tiebreak.CONTAINING.values())[0]
+_NONOP = tuple(dict.fromkeys(c for line in filed_tiebreak.CONTAINING.values()
+                             for c in line.components))
 NAMES: dict[str, dict[str, Any]] = {
     "CELH": {"rows": ("Merger & Related Restruct. Charges", "Other Unusual Items", *_NONOP)},
     "NFLX": {"rows": ("Merger & Related Restruct. Charges", *_NONOP)},

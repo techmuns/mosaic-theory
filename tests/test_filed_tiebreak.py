@@ -354,6 +354,52 @@ def test_a_breakdown_that_misses_the_filed_line_by_more_than_rounding_refuses(
             d.reason)
 
 
+def _nflx_sheet(b: CiqBundle, freq: str) -> list[list[typing.Any]]:
+    return typing.cast(typing.Any, next(iter(
+        b._cache[pathlib.Path(f"/frozen/NFLX-{freq}.xls")].values())))
+
+
+def test_a_component_row_the_quarterly_sheet_lacks_refuses_and_is_never_a_zero() -> None:
+    """(−) SYNTHETIC, ON THE REAL TYPE: NFLX's real quarterly export with its currency row removed
+    (WAT's export carries no such row). The breakdown is refused, naming the row — never summed
+    with the row as zero and then named on the page as read."""
+    b = _bundle("NFLX")
+    q = _nflx_sheet(b, "quarterly")
+    q[:] = [r for r in q if str(r[0]).strip() != NONOP[1]]
+    d = _decide("NFLX", MERGER, bundle=b)
+    assert d.figure is None and d.reason is not None
+    assert f"carries no '{NONOP[1]}' row above its unusual-items block" in d.reason
+
+
+def test_an_annual_component_the_export_does_not_state_is_never_totalled_as_zero() -> None:
+    """(−) SYNTHETIC, ON THE REAL TYPE: NFLX's annual LTM currency cell set to '-'. The annual
+    breakdown is not totalled without it: the caveat says it cannot be, never that the annual
+    export "reaches the same LTM total" on a sum that read the '-' as 0 (3,050.7 is within 2% of
+    the filed 2,992.3, so a zero would have claimed it)."""
+    b = _bundle("NFLX")
+    a = _nflx_sheet(b, "annual")
+    hdr = next(r for r in a if r and "Fiscal Period" in str(r[0]))
+    j = next(i for i, h in enumerate(hdr) if "LTM" in str(h))
+    next(r for r in a if str(r[0]).strip() == NONOP[1])[j] = "-"
+    d = _decide("NFLX", MERGER, bundle=b)
+    assert d.figure is not None
+    text = d.caveat()
+    assert "cannot be totalled: it states no LTM figure for Currency Exchange Gains" in text
+    assert "reaches the same LTM total" not in text
+
+
+def test_a_component_no_quarter_carries_is_none_never_a_summed_zero() -> None:
+    """(−) SYNTHETIC, ON THE REAL TYPE: every quarterly currency cell of NFLX's export set to '-'.
+    The component's four-quarter figure is None, never the 0 an empty sum returns."""
+    b = _bundle("NFLX")
+    q = _nflx_sheet(b, "quarterly")
+    r = next(r for r in q if str(r[0]).strip() == NONOP[1])
+    r[1:] = ["-"] * (len(r) - 1)
+    read = ft._breakdown(_read("NFLX")[MERGER], ft.CONTAINING[MERGER], b)
+    assert not isinstance(read, str)
+    assert read[1][NONOP[1]] == (-58.4, None)
+
+
 def test_celhs_merger_breakdown_misses_its_filed_line_and_refuses() -> None:
     """(−) CORPUS: CELH's merger row (-36.2 annual, -11.1 quarterly) is mapped to the same line.
     Its quarterly breakdown misses the filed `NonoperatingIncomeExpense` in all four quarters (by

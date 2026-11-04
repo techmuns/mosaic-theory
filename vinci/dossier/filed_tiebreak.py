@@ -302,15 +302,17 @@ def decide(row: lq.LtmCheck, facts: dict[str, Any], *, as_filed_by: date,
     return Decision(row, None, "no filed figure for every quarter — " + "; ".join(misses))
 
 
-def _row_above_block(sheet: list[list[Any]], label: str) -> int | None:
-    """The row named ``label`` ABOVE the sheet's unusual-items block — where CIQ puts a
-    non-operating component — or None when the sheet has no such row."""
+def _rows_above_block(sheet: list[list[Any]], labels: tuple[str, ...],
+                      ) -> dict[str, int | None] | None:
+    """{label: the row named ``label`` ABOVE the sheet's unusual-items block — where CIQ puts a
+    non-operating component — or None when the sheet has no such row}; None when the sheet has no
+    block to stand above. The block is located once per sheet."""
     try:
         lo, _hi = unusual_items_block(sheet)
     except MaterialityUnavailableError:
         return None
-    return next((i for i in range(lo - 1)
-                 if sheet[i] and str(sheet[i][0] or "").strip() == label), None)
+    above = sheet[:lo - 1]   # `lo` is the first row INSIDE the block; lo - 1 is its open subtotal
+    return {lab: cs._find_row(above, lab) for lab in labels}
 
 
 def _cell(sheet: list[list[Any]], ri: int | None, col: int) -> float | None:
@@ -318,10 +320,15 @@ def _cell(sheet: list[list[Any]], ri: int | None, col: int) -> float | None:
 
 
 def _breakdown(row: lq.LtmCheck, wider: ContainingLine, bundle: CiqBundle,
-               ) -> tuple[list[float], dict[str, tuple[float | None, float]], float] | str:
+               ) -> tuple[list[float], dict[str, tuple[float | None, float | None]],
+                          float | None] | str:
     """(the quarterly export's breakdown of the line in each quarter, {component: (the annual
     export's LTM, the quarterly export's four quarters summed)}, the annual export's LTM breakdown)
-    — or why it cannot be read. A '-' is an absence, never a zero, as in `ltm_quarters`."""
+    — or why it cannot be read. A component row the quarterly sheet LACKS refuses: it is never
+    summed as a zero, nor named on the page as read. Within a row the sheet carries, a quarter's
+    '-' adds nothing to that quarter's breakdown, which the filed line then checks; a component no
+    quarter carries is None, never a summed 0, and an annual LTM the export does not state leaves
+    the annual breakdown None — it is never totalled without it."""
     try:
         q = bundle.sheet("financials", "Income Statement", freq="quarterly")
         a = bundle.sheet("financials", "Income Statement", freq="annual")
@@ -336,15 +343,23 @@ def _breakdown(row: lq.LtmCheck, wider: ContainingLine, bundle: CiqBundle,
     ltm = [c for c, _s, is_ltm, _r in cs._fin_periods(a[ah]) if is_ltm][:1]
     if not ltm:
         return "the annual Income Statement carries no LTM column"
-    qrows = {lab: _row_above_block(q, lab) for lab in wider.components}
-    arows = {lab: _row_above_block(a, lab) for lab in wider.components}
+    qrows = _rows_above_block(q, wider.components)
+    if qrows is None:
+        return "the quarterly Income Statement carries no unusual-items block to read above"
+    if lacking := [lab for lab, ri in qrows.items() if ri is None]:
+        return ("the quarterly Income Statement carries no "
+                + ", ".join(f"'{lab}'" for lab in lacking) + " row above its unusual-items block")
+    arows = _rows_above_block(a, wider.components) or dict.fromkeys(wider.components)
     per_q = [sum(v for v in [*(_cell(q, qrows[lab], j) for lab in wider.components), cell.value]
                  if v is not None)
              for (j, _p), cell in zip(four, row.quarters, strict=True)]
-    parts = {lab: (_cell(a, arows[lab], ltm[0]),
-                   sum(v for j, _p in four if (v := _cell(q, qrows[lab], j)) is not None))
-             for lab in wider.components}
-    annual = sum(av for av, _qv in parts.values() if av is not None) + row.ltm
+    parts: dict[str, tuple[float | None, float | None]] = {}
+    for lab in wider.components:
+        qvs = [v for j, _p in four if (v := _cell(q, qrows[lab], j)) is not None]
+        parts[lab] = (_cell(a, arows[lab], ltm[0]), sum(qvs) if qvs else None)
+    avs = [av for av, _qv in parts.values()]
+    annual = (sum(av for av in avs if av is not None) + row.ltm
+              if all(av is not None for av in avs) else None)
     return per_q, parts, annual
 
 
@@ -379,9 +394,15 @@ def _judge_containing(row: lq.LtmCheck, wider: ContainingLine,
     ref = (f"CIQ Financials (Quarterly)→Income Statement '{label}', four quarters to "
            f"{row.ltm_end.isoformat()}, its breakdown reconciling in every quarter to EDGAR XBRL "
            f"us-gaap:{wider.tag} as filed by {as_filed_by.isoformat()} ({', '.join(accs)})")
-    apart = [f"{lab} {av:+,.1f} where the quarterly export's four quarters carry {qv:+,.1f}"
-             for lab, (av, qv) in parts.items() if av is not None and not lq.agrees(av, qv)]
-    note = (("The annual export reaches the same LTM total, "
+    apart = [f"{lab} {av:+,.1f} where the quarterly export's four quarters carry "
+             + ("no figure" if qv is None else f"{qv:+,.1f}")
+             for lab, (av, qv) in parts.items()
+             if av is not None and (qv is None or not lq.agrees(av, qv))]
+    unstated = [lab for lab, (av, _qv) in parts.items() if av is None]
+    note = (("The annual export's LTM breakdown cannot be totalled: it states no LTM figure for "
+             + ", ".join(unstated) + ".")
+            if annual is None else
+            ("The annual export reaches the same LTM total, "
              f"{annual:,.1f} against {filed_ltm:,.1f} filed, only by carrying "
              + "; ".join(apart or ["other components"])
              + ": the filed total alone cannot tell the two exports apart; the quarterly "
