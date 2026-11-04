@@ -26,6 +26,9 @@ MATERIAL row whose annual-export LTM DIFFERs from its four quarters in the quart
   a quarter, and a filed figure far from both readings. The check's own refusal message now adds
   why the filing could not decide.
 - **All or nothing.** One undecided material row refuses the build.
+- **An EDGAR that will not serve companyfacts** (`HttpError`: a 404, or a 5xx past its retries)
+  leaves every row refused, saying so, as `mechanical._companyfacts_or_none` degrades. A throttle
+  (`SecRateLimitedError`) still stops the run.
 
 The mapping has three entries:
 
@@ -93,7 +96,7 @@ refused.
   operator's Drive `manual/ciq`, beside SEC companyfacts fetched 2026-11-04. Main's check refuses
   CELH, NFLX and WAT. On this branch CELH is decided (table above, and the caveat as printed); NFLX
   and WAT refuse with the reason added.
-- **Pins** (`tests/test_filed_tiebreak.py`, 17 tests) run on `tests/fixtures/filed_tiebreak.json`:
+- **Pins** (`tests/test_filed_tiebreak.py`, 20 tests) run on `tests/fixtures/filed_tiebreak.json`:
   - the fixture is derived cells cut from the real exports (Drive shas CELH 0e47f54b97/9f492d7a75,
     NFLX 8ae9f12b10/512a1e9a0a, EPAM 04c788d495/7baf86ffeb, BDX b525583374/5489c75ea7, NKE
     f4bc343292/5a10072a9a) through the real decode path into the real `CiqBundle`, plus SEC's
@@ -103,24 +106,29 @@ refused.
     19c figure to the caveat rendered by `render._flags_section`, and EPAM's annual side;
   - negative: NFLX (the containing line, and why), BDX and EPAM's Other Unusual Items (far from
     both), CELH's EBITDA (unmapped), NKE (no fact), EPAM's merger row (NOT RUN, never asked),
-    the price-date cut (CELH as filed by 2026-08-05 refuses, by 2026-08-06 decides), and
-    all-or-nothing;
+    the price-date cut (CELH as filed by 2026-08-05 refuses, by 2026-08-06 decides),
+    all-or-nothing, and an EDGAR that will not serve companyfacts (the row stays refused; a
+    throttle still stops the run);
+  - from the in-session `/code-review high` (round 0): a restated quarter names only the filing
+    it was read from (CELH's real Q3-25 fact with an earlier, different first filing inserted),
+    and a partial quarterly reading is never called "four quarters" (EPAM, 2 of 4);
   - the call site, by AST: after `ltm_read.refused` and before every spend.
   - `tests/test_ciq_press_release_ltm.py`'s call-site pin follows the raise into
     `_settle_ltm_refusals`.
-- **Mutation:** 12 mutants, one change each, in a scratch copy of the tree; 10 killed. Killed:
+- **Mutation:** 14 mutants, one change each, in a scratch copy of the tree (final code); 13
+  killed:
   - M1 sign flipped; M2 band accepts anything; M3 the as-of cut dropped; M4 Q4 not differenced;
   - M5 `NonoperatingIncomeExpense` mapped for the merger row;
   - M6 an undecided row no longer refuses;
   - M7 the filed figure not put in the cell; M8 the caveat routed to QA;
-  - M9 a NOT RUN row reaching the filing; M12 the call deleted at assembly.
+  - M9 a NOT RUN row reaching the filing;
+  - M10 the earliest filing of a 3-month fact read instead of the latest;
+  - M12 the call deleted at assembly; M13 an unreadable EDGAR crashing the build;
+  - M14 accessions read off the rendered `source_ref`.
 
-  Two SURVIVED, each equivalent on the whole corpus:
-  - M10: the earliest filing of a 3-month fact read instead of the latest;
-  - M11: falling through to the next concept on a band failure.
-  Across the 37 names' mapped concepts, no quarter in the window carries two filings of different
-  value, and no name files both business-combination concepts. The only restatement found is WST's
-  9M-2024 restructuring (−2.5M → 0), which reaches neither line.
+  One SURVIVED: M11, falling through to the next concept on a band failure. It is equivalent on the
+  whole corpus, because no one of the 37 names files both business-combination concepts in the
+  window.
 
 **BOUNDARY.**
 - Population: the 37 folders of the operator's Drive `manual/ciq` as on disk 2026-11-04 (exports
@@ -145,9 +153,9 @@ refused.
 - No committed page changes: the check runs at assembly.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- **Two survivors (M10, M11)** guard behaviour no real case reaches yet.
-  - Falsifier: a filer restating a mapped quarter in the window, or tagging both
-    business-combination concepts. The first such name is the pin.
+- **One survivor (M11)** guards behaviour no real case reaches yet.
+  - Falsifier: a filer tagging both business-combination concepts in its window. The first such
+    name is the pin.
 - **"Other Unusual Items" → `RestructuringCharges` is the brief's mapping, and the band is its
   only guard.**
   - A row that is restructuring PLUS a small other item within 2% is stated as the restructuring

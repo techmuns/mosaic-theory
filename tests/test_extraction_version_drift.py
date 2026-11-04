@@ -85,7 +85,7 @@ PINNED_AT = "2026-11-04.filed-ltm-tiebreak"
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
-    "vinci/dossier/assemble.py": "b06836a937ae",
+    "vinci/dossier/assemble.py": "eb429722bf12",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "77def45663a9",
     "vinci/dossier/ciq.py": "78815874ffce",
@@ -101,7 +101,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/edgar_fundamentals.py": "6054321e6ca4",
     "vinci/dossier/ev_ebitda_basis.py": "232581813776",
     "vinci/dossier/ev_gap.py": "c1cd503b7723",
-    "vinci/dossier/filed_tiebreak.py": "a4295084a97b",
+    "vinci/dossier/filed_tiebreak.py": "cb4f35dacbf5",
     "vinci/dossier/flags.py": "8466d404a234",
     "vinci/dossier/freshness.py": "e5852b313d22",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
@@ -114,7 +114,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "459ea906d07c",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "7bf6ba12403e",
+    "vinci/dossier/schemas.py": "b24eea7630fe",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
     "vinci/dossier/synthesis.py": "9c732c86d48a",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",

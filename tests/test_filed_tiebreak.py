@@ -221,6 +221,35 @@ def test_epams_filed_restructuring_sides_with_the_annual_export() -> None:
     assert f is not None and (f.value.value, f.supports) == (-53.474, "annual")
 
 
+def test_a_partial_quarterly_reading_is_not_called_four_quarters() -> None:
+    """(−) EPAM's quarterly export carries the restructuring row in only 2 of its 4 quarters, so
+    the caveat says so — it never calls -28.5 the four quarters' sum."""
+    d = _decide("EPAM", RESTR)
+    text = d.caveat()
+    assert "quarterly export's 2 of 4 quarters carrying a figure sum to -28.5" in text
+    assert "quarterly export's four quarters" not in text
+    assert "quarterly export's four quarters sum to -405.0" in _decide("CELH", OUI).caveat()
+
+
+def test_a_restated_quarter_names_only_the_filing_it_was_read_from() -> None:
+    """(−/+) A quarter restated by a later filing: its source_ref still says what it restates
+    (`concepts.filed_at`), but the figure's accessions — its source and its caveat — name only the
+    filing the value was READ from. CELH's real Q3 2025 fact, with an earlier first filing of the
+    same period at another value inserted ahead of it."""
+    facts = _facts("CELH")
+    rows = facts["facts"]["us-gaap"]["RestructuringCharges"]["units"]["USD"]
+    first = "0001341766-25-000999"
+    rows.append({"start": "2025-07-01", "end": "2025-09-30", "val": 240000000, "accn": first,
+                 "fy": 2025, "fp": "Q3", "form": "10-Q", "filed": "2025-11-01"})
+    d = ft.decide(_read("CELH")[OUI], facts, as_filed_by=_cut("CELH"))
+    f = d.figure
+    assert f is not None and f.value.value == -412.748
+    assert first in f.quarters[0].source_ref and "restating" in f.quarters[0].source_ref
+    assert first not in f.quarters[0].accessions
+    assert f.value.source_ref is not None and first not in f.value.source_ref
+    assert first not in d.caveat()
+
+
 # --- the refusals that stand --------------------------------------------------------------------
 
 def test_a_filed_figure_far_from_both_readings_refuses() -> None:
@@ -355,3 +384,37 @@ def test_assembly_asks_the_filing_after_the_refusal_and_before_any_spend() -> No
     assert {"ltm_quarters.refusal_message", "filed_tiebreak.apply"} <= set(settle)
     ask = _calls(assemble._filed_tiebreak)
     assert {"page_price_date", "filed_tiebreak.decide"} <= set(ask)
+
+
+def test_an_unreadable_edgar_leaves_the_row_refused_never_a_crash(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """(−) EDGAR answering with a non-retryable error (a 404 for a CIK with no XBRL facts, a 5xx
+    after its retries) is a filing that cannot be read: the row stays REFUSED, with the CIQ
+    disagreement and the reason, exactly as before the tiebreak — never a bare exception that the
+    run's cost-and-outcome series records as a failed build. A throttle still stops the run
+    (`SecRateLimitedError` is not an `HttpError`)."""
+    from vinci.dossier import assemble
+    from vinci.netcache import HttpNotFoundError, SecRateLimitedError
+
+    class _Edgar:
+        def __init__(self, exc: Exception) -> None:
+            self.exc = exc
+
+        def companyfacts(self, cik: str) -> dict[str, typing.Any]:
+            raise self.exc
+
+    row = _read("NFLX")[MERGER]
+    mech = _mech("NFLX")
+    monkeypatch.setattr(assemble.EdgarClient, "from_config",
+                        staticmethod(lambda cfg: _Edgar(HttpNotFoundError("404 companyfacts"))))
+    decided = assemble._filed_tiebreak(typing.cast(typing.Any, None), "1065280", mech, [row],
+                                       reference_date=_cut("NFLX"))
+    assert [d.figure for d in decided] == [None]
+    assert "EDGAR companyfacts could not be read" in (decided[0].reason or "")
+    with pytest.raises(assemble.DossierAssemblyError, match="cannot decide it: EDGAR"):
+        assemble._settle_ltm_refusals("NFLX", mech, decided)
+    monkeypatch.setattr(assemble.EdgarClient, "from_config",
+                        staticmethod(lambda cfg: _Edgar(SecRateLimitedError("blocked"))))
+    with pytest.raises(SecRateLimitedError):
+        assemble._filed_tiebreak(typing.cast(typing.Any, None), "1065280", mech, [row],
+                                 reference_date=_cut("NFLX"))

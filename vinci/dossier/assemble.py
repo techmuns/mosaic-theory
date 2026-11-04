@@ -72,7 +72,7 @@ from vinci.finra import build_finra_http
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.llm import LlmClient, MeteredLlmClient
 from vinci.labels import resolve_label
-from vinci.netcache import SecRateLimitedError, sec_refusal
+from vinci.netcache import HttpError, SecRateLimitedError, sec_refusal
 from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
 from vinci.schemas.candidate import CandidateRecord
@@ -921,14 +921,21 @@ def _filed_tiebreak(cfg: Config, cik: str | None, mech: MechanicalLayer,
                     refused: list[ltm_quarters.LtmCheck], *,
                     reference_date: date) -> list[filed_tiebreak.Decision]:
     """The filing's answer for each refused row, read as filed by the page's price date (the cut
-    every page reader takes, `vinci.edgar.asof.page_price_date`). No CIK reads no filing, so every
-    row stays refused, saying so."""
+    every page reader takes, `vinci.edgar.asof.page_price_date`). No CIK, or companyfacts EDGAR
+    will not serve (`HttpError`: a 404, or a 5xx past its retries), reads no filing, so every row
+    stays refused, saying so — as `mechanical._companyfacts_or_none` degrades. A throttle is not
+    an `HttpError` and stops the run (`SecRateLimitedError`)."""
     si = mech.stock_info
     cut = page_price_date(si.as_of if si else None, reference_date)
     if not cik:
         return [filed_tiebreak.Decision(r, None, "the record carries no CIK, so no filing can be "
                                                  "read") for r in refused]
-    facts = EdgarClient.from_config(cfg).companyfacts(cik)
+    try:
+        facts = EdgarClient.from_config(cfg).companyfacts(cik)
+    except HttpError as exc:
+        return [filed_tiebreak.Decision(r, None, f"EDGAR companyfacts could not be read "
+                                                 f"({type(exc).__name__}: {exc})")
+                for r in refused]
     return [filed_tiebreak.decide(r, facts, as_filed_by=cut) for r in refused]
 
 

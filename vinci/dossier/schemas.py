@@ -1869,6 +1869,13 @@ class FiledLtmQuarter(BaseModel, frozen=True):
     value: float                              # $M, in CIQ's sign
     derived: bool = False                     # True: a difference of two filed periods
     source_ref: str                           # the tag, the period(s), each form + accession + day
+    #: the accession(s) the value was READ from, structured — the source_ref also names the first
+    #: filing a restated figure supersedes, which is not one of them
+    accessions: list[str] = Field(default_factory=list)
+
+
+#: Which CIQ reading a filed LTM reproduces (`FiledLtmFigure.supports`).
+Supports = Literal["annual", "quarterly", "both"]
 
 
 class FiledLtmFigure(BaseModel, frozen=True):
@@ -1881,8 +1888,9 @@ class FiledLtmFigure(BaseModel, frozen=True):
     value: Sourced[float]                     # $M, in CIQ's sign; source_ref names every accession
     tag: str                                  # the us-gaap concept the reviewed mapping read
     ciq_annual: float                         # $M — the annual export's LTM cell
-    ciq_quarterly: float                      # $M — the quarterly export's four quarters, summed
-    supports: str                             # "annual" | "quarterly" | "both"
+    ciq_quarterly: float                      # $M — the quarterly export's quarters carrying a
+    #                                           figure, summed (all four, or fewer on a '-')
+    supports: Supports
     quarters: list[FiledLtmQuarter]
     as_filed_by: str                          # ISO — the page's price date the facts were cut at
 

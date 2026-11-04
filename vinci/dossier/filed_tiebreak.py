@@ -62,14 +62,19 @@ leave a name where it was.
 """
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from datetime import date
 from typing import Any
 
 from vinci.dossier import ltm_quarters as lq
 from vinci.dossier.ciq_sheets import _fmt_m
-from vinci.dossier.schemas import FiledLtmFigure, FiledLtmQuarter, MechanicalLayer, Sourced
+from vinci.dossier.schemas import (
+    FiledLtmFigure,
+    FiledLtmQuarter,
+    MechanicalLayer,
+    Sourced,
+    Supports,
+)
 from vinci.edgar.concepts import ConceptPoint, facts_as_of, filed_at, points_for_tag
 
 #: A filed period ends on CIQ's quarter end, or within a week of it (a 52/53-week filer's quarter
@@ -77,8 +82,6 @@ from vinci.edgar.concepts import ConceptPoint, facts_as_of, filed_at, points_for
 SAME_END_DAYS = 7
 #: A quarter is 80-100 days — a 13-week quarter, or a 14-week one in a 53-week year.
 QUARTER_DAYS = (80, 100)
-#: An EDGAR accession number, as `concepts.filed_at` prints it.
-_ACCESSION_IN = re.compile(r"\b\d{10}-\d{2}-\d{6}\b")
 
 
 @dataclass(frozen=True)
@@ -127,13 +130,16 @@ class Decision:
             raise ValueError("no filed figure — a refused row has no caveat, it has a refusal")
         a, q, v = f.ciq_annual, f.ciq_quarterly, f.value.value
         gap = abs(a - q) / max(abs(a), abs(q))
+        n = sum(1 for c in self.row.quarters if c.value is not None)
+        summed = ("four quarters" if n == len(self.row.quarters)
+                  else f"{n} of {len(self.row.quarters)} quarters carrying a figure")
         sides = {"both": "both CIQ readings", "annual": "the annual export's reading",
                  "quarterly": "the quarterly export's reading"}[f.supports]
         return (f"FILED FIGURE STATED — {f.label}, LTM to {f.ltm_end}: the page states {v:,.1f}, "
                 f"the SEC filings' us-gaap:{f.tag} over the four quarters as filed by "
                 f"{f.as_filed_by} ({'; '.join(_accessions(f))}), because CIQ's two exports "
-                f"disagree: the annual export's LTM reads {a:,.1f} and the quarterly export's four "
-                f"quarters sum to {q:,.1f} ({gap:.1%} apart). The filed figure reproduces {sides} "
+                f"disagree: the annual export's LTM reads {a:,.1f} and the quarterly export's "
+                f"{summed} sum to {q:,.1f} ({gap:.1%} apart). The filed figure reproduces {sides} "
                 f"(within {lq.TOLERANCE:.0%} or {lq.PRINT_SLACK_MUSD} $M): the quarters "
                 + ", ".join(f"{x.value:,.1f} ({x.end}"
                             + (", a longer filed period less the one a quarter shorter"
@@ -142,13 +148,10 @@ class Decision:
 
 
 def _accessions(f: FiledLtmFigure) -> list[str]:
-    """Every distinct accession the four quarters were read from, in the order first read."""
-    seen: list[str] = []
-    for x in f.quarters:
-        for acc in _ACCESSION_IN.findall(x.source_ref):
-            if acc not in seen:
-                seen.append(acc)
-    return seen
+    """Every distinct accession the four quarters were read from, in the order first read — off
+    the structured field, never the rendered ``source_ref`` (which also names the FIRST filing a
+    restated figure supersedes, a filing the figure was not read from)."""
+    return list(dict.fromkeys(acc for x in f.quarters for acc in x.accessions))
 
 
 def _days(p: ConceptPoint) -> int:
@@ -209,18 +212,19 @@ def decide(row: lq.LtmCheck, facts: dict[str, Any], *, as_filed_by: date) -> Dec
                           + f" as filed by {as_filed_by}")
             continue
         return _judge(row, line, tag, [g for g in got if g is not None], cut,
-                      as_filed_by=as_filed_by)
+                      carried=row.carried, as_filed_by=as_filed_by)
     return Decision(row, None, "no filed figure for every quarter — " + "; ".join(misses))
 
 
 def _judge(row: lq.LtmCheck, line: FiledLine, tag: str,
            got: list[tuple[float, bool, tuple[ConceptPoint, ...]]], facts: dict[str, Any], *,
-           as_filed_by: date) -> Decision:
+           carried: float, as_filed_by: date) -> Decision:
     quarters = [FiledLtmQuarter(end=q.end.isoformat(), value=round(line.sign * v / 1e6, 3),
-                                derived=derived, source_ref=_quarter_ref(pts, facts))
+                                derived=derived, source_ref=_quarter_ref(pts, facts),
+                                accessions=list(dict.fromkeys(
+                                    p.accession for p in pts if p.accession)))
                 for q, (v, derived, pts) in zip(row.quarters, got, strict=True)]
     filed = round(line.sign * sum(v for v, _d, _p in got) / 1e6, 3)
-    carried = row.carried if row.carried is not None else 0.0
     to_annual, to_quarterly = lq.agrees(filed, row.ltm), lq.agrees(filed, carried)
     if not (to_annual or to_quarterly):
         return Decision(row, None, (
@@ -228,8 +232,9 @@ def _judge(row: lq.LtmCheck, line: FiledLine, tag: str,
             f"reading ({row.ltm:,.1f} annual, {carried:,.1f} quarterly; band "
             f"{lq.TOLERANCE:.0%} or {lq.PRINT_SLACK_MUSD} $M), so it is not shown to be the same "
             "item"))
-    supports = "both" if to_annual and to_quarterly else "annual" if to_annual else "quarterly"
-    accs = sorted({a for x in quarters for a in _ACCESSION_IN.findall(x.source_ref)})
+    supports: Supports = ("both" if to_annual and to_quarterly
+                          else "annual" if to_annual else "quarterly")
+    accs = sorted({a for x in quarters for a in x.accessions})
     ref = (f"EDGAR XBRL us-gaap:{tag}, four quarters to {row.ltm_end.isoformat()} as filed by "
            f"{as_filed_by.isoformat()} ({', '.join(accs)})")
     return Decision(row, FiledLtmFigure(
