@@ -181,7 +181,7 @@ def test_the_defect_itself_the_extraction_drops_the_line() -> None:
     # the page's annual table). SMPL's 2026-10-28 export closed fiscal 2026 and carries the
     # writedown as -60.9 and -331.0 in two columns — the row still surfaces, checked above.
     skip_unless_export("SMPL", "financials", "049150fb62", freq="annual", bundle=bundle,
-                       why="the -391.9 figure is the LTM column of the export it was observed in")
+                       why="the -391.9 figure is one export's LTM column")
     wd = next(r for r in tbl.rows if "Asset Writedown" in r.label)
     assert any(v is not None and abs(v) > 390 for v in wd.values), (
         f"the writedown row surfaced but carries no -391.9 magnitude: {wd.values}")

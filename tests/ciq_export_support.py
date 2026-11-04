@@ -16,9 +16,10 @@ Two kinds of expectation, and each gets its own check:
   it does nothing: the test's own no-folder handling stands, so a machine without the folder runs
   exactly what it ran before.
 * A VALUE PINNED FROM ONE EXPORT (a figure, a period label) holds only on that export, whatever
-  the page has moved on to — `skip_unless_export`, keyed on the sha256 of the export the value was
-  drawn from. The TEST-LAYER rule: a value pin lives on a frozen fixture, never on the living
-  export. The licensed bytes cannot be committed, so the fixture is frozen by IDENTITY instead.
+  the page has moved on to — `skip_unless_export`, keyed on the sha256 of an export the value is
+  verified on (not always the one it was first written on: that may be gone). The TEST-LAYER
+  rule: a value pin lives on a frozen fixture, never on the living export. The licensed bytes
+  cannot be committed, so the fixture is frozen by IDENTITY instead.
 
 A SKIP, NEVER A LOOSER ASSERTION: every skip names both sha256s, so re-pinning is one deliberate
 edit. The identity is `ciq_sheets.file_provenance` — the first 10 hex digits of the file's sha256,
@@ -58,7 +59,15 @@ def export_sha(ticker: str, kind: str, *, freq: str | None = None,
             return None
         bundle = CiqBundle.from_files(ticker, files)
     wb = bundle.workbook(kind, freq=freq)
-    return None if wb is None else file_provenance(wb.path)[0]
+    if wb is None:
+        return None
+    sha = file_provenance(wb.path)[0]
+    if sha is None:
+        # AN UNREADABLE EXPORT IS NOT AN ABSENT ONE: read as None it would run a comparison
+        # against an export nobody identified, or report "absent" for a file that is there
+        pytest.fail(f"{ticker}: the {kind} export {wb.path.name} is on disk but could not be "
+                    "hashed, so this test cannot tell which export it is")
+    return sha
 
 
 def page_export_sha(ticker: str, kind: str, *, page: dict[str, Any] | None = None) -> str:
@@ -79,6 +88,10 @@ def skip_unless_pages_export(ticker: str, kind: str, *, page: dict[str, Any] | N
                              bundle: CiqBundle | None = None) -> None:
     """SKIP when the folder holds a ``kind`` export for ``ticker`` that is not the one the committed
     page was built from. No such export on disk: nothing happens."""
+    # THE KIND IS CHECKED FIRST, so a kind no page stamps is refused on every machine — not only
+    # on the one holding the licensed folder, where it would otherwise surface alone
+    if kind not in PAGE_STAMPS:
+        raise KeyError(f"no page stamp is known for {kind!r} exports — add it to PAGE_STAMPS")
     disk = export_sha(ticker, kind, bundle=bundle)
     if disk is None:
         return
@@ -92,8 +105,8 @@ def skip_unless_pages_export(ticker: str, kind: str, *, page: dict[str, Any] | N
 def skip_unless_export(ticker: str, kind: str, sha: str, *, why: str, freq: str | None = None,
                        bundle: CiqBundle | None = None) -> None:
     """SKIP unless the folder's ``kind`` export for ``ticker`` is the one with sha256 prefix
-    ``sha`` — the export a pinned value was drawn from. ``why`` says what the pin depends on."""
+    ``sha`` — an export a pinned value is verified on. ``why`` says what the pin depends on."""
     disk = export_sha(ticker, kind, freq=freq, bundle=bundle)
     if disk != sha:
-        pytest.skip(f"{ticker}: {why} — this pin was drawn from the {kind} export {sha}, and the "
+        pytest.skip(f"{ticker}: {why} — this pin is verified on the {kind} export {sha}, and the "
                     f"one on disk is {disk or 'absent'}")

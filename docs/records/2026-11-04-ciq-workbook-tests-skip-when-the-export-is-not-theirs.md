@@ -98,10 +98,30 @@ pages carry; NFLX `406592d103`).
     earlier, on its ungated forward-years-only check.
   - M4, the surfaced unusual items at 1/1000 scale: materiality fails on the frozen magnitude.
   - M5, `_POINT_DECISION_BAND = 0.0`: NFLX fails.
-- **The helper's own pins** (`tests/test_ciq_export_support.py`, 6 tests): constructed export
-  files and SMPL's real committed page. They cover the page's export running, another export
-  skipping with both sha256s named, no export on disk doing nothing, a page with no stamp failing
-  loud, and a frozen pin running only on its own export. They run in CI.
+- **The helper's own pins** (`tests/test_ciq_export_support.py`, 9 tests): constructed export
+  files and SMPL's real committed page. They run in CI, and cover:
+  - the page's export running, and another export skipping with both sha256s named;
+  - no export on disk doing nothing;
+  - a page with no stamp failing loud;
+  - a frozen pin running only on its own export;
+  - the configured-folder path the parity and ev_gap tests use;
+  - an unhashable export failing rather than reading as absent;
+  - a kind no page stamps being refused without the folder.
+
+  A positive pin cannot pass by skipping. With both helpers forced to always skip, the two
+  positive pins FAIL; before review round 0 they would have read as skipped.
+- **Review round 0** (`/code-review high --fix`, 8 findings):
+  - FIXED: findings 1–4. Positive pins wrap their call so a wrongful skip fails. An unhashable
+    export fails rather than reading as absent. An unknown kind is refused before the disk is
+    read. The folder-lookup path has a pin.
+  - FIXED: the frozen-pin skip said "drawn from" where it should say "verified on" (from finding
+    5). NFLX's pin was written on an August export and is verified on `406592d103`.
+  - DISMISSED: the rest of finding 5. It also asks for a time-independent rewrite, but "most
+    recent" depends on the export by design, and the pin runs wherever the archived export is
+    linked (shown above).
+  - DISMISSED: finding 6, the third inline copy of the vintage gate. Consolidating is a refactor,
+    and identity-keying a baseline is wrong (AORT, above).
+  - DISMISSED: findings 7 and 8, an extra folder read per test. That costs I/O only.
 - **Full suite, both ways, branch `5550b738` against main `9e996d7f`:** `pytest -m "not network"
   -rs`, each run in its own checkout of that commit, run in parallel on 2026-11-04. None of the
   checkouts had a local store (`data/vinci.db`).
