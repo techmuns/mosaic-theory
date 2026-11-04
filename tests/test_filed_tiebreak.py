@@ -547,3 +547,26 @@ def test_an_unreadable_edgar_leaves_the_row_refused_never_a_crash(
     with pytest.raises(SecRateLimitedError):
         assemble._filed_tiebreak(typing.cast(typing.Any, None), "1065280", mech, [row],
                                  bundle=_bundle("NFLX"), reference_date=_cut("NFLX"))
+
+
+def test_a_derived_quarter_pairs_filings_of_one_vintage() -> None:
+    """(−/+) Codex, #891 round 2, on MVST's REAL facts. Its FY2024 NonoperatingIncomeExpense is
+    0.156 (10-K 0001760689-25-000010, 2025-03-31); its 9M-2024 was +7.864 beside that 10-K (10-Q/A
+    0001760689-25-000006, the same day) and was RESTATED to -0.293 in the 10-Q of 2025-11-10.
+
+    As filed by 2025-12-01, Q4-2024 is that 10-K's year less the nine months it stood beside:
+    -7.708. It is never 0.156 - (-0.293) = 0.449, which pairs the 10-K with a later comparative and
+    is a quarter no filing as of then states. Once the 10-K of 2026-03-16 re-reports the year, the
+    restated nine months are its vintage, and Q4 reads 0.449."""
+    from vinci.edgar.concepts import facts_as_of
+
+    facts = copy.deepcopy(FIX["companyfacts_only"]["MVST"])
+
+    def q4(cut: date) -> tuple[float, list[str | None]]:
+        got = ft.filed_quarter(points_for_tag(facts_as_of(facts, cut), "NonoperatingIncomeExpense"),
+                               date(2024, 12, 31))
+        assert got is not None and got[1]
+        return round(got[0] / 1e6, 3), [p.accession for p in got[2]]
+
+    assert q4(date(2025, 12, 1)) == (-7.708, ["0001760689-25-000010", "0001760689-25-000006"])
+    assert q4(date(2026, 11, 4)) == (0.449, ["0001628280-26-018264", "0001628280-25-051119"])

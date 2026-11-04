@@ -53,6 +53,14 @@ NAMES: dict[str, dict[str, Any]] = {
 }
 
 
+#: Names whose COMPANYFACTS alone a pin reads (no CIQ export): {ticker: the concepts, why}.
+COMPANYFACTS_ONLY: dict[str, tuple[tuple[str, ...], str]] = {
+    "MVST": (("NonoperatingIncomeExpense",),
+             "its 9M-2024 line, restated from +7.864 to -0.293 in a later 10-Q: a derived quarter "
+             "must pair filings of one vintage (Codex, #891 round 2)"),
+}
+
+
 def _sha(p: pathlib.Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()[:10]
 
@@ -116,6 +124,12 @@ def build(ciq: pathlib.Path, cf_dir: pathlib.Path) -> dict[str, Any]:
             "companyfacts": {"cik": facts.get("cik"), "entityName": facts.get("entityName"),
                              "facts": {"us-gaap": {tg: gaap[tg] for tg in tags if tg in gaap}}},
         }
+    only = {}
+    for t, (tags, why) in COMPANYFACTS_ONLY.items():
+        facts = json.loads((cf_dir / f"{t}.json").read_text())
+        gaap = facts["facts"].get("us-gaap", {})
+        only[t] = {"why": why, "cik": facts.get("cik"), "entityName": facts.get("entityName"),
+                   "facts": {"us-gaap": {tg: gaap[tg] for tg in tags if tg in gaap}}}
     return {
         "_about": (
             "The filed tiebreak for the LTM check (2026-11-04). CIQ rows cut "
@@ -130,6 +144,7 @@ def build(ciq: pathlib.Path, cf_dir: pathlib.Path) -> dict[str, Any]:
             "CONTAINING name, each concept's rows unmodified. "
             "Rebuild: scripts/build_filed_tiebreak_fixture.py."),
         "names": names,
+        "companyfacts_only": only,
     }
 
 

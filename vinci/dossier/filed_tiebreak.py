@@ -235,7 +235,13 @@ def _latest(p: ConceptPoint) -> tuple[date, str]:
 def filed_quarter(points: list[ConceptPoint], end: date,
                   ) -> tuple[float, bool, tuple[ConceptPoint, ...]] | None:
     """($ as filed, derived, the point(s) read) — the discrete quarter ending ``end`` on one tag's
-    points, or None when the filer stated nothing it can be read from."""
+    points, or None when the filer stated nothing it can be read from.
+
+    A DERIVED QUARTER PAIRS FILINGS OF ONE VINTAGE (Codex, #891 round 2): the shorter period is the
+    one filed on or before the longer — as `quality.sources.release._figures` pairs them — never a
+    later comparative. MVST's 9M-2024 non-operating line was restated from +7.864 to -0.293 in a
+    10-Q filed after its 10-K, and pairing the 10-K's year with that comparative stated a fourth
+    quarter, 0.449, that no filing as of then stated (the 10-K's own: -7.708)."""
     near = [p for p in points if p.period_start is not None
             and abs((p.period_end - end).days) <= SAME_END_DAYS]
     three = [p for p in near if QUARTER_DAYS[0] <= _days(p) <= QUARTER_DAYS[1]]
@@ -244,7 +250,7 @@ def filed_quarter(points: list[ConceptPoint], end: date,
         return p.value, False, (p,)
     for p in sorted((p for p in near if _days(p) > QUARTER_DAYS[1]), key=_latest,
                     reverse=True):
-        shorter = [x for x in points if x.period_start == p.period_start
+        shorter = [x for x in points if x.period_start == p.period_start and x.filed <= p.filed
                    and QUARTER_DAYS[0] <= (p.period_end - x.period_end).days <= QUARTER_DAYS[1]]
         if shorter:
             q = max(shorter, key=_latest)

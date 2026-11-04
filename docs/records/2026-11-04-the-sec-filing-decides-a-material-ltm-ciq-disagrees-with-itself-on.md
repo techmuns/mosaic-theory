@@ -16,7 +16,9 @@ decides in one of two ways, and refuses otherwise.
 
 - **Same item** (`MAPPING`). A filed concept states the row's own item. The filer's XBRL is read
   for the same four quarters, as filed by the page's price date (`concepts.facts_as_of`): each
-  quarter's 3-month fact, or a longer period less the one a quarter shorter (Q4 = FY − 9M). When
+  quarter's 3-month fact, or a longer period less the one a quarter shorter (Q4 = FY − 9M). The
+  shorter period is the one filed ON OR BEFORE the longer, so a derived quarter pairs filings of
+  one vintage (Codex, round 2). When
   the filed LTM reproduces one of CIQ's two readings within 2% or $0.5M (`ltm_quarters.agrees`, the
   check's own tolerance), the page states the FILED figure.
 - **Containing line** (`CONTAINING`; operator ruling 2026-11-04, verbatim: "NFLX: B"). The item is
@@ -130,7 +132,7 @@ clear is refused exactly as before, so the selection can only leave a name where
   operator's Drive `manual/ciq`, beside SEC companyfacts fetched 2026-11-04. Main's check refuses
   CELH, NFLX and WAT. On this branch CELH and NFLX are decided (table above, each caveat as
   printed in the PR) and WAT refuses with the reason added.
-- **Pins** (`tests/test_filed_tiebreak.py`, 25 tests) run on `tests/fixtures/filed_tiebreak.json`.
+- **Pins** (`tests/test_filed_tiebreak.py`, 29 tests) run on `tests/fixtures/filed_tiebreak.json`.
   - **The fixture.** Derived cells cut from the real exports through the real decode path into the
     real `CiqBundle`, plus SEC's companyfacts cut by concept with each concept's rows unmodified
     (`scripts/build_filed_tiebreak_fixture.py`). Drive shas (annual/quarterly):
@@ -152,11 +154,17 @@ clear is refused exactly as before, so the selection can only leave a name where
     - all-or-nothing;
     - an EDGAR that will not serve companyfacts;
     - from round 0, a restated quarter naming only the filing it was read from, and a partial
-      quarterly reading never called "four quarters".
+      quarterly reading never called "four quarters";
+    - from the review of option B, three pins on NFLX's real fixture: a component row missing, an
+      annual cell blanked, and a component no quarter carries;
+    - from Codex round 2, a derived quarter pairs filings of one vintage, on MVST's REAL facts. Its
+      9M-2024 line was restated from +7.864 to −0.293 in a 10-Q filed after its 10-K. As filed by
+      2025-12-01, Q4-2024 reads −7.708 (the 10-K's own), never 0.449. The pin failed on the PR
+      head.
   - **The call site**, by AST: after `ltm_read.refused` and before every spend.
     `tests/test_ciq_press_release_ltm.py`'s call-site pin follows the raise into
     `_settle_ltm_refusals`.
-- **Mutation:** 20 mutants, one change each, in a scratch copy of the final code; 19 killed.
+- **Mutation:** 21 mutants, one change each, in a scratch copy of the final code; 20 killed.
   - **Same item:**
     - M1 sign flipped; M2 band accepts anything; M3 the as-of cut dropped; M4 Q4 not differenced;
     - M5 the whole non-operating line read as a same-item concept;
@@ -165,7 +173,8 @@ clear is refused exactly as before, so the selection can only leave a name where
     - M9 a NOT RUN row reaching the filing;
     - M10 the earliest filing of a 3-month fact read;
     - M12 the call deleted at assembly; M13 an unreadable EDGAR crashing the build;
-    - M14 accessions read off the rendered `source_ref`.
+    - M14 accessions read off the rendered `source_ref`;
+    - M15 a derived quarter pairing a later comparative (the vintage rule dropped).
   - **Containing line:**
     - B1 a missing quarter no longer refusing; B2 the line's TOTAL stated as the row;
     - B3 the slack widened to 1 $M; B4 the row's own cell left out of the breakdown;
