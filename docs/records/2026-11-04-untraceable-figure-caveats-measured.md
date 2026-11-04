@@ -1,6 +1,6 @@
 ---
 id: 2026-11-04-untraceable-figure-caveats-measured
-status: open
+status: shipped
 date: 2026-11-04
 prs: [890]
 supersedes:
