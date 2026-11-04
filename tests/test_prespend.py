@@ -451,16 +451,12 @@ def test_every_committed_page_passes_the_freshness_check_at_its_own_build_date(
 
 def test_googls_page_passes_every_post_spend_check_on_its_export() -> None:
     from tests.ciq_export_support import skip_unless_export
-    from vinci.config import get_config
-    from vinci.dossier.ciq import CiqBundle
-    from vinci.dossier.manual_store import LocalFolderStore
 
-    files = LocalFolderStore.from_config(get_config()).files("GOOGL")
-    bundle = CiqBundle.from_files("GOOGL", files)
-    skip_unless_export("GOOGL", "financials", "482debf275", freq="annual", bundle=bundle,
-                       why="the materiality guard reads the annual Income Statement")
+    # the bundle holding the export this is verified on: the folder's, or an archived one (#897)
+    pinned = skip_unless_export("GOOGL", "financials", "482debf275", freq="annual",
+                                why="the materiality guard reads the annual Income Statement")
     page = Dossier.model_validate_json((DOSS / "GOOGL" / "dossier.json").read_text())
-    post = post_spend_checks(page, bundle)
+    post = post_spend_checks(page, pinned)
     assert (post.refusals, post.undecided) == ((), ())
     assert post.age is not None and post.age.days <= 45
 

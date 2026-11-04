@@ -1,8 +1,8 @@
 ---
 id: 2026-11-04-pre-spend-check-runs-post-spend-refusals
-status: open
+status: shipped
 date: 2026-11-04
-prs: []
+prs: [902]
 supersedes:
 superseded-by:
 ---
