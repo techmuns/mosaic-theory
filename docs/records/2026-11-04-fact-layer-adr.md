@@ -2,7 +2,7 @@
 id: 2026-11-04-fact-layer-adr
 status: open
 date: 2026-11-04
-prs: [895]
+prs: [895, 896]
 supersedes:
 superseded-by:
 ---
