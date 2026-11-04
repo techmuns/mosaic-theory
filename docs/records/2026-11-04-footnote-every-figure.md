@@ -2,7 +2,7 @@
 id: 2026-11-04-footnote-every-figure
 status: open
 date: 2026-11-04
-prs: []
+prs: [903]
 supersedes:
 superseded-by:
 ---
