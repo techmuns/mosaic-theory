@@ -85,6 +85,13 @@ at 2026-11-04), branch head vs `main` `cfedcb39`:
   `drawdown_cause.gap_down_dates` / `.revised_guidance` (the data record and 8-K follow-up,
   not CIQ). Newly present in both: `leverage_survival.credit_health_panels`,
   `valuation.forward_multiples`.
+  **Re-run after merging main `865c8b5c` (#898's covenant fix), same store and exports: 2.**
+  `covenant_term_rows` is now decided by the paid draw (its phase reaches the model). Left:
+  the two `drawdown_cause` fields — the screen's EOD gap-down detector finds no gap-down
+  event for SMPL in that store at the page's reference date 2026-10-16 (the committed page,
+  at 2026-08-14, had them), so the dates read UNKNOWN by their own rule and the
+  revised-guidance follow-up has no 8-K to read. Store-dependent, not CIQ, and the same on
+  main.
 - **Fails first**: main's code on the same header shapes — all three SMPL statement headers
   "unplaced", `_fin_periods` emitting `'Fiscal Y'`, the CS Summary refusing on order.
 - Pins (`tests/test_fiscal_year_change_marker.py`, 29): POSITIVE on SMPL's verbatim header cells
