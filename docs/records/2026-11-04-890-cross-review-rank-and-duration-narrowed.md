@@ -1,8 +1,8 @@
 ---
 id: 2026-11-04-890-cross-review-rank-and-duration-narrowed
-status: open
+status: shipped
 date: 2026-11-04
-prs: []
+prs: [899]
 supersedes:
 superseded-by:
 ---
