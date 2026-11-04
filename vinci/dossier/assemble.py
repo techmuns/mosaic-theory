@@ -51,6 +51,8 @@ from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import (
     CovenantPointer,
     Dossier,
+    EvBridge,
+    EvBridgeUnbuilt,
     MechanicalLayer,
     PriceStoreStamp,
     Sourced,
@@ -1221,6 +1223,12 @@ def assemble_one(
     except Exception as exc:  # noqa: BLE001 — anchor is best-effort; it never blocks the dossier
         anchor = Anchor(recipe_hint=RECIPE_UNKNOWN, applicable=False, computed_at=datetime.now(UTC),
                         reason=f"anchor computation failed: {type(exc).__name__}")
+    # (EV bridge) CIQ's TEV claims and the exit default an enterprise recipe subtracts, built by the
+    # ONE builder with EDGAR's lease-inclusive net debt beside it as a cross-check — or, when it
+    # cannot be built, why not (2026-11-04)
+    bridge = ciq_sheets.ev_bridge(
+        bundle, fy_periods=(forward_consensus.periods if forward_consensus else []),
+        edgar_net_debt=edgar_nd[0], edgar_source=edgar_nd[1])
     dossier = Dossier(
         ticker=ticker, name=rec.identity.name, cik=rec.identity.cik,
         reference_date=fin.reference_date, rank=fin.rank, sleeve=fin.sleeve,
@@ -1239,11 +1247,9 @@ def assemble_one(
         forward_multiple_history=ciq_sheets.forward_multiple_history(bundle),
         # (historical forecast error) the final consensus's miss per fiscal year — same rules
         historical_forecast_error=ciq_sheets.historical_forecast_error(bundle),
-        # (EV bridge) CIQ's TEV claims and the exit default an enterprise recipe subtracts — same
-        # rules, with EDGAR's lease-inclusive net debt beside it as a cross-check
-        ev_bridge=ciq_sheets.ev_bridge(
-            bundle, fy_periods=(forward_consensus.periods if forward_consensus else []),
-            edgar_net_debt=edgar_nd[0], edgar_source=edgar_nd[1]),
+        # (EV bridge) same rules; the reason it is unbuilt sits beside it, never with it
+        ev_bridge=bridge if isinstance(bridge, EvBridge) else None,
+        ev_bridge_unbuilt=bridge if isinstance(bridge, EvBridgeUnbuilt) else None,
         # UTC-aware so the stamp is unambiguous and comparable across machines/timezones — it lets
         # the human tell two same-day re-assemblies apart (rendered with time + "UTC").
         llm_model=(llm.model if llm else None), assembled_at=built_at,

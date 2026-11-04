@@ -261,6 +261,14 @@ const EXTRACTION_VERSIONS = [
     "page: `ex_lease_at_price` cuts the companyfacts once at the date of the stored close, so " +
     "its share count and its net debt read the same filings — the valuation-bases refresh, " +
     "which hands it the uncut blob, no longer divides by the average of a later 10-Q"],
+  ["2026-11-04.fiscal-year-change-marker",
+    "a fiscal-year change is no column: CIQ's 'Fiscal Year Change' period-header marker is " +
+    "registered as a known non-period cell (`ciq_sheets.PERIOD_HEADER_MARKERS`, closed), so a " +
+    "latest read skips it while any other undated header still places nothing; the summary " +
+    "tables and the Ratios panel drop it as a column, and no growth, year-on-year, step or " +
+    "order check " +
+    "spans the two fiscal calendars it divides; a page with no EV bridge says why " +
+    "(`ev_bridge_unbuilt`)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
