@@ -114,7 +114,7 @@ count and sentence (below).
 | ORKA | 2026-10-16 | 2018-03-31, 2019-03-31, 2020-03-31 → 2021-06-30..2021-12-31, **short 3 of 4** | +0.093 → +0.011 | 0/3 → 0/3 | 2021-06-30, 09-30, 12-31 | F → F |
 | PARR | 2026-10-16 | 2025-06-30..2026-06-30 → 2025-09-30..2026-06-30 | −68.0 → −53.4 | 0/4 → 0/4 | 2025-12-31 | F → F |
 | ROST | 2026-10-16 | 2025-08-02..2026-08-01 → 2025-11-01..2026-08-01 | +130.8 → +132.6 | 0/4 → 0/4 | 2026-01-31 | F → F |
-| SMPL | 2026-08-14 | 2025-03-01..2026-02-28 → 2025-05-31..2026-02-28 | −18.8 → −16.8 | 0/4 → 0/4 | 2025-08-30 | F → F |
+| SMPL | 2026-10-16 (#914's re-assembly, merged here at `9c78839a`; its 2026-08-14 page read the same) | 2025-03-01..2026-02-28 → 2025-05-31..2026-02-28 | −18.8 → −16.8 | 0/4 → 0/4 | 2025-08-30 | F → F |
 | TECX | 2026-09-22 | UNKNOWN both (the three totals never share a quarter) | — | — | — | — |
 | TGT | 2026-10-16 | 2025-08-02..2026-08-01 → 2025-11-01..2026-08-01 | −391 → −364 | 0/4 → 0/4 | 2026-01-31 | F → F |
 | TJX | 2026-10-16 | 2017-10-28..2018-11-03 → 2018-05-05..**2019-02-02** | −546.1 → −590.0 | 0/4 → 0/4 | 2019-02-02 | F → F |
@@ -221,6 +221,10 @@ proposes R4 where a full window would not.
 **BOUNDARY.**
 
 - **Code.** `c4c9f432` (main) against this branch, measured on 2026-11-05.
+- **Re-measured after main moved.** The run was repeated on the merge with main `3e97ee7d`
+  (`9c78839a`), with "old" re-exported from `3e97ee7d`. #914 had re-assembled SMPL, and #915's
+  stamp change touches no window code. The result is the same: main reproduces 27 of 27, 21 of 27
+  reads move, R4 flips on none, and cut and uncut agree on every page.
 - **Population.** All 27 committed pages under `data/dossiers/`, BURL included. The operator ruled
   on 2026-11-05: "i dont want mosaic theory to hold back any names for teamnostra repo, its two
   separate setups". The PR's first runs excluded BURL as a held audit pack, and its body claimed
@@ -241,11 +245,11 @@ proposes R4 where a full window would not.
    - **The stale pages.** TJX reads to 2019-02-02 at a 2026-10-16 reference date: operating income
      has been untagged since. ORKA reads to 2021-12-31. MVST reads to 2025-12-31 at 2026-08-24:
      pre-tax income is untagged for 2026's first two quarters. SMPL reads to 2026-02-28 at
-     2026-08-14: pre-tax income is untagged for 2026-05-30.
+     2026-10-16: pre-tax income is untagged for 2026-05-30.
    - **It is stated, but not flagged.** Each page names its end date, so the stale end is not
      silent. It is also not flagged as stale.
    - **Why it needs a ruling.** Anchoring the window at the filer's latest quarter instead would
-     move R4's inputs for a different reason (§5.0 row 50).
+     move R4's inputs for a different reason (§5.0 row 51).
 2. **ONE QUARTER'S THREE TOTALS CAN COME FROM DIFFERENT VINTAGES — accepted, stated.** Each total
    is derived on its own tag, from that tag's own latest pair, so one quarter can mix filings
    across totals:
