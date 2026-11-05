@@ -1,0 +1,48 @@
+{
+  "source": "AWS, Amazon S3 API Reference, 'Signature Calculations for the Authorization Header: Transferring Payload in a Single Chunk (AWS Signature Version 4)', its four worked examples (docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html). That page renders by script, so the inputs and signatures were read on 2026-11-05 from an independent implementation that pins the same four (ytsaurus/ytsaurus, yt/yt/library/s3/unittests/http_ut.cpp); the first signature is pinned by four more independent implementations found by a GitHub code search for it the same day (rspamd, fluxer, donutbrowser, smolvm).",
+  "access_key": "AKIAIOSFODNN7EXAMPLE",
+  "secret_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+  "region": "us-east-1",
+  "service": "s3",
+  "x_amz_date": "20130524T000000Z",
+  "host": "examplebucket.s3.amazonaws.com",
+  "examples": [
+    {
+      "name": "GET Object",
+      "method": "GET",
+      "path": "/test.txt",
+      "query": [],
+      "headers": {"range": "bytes=0-9"},
+      "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authorization": "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request,SignedHeaders=host;range;x-amz-content-sha256;x-amz-date,Signature=f0e8bdb87c964420e857bd35b5d6ed310bd44f0170aba48dd91039c6036bdb41"
+    },
+    {
+      "name": "PUT Object",
+      "method": "PUT",
+      "path": "/test$file.text",
+      "query": [],
+      "headers": {"Date": "Fri, 24 May 2013 00:00:00 GMT", "x-amz-storage-class": "REDUCED_REDUNDANCY"},
+      "body": "Welcome to Amazon S3.",
+      "payload_sha256": "44ce7dd67c959e0d3524ffac1771dfbba87d2b6b4b4e99e42034a8b803f8b072",
+      "authorization": "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request,SignedHeaders=date;host;x-amz-content-sha256;x-amz-date;x-amz-storage-class,Signature=98ad721746da40c64f1a55b78f14c238d841ea1380cd77a1b5971af0ece108bd"
+    },
+    {
+      "name": "GET Bucket Lifecycle",
+      "method": "GET",
+      "path": "",
+      "query": [["lifecycle", ""]],
+      "headers": {},
+      "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authorization": "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-content-sha256;x-amz-date,Signature=fea454ca298b7da1c68078a5d1bdbfbbe0d65c699e0f91ac7a200a0136783543"
+    },
+    {
+      "name": "GET Bucket (List Objects)",
+      "method": "GET",
+      "path": "/",
+      "query": [["max-keys", "2"], ["prefix", "J"]],
+      "headers": {},
+      "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authorization": "AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-content-sha256;x-amz-date,Signature=34b48302e7b5fa45bde8084f4b7868a86f0a534bc59db6670ed5711ef69dc6f7"
+    }
+  ]
+}

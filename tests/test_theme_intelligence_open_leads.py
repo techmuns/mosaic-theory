@@ -362,7 +362,7 @@ def test_a_refused_tiingo_key_turns_the_validator_red(monkeypatch: Any) -> None:
     """The check is wired into the run's verdict: a refused Tiingo key fails `validate-keys`.
     NEGATIVE: every check passing exits 0."""
     vk = validator()
-    for name in ("check_anthropic", "check_polygon", "check_sec"):
+    for name in ("check_anthropic", "check_polygon", "check_sec", "check_r2"):
         monkeypatch.setattr(vk, name, lambda: True)
     monkeypatch.setattr(vk, "check_tiingo", lambda: False)
     assert vk.main() == 1
