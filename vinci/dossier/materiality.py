@@ -59,6 +59,31 @@ REVENUE_FRACTION = 0.05
 _BLOCK_OPEN = "ebt excl. unusual items"
 _BLOCK_CLOSE = "ebt incl. unusual items"
 
+#: CIQ'S INCOME-STATEMENT UNUSUAL-ITEMS VOCABULARY (2026-11-05): every label the block between the
+#: two delimiters above carried on the 36 annual and 36 quarterly Financials exports in the primary
+#: checkout's CIQ folder on 2026-11-05 — ten, and the same ten are every non-curated row of the 28
+#: committed annual summaries. It names the STATEMENT a summary row came from, which the row does
+#: not carry: the table mixes Income Statement and Cash Flow rows, and the same event reads with
+#: opposite signs on the two (a writedown is negative here and an add-back on the Cash Flow).
+#:
+#: THE SIGN, MEASURED, NOT ASSUMED: on those 36 annual exports, on all 348 columns carrying both
+#: subtotals, "EBT Excl. Unusual Items" plus the block AS SIGNED equals "EBT Incl. Unusual Items"
+#: (to max(0.15, 0.1%) $M). So a positive item ADDS to pre-tax income and a negative one SUBTRACTS,
+#: whatever its label says — `filed_tiebreak`'s "CIQ's unusual-items rows print a CHARGE negative".
+#: A label CIQ adds later is not here, and a row carrying it reads as from no known statement.
+UNUSUAL_ITEM_LABELS: frozenset[str] = frozenset({
+    "Asset Writedown",
+    "Gain (Loss) On Sale Of Assets",
+    "Gain (Loss) On Sale Of Invest.",
+    "Impairment of Goodwill",
+    "In Process R & D Exp.",
+    "Insurance Settlements",
+    "Legal Settlements",
+    "Merger & Related Restruct. Charges",
+    "Other Unusual Items",
+    "Restructuring Charges",
+})
+
 
 class MaterialityUnavailableError(RuntimeError):
     """The unusual-items block could not be located — the guard cannot run, and says so."""

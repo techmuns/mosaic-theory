@@ -1,0 +1,5106 @@
+{
+ "_about": "Frozen copies for the material-figure direction pins (2026-11-05): each page's annual financial summary (`mechanical.financial_summary.annual`, rows as committed, material marks included) and its whole `synthesis`, copied verbatim from the committed dossier.json at the commit named. NFLX is PR #918's re-assembly (its branch head); the other five are main. The syntheses are LLM-written and frozen here so a classifier pin on them never rots with a re-assembly (CLAUDE.md TEST-LAYER RULE).",
+ "pages": {
+  "NFLX": {
+   "commit": "0dbe8f97c62748d2dcbd55237331840162d2b871",
+   "assembled_at": "2026-11-05T11:58:05.382371Z",
+   "extraction_version": "2026-11-05.input-record",
+   "annual": {
+    "value": {
+     "columns": [
+      "FY17 (R)",
+      "FY18",
+      "FY19",
+      "FY20",
+      "FY21",
+      "FY22",
+      "FY23",
+      "FY24",
+      "FY25",
+      "LTM",
+      "FY26E",
+      "FY27E"
+     ],
+     "rows": [
+      {
+       "label": "Revenue ($M)",
+       "cells": [
+        "11,693",
+        "15,794",
+        "20,156",
+        "24,996",
+        "29,698",
+        "31,616",
+        "33,723",
+        "39,001",
+        "45,183",
+        "49,735",
+        "51,124",
+        "56,601"
+       ],
+       "values": [
+        11692.713,
+        15794.341,
+        20156.447,
+        24996.056,
+        29697.844,
+        31615.55,
+        33723.297,
+        39000.966,
+        45183.036,
+        49734.633,
+        51124.18,
+        56600.95
+       ],
+       "material": false
+      },
+      {
+       "label": "Revenue growth",
+       "cells": [
+        "—",
+        "— (basis)",
+        "+28%",
+        "+24%",
+        "+19%",
+        "+6%",
+        "+7%",
+        "+16%",
+        "+16%",
+        "— (basis)",
+        "+13% (vs FY25)",
+        "+11%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBITDA ($M)",
+       "cells": [
+        "911",
+        "1,688",
+        "2,708",
+        "4,701",
+        "6,403",
+        "5,970",
+        "7,311",
+        "10,747",
+        "13,660",
+        "15,957",
+        "17,059",
+        "19,719"
+       ],
+       "values": [
+        910.59,
+        1688.383,
+        2707.833,
+        4700.999,
+        6402.921,
+        5969.513,
+        7310.95,
+        10746.528,
+        13659.992,
+        15957.058,
+        17059.31,
+        19718.72
+       ],
+       "material": false
+      },
+      {
+       "label": "EBITDA margin",
+       "cells": [
+        "8%",
+        "11%",
+        "13%",
+        "19%",
+        "22%",
+        "19%",
+        "22%",
+        "28%",
+        "30%",
+        "32%",
+        "33%",
+        "35%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBIT ($M)",
+       "cells": [
+        "839",
+        "1,605",
+        "2,604",
+        "4,585",
+        "6,195",
+        "5,633",
+        "6,954",
+        "10,418",
+        "13,327",
+        "15,565",
+        "16,203",
+        "18,866"
+       ],
+       "values": [
+        838.679,
+        1605.226,
+        2604.254,
+        4585.289,
+        6194.509,
+        5632.831,
+        6954.003,
+        10417.614,
+        13326.603,
+        15564.87,
+        16202.85,
+        18865.64
+       ],
+       "material": false
+      },
+      {
+       "label": "Net income ($M)",
+       "cells": [
+        "559",
+        "1,211",
+        "1,867",
+        "2,761",
+        "5,116",
+        "4,492",
+        "5,408",
+        "8,712",
+        "10,981",
+        "14,767",
+        "15,172",
+        "15,545"
+       ],
+       "values": [
+        558.929,
+        1211.242,
+        1866.916,
+        2761.395,
+        5116.228,
+        4491.924,
+        5407.99,
+        8711.631,
+        10981.201,
+        14766.653,
+        15171.85,
+        15544.76
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (GAAP, dil.)",
+       "cells": [
+        "0.13",
+        "0.27",
+        "0.41",
+        "0.61",
+        "1.12",
+        "1.00",
+        "1.20",
+        "1.98",
+        "2.53",
+        "3.45",
+        "3.58",
+        "3.77"
+       ],
+       "values": [
+        0.13,
+        0.27,
+        0.41,
+        0.61,
+        1.12,
+        1.0,
+        1.2,
+        1.98,
+        2.53,
+        3.45,
+        3.58,
+        3.77
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (Normalized)",
+       "cells": [
+        "0.07",
+        "0.17",
+        "0.29",
+        "0.44",
+        "0.80",
+        "0.73",
+        "0.86",
+        "1.42",
+        "1.83",
+        "3.00",
+        "3.57",
+        "3.77"
+       ],
+       "values": [
+        0.067886,
+        0.169871,
+        0.285301,
+        0.440237,
+        0.801556,
+        0.729011,
+        0.862827,
+        1.417958,
+        1.830535,
+        3.002246,
+        3.57,
+        3.77
+       ],
+       "material": false
+      },
+      {
+       "label": "Merger & Related Restruct. Charges ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "2,800",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        2800.0,
+        null,
+        null
+       ],
+       "material": true
+      },
+      {
+       "label": "CFO ($M)",
+       "cells": [
+        "-1,786",
+        "-2,680",
+        "-2,887",
+        "2,427",
+        "393",
+        "2,026",
+        "7,274",
+        "7,361",
+        "10,149",
+        "12,308",
+        "13,389",
+        "14,540"
+       ],
+       "values": [
+        -1785.9,
+        -2680.5,
+        -2887.3,
+        2427.077,
+        392.61,
+        2026.257,
+        7274.301,
+        7361.364,
+        10149.273,
+        12307.938,
+        13389.04,
+        14539.93
+       ],
+       "material": false
+      },
+      {
+       "label": "Capex ($M)",
+       "cells": [
+        "-173",
+        "-174",
+        "-253",
+        "-498",
+        "-525",
+        "-408",
+        "-349",
+        "-440",
+        "-688",
+        "-933",
+        "-1,006",
+        "-812"
+       ],
+       "values": [
+        -173.3,
+        -173.9,
+        -253.0,
+        -497.9,
+        -524.6,
+        -407.7,
+        -348.6,
+        -439.5,
+        -688.2,
+        -932.9,
+        -1005.5,
+        -812.38
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF ($M)",
+       "cells": [
+        "6,673",
+        "8,471",
+        "15,626",
+        "13,215",
+        "15,649",
+        "16,545",
+        "19,384",
+        "21,254",
+        "24,818",
+        "25,476",
+        "—",
+        "—"
+       ],
+       "values": [
+        6672.916875,
+        8470.949125,
+        15625.900375,
+        13214.64575,
+        15648.747625,
+        16544.708875,
+        19384.344625,
+        21253.854625,
+        24817.525125,
+        25475.8075,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A ($M)",
+       "cells": [
+        "72",
+        "83",
+        "104",
+        "116",
+        "208",
+        "337",
+        "357",
+        "329",
+        "333",
+        "392",
+        "—",
+        "—"
+       ],
+       "values": [
+        71.911,
+        83.157,
+        103.579,
+        115.71,
+        208.412,
+        336.682,
+        356.947,
+        328.914,
+        333.389,
+        392.188,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "12,499",
+        "13,523"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        12499.11,
+        13523.09
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "405",
+        "448"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        404.93,
+        447.74
+       ],
+       "material": false
+      }
+     ],
+     "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-10-27; (R) = Reclassified basis",
+     "is_estimate": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+     ]
+    },
+    "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E); Merger & Related Restruct. Charges ($M) LTM: CIQ Financials (Quarterly)→Income Statement 'Merger & Related Restruct. Charges', four quarters to 2026-09-30, its breakdown reconciling in every quarter to EDGAR XBRL us-gaap:NonoperatingIncomeExpense as filed by 2026-11-04 (0001065280-25-000406, 0001065280-26-000034, 0001065280-26-000138, 0001065280-26-000212, 0001065280-26-000291) — CIQ's two exports disagreeing",
+    "status": "present",
+    "note": null
+   },
+   "synthesis": {
+    "evidence_balance": "Mixed — near-floor multiple on all-time-high, still-compounding EBITDA and intact pricing/churn flywheel, set against a sustained idiosyncratic de-rate with sharply negative estimate breadth.",
+    "bull_points": [
+     {
+      "claim": "Absolute EBITDA has compounded without interruption from $911M (FY17) to $15,957M (LTM Sep-30-2026) as revenue climbed from $11,693M to $49,735M, so the margin optics never reverse — this is a growing, not impaired, earnings base.",
+      "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+      "figures": [
+       {
+        "figure": "$911M",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       },
+       {
+        "figure": "$15,957M",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       },
+       {
+        "figure": "$11,693M",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       },
+       {
+        "figure": "$49,735M",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "EBITDA margin has RISEN every step to 32% LTM from 8% (FY17) and gross margin to 51% from 31%, so the de-rate is not a deteriorating-margin story — margins are at an all-time high.",
+      "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+      "figures": [
+       {
+        "figure": "32%",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       },
+       {
+        "figure": "8%",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       },
+       {
+        "figure": "51%",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       },
+       {
+        "figure": "31%",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "EV/EBITDA of 15.9x sits at the 3rd percentile of its own 9.5-year range (low 12.7x, median 42.0x, high 157.7x) — the trailing multiple is near its own floor even as the business is at peak scale, posing overshoot rather than impairment; neutral on direction until a forward basis resolves it.",
+      "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 39 quarters spanning 2017-03-31..2026-09-30 (9.5y) (partial last column excluded from the distribution)",
+      "figures": [
+       {
+        "figure": "15.9x",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple"
+       },
+       {
+        "figure": "3rd percentile",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 39 quarters spanning 2017-03-31..2026-09-30 (9.5y) (partial last column excluded from the distribution)"
+       },
+       {
+        "figure": "12.7x",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+       },
+       {
+        "figure": "42.0x",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+       },
+       {
+        "figure": "157.7x",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "Against a HETEROGENEOUS peer set (caps $166M–$3,900.0B, 23,480x span; name $256.7B), NFLX carries BETTER fundamentals than the peer median on margin (32% vs 21%) and LT EPS growth (21% vs 16%) yet trades at EV/EBITDA 15.9x vs peer median 18.2x — posing whether that discount is RESIDUAL (overshoot) rather than EARNED; the human must judge, not computed here.",
+      "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+      "figures": [
+       {
+        "figure": "$166M–$3,900.0B",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description"
+       },
+       {
+        "figure": "23,480x",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description"
+       },
+       {
+        "figure": "$256.7B",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-10-27"
+       },
+       {
+        "figure": "32%",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "21%",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "21%",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "16%",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "15.9x",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)"
+       },
+       {
+        "figure": "18.2x",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "The balance sheet is self-funding, not survival-stressed: net-debt/EBITDA 0.6x, interest coverage 18.6x, FCF-positive, S&P issuer rating A — the de-rate is a multiple event, not a solvency event.",
+      "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+      "figures": [
+       {
+        "figure": "0.6x",
+        "source_ref": "CIQ Net Debt $9,307M [Q3 Sep-30-2026] ÷ CIQ EBITDA $15,957M [LTM 12 months Sep-30-2026]"
+       },
+       {
+        "figure": "18.6x",
+        "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Sep-30-2026]"
+       },
+       {
+        "figure": "A",
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-10-27"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "The operating mechanism the de-rate doubts is still delivering: Q3 churn improved year-on-year both globally and in the US, and 2026 price increases (US, Mexico, Spain) have gone well — management's pricing/retention flywheel is intact, grounding the overshoot read.",
+      "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Revenue growth remains double-digit — Q3 Sep-30-2026 up +11.8% YoY — with FY26E revenue $51,124M and FY27E $56,601M, so top-line deceleration is modest, not a terminal roll-over.",
+      "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+      "figures": [
+       {
+        "figure": "+11.8%",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)"
+       },
+       {
+        "figure": "$51,124M",
+        "source_ref": "CIQ Financials→Income Statement (annual) + Estimates→Trends (FY E)"
+       },
+       {
+        "figure": "$56,601M",
+        "source_ref": "CIQ Financials→Income Statement (annual) + Estimates→Trends (FY E)"
+       }
+      ],
+      "cited": true
+     }
+    ],
+    "bear_points": [
+     {
+      "claim": "The drawdown is a gradual bleed, not a single-event re-rate: the stock fell -39.6% over the 364 days to 2026-11-04 while SPY rose, and 180d relative-to-market was -35.0% — a sustained, idiosyncratic de-rate with no discrete gap-down to mark a one-off; the cause named at the follow has NOT reversed, as the since-follow window (2026-08-11 to 2026-11-04) shows continued decline.",
+      "source_ref": "EOD NFLX−SPY 180d to 2026-10-16 (assembly, cap-band)",
+      "figures": [
+       {
+        "figure": "-39.6%",
+        "source_ref": "EOD NFLX vs SPY rebased to 100, 2025-11-05..2026-11-04"
+       },
+       {
+        "figure": "-35.0%",
+        "source_ref": "EOD NFLX−SPY 180d to 2026-10-16 (assembly, cap-band)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "Near-term consensus breadth is overwhelmingly negative — Revenue FY2026 revisions ran 6 up / 34 down last month and FQ4 2026 EPS Normalized 0 up / 29 down across 1m/2m/3m — estimates are being cut into the print, consistent with the price action rather than a stabilising overshoot.",
+      "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+      "figures": [
+       {
+        "figure": "6 up / 34 down",
+        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)"
+       },
+       {
+        "figure": "0 up / 29 down",
+        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "LTM EPS carries a non-operating distortion that flatters the trailing multiple: $2,590M of the quarter ended 2026-03-31 came from below the operating line — 40% of pre-tax income and 21% of revenue — so the 18.1x trailing P/E is not a clean operating anchor; the real signal is that trailing earnings are inflated, making the name look cheaper than operating-only earnings would.",
+      "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-09-30..2026-09-30",
+      "figures": [
+       {
+        "figure": "$2,590M",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-09-30..2026-09-30"
+       },
+       {
+        "figure": "40%",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-09-30..2026-09-30"
+       },
+       {
+        "figure": "21%",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-09-30..2026-09-30"
+       },
+       {
+        "figure": "18.1x",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "A $2,800.0M Merger & Related Restruct. Charge sits in the LTM to 2026-09-30 — and CIQ's two exports disagree on it — evidence that the trailing period is contaminated by one-off items plus the aborted $71.5B Warner Bros. Discovery deal, complicating any trailing-multiple read, though it is a one-time rather than recurring drag.",
+      "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E); Merger & Related Restruct. Charges ($M) LTM: CIQ Financials (Quarterly)→Income Statement 'Merger & Related Restruct. Charges', four quarters to 2026-09-30, its breakdown reconciling in every quarter to EDGAR XBRL us-gaap:NonoperatingIncomeExpense as filed by 2026-11-04 (0001065280-25-000406, 0001065280-26-000034, 0001065280-26-000138, 0001065280-26-000212, 0001065280-26-000291) — CIQ's two exports disagreeing",
+      "figures": [
+       {
+        "figure": "$2,800.0M",
+        "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E); Merger & Related Restruct. Charges ($M) LTM: CIQ Financials (Quarterly)→Income Statement 'Merger & Related Restruct. Charges', four quarters to 2026-09-30, its breakdown reconciling in every quarter to EDGAR XBRL us-gaap:NonoperatingIncomeExpense as filed by 2026-11-04 (0001065280-25-000406, 0001065280-26-000034, 0001065280-26-000138, 0001065280-26-000212, 0001065280-26-000291) — CIQ's two exports disagreeing"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "A genuine counter to the overshoot read: the ads business — a core growth lever — is running behind plan, with management conceding they are 'a bit behind our aggressive target for the year' on partner-integration delays; outweighed by the fact it is still growing over 80% this year, but it tempers the clean-flywheel narrative.",
+      "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+      "cited": true
+     }
+    ],
+    "twin_reference_cases": [
+     {
+      "name": "Meta Platforms",
+      "outcome": "recovered",
+      "distinguishing_fact": "A dominant, cash-generative consumer-internet platform that de-rated hard on a growth-deceleration and heavy-spend scare, then re-rated once the core engagement and monetization flywheel proved intact — the overshoot template.",
+      "source": "[LLM-suggested, unverified]"
+     },
+     {
+      "name": "The Walt Disney Company",
+      "outcome": "went terminal",
+      "distinguishing_fact": "A streaming-and-content peer in the same comp set carrying far thinner margins, slow revenue growth and recurring goodwill/intangible write-downs — the value-trap template where a content business genuinely erodes rather than overshoots.",
+      "source": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+     },
+     {
+      "name": "Spotify Technology S.A.",
+      "outcome": "recovered",
+      "distinguishing_fact": "A subscription-media peer that saw sentiment swing on margin and pricing-power doubts, then re-rated as retention and ARPU proved durable — a pricing-flywheel analogue to NFLX's churn/price-increase mechanism.",
+      "source": "[LLM-suggested, unverified]"
+     }
+    ],
+    "decisive_question": {
+     "question": "Is the discount to the name's own history and to the (heterogeneous) peer median a RESIDUAL overshoot that mean-reverts as the pricing/retention flywheel keeps compounding EBITDA, or an EARNED re-rate as US-slate execution weakness and ads shortfalls slow the core growth engine toward the consensus cuts?",
+     "evidence_for": [
+      {
+       "claim": "The core mechanism is still delivering — Q3 churn improved year-on-year globally and in the US, 2026 price increases have gone well, and India view hours grew 24% driving nearly 20% revenue growth — supporting that depressed multiples will revert as EBITDA (now $15,957M LTM, up from $13,660M FY25) compounds.",
+       "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+       "figures": [
+        {
+         "figure": "$15,957M",
+         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+        },
+        {
+         "figure": "$13,660M",
+         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+        }
+       ],
+       "cited": true
+      },
+      {
+       "claim": "EV/EBITDA 15.9x at the 3rd percentile of a 9.5-year range (median 42.0x) with margins at an all-time 32% says the multiple, not the business, has compressed — the overshoot condition.",
+       "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 39 quarters spanning 2017-03-31..2026-09-30 (9.5y) (partial last column excluded from the distribution)",
+       "figures": [
+        {
+         "figure": "15.9x",
+         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple"
+        },
+        {
+         "figure": "3rd percentile",
+         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 39 quarters spanning 2017-03-31..2026-09-30 (9.5y) (partial last column excluded from the distribution)"
+        },
+        {
+         "figure": "42.0x",
+         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+        },
+        {
+         "figure": "32%",
+         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+        }
+       ],
+       "cited": true
+      }
+     ],
+     "evidence_against": [
+      {
+       "claim": "Estimate breadth is sharply negative into the print — FY2026 Revenue 6 up / 34 down and FQ4 2026 EPS Normalized 0 up / 29 down — consistent with an earned re-rate as analysts mark the growth engine down.",
+       "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+       "figures": [
+        {
+         "figure": "6 up / 34 down",
+         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)"
+        },
+        {
+         "figure": "0 up / 29 down",
+         "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)"
+        }
+       ],
+       "cited": true
+      },
+      {
+       "claim": "Management conceded the ads business — a stated core growth lever — is running behind its aggressive plan on partner-integration delays, a crack in the flywheel that could validate the slower-growth re-rate even though ads still grew over 80%.",
+       "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+       "cited": true
+      }
+     ]
+    },
+    "key_unknowns": [
+     "No forward/adjusted EV/EBITDA basis is available at the drawdown (ev_ebitda_adjusted_fwd UNKNOWN, no revised adjusted guide) — the 15.9x trailing multiple cannot be classed as temporarily depressed vs permanently impaired from the facts; the overshoot-vs-terminal question stays open.",
+     "The 5-year P/E percentile cannot be built because a ~10.02x share-basis change (stock split) falls inside the window — the trailing P/E range is not computable, so the P/E 18.1x / 26.24 figures lack a historical percentile anchor.",
+     "FY26E/FY27E EBITDA ($17,059M / $19,719M) are struck on a consensus basis whose implied D&A (855) is 3.18x the actuals' implied D&A (269) — trailing and forward EBITDA are NOT the same basis, so growth across the actual/estimate boundary is part definitional and a trailing-vs-forward multiple comparison is unreliable.",
+     "Single-segment reporting (Streaming Entertainment Service) means no segment-EBITDA breakout and no disclosed US-vs-international profitability split — an opacity that matters precisely because management flags US-slate execution as the weak spot; the market cannot verify the US profit drag independently.",
+     "Covenant basis and net-debt/company-adjusted LTM EBITDA are UNKNOWN (not disclosed); the capital-structure panel is 266d old and predates an Item 1.02 termination of a material agreement (filed 2026-02-27), so an instrument listed may already be terminated — verify before relying on the maturity wall.",
+     "The $2,800.0M LTM Merger & Related Restruct. Charge is reported inconsistently across CIQ's two exports — the magnitude and recurrence of restructuring/aborted-deal costs is not cleanly resolvable from the facts.",
+     "Whether the US content-slate execution gap management repeatedly flagged ('we could do better', 'not growing as fast as we'd like') is a temporary slate-timing issue or a structural engagement plateau is unresolved; view-hour growth was only +2% first-half 2026."
+    ],
+    "draw_agreement": {
+     "attempted": 5,
+     "completed": 5,
+     "labels": {
+      "mixed": 5
+     },
+     "unanimous": true
+    }
+   }
+  },
+  "AMZN": {
+   "commit": "3e97ee7d7ce275270f2c24185b1906fa84fc3fb7",
+   "assembled_at": "2026-11-03T18:18:35.905043Z",
+   "extraction_version": "2026-11-03.ex-lease-share-cut",
+   "annual": {
+    "value": {
+     "columns": [
+      "FY17",
+      "FY18",
+      "FY19 (R)",
+      "FY20",
+      "FY21",
+      "FY22 (R)",
+      "FY23",
+      "FY24",
+      "FY25",
+      "LTM",
+      "FY26E",
+      "FY27E"
+     ],
+     "rows": [
+      {
+       "label": "Revenue ($M)",
+       "cells": [
+        "177,866",
+        "232,887",
+        "280,522",
+        "386,064",
+        "469,822",
+        "513,983",
+        "574,785",
+        "637,959",
+        "716,924",
+        "797,455",
+        "828,933",
+        "949,994"
+       ],
+       "values": [
+        177866.0,
+        232887.0,
+        280522.0,
+        386064.0,
+        469822.0,
+        513983.0,
+        574785.0,
+        637959.0,
+        716924.0,
+        797455.0,
+        828933.23,
+        949994.17
+       ],
+       "material": false
+      },
+      {
+       "label": "Revenue growth",
+       "cells": [
+        "—",
+        "+31%",
+        "— (basis)",
+        "— (basis)",
+        "+22%",
+        "— (basis)",
+        "— (basis)",
+        "+11%",
+        "+12%",
+        "— (basis)",
+        "+16% (vs FY25)",
+        "+15%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBITDA ($M)",
+       "cells": [
+        "15,584",
+        "27,762",
+        "36,330",
+        "48,079",
+        "59,312",
+        "55,269",
+        "85,515",
+        "121,388",
+        "145,731",
+        "183,719",
+        "217,150",
+        "279,241"
+       ],
+       "values": [
+        15584.0,
+        27762.0,
+        36330.0,
+        48079.0,
+        59312.0,
+        55269.0,
+        85515.0,
+        121388.0,
+        145731.0,
+        183719.0,
+        217150.1,
+        279241.08
+       ],
+       "material": false
+      },
+      {
+       "label": "EBITDA margin",
+       "cells": [
+        "9%",
+        "12%",
+        "13%",
+        "12%",
+        "13%",
+        "11%",
+        "15%",
+        "19%",
+        "20%",
+        "23%",
+        "26%",
+        "29%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBIT ($M)",
+       "cells": [
+        "4,106",
+        "12,421",
+        "14,541",
+        "22,899",
+        "24,879",
+        "13,348",
+        "36,852",
+        "68,593",
+        "79,975",
+        "104,366",
+        "111,905",
+        "145,099"
+       ],
+       "values": [
+        4106.0,
+        12421.0,
+        14541.0,
+        22899.0,
+        24879.0,
+        13348.0,
+        36852.0,
+        68593.0,
+        79975.0,
+        104366.0,
+        111904.88,
+        145099.35
+       ],
+       "material": false
+      },
+      {
+       "label": "Net income ($M)",
+       "cells": [
+        "3,033",
+        "10,073",
+        "11,588",
+        "21,331",
+        "33,364",
+        "-2,722",
+        "30,425",
+        "59,248",
+        "77,670",
+        "134,779",
+        "139,426",
+        "116,944"
+       ],
+       "values": [
+        3033.0,
+        10073.0,
+        11588.0,
+        21331.0,
+        33364.0,
+        -2722.0,
+        30425.0,
+        59248.0,
+        77670.0,
+        134779.0,
+        139425.76,
+        116943.9
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (GAAP, dil.)",
+       "cells": [
+        "0.31",
+        "1.01",
+        "1.15",
+        "2.09",
+        "3.24",
+        "-0.27",
+        "2.90",
+        "5.53",
+        "7.17",
+        "12.37",
+        "12.81",
+        "10.66"
+       ],
+       "values": [
+        0.31,
+        1.01,
+        1.15,
+        2.09,
+        3.24,
+        -0.27,
+        2.9,
+        5.53,
+        7.17,
+        12.37,
+        12.81,
+        10.66
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (Normalized)",
+       "cells": [
+        "0.23",
+        "0.70",
+        "0.84",
+        "1.34",
+        "1.42",
+        "0.68",
+        "2.18",
+        "4.08",
+        "4.70",
+        "6.00",
+        "10.52",
+        "10.89"
+       ],
+       "values": [
+        0.233392,
+        0.704,
+        0.844246,
+        1.336046,
+        1.423368,
+        0.680083,
+        2.177849,
+        4.077336,
+        4.702133,
+        5.996167,
+        10.52,
+        10.89
+       ],
+       "material": false
+      },
+      {
+       "label": "Gain (Loss) On Sale Of Invest. ($M)",
+       "cells": [
+        "120",
+        "6",
+        "346",
+        "2,394",
+        "14,707",
+        "-15,926",
+        "985",
+        "-1,428",
+        "15,301",
+        "69,158",
+        "—",
+        "—"
+       ],
+       "values": [
+        120.0,
+        6.0,
+        346.0,
+        2394.0,
+        14707.0,
+        -15926.0,
+        985.0,
+        -1428.0,
+        15301.0,
+        69158.0,
+        null,
+        null
+       ],
+       "material": true
+      },
+      {
+       "label": "Asset Writedown ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "-1,100",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        -1100.0,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "CFO ($M)",
+       "cells": [
+        "18,365",
+        "30,723",
+        "38,514",
+        "66,064",
+        "46,327",
+        "46,752",
+        "84,946",
+        "115,877",
+        "139,514",
+        "168,300",
+        "188,704",
+        "256,612"
+       ],
+       "values": [
+        18365.0,
+        30723.0,
+        38514.0,
+        66064.0,
+        46327.0,
+        46752.0,
+        84946.0,
+        115877.0,
+        139514.0,
+        168300.0,
+        188703.98,
+        256612.2
+       ],
+       "material": false
+      },
+      {
+       "label": "Capex ($M)",
+       "cells": [
+        "-11,955",
+        "-13,427",
+        "-16,861",
+        "-40,140",
+        "-61,053",
+        "-63,645",
+        "-52,729",
+        "-82,999",
+        "-131,819",
+        "-215,192",
+        "-223,103",
+        "-297,839"
+       ],
+       "values": [
+        -11955.0,
+        -13427.0,
+        -16861.0,
+        -40140.0,
+        -61053.0,
+        -63645.0,
+        -52729.0,
+        -82999.0,
+        -131819.0,
+        -215192.0,
+        -223103.03,
+        -297838.94
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF ($M)",
+       "cells": [
+        "9,448",
+        "24,888",
+        "18,882",
+        "36,456",
+        "-968",
+        "695",
+        "45,476",
+        "45,556",
+        "23,793",
+        "-34,732",
+        "—",
+        "—"
+       ],
+       "values": [
+        9448.25,
+        24888.5,
+        18882.125,
+        36456.5,
+        -968.3,
+        695.125,
+        45475.75,
+        45555.875,
+        23793.125,
+        -34731.8,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A ($M)",
+       "cells": [
+        "11,478",
+        "15,341",
+        "21,789",
+        "25,180",
+        "34,433",
+        "41,921",
+        "48,663",
+        "52,795",
+        "65,756",
+        "79,353",
+        "—",
+        "—"
+       ],
+       "values": [
+        11478.0,
+        15341.0,
+        21789.0,
+        25180.0,
+        34433.0,
+        41921.0,
+        48663.0,
+        52795.0,
+        65756.0,
+        79353.0,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "-34,360",
+        "-18,090"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        -34359.83,
+        -18090.39
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "83,990",
+        "112,257"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        83989.94,
+        112256.81
+       ],
+       "material": false
+      }
+     ],
+     "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-11-01; (R) = Reclassified basis",
+     "is_estimate": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+     ]
+    },
+    "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+    "status": "present",
+    "note": null
+   },
+   "synthesis": {
+    "evidence_balance": "strongly-bullish — accelerating AWS growth, a $578B backlog and 35%+ segment margins outweigh a capex-driven, timing-dependent FCF deficit.",
+    "bull_points": [
+     {
+      "claim": "AWS grew 39.3% year-over-year in Q3, its sixth straight quarter of acceleration and fastest growth in nearly five years, on a business now at a $184 billion annualized run rate.",
+      "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "AWS backlog reached $578 billion in Q3, growing triple digits year-over-year and well diversified, giving multi-year visibility into the reinvestment runway.",
+      "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Management states AWS can grow north of 40% in each of 2027 and 2028 and become a $1 trillion revenue business within 5 to 10 years — a stated runway far longer than one year of pricing.",
+      "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Absolute EBITDA has compounded from $15,584M (FY2017) to $183,719M (LTM Sep-30-2026) with EBITDA margin rising from 9% to 23%, so the trend is rising scale and rising profitability together — not a margin-funded illusion.",
+      "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+      "cited": true
+     },
+     {
+      "claim": "AWS operating margin was 38.7% in Q3 with operating income of $17.8 billion, and management says AI-side margins are improving well ahead of where core was at a similar stage — the heavy AI build is not yet eroding segment economics.",
+      "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "FY2025 segment operating income shows AWS earned $45,606M at a 35.4% margin versus North America $29,619M (6.9%) and International $4,750M (2.9%), so the highest-return segment is the one growing fastest.",
+      "source_ref": "EDGAR 10-K 0001018724-26-000004 XBRL instance amzn-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31",
+      "cited": true
+     },
+     {
+      "claim": "Stores units grew nearly 15% year-to-date on a base of more than 30 billion items, adding more than $90 billion of gross sales in the trailing 12 months — about double the gross sales per quarter of the next largest US competitor.",
+      "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Revenue consensus rises steadily to FY2027E $949,994M, implying the long-duration growth the price embeds is corroborated by sell-side forecasts across multiple fiscal years.",
+      "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+      "cited": true
+     },
+     {
+      "claim": "Interest coverage is 41x and net-debt/EBITDA is 1.0x, so the company can fund an enormous reinvestment program without balance-sheet strain.",
+      "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Sep-30-2026]",
+      "cited": true
+     },
+     {
+      "claim": "On comps the name carries EBITDA growth of 33% vs peer-median 20% and LT EPS growth 23% vs peer-median 13% at a similar 23% EBITDA margin, so its discount to the LTM peer median (EV/EBITDA 13.8x vs 14.6x) is paired with materially better growth, posing whether that discount is EARNED or RESIDUAL — a question for the human, not a computed upside; the peer set is flagged HETEROGENEOUS so read it as a confidence-gated input.",
+      "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+      "cited": true
+     }
+    ],
+    "bear_points": [
+     {
+      "claim": "LTM levered free cash flow is -$34,731.8M and the FCF sign is negative, so despite rising EBITDA the company is burning cash — the self-fund read is MIXED (latest-Q OCF positive, LTM FCF negative, and both must be positive to self-fund).",
+      "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Sep-30-2026]",
+      "cited": true
+     },
+     {
+      "claim": "2026 cash CapEx is guided to approximately $220 billion with management expecting to spend meaningfully more in 2027, the cause behind the FCF deficit and the reason returns depend on data centers being monetized years out.",
+      "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "The trailing P/E of 34.3x is not an operating anchor: three of the last four quarters carry a material below-the-line block netting +$78,919M, including a Gain (Loss) On Sale Of Invest. of $69,158.0M in the LTM — the GAAP EPS and trailing P/E both inflate on non-operating items, so the optical multiple is a MISREAD, not the real earnings signal.",
+      "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-09-30..2026-09-30",
+      "cited": true
+     },
+     {
+      "claim": "EV/EBITDA (TEV/LTM) at 15.1x sits at the 3rd percentile of its own 9.2-year range (14.2–49.0x, median 24.4x), but this is trailing-only with no forward basis — the near-floor reading cannot by itself distinguish a temporarily depressed level from a structurally lower terminal one.",
+      "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
+      "cited": true
+     },
+     {
+      "claim": "North America segment revenue growth decelerated to 6% year-over-year in Q3 (from 16% in Q2), and even adjusted for the Prime Day timing shift of ~400bps the core retail top line is slowing against a very large base.",
+      "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     }
+    ],
+    "twin_reference_cases": [
+     {
+      "name": "Microsoft Corporation",
+      "outcome": "kept compounding",
+      "distinguishing_fact": "A mega-cap cloud platform that sustained a long reinvestment-into-cloud runway while the market repeatedly questioned whether high capex would compress returns.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "Alphabet Inc.",
+      "outcome": "kept compounding",
+      "distinguishing_fact": "A large-cap platform that carried a heavy AI/data-center capex cycle alongside a dominant core franchise and was debated as cheap on earnings versus the reinvestment it was funding.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "Meta Platforms",
+      "outcome": "re-rated to fair value",
+      "distinguishing_fact": "A platform whose multiple compressed sharply when a step-up in capital spend outran visible returns, then re-rated once reinvestment began converting to profit.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "Netflix",
+      "outcome": "kept compounding",
+      "distinguishing_fact": "A subscription-scale business that spent heavily ahead of monetization and was doubted on free cash flow before the invest-ahead model turned cash-generative.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     }
+    ],
+    "decisive_question": {
+     "question": "Will the ~$220 billion+ annual AWS/AI capex cycle convert into the 40%+ multi-year AWS growth and attractive return on invested capital management claims — turning today's FCF deficit into the long-duration free cash flow the price embeds — or will the build outrun monetization long enough to re-rate the terminal economics lower?",
+     "evidence_for": [
+      {
+       "claim": "AWS backlog of $578 billion growing triple digits and a stated line of sight to 40%+ growth in 2027 and 2028 give multi-year demand visibility behind the spend.",
+       "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+       "cited": true
+      },
+      {
+       "claim": "AWS operating margin held at 38.7% in Q3 with AI-side margins improving ahead of where core was at the same stage, evidence the invested capital is earning as it scales.",
+       "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+       "cited": true
+      }
+     ],
+     "evidence_against": [
+      {
+       "claim": "LTM levered free cash flow is -$34,731.8M, so the reinvestment is currently consuming cash rather than generating it.",
+       "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Sep-30-2026]",
+       "cited": true
+      },
+      {
+       "claim": "2026 cash CapEx guided to ~$220 billion with meaningfully more expected in 2027, and management concedes data-center capital is spent roughly two years before servers can start monetizing it.",
+       "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+       "cited": true
+      }
+     ]
+    },
+    "key_unknowns": [
+     "Forward EV/EBITDA and adjusted EPS cannot be read at the drawdown because no revised guidance was available, so the overshoot-vs-terminal question on the near-floor trailing 15.1x multiple is unresolved (neither bull nor bear).",
+     "The 5-year P/E percentile cannot be built because a stock split inside the window divides split-adjusted prices against as-filed older EPS (~20.01x basis mismatch); the current 34.3x P/E stands but has no historical context.",
+     "Segment EBITDA is not disclosed — only segment operating income is reported — so AWS's standalone cash economics and incremental margin on the AI build cannot be isolated from the consolidated figure; this missing breakout is a bearish opacity, not a neutral gap.",
+     "The covenant leverage basis and company-adjusted LTM EBITDA are UNKNOWN (not disclosed), so no covenant-basis leverage read is possible; the maturity wall on the 10-Q basis is NOT_STATED (no near-term maturity), a known rather than unknown.",
+     "CIQ's EBITDA is a vendor-normalised figure: its LTM ($181,219M) differs from the filing LTM ($183,719M) and the quarter to 2025-12-31 differs by -$2,500M, so every EV/EBITDA on the page divides a normalised denominator — read trailing-vs-forward multiples across the actual/estimate boundary as part definitional.",
+     "The consensus-basis FCF stays negative (FY26E -$34,360M, FY27E -$18,090M), so the timing of any crossover to positive free cash flow from the capex cycle is unresolved.",
+     "Insider activity shows 63 open-market sells by 8 insiders ($411.65M) over 182 days and zero buys over the 3-year scan — a signal the human must weigh.",
+     "Short interest is rising (+8.1% to 93.7M shares at the latest settle), though still only ~0.9% of shares outstanding."
+    ],
+    "draw_agreement": {
+     "attempted": 5,
+     "completed": 5,
+     "labels": {
+      "strongly-bullish": 3,
+      "mixed": 2
+     },
+     "unanimous": false
+    }
+   }
+  },
+  "CNXC": {
+   "commit": "3e97ee7d7ce275270f2c24185b1906fa84fc3fb7",
+   "assembled_at": "2026-10-29T17:34:13.614031Z",
+   "extraction_version": "2026-10-29.G-D3",
+   "annual": {
+    "value": {
+     "columns": [
+      "FY17",
+      "FY18",
+      "FY19 (R)",
+      "FY20 (R)",
+      "FY21 (R)",
+      "FY22",
+      "FY23 (R)",
+      "FY24 (R)",
+      "FY25",
+      "LTM",
+      "FY26E",
+      "FY27E"
+     ],
+     "rows": [
+      {
+       "label": "Revenue ($M)",
+       "cells": [
+        "1,990",
+        "2,463",
+        "4,708",
+        "4,720",
+        "5,587",
+        "6,324",
+        "7,115",
+        "9,619",
+        "9,826",
+        "9,969",
+        "9,942",
+        "9,824"
+       ],
+       "values": [
+        1990.18,
+        2463.151,
+        4707.912,
+        4719.534,
+        5587.015,
+        6324.473,
+        7114.706,
+        9618.9,
+        9825.771,
+        9969.468,
+        9941.79,
+        9824.36
+       ],
+       "material": false
+      },
+      {
+       "label": "Revenue growth",
+       "cells": [
+        "—",
+        "+24%",
+        "— (basis)",
+        "+0%",
+        "+18%",
+        "— (basis)",
+        "— (basis)",
+        "+35%",
+        "— (basis)",
+        "— (basis)",
+        "+1% (vs FY25)",
+        "-1%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBITDA ($M)",
+       "cells": [
+        "246",
+        "337",
+        "596",
+        "579",
+        "832",
+        "981",
+        "1,045",
+        "1,295",
+        "1,266",
+        "1,245",
+        "1,428",
+        "1,476"
+       ],
+       "values": [
+        245.548,
+        336.849,
+        596.178,
+        579.223,
+        831.921,
+        981.086,
+        1045.231,
+        1295.168,
+        1265.7,
+        1244.907,
+        1428.41,
+        1476.08
+       ],
+       "material": false
+      },
+      {
+       "label": "EBITDA margin",
+       "cells": [
+        "12%",
+        "14%",
+        "13%",
+        "12%",
+        "15%",
+        "16%",
+        "15%",
+        "13%",
+        "13%",
+        "12%",
+        "14%",
+        "15%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBIT ($M)",
+       "cells": [
+        "116",
+        "182",
+        "290",
+        "303",
+        "555",
+        "672",
+        "657",
+        "589",
+        "605",
+        "602",
+        "1,211",
+        "1,255"
+       ],
+       "values": [
+        115.68,
+        182.251,
+        290.398,
+        302.657,
+        554.746,
+        671.549,
+        656.936,
+        589.323,
+        605.267,
+        602.087,
+        1211.05,
+        1255.24
+       ],
+       "material": false
+      },
+      {
+       "label": "Net income ($M)",
+       "cells": [
+        "72",
+        "48",
+        "117",
+        "165",
+        "406",
+        "435",
+        "314",
+        "251",
+        "-1,279",
+        "-2,391",
+        "-852",
+        "340"
+       ],
+       "values": [
+        72.25,
+        48.271,
+        117.164,
+        164.811,
+        405.577,
+        435.049,
+        313.842,
+        251.217,
+        -1278.9,
+        -2390.6,
+        -852.29,
+        339.58
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (GAAP, dil.)",
+       "cells": [
+        "—",
+        "0.94",
+        "2.27",
+        "3.19",
+        "7.70",
+        "8.28",
+        "5.70",
+        "3.71",
+        "-20.36",
+        "-38.98",
+        "-13.86",
+        "5.39"
+       ],
+       "values": [
+        null,
+        0.94,
+        2.27,
+        3.19,
+        7.7,
+        8.28,
+        5.7,
+        3.71,
+        -20.36,
+        -38.98,
+        -13.86,
+        5.39
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (Normalized)",
+       "cells": [
+        "—",
+        "1.80",
+        "2.48",
+        "3.24",
+        "6.54",
+        "7.70",
+        "4.72",
+        "2.59",
+        "3.41",
+        "3.58",
+        "11.05",
+        "11.52"
+       ],
+       "values": [
+        null,
+        1.797386,
+        2.475873,
+        3.244726,
+        6.541154,
+        7.704633,
+        4.723986,
+        2.593259,
+        3.407545,
+        3.583133,
+        11.05,
+        11.52
+       ],
+       "material": false
+      },
+      {
+       "label": "Restructuring Charges ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "-92",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        -91.7,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Merger & Related Restruct. Charges ($M)",
+       "cells": [
+        "-1",
+        "-38",
+        "—",
+        "—",
+        "-1",
+        "-34",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—"
+       ],
+       "values": [
+        -1.1,
+        -37.5,
+        null,
+        null,
+        -0.8,
+        -33.8,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Impairment of Goodwill ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "-1,523",
+        "-2,573",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        -1523.3,
+        -2573.3,
+        null,
+        null
+       ],
+       "material": true
+      },
+      {
+       "label": "Gain (Loss) On Sale Of Assets ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "13",
+        "—",
+        "—",
+        "—",
+        "—",
+        "-8",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        13.197,
+        null,
+        null,
+        null,
+        null,
+        -8.4,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Asset Writedown ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "-4",
+        "-4",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        -4.5,
+        -4.5,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Other Unusual Items ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "29",
+        "2",
+        "-1",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        29.268,
+        1.958,
+        -1.2,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "CFO ($M)",
+       "cells": [
+        "168",
+        "212",
+        "450",
+        "508",
+        "514",
+        "601",
+        "678",
+        "667",
+        "807",
+        "787",
+        "—",
+        "—"
+       ],
+       "values": [
+        168.365,
+        212.323,
+        449.736,
+        507.614,
+        514.178,
+        600.72,
+        678.008,
+        667.492,
+        806.967,
+        787.098,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Capex ($M)",
+       "cells": [
+        "-79",
+        "-92",
+        "-111",
+        "-171",
+        "-149",
+        "-140",
+        "-180",
+        "-239",
+        "-234",
+        "-212",
+        "—",
+        "—"
+       ],
+       "values": [
+        -78.7,
+        -92.5,
+        -111.1,
+        -171.3,
+        -149.1,
+        -140.0,
+        -180.5,
+        -238.8,
+        -234.5,
+        -212.1,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF ($M)",
+       "cells": [
+        "—",
+        "—",
+        "231",
+        "324",
+        "412",
+        "505",
+        "476",
+        "632",
+        "705",
+        "806",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        231.25725,
+        324.279,
+        411.5415,
+        505.240625,
+        476.3335,
+        631.723375,
+        705.48775,
+        806.212125,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A ($M)",
+       "cells": [
+        "130",
+        "155",
+        "306",
+        "277",
+        "277",
+        "310",
+        "388",
+        "706",
+        "660",
+        "643",
+        "—",
+        "—"
+       ],
+       "values": [
+        129.868,
+        154.598,
+        305.78,
+        276.566,
+        277.175,
+        309.537,
+        388.295,
+        705.845,
+        660.433,
+        642.82,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "34",
+        "35"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        34.13,
+        34.6
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "214",
+        "202"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        213.6,
+        202.5
+       ],
+       "material": false
+      }
+     ],
+     "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-10-07; (R) = Reclassified basis",
+     "is_estimate": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+     ]
+    },
+    "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+    "status": "present",
+    "note": null
+   },
+   "synthesis": {
+    "evidence_balance": "mixed — operating EBITDA, margins and FCF hold and the AI mix-shift is real, but shrinking CC revenue plus 4.0x leverage keep the value-trap case alive.",
+    "bull_points": [
+     {
+      "claim": "The GAAP loss is driven by non-cash goodwill impairment, not operating collapse: FY26 consensus crossed to -$852M GAAP net income after a $1,050M goodwill impairment, while adjusted EPS guidance holds at $10.97–$11.09 — the P/E 'NM' is the impairment, not an earnings disappearance.",
+      "source_ref": "8-K 0001803599-26-000147 EX-99.1 (filed 2026-09-29)",
+      "cited": true
+     },
+     {
+      "claim": "The trailing EV/EBITDA 4.1x is struck on CIQ's own normalised EBITDA (TEV with leases over EBITDA with rent), NOT on the filing's GAAP number which the $1,050M+ unusual items drag to LTM $-1,436M — so the headline multiple measures the operating business, not the impaired GAAP one.",
+      "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)",
+      "cited": true
+     },
+     {
+      "claim": "Absolute EBITDA held up through the de-rate — $1,295M FY24 → $1,266M FY25 → $1,245M LTM — even as the EBITDA margin % slipped 13%→12%, so the margin optics overstate the operating deterioration.",
+      "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+      "cited": true
+     },
+     {
+      "claim": "Management delivered the committed second-half margin expansion: Q3 non-GAAP operating margin 12.6% and adjusted EBITDA margin 14.8%, both up 30bps YoY, with adjusted operating income $309M above the June guide high end.",
+      "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "The business is self-funding with FCF-positive capacity: LTM levered FCF $806M and OCF $787M positive, supporting the stated $550M+ gross-debt paydown and net leverage reduction toward ~2.6x at year-end.",
+      "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Aug-31-2026]",
+      "cited": true
+     },
+     {
+      "claim": "The AI/transformation pivot is reaching scale: management states 50% of revenue now comes from businesses built in the last 3 years, growing ~30% YoY, more profitable and 4x stickier, expected to exceed $6B in 2027.",
+      "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Client base is deep and retained — 98% retention, >16-year tenure with top-25 clients, and all top-5 plus >90% of top-100 clients have expanded into new services since FY2023 — arguing against terminal client flight.",
+      "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "On the forward lens the name screens far below a HETEROGENEOUS peer set (NTM TEV/EBITDA name 4.8 vs peer median 8.45; NTM P/E 2.87 vs 11.23) — but with the peer gap partly EARNED by weaker fundamentals (margin 12% vs 18%, rev growth 3% vs 8%, LT EPS growth 5% vs 10%), the human must judge whether the residual beyond those deltas is overshoot.",
+      "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+      "cited": true
+     }
+    ],
+    "bear_points": [
+     {
+      "claim": "Leverage is genuinely elevated and above peers — net-debt/EBITDA 4.0x (CIQ) and total-debt/EBITDA 3.1x vs peer-median 2.1x — a real signal of balance-sheet stress, not an optical artifact, against the credit facility's 3.75x leverage covenant (steps to 4.25x).",
+      "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-10-23",
+      "cited": true
+     },
+     {
+      "claim": "The core top line is now shrinking in constant currency: Q3 revenue -0.5% CC (below the June guide low end) and Q4 guided to -3% to -5% CC, driven by hyperscaler spend cuts and shore-mix — the AI pivot is cannibalising faster than it backfills.",
+      "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "The $1,050M goodwill impairment is a real signal of overpayment: it follows a $1,523M FY25 write-down, so $2,573M of goodwill has been impaired against ~$1,914M paid for the FY23 Webhelp-era acquisition — a genuine load-bearing marker of destroyed acquisition value, not a pure non-cash cosmetic.",
+      "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2025-12-01→2026-08-31, 273d)",
+      "cited": true
+     },
+     {
+      "claim": "Returns on capital have structurally de-rated and not recovered: ROIC fell from 9.0% (FY22) to 3.8% (FY24) and sits at just 4.4% LTM — the business earns a low return on a leveraged capital base, a real quality signal beneath the cheap multiple.",
+      "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+      "cited": true
+     },
+     {
+      "claim": "Forward estimate momentum is uniformly negative: FY26 EPS Normalized revised -10% and EBITDA -10% over 12m-to-latest, with next-quarter breadth running 0-up/3-down across Revenue, EBITDA and EBIT — consensus is cutting, not stabilising.",
+      "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+      "cited": true
+     }
+    ],
+    "twin_reference_cases": [
+     {
+      "name": "Teleperformance SE",
+      "outcome": "went terminal",
+      "distinguishing_fact": "A same-sector CX/outsourcing peer that de-rated hard on the same AI-disruption-of-services fear; sits in the roster as a low-multiple, slow-growth name — the directly comparable 'is BPO structurally impaired by AI' question.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "Cognizant Technology Solutions Corporation",
+      "outcome": "recovered",
+      "distinguishing_fact": "An IT-services peer that absorbed an offshoring/automation transition while sustaining mid-teens margins and a double-digit multiple — the pattern of a services business adapting rather than being terminally displaced.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "ExlService Holdings",
+      "outcome": "recovered",
+      "distinguishing_fact": "A roster peer that repositioned as a data/AI company and holds a premium multiple on faster growth — the constructive analogue for a BPO that converts AI from threat into higher-value offering.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "TaskUs",
+      "outcome": "recovered",
+      "distinguishing_fact": "The smallest, most directly comparable digital-outsourcing peer, trading at a similarly low multiple yet still growing double digits — a check on whether low BPO multiples reflect terminal risk or sentiment.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "International Business Machines",
+      "outcome": "recovered",
+      "distinguishing_fact": "A levered services incumbent that spent years with shrinking legacy revenue masking a faster-growing new-mix segment before the mix crossover stabilised the top line — the 'new business must out-grow the legacy decline' pattern.",
+      "source": "[LLM-suggested, unverified]"
+     }
+    ],
+    "decisive_question": {
+     "question": "Does the faster-growing, stickier, higher-margin new-business revenue reach mix dominance and out-run the decline in traditional/offshored revenue before leverage and shrinking consolidated revenue force a down-cycle — i.e. is this an overshoot on a self-disrupting transition, or a value trap on a structurally declining, over-levered BPO?",
+     "evidence_for": [
+      {
+       "claim": "New business is already 50% of revenue, growing ~30% YoY, more profitable and 4x stickier, expected to exceed $6B in 2027 — the crossover engine is live and ahead of management's own schedule.",
+       "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+       "cited": true
+      },
+      {
+       "claim": "Second-half margin expansion was delivered on plan (Q3 margins +30bps YoY) with absolute EBITDA holding near $1,245M LTM, and FCF funding a committed deleveraging path to ~2.6x.",
+       "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+       "cited": true
+      }
+     ],
+     "evidence_against": [
+      {
+       "claim": "The offshoring drag is a stated ~3-point headwind on growth management expects to persist into 2027, on top of the hyperscaler spend cuts hitting Q4 hardest — the legacy decline is accelerating, not fading.",
+       "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+       "cited": true
+      },
+      {
+       "claim": "Consolidated revenue is guided down -3% to -5% CC in Q4 while net-debt/EBITDA sits at 4.0x — a shrinking top line against elevated leverage is the value-trap signature.",
+       "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+       "cited": true
+      }
+     ]
+    },
+    "key_unknowns": [
+     "Covenant-basis leverage is NOT disclosed — the EBITDA-basis triangulation flags 'net debt / company-adjusted LTM EBITDA: UNKNOWN' and 'covenant basis: UNKNOWN', so the actual headroom against the 3.75x (→4.25x) leverage covenant cannot be verified — an opaque survival leg, bearish until shown.",
+     "No revised forward EV/EBITDA or adjusted net-debt/EBITDA is readable at the drawdown (ev_ebitda_adjusted_fwd UNKNOWN; net_debt_to_ebitda_adjusted UNKNOWN) — the trailing 4.1x cannot distinguish a temporarily depressed level from a permanently impaired one.",
+     "The trailing EV/EBITDA (0th percentile of its 5.7y range) and the forward P/E 2.87 are own-history-floor / optical facts whose overshoot-vs-terminal status is unresolved — belongs to the human, not counted as directional.",
+     "The $537M Securitization Facility (Mar-2028) and $375M term loan maturing Dec-2026 depend on FCF and liquidity to clear; refinance terms and whether the stated paydown holds through the shrinking top line are unresolved.",
+     "Peer set is HETEROGENEOUS (market caps $785M–$63.6B, 81x span) — every peer multiple is a confidence-gated input, so how much of the discount to peer median is EARNED vs RESIDUAL is a judgment the human must make, not a clean benchmark.",
+     "Single-segment reporting (Software & Programming) means no segment-EBITDA breakout to independently verify the profitability and growth of the 'new business' vs 'traditional' split that the whole thesis rests on — the 50%/$1.3B/$3B/$700M decomposition is management-stated only."
+    ],
+    "draw_agreement": {
+     "attempted": 5,
+     "completed": 5,
+     "labels": {
+      "mixed": 5
+     },
+     "unanimous": true
+    }
+   }
+  },
+  "GOOGL": {
+   "commit": "3e97ee7d7ce275270f2c24185b1906fa84fc3fb7",
+   "assembled_at": "2026-11-03T12:46:12.909331Z",
+   "extraction_version": "2026-11-03.ex-lease-share-cut",
+   "annual": {
+    "value": {
+     "columns": [
+      "FY17 (R)",
+      "FY18 (R)",
+      "FY19 (R)",
+      "FY20",
+      "FY21",
+      "FY22",
+      "FY23 (R)",
+      "FY24 (R)",
+      "FY25",
+      "LTM",
+      "FY26E",
+      "FY27E"
+     ],
+     "rows": [
+      {
+       "label": "Revenue ($M)",
+       "cells": [
+        "110,855",
+        "136,819",
+        "161,857",
+        "182,527",
+        "257,637",
+        "282,836",
+        "307,394",
+        "350,018",
+        "402,836",
+        "471,098",
+        "499,579",
+        "634,499"
+       ],
+       "values": [
+        110855.0,
+        136819.0,
+        161857.0,
+        182527.0,
+        257637.0,
+        282836.0,
+        307394.0,
+        350018.0,
+        402836.0,
+        471098.0,
+        499579.1,
+        634498.64
+       ],
+       "material": false
+      },
+      {
+       "label": "Revenue growth",
+       "cells": [
+        "—",
+        "+23%",
+        "+18%",
+        "— (basis)",
+        "+41%",
+        "+10%",
+        "— (basis)",
+        "+14%",
+        "— (basis)",
+        "— (basis)",
+        "+24% (vs FY25)",
+        "+27%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBITDA ($M)",
+       "cells": [
+        "35,813",
+        "41,624",
+        "47,579",
+        "54,903",
+        "88,987",
+        "88,317",
+        "96,239",
+        "127,701",
+        "150,175",
+        "185,516",
+        "227,919",
+        "303,791"
+       ],
+       "values": [
+        35813.0,
+        41624.0,
+        47579.0,
+        54903.0,
+        88987.0,
+        88317.0,
+        96239.0,
+        127701.0,
+        150175.0,
+        185516.0,
+        227918.99,
+        303791.22
+       ],
+       "material": false
+      },
+      {
+       "label": "EBITDA margin",
+       "cells": [
+        "32%",
+        "30%",
+        "29%",
+        "30%",
+        "35%",
+        "31%",
+        "31%",
+        "36%",
+        "37%",
+        "39%",
+        "46%",
+        "48%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBIT ($M)",
+       "cells": [
+        "28,914",
+        "32,595",
+        "35,928",
+        "41,224",
+        "78,714",
+        "74,842",
+        "84,293",
+        "112,390",
+        "129,039",
+        "156,976",
+        "168,487",
+        "216,958"
+       ],
+       "values": [
+        28914.0,
+        32595.0,
+        35928.0,
+        41224.0,
+        78714.0,
+        74842.0,
+        84293.0,
+        112390.0,
+        129039.0,
+        156976.0,
+        168487.3,
+        216957.96
+       ],
+       "material": false
+      },
+      {
+       "label": "Net income ($M)",
+       "cells": [
+        "12,662",
+        "30,736",
+        "34,343",
+        "40,269",
+        "76,033",
+        "59,972",
+        "73,795",
+        "100,118",
+        "132,170",
+        "235,694",
+        "240,071",
+        "186,433"
+       ],
+       "values": [
+        12662.0,
+        30736.0,
+        34343.0,
+        40269.0,
+        76033.0,
+        59972.0,
+        73795.0,
+        100118.0,
+        132170.0,
+        235694.0,
+        240071.11,
+        186432.7
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (GAAP, dil.)",
+       "cells": [
+        "0.90",
+        "2.19",
+        "2.46",
+        "2.93",
+        "5.61",
+        "4.56",
+        "5.80",
+        "8.04",
+        "10.80",
+        "19.15",
+        "19.71",
+        "14.81"
+       ],
+       "values": [
+        0.9,
+        2.19,
+        2.46,
+        2.93,
+        5.61,
+        4.56,
+        5.8,
+        8.04,
+        10.8,
+        19.15,
+        19.71,
+        14.81
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (Normalized)",
+       "cells": [
+        "1.34",
+        "1.49",
+        "1.71",
+        "1.90",
+        "3.62",
+        "3.65",
+        "4.25",
+        "5.88",
+        "6.86",
+        "8.05",
+        "14.14",
+        "15.19"
+       ],
+       "values": [
+        1.337882,
+        1.486506,
+        1.705929,
+        1.899652,
+        3.618387,
+        3.649925,
+        4.251493,
+        5.88214,
+        6.858442,
+        8.054957,
+        14.14,
+        15.19
+       ],
+       "material": false
+      },
+      {
+       "label": "Gain (Loss) On Sale Of Invest. ($M)",
+       "cells": [
+        "-193",
+        "6,530",
+        "3,188",
+        "6,317",
+        "12,270",
+        "-5,519",
+        "-823",
+        "2,671",
+        "24,620",
+        "129,109",
+        "—",
+        "—"
+       ],
+       "values": [
+        -193.0,
+        6530.0,
+        3188.0,
+        6317.0,
+        12270.0,
+        -5519.0,
+        -823.0,
+        2671.0,
+        24620.0,
+        129109.0,
+        null,
+        null
+       ],
+       "material": true
+      },
+      {
+       "label": "Legal Settlements ($M)",
+       "cells": [
+        "-2,736",
+        "-5,071",
+        "-1,697",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—"
+       ],
+       "values": [
+        -2736.0,
+        -5071.0,
+        -1697.0,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "CFO ($M)",
+       "cells": [
+        "37,091",
+        "47,971",
+        "54,520",
+        "65,124",
+        "91,652",
+        "91,495",
+        "101,746",
+        "125,299",
+        "164,713",
+        "179,551",
+        "182,588",
+        "270,948"
+       ],
+       "values": [
+        37091.0,
+        47971.0,
+        54520.0,
+        65124.0,
+        91652.0,
+        91495.0,
+        101746.0,
+        125299.0,
+        164713.0,
+        179551.0,
+        182588.29,
+        270947.68
+       ],
+       "material": false
+      },
+      {
+       "label": "Capex ($M)",
+       "cells": [
+        "-13,184",
+        "-25,139",
+        "-23,548",
+        "-22,281",
+        "-24,640",
+        "-31,485",
+        "-32,251",
+        "-52,535",
+        "-91,447",
+        "-159,804",
+        "-201,254",
+        "-318,716"
+       ],
+       "values": [
+        -13184.0,
+        -25139.0,
+        -23548.0,
+        -22281.0,
+        -24640.0,
+        -31485.0,
+        -32251.0,
+        -52535.0,
+        -91447.0,
+        -159804.0,
+        -201253.56,
+        -318716.31
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF ($M)",
+       "cells": [
+        "23,683",
+        "20,529",
+        "25,116",
+        "35,504",
+        "47,009",
+        "49,939",
+        "56,280",
+        "53,158",
+        "38,088",
+        "-1,162",
+        "—",
+        "—"
+       ],
+       "values": [
+        23683.125,
+        20528.625,
+        25115.5,
+        35503.625,
+        47009.0,
+        49939.125,
+        56279.625,
+        53158.25,
+        38088.375,
+        -1162.5,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A ($M)",
+       "cells": [
+        "6,899",
+        "9,029",
+        "11,651",
+        "13,679",
+        "10,273",
+        "13,475",
+        "11,946",
+        "15,311",
+        "21,136",
+        "28,540",
+        "—",
+        "—"
+       ],
+       "values": [
+        6899.0,
+        9029.0,
+        11651.0,
+        13679.0,
+        10273.0,
+        13475.0,
+        11946.0,
+        15311.0,
+        21136.0,
+        28540.0,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "-17,946",
+        "-41,807"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        -17945.59,
+        -41807.29
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "31,615",
+        "50,918"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        31615.09,
+        50918.01
+       ],
+       "material": false
+      }
+     ],
+     "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-11-01; (R) = Reclassified basis",
+     "is_estimate": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+     ]
+    },
+    "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+    "status": "present",
+    "note": null
+   },
+   "synthesis": {
+    "evidence_balance": "mixed — accelerating cloud/EBITDA growth and a possibly-residual P/E discount against a falling-ROIC, negative-FCF capex cycle the market is actively repricing.",
+    "bull_points": [
+     {
+      "claim": "Cloud is compounding at an extraordinary rate — Q3 2026 Cloud revenue grew 103% to $30.7B with operating margin expanding to 36.2% from 23.7% a year earlier, the mechanism behind the runway case.",
+      "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Cloud backlog reached $561 billion in Q3 (up from $514B the prior quarter), of which just over 55% is expected to convert to revenue over the next 24 months — a contracted forward-demand signal.",
+      "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Absolute EBITDA has risen almost unbroken from $35,813M (FY2017) to $185,516M (LTM Sep-2026), with EBITDA margin simultaneously climbing to 39% (LTM) — scale and profitability advancing together.",
+      "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+      "cited": true
+     },
+     {
+      "claim": "Revenue growth is accelerating at scale: Q3 2026 consolidated revenue of $127.6B was up 25%, with same-quarter revenue YoY at +24.7%, and management citing the highest Search query growth in five years.",
+      "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+      "cited": true
+     },
+     {
+      "claim": "On FY27 consensus the forward multiples compress hard — NTM TEV/EBITDA 11.82x and the cross-name ladder shows TEV/EBITDA falling to 11.02x (FY27) and 8.51x (FY28), implying the market is NOT paying a demanding multiple on forward numbers.",
+      "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+      "cited": true
+     },
+     {
+      "claim": "Returns on capital remain high — RoE 44.3% and RoCE 15.6% (LTM) — and the balance sheet is net cash at -0.6x net-debt/EBITDA with 60.3x interest coverage, so the business self-funds its reinvestment.",
+      "source_ref": "CIQ Financials→Ratios [LTM 12 months Sep-30-2026]",
+      "cited": true
+     },
+     {
+      "claim": "The name's fundamentals screen ahead of the peer median on most axes — EBITDA margin 39% vs 27%, revenue growth 22% vs 15%, Debt/EBITDA 0.8 vs 1.0 — posing whether the P/E discount to the peer median (14.6x vs 19.4x) is RESIDUAL (overshoot) rather than EARNED; the human must judge against a HETEROGENEOUS peer set.",
+      "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+      "cited": true
+     },
+     {
+      "claim": "Segment profitability is real and disclosed: FY2025 Google Services operating income $139,404M (40.7% margin) and Google Cloud $13,910M (23.7% margin), showing the core advertising engine funds the reinvestment.",
+      "source_ref": "EDGAR 10-K 0001652044-26-000018 XBRL instance goog-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31",
+      "cited": true
+     },
+     {
+      "claim": "Capacity commitments underwrite the AI runway: management cited nearly 100 TPU customers and signed partnerships to deliver TPU systems with Oracle and Crux AI, with inventory built only against committed contracts.",
+      "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+      "cited": true
+     }
+    ],
+    "bear_points": [
+     {
+      "claim": "The trailing EV/EBITDA sits near its own ceiling — 22.9x at the 92nd percentile of a 38-quarter range (low 10.9x, median 17.5x) — so on a trailing basis the quality is richly paid for, though this is trailing-only with no forward basis to distinguish a temporary from a permanent level.",
+      "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
+      "cited": true
+     },
+     {
+      "claim": "The optically cheap P/E is an accounting mirage, not the real signal: LTM net income of $235,694M carries $129,109.0M of Gain (Loss) On Sale Of Invest. plus four straight quarters of material below-operating-line items netting +$140,237M — a trailing P/E spanning them is not an operating anchor.",
+      "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-09-30..2026-09-30",
+      "cited": true
+     },
+     {
+      "claim": "Cash generation has inverted under the capex surge: LTM FCF is -$1,162.5M (CIQ Levered FCF basis) against capex rising to -$159,804M, and consensus models a negative FCF ramp (-$17,946M FY26E, -$41,807M FY27E) — the self-funding leg is weakening.",
+      "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Sep-30-2026]",
+      "cited": true
+     },
+     {
+      "claim": "ROIC has turned down even as growth accelerated — RoCE fell from 21.0% (FY2024) to 19.3% (FY2025) to 15.6% (LTM) — a genuine warning that the capital being poured in is earning less per dollar.",
+      "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+      "cited": true
+     },
+     {
+      "claim": "The stock has been a relative laggard and recently broke down: it returned -0.3% over 180 days vs SPY +7.5% (a -7.8% relative gap), and rebased performance fell from ~114 to ~98 in the final days to 2026-11-02 — the market is actively repricing something.",
+      "source_ref": "EOD GOOGL−SPY 180d to 2026-10-16 (assembly, cap-band)",
+      "cited": true
+     },
+     {
+      "claim": "Near-term estimate breadth is sharply negative — FY2026 GAAP EPS revisions ran 3 up / 40 down last month, and brokers cut FY26 EBITDA estimates (e.g. CICC to $191,194M, Phillip to $199,025M) well below the $227,919M consensus, a disagreement that signals forward uncertainty.",
+      "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+      "cited": true
+     }
+    ],
+    "twin_reference_cases": [
+     {
+      "name": "Microsoft Corporation",
+      "outcome": "kept compounding",
+      "distinguishing_fact": "A mega-cap platform that paired a dominant installed base with a fast-growing cloud/AI franchise and sustained high returns on capital while out-investing peers.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "Amazon.com",
+      "outcome": "kept compounding",
+      "distinguishing_fact": "A franchise whose headline GAAP earnings and free cash flow were repeatedly depressed by an aggressive multi-year capex/infrastructure build ahead of the revenue it was meant to serve.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "Meta Platforms",
+      "outcome": "re-rated to fair value",
+      "distinguishing_fact": "An advertising-led compounder that de-rated sharply when an AI/infrastructure spending cycle collided with decelerating core-ad growth, then the market re-judged the reinvestment.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "Netflix",
+      "outcome": "kept compounding",
+      "distinguishing_fact": "A content-heavy platform that ran years of negative free cash flow during a build-out phase before the spend inflected into cash generation.",
+      "source": "[LLM-suggested, unverified]"
+     }
+    ],
+    "decisive_question": {
+     "question": "Does the surging AI/cloud capex earn an attractive return — converting into durable EBITDA and eventual free cash flow — or is Alphabet entering a lower-ROIC, negative-FCF spending cycle that the recent de-rating is beginning to price?",
+     "evidence_for": [
+      {
+       "claim": "Cloud revenue grew 103% to $30.7B in Q3 with margin expanding to 36.2%, and backlog of $561B (55% convertible within 24 months) provides a contracted demand bridge for the spend.",
+       "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+       "cited": true
+      },
+      {
+       "claim": "Absolute EBITDA rose to $185,516M (LTM) with EBITDA margin at 39%, and interest coverage of 60.3x on a net-cash balance sheet shows the reinvestment is self-fundable from operations.",
+       "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+       "cited": true
+      }
+     ],
+     "evidence_against": [
+      {
+       "claim": "RoCE has fallen three periods running — 21.0% (FY24) → 19.3% (FY25) → 15.6% (LTM) — as capex climbed to -$159,804M, consistent with capital earning less per dollar deployed.",
+       "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+       "cited": true
+      },
+      {
+       "claim": "LTM FCF has turned negative at -$1,162.5M and consensus projects deeper negative FCF (-$17,946M FY26E, -$41,807M FY27E), while FY2026 GAAP EPS breadth ran 3 up / 40 down last month.",
+       "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Sep-30-2026]",
+       "cited": true
+      }
+     ]
+    },
+    "key_unknowns": [
+     "Segment EBITDA is not disclosed — the filing segments revenue but NOT segment EBITDA, so the standalone profitability and ROIC of the Cloud/AI build cannot be isolated from the Services engine funding it (a missing expected disclosure).",
+     "No forward EV/EBITDA on an adjusted basis and no revised guidance at the drawdown — the trailing 22.9x at the 92nd percentile cannot be reconciled against a normalized forward level.",
+     "The trailing P/E percentile cannot be built because a stock split inside the window divides split-adjusted prices against as-filed EPS — the 'cheap' 14.6x P/E stands but its historical context is unavailable.",
+     "CIQ's stated 22.9x EV/EBITDA does not reproduce against reported LTM EBITDA $185,516M (its implied denominator is $144,827M, -21.9%) — read CIQ's own denominator before comparing it with any reported-EBITDA multiple.",
+     "The two FCF bases carry OPPOSITE signs on the same period — CIQ Levered FCF -$1,162.5M vs CFO $179,551M − capex $159,804M = +$19,747M — so whether the business generated or consumed cash this period depends entirely on the basis named.",
+     "The consensus EBITDA estimate row is NOT the same basis as the actual row (implied D&A 73,132 vs 12,710, 5.75x divergent) — forward multiples struck off estimates are not directly comparable to trailing multiples off actuals.",
+     "Covenant terms are UNKNOWN — no agreement exhibit was located to extract from; a material gap in understanding any restrictions on the debt-funded capex ramp.",
+     "FY26E/FY27E capex guidance of $(195,000)–$(205,000)M is fresh and the delivery track record is 'MET', but the 2027 capex figure ('significant increase') is unquantified — the magnitude of the forward spend is not yet disclosed.",
+     "Future purchase commitments of $924B and pre-commencement leases of $152B (management-stated maximums) are large relative to the business and their variable-pricing flexibility is not quantified in the structured data."
+    ],
+    "draw_agreement": {
+     "attempted": 5,
+     "completed": 5,
+     "labels": {
+      "mixed": 4,
+      "strongly-bullish": 1
+     },
+     "unanimous": false
+    }
+   }
+  },
+  "LLY": {
+   "commit": "3e97ee7d7ce275270f2c24185b1906fa84fc3fb7",
+   "assembled_at": "2026-11-03T15:19:40.513094Z",
+   "extraction_version": "2026-11-03.ex-lease-share-cut",
+   "annual": {
+    "value": {
+     "columns": [
+      "FY17 (R)",
+      "FY18 (R)",
+      "FY19",
+      "FY20 (R)",
+      "FY21 (R)",
+      "FY22",
+      "FY23",
+      "FY24 (R)",
+      "FY25",
+      "LTM",
+      "FY26E",
+      "FY27E"
+     ],
+     "rows": [
+      {
+       "label": "Revenue ($M)",
+       "cells": [
+        "19,974",
+        "21,493",
+        "22,320",
+        "24,540",
+        "28,318",
+        "28,541",
+        "34,124",
+        "45,043",
+        "65,179",
+        "86,462",
+        "91,655",
+        "105,042"
+       ],
+       "values": [
+        19973.8,
+        21493.3,
+        22319.5,
+        24539.8,
+        28318.4,
+        28541.4,
+        34124.0,
+        45043.0,
+        65179.0,
+        86462.0,
+        91654.95,
+        105041.88
+       ],
+       "material": false
+      },
+      {
+       "label": "Revenue growth",
+       "cells": [
+        "—",
+        "+8%",
+        "— (basis)",
+        "— (basis)",
+        "+15%",
+        "— (basis)",
+        "+20%",
+        "— (basis)",
+        "— (basis)",
+        "— (basis)",
+        "+41% (vs FY25)",
+        "+15%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBITDA ($M)",
+       "cells": [
+        "6,264",
+        "7,635",
+        "7,232",
+        "8,535",
+        "9,820",
+        "10,176",
+        "11,852",
+        "18,807",
+        "31,693",
+        "46,489",
+        "41,347",
+        "56,742"
+       ],
+       "values": [
+        6263.8,
+        7634.8,
+        7232.0,
+        8534.7,
+        9820.3,
+        10175.8,
+        11852.0,
+        18807.0,
+        31693.0,
+        46489.0,
+        41347.32,
+        56742.04
+       ],
+       "material": false
+      },
+      {
+       "label": "EBITDA margin",
+       "cells": [
+        "31%",
+        "36%",
+        "32%",
+        "35%",
+        "35%",
+        "36%",
+        "35%",
+        "42%",
+        "49%",
+        "54%",
+        "45%",
+        "54%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBIT ($M)",
+       "cells": [
+        "4,696",
+        "6,026",
+        "5,999",
+        "7,211",
+        "8,273",
+        "8,653",
+        "10,325",
+        "17,040",
+        "29,696",
+        "44,315",
+        "40,702",
+        "54,126"
+       ],
+       "values": [
+        4696.5,
+        6025.8,
+        5999.4,
+        7210.8,
+        8272.7,
+        8653.3,
+        10325.0,
+        17040.0,
+        29696.0,
+        44315.0,
+        40701.79,
+        54125.58
+       ],
+       "material": false
+      },
+      {
+       "label": "Net income ($M)",
+       "cells": [
+        "-204",
+        "3,232",
+        "8,318",
+        "6,194",
+        "5,582",
+        "6,245",
+        "5,240",
+        "10,590",
+        "20,640",
+        "27,580",
+        "30,744",
+        "42,007"
+       ],
+       "values": [
+        -204.1,
+        3232.0,
+        8318.4,
+        6193.7,
+        5581.7,
+        6244.8,
+        5240.0,
+        10590.0,
+        20640.0,
+        27580.0,
+        30744.31,
+        42007.48
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (GAAP, dil.)",
+       "cells": [
+        "-0.19",
+        "3.13",
+        "8.89",
+        "6.79",
+        "6.12",
+        "6.90",
+        "5.80",
+        "11.71",
+        "22.95",
+        "30.81",
+        "34.22",
+        "47.30"
+       ],
+       "values": [
+        -0.19,
+        3.13,
+        8.89,
+        6.79,
+        6.12,
+        6.9,
+        5.8,
+        11.71,
+        22.95,
+        30.81,
+        34.22,
+        47.3
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (Normalized)",
+       "cells": [
+        "2.72",
+        "3.59",
+        "3.76",
+        "4.58",
+        "5.49",
+        "5.78",
+        "7.21",
+        "11.63",
+        "20.24",
+        "30.86",
+        "35.19",
+        "49.74"
+       ],
+       "values": [
+        2.720235,
+        3.586079,
+        3.755674,
+        4.581276,
+        5.491024,
+        5.782959,
+        7.211059,
+        11.628276,
+        20.241437,
+        30.860302,
+        35.19,
+        49.74
+       ],
+       "material": false
+      },
+      {
+       "label": "Restructuring Charges ($M)",
+       "cells": [
+        "-1,048",
+        "-128",
+        "-78",
+        "-151",
+        "-13",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—"
+       ],
+       "values": [
+        -1047.7,
+        -127.8,
+        -77.8,
+        -151.2,
+        -13.0,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Merger & Related Restruct. Charges ($M)",
+       "cells": [
+        "—",
+        "—",
+        "-401",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        -400.7,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Gain (Loss) On Sale Of Invest. ($M)",
+       "cells": [
+        "170",
+        "—",
+        "401",
+        "1,442",
+        "177",
+        "-411",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—"
+       ],
+       "values": [
+        170.2,
+        null,
+        401.2,
+        1442.2,
+        176.9,
+        -410.7,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Gain (Loss) On Sale Of Assets ($M)",
+       "cells": [
+        "—",
+        "—",
+        "310",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        309.8,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Asset Writedown ($M)",
+       "cells": [
+        "-202",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—"
+       ],
+       "values": [
+        -201.5,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "In Process R & D Exp. ($M)",
+       "cells": [
+        "-1,113",
+        "-1,984",
+        "-240",
+        "-770",
+        "-970",
+        "-908",
+        "-3,800",
+        "-3,280",
+        "-2,910",
+        "-8,070",
+        "—",
+        "—"
+       ],
+       "values": [
+        -1112.6,
+        -1983.9,
+        -239.6,
+        -769.8,
+        -970.1,
+        -908.5,
+        -3800.0,
+        -3280.0,
+        -2910.0,
+        -8070.0,
+        null,
+        null
+       ],
+       "material": true
+      },
+      {
+       "label": "Other Unusual Items ($M)",
+       "cells": [
+        "-82",
+        "-139",
+        "-350",
+        "20",
+        "-1,048",
+        "-245",
+        "-68",
+        "-861",
+        "-484",
+        "-1,369",
+        "—",
+        "—"
+       ],
+       "values": [
+        -82.4,
+        -139.1,
+        -349.6,
+        20.0,
+        -1048.0,
+        -244.6,
+        -68.0,
+        -861.0,
+        -484.0,
+        -1369.0,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "CFO ($M)",
+       "cells": [
+        "5,616",
+        "5,524",
+        "4,837",
+        "6,500",
+        "7,366",
+        "7,586",
+        "4,240",
+        "8,818",
+        "16,813",
+        "30,645",
+        "35,514",
+        "42,581"
+       ],
+       "values": [
+        5615.6,
+        5524.5,
+        4836.6,
+        6499.6,
+        7365.9,
+        7585.7,
+        4240.0,
+        8818.0,
+        16813.0,
+        30645.0,
+        35514.33,
+        42581.16
+       ],
+       "material": false
+      },
+      {
+       "label": "Capex ($M)",
+       "cells": [
+        "-1,077",
+        "-1,211",
+        "-1,034",
+        "-1,388",
+        "-1,310",
+        "-1,854",
+        "-3,448",
+        "-5,058",
+        "-7,841",
+        "-10,984",
+        "-7,734",
+        "-7,426"
+       ],
+       "values": [
+        -1076.8,
+        -1210.6,
+        -1033.9,
+        -1387.9,
+        -1309.8,
+        -1854.3,
+        -3448.0,
+        -5058.0,
+        -7841.0,
+        -10984.0,
+        -7733.81,
+        -7425.96
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF ($M)",
+       "cells": [
+        "2,119",
+        "539",
+        "4,991",
+        "3,501",
+        "5,461",
+        "5,276",
+        "292",
+        "1,355",
+        "1,951",
+        "9,344",
+        "—",
+        "—"
+       ],
+       "values": [
+        2119.3875,
+        539.2625,
+        4991.25,
+        3501.0,
+        5460.7625,
+        5275.8625,
+        292.325,
+        1354.9,
+        1951.0,
+        9343.7,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A ($M)",
+       "cells": [
+        "1,567",
+        "1,609",
+        "1,233",
+        "1,324",
+        "1,548",
+        "1,522",
+        "1,527",
+        "1,767",
+        "1,997",
+        "2,174",
+        "—",
+        "—"
+       ],
+       "values": [
+        1567.3,
+        1609.0,
+        1232.6,
+        1323.9,
+        1547.6,
+        1522.5,
+        1527.0,
+        1767.0,
+        1997.0,
+        2174.0,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "24,728",
+        "32,395"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        24727.71,
+        32394.57
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "2,326",
+        "2,867"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        2325.64,
+        2866.82
+       ],
+       "material": false
+      }
+     ],
+     "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-10-30; (R) = Reclassified basis",
+     "is_estimate": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+     ]
+    },
+    "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+    "status": "present",
+    "note": null
+   },
+   "synthesis": {
+    "evidence_balance": "strongly-bullish — volume-led 82% obesity Rx growth and 54% margins with 35.5% ROIC appear to earn the premium multiple, outweighing price erosion.",
+    "bull_points": [
+     {
+      "claim": "Revenue has compounded from $19,974M (FY17) to $86,462M LTM and EBITDA from $6,264M to $46,489M, with Q3 Sep-30-2026 revenue up +38.6% YoY — a runway-not-trailing pattern grounded in volume-led growth, not price.",
+      "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+      "cited": true
+     },
+     {
+      "claim": "The incretin engine is volume-driven: Mounjaro and Zepbound combined for more than $16 billion of revenue in Q3, contributing $6 billion of growth versus Q3 2025 — the mechanism behind the top-line beat.",
+      "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "The addressable market is early, not saturated: U.S. obesity incretin total prescriptions grew 82% in Q3, so the reinvestment runway is a market-expansion story rather than a share-rotation one.",
+      "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Lilly holds entrenched share: approximately 6 out of 10 total and more than 7 out of 10 injectable U.S. obesity prescriptions were for a Lilly medicine in Q3, evidencing a durable competitive position.",
+      "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "The oral GLP-1 opens a second leg: approximately 4 in 10 patients starting an obesity medicine chose Foundayo and new Foundayo patients in Q3 doubled from the previous quarter.",
+      "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Access expansion is a fresh demand channel: since the July 1 launch more than 0.5 million people have filled a prescription through the Medicare GLP-1 Bridge program, with about 80% of those treated being incretin-naive.",
+      "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Returns are rising, not plateauing: ROIC improved from 20.0% (FY23) to 35.5% LTM and EBITDA margin expanded to 54% LTM, both supporting a high-return reinvestment thesis.",
+      "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+      "cited": true
+     },
+     {
+      "claim": "Consensus embeds a long EBITDA ramp — FY27E $56,742M rising to FY33 $103,325.5M median — so the price is paying for a multi-year runway the forward multiple ladder prices down from NTM 23.96x to FY33 13.11x.",
+      "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+      "cited": true
+     },
+     {
+      "claim": "Heavy forward investment is funding the runway: $6.5B Houston and $5B Richmond facilities broke ground in Q3, and the company reports zero goodwill/intangible impairment over the 5-year window despite acquiring $27,958M of assets.",
+      "source_ref": "EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2019-01-01→2019-12-31, 364d)",
+      "cited": true
+     },
+     {
+      "claim": "The balance sheet underwrites the reinvestment: net-debt/EBITDA 0.9x and interest coverage 121.4x give ample capacity to fund the pipeline and capex without dilution (shares roughly flat, -0.9% over ~2y).",
+      "source_ref": "CIQ Net Debt $43,858M [Q3 Sep-30-2026] ÷ CIQ EBITDA $46,489M [LTM 12 months Sep-30-2026]",
+      "cited": true
+     },
+     {
+      "claim": "On the consensus comp read, LLY trades at a premium (TEV/EBITDA 28x vs peer median 15x) but on fundamentals far above the median — EBITDA margin 54% vs 37%, rev growth 46% vs 6%, EBITDA growth 66% vs 5%, Debt/EBITDA 1.1 vs 2.2 — posing whether the premium is EARNED by superior growth/margin/leverage rather than residual; peers span $99.6B–$657.7B vs the name at $1,262.7B, a heterogeneous set to gate before leaning on it.",
+      "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+      "cited": true
+     },
+     {
+      "claim": "Guidance has been serially raised during the year — revenue outlook moved from $80–83B (Feb) to $85–87B (Aug) to $91–92B (Oct) — a management-delivery signal that the committed trajectory is being beaten.",
+      "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Oct-29-2026",
+      "cited": true
+     }
+    ],
+    "bear_points": [
+     {
+      "claim": "The quality is largely paid for already: LLY carries EV/EBITDA 28x vs peer median 15.0x (+87%) and P/E 46x vs 29.0x (+59%) — the expectations in the price are the hurdle that must be beaten, a genuine counter-point but OUTWEIGHED by fundamental deltas showing 54% vs 37% margin and 66% vs 5% EBITDA growth that may justify the gap.",
+      "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+      "cited": true
+     },
+     {
+      "claim": "Price itself is the weakest leg of the runway: U.S. price declined 7% in Q3, and excluding a favorable rebate/discount adjustment it declined 10% — real erosion, though the 38.6% LTM YoY revenue gain shows volume is more than offsetting it.",
+      "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Part of 2026 revenue is non-recurring: management flagged approximately $2 billion of onetime items (milestone payments and rebate/discount estimate changes) in 2026 it does not expect to repeat, so a slice of the trailing base is not a run-rate — a genuine counter-point, outweighed by the $6B of Q3 YoY growth from Mounjaro/Zepbound volume.",
+      "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+      "cited": true
+     },
+     {
+      "claim": "Reported FCF conversion is weak relative to earnings: LTM Levered FCF was $9,343.7M against $46,489M EBITDA (CFO $30,645M less capex $10,984M = $19,661M), reflecting heavy capex/IPR&D draw — genuine, but outweighed by 121.4x coverage and 0.9x net leverage leaving reinvestment capacity intact.",
+      "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Sep-30-2026]",
+      "cited": true
+     },
+     {
+      "claim": "Acquired IPR&D is a recurring real cost against earnings: In Process R&D Exp. was $8,070.0M in the LTM, and management confirmed an active, large-deal BD cadence — a genuine drag on GAAP returns, outweighed by ROIC rising to 35.5% LTM despite it.",
+      "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+      "cited": true
+     }
+    ],
+    "twin_reference_cases": [
+     {
+      "name": "Novo Nordisk",
+      "outcome": "kept compounding",
+      "distinguishing_fact": "Single-category incretin leader whose durable volume growth and reinvestment sustained a premium rating — the closest live analogue for a GLP-1-driven compounder.",
+      "source": "[LLM-suggested, unverified]"
+     },
+     {
+      "name": "Merck & Co.",
+      "outcome": "re-rated to fair value",
+      "distinguishing_fact": "A pharma whose concentrated blockbuster franchise faced the eventual patent/duration question that compresses a once-premium multiple back toward the peer median.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "AbbVie Inc.",
+      "outcome": "re-rated to fair value",
+      "distinguishing_fact": "A peer whose single mega-product concentration drove the market to price a long runway, then test it as the lead asset matured.",
+      "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+     },
+     {
+      "name": "Monster Beverage",
+      "outcome": "kept compounding",
+      "distinguishing_fact": "A high-ROIC, single-category consumer-demand compounder that held an above-market multiple for years as volume kept expanding the category.",
+      "source": "[LLM-suggested, unverified]"
+     }
+    ],
+    "decisive_question": {
+     "question": "Is the multi-year EBITDA ramp embedded in the price (NTM 23.96x stepping down to FY33 13.11x) delivered by durable volume growth that out-earns the ongoing price erosion — or does price decline plus the roll-off of onetime items compress the runway faster than consensus assumes?",
+     "evidence_for": [
+      {
+       "claim": "U.S. obesity incretin total prescriptions grew 82% in Q3 and new Foundayo patients doubled QoQ, evidencing volume momentum that can absorb price decline.",
+       "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+       "cited": true
+      },
+      {
+       "claim": "Consensus EBITDA rises from FY27E $56,742M toward FY33 $103,325.5M median, the long ramp the forward ladder prices in.",
+       "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+       "cited": true
+      },
+      {
+       "claim": "Mounjaro and Zepbound contributed $6 billion of Q3 YoY revenue growth, the mechanism carrying the trajectory.",
+       "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+       "cited": true
+      }
+     ],
+     "evidence_against": [
+      {
+       "claim": "U.S. price declined 7% in Q3 (10% excluding the rebate/discount adjustment), a persistent net-price headwind management expects to continue into 2027.",
+       "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+       "cited": true
+      },
+      {
+       "claim": "Roughly $2 billion of 2026 revenue is onetime milestones and rebate/discount estimate changes management does not expect to recur, lowering the run-rate base the ramp builds on.",
+       "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+       "cited": true
+      },
+      {
+       "claim": "The price already embeds a premium of EV/EBITDA 28x vs peer median 15.0x, so a slower ramp than consensus has less cushion.",
+       "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+       "cited": true
+      }
+     ]
+    },
+    "key_unknowns": [
+     "No forward EV/EBITDA on an adjusted basis and no revised adjusted-EPS guide readable at the drawdown (ev_ebitda_adjusted_fwd and adjusted_eps both UNKNOWN) — the trailing 27.9x cannot be distinguished from a temporarily depressed or permanently impaired level without it.",
+     "Trailing P/E of 61.5x is flagged distorted (trailing EPS 22.95 anomalous vs recent median 8.76); EV/EBITDA 27.9x is trailing-only with no forward basis — these are neutral/unresolved, belonging here rather than in either case.",
+     "Primary-source cross-check shows a guide MISMATCH: CIQ revenue guide 91,000–92,000 vs the release actual/outlook 80,000–83,000 — the vintage gap must be reconciled before relying on the CIQ forward figures.",
+     "Durability of net price: management expects net realized price to remain a 2027 headwind 'more than offset by volume' — the magnitude of future price decline versus volume is unresolved.",
+     "Covenant terms are UNKNOWN (extraction failed from located exhibits) and covenant-basis leverage is not disclosed — an expected disclosure that is absent, a bearish opacity to resolve, though mitigated by 0.9x net leverage and 121.4x coverage.",
+     "FCF-sign survival leg is labeled 'runway not assessable' in survival_capacity even though the primary-source cross-check reads self-funding YES (OCF>0 and LTM FCF>0) — the two readings should be reconciled.",
+     "Single-segment reporting (pharmaceutical products) means no segment EBITDA breakout — product-level concentration in Mounjaro/Zepbound cannot be sized from the filings, a disclosure gap.",
+     "Pipeline/regulatory binary outcomes (e.g., retatrutide BLA pathway in active litigation, EMBER-4 2027 readout, Foundayo type 2 diabetes regulatory action) are catalysts whose results are not yet known and materially shape the runway.",
+     "Buyback per-share economics are not derivable: repurchase cash $4,334.0M (272d window) and share count $0 acquired (mismatched 180d window) cannot be divided into a price.",
+     "Export date of the CIQ estimates/catalyst data is unverified (a floor, data ≥ 2026-10-30), so the freshness of the forward ladder and revision breadth is uncertain."
+    ],
+    "draw_agreement": {
+     "attempted": 5,
+     "completed": 5,
+     "labels": {
+      "strongly-bullish": 5
+     },
+     "unanimous": true
+    }
+   }
+  },
+  "SMPL": {
+   "commit": "3e97ee7d7ce275270f2c24185b1906fa84fc3fb7",
+   "assembled_at": "2026-11-04T18:58:07.539074Z",
+   "extraction_version": "2026-11-04.drawdown-window-at-price-date",
+   "annual": {
+    "value": {
+     "columns": [
+      "FY16",
+      "FY15",
+      "FY16 (R)",
+      "FY17 (R)",
+      "FY18",
+      "FY19",
+      "FY20",
+      "FY21 (R)",
+      "FY22 (R)",
+      "FY23 (R)",
+      "FY24 (R)",
+      "FY25",
+      "FY26",
+      "FY27E",
+      "FY28E"
+     ],
+     "rows": [
+      {
+       "label": "Revenue ($M)",
+       "cells": [
+        "—",
+        "379",
+        "428",
+        "396",
+        "438",
+        "524",
+        "817",
+        "1,006",
+        "1,169",
+        "1,243",
+        "1,331",
+        "1,451",
+        "1,356",
+        "1,152",
+        "1,156"
+       ],
+       "values": [
+        null,
+        379.347,
+        427.858,
+        396.171,
+        437.854,
+        523.758,
+        816.641,
+        1005.613,
+        1168.678,
+        1242.672,
+        1331.321,
+        1450.92,
+        1356.499,
+        1151.51,
+        1155.59
+       ],
+       "material": false
+      },
+      {
+       "label": "Revenue growth",
+       "cells": [
+        "—",
+        "—",
+        "— (basis)",
+        "-7%",
+        "— (basis)",
+        "+20%",
+        "+56%",
+        "— (basis)",
+        "+16%",
+        "+6%",
+        "+7%",
+        "— (basis)",
+        "-7%",
+        "-15% (vs FY26)",
+        "+0%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBITDA ($M)",
+       "cells": [
+        "—",
+        "22",
+        "57",
+        "67",
+        "74",
+        "91",
+        "130",
+        "196",
+        "222",
+        "225",
+        "242",
+        "262",
+        "206",
+        "197",
+        "204"
+       ],
+       "values": [
+        null,
+        22.4265,
+        57.08,
+        66.806,
+        74.449,
+        91.457,
+        129.856,
+        196.149,
+        222.158,
+        225.202,
+        242.014,
+        262.334,
+        205.661,
+        196.77,
+        203.86
+       ],
+       "material": false
+      },
+      {
+       "label": "EBITDA margin",
+       "cells": [
+        "—",
+        "6%",
+        "13%",
+        "17%",
+        "17%",
+        "17%",
+        "16%",
+        "20%",
+        "19%",
+        "18%",
+        "18%",
+        "18%",
+        "15%",
+        "17%",
+        "18%"
+       ],
+       "values": [],
+       "material": false
+      },
+      {
+       "label": "EBIT ($M)",
+       "cells": [
+        "-1",
+        "12",
+        "48",
+        "57",
+        "67",
+        "84",
+        "114",
+        "178",
+        "203",
+        "205",
+        "221",
+        "241",
+        "181",
+        "178",
+        "186"
+       ],
+       "values": [
+        -0.7,
+        11.976,
+        47.501,
+        57.189,
+        66.777,
+        83.813,
+        113.849,
+        177.975,
+        202.859,
+        204.949,
+        221.021,
+        240.903,
+        181.406,
+        177.9,
+        185.54
+       ],
+       "material": false
+      },
+      {
+       "label": "Net income ($M)",
+       "cells": [
+        "-0",
+        "-8",
+        "10",
+        "-2",
+        "37",
+        "-25",
+        "66",
+        "41",
+        "109",
+        "134",
+        "139",
+        "104",
+        "-156",
+        "105",
+        "115"
+       ],
+       "values": [
+        -0.3,
+        -8.0,
+        10.034,
+        -2.0,
+        37.386,
+        -25.2,
+        65.638,
+        40.88,
+        108.574,
+        133.575,
+        139.309,
+        103.614,
+        -155.9,
+        105.37,
+        115.03
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (GAAP, dil.)",
+       "cells": [
+        "-0.03",
+        "—",
+        "—",
+        "0.01",
+        "0.51",
+        "-0.31",
+        "0.35",
+        "0.42",
+        "1.08",
+        "1.32",
+        "1.38",
+        "1.02",
+        "-1.69",
+        "1.39",
+        "1.48"
+       ],
+       "values": [
+        -0.03,
+        null,
+        null,
+        0.01,
+        0.51,
+        -0.31,
+        0.35,
+        0.42,
+        1.08,
+        1.32,
+        1.38,
+        1.02,
+        -1.69,
+        1.39,
+        1.48
+       ],
+       "material": false
+      },
+      {
+       "label": "EPS (Normalized)",
+       "cells": [
+        "-0.02",
+        "—",
+        "—",
+        "0.30",
+        "0.18",
+        "0.01",
+        "0.73",
+        "0.51",
+        "0.94",
+        "1.09",
+        "1.24",
+        "1.35",
+        "1.10",
+        "1.52",
+        "1.64"
+       ],
+       "values": [
+        -0.02,
+        null,
+        null,
+        0.301927,
+        0.178148,
+        0.008384,
+        0.728242,
+        0.514555,
+        0.936165,
+        1.088495,
+        1.237721,
+        1.354037,
+        1.102858,
+        1.52,
+        1.64
+       ],
+       "material": false
+      },
+      {
+       "label": "Restructuring Charges ($M)",
+       "cells": [
+        "—",
+        "—",
+        "-2",
+        "—",
+        "—",
+        "—",
+        "-6",
+        "-4",
+        "-0",
+        "—",
+        "—",
+        "—",
+        "-20",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        -1.5,
+        null,
+        null,
+        null,
+        -5.5,
+        -4.3,
+        -0.1,
+        null,
+        null,
+        null,
+        -19.5,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Merger & Related Restruct. Charges ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "-32",
+        "-2",
+        "-7",
+        "-27",
+        "—",
+        "—",
+        "—",
+        "-14",
+        "-23",
+        "-11",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        -31.6,
+        -2.3,
+        -7.1,
+        -27.1,
+        null,
+        null,
+        null,
+        -14.5,
+        -23.1,
+        -10.6,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Asset Writedown ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "-3",
+        "—",
+        "—",
+        "—",
+        "—",
+        "-61",
+        "-331",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        -3.0,
+        null,
+        null,
+        null,
+        null,
+        -60.9,
+        -331.0,
+        null,
+        null
+       ],
+       "material": true
+      },
+      {
+       "label": "Legal Settlements ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "-4",
+        "—",
+        "5",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        -3.5,
+        null,
+        5.0,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "Other Unusual Items ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "3",
+        "1",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        2.848,
+        1.001,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "CFO ($M)",
+       "cells": [
+        "—",
+        "31",
+        "—",
+        "-5",
+        "61",
+        "73",
+        "59",
+        "132",
+        "111",
+        "171",
+        "216",
+        "178",
+        "181",
+        "176",
+        "158"
+       ],
+       "values": [
+        null,
+        30.639,
+        null,
+        -5.4,
+        61.038,
+        73.042,
+        58.921,
+        132.089,
+        110.639,
+        171.117,
+        215.704,
+        178.457,
+        181.049,
+        175.55,
+        158.02
+       ],
+       "material": false
+      },
+      {
+       "label": "Capex ($M)",
+       "cells": [
+        "—",
+        "-2",
+        "—",
+        "-1",
+        "-2",
+        "-1",
+        "-2",
+        "-6",
+        "-5",
+        "-12",
+        "-6",
+        "-20",
+        "-24",
+        "-18",
+        "-11"
+       ],
+       "values": [
+        null,
+        -1.5,
+        null,
+        -1.0,
+        -1.8,
+        -1.0,
+        -1.7,
+        -5.9,
+        -5.2,
+        -11.6,
+        -5.7,
+        -20.5,
+        -24.1,
+        -17.6,
+        -10.64
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "31",
+        "46",
+        "57",
+        "25",
+        "105",
+        "73",
+        "128",
+        "161",
+        "127",
+        "135",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        30.839875,
+        45.70025,
+        57.25025,
+        25.3495,
+        104.73725,
+        72.89025,
+        127.920625,
+        160.999,
+        126.54175,
+        134.960375,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A ($M)",
+       "cells": [
+        "—",
+        "10",
+        "—",
+        "10",
+        "8",
+        "8",
+        "20",
+        "23",
+        "26",
+        "27",
+        "28",
+        "28",
+        "30",
+        "—",
+        "—"
+       ],
+       "values": [
+        null,
+        10.4505,
+        null,
+        9.617,
+        7.672,
+        7.644,
+        19.855,
+        23.225,
+        25.919,
+        26.982,
+        27.984,
+        28.294,
+        30.323,
+        null,
+        null
+       ],
+       "material": false
+      },
+      {
+       "label": "FCF (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "151",
+        "150"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        150.51,
+        149.53
+       ],
+       "material": false
+      },
+      {
+       "label": "D&A (consensus basis) ($M)",
+       "cells": [
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "—",
+        "18",
+        "18"
+       ],
+       "values": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        18.04,
+        17.96
+       ],
+       "material": false
+      }
+     ],
+     "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-10-29; (R) = Reclassified basis",
+     "is_estimate": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+     ]
+    },
+    "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+    "status": "present",
+    "note": null
+   },
+   "synthesis": {
+    "evidence_balance": "mixed — a genuinely cheap, well-capitalised self-funding turnaround, but a second consecutive guided sales decline and unbroken downward revisions keep the trough unproven.",
+    "bull_points": [
+     {
+      "claim": "The multiple sits near its own 8.8-year floor on a trailing basis — EV/EBITDA 6.1x against a median 17.6x and a 5.0–28.9x range, a 6%ile — but this is a trailing-only level that cannot by itself distinguish overshoot from permanent impairment, so it carries weight only alongside a genuine forward and mechanism (below).",
+      "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+      "figures": [
+       {
+        "figure": "6.1x",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple"
+       },
+       {
+        "figure": "17.6x",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+       },
+       {
+        "figure": "5.0–28.9x",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+       },
+       {
+        "figure": "6%ile",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "There IS a forward anchor, and it mean-reverts the trailing optics only modestly: on consensus the name trades 6.82x NTM TEV/EBITDA and 8.18x NTM P/E, i.e. the forward is close to the trailing, so the cheapness is not merely a one-year EBITDA dip about to normalise sharply.",
+      "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+      "figures": [
+       {
+        "figure": "6.82x",
+        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)"
+       },
+       {
+        "figure": "8.18x",
+        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "The balance sheet is strong and self-funding — net-debt/EBITDA 1.3x, interest coverage 9.6x, LTM FCF $135M positive — so this is a turnaround with time and reinvestment capacity, not a solvency race; leverage is far below the peer-median 3.4x total-debt/EBITDA.",
+      "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+      "figures": [
+       {
+        "figure": "1.3x",
+        "source_ref": "CIQ Net Debt $259M [FQ4/CQ3 Aug-29-2026] ÷ CIQ EBITDA $206M [12 months Aug-29-2026]"
+       },
+       {
+        "figure": "9.6x",
+        "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [12 months Aug-29-2026]"
+       },
+       {
+        "figure": "$135M",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [12 months Aug-29-2026]"
+       },
+       {
+        "figure": "3.4x",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-11-03"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "Management has a concrete, mechanism-bearing margin lever: it executed price increases approaching double digits across much of the portfolio, expected to move gross margin back toward the historic 40% level, with FY27 guided GAAP gross-margin improvement of 250 to 300 basis points.",
+      "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+      "figures": [
+       {
+        "figure": "40%",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+       },
+       {
+        "figure": "250 to 300 basis points",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "The largest brand is still recruiting consumers — Quest household penetration rose approximately 50 basis points to 20.2% in Q4 and Quest salty consumption grew approximately 13% — evidence the core franchise is relevant even as reported revenue falls.",
+      "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+      "figures": [
+       {
+        "figure": "50 basis points",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+       },
+       {
+        "figure": "20.2%",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+       },
+       {
+        "figure": "13%",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "On the peer comps the TEV/EBITDA discount to the peer median (6.1x vs 7.6x) is a HETEROGENEOUS-set reading (caps span $13M–$29.1B, 2203x) and must be decomposed: the name's EBITDA margin 15% slightly BEATS the peer-median 14% and leverage 1.8x is far below the peer-median 3.4x, so a portion of the discount looks RESIDUAL rather than earned — but revenue growth -7% is worse than the peer-median -1% and EBITDA growth -22% worse than -15%, which is the earned leg the human must weigh.",
+      "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+      "figures": [
+       {
+        "figure": "6.1x",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)"
+       },
+       {
+        "figure": "7.6x",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)"
+       },
+       {
+        "figure": "$13M–$29.1B",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description"
+       },
+       {
+        "figure": "2203x",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description"
+       },
+       {
+        "figure": "15%",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "14%",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "1.8x",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "3.4x",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "-7%",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "-1%",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "-22%",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       },
+       {
+        "figure": "-15%",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)"
+       }
+      ],
+      "cited": true
+     }
+    ],
+    "bear_points": [
+     {
+      "claim": "The decline is broad and worsening, not a one-year dip: total company retail consumption declined 8.4% in Q4 and management guides FY27 net sales to decline a further 13% to 17% — a second consecutive down year, so the trailing 6.1x multiple is the REAL signal of a shrinking business, not an optical artefact of a single weak quarter.",
+      "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+      "figures": [
+       {
+        "figure": "8.4%",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+       },
+       {
+        "figure": "13% to 17%",
+        "source_ref": "8-K 0001702744-26-000028 EX-99.1"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "Absolute EBITDA is falling, not just the margin %: EBITDA dropped from $262M (FY25) to $206M (FY26) and consensus FY27 is $197M — so the falling margin (18% → 15%) is corroborated by, not offset by, declining absolute profit, the opposite of the usual %-falls-while-EBITDA-rises reconciler.",
+      "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+      "figures": [
+       {
+        "figure": "$262M",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       },
+       {
+        "figure": "$206M",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       },
+       {
+        "figure": "$197M",
+        "source_ref": "CIQ Estimates→Trends (FY27E/FY28E consensus EBITDA, latest snapshot)"
+       },
+       {
+        "figure": "18%",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       },
+       {
+        "figure": "15%",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "Consensus is cutting hard and in one direction: FY27 EBITDA consensus fell from 288.9 (12m ago) to 196.8 (latest), net -32%, and the last-month breadth is 0↑/10↓ on revenue and 0↑/6↓ on EBITDA — an unbroken downward revision trend with no sign of a bottom.",
+      "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+      "figures": [
+       {
+        "figure": "288.9",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)"
+       },
+       {
+        "figure": "196.8",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)"
+       },
+       {
+        "figure": "-32%",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)"
+       },
+       {
+        "figure": "0↑/10↓",
+        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)"
+       },
+       {
+        "figure": "0↑/6↓",
+        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "The company took a $331.0M asset writedown in FY26 (plus $38M goodwill impairment, total $391.9M across Atkins and OWYN), capital destruction on acquired brands that drove a reported net loss of -$156M and a negative EPS of -1.69 — evidence the impaired brands may be structurally, not cyclically, weaker.",
+      "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+      "figures": [
+       {
+        "figure": "$331.0M",
+        "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)"
+       },
+       {
+        "figure": "$38M",
+        "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2025-08-31→2026-05-30, 272d)"
+       },
+       {
+        "figure": "$391.9M",
+        "source_ref": "EDGAR companyfacts SMPL: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (SMPL market cap)"
+       },
+       {
+        "figure": "-$156M",
+        "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)"
+       },
+       {
+        "figure": "-1.69",
+        "source_ref": "EDGAR XBRL eps_diluted × EOD latest stored close"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "The second-largest brand is in a steep, persistent decline: Atkins Q4 retail takeaway fell 22.6% with household penetration 8.3% (down ~210bp YoY), roughly unchanged from the prior quarter's 23.9% — distribution losses the company itself expects to continue, a mechanism pointing to further revenue attrition.",
+      "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+      "figures": [
+       {
+        "figure": "22.6%",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+       },
+       {
+        "figure": "8.3%",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+       },
+       {
+        "figure": "210bp",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+       },
+       {
+        "figure": "23.9%",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "The pricing lever carries a self-inflicted volume penalty: management expects FY27 elasticities well above 1 on a near-double-digit price increase, meaning the gross-margin gain is paid for with volume loss that itself erodes household penetration and buy rate — the very fundamentals the turnaround needs.",
+      "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+      "figures": [
+       {
+        "figure": "well above 1",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "The drawdown cause named at the underwrite has played out and deepened, not recovered: the gap-downs were the 2026-04-09/-10 Q2 earnings reaction (-18.1%, -11.5%) whose superseded guide was a 7–10% FY26 sales decline; the current FY27 guide is a steeper 13–17% decline, and the stock bled a further way down with no recovery gap since.",
+      "source_ref": "EOD closes on or before 2026-08-05 (each move, close to close) and EDGAR 8-K item codes at the gap-down dates, filed by 2026-08-05 (not blanket-labelled earnings)",
+      "figures": [
+       {
+        "figure": "-18.1%",
+        "source_ref": "EOD closes on or before 2026-08-05 (each move, close to close) and EDGAR 8-K item codes at the gap-down dates, filed by 2026-08-05 (not blanket-labelled earnings)"
+       },
+       {
+        "figure": "-11.5%",
+        "source_ref": "EOD closes on or before 2026-08-05 (each move, close to close) and EDGAR 8-K item codes at the gap-down dates, filed by 2026-08-05 (not blanket-labelled earnings)"
+       },
+       {
+        "figure": "7–10%",
+        "source_ref": "EDGAR 8-K 0001702744-26-000010 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1702744/000170274426000010/a991_pressreleasexq2x2026.htm"
+       },
+       {
+        "figure": "13–17%",
+        "source_ref": "8-K 0001702744-26-000028 EX-99.1"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "The stock has been a gradual-bleed underperformer with no catalyst reversal: name 1-year return -38.3% against the IWM benchmark +16.0%, a sustained relative decline that the market has repriced over many months rather than a single mispricing event.",
+      "source_ref": "EOD SMPL vs IWM rebased to 100, 2025-11-04..2026-11-03",
+      "figures": [
+       {
+        "figure": "-38.3%",
+        "source_ref": "EOD SMPL vs IWM rebased to 100, 2025-11-04..2026-11-03"
+       },
+       {
+        "figure": "+16.0%",
+        "source_ref": "EOD SMPL vs IWM rebased to 100, 2025-11-04..2026-11-03"
+       }
+      ],
+      "cited": true
+     },
+     {
+      "claim": "Sell-side conviction has collapsed to neutral: the consensus recommendation is Hold (2.60), target-price mean $12.00 against the $12.47 close (essentially no upside), and long-term growth consensus is just 1.6% — the external read offers no margin of safety on price.",
+      "source_ref": "CIQ Estimates→Consensus + Trends Non-Periodic (the listing's own recommendation)",
+      "figures": [
+       {
+        "figure": "2.60",
+        "source_ref": "CIQ Estimates→Consensus + Trends Non-Periodic (the listing's own recommendation)"
+       },
+       {
+        "figure": "$12.00",
+        "source_ref": "CIQ Estimates→Consensus + Trends Non-Periodic (the listing's own recommendation)"
+       },
+       {
+        "figure": "$12.47",
+        "source_ref": "EOD SMPL last close"
+       },
+       {
+        "figure": "1.6%",
+        "source_ref": "CIQ Estimates→Consensus + Trends Non-Periodic (the listing's own recommendation)"
+       }
+      ],
+      "cited": true
+     }
+    ],
+    "twin_reference_cases": [
+     {
+      "name": "The Kraft Heinz Company",
+      "outcome": "went terminal",
+      "distinguishing_fact": "A branded packaged-foods peer in the same comp set carrying heavy acquired goodwill/intangibles and serial brand impairments, with persistent revenue declines and repeated writedowns on brands that proved structurally impaired rather than cyclically soft — the value-trap pattern.",
+      "source": "EDGAR companyfacts KHC: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (KHC market cap)"
+     },
+     {
+      "name": "The Hain Celestial Group",
+      "outcome": "went terminal",
+      "distinguishing_fact": "A natural/better-for-you packaged-foods name whose declining takeaway and repeated impairments compounded into a severely de-rated micro-cap — the pattern of a branded portfolio that kept losing distribution and penetration without arresting the slide.",
+      "source": "EDGAR companyfacts HAIN: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (HAIN market cap)"
+     },
+     {
+      "name": "BellRing Brands",
+      "outcome": "recovered",
+      "distinguishing_fact": "A nutrition/active-nutrition peer that grew household penetration and consumption in a comparable category, showing a focused better-for-you brand can compound volume where the proposition and marketing execution land — the outcome SMPL's Quest franchise is attempting.",
+      "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-11-03"
+     },
+     {
+      "name": "Freshpet",
+      "outcome": "recovered",
+      "distinguishing_fact": "A single-category better-for-you consumer brand that sustained double-digit volume growth by expanding penetration of a differentiated proposition — the growth archetype SMPL cites for Quest salty, distinct from the declining legacy brands.",
+      "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-11-03"
+     },
+     {
+      "name": "Central Garden & Pet",
+      "outcome": "recovered",
+      "distinguishing_fact": "A branded CPG turnaround where a returning/experienced management team reset strategy, took pricing to rebuild margin and reinvested in core brands, restoring profitability over several years — the management-led turnaround pattern SMPL is pursuing under a returned former CEO.",
+      "source": "[LLM-suggested, unverified]"
+     }
+    ],
+    "decisive_question": {
+     "question": "Will the near-double-digit price increase plus reallocated marketing arrest the volume/penetration decline and restore gross margin toward 40% — making FY27's guided 13–17% sales drop the trough of an overshoot — or does the second consecutive down year and ongoing distribution loss on Atkins and OWYN confirm a structurally shrinking brand portfolio?",
+     "evidence_for": [
+      {
+       "claim": "Quest, ~80% of the key brand and the growth engine, is still recruiting: household penetration rose ~50bp to 20.2% and salty consumption grew ~13% in Q4, and management guides the second half of FY27 materially better than the first as pricing volume headwind eases and new marketing takes hold.",
+       "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+       "figures": [
+        {
+         "figure": "50bp",
+         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+        },
+        {
+         "figure": "20.2%",
+         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+        },
+        {
+         "figure": "13%",
+         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+        }
+       ],
+       "cited": true
+      },
+      {
+       "claim": "The balance sheet funds the wait: net-debt/EBITDA 1.3x, coverage 9.6x and $135M LTM FCF give the turnaround multiple years without a financing forcing-event, and FY27 gross margin is guided up 250–300bp toward the historic 40%.",
+       "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+       "figures": [
+        {
+         "figure": "1.3x",
+         "source_ref": "CIQ Net Debt $259M [FQ4/CQ3 Aug-29-2026] ÷ CIQ EBITDA $206M [12 months Aug-29-2026]"
+        },
+        {
+         "figure": "9.6x",
+         "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [12 months Aug-29-2026]"
+        },
+        {
+         "figure": "$135M",
+         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [12 months Aug-29-2026]"
+        },
+        {
+         "figure": "250–300bp",
+         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+        },
+        {
+         "figure": "40%",
+         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+        }
+       ],
+       "cited": true
+      }
+     ],
+     "evidence_against": [
+      {
+       "claim": "The decline is accelerating and company-guided to continue: total company retail consumption -8.4% in Q4 and FY27 net sales guided to decline a further 13–17%, with Atkins takeaway -22.6% and management itself expecting ongoing distribution losses on Atkins and OWYN.",
+       "source_ref": "8-K 0001702744-26-000028 EX-99.1",
+       "figures": [
+        {
+         "figure": "-8.4%",
+         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+        },
+        {
+         "figure": "13–17%",
+         "source_ref": "8-K 0001702744-26-000028 EX-99.1"
+        },
+        {
+         "figure": "-22.6%",
+         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+        }
+       ],
+       "cited": true
+      },
+      {
+       "claim": "The margin lever is self-penalising and consensus disbelieves the arithmetic: elasticities expected well above 1 on the price increase mean volume loss that feeds the penetration decline, and FY27 EBITDA consensus has been cut -32% over twelve months to $196.8M with 0↑/10↓ revenue revision breadth.",
+       "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+       "figures": [
+        {
+         "figure": "well above 1",
+         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf"
+        },
+        {
+         "figure": "-32%",
+         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)"
+        },
+        {
+         "figure": "$196.8M",
+         "source_ref": "CIQ Estimates→Trends (FY27E/FY28E consensus EBITDA, latest snapshot)"
+        },
+        {
+         "figure": "0↑/10↓",
+         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)"
+        }
+       ],
+       "cited": true
+      }
+     ]
+    },
+    "key_unknowns": [
+     "No revised forward adjusted-EBITDA or adjusted-EPS figure the parser reads at the drawdown (ev_ebitda_adjusted_fwd and adjusted_eps both UNKNOWN) — the human must read the 8-K EX-99.1 reconciliations directly (adjusted EBITDA 2026 of $225.9M and adjusted EPS 2026 of $1.7 are stated there) to strike a clean forward multiple.",
+     "FY27E adjusted gross-margin and EBITDA-margin recovery is a management plan, not a delivered result; the price increase only hit shelves in September 2026 and actual elasticity is explicitly flagged by management as one of the biggest unknowns in the plan — the first in-market quarters (FQ1 2027 guided to the weakest, -19% to -22% net sales) are the test.",
+     "Segment/brand-level EBITDA is NOT disclosed — single-segment reporting and the per-brand goodwill/intangible impairment split ($391.9M across Atkins and OWYN) is footnote prose with no XBRL axis; this missing breakout is a BEARISH opacity risk because it hides how much consolidated profit depends on the declining Atkins/OWYN versus growing Quest.",
+     "P/E is NM/distorted (latest annual EPS -1.69), so no meaningful trailing earnings multiple; the EV/EBITDA floor is trailing-only and cannot by itself separate overshoot from permanent impairment — a neutral fact, not directional.",
+     "Company-adjusted LTM EBITDA ($225.9M) diverges materially from CIQ's normalised LTM EBITDA ($206M) and from the filings-rebuilt LTM (-$155M, a +$361M gap driven by excluded unusual/impairment items) — every EV/EBITDA on the page divides CIQ's figure, so the human must fix which EBITDA base the thesis uses.",
+     "The heterogeneous peer set (caps span $13M–$29.1B, 2203x) means no peer multiple is a clean benchmark; whether the TEV/EBITDA discount to the 7.6x peer median is EARNED (worse growth) or RESIDUAL (overshoot) is for the human to judge, not computed here.",
+     "Whether pricing elasticity degrades over the year as consumers acclimatise to higher price points (management's stated expectation) versus persisting — the swing factor between the guided second-half improvement materialising or not."
+    ],
+    "draw_agreement": {
+     "attempted": 5,
+     "completed": 5,
+     "labels": {
+      "mixed": 4,
+      "strongly-bearish": 1
+     },
+     "unanimous": false
+    }
+   }
+  }
+ }
+}

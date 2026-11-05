@@ -80,14 +80,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "90d987c6d9e4"
-PINNED_AT = "2026-11-05.store-checkout-name"
+PINNED_TABLE = "c27e65ca2faf"
+PINNED_AT = "2026-11-05.material-figure-direction"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
-    "vinci/dossier/assemble.py": "ec03c68da5bc",
+    "vinci/dossier/assemble.py": "7e9f283028c4",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "ba165ad2af55",
     "vinci/dossier/ciq.py": "6a636c11c2f3",
@@ -111,7 +111,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/lease_basis.py": "a93d880597ba",
     "vinci/dossier/ltm_quarters.py": "976073b15fc6",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
-    "vinci/dossier/materiality.py": "274e1447b37f",
+    "vinci/dossier/materiality.py": "c91b8d44c5fe",
     "vinci/dossier/mechanical.py": "d1b80ce9757f",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
@@ -119,7 +119,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/requirements.py": "0d49ceadcac7",
     "vinci/dossier/schemas.py": "2b67b815aef1",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "1a9bcf25def9",
+    "vinci/dossier/synthesis.py": "5dc8fca400e2",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
     "vinci/dossier/verdict.py": "0b43167d2044",

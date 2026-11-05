@@ -69,6 +69,7 @@ from vinci.dossier.synthesis import (
     contradiction_flags,
     demanded_material_figures,
     gaap_eps_momentum_flags,
+    material_direction_flags,
     synthesize,
     uncited_material_figures,
 )
@@ -1325,6 +1326,9 @@ def assemble_one(
             flags += contradiction_flags(synthesis, mech)
             # a GAAP-EPS move the normalized figure did not make — a human caveat, not a block
             flags += gaap_eps_momentum_flags(synthesis, forward_consensus)
+            # a material figure framed only against its sign (NFLX's +2,800.0 'Charges' read
+            # as a drag, 2026-11-05) — a FLAG; the operator rules on making it HARD
+            flags += material_direction_flags(synthesis, mech)
     else:
         flags.append("LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only")
     # (A2) THE EV GAP — ASSEMBLY MUST PRODUCE IT, or a re-assembly DROPS it.
