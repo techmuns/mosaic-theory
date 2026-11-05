@@ -10649,8 +10649,8 @@
   "assembled_at": "2026-10-29T19:09:38.995444Z",
   "extraction_version": "2026-10-29.D-D5-prompt",
   "price_store": {
-    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory/.claude/worktrees/b6-model-inputs-1e3db3/data/vinci.db",
-    "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
+    "declared_path": "b6-model-inputs-1e3db3",
+    "resolved_path": "mosaic-theory-ta",
     "frontier": "2026-10-28"
   },
   "sector": "Consumer Discretionary",
