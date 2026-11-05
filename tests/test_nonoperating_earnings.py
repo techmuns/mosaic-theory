@@ -335,7 +335,8 @@ def test_a_fourth_quarter_whose_part_is_missing_is_never_replaced_by_a_year_back
     with it). The window reads 3 of 4 to 2026-09-30, naming 2025-12-31 as unread; 2025-09-30 is
     never read in its place."""
     facts = _fixture("GOOGL")
-    tag = "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest"
+    tag = ("IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItems"
+           "NoncontrollingInterest")
     rows = facts["facts"]["us-gaap"][tag]["units"]["USD"]
     kept = [r for r in rows if not (r.get("start") == "2025-01-01" and r.get("end") == "2025-09-30"
                                     and r.get("accn") == "0001652044-25-000091")]

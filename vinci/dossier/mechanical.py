@@ -1420,7 +1420,8 @@ class _NonopWindow:
         why = [f"{d} has no {' or '.join(absent)} filed or derivable"
                for d, absent in self.missing]
         if self.uncalendared:
-            why.append(f"{self.uncalendared} sit on no filing's calendar")
+            why.append(f"{self.uncalendared} {'sits' if self.uncalendared == 1 else 'sit'} on no "
+                       "filing's calendar")
         return "; ".join(why)
 
     def source_ref(self) -> str:
@@ -1428,26 +1429,35 @@ class _NonopWindow:
         quarter of the four the window could not read."""
         ref = f"EDGAR XBRL pre-tax − operating, quarters {self.quarters[0]}..{self.end}"
         for d, parts in self.derived.items():
-            ref += (f"; the quarter to {d} is DERIVED, the longer period less the shorter on one "
-                    f"tag: {' · '.join(parts)}")
+            how = ("is DERIVED, the longer period less the shorter on one tag"
+                   if not any(_NEARBY in part for part in parts)  # no part stated days off it
+                   else "has no 80-100-day fact on its date: each part is DERIVED, the longer "
+                        "period less the shorter on one tag, unless marked stated")
+            ref += f"; the quarter to {d} {how}: {' · '.join(parts)}"
         if self.short:
             ref += (f"; {len(self.quarters)} of the trailing four quarters to {self.end} are read "
                     f"— {self.shortfall()}")
         return ref
 
 
-def _derived_quarter(facts: dict[str, Any], concept: str, q: date) -> tuple[float, str] | None:
-    """($, the filings it is made of) — the quarter ending ``q`` where no ~quarterly fact states it,
+#: Marks a part `filed_tiebreak.filed_quarter` read as a STATED quarter ending a few days off the
+#: calendar's date (a 52/53-week filer), so the cite never calls it derived.
+_NEARBY = "stated for a quarter ending within a week of"
+
+
+def _derived_quarter(facts: dict[str, Any], concept: str, q: date,
+                     ) -> tuple[float, bool, tuple[ConceptPoint, ...]] | None:
+    """($, derived, the points read) — the quarter ending ``q`` where no ~quarterly fact states it,
     read by `filed_tiebreak.filed_quarter`: the longer period ending there less the period one
     quarter shorter from the same start, on ONE tag, the shorter filed on or before the longer (a
     fourth quarter is the fiscal year less the nine months). Aliases in their order of meaning, as
-    in :func:`_quarterly_map`. None — an absence, never a zero — when no alias states the parts."""
+    in :func:`_quarterly_map`. None — an absence, never a zero — when no alias states the parts.
+    The cite is built by the caller, and only for a quarter it keeps (`_filed_quarter_ref` looks
+    each part's restatements up across its whole tag)."""
     for tag in CONCEPT_ALIASES[concept]:
         got = filed_quarter(points_for_tag(facts, tag), q)
         if got is not None:
-            value, derived, parts = got
-            ref = _filed_quarter_ref(parts, facts)
-            return value, (ref if derived else f"{ref}, a quarter ending within a week of {q}")
+            return got
     return None
 
 
@@ -1494,8 +1504,7 @@ def _nonop_window(facts: dict[str, Any], reference_date: date) -> _NonopWindow |
     def read(d: date) -> list[str]:
         """The totals the quarter ending ``d`` lacks — [] once each is in ``maps``, filed or
         derived (a derived value is kept only when all three are there)."""
-        got: dict[str, float] = {}
-        parts: list[str] = []
+        got: dict[str, tuple[str, float, bool, tuple[ConceptPoint, ...]]] = {}
         absent: list[str] = []
         for name, concept in _NONOP_TOTALS:
             if d in maps[concept]:
@@ -1504,13 +1513,14 @@ def _nonop_window(facts: dict[str, Any], reference_date: date) -> _NonopWindow |
             if q is None:
                 absent.append(name)
             else:
-                got[concept] = q[0]
-                parts.append(f"{name} {q[1]}")
+                got[concept] = (name, *q)
         if not absent:
-            for concept, v in got.items():
+            for concept, (_, v, _, _) in got.items():
                 maps[concept][d] = v
-            if parts:
-                derived[d] = parts
+            if got:
+                derived[d] = [f"{name} {_filed_quarter_ref(pts, facts)}"
+                              + ("" if is_derived else f", {_NEARBY} {d}")
+                              for name, _, is_derived, pts in got.values()]
         return absent
 
     end = next((d for d in reversed(ends) if not read(d)), None)
