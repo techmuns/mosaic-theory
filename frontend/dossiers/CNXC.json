@@ -11463,6 +11463,76 @@
     "valuation_snapshot_as_of": "2026-10-23",
     "price_days_after_valuation_snapshot": 5
   },
+  "inputs": {
+    "schema_version": 1,
+    "recorded": "backfill",
+    "extraction_version": "2026-11-05.input-record",
+    "covers": [
+      "ciq"
+    ],
+    "not_covered": [
+      "committed repository files: data/graph_coverage.json, scenarios/<T>.json, data/followed.json, the screen snapshots and the committed page itself — versioned by the commit the page lands in",
+      "the price store's securities rows read through Store.get_security (the SIC behind the sector label, the stored name)",
+      "a credential embedded in a URL's path or a POST body: only query values and userinfo are redacted (`provenance.redact_url`); no client in this repository sends either"
+    ],
+    "inputs_id": null,
+    "ciq": [
+      {
+        "kind": "estimates",
+        "freq": null,
+        "file": "ConcentrixCorporationNasdaqGSCNXCEstimatesReport.xls",
+        "sha256": "788dc09c8bb68ad1289e647177c6ce6b2d8e45b77042ba1b6877cda98cd8b339",
+        "bytes": 2789956,
+        "stamped_by": [
+          "ev_bridge.estimates_sha256",
+          "forward_consensus.source_sha256",
+          "historical_forecast_error.source_sha256"
+        ]
+      },
+      {
+        "kind": "financials",
+        "freq": "annual",
+        "file": "Concentrix Corporation NasdaqGS CNXC Financials_Annual.xls",
+        "sha256": "e96007d828c4d932d738601fb34a1e5277f78b789404eb7962953d66a90c446b",
+        "bytes": 322570,
+        "stamped_by": [
+          "anchor.d_and_a.source"
+        ]
+      },
+      {
+        "kind": "financials",
+        "freq": "quarterly",
+        "file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls",
+        "sha256": "35c54fd6f0734dcb252a759dd68c93b5e68e9ac30c79e29f9deb4f2041528cc7",
+        "bytes": 493066,
+        "stamped_by": [
+          "ev_bridge.source_sha256",
+          "forward_multiple_history.series.band.source_sha256",
+          "forward_multiple_history.source_sha256",
+          "mechanical.valuation.lease_basis.ex_lease_band.source_sha256",
+          "mechanical.valuation.own_history.value.source_sha256"
+        ]
+      }
+    ],
+    "responses_listed": "all",
+    "responses": [],
+    "responses_digest": null,
+    "prices": [],
+    "unrecorded": [
+      {
+        "input": "ciq:unstamped",
+        "why": "a page built before 2026-11-05 stamps an export only where a block records a 10-hex prefix of its sha256; any other export it read (comps, transcripts, capital structure, credit health …) was never recorded"
+      },
+      {
+        "input": "prices",
+        "why": "the page records only the store's newest bar across every name (price_store.frontier = 2026-10-28), not which series it read"
+      },
+      {
+        "input": "responses",
+        "why": "no build before 2026-11-05 recorded which SEC, Polygon or FINRA responses it read, and the cache rewrites an entry in place, so the copy there now is no evidence of the copy read"
+      }
+    ]
+  },
   "anchor": {
     "recipe_hint": "R1_NOT_ROBUST",
     "applicable": true,

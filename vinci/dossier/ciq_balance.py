@@ -35,6 +35,7 @@ DERIVED scalars with a source stamp. The workbooks themselves are never committe
 from __future__ import annotations
 
 import functools
+import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
@@ -130,6 +131,20 @@ class CiqFacts:
         if not held:
             return "workbook unrecorded"
         return " + ".join(f"{name} sha {sha or '?'}" for name, sha in held)
+
+
+#: An export stamp written INTO A STRING: `CiqBridge.stamp`'s ``<file> sha <10 hex>`` (an anchor
+#: input's ``source``) and `valuation_basis`'s ``(<file>, sha <10 hex>)`` (the bridge's claims
+#: source). Both take the hash from `ciq_sheets.file_provenance`; ``?`` (no hash) is no stamp.
+_STAMP_IN_TEXT = re.compile(r"\bsha ([0-9a-f]{10})\b")
+
+
+def stamps_in_text(text: str) -> list[str]:
+    """THE ONE READER of an export stamp a page carries inside a string, for the code that must
+    account for every export a page names (`vinci.dossier.inputs.stamps`, the precheck's census).
+    A parse of a rendered string is the exception CLAUDE.md allows only through one shared, tested
+    helper; it is pinned against both writers' output. Order kept, repeats kept."""
+    return _STAMP_IN_TEXT.findall(text)
 
 
 def _sourced(bundle: CiqBundle, fn: Any) -> float | None:

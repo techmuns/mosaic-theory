@@ -31,6 +31,7 @@ from pydantic import (
 )
 
 from vinci.dossier.anchor import Anchor, check_decision_write, committed_anchor_block
+from vinci.dossier.inputs_schema import InputManifest
 from vinci.dossier.midcycle import MidCycle
 from vinci.schemas.listing import AdsRatio
 from vinci.sleeves import DEFAULT_SLEEVE, UnknownSleeveError, require_sleeve
@@ -3147,6 +3148,11 @@ class Dossier(BaseModel):
     # Declared before `layer_refreshes`, which must stay immediately before `anchor`.
     valuation_basis: ValuationBasis | None = None
     date_semantics: DateSemantics | None = None
+    # (inputs, 2026-11-05) WHAT THIS PAGE WAS BUILT FROM, by content hash: every CIQ export, HTTP
+    # response and price series it read (`vinci.dossier.inputs`). JSON-only; ABSENT on a page that
+    # predates it until backfilled, so those round-trip byte-identically. Declared before
+    # `layer_refreshes`, which must stay immediately before `anchor`.
+    inputs: InputManifest | None = None
     # (layer refreshes) the writers that changed this page since its assembly, each with the code
     # vintage that ran it (`LayerRefresh`). ABSENT until a writer records one, and dropped by the
     # next full assembly, whose stamp then covers the whole page. Declared IMMEDIATELY BEFORE
@@ -3293,6 +3299,8 @@ def dossier_json(doc: Dossier) -> str:
         excl["ev_bridge"] = True
     if doc.ev_bridge_unbuilt is None:
         excl["ev_bridge_unbuilt"] = True
+    if doc.inputs is None:
+        excl["inputs"] = True
     if doc.layer_refreshes is None:
         excl["layer_refreshes"] = True
     if doc.valuation_basis is None:

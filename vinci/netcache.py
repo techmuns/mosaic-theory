@@ -29,6 +29,8 @@ from typing import Any
 
 import httpx
 
+from vinci import provenance
+
 #: How long to wait after a 429 before retrying. Rate limits are enforced over a ROLLING
 #: WINDOW — Polygon's is per minute — so a sub-window retry is refused by the same window
 #: that refused the first call. 61s clears a 60s window with a second to spare. Only the
@@ -232,6 +234,9 @@ class CachedHttp:
     ) -> None:
         self._cache_dir = cache_dir / namespace
         self._cache_dir.mkdir(parents=True, exist_ok=True)
+        #: the namespace a build's input record names this client's responses under
+        #: (`vinci.provenance`): ``sec``, ``efts``, ``polygon``, ``finra`` …
+        self._namespace = namespace
         self._min_interval = min_interval_sec
         self._max_retries = max_retries
         self._next_at = 0.0
@@ -260,11 +265,13 @@ class CachedHttp:
         """
         full_url = self._with_params(url, params)
         cached = self._read_cache(full_url, ttl_seconds)
-        if cached is not None:
-            return cached
-        text = self._fetch_with_retries(full_url)
-        self._write_cache(full_url, text)
-        return text
+        if cached is None:
+            cached = self._fetch_with_retries(full_url)
+            self._write_cache(full_url, cached)
+        # EVERY RESPONSE RETURNED IS AN INPUT, cached or fetched (`vinci.provenance`): recorded
+        # only while a build's recorder is open, and never changing what is returned
+        provenance.note_http(self._namespace, full_url, cached, self._fetched.get(full_url))
+        return cached
 
     def get_json(
         self,
@@ -303,11 +310,11 @@ class CachedHttp:
         loud path as GET; the cache key folds in the body so distinct queries don't collide."""
         cache_key = f"{url}\n#POST#{json.dumps(json_body, sort_keys=True)}"
         cached = self._read_cache(cache_key, ttl_seconds)
-        if cached is not None:
-            return json.loads(cached)
-        text = self._fetch_with_retries(url, json_body=json_body)
-        self._write_cache(cache_key, text)
-        return json.loads(text)
+        if cached is None:
+            cached = self._fetch_with_retries(url, json_body=json_body)
+            self._write_cache(cache_key, cached)
+        provenance.note_http(self._namespace, cache_key, cached, self._fetched.get(cache_key))
+        return json.loads(cached)
 
     def close(self) -> None:
         self._client.close()

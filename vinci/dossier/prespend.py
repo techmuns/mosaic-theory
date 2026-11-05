@@ -53,6 +53,12 @@ These run on a first assembly too: a page that does not exist yet costs the same
 synthesis-dependent refusals (``_require_synthesis``, the uncited-material-figure guard) cannot be
 decided here.
 
+WHAT IT READ (2026-11-05, `vinci.dossier.inputs`). The check records every input its $0 build
+reads — the build's own, and the exhibits the LLM-phase forecast fetches, which the paid build
+reads inside its covenant phase — and prints them against the committed page's ``inputs`` record:
+per class, which inputs are the page's and which moved. It decides nothing: the exit code is the
+regressions' and the refusals' alone. ``--inputs-json`` writes the record in full.
+
 THE DRAWDOWN'S DATED PARTS (2026-11-04, `DrawdownAnchor`). The current window rolls with the
 page's date, so a rebuild moves an old gap-down OUT of it; on an anchored name the at-the-anchor
 part now carries that event, dated. A current-window field (``MOVABLE``) that leaves the window is
@@ -74,7 +80,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeGuard
 
+from vinci import provenance
 from vinci.config import Config
+from vinci.dossier import inputs as page_inputs
 from vinci.dossier.freshness import MAX_PANEL_AGE_DAYS, PanelAge, panel_age
 from vinci.dossier.schemas import Dossier, MechanicalLayer, SourceStatus, dossier_json
 from vinci.graph.llm import LlmClient, LlmError
@@ -522,7 +530,11 @@ def post_spend_checks(built: Dossier, bundle: CiqBundle, *,
 
 
 def _stamps(doc: Mapping[str, Any]) -> Counter[str]:
-    """Every export sha256 the page stamps (any key ending ``sha256``), with how often."""
+    """Every export sha256 the page stamps (any key ending ``sha256``, and a stamp written into a
+    string — an anchor input's source — through the one shared reader,
+    `ciq_balance.stamps_in_text`), with how often."""
+    from vinci.dossier.ciq_balance import stamps_in_text
+
     seen: Counter[str] = Counter()
 
     def walk(node: Any) -> None:
@@ -535,8 +547,11 @@ def _stamps(doc: Mapping[str, Any]) -> Counter[str]:
         elif isinstance(node, list):
             for child in node:
                 walk(child)
+        elif isinstance(node, str):
+            seen.update(stamps_in_text(node))
 
-    walk(doc)
+    # the page's input record names full sha256s of its own; those are no export stamps
+    walk({k: v for k, v in doc.items() if k != "inputs"})
     return seen
 
 
@@ -632,9 +647,11 @@ def report(ticker: str, committed: Mapping[str, Any] | None, fresh: Mapping[str,
     return lines
 
 
-def run(ticker: str, cfg: Config, *, emit: Callable[[str], None] = print) -> int:
+def run(ticker: str, cfg: Config, *, emit: Callable[[str], None] = print,
+        inputs_json: Path | None = None) -> int:
     """The check for one name: 0 when nothing present on the committed page is lost and no
-    ``POST_SPEND`` refusal fires, else 1. With no committed page only the refusals are checked."""
+    ``POST_SPEND`` refusal fires, else 1. With no committed page only the refusals are checked.
+    ``inputs_json``: where to write this build's input record in full (`vinci.dossier.inputs`)."""
     from vinci.dossier.assemble import DossierAssemblyError
     from vinci.dossier.ciq import CiqBundle
     from vinci.dossier.ciq_sheets import file_provenance
@@ -645,21 +662,35 @@ def run(ticker: str, cfg: Config, *, emit: Callable[[str], None] = print) -> int
     t = ticker.upper()
     path = cfg.data_dir / "dossiers" / t / "dossier.json"
     committed = json.loads(path.read_text()) if path.exists() else None
-    try:
-        built = mechanical_build(t, cfg)
-        # the forecast feeds only the comparison, so a first assembly does not fetch its exhibits
-        forecast = (forecast_llm_fields(built, http=build_sec_http(cfg))
-                    if committed is not None else None)
-    except (DossierAssemblyError, SecRateLimitedError, LookupError) as exc:
-        emit(f"=== pre-spend check · {t}: the $0 build was REFUSED — the paid build stops at the "
-             f"same point — {type(exc).__name__}: {exc} ===")
-        return 1
+    # every read this check makes — the $0 build's (its own recorder is nested in this one) and
+    # the forecast's exhibit fetches, which the paid build makes inside its covenant phase
+    with provenance.recording() as reads:
+        try:
+            built = mechanical_build(t, cfg)
+            # the forecast feeds only the comparison, so a first assembly does not fetch its
+            # exhibits
+            forecast = (forecast_llm_fields(built, http=build_sec_http(cfg))
+                        if committed is not None else None)
+        except (DossierAssemblyError, SecRateLimitedError, LookupError) as exc:
+            emit(f"=== pre-spend check · {t}: the $0 build was REFUSED — the paid build stops at "
+                 f"the same point — {type(exc).__name__}: {exc} ===")
+            return 1
     fresh = json.loads(dossier_json(built))
     bundle = CiqBundle.from_files(t, LocalFolderStore.from_config(cfg).files(t))
     exports = [(wb.kind + (f"/{wb.freq}" if wb.freq else ""), file_provenance(wb.path)[0])
                for wb in bundle.workbooks]
     post = post_spend_checks(built, bundle, committed=path.parent)
     result = compare(committed, fresh, forecast) if committed is not None else None
-    for line in report(t, committed, fresh, result, exports, post):
+    present = page_inputs.manifest_for(reads.reads(), db_path=cfg.db_path,
+                                       extraction_version=built.extraction_version or "",
+                                       facts_base=cfg.data_dir / "facts")
+    recorded = (page_inputs.InputManifest.model_validate(committed["inputs"])
+                if committed is not None and committed.get("inputs") else None)
+    lines = report(t, committed, fresh, result, exports, post)
+    # the INPUTS block sits before the verdict, which stays the last line
+    for line in [*lines[:-1], *page_inputs.summary_lines(present, recorded), lines[-1]]:
         emit(line)
+    if inputs_json is not None:
+        page_inputs.write_json(present, inputs_json)
+        emit(f"input record written to {inputs_json}")
     return 1 if post.refusals or (result is not None and result.regressions) else 0

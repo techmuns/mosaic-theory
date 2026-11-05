@@ -34,7 +34,15 @@ THE RECORD — shape contract, one literal example (abridged to one call):
      "synthesis": {"lean": "strongly-bullish", "lean_raw": "Strongly bullish",
                    "draws": {"attempted": 5, "completed": 5,
                              "labels": {"strongly-bullish": 5}, "unanimous": true}},
-     "flags": {"caveats": 4, "qa_flags": 11}}
+     "flags": {"caveats": 4, "qa_flags": 11},
+     "inputs": {"schema_version": 1, "recorded": "build", "inputs_id": "inputs-3c1f…",
+                "ciq": [{"kind": "estimates", "file": "…EstimatesReport.xls",
+                         "sha256": "9a120cb5ae…", "bytes": 412160, …}],
+                "responses": [{"namespace": "sec", "source_url": "https://data.sec.gov/api/
+                               xbrl/companyfacts/CIK0001652044.json", "response_sha256": "…",
+                               "fetched_at": "2026-11-03T12:40:02Z", "sealed_by": […], …}],
+                "prices": [{"internal_id": "…", "ticker": "GOOGL", "newest_bar": "2026-10-31",
+                            "rows_sha256": "…", …}], "unrecorded": [], …}}
 
 BOUNDARIES THE FIELDS CARRY. ``usd`` is list price over the METERED calls only; a call that got no
 response is counted in ``unmetered_calls`` and adds nothing. ``usd`` is ``null`` when the model has
@@ -43,6 +51,12 @@ with no LLM client, which made no call. The phase is the tool name: ``covenant_t
 ``maturity_event``, ``operating_drivers``, ``assemble_dossier_framing`` (synthesis).
 ``synthesis`` and ``flags`` are ``null`` when nothing was written. An ``error`` longer than 300
 characters says it was cut.
+
+``inputs`` (schema 2, 2026-11-05) is what the build READ (`vinci.dossier.inputs`), IN FULL —
+every response listed (``responses_listed: "all"``), where the page carries the list cut to the
+fact layer's sources under the same ``inputs_id``; on a refused or failed build, everything it
+read before it stopped — so a refusal can be replayed on the inputs that produced it. ``null``
+only when the record of the reads could not itself be built; the line says so in ``error``.
 """
 
 from __future__ import annotations
@@ -57,11 +71,12 @@ from typing import Any
 
 from vinci.config import LLM_PRICE_PER_MTOK
 from vinci.dossier.extraction_version import EXTRACTION_VERSION
+from vinci.dossier.inputs_schema import InputManifest
 from vinci.dossier.schemas import Dossier
 from vinci.dossier.verdict import split_lean
 from vinci.graph.llm import MeteredLlmClient, cost_usd
 
-SCHEMA = 1
+SCHEMA = 2
 RUNS_DIR = "assembly_runs"
 ERROR_CAP = 300
 _TOKEN_FIELDS = ("input_tokens", "output_tokens", "cache_creation_input_tokens",
@@ -113,7 +128,8 @@ def _synthesis(dossier: Dossier) -> dict[str, Any] | None:
 def name_record(
     *, run_id: str, ticker: str, started: datetime, finished: datetime,
     meter: MeteredLlmClient | None, dossier: Dossier | None = None,
-    error: BaseException | None = None,
+    error: BaseException | None = None, inputs: InputManifest | None = None,
+    inputs_error: str | None = None,
 ) -> dict[str, Any]:
     """One name's line. Pass ``dossier`` for a written build, ``error`` for one that raised."""
     from vinci.dossier.assemble import DossierAssemblyError
@@ -127,9 +143,13 @@ def name_record(
     costs = [c for u in metered if model is not None and (c := cost_usd(model, u)) is not None]
     outcome = ("written" if error is None
                else "refused" if isinstance(error, DossierAssemblyError) else "failed")
+    said = f"{type(error).__name__}: {error}" if error is not None else None
+    if inputs is None and inputs_error:
+        lost = f"input record NOT built: {inputs_error}"
+        said = f"{said}; {lost}" if said else lost
     return {
         "schema": SCHEMA, "run_id": run_id, "ticker": ticker, "outcome": outcome,
-        "error": _capped(f"{type(error).__name__}: {error}") if error is not None else None,
+        "error": _capped(said),
         "started_at": _iso(started), "finished_at": _iso(finished),
         "seconds": round((finished - started).total_seconds(), 1),
         "model": model, "extraction_version": EXTRACTION_VERSION,
@@ -141,6 +161,7 @@ def name_record(
         "synthesis": _synthesis(dossier) if dossier is not None else None,
         "flags": ({"caveats": len(dossier.caveats), "qa_flags": len(dossier.qa_flags)}
                   if dossier is not None else None),
+        "inputs": inputs.model_dump(mode="json") if inputs is not None else None,
     }
 
 
