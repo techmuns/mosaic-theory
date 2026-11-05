@@ -10769,8 +10769,8 @@
   "assembled_at": "2026-11-04T18:58:07.539074Z",
   "extraction_version": "2026-11-04.drawdown-window-at-price-date",
   "price_store": {
-    "declared_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/busy-goldstine-88c81c/data/vinci.db",
-    "resolved_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/busy-goldstine-88c81c/data/vinci.db",
+    "declared_path": "busy-goldstine-88c81c",
+    "resolved_path": "busy-goldstine-88c81c",
     "frontier": "2026-11-03"
   },
   "sector": "Consumer Staples",
