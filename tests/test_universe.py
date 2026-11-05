@@ -157,3 +157,17 @@ def test_build_universe_persists_fetched_sic_onto_identity(
     assert len(secs) == 1
     assert secs[0].sic == "7372"  # the dead write is fixed — the fetched SIC persists at rest
     assert sector_for_sic(secs[0].sic) == "Technology"  # → the coarse bucket the roll-up uses
+
+
+def test_share_periods_are_point_in_time_no_lookahead() -> None:
+    """REGRESSION (review #3, MED lookahead): the assay reuses ``universe.recent_share_periods`` so
+    basket cap-banding never sees shares disclosed AFTER as_of. At as_of=2022-07-01 the current and
+    next quarter-end frames (disclosed later) are excluded by the ~40-day filing-lag gate.
+
+    Moved here from `tests/test_theme_assay.py` when the assay retired (#908, round 2): it was the
+    ONLY pin on the gate, and `build_universe` reads the same frames on the decision path."""
+    keys = recent_share_periods(date(2022, 7, 1))
+    assert keys, "expected some admitted share-frame periods"
+    assert "CY2022Q2I" not in keys  # qe 2022-06-30, disclosed ~Aug 2022 — postdates as_of
+    assert "CY2022Q3I" not in keys  # qe 2022-09-30 — a full quarter in the FUTURE
+    assert keys[-1] == "CY2022Q1I"  # latest admitted = the last plausibly-filed quarter

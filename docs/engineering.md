@@ -343,8 +343,9 @@ PR (CLAUDE.md: coin-time translation).
   Distinct from **book** (= the live portfolio of positions, `monitor.py`) and from **frame**
   (three unrelated live meanings: `frame()` page layout, the XBRL frames API, "reference frame"
   on an underwrite record).
-- **themes lane** (`vinci/themes/`): **theme** = a ratified thematic driver; **DriverSpec** = its
-  verbatim definition; **sweep** = the monthly theme sweep; **radar** = the frontend triage inbox;
+- **themes lane** (`vinci/themes/`, RETIRED 2026-11-04 with R2; last held by `481e82f7`):
+  **theme** = a ratified thematic driver; **DriverSpec** = its verbatim definition; **sweep** = the
+  monthly theme sweep; **radar** = the frontend triage inbox;
   **assay** = the evidence test of a theme (**retrocast** = assay on deeper history);
   **freeze** = the frozen theme source artifact that must reproduce byte-identical.
 - **mirror** — the committed `frontend/` copy of data snapshots the static dashboard serves
@@ -403,7 +404,8 @@ PR (CLAUDE.md: coin-time translation).
   (`vinci/theme_intelligence/`). Plain words: *a versioned, source-cited summary of one investable
   idea that publisher articles support, and whether an analyst should look at it now* — RESEARCH
   NOW / WATCH / SKIP is a call on ANALYST ATTENTION, never a buy. Not the operator-typed house theme
-  card (`vinci/themes/thesis.py`) and not on the decision path. Guide: `docs/theme_intelligence.md`.
+  card (`vinci/themes/thesis.py`, retired 2026-11-04) and not on the decision path. Guide:
+  `docs/theme_intelligence.md`.
 - **Market-regime record** (theme intelligence, `ThesisKind.MARKET_REGIME`) — plain words: *a card
   for a market-STRUCTURE condition an article measures (breadth, correlation, dispersion) and the
   research opportunity it draws — e.g. "pick sectors, not the index" — that names no stock and

@@ -179,7 +179,6 @@ def test_the_screen_withholds_a_yuan_level_and_keeps_g3s_percentile() -> None:
 @pytest.mark.parametrize(("path", "function"), [
     ("vinci/screens/assemble.py", "enrich_with_fundamentals"),
     ("vinci/dossier/mechanical.py", "_at_latest_close"),
-    ("vinci/cli.py", "_pc_valuation"),
     # `edgar_eps` serves `desk_points`, which holds the read since Phase 2 C2
     ("vinci/theme_intelligence/market.py", "desk_points"),
 ])

@@ -154,20 +154,6 @@ def test_the_segment_read_takes_the_rule_and_names_the_amendment(
     assert got is not None and named in (got.source_ref or "")
 
 
-def test_the_exposure_stream_names_a_later_amendment_beside_the_annual() -> None:
-    from vinci.themes.exposure import recent_disclosure_stream
-
-    class _Docs:
-        def get_text(self, url: str, *, ttl_seconds: float | None = None) -> str:
-            return "<html><body>Item 1. Business We make semiconductors.</body></html>"
-
-    stream = recent_disclosure_stream(_edgar("SWKS"), cast(CachedHttp, _Docs()), "4127",
-                                      since=date(2026, 6, 1))
-    annual = [ref for ref, _ in stream if ref.startswith("10-K ")]
-    assert annual and "0000004127-25-000085" in annual[0]
-    assert "0000004127-26-000003" in annual[0] and "not read" in annual[0]
-
-
 # ─── 3. events: an 8-K/A counts for the codes it adds ─────────────────────────────────────────
 
 def test_an_amendment_counts_only_for_the_item_codes_it_adds() -> None:

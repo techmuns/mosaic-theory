@@ -164,9 +164,10 @@ def _pick_report(summary_xml: str, *, topic: re.Pattern[str] = _SEGMENT_REPORT,
     """(filename, short name) of the DETAILS report on ``topic`` — or raise, naming what was there.
 
     PARAMETERISED because the same resolution serves any note. The PP&E note the commissioning
-    ratio reads sat at R70 in the FY2025 10-K and R64 in the Q2 10-Q — the drift the monitoring
-    plan's Part 7 records ("R64, R64, R70 and R62 across its last four filings"), and the reason
-    every consumer must resolve by NAME rather than number.
+    ratio read (`vinci/edgar/commissioning.py`, its one other topic, retired in #910 with the
+    monitor's panels) sat at R70 in the FY2025 10-K and R64 in the Q2 10-Q — the drift the
+    monitoring plan's Part 7 records ("R64, R64, R70 and R62 across its last four filings"), and
+    the reason every consumer must resolve by NAME rather than number.
 
     A filing carries several segment reports and only one holds the numbers; the others are the
     accounting policy and a tables-only stub. Preferring "(Details)" is not a heuristic about

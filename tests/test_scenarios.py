@@ -417,18 +417,14 @@ def _load_build():  # type: ignore[no-untyped-def]
     return mod
 
 
-def test_emit_scenarios_matches_theme_embedded_card_and_is_deterministic() -> None:
-    """The standalone `frontend/scenarios/<T>.json` must be the EXACT `_scenario_card()` shape the
-    theme JSON embeds (one contract), and two emits must be byte-identical (committed output never
-    churns). Runs against the real committed `scenarios/` + `frontend/themes/` artifacts."""
+def test_emit_scenarios_is_deterministic() -> None:
+    """Two emits of `frontend/scenarios/<T>.json` must be byte-identical (committed output never
+    churns). Runs against the real committed `scenarios/`. (The half that matched the card the
+    theme JSON embedded left with `frontend/themes/` on 2026-11-04.)"""
     build = _load_build()
     root = Path(__file__).resolve().parents[1]
     cards = build._scenario_cards()
     assert "WERN" in cards                                  # the committed record reaches the emit
-    theme = json.loads((root / "frontend" / "themes" / "truckload-supply-purge.json").read_text())
-    embedded = next(w["scenarioCard"] for w in theme["watchlist"]
-                    if w["ticker"] == "WERN" and "scenarioCard" in w)
-    assert cards["WERN"] == embedded                        # ONE shape, wherever the card renders
     out = root / "frontend" / "scenarios"
     if out.is_dir():                                        # emitted by the build → pinned stable
         first = {p.name: p.read_bytes() for p in sorted(out.glob("*.json"))}
@@ -437,15 +433,6 @@ def test_emit_scenarios_matches_theme_embedded_card_and_is_deterministic() -> No
         assert first == second                              # idempotent, byte-for-byte
         idx = json.loads(second["index.json"].decode())
         assert idx == {"tickers": sorted(cards)}
-
-
-def test_reserved_theme_slugs_fail_loud() -> None:
-    """A theme slug that collides with a themes-route first segment (radar/watchlist/scan/forward)
-    would be unroutable — the build must refuse it, never ship a shadowed page."""
-    build = _load_build()
-    with pytest.raises(SystemExit, match="reserved themes route"):
-        build._slug("Radar")
-    assert build._slug("Truckload Supply Purge")[0] == "truckload-supply-purge"
 
 
 def test_dossier_view_resolves_existence_from_the_index_never_from_a_404() -> None:
@@ -614,29 +601,6 @@ console.log(JSON.stringify({{
     # PASS is the machine's bar test — it speaks only while the human's call is still open
     assert r["pendingShowsPass"] and r["targetHidesPass"], r
     assert r["pendingNoEntry"] and r["targetHasEntry"], r
-
-
-def test_theme_embedded_cards_are_regenerable_from_committed_inputs() -> None:
-    """The theme JSON embeds each watch name's card, and a pin asserts the embed equals a fresh
-    build — but the FREEZE source that writes it is git-ignored. Without a refresh path a
-    card-shape change is unsatisfiable in CI: the committed embed goes stale and nothing
-    committed can rebuild it. `refresh_theme_cards()` closes that, from committed inputs only.
-
-    Pinned by mutating the committed embed and asserting the refresh restores it byte-for-byte."""
-    build = _load_build()
-    root = Path(__file__).resolve().parents[1]
-    p = root / "frontend" / "themes" / "truckload-supply-purge.json"
-    original = p.read_text()
-    try:
-        doc = json.loads(original)
-        row = next(w for w in doc["watchlist"] if "scenarioCard" in w)
-        row["scenarioCard"] = {"ticker": row["ticker"], "stale": True}   # simulate a shape change
-        p.write_text(json.dumps(doc, indent=1))
-        assert build.refresh_theme_cards() == ["truckload-supply-purge"]
-        assert p.read_text() == original, "refresh must restore the embed byte-for-byte"
-        assert build.refresh_theme_cards() == [], "a clean refresh must be a no-op (idempotent)"
-    finally:
-        p.write_text(original)
 
 
 def test_entry_price_refuses_a_price_that_never_traded() -> None:

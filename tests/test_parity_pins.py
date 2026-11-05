@@ -30,32 +30,6 @@ def _load_build() -> Any:
     return mod
 
 
-def test_med3_tier_bucket_trio_agree() -> None:
-    """firm/partial/early ↔ grade-tier bucketing is maintained in THREE places (build.py
-    frozen_tiers, format.js GRADE_BUCKET, tier.js TIER_BASES) — one mapping, three languages."""
-    canonical = {"firm": {"binding", "quantified"}, "partial": {"committed"},
-                 "early": {"aspirational"}}
-    bp = _src("frontend/build.py")
-    m = re.search(r'"firm":.*?\("binding", "quantified"\)', bp, re.S)
-    assert m, "build.py frozen_tiers no longer buckets binding+quantified as firm"
-    assert '"partial": sum(1 for n in names if n["basis"] == "committed")' in bp
-    assert '"early": sum(1 for n in names if n["basis"] == "aspirational")' in bp
-    fj = _src("frontend/lib/format.js")
-    gb = re.search(r"GRADE_BUCKET\s*=\s*\{([^}]*)\}", fj)
-    assert gb, "format.js GRADE_BUCKET missing"
-    pairs = dict(re.findall(r"(\w+)\s*:\s*\"(\w+)\"", gb.group(1)))
-    js_map: dict[str, set[str]] = {}
-    for basis, bucket in pairs.items():
-        js_map.setdefault(bucket, set()).add(basis)
-    assert {k: v for k, v in js_map.items() if k in canonical} == canonical
-    tj = _src("frontend/views/themes/tier.js")
-    tb = re.search(r"TIER_BASES\s*=\s*\{([^}]*)\}", tj)
-    assert tb, "tier.js TIER_BASES missing"
-    tiers = {k: set(re.findall(r'"(\w+)"', v)) for k, v in
-             re.findall(r"(\w+):\s*\[([^\]]*)\]", tb.group(1))}
-    assert tiers == canonical
-
-
 def test_med4_ranker_weights_js_mirror() -> None:
     """The queue ships contributions but NOT weights, so snapshots.js hand-copies the defaults —
     pin the JS literals to RankWeights so a re-weight cannot ship a stale legend."""
@@ -82,42 +56,6 @@ def test_med5_screen_gate_prose_matches_thresholds() -> None:
     js = _src("frontend/lib/snapshots.js")
     assert "−30% to −85%" in js, "G1 prose no longer states -30%/-85%"
     assert "bottom quartile" in js, "G3 prose no longer states the bottom quartile"
-
-
-def test_med6_power_floor_mirrors_backend() -> None:
-    """build.py's _MIN_THEMES + _POWER_NOTE mirror vinci.themes.forward's a-priori floor
-    (MIN_DRIVERS / MIN_THEME_QUARTERS) — the one build↔backend mirror test_build_themes missed."""
-    from vinci.themes.forward import MIN_DRIVERS, MIN_THEME_QUARTERS
-
-    b = _load_build()
-    assert b._MIN_THEMES == MIN_DRIVERS
-    assert f">={MIN_THEME_QUARTERS} theme-quarters" in b._POWER_NOTE
-    assert f">={MIN_DRIVERS} drivers" in b._POWER_NOTE
-
-
-def test_low9_scan_basis_keys_equal_exposure_enum() -> None:
-    """build.py's _SCAN_BASIS keys are a hand-copy of the ExposureBasis enum values (stdlib
-    fence) — pin them equal BY NAME so enum drift is caught here, not by a downstream KeyError."""
-    from vinci.themes.schemas import ExposureBasis
-
-    b = _load_build()
-    genuine = {e.value for e in ExposureBasis} - {ExposureBasis.UNASSESSED_ERROR.value}
-    # UNASSESSED_ERROR is deliberately NOT a scan-basis bucket (a scan FAILURE, not a disclosure
-    # read) — the map must cover exactly the genuine bases, no more, no fewer.
-    assert set(b._SCAN_BASIS) == genuine
-
-
-def test_low10_reserved_slugs_match_router_normalizer() -> None:
-    """The reserved first-segment set lives in build.py (_RESERVED_SLUGS, the build-time guard)
-    and in app.js's parseHash legacy normalizer — pin the sets equal."""
-    b = _load_build()
-    app = _src("frontend/app.js")
-    js_set = set()
-    if re.search(r'h === "radar" \|\| h\.startsWith\("radar/"\)', app):
-        js_set.add("radar")
-    js_set |= set(re.findall(r'h === "themes/(\w+)"', app))
-    assert js_set == set(b._RESERVED_SLUGS), (
-        f"app.js normalizer handles {js_set} but build.py reserves {set(b._RESERVED_SLUGS)}")
 
 
 def test_card_verdict_keys_read_by_js_are_emitted_by_build() -> None:

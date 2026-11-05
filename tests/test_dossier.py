@@ -3632,6 +3632,21 @@ def test_clean_num_treats_ciq_blanks_as_unavailable() -> None:
     assert ciq.clean_num(5) == 5.0
 
 
+def test_a_percent_display_cell_reads_through_the_shared_ciq_helper() -> None:
+    """`coupon` is a DISPLAY string ("4.500%"). The house rule allows one shared, tested helper and
+    forbids an ad-hoc regex; `clean_num` is that helper and it returns None — never 0 — for an
+    unavailable cell, which is what keeps 'NM' out of the average.
+
+    Moved here from `tests/test_cohort_five.py::
+    test_the_coupon_cell_is_read_through_the_shared_ciq_helper` (retired in #910): its two
+    assertions on `clean_num`. The third averaged coupons in `vinci/borrowing.py`, which retired
+    with the panels; this was the one pin on a `%` cell."""
+    from vinci.dossier.ciq import clean_num
+
+    assert clean_num("4.500%") == 4.5
+    assert clean_num("NA") is None and clean_num("NM") is None
+
+
 def test_excel_date_handles_serial_and_string() -> None:
     assert ciq.excel_date(44377.0) == date(2021, 6, 30)  # Excel serial
     assert ciq.excel_date("Jan-31-2024") == date(2024, 1, 31)  # string

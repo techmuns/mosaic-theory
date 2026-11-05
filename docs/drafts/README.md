@@ -1,9 +1,8 @@
-# Draft thesis cards — NOT declared
+# Draft thesis cards — NOT declared, and no longer declarable
 
-A card here is **not declared** and nothing loads it. `load_all_theses` reads only
-`data/themes/thesis/`; a file in this directory is a working draft held for the operator, kept in
-the repo rather than a scratch path so the STATE.md row that cites it still resolves next week.
-
-Declaring is the operator's act: `vinci theme-thesis declare <driver> --file <card.json>`. When a
-draft is declared, the declared copy lands under `data/themes/thesis/` and the draft here is deleted
-— the record of what changed between draft and declaration lives in `docs/records/`, not here.
+A card here was a working draft of a `vinci.themes` thesis card, held for the operator so the
+STATE.md row that cited it would still resolve. `vinci.themes` retired on 2026-11-04 (#908) with
+its `theme-thesis declare` command and the `data/themes/thesis/` directory it declared into, so
+nothing loads a file here and nothing can declare one. The one draft left,
+`ai-compute-platform.card.draft.json`, is the falsified pre-declaration card, kept as history.
+Read the retired procedure with `git show 481e82f7:docs/drafts/README.md`.

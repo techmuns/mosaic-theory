@@ -2811,7 +2811,7 @@ FORWARD_METRICS: tuple[str, ...] = (
 #: Lines CIQ states NEGATIVE: a 'Downward' revision is a LARGER outflow (see `RevisionCount`).
 _OUTFLOW_LINES = frozenset({"Capital Expenditure"})
 #: Trends carries an 18-month vintage `acceleration_read` never reads. A scenario needs it: the two
-#: halves of a price decomposition share a window (RUNBOOKS step 10), and 18 months is as far back
+#: halves of a price decomposition share a window (RUNBOOKS §m), and 18 months is as far back
 #: as Trends goes.
 _FORWARD_LOOKBACK: dict[str, int] = {**_SNAP_LOOKBACK, "18 months ago": 18}
 _FORWARD_YEARS = 3  # FY+0, FY+1, FY+2

@@ -25,8 +25,6 @@ const SHARED = [
     does: "Per-name research records — assembled-facts dossiers and first-cut underwrites, typed and kept distinct; the human's confirm/override is the verdict of record." },
   { route: "decision-log", label: "Decision log", state: "live",
     does: "The immutable, append-only ledger of logged verdicts — each a frozen leg of the BUY−AVOID spread, sealed beside the machine's proposal (confirm / override / no-proposal tracked). Displayed here; logged only via the CLI." },
-  { route: "monitor-panels", label: "Monitor panels", state: "live",
-    does: "What has happened to each followed name since it was underwritten, one panel per question — the call, its kill criteria, the multiple, what has printed since, dilution, attribution, and the sources behind all of it. A panel that does not apply to a name is absent; one that applies and cannot be computed says so and names what is missing. The machine surfaces an indicator; the human concludes." },
 ];
 
 // --- EDGE REGISTRY: adding an edge / a stage is a DATA change here ------------
@@ -50,18 +48,6 @@ const EDGES = [
           what: "A structured bull / bear / judge step over a finalist.",
           trigger: "Conditional · built only if operating the manual loop reveals it is needed. May never be built.",
         } },
-    ],
-  },
-  {
-    key: "themes", label: "Themes", state: "live",
-    stages: [
-      // Two tabs, funnel order: the themes landing (glance — table, watchlist, intake strip),
-      // then the radar intake (candidates -> inbox -> log). Theme pages and tier tables are
-      // DRILL-DOWNS from the landing (#/themes/<theme>[/<tier>]), framed with these same tabs.
-      { route: "themes", label: "Themes",
-        does: "Where each driver stands, and what it needs next." },
-      { route: "themes/radar", label: "Radar",
-        does: "Every theme idea on one map — how real the evidence is vs how much price has already moved." },
     ],
   },
   {
@@ -107,18 +93,16 @@ const CAPITAL = [
     } },
 ];
 
-// View modules registered by BASE route (first hash segment). The Theme-edge
-// sub-routes (#/themes/scan …) all resolve to the ONE `themes` module.
+// View modules registered by BASE route (first hash segment). Every sub-route
+// (#/intel/themes …) resolves to its base's module.
 const VIEWS = {
   overview: () => import("./views/shared/overview.js"),
   dossier: () => import("./views/shared/dossier.js"),
   "decision-log": () => import("./views/shared/decision-log.js"),
-  "monitor-panels": () => import("./views/shared/panels.js"),
   ingestion: () => import("./views/edge2/ingestion.js"),
   "screen-overshoot": () => import("./views/edge2/screen-overshoot.js"),
   ranker: () => import("./views/edge2/ranker.js"),
   graph: () => import("./views/edge2/graph.js"),
-  themes: () => import("./views/themes/index.js"),
   intel: () => import("./views/intel/desk.js"),
 };
 
@@ -153,9 +137,9 @@ function edgeOfItem(item) {
 }
 
 // Resolve the nav item for a full path by LONGEST route-prefix, so a sub-route
-// (#/themes/scan) resolves to its own stage while a detail path (#/dossier/TICKER)
-// still resolves to its section. Path-segment aware ("themes" matches "themes/scan"
-// but not "themestuff").
+// (#/intel/themes) resolves to its own item while a detail path (#/dossier/TICKER)
+// still resolves to its section. Path-segment aware ("intel" matches "intel/themes"
+// but not "intelx").
 function resolveItem(route, params) {
   const full = [route, ...params].join("/");
   let best = null;
@@ -291,10 +275,6 @@ function renderConditional(root, item) {
 // --- router ------------------------------------------------------------------
 function parseHash() {
   let h = (location.hash || "#/overview").replace(/^#\/?/, "");
-  // Legacy-route normalizer — old URLs keep working after the IA fold-in (radar joined the
-  // themes sub-router; the flat watchlist/scan/forward screens folded into the landing).
-  if (h === "radar" || h.startsWith("radar/")) h = "themes/" + h;
-  else if (h === "themes/watchlist" || h === "themes/scan" || h === "themes/forward") h = "themes";
   const [route, ...rest] = h.split("/");
   return { route: route || "overview", params: rest };
 }
