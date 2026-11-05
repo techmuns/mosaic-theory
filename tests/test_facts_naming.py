@@ -237,7 +237,7 @@ def test_a_local_snapshot_fails_loud_where_its_objects_are_not(
     monkeypatch.delenv("VINCI_FACTS_STORE", raising=False)
     _publish(tmp_path, _load("NKE-companyfacts-slice.json"), name="screen", storage="local")
     (tmp_path / "local").rename(tmp_path / "elsewhere")
-    with pytest.raises(FactsStoreNotPresentError, match="not shared until R2"):
+    with pytest.raises(FactsStoreNotPresentError, match="if uploaded, in R2"):
         FactStore(name="screen", facts_base=tmp_path)
     monkeypatch.setenv("VINCI_FACTS_STORE", str(tmp_path / "elsewhere"))
     with FactStore(name="screen", facts_base=tmp_path) as store:     # pointed at, it opens
