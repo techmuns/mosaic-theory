@@ -22,6 +22,7 @@ from datetime import date
 from pathlib import Path
 from types import ModuleType
 from typing import Any
+from urllib.parse import parse_qsl, unquote
 
 import httpx
 import pytest
@@ -66,6 +67,26 @@ def _err(status: int, code: str) -> httpx.Response:
     return httpx.Response(status, content=f"<Error><Code>{code}</Code></Error>".encode())
 
 
+def _resigned(request: httpx.Request) -> str:
+    """The Authorization the RECEIVED request should carry: its method, its raw path and query as
+    sent, the headers it says it signed, and its body's own hash (round 2: the client signing one
+    path or query and sending another passed every test)."""
+    auth = request.headers["authorization"]
+    names = auth.split("SignedHeaders=", 1)[1].split(",", 1)[0].split(";")
+    path, _, qs = request.url.raw_path.decode().partition("?")
+    return sign(request.method, request.url.host, unquote(path),
+                query=parse_qsl(qs, keep_blank_values=True),
+                headers={n: request.headers[n] for n in names
+                         if n not in ("host", "x-amz-content-sha256")},
+                payload_sha256=_sha(request.content), access_key=CONFIG.access_key_id,
+                secret_key=CONFIG.secret_access_key, region="auto")["authorization"]
+
+
+def _flip(data: bytes) -> bytes:
+    """The same bytes with the last bit flipped: a corruption no size check can see."""
+    return data[:-1] + bytes([data[-1] ^ 1])
+
+
 class FakeBucket:
     """One R2 bucket in memory, keeping the S3 rules the client depends on."""
 
@@ -80,6 +101,8 @@ class FakeBucket:
         assert request.url.host == f"{ACCOUNT}.r2.cloudflarestorage.com"
         assert request.headers["authorization"].startswith(
             "AWS4-HMAC-SHA256 Credential=AKFAKEACCESSKEY/")
+        if request.headers["authorization"] != _resigned(request):
+            return _err(403, "SignatureDoesNotMatch")
         body = request.content
         assert request.headers["x-amz-content-sha256"] == _sha(body)
         bucket, _, key = request.url.path.lstrip("/").partition("/")
@@ -507,18 +530,19 @@ def test_a_refused_r2_check_turns_the_validator_red(monkeypatch: pytest.MonkeyPa
 
 
 class _RottingBucket(FakeBucket):
-    """Accepts a PUT (its digest checked) and stores other bytes: what the read-back is for."""
+    """Accepts a PUT (its digest checked) and stores other bytes OF THE SAME SIZE: what the
+    read-back's hash is for (round 2: an appended byte let a size compare pass the suite)."""
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
         r = super().__call__(request)
         _, _, key = request.url.path.lstrip("/").partition("/")
         if request.method == "PUT" and r.status_code == 200 and "/order/" in key:
-            self.objects[key] = self.objects[key] + b"\0"
+            self.objects[key] = _flip(self.objects[key])
         return r
 
 
 def test_the_read_back_catches_bytes_the_bucket_changed(pages: dict[str, Any]) -> None:
-    """NEGATIVE: every order object is stored with a byte appended; each is reported, and every
+    """NEGATIVE: every order object is stored with one bit flipped; each is reported, and every
     data object reads back clean."""
     bucket = _RottingBucket()
     with _client(bucket) as client:
@@ -576,3 +600,157 @@ def test_a_listing_that_is_not_xml_is_an_r2_error() -> None:
     with _client(_HtmlBucket()) as client, pytest.raises(R2RequestError,
                                                           match="ListObjectsV2: not S3's XML"):
         list(client.list_objects())
+
+
+
+# --- round 2 (the coordinator's review of #913) ----------------------------------------------
+
+def test_same_size_corruption_is_caught_at_every_hash(pages: dict[str, Any],
+                                                     tmp_path: Path) -> None:
+    """Item 1: each corruption here keeps the object's size, so only the sha256 can see it: the
+    fetch, the 412 compare and the cached copy (the read-back: the rotting bucket above)."""
+    entry = pages["files"][0]
+    sealed = (OBJECTS / entry["path"]).read_bytes()
+    flipped = _uploaded(pages)
+    flipped.objects[entry["path"]] = _flip(sealed)
+    with pytest.raises(FactsStoreError, match="are not the manifest's"):
+        R2Objects(_client(flipped), tmp_path / "a").fetch(entry)
+    assert not (tmp_path / "a" / entry["path"]).exists()
+    with _client(flipped) as client, pytest.raises(RemoteBytesDifferError):
+        client.put_new(entry["path"], sealed)
+    assert flipped.objects[entry["path"]] == _flip(sealed)
+    good = R2Objects(_client(_uploaded(pages)), tmp_path / "b")
+    path, _ = good.fetch(entry)
+    path.write_bytes(_flip(sealed))
+    assert good.fetch(entry)[1] is True and path.read_bytes() == sealed
+
+
+def test_an_older_snapshot_cannot_upload_below_the_current_list(pages: dict[str, Any],
+                                                                tmp_path: Path) -> None:
+    """Item 2: an old manifest written with no exclusion uploads with none, unless every current
+    snapshot's list is held to it too (the loop over current.json). And the snapshot's own count
+    binds where no current snapshot lists one."""
+    old = {**pages, "scope": {**pages["scope"], "exclusions_listed": 0,
+                              "excluded_by_operator_instruction": 0}}
+    with pytest.raises(FactsStoreError, match=r"exclude 0 name\(s\).*excluding 6"):
+        require_upload_exclusions(old, [])
+    (tmp_path / "manifests").mkdir()
+    require_upload_exclusions(old, [], base=tmp_path)            # nothing current: none needed
+    with pytest.raises(FactsStoreError, match=r"exclude 5 name\(s\).*excluding 6"):
+        require_upload_exclusions(pages, _SIX_OTHERS[:5], base=tmp_path)
+
+
+def test_the_upload_fails_when_the_bucket_holds_what_no_manifest_names(
+        monkeypatch: pytest.MonkeyPatch, pages: dict[str, Any],
+        capsys: pytest.CaptureFixture[str]) -> None:
+    """Item 4: the audit is the evidence that nothing but the manifests' objects is in the bucket,
+    so a key no manifest names, or a named key of another size, fails the run."""
+    from vinci.facts import remote
+    from vinci.facts.__main__ import main
+    argv = ["upload", "--workers", "2", *(x for t in _SIX_OTHERS for x in ("--exclude", t))]
+    for extra in ({"edgar/stray/2020/" + "0" * 64 + ".parquet": b"x"},
+                  {load_manifest(name="screen")["files"][0]["path"]: b"x"}):
+        bucket = FakeBucket()
+        bucket.objects.update(extra)
+        monkeypatch.setattr(remote.R2Client, "from_env",
+                            classmethod(lambda cls, b=bucket: _client(b)))
+        assert main(argv) == 1
+        assert "FAIL: the bucket holds" in capsys.readouterr().out
+
+
+def test_bytes_changed_after_the_local_verify_are_not_uploaded(
+        monkeypatch: pytest.MonkeyPatch, pages: dict[str, Any], tmp_path: Path) -> None:
+    """Item 5: the re-hash inside each PUT, for a file that changed after the pre-verify."""
+    from vinci.facts import remote
+    local = tmp_path / "objects"
+    shutil.copytree(OBJECTS, local)
+    target = local / pages["files"][3]["path"]
+    target.write_bytes(_flip(target.read_bytes()))
+    monkeypatch.setattr(remote, "verify_manifest", lambda *a, **k: [])
+    bucket = FakeBucket()
+    with _client(bucket) as client:
+        rep = upload_snapshot(pages, local, client, workers=2)
+    assert rep.written == 378 and len(rep.problems) == 1
+    assert "changed on disk since it was verified" in rep.problems[0]
+    assert pages["files"][3]["path"] not in bucket.objects
+
+
+def test_a_transient_status_is_retried_and_a_lasting_one_reported() -> None:
+    """Item 5: 503 is retried with backoff; three in a row are reported with S3's code."""
+    bucket = FakeBucket()
+    bucket.objects["k/2020/x.parquet"] = b"abc"
+    answers = [503, 503]
+
+    def flaky(request: httpx.Request) -> httpx.Response:
+        if answers:
+            return _err(answers.pop(), "ServiceUnavailable")
+        return bucket(request)
+
+    waits: list[float] = []
+    client = R2Client(CONFIG, transport=httpx.MockTransport(flaky), retries=2,
+                      sleep=waits.append)
+    assert client.get("k/2020/x.parquet") == b"abc" and waits == [0.5, 1.0]
+    answers.extend([503, 503, 503])
+    with pytest.raises(R2RequestError, match="HTTP 503 ServiceUnavailable after 3 attempts"):
+        client.get("k/2020/x.parquet")
+
+
+class _EndlessBucket(FakeBucket):
+    def _list(self, request: httpx.Request) -> httpx.Response:
+        ns = "http://s3.amazonaws.com/doc/2006-03-01/"
+        return httpx.Response(200, content=(f'<ListBucketResult xmlns="{ns}"><IsTruncated>true'
+                                            "</IsTruncated></ListBucketResult>").encode())
+
+
+def test_a_truncated_listing_without_a_token_is_an_error() -> None:
+    """Item 5: never loop forever on page one, never stop short and call it the whole bucket."""
+    with _client(_EndlessBucket()) as client, pytest.raises(
+            R2RequestError, match="truncated with no continuation token"):
+        list(client.list_objects())
+
+
+def test_the_account_id_and_a_placeholder_are_refused(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Item 5: an account id that is not one never reaches a host name. Item 9: a value copied
+    from .env.example unedited is refused by its NAME, as config.sec_user_agent refuses its own."""
+    env = dict(zip(("R2_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET"),
+                   CONFIG.secrets(), strict=True))
+    assert R2Config.from_env(env) == CONFIG
+    with pytest.raises(R2NotConfiguredError, match="R2_ACCOUNT_ID is not an account id"):
+        R2Config.from_env({**env, "R2_ACCOUNT_ID": "evil.example/x"})
+    example = (ROOT / ".env.example").read_text()
+    copied = {n: line.split("=", 1)[1] for line in example.splitlines()
+              for n in env if line.startswith(f"{n}=")}
+    assert set(copied) == set(env)
+    with pytest.raises(R2NotConfiguredError) as got:
+        R2Config.from_env(copied)
+    assert "still .env.example's placeholder" in str(got.value)
+    for n in env:
+        assert n in str(got.value) and copied[n] not in str(got.value)
+
+
+def test_a_cache_write_that_fails_is_counted_and_leaves_nothing(
+        monkeypatch: pytest.MonkeyPatch, pages: dict[str, Any], tmp_path: Path) -> None:
+    """Items 5 and 6: the write goes to a temporary file renamed into place, so a failure leaves
+    no object at its name and no temporary file; and fetch_all counts it rather than dying."""
+    def full(*a: Any, **k: Any) -> None:
+        raise OSError(28, "No space left on device")
+
+    monkeypatch.setattr("vinci.facts.remote.os.replace", full)
+    cache = tmp_path / "cache"
+    rep = R2Objects(_client(_uploaded(pages)), cache).fetch_all(manifest_objects(pages)[:3],
+                                                                workers=1)
+    assert (rep.fetched, len(rep.problems)) == (0, 3)
+    assert all("could not be written to the cache (OSError)" in p for p in rep.problems)
+    assert [p for p in cache.rglob("*") if p.is_file()] == []
+
+
+def test_an_http_error_that_is_not_a_transport_error_is_an_r2_error() -> None:
+    """Item 6: any httpx error, not only a transport one, is retried and reported by type only."""
+    def broken(request: httpx.Request) -> httpx.Response:
+        raise httpx.DecodingError(f"bad body from {request.url}")
+
+    client = R2Client(CONFIG, transport=httpx.MockTransport(broken), retries=1,
+                      sleep=lambda s: None)
+    with client, pytest.raises(R2RequestError, match="DecodingError after 2 attempts") as got:
+        client.get("k/2020/x.parquet")
+    assert ACCOUNT not in str(got.value)

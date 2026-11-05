@@ -264,6 +264,13 @@ def cmd_upload(a: argparse.Namespace) -> int:
                   f"a manifest, {audit['named_by_none']:,} named by none; "
                   f"{audit['named_and_absent']:,} named and absent; {audit['size_differs']:,} "
                   "with a size other than the manifest's")
+            # the audit is the evidence that only the manifests' objects are in the bucket (and so
+            # no held name's): a key none names, or a named key of another size, fails the run.
+            # Named-and-absent does not: a committed manifest may not have been uploaded yet.
+            if audit["named_by_none"] or audit["size_differs"]:
+                print(f"  FAIL: the bucket holds {audit['named_by_none']:,} key(s) no committed "
+                      f"manifest names and {audit['size_differs']:,} named key(s) of another size")
+                return 1
     return 1 if rep.problems or rep.not_attempted else 0
 
 

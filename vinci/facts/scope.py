@@ -57,8 +57,10 @@ def require_upload_exclusions(manifest: dict[str, Any], exclude: Iterable[str], 
     the snapshot's companies carries a name on it.
 
     The ingest's ``--exclude`` carries to the upload, so a manifest written without an exclusion
-    (an old one, or one written by hand) cannot put a held name's objects in the bucket. Checked
-    before any request, and the refusal names COUNTS, never a name:
+    (an old one, or one written by hand) is refused when the held names are passed. THE LIMIT: it
+    is a count check plus a match on the names PASSED, so it binds only as far as the list passed
+    is the operator's; as many invented names pass it (a test's positive case does exactly that).
+    Checked before any request, and the refusal names COUNTS, never a name:
     - how many names this upload was told to exclude, against the snapshot's own
       ``exclusions_listed`` and every current snapshot's of its source (the operator's list does
       not depend on the scope, as :func:`require_exclusions` holds);

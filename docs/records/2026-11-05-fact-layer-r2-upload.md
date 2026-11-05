@@ -43,8 +43,10 @@ in the repo's Actions secrets.
 - **validate-keys** gains `check_r2`: one signed HeadBucket, PASS/FAIL and the HTTP status only,
   the `padded()` check on all four values, REQUIRED (a missing or refused value turns the run red).
   The workflow passes the four secrets; `.env.example` lists the four names.
-- **One writer, read-only readers.** Only `upload` writes. HeadBucket and every read pass with a
-  read-only token; a token that may not write stops the upload at its first refused PUT and counts
+- **One writer, read-only readers.** Only `upload` writes. HeadBucket and every read should pass
+  with a read-only token, but that is UNTESTED: only this Mac's Read & Write pair was used (round
+  2). A token that may not write stops the upload at its first refused PUT (pinned on the fake
+  bucket, which refuses every PUT with 403), and counts
   the rest as not attempted.
 - **The endpoint is never printed.** Errors name the operation, the key and the status (and S3's
   error code), never a URL; a transport error is re-raised as its type name only. A logging filter
@@ -59,8 +61,11 @@ standard library only.
 - **For it.**
   - No new core dependency. httpx is already one, so there is no env drift and nothing new in CI's
     install.
-  - The fact layer makes five kinds of request (HeadBucket, Head/Get/PutObject, ListObjectsV2), all
-    of small objects: the largest in either snapshot is 39,969 bytes, so there is no multipart.
+  - The fact layer makes four kinds of request (HeadBucket, GetObject, PutObject,
+    ListObjectsV2), all of small objects, so there is no multipart. The largest object is an order
+    object of the screen snapshot, 71,058 bytes; its largest data object is 39,969. In the pages
+    snapshot the largest is an order object of 40,056 bytes (corrected in round 2: the figure first
+    given was the largest DATA object).
   - It reproduces AWS's four worked S3 examples byte for byte (`tests/fixtures/facts/sigv4_aws_s3_
     examples.json`). Each example's inputs and signature were read from an independent
     implementation's tests (ytsaurus), because AWS's page renders by script; the first signature
@@ -145,7 +150,8 @@ primary checkout's `.env` (loaded into the process, never printed). All on 2026-
 
      744 name-cuts were unread: the 372 names not in the SEC cache, at both cuts, as in slice 2a.
      None was unread that the snapshot does not name unread.
-7. **Tests.** `tests/test_facts_remote.py` holds 26 tests (28 cases, one parametrized over three statuses).
+7. **Tests.** `tests/test_facts_remote.py` holds 37 tests (39 cases, one parametrized over three
+   statuses) after round 2.
    - The signer reproduces AWS's four examples; the secret, day, region and path each change the
      signature; the signer imports only the standard library.
    - The rest run the REAL committed pages snapshot through a fake bucket (an
@@ -155,7 +161,7 @@ primary checkout's `.env` (loaded into the process, never printed). All on 2026-
      - other bytes under a key refused and kept;
      - a body changed after its digest, caught by the read-back;
      - an unsealed local copy sends nothing;
-     - a read-only token stops at its first PUT;
+     - a token the fake bucket refuses writes to stops at its first PUT;
      - a reader with an empty cache reads all 26 companies identically to the committed objects;
      - a missing or altered remote object raises, with no fallback;
      - a corrupted cache copy is fetched again;
@@ -212,6 +218,37 @@ primary checkout's `.env` (loaded into the process, never printed). All on 2026-
   - DISMISSED, each with its reason in the PR's table: the audit's population is printed beside
     its counts; a failed fetch is listed twice by `verify --store r2://`, both lists labelled and
     the exit status right; there is one log filter per distinct configuration.
+- **Review round 2** (the coordinator's review of `d4177d47`, the last allowed round). Four
+  guards were unpinned: each survived its mutant over `tests/test_facts_remote.py`,
+  `test_facts_layer.py` and `test_facts_naming.py` (99 tests then).
+  - Every corruption fixture had changed the object's SIZE, so a length compare could stand in
+    for the sha256 at the fetch, the read-back, the 412 compare and the cached copy. Each is now
+    pinned with a same-size bit flip.
+  - The loop that holds an upload to every CURRENT snapshot's exclusion count, and the snapshot's
+    own count, are pinned. That loop is the case of an old manifest written with no exclusion.
+  - The fake bucket now re-signs every request it receives (method, raw path and query as sent,
+    the headers it says it signed, the body's own hash) and refuses a mismatch with 403
+    SignatureDoesNotMatch. A client signing one path or query and sending another had passed.
+  - Pinned too: the re-hash inside each PUT, a retried 503, a truncated listing with no token,
+    the account-id format, and the write to a temporary file renamed into place.
+
+  The real defects, each behind a test that FAILED on `d4177d47`:
+  - The bucket audit never affected the exit status. A key no committed manifest names, or a
+    named key of another size, now fails the run. Named-and-absent does not, since a committed
+    manifest may not have been uploaded yet.
+  - A cache write that failed (disk full on the 388 MB pull) escaped `fetch_all` as an OSError
+    and left its temporary file. It is now a counted error, and the file is removed.
+  - An httpx error that is not a transport error (`DecodingError`) escaped `_request` with the
+    URL, and so the ACCOUNT ID, in its message. It is now retried and reported by type only.
+  - A value copied unedited from `.env.example` (each begins `replace-with-`) passed `from_env`
+    and made five signed attempts at a host that does not exist. It is now refused by the
+    variable's name, as `config.sec_user_agent` refuses its own placeholder.
+
+  The docstring of `require_upload_exclusions` now states its limit: it is a count check plus a
+  match on the names PASSED, so as many invented names pass it.
+
+  18 mutants: the 4 surviving classes above, the 5 small guards, and one for each new fix. All
+  18 were caught and restored with their sha256 checked.
 - **NOT DECIDED HERE** (open operator rulings):
   - the manifest growth policy (the ADR's open item; STATE row 44);
   - slice 2b.

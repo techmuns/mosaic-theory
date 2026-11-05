@@ -155,9 +155,10 @@ def _load_sigv4() -> ModuleType:
 
 def check_r2() -> bool:
     """The fact layer's R2 bucket (vinci/facts/remote.py). All four values are REQUIRED: one
-    signed HeadBucket, which a read-only token passes (CI may hold one; only this repo's ingest
-    machine writes). Prints PASS/FAIL and the HTTP status only — never the account id, the
-    endpoint (which contains it) or the bucket name."""
+    signed HeadBucket, which a read-only token should pass (CI may hold one; only this repo's
+    ingest machine writes; untested with a read-only pair, 2026-11-05). Prints PASS/FAIL and the
+    HTTP status only — never the account id, the endpoint (which contains it) or the bucket
+    name."""
     values = {
         "R2_ACCOUNT_ID": os.environ.get("R2_ACCOUNT_ID") or "",
         "R2_ACCESS_KEY_ID": os.environ.get("R2_ACCESS_KEY_ID") or "",

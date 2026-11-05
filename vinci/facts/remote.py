@@ -64,6 +64,8 @@ DEFAULT_CACHE = Path("data") / "cache" / "facts"
 #: What a transient failure looks like: retried with backoff, then raised.
 _RETRY = frozenset({429, 500, 502, 503, 504})
 _ACCOUNT = re.compile(r"^[A-Za-z0-9-]+$")
+#: How every value in ``.env.example`` begins: copied unedited, it is refused by its name.
+_PLACEHOLDER = "replace-with-"
 _CODE = re.compile(r"<Code>([A-Za-z]+)</Code>")
 #: A content-addressed key and nothing else: no ``..``, no absolute path, no other file.
 _KEY = re.compile(r"^[a-z0-9_-]+/[A-Za-z0-9_-]+/(?:[0-9]{4}|order)/[0-9a-f]{64}\.parquet$")
@@ -101,6 +103,11 @@ class R2Config:
             raise R2NotConfiguredError(
                 f"r2:// needs {', '.join(missing)} in the environment (.env on this machine, the "
                 "Actions secrets in CI); .env.example lists all four")
+        placeholder = [n for n in R2_VARS if env[n].startswith(_PLACEHOLDER)]
+        if placeholder:
+            raise R2NotConfiguredError(
+                f"{', '.join(placeholder)} is still .env.example's placeholder: set the real "
+                "value in .env")
         padded = [n for n in R2_VARS if env[n] != env[n].strip()]
         if padded:
             raise R2NotConfiguredError(f"{', '.join(padded)} has leading or trailing whitespace")
@@ -162,7 +169,8 @@ def _code(r: httpx.Response) -> str:
 
 
 class R2Client:
-    """The five requests the fact layer makes, signed with :func:`vinci.facts.sigv4.sign`.
+    """The four kinds of request the fact layer makes (HeadBucket, GetObject, PutObject and
+    ListObjectsV2), signed with :func:`vinci.facts.sigv4.sign`.
 
     Thread-safe: each thread gets its own ``httpx.Client``. ``transport`` replaces the network
     (tests pass an ``httpx.MockTransport``); ``sleep`` the backoff."""
@@ -226,7 +234,7 @@ class R2Client:
             try:
                 r = self._http().request(method, url, headers=signed,
                                          content=body if method == "PUT" else None)
-            except httpx.TransportError as exc:
+            except httpx.HTTPError as exc:        # a transport error, or any other httpx one
                 err = type(exc).__name__          # its message carries the URL: never shown
             else:
                 if r.status_code not in retry:
@@ -365,10 +373,15 @@ class R2Objects:
             raise FactsStoreError(
                 f"{rel}: the bytes R2 holds (sha256 {_sha256(data)}, {len(data)} bytes) are not "
                 f"the manifest's ({want}, {entry['bytes']} bytes)")
-        p.parent.mkdir(parents=True, exist_ok=True)
         tmp = p.with_name(f".{p.name}.{os.getpid()}.{threading.get_ident()}.tmp")
-        tmp.write_bytes(data)
-        os.replace(tmp, p)
+        try:
+            p.parent.mkdir(parents=True, exist_ok=True)
+            tmp.write_bytes(data)
+            os.replace(tmp, p)                # never a partial object at its name
+        except OSError as exc:
+            tmp.unlink(missing_ok=True)
+            raise FactsStoreError(f"{rel}: could not be written to the cache "
+                                  f"({type(exc).__name__})") from None
         return p, True
 
     def fetch_all(self, entries: Sequence[Mapping[str, Any]], *, workers: int = 16
