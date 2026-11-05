@@ -298,9 +298,11 @@ def test_a_duration_header_without_its_title_cell_mark_is_refused() -> None:
 # --- moved here from the panel tests retired in #910 (2026-11-05) ------------------------------
 #
 # The commissioning ratio (`vinci/edgar/commissioning.py`) was this picker's one other topic, and
-# its tests and the panel registry's held the only pins on the picker's ABSENCE guard and on its
-# refusal of an ambiguous filing. The picker stays, so the pins do: the first four verbatim, the
-# fifth cut to its half that reads this module's default route.
+# its tests and the panel registry's held the only pins on the picker's ABSENCE guard, on its
+# refusal of an ambiguous filing, and on its CUSTOM-TOPIC path (a caller's topic, refinement and
+# absence clause actually used). The picker stays, so the pins do: the first four verbatim, the
+# fifth cut to its half that reads this module's default route, and the last three re-expressed
+# with the literal patterns their removed callers passed (round 2 of #910's review).
 
 
 def test_a_new_topic_must_state_its_own_absence_meaning_or_fail_loudly() -> None:
@@ -389,3 +391,82 @@ def test_the_repo_wide_pattern_refuses_a_filing_with_two_economics_reports() -> 
     summary = (FIX / "GOOGL-0001652044-26-000071-FilingSummary.xml").read_text()
     with pytest.raises(SegmentReportUnavailableError, match="more than one segment report"):
         _pick_report(summary)
+
+
+#: GOOGL's Q2 2026 10-Q, as filed — the summary the commissioning ratio and the cohort panels read.
+_Q2 = "0001652044-26-000071"
+#: The arguments `vinci/edgar/commissioning.py` passed for its PP&E topic (at `7e9f6fa2`), literal.
+_PPE_TOPIC = re.compile(r"property and equipment", re.I)
+_PPE_ABSENCE = ("unlike a single-segment filer, an operating company always holds fixed "
+                "assets — so this is a presentation difference, and the balances may sit "
+                "under a note named for the asset rather than for property")
+
+
+def test_a_missing_ppe_note_is_not_explained_with_the_segment_notes_story() -> None:
+    """A refusal must tell the reader THIS note's story, not another note's.
+
+    `_pick_report` is shared with the segment route, and its "why nothing is here" clause was
+    hardcoded to segments while `what` was parameterised — so a filing with no property note
+    refused with "a single-segment filer discloses none, and that is an answer rather than a
+    failure". For segments that clause is true and useful: a single-segment filer really does
+    disclose none. For fixed assets it is FALSE — every operating company holds them, so absence
+    is a presentation choice, and the balances may sit under a note named for the asset itself.
+    Observed live on WERN (a trucking filer, no property-named report) and LLY, 2026-09-03.
+
+    Pinned as the CLAIM, not as wording: the new text mentions single-segment filers in order to
+    deny the analogy, so a token scan would pass on the very message it is meant to reject.
+
+    Re-expressed from `tests/test_commissioning_ratio.py` (retired in #910): it reached the picker
+    through `commissioning()`, and now calls it with the arguments that function passed. The four
+    guard pins above prove a clause is REQUIRED; only this one proves the caller's clause is USED.
+    """
+    summary = (FIX / f"GOOGL-{_Q2}-FilingSummary.xml").read_text()
+    summary = re.sub(r"Property and [Ee]quipment", "Widgets", summary)
+    with pytest.raises(SegmentReportUnavailableError) as got:
+        _pick_report(summary, topic=_PPE_TOPIC, refine=re.compile(r".", re.S),
+                     what="property-and-equipment", absent_means=_PPE_ABSENCE)
+    msg = str(got.value)
+    assert "indexes no report naming a property-and-equipment" in msg
+    # The segment note's conclusion must NOT be asserted of this one.
+    assert "a single-segment filer discloses none, and that is an answer" not in msg
+    assert "always holds fixed assets" in msg
+
+
+def test_the_report_is_resolved_by_name_because_its_number_moves() -> None:
+    """THE PLAN'S PART 7 TRAP 2, pinned: "Alphabet's property note sat at R64, R64, R70 and R62
+    across its last four filings. Hardcode the number and the parser silently reads a different
+    note."
+
+    Observed directly across the two filings this build read: the note is R70 in the FY2025 10-K
+    and R64 in this 10-Q. Resolution is by ShortName; this asserts the resolver still finds it
+    when the number is not the one anyone remembers.
+
+    Re-expressed from `tests/test_commissioning_ratio.py` (retired in #910) with the literal
+    topic and refinement `commissioning.py` passed (`_PPE_REPORT`, `_ANY`): the CALLER's topic is
+    what is searched, and the caller's refinement is what selects.
+    """
+    summary = (FIX / f"GOOGL-{_Q2}-FilingSummary.xml").read_text()
+    fname, short = _pick_report(summary, topic=_PPE_TOPIC, refine=re.compile(r".", re.S),
+                                absent_means="an operating company always holds fixed assets")
+    assert fname == "R64.htm", f"resolved {fname}"
+    assert re.search(r"property and equipment", short, re.I)
+    # ...and the number genuinely differs from the 10-K's, which is the whole point
+    assert fname != "R70.htm"
+
+
+def test_a_declared_note_name_resolves_what_the_repo_wide_pattern_cannot() -> None:
+    """THE PHASE-4 PAYOFF: GOOGL's 10-Q carries TWO economics-matching segment (Details) reports,
+    so the repo-wide pattern refuses (pinned above); a topic naming the report resolves it.
+
+    Re-expressed from the second half of `tests/test_cohort_five.py::
+    test_the_declared_note_name_resolves_what_the_repo_wide_pattern_cannot` (retired in #910). It
+    read the note name from GOOGL's `segment_economics` declaration in `data/followed.json`, which
+    left with the panels; the name is the one declared there at `7e9f6fa2`, literal.
+    """
+    summary = (FIX / f"GOOGL-{_Q2}-FilingSummary.xml").read_text()
+    note = "Information about Segments and Geographic Areas - Revenue and Operating Income"
+    fname, short = _pick_report(
+        summary, topic=re.compile(re.escape(note), re.I), refine=re.compile(r".", re.S),
+        what="GOOGL segment note", absent_means="this filer renames reports between filings")
+    assert note.lower() in short.lower()
+    assert fname.endswith(".htm")

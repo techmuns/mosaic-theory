@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: superseded
 date: 2026-08-27
 prs: [508]
 supersedes:

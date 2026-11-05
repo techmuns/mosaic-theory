@@ -9,7 +9,8 @@ superseded-by:
 
 # Retired: the monitor's panel grid, the cost-of-borrowing panel and the commissioning reader — `vinci/panels*.py`, `vinci/borrowing.py`, `vinci/edgar/commissioning.py` and the app's Monitor panels view removed; STATE row 26 closed and row 5 cut to its two non-panel items (R3 of three retirements)
 
-**WHAT.** This is R3 of the three retirement PRs from the operator's decision of 2026-11-04. R1
+**WHAT.** This is R3 — the third of three retirement PRs, not the `R3_forward_pe` scenario recipe,
+which STATE row 5 also names — from the operator's decision of 2026-11-04. R1
 (#905, `3ad14793`) retired the calls tape, graph Test 0/1, the scale back-fill and triage. R2 (#908,
 `7e9f6fa2`) retired `vinci.themes` and the CIQ charting reader. R3 retires the between-print
 monitor's panel grid. The monitor day itself stays: its BUY−AVOID spread, its rows, the realized
@@ -24,7 +25,7 @@ that renders them and the measured kill criteria in the freshness rows. Removed:
 | the monitor's grid | `_cmd_monitor`'s `emit_panels` call and its `PANEL GRID UNAVAILABLE` note; the `panels` field of `MonitorSnapshot` and its `PanelRow` import |
 | the app's view | `frontend/views/shared/panels.js` (413 lines), its nav entry and route in `app.js`, and its `pn-*` block in `styles.css` (140 lines with its leading blank line) |
 | data | the `panels` declarations of six names in `data/followed.json` (LLY, NFLX, UBER, V, GOOGL, TECX); every other field is byte-identical |
-| tests | 6 files, 84 cases (`test_panels`, `test_panel_emit`, `test_panels_universal`, `test_cohort_five`, `test_commissioning_ratio`, `test_load_bearing_axis`); 3 of the 4 `tests/fixtures/commissioning/` files; the panels half of one render test. Six of the 84 pin behaviour this PR KEEPS and moved (**THE LOST PINS**, below) |
+| tests | 6 files, 84 cases (`test_panels`, `test_panel_emit`, `test_panels_universal`, `test_cohort_five`, `test_commissioning_ratio`, `test_load_bearing_axis`); 3 of the 4 `tests/fixtures/commissioning/` files; the panels half of one render test. Nine of the 84 pin behaviour this PR KEEPS and moved or were re-expressed (**THE LOST PINS**, below) |
 
 The GOOGL monitoring plan the panels were built from (`GOOGL_Monitoring_Plan_Plain_English.md`,
 reviewed in `docs/records/2026-08-27-between-print-monitor-panels.md`) was never committed:
@@ -46,8 +47,8 @@ for a DELETED path. `7e9f6fa2` (R2's merge) is the last `main` commit that holds
 - **`vinci/edgar/segments.py`**, the R-file segment reader `commissioning.py` was built on. It is
   MC2's extractor; STATE row 4 already records it as unwired, and says to delete or replace it
   separately. With `commissioning.py` gone, its `_pick_report` parameters (`topic`, `refine`,
-  `what`, `absent_means`) have no caller but the default segment route; the guards on them stay
-  pinned (below).
+  `what`, `absent_means`) have no caller but the default segment route; the guards on them, and
+  their use, stay pinned (below).
 - **`tests/fixtures/tiingo_reserve/data/followed.json`**, a frozen copy of the follow list that still
   carries the `panels` key. The reader ignores the key, and the fixture is a copy of what the list
   held then.
@@ -61,9 +62,13 @@ helpers, fixtures and constants it reaches, name anything this PR removes? **Emp
 file ran against the head with its removed-module imports neutralised and the commissioning
 fixtures restored. Four tests are static-clean and pass. Six more pass only because they read the
 `panels` block of a committed day, which is history. Two tests that name removed code also pin a
-kept fact no kept test pins. Those six moved: four verbatim, two cut to their kept half, each with a
-docstring line naming where it came from. Each passes on the head and FAILS under a mutant of the
-code it guards:
+kept fact no kept test pins. And three more, which reached `_pick_report` only through the removed
+`commissioning()` or the removed declarations, pinned its CUSTOM-TOPIC path: that the caller's
+topic, refinement and absence clause are actually used (found by the coordinator's review, round
+2; the first audit filed them under "name removed code"). Nine pins moved, each with a docstring
+line naming where it came from: **the four static-clean tests verbatim; the two kept halves; and
+the three custom-topic tests re-expressed** with the literal patterns their removed callers passed.
+Each passes on the head and FAILS under a mutant of the code it guards:
 
 | pin (from) | now in | guards | mutant → result |
 |---|---|---|---|
@@ -73,6 +78,13 @@ code it guards:
 | `test_a_third_topic_cannot_inherit_the_segment_absence_story_by_forgetting_a_keyword` (`test_commissioning_ratio`) | same | every other topic must state its own clause | guard removed → FAIL |
 | `test_the_repo_wide_pattern_refuses_a_filing_with_two_economics_reports` (the first half of `test_cohort_five::test_the_declared_note_name_resolves_what_the_repo_wide_pattern_cannot`) | same, with the summary it read (moved to `tests/fixtures/segments/`) | the default route refuses GOOGL's Q2 2026 10-Q, which carries two economics reports, rather than take one | first economics report taken → FAIL |
 | `test_a_percent_display_cell_reads_through_the_shared_ciq_helper` (the two `clean_num` assertions of `test_cohort_five::test_the_coupon_cell_is_read_through_the_shared_ciq_helper`) | `tests/test_dossier.py` | `read_cell` reads "4.500%" as 4.5; the one pin on a `%` cell | `%` no longer stripped → FAIL |
+| `test_a_missing_ppe_note_is_not_explained_with_the_segment_notes_story` (`test_commissioning_ratio`, through `commissioning()`), re-expressed | `tests/test_segment_economics.py`, on the moved Q2 10-Q summary | the caller's `absent_means` clause is the one the refusal states | (A) `absent_means = absent_means.strip()` → `= _SEGMENT_ABSENCE` → FAIL |
+| `test_the_report_is_resolved_by_name_because_its_number_moves` (`test_commissioning_ratio`, through the removed `_PPE_REPORT` / `_ANY`), re-expressed | same | a caller's topic resolves its report by name (R64, not the 10-K's R70) | (B) `topic.search` → `_SEGMENT_REPORT.search` → FAIL; (C) `refine.search` → `_ECONOMICS.search` → FAIL |
+| `test_a_declared_note_name_resolves_what_the_repo_wide_pattern_cannot` (the second half of the `test_cohort_five` test above, through the removed declarations), re-expressed | same | a topic naming the report resolves the 10-Q the default route refuses | (B) → FAIL |
+
+Over every `tests/test_segment*.py` (54 tests on the head, 3 skipped), mutant A fails 1, B fails 3
+and C fails 1; before the three were re-expressed, all three mutants left those files green (51
+passed), which is the gap the review found.
 
 The other 78 name removed code. Six of those pass only on the history: five `test_panel_emit`
 checks of the committed `panels` block, and `test_load_bearing_axis`'s check of the 2026-08-11
@@ -80,8 +92,10 @@ day. `test_panel_emit`'s `test_a_snapshot_predating_the_grid_still_validates` as
 field. Its other half, that the pre-grid 2026-07-20 day loads, is pinned by
 `tests/test_total_return.py`, which loads every committed day. `test_commissioning_ratio`'s
 `test_the_report_is_resolved_by_name_because_its_number_moves` resolves commissioning's own PP&E
-topic through its removed constants. The segment route's by-name resolution stays pinned by
-`test_the_details_report_is_chosen_over_the_policy_note`. The two `panels.js` pins R2 moved into
+topic through its removed constants; it is re-expressed above. *(Corrected in round 2: this
+paragraph first said by-name resolution "stays pinned by
+`test_the_details_report_is_chosen_over_the_policy_note`" — that test covers only the default
+segment route, never a caller's topic.)* The two `panels.js` pins R2 moved into
 `test_panel_emit.py` leave with `panels.js`, as R2's record said.
 
 **Every kept file this PR edits** (each edit only where a removal forced it):
@@ -94,7 +108,11 @@ topic through its removed constants. The segment route's by-name resolution stay
 - `vinci/edgar/segments.py`: one docstring names `commissioning.py` as the picker's retired other
   topic. Docstrings only, which the drift hash ignores.
 - `data/followed.json`: the six `panels` declarations are removed by a text edit, so the file's
-  other bytes (its mixed `—` escapes among them) are unchanged. `follow_records` never read the
+  other bytes (its mix of escaped `\u2014` and literal dashes among them) are unchanged. Those
+  declarations held the per-filer segment and PP&E note names (GOOGL's resolves its Q2 2026 10-Q,
+  which the default route refuses); they are the only committed data that does, and a revived
+  R-file reader would need them. They are recoverable at `7e9f6fa2` (`git show
+  7e9f6fa2:data/followed.json`). `follow_records` never read the
   key; the assembler, the scoring baskets and the fact layer read the same records as before.
 - `frontend/app.js`: the Monitor panels nav entry and route are removed.
 - `frontend/assets/styles.css`: the `MONITOR PANELS (phase 6)` block (every `pn-*` rule and the
@@ -103,8 +121,8 @@ topic through its removed constants. The segment route's by-name resolution stay
   longer says a red `test_panel_emit` corpus pin forces a new day; that pin is gone, so **an artifact
   pass no longer requires a monitor day.** The check list drops "the panel-emit pin is green". Two
   sentences on what a re-cut reads from today's pages name the measured rows instead of the panels.
-- Tests that receive the moved pins: `tests/test_segment_economics.py` (gains `import re`) and
-  `tests/test_dossier.py`.
+- Tests that receive the moved pins: `tests/test_segment_economics.py` (gains `import re` and the
+  three re-expressed custom-topic pins) and `tests/test_dossier.py`.
 - `tests/test_monitor_horizon_close.py`: the render test drops its third view, the panels page's
   `the_call`, and is renamed `test_the_two_views_label_a_resolved_mark_as_the_horizon_close_node`.
   Its decision-log and dossier assertions are unchanged.
@@ -129,6 +147,13 @@ the panel stack. So no page is re-rendered into the repo and no artifact pass fo
     8-K/10-Q/10-K only), a decision-path change for its own PR;
   - row 6's four operator rulings of 2026-08-31, merged into row 5 on 2026-11-01, with their two
     open actions.
+  Row 5 also listed "Remaining: two blocked cohort members". **Backlog** left with its panel: it
+  had no structured field anywhere and no other consumer. **The race** names a KEPT-code defect,
+  DEFERRED here: `ciq_sheets._revision_breadth` (`vinci/dossier/ciq_sheets.py:2083`) still returns
+  only a display string (`"EPS (GAAP) FY…: 3↑/1↓ last mo"`), with no structured count beside it,
+  against the house rule that an extractor producing a display string also exposes its structured
+  value. Its one consumer that needed the counts was the race panel, now retired; after this PR no
+  STATE row tracks it. No row is opened, because no consumer needs it today.
 - **Row 6** has been empty since that merge.
 - **Rows 11, 12 and 13 stay open.** They describe kept code:
   - row 11, the freshness rows' `stale_tags` scan (`monitor._stale_tags`);
@@ -139,6 +164,15 @@ the panel stack. So no page is re-rendered into the repo and no artifact pass fo
   log still renders them.
 - **§2** carries one three-line claim: every §2 line naming the removed modules describes removed
   code, restorable by reverting this PR.
+
+**THE PANEL RECORDS' STATUS.** Six records describe code now deleted and read `status: open`;
+each flips to `superseded` (front matter only; `superseded-by:` may not change after merge, so the
+superseding record is named here):
+
+- by this record: `2026-08-27-between-print-monitor-panels.md`, `2026-09-03-panelspec-registry.md`,
+  `2026-09-10-universal-seven.md`, `2026-09-10-cohort-five.md`, `2026-09-10-panel-wiring.md`;
+- by R2's `2026-11-04-retire-themes-and-the-charting-reader.md`: `2026-09-10-theme-panel-terms-verified.md`
+  (the theme panels' precondition, left open by R2).
 
 **CLAUDE.md — for the operator's ruling, NOT edited here:** line 239, the **A TRUNCATED OUTPUT
 PRINTS ITS OWN TRUNCATION** rule, cites "rendered panels (`vinci/panels_render.py` carried two…)".
@@ -192,11 +226,16 @@ this record and one RUNBOOKS line wrap (`git diff --stat` between the two).
   - the console logs no error;
   - `node --check` passes on `app.js` and `views/shared/decision-log.js`.
 - **The moved pins** — each passes on the head and fails under its mutant (table above). The mutant
-  runner edits the real file, runs the pin and restores the file byte for byte.
+  runner edits the real file, runs the pin and restores the file byte for byte. Round 2's three
+  custom-topic pins add no code path the runs above exercise (tests only).
 - **Gate.** ruff: all checks passed. `mypy --strict vinci`: no issues in 183 source files (191 less
   the 8 removed modules). `pytest -m "not network"`: **8,747 passed, 0 failed**, 555 skipped, 8
   xfailed, 39 deselected, 421.7 s. That is `main`'s 8,825 (R2's final gate, the same tree) less the
-  84 deleted cases plus the 6 moved pins.
+  84 deleted cases plus the 6 moved pins, counted on the code tree BEFORE this record existed (the
+  record adds one `test_record_hygiene` case). The gate on the final head (round 2's tree): ruff clean, `mypy --strict vinci` clean (183 files),
+  **8,751 passed, 0 failed**, 555 skipped, 8 xfailed, 39 deselected, 370.2 s — 8,747 + 1 + the 3
+  re-expressed pins. (A reviewer's run at `df70ae50` gave 8,746 passed and 557 skipped; the two
+  extra skips are environment.)
 - **Review rounds 0 and 1.**
   - Round 0, `/code-review high --fix` before the PR opened: one RUNBOOKS line re-wrapped, one finding
     dismissed (the frozen `tiingo_reserve` copy of the follow list keeps the `panels` key; nothing
@@ -209,6 +248,10 @@ this record and one RUNBOOKS line wrap (`git diff --stat` between the two).
   - Round 1, an in-session `/code-review high` run because Codex hit its usage limit: this record
     named an unpushed commit as the runs' code, and did not name round 0's deferrals. Both are
     fixed here; no code changed.
+  - Round 2, the coordinator's review of `df70ae50`: the three custom-topic pins re-expressed
+    (table above), the by-name claim corrected, the race defect named as deferred, the six panel
+    records' status flipped, the note names' recovery point stated, "R3" defined, and the pin and
+    gate counts restated.
 
 **BOUNDARY.**
 
