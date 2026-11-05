@@ -155,8 +155,9 @@ Measured at `7e9f6fa2`:
   `panels_payload`.
 - On the latest committed day, 56 of the 124 rows are refusals.
 
-**HOW VERIFIED.** Every run below is on this PR's code (local commit `689a7990`, squashed into the
-PR's code commit) against `main` (`7e9f6fa2`).
+**HOW VERIFIED.** Every run below is on this PR's code against `main` (`7e9f6fa2`). The runs used a
+local commit that was never pushed; its code equals this PR's `293a01fb`, which adds only STATE.md,
+this record and one RUNBOOKS line wrap (`git diff --stat` between the two).
 `main` ran first; the branch ran on a clone of what `main`'s run left. Outputs are in the PR body.
 
 - **The monitor day** — `vinci monitor --ref 2026-11-02 --out <scratch>`, on a clone of the cache
@@ -196,6 +197,18 @@ PR's code commit) against `main` (`7e9f6fa2`).
   the 8 removed modules). `pytest -m "not network"`: **8,747 passed, 0 failed**, 555 skipped, 8
   xfailed, 39 deselected, 421.7 s. That is `main`'s 8,825 (R2's final gate, the same tree) less the
   84 deleted cases plus the 6 moved pins.
+- **Review rounds 0 and 1.**
+  - Round 0, `/code-review high --fix` before the PR opened: one RUNBOOKS line re-wrapped, one finding
+    dismissed (the frozen `tiingo_reserve` copy of the follow list keeps the `panels` key; nothing
+    reads it).
+  - Two findings were DEFERRED. First, with `commissioning.py` gone, `segments._pick_report`'s
+    `topic` / `refine` / `what` / `absent_means` parameters have no production caller; STATE row 4
+    already owns `segments.py` (delete or replace separately). Second, `vinci/monitor.py`'s module
+    docstring still says the freshness rows never adjudicate a trigger as fired, which ruling 3
+    (2026-08-31) narrowed. That text predates R3 and sits outside its hunks.
+  - Round 1, an in-session `/code-review high` run because Codex hit its usage limit: this record
+    named an unpushed commit as the runs' code, and did not name round 0's deferrals. Both are
+    fixed here; no code changed.
 
 **BOUNDARY.**
 
