@@ -40,6 +40,7 @@ from vinci.dossier.mechanical import (
     _NONOP_PRETAX_SHARE,
     _NONOP_REVENUE_SHARE,
     _nonoperating_earnings,
+    _nonoperating_quarters,
     _quarterly_map,
 )
 
@@ -114,15 +115,20 @@ def test_every_material_quarter_is_named_not_only_the_largest() -> None:
     quarters are the RECENT ones, and 2026-06-30's +$1,387M is the investment revaluation the
     analyst raised AGAINST THIS VERY FIELD ("Q2 GAAP net income included a $1.6bn pre-tax benefit").
 
-    The figure a reader divides by is an LTM one, so every quarter inside it counts."""
+    The figure a reader divides by is an LTM one, so every quarter inside it counts.
+
+    FOUR, NOT THREE, SINCE 2026-11-05: this pin was written on the window that skipped the fiscal
+    Q4 (2025-06-30..2026-06-30 without 2025-12-31). The trailing four carry 2025-12-31 too — the
+    year less the nine months, −$1,483M, itself material — in place of 2025-06-30."""
     out = _run("UBER")
     assert out.value is not None
     for quarter, amount in (("2025-09-30", "+$1,507M"),
+                            ("2025-12-31", "−$1,483M"),
                             ("2026-03-31", "−$1,427M"),
                             ("2026-06-30", "+$1,387M")):
         assert quarter in out.value, f"{quarter} is material and unnamed"
         assert amount in out.value, f"{quarter}'s magnitude is missing"
-    assert out.value.startswith("3 of the trailing four quarters"), (
+    assert out.value.startswith("4 of the trailing four quarters"), (
         "the count leads, so a reader knows how many items the LTM carries before reading them")
 
 
@@ -130,10 +136,14 @@ def test_every_material_quarter_is_named_not_only_the_largest() -> None:
 def test_the_net_is_stated_because_the_largest_alone_overstates_it() -> None:
     """THE POINT THE MAXIMUM CANNOT MAKE. UBER's two unnamed quarters point OPPOSITE ways
     (−$1,427M then +$1,387M) and very nearly cancel, so naming only the +$1,507M implied a
-    distortion the trailing figure does not carry. An LTM EPS carries the SUM."""
+    distortion the trailing figure does not carry. An LTM EPS carries the SUM.
+
+    −$16M, NOT +$1,521M, SINCE 2026-11-05: the old net was over a window that skipped the fiscal
+    Q4. With 2025-12-31's −$1,483M in place of 2025-06-30, the four material blocks all but cancel
+    — the point this pin makes, made harder."""
     out = _run("UBER")
     assert out.value is not None
-    assert "netting +$1,521M across the four" in out.value, out.value
+    assert "netting −$16M across the four" in out.value, out.value
     assert "carries the SUM, not the largest" in out.value
 
 
@@ -250,6 +260,110 @@ def test_the_thresholds_are_the_measured_ones() -> None:
     a later edit state its own reason rather than drifting the calibration silently."""
     assert _NONOP_PRETAX_SHARE == 0.20
     assert _NONOP_REVENUE_SHARE == 0.05
+
+
+# ─── the trailing four are the calendar's (2026-11-05) ────────────────────────────────────────
+#
+# THE DEFECT. The window was the newest four quarters carrying an 80-100-day fact for all three
+# totals. A 10-K states its fourth quarter only inside the year — no committed page's 10-K tags a
+# Q4 duration (25 checked; FUBO's window holds none) — so every window skipped the fiscal Q4 and
+# reached a year back for a fourth quarter. Each pin below is on a FROZEN companyfacts fixture at
+# the page's own reference date, and each fails on main `c4c9f432`.
+
+_GOOGL_REF = date(2026, 10, 16)  # GOOGL's committed page's reference_date
+_ORKA_REF = date(2026, 10, 16)   # ORKA's
+
+
+def _fixture(ticker: str) -> dict[str, Any]:
+    facts: dict[str, Any] = json.loads((FIX / f"{ticker}.json").read_text())
+    return facts
+
+
+def _quarters(ref: str) -> list[date]:
+    """The first and last quarter of the window a cite names ("quarters <first>..<last>")."""
+    first, last = ref.split("quarters ", 1)[1].split(";")[0].split("..")
+    return [date.fromisoformat(first), date.fromisoformat(last.strip())]
+
+
+@pytest.mark.skipif(not (FIX / "GOOGL.json").is_file(), reason="no fixture")
+def test_a_fourth_quarter_the_10k_states_only_inside_the_year_is_derived() -> None:
+    """POSITIVE PIN — GOOGL, the measured case. Its FY2025 10-K tags no Q4 duration, so the window
+    read 2025-09-30, 2026-03-31, 2026-06-30, 2026-09-30 — +$140,237M, 4 of 4 material. The trailing
+    four put 2025-12-31 in place of 2025-09-30: the year less the nine months on one tag (operating
+    income 129,039 − 93,105 = 35,934; pre-tax 158,826 − 119,709 = 39,117; $M), a +$3,183M block —
+    8% of pre-tax, under the 20% bar — so +$130,661M and 3 of 4. The derived quarter is cited
+    with BOTH filings it is made of."""
+    stub = _Stub(_fixture("GOOGL"))
+    nq = _nonoperating_quarters(stub, "x", _GOOGL_REF)
+    assert nq is not None
+    assert (nq.material, nq.window, nq.window_end) == (3, 4, "2026-09-30"), nq
+    assert _quarters(nq.source_ref)[0] == date(2025, 12, 31), nq.source_ref
+    assert "the quarter to 2025-12-31 is DERIVED" in nq.source_ref, nq.source_ref
+    for accession in ("0001652044-26-000018", "0001652044-25-000091"):  # the 10-K, the Q3 10-Q
+        assert accession in nq.source_ref, f"the derived quarter does not name {accession}"
+    prose = _nonoperating_earnings(stub, "x", _GOOGL_REF)
+    assert prose.value is not None and prose.source_ref == nq.source_ref
+    assert prose.value.startswith("3 of the trailing four quarters"), prose.value
+    assert "netting +$130,661M across the four" in prose.value, prose.value
+    assert "2025-09-30" not in prose.value, "a quarter a year back was read as the fourth"
+
+
+@pytest.mark.skipif(not (FIX / "ORKA.json").is_file(), reason="no fixture")
+def test_a_quarter_with_a_missing_part_leaves_the_window_short_and_never_reaches_back() -> None:
+    """NEGATIVE PIN — ORKA, as filed. Its newest quarter carrying all three totals (filed or
+    derived) is 2021-12-31, and 2021-03-31, inside the four, has no pre-tax income filed and none
+    derivable (a first quarter has no shorter period to come from). The window is 3 of the
+    trailing four, said in the count, the prose and the cite — on main it was 2018-03-31,
+    2019-03-31 and 2020-03-31, three quarters over two years, called "the four quarters"."""
+    stub = _Stub(_fixture("ORKA"))
+    nq = _nonoperating_quarters(stub, "x", _ORKA_REF)
+    assert nq is not None
+    assert (nq.window, nq.window_end) == (3, "2021-12-31"), nq
+    first, last = _quarters(nq.source_ref)
+    assert (last - first).days <= 300, f"the window reaches back: {first}..{last}"
+    assert "2021-03-31 has no pre-tax income filed or derivable" in nq.source_ref, nq.source_ref
+    prose = _nonoperating_earnings(stub, "x", _ORKA_REF).value
+    assert prose is not None and "3 available quarters of the trailing four" in prose, prose
+    assert "The window is short: 2021-03-31 has no pre-tax income" in prose, prose
+
+
+@pytest.mark.skipif(not (FIX / "GOOGL.json").is_file(), reason="no fixture")
+def test_a_fourth_quarter_whose_part_is_missing_is_never_replaced_by_a_year_back() -> None:
+    """NEGATIVE PIN on the measured shape: GOOGL's REAL fixture with ONE real row removed — the
+    Q3 10-Q's nine-month pre-tax figure, the part 2025-12-31's pre-tax is derived from (its only
+    other nine-month row is a comparative filed after the 10-K, which a derivation never pairs
+    with it). The window reads 3 of 4 to 2026-09-30, naming 2025-12-31 as unread; 2025-09-30 is
+    never read in its place."""
+    facts = _fixture("GOOGL")
+    tag = "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest"
+    rows = facts["facts"]["us-gaap"][tag]["units"]["USD"]
+    kept = [r for r in rows if not (r.get("start") == "2025-01-01" and r.get("end") == "2025-09-30"
+                                    and r.get("accn") == "0001652044-25-000091")]
+    assert len(kept) == len(rows) - 1, "the real nine-month row was not where the pin expects it"
+    facts["facts"]["us-gaap"][tag]["units"]["USD"] = kept
+    nq = _nonoperating_quarters(_Stub(facts), "x", _GOOGL_REF)
+    assert nq is not None
+    assert (nq.window, nq.window_end) == (3, "2026-09-30"), nq
+    assert _quarters(nq.source_ref)[0] == date(2026, 3, 31), nq.source_ref
+    assert "2025-12-31 has no pre-tax income filed or derivable" in nq.source_ref, nq.source_ref
+    assert "2025-09-30" not in nq.source_ref, "a quarter a year back was read as the fourth"
+
+
+@pytest.mark.skipif(not (FIX / "WOR.json").is_file(), reason="no fixture")
+def test_two_ends_a_day_apart_are_one_quarter() -> None:
+    """THE CALENDAR'S QUARTERS ARE DISTINCT. Worthington's pre-tax income carries a stray period
+    ending 2024-02-28 beside its 2024-02-29 quarter; read as two quarters, it took a place in the
+    four and pushed 2023-08-31 out. Ends within `filed_tiebreak.SAME_END_DAYS` are one quarter,
+    dated as the filer's calendar dates it. (The negative half: GOOGL's four, ~91 days apart,
+    stay four — pinned above.)"""
+    from vinci.dossier.mechanical import _nonop_window  # new with the fix: imported here, so the
+    # file's other pins still collect, and fail on their own, against main
+
+    w = _nonop_window(_fixture("WOR"), date(2024, 7, 15))
+    assert not isinstance(w, str), w
+    assert w.quarters == [date(2023, 8, 31), date(2023, 11, 30), date(2024, 2, 29),
+                          date(2024, 5, 31)], w.quarters
+    assert not w.short and not w.missing, (w.missing, w.uncalendared)
 
 
 def test_a_filer_without_the_pretax_tag_is_unknown_and_names_what_was_missing() -> None:

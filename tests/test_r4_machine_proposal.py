@@ -92,20 +92,39 @@ def test_the_count_and_the_prose_are_one_read() -> None:
             continue
         doc = _page(t)
         stub = _Stub(json.loads((FIX / f"{t}.json").read_text()))
-        prose = _nonoperating_earnings(stub, "x", _ref(doc)).value
+        read = _nonoperating_earnings(stub, "x", _ref(doc))
+        prose, prose_cite = read.value, read.source_ref
         nq = _nonoperating_quarters(stub, "x", _ref(doc))
         if prose is None:
             assert nq is None, f"{t}: a count was invented where the prose is UNKNOWN"
             continue
         assert nq is not None, t
         checked += 1
+        assert prose_cite == nq.source_ref, f"{t}: the prose and the count cite two windows"
         if nq.material == 0:
             assert prose.startswith("no material non-operating item"), (t, prose[:60])
         elif nq.material == 1:
             assert "came from BELOW the operating line" in prose, (t, prose[:60])
-        else:
+        elif nq.window == 4:
             assert prose.startswith(f"{nq.material} of the trailing four quarters"), t
+        else:  # a SHORT window says how many quarters it read (2026-11-05)
+            assert prose.startswith(f"{nq.material} of the {nq.window} available quarters"), t
+        assert ("The window is short" in prose) == (nq.window < 4), (t, nq.window)
     assert checked >= 15, f"only {checked} names checked — the agreement test checked too little"
+
+
+def test_condition_3_reads_the_trailing_four_with_their_fourth_quarter() -> None:
+    """END TO END (real fixture → the extractor → the page's count → condition 3): GOOGL's
+    committed page read "4 of the trailing 4" because the window skipped 2025-12-31, which GOOGL's
+    10-K states only inside the year, and took 2025-09-30 a year back. The trailing four read
+    3 of 4 — still R4-eligible (≥2 ruled), so the selection is unchanged; the count is not."""
+    doc = _with_count("GOOGL")
+    c3 = rp.r4_conditions(doc, _r1(doc))[2]
+    assert "3 of the trailing 4 quarters carry material non-operating income" in c3.detail, (
+        c3.detail)
+    assert c3.met is True
+    assert doc["mechanical"]["quality"]["nonoperating_quarters"]["source_ref"].startswith(
+        "EDGAR XBRL pre-tax − operating, quarters 2025-12-31..2026-09-30"), doc["mechanical"]
 
 
 # --- the ruled selection, and each condition on the page that fails it --------------------------

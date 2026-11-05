@@ -498,6 +498,16 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "page built before it is backfilled from its own stamps, the rest `unrecorded`. No "
         "extracted value changes",
     ),
+    (
+        "2026-11-05.nonop-window-fourth-quarter",
+        "the non-operating read's trailing four are the filer's calendar quarters ending at its "
+        "window end: a quarter no 80-100-day fact states — every committed filer's fiscal Q4, "
+        "which its 10-K states only inside the year — is derived as the longer period less the "
+        "shorter on one tag (`filed_tiebreak.filed_quarter`; Q4 = the year less the nine months) "
+        "and cited with both filings; a quarter that cannot be read leaves the window short, "
+        "said in the count (`nonoperating_quarters.window`), the prose and the cite, and no "
+        "older quarter is read in its place",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
