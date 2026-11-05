@@ -54,11 +54,10 @@ def all_registries() -> PanelRegistry:
     know about every tier, because the file does.
     """
     from vinci.panels import default_registry
-    from vinci.panels_theme import theme_registry
     from vinci.panels_universal import universal_registry
 
     merged = PanelRegistry()
-    for reg in (universal_registry(), default_registry(), theme_registry()):
+    for reg in (universal_registry(), default_registry()):
         for key in reg:
             spec = reg.get(key)
             assert spec is not None

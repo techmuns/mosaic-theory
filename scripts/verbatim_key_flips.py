@@ -1,17 +1,17 @@
 """Does a change to the verbatim-span key move a committed answer? Old key against new, measured.
 
-`vinci.verbatim.comparison_key` is read by four consumers. This script asks each one's committed
-corpus the same question twice, once under the key as it stood before audit G-D7 (`_pre_gd7_key`,
-copied from 9503c4fa) and once under the key this checkout carries, and lists every answer that
-differs. Nothing is written back to any artifact.
+`vinci.verbatim.comparison_key` is read by three consumers (a fourth left with `vinci.themes`).
+This script asks each one's committed corpus the same question twice, once under the key as it
+stood before audit G-D7 (`_pre_gd7_key`, copied from 9503c4fa) and once under the key this
+checkout carries, and lists every answer that differs. Nothing is written back to any artifact.
 
 - covenant terms, the maturity event and graph edges, read exactly as
   `scripts/audit_verbatim_corpus.py` reads them (its own functions);
 - each rate component's own clause (`component_quotes`) against its term's exhibit;
 - synthesis citations (bull, bear, decisive evidence, twin source) against the page's mechanical
-  refs, as `synthesis._traces` compares them;
-- theme-exposure fact refs, as `exposure._cited_filing_text` reads them (the key path is taken only
-  by a ref with no accession).
+  refs, as `synthesis._traces` compares them.
+
+(A fourth corpus, theme-exposure fact refs, left with `vinci.themes` on 2026-11-04.)
 
 CACHE ONLY. Every SEC document is read from ``--cache-dir`` at any age; a document not there is a
 loud error, never a request, so the run cannot probe SEC's rate limit. Point it at a checkout whose
@@ -45,7 +45,6 @@ import audit_verbatim_corpus as avc
 from vinci import verbatim
 from vinci.dossier import synthesis
 from vinci.netcache import CachedHttp
-from vinci.themes import exposure
 
 Key = Callable[[str], str]
 
@@ -86,8 +85,8 @@ class CacheOnlyHttp(CachedHttp):
 @contextlib.contextmanager
 def _keyed(key: Key) -> Iterator[None]:
     """Every consumer reads ``key`` for the duration: the module global SourceText calls, and the
-    names synthesis and exposure imported."""
-    modules = (verbatim, synthesis, exposure)
+    name synthesis imported."""
+    modules = (verbatim, synthesis)
     saved = [getattr(m, "comparison_key") for m in modules]  # noqa: B009 — a patched global
     for m in modules:
         setattr(m, "comparison_key", key)  # noqa: B010
@@ -213,24 +212,6 @@ def synthesis_citations(root: Path, exclude: set[str]) -> dict[str, Any]:
     return dict(c) | {"flips": flips}
 
 
-def exposure_facts(root: Path) -> dict[str, Any]:
-    """Every committed exposure fact ref: how many resolve by accession, and how many take the
-    key path at all (`exposure._cited_filing_text`)."""
-    c: Counter[str] = Counter()
-    for p in sorted(root.glob("data/scan_history/*/*.jsonl")):
-        c["files"] += 1
-        for line in p.read_text().splitlines():
-            if not line.strip():
-                continue
-            for f in json.loads(line).get("disclosed_facts") or []:
-                ref = str(f.get("source_ref", ""))
-                n = len(set(exposure._ACC_RE.findall(ref)))
-                c["facts"] += 1
-                c["one_accession" if n == 1 else "several_accessions" if n else "key_path"] += 1
-                c["key_path_carrying_a_digit_gap"] += n == 0 and _gap(ref)
-    return dict(c)
-
-
 def main() -> int:
     ap = argparse.ArgumentParser(description=(__doc__ or "").splitlines()[0])
     ap.add_argument("--root", default=".", help="the checkout whose committed artifacts are read")
@@ -249,7 +230,6 @@ def main() -> int:
         "graph_cut": a.graph_cut,
         **quote_corpora(http, root, exclude, date.fromisoformat(a.graph_cut)),
         "synthesis_citation": synthesis_citations(root, exclude),
-        "exposure_fact": exposure_facts(root),
     }
     Path(a.out).write_text(json.dumps(rep, indent=1, ensure_ascii=False))
     flips = sum(len(v["flips"]) for v in rep.values() if isinstance(v, dict) and "flips" in v)

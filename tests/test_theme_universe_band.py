@@ -22,7 +22,6 @@ import pytest
 from vinci.config import Config
 from vinci.schemas.envelope import DataField, SourceTier
 from vinci.store import Store
-from vinci.themes.detection import load_detection_universe
 from vinci.universe import BUILD_THEME_UNIVERSE_TABLES, BUILD_UNIVERSE_TABLES, UNIVERSE_BANDS
 
 _REPO = Path(__file__).resolve().parents[1]
@@ -89,102 +88,6 @@ def test_the_theme_band_is_wider_and_otherwise_identical() -> None:
     assert t.market_cap_max_usd > t.market_cap_min_usd
     assert (t.exchanges, t.adv_floor_usd, t.excluded_sic_codes, t.allowed_security_types) == (
         p.exchanges, p.adv_floor_usd, p.excluded_sic_codes, p.allowed_security_types)
-
-
-def _write_snapshots(snaps: Path, *, theme_rows: list[dict[str, object]] | None) -> None:
-    snaps.mkdir(parents=True, exist_ok=True)
-    (snaps / "securities.jsonl").write_text("\n".join(json.dumps(r) for r in [
-        {"internal_id": "SEC-1", "eod_symbol": "AAA", "cik": "1", "name": "Small Co"},
-        {"internal_id": "SEC-2", "eod_symbol": "MEGA", "cik": "2", "name": "Mega Co"},
-    ]) + "\n")
-    (snaps / "universe_snapshot.jsonl").write_text(json.dumps(
-        {"as_of": "2026-08-31", "internal_id": "SEC-1", "in_universe": 1,
-         "market_cap": 1.0e9}) + "\n")
-    theme_file = snaps / "theme_universe_snapshot.jsonl"
-    if theme_rows is None:
-        theme_file.unlink(missing_ok=True)   # "band never built" must really remove it
-    else:
-        theme_file.write_text("\n".join(json.dumps(r) for r in theme_rows) + "\n")
-
-
-def test_the_union_is_opt_in_per_call_site_not_per_checkout(tmp_path: Path) -> None:
-    """THE DEFAULT IS PRIMARY-ONLY — corrected at review 2026-08-31, and this pin is the reason.
-
-    The loader feeds two consumers with opposite sensitivities. The exposure scan reads each
-    name's filings INDEPENDENTLY, so widening its population only adds names. Component A /
-    stage-2 detection builds CROSS-SECTIONAL factors — the SMB leg is a tercile of the
-    population's market caps — so unioning 810 names spanning $10B-$3.7T re-cuts those terciles
-    and moves EVERY existing primary name's residual, its clusters, and its admission. The first
-    version defaulted the union ON, which silently redefined that measurement for every caller.
-    Opting in per call site is what keeps the band additive where it is safe and absent where it
-    is not."""
-    snaps = tmp_path / "snapshots"
-    cfg = Config(data_dir=tmp_path)
-    theme_row = [{"as_of": "2026-08-31", "internal_id": "SEC-2", "in_universe": 1,
-                  "market_cap": 3.0e12}]
-
-    _write_snapshots(snaps, theme_rows=theme_row)     # band BUILT and committed...
-    names, as_of = load_detection_universe(cfg)       # ...and the DEFAULT still excludes it
-    assert [n.ticker for n in names] == ["AAA"]
-    assert {n.band for n in names} == {"primary"}
-    assert as_of == date(2026, 8, 31)
-
-    names, _ = load_detection_universe(cfg, include_theme_band=True)      # explicit opt-in
-    assert sorted(n.ticker for n in names) == ["AAA", "MEGA"]
-    assert {n.ticker: n.band for n in names} == {"AAA": "primary", "MEGA": "theme"}
-
-    _write_snapshots(snaps, theme_rows=None)          # band never built: opting in is a no-op
-    names, _ = load_detection_universe(cfg, include_theme_band=True)
-    assert [n.ticker for n in names] == ["AAA"]
-
-
-def test_only_the_exposure_scan_opts_into_the_band() -> None:
-    """SOURCE PIN at the call sites, because the property is 'this population is not consulted'
-    and only reading every caller can assert it. The exposure scan opts in; the residual
-    detection path (`detect_themes` / `analyze_stage2`) must not — its factors are
-    cross-sectional, so the band would move numbers that have nothing to do with it."""
-    cli = (_REPO / "vinci/cli.py").read_text()
-    fn = cli.split("def _cmd_themes_exposure(", 1)[1].split("\ndef ", 1)[0]
-    assert "include_theme_band=True" in fn, "the exposure scan must opt in"
-    # exactly ONE opt-in in the whole tree, so the band cannot spread by copy-paste. The loader's
-    # own module is excluded by construction: it DEFINES the parameter.
-    opt_ins = [rel for rel in ("vinci/cli.py", "vinci/themes/stage2.py", "vinci/themes/leaders.py",
-                               "vinci/orchestrator.py", "vinci/screens/run.py")
-               if "include_theme_band=True" in (_REPO / rel).read_text()]
-    assert opt_ins == ["vinci/cli.py"], f"unexpected opt-in call sites: {opt_ins}"
-    # and the loader's own default is the primary-only population
-    loader = (_REPO / "vinci/themes/detection.py").read_text()
-    assert "include_theme_band: bool = False" in loader
-
-
-def test_a_name_in_both_bands_keeps_its_primary_identity(tmp_path: Path) -> None:
-    """A name admitted by BOTH bands (a mid-cap that crossed $10B between builds) must appear
-    ONCE, as primary. Two rows for one name would double it in every by-tag count the theme
-    surfaces report, and the duplicate would carry the wrong provenance."""
-    snaps = tmp_path / "snapshots"
-    _write_snapshots(snaps, theme_rows=[
-        {"as_of": "2026-08-31", "internal_id": "SEC-1", "in_universe": 1, "market_cap": 1.1e10},
-        {"as_of": "2026-08-31", "internal_id": "SEC-2", "in_universe": 1, "market_cap": 3.0e12}])
-    names, _ = load_detection_universe(Config(data_dir=tmp_path), include_theme_band=True)
-    assert sorted(n.ticker for n in names) == ["AAA", "MEGA"]
-    assert {n.ticker: n.band for n in names}["AAA"] == "primary"
-
-
-def test_the_theme_band_only_stale_rows_are_filtered_to_its_own_latest_as_of(
-    tmp_path: Path,
-) -> None:
-    """The two bands are built by SEPARATE runs, so their dates need not coincide: the theme rows
-    are filtered to the THEME file's own latest as_of, never to the primary's. Pinned because
-    filtering the theme rows on the primary date would silently empty the band whenever the two
-    builds landed on different days — a whole population vanishing with no error."""
-    snaps = tmp_path / "snapshots"
-    _write_snapshots(snaps, theme_rows=[
-        {"as_of": "2026-08-20", "internal_id": "SEC-2", "in_universe": 1, "market_cap": 2.9e12},
-        {"as_of": "2026-08-28", "internal_id": "SEC-2", "in_universe": 1, "market_cap": 3.0e12}])
-    names, as_of = load_detection_universe(Config(data_dir=tmp_path), include_theme_band=True)
-    assert as_of == date(2026, 8, 31)                 # the PRIMARY population's vintage
-    mega = [n for n in names if n.ticker == "MEGA"]
-    assert len(mega) == 1 and mega[0].market_cap == 3.0e12   # the theme band's own latest row
 
 
 def test_no_decision_path_module_reads_the_theme_band() -> None:

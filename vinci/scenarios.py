@@ -1856,7 +1856,7 @@ def _run_r3(rec: ScenarioRecord) -> ScenarioRecord:
 
 def _run_r4(rec: ScenarioRecord) -> ScenarioRecord:
     """(R4) Value each leg as ``(ebit × multiple − net_debt) ÷ diluted_shares`` — an EV/NTM EBIT
-    underwrite, displaced from today's multiple the way R3 is (RUNBOOKS step 10).
+    underwrite, displaced from today's multiple the way R3 is (RUNBOOKS §m).
 
     WHAT IT REFUSES, and why each is a refusal rather than an ignore:
 

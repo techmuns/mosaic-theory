@@ -141,33 +141,21 @@ def test_the_multiple_payload_states_that_its_range_excludes_todays_mark() -> No
 def test_emit_is_deterministic_over_the_committed_corpus() -> None:
     """Re-running the emitter on the same committed inputs reproduces the artifact's block. An
     artifact that cannot be regenerated is not derived data, it is hand-edited state."""
-    import datetime as _dt
-
-    from vinci.panels_emit import theme_panel_rows
-
     snap = _snap()
-    cards = {json.loads(p.read_text())["driver_key"]
-             for p in (ROOT / "data" / "themes" / "thesis").glob("*.json")}
-    themes = ROOT / "data" / "themes"
-    tracked = sorted({p.stem for p in (themes / "baskets").glob("*.json")}
-                     | {p.stem for p in (themes / "economics").glob("*.json")})
-    # THEME ROWS FIRST, matching the CLI's own order — the artifact is a sequence, so a
-    # reproduction that emits the same rows in a different order is not a reproduction.
-    again = theme_panel_rows(
-        driver_keys=tracked, declared_cards=cards,
-        theme_falsifiers=snap.get("theme_falsifiers") or [],
-        today=_dt.date.fromisoformat(snap["as_of"]))
-    again += emit_panels(rows=snap["rows"], freshness=snap["freshness"],
-                         dossier_for=_dossier, record_for=_record, root=ROOT)
+    # THE THEME TIER LEFT WITH `vinci.themes` (2026-11-04): the emitter makes no theme rows, and a
+    # committed day keeps the ones it was written with — so the reproduction is of every other row.
+    again = emit_panels(rows=snap["rows"], freshness=snap["freshness"],
+                        dossier_for=_dossier, record_for=_record, root=ROOT)
     got = [json.loads(r.model_dump_json()) for r in again]
     # THE REMEDY IS PART OF THE FAILURE (operator ruling 2026-10-12). This pin goes red whenever a
     # page moves after the latest day — or the emitter's code changes, which a new day would only
     # launder into an artifact — and the tempting fix, re-running that day, writes later pages into
     # a dated record. The message names both causes and the ruled fix, where the operator meets it.
-    assert got == (snap.get("panels") or []), (
+    committed = [r for r in (snap.get("panels") or []) if r.get("tier") != "theme"]
+    assert got == committed, (
         f"the latest monitor day ({snap['as_of']}) no longer reproduces from today's inputs. If "
         f"the emitter's CODE changed, the diff is the defect to inspect first — a new day would "
-        f"commit it. If a page, record or theme card moved, run `vinci monitor` with NO --ref "
+        f"commit it. If a page or record moved, run `vinci monitor` with NO --ref "
         f"(it files the latest close): a NEW day when that close is later than {snap['as_of']}, "
         f"the same-session re-run when it is {snap['as_of']} itself. Never re-cut a day that a "
         f"later close sits after (docs/RUNBOOKS.md §j).")
@@ -402,3 +390,101 @@ def test_the_corpus_actually_overflows_two_of_the_three_caps() -> None:
     assert newer_max > 4, (
         f"no committed name overflows the timeline dots (max {newer_max}) — the witness WERN "
         f"supplied on 2026-09-16 is gone, so the cap is proven by construction only again")
+
+
+# --------------------------------------------------------------------------------------------
+# THE PANEL VIEW'S TWO RENDER PINS, moved verbatim from `tests/test_panels_theme.py` when the
+# theme tier retired (#908, round 2). They guard `frontend/views/shared/panels.js` (a refusal's
+# `why` survives de-duplication; `tabTickers` offers only selectable names), which every committed
+# day still renders; they leave with that view in R3.
+# --------------------------------------------------------------------------------------------
+
+
+def test_a_refusal_whose_reason_omits_the_why_still_shows_it_node() -> None:
+    """`decide()`'s MISSING-CONFIG branch composes its own sentence and never mentions `why`, so an
+    unconditional de-dup would drop the explanation entirely — on exactly the refusal a
+    half-onboarded name hits. Latent on today's corpus; pinned so it stays that way."""
+    import shutil
+    import subprocess
+
+    import pytest
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    driver = r"""
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const { panelGridHtml } = await import(pathToFileURL(
+  path.resolve("frontend/views/shared/panels.js")).href);
+const html = panelGridHtml([{ ticker: "WERN", tier: "cohort", key: "commissioning",
+  title: "C", state: "refused", changes_the_call: "c", caveat: "", cadence: "event",
+  sources: [], value: {},
+  missing: [{ kind: "rfile_note", detail: "revenue equipment", why: "THE ONLY EXPLANATION" }],
+  reason: "rfile_note config 'note_name' is not set for this name, so the panel would probe the "
+        + "DEFAULT 'property and equipment'" }], { ticker: "WERN" });
+console.log(JSON.stringify({ explanationSurvives: /THE ONLY EXPLANATION/.test(html) }));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, cwd=ROOT)
+    assert out.returncode == 0, out.stderr
+    assert json.loads(out.stdout)["explanationSurvives"] is True
+
+
+def test_the_tab_strip_offers_no_tab_that_cannot_be_selected_node() -> None:
+    """A THEME ROW'S `ticker` IS A DRIVER KEY, and the tab strip is a NAME strip.
+
+    Deriving tabs from every row appended six driver tabs that could not be selected: clicking one
+    set the asked-for value to something not in the ticker list, so the view fell back to the first
+    ticker and NO tab highlighted. A control that looks live and does nothing is worse than an
+    absent one — the reader concludes the data is empty rather than that the link is dead.
+    """
+    import shutil
+    import subprocess
+
+    import pytest
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    driver = r"""
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const { panelGridHtml } = await import(pathToFileURL(
+  path.resolve("frontend/views/shared/panels.js")).href);
+const base = { changes_the_call: "c", caveat: "", cadence: "event", sources: [], value: {},
+  missing: [], reason: "" };
+const rows = [
+  { ...base, ticker: "AORT", tier: "universal", key: "sources", title: "S", state: "ready",
+    value: { refs: ["r"] } },
+  { ...base, ticker: "ai-datacenter", tier: "theme", key: "theme_thesis", title: "T",
+    state: "refused", missing: [{ kind: "metric_path", detail: "thesis_card", why: "W" }],
+    reason: "metric_path 'thesis_card' — W. no thesis card is declared" },
+];
+const html = panelGridHtml(rows, { ticker: "AORT" });
+const tabs = (await import(pathToFileURL(
+  path.resolve("frontend/views/shared/panels.js")).href)).tabTickers(rows);
+// A theme tile still renders on a name's page (the tier attaches to the driver)...
+const themeShown = /ai-datacenter/i.test(html);
+// ...and its subject is named correctly.
+const saysDriver = /applies to this driver/.test(html);
+const saysName = /applies to this name/.test(html);
+// The `why` appears ONCE, because `reason` already carries it.
+const whyCount = (html.match(/>W</g) || []).length + (html.match(/— W\./g) || []).length;
+console.log(JSON.stringify({ themeShown, saysDriver, saysName, whyCount, tabs,
+  tabsExcludeDrivers: !tabs.includes("ai-datacenter"),
+  tabsKeepNames: tabs.includes("AORT") }));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, cwd=ROOT)
+    assert out.returncode == 0, out.stderr
+    got = json.loads(out.stdout)
+    assert got["themeShown"] is True
+    assert got["saysDriver"] is True
+    assert got["saysName"] is False, "a theme tile's subject is a driver, not a name"
+    assert got["whyCount"] == 1, "the requirement's why must not be printed twice"
+    assert got["tabsExcludeDrivers"] is True, "a driver key must not become an unselectable tab"
+    assert got["tabsKeepNames"] is True
+    assert got["tabs"] == ["AORT"]
