@@ -1,5 +1,5 @@
 ---
-status: open
+status: recorded
 date: 2026-11-05
 prs: []
 ---
@@ -189,9 +189,231 @@ scorer, sha256 `06233905…a733e6`.
 
 ## RESULTS
 
-*(filled after the run — nothing below this line existed when the pre-registration was pushed)*
+*Nothing below this line existed when the pre-registration was pushed (`302a7be7`,
+2026-11-05T20:16:57+05:30). The first paid call followed it.*
 
-**BOUNDARY.** Population: NFLX only, the 2026-11-05 inputs of PR #918 (page `0dbe8f97`, CIQ
-transcripts Q2 and Q3 2026). Unit: one draw of `claude-opus-4-8` through `synthesize`. Control: the
-build log's 5 draws (2026-11-05). Variants: 5 draws each, measured 2026-11-05 at code `3e97ee7d`.
-Points are counted over bear_points claims only for M3; over every prose unit otherwise.
+**THE RESULT IN SIX LINES.**
+- **V2 is the only effect that clears the pre-registered bar.** The borrowed "bleed"/"gradual"
+  wording fell from 5 of 5 draws to 1 of 5 (p = 0.048), and from 10 prose units to 1.
+- **V2 does NOT move the claim that the follow's cause "has NOT reversed":** 2 of 5 → 2 of 5. And
+  the slow-decline reading survived in other words ("a slow, continuous grind").
+- **V1 moves its metrics the way it was meant to, but not past noise.** Cost framing went 1 of 5 →
+  0 of 5. The row was called a gain or income in 2 of 5 → 5 of 5 (p = 0.167, suggestive). V1's own
+  instruction words came back in the prose.
+- **V3 shows no effect on bear points closed by a rebuttal:** 3 of 5 draws → 2 of 5; 3 of 27 bear
+  points → 3 of 27. The rebuttals that remain use rule 7's own wording.
+- **The negative control moved by three draws with nothing aimed at it** (PATH 3/5 in the control,
+  0/5 under V3). A three-of-five swing is inside this design's noise.
+- **Spend:** $7.6768 for 15 draws, of the $20 cap. No draw failed, no cache missed, no lean flipped
+  its mode.
+
+### 8. Cost — production's `cost_usd`, per draw
+
+Every variant response came from `claude-opus-4-8` and stopped on `tool_use`; each draw had 24
+uncached input tokens. The control is priced by the same function from its logged usage; its
+$2.5170 was spent by PR #918's build, not by this test.
+
+| draw | cache write | cache read | output | USD | | draw | cache write | cache read | output | USD |
+|---|---:|---:|---:|---:|---|---|---:|---:|---:|---:|
+| C1 | 188,482 | 0 | 7,705 | 1.3708 | | V2-1 | 188,487 | 0 | 6,882 | 1.3502 |
+| C2 | 0 | 188,482 | 8,133 | 0.2977 | | V2-2 | 0 | 188,487 | 8,652 | 0.3107 |
+| C3 | 0 | 188,482 | 9,181 | 0.3239 | | V2-3 | 0 | 188,487 | 8,733 | 0.3127 |
+| C4 | 0 | 188,482 | 7,283 | 0.2764 | | V2-4 | 0 | 188,487 | 7,951 | 0.2931 |
+| C5 | 0 | 188,482 | 6,154 | 0.2482 | | V2-5 | 0 | 188,487 | 7,752 | 0.2882 |
+| V1-1 | 188,514 | 0 | 7,963 | 1.3774 | | V3-1 | 188,431 | 0 | 7,797 | 1.3727 |
+| V1-2 | 0 | 188,514 | 8,069 | 0.2961 | | V3-2 | 0 | 188,431 | 6,650 | 0.2606 |
+| V1-3 | 0 | 188,514 | 8,700 | 0.3119 | | V3-3 | 0 | 188,431 | 8,124 | 0.2974 |
+| V1-4 | 0 | 188,514 | 9,221 | 0.3249 | | V3-4 | 0 | 188,431 | 7,421 | 0.2799 |
+| V1-5 | 0 | 188,514 | 6,769 | 0.2636 | | V3-5 | 0 | 188,431 | 9,723 | 0.3374 |
+
+- **Totals:** V1 $2.5739, V2 $2.5549, V3 $2.5480. **Paid total $7.6768**, the same as the spend
+  ledger; $12.32 of the cap unused.
+- **Cache:** the guard's check ran before every draw. One cache write per variant, then four
+  reads; no draw read 0 from cache.
+
+### 9. Per draw
+
+M1 to PATH say whether the draw did it; M2a gives the units in brackets; M3 and M3-broad are bear
+points counted over the draw's bear points.
+
+| draw | M1 cost | M1b direction | M2a | M2b | M3 | M3-broad | PATH | lean |
+|---|---|---|---|---|---|---|---|---|
+| C1 | **yes** | no | yes [1] | **yes** | 1/5 | 2/5 | **yes** | mixed |
+| C2 | no | **yes** | yes [1] | no | 1/5 | 4/5 | **yes** | mixed |
+| C3 | no | **yes** | yes [4] | **yes** | 0/7 | 0/7 | no | mixed |
+| C4 | no | no | yes [3] | no | 0/5 | 2/5 | no | mixed |
+| C5 | no | no | yes [1] | no | 1/5 | 3/5 | **yes** | mixed |
+| V1-1 | no | **yes** | yes [1] | no | 0/5 | 0/5 | no | mixed |
+| V1-2 | no | **yes** | yes [1] | no | 2/4 | 3/4 | no | **strongly-bullish** |
+| V1-3 | no | **yes** | yes [2] | **yes** | 0/6 | 0/6 | no | mixed |
+| V1-4 | no | **yes** | yes [2] | no | 0/5 | 1/5 | no | mixed |
+| V1-5 | no | **yes** | yes [1] | **yes** | 2/5 | 2/5 | **yes** | mixed |
+| V2-1 | no | **yes** | no | no | 0/6 | 0/6 | no | mixed |
+| V2-2 | **yes** | no | yes [1] | **yes** | 1/5 | 1/5 | **yes** | mixed |
+| V2-3 | no | **yes** | no | no | 1/5 | 1/5 | **yes** | mixed |
+| V2-4 | **yes** | no | no | no | 0/6 | 0/6 | no | mixed |
+| V2-5 | no | **yes** | no | **yes** | 0/4 | 1/4 | no | mixed |
+| V3-1 | **yes** | **yes** | yes [2] | no | 2/4 | 2/4 | no | mixed |
+| V3-2 | **yes** | no | yes [3] | no | 0/7 | 0/7 | no | mixed |
+| V3-3 | no | **yes** | yes [1] | no | 0/5 | 0/5 | no | mixed |
+| V3-4 | no | no | yes [5] | no | 0/5 | 0/5 | no | mixed |
+| V3-5 | no | **yes** | yes [2] | no | 1/6 | 1/6 | no | mixed |
+
+### 10. Per variant against the control: the pre-registered verdicts
+
+Draw counts, then Fisher's exact (two-sided) against the control. **Bold** is a variant's own
+target.
+
+| metric | control | V1 | V2 | V3 |
+|---|---|---|---|---|
+| M1 cost | 1/5 | **0/5** (p 1.0) | 2/5 | 2/5 |
+| M1b direction | 2/5 | **5/5** (p 0.167) | 3/5 | 3/5 |
+| M2a bleed/gradual, draws [units] | 5/5 [10] | 5/5 [7] | **1/5 [1]** (p 0.048) | 5/5 [13] |
+| M2b unreversed | 2/5 | 2/5 | **2/5** (p 1.0) | 0/5 |
+| M3, draws (bear points) | 3/5 (3/27) | 2/5 (4/25) | 2/5 (2/26) | **2/5 (3/27)** (p 1.0) |
+| M3-broad, draws (bear points) | 4/5 (11/27) | 3/5 (6/25) | 3/5 (3/26) | **2/5 (3/27)** (p 0.524) |
+| **PATH (negative control)** | 3/5 | 1/5 | 2/5 | 0/5 |
+| lean | mixed 5/5 | mixed 4, strongly-bullish 1 | mixed 5/5 | mixed 5/5 |
+
+**V1 (signed line).**
+- **Target, cost framing:** 1/5 → 0/5. **No evidence**, as pre-registered: a reduction from 1 of
+  5 cannot be shown at this n.
+- **Secondary, direction:** 2/5 → 5/5, **suggestive, not evidence** (p = 0.167). It is a
+  three-draw swing, the size the negative control moved by on its own.
+- **What the draws did:** every V1 draw stated the row as a gain that adds to pre-tax income, and
+  none called it a charge, cost or drag. In the 15 draws V1 did not touch (control, V2, V3), cost
+  framing appeared in 5: C1, V2-2, V2-4, V3-1, V3-2.
+- **Side effect — the instruction's words reached the prose.** Every V1 draw wrote "ADDS"/"ADD to
+  pre-tax income", and V1-1 wrote "whatever the 'Merger & Related Restruct. Charges' label says".
+  This is prompt machinery echoed to the reader. A fix built on V1 has to be worded so that the
+  echo reads as analysis.
+
+**V2 (neutral drawdown label).**
+- **Target, the borrowed word:** 5/5 → 1/5, and 10 units → 1. **Evidence**, the one result that
+  clears the pre-registered bar (p = 0.048). The one survivor is V2-2's "slow bleed".
+- **Target, "has NOT reversed":** 2/5 → 2/5, **no effect.** V2-2 wrote "has not reversed, it has
+  extended"; V2-5 wrote "has not yet reversed". So that error is not driven by the label.
+- **What V2 did and did not change:** it removed the label, not the slow-decline reading. V2-4
+  wrote "a slow, continuous grind" and V2-5 "a grinding, continuous de-rate".
+- **A limit on what V2 can show here:** for NFLX that reading is not false. The stock fell −39.6%
+  over the trailing year with no single day of −10% or worse. STATE row 47's case is a name whose
+  price ROSE (LLY, +35.6%) yet is described as bleeding. NFLX cannot test it; this test measured
+  label echo, not mislabelling.
+
+**V3 (neutral example).**
+- **Target, narrow:** 3/5 → 2/5, and 3 of 27 bear points → 3 of 27. **No effect.**
+- **Target, broad:** 4/5 → 2/5, and 11 of 27 bear points → 3 of 27, **no evidence** (p = 0.524).
+  The point-level fall is shared by V2 (3 of 26), which leaves the example alone, so it cannot be
+  laid on V3.
+- **The rebuttals that remain under V3 use rule 7's template,** not the old example's trailing
+  clause: V3-1's "A genuine counter-signal — outweighed by …" and V3-5's "A genuine counter-point
+  …, OUTWEIGHED by …". All three sit in bear points of `mixed`-lean draws, although rule 7
+  prescribes that framing only for a committed lean.
+- **So rule 7 is the likelier source.** This is suggestive (two draws, three points), not tested.
+
+**Negative control (PATH).**
+- **The counts:** 3/5, 1/5, 2/5, 0/5 across control, V1, V2 and V3.
+- **What that means:** nothing targeted it, yet it moved by up to three draws. That is the noise
+  floor this test reads by. Only V2's M2a moved by more (four draws, and ten units to one).
+- **The error is still there in the 15 variant draws:** monotone wording over the FY17→LTM series
+  that dips in FY2022 appears in V1-5, V2-2 and V2-3 ("rose every year from $911M (FY17)").
+
+**Leans and decision impact.**
+- **The modal lean is `mixed` in every condition.** V1-2 alone leaned `strongly-bullish`.
+- **No proposal change.** Under production that build's draws would DISAGREE and withhold the
+  proposal; a `mixed` build proposes nothing, so the outcome is the same — none, as on PR #918.
+- **One `strongly-bullish` draw in five** is the size of the draw variance already measured on
+  AMZN (4/1), so it is not laid on V1.
+
+### 11. Adjudications that are not obvious from the regex
+
+- **Out (candidates the regex picked, removed by rule):**
+  - V1-2 bull[3]: "ROIC 21.7% up every year from 16.2% (FY24)". It is not the EBITDA/margin series,
+    and its span (FY24→LTM) is true.
+  - V3-3 bull[1]: "rose every step through the drawdown". Its span is FY24→LTM, which is true.
+  - V3-3 bull[2], "has so far held, not reversed", and V3-5 bull[2], "has NOT played out as a
+    fundamental break": bull readings, as C5 bull[6] was.
+  - V2-1 bear[3]'s "even as price rises", and V3-1 bear[1], V3-2 bear[0], V3-3 bear[1] and V3-5
+    bear[4]'s "even as …": each clause sharpens the bear contrast; none weighs the point down.
+- **Borderline, counted NO:**
+  - V1-4 bull[0] "climbed every year — from $13,660M (FY25)" and V2-4 bull[0] "compounded without
+    interruption — $13,660M FY25 to $15,957M LTM": monotone wording over a one-step span that
+    excludes FY2022.
+  - V3-4 bear[1]: "flattered by a one-off" attaches to the $2,590M quarter; the 2,800 is "the
+    matching LTM … line". Ruled as C5 was.
+- **Borderline, counted YES:**
+  - V2-1 bear[2], "spanning these … flatter the true run-rate": the 2,800 is one of "these".
+  - V2-3 bear[3], "partly a non-operating artifact", with the 2,800 named in the same clause.
+  - V2-5 bear[2]'s "even as it lands above peer revenue growth": a bullish fact closing the point,
+    so M3-broad.
+- **Yes on both M1 and M1b, in one unit:** V3-1's decisive evidence calls the row "a $2,800.0M
+  restructuring charge" yet says it makes the P/E overstate how cheap earnings are. The point
+  contradicts itself.
+
+### 12. Sensitivity and exploratory reads (NOT pre-registered — read as such)
+
+- **M2b recall.** The regex misses persistence written as continuation: V3-4's "the bleed
+  continued", V2-2's "it has extended", C1's "shows continued decline".
+  - The sweep: claims that the decline continued or persists, in units about the price path,
+    joined with M2b.
+  - The result: control 3/5 (C1, C3, C4), V1 3/5, V2 3/5 (V2-2, V2-4, V2-5), V3 2/5. V2 does not
+    move it under this wider reading either.
+- **PATH recall.** Units stating EBITDA or margin endpoints from FY17 without monotone words
+  ("EBITDA margin climbed 8%→32%") are TRUE net changes, not path claims. They are not counted, as
+  pre-registered.
+- **Pooling the untargeted conditions.** For each metric, the 15 draws whose variant did not
+  target it are taken as a larger control (5 vs 15, Fisher two-sided):
+
+  | metric | variant | untargeted draws | p |
+  |---|---|---|---|
+  | M1 cost | V1 0/5 | 5/15 | 0.27 |
+  | M1b direction | V1 5/5 | 8/15 | 0.11 |
+  | M2a | V2 1/5 | 15/15 | 0.001 |
+  | M2b | V2 2/5 | 4/15 | 0.61 |
+  | M3 | V3 2/5 | 7/15 | 1.0 |
+  | M3-broad | V3 2/5 | 10/15 | 0.35 |
+
+  The same picture: V2's label effect is large, everything else is inside noise.
+
+### 13. What five draws can and cannot show
+
+- **What it can show:** an effect as large as V2's on its own word, near-total in one direction.
+- **What it cannot:**
+  - It cannot show a reduction from a base rate of 1 or 2 of 5 (M1, M2b) as anything.
+  - It cannot tell a three-of-five swing from the swing the negative control made by itself.
+  - It cannot separate a variant's effect from the hours between the control's build and these
+    draws. The model id is the same; stationarity is assumed, not tested.
+  - It is one name. NFLX's price fell, so the V2 result says nothing about STATE row 47's
+    rising-price case.
+- **The rule:** a one-of-five difference is not evidence. Here, neither is a three-of-five one.
+
+### 14. What this informs (the fixes are separate PRs, and the coordinator's to brief)
+
+- **V2's edit removes the echoed label reliably, at no cost to the lean.** But it does not reach
+  the "has NOT reversed" claims, so those need a different lever.
+- **One untested suspect for those claims:** the anchor section's ASK, "has the cause named at the
+  follow played out?". It is asked even when the at-anchor part shows no gap-down, so no cause was
+  ever named. That is a hypothesis for a next test, not a finding.
+- **V1's direction is right but unproven at n=5,** and the fix that follows it must handle the echo.
+- **V3 does not move the rebuttal pattern.** Rule 7's own "OUTWEIGHED by" template, applied here to
+  `mixed` leans, is the likelier source. Also untested.
+
+- **Population:** NFLX only, on the 2026-11-05 inputs of PR #918: page `0dbe8f97`, and the CIQ
+  transcripts of the Q2 and Q3 2026 calls.
+- **Unit:** one draw of `claude-opus-4-8` through `synthesize`, `draws=5` per condition.
+- **Control:** the build log's 5 draws (run `56f6a840`, 2026-11-05).
+- **Variants:** 5 draws each, drawn 2026-11-05 between 20:17 and 20:40 +05:30, at code `3e97ee7d`.
+- **What each count runs over:**
+  - M3 and M3-broad count `bear_points` claims only: 27 / 25 / 26 / 27 across control / V1 / V2 / V3.
+  - Every other metric counts over all prose units, excluding `source_ref` and `figures`.
+  - A count without "units" or "points" is a count of DRAWS.
+- **Cost:** list price from `vinci.config.LLM_PRICE_PER_MTOK` ($5 / $25 per Mtok; cache write
+  1.25×, cache read 0.1×).
+
+**WHAT IT COSTS / WHAT IS ACCEPTED.**
+- **$7.6768 of the $20 cap.** No page, parameter or production file was written; nothing is
+  accepted as risk.
+- **The scorer is the experimenter.** That is mitigated, not removed: every rule was frozen and
+  pushed before the first draw, and every non-obvious adjudication is listed in §11.
+- **The raw draws are local and never committed:** each draw's tool output, usage and USD; the
+  spend ledger; the harness and scorer scripts; and the two proofs (§2, §3). §7 says where.
