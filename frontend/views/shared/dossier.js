@@ -323,6 +323,11 @@ const EXTRACTION_VERSIONS = [
     "goes on past them (`revised_guidance_cut` on `drawdown_cause` and on each dated part, " +
     "absent until built); the quote is unchanged, and the page marks it cut, or on a page " +
     "built before the field, possibly cut"],
+  ["2026-11-05.consensus-ref-names-its-sheet",
+    "a forward-year consensus row's ref names its sheet, then its row: " +
+    "`consensus_level_ref` writes 'CIQ Estimates→Consensus · EBITDA FY2027 (…)', where the " +
+    "first cut ran the metric into the sheet name ('Consensus EBITDA FY2027'); the figures " +
+    "are unchanged"],
   ["2026-11-05.input-record",
     "every page records what it was built from (`inputs`, JSON-only): the full sha256 of each " +
     "CIQ export, HTTP response and price series the build read, cut on the page to the fact " +
