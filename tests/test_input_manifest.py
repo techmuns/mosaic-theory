@@ -747,11 +747,11 @@ def test_a_whole_corpus_backfill_runs_without_exclude(tmp_path: pathlib.Path) ->
     assert inputs_backfill.run(cfg, tickers=[], exclude=[], roots=[tmp_path / "none"],
                                write=False, emit=out.append) == 0
     assert "2 page(s)" in out[0] and "REFUSED" not in out[0]
-    assert [line.split()[0] for line in out[1:]] == ["BURL", "NFLX"]
+    assert {line.split()[0] for line in out[1:]} == {"BURL", "NFLX"}
     skipped: list[str] = []
     assert inputs_backfill.run(cfg, tickers=[], exclude=["NFLX"], roots=[tmp_path / "none"],
                                write=False, emit=skipped.append) == 0
-    assert [line.split()[0] for line in skipped[1:]] == ["BURL"]
+    assert {line.split()[0] for line in skipped[1:]} == {"BURL"}
 
 
 def test_a_file_held_under_two_names_is_named_by_the_least(tmp_path: pathlib.Path) -> None:

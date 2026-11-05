@@ -18,7 +18,8 @@ The six are now treated like any name, for CIQ exports and SEC data alike.
 
 **#917 IS CLOSED, NOT MERGED.** #917 made the test suite refuse to read a held name's CIQ export. It
 did this with a shared list, an audit hook and a static guard
-(`docs/records/2026-11-05-no-test-reads-a-held-audit-packs-ciq-export.md` on its branch). The ruling
+(its record, `docs/records/2026-11-05-no-test-reads-a-held-audit-packs-ciq-export.md`, lives
+only on the kept branch `claude/held-name-test-exclusion`, never on main). The ruling
 made its purpose moot. The coordinator closed it with the operator's approval (*"Yes, do both"*),
 and its branch `claude/held-name-test-exclusion` is kept. Its round-2 commit `a35931ad` was never
 pushed and exists only in its worktree.
