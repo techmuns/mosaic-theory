@@ -483,6 +483,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "absent until built); the quote is unchanged, and the page marks it cut, or on a page "
         "built before the field, possibly cut",
     ),
+    (
+        "2026-11-05.consensus-ref-names-its-sheet",
+        "a forward-year consensus row's ref names its sheet, then its row: "
+        "`consensus_level_ref` writes 'CIQ Estimates→Consensus · EBITDA FY2027 (…)', where the "
+        "first cut ran the metric into the sheet name ('Consensus EBITDA FY2027'); the figures "
+        "are unchanged",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
