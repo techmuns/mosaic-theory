@@ -2,7 +2,7 @@
 id: 2026-11-05-fact-layer-r2-upload
 status: open
 date: 2026-11-05
-prs: [912, TBD]
+prs: [912, 913]
 supersedes:
 superseded-by:
 ---
