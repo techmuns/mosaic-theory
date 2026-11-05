@@ -2636,39 +2636,9 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     realized_rows = [mon.RealizedRow.model_validate(r) for r in realized]
     notes.extend(r.note() for r in realized_rows)
     notes.extend(str(r["split_note"]) for r in realized if r.get("split_note"))
-    # THE PANEL GRID (phase 6) — the consumer phases 2-4 were built for. Every panel decision and
-    # its STRUCTURED values land in the artifact; the frontend mirrors the file and renders it.
-    #
-    # A FAILURE HERE MUST NOT TAKE THE BOOK DOWN. The marks and the spread are the artifact's
-    # reason to exist; the grid is an addition to it. A hand-edited `followed.json` that names an
-    # unregistered panel raises by design (loud at read, per phase 4), and that must surface as a
-    # note rather than as a monitor run that writes nothing at all. It is NOT silent: the run
-    # prints it and the snapshot carries it.
-    panel_rows: list[Any] = []
-    try:
-        import json as _pj
-
-        from vinci.panels_emit import emit_panels
-
-        def _dossier_for(t: str) -> dict[str, Any] | None:
-            f = cfg.data_dir / "dossiers" / t / "dossier.json"
-            return _pj.loads(f.read_text()) if f.is_file() else None
-
-        def _record_for(t: str) -> dict[str, Any] | None:
-            f = root / "scenarios" / f"{t}.json"
-            return _pj.loads(f.read_text()) if f.is_file() else None
-
-        panel_rows = emit_panels(
-            rows=[r.model_dump(mode="json") for r in rows],
-            freshness=[f.model_dump(mode="json") for f in fresh],
-            dossier_for=_dossier_for, record_for=_record_for, root=root,
-        )
-    except Exception as exc:  # noqa: BLE001 — surfaced as a note; see the comment above
-        notes.append(f"PANEL GRID UNAVAILABLE ({type(exc).__name__}): {exc}")
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
                                return_basis="total", price_basis=mon.RETURN_BASIS,
-                               freshness=fresh, notes=notes, realized=realized_rows,
-                               panels=panel_rows)
+                               freshness=fresh, notes=notes, realized=realized_rows)
     print(mon.render_table(snap))
     # The CLI never writes a day that a later day file sits after — neither a SUPERSEDED day nor a
     # BACK-DATED one: re-running the front of the book is routine, while either would put today's

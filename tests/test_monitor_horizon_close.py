@@ -229,18 +229,18 @@ def test_the_monitor_and_the_scoring_report_give_the_same_resolved_return(
     assert row["excess"] == pytest.approx(score.excess_gross, abs=1e-12)
 
 
-# --- the three web views label a resolved row's mark as its horizon close ---------------------
+# --- the two web views label a resolved row's mark as its horizon close -----------------------
 
 
-def test_the_three_views_label_a_resolved_mark_as_the_horizon_close_node(
+def test_the_two_views_label_a_resolved_mark_as_the_horizon_close_node(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """TEST-LAYER RULE, end to end: the rows the real command wrote — VRRM resolved at its 10-14
     horizon, and its real 180-day row unresolved — rendered by the decision log (the mark row and
-    the spread card), the panels page (`the_call`, through the real payload) and the dossier's
-    implied-odds line. ⊕ resolved reads "horizon close"; ⊖ unresolved keeps "Current"/"now"."""
+    the spread card) and the dossier's implied-odds line. ⊕ resolved reads "horizon close"; ⊖
+    unresolved keeps "Current". (A third view, the panels page's `the_call`, retired with the
+    panel grid in #910.)"""
     import subprocess
 
-    from vinci import panels_payload as pay
     if not shutil.which("node"):
         pytest.skip("node unavailable")
     done = _monitor(tmp_path / "a", monkeypatch, horizon_days=119, ref="2026-10-16")
@@ -248,8 +248,7 @@ def test_the_three_views_label_a_resolved_mark_as_the_horizon_close_node(
     marks = tmp_path / "marks.json"
     marks.write_text(json.dumps({
         "done": {k: v for k, v in done.items() if k != "_day"}, "doneDay": done["_day"],
-        "live": {k: v for k, v in live.items() if k != "_day"}, "liveDay": live["_day"],
-        "doneCall": pay.the_call(done), "liveCall": pay.the_call(live)}))
+        "live": {k: v for k, v in live.items() if k != "_day"}, "liveDay": live["_day"]}))
     driver = r"""
 import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
@@ -258,18 +257,12 @@ const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, const
 for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
 const imp = (f) => import(pathToFileURL(path.resolve(`frontend/views/shared/${f}`)).href);
 const { liveRow, spreadCard } = await imp("decision-log.js");
-const { panelGridHtml } = await imp("panels.js");
 const { uwCard } = await imp("uw-card.js");
 const m = JSON.parse(readFileSync(process.argv[1]));
 const card = JSON.parse(readFileSync("frontend/scenarios/IT.json"));
-const base = { ticker: "VRRM", tier: "universal", changes_the_call: "c", caveat: "",
-  cadence: "event", missing: [], reason: "", sources: [] };
-const call = (v) => panelGridHtml([{ ...base, key: "the_call", title: "The call",
-  state: "ready", value: v }], { ticker: "VRRM" });
 console.log(JSON.stringify({
   logDone: liveRow(m.done), logLive: liveRow(m.live),
   spreadDone: spreadCard(m.doneDay), spreadLive: spreadCard(m.liveDay),
-  callDone: call(m.doneCall), callLive: call(m.liveCall),
   oddsDone: uwCard(card, { mark: m.done }), oddsLive: uwCard(card, { mark: m.live }),
 }));
 """
@@ -280,8 +273,6 @@ console.log(JSON.stringify({
     assert ">Current<" in r["logLive"] and "Horizon close" not in r["logLive"]
     assert "resolved rows at their horizon close" in r["spreadDone"]
     assert "horizon close" not in r["spreadLive"]
-    assert "horizon close $2.94" in r["callDone"] and ">now " not in r["callDone"]
-    assert ">now $2.86" in r["callLive"] and "horizon close" not in r["callLive"]
     assert "bear weight at its horizon close" in r["oddsDone"]
     assert "Market-implied bear weight" in r["oddsLive"] and "horizon close" not in r["oddsLive"]
 
