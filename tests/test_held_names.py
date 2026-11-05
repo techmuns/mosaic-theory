@@ -118,6 +118,15 @@ class _Module:
                 if isinstance(t, ast.Name):
                     self.binds.setdefault((self.enclosing_def(node), t.id), []).append(v)
         self._reach: dict[ast.AST, bool] = {}
+        self._busy: set[ast.AST] = set()
+        #: docstrings are prose: one that MENTIONS the CIQ folder reads nothing from it
+        self.docstrings: set[ast.AST] = set()
+        for node in ast.walk(self.tree):
+            if isinstance(node, ast.Module | ast.ClassDef | ast.FunctionDef | ast.AsyncFunctionDef):
+                first = node.body[0] if node.body else None
+                if isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant) and (
+                        isinstance(first.value.value, str)):
+                    self.docstrings.add(first.value)
 
     def values_of(self, name: ast.Name) -> list[ast.expr]:
         """The values ``name`` can hold where it is read: its own function's bindings (none, for
@@ -177,13 +186,16 @@ class _Module:
         takes as a fixture) a function of this module that does."""
         if node in self._reach:
             return self._reach[node]
-        self._reach[node] = False          # a cycle reaches nothing new
+        if node in self._busy:             # a cycle reaches nothing new on this path
+            return False
+        self._busy.add(node)
         got = False
         for n in ast.walk(node):
             if (isinstance(n, ast.Name) and n.id in CIQ_READERS) or (
                     isinstance(n, ast.Attribute) and n.attr in CIQ_READERS):
                 got = True
-            elif isinstance(n, ast.Constant) and isinstance(n.value, str):
+            elif isinstance(n, ast.Constant) and isinstance(n.value, str) and (
+                    n not in self.docstrings):
                 got = bool(_CIQ.search(repr(n.value)))
             elif isinstance(n, ast.Name) and n.id not in seen:
                 got = any(self.reaches(d, seen | {n.id}) for d in self.defs.get(n.id, [])) or any(
@@ -193,8 +205,19 @@ class _Module:
         if not got and isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
             got = any(self.reaches(d, seen | {a.arg}) for a in node.args.args
                       if a.arg not in seen for d in self.defs.get(a.arg, []))
-        self._reach[node] = got
+        self._busy.discard(node)
+        # a False found while an enclosing call was still open may owe that call its answer, so
+        # only a True, or a False settled with nothing open, is kept
+        if got or not self._busy:
+            self._reach[node] = got
         return got
+
+    def within(self, node: ast.AST, scope: ast.AST) -> bool:
+        """``node`` sits in ``scope``'s body, directly or in a function nested in it."""
+        fn = self.enclosing_def(node)
+        while fn is not None and fn is not scope:
+            fn = self.enclosing_def(fn)
+        return fn is scope
 
     def stmt_of(self, node: ast.AST) -> ast.AST:
         while not isinstance(node, ast.stmt):
@@ -276,7 +299,7 @@ class _Module:
                 return False
             consumers: list[ast.AST] = []
             for u in self.uses.get(name, []):
-                if scope is not None and self.enclosing_def(u) is not scope:
+                if scope is not None and not self.within(u, scope):
                     continue
                 call = self.parents.get(u)
                 # a function's result is its CALL: follow on from there
@@ -344,16 +367,18 @@ class _Module:
         return out
 
 
-def unrouted(path: str, src: str) -> list[Site]:
+def unrouted(path: str, src: str, mod: _Module | None = None) -> list[Site]:
     """Every enumeration over the committed pages or the CIQ folder in ``src`` whose values reach
     code that can open a CIQ export without passing through `page_params` / `without_held`. A
     page enumeration may instead declare it reads committed JSON only; a CIQ-folder one may not."""
-    mod = _Module(src)
+    mod = mod if mod is not None else _Module(src)
     out = []
     for call, root in mod.sites():
         if mod.leaks(call, ciq=root == "ciq"):
             text = (ast.get_source_segment(src, call) or "").replace("\n", " ")
-            out.append(Site(path, call.lineno, root, text[:100]))
+            if len(text) > 100:
+                text = f"{text[:100]}… (cut at 100 of {len(text)} characters)"
+            out.append(Site(path, call.lineno, root, text))
     return sorted(out, key=lambda s: s.line)
 
 
@@ -362,7 +387,7 @@ def scan_suite(sources: dict[str, str]) -> list[Site]:
     module into another and consumed there without a helper."""
     mods = {path: _Module(src) for path, src in sources.items()}
     exports = {Path(path).stem: mod.exports() for path, mod in mods.items()}
-    bad = [s for path, src in sources.items() for s in unrouted(path, src)]
+    bad = [s for path, src in sources.items() for s in unrouted(path, src, mods[path])]
     bad += [s for path, mod in mods.items() for s in mod.imported_leaks(path, exports)]
     return bad
 
@@ -528,6 +553,61 @@ def test_the_declaration_may_sit_alone_on_the_line_above() -> None:
     assert _scan(src.format(gap="", pad="")) == []
     assert _scan(src.format(gap="", pad="x = 1\n            ")) == [
         '(ROOT / "data" / "dossiers").glob("*/dossier.json")']
+
+
+def test_the_scan_follows_a_closure_and_a_recursive_helper_and_ignores_docstrings() -> None:
+    """⊖ A page list read inside a nested function, and a helper that reaches CIQ only through a
+    recursive call, are followed. ⊕ A docstring that mentions the CIQ folder reads nothing."""
+    closure = '''
+        def test_x() -> None:
+            pages = sorted((ROOT / "data" / "dossiers").iterdir())
+
+            def inner() -> None:
+                for p in pages:
+                    CiqBundle.from_files(p.name, [])
+            inner()
+    '''
+    assert _scan(closure) == ['(ROOT / "data" / "dossiers").iterdir()']
+    cycle = '''
+        def _a(n: int) -> None:
+            if n:
+                _b(n - 1)
+            LocalFolderStore.from_config()
+
+        def _b(n: int) -> None:
+            _a(n)
+
+        def test_first() -> None:
+            for p in sorted((ROOT / "data" / "dossiers").glob("*")):
+                _a(1)
+
+        def test_x() -> None:
+            for p in sorted((ROOT / "data" / "dossiers").iterdir()):
+                _b(1)
+    '''
+    # `_a` is judged first and meets `_b` while `_a` is still open: `_b` must not be settled False
+    assert _scan(cycle) == ['(ROOT / "data" / "dossiers").glob("*")',
+                            '(ROOT / "data" / "dossiers").iterdir()']
+    prose = '''
+        def test_x() -> None:
+            """Unlike the exports under data/manual/ciq, this reads committed JSON."""
+            for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
+                json.loads(p.read_text())
+    '''
+    assert _scan(prose) == []
+
+
+def test_a_long_site_says_it_was_cut() -> None:
+    """A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION: a call longer than 100 characters is shown
+    with the mark and its full length."""
+    long_root = "ROOT / " + " / ".join(['"data"'] * 30) + ' / "dossiers"'
+    src = f'''
+        def test_x() -> None:
+            for p in sorted(({long_root}).iterdir()):
+                CiqBundle.from_files(p.name, [])
+    '''
+    (text,) = _scan(src)
+    assert "… (cut at 100 of" in text
 
 
 def test_a_page_loop_that_reaches_no_ciq_reader_is_left_alone() -> None:
@@ -724,6 +804,32 @@ def test_the_hook_follows_a_held_folder_that_is_a_link(tmp_path: Path,
     monkeypatch.setattr(hn, "HELD_FOLDERS", held)
     assert _refused(target / "s.xls")
     assert _refused(tmp_path / "manual" / "ciq" / "BURL" / "s.xls")
+
+
+def test_the_hook_watches_the_archive_beside_a_linked_ciq_folder(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """⊖ `data/manual` a real folder, `data/manual/ciq` a link: the archive beside the LINKED
+    folder (where `archive_roots` looks) is watched too."""
+    drive = tmp_path / "Drive"
+    (drive / "ciq" / "TJX").mkdir(parents=True)
+    archived = drive / "ciq-archive" / "replaced-2026-10-28" / "BURL" / "s.xls"
+    archived.parent.mkdir(parents=True)
+    archived.write_text("SENTINEL")
+    (tmp_path / "manual").mkdir()
+    (tmp_path / "manual" / "ciq").symlink_to(drive / "ciq")
+    roots, held = hn.ciq_roots(tmp_path / "manual")
+    monkeypatch.setattr(hn, "CIQ_ROOTS", roots)
+    monkeypatch.setattr(hn, "HELD_FOLDERS", held)
+    assert _refused(archived)
+
+
+def test_the_hook_reads_the_roots_without_regard_to_case(fake_ciq: Path) -> None:
+    """⊖ A root spelled in another case names the same folder on a case-insensitive disk."""
+    upper = Path(str(fake_ciq).replace("/manual", "/MANUAL"))
+    if upper.exists():
+        assert _refused(upper / "ciq" / "BURL" / "s.xls")
+    assert hn.held_path(str(fake_ciq).upper() + "/CIQ/BURL/S.XLS",
+                        tuple(r for r in hn.CIQ_ROOTS), {}) == "BURL"
 
 
 def test_the_hook_is_installed_on_this_checkout() -> None:

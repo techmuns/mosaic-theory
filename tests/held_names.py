@@ -41,7 +41,7 @@ from __future__ import annotations
 
 import os
 import sys
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any, TypeVar
 
@@ -106,14 +106,13 @@ def skip_if_held(item: object) -> None:
         pytest.skip(held_reason(t))
 
 
-def page_params(items: Iterable[Any], *, key: Callable[[Any], object] | None = None) -> list[Any]:
+def page_params(items: Iterable[Any]) -> list[Any]:
     """A parametrization's values with every held name SKIPPED, the reason naming the rule. A
     non-held value is returned as it came, so its case id does not move; a held one becomes a
-    `pytest.param` of the same values, so its id does not move either. ``key`` maps a value to
-    what names it, when `tickers_named` cannot read the value itself."""
+    `pytest.param` of the same values, so its id does not move either."""
     out: list[Any] = []
     for item in items:
-        t = held_in(key(item) if key is not None else item)
+        t = held_in(item)
         if t is None:
             out.append(item)
             continue
@@ -127,13 +126,12 @@ def page_params(items: Iterable[Any], *, key: Callable[[Any], object] | None = N
     return out
 
 
-def without_held(items: Iterable[T], *, key: Callable[[T], object] | None = None) -> list[T]:
+def without_held(items: Iterable[T]) -> list[T]:
     """A loop's items with every held name DROPPED, before the loop body can open its folder.
-    Each drop is recorded for the terminal summary. ``key`` maps an item to what names it, when
-    `tickers_named` cannot read the item itself."""
+    Each drop is recorded for the terminal summary."""
     kept: list[T] = []
     for item in items:
-        t = held_in(key(item) if key is not None else item)
+        t = held_in(item)
         if t is None:
             kept.append(item)
             continue
@@ -149,14 +147,18 @@ def without_held(items: Iterable[T], *, key: Callable[[T], object] | None = None
 
 def ciq_roots(manual: Path = ROOT / "data" / "manual") -> tuple[tuple[str, ...], dict[str, str]]:
     """(roots, held folders) of the CIQ folder in this checkout, each path ending in a separator.
-    The roots are `data/manual` as spelled and as resolved, and the resolved `ciq` and
-    `ciq-archive` in it (a checkout may link `data/manual`, or either of those). The held folders
+    The roots are `data/manual` as spelled and as resolved, the resolved `ciq` and `ciq-archive`
+    in it (a checkout may link `data/manual`, or either of those), and the `ciq-archive` beside
+    the resolved `ciq` (where `ciq_export_support.archive_roots` looks). The held folders
     map the resolved folder of each held name the live folder holds to its ticker: a ticker
     folder can itself be a link, whose target need not carry the ticker (Drive's GOOGL was one)."""
     roots = {str(manual)}
     for p in (manual, manual / "ciq", manual / "ciq-archive"):
         if p.exists():
             roots.add(os.path.realpath(p))
+    if (manual / "ciq").exists():
+        # the archive `ciq_export_support.archive_roots` also searches: beside the linked folder
+        roots.add(os.path.join(os.path.dirname(os.path.realpath(manual / "ciq")), "ciq-archive"))
     held = {}
     for t in HELD_NAMES:
         folder = manual / "ciq" / t
@@ -173,11 +175,12 @@ HELD_FOLDERS: dict[str, str] = {}
 def held_path(path: str, roots: tuple[str, ...], held_folders: dict[str, str]) -> str | None:
     """The held ticker whose folder ``path`` (absolute) lies in: under a held folder, or under one
     of ``roots`` with a held ticker among the folders between."""
+    key = path.casefold()     # the checkout's disk may not tell case apart (APFS does not)
     for folder, t in held_folders.items():
-        if path.startswith(folder):
+        if key.startswith(folder.casefold()):
             return t
     for root in roots:
-        if path.startswith(root):
+        if key.startswith(root.casefold()):
             folders = path[len(root):].split(os.sep)[:-1]
             held = sorted({f.upper() for f in folders} & HELD_NAMES)
             if held:
