@@ -3169,7 +3169,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_dossier.add_argument("--all", action="store_true", dest="all_pages",
                            help="with 'inputs-backfill': every committed page")
     p_dossier.add_argument("--exclude", action="append", default=[],
-                           help="with 'inputs-backfill': a page never read (repeatable)")
+                           help="with 'inputs-backfill': a page to skip (repeatable)")
     p_dossier.add_argument("--ciq-root", action="append", default=[], dest="ciq_root",
                            help="with 'inputs-backfill': a folder holding <TICKER>/ CIQ folders "
                            "(a live folder or a ciq-archive); repeatable; default: the "
