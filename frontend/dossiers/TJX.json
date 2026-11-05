@@ -15303,9 +15303,12 @@
     "recorded": "backfill",
     "extraction_version": "2026-11-05.input-record",
     "covers": [
-      "ciq",
-      "responses",
-      "prices"
+      "ciq"
+    ],
+    "not_covered": [
+      "committed repository files: data/graph_coverage.json, scenarios/<T>.json, data/followed.json, the screen snapshots and the committed page itself — versioned by the commit the page lands in",
+      "the price store's securities rows read through Store.get_security (the SIC behind the sector label, the stored name)",
+      "a credential embedded in a URL's path or a POST body: only query values and userinfo are redacted (`provenance.redact_url`); no client in this repository sends either"
     ],
     "inputs_id": null,
     "ciq": [
@@ -15346,12 +15349,12 @@
         "why": "a page built before 2026-11-05 stamps an export only where a block records a 10-hex prefix of its sha256; any other export it read (comps, transcripts, capital structure, credit health …) was never recorded"
       },
       {
-        "input": "responses",
-        "why": "no build before 2026-11-05 recorded which SEC, Polygon or FINRA responses it read, and the cache rewrites an entry in place, so the copy there now is no evidence of the copy read"
-      },
-      {
         "input": "prices",
         "why": "the page records only the store's newest bar across every name (price_store.frontier = 2026-10-28), not which series it read"
+      },
+      {
+        "input": "responses",
+        "why": "no build before 2026-11-05 recorded which SEC, Polygon or FINRA responses it read, and the cache rewrites an entry in place, so the copy there now is no evidence of the copy read"
       }
     ]
   },
