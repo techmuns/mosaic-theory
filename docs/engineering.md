@@ -624,6 +624,10 @@ PR (CLAUDE.md: coin-time translation).
 - **Order object** (2026-11-04, slice 2a, `vinci/facts/store.py`) — plain words: *one file per
   company and snapshot recording which stored row was which row of SEC's response, kept apart from
   the facts so a year of facts no new filing touched keeps its name across refreshes.*
+- **`r2://` / upload** (2026-11-05, `vinci/facts/remote.py`) — plain words: *the Cloudflare R2
+  bucket that holds a copy of every uploaded snapshot's files under the same names; one machine
+  uploads (`python -m vinci.facts upload`), and any reader given `r2://` downloads a snapshot's
+  files by its committed manifest, checking each file's hash before using it.*
 - **Drawdown anchor / at-anchor part / since part** (2026-11-04, `DrawdownAnchor`,
   `drawdown_cause.anchor`) — plain words: *the date a name's drawdown record is pinned to (its
   underwrite, else the day it was followed); the at-anchor part is the gap-downs, 8-Ks and outlook

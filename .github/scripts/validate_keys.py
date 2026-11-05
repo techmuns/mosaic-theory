@@ -2,14 +2,17 @@
 """On-demand validator that the API-key SECRETS are set + valid in this environment.
 
 Pings each external service with a tiny request. Prints PASS/FAIL per key — NEVER the key
-value. Exits non-zero if a REQUIRED key (Polygon, Anthropic) is missing or rejected, or an
-OPTIONAL key that is set (Tiingo) is rejected, so the `validate-keys` workflow goes red. Run via
-workflow_dispatch. Cheap: ~1 trivial call each.
+value. Exits non-zero if a REQUIRED key (Polygon, Anthropic, the four R2 values) is missing or
+rejected, or an OPTIONAL key that is set (Tiingo) is rejected, so the `validate-keys` workflow goes
+red. Run via workflow_dispatch. Cheap: ~1 trivial call each.
 """
 from __future__ import annotations
 
+import importlib.util
 import os
 import sys
+from pathlib import Path
+from types import ModuleType
 
 import httpx
 
@@ -136,6 +139,58 @@ def check_tiingo() -> bool:
     return False
 
 
+def _load_sigv4() -> ModuleType:
+    """The fact layer's own SigV4 signer, loaded BY PATH: this script cannot import `vinci` (the
+    workflow installs only anthropic and httpx), and `vinci/facts/sigv4.py` imports the standard
+    library only (tests/test_facts_remote.py holds it to that). One signer for the key check and
+    the uploads, so a check that passes signs the way the uploads sign."""
+    path = Path(__file__).resolve().parents[2] / "vinci" / "facts" / "sigv4.py"
+    spec = importlib.util.spec_from_file_location("vinci_facts_sigv4", path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"cannot load the signer at {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def check_r2() -> bool:
+    """The fact layer's R2 bucket (vinci/facts/remote.py). All four values are REQUIRED: one
+    signed HeadBucket, which a read-only token should pass (CI may hold one; only this repo's
+    ingest machine writes; untested with a read-only pair, 2026-11-05). Prints PASS/FAIL and the
+    HTTP status only — never the account id, the endpoint (which contains it) or the bucket
+    name."""
+    values = {
+        "R2_ACCOUNT_ID": os.environ.get("R2_ACCOUNT_ID") or "",
+        "R2_ACCESS_KEY_ID": os.environ.get("R2_ACCESS_KEY_ID") or "",
+        "R2_SECRET_ACCESS_KEY": os.environ.get("R2_SECRET_ACCESS_KEY") or "",
+        "R2_BUCKET": os.environ.get("R2_BUCKET") or "",
+    }
+    missing = [name for name, value in values.items() if not value]
+    if missing:
+        print(f"R2: FAIL — secret not set / empty: {', '.join(missing)}")
+        return False
+    if [name for name, value in values.items() if padded(name, value)]:
+        return False
+    sigv4 = _load_sigv4()
+    host = f"{values['R2_ACCOUNT_ID']}.r2.cloudflarestorage.com"
+    path = f"/{values['R2_BUCKET']}"
+    headers = sigv4.sign("HEAD", host, path, access_key=values["R2_ACCESS_KEY_ID"],
+                         secret_key=values["R2_SECRET_ACCESS_KEY"], region="auto")
+    try:
+        r = httpx.request("HEAD", f"https://{host}{sigv4.canonical_uri(path)}", headers=headers,
+                          timeout=30)
+    except Exception as e:
+        # the exception's text carries the URL, and the URL the account id: its type only
+        print(f"R2: FAIL — {type(e).__name__} (no answer from the bucket's endpoint)")
+        return False
+    if r.status_code == 200:
+        print("R2: PASS — HeadBucket HTTP 200")
+        return True
+    print(f"R2: FAIL — HeadBucket HTTP {r.status_code} (403 ⇒ the token may not read this "
+          "bucket; 404 ⇒ no such bucket in this account)")
+    return False
+
+
 def check_sec() -> bool:
     # SEC_USER_AGENT is OPTIONAL (EDGAR works with a default UA), so this never fails the run;
     # it just reports whether the secret is set and EDGAR is reachable.
@@ -161,8 +216,9 @@ def main() -> int:
     anthropic_ok = check_anthropic()
     polygon_ok = check_polygon()
     tiingo_ok = check_tiingo()  # optional — fails the run only when set and refused
+    r2_ok = check_r2()
     check_sec()  # optional — informational, never fails the run
-    ok = anthropic_ok and polygon_ok and tiingo_ok
+    ok = anthropic_ok and polygon_ok and tiingo_ok and r2_ok
     print(f"\n=== {'ALL KEYS VALID' if ok else 'A KEY FAILED'} ===")
     return 0 if ok else 1
 

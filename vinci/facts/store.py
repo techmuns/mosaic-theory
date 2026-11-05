@@ -24,12 +24,18 @@ same cache ingested twice yields the same id. ``data/facts/current.json`` names 
 snapshot of each (source, name): ``edgar`` for the committed pages, ``edgar:screen`` for the
 screen's universe.
 
-WHERE THE OBJECTS ARE IS THE MANIFEST'S ``storage``. ``git``: committed under
+WHERE THE WRITER KEEPS THE OBJECTS IS THE MANIFEST'S ``storage``. ``git``: committed under
 ``data/facts/objects`` (the stopgap while it stays under 50 MB). ``local``: on the machine that
-wrote them, at ``$VINCI_FACTS_STORE`` or the git-ignored ``data/facts/local``, and NOT shared with
-any other machine or CI until R2 exists (STATE.md §5.0 row 32 (30)); only the manifest is
-committed. A remote location (``r2://``, ``s3://``) raises :class:`RemoteStoreNotConfiguredError`:
-no bucket or credential exists yet, and the upload path is not built until one does.
+wrote them, at ``$VINCI_FACTS_STORE`` or the git-ignored ``data/facts/local``; only the manifest is
+committed.
+
+R2 HOLDS A COPY OF EVERY UPLOADED SNAPSHOT, read anywhere (:mod:`vinci.facts.remote`). ``r2://``,
+as ``$VINCI_FACTS_STORE`` or an explicit root, makes a READER fetch the objects from the bucket by
+their manifest entries. It is not a directory, so :func:`store_root` (where a writer writes)
+refuses it: a writer writes locally, and ``python -m vinci.facts upload`` copies a snapshot up.
+Where the objects are read from is chosen by the reader, never recorded in the manifest, so an
+upload changes no manifest and no snapshot id. Any other remote scheme raises
+:class:`RemoteStoreNotConfiguredError`.
 """
 from __future__ import annotations
 
@@ -68,6 +74,8 @@ DEFAULT_FACTS_DIR = Path("data") / "facts"
 DEFAULT_NAME = "pages"
 STORAGES = ("git", "local")
 _REMOTE = re.compile(r"^[a-z][a-z0-9+.-]*://", re.I)
+#: The one remote location: the Cloudflare R2 bucket the four ``R2_*`` variables configure.
+R2_LOCATION = "r2://"
 _SHA = re.compile(r"^[0-9a-f]{64}$")
 
 
@@ -76,7 +84,7 @@ class FactsStoreError(RuntimeError):
 
 
 class RemoteStoreNotConfiguredError(FactsStoreError):
-    """A remote object store was named, and none is configured yet."""
+    """A remote location was named that is not configured, or where a directory is needed."""
 
 
 def facts_dir() -> Path:
@@ -106,18 +114,40 @@ def read_pointers(base: Path | None = None) -> dict[str, str]:
     return {str(k): str(v) for k, v in raw.items()}
 
 
-def store_root(explicit: str | Path | None = None, *, storage: str = "git",
-               base: Path | None = None) -> Path:
-    """The object root of a snapshot stored as ``storage``: ``explicit`` when given; else, for
-    ``git``, ``<base>/objects``; for ``local``, ``$VINCI_FACTS_STORE`` or ``<base>/local``."""
+def requested_location(explicit: str | Path | None = None, *, storage: str = "git") -> str:
+    """The location asked for: ``explicit``; else, for a ``local`` snapshot, ``$VINCI_FACTS_STORE``;
+    else ``""`` (the default directory)."""
     if storage not in STORAGES:
         raise FactsStoreError(f"storage {storage!r} is not one of {STORAGES}")
-    raw = str(explicit) if explicit is not None else (
-        os.environ.get(STORE_ENV, "") if storage == "local" else "")
+    if explicit is not None:
+        return str(explicit)
+    return os.environ.get(STORE_ENV, "") if storage == "local" else ""
+
+
+def is_r2(raw: str | Path | None) -> bool:
+    """``r2://`` exactly: the bucket the ``R2_*`` variables name. Anything after the scheme is
+    refused rather than read as a bucket or a prefix."""
+    s = str(raw or "")
+    if s.lower().startswith("r2://") and s.lower() != R2_LOCATION:
+        raise RemoteStoreNotConfiguredError(
+            f"{s!r}: the R2 location is {R2_LOCATION!r} alone; the bucket is $R2_BUCKET")
+    return s.lower() == R2_LOCATION
+
+
+def store_root(explicit: str | Path | None = None, *, storage: str = "git",
+               base: Path | None = None) -> Path:
+    """The local object root of a snapshot stored as ``storage``: ``explicit`` when given; else,
+    for ``git``, ``<base>/objects``; for ``local``, ``$VINCI_FACTS_STORE`` or ``<base>/local``.
+    A remote location is not a directory and raises: a reader resolves ``r2://`` itself
+    (:class:`vinci.facts.reader.FactStore`), and a writer never writes to one."""
+    raw = requested_location(explicit, storage=storage)
+    if is_r2(raw):
+        raise RemoteStoreNotConfiguredError(
+            "r2:// is read by FactStore and `python -m vinci.facts verify`, and written only by "
+            "`python -m vinci.facts upload`: an ingest writes to a local directory (--store)")
     if raw and _REMOTE.match(raw):
         raise RemoteStoreNotConfiguredError(
-            f"{raw!r} names a remote store; only a local directory is supported until the R2 "
-            "bucket and its credentials exist (STATE.md §5.0, row 32 (30))")
+            f"{raw!r} names a remote store; the only one configured is R2 ({R2_LOCATION!r})")
     if raw:
         return Path(raw)
     return (base or facts_dir()) / ("objects" if storage == "git" else "local")

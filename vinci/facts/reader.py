@@ -16,9 +16,13 @@ order, so its name is its content; :meth:`FactStore.companyfacts_as_of` puts the
 response's order by joining each row to the entity's order object on (object, row), and a row the
 order object does not map raises rather than being dropped or misplaced.
 
-A LOCAL SNAPSHOT IS NOT SHARED. A snapshot whose manifest says ``storage: local`` has its objects
-only on the machine that wrote them; opened anywhere else (CI, another checkout) it raises
-:class:`FactsStoreNotPresentError` at open, never a quieter fallback to another reader.
+A LOCAL SNAPSHOT IS READ WHERE ITS OBJECTS ARE. A snapshot whose manifest says ``storage: local``
+has its objects on the machine that wrote them and, once uploaded, in R2. Opened with ``r2://``
+(``root`` or ``$VINCI_FACTS_STORE``), every object is fetched from the bucket into a local cache by
+its manifest entry and its sha256 checked (:class:`vinci.facts.remote.R2Objects`); a key the bucket
+lacks or bytes that do not match raise. Opened with neither, where the directory is absent, it
+raises :class:`FactsStoreNotPresentError` at open. The location is the caller's choice: there is
+no fallback from one to the other.
 
 AGENTS ONLY READ. The connection is an in-memory DuckDB with no database file, so there is no
 writable DuckDB file for two processes to share (DuckDB allows one read-write process). The one
@@ -30,7 +34,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import duckdb
 
@@ -39,9 +43,14 @@ from vinci.facts.store import (
     DEFAULT_NAME,
     FactsStoreError,
     _sha256_file,
+    is_r2,
     load_manifest,
+    requested_location,
     store_root,
 )
+
+if TYPE_CHECKING:
+    from vinci.facts.remote import R2Objects
 
 #: The periodic reports (and, by prefix, their amendments: 10-K/A, 10-Q/A, 10-KT, 20-F/A). On a
 #: same-day, same-value tie one of these is named over a proxy or any other form: NKE's FY2024 net
@@ -228,21 +237,32 @@ class FactStore:
     entry: a reader never serves a fact from bytes the manifest did not seal.
 
     ``name`` picks which current snapshot of ``source`` (``pages``, the committed one, or
-    ``screen``); ``root`` overrides where its objects are read from."""
+    ``screen``); ``root`` overrides where its objects are read from: a directory, or ``r2://``.
+    ``remote`` supplies the R2 reader ``r2://`` uses (tests; else one from the ``R2_*``
+    variables). An object fetched from R2 is checked against its entry whatever ``verify`` says."""
 
     def __init__(self, snapshot_id: str | None = None, *, source: str = "edgar",
                  name: str = DEFAULT_NAME, facts_base: Path | None = None,
-                 root: str | Path | None = None, verify: bool = True) -> None:
+                 root: str | Path | None = None, verify: bool = True,
+                 remote: R2Objects | None = None) -> None:
         self.manifest = load_manifest(snapshot_id, source=source, name=name, base=facts_base)
         self.snapshot_id: str = self.manifest["snapshot_id"]
         self.storage: str = self.manifest["storage"]
-        self.root = store_root(root, storage=self.storage, base=facts_base)
-        if self.storage == "local" and not self.root.is_dir():
+        self._remote: R2Objects | None = None
+        self._owns_remote = False
+        if is_r2(requested_location(root, storage=self.storage)):
+            from vinci.facts.remote import R2Objects
+            self._remote = remote if remote is not None else R2Objects.from_env()
+            self._owns_remote = remote is None
+            self.root = self._remote.cache
+        else:
+            self.root = store_root(root, storage=self.storage, base=facts_base)
+        if self._remote is None and self.storage == "local" and not self.root.is_dir():
             raise FactsStoreNotPresentError(
                 f"snapshot {self.snapshot_id} is stored locally and its objects are not here "
-                f"({self.root} does not exist): they are on the machine that wrote them, and not "
-                "shared until R2 exists (STATE.md §5.0 row 32 (30)). Ingest it here from the SEC "
-                "cache, or set $VINCI_FACTS_STORE to where it is")
+                f"({self.root} does not exist): they are on the machine that wrote them and, if "
+                "uploaded, in R2. Read them from R2 with root='r2://' (or $VINCI_FACTS_STORE=r2://"
+                "), set $VINCI_FACTS_STORE to where they are, or ingest here from the SEC cache")
         self._verify = verify
         self._verified: set[str] = set()
         self._files: dict[str, list[dict[str, Any]]] = {}
@@ -254,6 +274,8 @@ class FactStore:
 
     def close(self) -> None:
         self._con.close()
+        if self._remote is not None and self._owns_remote:
+            self._remote.client.close()
 
     def __enter__(self) -> FactStore:
         return self
@@ -267,6 +289,11 @@ class FactStore:
 
     def _path(self, entry: dict[str, Any]) -> Path:
         """An object's path, its bytes checked against the manifest the first time it is read."""
+        if self._remote is not None:
+            if entry["path"] not in self._verified:
+                self._remote.fetch(entry)        # raises on a missing key or unsealed bytes
+                self._verified.add(entry["path"])
+            return Path(self.root / entry["path"])
         p = self.root / entry["path"]
         if self._verify and entry["path"] not in self._verified:
             if not p.exists():
