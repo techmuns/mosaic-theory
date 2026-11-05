@@ -129,10 +129,14 @@ weighing the exposure should treat everything those paths reveal as already publ
   - A checkout folder that is itself a username (`/Users/<user>/data/vinci.db` → `<user>`) passes
     the guard.
   - A relative path, a Linux `/tmp/…` or `/var/…`, and a bare username are not caught.
-- **#914 (SMPL re-assembled) is open and stamps on the old writer.** Whichever of #914 and this PR
-  merges second must run `scripts/rewrite_store_stamps.py data/dossiers/SMPL/dossier.json`, then
-  `frontend/build.py`. Until then the guard fails on SMPL's page and mirror, which is the point of
-  it.
+- **Pages assembled on the old writer land after this one.** Two were in flight on 2026-11-05:
+  #914 (SMPL re-assembled) and the NFLX rebuild, with UBER, MCK and PARR to follow as their
+  re-exports arrive. Each was built on a branch cut before this writer, so its page and mirror
+  carry absolute paths. Whichever of that PR and this one merges second runs
+  `scripts/rewrite_store_stamps.py data/dossiers/<T>/dossier.json`, then `frontend/build.py`, on
+  the merged tree, and shows the guard reads 0. Until then the guard fails on that page and its
+  mirror, which is the point of it. A page assembled from main after this merges stamps folder
+  names by itself.
 - **Local paths outside the guard's three folders** (same pattern, the other 2,640 tracked files at
   `c4c9f432`):
 
