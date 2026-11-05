@@ -32,6 +32,18 @@ def _doc(t: str) -> dict:
     return json.loads((DOSS / t / "dossier.json").read_text())
 
 
+#: SMPL's page as committed on 2026-08-18, frozen (tests/fixtures/frozen_pages/README.md): the page
+#: its scenario record was struck against. The living page was re-assembled on its FY2026 10-K
+#: (2026-11-04): its anchors moved (margin median 15.4481% → 15.3855%, base revenue onto FY2027's
+#: consensus) and `build_template` refuses it on STATE row 36's share gap. So the VALUE pins and
+#: the template fixtures read this page, and the structural checks also read the living one.
+FROZEN_SMPL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL" / "dossier.json"
+
+
+def _frozen_smpl() -> dict:
+    return json.loads(FROZEN_SMPL.read_text())
+
+
 def _legs(**over) -> dict[str, dict]:
     # dict.fromkeys is NOT the substitution ruff suggests here: it would give all three legs the
     # SAME inner dict, so patching one would silently patch the others.
@@ -107,32 +119,40 @@ def test_the_committed_smpl_base_margin_is_refused_which_is_the_whole_point() ->
     """§D, MADE STRUCTURALLY IMPOSSIBLE. SMPL's record states a base margin of 14.0% derived by
     averaging a cited anchor against a figure that exists nowhere but prose. Against the computed
     anchor of 15.4481% that is a −1.45pp deviation, and the writer now refuses it unless the
-    adjustment is stated. The ruling moved into the write path, where it binds every author."""
-    ancs = propose_anchors(_doc("SMPL"))
+    adjustment is stated. The ruling moved into the write path, where it binds every author.
+    The figures are the frozen page's, the one the record was struck against; the living page
+    still refuses the same leg."""
     # SCHEMA UNITS — ScenarioInput.margin is a decimal fraction, so the committed 14.0% is 0.14.
-    problems = validate_legs(_legs(base={"revenue": 1330.0, "margin": 0.14, "multiple": 12.5}),
-                             ancs)
+    legs = _legs(base={"revenue": 1330.0, "margin": 0.14, "multiple": 12.5})
+    problems = validate_legs(legs, propose_anchors(_frozen_smpl()))
     hit = [p for p in problems if p.startswith("base.margin")]
     assert hit and "15.4481" in hit[0] and "-0.014481" in hit[0], problems
     assert "§D" in hit[0]
+    now = [p for p in validate_legs(legs, propose_anchors(_doc("SMPL")))
+           if p.startswith("base.margin")]
+    assert now and "§D" in now[0], now
 
 
 @pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_stating_the_adjustment_clears_it_and_matching_the_anchor_needs_nothing() -> None:
     """THE POSITIVE HALF. The guard demands a stated derivation, not a particular number — an
-    analyst who says why may sit anywhere, and one who takes the anchor states nothing."""
-    ancs = propose_anchors(_doc("SMPL"))
-    m = next(a for a in ancs if a.axis == "margin")
-    # the multiple the ANCHOR proposes, read off the proposal like the margin — not a literal of
-    # CIQ's median, which stopped being SMPL's anchor when its lease basis landed (#750's pages)
-    x = next(a for a in ancs if a.axis == "multiple")
+    analyst who says why may sit anywhere, and one who takes the anchor states nothing. Run on the
+    frozen page (its base revenue anchor is the 1,351.7 written below) and on the living page,
+    where every at-anchor leg is read off the proposal."""
     stated = _legs(base={"revenue": 1330.0, "margin": 0.14, "multiple": 12.5,
                          "margin_adjustment": "−1.45pp: this year's gross-margin reset treated as "
                                               "partly structural"})
-    assert not [p for p in validate_legs(stated, ancs) if p.startswith("base.margin")]
-    at_anchor = _legs(base={"revenue": 1351.7, "margin": m.schema_value,
-                            "multiple": x.schema_value})
-    assert not [p for p in validate_legs(at_anchor, ancs) if p.startswith("base.")]
+    for doc, revenue in ((_frozen_smpl(), 1351.7), (_doc("SMPL"), None)):
+        ancs = propose_anchors(doc)
+        m = next(a for a in ancs if a.axis == "margin")
+        # the multiple the ANCHOR proposes, read off the proposal like the margin — not a literal
+        # of CIQ's median, which stopped being SMPL's anchor when its lease basis landed (#750)
+        x = next(a for a in ancs if a.axis == "multiple")
+        r = next(a for a in ancs if a.axis == "revenue" and a.leg == "base")
+        assert not [p for p in validate_legs(stated, ancs) if p.startswith("base.margin")]
+        at_anchor = _legs(base={"revenue": revenue if revenue is not None else r.schema_value,
+                                "margin": m.schema_value, "multiple": x.schema_value})
+        assert not [p for p in validate_legs(at_anchor, ancs) if p.startswith("base.")]
 
 
 @pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
@@ -187,17 +207,20 @@ def test_the_margin_anchor_is_compared_in_schema_units_not_display_units() -> No
     FRACTION (SMPL's committed legs are 0.1 / 0.14 / 0.165) while a `RefPoint` displays a margin as
     `15.4481` + `"%"`. A single field would compare a supplied 0.14 against 15.4481 and report a
     99% deviation on a leg that matches its anchor EXACTLY — display formatting made load-bearing,
-    which is the rule this repo already has."""
-    m = next(a for a in propose_anchors(_doc("SMPL")) if a.axis == "margin")
-    assert m.unit == "%" and abs(m.value - 15.4481) < 1e-4, m       # display
-    assert abs(m.schema_value - 0.154481) < 1e-6, m                  # what a leg is compared to
-    assert m.as_refpoint().value == m.value
+    which is the rule this repo already has. The figures are the frozen page's; the two units
+    are checked on the living page too."""
+    frozen = next(a for a in propose_anchors(_frozen_smpl()) if a.axis == "margin")
+    assert frozen.unit == "%" and abs(frozen.value - 15.4481) < 1e-4, frozen      # display
+    assert abs(frozen.schema_value - 0.154481) < 1e-6, frozen    # what a leg is compared to
 
-    ancs = [m]
-    at_anchor = _legs(base={"margin": m.schema_value})               # schema units == no deviation
-    assert not [p for p in validate_legs(at_anchor, ancs) if p.startswith("base.margin")]
-    display_units = _legs(base={"margin": m.value})                  # 15.4481 IS a real deviation
-    assert [p for p in validate_legs(display_units, ancs) if p.startswith("base.margin")]
+    for m in (frozen, next(a for a in propose_anchors(_doc("SMPL")) if a.axis == "margin")):
+        assert m.unit == "%" and abs(m.schema_value * 100 - m.value) < 1e-3, m
+        assert m.as_refpoint().value == m.value
+        ancs = [m]
+        at_anchor = _legs(base={"margin": m.schema_value})           # schema units == no deviation
+        assert not [p for p in validate_legs(at_anchor, ancs) if p.startswith("base.margin")]
+        display_units = _legs(base={"margin": m.value})              # 15.4481 IS a real deviation
+        assert [p for p in validate_legs(display_units, ancs) if p.startswith("base.margin")]
 
 
 def test_a_zero_anchor_does_not_silently_accept_everything() -> None:
@@ -375,7 +398,7 @@ def test_the_template_carries_the_operating_drivers_under_every_axis() -> None:
     mapping is derivable, so none was invented; the full set goes under each axis.
     """
     from vinci.dossier.propose import build_template
-    doc = _doc("SMPL")
+    doc = _frozen_smpl()   # a page the template accepts (the living one is refused, row 36)
     ev = build_template(doc)["_evidence"]
     rows = ((doc["mechanical"].get("operating_drivers") or {}).get("rows")) or []
     assert rows, "SMPL has no driver rows — re-pin this"
@@ -396,7 +419,7 @@ def test_the_forward_peer_leg_is_in_the_template_whatever_a_roll_cites() -> None
     distinguish cheap-overshoot from cheap-terminal'. The data never left the page; the ARGUMENT
     did. The template carries both bases so the analyst does not depend on what a roll cited."""
     from vinci.dossier.propose import build_template
-    mult = " ".join(build_template(_doc("SMPL"))["_evidence"]["multiple"])
+    mult = " ".join(build_template(_frozen_smpl())["_evidence"]["multiple"])
     assert "NTM TEV/EBITDA" in mult and "NTM P/E" in mult, mult[:300]
     assert "TEV/EBITDA:" in mult, "the LTM peer row is gone"
     assert "disagree in SIGN" in mult, "the LTM-vs-NTM warning is gone"
@@ -481,7 +504,7 @@ def test_the_margin_trend_is_labelled_ebitda_against_an_ebit_leg() -> None:
     anchor. This is the axis §D happened on, and an unlabelled basis is how two numbers get averaged
     into one."""
     from vinci.dossier.propose import build_template
-    line = next(x for x in build_template(_doc("SMPL"))["_evidence"]["margin"]
+    line = next(x for x in build_template(_frozen_smpl())["_evidence"]["margin"]
                 if x.startswith("margin trend"))
     assert "EBITDA basis" in line and "NOT the EBIT margin" in line, line
 
