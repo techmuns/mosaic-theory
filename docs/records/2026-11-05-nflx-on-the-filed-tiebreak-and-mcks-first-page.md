@@ -31,12 +31,20 @@ the 2026-11-04 close, the latest at build time (06:58 ET on 2026-11-05).
   so the quarter-by-quarter breakdown is what decides it.
 - The `ciq-ltm-quarters` QA flag stays: the annual LTM −2,800.0 against the quarters' +2,800.0,
   "DIFFER by 5,600.0 $M".
-- **For the operator's look — the synthesis reads the label, not the sign.** A bear point says "A
-  $2,800.0M Merger & Related Restruct. Charge sits in the LTM … though it is a one-time rather
-  than recurring drag", and a key unknown speaks of "restructuring/aborted-deal costs". The page
-  states +2,800.0, filed inside non-operating income: a one-off INCOME item in the trailing period,
-  not a cost. The 19c guard checks that the figure is stated, not its direction. Not re-drawn: a
-  re-roll to clean the prose is selection on outcome (RUNBOOKS §i).
+- **DEFECT ON THE WRITTEN PAGE — the synthesis gives the merger row the wrong DIRECTION**
+  (confirmed by the coordinating session's review, round 1). **AWAITING THE OPERATOR:** keep the
+  page with this defect recorded, or re-draw NFLX (about $5.55). Not decided, and nothing is
+  re-drawn here.
+  - The bear case's fifth point (`synthesis.bear_points[3]`; the page renders the bear points by
+    tier, so it prints fifth) says "A $2,800.0M Merger & Related Restruct. Charge sits in the LTM …
+    though it is a one-time rather than recurring drag".
+  - The sixth key unknown (`synthesis.key_unknowns[5]`) speaks of "restructuring/aborted-deal
+    costs". The decisive question does not mention the row.
+  - Both read the row as a cost. The page states +2,800.0, filed inside non-operating income: a
+    one-off INCOME item in the trailing period. The page's own caveat says so, and so does its
+    third bear point, which reads $2,590M of the 2026-03-31 quarter as coming "from below the
+    operating line" and flattering the trailing multiple.
+  - The 19c guard checks that a material figure is stated, not which way it points, so it passed.
 
 *NFLX: everything else that moved against the committed page (#867, assembled 2026-10-29).*
 - **Fields** (`prespend.compare`, the precheck's own comparison, run on the committed and the
@@ -149,6 +157,9 @@ operator approved $50 for the remaining pages on 2026-11-05.
     this record's empty `prs:` trail (`test_a_shipped_record_names_the_pr_that_carried_it`), filled
     before the push; the records tests then pass. #917 (open) is the PR that keeps every test off
     the held packs' exports; until it merges, a linked suite needs a copy made without them, as here.
+  - **Review round 1** (after merging main `eac82b7f` and rewriting the two stamps): CI-like on the
+    tree with this record's defect entry and the STATE edits, **0 failed, 8,924 passed, 569
+    skipped, 8 xfailed** (9 min); `python -m tests.test_no_local_paths` 0 hits in 1,108 files.
 
 **BOUNDARY.**
 - **Runs:** 2, on 2026-11-05: `56f6a840` 11:58:05–12:08:03 UTC (597.6 s) and `d4304414`
@@ -166,11 +177,15 @@ operator approved $50 for the remaining pages on 2026-11-05.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **$12.95** of the operator's $50; $37.05 remains for V, ORKA, SMPL and UBER.
-- **For the operator's look before merge:** NFLX's synthesis calls the +2,800.0 a charge and a drag
-  (above); MCK's first lean and anchor (R1 base $484.71 against a $1,069.44 price).
-- **Both pages still carry `price_store`'s absolute local paths** (`declared_path` in this worktree,
-  `resolved_path` in `mosaic-theory-ta`). #915 rewrites every committed page's stamp, NFLX's
-  included, and changes the writer; whichever of the two PRs merges second must re-run #915's rewrite
-  on NFLX and MCK. Not fixed here.
+- **AWAITING THE OPERATOR:** NFLX's direction defect (above) — keep the page with it recorded, or
+  re-draw (about $5.55, which would leave $31.50 for the rest).
+- **For the operator's look before merge:** MCK's first lean and anchor (R1 base $484.71 against a
+  $1,069.44 price).
+- **The price-store stamps no longer name a local path.** Both builds wrote absolute paths
+  (`declared_path` in this worktree, `resolved_path` in `mosaic-theory-ta`). After #915 merged
+  (`eac82b7f`), this PR merged main and ran its `scripts/rewrite_store_stamps.py` on both pages:
+  each JSON and its mirror moves exactly those two lines, and both `dossier.md` files are
+  byte-unchanged. `python -m tests.test_no_local_paths` read 8 hits in 1,108 files before and 0
+  after, over `data`, `frontend`, `scenarios` and `tests/fixtures`, this pass's fixtures included.
 - **The non-operating read's trailing-four-quarters window fix is in flight** (#916). NFLX and MCK
   pick it up only at their next assembly.
