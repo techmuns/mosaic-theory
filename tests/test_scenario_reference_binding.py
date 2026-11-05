@@ -69,6 +69,27 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 #: defect it names is live.
 KNOWN_FOREIGN: dict[str, str] = {}
 
+#: A RECORD STRUCK ON AN EARLIER VINTAGE OF ITS OWN PAGE: it cites a band figure the page's CURRENT
+#: series no longer produces, because the page moved and the underwrite has not yet. Not
+#: KNOWN_FOREIGN, which names a record carrying ANOTHER name's figures and is earned only while that
+#: record shares an assumptions block (the check below it). Named here rather than bound to a frozen
+#: page, so the gap stays visible; earned only while the reference is still unreproducible
+#: (`test_a_known_stale_record_still_cites_what_its_page_no_longer_produces`).
+#: KEYED BY THE EXACT FINDING guard 2 emits (`"<record> <role>=<value>"`), never by the name: a
+#: name-keyed entry would wave through EVERY foreign figure on SMPL until January — a hand-edited
+#: `median` included — the whole-group exemption KNOWN_SHARED_GROUPS below was narrowed to avoid.
+#: UNLOCK: the re-underwrite that re-derives the reference from the current band.
+KNOWN_STALE: dict[str, str] = {
+    "SMPL band_low=6.11": (
+        "STATE §5.0 row 36: scenarios/SMPL.json (struck 2026-08-05) cites band_low 6.11, and its "
+        "bear leg says '5.5x is below the lowest close … 6.11x'. That no longer holds: the page "
+        "re-assembled 2026-11-04 on its FY2026 10-K reads an EV/EBITDA (TEV/LTM) band low of 5.04x "
+        "(the 2026-09-30 close; 36 closes 2017-12-29..2026-09-30, as of 2026-11-03, the current "
+        "close excluded), so the bear 5.5x now sits ABOVE the band's low. Fix at the January "
+        "re-underwrite, after the Q1 FY27 10-Q; the record is the operator's and is not edited "
+        "here."),
+}
+
 #: The EXACT shared-digest group that is exempt — not "any group containing an allowlisted name".
 #: The first cut exempted the whole group, so a THIRD record pasted from BRBR/SMPL's block would
 #: have been waved through for as long as the BRBR entry lived. Keyed as a frozenset so a new member
@@ -175,6 +196,32 @@ def _band_refs(doc: dict[str, Any]) -> list[dict[str, Any]]:
             and isinstance(ref.get("value"), (int, float))]
 
 
+def _score_band_refs() -> tuple[int, list[str], list[str]]:
+    """Guard 2's scoring, shared with the KNOWN_STALE earned-check so the two cannot drift apart.
+
+    Returns (references scored, foreign findings as ``"<record> <role>=<value>"``, records citing a
+    band with no usable committed band to score against)."""
+    checked, foreign, unscored = 0, [], []
+    for name, doc in _scenarios():
+        refs = _band_refs(doc)
+        band = _own_band(name.split("-")[0])
+        if not refs:
+            continue
+        # FAIL LOUD, NEVER SKIP SILENTLY. A record citing a band while carrying no committed band
+        # is the shape where a foreign figure is LEAST likely to be caught by eye — WERN is live in
+        # exactly that state today. The first cut `continue`d here and said nothing.
+        if band is None or len(band.get("series") or []) < 4:
+            unscored.append(name)
+            continue
+        for ref in refs:
+            checked += 1
+            value, role = float(ref["value"]), str(ref["role"])
+            reach = _reachable(band, role)
+            if not any(abs(value - r) <= 0.02 * max(1.0, abs(r)) for r in reach):
+                foreign.append(f"{name} {role}={value}")
+    return checked, foreign, unscored
+
+
 def test_no_two_scenario_records_share_an_assumptions_block() -> None:
     """GUARD 1 — the wholesale copy. Two names cannot have arrived at byte-identical reference
     values, notes and prose across all three axes independently; that is a paste, not a coincidence.
@@ -205,24 +252,7 @@ def test_every_band_reference_is_reproducible_from_its_own_series() -> None:
     — that is what `band_low` / `median` / `band_high` in turns MEAN, whatever prose the `source`
     field happens to carry. If its value is neither the band's own stored statistic for that role
     nor that same statistic over any trailing window, it came from somewhere else."""
-    checked, foreign, unscored = 0, [], []
-    for name, doc in _scenarios():
-        refs = _band_refs(doc)
-        band = _own_band(name.split("-")[0])
-        if not refs:
-            continue
-        # FAIL LOUD, NEVER SKIP SILENTLY. A record citing a band while carrying no committed band
-        # is the shape where a foreign figure is LEAST likely to be caught by eye — WERN is live in
-        # exactly that state today. The first cut `continue`d here and said nothing.
-        if band is None or len(band.get("series") or []) < 4:
-            unscored.append(name)
-            continue
-        for ref in refs:
-            checked += 1
-            value, role = float(ref["value"]), str(ref["role"])
-            reach = _reachable(band, role)
-            if not any(abs(value - r) <= 0.02 * max(1.0, abs(r)) for r in reach):
-                foreign.append(f"{name} {role}={value}")
+    checked, foreign, unscored = _score_band_refs()
     # NO HAND-TUNED FLEET TOTAL. The first cut asserted `checked >= 6` against an actual 7 — a
     # value-level pin on a living corpus with one reference of slack, and the documented BRBR unlock
     # rewrites two of the seven, so the floor could redden on the fix it prescribes. That is the
@@ -237,13 +267,14 @@ def test_every_band_reference_is_reproducible_from_its_own_series() -> None:
         f"a scenario underwriting a name with no committed dossier is itself the anomaly, and its "
         f"band citations cannot be verified by any means. Assemble the name, or drop the citation. "
         f"(Known: {sorted(NO_COMMITTED_BAND)}.)")
-    unexpected = [f for f in foreign if f.split()[0].split("-")[0] not in KNOWN_FOREIGN]
+    unexpected = [f for f in foreign
+                  if f.split()[0].split("-")[0] not in KNOWN_FOREIGN and f not in KNOWN_STALE]
     assert not unexpected, (
         f"reference(s) cite a figure their own name's close series cannot produce: {unexpected}. "
         f"A stable-role band statistic on the multiple axis asserts it describes THIS "
         f"company's own trading history — whatever prose its `source` field carries. A value "
-        f"unreachable from that name's own series belongs to another. (Known: "
-        f"{sorted(KNOWN_FOREIGN)}.)")
+        f"unreachable from that name's own series belongs to another. (Known foreign: "
+        f"{sorted(KNOWN_FOREIGN)}; known stale: {sorted(KNOWN_STALE)}.)")
 
 
 def test_the_known_foreign_record_is_still_foreign_and_still_recorded() -> None:
@@ -263,6 +294,19 @@ def test_the_known_foreign_record_is_still_foreign_and_still_recorded() -> None:
         f"{sorted(set(KNOWN_FOREIGN) - set(still_shared))} no longer shares an assumptions block "
         f"with another name — the underwriting was re-derived, so DELETE the KNOWN_FOREIGN "
         f"entry so the guards protect this name again. This is the good failure.")
+
+
+def test_a_known_stale_record_still_cites_what_its_page_no_longer_produces() -> None:
+    """THE STALE ALLOWLIST IS EARNED THE SAME WAY — only while its gap is live. Guard 2 skips
+    `KNOWN_STALE`, so without this an entry could outlive the re-underwrite that closes it and
+    exempt the next foreign figure on that name. Each entry must still be a finding guard 2's own
+    scoring emits; once the record is re-derived, this fails and says to delete the entry."""
+    _, foreign, _ = _score_band_refs()
+    closed = sorted(set(KNOWN_STALE) - set(foreign))
+    assert not closed, (
+        f"{closed}: no longer a figure its page cannot produce — the underwriting was re-derived "
+        f"(or the record is gone), so DELETE the KNOWN_STALE entry so guard 2 protects this name "
+        f"again. This is the good failure.")
 
 
 #: Facts whose value is a NAME-SPECIFIC MAGNITUDE — a revenue, a debt balance, a share count. Two

@@ -15,6 +15,11 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 DOSSIERS = sorted(d for d in (ROOT / "data" / "dossiers").iterdir() if (d / "dossier.md").exists())
 HEAD = "### The EV gap — our base case vs the street"
+#: SMPL's page as committed on 2026-08-18, frozen (tests/fixtures/frozen_pages/README.md). Its
+#: 2026-11-04 re-assembly onto the FY2026 10-K moved the anchor to FY2027, where the shape reads
+#: "multiple" and FY2028 "multiple-dominant" — the page says the shape moves between years. The
+#: shape VALUES below read this page; the living one is held to printing what its own JSON holds.
+FROZEN_SMPL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL"
 
 
 def block(folder: Path) -> str:
@@ -61,10 +66,14 @@ def test_each_state_gets_its_own_sentence(folder: Path) -> None:
 def test_smpls_page_reads_multiple_dominant() -> None:
     """THE OPERATOR'S ACCEPTANCE CONDITION, checked on the PAGE. The audit found the SMPL view
     rests on re-rating rather than on the business; this is that finding, reproduced by the machine
-    and printed where a human meets it."""
-    body = block(ROOT / "data" / "dossiers" / "SMPL")
+    and printed where a human meets it. The figures are the frozen page's; the living page must
+    print the shape its own JSON holds, at its own anchor year."""
+    body = block(FROZEN_SMPL)
     assert "**multiple-dominant** at FY2026" in body
     assert "does not move with the year" in body, "the cross-year check is missing from the page"
+    g = _gapj("SMPL")
+    living = block(ROOT / "data" / "dossiers" / "SMPL")
+    assert f"**{g['shape']['anchor']}** at FY{g['anchor_fy']}" in living, living[:400]
 
 
 def test_the_consensus_floor_marker_survives_to_the_page() -> None:
@@ -202,9 +211,13 @@ def test_the_two_margins_print_as_figures_and_are_never_divided(ticker: str) -> 
 
 @pytest.mark.parametrize("ticker", ["SMPL", "EPAM", "IT"])
 def test_the_decomposed_names_are_unchanged_and_still_multiple_dominant(ticker: str) -> None:
-    """THE CONTROL. The revision must not move the three names that were already right."""
+    """THE CONTROL. The revision must not move the three names that were already right. SMPL's
+    shape is read off its frozen 2026-08-18 page (its living one moved with its FY2026 10-K); its
+    living page still carries the three-ratio form."""
     g = _gapj(ticker)
     assert g["form"] == "three-ratio"
     assert set(g["ratios"]) == {"revenue_ratio", "margin_ratio", "multiple_ratio", "ev_gap"}
-    assert g["shape"]["anchor"] == "multiple-dominant"
-    assert "**multiple-dominant** at" in block(ROOT / "data" / "dossiers" / ticker)
+    folder = FROZEN_SMPL if ticker == "SMPL" else ROOT / "data" / "dossiers" / ticker
+    shaped = json.loads((folder / "dossier.json").read_text())["mechanical"]["ev_gap"]
+    assert shaped["shape"]["anchor"] == "multiple-dominant"
+    assert "**multiple-dominant** at" in block(folder)

@@ -74,9 +74,20 @@ def _dc(doc: dict[str, Any]) -> dict[str, Any]:
 
 
 def _quoted() -> list[str]:
-    """The committed pages that carry a PRESENT drawdown outlook quote."""
+    """The committed pages that carry a PRESENT drawdown outlook quote in the rolling window."""
     return [t for t in PAGES
             if (_dc(_page(t)).get("revised_guidance") or {}).get("status") == "present"]
+
+
+def _anchor_quoted() -> list[str]:
+    """The committed pages whose DATED part (#906's `drawdown_cause.anchor.at_anchor`) carries a
+    PRESENT outlook quote — whatever the rolling window holds."""
+    out = []
+    for t in PAGES:
+        at = (_dc(_page(t)).get("anchor") or {}).get("at_anchor") or {}
+        if (at.get("revised_guidance") or {}).get("status") == "present":
+            out.append(t)
+    return out
 
 
 def _expected_mark(dc: dict[str, Any]) -> str:
@@ -236,11 +247,18 @@ def test_a_quote_the_release_ends_inside_prints_no_mark(tmp_path: pathlib.Path) 
 
 
 def test_a_page_without_a_quote_prints_no_mark() -> None:
-    """NEGATIVE on the living corpus: a page whose drawdown outlook is UNKNOWN prints its reason,
-    and no cut mark of either kind."""
-    quoted = set(_quoted())
+    """NEGATIVE on the living corpus: a page with no PRESENT drawdown outlook quote IN EITHER PLACE
+    — the rolling window or the dated part (`anchor.at_anchor`) — prints its reason, and no cut mark
+    of either kind.
+
+    The first cut read only the rolling window. It predates any committed anchored page: SMPL's
+    2026-11-04 page, the first, holds its April quote in `anchor.at_anchor` with none in the window,
+    prints the mark there correctly, and reddened this test as "a page without a quote"."""
+    quoted = set(_quoted()) | set(_anchor_quoted())
     unquoted = [t for t in PAGES if t not in quoted]
-    assert unquoted, "every committed page now carries a quote — re-point this test"
+    print(f"pages with no outlook quote in either place: {len(unquoted)} of {len(PAGES)}")
+    assert unquoted, ("every committed page now carries a quote in the window or the dated part "
+                      f"({len(PAGES)} of {len(PAGES)}) — re-point this test")
     for t in unquoted:
         md = _md(_page(t))
         assert not any(m in md for m in MARKS), t
@@ -300,6 +318,35 @@ def test_the_reader_carries_the_cut_into_the_current_window() -> None:
     assert dc.revised_guidance.status is SourceStatus.PRESENT
     assert dc.revised_guidance_cut is True
     assert json.loads(dc.model_dump_json())["revised_guidance_cut"] is True
+
+
+def test_every_committed_anchored_quote_prints_the_mark_its_field_says() -> None:
+    """E2E on the LIVING corpus, the dated part: every committed page whose `anchor.at_anchor` holds
+    a PRESENT quote prints, on its "outlook then" line and directly after the stored quote, the mark
+    its OWN `at_anchor.revised_guidance_cut` dictates — absent → the possibly-cut mark, True → the
+    cut mark, False → none — and no other mark on that line. Structure only: the quote is read from
+    the committed record at test time, never written here. Skips, visibly, while no committed page
+    is anchored."""
+    anchored = _anchor_quoted()
+    print(f"pages with an anchored outlook quote: {len(anchored)} of {len(PAGES)} {anchored}")
+    if not anchored:
+        pytest.skip("no committed page carries an anchored outlook quote yet")
+    window = set(_quoted())
+    for t in anchored:
+        doc = _page(t)
+        at = _at(doc)
+        mark = _expected_mark(at)
+        line = next((ln for ln in _md(doc).splitlines() if ln.startswith("  - outlook then: ")),
+                    None)
+        assert line is not None, f"{t}: an anchored quote and no 'outlook then' line"
+        assert f"{at['revised_guidance']['value']}{mark} [" in line, t  # the mark, then the cite
+        assert not any(m in line for m in MARKS if m != mark), t
+        if t not in window:
+            # no quote in the rolling window: the "outlook then" line is the ONLY place a mark may
+            # print — these pages left the no-quote negative above when it learned the dated part
+            stray = [ln for ln in _md(doc).splitlines()
+                     if ln != line and any(m in ln for m in MARKS)]
+            assert not stray, (t, stray[:3], f"showing {min(3, len(stray))} of {len(stray)}")
 
 
 def test_a_dated_part_built_before_the_field_round_trips_without_it() -> None:

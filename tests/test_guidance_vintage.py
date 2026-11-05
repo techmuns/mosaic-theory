@@ -215,10 +215,12 @@ def test_the_analyst_template_shows_the_same_vintages_as_the_brief() -> None:
     this test asserts the template's marks MATCH the brief's, rather than asserting a literal.
     """
     from vinci.dossier.propose import build_template
-    doc = json.loads((DOSS / "SMPL" / "dossier.json").read_text())
+    # THE FROZEN PAGE, both surfaces off it: the template refuses the living page on STATE row 36's
+    # share gap since its 2026-11-04 re-assembly, and the brief must be the same page's
+    doc = json.loads((FROZEN / "SMPL" / "dossier.json").read_text())
     tmpl = [x for x in build_template(doc)["_evidence"]["revenue"]
             if x.startswith("guidance (")]
-    brief = [x for x in _digest("SMPL").splitlines() if x.startswith("guidance (")]
+    brief = [x for x in _digest("SMPL", FROZEN).splitlines() if x.startswith("guidance (")]
     assert tmpl and brief
 
     def marks(lines: list[str]) -> set[str]:
@@ -266,7 +268,7 @@ def test_the_analyst_template_shows_the_same_vintages_as_the_brief() -> None:
         # release that contributes nothing from a guide that is genuinely not shown. Matching on the
         # `(note:` prefix pins that SOMETHING was disclosed, which is the actual requirement, and
         # survives the next rewording of a sentence no test should own.
-        assert any(x.startswith("(note:") for x in _digest("SMPL").splitlines()), (
+        assert any(x.startswith("(note:") for x in _digest("SMPL", FROZEN).splitlines()), (
             "the brief dropped a guidance vintage without saying so")
     # Derived, not typed in — same reason as the acceptance case above: hardcoding the July/April
     # figures schedules this to redden on SMPL's next print rather than on a defect.

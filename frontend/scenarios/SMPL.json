@@ -256,7 +256,7 @@
   "spotSource": "EOD SMPL last close 2026-08-04 (Polygon daily aggregate; store frontier at write)",
   "underwriteDate": "2026-08-05",
   "nextEvidence": {
-   "date": "2026-10-08",
+   "date": "2027-01-26",
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
