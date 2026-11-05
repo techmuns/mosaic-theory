@@ -263,7 +263,10 @@ def test_both_write_paths_run_the_entry_window_guard() -> None:
     assert "entry_basis=" in inspect.getsource(cli._cmd_scenario_create), (
         "scenario-create validates the entry window but never writes it onto the record")
 
-    doc = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    # SMPL's frozen 2026-08-18 page (tests/fixtures/frozen_pages/README.md): a page the template
+    # accepts — the living one is refused on STATE row 36's share gap since its 2026-11-04 rebuild
+    doc = json.loads((ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL"
+                      / "dossier.json").read_text())
     tpl = build_template(doc)
     assert "entry_basis" in tpl, "the template has no cell for the entry window"
     assert tpl["entry_basis"] == "", (

@@ -118,7 +118,14 @@ def test_the_anchor_is_the_nearest_year_where_both_metrics_resolve() -> None:
     assert got is not None and got in rev and got in ebitda
     assert got == min(rev & ebitda, key=int)
 
+    # the year off SMPL's frozen 2026-08-18 page; its living page (re-assembled on the FY2026 10-K,
+    # 2026-11-04) is held to the same rule, nearest year both metrics carry, at whatever year it is
+    frozen = json.loads((ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL"
+                         / "dossier.json").read_text())
+    assert anchor_year(frozen["mechanical"]["consensus_context"]["consensus_levels"]) == "2026"
     smpl = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
-    assert anchor_year(smpl["mechanical"]["consensus_context"]["consensus_levels"]) == "2026"
+    now = smpl["mechanical"]["consensus_context"]["consensus_levels"]
+    both = {str(c["fy"]) for c in now["Revenue"]} & {str(c["fy"]) for c in now["EBITDA"]}
+    assert anchor_year(now) == min(both, key=int)
 
     assert anchor_year({"Revenue": [{"fy": "2026"}]}) is None, "one metric is not an anchor"

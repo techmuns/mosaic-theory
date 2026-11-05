@@ -488,8 +488,11 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: Cut whole there, its base is None, not a different number: no EDGAR D&A covers the window to
 #: 2026-09-30. A recompute that values nothing is not a divergence; it lands in
 #: BRIDGE_ONLY_ANCHORS below, and listing LLY here would red this pin on an anchor nobody can value.
+#:
+#: **SMPL LANDED** (2026-11-04, run `29e8038c`, on its FY2026 10-K): its committed base (46.4765)
+#: is the recompute's, `docs/records/2026-11-04-smpl-re-assembled-on-its-2026-11-04-exports.md`.
 ANCHORS_AWAITING_BACKFILL: set[str] = {
-    "AORT", "BRBR", "BURL", "EPAM", "IT", "PARR", "SMPL", "TGT", "VRRM", "WLK"}
+    "AORT", "BRBR", "BURL", "EPAM", "IT", "PARR", "TGT", "VRRM", "WLK"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than
