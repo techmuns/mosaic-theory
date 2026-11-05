@@ -151,19 +151,26 @@ def test_a_hit_cut_short_says_so_and_a_whole_one_does_not() -> None:
     assert local_paths('"/Users/x/y"') == ['/Users/x/y"'], "a hit that fits must not claim a cut"
 
 
-def test_a_file_not_yet_added_is_read() -> None:
+def test_a_file_not_yet_added_is_read_and_an_ignored_one_is_not(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """An artifact pass runs the suite before `git add`, so a new page or fixture is read while it
-    is still untracked — not first in CI."""
-    probe = ROOT / "tests" / "fixtures" / "_local_path_probe.json"
-    assert not probe.exists(), f"{probe} is left over from an earlier run — remove it"
-    try:
-        probe.write_text('{"reason": "read /Users/x/data/vinci.db"}\n')
-        files, hits = scan()
-        assert probe in files
-        assert [h for h in hits if h.startswith("tests/fixtures/_local_path_probe.json:1:")], hits
-    finally:
-        probe.unlink()
-    assert probe not in scan()[0]
+    is still untracked — not first in CI (+); a git-ignored file (`llm_call.log`) is not (−). In a
+    scratch repository, so a killed run leaves nothing in this one."""
+    repo = tmp_path / "repo"
+    fixtures = repo / "tests" / "fixtures"
+    fixtures.mkdir(parents=True)
+    subprocess.run(["git", "init", "-q", str(repo)], check=True)
+    (repo / ".gitignore").write_text("*.log\n")
+    (fixtures / "tracked.json").write_text('{"a": 1}\n')
+    subprocess.run(["git", "-C", str(repo), "add", "."], check=True)
+    (fixtures / "new.json").write_text('{"reason": "read /Users/x/data/vinci.db"}\n')
+    (fixtures / "llm_call.log").write_text("read /Users/x/data/vinci.db\n")
+    monkeypatch.setattr(sys.modules[__name__], "ROOT", repo)
+
+    files, hits = scan()
+    assert {f.name for f in files} == {"tracked.json", "new.json"}
+    assert hits == ["tests/fixtures/new.json:1: /Users/x/data/vinci.db\"}"], hits
 
 
 def test_a_tracked_file_deleted_in_the_working_tree_is_skipped_not_a_crash(
