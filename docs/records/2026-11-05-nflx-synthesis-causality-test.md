@@ -1,7 +1,7 @@
 ---
 status: recorded
 date: 2026-11-05
-prs: []
+prs: [920]
 ---
 
 # NFLX synthesis causality test: three single-variable prompt edits, five paid draws each, against the 2026-11-05 build's five logged draws (PRE-REGISTERED; results below the line)
