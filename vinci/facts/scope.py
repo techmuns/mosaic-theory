@@ -10,6 +10,7 @@ STATES ITS BOUNDARY). A name excluded by an operator instruction is counted ther
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -48,6 +49,46 @@ def _prior_scope(base: Path | None, key: str, snapshot_id: str) -> dict[str, Any
         raise FactsStoreError(f"current.json names {snapshot_id} for {key!r}; {path} is missing")
     scope = json.loads(path.read_text()).get("scope")
     return scope if isinstance(scope, dict) else {}
+
+
+def require_upload_exclusions(manifest: dict[str, Any], exclude: Iterable[str], *,
+                              base: Path | None = None) -> None:
+    """Refuse to upload a snapshot unless the held-name list is passed again, and unless none of
+    the snapshot's companies carries a name on it.
+
+    The ingest's ``--exclude`` carries to the upload, so a manifest written without an exclusion
+    (an old one, or one written by hand) cannot put a held name's objects in the bucket. Checked
+    before any request, and the refusal names COUNTS, never a name:
+    - how many names this upload was told to exclude, against the snapshot's own
+      ``exclusions_listed`` and every current snapshot's of its source (the operator's list does
+      not depend on the scope, as :func:`require_exclusions` holds);
+    - how many of the snapshot's companies carry a ticker on that list: it must be none."""
+    held = {t.strip().upper() for t in exclude if t.strip()}
+    sid = str(manifest["snapshot_id"])
+    source = str(manifest["source"])
+    own = manifest.get("scope")
+    scopes: list[tuple[str, dict[str, Any]]] = [(sid, own if isinstance(own, dict) else {})]
+    for key, snapshot_id in sorted(read_pointers(base).items()):
+        if key == source or key.startswith(f"{source}:"):
+            scopes.append((snapshot_id, _prior_scope(base, key, snapshot_id)))
+    for snapshot_id, scope in scopes:
+        listed = scope.get("exclusions_listed", scope.get("excluded_by_operator_instruction"))
+        if not isinstance(listed, int) or isinstance(listed, bool):
+            raise FactsStoreError(
+                f"snapshot {snapshot_id} states no exclusion count, so the upload of {sid} cannot "
+                "be checked against it")
+        if len(held) < listed:
+            raise FactsStoreError(
+                f"this upload was told to exclude {len(held)} name(s) by operator instruction; "
+                f"snapshot {snapshot_id} was written excluding {listed}. Pass every --exclude "
+                "the snapshots were written with; nothing was uploaded")
+    entities = manifest["entities"]
+    carrying = sum(1 for e in entities
+                   if held & {str(t).strip().upper() for t in e.get("tickers") or ()})
+    if carrying:
+        raise FactsStoreError(
+            f"{carrying} of snapshot {sid}'s {len(entities)} companies carry a name this upload "
+            "excludes; nothing was uploaded")
 
 
 def require_exclusions(excluded: int, *, listed: int, rule: str, selected: int, source: str,

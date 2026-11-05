@@ -4,7 +4,8 @@
     python -m vinci.facts ingest --scope screen --run <run_id> --cache-dir <dir> --exclude <T> ...
     python -m vinci.facts parity --cache-dir <dir> --exclude <T> ...          # every page, shadow
     python -m vinci.facts screen-replay --run <run_id> --cache-dir <dir>      # the screen, shadow
-    python -m vinci.facts verify [--name screen]                       # manifest against objects
+    python -m vinci.facts verify [--name screen] [--store r2://]       # manifest against objects
+    python -m vinci.facts upload --name screen --exclude <T> ...       # a snapshot's objects to R2
 
 ``--cache-dir`` is the directory that holds ``sec/`` (``Config.cache_dir``, ``data/cache`` by
 default). Nothing here fetches: a name the cache does not hold is reported, never requested. Every
@@ -12,7 +13,11 @@ default). Nothing here fetches: a name the cache does not hold is reported, neve
 
 ``pages`` is written to ``data/facts/objects`` (committed); ``screen``, past the 50 MB committed
 cap, to ``$VINCI_FACTS_STORE`` or the git-ignored ``data/facts/local``, with only its manifest
-committed (:mod:`vinci.facts.store`).
+committed (:mod:`vinci.facts.store`). ``upload`` copies a snapshot's objects to the R2 bucket the
+four ``R2_*`` variables name, from the machine that wrote them, then reads every one back; the held
+names' ``--exclude`` must be passed again. ``--store r2://`` makes ``verify``, ``parity`` and
+``screen-replay`` read the objects from R2 (:mod:`vinci.facts.remote`). Run as a module, this loads
+the repository's ``.env`` first (``vinci.config.load_local_env``), as the ``vinci`` CLI does.
 """
 from __future__ import annotations
 
@@ -37,6 +42,7 @@ from vinci.facts.scope import (
     RULE,
     ScopeName,
     require_exclusions,
+    require_upload_exclusions,
     scope_names,
     screen_scope_names,
 )
@@ -45,7 +51,10 @@ from vinci.facts.store import (
     FileEntry,
     OrderEntry,
     build_manifest,
+    is_r2,
     load_manifest,
+    manifests_dir,
+    requested_location,
     store_root,
     verify_manifest,
     write_entity,
@@ -183,42 +192,103 @@ def cmd_screen_replay(a: argparse.Namespace) -> int:
     return 1 if bad else 0
 
 
+def _shown(problems: list[str], k: int = 20) -> None:
+    for p in problems[:k]:
+        print(f"  PROBLEM {p}")
+    if len(problems) > k:
+        print(f"  (showing {k} of {len(problems)} problems)")
+
+
 def cmd_verify(a: argparse.Namespace) -> int:
     manifest = load_manifest(a.snapshot, name=a.name)
-    problems = verify_manifest(manifest, store_root(a.store, storage=manifest["storage"]),
-                               check_content=not a.no_content)
     print(manifest_summary(manifest))
-    for p in problems:
-        print(f"  PROBLEM {p}")
+    fetch_problems: list[str] = []
+    if is_r2(requested_location(a.store, storage=manifest["storage"])):
+        from vinci.facts.remote import R2Objects, manifest_objects
+        remote = R2Objects.from_env()
+        with remote.client:
+            rep = remote.fetch_all(manifest_objects(manifest), workers=a.workers)
+        print(f"  from R2: {rep.objects:,} objects named ({rep.bytes:,} bytes): {rep.fetched:,} "
+              f"fetched ({rep.fetched_bytes:,} bytes) and {rep.cached:,} already in the cache "
+              f"{remote.cache}, each hashed against its entry; {len(rep.problems)} problems")
+        fetch_problems = rep.problems
+        _shown(fetch_problems)
+        root = remote.cache
+    else:
+        root = store_root(a.store, storage=manifest["storage"])
+    problems = verify_manifest(manifest, root, check_content=not a.no_content)
+    _shown(problems)
     print(("verified: every object present, its bytes as sealed, rows as stated"
            + ("" if a.no_content else ", its rows hashing to its name, every order complete"))
           if not problems else f"{len(problems)} problems")
-    return 1 if problems else 0
+    return 1 if problems or fetch_problems else 0
+
+
+def cmd_upload(a: argparse.Namespace) -> int:
+    from vinci.facts.remote import R2Client, bucket_against_manifests, upload_snapshot
+    manifest = load_manifest(a.snapshot, name=a.name)
+    require_upload_exclusions(manifest, a.exclude)        # before any request
+    root = store_root(a.store, storage=manifest["storage"])
+    t = manifest["totals"]
+    print(f"snapshot {manifest_summary(manifest)}\n  + {t['order_files']:,} order objects "
+          f"({t['order_bytes']:,} bytes); the local copy: {root} ({manifest['storage']})")
+    with R2Client.from_env() as client:
+        status = client.head_bucket()
+        if status != 200:
+            print(f"HeadBucket HTTP {status}: the bucket cannot be read with these keys; "
+                  "nothing uploaded")
+            return 1
+        rep = upload_snapshot(manifest, root, client, workers=a.workers)
+        print(f"  objects the manifest names: {rep.objects:,} ({rep.bytes:,} bytes)\n"
+              f"  written: {rep.written:,} ({rep.written_bytes:,} bytes); already in the bucket "
+              f"with the same bytes: {rep.present:,} ({rep.present_bytes:,} bytes); not "
+              f"attempted: {rep.not_attempted:,}\n"
+              f"  read back and hashed against the manifest: {rep.read_back:,} of {rep.objects:,} "
+              f"({rep.read_back_bytes:,} bytes); {len(rep.problems)} problems")
+        _shown(rep.problems)
+        if not a.no_audit:
+            ids = sorted(p.stem for p in manifests_dir().glob("*.json"))
+            audit = bucket_against_manifests(client, [load_manifest(i) for i in ids])
+            print(f"  the bucket after this upload, against all {len(ids)} committed manifests "
+                  f"({audit['manifest_objects']:,} distinct objects, "
+                  f"{audit['manifest_bytes']:,} bytes): {audit['bucket_keys']:,} keys "
+                  f"({audit['bucket_bytes']:,} bytes); {audit['named_by_a_manifest']:,} named by "
+                  f"a manifest, {audit['named_by_none']:,} named by none; "
+                  f"{audit['named_and_absent']:,} named and absent; {audit['size_differs']:,} "
+                  "with a size other than the manifest's")
+    return 1 if rep.problems or rep.not_attempted else 0
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m vinci.facts")
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name, fn in (("ingest", cmd_ingest), ("parity", cmd_parity), ("verify", cmd_verify),
-                     ("screen-replay", cmd_screen_replay)):
+                     ("screen-replay", cmd_screen_replay), ("upload", cmd_upload)):
         p = sub.add_parser(name)
         p.set_defaults(fn=fn)
         p.add_argument("--store", default=None,
                        help="object root (default: data/facts/objects for a committed snapshot; "
-                            "$VINCI_FACTS_STORE or data/facts/local for a local one)")
+                            "$VINCI_FACTS_STORE or data/facts/local for a local one)"
+                            + ("" if name in ("ingest", "upload") else "; r2:// reads from R2"))
         if name != "ingest":
             p.add_argument("--snapshot", default=None, help="snapshot id (default: current.json)")
-        if name == "verify":
+        if name in ("verify", "upload"):
             p.add_argument("--name", default=DEFAULT_NAME, choices=sorted(STORAGE),
                            help="which current snapshot (default: pages)")
+            p.add_argument("--workers", type=int, default=16,
+                           help="R2 requests in flight at once (default 16)")
+        if name == "upload":
+            p.add_argument("--no-audit", action="store_true",
+                           help="skip listing the bucket against every committed manifest")
         if name == "ingest":
             p.add_argument("--scope", default="pages", choices=sorted(STORAGE),
                            help="which companies (default: the committed pages)")
         if name in ("ingest", "screen-replay"):
             p.add_argument("--run", default=None, help="the screen run (--scope screen)")
-        if name in ("ingest", "parity"):
+        if name in ("ingest", "parity", "upload"):
             p.add_argument("--exclude", action="append", default=[], metavar="TICKER",
-                           help="leave this name out (repeatable)")
+                           help="leave this name out (repeatable); an upload refuses without "
+                                "every exclusion the snapshot was written with")
         if name in ("ingest", "parity", "screen-replay"):
             p.add_argument("--cache-dir", type=Path, default=get_config().cache_dir,
                            help="the directory holding the SEC cache's sec/ (read only)")
@@ -240,4 +310,6 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    from vinci.config import load_local_env
+    load_local_env()                     # the CLI entry only: a library import stays hermetic
     sys.exit(main())
