@@ -28,6 +28,7 @@ from typing import Any
 
 import pytest
 
+from tests.held_names import skip_if_held, without_held
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.schemas import Dossier, EvBridge, dossier_json
 
@@ -215,10 +216,12 @@ def test_assembly_builds_the_layer_through_the_one_builder() -> None:
 def _bundle(ticker: str) -> Any:
     from vinci.dossier.ciq import CiqBundle
 
+    skip_if_held(ticker)
     folder = ROOT / "data" / "manual" / "ciq" / ticker
     if not folder.is_dir():
         pytest.skip("no CIQ export on this machine")
-    return CiqBundle.from_files(ticker, sorted(p for p in folder.iterdir() if p.is_file()))
+    return CiqBundle.from_files(ticker,
+                                sorted(p for p in without_held(folder.iterdir()) if p.is_file()))
 
 
 @pytest.mark.parametrize("ticker", sorted(CASES))
@@ -242,11 +245,12 @@ def test_claims_equal_ciqs_current_figure_on_every_committed_name() -> None:
     if not root.is_dir():
         pytest.skip("no CIQ exports on this machine")
     compared = 0
-    for page in sorted((ROOT / "data" / "dossiers").iterdir()):
+    for page in without_held(sorted((ROOT / "data" / "dossiers").iterdir())):
         folder = root / page.name
         if not folder.is_dir():
             continue
-        b = CiqBundle.from_files(page.name, sorted(p for p in folder.iterdir() if p.is_file()))
+        b = CiqBundle.from_files(page.name,
+                                 sorted(p for p in without_held(folder.iterdir()) if p.is_file()))
         got = cs.ev_bridge(b, fy_periods=[])
         assert isinstance(got, EvBridge), (page.name, got.reason)
         assert got.ciq_tev_claims is not None, page.name

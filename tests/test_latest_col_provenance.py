@@ -26,6 +26,7 @@ from typing import Any
 
 import pytest
 
+from tests.held_names import without_held
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num, excel_date
@@ -34,11 +35,11 @@ from vinci.dossier.manual_store import LocalFolderStore
 
 def _bundles() -> list[tuple[str, CiqBundle]]:
     root = get_config().data_dir / "manual" / "ciq"
-    if not root.is_dir() or not any(root.iterdir()):
+    if not root.is_dir() or not any(without_held(root.iterdir())):
         pytest.skip("licensed CIQ bundles unavailable (never committed)")
     ms = LocalFolderStore(root)
     out = []
-    for tk in sorted(p.name for p in root.iterdir() if p.is_dir()):
+    for tk in sorted(p.name for p in without_held(root.iterdir()) if p.is_dir()):
         files = ms.files(tk)
         if files:
             out.append((tk, CiqBundle.from_files(tk, files)))

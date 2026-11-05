@@ -34,11 +34,13 @@ file the code under test reads.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any
 
 import pytest
 
+from tests.held_names import HELD_NAMES
 from vinci.config import get_config
 from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
 from vinci.dossier.ciq_sheets import file_provenance
@@ -121,13 +123,27 @@ def archive_roots(ticker: str) -> list[Path]:
     return out
 
 
+def archived_folders(root: Path, ticker: str) -> list[Path]:
+    """Every folder named ``ticker`` below ``root`` — the walk `root.rglob(ticker)` makes, symlinked
+    folders matched but never descended into — that never LISTS a held name's folder
+    (tests/held_names.py). `rglob` lists every folder it passes, so a search for SMPL's archived
+    export read the names in an archived BURL folder (measured 2026-11-05 on a fake one: two tests,
+    four listings, no file opened)."""
+    want = ticker.upper()
+    out: list[Path] = []
+    for dirpath, dirnames, _ in os.walk(root):
+        dirnames[:] = sorted(d for d in dirnames if d.upper() not in HELD_NAMES)
+        out += [Path(dirpath) / d for d in dirnames if d == want]
+    return sorted(out)
+
+
 def archived_bundle(ticker: str, kind: str, sha: str, *,
                     freq: str | None = None) -> CiqBundle | None:
     """The bundle of the one archived folder for ``ticker`` whose ``kind`` export has sha256
     prefix ``sha``, or None. The WHOLE folder is the bundle — one pull, never one archived
     workbook spliced into the live folder's other exports."""
     for root in archive_roots(ticker):
-        for folder in sorted(p for p in root.rglob(ticker.upper()) if p.is_dir()):
+        for folder in archived_folders(root, ticker):
             files = sorted(p for p in folder.iterdir()
                            if p.is_file() and not p.name.startswith("."))
             try:

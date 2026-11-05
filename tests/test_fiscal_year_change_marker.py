@@ -31,6 +31,7 @@ from typing import Any
 import pytest
 
 from tests.fixtures.ciq_synthetic import generate as gen
+from tests.held_names import without_held
 from vinci.config import get_config
 from vinci.dossier import ciq_balance
 from vinci.dossier import ciq_sheets as cs
@@ -407,7 +408,8 @@ def _smpl() -> CiqBundle:
     folder = get_config().data_dir / "manual" / "ciq" / "SMPL"
     if not folder.is_dir():
         pytest.skip("SMPL's licensed CIQ export is unavailable (never committed)")
-    b = CiqBundle.from_files("SMPL", sorted(p for p in folder.iterdir() if p.is_file()))
+    b = CiqBundle.from_files("SMPL",
+                             sorted(p for p in without_held(folder.iterdir()) if p.is_file()))
     rows = b.sheet("financials", "Income Statement", freq="annual")
     hdr = cs._period_header(rows)
     if hdr is None or not any(cs.is_period_marker(c) for c in rows[hdr]):
@@ -478,10 +480,10 @@ def test_every_undated_header_cell_on_file_is_a_registered_marker() -> None:
     suffixes 'A'/'E' and no reader reads, and the Capital Structure Details instrument table are
     not period headers."""
     root = get_config().data_dir / "manual" / "ciq"
-    if not root.is_dir() or not any(root.iterdir()):
+    if not root.is_dir() or not any(without_held(root.iterdir())):
         pytest.skip("licensed CIQ bundles unavailable (never committed)")
     cells, unregistered = 0, set()
-    for folder in sorted(p for p in root.iterdir() if p.is_dir()):
+    for folder in sorted(p for p in without_held(root.iterdir()) if p.is_dir()):
         try:
             b = CiqBundle.from_files(folder.name,
                                      sorted(p for p in folder.iterdir() if p.is_file()))

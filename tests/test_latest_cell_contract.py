@@ -31,6 +31,7 @@ from typing import Any
 import pytest
 
 from tests.fixtures.ciq_synthetic import generate as gen
+from tests.held_names import without_held
 from vinci.config import get_config
 from vinci.dossier import ciq_balance, ebitda_recon, midcycle
 from vinci.dossier import ciq_sheets as cs
@@ -514,11 +515,11 @@ def test_a_header_suffixed_on_its_newest_column_places_nothing() -> None:
 
 def _bundles() -> list[tuple[str, CiqBundle]]:
     root = get_config().data_dir / "manual" / "ciq"
-    if not root.is_dir() or not any(root.iterdir()):
+    if not root.is_dir() or not any(without_held(root.iterdir())):
         pytest.skip("licensed CIQ bundles unavailable (never committed)")
     ms = LocalFolderStore(root)
     return [(tk, CiqBundle.from_files(tk, files))
-            for tk in sorted(p.name for p in root.iterdir() if p.is_dir())
+            for tk in sorted(p.name for p in without_held(root.iterdir()) if p.is_dir())
             if (files := ms.files(tk))]
 
 

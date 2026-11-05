@@ -19,6 +19,7 @@ from typing import Any
 
 import pytest
 
+from tests.held_names import page_params
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num, excel_date
 from vinci.dossier.schemas import (
@@ -65,7 +66,7 @@ def _own_close_cells(rows: list[list[Any]], label: str) -> list[tuple[str, Any]]
 # --- the reads, on the real workbooks -----------------------------------------------------------
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_every_point_is_its_own_rows_close_cell(ticker: str) -> None:
     """ACROSS THE CORPUS: each series is its EXACT row's Close, every column in time order, and a
     cell that is not a number keeps what it said."""
@@ -80,7 +81,7 @@ def test_every_point_is_its_own_rows_close_cell(ticker: str) -> None:
         assert [(p.date, p.close, p.cell) for p in s.points] == want, s.metric
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_every_band_is_the_trailing_bands_own_stat_or_is_named_withheld(ticker: str) -> None:
     """One definition of current/percentile/history for trailing and forward alike. A missing band
     is named in `withheld`, with the latest cell's own text when that cell is not a number."""

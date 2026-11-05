@@ -20,6 +20,7 @@ import pathlib
 
 import pytest
 
+from tests.held_names import HELD_NAMES, held_reason, without_held
 from vinci.dossier.ciq import CiqBundle, CiqParseError, read_text
 from vinci.dossier.ciq_sheets import customers
 from vinci.dossier.covenant_extract import _MAX_EXHIBIT_CHARS
@@ -124,6 +125,7 @@ def test_a_view_that_fails_to_parse_still_says_so(tmp_path: pathlib.Path) -> Non
         f"a genuine parse failure must not be reported as an empty view, got: {got.note}")
 
 
+@pytest.mark.skipif("BURL" in HELD_NAMES, reason=held_reason("BURL"))
 @pytest.mark.skipif(
     not (pathlib.Path(__file__).resolve().parents[1] / "data/manual/ciq/BURL").is_dir(),
     reason="licensed CIQ bundles are never committed",
@@ -131,9 +133,13 @@ def test_a_view_that_fails_to_parse_still_says_so(tmp_path: pathlib.Path) -> Non
 def test_the_real_burl_export_is_read_as_empty_not_broken() -> None:
     """⊕ CORPUS BEFORE SYNTHETIC — the fixture above is built to the shape; this is the file that
     caused the incident. Its sibling Suppliers export parses 33 rows from the same bundle, which
-    is what makes the empty customers view a fact about BURL rather than about the reader."""
+    is what makes the empty customers view a fact about BURL rather than about the reader.
+
+    SKIPPED WHILE BURL IS HELD (tests/held_names.py): BURL's export is one of TeamNostra's blind
+    audit packs. The pin stays, and runs again the day the list lets BURL go."""
     root = pathlib.Path(__file__).resolve().parents[1] / "data/manual/ciq/BURL"
-    got = customers(CiqBundle.from_files("BURL", sorted(p for p in root.glob("*") if p.is_file())))
+    got = customers(CiqBundle.from_files(
+        "BURL", sorted(p for p in without_held(root.glob("*")) if p.is_file())))
     assert got.status is SourceStatus.UNKNOWN and got.value is None
     assert "discloses no customers" in (got.note or "").lower(), got.note
     assert "customers" in (got.source_ref or "").lower().rsplit(" ", 1)[-1]

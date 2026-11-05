@@ -16,6 +16,7 @@ from typing import Any
 
 import pytest
 
+from tests.held_names import without_held
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.ciq_sheets import (
     _absence_reason,
@@ -138,7 +139,7 @@ def test_an_empty_row_in_the_roster_block_does_not_crash_the_build() -> None:
 def test_no_committed_bundle_still_asserts_sheet_shape() -> None:
     """THE CORPUS RED. Ten of eleven names carried the sheet-shape note; none may now."""
     seen = single = 0
-    for d in sorted(CIQ.iterdir()):
+    for d in without_held(sorted(CIQ.iterdir())):
         if not d.is_dir():
             continue
         s = segment_ebitda(CiqBundle.from_files(d.name, sorted(d.glob("*"))))
@@ -205,7 +206,7 @@ def test_no_bundle_renders_our_own_parse_error_as_its_customer_field() -> None:
     read_sheets()', and `customers` caught that and shipped it INTO the dossier as the field's
     UNKNOWN note. SMPL carried it live; WERN's export is the second instance."""
     seen = 0
-    for d in sorted(CIQ.iterdir()):
+    for d in without_held(sorted(CIQ.iterdir())):
         if not d.is_dir():
             continue
         s = customers(CiqBundle.from_files(d.name, sorted(d.glob("*"))))
@@ -223,7 +224,7 @@ def test_the_customers_export_is_chosen_by_name_not_by_file_order() -> None:
     accident would have rendered SUPPLIER rows as customer concentration. Reversing the file order
     must change nothing."""
     checked = 0
-    for d in sorted(CIQ.iterdir()):
+    for d in without_held(sorted(CIQ.iterdir())):
         if not d.is_dir():
             continue
         paths = sorted(p for p in d.glob("*") if p.is_file())

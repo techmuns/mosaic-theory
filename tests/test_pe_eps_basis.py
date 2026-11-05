@@ -18,6 +18,7 @@ from typing import Any
 
 import pytest
 
+from tests.held_names import skip_if_held, without_held
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.schemas import Dossier, dossier_json
 
@@ -178,10 +179,12 @@ def test_the_live_read_matches_the_frozen_case(ticker: str) -> None:
     on the SAME export (by hash). Skips where the workbook is not on this machine (CI)."""
     from vinci.dossier.ciq import CiqBundle
 
+    skip_if_held(ticker)
     folder = ROOT / "data" / "manual" / "ciq" / ticker
     if not folder.is_dir():
         pytest.skip("no CIQ export on this machine")
-    bundle = CiqBundle.from_files(ticker, sorted(p for p in folder.iterdir() if p.is_file()))
+    bundle = CiqBundle.from_files(ticker,
+                                  sorted(p for p in without_held(folder.iterdir()) if p.is_file()))
     wb = bundle.workbook("estimates")
     case = CASES[ticker]
     if wb is None or cs.file_provenance(wb.path)[0] != case["sha256"]:
@@ -201,10 +204,12 @@ def test_the_live_read_matches_the_frozen_case(ticker: str) -> None:
 def _local_bundle(ticker: str) -> Any:
     from vinci.dossier.ciq import CiqBundle
 
+    skip_if_held(ticker)
     folder = ROOT / "data" / "manual" / "ciq" / ticker
     if not folder.is_dir():
         pytest.skip("no CIQ export on this machine")
-    return CiqBundle.from_files(ticker, sorted(p for p in folder.iterdir() if p.is_file()))
+    return CiqBundle.from_files(ticker,
+                                sorted(p for p in without_held(folder.iterdir()) if p.is_file()))
 
 
 def test_a_trends_sheet_without_the_gaap_block_still_answers() -> None:

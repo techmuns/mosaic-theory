@@ -25,6 +25,7 @@ import re
 
 import pytest
 
+from tests.held_names import without_held
 from vinci.dossier.ciq_sheets import _parse_business_relationships
 
 # A COMPANY NAME where a relationship type belongs — the defect itself, detected by company
@@ -127,7 +128,7 @@ def test_no_committed_name_renders_a_company_in_the_relationship_slot() -> None:
     warnings.filterwarnings("ignore")
     root = pathlib.Path(__file__).resolve().parents[1] / "data" / "manual" / "ciq"
     offenders, seen = {}, 0
-    for d in sorted(root.iterdir()):
+    for d in without_held(sorted(root.iterdir())):
         if not d.is_dir():
             continue
         b = CiqBundle.from_files(d.name, sorted(p for p in d.glob("*") if p.is_file()))

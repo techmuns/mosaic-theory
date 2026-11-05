@@ -38,6 +38,7 @@ from typing import Any
 
 import pytest
 
+from tests.held_names import without_held
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.manual_store import LocalFolderStore
@@ -163,11 +164,12 @@ def _bundles() -> list[tuple[str, CiqBundle]]:
     # "licensed CIQ bundles unavailable" while the corpus sat on disk, and skipping past the
     # `assert seen` counters that exist to catch exactly that kind of silent no-op.
     root = pathlib.Path(__file__).resolve().parents[1] / "data" / "manual" / "ciq"
-    if not root.is_dir() or not any(root.iterdir()):
+    if not root.is_dir() or not any(without_held(root.iterdir())):
         pytest.skip("licensed CIQ bundles unavailable (never committed)")
     ms = LocalFolderStore(root)
     return [(tk, CiqBundle.from_files(tk, ms.files(tk)))
-            for tk in sorted(p.name for p in root.iterdir() if p.is_dir()) if ms.files(tk)]
+            for tk in sorted(p.name for p in without_held(root.iterdir()) if p.is_dir())
+            if ms.files(tk)]
 
 
 def _disclosed(pt: dict[str, Any], flags: list[str]) -> bool:

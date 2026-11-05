@@ -22,6 +22,7 @@ from typing import Any
 
 import pytest
 
+from tests.held_names import without_held
 from tests.sec_offline_support import no_network, seed_sec_cache
 from vinci import provenance
 from vinci.config import Config
@@ -41,9 +42,6 @@ FUBO_URL = "https://data.sec.gov/api/xbrl/companyfacts/CIK0001484769.json"
 #: committed pages snapshot sealed that exact response
 FUBO_RESPONSE_SHA = "ea10a688894936583797d7b152d6f44f1e825c45722945cc4cad36269ce3fc7a"
 PAGES_SNAPSHOT = "edgar-4f3207f4da9fb71a"
-#: A page held by a standing operator instruction is never read by any build or backfill
-#: (2026-10-28, the six blind audit packs; BURL is the one with a committed page).
-HELD = ("BURL",)
 
 
 def _http(cache: pathlib.Path, namespace: str = "sec") -> CachedHttp:
@@ -426,9 +424,9 @@ def test_the_backfill_writes_only_the_block_and_keeps_a_record_it_finds(
 
 
 def _pages() -> list[tuple[str, dict[str, Any]]]:
+    # a held page is never read by any build or backfill, so it carries no record to check
     return [(p.parent.name, json.loads(p.read_text()))
-            for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))
-            if p.parent.name not in HELD]
+            for p in without_held(sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")))]
 
 
 def test_every_committed_page_says_what_it_was_built_from() -> None:

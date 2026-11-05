@@ -45,6 +45,7 @@ from datetime import date
 
 import pytest
 
+from tests.held_names import without_held
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
@@ -55,7 +56,7 @@ _WINDOW = re.compile(r"(\d+)\s+months", re.I)
 
 def _root():
     r = get_config().data_dir / "manual" / "ciq"
-    if not r.is_dir() or not any(r.iterdir()):
+    if not r.is_dir() or not any(without_held(r.iterdir())):
         pytest.skip("licensed CIQ bundles unavailable (never committed)")
     return r
 
@@ -64,7 +65,7 @@ def _bundles() -> list[tuple[str, CiqBundle]]:
     root = _root()
     ms = LocalFolderStore(root)
     out = []
-    for tk in sorted(p.name for p in root.iterdir() if p.is_dir()):
+    for tk in sorted(p.name for p in without_held(root.iterdir()) if p.is_dir()):
         files = ms.files(tk)
         if files:
             out.append((tk, CiqBundle.from_files(tk, files)))
@@ -248,7 +249,7 @@ def test_a_missing_quarterly_workbook_cannot_pose_as_a_fresh_one() -> None:
     root = _root()
     ms = LocalFolderStore(root)
     quarterly_only = None
-    for tk in sorted(p.name for p in root.iterdir() if p.is_dir()):
+    for tk in sorted(p.name for p in without_held(root.iterdir()) if p.is_dir()):
         paths = [p for p in ms.files(tk) if "_quarterly" in p.name.lower()]
         if paths:
             quarterly_only = CiqBundle.from_files(tk, paths)

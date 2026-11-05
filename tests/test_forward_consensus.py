@@ -21,6 +21,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.held_names import page_params
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.anchor import replace_anchor_block
 from vinci.dossier.ciq import CiqBundle, clean_num
@@ -90,7 +91,7 @@ def test_the_market_summary_is_read_only_inside_its_own_block() -> None:
     assert sec is not None, "the summary's per-share figure vouches for no section"
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_every_spread_sits_on_its_own_trends_figure(ticker: str) -> None:
     """ACROSS THE CORPUS. Consensus and Trends are separate sheets and can differ by a fraction of a
     percent (ROST EBITDA 0.9%), but a wrong-section read is off by orders of magnitude — 0.01
@@ -109,7 +110,7 @@ def test_every_spread_sits_on_its_own_trends_figure(ticker: str) -> None:
         assert s.ordered_by == ("magnitude" if s.high < s.low else "value"), s
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_revision_counts_are_bounded_by_their_own_block(ticker: str) -> None:
     """Each count is read inside its own block. The structural pin is AMZN's: 'EPS Normalized' ends
     at the very next block ('Cash Earnings / Share'), where `horizon_read`'s bounding runs on to

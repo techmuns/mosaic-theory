@@ -168,6 +168,7 @@ def test_the_build_writes_only_into_a_folder_it_deletes(
     assert len(roots) == 1 and not roots[0].exists()
     assert not roots[0].is_relative_to(cfg.data_dir)
     assert page.read_bytes() == FROZEN_PAGE.read_bytes()
+    # held-names: reads no CIQ export
     assert sorted(p.name for p in page.parent.iterdir()) == ["dossier.json"]
 
 

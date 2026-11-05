@@ -17,6 +17,7 @@ import pathlib
 
 import pytest
 
+from tests.held_names import without_held
 from vinci.dossier.ciq import (
     MULTI_FILE_KINDS,
     CiqAmbiguousError,
@@ -142,7 +143,7 @@ def test_every_live_folder_builds_and_picks_what_it_picked_before() -> None:
     """CORPUS FIRST: on every live folder the change refuses nothing a caller asks for and picks
     the SAME file as before — financials by period type (every caller passes one), every other
     kind once. Skips where the licensed exports are not on this machine (CI)."""
-    folders = sorted(p for p in LIVE.iterdir() if p.is_dir()) if LIVE.is_dir() else []
+    folders = sorted(p for p in without_held(LIVE.iterdir()) if p.is_dir()) if LIVE.is_dir() else []
     if not folders:
         pytest.skip("no CIQ exports on this machine")
     picks = 0
@@ -167,8 +168,8 @@ def test_the_real_copy_in_shapes_refuse(replaced: str, ticker: str, stale: str) 
     old_dir, live_dir = ARCHIVE / replaced / ticker, LIVE / ticker
     if not (old_dir.is_dir() and live_dir.is_dir()):
         pytest.skip("archived and live exports not on this machine")
-    live = {p.name: p for p in live_dir.iterdir() if p.is_file()}
-    left = [p for p in old_dir.iterdir() if p.is_file() and p.name not in live]
+    live = {p.name: p for p in without_held(live_dir.iterdir()) if p.is_file()}
+    left = [p for p in without_held(old_dir.iterdir()) if p.is_file() and p.name not in live]
     with pytest.raises(CiqAmbiguousError) as exc:
         CiqBundle.from_files(ticker, sorted([*live.values(), *left]))
     assert stale in str(exc.value)

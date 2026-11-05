@@ -26,6 +26,7 @@ from typing import Any
 
 import pytest
 
+from tests.held_names import without_held
 from vinci.dossier import lease_basis as lbm
 from vinci.dossier import render as rend
 from vinci.dossier import valuation_basis as vb
@@ -656,7 +657,7 @@ def _local_bundles() -> list[tuple[str, Any]]:
 
     store = LocalFolderStore.from_config(get_config())
     out = []
-    for p in sorted(CORPUS.glob("*/dossier.json")):
+    for p in without_held(sorted(CORPUS.glob("*/dossier.json"))):
         t = p.parent.name
         if store.available(t) and (FACTS / f"{t}.json").exists():
             out.append((t, CiqBundle.from_files(t, store.files(t))))

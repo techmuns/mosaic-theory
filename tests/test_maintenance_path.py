@@ -28,6 +28,7 @@ from datetime import date as dt_date
 import pytest
 
 import vinci.dossier.assemble as asm
+from tests.held_names import without_held
 from tests.sec_offline_support import no_network, seed_sec_cache
 from vinci.config import Config
 
@@ -92,6 +93,7 @@ def _cfg() -> Config:
 def _maintained_names() -> list[str]:
     """Committed dossiers that are NOT current screen candidates — the maintenance-route set."""
     cands = _candidate_tickers()
+    # held-names: reads no CIQ export
     return [p.parent.name for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))
             if p.parent.name not in cands]
 
@@ -122,7 +124,7 @@ def _candidate_tickers() -> set[str]:
 def _a_maintained_orphan() -> str:
     """A committed-dossier name that is NOT a current candidate — the case under test."""
     cands = _candidate_tickers()
-    for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
+    for p in without_held(sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))):
         if p.parent.name not in cands:
             return p.parent.name
     pytest.skip(
@@ -407,6 +409,7 @@ def test_every_committed_dossier_can_still_be_located() -> None:
     carries must now resolve by one route or the other."""
     cfg = _cfg()
     unreachable = []
+    # held-names: reads no CIQ export
     for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         t = p.parent.name
         try:
@@ -441,6 +444,7 @@ def test_the_fleet_snapshot_of_which_names_take_which_route(capsys) -> None:
     cfg = _cfg()
     cands = _candidate_tickers()
     rows = []
+    # held-names: reads no CIQ export
     for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         t = p.parent.name
         rows.append((t, "candidate" if t in cands else "maintenance"))
@@ -459,6 +463,7 @@ def test_json_snapshots_are_not_mutated_by_reading_them() -> None:
     dossier tree; none of it may change a committed byte."""
     snaps = _cfg().snapshots_dir
     before = {p: p.read_bytes() for p in sorted(snaps.glob("*.jsonl"))}
+    # held-names: reads no CIQ export
     for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         asm.load_finalists(_cfg(), ticker=p.parent.name)
     after = {p: p.read_bytes() for p in sorted(snaps.glob("*.jsonl"))}

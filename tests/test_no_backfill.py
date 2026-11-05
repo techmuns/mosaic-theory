@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.held_names import skip_if_held, without_held
 from vinci.dossier.ciq_sheets import _multiples_close, pe_ltm_current, range_position
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,10 +19,11 @@ ROOT = Path(__file__).resolve().parents[1]
 def _bundle(ticker: str):
     from vinci.dossier.ciq import CiqBundle
 
+    skip_if_held(ticker)
     d = ROOT / "data" / "manual" / "ciq" / ticker
     if not d.is_dir():
         pytest.skip(f"licensed CIQ bundle for {ticker} unavailable (never committed)")
-    return CiqBundle.from_files(ticker, sorted(d.glob("*")))
+    return CiqBundle.from_files(ticker, sorted(without_held(d.glob("*"))))
 
 
 @pytest.mark.parametrize("ticker", ["SMPL", "CNXC", "WERN"])
@@ -71,7 +73,7 @@ def test_the_reported_value_is_always_the_latest_cell() -> None:
     if not man.is_dir():
         pytest.skip("licensed CIQ bundles unavailable (never committed)")
     checked = 0
-    for d in sorted(man.iterdir()):
+    for d in without_held(sorted(man.iterdir())):
         if not d.is_dir():
             continue
         try:

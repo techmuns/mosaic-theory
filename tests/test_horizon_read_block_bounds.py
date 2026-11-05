@@ -18,6 +18,7 @@ from typing import Any
 
 import pytest
 
+from tests.held_names import page_params
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num
 from vinci.dossier.refresh import (
@@ -82,7 +83,7 @@ def _own_block_lines(rows: list[list[Any]]) -> set[str]:
     return out
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_every_line_is_its_own_blocks_counts(ticker: str) -> None:
     """ACROSS THE CORPUS: the whole field equals what each metric's own block says — no line from a
     neighbour, none dropped, none invented."""
@@ -92,7 +93,7 @@ def test_every_line_is_its_own_blocks_counts(ticker: str) -> None:
     assert _lines(value) == _own_block_lines(b.sheet("estimates", "Revisions"))
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_the_fix_moves_only_metrics_whose_block_ended_in_the_wrong_place(ticker: str) -> None:
     """A metric whose block the two boundings end at the SAME row prints the same line under both;
     only a mis-bounded metric may move. This is what licenses correcting a stored page in place."""

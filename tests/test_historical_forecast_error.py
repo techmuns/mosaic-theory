@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 
+from tests.held_names import page_params
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num
 from vinci.dossier.schemas import Dossier, HistoricalForecastError, MechanicalLayer, dossier_json
@@ -55,7 +56,7 @@ def _fiscal_block(rows: list[list[Any]]) -> tuple[int, int]:
 # --- the reads, on the real workbooks ------------------------------------------------------------
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_every_observation_is_its_fiscal_year_cells_and_agrees_with_ciqs_difference(
         ticker: str) -> None:
     """ACROSS THE CORPUS: each observation is the Actual and Estimate cells of its year in the
@@ -86,7 +87,7 @@ def test_every_observation_is_its_fiscal_year_cells_and_agrees_with_ciqs_differe
             assert diff == pytest.approx(o.actual - o.final_estimate, abs=0.01, rel=1e-6)
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_each_line_carries_only_its_meaningful_measures_and_the_identity_holds(
         ticker: str) -> None:
     """ACROSS THE CORPUS: Revenue carries a percentage and nothing revenue-normalised; profit lines

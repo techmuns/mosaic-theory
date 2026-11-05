@@ -23,6 +23,7 @@ import typing
 
 import pytest
 
+from tests.held_names import without_held
 from tests.test_dossier import _comps, _credit_sheet
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier import render as rend
@@ -236,7 +237,7 @@ def test_every_real_standalone_export_yields_a_panel() -> None:
     standalone export on disk. Measured 2026-10-05: ten exports, ten panels, none refused."""
     root = ROOT / "data/manual/ciq"
     seen = 0
-    for d in sorted(p for p in root.iterdir() if p.is_dir()):
+    for d in sorted(p for p in without_held(root.iterdir()) if p.is_dir()):
         files = sorted(p for p in d.iterdir() if p.is_file())
         if not any("credit health" in f.name.lower() for f in files):
             continue

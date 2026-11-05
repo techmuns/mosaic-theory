@@ -19,6 +19,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.held_names import page_params
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import (
@@ -62,7 +63,7 @@ def _render(cells: list[CurrentMultiple]) -> str:
 # --- today's multiples: the same cells as the string -------------------------------------------
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_the_ladder_string_is_the_structured_cells_rendered(ticker: str) -> None:
     """ACROSS THE CORPUS: the synthesis-input string and the structured values come from ONE read,
     so the string is exactly the cells rendered — no second parser, no drift."""
@@ -77,7 +78,7 @@ def test_the_ladder_string_is_the_structured_cells_rendered(ticker: str) -> None
     assert ladder.value == _render(cells)
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_the_ntm_cells_are_the_sheets_own(ticker: str) -> None:
     """ACROSS THE CORPUS, read WITHOUT `_ladder_cells`: the row whose first cell is 'NTM', under the
     columns the TEV/REV header names — so a reader that shifted a column fails on every name."""
@@ -125,7 +126,7 @@ def test_a_close_is_a_quarter_end_by_its_date(d: date, settled: bool) -> None:
     assert cs._is_quarter_end_close(d) is settled
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_every_settled_column_is_a_quarter_end_and_the_latest_is_judged_by_its_date(
         ticker: str) -> None:
     """ACROSS THE CORPUS: every column before the latest passes the rule (the rule fits the sheet),
@@ -142,7 +143,7 @@ def test_every_settled_column_is_a_quarter_end_and_the_latest_is_judged_by_its_d
 # --- the reconciliations: arithmetic of the layer's own means -----------------------------------
 
 
-@pytest.mark.parametrize("ticker", COMMITTED)
+@pytest.mark.parametrize("ticker", page_params(COMMITTED))
 def test_every_reconciliation_is_the_layers_own_means_and_present_when_it_can_be(
         ticker: str) -> None:
     """ACROSS THE CORPUS: each record is the identity applied to the SAME layer's consensus means

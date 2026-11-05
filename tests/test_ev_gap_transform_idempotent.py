@@ -18,6 +18,7 @@ from pathlib import Path
 import pytest
 
 from tests.ciq_export_support import skip_unless_pages_export
+from tests.held_names import page_params
 from vinci.dossier.refresh import ev_gap_transform, refresh_dossier
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,7 +35,7 @@ def _gap(p: Path) -> dict:
     return (json.loads(p.read_text()).get("mechanical") or {}).get("ev_gap") or {}
 
 
-@pytest.mark.parametrize("ticker", COMPUTED)
+@pytest.mark.parametrize("ticker", page_params(COMPUTED))
 def test_a_second_refresh_preserves_the_computed_gap(ticker: str, tmp_path: Path) -> None:
     """RE-RUN ON THE WRITTEN ARTIFACT. A gap that computes once and then degrades to
     `not-computed` is the silent-drop failure — and it would look like a correct refusal, complete
@@ -74,7 +75,7 @@ def test_a_second_refresh_preserves_the_computed_gap(ticker: str, tmp_path: Path
     assert after["vintages"] == before["vintages"]
 
 
-@pytest.mark.parametrize("ticker", COMPUTED)
+@pytest.mark.parametrize("ticker", page_params(COMPUTED))
 def test_the_market_cap_the_gap_uses_survives_the_model_round_trip(ticker: str,
                                                                    tmp_path: Path) -> None:
     """THE SPECIFIC FIELD the review named. `implied_valuation.market_cap` is a DECLARED required
@@ -91,7 +92,7 @@ def test_the_market_cap_the_gap_uses_survives_the_model_round_trip(ticker: str,
         "degrade to 'tev unavailable' on the next refresh")
 
 
-@pytest.mark.parametrize("ticker", COMPUTED)
+@pytest.mark.parametrize("ticker", page_params(COMPUTED))
 def test_the_two_market_caps_agree(ticker: str) -> None:
     """TWO FIELDS, TWO TEVs, AND NOTHING ASSERTING THEY MATCH — the duplicate-definition class the
     review surfaced, which is real even though its stated mechanism is not.

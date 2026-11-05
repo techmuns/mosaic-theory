@@ -194,6 +194,7 @@ def test_every_live_negative_eps_name_reads_grammatically_and_claims_no_cause(
     Non-vacuous by construction: the run FAILS if it finds no triggering name, because a corpus
     pin that silently covers nothing is the vacuity that let the batch e2e cover 0 of 11."""
     seen: list[str] = []
+    # held-names: reads no CIQ export
     for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         raw = json.loads(p.read_text())
         doss = ds.Dossier.model_validate(raw)

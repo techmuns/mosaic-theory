@@ -27,6 +27,7 @@ from tests.ciq_export_support import (
     skip_unless_export,
     skip_unless_pages_export,
 )
+from tests.held_names import without_held
 from tests.test_ev_gap_transform_idempotent import COMPUTED
 from vinci.config import get_config
 from vinci.dossier import manual_store as ms
@@ -237,10 +238,10 @@ def test_most_computed_pages_hold_the_estimates_export_they_stamp() -> None:
     configured store), so a run from another directory skips rather than counting every page
     drifted against a folder it never looked in."""
     root = get_config().data_dir / "manual" / "ciq"
-    if not root.is_dir() or not any(p.is_dir() for p in root.iterdir()):
+    if not root.is_dir() or not any(p.is_dir() for p in without_held(root.iterdir())):
         pytest.skip("no CIQ folder holding tickers on this machine — no export to measure")
     assert COMPUTED, "no committed page carries a computed ev_gap — the population is gone"
-    breach = floor_breach(*own_export_census(COMPUTED))
+    breach = floor_breach(*own_export_census(without_held(COMPUTED)))
     if breach:
         pytest.fail(breach)
 

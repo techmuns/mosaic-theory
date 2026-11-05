@@ -119,6 +119,12 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Held name / held audit pack** (2026-11-05). Plain words: *one of the six tickers whose CIQ
+  exports TeamNostra keeps as a blind test set (BURL, MTB, RIVN, PCVX, NVO, PLD), which no
+  mosaic-theory code — the test suite included — reads until the answer key is frozen*. In the
+  suite: `page_params` skips a held case, `without_held` drops one from a loop, an audit hook fails
+  any open of a held export, and `tests/test_held_names.py` refuses a loop that bypasses them.
+  `tests/held_names.py`, `docs/records/2026-11-05-no-test-reads-a-held-audit-packs-ciq-export.md`.
 - **Input manifest / the `inputs` block** (2026-11-05, workstream B). Plain words: *the list of
   everything a page was built from, each by the full sha256 of its bytes — every CIQ export, every
   SEC/Polygon/FINRA response (hashed as the fact layer hashes it), every price series — or

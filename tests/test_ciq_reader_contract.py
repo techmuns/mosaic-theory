@@ -29,6 +29,7 @@ from typing import Any
 import pytest
 
 from tests.fixtures.ciq_synthetic import generate as gen
+from tests.held_names import without_held
 from vinci.dossier import ciq_balance
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import (
@@ -1073,7 +1074,7 @@ def _prior_section_export() -> tuple[CiqBundle, str]:
     """TECX's own Customers export where it is on file (licensed, never committed), else the
     synthetic view in its shape — so the pin below runs in CI and on the real file alike."""
     live = Path(__file__).resolve().parents[1] / "data" / "manual" / "ciq" / "TECX"
-    files = sorted(live.glob("*Customers*")) if live.is_dir() else []
+    files = sorted(without_held(live.glob("*Customers*"))) if live.is_dir() else []
     return (CiqBundle.from_files("TECX", files), "TECX") if files else (
         _bundle(PRIOR_CUSTOMERS), gen.TICKER)
 

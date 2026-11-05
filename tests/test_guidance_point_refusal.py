@@ -27,6 +27,7 @@ from datetime import date
 import pytest
 
 from tests.ciq_export_support import skip_unless_export
+from tests.held_names import without_held
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq_sheets import _POINT_DECISION_BAND, _guidance_reads
 
@@ -178,10 +179,10 @@ def test_real_misses_survive_across_the_fleet() -> None:
 
     root = get_config().data_dir / "manual" / "ciq"
     ms = LocalFolderStore(root)
-    if not root.is_dir() or not any(root.iterdir()):
+    if not root.is_dir() or not any(without_held(root.iterdir())):
         pytest.skip("licensed CIQ bundles unavailable (never committed)")
     missed = at_guide = 0
-    for tk in sorted(p.name for p in root.iterdir() if p.is_dir()):
+    for tk in sorted(p.name for p in without_held(root.iterdir()) if p.is_dir()):
         try:
             from vinci.dossier.ciq import CiqBundle
             rows = cs.guidance_bridge_rows(

@@ -13,6 +13,7 @@ from typing import Any
 import pytest
 
 from tests.ciq_export_support import skip_unless_export
+from tests.held_names import without_held
 from vinci.dossier.materiality import (
     MCAP_FRACTION,
     MaterialityError,
@@ -117,7 +118,7 @@ def test_every_committed_bundle_has_a_locatable_block() -> None:
     if not man.is_dir():
         pytest.skip("licensed CIQ bundles unavailable (never committed)")
     seen = 0
-    for d in sorted(man.iterdir()):
+    for d in without_held(sorted(man.iterdir())):
         if not d.is_dir():
             continue
         try:
@@ -167,7 +168,7 @@ def test_the_defect_itself_the_extraction_drops_the_line() -> None:
     d = ROOT / "data" / "manual" / "ciq" / "SMPL"
     if not d.is_dir():
         pytest.skip("licensed CIQ bundle unavailable (never committed)")
-    bundle = CiqBundle.from_files("SMPL", sorted(d.glob("*")))
+    bundle = CiqBundle.from_files("SMPL", sorted(without_held(d.glob("*"))))
     tbl = financial_summary_annual(bundle).value
     assert tbl is not None, "SMPL annual summary is UNKNOWN — cannot observe the defect"
     labels = [r.label for r in tbl.rows]
@@ -218,7 +219,7 @@ def test_the_green_path_is_deterministic_and_does_not_involve_the_llm() -> None:
         d, dj = man / t, ROOT / "data" / "dossiers" / t / "dossier.json"
         if not d.is_dir() or not dj.exists():
             continue
-        b = CiqBundle.from_files(t, sorted(d.glob("*")))
+        b = CiqBundle.from_files(t, sorted(without_held(d.glob("*"))))
         inc = b.sheet("financials", "Income Statement", freq="annual")
         hdr = _cs._period_header(inc)
         pers = _cs._fin_periods(inc[hdr])
