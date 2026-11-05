@@ -1081,35 +1081,6 @@ def test_the_manifest_records_which_policy_the_run_used() -> None:
     assert "routing_policy" in moved.model_dump_json(), "the policy is not serialised"
 
 
-def test_detection_refuses_to_overwrite_the_pointer_without_an_archive() -> None:
-    """THE ARCHIVE PROTECTED NOTHING. `candidate_themes.jsonl` — the only committed cluster file —
-    was overwritten BEFORE the immutable snapshot was written, and `data/scan_history/` was
-    git-ignored, so "a monthly sweep must never clobber the prior harvest" described an intent the
-    sequence did not implement.
-
-    Archive first, pointer last, and `--no-scan-history` with a write is refused outright."""
-    import inspect
-
-    from vinci import cli
-
-    src = inspect.getsource(cli._cmd_themes)
-    assert "if not args.no_write and args.no_scan_history:" in src
-    assert "REFUSED:" in src and "no immutable snapshot kept" in src
-    # ORDER: the archive call must precede the pointer write
-    assert src.index("record_snapshot(") < src.index('"candidate_themes.jsonl"'), (
-        "the pointer is still written before the snapshot is secured")
-
-
-def test_the_scan_history_archive_is_tracked() -> None:
-    """It was git-ignored, so the archive standing behind the pointer kept nothing."""
-    import subprocess
-
-    keep = ROOT / "data" / "scan_history" / "README.md"
-    assert keep.is_file(), "the archive directory is not present"
-    r = subprocess.run(["git", "check-ignore", "-q", str(keep)], cwd=ROOT)
-    assert r.returncode != 0, "data/scan_history/ is still git-ignored — it keeps nothing"
-
-
 def test_the_manifest_and_the_run_cannot_state_different_policies(tmp_path: pathlib.Path) -> None:
     """REVIEW FINDING. `routing_policy` was recorded on the manifest AND passed to the runner, with
     NOTHING binding them — so a run could execute under DROP while its own record said CARRY.

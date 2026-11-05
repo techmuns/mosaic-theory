@@ -3632,6 +3632,21 @@ def test_clean_num_treats_ciq_blanks_as_unavailable() -> None:
     assert ciq.clean_num(5) == 5.0
 
 
+def test_a_percent_display_cell_reads_through_the_shared_ciq_helper() -> None:
+    """`coupon` is a DISPLAY string ("4.500%"). The house rule allows one shared, tested helper and
+    forbids an ad-hoc regex; `clean_num` is that helper and it returns None — never 0 — for an
+    unavailable cell, which is what keeps 'NM' out of the average.
+
+    Moved here from `tests/test_cohort_five.py::
+    test_the_coupon_cell_is_read_through_the_shared_ciq_helper` (retired in #910): its two
+    assertions on `clean_num`. The third averaged coupons in `vinci/borrowing.py`, which retired
+    with the panels; this was the one pin on a `%` cell."""
+    from vinci.dossier.ciq import clean_num
+
+    assert clean_num("4.500%") == 4.5
+    assert clean_num("NA") is None and clean_num("NM") is None
+
+
 def test_excel_date_handles_serial_and_string() -> None:
     assert ciq.excel_date(44377.0) == date(2021, 6, 30)  # Excel serial
     assert ciq.excel_date("Jan-31-2024") == date(2024, 1, 31)  # string
@@ -4396,8 +4411,9 @@ def test_revised_guidance_extracts_figures_block_not_lede() -> None:
         "of $380 million to $385 million; Adjusted EPS of $1.19 to $1.25; Free Cash Flow of $140 "
         "million to $150 million."
     )
-    block = dm._extract_revised_guidance(lede + filler + figures)
-    assert block is not None
+    found = dm._extract_revised_guidance(lede + filler + figures)
+    assert found is not None
+    block = found.text
     assert all(s in block for s in ("985", "380", "1.19", "140"))  # all four figures, verbatim
     assert "termination notice from Avis" not in block  # lede skipped (no figures in its window)
     assert dm._extract_revised_guidance("An earnings call. Revenue grew. No outlook given.") is None
@@ -4423,8 +4439,10 @@ def test_revised_guidance_updating_verb_matches_and_initial_does_not() -> None:
         "300 and 350 basis points year-over-year Adjusted EBITDA expected to range between $217 "
         "to $225 million, or -22% to -19% year-over-year"
     )
-    block = dm._extract_revised_guidance(smpl)
-    assert block is not None and "$1.31" in block and "$217" in block
+    found = dm._extract_revised_guidance(smpl)
+    assert found is not None
+    block = found.text
+    assert "$1.31" in block and "$217" in block
     assert "reported financial results" not in block  # the results-lede headline window lost
     initial = (
         "The Company provides its fiscal year 2027 outlook: Net sales expected between $1.40 "
@@ -4449,13 +4467,13 @@ def test_revised_guidance_note_honest_and_accessions_deduped(
             return "<p>An earnings call transcript. No outlook discussed.</p>"
 
     monkeypatch.setattr(dm, "_exhibit_991_url", lambda http, cik, acc: "http://x/ex991.htm")
-    got = dm._revised_guidance(_Http(), "1", [f, twin])  # type: ignore[arg-type]
-    assert got.status is ds.SourceStatus.UNKNOWN
+    got, cut = dm._revised_guidance(_Http(), "1", [f, twin])  # type: ignore[arg-type]
+    assert got.status is ds.SourceStatus.UNKNOWN and cut is None  # no quote, so nothing is cut
     note = str(got.note)
     assert "block matched" in note and note.count("A-1") == 1
     assert "exhibit parsed" not in note
     monkeypatch.setattr(dm, "_exhibit_991_url", lambda http, cik, acc: None)
-    got2 = dm._revised_guidance(_Http(), "1", [f])  # type: ignore[arg-type]
+    got2 = dm._revised_guidance(_Http(), "1", [f]).guidance  # type: ignore[arg-type]
     assert "no 99.1 exhibit located" in str(got2.note)
 
 

@@ -54,7 +54,6 @@ data/facts/local/
 # how the book was marked on each date — a spread nobody can re-read is not evidence. Small,
 # diff-able, no licensed workbook content.
 !data/monitor/
-!data/scan_history/
 
 # Frontend — generated mirrors from frontend/build.py. frontend/snapshots/ stays ignored (regenerate
 # via build.py). frontend/dossiers/ IS committed — the pre-built DERIVED dossier.json the authed
@@ -66,6 +65,9 @@ frontend/snapshots/
 # frontend/dossiers if the repo/deploy goes public.
 node_modules/
 
+# RETIRED 2026-11-04 with `vinci.themes` (R2): only `data/themes/ledgers/` stays, KEPT AS HISTORY —
+# the two frozen 2026-09-01 ratification ledgers; nothing reads them now.
+#
 # THEME FORWARD-VALIDATION ARTIFACTS — COMMITTED as of 2026-08-12, reversing the standing
 # "derived, LOCAL-only, never committed" rule for the two per-driver records below. The loose
 # `forward_*` filenames and `data/forward/` stay ignored: only the canonical paths are tracked.
@@ -92,20 +94,7 @@ forward_*_baskets.json
 data/forward/
 !data/themes/
 data/themes/*
-!data/themes/baskets/
 !data/themes/ledgers/
-# thesis cards (operator-declared, brief Item 1) + economics roll-ups (derived, Item 4) — both
-# committed classes, same rationale as the baskets: durable inputs/artifacts, not local staging
-!data/themes/thesis/
-!data/themes/economics/
-
-# scan-history archive (themes-exposure) — timestamped scan snapshots + manifest. DATA, never
-# committed (already covered by data/*; explicit here for fail-closed clarity).
-# data/scan_history/ is TRACKED (2026-07-31): it is the immutable archive standing
-# behind candidate_themes.jsonl, and while it was ignored the 'never clobber the
-# prior harvest' guarantee protected nothing — the only committed cluster file had
-# no keeper. Derived from public EOD prices + EDGAR SIC; no licensed content.
-
 # earliness-assay v0 harness runtime outputs — derived, LOCAL-only (already covered by data/*;
 # explicit for fail-closed clarity). Cards, the efts velocity cache, and the quarter-snapshot archive.
 data/assay/

@@ -637,6 +637,29 @@ def test_cited_sheet_reader_finds_an_undeclared_sheet() -> None:
     assert cited - declared == {"Financials→Pension Detail"}
 
 
+def test_a_consensus_level_ref_names_the_consensus_sheet_then_its_row() -> None:
+    """THE REF OF ONE FORWARD-YEAR CONSENSUS ROW NAMES ITS SHEET, THEN ITS ROW (#903 follow-up).
+    `ciq_sheets.consensus_level_ref` wrote "{metric} FY{fy}" straight after "Consensus" with no
+    delimiter, so the reader above took "Consensus EBITDA FY2027" for a sheet, and the map guard
+    went red on the first page built on #903 (SMPL, 2026-11-04: 14 refs, Revenue and EBITDA
+    FY2027..FY2033). Built from the real function over the metrics the builder reads, so a ref the
+    `CIQ <workbook>→<sheet> …` convention cannot read fails here before a page carries it."""
+    from vinci.dossier.ciq_sheets import CONSENSUS_METRICS, consensus_level_ref
+
+    declared = {s for f in ciq.FAMILIES for s in f.cited_as}
+    assert "Estimates→Consensus" in declared
+    for metric in CONSENSUS_METRICS:
+        for fy in ("2027", "2033"):
+            ref = consensus_level_ref(metric, fy)
+            assert _cited_sheets({"P": {"x": {"source_ref": ref}}}) == {"Estimates→Consensus"}, ref
+            assert f"{metric} FY{fy}" in ref, ref   # the row is still named, after the sheet
+    # THE OBSERVED FAILURE SHAPE, copied from SMPL's 2026-11-04 page: the reader must keep reading
+    # it as the undeclared sheet it looks like, or the guard above could never have caught it
+    old = "CIQ Estimates→Consensus EBITDA FY2027 (median, high, low, std dev, estimates)"
+    assert _cited_sheets({"P": {"x": {"source_ref": old}}}) - declared == {
+        "Estimates→Consensus EBITDA FY2027"}
+
+
 # --- end to end over the committed pages -------------------------------------------------------
 
 _PAGES = ciq.load_pages(ROOT)

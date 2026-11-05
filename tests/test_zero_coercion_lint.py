@@ -122,10 +122,6 @@ ALLOWED: tuple[tuple[str, str, str, str], ...] = (
     ("vinci/theme_intelligence/pipeline.py", "run_scan", "c.get('cost_usd') or 0.0", COST),
     ("vinci/theme_intelligence/state.py", "pull", "c or 0.0", COST),
     ("vinci/theme_intelligence/upload.py", "_steps", "out.cost_usd or 0", COST),
-    ("vinci/themes/forward.py", "baskets_from_mirror", "mirror.get('ratifiedCount', 0) or 0",
-     "a count in the radar mirror: an absent count is none ratified"),
-    ("vinci/themes/subsidiaries.py", "subsidiaries_of", "str(cik).lstrip('0') or 0",
-     "a CIK of all zeros is the integer 0; no figure is stated"),
 )
 
 

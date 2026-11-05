@@ -67,20 +67,27 @@ the same 11 exports; only the second is committed.
   the page for the human, and none was re-rolled away.
 - **UNREAD PRINT does not clear, and cannot from a page.** `monitor.freshness_row` reads the
   RECORD's evidence date: `scenarios/SMPL.json`'s underwrite, 2026-08-05, or a later
-  `[amended …]` tag. It never reads the page. The new day reads
+  `[amended …]` tag. It never reads the page. The 2026-11-03 run (not committed, below) read
   `SMPL UNREAD PRINT evidence 2026-08-05 (underwrite_date)`, with the 10-K and 8-K of
-  2026-10-27, and the held build's run read the same with its page in the tree. Row 36 said these
+  2026-10-27, and the held build's run read the same with its page in the tree. So do the
+  committed days 2026-10-28, 10-30 and 11-02 (`unread_print` true on each). Row 36 said these
   filings "postdate the committed page". The cause is the record, and the row is corrected. The
   flag clears at the re-underwrite.
-- **The monitor day is new** (RUNBOOKS §j): `data/monitor/2026-11-03.json`, run with no `--ref`.
-  The 2026-11-02 day is untouched.
-  - The book is on total return.
-  - BUY−AVOID is +67.26 pp (price return +67.25 pp), against +73.96 pp on 2026-11-02.
-  - SMPL's two rows mark at $12.47: +14.19% and +10.06%, against IWM −4.03% and −7.02%.
-  - The newest `newer_filings` date is 2026-11-03 and the newest `last_evidence_date` is
-    2026-09-01, both before the run day.
-  - There are no "no freshness row" or "evidence dated after" notes.
-  - `test_emit_is_deterministic_over_the_committed_corpus` is green on it.
+- **No monitor day is committed.** A day was run for this pass (RUNBOOKS §j, no `--ref`, filed
+  under 2026-11-03) and then dropped from the PR. Operator ruling 2026-11-05, relayed by the
+  coordinating session: "drop it". The reasons:
+  - It was written by code main has since retired: it carried 124 `panels` rows (#910 retired the
+    panel grid) and 7 `theme_falsifiers` rows (#908 retired `vinci.themes`).
+  - It was added only because `test_panel_emit`'s corpus pin required the latest day's panels to
+    equal what today's pages emit. #910 deleted that test, and main's RUNBOOKS §j now says "No pin
+    ties an artifact pass to a monitor day now."
+  - Keeping it would make #910's record wrong, which says the days 2026-08-11 → 2026-11-02 carry the
+    panel grid.
+
+  What that run read, for the record only: on total return, BUY−AVOID +67.26 pp (price return
+  +67.25 pp) against +73.96 pp on 2026-11-02, and SMPL's two rows at $12.47, +14.19% and +10.06%,
+  against IWM −4.03% and −7.02%. `frontend/monitor/index.json` equals main's (9 days, latest
+  2026-11-02), and the 2026-11-02 day is untouched.
 
 **WHY THE FIRST BUILD WAS HELD.** `4f30d3a2` ran on main `cfedcb39`, and the 2026-11-04
 Financials export reaches back to 2015, past SMPL's 2016–17 fiscal-year change. So every
@@ -134,14 +141,17 @@ or labelling them is the operator's ruling there.
   (`pytest -m "not network" -rs`, on `5c8a415d`), 22 failed. Re-running the 13 files involved
   with main's SMPL page and tracking fixture swapped back in left 4: the two known
   `test_forward_consensus` failures (GOOGL, LLY), `test_store_freshness` (this worktree's store
-  copy) and the panel-emit determinism pin (the new monitor day was emitted from the new page). The
-  operator-approved dispositions, through the coordinating session:
+  copy) and the panel-emit determinism pin (the new monitor day was emitted from the new page; #910
+  has since deleted that test and its emitter). The operator-approved dispositions, through the
+  coordinating session:
   - **A (8)**: template tests used SMPL's living page as a page `scenario-propose` accepts. It now
     refuses it on row 36's share gap, so they read `tests/fixtures/frozen_pages/2026-08-18/SMPL/`.
   - **B (8)**: value pins moved with the 10-K (the first forward FY 2026 → 2027, the margin median
     15.4481% → 15.3855%, the band low 6.11x → 5.04x). Their values read the frozen page; their
     structural halves still read the living one. Each moved pin was shown red under a mutation of
-    the frozen value.
+    the frozen value. One of the eight, `test_panel_emit`'s range-excludes-today's-mark pin, left
+    with the retired emitter: #910 deleted `tests/test_panel_emit.py`, and the merge of main took the
+    deletion over this branch's edit to it.
   - **C (1)**: SMPL leaves `ANCHORS_AWAITING_BACKFILL`, because its committed anchor now equals
     the recompute.
   - **D (1)**: the record's band_low 6.11 is named in a new `KNOWN_STALE` allowlist, kept apart from
@@ -150,8 +160,36 @@ or labelling them is the operator's ruling there.
     is re-derived. Both directions were shown.
   - **E (1)**: `test_quality_ciq::test_every_sheet_the_committed_pages_cite_is_in_the_map` read the
     14 consensus-level refs #903 gave the page (Revenue and EBITDA, FY2027..FY2033) as undeclared
-    sheets. The ref is fixed in its own PR (`docs/records/2026-11-05-a-consensus-level-ref-names-its-sheet.md`),
-    and SMPL's stored refs are re-stamped through `refresh.consensus_transform` at $0.
+    sheets. The ref is fixed in its own PR, #909
+    (`docs/records/2026-11-05-a-consensus-level-ref-names-its-sheet.md`). After it merged, SMPL's
+    stored refs were re-stamped through `refresh.refresh_dossier(…, transform=consensus_transform("SMPL"))`
+    at $0: the old shape `CIQ Estimates→Consensus <metric> FY<year> (median` 14 → 0, the new shape
+    `CIQ Estimates→Consensus · <metric> FY<year> (median` 0 → 14. 15 JSON paths moved, the 14 refs
+    and one `layer_refreshes` entry (`2026-11-05`, `mechanical.consensus_context`).
+- **Merged with main at `fb91ad84` (#907, #908, #909, #910), and re-checked there.**
+  - SMPL's `.md` was never hand-merged. The $0 re-stamp above re-rendered it, with its mirror, from
+    the branch's `dossier.json` on main's code. #907's mark now ends the "outlook then" quote ("… (quote
+    may be cut — see the filing)"), and the page names the refresh ("layers refreshed to
+    2026-11-05.consensus-ref-names-its-sheet").
+  - `python frontend/build.py` moved only `frontend/dossiers/SMPL.json` and `.md`, each
+    byte-identical to its source. `frontend/dossiers/index.json` and `frontend/scenarios/SMPL*.json`
+    did not move.
+  - `vinci dossier precheck --ticker SMPL` exited 0: "0 regressions · 0 post-spend refusals". The 11
+    CIQ exports are byte-identical to before the first build.
+  - **A test defect the merge surfaced, fixed in its own test-only commit.**
+    `test_guidance_cut_mark::test_a_page_without_a_quote_prints_no_mark` went red on SMPL. #907's
+    living classifier predates any committed anchored page: it read only the rolling-window
+    `drawdown_cause.revised_guidance`. SMPL's page is the first with #906's anchor. Its window holds
+    no quote, and its April quote sits in `anchor.at_anchor`, with the possibly-cut mark printed
+    there correctly.
+    - The fix was approved by the operator through the coordinating session, and committed on main's
+      line before this merge (`e6011062`), so no commit is red.
+    - It counts the dated part as a quote. The negative test still asserts at least one page with
+      no quote in either place (23 of 27).
+    - It adds a living-corpus check that each anchored "outlook then" line carries the mark its own
+      `at_anchor.revised_guidance_cut` dictates.
+    - SMPL is red under the old classifier and green under the new one. Each new assertion goes red
+      under a mutation: the mark stripped, a cut field the page ignores, a mark on an unquoted page.
 - **A finding carried by B, for the operator.** `test_smpls_page_reads_multiple_dominant` pins "the
   operator's acceptance condition": the audit found that SMPL's view rests on re-rating. The frozen
   page reads "**multiple-dominant** at FY2026". The new page reads "**multiple** at FY2027, but
@@ -175,8 +213,9 @@ or labelling them is the operator's ruling there.
 - **Census:** `ciq_sheets._column_date` over the period-header row of each annual and quarterly
   Income Statement, Balance Sheet and Cash Flow in every `data/manual/ciq/*` folder, read
   2026-11-04 at main `cfedcb39`.
-- **Monitor:** Polygon grouped-daily, with Tiingo dividends on every leg. The run of 2026-11-04
-  ~19:10 UTC, before that day's close, is filed under 2026-11-03.
+- **Monitor (not committed):** Polygon grouped-daily, with Tiingo dividends on every leg. The run of
+  2026-11-04 ~19:10 UTC, before that day's close, was filed under 2026-11-03 and then dropped by
+  the operator's ruling above.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **$5.27,** of which $2.27 buys no committed page. It is counted in the series.

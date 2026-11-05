@@ -475,6 +475,21 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "shows, so a drop after the last screen run is classified, not only charted "
         "(`drawdown_cause.gap_window_end`)",
     ),
+    (
+        "2026-11-04.guidance-quote-cut",
+        "the drawdown outlook quote says where it stops: `_extract_revised_guidance` quotes 800 "
+        "raw characters of the 99.1 from its outlook heading and now records whether the release "
+        "goes on past them (`revised_guidance_cut` on `drawdown_cause` and on each dated part, "
+        "absent until built); the quote is unchanged, and the page marks it cut, or on a page "
+        "built before the field, possibly cut",
+    ),
+    (
+        "2026-11-05.consensus-ref-names-its-sheet",
+        "a forward-year consensus row's ref names its sheet, then its row: "
+        "`consensus_level_ref` writes 'CIQ Estimates→Consensus · EBITDA FY2027 (…)', where the "
+        "first cut ran the metric into the sheet name ('Consensus EBITDA FY2027'); the figures "
+        "are unchanged",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

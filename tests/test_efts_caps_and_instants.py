@@ -31,7 +31,6 @@ from vinci.dossier.schemas import CapitalInstrument, SourceStatus
 from vinci.edgar.client import EdgarClient, FtsHit, FtsResult
 from vinci.edgar.concepts import extract_points, latest_instant
 from vinci.netcache import CachedHttp, HttpError
-from vinci.themes.exposure import mention_prefilter
 
 _ROOT = Path(__file__).resolve().parent.parent
 
@@ -108,25 +107,6 @@ def test_a_one_page_search_is_one_request_on_the_url_it_always_had() -> None:
     got = _client(efts).fulltext_search("Credit Agreement", ciks="1")
     assert len(efts.urls) == 1 and "from=" not in efts.urls[0]
     assert len(got.hits) == 17 and not got.capped
-
-
-def test_the_prefilter_names_a_query_its_page_cap_cut() -> None:
-    """A batch×phrase whose matches outrun the cap is named with what it read of its total — the
-    shape of the cached `"defense"` queries (530-774 hits, read as 500)."""
-    efts = _PagedEfts(564)
-    capped: list[str] = []
-    mention_prefilter(cast(CachedHttp, efts), ["0000000001"], ("defense",),
-                      startdt="2025-09-01", enddt="2026-06-30", capped=capped)
-    assert len(efts.urls) == 5
-    assert len(capped) == 1 and "read 500 of 564" in capped[0] and "'defense'" in capped[0]
-
-
-def test_the_prefilter_names_nothing_it_read_whole() -> None:
-    efts = _PagedEfts(120)
-    capped: list[str] = []
-    mention_prefilter(cast(CachedHttp, efts), ["0000000001"], ("defense",),
-                      startdt="2025-09-01", enddt="2026-06-30", capped=capped)
-    assert len(efts.urls) == 2 and capped == []
 
 
 # ─── the covenant-pointer table states its own caps ──────────────────────────────────────────
@@ -214,24 +194,6 @@ def test_a_whole_search_that_found_nothing_still_says_so() -> None:
     which assembly keys on to tell 'searched, none' from 'could not search'."""
     out = _pointers(_instruments("BRBR"), _Edgar(FtsResult(hits=[], total=0)), exhibits=())
     assert out.status is SourceStatus.UNKNOWN and out.note == COVENANT_SEARCH_FOUND_NOTHING
-
-
-class _ShortPageEfts(_PagedEfts):
-    """efts serving 60 hits a page — the cap line must count what came back, not the offsets."""
-
-    def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
-        data = super().get_json(url, ttl_seconds=ttl_seconds)
-        data["hits"]["hits"] = data["hits"]["hits"][:60]
-        return data
-
-
-def test_the_prefilter_cap_line_counts_the_hits_it_read() -> None:
-    """Review round 1: the line said "read 500" from the request offsets; with 60-hit pages it read
-    300."""
-    capped: list[str] = []
-    mention_prefilter(cast(CachedHttp, _ShortPageEfts(564)), ["0000000001"], ("defense",),
-                      startdt="2025-09-01", enddt="2026-06-30", capped=capped)
-    assert len(capped) == 1 and "read 300 of 564" in capped[0], capped
 
 
 # ─── review round 2: a later page that fails, and reading only as far as the caller needs ─────
@@ -323,21 +285,3 @@ def test_a_search_that_stopped_short_is_not_called_one_that_could_not_run() -> N
     assert covenant_fail_reason(short, gov_present=True, mat_present=False) is None
 
 
-class _CiklessEfts(_PagedEfts):
-    """efts whose every other hit carries no CIK (`parse_efts_ciks` keeps only the ones that do)."""
-
-    def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
-        data = super().get_json(url, ttl_seconds=ttl_seconds)
-        for i, h in enumerate(data["hits"]["hits"]):
-            if i % 2:
-                h["_source"].pop("ciks")
-        return data
-
-
-def test_the_prefilter_cap_line_counts_hits_not_the_ciks_it_kept() -> None:
-    """Review round 2: "read N of M hits" counted the CIKs kept, so a page with CIK-less hits read
-    as half a page."""
-    capped: list[str] = []
-    mention_prefilter(cast(CachedHttp, _CiklessEfts(564)), ["0000000001"], ("defense",),
-                      startdt="2025-09-01", enddt="2026-06-30", capped=capped)
-    assert len(capped) == 1 and "read 500 of 564" in capped[0], capped

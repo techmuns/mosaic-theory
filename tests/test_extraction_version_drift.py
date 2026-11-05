@@ -80,8 +80,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "3da583755b67"
-PINNED_AT = "2026-11-04.drawdown-window-at-price-date"
+PINNED_TABLE = "2bfdcdec9106"
+PINNED_AT = "2026-11-05.consensus-ref-names-its-sheet"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -90,10 +90,9 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/assemble.py": "748833cac9cf",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "ba165ad2af55",
-    "vinci/dossier/ciq.py": "78815874ffce",
+    "vinci/dossier/ciq.py": "6a636c11c2f3",
     "vinci/dossier/ciq_balance.py": "68c97913bf6e",
-    "vinci/dossier/ciq_charting.py": "e25a753aae4f",
-    "vinci/dossier/ciq_sheets.py": "206db59412fc",
+    "vinci/dossier/ciq_sheets.py": "51373d182167",
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
@@ -110,12 +109,12 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ltm_quarters.py": "976073b15fc6",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
-    "vinci/dossier/mechanical.py": "9ef74ecec108",
+    "vinci/dossier/mechanical.py": "d1b80ce9757f",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "614e5530df26",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "e5001a5cd972",
+    "vinci/dossier/schemas.py": "75eedc1b8932",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
     "vinci/dossier/synthesis.py": "1a9bcf25def9",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
@@ -123,7 +122,6 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/verdict.py": "0b43167d2044",
     "vinci/edgar/asof.py": "b8166e456b80",
     "vinci/edgar/client.py": "49703bf31602",
-    "vinci/edgar/commissioning.py": "dc2004432387",
     "vinci/edgar/concepts.py": "11278504f70c",
     "vinci/edgar/cover_count.py": "24d1e9a7d94a",
     "vinci/edgar/debt_maturities.py": "a0b1d84be715",

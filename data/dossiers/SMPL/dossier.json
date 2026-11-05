@@ -1595,7 +1595,7 @@
       "consensus_levels": {
         "Revenue": [
           {
-            "source_ref": "CIQ Estimates→Consensus Revenue FY2027 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · Revenue FY2027 (median, high, low, std dev, estimates)",
             "fy": "2027",
             "median": 1152.39,
             "high": 1169.28268,
@@ -1604,7 +1604,7 @@
             "estimates": "10/11"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus Revenue FY2028 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · Revenue FY2028 (median, high, low, std dev, estimates)",
             "fy": "2028",
             "median": 1155.0,
             "high": 1185.81611,
@@ -1613,7 +1613,7 @@
             "estimates": "11/11"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus Revenue FY2029 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · Revenue FY2029 (median, high, low, std dev, estimates)",
             "fy": "2029",
             "median": 1181.90806,
             "high": 1210.68375,
@@ -1622,7 +1622,7 @@
             "estimates": "6/6"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus Revenue FY2030 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · Revenue FY2030 (median, high, low, std dev, estimates)",
             "fy": "2030",
             "median": 1210.8122,
             "high": 1219.0,
@@ -1631,7 +1631,7 @@
             "estimates": "2/2"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus Revenue FY2031 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · Revenue FY2031 (median, high, low, std dev, estimates)",
             "fy": "2031",
             "median": 1243.0,
             "high": 1243.0,
@@ -1640,7 +1640,7 @@
             "estimates": "1/1"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus Revenue FY2032 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · Revenue FY2032 (median, high, low, std dev, estimates)",
             "fy": "2032",
             "median": 1268.0,
             "high": 1268.0,
@@ -1649,7 +1649,7 @@
             "estimates": "1/1"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus Revenue FY2033 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · Revenue FY2033 (median, high, low, std dev, estimates)",
             "fy": "2033",
             "median": 1293.0,
             "high": 1293.0,
@@ -1660,7 +1660,7 @@
         ],
         "EBITDA": [
           {
-            "source_ref": "CIQ Estimates→Consensus EBITDA FY2027 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · EBITDA FY2027 (median, high, low, std dev, estimates)",
             "fy": "2027",
             "median": 195.8959,
             "high": 202.43315,
@@ -1669,7 +1669,7 @@
             "estimates": "10/10"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus EBITDA FY2028 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · EBITDA FY2028 (median, high, low, std dev, estimates)",
             "fy": "2028",
             "median": 205.2,
             "high": 213.7924,
@@ -1678,7 +1678,7 @@
             "estimates": "10/10"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus EBITDA FY2029 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · EBITDA FY2029 (median, high, low, std dev, estimates)",
             "fy": "2029",
             "median": 215.0,
             "high": 224.40875,
@@ -1687,7 +1687,7 @@
             "estimates": "5/5"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus EBITDA FY2030 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · EBITDA FY2030 (median, high, low, std dev, estimates)",
             "fy": "2030",
             "median": 210.3642,
             "high": 223.0,
@@ -1696,7 +1696,7 @@
             "estimates": "2/2"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus EBITDA FY2031 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · EBITDA FY2031 (median, high, low, std dev, estimates)",
             "fy": "2031",
             "median": 231.0,
             "high": 231.0,
@@ -1705,7 +1705,7 @@
             "estimates": "1/1"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus EBITDA FY2032 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · EBITDA FY2032 (median, high, low, std dev, estimates)",
             "fy": "2032",
             "median": 239.0,
             "high": 239.0,
@@ -1714,7 +1714,7 @@
             "estimates": "1/1"
           },
           {
-            "source_ref": "CIQ Estimates→Consensus EBITDA FY2033 (median, high, low, std dev, estimates)",
+            "source_ref": "CIQ Estimates→Consensus · EBITDA FY2033 (median, high, low, std dev, estimates)",
             "fy": "2033",
             "median": 247.0,
             "high": 247.0,
@@ -14827,6 +14827,16 @@
     "valuation_snapshot_as_of": "2026-11-03",
     "price_days_after_valuation_snapshot": 0
   },
+  "layer_refreshes": [
+    {
+      "date": "2026-11-05",
+      "extraction_version": "2026-11-05.consensus-ref-names-its-sheet",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.consensus_context"
+      ]
+    }
+  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,

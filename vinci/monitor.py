@@ -36,7 +36,6 @@ from pydantic import BaseModel, Field, model_validator
 
 from vinci.eod.splits import SplitSource, close_on_basis
 from vinci.labels import resolve_label
-from vinci.panels_emit import PanelRow
 from vinci.schemas.ledger import EVENT_CLOSE, ORIGIN_SCREEN
 from vinci.sleeves import DEFAULT_SLEEVE
 
@@ -243,11 +242,6 @@ class MonitorSnapshot(BaseModel):
     rows: list[PositionRow] = Field(default_factory=list)
     spread: SpreadDiagnostic
     freshness: list[FreshnessRow] = Field(default_factory=list)
-    # THEME-LEVEL falsifier deadlines (brief Item 2, 2026-08-29): every declared thesis card's
-    # dated triggers, swept the same way the scenario `dated_triggers` are — a passed deadline is
-    # a FLAG ("re-underwrite due"), never an adjudication that the trigger FIRED. Defaulted, so
-    # every committed pre-Item-2 snapshot still validates (corpus-pinned).
-    theme_falsifiers: list[ThemeFalsifierRow] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
     # THE REALIZED BOOK, TYPED. It reached this artifact only as prose inside ``notes``, so the one
     # view that says what the fund actually EARNED could not be read by anything that was not
@@ -255,17 +249,8 @@ class MonitorSnapshot(BaseModel):
     # lines are now RENDERED from these rows (``RealizedRow.note``), so there is one definition and
     # the display cannot drift from the data.
     realized: list[RealizedRow] = Field(default_factory=list)
-    # THE PANEL GRID (phase 6), as STRUCTURED rows — the consumer phases 2-4 were built for and did
-    # not have. Defaulted for the same reason `theme_falsifiers` is: every committed pre-phase-6
-    # snapshot must still validate, and they are corpus-pinned.
-    #
-    # A `not_in_set` panel IS ABSENT FROM THIS LIST rather than present with a falsy state. That is
-    # the gating rule surviving serialization: a row saying "does not apply" is a tile waiting to be
-    # drawn, and the rule is that those never draw. Every row here renders.
-    #
-    # Typed as a forward reference to avoid a cycle — `vinci.panels_emit` imports the panel stack,
-    # which must not import the monitor.
-    panels: list[PanelRow] = Field(default_factory=list)
+    # NO PANEL GRID (retired in #910, 2026-11-05). Eight committed days (2026-08-11 → 2026-11-02)
+    # carry a `panels` block; it loads as an unknown key and nothing reads it.
 
     @model_validator(mode="after")
     def _one_basis(self) -> MonitorSnapshot:
@@ -333,11 +318,10 @@ class FreshnessRow(BaseModel):
 class MeasuredTriggerRow(BaseModel):
     """One MEASURED criterion, evaluated at monitor time (ruling 3, 2026-08-31).
 
-    TYPED HERE SO `PanelSpec` READS IT RATHER THAN RECOMPUTING. `ThemeFalsifierRow` below records
-    that indicator measurement "is the PanelSpec plan's job, and this sweep must never grow into a
-    rival panel" — the same rule binds here. This row is not a panel: it is the evaluated STATE
-    hung on the trigger list this row already carried in prose, so the panel that renders it later
-    consumes one answer instead of computing a second one that could disagree.
+    TYPED HERE SO A READER READS IT RATHER THAN RECOMPUTING. It is the evaluated STATE hung on the
+    trigger list this row already carried in prose, so the surface that renders it (the decision
+    log's freshness rows) consumes one answer instead of computing a second one that could
+    disagree. (The panel grid that also read it retired in #910, 2026-11-05.)
 
     THE STATE IS THREE-VALUED AND `UNKNOWN` IS NOT A QUIET NO. A criterion the evaluator could not
     read must look different on the page from one that has not fired; they recommend opposite
@@ -366,39 +350,6 @@ class MeasuredTriggerRow(BaseModel):
     observed: float | None = None
     unit: str | None = None
     source: str | None = None       # the metric's own source_ref, so the number is checkable
-
-
-class ThemeFalsifierRow(BaseModel):
-    """One dated trigger from a theme thesis card, at sweep time. TYPED FIRST, prose rendered
-    from it (the RealizedRow lesson): ``deadline_passed`` is the machine's whole contribution —
-    the window closed; whether the falsifier FIRED is the human's read, exactly as with the
-    scenario ``dated_triggers`` this mirrors. Indicator MEASUREMENT (the number beside the
-    criterion) is deliberately NOT here — that is the PanelSpec plan's job, and this sweep must
-    never grow into a rival panel."""
-
-    driver_key: str
-    kind: str            # "first-confirming" | "falsifier"
-    trigger: str         # verbatim, the operator's words
-    deadline: str        # ISO (declare-time validated)
-    basis: str = ""
-    deadline_passed: bool = False
-
-
-def theme_falsifier_rows(cards: list[Any], *, today: date) -> list[ThemeFalsifierRow]:
-    """Sweep every declared card's dated triggers. ``cards`` are ``ThemeThesis`` instances
-    (duck-read here so the monitor stays importable without the themes package at type time).
-    Deadlines are ISO by declare-time validation, so a parse failure is a corrupted card and
-    raises LOUDLY rather than being skipped — unlike the scenario path, where an unparseable
-    analyst date legitimately renders verbatim in the dossier instead."""
-    rows: list[ThemeFalsifierRow] = []
-    for card in cards:
-        entries = [("first-confirming", card.first_confirming)]
-        entries += [("falsifier", f) for f in card.falsifiers]
-        for kind, t in entries:
-            rows.append(ThemeFalsifierRow(
-                driver_key=card.driver_key, kind=kind, trigger=t.trigger, deadline=t.deadline,
-                basis=t.basis, deadline_passed=date.fromisoformat(t.deadline) <= today))
-    return rows
 
 
 MonitorSnapshot.model_rebuild()
@@ -1096,8 +1047,9 @@ def write_snapshot(
     that is what this refuses.
 
     AND A PAST RE-RUN DOES NOT REPRODUCE (2026-10-11, #707). Decisions, closes, filings and
-    evidence dates are read as of the day, but the panels, measured rows and record-read fields
-    read TODAY's pages, records and cards — the 09-22 re-cut drew UBER's 10-09 multiple. So this
+    evidence dates are read as of the day, but the measured rows and record-read fields read
+    TODAY's pages, records and cards — the 09-22 re-cut drew UBER's 10-09 multiple (into the panel
+    grid, retired in #910). So this
     guards a known lookahead, and since #708 it also refuses a BACK-DATED day that was never
     written (below). What it cannot see from the files alone — a re-cut of the NEWEST day after a
     later close whose file does not exist yet — is refused one step earlier, by the command:
@@ -1225,22 +1177,6 @@ def render_table(snap: MonitorSnapshot) -> str:
                 out.append(f"           ⚑ {p}")
             if f.watch_note:
                 out.append(f"           note: {f.watch_note}")
-    # THEME FALSIFIERS (brief Item 2) — always printed: "none declared" is a stated state, never
-    # a silent absence (a card exists ⇔ rows exist, since a card carries ≥1 dated trigger).
-    out += ["", "THEME FALSIFIERS (thesis cards; machine flags deadlines — the human concludes)"]
-    if not snap.theme_falsifiers:
-        out.append("  no thesis cards declared")
-    for tf in snap.theme_falsifiers:
-        if tf.deadline_passed:
-            # the kind LEADS the flag (review 2026-08-31): without it a passed FIRST-CONFIRMING
-            # printed indistinguishably from a passed falsifier — the human must see WHICH kind
-            # of window closed before deciding what the re-underwrite is about.
-            out.append(f"  {tf.driver_key:<24} ⚑ {tf.kind}: {tf.trigger} — deadline "
-                       f"{tf.deadline} PASSED → re-underwrite due")
-        else:
-            out.append(f"  {tf.driver_key:<24}   {tf.kind}: {tf.trigger} (by {tf.deadline})")
-        if tf.basis:
-            out.append(f"{'':<28}basis: {tf.basis}")
     for n in snap.notes:
         out.append(f"NOTE: {n}")
     return "\n".join(out)

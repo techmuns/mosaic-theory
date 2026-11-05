@@ -2767,8 +2767,13 @@ def consensus_levels(bundle: CiqBundle) -> dict[str, list[ConsensusCell]]:
 def consensus_level_ref(metric: str, fy: str) -> str:
     """The ref one forward-year consensus row is cited by (item 29, option 4) — ONE function, so
     assembly and the refresh transform name a row alike. Before it the levels carried no ref, and a
-    point quoting a FY33 EBITDA median (LLY's $103,325.5M) could cite nothing that held it."""
-    return f"CIQ Estimates→Consensus {metric} FY{fy} (median, high, low, std dev, estimates)"
+    point quoting a FY33 EBITDA median (LLY's $103,325.5M) could cite nothing that held it.
+
+    THE SHEET, A DELIMITER, THEN THE ROW — the `CIQ <workbook>→<sheet> …` convention every other
+    ref keeps. The first cut wrote "{metric} FY{fy}" straight after "Consensus", so a reader of the
+    convention took "Consensus EBITDA FY2027" for a sheet (SMPL's 2026-11-04 page, the first built
+    on it: 14 refs)."""
+    return f"CIQ Estimates→Consensus · {metric} FY{fy} (median, high, low, std dev, estimates)"
 
 
 def trends_fy_level(bundle: CiqBundle, *, metric: str, fy_label: str) -> float | None:
@@ -2806,7 +2811,7 @@ FORWARD_METRICS: tuple[str, ...] = (
 #: Lines CIQ states NEGATIVE: a 'Downward' revision is a LARGER outflow (see `RevisionCount`).
 _OUTFLOW_LINES = frozenset({"Capital Expenditure"})
 #: Trends carries an 18-month vintage `acceleration_read` never reads. A scenario needs it: the two
-#: halves of a price decomposition share a window (RUNBOOKS step 10), and 18 months is as far back
+#: halves of a price decomposition share a window (RUNBOOKS §m), and 18 months is as far back
 #: as Trends goes.
 _FORWARD_LOOKBACK: dict[str, int] = {**_SNAP_LOOKBACK, "18 months ago": 18}
 _FORWARD_YEARS = 3  # FY+0, FY+1, FY+2

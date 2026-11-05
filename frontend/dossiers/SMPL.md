@@ -1,6 +1,6 @@
 # Dossier — Simply Good Foods Co (Nasdaq: SMPL)
 
-_November 4, 2026 · extraction 2026-11-04.drawdown-window-at-price-date_
+_November 4, 2026 · extraction 2026-11-04.drawdown-window-at-price-date · layers refreshed to 2026-11-05.consensus-ref-names-its-sheet_
 
 # Brief — first cut
 
@@ -193,7 +193,7 @@ _The record since the underwrite, kept dated (2026-08-05, `scenarios/SMPL.json u
 - **Drawdown at underwrite (2026-08-05)** · 2026-02-06 → 2026-08-05, as knowable on 2026-08-05: [5]
   - 2026-04-09 **-18.1%** → earnings
   - 2026-04-10 **-11.5%** → earnings
-  - outlook then: Updating Fiscal Year 2026 (4) Outlook: • Net sales expected to range between $1.31 and $1.35 billion, or -10% to -7% year-over-year • Gross margins expected to decline between 300 and 350 basis points year-over-year • Adjusted EBITDA expected to range between $217 and $225 million, or -22% to -19% year-over-year “I want to make it quite clear that we are not satisfied with our current performance,” said Joe Scalzo, President and Chief Executive Officer of Simply Good Foods. "Our recent results have not met our expectations, and we have taken immediate and fundamental actions to turnaround both our financial performance and our in-market performance." Scalzo continued, “The long-term fundamentals of our category, our portfolio and our company capabilities are compelling, but in the near-ter [39]
+  - outlook then: Updating Fiscal Year 2026 (4) Outlook: • Net sales expected to range between $1.31 and $1.35 billion, or -10% to -7% year-over-year • Gross margins expected to decline between 300 and 350 basis points year-over-year • Adjusted EBITDA expected to range between $217 and $225 million, or -22% to -19% year-over-year “I want to make it quite clear that we are not satisfied with our current performance,” said Joe Scalzo, President and Chief Executive Officer of Simply Good Foods. "Our recent results have not met our expectations, and we have taken immediate and fundamental actions to turnaround both our financial performance and our in-market performance." Scalzo continued, “The long-term fundamentals of our category, our portfolio and our company capabilities are compelling, but in the near-ter… (quote may be cut — see the filing) [39]
   - 8-K filed 2026-04-09 · items: 2.02 Results of Operations and Financial Condition [`0001702744-26-000010`](https://www.sec.gov/Archives/edgar/data/1702744/000170274426000010/atk-20260409.htm)
 - **Since underwrite · 2026-08-06 → 2026-11-03:** no single day of -10% or worse [6]
 
@@ -694,6 +694,8 @@ _Source §: 8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm · amended by 0001
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-11-04 18:58 UTC
 - **Extraction:** 2026-11-04.drawdown-window-at-price-date — the rolling drawdown window ends on the page's price date, not the screen's reference date: the screen's detector over the 180 days ending on the stored close the price box shows, so a drop after the last screen run is classified, not only charted (`drawdown_cause.gap_window_end`)
+- **Refreshed since assembly** (oldest first):
+  - 2026-11-05 · mechanical.consensus_context — refresh at 2026-11-05.consensus-ref-names-its-sheet
 - **Price store:** `busy-goldstine-88c81c` · reaching 2026-11-03
 - **Panel age:** oldest panel 1d old — 2026-11-03 (valuation.implied_expectations.tev_as_of), against a 2026-11-04 build
 - **Consensus age:** consensus 6d old (2026-10-29, valuation.implied_expectations.multiples_as_of) — within the ceiling

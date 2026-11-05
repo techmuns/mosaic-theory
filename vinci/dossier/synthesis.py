@@ -2321,7 +2321,7 @@ def _eps_move(fc: ForwardConsensus) -> _EpsMove | None:
     ONE move a claim can be citing: the current fiscal year, over the longest lookback up to 12
     months, which is what `acceleration_read` puts in front of the synthesis. The normalized move
     is taken over that SAME window or not at all — two halves of a comparison share a window
-    (RUNBOOKS step 10). None when either base is not positive: a sign-crossing or loss-making base
+    (RUNBOOKS §m). None when either base is not positive: a sign-crossing or loss-making base
     has no percentage move.
 
     ONE MOVE, NOT EVERY WINDOW, AND THE CORPUS IS WHY. Matching a claim's percentage against every
