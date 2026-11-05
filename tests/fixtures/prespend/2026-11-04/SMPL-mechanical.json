@@ -9440,8 +9440,8 @@
   "assembled_at": "2026-11-04T08:11:02.355364Z",
   "extraction_version": "2026-11-03.ex-lease-share-cut",
   "price_store": {
-    "declared_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/practical-wilson-4fa5a4/data/vinci.db",
-    "resolved_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/practical-wilson-4fa5a4/data/vinci.db",
+    "declared_path": "practical-wilson-4fa5a4",
+    "resolved_path": "practical-wilson-4fa5a4",
     "frontier": "2026-11-03"
   },
   "sector": "Consumer Staples",

@@ -11477,8 +11477,8 @@
   "assembled_at": "2026-11-03T12:46:12.909331Z",
   "extraction_version": "2026-11-03.ex-lease-share-cut",
   "price_store": {
-    "declared_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/busy-goldstine-88c81c/data/vinci.db",
-    "resolved_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/busy-goldstine-88c81c/data/vinci.db",
+    "declared_path": "busy-goldstine-88c81c",
+    "resolved_path": "busy-goldstine-88c81c",
     "frontier": "2026-11-02"
   },
   "sector": "Technology",

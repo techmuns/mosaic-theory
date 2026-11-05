@@ -334,6 +334,12 @@ const EXTRACTION_VERSIONS = [
     "layer's sources plus a digest of the rest (the build's run record carries them all); a " +
     "page built before it is backfilled from its own stamps, the rest `unrecorded`. No " +
     "extracted value changes"],
+  ["2026-11-05.store-checkout-name",
+    "the price-store stamp names each store by its checkout's folder alone " +
+    "(`price_store.declared_path` / `resolved_path`, e.g. 'mosaic-theory-wb'), never the " +
+    "absolute local path that named the user and the session; the rendered page is unchanged, " +
+    "and the pages stamped before it were rewritten in place to the same form. No extracted " +
+    "value changes"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

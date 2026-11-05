@@ -3021,10 +3021,16 @@ class PriceStoreStamp(BaseModel):
 
     `frontier` is the store's newest bar across every name — the last moment its price data
     actually reaches, and the number that decides whether an as-of can be checked here at all.
+
+    EACH "PATH" IS A CHECKOUT'S FOLDER NAME, NEVER AN ABSOLUTE PATH (2026-11-05). The page is
+    public, and the absolute path named the user and the session it was built in; the render only
+    ever printed the folder name. So the stamp keeps that alone (`assemble.store_checkout`), and
+    what it gives up is which MACHINE: two machines' checkouts of one name stamp alike. Pages
+    stamped before then were rewritten to this form in place (`scripts/rewrite_store_stamps.py`).
     """
 
-    declared_path: str          # the path as configured, e.g. "<worktree>/data/vinci.db"
-    resolved_path: str          # symlinks followed — the identity two stamps compare on
+    declared_path: str          # the declaring checkout's folder, e.g. "mosaic-theory-pg"
+    resolved_path: str          # symlink followed, e.g. "mosaic-theory-wb": the bytes' checkout
     frontier: date | None       # newest bar date in the store; None when it holds no bars
 
     model_config = {"frozen": True}
