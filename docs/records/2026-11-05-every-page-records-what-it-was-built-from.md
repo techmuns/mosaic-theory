@@ -457,7 +457,11 @@ id now hashes distinct responses and its tuples changed (review round 2). Source
      behaviour fails there. The pins written for the reviewer's surviving mutants pass there,
      because the behaviour they pin already worked: the backfill's pre-write refusal, the
      finalist's and the resolver's reads, and two redaction shapes.
-   - **The gate**: ⟨GATE-R2⟩.
+   - **The gate at `96f6d818`** (round 2 merged with main `fb91ad84`, #909):
+     - as CI, in a clean checkout with nothing git-ignored present: ruff and `mypy --strict`
+       clean (187 files), **8,800 passed, 557 skipped, 0 failed**;
+     - with the Drive CIQ copy linked (held names removed) and the assembler's cache and store
+       cloned: 9,241 passed, 112 skipped, **4 failed: run C's 4 on main, none new**.
 
 **BOUNDARY.**
 - Commit: every count is on main `097098f9` or this branch on top of it, 2026-11-05.
