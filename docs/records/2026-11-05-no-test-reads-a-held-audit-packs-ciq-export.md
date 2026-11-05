@@ -83,8 +83,8 @@ per test.
   The other 2 involve no held name: `test_forward_consensus::test_every_spread_sits_on_its_own_trends_figure[GOOGL]`
   and `[LLY]`, against the exports Drive holds today. Across the run, 493 tests in 35 modules
   touched `data/manual` at all.
-- **After (this branch):** AFTER_RUN_LINE
-- **CI-like (this branch, no `data/manual`):** CI_RUN_LINE
+- **After (this branch):** 9,315 passed, 3 failed, 119 skipped, 39 deselected, 8 xfailed in 33m16s (collected at `20f69b71`). **0 held-folder accesses — no open, no listing.** 13 held cases skipped with the rule as their reason; 41 loops listed in the summary as having dropped a held name. The 3 failures: main's own GOOGL and LLY spreads, and `test_records_ledger` refusing this record while its `prs:` was empty (filled in once the PR existed). It ran longer than before because the tests that failed at BURL now read every other folder (the slow reader below). A linked re-run of `test_maintenance_path`, `test_maintenance_identity`, the guard and `test_ciq_export_support` at `9d09894d` (the link fix), with the probe resolving held-named paths too: 83 passed, 1 skipped, 0 held-folder accesses.
+- **CI-like (this branch, no `data/manual`):** a `git clone` of the branch at `e5ff9984` with `origin/main` at `c4c9f432` and nothing untracked, run as the gate runs it (`-m "not network" -p no:warnings`): 8,883 passed, 1 failed, 557 skipped, 39 deselected, 8 xfailed in 10m42s. The 1 failure is the same empty-`prs:` refusal. 557 skipped is the count #911 recorded for its own final tree in CI-like form (not re-measured on main here); 12 of them now give the held reason (BURL's per-page cases, which skip in CI either way, for want of an export).
 - **The guard on the corpus:** the final scanner flags **50 enumerations in 27 modules on main
   `c4c9f432`**: 49 in-module, plus `COMPUTED` imported by `test_ciq_export_support` and passed raw
   into `own_export_census`. It flags 0 on this branch. Every module the probe caught is among the
@@ -111,6 +111,14 @@ per test.
   2 skipped. A central collection hook would also skip held pages' committed-JSON cases. Held
   packs kept under a non-ticker folder name are question (2) below. After the round the guard
   still flags 50 on main and 0 here, and the 6 routing mutants are still each caught.
+- **A hole found after the review, by the CI-like run's left-out summary.** `test_maintenance_path`
+  and `test_maintenance_identity` build a scratch data folder that symlinks `manual` to this
+  checkout's `data/manual`. An open spelled through it matched none of the hook's roots, and it
+  matched none of the probe's either, so the "before" count cannot see such a path. The hook now
+  resolves a path that has a held ticker as one of its folders and judges where it leads. It is
+  pinned both ways, and the pin fails with the fallback removed. Neither module reads CIQ: the
+  finalist functions they call (`load_finalists`, `_standalone_record`, `_maintenance_reason`)
+  never touch the store. The linked re-run of both modules with the fixed probe is below.
 - **The helpers and the backstop, mutation-checked:** 6 mutants, each killed by its own pin —
   the hook never refusing, ignoring a linked held folder, or matching case-sensitively;
   `page_params` not skipping; `without_held` keeping a held name; a file's own name counted as
