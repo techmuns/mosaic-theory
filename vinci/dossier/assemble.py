@@ -964,21 +964,40 @@ def _require_synthesis(synthesis: _S | None, *, ticker: str, flags: list[str]) -
         f"Flags: {'; '.join(flags) or '(none)'}")
 
 
+def store_checkout(db_path: Path) -> str:
+    """The checkout a store lives in, by its folder name alone: `<checkout>/data/vinci.db` →
+    `<checkout>`. What a page keeps of a store's path (`PriceStoreStamp`), and what
+    `scripts/rewrite_store_stamps.py` reduces a committed absolute stamp to — one function, so the
+    clean and the writer cannot disagree.
+
+    A FOLDER NAME, NEVER THE PATH (2026-11-05). The page is public, and an absolute path names the
+    user (`/Users/<user>/…`) and the session (`/private/tmp/claude-501/…`). The render already
+    printed only this name (`render._price_store_line`); the full paths it said stay in the JSON
+    were the leak. Refuses a path with no folder above `data/` — a store at a filesystem root names
+    no checkout, and an empty name would read as a stamp that said nothing."""
+    name = db_path.parent.parent.name
+    if not name:
+        raise ValueError(f"the store at {db_path.parent.name}/{db_path.name} sits at a filesystem "
+                         "root, so it names no checkout to stamp")
+    return name
+
+
 def _price_store_stamp(cfg: Config) -> PriceStoreStamp:
     """The price store's identity + reach, read at assembly.
 
     RESOLVES THE SYMLINK ON PURPOSE. `data/` is per-worktree by design, and at least one checkout's
-    `data/vinci.db` is a symlink into another's — so the declared path answers "which worktree
-    wrote this" while the resolved path answers "which bytes", and only the second compares.
+    `data/vinci.db` is a symlink into another's — so the declared checkout answers "which worktree
+    wrote this" while the resolved one answers "which bytes", and only the second compares.
     """
-    # ABSOLUTE, NOT AS CONFIGURED. `cfg.db_path` is relative to the cwd, and a stamp reading
-    # "data/vinci.db" names nothing — every worktree writes the same string. `.absolute()`
-    # keeps the symlink so the declaring worktree stays visible; `.resolve()` follows it.
+    # ABSOLUTE BEFORE IT IS NAMED. `cfg.db_path` is relative to the cwd, and "data/vinci.db" names
+    # no checkout — every worktree writes the same string. `.absolute()` keeps the symlink so the
+    # declaring worktree stays visible; `.resolve()` follows it. Only each one's folder name is
+    # stamped (`store_checkout`).
     declared = cfg.db_path.absolute()
     with Store(declared) as store:
         frontier = store.price_frontier()
-    return PriceStoreStamp(declared_path=str(declared), resolved_path=str(declared.resolve()),
-                           frontier=frontier)
+    return PriceStoreStamp(declared_path=store_checkout(declared),
+                           resolved_path=store_checkout(declared.resolve()), frontier=frontier)
 
 
 def _filed_tiebreak(cfg: Config, cik: str | None, mech: MechanicalLayer,

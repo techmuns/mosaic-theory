@@ -4783,9 +4783,10 @@ def _price_store_line(stamp: PriceStoreStamp | None) -> str:
     """The price store, named by its WORKTREE rather than its absolute path.
 
     THE READER NEEDS COMPARABILITY, NOT A FILESYSTEM TOUR. `.../mosaic-theory-wb/data/vinci.db`
-    reads as noise; `mosaic-theory-wb` is what tells one page from another, and the full declared
-    and resolved paths stay in `dossier.json` — the machine-complete tier, exactly where the
-    three-tier rule puts the full record behind a curated value.
+    reads as noise; `mosaic-theory-wb` is what tells one page from another. Since 2026-11-05 that
+    folder name is ALL `dossier.json` keeps too (`PriceStoreStamp`): the absolute path named the
+    user and the session, on a public page. A stamp of either form renders the same line: a bare
+    folder name has no grandparent to take a name from, so the fallback below prints it as stored.
 
     THE ARROW IS THE SYMLINK, and it is worth a reader's attention: a worktree whose store points
     into another's is reading data it did not refresh, which is how a corroboration check once

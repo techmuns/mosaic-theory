@@ -277,6 +277,54 @@ def test_the_price_store_stamp_follows_a_symlink_rather_than_naming_the_link(
     assert "link-worktree → real-worktree" in _price_store_line(stamp)
 
 
+def test_the_price_store_stamp_names_checkouts_never_an_absolute_local_path(
+    tmp_path: Path,
+) -> None:
+    """THE PAGE IS PUBLIC, AND THE ABSOLUTE PATH WAS A USERNAME (2026-11-05). Until this pin the
+    stamp wrote `str(declared)` and `str(declared.resolve())`, so every committed page carried two
+    paths such as `/Users/<user>/Documents/GitHub/mosaic-theory/.claude/worktrees/<worktree>/data/
+    vinci.db` or a session's `/private/tmp/claude-501/…/scratchpad/…` — 54 across 27 pages, in a
+    repository public since 2026-10-22. The render already printed only the checkout's folder
+    name (`_price_store_line`), so that is all the stamp keeps: the declaring checkout and the one
+    whose bytes it read, which is what tells two pages' stores apart.
+
+    Pinned on the EXECUTED writer, through a real symlinked store under pytest's `tmp_path` —
+    itself an absolute path under the user's temp root, the shape the old stamp leaked."""
+    from vinci.config import Config
+    from vinci.dossier.assemble import _price_store_stamp
+
+    real = tmp_path / "real-worktree" / "data"
+    real.mkdir(parents=True)
+    Store(real / "vinci.db").write_prices([
+        PriceBar(internal_id=IID, bar_date=date(2026, 8, 4), open=1, high=1, low=1,
+                 close=11.33, volume=1.0, source="polygon-grouped")])
+    link = tmp_path / "link-worktree" / "data"
+    link.mkdir(parents=True)
+    (link / "vinci.db").symlink_to(real / "vinci.db")
+
+    stamp = _price_store_stamp(Config(data_dir=link))
+    assert (stamp.declared_path, stamp.resolved_path) == ("link-worktree", "real-worktree"), (
+        f"the stamp must name each checkout by its folder alone: {stamp!r}")
+    dumped = stamp.model_dump_json()
+    assert str(tmp_path.resolve()) not in dumped and str(tmp_path) not in dumped, (
+        f"the stamp carries the absolute local path it was built under: {dumped}")
+    # (−) and the page still reads the same: the arrow, the two names, the reach.
+    assert _price_store_line(stamp) == "`link-worktree → real-worktree` · reaching 2026-08-04"
+
+
+def test_a_folder_name_stamp_renders_exactly_as_the_absolute_one_did() -> None:
+    """THE CLEAN IS INVISIBLE ON THE PAGE. The committed pages were rewritten from their absolute
+    paths to the folder names those paths end in; the render must print the same line for both,
+    or the rewrite changed a rendered page it promised to leave byte-identical."""
+    for declared, resolved in (("mosaic-theory-pg", "mosaic-theory-wb"), ("wt-pass", "wt-pass")):
+        old = PriceStoreStamp(declared_path=f"/x/{declared}/data/vinci.db",
+                              resolved_path=f"/x/{resolved}/data/vinci.db",
+                              frontier=date(2026, 8, 4))
+        new = PriceStoreStamp(declared_path=declared, resolved_path=resolved,
+                              frontier=date(2026, 8, 4))
+        assert _price_store_line(new) == _price_store_line(old), (declared, resolved)
+
+
 def test_the_stamp_is_wired_into_the_assembler() -> None:
     """A SOURCE PIN, and deliberately so — the same trade `test_no_false_unknown.py` documents for
     `assemble_one`, which cannot be driven offline (CIQ + EDGAR + LLM). So the helper above is
