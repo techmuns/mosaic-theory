@@ -832,6 +832,23 @@ def test_the_hook_reads_the_roots_without_regard_to_case(fake_ciq: Path) -> None
                         tuple(r for r in hn.CIQ_ROOTS), {}) == "BURL"
 
 
+def test_the_hook_follows_a_scratch_folder_that_links_into_the_ciq_folder(
+        fake_ciq: Path, tmp_path: Path) -> None:
+    """⊖ A test's scratch data folder whose `manual` is a link to the CIQ folder: an open through
+    the link is judged where it leads, and refused. ⊕ Another name's export through the same link
+    is let through, and so is a held-named folder that leads outside the CIQ folder."""
+    scratch = tmp_path / "scratch-data"
+    scratch.mkdir()
+    (scratch / "manual").symlink_to(fake_ciq)
+    assert _refused(scratch / "manual" / "ciq" / "BURL" / "s.xls")
+    assert not _refused(scratch / "manual" / "ciq" / "TJX" / "s.xls")
+    loose = tmp_path / "loose" / "BURL" / "s.xls"
+    loose.parent.mkdir(parents=True)
+    loose.write_text("x")
+    (scratch / "other").symlink_to(tmp_path / "loose")
+    assert not _refused(scratch / "other" / "BURL" / "s.xls")
+
+
 def test_the_hook_is_installed_on_this_checkout() -> None:
     """The backstop watches this checkout's own `data/manual`, whether or not it exists."""
     assert str(ROOT / "data" / "manual") + os.sep in hn.CIQ_ROOTS

@@ -200,6 +200,11 @@ def refuse_held_open(event: str, args: tuple[Any, ...]) -> None:
         return
     path = os.path.abspath(os.fsdecode(raw))
     t = held_path(path, CIQ_ROOTS, HELD_FOLDERS)
+    if t is None and HELD_NAMES & {part.upper() for part in path.split(os.sep)[:-1]}:
+        # a held-named folder reached through a link from outside the roots — a test's scratch
+        # data folder whose `manual` links here (`test_maintenance_path`): judge where it leads.
+        # Resolved only for such a path, so an ordinary open costs no extra system call.
+        t = held_path(os.path.realpath(path), CIQ_ROOTS, HELD_FOLDERS)
     if t is None:
         return
     REFUSED_OPENS.append((CURRENT_TEST[0], path))
