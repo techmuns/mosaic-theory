@@ -8232,8 +8232,8 @@
   "assembled_at": "2026-11-04T10:01:48.872431Z",
   "extraction_version": "2026-11-04.trace-rank-and-duration",
   "price_store": {
-    "declared_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/prespend-refusals-85c77a/data/vinci.db",
-    "resolved_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/prespend-refusals-85c77a/data/vinci.db",
+    "declared_path": "prespend-refusals-85c77a",
+    "resolved_path": "prespend-refusals-85c77a",
     "frontier": "2026-10-30"
   },
   "sector": "Consumer Staples",

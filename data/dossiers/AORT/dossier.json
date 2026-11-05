@@ -10072,8 +10072,8 @@
   "assembled_at": "2026-10-26T14:14:01.604169Z",
   "extraction_version": "2026-10-09.3",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory--claude-worktrees-ai-agent-team-practices-e005c8/a08ef917-84bf-4d59-9bc3-5b40b1f95038/scratchpad/wt-pass/data/vinci.db",
-    "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
+    "declared_path": "wt-pass",
+    "resolved_path": "mosaic-theory-ta",
     "frontier": "2026-10-23"
   },
   "sector": "Health Care",
