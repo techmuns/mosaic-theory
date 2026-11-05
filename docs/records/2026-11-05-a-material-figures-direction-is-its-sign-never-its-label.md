@@ -65,7 +65,12 @@ and #916 (the non-operating window) have both landed. That rebuild is not part o
   - both-ways forms ("Gain (Loss)", "Income (Expense)");
   - measure names ("net income", "pre-tax income": the digest's own words, so an echo never trips
     it);
-  - income as the object of the effect ("a drag on income").
+  - income as where a cost lands ("a drag on income", "against", "from"). "to income"
+    is kept, because "adds $2.8bn to other income" frames a gain (review round 0).
+- **The flag is QA (dev/JSON), like CONTRADICTION.** `MATERIAL-DIRECTION` is on
+  `flags._QA_MARKERS`. Without the marker, `flags.partition` would have printed it among the
+  READER's caveats in validator-speak (review round 0). Showing it to the reader instead is
+  one line, and the operator's call.
 - **Extraction version `2026-11-05.material-figure-direction`**, in Python and its `dossier.js`
   twin, re-pinned. The re-pin moved exactly `assemble.py`, `materiality.py` and `synthesis.py`.
   #916 adds `2026-11-05.nonop-window-fourth-quarter`; whichever merges second keeps both rows, in
@@ -113,8 +118,8 @@ the prompt complete. Bull or bear stays the model's call.
     "only-against" rule and a stricter "any word against" rule give the same answer today.
   - The label's own "Charge" is not what fires it. With label-blanking switched off, both flags
     would name 'charge' too.
-- **Fail first.** All 28 new pins (`tests/test_material_figure_direction.py`) fail against main's
-  three modules.
+- **Fail first.** All 28 first-cut pins (`tests/test_material_figure_direction.py`) fail against main's
+  three modules; the 3 added in review fail on the pre-review code.
 - **Mutations.** Each was caught by its pin:
   - label never blanked: 2 red;
   - the effect's sign flipped: 7 red;
@@ -122,6 +127,10 @@ the prompt complete. Bull or bear stays the model's call.
 
   One finding: with label-blanking off, AMZN and GOOGL still pass, because the "Gain (Loss)"
   neutraliser covers them too. The pin's docstring says so.
+- **Review round 0** (`/code-review high --fix`): 5 findings, 4 fixed behind 3 pins that fail
+  on the pre-fix code (QA routing, a case-free word list, the narrowed "to income" rule) plus
+  a cached label regex; 1 skipped (a structured statement field needs a schema change and every
+  page re-assembled). The real run's output is byte-identical after the fixes.
 - The suite (ruff, `mypy --strict vinci`, `pytest -m "not network"`): counts in the PR body.
 
 **BOUNDARY.**

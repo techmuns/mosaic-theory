@@ -17,6 +17,7 @@ the dossier writes nothing to the ledger.
 
 from __future__ import annotations
 
+import functools
 import json
 import re
 import time
@@ -2012,15 +2013,16 @@ _GAIN_WORD = re.compile(
 #: - A MEASURE NAMED, not a figure framed: "net income", "operating loss", "pre-tax income" (the
 #:   digest's own wording, so an echo of it never reads as framing), "income statement",
 #:   "income tax", "cost of revenue";
-#: - INCOME AS THE OBJECT of what the figure does: "a drag ON income", "a charge AGAINST net
-#:   income" — the word names where the effect lands, not which way it goes.
+#: - INCOME AS WHERE A COST LANDS: "a drag ON income", "a charge AGAINST net income", "taken
+#:   FROM income" — the word names where the effect lands, not which way it goes. "to income"
+#:   is NOT blanked: "adds $2.8bn to other income" frames a gain.
 _NEUTRAL_DIRECTION = re.compile(
     r"\bgains?\s*\(\s*loss(?:es)?\s*\)|\(\s*gains?\s*\)\s*loss(?:es)?"
     r"|\bgains?\s*(?:/|&|\band\b|\bor\b)\s*loss(?:es)?\b"
     r"|\bincome\s*\(\s*expense\s*\)|\(\s*income\s*\)\s*expense\b|\binc\.?\s*\(\s*exp\.?\s*\)"
     r"|\b(?:net|operating|pre-?tax|gross|comprehensive)\s+(?:income|loss(?:es)?)\b"
     r"|\bincome\s+(?:statement|tax(?:es)?|before)\b|\bcost\s+of\s+(?:revenue|sales|goods)\b"
-    r"|\b(?:on|to|against|from|into)\s+(?:[A-Za-z-]+\s+){0,2}?income\b",
+    r"|\b(?:on|against|from)\s+(?:[A-Za-z-]+\s+){0,2}?income\b",
     re.IGNORECASE)
 
 
@@ -2030,19 +2032,29 @@ def _neutral(text: str, *, label: str | None = None) -> str:
     count — "Gain (Loss) On Sale Of Invest." is the row's name, not a framing — so the label is
     matched as a phrase, loosely, the way prose writes it: case-free, "R&D" for "R & D", a word
     lengthened ("Restructuring" for "Restruct.") or made singular ("Charge" for "Charges")."""
-    if label:
-        words = re.findall(r"[A-Za-z]+", label.removesuffix(" ($M)"))
-        stems = [w[:-1] if len(w) > 3 and w.lower().endswith("s") else w for w in words]
-        if stems:
-            phrase = r"[\s&().,/-]*".join(rf"{re.escape(s)}\w*" for s in stems)
-            text = re.sub(rf"\b{phrase}", " ", text, flags=re.IGNORECASE)
+    if label and (phrase := _label_phrase(label)) is not None:
+        text = phrase.sub(" ", text)
     return _NEUTRAL_DIRECTION.sub(" ", text)
 
 
+@functools.lru_cache(maxsize=64)
+def _label_phrase(label: str) -> re.Pattern[str] | None:
+    """The row label as a loose phrase (`_neutral`), built once per label."""
+    words = re.findall(r"[A-Za-z]+", label.removesuffix(" ($M)"))
+    stems = [w[:-1] if len(w) > 3 and w.lower().endswith("s") else w for w in words]
+    if not stems:
+        return None
+    phrase = r"[\s&().,/-]*".join(rf"{re.escape(s)}\w*" for s in stems)
+    return re.compile(rf"\b{phrase}", re.IGNORECASE)
+
+
 def _direction_words(text: str) -> tuple[list[str], list[str]]:
-    """(cost words, gain words) in ``text``, each once, as written, in order of appearance."""
+    """(cost words, gain words) in ``text``, each once (case-free), as first written."""
     def found(rx: re.Pattern[str]) -> list[str]:
-        return list(dict.fromkeys(m.group() for m in rx.finditer(text)))
+        out: dict[str, str] = {}
+        for m in rx.finditer(text):
+            out.setdefault(m.group().lower(), m.group())
+        return list(out.values())
     return found(_COST_WORD), found(_GAIN_WORD)
 
 

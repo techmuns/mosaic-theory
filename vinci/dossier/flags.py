@@ -38,6 +38,9 @@ _QA_MARKERS: tuple[str, ...] = (
     "evidence_balance MISSING",
     "LLM synthesis",
     "RULE-LEAK",  # R3 — an internal 'rule N' reference leaked into the output (dev QA lint)
+    # (2026-11-05) a claim framing a material figure only against its sign — QA, the coordinator's
+    # brief: like CONTRADICTION it is the synthesis misreading a fact the page states correctly
+    "MATERIAL-DIRECTION",
     "CONTRADICTION",  # P2 — synthesis calls a PRESENT mechanical block pending/unread (dev QA lint)
     "(E5)",  # FIX-2 — Tier-2 covenant-extraction machine notes (cost bound / fetch fail) → dev, not
     "(P3)",  # a decision caveat; the human-facing summary is one line INSIDE the covenant block.

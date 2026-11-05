@@ -238,6 +238,9 @@ def test_an_unidentified_statement_is_reported_not_checked(monkeypatch: pytest.M
     ("LLY", "The $8,070.0M IPR&D line boosted earnings.", True),
     # the billions form is the same citation
     ("NFLX", "A $2.8bn one-off cost.", True),
+    # "to income" frames a GAIN (review round 0): kept, so a right framing is not flagged
+    ("NFLX", "The $2,800.0M flowed to other income, not a restructuring charge.", False),
+    ("LLY", "The $8,070.0M IPR&D line adds to income.", True),
 ])
 def test_the_neutralising_rules(ticker: str, claim: str, flagged: bool) -> None:
     """Hand-written claims (not LLM text) for the rules the frozen corpus does not exercise; the
@@ -261,3 +264,17 @@ def test_the_check_runs_at_assembly_on_the_marked_table() -> None:
                        and isinstance(n.func, ast.Name) and n.func.id == name)
              for name in ("_mark_material", "material_direction_flags")}
     assert lines["_mark_material"] < lines["material_direction_flags"], lines
+
+
+def test_the_flag_is_qa_and_names_each_word_once() -> None:
+    """(-) Review round 0. The flag is a QA flag, as the brief and this docstring say: without
+    its marker on `flags._QA_MARKERS`, `flags.partition` printed it among the READER's caveats in
+    validator-speak. And a word written twice in two cases ("Charge … charge") is named once."""
+    from vinci.dossier import flags as fl
+
+    nflx = syn.material_direction_flags(_synth("NFLX"), _mech("NFLX"))
+    assert nflx and all(fl.is_qa(f) for f in nflx)
+    assert fl.partition(nflx) == ([], nflx)
+    not_checked = "MATERIAL-DIRECTION: X ($M) FY25 = 1.0 not checked"
+    assert fl.is_qa(not_checked)
+    assert syn._direction_words("A Charge, then the charge, then a drag")[0] == ["Charge", "drag"]
