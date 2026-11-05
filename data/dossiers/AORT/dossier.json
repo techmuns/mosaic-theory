@@ -14151,6 +14151,63 @@
     "valuation_snapshot_as_of": "2026-10-23",
     "price_days_after_valuation_snapshot": 0
   },
+  "inputs": {
+    "schema_version": 1,
+    "recorded": "backfill",
+    "extraction_version": "2026-11-05.input-record",
+    "covers": [
+      "ciq",
+      "responses",
+      "prices"
+    ],
+    "inputs_id": null,
+    "ciq": [
+      {
+        "kind": "estimates",
+        "freq": null,
+        "file": "Artivion,IncNYSEAORTEstimatesReport.xls",
+        "sha256": "16630136ba6060f9f61ff21090d6fe7dd86068c478f4fed19fdd0a35394a23b4",
+        "bytes": 4355436,
+        "stamped_by": [
+          "ev_bridge.estimates_sha256",
+          "forward_consensus.source_sha256",
+          "historical_forecast_error.source_sha256"
+        ]
+      },
+      {
+        "kind": "financials",
+        "freq": "quarterly",
+        "file": "Artivion Inc NYSE AORT Financials_Quarterly.xls",
+        "sha256": "b9356558798638b11992d725a1ff2fc42507a44c1a5c4d0f34391564af809ac3",
+        "bytes": 538122,
+        "stamped_by": [
+          "ev_bridge.source_sha256",
+          "forward_multiple_history.series.band.source_sha256",
+          "forward_multiple_history.source_sha256",
+          "mechanical.valuation.lease_basis.ex_lease_band.source_sha256",
+          "mechanical.valuation.own_history.value.source_sha256"
+        ]
+      }
+    ],
+    "responses_listed": "all",
+    "responses": [],
+    "responses_digest": null,
+    "prices": [],
+    "unrecorded": [
+      {
+        "input": "ciq:unstamped",
+        "why": "a page built before 2026-11-05 stamps an export only where a block records a 10-hex prefix of its sha256; any other export it read (comps, transcripts, capital structure, credit health …) was never recorded"
+      },
+      {
+        "input": "responses",
+        "why": "no build before 2026-11-05 recorded which SEC, Polygon or FINRA responses it read, and the cache rewrites an entry in place, so the copy there now is no evidence of the copy read"
+      },
+      {
+        "input": "prices",
+        "why": "the page records only the store's newest bar across every name (price_store.frontier = 2026-10-23), not which series it read"
+      }
+    ]
+  },
   "layer_refreshes": [
     {
       "date": "2026-10-27",

@@ -9665,6 +9665,47 @@
     "valuation_snapshot_as_of": "2026-08-11",
     "price_days_after_valuation_snapshot": 6
   },
+  "inputs": {
+    "schema_version": 1,
+    "recorded": "backfill",
+    "extraction_version": "2026-11-05.input-record",
+    "covers": [
+      "ciq",
+      "responses",
+      "prices"
+    ],
+    "inputs_id": null,
+    "ciq": [
+      {
+        "kind": "estimates",
+        "freq": null,
+        "file": "FuboTVIncNYSEFUBOEstimatesReport.xls",
+        "sha256": "6a70302115c1f4d894af23e2ef5916ef6c99f10e43c1647c73fc35a059c0e891",
+        "bytes": 3663593,
+        "stamped_by": [
+          "forward_consensus.source_sha256"
+        ]
+      }
+    ],
+    "responses_listed": "all",
+    "responses": [],
+    "responses_digest": null,
+    "prices": [],
+    "unrecorded": [
+      {
+        "input": "ciq:unstamped",
+        "why": "a page built before 2026-11-05 stamps an export only where a block records a 10-hex prefix of its sha256; any other export it read (comps, transcripts, capital structure, credit health …) was never recorded"
+      },
+      {
+        "input": "responses",
+        "why": "no build before 2026-11-05 recorded which SEC, Polygon or FINRA responses it read, and the cache rewrites an entry in place, so the copy there now is no evidence of the copy read"
+      },
+      {
+        "input": "prices",
+        "why": "the page records only the store's newest bar across every name (price_store.frontier = 2026-08-17), not which series it read"
+      }
+    ]
+  },
   "layer_refreshes": [
     {
       "date": "2026-08-31",

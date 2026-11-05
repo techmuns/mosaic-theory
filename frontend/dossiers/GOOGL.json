@@ -16148,6 +16148,62 @@
     "valuation_snapshot_as_of": "2026-10-30",
     "price_days_after_valuation_snapshot": 3
   },
+  "inputs": {
+    "schema_version": 1,
+    "recorded": "backfill",
+    "extraction_version": "2026-11-05.input-record",
+    "covers": [
+      "ciq",
+      "responses",
+      "prices"
+    ],
+    "inputs_id": null,
+    "ciq": [
+      {
+        "kind": "estimates",
+        "freq": null,
+        "file": "AlphabetIncNasdaqGSGOOGLEstimatesReport.xls",
+        "sha256": "9a120cb5aef38a465b1a78bc3177a0fcef8baff03249ba0284ceac8443264fc8",
+        "bytes": 9437505,
+        "stamped_by": [
+          "ev_bridge.estimates_sha256",
+          "forward_consensus.source_sha256",
+          "historical_forecast_error.source_sha256"
+        ]
+      },
+      {
+        "kind": "financials",
+        "freq": "quarterly",
+        "file": "Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls",
+        "sha256": "f494e7869bf22fb00a61d35556b96cde9c54d662c05fc14003942b81c067b958",
+        "bytes": 500234,
+        "stamped_by": [
+          "ev_bridge.source_sha256",
+          "forward_multiple_history.series.band.source_sha256",
+          "forward_multiple_history.source_sha256",
+          "mechanical.valuation.own_history.value.source_sha256"
+        ]
+      }
+    ],
+    "responses_listed": "all",
+    "responses": [],
+    "responses_digest": null,
+    "prices": [],
+    "unrecorded": [
+      {
+        "input": "ciq:unstamped",
+        "why": "a page built before 2026-11-05 stamps an export only where a block records a 10-hex prefix of its sha256; any other export it read (comps, transcripts, capital structure, credit health …) was never recorded"
+      },
+      {
+        "input": "responses",
+        "why": "no build before 2026-11-05 recorded which SEC, Polygon or FINRA responses it read, and the cache rewrites an entry in place, so the copy there now is no evidence of the copy read"
+      },
+      {
+        "input": "prices",
+        "why": "the page records only the store's newest bar across every name (price_store.frontier = 2026-11-02), not which series it read"
+      }
+    ]
+  },
   "anchor": {
     "recipe_hint": "R3_forward_pe",
     "applicable": true,

@@ -14001,6 +14001,62 @@
     "valuation_snapshot_as_of": "2026-07-29",
     "price_days_after_valuation_snapshot": 19
   },
+  "inputs": {
+    "schema_version": 1,
+    "recorded": "backfill",
+    "extraction_version": "2026-11-05.input-record",
+    "covers": [
+      "ciq",
+      "responses",
+      "prices"
+    ],
+    "inputs_id": null,
+    "ciq": [
+      {
+        "kind": "estimates",
+        "freq": null,
+        "file": "Gartner,IncNYSEITEstimatesReport.xls",
+        "sha256": "d324beb8f6919167108c3d51deec3f8a3ef77df4aa49f9fdea3873017ae8b8c7",
+        "bytes": 7116341,
+        "stamped_by": [
+          "ev_bridge.estimates_sha256",
+          "forward_consensus.source_sha256",
+          "historical_forecast_error.source_sha256"
+        ]
+      },
+      {
+        "kind": "financials",
+        "freq": "quarterly",
+        "file": "Gartner Inc NYSE IT Financials_Quarterly.xls",
+        "sha256": "66405c3bc03a096dec7c0ee43d800cc865d0532e16ce53791813183ed48c2a43",
+        "bytes": 543754,
+        "stamped_by": [
+          "ev_bridge.source_sha256",
+          "forward_multiple_history.series.band.source_sha256",
+          "forward_multiple_history.source_sha256",
+          "mechanical.valuation.own_history.value.source_sha256"
+        ]
+      }
+    ],
+    "responses_listed": "all",
+    "responses": [],
+    "responses_digest": null,
+    "prices": [],
+    "unrecorded": [
+      {
+        "input": "ciq:unstamped",
+        "why": "a page built before 2026-11-05 stamps an export only where a block records a 10-hex prefix of its sha256; any other export it read (comps, transcripts, capital structure, credit health …) was never recorded"
+      },
+      {
+        "input": "responses",
+        "why": "no build before 2026-11-05 recorded which SEC, Polygon or FINRA responses it read, and the cache rewrites an entry in place, so the copy there now is no evidence of the copy read"
+      },
+      {
+        "input": "prices",
+        "why": "the page records only the store's newest bar across every name (price_store.frontier = 2026-08-17), not which series it read"
+      }
+    ]
+  },
   "layer_refreshes": [
     {
       "date": "2026-08-31",
