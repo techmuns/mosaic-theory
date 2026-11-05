@@ -218,7 +218,6 @@ def test_the_decomposed_names_are_unchanged_and_still_multiple_dominant(ticker: 
     assert g["form"] == "three-ratio"
     assert set(g["ratios"]) == {"revenue_ratio", "margin_ratio", "multiple_ratio", "ev_gap"}
     folder = FROZEN_SMPL if ticker == "SMPL" else ROOT / "data" / "dossiers" / ticker
-    shaped = (json.loads((folder / "dossier.json").read_text())["mechanical"]["ev_gap"]
-              if ticker == "SMPL" else g)
+    shaped = json.loads((folder / "dossier.json").read_text())["mechanical"]["ev_gap"]
     assert shaped["shape"]["anchor"] == "multiple-dominant"
     assert "**multiple-dominant** at" in block(folder)

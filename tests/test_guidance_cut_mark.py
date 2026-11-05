@@ -331,6 +331,7 @@ def test_every_committed_anchored_quote_prints_the_mark_its_field_says() -> None
     print(f"pages with an anchored outlook quote: {len(anchored)} of {len(PAGES)} {anchored}")
     if not anchored:
         pytest.skip("no committed page carries an anchored outlook quote yet")
+    window = set(_quoted())
     for t in anchored:
         doc = _page(t)
         at = _at(doc)
@@ -340,6 +341,12 @@ def test_every_committed_anchored_quote_prints_the_mark_its_field_says() -> None
         assert line is not None, f"{t}: an anchored quote and no 'outlook then' line"
         assert f"{at['revised_guidance']['value']}{mark} [" in line, t  # the mark, then the cite
         assert not any(m in line for m in MARKS if m != mark), t
+        if t not in window:
+            # no quote in the rolling window: the "outlook then" line is the ONLY place a mark may
+            # print — these pages left the no-quote negative above when it learned the dated part
+            stray = [ln for ln in _md(doc).splitlines()
+                     if ln != line and any(m in ln for m in MARKS)]
+            assert not stray, (t, stray[:3], f"showing {min(3, len(stray))} of {len(stray)}")
 
 
 def test_a_dated_part_built_before_the_field_round_trips_without_it() -> None:

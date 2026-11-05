@@ -159,6 +159,7 @@ def test_the_total_gap_does_not_move_with_the_year_but_the_split_does() -> None:
     living = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
     fys = sorted({str(c["fy"]) for c in (living["mechanical"]["consensus_context"] or {})
                   ["consensus_levels"]["Revenue"]}, key=int)
+    assert len(fys) >= 3, f"the living page carries {len(fys)} forward revenue years {fys} — need 3"
     # the frozen page at the years this pin was written on; the living one at its own first and
     # third forward years (FY2026 is past on it) — the claim carries no year, so it holds on both
     for doc, (y0, y1) in ((json.loads(FROZEN_SMPL.read_text()), ("2026", "2028")),

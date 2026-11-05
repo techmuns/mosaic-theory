@@ -2,7 +2,7 @@
 id:
 status: shipped
 date: 2026-11-05
-prs: [909]
+prs: []
 supersedes:
 superseded-by:
 ---
@@ -60,3 +60,8 @@ at main `2771d9a1`.
 **WHAT IT COSTS / WHAT IS ACCEPTED.** Nothing re-stamps a page by itself: a page built on #903's
 code before this merges keeps the old refs until its refresh or re-assembly. SMPL is the only one,
 and its artifact PR re-stamps it at $0.
+## Amendments
+
+**2026-11-05 — this record shipped in #909, and its `prs:` trail is empty.** The trail was left
+empty until a PR existed, and the record merged before it was written. After merge the front matter
+is frozen except `status:`, so #909 is named here instead (`fb91ad84`, squash of `8fee13f6`).
