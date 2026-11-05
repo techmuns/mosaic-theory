@@ -12,14 +12,28 @@ superseded-by:
 - **The writer.** `assemble._price_store_stamp` wrote `price_store.declared_path` and `resolved_path`
   as `str(declared)` and `str(declared.resolve())`, absolute local paths. It now writes each one's
   checkout folder name through one function, `assemble.store_checkout`:
-  `<checkout>/data/vinci.db` → `<checkout>` (for example `mosaic-theory-wb`). A store with no folder
-  above `data/` (a store at a filesystem root) raises instead of stamping an empty name.
+  `<checkout>/data/vinci.db` → `<checkout>` (for example `mosaic-theory-wb`).
+  - It refuses any store it cannot name: a relative path, a store not at
+    `<checkout>/data/vinci.db`, or one with no folder above `data/`. A `data/vinci.db` symlinked
+    into `~<user>/stores/` would otherwise stamp the username. The refusal message names no folder
+    above the file, because a build's run record commits it.
+  - Round 2 moved the stamp to the top of `assemble_one`, before any paid phase. Built where the
+    page is, after `synthesize`, a refusal would have spent the build's LLM calls and then thrown
+    the build away.
 - **The schema.** `PriceStoreStamp` keeps its two field names and their `str` type. Only the
   documented meaning changes: each value is a folder name, never a path. So pages from earlier in
   git history still parse, and no reader of the shape had to change.
-- **The guard.** `tests/test_no_local_paths.py` reads every tracked file under `data/dossiers/`,
-  `frontend/dossiers/` and `tests/fixtures/` as text. It fails on any absolute path under `/Users/`,
-  `/private/` or `/home/`, and on a drive letter (`C:\…`, `D:/…`), whatever key the path sits in.
+- **The guard.** `tests/test_no_local_paths.py` reads every file under every committed artifact
+  folder: all of `data/`, `frontend/` and `scenarios/`, plus `tests/fixtures/`.
+  - That covers files tracked, and files untracked and not ignored, so an artifact pass is checked
+    before `git add`.
+  - It takes in the build run records (`data/snapshots/assembly_runs/`), whose exception text and
+    input manifests a build writes.
+  - It fails on an absolute path under `/Users/`, `/private/`, `/home/`, `/Volumes/`, `/root/` or
+    WSL's `/mnt/<drive>/`; on a drive letter (`C:\…`, `D:/…`); and on the dashed form a Claude
+    project folder takes (`-Users-<user>-…`), whatever key the path sits in.
+  - It does not read inside compressed binaries (an `.xlsx`'s zip members, a PDF's Flate streams,
+    Parquet pages). Its docstring lists every blind spot.
   - The failure prints every hit as `file:line` beside the count, never a cut list.
   - `python -m tests.test_no_local_paths` prints the same list.
   - It also asserts end to end, from committed JSON through the render to the committed `.md`, that
@@ -40,7 +54,7 @@ superseded-by:
 the blobs of every earlier version of these pages, PR diffs, and any fork or clone made before this
 change. Those paths name two macOS usernames, worktree names and Claude session scratch
 directories. History was not rewritten, and no history rewrite is proposed here. This change stops
-the current tree carrying them, and the guard stops new ones landing in its three folders. Anyone
+the current tree carrying them, and the guard stops new ones landing in its four folders. Anyone
 weighing the exposure should treat everything those paths reveal as already published.
 
 **WHY.**
@@ -80,6 +94,12 @@ weighing the exposure should treat everything those paths reveal as already publ
   of 433 tracked files**: 54 in pages, 54 in mirrors, 10 in fixtures. Every hit sits on a
   `declared_path` or `resolved_path` line (59 + 59). That matches the review's 54 page paths, their
   54 mirrors, and the fixtures it named. On the cleaned tree the guard lists **0**.
+  - Round 2 widened the scope to all four folders (1,100 files at `c4c9f432`) and added the dashed
+    and mount-root forms. On main's blobs that guard lists **144 hits on the same 118 lines of the
+    same 59 files**. The 26 extra are the dashed `-Users-<user>-…` session folder inside the 26
+    `/private/tmp/claude-501/…` stamps: real corpus shapes, so the dashed pattern is corpus-tested.
+    The rest of the four folders held none. On the cleaned tree it lists **0**, in about 2 s: a
+    literal trigger in front of the patterns stands in for 20 s of regex over 147 MB.
 - **The pattern's first cut was wrong twice, and the corpus caught both.**
   - A bare `[A-Za-z]:/` matched the `https:` of URLs in 24 committed `.md` files (12 pages and their 12 mirrors). The drive letter
     now has to stand alone, and URLs are a negative pin.
@@ -99,6 +119,22 @@ weighing the exposure should treat everything those paths reveal as already publ
   - **Before** the rewrite, all 27 renders equalled the committed `dossier.md` byte for byte.
   - **After**, `diff -r` of the two render sets is empty.
   - No `dossier.md` or `frontend/dossiers/*.md` changed (`git diff --quiet`).
+- **Mutation, round 2 (coordinator review).** 30 mutants, each applied to the code, run against
+  its tests, then restored: **30 killed, 0 survived**.
+  - **Writer:** dropping `.absolute()`; stamping `str(declared)` or `str(declared.resolve())`;
+    removing each refusal; and moving the stamp back after the paid phases.
+  - **Guard:**
+    - each lookbehind and lookahead character;
+    - binary files skipped, or every file read as binary;
+    - a folder dropped from `SCANNED`, or `.json` only;
+    - the first line only;
+    - no dashed pattern, or a trigger without `/mnt/`;
+    - untracked files not read;
+    - no cut mark.
+  - **Script:** each refusal; reducing by its own `parent.parent.name`; always writing; never
+    writing; the missing-field guard; and the parse-equality proof.
+  - Two survived the first run, the `/mnt/` trigger and the parse proof. Each got a pin and is now
+    killed.
 - **What the rewrite read.** Committed JSON and committed scenario cards only. It ran no assemble,
   precheck, extractor, store, CIQ export or LLM. That includes BURL, one of the six held audit
   names: operator ruling D-D4 allows a deterministic rewrite of its committed JSON, and its CIQ
@@ -106,9 +142,12 @@ weighing the exposure should treat everything those paths reveal as already publ
   CIQ export.
 
 **BOUNDARY.**
-- **118 / 59 / 433:** matched path starts under the guard's pattern, over the files `git ls-tree -r`
-  lists under `data/dossiers`, `frontend/dossiers` and `tests/fixtures` at main `c4c9f432`
-  (2026-11-05).
+- **118 / 59 / 433:** matched path starts under the first guard's pattern, over the files
+  `git ls-tree -r` lists under `data/dossiers`, `frontend/dossiers` and `tests/fixtures` at main
+  `c4c9f432` (2026-11-05).
+- **144 / 118 / 59 / 1,100:** matched starts, distinct lines and files under the round-2 pattern,
+  over the files `git ls-tree -r` lists under `data`, `frontend`, `scenarios` and `tests/fixtures`
+  at main `c4c9f432`. 147 MB is the same files read on this branch.
 - **54 page paths:** 27 pages × 2 fields.
 - **32 rewritten files:** 27 pages plus 5 fixtures:
   - `band_checks/VITL`
@@ -117,18 +156,19 @@ weighing the exposure should treat everything those paths reveal as already publ
 - **60 files in the artifact commit:** the 32 above, the 27 mirrors, and the frozen-pages README.
 - **The 547 binary files and 82 drive-letter matches:** every tracked file not valid UTF-8, at main
   `c4c9f432`.
-- **Out-of-scope counts below:** the same pattern over the other 2,640 tracked files at `c4c9f432`.
+- **Out-of-scope counts below:** the round-2 pattern over the other 1,973 tracked files at
+  `c4c9f432`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **Which machine is lost.** Two machines' checkouts with the same folder name now stamp alike,
   where the absolute path told them apart. Nothing compares two stamps today. The render never
   showed the machine, and keeping it is the leak.
 - **Edges the writer and the guard do not cover.**
-  - A store not at `<checkout>/data/vinci.db` is named by whatever folder sits two levels above the
-    file, as the render always named it.
-  - A checkout folder that is itself a username (`/Users/<user>/data/vinci.db` → `<user>`) passes
-    the guard.
-  - A relative path, a Linux `/tmp/…` or `/var/…`, and a bare username are not caught.
+  - The writer refuses a store not at `<checkout>/data/vinci.db`. A checkout folder that is itself
+    a username (`/Users/<user>/data/vinci.db` → `<user>`) still has that shape, so it is stamped,
+    and it passes the guard.
+  - A relative path, a Linux `/tmp/…` or `/var/…`, a bare username, and the inside of a
+    compressed binary are not caught.
 - **Pages assembled on the old writer land after this one.** Two were in flight on 2026-11-05:
   #914 (SMPL re-assembled) and the NFLX rebuild, with UBER, MCK and PARR to follow as their
   re-exports arrive. Each was built on a branch cut before this writer, so its page and mirror
@@ -137,17 +177,17 @@ weighing the exposure should treat everything those paths reveal as already publ
   the merged tree, and shows the guard reads 0. Until then the guard fails on that page and its
   mirror, which is the point of it. A page assembled from main after this merges stamps folder
   names by itself.
-- **Local paths outside the guard's three folders** (same pattern, the other 2,640 tracked files at
-  `c4c9f432`):
+- **Local paths outside the guard's four folders**, none of them an artifact (the round-2 pattern,
+  the other 1,973 tracked files at `c4c9f432`):
 
   | where | hits | files | what |
   |---|---|---|---|
-  | `.claude/launch.json` | 14 | 1 | per-machine preview config, naming both users' checkouts and session scratchpads |
+  | `.claude/launch.json` | 18 | 1 | per-machine preview config, naming both users' checkouts and session scratchpads |
   | `bin/commit` | 1 | 1 | the venv default |
-  | `docs/records/` | 17 | 14 | prose quoting paths |
-  | `docs/theme_intelligence/` | 1 | 1 | a text file |
+  | `docs/records/` | 19 | 16 | prose quoting paths |
+  | `docs/theme_intelligence/` | 2 | 1 | a text file |
 
   These are reported, not fixed: they are out of this build's scope (STATE.md §5.0 row 49). The
   `.claude/launch.json` question, whether a per-machine file stays tracked at all, is the operator's.
-- **Falsifier.** A committed page, mirror or fixture carrying `/Users/`, `/private/`, `/home/` or a
-  drive letter while this test is green.
+- **Falsifier.** A file under `data/`, `frontend/`, `scenarios/` or `tests/fixtures/` carrying a
+  path of a form the guard's docstring says it catches, while this test is green.

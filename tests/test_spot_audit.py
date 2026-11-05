@@ -312,6 +312,58 @@ def test_the_price_store_stamp_names_checkouts_never_an_absolute_local_path(
     assert _price_store_line(stamp) == "`link-worktree → real-worktree` · reaching 2026-08-04"
 
 
+def test_the_default_relative_store_is_named_by_the_checkout_it_sits_in(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """THE PRODUCTION SHAPE (review of #915). Nothing passes `data_dir=`, so every real build
+    stamps `Config().db_path`, the RELATIVE `data/vinci.db`, from the checkout it runs in. The pins
+    above all pass an absolute `data_dir` and could not see a writer that forgot `.absolute()`."""
+    from vinci.config import Config
+    from vinci.dossier.assemble import _price_store_stamp
+
+    checkout = tmp_path / "my-checkout"
+    (checkout / "data").mkdir(parents=True)
+    Store(checkout / "data" / "vinci.db").write_prices([
+        PriceBar(internal_id=IID, bar_date=date(2026, 8, 4), open=1, high=1, low=1,
+                 close=11.33, volume=1.0, source="polygon-grouped")])
+    monkeypatch.chdir(checkout)
+    cfg = Config()
+    assert not cfg.db_path.is_absolute(), cfg.db_path   # the shape this pin exists for
+    stamp = _price_store_stamp(cfg)
+    assert (stamp.declared_path, stamp.resolved_path, stamp.frontier) == (
+        "my-checkout", "my-checkout", date(2026, 8, 4))
+
+
+@pytest.mark.parametrize("path, why", [
+    ("data/vinci.db", "is relative"),                   # a writer that forgot `.absolute()`
+    ("/data/vinci.db", "not at <checkout>/data/"),      # no folder above data/
+    ("/Users/x/stores/vinci.db", "not at <checkout>/data/"),   # a symlink target outside data/
+])
+def test_a_store_it_cannot_name_is_refused_and_the_refusal_names_no_folder(
+    path: str, why: str,
+) -> None:
+    """(−) The last would have stamped `x`, a username; the message goes into a committed run
+    record, so it names the file and never a folder above it."""
+    from vinci.dossier.assemble import store_checkout
+
+    with pytest.raises(ValueError, match=why) as err:
+        store_checkout(Path(path))
+    assert "/Users/" not in str(err.value) and "stores" not in str(err.value), err.value
+
+
+def test_the_stamp_is_taken_before_any_paid_phase() -> None:
+    """A SOURCE PIN, for `test_the_stamp_is_wired_into_the_assembler`'s reason (`assemble_one`
+    cannot run offline). The stamp can refuse; read after `synthesize`, that refusal spent the
+    build's LLM calls and then threw them away."""
+    import inspect
+
+    import vinci.dossier.assemble as asm
+    src = inspect.getsource(asm.assemble_one)
+    assert "price_store = _price_store_stamp(cfg)" in src, "the stamp is not read into a local"
+    assert src.index("price_store = _price_store_stamp(cfg)") < src.index("if llm is not None:"), (
+        "the store stamp is read after the paid phases begin")
+
+
 def test_a_folder_name_stamp_renders_exactly_as_the_absolute_one_did() -> None:
     """THE CLEAN IS INVISIBLE ON THE PAGE. The committed pages were rewritten from their absolute
     paths to the folder names those paths end in; the render must print the same line for both,
@@ -335,7 +387,8 @@ def test_the_stamp_is_wired_into_the_assembler() -> None:
     import inspect
 
     import vinci.dossier.assemble as asm
-    assert "price_store=_price_store_stamp(cfg)" in inspect.getsource(asm.assemble_one), (
+    src = inspect.getsource(asm.assemble_one)
+    assert "price_store = _price_store_stamp(cfg)" in src and "price_store=price_store," in src, (
         "the store stamp is not wired into assemble_one — every new dossier would say 'unstamped' "
         "forever, and no committed artifact would show the difference")
 

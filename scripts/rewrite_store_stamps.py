@@ -39,17 +39,27 @@ def rewrite(text: str, *, name: str) -> tuple[str, dict[str, str]]:
         return text, {}
     out, moved = text, {}
     for key in KEYS:
+        if not isinstance(stamp.get(key), str):
+            raise ValueError(f"{name}: price_store has no {key} string to rewrite")
         value = stamp[key]
         if not PurePosixPath(value).is_absolute():
             if "/" in value or "\\" in value:
                 raise ValueError(f"{name}: price_store.{key} is a path, but not a POSIX absolute "
                                  "one this rewrite knows how to reduce")
             continue                      # already a folder name
-        new = store_checkout(Path(value))
+        try:
+            new = store_checkout(Path(value))
+        except ValueError as exc:         # the writer's own refusal, named for this file
+            raise ValueError(f"{name}: price_store.{key}: {exc}") from exc
         span = f"{json.dumps(key)}: {json.dumps(value)}"
-        if out.count(span) != 1:
-            raise ValueError(f"{name}: price_store.{key}'s text occurs {out.count(span)} times, "
-                             "not once — refusing to guess which to rewrite")
+        found = out.count(span)
+        if found == 0:
+            raise ValueError(f"{name}: price_store.{key} is not in the text as `json.dumps` writes "
+                             "it (a non-ASCII or escaped path?) — refusing to rewrite what it "
+                             "cannot find")
+        if found > 1:
+            raise ValueError(f"{name}: price_store.{key}'s text occurs {found} times, not once — "
+                             "refusing to guess which to rewrite")
         out = out.replace(span, f"{json.dumps(key)}: {json.dumps(new)}")
         moved[key] = new
     expect = json.loads(text)

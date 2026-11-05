@@ -11,19 +11,29 @@ shows only the checkout's folder name, and since this date the stamp keeps only 
 
 THIS GUARD READS WHAT IS COMMITTED, NOT ONE FIELD. A check on `price_store` alone would pass the
 next field that carries a path — #911's round 1 had already removed one, from an OSError's reason
-text. So every tracked file under the three folders is scanned, as text, whatever key it sits in.
+text. So every file under every committed artifact folder — all of `data/`, `frontend/` and
+`scenarios/`, plus `tests/fixtures/` — is scanned, whatever key the path sits in. That takes in
+the build run records (`data/snapshots/assembly_runs/`), which carry free-text exception messages
+(`run_metrics`) and, since #911, each build's input manifest. Widened in #915's round 2 at a
+cost of nothing: every hit the four folders (1,100 files, 147 MB) held on main c4c9f432 was a
+price-store stamp, and on the cleaned tree they hold none.
 
     python -m tests.test_no_local_paths     # print every hit, file:line, with the count
 
-THE PATTERN, and what it does not catch. An absolute path under `/Users/`, `/private/` or
-`/home/` (macOS home and temp roots, a Linux home or a CI runner's `/home/runner/…`), or a drive
-letter (`C:\\…`, `D:/…`). The path must START there: a URL's `/home/` follows its host and is
-not one, which is the false positive a bare substring check would raise on the first investor
-page cited from `…/home/default.aspx`. NOT caught: a bare username or a relative path, a Linux
-`/tmp/…` or `/var/…`, and a store whose checkout folder is itself a username (`store_checkout`
-of `/Users/x/data/vinci.db` is `x`). Binary files are read too, as Latin-1 and for the POSIX
-roots only (a PDF's metadata can carry its author's path; a drive letter is three bytes that
-compressed data produces at random); none of the 16 in scope matches today.
+THE PATTERN. An absolute path under a home, temp or mount root — `/Users/`, `/private/`, `/home/`
+(a Linux home or a CI runner's `/home/runner/…`), `/Volumes/`, `/root/`, WSL's `/mnt/<drive>/` —
+or a drive letter (`C:\\…`, `D:/…`), or the DASHED form a Claude project folder takes
+(`-Users-<user>-Documents-…`), which a store stamped from inside one would carry. A path must
+START there: a URL's `/home/` follows its host and is not one, which is the false positive a bare
+substring check would raise on the first investor page cited from `…/home/default.aspx`; nor is a
+relative `../home/…`.
+
+WHAT IT DOES NOT CATCH, stated so nobody reads 0 as more than it is: a bare username, a relative
+path, a Linux `/tmp/…` or `/var/…`, and the inside of a COMPRESSED binary (an `.xlsx`'s zip
+members, a PDF's Flate streams, a Parquet page). A binary file is read as Latin-1 for the POSIX
+roots only: a PDF's metadata can carry its author's path in the clear, while a drive letter is
+three bytes compressed data produces at random. The writer side is narrower still:
+`store_checkout` refuses any store not at `<checkout>/data/vinci.db`.
 
 FIX FOR A HIT IN A PRICE-STORE STAMP: `PYTHONPATH=$PWD python scripts/rewrite_store_stamps.py
 <file> …` rewrites the two fields in place to their folder names and nothing else, then rebuild
@@ -41,31 +51,62 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 
-#: The committed pages, their web mirrors and every test fixture.
-SCANNED = ("data/dossiers", "frontend/dossiers", "tests/fixtures")
+#: Every committed artifact folder — pages, mirrors, run records, snapshots, scenarios, the web
+#: app's data — and every test fixture.
+SCANNED = ("data", "frontend", "scenarios", "tests/fixtures")
 
-#: An absolute POSIX path under a home or temp root, where it begins. The lookbehind keeps a URL
-#: out: a URL's path follows a host character (`sec.gov/…`, `:8080/…`), a local path follows a
-#: quote, a space, a backtick, a `${VAR:-` default, a line start or `file://`.
-POSIX_ROOT = re.compile(r"(?<![\w.])/(?:Users|private|home)/")
-#: A drive letter standing alone (not `https:`, not `s3:`), then a separator that does not start a
-#: `//` scheme. Three characters, so it is read in TEXT only: over the 547 binary files tracked on
-#: 2026-11-05 (47 MB) it matched 82 times — random bytes, every one — and the POSIX roots 0.
-DRIVE = re.compile(r"(?<![\w.+\-])[A-Za-z]:(?:\\|/(?!/))")
-
+#: An absolute POSIX path under a home, temp or mount root, where it begins. The lookbehind keeps a
+#: URL out: a URL's path follows a host character (`sec.gov/…`, `:8080/…`), a local path follows a
+#: quote, a space, a backtick, a `${VAR:-` default, a line start or `file://` — never a `.`
+#: (`../home/` is relative). Matched on BYTES (a binary is read as is; UTF-8 text keeps its ASCII
+#: bytes), so `\w` is ASCII: a non-ASCII letter before a root does not hide it.
+POSIX_ROOT = re.compile(rb"(?<![\w.])/(?:Users|private|home|Volumes|root)/"
+                        rb"|(?<![\w.])/mnt/[A-Za-z]/")
+#: A Claude project folder's dashed path (`-Users-<user>-…`), standing alone.
+DASHED = re.compile(rb"(?<![\w-])-(?:Users|home)-[\w.]")
+#: A drive letter standing alone (not `https:`, not `s3:`, not `x.c:` or `a+b:`), then a separator
+#: that does not start a `//` scheme. Three characters, so it is read in TEXT only: over the 547
+#: binary files tracked on 2026-11-05 (47 MB) it matched 82 times — random bytes, every one — and
+#: the POSIX roots 0.
+DRIVE = re.compile(rb"(?<![\w.+\-])[A-Za-z]:(?:\\|/(?!/))")
+#: SPEED ONLY, never a definition. A regex led by a lookbehind is tried at every byte — 20 s over
+#: the 147 MB in scope (2026-11-05) — so a file runs `POSIX_ROOT` / `DASHED` only if it holds one
+#: of their literal cores (`_TRIGGER`, which must cover both: the LEAKED pins go through it), and
+#: `DRIVE` only at a `:` before a separator (`_COLON`). About 2 s.
+_TRIGGER = re.compile(rb"/(?:Users|private|home|Volumes|root|mnt)/|-(?:Users|home)-")
+_COLON = re.compile(rb":[\\/]")
 
 #: How much of a hit is printed; a longer one ends in `CUT`, so a cut path never reads as whole.
 SHOWN = 60
 CUT = "… [cut]"
 
 
+def _matches(raw: bytes, *, binary: bool) -> list[tuple[int, str]]:
+    """(line number, the hit as printed) for each local path in `raw`. In a `binary` file, the
+    POSIX roots only (see `DRIVE`). The printed hit runs to `SHOWN` bytes or its line's end,
+    whichever is first, and carries `CUT` if its line goes on past it."""
+    starts: set[int] = set()
+    if _TRIGGER.search(raw):
+        for rx in (POSIX_ROOT,) if binary else (POSIX_ROOT, DASHED):
+            starts.update(m.start() for m in rx.finditer(raw))
+    if not binary:
+        starts.update(m.start() - 1 for m in _COLON.finditer(raw)
+                      if m.start() and DRIVE.match(raw, m.start() - 1))
+    out: list[tuple[int, str]] = []
+    for i in sorted(starts):
+        eol = raw.find(b"\n", i)
+        eol = len(raw) if eol < 0 else eol
+        stop = min(i + SHOWN, eol)
+        hit = raw[i:stop].decode("latin-1" if binary else "utf-8", errors="replace")
+        out.append((raw.count(b"\n", 0, i) + 1, hit + (CUT if stop < eol else "")))
+    return out
+
+
 def local_paths(text: str, *, binary: bool = False) -> list[str]:
-    """Each absolute local path in `text`, as the `SHOWN` characters from where it starts, marked
-    `CUT` when the text runs on. In a `binary` file's Latin-1 text, the POSIX roots only (see
-    `DRIVE`)."""
-    found = sorted(m.start() for rx in ((POSIX_ROOT,) if binary else (POSIX_ROOT, DRIVE))
-                   for m in rx.finditer(text))
-    return [text[i:i + SHOWN] + (CUT if len(text) > i + SHOWN else "") for i in found]
+    """Each absolute local path in `text`, as printed (`_matches`). A `binary` file's text is its
+    Latin-1 decoding, read for the POSIX roots only."""
+    raw = text.encode("latin-1" if binary else "utf-8")
+    return [hit for _, hit in _matches(raw, binary=binary)]
 
 
 def _corpus() -> list[Path]:
@@ -85,24 +126,24 @@ def scan() -> tuple[list[Path], list[str]]:
     for f in files:
         raw = f.read_bytes()
         try:
-            text, binary = raw.decode("utf-8"), False
+            raw.decode("utf-8")
+            binary = False
         except UnicodeDecodeError:
-            text, binary = raw.decode("latin-1"), True
-        for n, line in enumerate(text.splitlines(), 1):
-            for h in local_paths(line, binary=binary):
-                hits.append(f"{f.relative_to(ROOT)}:{n}: {h.strip()}")
+            binary = True
+        hits += [f"{f.relative_to(ROOT)}:{n}: {h.strip()}" for n, h in _matches(raw, binary=binary)]
     return files, hits
 
 
 # --- the matcher, on the shapes the corpus actually held -----------------------------------------
 
-#: (+) Real stamps the committed corpus carried on 2026-11-05 (main c4c9f432) — one of each kind —
+#: (+) Real stamps the committed corpus carried on 2026-11-05 (main c4c9f432), one of each kind and
+#: with each username replaced by `u` (this file is public too) —
 #: plus the CI runner's home and both drive-letter forms as they appear in JSON text.
 LEAKED = (
-    '"declared_path": "/Users/mac/Documents/GitHub/mosaic-theory/.claude/worktrees/'
+    '"declared_path": "/Users/u/Documents/GitHub/mosaic-theory/.claude/worktrees/'
     'eager-mendel-4c6d33/data/vinci.db",',
-    '"resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-wb/data/vinci.db",',
-    '"declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/'
+    '"resolved_path": "/Users/u/Documents/GitHub/mosaic-theory-wb/data/vinci.db",',
+    '"declared_path": "/private/tmp/claude-501/-Users-u-Documents-GitHub-mosaic-theory/'
     'd46b7606/scratchpad/wt-pass/data/vinci.db",',
     "a reason quoting /home/runner/work/mosaic-theory/mosaic-theory/data/vinci.db",
     '"declared_path": "C:\\\\Users\\\\x\\\\mosaic-theory\\\\data\\\\vinci.db",',
@@ -110,6 +151,15 @@ LEAKED = (
     "file:///Users/x/report.pdf",
     # a shell default, the shape `bin/commit` carries (outside this guard's scope)
     'VENV="${VENV:-/Users/x/mosaic-theory/.venv/bin/python}"',
+    # the other mount and home roots, and WSL's view of a Windows drive (round 2: synthetic — the
+    # corpus has held none)
+    "`/Volumes/ext/mosaic-theory/data/vinci.db`",
+    '"/root/mosaic-theory/data/vinci.db"',
+    "a store at /mnt/c/Users/x/mosaic-theory/data/vinci.db",
+    "/mnt/d/repos/mosaic-theory/data/vinci.db",   # no other root in it: the trigger alone
+    # a store stamped from inside a Claude project folder: standalone here; on main c4c9f432 the
+    # form sat inside all 26 `/private/tmp/claude-501/-Users-<user>-…` stamps (round 2)
+    '"declared_path": "-Users-alice-Documents-GitHub-mosaic-theory",',
 )
 
 #: (−) What must not fire: the cleaned stamp, a relative store path, and URLs — the `https:` drive
@@ -123,6 +173,13 @@ CLEAN = (
     "https://investor.example.com/home/default.aspx and https://x.com:8080/private/a",
     "s3://bucket/key r2://facts/objects/edgar/0000320187",
     "Monthly Active Users/Subscribers grew; EV/EBITDA 12.0x; Q3: 10:30 ET",
+    # round 2, each killing a surviving mutant: `.` before a root is a relative path; `a://` is a
+    # scheme (a digit precedes `s3:`'s colon, so it never reached the drive check); a letter after
+    # `.`, `+` or `-` is the tail of a word, not a drive (synthetic)
+    "../home/x/data/vinci.db",
+    "a://x",
+    "notes.a:/b  svn+a:/b  pre-a:/b",
+    "Monthly-Active-Users-grew",
 )
 
 
@@ -151,22 +208,68 @@ def test_a_hit_cut_short_says_so_and_a_whole_one_does_not() -> None:
     assert local_paths('"/Users/x/y"') == ['/Users/x/y"'], "a hit that fits must not claim a cut"
 
 
+def _repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, tracked: dict[str, str | bytes],
+          untracked: dict[str, str | bytes] | None = None) -> Path:
+    """A throwaway git repository the scan is pointed at (`ROOT`), so a killed run leaves nothing
+    in this one."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-q", str(repo)], check=True)
+    for batch, add in ((tracked, True), (untracked or {}, False)):
+        for rel, body in batch.items():
+            f = repo / rel
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_bytes(body if isinstance(body, bytes) else body.encode())
+        if add:
+            subprocess.run(["git", "-C", str(repo), "add", "."], check=True)
+    monkeypatch.setattr(sys.modules[__name__], "ROOT", repo)
+    return repo
+
+
+def test_every_folder_every_kind_of_file_and_every_line_is_read(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """(+) One path per place the scan must reach (round 2: each line kills a surviving mutant):
+    deep in a page laid out as the writer lays one out (`indent=2`), not on its first line; a
+    rendered `.md`; a web mirror under `frontend/`; a scenario record; a build's run record; a
+    Windows path in plain text (a binary-only read drops the drive letter); a PDF's metadata (a
+    text-only read drops it). (−) A file outside the four folders is not read."""
+    page = json.dumps({"ticker": "T", "mechanical": {"a": 1, "b": [1, 2]},
+                       "price_store": {"declared_path": "/Users/x/w/data/vinci.db"}}, indent=2)
+    _repo(tmp_path, monkeypatch, {
+        "data/dossiers/T/dossier.json": page,
+        "data/dossiers/T/dossier.md": "# T\n\n- **Price store:** `/home/x/w`\n",
+        "frontend/dossiers/T.json": '{\n  "x": "/private/tmp/s/data/vinci.db"\n}\n',
+        "scenarios/T.json": '{"spot_source": "read /Volumes/ext/vinci.db"}\n',
+        "data/snapshots/assembly_runs/r.jsonl":
+            '{"ticker": "A"}\n{"error": "OSError: [Errno 2] /Users/x/data/vinci.db"}\n',
+        "tests/fixtures/win.txt": "store: C:\\Users\\x\\data\\vinci.db\n",
+        "tests/fixtures/meta.pdf": b"%PDF-1.7\n\x9c\xff\x00/Author (/Users/x/a.pdf)\n",
+        "docs/elsewhere.md": "/Users/x/outside the scope\n",
+    })
+    files, hits = scan()
+    assert len(files) == 7, files
+    where = sorted(h.split(": ", 1)[0] for h in hits)
+    assert where == ["data/dossiers/T/dossier.json:11", "data/dossiers/T/dossier.md:3",
+                     "data/snapshots/assembly_runs/r.jsonl:2", "frontend/dossiers/T.json:2",
+                     "scenarios/T.json:1", "tests/fixtures/meta.pdf:2",
+                     "tests/fixtures/win.txt:1"], hits
+
+
+def test_a_printed_hit_stops_at_its_line() -> None:
+    assert local_paths('"/Users/x/y"\nnext line') == ['/Users/x/y"']
+
+
 def test_a_file_not_yet_added_is_read_and_an_ignored_one_is_not(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """An artifact pass runs the suite before `git add`, so a new page or fixture is read while it
     is still untracked — not first in CI (+); a git-ignored file (`llm_call.log`) is not (−). In a
     scratch repository, so a killed run leaves nothing in this one."""
-    repo = tmp_path / "repo"
-    fixtures = repo / "tests" / "fixtures"
-    fixtures.mkdir(parents=True)
-    subprocess.run(["git", "init", "-q", str(repo)], check=True)
-    (repo / ".gitignore").write_text("*.log\n")
-    (fixtures / "tracked.json").write_text('{"a": 1}\n')
-    subprocess.run(["git", "-C", str(repo), "add", "."], check=True)
-    (fixtures / "new.json").write_text('{"reason": "read /Users/x/data/vinci.db"}\n')
-    (fixtures / "llm_call.log").write_text("read /Users/x/data/vinci.db\n")
-    monkeypatch.setattr(sys.modules[__name__], "ROOT", repo)
+    _repo(tmp_path, monkeypatch,
+          {".gitignore": "*.log\n", "tests/fixtures/tracked.json": '{"a": 1}\n'},
+          {"tests/fixtures/new.json": '{"reason": "read /Users/x/data/vinci.db"}\n',
+           "tests/fixtures/llm_call.log": "read /Users/x/data/vinci.db\n"})
 
     files, hits = scan()
     assert {f.name for f in files} == {"tracked.json", "new.json"}
@@ -192,8 +295,10 @@ def test_a_tracked_file_deleted_in_the_working_tree_is_skipped_not_a_crash(
 # --- the corpus -----------------------------------------------------------------------------------
 
 def test_no_committed_page_mirror_or_fixture_carries_an_absolute_local_path() -> None:
-    """THE GUARD. On main c4c9f432 it listed 118 hits in 59 files — every one a price-store stamp;
-    on the cleaned tree it lists none. The count is printed beside the full list, never a cut."""
+    """THE GUARD. On main c4c9f432, over the four folders (1,100 files), it lists 144 hits on 118
+    lines of 59 files — every line a price-store stamp, 26 of them carrying both `/private/` and
+    the dashed `-Users-` session folder; on the cleaned tree it lists none. The count is printed
+    beside the full list, never a cut."""
     files, hits = scan()
     pages = set((ROOT / "data" / "dossiers").glob("*/dossier.json"))
     assert pages and pages <= set(files), (
