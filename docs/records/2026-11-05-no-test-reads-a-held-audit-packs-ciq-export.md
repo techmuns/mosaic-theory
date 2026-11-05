@@ -97,8 +97,33 @@ per test.
   by a helper (`root = _root()`, two loops in `test_capital_panel_selection`), and a page list
   imported from another module (`COMPUTED`). Also fixed was a false positive: a temp-dir parameter
   read through another function's binding of the same name.
+- **The review round** (`/code-review high --fix`, 10 findings). 8 fixed, each behind a pin that
+  fails on the old logic (mutation-checked):
+  - the hook now watches the `ciq-archive` beside a linked `ciq` folder;
+  - it matches roots without regard to case (APFS does not tell case apart);
+  - the scan follows a page list read inside a nested function;
+  - it no longer settles a recursive helper as "reads no CIQ" before the call that does returns;
+  - it no longer counts a docstring as a path into the CIQ folder;
+  - a cut site says it was cut;
+  - the helpers' unused `key` parameters are gone;
+  - each module is parsed once.
+
+  2 skipped. A central collection hook would also skip held pages' committed-JSON cases. Held
+  packs kept under a non-ticker folder name are question (2) below. After the round the guard
+  still flags 50 on main and 0 here, and the 6 routing mutants are still each caught.
+- **The helpers and the backstop, mutation-checked:** 6 mutants, each killed by its own pin —
+  the hook never refusing, ignoring a linked held folder, or matching case-sensitively;
+  `page_params` not skipping; `without_held` keeping a held name; a file's own name counted as
+  held.
 - **Cost of the hook:** +2.5 µs per `open()` (18.6 → 21.2 µs, 100,000 opens, 4 roots and 6 held
   folders linked).
+- **Found on the way, not changed (a slow reader the old failure hid):**
+  `test_segment_absence_and_relationship_route::test_the_customers_export_is_chosen_by_name_not_by_file_order`
+  ran about 15 minutes in the targeted run. `customers()` spends 164.5 s in `read_text`'s regex on
+  AMZN's 2.9 MB Customers RTF and 147.7 s on GOOGL's 2.6 MB one (measured once each, this
+  machine, Drive's exports of today), and the test calls it twice per folder. On main the stub
+  BURL folder failed the test at its third folder, so the cost never showed. It is a property of
+  `vinci/dossier/ciq.py:read_text` and is out of this change's scope.
 
 **BOUNDARY.** Commit: main `c4c9f432` (#911 merged) for every "before" count and for the
 population; this branch for every "after" count. Modules: `tests/**/*.py` minus `tests/fixtures/`,
@@ -118,12 +143,19 @@ literals:
 - every other reads committed SEC fixtures (`_facts("BURL")`, `_rec("BURL")`, a lease-basis
   fixture), a committed page, or is a dict key or an expected value.
 
-The probe agrees: no test outside the 46 touched a held folder. **NOT CHANGED, a question for the
-operator:** about a dozen tests run extractors on BURL's committed SEC fixtures — `test_anchor_ltm_window`,
-`test_cross_check`, `test_debt_maturities`, `test_ebitda_recon_wave2`, `test_lease_basis`,
-`test_net_debt_one_builder`, `test_forward_multiples_and_basis`, `test_covenant_refused_newer`.
-The rule as stated covers the CIQ packs; whether it extends to SEC data for the same six names is
-the operator's call.
+The probe agrees: no test outside the 46 touched a held folder.
+
+**NOT CHANGED — two questions for the operator.**
+1. About a dozen tests run extractors on BURL's committed SEC fixtures: `test_anchor_ltm_window`,
+   `test_cross_check`, `test_debt_maturities`, `test_ebitda_recon_wave2`, `test_lease_basis`,
+   `test_net_debt_one_builder`, `test_forward_multiples_and_basis`,
+   `test_covenant_refused_newer`. The rule as stated covers the CIQ packs. Whether it extends to
+   SEC data for the same six names is the operator's call.
+2. The hook recognises a held export by a TICKER-NAMED folder. Drive's `manual/` also holds a
+   `CIQ exports` folder, which this work deliberately did not list. If the packs sit there under
+   company names, the hook would not refuse an open of them. No test reads that folder: the store
+   reads only `ciq/`, and the scratch copy left `CIQ exports` out. Should the suite refuse every
+   open under `data/manual` outside `ciq/` and `ciq-archive/`?
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **The static guard sees one module at a time, plus module-level names imported from another

@@ -16,7 +16,7 @@ WHAT THE SCAN CANNOT SEE (stated, not hidden): values that cross a module bounda
 enumeration helper imported by another test module is judged in the module that defines it,
 by the uses there; a production function that enumerates pages itself; a subprocess. The backstop
 covers the first two in any linked run (it watches every open in the process); a subprocess runs
-outside it — on main `c4c9f432` four tests run `vinci` in a child process, none on a held name.
+outside it — on main `c4c9f432` nine modules start a Python child, and none passes it a held name.
 """
 from __future__ import annotations
 
