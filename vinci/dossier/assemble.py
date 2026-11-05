@@ -1094,15 +1094,8 @@ def assemble_one(
         fin.data_record, resolver=resolver, reference_date=fin.reference_date,
         security_types=PolygonEodClient.from_config(cfg).security_types())
     ticker = rec.identity.ticker
-    folder_files = manual.files(ticker)
-    try:
-        bundle = CiqBundle.from_files(ticker, folder_files)
-    except Exception:
-        # a build the LOADER refuses (two exports of a kind, a mislabelled export) still records
-        # the files it read — they are what the refusal is about
-        page_inputs.note_files(folder_files)
-        raise
-    page_inputs.note_bundle(bundle)
+    # every CIQ file the build reads is recorded, a loader refusal's included (`load_bundle`)
+    bundle = page_inputs.load_bundle(ticker, manual.files(ticker))
     location = manual.location(ticker)
     # MISSING-manifest: per-module 'pull CIQ' flags from the ONE requirements definition (so this
     # and `vinci dossier requirements` can't drift). Empty/partial folder → what's still owed.
@@ -1394,10 +1387,23 @@ def assemble_one(
         dossier = dossier.model_copy(update={"anchor": recipe_proposal.propose(
             json.loads(dossier_json(dossier)), dossier.anchor)})
     # WHAT THIS PAGE WAS BUILT FROM — every read up to here, LLM phases included
-    dossier = dossier.model_copy(update={"inputs": page_inputs.for_page(page_inputs.manifest_for(
-        reads.reads(), db_path=cfg.db_path, extraction_version=EXTRACTION_VERSION,
-        facts_base=cfg.data_dir / "facts"))})
+    dossier = dossier.model_copy(update={"inputs": _page_inputs(reads.reads(), cfg)})
     return _write(dossier, llm_log, out_root)
+
+
+def _page_inputs(reads: provenance.Reads, cfg: Config) -> page_inputs.InputManifest:
+    """The page's input record (`page_inputs.for_page`). BUILT AFTER EVERY PAID PHASE, so a record
+    that cannot be built is a record saying so — never a refused build (review round 2)."""
+    try:
+        return page_inputs.for_page(page_inputs.manifest_for(
+            reads, db_path=cfg.db_path, extraction_version=EXTRACTION_VERSION,
+            facts_base=cfg.data_dir / "facts"))
+    except Exception as exc:  # noqa: BLE001 — said in the record, never a lost build
+        return page_inputs.InputManifest(
+            recorded="build", extraction_version=EXTRACTION_VERSION, covers=[],
+            not_covered=list(page_inputs.NOT_COVERED),
+            unrecorded=[page_inputs.Unrecorded(
+                input="all", why=f"the record could not be built ({type(exc).__name__})")])
 
 
 def assemble_cohort(
@@ -1463,7 +1469,11 @@ def assemble_cohort(
                                             facts_base=cfg.data_dir / "facts")
         except Exception as exc:  # noqa: BLE001 — said in the line and the errors, never fatal
             unbuilt = f"{type(exc).__name__}: {exc}"
-            lost_inputs = f"{ticker}: input record NOT built ({unbuilt})"
+            # ITS OWN ERROR, and the build's outcome stands: a written page is not re-run for
+            # it (the CLI exits 1 on any error, so a reroll keyed on exit status must read this)
+            lost_inputs = (f"{ticker}: input record NOT built ({unbuilt}) — the build's outcome "
+                           f"stands ({'page written' if dossier is not None else 'no page'}); "
+                           "nothing to re-run for it")
             error = f"{error}; {lost_inputs}" if error else lost_inputs
         try:
             log.add(run_metrics.name_record(

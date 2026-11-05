@@ -52,10 +52,11 @@ with no LLM client, which made no call. The phase is the tool name: ``covenant_t
 ``synthesis`` and ``flags`` are ``null`` when nothing was written. An ``error`` longer than 300
 characters says it was cut.
 
-``inputs`` (schema 2, 2026-11-05) is what the build READ (`vinci.dossier.inputs`): the page's own
-``inputs`` block on a written build, and on a refused or failed one everything it read before it
-stopped — so a refusal can be replayed on the inputs that produced it. ``null`` only when the
-record of the reads could not itself be built; the line says so in ``error``.
+``inputs`` (schema 2, 2026-11-05) is what the build READ (`vinci.dossier.inputs`), IN FULL —
+every response listed (``responses_listed: "all"``), where the page carries the list cut to the
+fact layer's sources under the same ``inputs_id``; on a refused or failed build, everything it
+read before it stopped — so a refusal can be replayed on the inputs that produced it. ``null``
+only when the record of the reads could not itself be built; the line says so in ``error``.
 """
 
 from __future__ import annotations

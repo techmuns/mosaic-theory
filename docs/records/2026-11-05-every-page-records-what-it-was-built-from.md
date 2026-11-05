@@ -56,7 +56,7 @@ ONE IDENTITY PER LAYER, each the one that layer already uses. Nothing here is a 
 |---|---|---|
 | a CIQ export | sha256 of the file's bytes, all 64 hex | every page stamp is already its first 10 hex (`ciq_sheets.file_provenance`); the fact layer's slice 4 keys CIQ facts on it |
 | an HTTP response (SEC, Polygon, FINRA) | `response_sha256` = sha256 of the cached text, UTF-8, under `source_url` and `fetched_at` | the fact layer's own rule and field names (`edgar_ingest.CachedResponse.sha256`, a snapshot manifest's `entities[]`): the page's input and a snapshot's entity are one identity |
-| a price series | `rows_sha256` over one canonical JSON line per bar (`[date, open, high, low, close, volume, source]`), oldest first, through `newest_bar` | a store holding more bars later re-hashes the rows through `newest_bar` and compares; a restated or refiled bar changes it |
+| a price series | `rows_sha256` over one canonical JSON line per bar (`[date, open, high, low, close, volume, source]`, prices as floats), oldest first, through `newest_bar` — TAKEN WHEN READ (`provenance.note_series_read`, review round 2) | a store holding more bars later re-hashes the rows through `newest_bar` and compares; a restated or refiled bar changes it. The store is shared across checkouts, so the first draft's re-read after the build could name a bar the build never saw |
 | the record | `inputs_id` = `inputs-<16 hex>` over the identities above only (never names, times or counts) | the shape of the fact layer's `<source>-<16 hex>` snapshot id. Two builds from identical inputs carry one id. **Set only on a COMPLETE record**: a partial record has no identity |
 
 THE SHAPE — one literal example, abridged (a real $0 build's record, `vinci dossier precheck
@@ -84,9 +84,17 @@ THE SHAPE — one literal example, abridged (a real $0 build's record, `vinci do
   page's own stamps).
 - `extraction_version`: the code vintage that wrote THIS record. On a backfill it is not the
   page's assembly vintage.
-- `covers` states the classes recorded. NOT covered, by design: the committed repository files a
-  build reads (`data/graph_coverage.json`, `scenarios/<T>.json`, `data/followed.json`, the screen
-  snapshots, the committed page itself). The commit the page lands in versions them.
+- `covers` states the classes this record IDENTIFIES: all three on a build, only `ciq` on a
+  backfill (review round 2: a backfill listed all three beside empty lists).
+- `not_covered` states, on every record, what a build reads that no record covers
+  (`inputs.NOT_COVERED`), so "complete" means complete within these bounds:
+  - the committed repository files (`data/graph_coverage.json`, `scenarios/<T>.json`,
+    `data/followed.json`, the screen snapshots, the committed page), which the commit the page
+    lands in versions;
+  - the price store's securities rows read through `Store.get_security` (the SIC behind the
+    sector label, the stored name), which are git-ignored and NOT versioned by a commit;
+  - a credential in a URL's path or a POST body (only query values, path parameters and userinfo
+    are redacted).
 - `unrecorded`: every input, or class of inputs, the record cannot identify, each with why. An
   export that could not be hashed is listed here and never given a hash.
 - `sealed_by`: the committed fact-layer snapshots (`data/facts/manifests/`) whose entity carries
@@ -98,7 +106,8 @@ THE SHAPE — one literal example, abridged (a real $0 build's record, `vinci do
 - 14 Polygon reference pages, 11 companyfacts, 2 ticker files;
 - one each of efts, FINRA and submissions.
 
-In full the record is 357,516 bytes, against a 635,125-byte page. So:
+In full the record is 357,516 bytes (GOOGL's first $0 precheck, `--inputs-json`, pydantic's
+`model_dump_json(indent=2)`), against GOOGL's 635,125-byte committed page. So:
 
 - **the assembly-run record carries the record IN FULL.** That is what a refused build leaves
   behind, so a refusal can be replayed on the inputs that produced it;
@@ -117,8 +126,9 @@ The record reuses the fact layer's identities; it does not mint parallel ones
 - **Today the page reads SEC responses through the cache, not the store** (the fact layer is in
   shadow, STATE §5.0 row 44). So a response is recorded by the fact layer's `response_sha256`,
   and `sealed_by` names every committed snapshot that sealed that exact response. On GOOGL's
-  build, 1 of its 11 companyfacts responses is sealed by `edgar-4f3207f4da9fb71a`: NFLX's, read as
-  a comparable. GOOGL's own (CIK 1652044) is NOT. Its cache copy is newer than the one the
+  build, 1 of its 11 companyfacts responses is sealed by `edgar-4f3207f4da9fb71a` (the pages
+  snapshot of 26 entities, GOOGL's among them): the response for NFLX, read as a comparable.
+  GOOGL's own (CIK 1652044) is NOT. Its cache copy is newer than the one the
   snapshot ingested on 2026-10-27, because `EdgarClient.companyfacts` re-reads a copy older than a
   day. **This is the freshness gap the fact-layer slice 2b note names, now visible per page.**
 - **When a page reads the store** (fact layer slice 6), the record gains a `facts` class: the
@@ -140,10 +150,22 @@ Three doors, each the only one for its class:
 - **`CachedHttp.get_text` / `post_json`** — every SEC, Polygon and FINRA response, served from the
   cache or fetched. `grep` for `httpx.`, `urlopen` and `requests.` outside `netcache.py` finds
   only theme intelligence (2026-11-05).
-- **`Store`'s per-name price readers** (`get_price_history`, `close_on`, `close_as_of`,
-  `latest_close`, `last_bar_before`, `bar_dates`, `price_frontier_for`, `bars_on`).
-- **The assembler's CIQ bundle**: `note_bundle`, called as `assemble_one` builds it. Every page
-  reader reads CIQ through that bundle.
+- **`Store`'s per-name price readers.** `get_price_history`, the one every page reader uses,
+  reports the rows it returns, so the series is identified at read time. A read of PART of a series
+  (`close_on`, `close_as_of`, `latest_close`, `last_bar_before`, `bar_dates`,
+  `price_frontier_for`, `bars_on`) is recorded as partial and makes the record incomplete: no page
+  path calls one (searched in `vinci/dossier`, `vinci/edgar` and `vinci/resolver`, 2026-11-05).
+- **The assembler's CIQ bundle** (`inputs.load_bundle`, called as `assemble_one` builds it). It
+  records:
+  - every workbook, the one door every page reader reads CIQ through;
+  - the `AS_OF` sidecar, which sets the comps and estimates as-of;
+  - each unrecognised file, whose NAME moves a caveat;
+  - on a loader refusal, every file in the folder.
+
+**THE EXIT CODE, DECIDED (round 2).** When a written build's run record cannot carry its input
+record, the CLI still exits 1: every error does, and a record that could not be built is one.
+The line says the build's outcome stands ("page written; nothing to re-run for it"), so a reroll
+keyed on the exit status must read the line, not re-run the paid build.
 
 A recorder is context-local and nested. A read reaches the open recorder and every one around it.
 A cohort worker starts with none, so one page's reads never reach another's. Two reads happen
@@ -224,7 +246,9 @@ The largest: `test_forward_layers_basis` (110), `test_forward_multiple_history` 
   committed page's ticker as a token of their parameter id (27 pages, the held one included). 427
   of them skip in run A.
 - **Of those, 324 are the CIQ-dependent per-page invariants the gate exists to run:** 12 functions
-  × 27 pages, every one skipped in CI. They are listed in the table below.
+  × 27 pages, every one skipped in CI. All 12 are in the table below, rows 3 and 5–9 and the row
+  marked 9b. Rows 4 (`ev_bridge`, one test that loops over the pages) and 10
+  (`consensus_rows`, 11 ids) are proposed checks too, but are NOT among the 324.
 - **Loop-style:** 357 further test functions read the committed corpus without a per-page
   parameter. This is a source scan, not a collection: a test function, or a module helper it
   calls, names `dossiers` and globs or loops. The count is a heuristic.
@@ -252,26 +276,34 @@ on disk are not their pages'.
   stamp line gains "· layers refreshed to …". The test asserts the `dossier.md` is unchanged. It
   is a pre-existing defect on main, hidden in CI by the skip. Reported, not changed here.
 
-Run C skips 39 cases that run B ran:
-- 17 are AORT's (the Drive copy holds no AORT folder);
-- 12 are BURL's (its folder was removed);
-- 10 are pins frozen on exports that Drive has replaced (AMZN's pre-2026-10-08 Estimates and the
-  archived ones it holds).
-
-So run C shows 61 CIQ skips in all.
+Of run A's 501 CIQ skips, run B still skips 25 and run C 61. 61 = 25 + 39 − 3:
+- run C skips 39 cases run B ran: 17 are AORT's (the Drive copy holds no AORT folder), 12 are
+  BURL's (its folder was removed), and 10 are pins frozen on exports Drive has replaced (AMZN's
+  pre-2026-10-08 Estimates and the archived ones it holds);
+- run C RUNS 3 cases run B skipped, all passing on Drive's exports:
+  `test_ev_bridge::test_the_refresh_lands_the_layer_only_from_the_pages_own_exports` and SMPL's
+  two `test_fiscal_year_change_marker` cases (`…live_export_reads_every_latest_figure`,
+  `…latest_reads_equal_its_export_with_the_old_calendar_cut_out`).
 
 **HELD NAMES AND THE SUITE (found here, reported, not changed).** The suite parametrizes over
-every committed page, so with a CIQ folder linked it runs CIQ readers on BURL's export:
+every committed page, so with a CIQ folder linked it runs CIQ readers on BURL's export. AT LEAST
+these — *corrected in review round 2: the first draft said "13 cases", which undercounted*:
 
 - 12 per-page CIQ cases;
-- plus `test_ciq_empty_view_and_exhibit_cap::test_the_real_burl_export_is_read_as_empty_not_broken`,
-  which reads BURL's real export by design.
+- `test_ciq_empty_view_and_exhibit_cap::test_the_real_burl_export_is_read_as_empty_not_broken`,
+  which reads BURL's real export by design;
+- every loop-style test that globs `data/dossiers/*` and reads each page's CIQ folder:
+  `test_ev_bridge::test_claims_equal_ciqs_current_figure_on_every_committed_name` is one, and it
+  has no exclusion. Run B stopped at AORT's assertion first; a linked run where AORT passes reads
+  BURL's. Loop-style tests are not counted one by one here.
+
+A per-page parametrization exclusion would therefore NOT cover all of it. The coordinator is
+proposing the suite-wide exclusion to the operator as its own follow-up; it is not built here.
 
 Run B did that before this was noticed: the assembler's copy holds a BURL folder. STATE row 28's
 2026-11-04 measurement, with the Drive folder linked, will have done the same. Run C was stopped
 and re-run on a copy with BURL's folder removed. No page, no LLM call and no extractor output came
-of it, but the standing instruction says never to run an extractor on a held name. **Follow-up:**
-make the held-name exclusion part of the suite's page parametrization, not the operator's memory.
+of it, but the standing instruction says never to run an extractor on a held name.
 
 ## PROPOSED HARD / FLAG — for the operator to rule on (nothing is HARD by this PR)
 
@@ -283,13 +315,14 @@ B's or C's result on the committed corpus.
 |---|---|---|---|---|---|
 | 1 | **the build's inputs are recorded** — no `unrecorded` on a build's record (new) | all | — (backfilled pages are not builds) | **HARD** | a page that cannot say what it read cannot be checked anywhere else; refusing costs one re-run |
 | 2 | **one export per kind on a page** — every block's stamp is the record's export of that kind (new; the "two vintages on one page" class) | all | 0 of 26 backfilled | **HARD** | two exports of one kind on one page is the `forward_multiple_history` refusal's rule, page-wide |
-| 3 | `forward_consensus::spread_sits_on_its_own_trends_figure` | 27 | GOOGL (4.7%) | FLAG | the 2% tolerance is unruled (row 32 (28)); a HARD at an unruled tolerance would be tuning |
+| 3 | `forward_consensus::spread_sits_on_its_own_trends_figure` | 27 | GOOGL (EPS Normalized FY2026, 4.7%) and LLY (Cash From Operations FY2026, 33,690.7 vs 35,514.33, 5.1%), both runs B and C | FLAG | the 2% tolerance is unruled (row 32 (28)); a HARD at an unruled tolerance would be tuning |
 | 4 | `ev_bridge::claims_equal_ciqs_current_figure` | all | AORT | FLAG | the page already states DISAGREES; the remedy is a re-export, not a refusal |
 | 5 | `forward_consensus::revision_counts_are_bounded_by_their_own_block` | 27 | 0 | HARD | a count outside its block is a mis-read, never a judgment |
 | 6 | `forward_multiple_history::every_point_is_its_own_rows_close_cell` and `…every_band_is_the_trailing_bands_own_stat…` | 27 + 27 | 0 | HARD | a point off its own cell is a fabricated number |
 | 7 | `historical_forecast_error::every_observation_is_its_fiscal_year_cells…` and `…identity_holds` | 27 + 27 | 0 | HARD | the same: an observation not its cells is not the export's |
 | 8 | `forward_layers_basis` (ladder string = structured cells; NTM cells are the sheet's; settled columns are quarter-ends; reconciliations are the layer's own means) | 4 × 27 | 0 | HARD for the first two, FLAG for the reconciliations | a string or cell not the sheet's is a parse defect; a reconciliation gap is information |
 | 9 | `horizon_read_block_bounds::every_line_is_its_own_blocks_counts` | 27 | 0 | HARD | a line counted from another block is a mis-read |
+| 9b | `horizon_read_block_bounds::the_fix_moves_only_metrics_whose_block_ended_in_the_wrong_place` | 27 | 0 | — (stays a test) | it pins a past fix's effect against the committed pages, not a property of a page; a build has nothing to check it against |
 | 10 | `consensus_rows::range_check_holds_on_every_resolved_cell` | 11 | 0 | FLAG | a range check is a plausibility bound, set by face validity, not a mis-read |
 | 11 | the price store's freshness against the fleet (`test_store_freshness`) | — | B: 8 names 7–24d | FLAG | stale is said, not refused; the existing 45-day panel ceiling stays the HARD |
 | — | **already HARD in code, unchanged:** `_freshness_check` (45-day panel ceiling, share basis), `_materiality_check`, the uncited-material-figure guard, `_refuse_degraded_drawdown_overwrite`, the filed-tiebreak refusal | | | HARD | ruled earlier; the registry lists them so a reader sees every refusal in one place |
@@ -313,7 +346,9 @@ B's or C's result on the committed corpus.
 6. **G's shared store.** Once the R2 bucket exists (row 32 (30)), a page's inputs are fetched by
    these hashes. A CIQ export's sha256 and a response's `response_sha256` are the keys.
 
-**HOW VERIFIED.** Real runs at $0 on 2026-11-05, every one on this branch. Sources:
+**HOW VERIFIED.** Real runs at $0 on 2026-11-05, every one on this branch. Runs 1–6 were made at
+`f610675f` and earlier, under the round-0 rules, and their ids are not comparable with run 7's: the
+id now hashes distinct responses and its tuples changed (review round 2). Sources:
 - CIQ: the assembler's copy (`mosaic-theory-ta`) for the precheck runs, and a scratch copy of the
   operator's Drive folder (the held names removed) for the cohort build.
 - SEC and Polygon: an APFS clone of the assembler's HTTP cache.
@@ -338,7 +373,8 @@ B's or C's result on the committed corpus.
    - The assembler's copy holds AMZN exports `e10ed62223` / `e5abf9d69d`; the page was built from
      Drive's `1b971fda50` / `796a53f316`.
    - The field comparison reads **0 regressions**: presence did not move.
-   - The INPUTS block reads `ciq: 0 same, 2 changed — changed: estimates, financials/quarterly`.
+   - The INPUTS block reads, abridged to its two lines: `ciq: 0 same, 2 changed, 0 only on the
+     page, 7 only here` and `changed: estimates, financials/quarterly`.
    - 565 responses, 24 price series; 172 s.
 3. **A real `assemble_cohort(…, llm=None)` for GOOGL into a scratch data dir** (its `dossiers/`
    and `snapshots/` copies, never the worktree's).
@@ -351,19 +387,29 @@ B's or C's result on the committed corpus.
        (`fact_layer_sources`) of a digest over 1,077; 15 series; 0 unrecorded.
      - The run record's block: the same, with all 1,077 listed.
      - **The same `inputs_id` and digest on both, and the same id the refused build carried.**
-   - Of the eleven companyfacts responses, one is sealed by `edgar-4f3207f4da9fb71a` (NFLX's, read
-     as a comparable). The other ten, GOOGL's own included, were refetched on 2026-11-05, after the
+   - 1,077 responses here against the precheck's 1,079: the two the precheck reads beyond the
+     build are the 2026-03-30 10-Q's index and document (`…/000165204426000031/`), which its
+     covenant FORECAST fetches as the paid build's covenant phase does; a build with no LLM client
+     skips that phase.
+   - Of the eleven companyfacts responses, one — the response for NFLX, read as a comparable — is
+     sealed by `edgar-4f3207f4da9fb71a`, the 26-entity pages snapshot. The other ten, GOOGL's own included, were refetched on 2026-11-05, after the
      snapshot's 2026-10-27 ingest. That is the fact layer's 2b freshness gap, per page.
 4. **The backfill**: `vinci dossier inputs-backfill --all --exclude BURL` with the four roots
    (assembler's copy + archive, Drive + archive), dry run, then `--write`.
-   - **The stamps.** 26 pages, 50 of 50 stamps resolved: 24 pages × estimates +
-     financials/quarterly; FUBO and TECX estimates only.
+   - **The stamps, as first run.** 26 pages, 50 key stamps resolved. *Corrected in review round
+     2:* that counted only keys ending `sha256`. Four pages also stamp an export inside an anchor
+     input's source string (`CiqBridge.stamp`, `<file> sha <10 hex>`), which the first backfill
+     never read: TECX's quarterly Financials (`dce450e41b`, `anchor.net_debt.source`) and the
+     annual Financials of GOOGL (`482debf275`, `anchor.d_and_a.source`), CNXC (`e96007d828`, the
+     same) and LLY (`0fa91cd481`, `anchor.ltm_fcf.source`). The population was 54 distinct stamps,
+     50 resolved and 4 never attempted; run 7 resolves all 54.
    - **The diff.** 26 `dossier.json` files and their 26 `frontend/dossiers/` mirrors: +2,878 lines,
      0 deleted. No `dossier.md` changed.
    - **Roots.** With the assembler's copy alone, LLY's two stamps resolve nowhere (its pages were
      built from Drive). That is why the four roots are named.
    - **Deterministic.** A fresh backfill of every page as committed at `HEAD` gives the written
-     bytes: 26 of 26 identical. A second `--write` keeps every record.
+     bytes: 26 of 26 identical. (A second `--write` then kept every record; since round 2 it
+     re-backfills a backfill's record, and writes the same bytes.)
    - No page carries two exports of one kind (proposed check 2: 0 of 26).
 5. **Mutation** (`PYTHONDONTWRITEBYTECODE=1`, `__pycache__` cleared, each restored). 10 mutants
    against `tests/test_input_manifest.py`, 10 killed:
@@ -378,7 +424,8 @@ B's or C's result on the committed corpus.
    - the store not recording a series;
    - a series hashed without its `source` column. This one SURVIVED first: a bar whose only change
      is `+refiled:` now changes the identity, pinned.
-6. **The suite**, on this branch's final tree, with run C's environment in this worktree.
+6. **The suite at `f610675f`** (superseded by run 7's), with run C's environment in this
+   worktree.
    - ruff and `mypy --strict` are clean (187 files).
    - `pytest -m "not network"`: 9,214 passed, 112 skipped, **4 failed — run C's 4 on main, none
      new**.
@@ -390,6 +437,27 @@ B's or C's result on the committed corpus.
      - the monitor's import fence (the models now live apart, above);
      - the extraction-version drift pin (the version row, above);
      - the §5.0 owner cell's format.
+7. **Re-run after review round 2** (the code at the round-2 head; CIQ from the scratch Drive copy
+   with the held names removed, cache and store as above).
+   - **The backfill** with the same four roots: 26 pages, 54 of 54 distinct stamps resolved.
+     - CNXC, GOOGL, LLY and TECX gain the export their anchor string stamps.
+     - AMZN, IT, ORKA and UBER gain the string sites that repeat a key stamp.
+     - Every page's block changes form (`covers`, `not_covered`, the sorted `unrecorded`), and only
+       its block: 26/26 pages equal outside it, key order kept.
+     - A fresh backfill reproduces the written bytes, 26/26; each mirror equals its page; BURL's
+       page is untouched.
+     - `--all` without `--exclude` is refused.
+   - **`precheck --ticker GOOGL`, twice.** Both runs: 0 regressions, 0 post-spend refusals, 11 CIQ
+     exports, 1,079 responses, 15 price series — and **both `inputs-a35469e571d905aa`**. The
+     census now reads `482debf275 ×1 (on disk); 9a120cb5ae ×3 (on disk); f494e7869b ×8 (on
+     disk)`, and `ciq: 3 same` against the corrected record.
+   - **Mutation.** The reviewer's eight survivors and this round's nine fixes, 17 mutants against
+     `tests/test_input_manifest.py` on the corrected corpus: 17 killed, each by its own pin.
+   - **Fails first.** The round-2 test file, run against `ed20e835`: every test of a fixed
+     behaviour fails there. The pins written for the reviewer's surviving mutants pass there,
+     because the behaviour they pin already worked: the backfill's pre-write refusal, the
+     finalist's and the resolver's reads, and two redaction shapes.
+   - **The gate**: ⟨GATE-R2⟩.
 
 **BOUNDARY.**
 - Commit: every count is on main `097098f9` or this branch on top of it, 2026-11-05.
@@ -407,7 +475,8 @@ B's or C's result on the committed corpus.
   `data/snapshots/assembly_runs/`. Accepted while G's shared store does not exist.
   *Falsifier:* the directory passing 50 MB, the fact layer's stopgap line. Then the full lists
   move to R2 under their `inputs_id` and the run record keeps the digest.
-- **A page grows by its block**: 1.3–2.0 KB backfilled, about 10 KB built (GOOGL).
+- **A page grows by its block**: 1,876–2,909 bytes backfilled (26 pages, the block's bytes in
+  the committed file, after round 2; 1.8–2.8 KiB), about 10 KB built (GOOGL's cohort build).
 - **Hashing cost**: every response text read is hashed once per fetched copy (GOOGL: 51.6 MB of
   text), and every series' rows once. Not measured apart from the build: the precheck took 111 s
   with it, against no baseline taken without it.
@@ -415,11 +484,13 @@ B's or C's result on the committed corpus.
   FLAG lines.
 - **Accepted: a backfilled page's record is partial by construction.** `responses` and `prices`
   are `unrecorded` on all 26, and so is every export the page never stamped (comps, transcripts,
-  annual financials, capital structure). Only a re-assembly records them.
+  capital structure, and the annual Financials except on CNXC, GOOGL and LLY, whose anchors stamp
+  it). Only a re-assembly records them.
 - **Accepted: refresh writers do not yet record their reads** (slice 5). A page a layer refresh
   moves still names only its build's inputs.
 - **Found and reported, not changed (scope):**
-  - the suite's page parametrization includes the held page (above);
+  - the suite reads the held page's export when a CIQ folder is linked (above; the coordinator
+    is taking it to the operator);
   - `compare` keys a series by `newest_bar` and `rows_sha256`, so the precheck reads a store that
     only appended bars as "changed". Slice 3's `checkable` re-hashes through the recorded
     `newest_bar` instead.
@@ -432,3 +503,9 @@ B's or C's result on the committed corpus.
     refusing a build after its paid phases.
   - An unhashable export's reason carries no local path.
   - The `stamps` docstring now states its 10-hex rule.
+- **Review round 2** (the coordinator's review of `ed20e835`, the last round): 19 items. Each has
+  a row in the PR's dispositions table. Two are DEFERRED, and they are in STATE row 48's open list:
+  - no test runs a REAL build's record end to end. It needs the licensed exports, so it is slice
+    3's `not_checkable`; the real runs above stand in for it;
+  - `Store.get_security`'s rows are not recorded. They are named in `not_covered` instead of being
+    hooked as a fourth class.

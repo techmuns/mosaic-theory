@@ -13,7 +13,10 @@ THREE ENTRY POINTS, EACH THE ONLY DOOR FOR ITS CLASS:
 - :class:`vinci.netcache.CachedHttp` — every SEC, Polygon and FINRA response, served from the cache
   or fetched (no other module in `vinci/` opens an HTTP connection: `grep` for `httpx.`,
   `urlopen`, `requests.` outside `netcache.py` finds only theme intelligence, 2026-11-05);
-- :class:`vinci.store.store.Store` — every per-name price read, by internal id;
+- :class:`vinci.store.store.Store` — every per-name price read. A whole-history read
+  (`Store.get_price_history`, the one every page reader uses) is identified AT READ TIME by its
+  rows (:func:`series_rows_sha256`), never by re-reading a store another checkout may be writing;
+  a read of part of a series (one close, the dates) is recorded as partial, identifying nothing;
 - the assembler's CIQ bundle — every export the page's readers read
   (`vinci.dossier.inputs.note_bundle`).
 
@@ -32,6 +35,7 @@ from __future__ import annotations
 
 import functools
 import hashlib
+import json
 import re
 import threading
 from collections.abc import Callable, Iterable, Iterator
@@ -40,32 +44,49 @@ from contextvars import ContextVar
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import ParamSpec, TypeVar
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from urllib.parse import unquote, urlsplit, urlunsplit
 
 _P = ParamSpec("_P")
 _R = TypeVar("_R")
 
-#: A query parameter whose VALUE is never recorded. Every client in this repo sends its key in a
-#: header (`eod/client.py`, `eod/tiingo.py`), so none matches today; a URL that ever carries one is
-#: still recorded, with the value replaced — the record is committed to a public repository.
-_SECRET_PARAM = re.compile(r"key|token|secret|password|signature|credential", re.I)
+#: A query parameter whose VALUE is never recorded: the whole name, or its last ``_ - .``-separated
+#: part, is a credential word (``apiKey``, ``x-api-key``, ``access_token``, ``sig``, ``auth`` —
+#: never ``keyword`` or ``monkey``). Every client in this repo sends its key in a header
+#: (`eod/client.py`, `eod/tiingo.py`), so none matches today; a URL that ever carries one is still
+#: recorded, with the value replaced — the record is committed to a public repository.
+_SECRET_NAME = re.compile(
+    r"(?:^|[_\-.])(?:api[_\-]?key|key|(?:access[_\-]?)?token|secret|pass(?:word|wd)?|pwd"
+    r"|signature|sig|auth(?:orization)?|credentials?)$", re.I)
+_QUERY_SEP = re.compile(r"([&;])")
+_PATH_PARAM = re.compile(r";(?P<name>[^;=/]+)=(?P<value>[^;/]*)")
 REDACTED = "REDACTED"
 
 
 def redact_url(url: str) -> str:
-    """``url`` with the value of every secret-shaped query parameter replaced by ``REDACTED``.
+    """``url`` with every secret-shaped query value, and any userinfo (``user:pass@``), replaced by
+    ``REDACTED`` — and EVERY OTHER BYTE AS IT WAS, so a redacted URL still matches its cache key and
+    the fact layer's ``source_url`` (review round 2: re-encoding the query moved ``%20`` to ``+``).
 
-    A POST cache key (``<url>\\n#POST#<body>``, `CachedHttp.post_json`) keeps its body as it is:
-    the bodies sent are query filters (FINRA's), never credentials."""
+    NOT covered, stated: a key embedded in the path, and a POST body (``<url>\\n#POST#<body>``,
+    `CachedHttp.post_json`), kept as it is — the bodies sent are FINRA's query filters."""
     head, sep, body = url.partition("\n")
     parts = urlsplit(head)
-    if not parts.query:
+    netloc = parts.netloc
+    if "@" in netloc:
+        netloc = f"{REDACTED}@{netloc.rsplit('@', 1)[1]}"
+    pieces = _QUERY_SEP.split(parts.query) if parts.query else []
+    for i in range(0, len(pieces), 2):
+        name, eq, _value = pieces[i].partition("=")
+        if _SECRET_NAME.search(unquote(name)):
+            pieces[i] = f"{name}{eq or '='}{REDACTED}"
+    query = "".join(pieces)
+    # a path parameter (``/a;apiKey=…``) is a query in all but position
+    path = _PATH_PARAM.sub(
+        lambda m: f";{m['name']}={REDACTED}" if _SECRET_NAME.search(unquote(m["name"]))
+        else m[0], parts.path)
+    if netloc == parts.netloc and query == parts.query and path == parts.path:
         return url
-    pairs = parse_qsl(parts.query, keep_blank_values=True)
-    if not any(_SECRET_PARAM.search(k) for k, _ in pairs):
-        return url
-    query = urlencode([(k, REDACTED if _SECRET_PARAM.search(k) else v) for k, v in pairs])
-    return urlunsplit(parts._replace(query=query)) + sep + body
+    return urlunsplit(parts._replace(netloc=netloc, path=path, query=query)) + sep + body
 
 
 def text_sha256(text: str) -> str:
@@ -111,14 +132,46 @@ class FileRead:
     error: str | None = None
 
 
+#: How a whole-history price read is identified (`series_rows_sha256`): its rows' columns, in
+#: order, each bar one canonical JSON line.
+PriceRow = tuple[str, float, float, float, float, float, str]
+
+
+def series_rows_sha256(rows: Iterable[PriceRow]) -> str:
+    """THE ONE RULE for a price series' identity: sha256 over one canonical JSON line per bar
+    (``[date, open, high, low, close, volume, source]``), oldest first. A store that later holds
+    more bars re-hashes its rows through the recorded newest bar and compares; a restated or
+    refiled bar (its ``source`` gains ``+restated`` / ``+refiled:``) is another identity."""
+    digest = hashlib.sha256()
+    for d, o, h, lo, c, v, src in sorted(rows, key=lambda r: r[0]):
+        # every price column as a float, so the store's raw row (an integral volume) and the
+        # `PriceBar` it becomes hash alike
+        line = [str(d), float(o), float(h), float(lo), float(c), float(v), str(src)]
+        digest.update(json.dumps(line, separators=(",", ":")).encode("utf-8") + b"\n")
+    return digest.hexdigest()
+
+
+@dataclass(frozen=True)
+class SeriesRead:
+    """One price read: by which `Store` method, and — for a whole-history read only — what it
+    returned, identified at read time. A partial read (``rows_sha256`` None) identifies nothing."""
+
+    internal_id: str
+    via: str
+    bars: int | None = None
+    first_bar: str | None = None
+    newest_bar: str | None = None
+    rows_sha256: str | None = None
+
+
 @dataclass(frozen=True)
 class Reads:
     """A frozen set of reads, mergeable with ``|``."""
 
     http: frozenset[HttpRead] = frozenset()
     files: frozenset[FileRead] = frozenset()
-    #: internal ids whose price history was read from the store
-    series: frozenset[str] = frozenset()
+    #: every price read from the store (`SeriesRead`)
+    series: frozenset[SeriesRead] = frozenset()
 
     def __or__(self, other: Reads | None) -> Reads:
         if other is None:
@@ -138,7 +191,7 @@ class InputRecorder:
     _http: dict[tuple[str, str, float | None, str], HttpRead] = field(default_factory=dict)
     _seen: set[tuple[str, str, float | None]] = field(default_factory=set)
     _files: set[FileRead] = field(default_factory=set)
-    _series: set[str] = field(default_factory=set)
+    _series: set[SeriesRead] = field(default_factory=set)
     _lock: threading.Lock = field(default_factory=threading.Lock)
 
     def _chain(self) -> Iterator[InputRecorder]:
@@ -167,10 +220,10 @@ class InputRecorder:
             with node._lock:
                 node._files.add(read)
 
-    def add_series(self, internal_id: str) -> None:
+    def add_series(self, read: SeriesRead) -> None:
         for node in self._chain():
             with node._lock:
-                node._series.add(internal_id)
+                node._series.add(read)
 
     def add_reads(self, reads: Reads | None) -> None:
         """Fold reads made elsewhere (a finalist built before this build, a resolver index loaded
@@ -234,13 +287,28 @@ def note_http(namespace: str, url: str, text: str, fetched_at: float | None) -> 
         rec.add_http(namespace, url, text, fetched_at)
 
 
-def note_series(internal_ids: str | Iterable[str]) -> None:
-    """Called by `Store` for every per-name price read. Nothing happens with no recorder."""
+def note_series(internal_ids: str | Iterable[str], *, via: str) -> None:
+    """Called by `Store` for a read of PART of a series (one close, the dates, a session's bars):
+    recorded as partial, identifying nothing. Nothing happens with no recorder."""
     rec = _ACTIVE.get()
     if rec is None:
         return
     for iid in ([internal_ids] if isinstance(internal_ids, str) else internal_ids):
-        rec.add_series(iid)
+        rec.add_series(SeriesRead(iid, via))
+
+
+def note_series_read(internal_id: str, rows: list[PriceRow], *, via: str) -> None:
+    """Called by `Store.get_price_history` with the rows it is about to return: the read is
+    identified by them, at read time (`series_rows_sha256`). Nothing is hashed with no recorder."""
+    rec = _ACTIVE.get()
+    if rec is None:
+        return
+    ordered = sorted(rows, key=lambda r: r[0])
+    rec.add_series(SeriesRead(
+        internal_id, via, bars=len(ordered),
+        first_bar=ordered[0][0] if ordered else None,
+        newest_bar=ordered[-1][0] if ordered else None,
+        rows_sha256=series_rows_sha256(ordered) if ordered else None))
 
 
 def note_file(role: str, path: Path, *, kind: str | None = None,

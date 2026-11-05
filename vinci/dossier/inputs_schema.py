@@ -85,7 +85,11 @@ class InputManifest(BaseModel):
     recorded: Literal["build", "backfill"]
     #: the code vintage that wrote this record (on a backfill, NOT the page's assembly vintage)
     extraction_version: str
+    #: the input classes this record identifies: all three on a build, ``ciq`` on a backfill
     covers: list[str]
+    #: what a build reads that no record covers (`inputs.NOT_COVERED`): a complete record is
+    #: complete within these bounds. Empty on a record written before the field (none committed)
+    not_covered: list[str] = []
     #: ``inputs-<16 hex>`` over the recorded identities; None unless the record is complete
     inputs_id: str | None = None
     ciq: list[CiqExport] = []

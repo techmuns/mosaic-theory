@@ -70,9 +70,19 @@ if TYPE_CHECKING:
     from vinci.store.store import Store
 
 SCHEMA_VERSION = 1
-#: The input classes this schema version records. Anything a build reads outside them is named in
-#: the module docstring, never silently implied to be covered.
+#: The input classes a BUILD's record covers. A backfill covers only ``ciq`` (`backfill`).
 COVERS = ("ciq", "responses", "prices")
+#: What a build reads that NO record covers, stated on every record (``not_covered``) so a
+#: complete record is complete only within these bounds (review round 2).
+NOT_COVERED = (
+    "committed repository files: data/graph_coverage.json, scenarios/<T>.json, "
+    "data/followed.json, the screen snapshots and the committed page itself — versioned by the "
+    "commit the page lands in",
+    "the price store's securities rows read through Store.get_security (the SIC behind the "
+    "sector label, the stored name)",
+    "a credential embedded in a URL's path or a POST body: only query values and userinfo are "
+    "redacted (`provenance.redact_url`); no client in this repository sends either",
+)
 _ID_PREFIX = "inputs-"
 #: A page's CIQ export stamp: the first 10 hex of the file's sha256 (`ciq_sheets.file_provenance`).
 #: Any other hash a page carries is no export stamp.
@@ -82,29 +92,45 @@ _STAMP = re.compile(r"[0-9a-f]{10}")
 # --- recording -------------------------------------------------------------------------------
 
 
-def note_bundle(bundle: CiqBundle) -> None:
-    """Record every export ``bundle`` holds as read (`provenance.note_file`). The bundle is the
-    one door the page's CIQ readers read through, so its workbooks ARE the CIQ inputs."""
+#: The operator's attested export date, read from the CIQ folder (`ciq_sheets._sidecar_as_of`).
+AS_OF_SIDECAR = "AS_OF"
+
+
+def load_bundle(ticker: str, files: list[Path]) -> CiqBundle:
+    """THE BUILD'S CIQ BUNDLE, every file it reads recorded (`provenance.note_file`):
+
+    - each workbook the bundle holds — the one door every page reader reads CIQ through;
+    - the ``AS_OF`` sidecar beside them, which sets the comps and estimates as-of;
+    - each file no workbook kind matches: only its NAME is read, and it moves a caveat;
+    - and, when the LOADER refuses the folder (two exports of a kind, a mislabelled export),
+      every file in it, kind unread, before the refusal propagates."""
+    from vinci.dossier.ciq import CiqBundle
+
+    shown = [p for p in files if not p.name.startswith((".", "~$"))]
+    try:
+        bundle = CiqBundle.from_files(ticker, files)
+    except Exception:
+        for p in shown:
+            provenance.note_file("ciq", p)
+        raise
     for wb in bundle.workbooks:
         provenance.note_file("ciq", wb.path, kind=wb.kind, freq=wb.freq)
-
-
-def note_files(paths: Iterable[Path]) -> None:
-    """Record CIQ files the loader read but refused to build a bundle from, kind unread."""
-    for p in paths:
-        if not p.name.startswith((".", "~$")):
-            provenance.note_file("ciq", p)
+    for folder in sorted({wb.path.parent for wb in bundle.workbooks}):
+        if (folder / AS_OF_SIDECAR).is_file():
+            provenance.note_file("ciq", folder / AS_OF_SIDECAR, kind="as_of_sidecar")
+    unread = set(bundle.unrecognised) - {AS_OF_SIDECAR}   # the sidecar is recorded as such
+    for p in shown:
+        if p.name in unread:
+            provenance.note_file("ciq", p, kind="unrecognised")
+    return bundle
 
 
 def series_rows_sha256(bars: Sequence[PriceBar]) -> str:
-    """THE ONE RULE for a series' identity: sha256 over one canonical JSON line per bar
-    (``[date, open, high, low, close, volume, source]``), oldest first. A store that later holds
-    more bars re-hashes the rows through the recorded newest bar and compares."""
-    digest = hashlib.sha256()
-    for b in sorted(bars, key=lambda b: b.bar_date):
-        row = [b.bar_date.isoformat(), b.open, b.high, b.low, b.close, b.volume, b.source]
-        digest.update(json.dumps(row, separators=(",", ":")).encode("utf-8") + b"\n")
-    return digest.hexdigest()
+    """`provenance.series_rows_sha256` over `PriceBar` rows — the one rule, for a reader holding
+    bars rather than the store's raw rows (they hash alike)."""
+    return provenance.series_rows_sha256(
+        (b.bar_date.isoformat(), b.open, b.high, b.low, b.close, b.volume, b.source)
+        for b in bars)
 
 
 def _iso(ts: float | None) -> str | None:
@@ -121,8 +147,12 @@ def _sealed_index(manifests_dir: str, stamp: tuple[tuple[str, float], ...]
     out: dict[str, set[str]] = {}
     for name, _ in stamp:
         body = json.loads((Path(manifests_dir) / name).read_text())
+        if not isinstance(body, dict) or not isinstance(body.get("entities") or [], list):
+            raise ValueError(f"{name}: not a snapshot manifest")
         sid = str(body.get("snapshot_id"))
         for ent in body.get("entities") or []:
+            if not isinstance(ent, dict):
+                raise ValueError(f"{name}: an entity is not an object")
             if sha := ent.get("response_sha256"):
                 out.setdefault(str(sha), set()).add(sid)
     return {k: tuple(sorted(v)) for k, v in out.items()}
@@ -167,25 +197,33 @@ def _ciq(files: Iterable[provenance.FileRead]) -> tuple[list[CiqExport], list[Un
     return sorted(exports.values(), key=lambda e: (e.kind, e.freq or "", e.file)), missing
 
 
-def price_series(store: Store, internal_ids: Iterable[str]
+def price_series(reads: Iterable[provenance.SeriesRead], *, store: Store | None
                  ) -> tuple[list[PriceSeries], list[Unrecorded]]:
-    """Each series' identity as the store holds it now — read right after the build, from the
-    store it read (no build writes the price store)."""
+    """Each price read as IDENTIFIED WHEN IT WAS READ (`provenance.note_series_read`), never by
+    re-reading the store: it is shared across checkouts, so a later read could name a bar the
+    build never saw (review round 2). A partial read (one close, the dates) identifies nothing and
+    is ``unrecorded``. Two whole reads of one series that differ are both kept. ``ticker`` is a
+    LABEL looked up in ``store`` as the record is written, and is no part of any identity."""
     out: list[PriceSeries] = []
     missing: list[Unrecorded] = []
-    for iid in sorted(set(internal_ids)):
-        try:
-            bars = store.get_price_history(iid)
-            sec = store.get_security(iid)
-        except Exception as exc:  # noqa: BLE001 — an unreadable series is recorded as such
-            missing.append(Unrecorded(input=f"prices:{iid}",
-                                      why=f"the store could not be read ({type(exc).__name__})"))
+    labels: dict[str, str | None] = {}
+    for r in sorted(reads, key=lambda r: (r.internal_id, r.via, r.newest_bar or "",
+                                          r.rows_sha256 or "")):
+        if r.bars is None:
+            missing.append(Unrecorded(
+                input=f"prices:{r.internal_id}",
+                why=f"read through Store.{r.via}, which reads part of the series and records "
+                    "no rows"))
             continue
+        if r.internal_id not in labels:
+            try:
+                sec = store.get_security(r.internal_id) if store is not None else None
+            except Exception:  # noqa: BLE001 — a label, never an identity
+                sec = None
+            labels[r.internal_id] = sec.ticker if sec is not None else None
         out.append(PriceSeries(
-            internal_id=iid, ticker=sec.ticker if sec is not None else None, bars=len(bars),
-            first_bar=bars[0].bar_date if bars else None,
-            newest_bar=bars[-1].bar_date if bars else None,
-            rows_sha256=series_rows_sha256(bars) if bars else None))
+            internal_id=r.internal_id, ticker=labels[r.internal_id], bars=r.bars,
+            first_bar=r.first_bar, newest_bar=r.newest_bar, rows_sha256=r.rows_sha256))
     return out, missing
 
 
@@ -198,13 +236,22 @@ def is_fact_source(r: Response) -> bool:
     return r.namespace == "sec" and FACT_SOURCE in r.source_url
 
 
+def _identities(responses: Iterable[Response]) -> set[tuple[str, str, str]]:
+    """Each DISTINCT response a build read: (namespace, URL, body sha256). A copy re-fetched with
+    the same bytes is the same input, so it moves neither the digest nor the id (review round 2)."""
+    return {(r.namespace, r.source_url, r.response_sha256) for r in responses}
+
+
 def responses_digest(responses: Sequence[Response]) -> ResponsesDigest:
-    lines = sorted(f"{r.namespace} {r.source_url} {r.response_sha256}" for r in responses)
+    """Count and hash of the DISTINCT responses (`_identities`), whatever fetched copies the list
+    holds."""
+    ids = _identities(responses)
+    lines = sorted(" ".join(i) for i in ids)
     counts: dict[str, int] = {}
-    for r in responses:
-        counts[r.namespace] = counts.get(r.namespace, 0) + 1
+    for ns, _, _ in ids:
+        counts[ns] = counts.get(ns, 0) + 1
     return ResponsesDigest(
-        count=len(responses), by_namespace=dict(sorted(counts.items())),
+        count=len(ids), by_namespace=dict(sorted(counts.items())),
         sha256=hashlib.sha256("\n".join(lines).encode("utf-8")).hexdigest())
 
 
@@ -221,40 +268,39 @@ def for_page(full: InputManifest) -> InputManifest:
 def inputs_id_for(ciq: Sequence[CiqExport], responses: Sequence[Response],
                   prices: Sequence[PriceSeries]) -> str:
     """``inputs-<16 hex>`` over the identities only — never names, times or counts."""
-    body = {"ciq": sorted([e.kind, e.freq, e.sha256] for e in ciq),
-            "responses": sorted([r.namespace, r.source_url, r.response_sha256]
-                                for r in responses),
-            "prices": sorted([p.internal_id, p.newest_bar.isoformat() if p.newest_bar else None,
-                              p.rows_sha256] for p in prices)}
+    # every sort key a string: a kind read with no period type beside one with a period type
+    # (`…Financials_Quarterly` beside an unread one) must not raise after the paid phases
+    body = {"ciq": sorted({(e.kind, e.freq or "", e.sha256) for e in ciq}),
+            "responses": sorted(_identities(responses)),
+            "prices": sorted({(p.internal_id, p.newest_bar.isoformat() if p.newest_bar else "",
+                               p.rows_sha256 or "") for p in prices})}
     canon = json.dumps(body, sort_keys=True, separators=(",", ":"), default=str)
     return _ID_PREFIX + hashlib.sha256(canon.encode("utf-8")).hexdigest()[:16]
 
 
 def from_reads(reads: provenance.Reads, *, store: Store | None, extraction_version: str,
                facts_base: Path | None = None) -> InputManifest:
-    """The build's manifest from what its recorder saw. ``store`` None (it could not be opened):
-    every series it read is ``unrecorded``."""
+    """The build's manifest from what its recorder saw. ``store`` only labels a series with its
+    ticker (None: unlabelled); every identity was taken when it was read."""
     ciq, missing = _ciq(reads.files)
     # BUILT AFTER EVERY PAID PHASE, so a lookup that cannot read the fact layer's manifests is
     # said in the record, never a refused build
     try:
         sealed = sealed_index(facts_base)
-    except (OSError, ValueError) as exc:
+    except (OSError, ValueError, TypeError, AttributeError, KeyError) as exc:
         sealed = {}
         missing.append(Unrecorded(
             input="responses:sealed_by",
             why=f"the fact layer's snapshot manifests could not be read ({type(exc).__name__}), "
                 "so no response names the snapshot that sealed it"))
     responses = _responses(reads.http, sealed)
-    if store is None:
-        prices: list[PriceSeries] = []
-        missing += [Unrecorded(input=f"prices:{iid}", why="the price store could not be opened")
-                    for iid in sorted(reads.series)]
-    else:
-        prices, gone = price_series(store, reads.series)
-        missing += gone
+    prices, gone = price_series(reads.series, store=store)
+    missing += gone
+    # SORTED: set iteration order follows PYTHONHASHSEED, and a record's bytes may not
+    missing = sorted(missing, key=lambda u: (u.input, u.why))
     return InputManifest(
         recorded="build", extraction_version=extraction_version, covers=list(COVERS),
+        not_covered=list(NOT_COVERED),
         inputs_id=None if missing else inputs_id_for(ciq, responses, prices),
         ciq=ciq, responses=responses, responses_digest=responses_digest(responses),
         prices=prices, unrecorded=missing)
@@ -262,9 +308,9 @@ def from_reads(reads: provenance.Reads, *, store: Store | None, extraction_versi
 
 def manifest_for(reads: provenance.Reads, *, db_path: Path, extraction_version: str,
                  facts_base: Path | None = None) -> InputManifest:
-    """`from_reads` with the store opened here and closed again; an unopenable store makes the
-    series unrecorded rather than failing the build. ``facts_base``: the build's
-    ``<data_dir>/facts``, where the fact layer's manifests are read from."""
+    """`from_reads` with the store opened here for the series' ticker labels, and closed
+    again. ``facts_base``: the build's ``<data_dir>/facts``, where the fact layer's manifests are
+    read from."""
     from vinci.store.store import Store
 
     try:
@@ -295,9 +341,16 @@ UNRECORDED_UNSTAMPED_CIQ = (
 
 
 def stamps(doc: Mapping[str, Any]) -> dict[str, list[str]]:
-    """``{10-hex stamp: [page sites]}`` for every key ending ``sha256`` whose value is a 10-hex
-    stamp (`_STAMP`; any other hash a page carries is no export stamp), outside the page's own
-    ``inputs`` block, the site a dotted path with list positions dropped."""
+    """``{10-hex stamp: [page sites]}`` for EVERY export stamp a page carries, outside its own
+    ``inputs`` block, the site a dotted path with list positions dropped:
+
+    - a key ending ``sha256`` whose value is a 10-hex stamp (`_STAMP`; any other hash a page
+      carries is no export stamp);
+    - a stamp written into a string — an anchor input's ``source``, the bridge's claims source —
+      read through the ONE shared reader, `ciq_balance.stamps_in_text` (review round 2: four
+      pages' anchors named exports no key stamped, and the backfill never saw them)."""
+    from vinci.dossier.ciq_balance import stamps_in_text
+
     out: dict[str, set[str]] = {}
 
     def walk(node: Any, path: str) -> None:
@@ -312,6 +365,9 @@ def stamps(doc: Mapping[str, Any]) -> dict[str, list[str]]:
         elif isinstance(node, list):
             for child in node:
                 walk(child, path)
+        elif isinstance(node, str):
+            for stamp in stamps_in_text(node):
+                out.setdefault(stamp, set()).add(path)
 
     walk({k: v for k, v in doc.items() if k != "inputs"}, "")
     return {k: sorted(v) for k, v in out.items()}
@@ -369,12 +425,18 @@ def backfill(doc: Mapping[str, Any], *, ticker: str, roots: Sequence[Path],
     Each 10-hex stamp becomes a full sha256 only when exactly one distinct file on this machine
     hashes to it (a chance match is 1 in 16^10 per file); a stamp no file matches, and every
     class the page never stamped, is ``unrecorded`` with its reason. DETERMINISTIC: the same
-    page and the same files give the same record, byte for byte (no clock is read)."""
+    page and the same files give the same record, byte for byte — no clock is read, a file held
+    under several names is named by the least of them, and no reason counts what was searched.
+    It ``covers`` only ``ciq``: responses and prices are no class it records."""
     found = candidates(ticker, roots)
     ciq: list[CiqExport] = []
     missing: list[Unrecorded] = []
     for stamp, sites in sorted(stamps(doc).items()):
-        hits = {c.sha256: c for c in found if c.sha256.startswith(stamp)}
+        hits: dict[str, Candidate] = {}
+        for c in found:
+            if c.sha256.startswith(stamp) and (
+                    c.sha256 not in hits or c.path.name < hits[c.sha256].path.name):
+                hits[c.sha256] = c
         if len(hits) == 1:
             c = next(iter(hits.values()))
             kind, freq = _classify(ticker, c.path)
@@ -383,8 +445,7 @@ def backfill(doc: Mapping[str, Any], *, ticker: str, roots: Sequence[Path],
         elif not hits:
             missing.append(Unrecorded(
                 input=f"ciq:{stamp}",
-                why=(f"stamped at {', '.join(sites)}; no file on this machine hashes to it "
-                     f"({len(found)} file(s) under {len(roots)} root(s) searched)")))
+                why=f"stamped at {', '.join(sites)}; no file on this machine hashes to it"))
         else:
             missing.append(Unrecorded(
                 input=f"ciq:{stamp}",
@@ -399,9 +460,10 @@ def backfill(doc: Mapping[str, Any], *, ticker: str, roots: Sequence[Path],
              f"(price_store.frontier = {frontier}), not which series it read"
              if frontier else "the page records no price store")))
     return InputManifest(
-        recorded="backfill", extraction_version=extraction_version, covers=list(COVERS),
-        inputs_id=None, ciq=sorted(ciq, key=lambda e: (e.kind, e.freq or "", e.file)),
-        unrecorded=missing)
+        recorded="backfill", extraction_version=extraction_version, covers=["ciq"],
+        not_covered=list(NOT_COVERED), inputs_id=None,
+        ciq=sorted(ciq, key=lambda e: (e.kind, e.freq or "", e.file)),
+        unrecorded=sorted(missing, key=lambda u: (u.input, u.why)))
 
 
 # --- recorded against present ------------------------------------------------------------------

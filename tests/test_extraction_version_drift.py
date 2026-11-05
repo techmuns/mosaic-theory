@@ -87,11 +87,11 @@ PINNED_AT = "2026-11-05.input-record"
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
-    "vinci/dossier/assemble.py": "cffb237e12d8",
+    "vinci/dossier/assemble.py": "38ad94ab116c",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "ba165ad2af55",
     "vinci/dossier/ciq.py": "6a636c11c2f3",
-    "vinci/dossier/ciq_balance.py": "68c97913bf6e",
+    "vinci/dossier/ciq_balance.py": "7bf163fd7abe",
     "vinci/dossier/ciq_sheets.py": "206db59412fc",
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
@@ -104,9 +104,9 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/filed_tiebreak.py": "b1b860e14190",
     "vinci/dossier/flags.py": "8b849e6eac83",
     "vinci/dossier/freshness.py": "e5852b313d22",
-    "vinci/dossier/inputs.py": "645401231905",
-    "vinci/dossier/inputs_backfill.py": "60f26c688028",
-    "vinci/dossier/inputs_schema.py": "254501add3ed",
+    "vinci/dossier/inputs.py": "fcda11ef218f",
+    "vinci/dossier/inputs_backfill.py": "03c3c6f8c540",
+    "vinci/dossier/inputs_schema.py": "6f7d41f25223",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
     "vinci/dossier/lease_basis.py": "a93d880597ba",
     "vinci/dossier/ltm_quarters.py": "976073b15fc6",
@@ -138,6 +138,7 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/submissions.py": "6644355e5c3f",
     "vinci/eod/features.py": "8d23c6080234",
     "vinci/finra.py": "5787c9793b1b",
+    "vinci/provenance.py": "b61b841aa7b2",
     "vinci/verbatim.py": "cb75bef0a20e",
 }
 
@@ -156,7 +157,10 @@ NOT_EXTRACTION: dict[str, str] = {
 }
 
 #: Watched beyond the two classified packages.
-EXTRA_WATCHED = ("vinci/verbatim.py", "vinci/finra.py", "vinci/eod/features.py")
+#: `vinci/provenance.py` (2026-11-05, review round 2): its hashing and redaction set values in every
+#: page's `inputs` block.
+EXTRA_WATCHED = ("vinci/verbatim.py", "vinci/finra.py", "vinci/eod/features.py",
+                 "vinci/provenance.py")
 CLASSIFIED_PACKAGES = ("vinci/dossier", "vinci/edgar")
 
 

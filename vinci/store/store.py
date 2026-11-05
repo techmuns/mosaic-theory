@@ -392,10 +392,15 @@ class Store:
         return n
 
     def get_price_history(self, internal_id: str) -> list[PriceBar]:
-        provenance.note_series(internal_id)  # a price read is a build input (`vinci.provenance`)
         rows = self._conn.execute(
             "SELECT * FROM prices WHERE internal_id = ? ORDER BY bar_date", (internal_id,)
         ).fetchall()
+        # A PRICE READ IS A BUILD INPUT, identified by the rows it returned, AT READ TIME
+        # (`vinci.provenance`): the store is shared across checkouts, so a later re-read could name
+        # bars this read never saw
+        provenance.note_series_read(internal_id, [
+            (r["bar_date"], r["open"], r["high"], r["low"], r["close"], r["volume"], r["source"])
+            for r in rows], via="get_price_history")
         return [
             PriceBar(
                 internal_id=r["internal_id"],
@@ -443,7 +448,7 @@ class Store:
         """The stored bar of each of ``internal_ids`` on ``day``, by internal id — absent when the
         store holds none. Read by `eod.client.restate_held` to set a held bar beside a fresh one."""
         ids = sorted(set(internal_ids))
-        provenance.note_series(ids)
+        provenance.note_series(ids, via="bars_on")
         out: dict[str, PriceBar] = {}
         for i in range(0, len(ids), _ID_CHUNK):
             chunk = ids[i:i + _ID_CHUNK]
@@ -458,7 +463,7 @@ class Store:
 
     def last_bar_before(self, internal_id: str, day: date) -> date | None:
         """The newest bar date for one name strictly before ``day`` — None when it has none."""
-        provenance.note_series(internal_id)
+        provenance.note_series(internal_id, via="last_bar_before")
         row = self._conn.execute(
             "SELECT MAX(bar_date) AS d FROM prices WHERE internal_id = ? AND bar_date < ?",
             (internal_id, _iso(day))).fetchone()
@@ -500,7 +505,7 @@ class Store:
 
     def bar_dates(self, internal_id: str) -> list[date]:
         """One name's bar dates, oldest first — the dates alone, for a scan over many names."""
-        provenance.note_series(internal_id)
+        provenance.note_series(internal_id, via="bar_dates")
         return [date.fromisoformat(r[0]) for r in self._conn.execute(
             "SELECT bar_date FROM prices WHERE internal_id = ? ORDER BY bar_date", (internal_id,))]
 
@@ -528,7 +533,7 @@ class Store:
         of the three), and "this store has not refreshed that far" is a different statement from
         "this store does not carry this name".
         """
-        provenance.note_series(internal_id)
+        provenance.note_series(internal_id, via="price_frontier_for")
         row = self._conn.execute(
             "SELECT MAX(bar_date) AS d FROM prices WHERE internal_id = ?", (internal_id,)
         ).fetchone()
@@ -551,7 +556,7 @@ class Store:
         unlike a lookup by VALUE, which is one-to-many on real data (MVST's 0.9188 matches four
         separate bars spanning 2024-02-06 to 2026-07-21).
         """
-        provenance.note_series(internal_id)
+        provenance.note_series(internal_id, via="close_on")
         row = self._conn.execute(
             "SELECT close FROM prices WHERE internal_id = ? AND bar_date = ?",
             (internal_id, _iso(bar_date)),
@@ -562,7 +567,7 @@ class Store:
         self, internal_id: str, *, reference_date: date, staleness_days: int
     ) -> DataField[float]:
         """Latest close as an enveloped datum: UNKNOWN if absent, STALE if too old, else PRESENT."""
-        provenance.note_series(internal_id)
+        provenance.note_series(internal_id, via="latest_close")
         row = self._conn.execute(
             "SELECT bar_date, close, source FROM prices "
             "WHERE internal_id = ? ORDER BY bar_date DESC LIMIT 1",
@@ -593,7 +598,7 @@ class Store:
         ``reference_date`` it raises, rather than reaching forward or returning nothing to ignore.
         The staleness check still applies on top: a too-old *prior* bar comes back STALE (surfaced).
         """
-        provenance.note_series(internal_id)
+        provenance.note_series(internal_id, via="close_as_of")
         row = self._conn.execute(
             "SELECT bar_date, close, source FROM prices "
             "WHERE internal_id = ? AND bar_date <= ? ORDER BY bar_date DESC LIMIT 1",

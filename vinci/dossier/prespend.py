@@ -530,7 +530,11 @@ def post_spend_checks(built: Dossier, bundle: CiqBundle, *,
 
 
 def _stamps(doc: Mapping[str, Any]) -> Counter[str]:
-    """Every export sha256 the page stamps (any key ending ``sha256``), with how often."""
+    """Every export sha256 the page stamps (any key ending ``sha256``, and a stamp written into a
+    string — an anchor input's source — through the one shared reader,
+    `ciq_balance.stamps_in_text`), with how often."""
+    from vinci.dossier.ciq_balance import stamps_in_text
+
     seen: Counter[str] = Counter()
 
     def walk(node: Any) -> None:
@@ -543,6 +547,8 @@ def _stamps(doc: Mapping[str, Any]) -> Counter[str]:
         elif isinstance(node, list):
             for child in node:
                 walk(child)
+        elif isinstance(node, str):
+            seen.update(stamps_in_text(node))
 
     # the page's input record names full sha256s of its own; those are no export stamps
     walk({k: v for k, v in doc.items() if k != "inputs"})
