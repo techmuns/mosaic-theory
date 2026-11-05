@@ -48,6 +48,7 @@ from vinci.facts.scope import (
 )
 from vinci.facts.store import (
     DEFAULT_NAME,
+    FactsStoreError,
     FileEntry,
     OrderEntry,
     build_manifest,
@@ -247,9 +248,16 @@ def cmd_upload(a: argparse.Namespace) -> int:
               f"({rep.read_back_bytes:,} bytes); {len(rep.problems)} problems")
         _shown(rep.problems)
         if not a.no_audit:
-            ids = sorted(p.stem for p in manifests_dir().glob("*.json"))
-            audit = bucket_against_manifests(client, [load_manifest(i) for i in ids])
-            print(f"  the bucket after this upload, against all {len(ids)} committed manifests "
+            read, unread = [], 0
+            for i in sorted(p.stem for p in manifests_dir().glob("*.json")):
+                try:
+                    read.append(load_manifest(i))
+                except FactsStoreError:          # an older version kept in the tree
+                    unread += 1
+            audit = bucket_against_manifests(client, read)
+            print(f"  the bucket after this upload, against the {len(read)} committed manifests "
+                  f"it reads ({unread} manifest{'' if unread == 1 else 's'} not read: a "
+                  "version this code does not read) "
                   f"({audit['manifest_objects']:,} distinct objects, "
                   f"{audit['manifest_bytes']:,} bytes): {audit['bucket_keys']:,} keys "
                   f"({audit['bucket_bytes']:,} bytes); {audit['named_by_a_manifest']:,} named by "

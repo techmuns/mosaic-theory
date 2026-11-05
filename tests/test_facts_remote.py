@@ -544,3 +544,35 @@ def test_a_manifest_path_that_is_not_a_content_addressed_key_is_never_used(
         manifest_objects({**pages, "files": [{**entry, "path": "../x.parquet"}]})
     assert bucket.requests == [] and not (tmp_path / "cache").exists()
     assert len(manifest_objects(pages)) == 379
+
+
+def test_a_manifest_the_audit_cannot_read_is_counted_not_fatal(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+        capsys: pytest.CaptureFixture[str]) -> None:
+    """Round 1: a manifest `load_manifest` refuses (an older version kept in the tree) made the
+    audit raise AFTER a finished upload. It is now counted, and the upload's verdict stands."""
+    from vinci.facts import remote
+    from vinci.facts.__main__ import main
+    shutil.copytree(ROOT / "data" / "facts", tmp_path / "data" / "facts")
+    (tmp_path / "data" / "facts" / "manifests" / "edgar-00000000000000v1.json").write_text(
+        json.dumps({"manifest_version": 1, "snapshot_id": "edgar-00000000000000v1"}))
+    monkeypatch.chdir(tmp_path)
+    bucket = FakeBucket()
+    monkeypatch.setattr(remote.R2Client, "from_env", classmethod(lambda cls: _client(bucket)))
+    assert main(["upload", "--workers", "2", *(x for t in _SIX_OTHERS
+                                              for x in ("--exclude", t))]) == 0
+    out = capsys.readouterr().out
+    assert "against the 2 committed manifests it reads" in out
+    assert "1 manifest not read" in out
+
+
+class _HtmlBucket(FakeBucket):
+    def _list(self, request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, content=b"<html><body>sign in to the network</body>")
+
+
+def test_a_listing_that_is_not_xml_is_an_r2_error() -> None:
+    """Round 1: a 200 that is not S3's XML (a proxy's page) raised ParseError from the parser."""
+    with _client(_HtmlBucket()) as client, pytest.raises(R2RequestError,
+                                                          match="ListObjectsV2: not S3's XML"):
+        list(client.list_objects())

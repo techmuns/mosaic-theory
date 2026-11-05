@@ -201,6 +201,17 @@ primary checkout's `.env` (loaded into the process, never printed). All on 2026-
     length of one command. Sharing one would lean on a thread-safety guarantee not checked here.
   - **`FactStore` over `r2://` fetches one object at a time** on first touch. A whole-snapshot read
     from a cold cache should run `verify --store r2://` first, which fetches in parallel.
+- **Review round 1** (an in-session `/code-review high`: Codex failed on its usage limit). Five
+  findings: 2 FIXED, each behind a test that failed on the PR head, and 3 DISMISSED.
+  - FIXED: the upload's bucket audit raised, AFTER a finished upload, on a manifest
+    `load_manifest` refuses. It now counts that manifest as not read. The live re-run printed
+    "against the 2 committed manifests it reads (0 manifests not read …)": 22,559 keys, the same
+    22,559 objects.
+  - FIXED: a listing that is not S3's XML raised `ParseError`. It is now an `R2RequestError`
+    naming the operation.
+  - DISMISSED, each with its reason in the PR's table: the audit's population is printed beside
+    its counts; a failed fetch is listed twice by `verify --store r2://`, both lists labelled and
+    the exit status right; there is one log filter per distinct configuration.
 - **NOT DECIDED HERE** (open operator rulings):
   - the manifest growth policy (the ADR's open item; STATE row 44);
   - slice 2b.

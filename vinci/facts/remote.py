@@ -280,7 +280,11 @@ class R2Client:
             r = self._request("GET", "", "ListObjectsV2", query=query)
             if r.status_code != 200:
                 raise R2RequestError(f"ListObjectsV2: HTTP {r.status_code}{_code(r)}")
-            root = ElementTree.fromstring(r.content)
+            try:
+                root = ElementTree.fromstring(r.content)
+            except ElementTree.ParseError:
+                raise R2RequestError("ListObjectsV2: not S3's XML (HTTP 200 from something "
+                                     "other than the bucket)") from None
             for c in root.iter(f"{_S3_NS}Contents"):
                 yield (c.findtext(f"{_S3_NS}Key") or "", int(c.findtext(f"{_S3_NS}Size") or -1))
             if root.findtext(f"{_S3_NS}IsTruncated") != "true":
