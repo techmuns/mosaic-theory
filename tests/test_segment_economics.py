@@ -8,6 +8,7 @@ the parser exists to read.
 from __future__ import annotations
 
 import pathlib
+import re
 
 import pytest
 
@@ -292,3 +293,99 @@ def test_a_duration_header_without_its_title_cell_mark_is_refused() -> None:
     bare = ('<th class="tl" colspan="1" rowspan="2">', '<th colspan="1" rowspan="2">')
     with pytest.raises(SegmentReportUnavailableError, match="duration header"):
         segment_rows(_Q3Http(bare), "0001652044", Q3)  # type: ignore[arg-type]
+
+
+# --- moved here from the panel tests retired in #910 (2026-11-05) ------------------------------
+#
+# The commissioning ratio (`vinci/edgar/commissioning.py`) was this picker's one other topic, and
+# its tests and the panel registry's held the only pins on the picker's ABSENCE guard and on its
+# refusal of an ambiguous filing. The picker stays, so the pins do: the first four verbatim, the
+# fifth cut to its half that reads this module's default route.
+
+
+def test_a_new_topic_must_state_its_own_absence_meaning_or_fail_loudly() -> None:
+    """The guard reads the TOPIC PATTERN, not the `what` LABEL.
+
+    Keyed on `what`, the guard made a DISPLAY STRING load-bearing — the rule this repo holds
+    because display text drifts — and failed open in the way that matters: a caller passing a new
+    `topic` and forgetting BOTH keywords inherited the segment clause AND had its note mislabelled
+    "segment", so
+    the refusal was wrong twice and silent about both. Observed: a `goodwill` topic returned
+    *"no report naming a segment — a single-segment filer discloses none"*.
+
+    Moved here from `tests/test_panels.py` (retired in #910).
+    """
+    import re as _re
+
+    from vinci.edgar.segments import _pick_report
+
+    with pytest.raises(ValueError, match="must state what ABSENCE means"):
+        _pick_report("<FilingSummary></FilingSummary>", topic=_re.compile("goodwill"))
+    # The segment route still needs no keyword — it is the one topic the default clause is true of.
+    from vinci.edgar.segments import SegmentReportUnavailableError
+    with pytest.raises(SegmentReportUnavailableError):
+        _pick_report("<FilingSummary></FilingSummary>")
+
+
+def test_a_blank_absence_clause_is_the_same_hole_as_a_missing_one() -> None:
+    """`absent_means=""` passed a None-only check and shipped a refusal explaining nothing.
+
+    Moved here from `tests/test_panels.py` (retired in #910)."""
+    import re as _re
+
+    from vinci.edgar.segments import _pick_report
+
+    for blank in ("", "   "):
+        with pytest.raises(ValueError, match="may not be blank"):
+            _pick_report("<FilingSummary></FilingSummary>", topic=_re.compile("goodwill"),
+                         what="goodwill note", absent_means=blank)
+
+
+def test_the_segment_route_keeps_its_own_absence_meaning() -> None:
+    """The sibling call site: parameterising the clause must not blank it for segments.
+
+    A default that silently became empty would strip the segment route's explanation while every
+    commissioning test stayed green — the sibling-call-site class.
+
+    Moved here from `tests/test_commissioning_ratio.py` (retired in #910).
+    """
+    from vinci.edgar.segments import SegmentReportUnavailableError, _pick_report
+
+    with pytest.raises(SegmentReportUnavailableError) as got:
+        _pick_report("<FilingSummary></FilingSummary>")
+    assert "a single-segment filer discloses none, and that is an answer" in str(got.value)
+
+
+def test_a_third_topic_cannot_inherit_the_segment_absence_story_by_forgetting_a_keyword() -> None:
+    """The defect class, closed rather than fixed once.
+
+    Parameterising the clause fixed the PP&E route; leaving the SEGMENT sentence as the default
+    left the next topic one forgotten keyword away from telling the wrong note's story again —
+    and `what=` is already easy to remember because the message is visibly wrong without it,
+    while an inherited absence clause reads perfectly and is false. So every topic but segments
+    must state its own, and forgetting raises before any fetch. The segment route's own
+    no-keyword call is pinned by the test above, so this one only shows every OTHER topic refused.
+
+    Moved here from `tests/test_commissioning_ratio.py` (retired in #910).
+    """
+    from vinci.edgar.segments import _pick_report
+
+    with pytest.raises(ValueError, match="must state what ABSENCE means"):
+        _pick_report("<FilingSummary></FilingSummary>",
+                     topic=re.compile("goodwill", re.I), what="goodwill")
+
+
+def test_the_repo_wide_pattern_refuses_a_filing_with_two_economics_reports() -> None:
+    """GOOGL's Q2 2026 10-Q (acc 0001652044-26-000071) carries TWO economics-matching segment
+    (Details) reports, so the repo-wide pattern rightly refuses as ambiguous — choosing would file
+    geography or revenue-only figures as segment economics.
+
+    Moved here from `tests/test_cohort_five.py::
+    test_the_declared_note_name_resolves_what_the_repo_wide_pattern_cannot` (retired in #910),
+    with the summary it read: its first half, which pins this module's default route. Its second
+    half resolved the report through the panel declarations in `data/followed.json`, which retired
+    with the panels.
+    """
+    summary = (FIX / "GOOGL-0001652044-26-000071-FilingSummary.xml").read_text()
+    with pytest.raises(SegmentReportUnavailableError, match="more than one segment report"):
+        _pick_report(summary)

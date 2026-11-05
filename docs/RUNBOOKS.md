@@ -331,9 +331,10 @@ cleaner flags** — that is selecting prose on outcome; the flags stay on the pa
 record `docs/records/2026-10-12-monitor-runs-at-the-latest-close.md`.)*
 
 A monitor day (`data/monitor/<YYYY-MM-DD>.json`) is the book as of ONE market close: marks against
-benchmarks, the BUY−AVOID diagnostic, the freshness rows and the panel grid. Its DATED inputs are
-bounded by #707 (filings, evidence dates, ledger decisions, deadlines), but its panels, measured rows
-and record-read fields read TODAY's pages, records and cards. So a day re-run after a later close
+benchmarks, the BUY−AVOID diagnostic and the freshness rows. (The days 2026-08-11 → 2026-11-02 also
+carry a panel grid; it retired in #910 and nothing reads it.) Its DATED inputs are bounded by #707
+(filings, evidence dates, ledger decisions, deadlines), but its measured rows and record-read fields
+read TODAY's pages, records and cards. So a day re-run after a later close
 writes later information into an earlier date, and the only safe re-run is of the latest close
 itself.
 
@@ -345,9 +346,9 @@ Price return is printed beside each row (`PX-EXC%`) and beside the spread. Every
 2026-10-26 was price return: each states its own basis (`return_basis`, `price_basis`), and none is
 restated.
 
-**When.** Any routine mark of the book, AND whenever `tests/test_panel_emit.py::
-test_emit_is_deterministic_over_the_committed_corpus` goes red after an artifact pass. That pin
-requires the latest day's panels to equal what today's pages emit, so a moved page turns it red.
+**When.** Any routine mark of the book. *(Until #910 retired the panel grid, a moved page also forced
+a new day: `test_panel_emit`'s corpus pin required the latest day's panels to equal what today's
+pages emit. No pin ties an artifact pass to a monitor day now.)*
 
 1. **Pick the date: the LATEST close** — the last session whose closing prices exist — never an
    earlier one.
@@ -373,7 +374,6 @@ requires the latest day's panels to equal what today's pages emit, so a moved pa
 3. **Mirror** — `python3 frontend/build.py` copies every day into `frontend/monitor/` and moves
    `index.json`'s `latest`. *(Source: `frontend/build.py:emit_monitor`.)*
 4. **Check before committing:**
-   - the panel-emit pin is green;
    - no `newer_filings` date and no `last_evidence_date` is after TODAY, the day the run was made.
      The comparison is never against a `--ref`: a committed run takes none. A filing dated after
      the day's `as_of` but on or before today is CORRECT on a same-session re-run — a
@@ -388,9 +388,9 @@ requires the latest day's panels to equal what today's pages emit, so a moved pa
 - **Where it writes:** `<scratch dir>/data/monitor/<day>.json`. It reads the book's own history,
   and its filings and evidence stop at `<day>`.
 - **What is refused:** an `--out` that resolves to this repo's own `data/monitor/`.
-- **What it still cannot do:** like any re-cut, its panels and record-read fields are today's
-  pages, so it answers "what would today's documents say about that day", not "what did the book
-  record then". The committed day is the record.
+- **What it still cannot do:** like any re-cut, its measured rows and record-read fields are
+  today's pages, so it answers "what would today's documents say about that day", not "what did
+  the book record then". The committed day is the record.
 
 ---
 

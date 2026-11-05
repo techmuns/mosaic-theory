@@ -36,7 +36,6 @@ from pydantic import BaseModel, Field, model_validator
 
 from vinci.eod.splits import SplitSource, close_on_basis
 from vinci.labels import resolve_label
-from vinci.panels_emit import PanelRow
 from vinci.schemas.ledger import EVENT_CLOSE, ORIGIN_SCREEN
 from vinci.sleeves import DEFAULT_SLEEVE
 
@@ -250,17 +249,8 @@ class MonitorSnapshot(BaseModel):
     # lines are now RENDERED from these rows (``RealizedRow.note``), so there is one definition and
     # the display cannot drift from the data.
     realized: list[RealizedRow] = Field(default_factory=list)
-    # THE PANEL GRID (phase 6), as STRUCTURED rows — the consumer phases 2-4 were built for and did
-    # not have. Defaulted so every committed pre-phase-6 snapshot still validates, and they are
-    # corpus-pinned.
-    #
-    # A `not_in_set` panel IS ABSENT FROM THIS LIST rather than present with a falsy state. That is
-    # the gating rule surviving serialization: a row saying "does not apply" is a tile waiting to be
-    # drawn, and the rule is that those never draw. Every row here renders.
-    #
-    # Typed as a forward reference to avoid a cycle — `vinci.panels_emit` imports the panel stack,
-    # which must not import the monitor.
-    panels: list[PanelRow] = Field(default_factory=list)
+    # NO PANEL GRID (retired in #910, 2026-11-05). Eight committed days (2026-08-11 → 2026-11-02)
+    # carry a `panels` block; it loads as an unknown key and nothing reads it.
 
     @model_validator(mode="after")
     def _one_basis(self) -> MonitorSnapshot:
@@ -328,10 +318,10 @@ class FreshnessRow(BaseModel):
 class MeasuredTriggerRow(BaseModel):
     """One MEASURED criterion, evaluated at monitor time (ruling 3, 2026-08-31).
 
-    TYPED HERE SO `PanelSpec` READS IT RATHER THAN RECOMPUTING: indicator measurement is the
-    PanelSpec plan's job, and this row must never grow into a rival panel. It is the evaluated STATE
-    hung on the trigger list this row already carried in prose, so the panel that renders it later
-    consumes one answer instead of computing a second one that could disagree.
+    TYPED HERE SO A READER READS IT RATHER THAN RECOMPUTING. It is the evaluated STATE hung on the
+    trigger list this row already carried in prose, so the surface that renders it (the decision
+    log's freshness rows) consumes one answer instead of computing a second one that could
+    disagree. (The panel grid that also read it retired in #910, 2026-11-05.)
 
     THE STATE IS THREE-VALUED AND `UNKNOWN` IS NOT A QUIET NO. A criterion the evaluator could not
     read must look different on the page from one that has not fired; they recommend opposite
@@ -1057,8 +1047,9 @@ def write_snapshot(
     that is what this refuses.
 
     AND A PAST RE-RUN DOES NOT REPRODUCE (2026-10-11, #707). Decisions, closes, filings and
-    evidence dates are read as of the day, but the panels, measured rows and record-read fields
-    read TODAY's pages, records and cards — the 09-22 re-cut drew UBER's 10-09 multiple. So this
+    evidence dates are read as of the day, but the measured rows and record-read fields read
+    TODAY's pages, records and cards — the 09-22 re-cut drew UBER's 10-09 multiple (into the panel
+    grid, retired in #910). So this
     guards a known lookahead, and since #708 it also refuses a BACK-DATED day that was never
     written (below). What it cannot see from the files alone — a re-cut of the NEWEST day after a
     later close whose file does not exist yet — is refused one step earlier, by the command:
