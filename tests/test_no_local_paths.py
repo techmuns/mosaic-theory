@@ -54,23 +54,33 @@ POSIX_ROOT = re.compile(r"(?<![\w.])/(?:Users|private|home)/")
 DRIVE = re.compile(r"(?<![\w.+\-])[A-Za-z]:(?:\\|/(?!/))")
 
 
+#: How much of a hit is printed; a longer one ends in `CUT`, so a cut path never reads as whole.
+SHOWN = 60
+CUT = "… [cut]"
+
+
 def local_paths(text: str, *, binary: bool = False) -> list[str]:
-    """Each absolute local path in `text`, as the 60 characters from where it starts. In a
-    `binary` file's Latin-1 text, the POSIX roots only (see `DRIVE`)."""
+    """Each absolute local path in `text`, as the `SHOWN` characters from where it starts, marked
+    `CUT` when the text runs on. In a `binary` file's Latin-1 text, the POSIX roots only (see
+    `DRIVE`)."""
     found = sorted(m.start() for rx in ((POSIX_ROOT,) if binary else (POSIX_ROOT, DRIVE))
                    for m in rx.finditer(text))
-    return [text[i:i + 60] for i in found]
+    return [text[i:i + SHOWN] + (CUT if len(text) > i + SHOWN else "") for i in found]
 
 
-def _tracked() -> list[Path]:
-    out = subprocess.run(["git", "-C", str(ROOT), "ls-files", "-z", "--", *SCANNED],
+def _corpus() -> list[Path]:
+    """Every file under `SCANNED` that is committed or about to be: tracked, plus untracked and not
+    ignored — an artifact pass runs the suite BEFORE `git add`, and a new page must be read then,
+    not first in CI. A tracked file deleted in the working tree is not there to read."""
+    out = subprocess.run(["git", "-C", str(ROOT), "ls-files", "-z", "--cached", "--others",
+                          "--exclude-standard", "--", *SCANNED],
                          capture_output=True, check=True).stdout
-    return [ROOT / p for p in out.decode().split("\0") if p]
+    return sorted({ROOT / p for p in out.decode().split("\0") if p and (ROOT / p).is_file()})
 
 
-def scan() -> tuple[int, list[str]]:
-    """(files scanned, every hit as `path:line: text`) over the committed corpus — never cut."""
-    files = _tracked()
+def scan() -> tuple[list[Path], list[str]]:
+    """(the files scanned, every hit as `path:line: text`) over the corpus — the list never cut."""
+    files = _corpus()
     hits: list[str] = []
     for f in files:
         raw = f.read_bytes()
@@ -81,7 +91,7 @@ def scan() -> tuple[int, list[str]]:
         for n, line in enumerate(text.splitlines(), 1):
             for h in local_paths(line, binary=binary):
                 hits.append(f"{f.relative_to(ROOT)}:{n}: {h.strip()}")
-    return len(files), hits
+    return files, hits
 
 
 # --- the matcher, on the shapes the corpus actually held -----------------------------------------
@@ -103,7 +113,8 @@ LEAKED = (
 )
 
 #: (−) What must not fire: the cleaned stamp, a relative store path, and URLs — the `https:` drive
-#: letter is the false positive a first cut of this pattern raised on 12 committed `.md` pages.
+#: letter is the false positive a first cut of this pattern raised in 24 committed `.md` files at
+#: main c4c9f432 (12 pages' `dossier.md` and their 12 `frontend/dossiers/` mirrors).
 CLEAN = (
     '"declared_path": "eager-mendel-4c6d33",',
     '"resolved_path": "mosaic-theory-wb",',
@@ -134,19 +145,55 @@ def test_a_binary_file_is_read_for_the_posix_roots_and_not_the_drive_letter() ->
     assert len(local_paths(text)) == 2, "as text, the drive-letter bytes would have matched too"
 
 
+def test_a_hit_cut_short_says_so_and_a_whole_one_does_not() -> None:
+    long = "/Users/x/" + "a" * 80
+    assert local_paths(long) == [long[:SHOWN] + CUT]
+    assert local_paths('"/Users/x/y"') == ['/Users/x/y"'], "a hit that fits must not claim a cut"
+
+
+def test_a_file_not_yet_added_is_read() -> None:
+    """An artifact pass runs the suite before `git add`, so a new page or fixture is read while it
+    is still untracked — not first in CI."""
+    probe = ROOT / "tests" / "fixtures" / "_local_path_probe.json"
+    assert not probe.exists(), f"{probe} is left over from an earlier run — remove it"
+    try:
+        probe.write_text('{"reason": "read /Users/x/data/vinci.db"}\n')
+        files, hits = scan()
+        assert probe in files
+        assert [h for h in hits if h.startswith("tests/fixtures/_local_path_probe.json:1:")], hits
+    finally:
+        probe.unlink()
+    assert probe not in scan()[0]
+
+
+def test_a_tracked_file_deleted_in_the_working_tree_is_skipped_not_a_crash(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """git still lists a tracked file deleted but not staged; reading it would raise."""
+    gone = "tests/fixtures/_deleted_but_tracked.json"
+    real = subprocess.run
+
+    def ls_files(args: list[str], **kw: object) -> subprocess.CompletedProcess[bytes]:
+        done = real(args, **kw)  # type: ignore[call-overload]
+        return subprocess.CompletedProcess(args, 0, done.stdout + gone.encode() + b"\0", b"")
+
+    monkeypatch.setattr(subprocess, "run", ls_files)
+    files = _corpus()
+    assert files and ROOT / gone not in files
+
+
 # --- the corpus -----------------------------------------------------------------------------------
 
 def test_no_committed_page_mirror_or_fixture_carries_an_absolute_local_path() -> None:
     """THE GUARD. On main c4c9f432 it listed 118 hits in 59 files — every one a price-store stamp;
     on the cleaned tree it lists none. The count is printed beside the full list, never a cut."""
-    n, hits = scan()
-    pages = {p.relative_to(ROOT) for p in (ROOT / "data" / "dossiers").glob("*/dossier.json")}
-    scanned = {f.relative_to(ROOT) for f in _tracked()}
-    assert pages and pages <= scanned, (
-        f"the scan ({n} tracked files under {SCANNED}) misses committed pages: "
-        f"{sorted(map(str, pages - scanned))}")
+    files, hits = scan()
+    pages = set((ROOT / "data" / "dossiers").glob("*/dossier.json"))
+    assert pages and pages <= set(files), (
+        f"the scan ({len(files)} files under {SCANNED}) misses pages: "
+        f"{sorted(str(p.relative_to(ROOT)) for p in pages - set(files))}")
     assert not hits, (
-        f"{len(hits)} absolute local path(s) in the committed corpus ({n} files scanned); this "
+        f"{len(hits)} absolute local path(s) in the corpus ({len(files)} files scanned); this "
         "repository is public. A price-store stamp is fixed by scripts/rewrite_store_stamps.py; "
         "anything else is a new leak, removed at its writer:\n" + "\n".join(hits))
 
@@ -167,14 +214,14 @@ def test_every_committed_page_prints_the_price_store_line_its_stamp_renders() ->
         if raw is None:
             continue
         stamped += 1
-        line = f"- **Price store:** {_price_store_line(PriceStoreStamp.model_validate(raw))}"
+        line = _price_store_line(PriceStoreStamp.model_validate(raw))
         assert line in (p.parent / "dossier.md").read_text(), (p.parent.name, line)
     assert stamped, "no committed page carries a price-store stamp — the test reads nothing"
 
 
 if __name__ == "__main__":
     scanned, found = scan()
-    print(f"{len(found)} absolute local path(s) in {scanned} tracked files under "
+    print(f"{len(found)} absolute local path(s) in {len(scanned)} files under "
           f"{', '.join(SCANNED)}")
     print("\n".join(found))
     sys.exit(1 if found else 0)

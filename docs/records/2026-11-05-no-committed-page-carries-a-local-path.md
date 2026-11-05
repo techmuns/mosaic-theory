@@ -81,7 +81,7 @@ weighing the exposure should treat everything those paths reveal as already publ
   `declared_path` or `resolved_path` line (59 + 59). That matches the review's 54 page paths, their
   54 mirrors, and the fixtures it named. On the cleaned tree the guard lists **0**.
 - **The pattern's first cut was wrong twice, and the corpus caught both.**
-  - A bare `[A-Za-z]:/` matched the `https:` of URLs in 12 committed `.md` pages. The drive letter
+  - A bare `[A-Za-z]:/` matched the `https:` of URLs in 24 committed `.md` files (12 pages and their 12 mirrors). The drive letter
     now has to stand alone, and URLs are a negative pin.
   - The first lookbehind skipped a path after `-`, so it missed `${VENV:-/Users/…}` in `bin/commit`.
     The wider survey below turned that up, and it is now a positive pin.
