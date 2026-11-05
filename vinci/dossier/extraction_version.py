@@ -498,6 +498,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "page built before it is backfilled from its own stamps, the rest `unrecorded`. No "
         "extracted value changes",
     ),
+    (
+        "2026-11-05.store-checkout-name",
+        "the price-store stamp names each store by its checkout's folder alone "
+        "(`price_store.declared_path` / `resolved_path`, e.g. 'mosaic-theory-wb'), never the "
+        "absolute local path that named the user and the session; the rendered page is unchanged, "
+        "and the pages stamped before it were rewritten in place to the same form. No extracted "
+        "value changes",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

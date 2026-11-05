@@ -8956,8 +8956,8 @@
   "assembled_at": "2026-10-29T17:34:13.614031Z",
   "extraction_version": "2026-10-29.G-D3",
   "price_store": {
-    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory/.claude/worktrees/b6-model-inputs-1e3db3/data/vinci.db",
-    "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
+    "declared_path": "b6-model-inputs-1e3db3",
+    "resolved_path": "mosaic-theory-ta",
     "frontier": "2026-10-28"
   },
   "sector": "Technology",

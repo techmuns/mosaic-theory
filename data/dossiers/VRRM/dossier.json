@@ -8478,8 +8478,8 @@
   "assembled_at": "2026-08-18T12:54:10.760919Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory-pg/data/vinci.db",
-    "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-wb/data/vinci.db",
+    "declared_path": "mosaic-theory-pg",
+    "resolved_path": "mosaic-theory-wb",
     "frontier": "2026-08-17"
   },
   "sector": "Industrials",
