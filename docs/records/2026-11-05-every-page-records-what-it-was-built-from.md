@@ -425,3 +425,10 @@ B's or C's result on the committed corpus.
     `newest_bar` instead.
 - **Review round 0** (`/code-review high --fix`): 7 findings — 4 FIXED, 3 SKIPPED, each listed in
   the PR's dispositions table.
+- **Review round 1** (an in-session `/code-review high`, as Codex failed on its usage limit):
+  6 findings, 4 FIXED behind tests that failed first, 2 DISMISSED.
+  - A record that cannot be built no longer costs the run record its line.
+  - A fact-layer manifest that cannot be read is `unrecorded` (`responses:sealed_by`) rather than
+    refusing a build after its paid phases.
+  - An unhashable export's reason carries no local path.
+  - The `stamps` docstring now states its 10-hex rule.

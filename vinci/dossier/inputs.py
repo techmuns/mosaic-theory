@@ -235,7 +235,17 @@ def from_reads(reads: provenance.Reads, *, store: Store | None, extraction_versi
     """The build's manifest from what its recorder saw. ``store`` None (it could not be opened):
     every series it read is ``unrecorded``."""
     ciq, missing = _ciq(reads.files)
-    responses = _responses(reads.http, sealed_index(facts_base))
+    # BUILT AFTER EVERY PAID PHASE, so a lookup that cannot read the fact layer's manifests is
+    # said in the record, never a refused build
+    try:
+        sealed = sealed_index(facts_base)
+    except (OSError, ValueError) as exc:
+        sealed = {}
+        missing.append(Unrecorded(
+            input="responses:sealed_by",
+            why=f"the fact layer's snapshot manifests could not be read ({type(exc).__name__}), "
+                "so no response names the snapshot that sealed it"))
+    responses = _responses(reads.http, sealed)
     if store is None:
         prices: list[PriceSeries] = []
         missing += [Unrecorded(input=f"prices:{iid}", why="the price store could not be opened")
@@ -285,8 +295,9 @@ UNRECORDED_UNSTAMPED_CIQ = (
 
 
 def stamps(doc: Mapping[str, Any]) -> dict[str, list[str]]:
-    """``{10-hex stamp: [page sites]}`` for every key ending ``sha256`` (the walk `prespend`'s
-    stamp census takes), the site a dotted path with list positions dropped."""
+    """``{10-hex stamp: [page sites]}`` for every key ending ``sha256`` whose value is a 10-hex
+    stamp (`_STAMP`; any other hash a page carries is no export stamp), outside the page's own
+    ``inputs`` block, the site a dotted path with list positions dropped."""
     out: dict[str, set[str]] = {}
 
     def walk(node: Any, path: str) -> None:

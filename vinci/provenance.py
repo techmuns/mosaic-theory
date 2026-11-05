@@ -254,6 +254,8 @@ def note_file(role: str, path: Path, *, kind: str | None = None,
         sha, size = file_sha256(path)
         read = FileRead(role, str(path), sha, size, kind, freq)
     except OSError as exc:
+        # the error's CLASS and reason only: an OSError's text carries the full local path, and
+        # the record lands on a committed page in a public repository
         read = FileRead(role, str(path), None, None, kind, freq,
-                        error=f"{type(exc).__name__}: {exc}")
+                        error=f"{type(exc).__name__}: {exc.strerror or 'unreadable'}")
     rec.add_file(read)

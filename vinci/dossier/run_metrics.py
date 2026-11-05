@@ -128,6 +128,7 @@ def name_record(
     *, run_id: str, ticker: str, started: datetime, finished: datetime,
     meter: MeteredLlmClient | None, dossier: Dossier | None = None,
     error: BaseException | None = None, inputs: InputManifest | None = None,
+    inputs_error: str | None = None,
 ) -> dict[str, Any]:
     """One name's line. Pass ``dossier`` for a written build, ``error`` for one that raised."""
     from vinci.dossier.assemble import DossierAssemblyError
@@ -141,9 +142,13 @@ def name_record(
     costs = [c for u in metered if model is not None and (c := cost_usd(model, u)) is not None]
     outcome = ("written" if error is None
                else "refused" if isinstance(error, DossierAssemblyError) else "failed")
+    said = f"{type(error).__name__}: {error}" if error is not None else None
+    if inputs is None and inputs_error:
+        lost = f"input record NOT built: {inputs_error}"
+        said = f"{said}; {lost}" if said else lost
     return {
         "schema": SCHEMA, "run_id": run_id, "ticker": ticker, "outcome": outcome,
-        "error": _capped(f"{type(error).__name__}: {error}") if error is not None else None,
+        "error": _capped(said),
         "started_at": _iso(started), "finished_at": _iso(finished),
         "seconds": round((finished - started).total_seconds(), 1),
         "model": model, "extraction_version": EXTRACTION_VERSION,

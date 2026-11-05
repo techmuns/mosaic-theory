@@ -1451,16 +1451,25 @@ def assemble_cohort(
                     refused.append(exc)
                     stop.set()
         error = f"{ticker}: {type(failure).__name__}: {failure}" if failure is not None else None
+        # THE FULL RECORD — the page carries it with its response list cut (`for_page`) — and A
+        # REFUSED BUILD STILL SAYS WHAT IT READ: every read up to the refusal reached this
+        # recorder too, as a build's recorder is nested in it. A record that cannot be built is
+        # said, and never costs the run record its line (`run_metrics`: ``inputs`` null)
+        read: page_inputs.InputManifest | None = None
+        unbuilt: str | None = None
         try:
-            # THE FULL RECORD — the page carries it with its response list cut (`for_page`) —
-            # and A REFUSED BUILD STILL SAYS WHAT IT READ: every read up to the refusal reached
-            # this recorder too, as a build's recorder is nested in it
             read = page_inputs.manifest_for(attempt.reads(), db_path=cfg.db_path,
                                             extraction_version=EXTRACTION_VERSION,
                                             facts_base=cfg.data_dir / "facts")
+        except Exception as exc:  # noqa: BLE001 — said in the line and the errors, never fatal
+            unbuilt = f"{type(exc).__name__}: {exc}"
+            lost_inputs = f"{ticker}: input record NOT built ({unbuilt})"
+            error = f"{error}; {lost_inputs}" if error else lost_inputs
+        try:
             log.add(run_metrics.name_record(
                 run_id=log.run_id, ticker=ticker, started=started, finished=datetime.now(UTC),
-                meter=meter, dossier=dossier, error=failure, inputs=read))
+                meter=meter, dossier=dossier, error=failure, inputs=read,
+                inputs_error=unbuilt))
         except Exception as exc:  # noqa: BLE001 — the dossier stands; the lost record is an error
             lost = f"{ticker}: run record NOT written to {log.path} ({type(exc).__name__}: {exc})"
             error = f"{error}; {lost}" if error else lost

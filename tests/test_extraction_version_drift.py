@@ -87,7 +87,7 @@ PINNED_AT = "2026-11-05.input-record"
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
-    "vinci/dossier/assemble.py": "408d8feb5933",
+    "vinci/dossier/assemble.py": "cffb237e12d8",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "ba165ad2af55",
     "vinci/dossier/ciq.py": "6a636c11c2f3",
@@ -104,7 +104,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/filed_tiebreak.py": "b1b860e14190",
     "vinci/dossier/flags.py": "8b849e6eac83",
     "vinci/dossier/freshness.py": "e5852b313d22",
-    "vinci/dossier/inputs.py": "07c7de99accc",
+    "vinci/dossier/inputs.py": "645401231905",
     "vinci/dossier/inputs_backfill.py": "60f26c688028",
     "vinci/dossier/inputs_schema.py": "254501add3ed",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",

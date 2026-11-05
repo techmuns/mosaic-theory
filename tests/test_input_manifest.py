@@ -491,3 +491,58 @@ def test_a_folder_the_loader_refuses_is_still_recorded(tmp_path: pathlib.Path) -
     assert sorted(e.file for e in m.ciq) == sorted([a.name, b.name])
     src = (ROOT / "vinci" / "dossier" / "assemble.py").read_text()
     assert "page_inputs.note_files(folder_files)" in src
+
+
+# --- review round 1 (in-session /code-review high; Codex failed on its usage limit) -------------
+
+
+def test_an_unhashable_export_names_no_local_path(tmp_path: pathlib.Path) -> None:
+    """An OSError's text carries the file's full path; the reason recorded on a committed page in
+    a public repository must not (round 1)."""
+    with provenance.recording() as rec:
+        provenance.note_file("ciq", tmp_path / "deep" / "gone.xls", kind="comps")
+    m = inputs.manifest_for(rec.reads(), db_path=tmp_path / "v.db", extraction_version="t")
+    (u,) = m.unrecorded
+    assert u.input == "ciq:gone.xls" and "FileNotFoundError" in u.why
+    assert str(tmp_path) not in m.model_dump_json()
+
+
+def test_an_unreadable_fact_layer_manifest_never_fails_the_build(tmp_path: pathlib.Path) -> None:
+    """The record is built after every paid phase, so a provenance lookup that cannot read the
+    fact layer's manifests says so in the record instead of refusing the build (round 1)."""
+    facts = tmp_path / "facts"
+    (facts / "manifests").mkdir(parents=True)
+    (facts / "manifests" / "edgar-0000000000000000.json").write_text('{"entities": [')
+    reads = provenance.Reads(http=frozenset({_http_read(FUBO_RESPONSE_SHA)}))
+    m = inputs.manifest_for(reads, db_path=tmp_path / "v.db", extraction_version="t",
+                            facts_base=facts)
+    assert [r.sealed_by for r in m.responses] == [None]
+    assert [u.input for u in m.unrecorded] == ["responses:sealed_by"]
+    assert m.inputs_id is None
+
+
+def test_a_record_that_cannot_be_built_leaves_the_run_record_standing(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
+    """run_metrics' contract: ``inputs`` is null only when the record of the reads could not be
+    built, and the line says so in ``error`` — the cost-and-outcome line is never lost (round 1)."""
+    from vinci.rank import load_candidates_from_snapshot
+
+    rec = load_candidates_from_snapshot(ROOT / "data" / "snapshots" / "candidate_records.jsonl")[0]
+    page = Dossier.model_validate_json(
+        (ROOT / "data" / "dossiers" / "NFLX" / "dossier.json").read_text())
+    monkeypatch.setattr(asm, "assemble_one", lambda fin, **kw: page)
+
+    def broken(*a: Any, **k: Any) -> Any:
+        raise ValueError("TEST: no record")
+
+    monkeypatch.setattr(asm.page_inputs, "manifest_for", broken)
+    cfg = Config(data_dir=tmp_path)
+    seed_sec_cache(cfg)
+    with no_network():
+        dossiers, errors = asm.assemble_cohort(
+            [asm.Finalist(rec, rank=1, reference_date=dt.date(2026, 10, 1))], cfg=cfg)
+    (path,) = (tmp_path / "snapshots" / run_metrics.RUNS_DIR).glob("*.jsonl")
+    (line,) = [json.loads(x) for x in path.read_text().splitlines()]
+    assert line["outcome"] == "written" and line["inputs"] is None
+    assert "TEST: no record" in (line["error"] or "")
+    assert dossiers == [page] and errors and "input record NOT built" in errors[0]
