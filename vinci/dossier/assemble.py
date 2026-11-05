@@ -964,20 +964,51 @@ def _require_synthesis(synthesis: _S | None, *, ticker: str, flags: list[str]) -
         f"Flags: {'; '.join(flags) or '(none)'}")
 
 
+def store_checkout(db_path: Path) -> str:
+    """The checkout a store lives in, by its folder name alone: `<checkout>/data/vinci.db` →
+    `<checkout>`. What a page keeps of a store's path (`PriceStoreStamp`), and what
+    `scripts/rewrite_store_stamps.py` reduces a committed absolute stamp to — one function, so the
+    clean and the writer cannot disagree.
+
+    A FOLDER NAME, NEVER THE PATH (2026-11-05). The page is public, and an absolute path names the
+    user (`/Users/<user>/…`) and the session (`/private/tmp/claude-501/…`). The render already
+    printed only this name (`render._price_store_line`); the full paths it said stay in the JSON
+    were the leak.
+
+    REFUSES A STORE IT CANNOT NAME (review of #915). The folder is the checkout's only when the
+    path is absolute and the store sits at `<checkout>/data/vinci.db`, where `Config.db_path` puts
+    it. A relative `data/vinci.db` has no folder above it; a store at `/data/vinci.db` has an empty
+    one; and a `data/vinci.db` symlinked into `~<user>/stores/` would stamp the folder above the
+    target, which can be the username itself. The message names no folder above the file, because
+    a build's run record commits it (`run_metrics`). `assemble_one` stamps before any paid phase,
+    so a refusal spends nothing."""
+    if not db_path.is_absolute():
+        raise ValueError(f"the store path {db_path} is relative, so it names no checkout — stamp "
+                         "it absolute (`Path.absolute()`)")
+    name = db_path.parent.parent.name
+    if db_path.parent.name != "data" or not name:
+        raise ValueError(f"the store `{db_path.name}` is not at <checkout>/data/{db_path.name}, so "
+                         "the folder above it names no checkout to stamp")
+    return name
+
+
 def _price_store_stamp(cfg: Config) -> PriceStoreStamp:
     """The price store's identity + reach, read at assembly.
 
     RESOLVES THE SYMLINK ON PURPOSE. `data/` is per-worktree by design, and at least one checkout's
-    `data/vinci.db` is a symlink into another's — so the declared path answers "which worktree
-    wrote this" while the resolved path answers "which bytes", and only the second compares.
+    `data/vinci.db` is a symlink into another's — so the declared checkout answers "which worktree
+    wrote this" while the resolved one answers "which bytes", and only the second compares.
     """
-    # ABSOLUTE, NOT AS CONFIGURED. `cfg.db_path` is relative to the cwd, and a stamp reading
-    # "data/vinci.db" names nothing — every worktree writes the same string. `.absolute()`
-    # keeps the symlink so the declaring worktree stays visible; `.resolve()` follows it.
+    # ABSOLUTE BEFORE IT IS NAMED. `cfg.db_path` is relative to the cwd, and "data/vinci.db" names
+    # no checkout — every worktree writes the same string. `.absolute()` keeps the symlink so the
+    # declaring worktree stays visible; `.resolve()` follows it. Only each one's folder name is
+    # stamped (`store_checkout`), and both are named BEFORE the store is opened, so a store it
+    # cannot name is refused without being touched.
     declared = cfg.db_path.absolute()
+    declared_name, resolved_name = store_checkout(declared), store_checkout(declared.resolve())
     with Store(declared) as store:
         frontier = store.price_frontier()
-    return PriceStoreStamp(declared_path=str(declared), resolved_path=str(declared.resolve()),
+    return PriceStoreStamp(declared_path=declared_name, resolved_path=resolved_name,
                            frontier=frontier)
 
 
@@ -1086,6 +1117,10 @@ def assemble_one(
     # guard and the artifact disagree about when the build ran — a small window, but this contract
     # exists so that the number a page reports is the number its own guard applied.
     built_at = datetime.now(UTC)
+    # WHICH PRICE STORE, read FIRST (review of #915). The stamp refuses a store it cannot name
+    # (`store_checkout`); built where the page is, after `synthesize`, that refusal came after the
+    # paid phases and threw their spend away.
+    price_store = _price_store_stamp(cfg)
     # THE LISTING BASIS, whichever route supplied the record (FPI4): Polygon's one cached bulk
     # type pull, the same the universe sizes on
     from vinci.eod import PolygonEodClient
@@ -1375,7 +1410,8 @@ def assemble_one(
         # (spot audit) WHICH STORE these prices came from. Written at assembly rather than derived
         # at render, for `extraction_version`'s reason: re-rendering an old JSON must keep the store
         # that actually produced it, not claim whichever one the re-render happens to sit next to.
-        price_store=_price_store_stamp(cfg),
+        # Read at the top of the build, before any paid phase.
+        price_store=price_store,
     )
     # (2026-10-09) THE MACHINE'S R4 PROPOSAL — the operator's three ratified conditions, read off
     # the page just built (`recipe_proposal`). It replaces this build's FRESH R1 hint only; `_write`

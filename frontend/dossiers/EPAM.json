@@ -9624,8 +9624,8 @@
   "assembled_at": "2026-09-17T19:20:54.096064Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/da9b3c6e-2496-46e5-9725-9830e8c1208f/scratchpad/wt-artifact/data/vinci.db",
-    "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
+    "declared_path": "wt-artifact",
+    "resolved_path": "mosaic-theory-ta",
     "frontier": "2026-09-16"
   },
   "sector": "Technology",

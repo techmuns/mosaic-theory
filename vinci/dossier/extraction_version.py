@@ -499,6 +499,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "extracted value changes",
     ),
     (
+        "2026-11-05.store-checkout-name",
+        "the price-store stamp names each store by its checkout's folder alone "
+        "(`price_store.declared_path` / `resolved_path`, e.g. 'mosaic-theory-wb'), never the "
+        "absolute local path that named the user and the session; the rendered page is unchanged, "
+        "and the pages stamped before it were rewritten in place to the same form. No extracted "
+        "value changes",
+    ),
+    (
         "2026-11-05.nonop-window-fourth-quarter",
         "the non-operating read's trailing four are the filer's calendar quarters ending at its"
         " window end: a quarter no 80-100-day fact states — each 10-K's fiscal Q4 on the 25 "

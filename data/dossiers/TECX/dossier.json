@@ -6304,8 +6304,8 @@
   "assembled_at": "2026-09-28T18:26:40.588750Z",
   "extraction_version": "2026-08-16.1",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-fl2/data/vinci.db",
-    "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
+    "declared_path": "wt-fl2",
+    "resolved_path": "mosaic-theory-ta",
     "frontier": "2026-09-22"
   },
   "sector": "Health Care",
