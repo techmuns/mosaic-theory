@@ -20,6 +20,7 @@ import inspect
 import json
 import pathlib
 import shutil
+import typing
 from datetime import date
 from typing import Any
 
@@ -114,27 +115,57 @@ def test_the_count_and_the_prose_are_one_read() -> None:
 
 
 def test_condition_3_reads_the_trailing_four_with_their_fourth_quarter() -> None:
-    """END TO END (real fixture → the extractor → the page's count → condition 3): GOOGL's
-    committed page read "4 of the trailing 4" because the window skipped 2025-12-31, which GOOGL's
-    10-K states only inside the year, and took 2025-09-30 a year back. The trailing four read
-    3 of 4 — still R4-eligible (≥2 ruled), so the selection is unchanged; the count is not.
+    """END TO END through the assembly's own quality builder (`mechanical._quality`, review round
+    2): GOOGL's frozen companyfacts, as filed by its page's 2026-11-02 price date, read at its
+    2026-10-16 reference date. The page's count read "4 of the trailing 4" because the window
+    skipped 2025-12-31, which GOOGL's 10-K states only inside the year, and took 2025-09-30 a year
+    back. The trailing four read 3 of 4 — still R4-eligible (≥2 ruled), so the selection is
+    unchanged; the count is not.
 
-    THE COUNT IS PINNED, THE PAGE'S EPS BASIS IS NOT (review round 1). The count comes from the
-    frozen fixture; condition 3's other half, the FY P/E's EPS basis, is the LIVING page's and is
-    re-drawn on every rebuild, so it is read, never pinned (CLAUDE.md TEST-LAYER RULE)."""
-    doc = _with_count("GOOGL")
-    nq = doc["mechanical"]["quality"]["nonoperating_quarters"]
-    assert (nq["material"], nq["window"], nq["window_end"]) == (3, 4, "2026-09-30"), nq
-    assert nq["source_ref"].startswith(
-        "EDGAR XBRL pre-tax − operating, quarters 2025-12-31..2026-09-30"), nq
-    c3 = rp.r4_conditions(doc, _r1(doc))[2]
-    basis = (doc.get("forward_consensus") or {}).get("pe_eps_basis", {}).get("fiscal_years")
-    if basis is None:
-        assert c3.met is None, c3  # no basis on the page: condition 3 is UNKNOWN, never a guess
-        return
+    FROZEN INPUT, UNCONDITIONAL ASSERTIONS: condition 3's other half, the FY P/E's EPS basis, is
+    STATED here as GOOGL's page states it since 2026-11-02 (GAAP), never read off the living page,
+    which is re-drawn on every rebuild (CLAUDE.md TEST-LAYER RULE)."""
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.mechanical import _quality
+    from vinci.dossier.schemas import Sourced
+    from vinci.edgar.concepts import facts_as_of
+    from vinci.netcache import HttpError
+    from vinci.schemas.data_record import DataRecord, Fundamentals, Identity
+    from vinci.schemas.envelope import DataField, SourceTier
+
+    frozen = ROOT / "tests" / "fixtures" / "companyfacts_frozen" / "nonop_window" / "GOOGL.json"
+    facts = facts_as_of(json.loads(frozen.read_text()), date(2026, 11, 2))
+
+    class _Edgar:
+        def companyfacts(self, cik: str) -> dict[str, Any]:
+            return facts
+
+        def __getattr__(self, name: str) -> Any:
+            raise HttpError(f"not served: {name}")
+
+    unknown: DataField[Any] = DataField.unknown(source="not read here", tier=SourceTier.EDGAR)
+    record = typing.cast(typing.Any, DataRecord).model_construct(
+        identity=Identity(internal_id="SEC-0001652044-GOOGL", issuer_id="ISS-0001652044",
+                          cik="0001652044", ticker="GOOGL", mic="XNAS", exchange="Nasdaq",
+                          eod_symbol="GOOGL", name="Alphabet Inc."),
+        fundamentals=typing.cast(typing.Any, Fundamentals).model_construct(
+            net_leverage=unknown, net_debt_to_ocf=unknown, fcf_sign=unknown))
+    blank = Sourced[Any].unknown(note="not read here")
+    quality = _quality(record, typing.cast(typing.Any, _Edgar()), CiqBundle.from_files("GOOGL", []),
+                       date(2026, 10, 16), blank, fcf=blank, margin=blank, trajectory=blank)
+    nq = quality.nonoperating_quarters
+    assert nq is not None
+    assert (nq.material, nq.window, nq.window_end) == (3, 4, "2026-09-30"), nq
+    assert nq.source_ref.startswith(
+        "EDGAR XBRL pre-tax − operating, quarters 2025-12-31..2026-09-30"), nq.source_ref
+    assert quality.nonoperating_earnings is not None
+    assert quality.nonoperating_earnings.source_ref == nq.source_ref, "two windows on one page"
+    doc = {"forward_consensus": {"pe_eps_basis": {"fiscal_years": "gaap"}},
+           "mechanical": {"quality": quality.model_dump(mode="json")}}
+    c3 = rp.r4_conditions(doc, None)[2]
     assert "3 of the trailing 4 quarters carry material non-operating income" in c3.detail, (
         c3.detail)
-    assert c3.met is (basis == "gaap"), (basis, c3)
+    assert c3.met is True, c3
 
 
 # --- the ruled selection, and each condition on the page that fails it --------------------------

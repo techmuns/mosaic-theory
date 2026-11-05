@@ -1367,7 +1367,7 @@ def _quarterly_map(facts: dict[str, Any], concept: str) -> dict[date, float]:
 
     Duration-bounded at 80-100 days rather than trusting ``fp``: EDGAR stamps quarterly points
     inside a 10-K with ``fp="FY"``, the trapdoor `ConceptPoint.is_annual` documents at length. A
-    10-K's embedded Q4 lands here only where the 10-K TAGS one — and on 2026-11-05 none of the 25
+    10-K's embedded Q4 lands here only where the 10-K TAGS one — and on 2026-11-05 none of the 26
     committed pages with a fiscal-year end among their six latest quarters did (FUBO has none
     there): each 10-K states its fourth quarter only inside the year. A quarter this map lacks is
     derived by :func:`_nonop_window`, never left out.
@@ -1453,10 +1453,21 @@ def _derived_quarter(facts: dict[str, Any], concept: str, q: date,
     fourth quarter is the fiscal year less the nine months). Aliases in their order of meaning, as
     in :func:`_quarterly_map`. None — an absence, never a zero — when no alias states the parts.
     The cite is built by the caller, and only for a quarter it keeps (`_filed_quarter_ref` looks
-    each part's restatements up across its whole tag)."""
+    each part's restatements up across its whole tag).
+
+    A DERIVED REVENUE BELOW ZERO IS NO QUARTER (review of #916, 2026-11-05). Revenue is the
+    revenue arm's denominator, and a quarter cannot sell less than nothing: a negative difference
+    says the two parts are not one basis. FUBO's quarter to 2019-12-31 read −1.563M as filed by
+    2020-08-15 (its year and nine months on `RevenueFromContractWithCustomerExcludingAssessedTax`),
+    and its quarter to 2024-12-31 −777.2M (a Q1-2025 10-Q fact dated as the whole of 2024, which
+    `filed_quarter` now refuses as a restated year). A derived ZERO stands: both parts filed as
+    zero is a pre-revenue quarter (ORKA's 2021, FUBO's shell years), and the revenue arm already
+    reads a zero denominator as undefined, never material."""
     for tag in CONCEPT_ALIASES[concept]:
         got = filed_quarter(points_for_tag(facts, tag), q)
         if got is not None:
+            if concept == "revenue" and got[1] and got[0] < 0:
+                return None
             return got
     return None
 
