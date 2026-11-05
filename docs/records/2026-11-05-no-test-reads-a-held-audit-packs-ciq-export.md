@@ -123,8 +123,20 @@ per test.
   the hook never refusing, ignoring a linked held folder, or matching case-sensitively;
   `page_params` not skipping; `without_held` keeping a held name; a file's own name counted as
   held.
-- **Cost of the hook:** +2.5 µs per `open()` (18.6 → 21.2 µs, 100,000 opens, 4 roots and 6 held
-  folders linked).
+- **Cost of the hook:** +5.8 µs per `open()` on the PR head `99c8b681` (22.9 → 28.7 µs, best of
+  3 × 200,000 opens, 4 roots and 6 held folders linked). The first figure, +2.5 µs, was measured
+  before the case-folded roots and the link fallback, and no longer described the shipped hook
+  (review round 1).
+- **Review round 1** (Codex failed on its usage limit, so the in-session `/code-review high` stood
+  in; 6 findings): 2 FIXED — this cost figure, and a checkout under a held-named folder (`/srv/PLD/…`)
+  marking every page held, which is pinned and failed on the head. 4 DISMISSED:
+  - a cheaper prefilter in the hook (~6 s at most over a 17-minute suite, no failure);
+  - the left-out summary listing a loop that dropped a held name it would not have used (the list
+    did drop it, and a lazy helper would be a single-use-iterator trap);
+  - a refused open reported as a failure plus a teardown error (loud either way);
+  - the bare word `"manual"` counting as a CIQ path. Narrowing it un-flagged `test_maintenance_path`,
+    whose `_LINKED` tuple links the CIQ folder by that bare name, and let a routing mutant survive.
+    Measured, then reverted.
 - **Found on the way, not changed (a slow reader the old failure hid):**
   `test_segment_absence_and_relationship_route::test_the_customers_export_is_chosen_by_name_not_by_file_order`
   ran about 15 minutes in the targeted run. `customers()` spends 164.5 s in `read_text`'s regex on

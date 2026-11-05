@@ -196,6 +196,8 @@ class _Module:
                 got = True
             elif isinstance(n, ast.Constant) and isinstance(n.value, str) and (
                     n not in self.docstrings):
+                # the bare word counts: a module may link the CIQ folder by name
+                # (`test_maintenance_path`'s `_LINKED = (..., "manual", ...)`)
                 got = bool(_CIQ.search(repr(n.value)))
             elif isinstance(n, ast.Name) and n.id not in seen:
                 got = any(self.reaches(d, seen | {n.id}) for d in self.defs.get(n.id, [])) or any(
@@ -898,3 +900,27 @@ def test_the_archive_search_never_lists_a_held_folder(tmp_path: Path,
     assert archived_folders(root, "SMPL")
     assert archived_folders(root, "BURL") == []
     assert listed and not [p for p in listed if "BURL" in Path(p).parts]
+
+
+# ==================================================================================================
+# 5. REVIEW ROUND 1 (in-session /code-review high, Codex having failed on its usage limit)
+# ==================================================================================================
+
+@pytest.mark.parametrize("item", [
+    Path("/Users/x/PLD/mosaic-theory/data/dossiers/TJX/dossier.json"),
+    "/home/nvo/mosaic-theory/frontend/dossiers/ROST.json",
+    Path("/srv/MTB/checkout/data/manual/ciq/TJX/s.xls"),
+])
+def test_a_checkout_under_a_held_named_folder_does_not_hold_every_page(item: object) -> None:
+    """⊕ Only the part of a path BELOW the pages or the CIQ folder names its ticker: a checkout
+    that sits under a folder named like a held ticker would otherwise mark every page held."""
+    assert hn.held_in(item) is None
+
+
+@pytest.mark.parametrize("item", [
+    Path("/Users/x/repo/data/dossiers/BURL/dossier.json"),
+    Path("/srv/MTB/checkout/data/manual/ciq/RIVN/s.xls"),
+    Path("/srv/repo/data/manual/ciq-archive/replaced-2026-10-28/NVO/s.xls"),
+])
+def test_below_the_root_a_held_folder_still_names_its_ticker(item: object) -> None:
+    assert hn.held_in(item) in hn.HELD_NAMES

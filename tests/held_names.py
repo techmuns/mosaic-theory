@@ -51,6 +51,11 @@ from _pytest.mark.structures import ParameterSet
 #: The six blind audit packs (TeamNostra, exported 2026-10-28). CIQ folder names are tickers.
 HELD_NAMES: frozenset[str] = frozenset({"BURL", "MTB", "NVO", "PCVX", "PLD", "RIVN"})
 
+#: The folders a ticker sits directly below: the pages (`data/dossiers`, `frontend/dossiers`) and
+#: the CIQ folder (`data/manual/ciq`, its `ciq-archive`). A path's folders above the last of them
+#: name the checkout, never a ticker.
+_ANCHORS = frozenset({"dossiers", "ciq", "ciq-archive"})
+
 #: The declaration that a page enumeration's values never reach a CIQ export.
 NO_CIQ_READ = "# held-names: reads no CIQ export"
 
@@ -88,7 +93,13 @@ def tickers_named(item: object) -> set[str]:
         return {item.upper()}
     if isinstance(item, str | os.PathLike):
         p = Path(item)
-        return {part.upper() for part in p.parent.parts} | {p.name.upper(), p.stem.upper()}
+        folders = p.parent.parts
+        # only the part BELOW the pages or the CIQ folder names a ticker: a checkout that sits
+        # under a folder named like one (`/srv/PLD/mosaic-theory`) must not hold every page
+        anchors = [i for i, f in enumerate(folders) if f in _ANCHORS]
+        if anchors:
+            folders = folders[anchors[-1] + 1:]
+        return {part.upper() for part in folders} | {p.name.upper(), p.stem.upper()}
     return set()
 
 
