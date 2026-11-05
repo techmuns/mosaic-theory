@@ -18,6 +18,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
+from vinci import provenance
 from vinci.schemas.candidate import CandidateRecord
 from vinci.schemas.data_record import Identity
 from vinci.schemas.envelope import CoverageStatus, DataField, SourceTier
@@ -391,6 +392,7 @@ class Store:
         return n
 
     def get_price_history(self, internal_id: str) -> list[PriceBar]:
+        provenance.note_series(internal_id)  # a price read is a build input (`vinci.provenance`)
         rows = self._conn.execute(
             "SELECT * FROM prices WHERE internal_id = ? ORDER BY bar_date", (internal_id,)
         ).fetchall()
@@ -441,6 +443,7 @@ class Store:
         """The stored bar of each of ``internal_ids`` on ``day``, by internal id — absent when the
         store holds none. Read by `eod.client.restate_held` to set a held bar beside a fresh one."""
         ids = sorted(set(internal_ids))
+        provenance.note_series(ids)
         out: dict[str, PriceBar] = {}
         for i in range(0, len(ids), _ID_CHUNK):
             chunk = ids[i:i + _ID_CHUNK]
@@ -455,6 +458,7 @@ class Store:
 
     def last_bar_before(self, internal_id: str, day: date) -> date | None:
         """The newest bar date for one name strictly before ``day`` — None when it has none."""
+        provenance.note_series(internal_id)
         row = self._conn.execute(
             "SELECT MAX(bar_date) AS d FROM prices WHERE internal_id = ? AND bar_date < ?",
             (internal_id, _iso(day))).fetchone()
@@ -496,6 +500,7 @@ class Store:
 
     def bar_dates(self, internal_id: str) -> list[date]:
         """One name's bar dates, oldest first — the dates alone, for a scan over many names."""
+        provenance.note_series(internal_id)
         return [date.fromisoformat(r[0]) for r in self._conn.execute(
             "SELECT bar_date FROM prices WHERE internal_id = ? ORDER BY bar_date", (internal_id,))]
 
@@ -523,6 +528,7 @@ class Store:
         of the three), and "this store has not refreshed that far" is a different statement from
         "this store does not carry this name".
         """
+        provenance.note_series(internal_id)
         row = self._conn.execute(
             "SELECT MAX(bar_date) AS d FROM prices WHERE internal_id = ?", (internal_id,)
         ).fetchone()
@@ -545,6 +551,7 @@ class Store:
         unlike a lookup by VALUE, which is one-to-many on real data (MVST's 0.9188 matches four
         separate bars spanning 2024-02-06 to 2026-07-21).
         """
+        provenance.note_series(internal_id)
         row = self._conn.execute(
             "SELECT close FROM prices WHERE internal_id = ? AND bar_date = ?",
             (internal_id, _iso(bar_date)),
@@ -555,6 +562,7 @@ class Store:
         self, internal_id: str, *, reference_date: date, staleness_days: int
     ) -> DataField[float]:
         """Latest close as an enveloped datum: UNKNOWN if absent, STALE if too old, else PRESENT."""
+        provenance.note_series(internal_id)
         row = self._conn.execute(
             "SELECT bar_date, close, source FROM prices "
             "WHERE internal_id = ? ORDER BY bar_date DESC LIMIT 1",
@@ -585,6 +593,7 @@ class Store:
         ``reference_date`` it raises, rather than reaching forward or returning nothing to ignore.
         The staleness check still applies on top: a too-old *prior* bar comes back STALE (surfaced).
         """
+        provenance.note_series(internal_id)
         row = self._conn.execute(
             "SELECT bar_date, close, source FROM prices "
             "WHERE internal_id = ? AND bar_date <= ? ORDER BY bar_date DESC LIMIT 1",

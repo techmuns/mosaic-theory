@@ -19,6 +19,7 @@ from typing import Any, cast
 
 from pydantic import BaseModel
 
+from vinci import provenance
 from vinci.config import Config, get_config
 from vinci.edgar.submissions import parse_former_names
 from vinci.netcache import CachedHttp, HttpError
@@ -86,6 +87,8 @@ class EntityResolver:
         self._cfg = config or get_config()
         #: a cover's lines by document URL — one issuer's lines share one cover, parsed once
         self._covers: dict[str, list[tuple[str | None, str | None]]] = {}
+        #: the responses the index was built from (`index_reads`)
+        self._index_reads: provenance.Reads | None = None
 
     @classmethod
     def from_config(cls, config: Config | None = None) -> EntityResolver:
@@ -101,10 +104,20 @@ class EntityResolver:
         if self._index is None:
             if self._http is None:
                 raise RuntimeError("EntityResolver has no injected index and no HTTP client")
-            ct = self._http.get_json(_CT_URL, ttl_seconds=_ONE_DAY)
-            cte = self._http.get_json(_CTE_URL, ttl_seconds=_ONE_DAY)
+            # RECORDED HERE, not by the build that resolves through it: a cohort loads the index
+            # once, before any page's build opens its recorder (`vinci.provenance`)
+            with provenance.recording() as reads:
+                ct = self._http.get_json(_CT_URL, ttl_seconds=_ONE_DAY)
+                cte = self._http.get_json(_CTE_URL, ttl_seconds=_ONE_DAY)
             self._index = ResolverIndex.from_sec_files(ct, cte)
+            self._index_reads = reads.reads()
         return self._index
+
+    @property
+    def index_reads(self) -> provenance.Reads | None:
+        """The SEC responses the index was built from — None for an injected index or one not
+        loaded yet. Every page resolved through this index read them (`vinci.dossier.inputs`)."""
+        return self._index_reads
 
     # --- universe iteration -------------------------------------------------------------------
     def iter_universe(self, exchanges: Iterable[str]) -> Iterator[Identity]:

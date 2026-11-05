@@ -323,6 +323,12 @@ const EXTRACTION_VERSIONS = [
     "goes on past them (`revised_guidance_cut` on `drawdown_cause` and on each dated part, " +
     "absent until built); the quote is unchanged, and the page marks it cut, or on a page " +
     "built before the field, possibly cut"],
+  ["2026-11-05.input-record",
+    "every page records what it was built from (`inputs`, JSON-only): the full sha256 of each " +
+    "CIQ export, HTTP response and price series the build read, cut on the page to the fact " +
+    "layer's sources plus a digest of the rest (the build's run record carries them all); a " +
+    "page built before it is backfilled from its own stamps, the rest `unrecorded`. No " +
+    "extracted value changes"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

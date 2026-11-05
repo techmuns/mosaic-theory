@@ -14,16 +14,18 @@ import math
 import threading
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, TypeVar
 
 from pydantic import ValidationError
 
+from vinci import provenance
 from vinci.config import Config, get_config
 from vinci.dossier import ciq_sheets, filed_tiebreak, ltm_quarters, requirements, run_metrics
 from vinci.dossier import flags as dossier_flags
+from vinci.dossier import inputs as page_inputs
 from vinci.dossier.anchor import (
     RECIPE_UNKNOWN,
     Anchor,
@@ -117,6 +119,10 @@ class Finalist:
     #: `overshoot` by construction — the screen finds overshoot setups; a followed name states its
     #: own, and assembly refuses it unstated.
     sleeve: str = DEFAULT_SLEEVE
+    #: WHAT BUILDING THIS FINALIST READ (`vinci.provenance`): a maintained name's record reads its
+    #: price history and EDGAR's companyfacts before its build starts, so its build folds these into
+    #: the page's input record (`load_finalists`). None for a finalist made by hand.
+    reads: provenance.Reads | None = None
 
     @property
     def data_record(self) -> DataRecord:
@@ -548,7 +554,7 @@ def load_finalists(
         t = ticker.upper()
         row = next((r for r in queue if r.get("ticker") == t), None)
         rec = by_ticker.get(t) or (by_cid.get(str(row["candidate_id"])) if row else None)
-        fin = _finalist(cfg, t, rec, row)
+        fin = _recorded_finalist(cfg, t, rec, row)
         if fin is None:
             raise LookupError(
                 f"{t} not in candidate_records.jsonl and not maintained (no committed dossier, "
@@ -559,10 +565,19 @@ def load_finalists(
     for r in queue[: top or len(queue)]:
         t = str(r.get("ticker"))
         rec = by_cid.get(str(r.get("candidate_id"))) or by_ticker.get(t)
-        fin = _finalist(cfg, t, rec, r)
+        fin = _recorded_finalist(cfg, t, rec, r)
         if fin is not None:
             out.append(fin)
     return out
+
+
+def _recorded_finalist(
+    cfg: Config, ticker: str, rec: CandidateRecord | None, row: dict[str, Any] | None
+) -> Finalist | None:
+    """`_finalist`, carrying what building it read — the page's inputs start here."""
+    with provenance.recording() as reads:
+        fin = _finalist(cfg, ticker, rec, row)
+    return None if fin is None else replace(fin, reads=reads.reads())
 
 
 def _load_graph(cfg: Config) -> ExposureGraph:
@@ -1047,6 +1062,7 @@ def _with_listing_basis(rec: DataRecord, *, resolver: Any, reference_date: date,
     return rec if ads is None else rec.model_copy(update={"ads": ads})
 
 
+@provenance.recorded
 def assemble_one(
     fin: Finalist,
     *,
@@ -1057,7 +1073,14 @@ def assemble_one(
     out_root: Path,
     llm: LlmClient | None,
 ) -> Dossier:
-    """Assemble + persist one finalist's dossier. Opens its own store/edgar (thread-safe)."""
+    """Assemble + persist one finalist's dossier. Opens its own store/edgar (thread-safe).
+
+    RECORDS WHAT IT READS (`vinci.provenance`, opened by the decorator): every CIQ export, HTTP
+    response and price series, together with what building the finalist and the resolver's index
+    read before it, lands on the page as ``inputs`` (`vinci.dossier.inputs`)."""
+    reads = provenance.current()
+    reads.add_reads(fin.reads)
+    reads.add_reads(getattr(resolver, "index_reads", None))
     # THE BUILD'S OWN INSTANT, taken ONCE and used for BOTH the freshness gate and the artifact's
     # ``assembled_at``. Stamping it twice (a second ``datetime.now()`` at write time) would let the
     # guard and the artifact disagree about when the build ran — a small window, but this contract
@@ -1071,7 +1094,15 @@ def assemble_one(
         fin.data_record, resolver=resolver, reference_date=fin.reference_date,
         security_types=PolygonEodClient.from_config(cfg).security_types())
     ticker = rec.identity.ticker
-    bundle = CiqBundle.from_files(ticker, manual.files(ticker))
+    folder_files = manual.files(ticker)
+    try:
+        bundle = CiqBundle.from_files(ticker, folder_files)
+    except Exception:
+        # a build the LOADER refuses (two exports of a kind, a mislabelled export) still records
+        # the files it read — they are what the refusal is about
+        page_inputs.note_files(folder_files)
+        raise
+    page_inputs.note_bundle(bundle)
     location = manual.location(ticker)
     # MISSING-manifest: per-module 'pull CIQ' flags from the ONE requirements definition (so this
     # and `vinci dossier requirements` can't drift). Empty/partial folder → what's still owed.
@@ -1362,6 +1393,10 @@ def assemble_one(
 
         dossier = dossier.model_copy(update={"anchor": recipe_proposal.propose(
             json.loads(dossier_json(dossier)), dossier.anchor)})
+    # WHAT THIS PAGE WAS BUILT FROM — every read up to here, LLM phases included
+    dossier = dossier.model_copy(update={"inputs": page_inputs.for_page(page_inputs.manifest_for(
+        reads.reads(), db_path=cfg.db_path, extraction_version=EXTRACTION_VERSION,
+        facts_base=cfg.data_dir / "facts"))})
     return _write(dossier, llm_log, out_root)
 
 
@@ -1404,21 +1439,28 @@ def assemble_cohort(
         started = datetime.now(UTC)
         dossier: Dossier | None = None
         failure: Exception | None = None
-        try:
-            dossier = assemble_one(
-                fin, cfg=cfg, resolver=resolver, graph=graph, manual=manual,
-                out_root=out_root, llm=meter,
-            )
-        except Exception as exc:  # noqa: BLE001 — one bad name must not crash the cohort batch
-            failure = exc
-            if isinstance(exc, SecRateLimitedError):
-                refused.append(exc)
-                stop.set()
+        with provenance.recording() as attempt:
+            try:
+                dossier = assemble_one(
+                    fin, cfg=cfg, resolver=resolver, graph=graph, manual=manual,
+                    out_root=out_root, llm=meter,
+                )
+            except Exception as exc:  # noqa: BLE001 — one bad name must not crash the cohort batch
+                failure = exc
+                if isinstance(exc, SecRateLimitedError):
+                    refused.append(exc)
+                    stop.set()
         error = f"{ticker}: {type(failure).__name__}: {failure}" if failure is not None else None
         try:
+            # THE FULL RECORD — the page carries it with its response list cut (`for_page`) —
+            # and A REFUSED BUILD STILL SAYS WHAT IT READ: every read up to the refusal reached
+            # this recorder too, as a build's recorder is nested in it
+            read = page_inputs.manifest_for(attempt.reads(), db_path=cfg.db_path,
+                                            extraction_version=EXTRACTION_VERSION,
+                                            facts_base=cfg.data_dir / "facts")
             log.add(run_metrics.name_record(
                 run_id=log.run_id, ticker=ticker, started=started, finished=datetime.now(UTC),
-                meter=meter, dossier=dossier, error=failure))
+                meter=meter, dossier=dossier, error=failure, inputs=read))
         except Exception as exc:  # noqa: BLE001 — the dossier stands; the lost record is an error
             lost = f"{ticker}: run record NOT written to {log.path} ({type(exc).__name__}: {exc})"
             error = f"{error}; {lost}" if error else lost

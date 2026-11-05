@@ -119,6 +119,11 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Input manifest / the `inputs` block** (2026-11-05, workstream B). Plain words: *the list of
+  everything a page was built from, each by the full sha256 of its bytes — every CIQ export, every
+  SEC/Polygon/FINRA response (hashed as the fact layer hashes it), every price series — or
+  `unrecorded` with why*; `inputs_id` is that list's own hash, set only when nothing is unrecorded.
+  `vinci/dossier/inputs.py`, `docs/records/2026-11-05-every-page-records-what-it-was-built-from.md`.
 - **Filed tiebreak / filed LTM** (2026-11-04, operator approval). Plain words: *when a MATERIAL
   annual-summary row's LTM in CIQ's annual export disagrees with its four quarters in CIQ's
   quarterly export, the filer's own XBRL figure for the same four quarters (as filed by the page's
