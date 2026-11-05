@@ -502,7 +502,17 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
             return 1
         from vinci.dossier.prespend import run as precheck
 
-        return precheck(args.ticker, get_config())
+        out = getattr(args, "inputs_json", None)
+        return precheck(args.ticker, get_config(), inputs_json=Path(out) if out else None)
+    if getattr(args, "mode", "assemble") == "inputs-backfill":
+        if not (args.ticker or args.all_pages):
+            print("inputs-backfill requires --ticker or --all")
+            return 1
+        from vinci.dossier.inputs_backfill import run as backfill_inputs
+
+        return backfill_inputs(
+            get_config(), tickers=[args.ticker] if args.ticker else [], exclude=args.exclude,
+            roots=[Path(r) for r in args.ciq_root] or None, write=args.write)
     if getattr(args, "mode", "assemble") == "requirements":
         from vinci.dossier import requirements
 
@@ -3139,12 +3149,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_dossier = sub.add_parser("dossier", help="assemble per-finalist dossiers (never concludes)")
     p_dossier.add_argument(
-        "mode", nargs="?", default="assemble", choices=("assemble", "requirements", "precheck"),
+        "mode", nargs="?", default="assemble",
+        choices=("assemble", "requirements", "precheck", "inputs-backfill"),
         help="'assemble' (default) builds dossiers; 'requirements' prints the canonical manual-CIQ "
         "manifest (export checklist; the MISSING-manifest path reads the same definition); "
         "'precheck' builds --ticker's page at $0 (no LLM, nothing written) and exits non-zero on "
         "any field the committed page has and the build would lose, or on any refusal the paid "
-        "build would make only after its LLM calls — run it before a paid build",
+        "build would make only after its LLM calls — run it before a paid build; "
+        "'inputs-backfill' gives each committed page that predates its input record one, from its "
+        "own CIQ stamps and the files on this machine (dry run unless --write)",
     )
     p_dossier.add_argument("--top", type=int, default=10, help="top N of the queue (default: 10)")
     p_dossier.add_argument(
@@ -3152,6 +3165,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_dossier.add_argument(
         "--no-llm", action="store_true", dest="no_llm", help="mechanical layer only; skip synthesis"
+    )
+    p_dossier.add_argument("--all", action="store_true", dest="all_pages",
+                           help="with 'inputs-backfill': every committed page")
+    p_dossier.add_argument("--exclude", action="append", default=[],
+                           help="with 'inputs-backfill': a page never read (repeatable)")
+    p_dossier.add_argument("--ciq-root", action="append", default=[], dest="ciq_root",
+                           help="with 'inputs-backfill': a folder holding <TICKER>/ CIQ folders "
+                           "(a live folder or a ciq-archive); repeatable; default: the "
+                           "assembler's folder and its ciq-archive")
+    p_dossier.add_argument("--write", action="store_true",
+                           help="with 'inputs-backfill': save the records (default: dry run)")
+    p_dossier.add_argument(
+        "--inputs-json", dest="inputs_json",
+        help="with 'precheck': write the $0 build's input record (every CIQ export, response and "
+        "price series it read, by sha256) to this path",
     )
     p_dossier.add_argument(
         "--json", action="store_true", dest="json",

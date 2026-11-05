@@ -328,6 +328,12 @@ const EXTRACTION_VERSIONS = [
     "`consensus_level_ref` writes 'CIQ Estimates→Consensus · EBITDA FY2027 (…)', where the " +
     "first cut ran the metric into the sheet name ('Consensus EBITDA FY2027'); the figures " +
     "are unchanged"],
+  ["2026-11-05.input-record",
+    "every page records what it was built from (`inputs`, JSON-only): the full sha256 of each " +
+    "CIQ export, HTTP response and price series the build read, cut on the page to the fact " +
+    "layer's sources plus a digest of the rest (the build's run record carries them all); a " +
+    "page built before it is backfilled from its own stamps, the rest `unrecorded`. No " +
+    "extracted value changes"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
