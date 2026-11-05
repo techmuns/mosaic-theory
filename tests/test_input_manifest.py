@@ -425,6 +425,28 @@ def _pages() -> list[tuple[str, dict[str, Any]]]:
             if p.parent.name not in HELD]
 
 
+def test_every_committed_page_says_what_it_was_built_from() -> None:
+    """THE LIVING CORPUS (phrasing-independent invariants): every page carries a record; a
+    backfilled one resolves each of its own stamps or lists it unrecorded, each resolved export's
+    sha256 begins with the stamp at every site it names, and it never claims an id."""
+    pages = _pages()
+    assert len(pages) >= 20
+    for t, doc in pages:
+        assert doc.get("inputs"), f"{t}: the page records no inputs"
+        m = inputs.InputManifest.model_validate(doc["inputs"])
+        if m.recorded != "backfill":
+            continue
+        assert m.inputs_id is None, f"{t}: a backfill claims an id"
+        sites = inputs.stamps(doc)
+        unrecorded = {u.input for u in m.unrecorded}
+        for stamp in sites:
+            resolved = [e for e in m.ciq if e.sha256.startswith(stamp)]
+            assert resolved or f"ciq:{stamp}" in unrecorded, f"{t}: stamp {stamp} is unaccounted"
+            for e in resolved:
+                assert e.stamped_by == sites[stamp], f"{t}: {e.file} names other sites"
+        assert {"ciq:unstamped", "responses", "prices"} <= unrecorded
+
+
 def test_the_precheck_census_counts_no_record_hash_as_an_export_stamp() -> None:
     """The precheck's stamp census walks every key ending ``sha256``; the page's own input record
     carries full sha256s that are no export stamps, so it is left out (found on GOOGL's first
