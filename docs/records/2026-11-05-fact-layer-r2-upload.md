@@ -252,3 +252,11 @@ primary checkout's `.env` (loaded into the process, never printed). All on 2026-
 - **NOT DECIDED HERE** (open operator rulings):
   - the manifest growth policy (the ADR's open item; STATE row 44);
   - slice 2b.
+## Amendments
+
+**2026-11-06 — "The held names" bullet above is REMOVED.** The operator lifted the hold on
+2026-11-05: *"i dont want mosaic theory to hold back any names for teamnostra repo, its two
+separate setups"*. `scope.require_upload_exclusions` is gone, and `upload` no longer takes
+`--exclude`: a snapshot goes up whole, and a copied command that passes the flag is refused before
+any request. Every other guard here stands, and its pins still catch their mutants (read-back hash,
+bucket audit). Record: `docs/records/2026-11-06-the-fact-layer-holds-back-no-name.md`.

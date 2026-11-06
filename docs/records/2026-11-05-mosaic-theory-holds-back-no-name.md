@@ -89,3 +89,9 @@ backfill above:
   `extraction_version` stamp, from #911's `2026-11-05.input-record` to the current table row
   `2026-11-05.store-checkout-name` (#915). That stamp names the code vintage a backfill ran under,
   and it moves on main as on this branch. No other line moves.
+## Amendments
+
+**2026-11-06 — the fact layer's hold machinery FOUND above is REMOVED, and STATE row 50 is
+closed.** Ingest and upload take no exclusion list and no `--exclude`. Parity keeps it as an
+ordinary skip, counted. New manifests state both counts as 0. Record:
+`docs/records/2026-11-06-the-fact-layer-holds-back-no-name.md`.

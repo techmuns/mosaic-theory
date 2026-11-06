@@ -21,7 +21,7 @@ import pytest
 
 from vinci.facts import FactStore
 from vinci.facts.edgar_ingest import IngestShapeError, rows_from_companyfacts
-from vinci.facts.scope import require_exclusions, screen_scope_names
+from vinci.facts.scope import screen_scope_names
 from vinci.facts.store import FactsStoreError
 from vinci.netcache import CachedHttp
 
@@ -73,21 +73,16 @@ def test_an_integer_too_large_for_any_float_is_refused_not_crashed() -> None:
 # --- the screen's scope is its run's universe -----------------------------------------------------
 
 def test_the_screen_scope_is_every_candidate_of_the_run_with_its_cik() -> None:
-    names, excluded, rule = screen_scope_names(RUN, RUN_FIX)
+    names, rule = screen_scope_names(RUN, RUN_FIX)
     assert [(n.ticker, n.cik, n.page, n.unresolved) for n in names] == [
         ("EEFT", EEFT, None, None), ("FUBO", FUBO, None, None)]
-    assert excluded == 0 and RUN in rule and "2026-10-16" in rule
+    assert RUN in rule and "2026-10-16" in rule
 
 
 def test_a_ticker_the_run_never_screened_is_not_in_scope() -> None:
     """NEGATIVE: NFLX has a row in the run (out of band) and is not a candidate."""
-    names, _, _ = screen_scope_names(RUN, RUN_FIX)
+    names, _ = screen_scope_names(RUN, RUN_FIX)
     assert "NFLX" not in {n.ticker for n in names}
-
-
-def test_an_excluded_name_is_counted_and_left_out() -> None:
-    names, excluded, _ = screen_scope_names(RUN, RUN_FIX, exclude=frozenset({"FUBO"}))
-    assert [n.ticker for n in names] == ["EEFT"] and excluded == 1
 
 
 def test_a_universe_snapshot_of_another_date_is_refused(tmp_path: Path) -> None:
@@ -104,50 +99,9 @@ def test_a_ticker_two_universe_securities_carry_is_unresolved_not_guessed(tmp_pa
         f = tmp_path / "s" / name
         line = next(x for x in f.read_text().splitlines() if "-EEFT" in x)
         f.write_text(f.read_text() + line.replace("-EEFT", "-EEFT2") + "\n")
-    names, _, _ = screen_scope_names(RUN, tmp_path / "s")
+    names, _ = screen_scope_names(RUN, tmp_path / "s")
     (eeft,) = [n for n in names if n.ticker == "EEFT"]
     assert eeft.cik is None and eeft.unresolved == "2 universe securities carry ticker EEFT"
-
-
-# --- the held-name guard holds a scope's FIRST snapshot to the operator's list --------------------
-
-def _pointer(base: Path, key: str, sid: str, scope: dict[str, Any]) -> None:
-    (base / "manifests").mkdir(parents=True, exist_ok=True)
-    (base / "manifests" / f"{sid}.json").write_text(json.dumps({"scope": scope}))
-    cur = base / "current.json"
-    pointers = json.loads(cur.read_text()) if cur.exists() else {}
-    cur.write_text(json.dumps({**pointers, key: sid}))
-
-
-def test_a_first_screen_snapshot_listing_fewer_exclusions_than_the_pages_is_refused(
-        tmp_path: Path) -> None:
-    """The screen has no snapshot of its own to fall short of; the pages' list is the bar."""
-    _pointer(tmp_path, "edgar", "edgar-aaaa", {"excluded_by_operator_instruction": 1,
-                                                "exclusions_listed": 2})
-    with pytest.raises(FactsStoreError, match="told to exclude 1 name") as refused:
-        require_exclusions(0, listed=1, rule="r", selected=1, source="edgar", name="screen",
-                           base=tmp_path)
-    assert "excluding 2" in str(refused.value)
-    require_exclusions(0, listed=2, rule="r", selected=1, source="edgar", name="screen",
-                           base=tmp_path)   # POSITIVE
-
-
-def test_a_snapshot_written_before_the_list_count_is_held_to_its_in_scope_count(
-        tmp_path: Path) -> None:
-    """Slice 1's manifest states only the in-scope count; the list was at least that long."""
-    _pointer(tmp_path, "edgar", "edgar-aaaa", {"excluded_by_operator_instruction": 1})
-    with pytest.raises(FactsStoreError, match="excluding 1"):
-        require_exclusions(0, listed=0, rule="r", selected=1, source="edgar", name="screen",
-                           base=tmp_path)
-    require_exclusions(0, listed=1, rule="r", selected=1, source="edgar", name="screen",
-                           base=tmp_path)
-
-
-def test_a_current_pointer_to_a_missing_manifest_refuses(tmp_path: Path) -> None:
-    (tmp_path / "current.json").write_text(json.dumps({"edgar": "edgar-gone"}))
-    with pytest.raises(FactsStoreError, match="is missing"):
-        require_exclusions(0, listed=6, rule="r", selected=1, source="edgar", name="screen",
-                           base=tmp_path)
 
 
 # --- the screen ingest and its replay, end to end on the frozen run -------------------------------
@@ -273,38 +227,39 @@ def test_a_cache_that_moved_since_the_ingest_is_named_not_compared(
     assert [n.ticker for n in print_replay(got)] == ["EEFT"]
 
 
+# --- mosaic-theory holds back no name (operator ruling 2026-11-05) -------------------------------
+
+def test_a_screen_ingest_needs_no_exclusion_list(tmp_path: Path,
+                                                 monkeypatch: pytest.MonkeyPatch) -> None:
+    """On main a screen ingest beside the two committed snapshots (each written excluding 1 name
+    of a list of 6) was REFUSED before anything was read, for passing no `--exclude`: the guard
+    held every snapshot of the source, the screen's first one included, to the pages' list. The
+    frozen run's rule is the committed screen snapshot's own (run 2026-10-16-01, universe as of
+    2026-10-16), so this is its same rule re-ingested. It now writes, and states both counts 0."""
+    from vinci.facts.__main__ import main
+    committed = Path(__file__).resolve().parent.parent / "data" / "facts"
+    facts = tmp_path / "data" / "facts"
+    shutil.copytree(committed / "manifests", facts / "manifests")
+    shutil.copy(committed / "current.json", facts / "current.json")
+    prior = json.loads((facts / "current.json").read_text())
+    shutil.copytree(RUN_FIX, tmp_path / "data" / "snapshots")
+    cache = _cache_with(tmp_path, ["EEFT-companyfacts-slice.json",
+                                   "FUBO-companyfacts-slice.json"])
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("VINCI_FACTS_STORE", raising=False)
+    old = json.loads((facts / "manifests" / f"{prior['edgar:screen']}.json").read_text())["scope"]
+    assert main(["ingest", "--scope", "screen", "--run", RUN, "--cache-dir", str(cache)]) == 0
+    pointers = json.loads((facts / "current.json").read_text())
+    assert pointers["edgar"] == prior["edgar"] and pointers["edgar:screen"] != prior["edgar:screen"]
+    scope = json.loads((facts / "manifests" / f"{pointers['edgar:screen']}.json").read_text())[
+        "scope"]
+    assert scope["rule"] == old["rule"]
+    assert (old["excluded_by_operator_instruction"], old["exclusions_listed"]) == (1, 6)
+    assert (scope["names_selected"], scope["excluded_by_operator_instruction"],
+            scope["exclusions_listed"]) == (2, 0, 0)
+
+
 # --- review round 2 of #904 (coordinator) ---------------------------------------------------------
-
-def _scope(rule: str, selected: int, excluded: int, listed: int) -> dict[str, Any]:
-    return {"rule": rule, "names_selected": selected, "excluded_by_operator_instruction": excluded,
-            "exclusions_listed": listed}
-
-
-def test_the_same_population_excluding_fewer_held_names_is_refused(tmp_path: Path) -> None:
-    """POSITIVE: the same run re-ingested, its held name no longer excluded (the list as long)."""
-    _pointer(tmp_path, "edgar:screen", "edgar-s", _scope("run A", 3, 1, 1))
-    with pytest.raises(FactsStoreError, match="excludes 0 name"):
-        require_exclusions(0, listed=1, rule="run A", selected=3, source="edgar",
-                           name="screen", base=tmp_path)
-
-
-def test_a_later_run_that_no_longer_screens_the_held_name_is_accepted(tmp_path: Path) -> None:
-    """NEGATIVE: the next run's universe dropped the held name; every name is still listed. The
-    in-scope count of ANOTHER population is no bar (it dead-ended every later run: 0 < 1)."""
-    _pointer(tmp_path, "edgar:screen", "edgar-s", _scope("run A", 3, 1, 1))
-    require_exclusions(0, listed=1, rule="run B", selected=2, source="edgar", name="screen",
-                       base=tmp_path)
-
-
-def test_the_pages_after_the_held_page_left_are_accepted(tmp_path: Path) -> None:
-    """The pages' rule is constant, so their population is told apart by its size."""
-    _pointer(tmp_path, "edgar", "edgar-p", _scope("pages", 28, 1, 6))
-    require_exclusions(0, listed=6, rule="pages", selected=27, source="edgar", name="pages",
-                       base=tmp_path)
-    with pytest.raises(FactsStoreError, match="excludes 0 name"):
-        require_exclusions(0, listed=6, rule="pages", selected=28, source="edgar",
-                           name="pages", base=tmp_path)
-
 
 def test_the_replay_refuses_a_ticker_whose_cik_is_not_the_snapshots(
         screen: tuple[Path, Path]) -> None:

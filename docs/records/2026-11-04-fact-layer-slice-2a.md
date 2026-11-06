@@ -237,3 +237,12 @@ cut). Only the rows can see a store that reads late, which is why the replay com
   `data/facts/local` opens, and the first read then fails loud on the missing object.
 - **The order objects are rewritten on every refresh** of a company whose response changed: 0.64 MB
   for the 26 page companies, delta-encoded (2.18 MB dictionary-encoded).
+## Amendments
+
+**2026-11-06 — the held-name guard this record extends is REMOVED.** The operator lifted the hold
+on 2026-11-05: *"i dont want mosaic theory to hold back any names for teamnostra repo, its two
+separate setups"*. `scope.require_exclusions` is gone, and with it the first-snapshot and
+same-population comparisons above. So is `screen_scope_names`' `exclude`. A screen ingest takes no
+`--exclude`. The committed screen manifest still states 1 excluded of a list of 6, and the screen
+replay still reads that count. Record:
+`docs/records/2026-11-06-the-fact-layer-holds-back-no-name.md`.

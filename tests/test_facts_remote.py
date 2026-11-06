@@ -28,6 +28,12 @@ import httpx
 import pytest
 
 from vinci.facts import open_store
+from vinci.facts.edgar_ingest import (
+    EXTRACTOR,
+    EXTRACTOR_VERSION,
+    SOURCE,
+    rows_from_companyfacts,
+)
 from vinci.facts.reader import FactStore
 from vinci.facts.remote import (
     R2Client,
@@ -41,14 +47,15 @@ from vinci.facts.remote import (
     manifest_objects,
     upload_snapshot,
 )
-from vinci.facts.scope import require_upload_exclusions
 from vinci.facts.sigv4 import canonical_uri, sign
 from vinci.facts.store import (
     FactsStoreError,
     RemoteStoreNotConfiguredError,
+    build_manifest,
     is_r2,
     load_manifest,
     store_root,
+    write_entity,
 )
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -295,37 +302,38 @@ def test_a_transient_failure_is_retried_then_reported_without_the_endpoint() -> 
         assert secret not in str(got.value)
 
 
-# --- the held names --------------------------------------------------------------------------
+# --- no list of names: mosaic-theory holds back no name (operator ruling 2026-11-05) ---------
 
-_SIX_OTHERS = ["ZZQA", "ZZQB", "ZZQC", "ZZQD", "ZZQE", "ZZQF"]
+def test_the_committed_snapshot_uploads_with_no_exclusion_list(monkeypatch: pytest.MonkeyPatch,
+                                                               pages: dict[str, Any]) -> None:
+    """On main this command was REFUSED before any request: the snapshot was written excluding 1
+    name of a list of 6 under the lifted hold, and no `--exclude` was passed. It now uploads, and
+    every object reads back against the manifest."""
+    from vinci.facts import remote
+    from vinci.facts.__main__ import main
+    assert (pages["scope"]["excluded_by_operator_instruction"],
+            pages["scope"]["exclusions_listed"]) == (1, 6)
+    bucket = FakeBucket()
+    monkeypatch.setattr(remote.R2Client, "from_env", classmethod(lambda cls: _client(bucket)))
+    assert main(["upload", "--no-audit", "--workers", "2"]) == 0
+    assert {k: _sha(v) for k, v in bucket.objects.items()} == {
+        e["path"]: e["sha256"] for e in manifest_objects(pages)}
 
 
-def test_the_upload_needs_every_exclusion_the_snapshot_was_written_with(
-        pages: dict[str, Any]) -> None:
-    """POSITIVE: six names, none of them the snapshot's, as many as it was written excluding.
-    NEGATIVE: five; and a list naming one of its companies. Each refusal names counts only."""
-    assert pages["scope"]["exclusions_listed"] == 6
-    require_upload_exclusions(pages, _SIX_OTHERS)
-    with pytest.raises(FactsStoreError, match=r"exclude 5 name\(s\).*excluding 6"):
-        require_upload_exclusions(pages, _SIX_OTHERS[:5])
-    held = pages["entities"][0]["tickers"][0]
-    with pytest.raises(FactsStoreError, match=r"1 of snapshot .*'s 26 companies") as got:
-        require_upload_exclusions(pages, [*_SIX_OTHERS[:5], held.lower()])
-    assert held not in str(got.value) and held.lower() not in str(got.value)
-
-
-def test_the_upload_command_refuses_before_any_request(monkeypatch: pytest.MonkeyPatch,
-                                                       pages: dict[str, Any]) -> None:
+def test_an_upload_given_exclude_fails_loud_before_any_request(
+        monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    """An upload has no names to skip: a snapshot goes up whole. On main `--exclude` was the
+    held-name list, refused here for naming 1 where the snapshot was written with 6. The flag is
+    gone, so a copied command line is refused by argparse, and nothing is requested."""
     from vinci.facts import remote
     from vinci.facts.__main__ import main
     bucket = FakeBucket()
     monkeypatch.setattr(remote.R2Client, "from_env", classmethod(lambda cls: _client(bucket)))
-    argv = ["upload", "--no-audit", "--workers", "2"]
-    with pytest.raises(FactsStoreError, match="nothing was uploaded"):
-        main([*argv, *(x for t in _SIX_OTHERS[:5] for x in ("--exclude", t))])
+    with pytest.raises(SystemExit) as refused:
+        main(["upload", "--no-audit", "--workers", "2", "--exclude", "ZZQA"])
+    assert refused.value.code == 2
+    assert "unrecognized arguments: --exclude ZZQA" in capsys.readouterr().err
     assert bucket.requests == []
-    assert main([*argv, *(x for t in _SIX_OTHERS for x in ("--exclude", t))]) == 0
-    assert len(bucket.objects) == 379
 
 
 # --- reading from R2 -------------------------------------------------------------------------
@@ -583,8 +591,7 @@ def test_a_manifest_the_audit_cannot_read_is_counted_not_fatal(
     monkeypatch.chdir(tmp_path)
     bucket = FakeBucket()
     monkeypatch.setattr(remote.R2Client, "from_env", classmethod(lambda cls: _client(bucket)))
-    assert main(["upload", "--workers", "2", *(x for t in _SIX_OTHERS
-                                              for x in ("--exclude", t))]) == 0
+    assert main(["upload", "--workers", "2"]) == 0
     out = capsys.readouterr().out
     assert "against the 2 committed manifests it reads" in out
     assert "1 manifest not read" in out
@@ -625,19 +632,40 @@ def test_same_size_corruption_is_caught_at_every_hash(pages: dict[str, Any],
     assert good.fetch(entry)[1] is True and path.read_bytes() == sealed
 
 
-def test_an_older_snapshot_cannot_upload_below_the_current_list(pages: dict[str, Any],
-                                                                tmp_path: Path) -> None:
-    """Item 2: an old manifest written with no exclusion uploads with none, unless every current
-    snapshot's list is held to it too (the loop over current.json). And the snapshot's own count
-    binds where no current snapshot lists one."""
-    old = {**pages, "scope": {**pages["scope"], "exclusions_listed": 0,
-                              "excluded_by_operator_instruction": 0}}
-    with pytest.raises(FactsStoreError, match=r"exclude 0 name\(s\).*excluding 6"):
-        require_upload_exclusions(old, [])
-    (tmp_path / "manifests").mkdir()
-    require_upload_exclusions(old, [], base=tmp_path)            # nothing current: none needed
-    with pytest.raises(FactsStoreError, match=r"exclude 5 name\(s\).*excluding 6"):
-        require_upload_exclusions(pages, _SIX_OTHERS[:5], base=tmp_path)
+@pytest.mark.parametrize("scope", [
+    {"rule": "test", "names_selected": 1, "excluded_by_operator_instruction": 0,
+     "exclusions_listed": 0, "names_ingested": 1, "unread": []},       # as every ingest writes
+    {"rule": "test"}])                                                 # no count at all
+def test_a_snapshot_naming_no_exclusion_uploads_beside_the_committed_ones(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Path, scope: dict[str, Any],
+        capsys: pytest.CaptureFixture[str]) -> None:
+    """A snapshot that names no exclusion, uploaded while the two committed snapshots (each
+    written excluding 1 of a list of 6) are current. On main both were REFUSED before any
+    request: the guard held an upload to every current snapshot's list (0 < 6), and refused a
+    snapshot stating no count. Now it uploads, and the bucket audit over every manifest in the
+    tree still runs and passes."""
+    from vinci.facts import remote
+    from vinci.facts.__main__ import main
+    facts = tmp_path / "data" / "facts"
+    shutil.copytree(ROOT / "data" / "facts" / "manifests", facts / "manifests")
+    shutil.copy(ROOT / "data" / "facts" / "current.json", facts / "current.json")
+    got = rows_from_companyfacts(json.loads(
+        (FIXTURES / "FUBO-companyfacts-slice.json").read_text()))
+    files, order = write_entity(got.rows, facts / "objects")
+    manifest = build_manifest(
+        source=SOURCE, extractor=EXTRACTOR, extractor_version=EXTRACTOR_VERSION, scope=scope,
+        entities=[{"entity": got.entity, "tickers": ["FUBO"], "rows_kept": len(got.rows)}],
+        files=files, orders={got.entity: order})
+    sid = manifest["snapshot_id"]
+    (facts / "manifests" / f"{sid}.json").write_text(json.dumps(manifest, indent=2,
+                                                                sort_keys=True) + "\n")
+    monkeypatch.chdir(tmp_path)
+    bucket = FakeBucket()
+    monkeypatch.setattr(remote.R2Client, "from_env", classmethod(lambda cls: _client(bucket)))
+    assert main(["upload", "--snapshot", sid, "--workers", "2"]) == 0
+    assert {k: _sha(v) for k, v in bucket.objects.items()} == {
+        e["path"]: e["sha256"] for e in manifest_objects(manifest)}
+    assert "0 named by none" in capsys.readouterr().out
 
 
 def test_the_upload_fails_when_the_bucket_holds_what_no_manifest_names(
@@ -647,7 +675,7 @@ def test_the_upload_fails_when_the_bucket_holds_what_no_manifest_names(
     so a key no manifest names, or a named key of another size, fails the run."""
     from vinci.facts import remote
     from vinci.facts.__main__ import main
-    argv = ["upload", "--workers", "2", *(x for t in _SIX_OTHERS for x in ("--exclude", t))]
+    argv = ["upload", "--workers", "2"]
     for extra in ({"edgar/stray/2020/" + "0" * 64 + ".parquet": b"x"},
                   {load_manifest(name="screen")["files"][0]["path"]: b"x"}):
         bucket = FakeBucket()

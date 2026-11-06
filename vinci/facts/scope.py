@@ -5,24 +5,26 @@ in one screen run's universe, the population its gates ran over (``data/snapshot
 
 The rule is stated in the manifest beside the result, with every name the rule named but the ingest
 could not read and why, so a count never stands without its population (CLAUDE.md, EVERY COUNT
-STATES ITS BOUNDARY). A name excluded by an operator instruction is counted there and never named.
+STATES ITS BOUNDARY).
+
+NO NAME IS HELD BACK (operator ruling 2026-11-05,
+``docs/records/2026-11-05-mosaic-theory-holds-back-no-name.md``): an ingest selects its rule's
+whole population. Only the parity's comparison skips a page (``scope_names``' ``exclude``), and it
+writes nothing. The two snapshots written under the lifted hold each excluded one name of a list
+of six, and their manifests say so (``excluded_by_operator_instruction`` 1,
+``exclusions_listed`` 6); an ingest now writes both counts as 0
+(``docs/records/2026-11-06-the-fact-layer-holds-back-no-name.md``).
 """
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from typing import Any
 
 from vinci.facts.edgar_ingest import NotInCacheError, cik_for_ticker, pad_cik
-from vinci.facts.store import (
-    FactsStoreError,
-    manifest_path,
-    pointer_key,
-    read_pointers,
-)
+from vinci.facts.store import FactsStoreError
 from vinci.followed import follow_records
 
 RULE = "committed pages (data/dossiers/*/dossier.json) plus followed names (data/followed.json)"
@@ -39,107 +41,6 @@ class ScopeName:
     page: Path | None           # the committed dossier.json, when the name has one
     followed: bool
     unresolved: str | None = None
-
-
-def _prior_scope(base: Path | None, key: str, snapshot_id: str) -> dict[str, Any]:
-    """The scope a current snapshot was written with, read raw: a manifest of an older version
-    still states its exclusions, and an unreadable one refuses rather than passing the check."""
-    path = manifest_path(snapshot_id, base)
-    if not path.exists():
-        raise FactsStoreError(f"current.json names {snapshot_id} for {key!r}; {path} is missing")
-    scope = json.loads(path.read_text()).get("scope")
-    return scope if isinstance(scope, dict) else {}
-
-
-def require_upload_exclusions(manifest: dict[str, Any], exclude: Iterable[str], *,
-                              base: Path | None = None) -> None:
-    """Refuse to upload a snapshot unless the held-name list is passed again, and unless none of
-    the snapshot's companies carries a name on it.
-
-    The ingest's ``--exclude`` carries to the upload, so a manifest written without an exclusion
-    (an old one, or one written by hand) is refused when the held names are passed. THE LIMIT: it
-    is a count check plus a match on the names PASSED, so it binds only as far as the list passed
-    is the operator's; as many invented names pass it (a test's positive case does exactly that).
-    Checked before any request, and the refusal names COUNTS, never a name:
-    - how many names this upload was told to exclude, against the snapshot's own
-      ``exclusions_listed`` and every current snapshot's of its source (the operator's list does
-      not depend on the scope, as :func:`require_exclusions` holds);
-    - how many of the snapshot's companies carry a ticker on that list: it must be none."""
-    held = {t.strip().upper() for t in exclude if t.strip()}
-    sid = str(manifest["snapshot_id"])
-    source = str(manifest["source"])
-    own = manifest.get("scope")
-    scopes: list[tuple[str, dict[str, Any]]] = [(sid, own if isinstance(own, dict) else {})]
-    for key, snapshot_id in sorted(read_pointers(base).items()):
-        if key == source or key.startswith(f"{source}:"):
-            scopes.append((snapshot_id, _prior_scope(base, key, snapshot_id)))
-    for snapshot_id, scope in scopes:
-        listed = scope.get("exclusions_listed", scope.get("excluded_by_operator_instruction"))
-        if not isinstance(listed, int) or isinstance(listed, bool):
-            raise FactsStoreError(
-                f"snapshot {snapshot_id} states no exclusion count, so the upload of {sid} cannot "
-                "be checked against it")
-        if len(held) < listed:
-            raise FactsStoreError(
-                f"this upload was told to exclude {len(held)} name(s) by operator instruction; "
-                f"snapshot {snapshot_id} was written excluding {listed}. Pass every --exclude "
-                "the snapshots were written with; nothing was uploaded")
-    entities = manifest["entities"]
-    carrying = sum(1 for e in entities
-                   if held & {str(t).strip().upper() for t in e.get("tickers") or ()})
-    if carrying:
-        raise FactsStoreError(
-            f"{carrying} of snapshot {sid}'s {len(entities)} companies carry a name this upload "
-            "excludes; nothing was uploaded")
-
-
-def require_exclusions(excluded: int, *, listed: int, rule: str, selected: int, source: str,
-                       name: str, base: Path | None = None) -> None:
-    """Refuse a run that excludes FEWER names than a current snapshot did.
-
-    The exclusion is a command-line flag, so a run that forgets it would select a held name and put
-    its ticker and CIK into a manifest that is public and permanent (review round 2 of #896). Two
-    counts are checked, before anything is read or written, and the refusal names COUNTS, never a
-    name:
-    - ``listed``, how many names the run was told to exclude, against EVERY current snapshot of the
-      source: the operator's list does not depend on the scope, so a scope's FIRST snapshot is
-      held to it too (slice 2a; a per-scope count alone has nothing to compare a first run to);
-    - ``excluded``, how many of them this scope selected, against the current snapshot of the same
-      name, ONLY when it was written over the same population: the same ``rule`` and as many names
-      ``selected``. A later screen run (another rule) or the pages after a page left (fewer names)
-      is another population, and its in-scope count is no bar: comparing it dead-ended every later
-      run whose universe no longer held the excluded name, every ``--exclude`` passed (review round
-      2 of #904). A population that changes at a constant size still compares, which can refuse a
-      run that should pass and never pass one that should not."""
-    pointers = read_pointers(base)
-    own = pointer_key(source, name)
-    for key, snapshot_id in sorted(pointers.items()):
-        if key != source and not key.startswith(f"{source}:"):
-            continue
-        scope = _prior_scope(base, key, snapshot_id)
-        in_scope = scope.get("excluded_by_operator_instruction")
-        # a manifest written before `exclusions_listed` existed states only the in-scope count,
-        # which the list was at least as long as
-        prior_listed = scope.get("exclusions_listed", in_scope)
-        if not isinstance(in_scope, int) or not isinstance(prior_listed, int):
-            # never read an absent count as zero: that is exactly the run this guard exists to stop
-            raise FactsStoreError(
-                f"the current snapshot {snapshot_id} ({key!r}) states no exclusion count "
-                "(scope.excluded_by_operator_instruction), so this run cannot be checked "
-                "against it")
-        if listed < prior_listed:
-            raise FactsStoreError(
-                f"this run was told to exclude {listed} name(s) by operator instruction; the "
-                f"current snapshot {snapshot_id} ({key!r}) was written excluding {prior_listed}. "
-                "Writing it could publish a held name in a permanent manifest: pass every "
-                "--exclude the current snapshots were written with")
-        same_population = (scope.get("rule") == rule
-                           and scope.get("names_selected") == selected)
-        if key == own and same_population and excluded < in_scope:
-            raise FactsStoreError(
-                f"this run excludes {excluded} name(s) by operator instruction; the current "
-                f"snapshot {snapshot_id} excludes {in_scope}. Writing it would publish a held "
-                "name in a permanent manifest: pass every --exclude it was written with")
 
 
 def page_path(dossiers_dir: Path, ticker: str) -> Path:
@@ -220,19 +121,15 @@ def screen_population(run_id: str, snapshots_dir: Path) -> ScreenPopulation:
                             securities=by_ticker)
 
 
-def screen_scope_names(run_id: str, snapshots_dir: Path, *,
-                       exclude: frozenset[str] = frozenset()) -> tuple[list[ScopeName], int, str]:
-    """Every ticker run ``run_id`` screened, minus ``exclude``, each with its CIK; how many the
-    exclusion removed; and the rule, stated with the run's own universe date.
+def screen_scope_names(run_id: str, snapshots_dir: Path) -> tuple[list[ScopeName], str]:
+    """Every ticker run ``run_id`` screened, each with its CIK, and the rule, stated with the run's
+    own universe date.
 
     The CIK is the security's as the run's universe snapshot held it, so a ticker that changed
     hands is read for the company the screen screened."""
     pop = screen_population(run_id, snapshots_dir)
-    excluded = len(set(pop.screened) & exclude)
     out: list[ScopeName] = []
     for ticker in pop.screened:
-        if ticker in exclude:
-            continue
         secs = pop.securities.get(ticker, [])
         cik = secs[0].get("cik") if len(secs) == 1 else None
         if not cik:
@@ -241,4 +138,4 @@ def screen_scope_names(run_id: str, snapshots_dir: Path, *,
             out.append(ScopeName(ticker, None, None, False, unresolved=why))
         else:
             out.append(ScopeName(ticker, pad_cik(cik), None, False))
-    return out, excluded, pop.rule
+    return out, pop.rule
