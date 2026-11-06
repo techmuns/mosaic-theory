@@ -12,6 +12,8 @@ registration written before the first draw.
     score --out-dir DIR --registration FILE   $0: the registered rule, logged
     capture --ticker T [--code-ref REF] [--transform NAME ...] --out FILE
     prove --ticker T --log FILE [--code-ref REF] [--page-ref REF]
+    judge --half dev|test --budget-ledger FILE --out-dir DIR --paid
+                                              PAID: the judge on one gold half, calibrated
     gold                                      each metric's P/R, DEV and TEST, at the freeze
     panel                                     re-run the panel rule on the frozen rows
     run --ticker T [--code-ref REF] --budget-ledger FILE --draws-out FILE --label L [--cap USD]
@@ -76,6 +78,12 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument("--log", required=True, type=Path)
     pr.add_argument("--code-ref")
     pr.add_argument("--page-ref")
+    jd = sub.add_parser("judge")
+    jd.add_argument("--half", required=True, choices=("dev", "test"))
+    jd.add_argument("--budget-ledger", required=True, type=Path)
+    jd.add_argument("--cap", type=float, help="may only LOWER the approved cap")
+    jd.add_argument("--out-dir", required=True, type=Path)
+    jd.add_argument("--paid", action="store_true")
     sub.add_parser("gold")
     sub.add_parser("panel")
     r = sub.add_parser("run")
@@ -176,6 +184,18 @@ def main(argv: list[str] | None = None) -> int:
               f"IDENTICAL {proof.identical} (the log carries no tools, tool_choice or "
               "cache_control: those are compared only between a capture and its paid request)")
         return 0 if proof.identical else 1
+    if a.cmd == "judge":
+        from vinci.evals import gold as gd
+        from vinci.evals import judge as jg
+        rp.refuse_inside_repo(a.out_dir, "the judge's run folder")
+        budget = rp.Budget.load(a.budget_ledger, cap_usd=a.cap)
+        if not _paid(a):
+            return 2
+        gold = gd.load_gold()
+        judged = jg.run_half(a.half, budget=budget, out_dir=a.out_dir, gold=gold)
+        print(jg.calibration_text(jg.calibrate(judged, gold, a.half)))
+        print(f"the approval's spend is now ${budget.spent():.4f} of ${budget.cap_usd:.2f}")
+        return 0
     if a.cmd == "gold":
         from vinci.evals.report import gold_report
         print(gold_report())
