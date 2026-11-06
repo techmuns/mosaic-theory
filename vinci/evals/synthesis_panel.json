@@ -1,0 +1,1010 @@
+{
+ "schema": 1,
+ "freeze_ref": "bcda7ce36e02369d2d67aaba6ff2004c3777d40e",
+ "rule": "vinci/evals/panel.py (module docstring); SALT \"mosaic-theory synthesis-eval panel v1 2026-11-06\"",
+ "panel": [
+  "CNXC",
+  "LLY",
+  "MCK",
+  "NKE",
+  "ROST",
+  "SMPL"
+ ],
+ "search": {
+  "eligible": 16,
+  "subsets": 8008,
+  "feasible": 812,
+  "best_score": [
+   5,
+   1,
+   0,
+   0
+  ],
+  "tied_at_best": 7,
+  "tied_in_hash_order": [
+   [
+    "CNXC",
+    "LLY",
+    "MCK",
+    "NKE",
+    "ROST",
+    "SMPL"
+   ],
+   [
+    "CNXC",
+    "LLY",
+    "MCK",
+    "ROST",
+    "SMPL",
+    "TJX"
+   ],
+   [
+    "BRBR",
+    "CNXC",
+    "LLY",
+    "MCK",
+    "NFLX",
+    "TGT"
+   ],
+   [
+    "BURL",
+    "CNXC",
+    "LLY",
+    "MCK",
+    "ROST",
+    "SMPL"
+   ],
+   [
+    "AORT",
+    "CNXC",
+    "LLY",
+    "MCK",
+    "ROST",
+    "SMPL"
+   ],
+   [
+    "BRBR",
+    "CNXC",
+    "LLY",
+    "MCK",
+    "NFLX",
+    "V"
+   ],
+   [
+    "BRBR",
+    "CNXC",
+    "LLY",
+    "MCK",
+    "ROST",
+    "SMPL"
+   ]
+  ],
+  "score_fields": [
+   "distinct sectors",
+   "has a proposal-boundary page (1/0)",
+   "-|material - non-material|",
+   "-|rising - falling|"
+  ]
+ },
+ "motivated": {
+  "rule": "ticker named in the subject of a commit on freeze_ref that changed vinci/dossier/synthesis.py or vinci/dossier/mechanical.py, or in the title of a docs/records file such a commit added",
+  "by_commit": {
+   "AMZN": [
+    "f487eeb3"
+   ],
+   "FUBO": [
+    "e0d1c12f"
+   ],
+   "GOOGL": [
+    "c6ce5782"
+   ],
+   "MVST": [
+    "7f7823a1"
+   ],
+   "NCNO": [
+    "6f620e4d"
+   ],
+   "NFLX": [
+    "b109e26c"
+   ],
+   "SMPL": [
+    "05b2529b",
+    "3ad635ea",
+    "dba3fa46",
+    "edc2559b"
+   ],
+   "TJX": [
+    "06c9a5ed",
+    "1d9708d8"
+   ],
+   "UBER": [
+    "a2851d05",
+    "f487eeb3"
+   ],
+   "VRRM": [
+    "3ab4747f",
+    "64f91b2a"
+   ]
+  },
+  "in_flight": {
+   "LLY": "STATE §5.0 row 47 — closed by fix 3a, in flight on branch claude/awesome-kilby-7c25a5 on 2026-11-06 — names LLY's rising window (+35.6%) as its case; the fix's record title names no ticker, so the subject/title rule alone would miss it"
+  }
+ },
+ "forward_basis_constraint": "vacuous: every eligible page has a forward basis",
+ "rows": [
+  {
+   "ticker": "AMZN",
+   "sleeve": "quality",
+   "sector": "Consumer Discretionary",
+   "material": true,
+   "forward_basis": true,
+   "window_change": -0.1068,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "strongly-bullish": 3,
+    "mixed": 2
+   },
+   "modal_boundary": true,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "AORT",
+   "sleeve": "overshoot",
+   "sector": "Health Care",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.4387,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "mixed": 5
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "BRBR",
+   "sleeve": "overshoot",
+   "sector": "Consumer Staples",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.4277,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "mixed": 3,
+    "strongly-bearish": 2
+   },
+   "modal_boundary": true,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "BURL",
+   "sleeve": "overshoot",
+   "sector": "Consumer Discretionary",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.2448,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "mixed": 2,
+    "strongly-bullish": 3
+   },
+   "modal_boundary": true,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "CNXC",
+   "sleeve": "overshoot",
+   "sector": "Technology",
+   "material": true,
+   "forward_basis": true,
+   "window_change": -0.082,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "mixed": 5
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "EPAM",
+   "sleeve": "overshoot",
+   "sector": "Technology",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.1512,
+   "window_dir": "falling",
+   "five_draw": false,
+   "draws": null,
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": false,
+   "exclusion": "built before the five-draw gate (no draw_agreement)"
+  },
+  {
+   "ticker": "FUBO",
+   "sleeve": "overshoot",
+   "sector": "Consumer Discretionary",
+   "material": false,
+   "forward_basis": false,
+   "window_change": -0.3641,
+   "window_dir": "falling",
+   "five_draw": false,
+   "draws": null,
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": false,
+   "exclusion": "built before the five-draw gate (no draw_agreement)"
+  },
+  {
+   "ticker": "GOOGL",
+   "sleeve": "quality",
+   "sector": "Technology",
+   "material": true,
+   "forward_basis": true,
+   "window_change": -0.2991,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "mixed": 4,
+    "strongly-bullish": 1
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "IT",
+   "sleeve": "overshoot",
+   "sector": "Industrials",
+   "material": false,
+   "forward_basis": true,
+   "window_change": 0.1587,
+   "window_dir": "rising",
+   "five_draw": false,
+   "draws": null,
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": false,
+   "exclusion": "built before the five-draw gate (no draw_agreement)"
+  },
+  {
+   "ticker": "LLY",
+   "sleeve": "quality",
+   "sector": "Health Care",
+   "material": true,
+   "forward_basis": true,
+   "window_change": 0.4294,
+   "window_dir": "rising",
+   "five_draw": true,
+   "draws": {
+    "strongly-bullish": 5
+   },
+   "modal_boundary": false,
+   "proposal_boundary": true,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "MCK",
+   "sleeve": "quality",
+   "sector": "Industrials",
+   "material": false,
+   "forward_basis": true,
+   "window_change": 0.4528,
+   "window_dir": "rising",
+   "five_draw": true,
+   "draws": {
+    "mixed": 4,
+    "strongly-bullish": 1
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "MVST",
+   "sleeve": "overshoot",
+   "sector": "Technology",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.667,
+   "window_dir": "falling",
+   "five_draw": false,
+   "draws": null,
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": false,
+   "exclusion": "built before the five-draw gate (no draw_agreement)"
+  },
+  {
+   "ticker": "NCNO",
+   "sleeve": "overshoot",
+   "sector": "Technology",
+   "material": false,
+   "forward_basis": true,
+   "window_change": 0.2861,
+   "window_dir": "rising",
+   "five_draw": false,
+   "draws": null,
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": false,
+   "exclusion": "built before the five-draw gate (no draw_agreement)"
+  },
+  {
+   "ticker": "NFLX",
+   "sleeve": "overshoot",
+   "sector": "Consumer Discretionary",
+   "material": true,
+   "forward_basis": true,
+   "window_change": -0.2412,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "mixed": 5
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "NKE",
+   "sleeve": "overshoot",
+   "sector": "Consumer Discretionary",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.2012,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "mixed": 5
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "ORKA",
+   "sleeve": "quality",
+   "sector": "Health Care",
+   "material": false,
+   "forward_basis": true,
+   "window_change": 0.0444,
+   "window_dir": "flat",
+   "five_draw": true,
+   "draws": {
+    "mixed": 4,
+    "strongly-bearish": 1
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 0,
+   "motivated": false,
+   "eligible": false,
+   "exclusion": "no CIQ transcript for the replay to read"
+  },
+  {
+   "ticker": "PARR",
+   "sleeve": "ultra_short_term",
+   "sector": "Energy",
+   "material": false,
+   "forward_basis": true,
+   "window_change": 0.4105,
+   "window_dir": "rising",
+   "five_draw": true,
+   "draws": {
+    "mixed": 5
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": false,
+   "exclusion": "sleeve ultra_short_term is not stratified"
+  },
+  {
+   "ticker": "ROST",
+   "sleeve": "quality",
+   "sector": "Consumer Discretionary",
+   "material": false,
+   "forward_basis": true,
+   "window_change": 0.0379,
+   "window_dir": "flat",
+   "five_draw": true,
+   "draws": {
+    "strongly-bullish": 3,
+    "mixed": 2
+   },
+   "modal_boundary": true,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "SMPL",
+   "sleeve": "overshoot",
+   "sector": "Consumer Staples",
+   "material": true,
+   "forward_basis": true,
+   "window_change": 0.0024,
+   "window_dir": "flat",
+   "five_draw": true,
+   "draws": {
+    "mixed": 4,
+    "strongly-bearish": 1
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "TECX",
+   "sleeve": "quality",
+   "sector": "Health Care",
+   "material": false,
+   "forward_basis": false,
+   "window_change": -0.1385,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "mixed": 5
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 0,
+   "motivated": false,
+   "eligible": false,
+   "exclusion": "no CIQ transcript for the replay to read"
+  },
+  {
+   "ticker": "TGT",
+   "sleeve": "quality",
+   "sector": "Consumer Discretionary",
+   "material": false,
+   "forward_basis": true,
+   "window_change": 0.185,
+   "window_dir": "rising",
+   "five_draw": true,
+   "draws": {
+    "mixed": 5
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "TJX",
+   "sleeve": "overshoot",
+   "sector": "Consumer Discretionary",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.0774,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "strongly-bullish": 5
+   },
+   "modal_boundary": false,
+   "proposal_boundary": true,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "UBER",
+   "sleeve": "quality",
+   "sector": "Technology",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.0921,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "mixed": 3,
+    "strongly-bullish": 2
+   },
+   "modal_boundary": true,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "V",
+   "sleeve": "quality",
+   "sector": "Technology",
+   "material": false,
+   "forward_basis": true,
+   "window_change": 0.2825,
+   "window_dir": "rising",
+   "five_draw": true,
+   "draws": {
+    "strongly-bullish": 4,
+    "mixed": 1
+   },
+   "modal_boundary": false,
+   "proposal_boundary": true,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": true,
+   "exclusion": null
+  },
+  {
+   "ticker": "VITL",
+   "sleeve": "overshoot",
+   "sector": "Consumer Staples",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.614,
+   "window_dir": "falling",
+   "five_draw": false,
+   "draws": null,
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": false,
+   "exclusion": "built before the five-draw gate (no draw_agreement)"
+  },
+  {
+   "ticker": "VRRM",
+   "sleeve": "overshoot",
+   "sector": "Industrials",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.7418,
+   "window_dir": "falling",
+   "five_draw": false,
+   "draws": null,
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": true,
+   "eligible": false,
+   "exclusion": "built before the five-draw gate (no draw_agreement)"
+  },
+  {
+   "ticker": "WERN",
+   "sleeve": "overshoot",
+   "sector": "Industrials",
+   "material": false,
+   "forward_basis": true,
+   "window_change": 0.1538,
+   "window_dir": "rising",
+   "five_draw": false,
+   "draws": null,
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": false,
+   "exclusion": "built before the five-draw gate (no draw_agreement)"
+  },
+  {
+   "ticker": "WLK",
+   "sleeve": "ultra_short_term",
+   "sector": "Materials",
+   "material": false,
+   "forward_basis": true,
+   "window_change": -0.4439,
+   "window_dir": "falling",
+   "five_draw": true,
+   "draws": {
+    "mixed": 5
+   },
+   "modal_boundary": false,
+   "proposal_boundary": false,
+   "transcripts": 2,
+   "motivated": false,
+   "eligible": false,
+   "exclusion": "sleeve ultra_short_term is not stratified"
+  }
+ ],
+ "pages": {
+  "AMZN": {
+   "dossier_blob": "17fb2beb7079ad8c9aefce0441acd96e9124c967",
+   "transcripts": [
+    {
+     "file": "Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf",
+     "sha256": "79079f702c835f6085c44efa9bd3baa782fdb3b708d539485630a80cd3b8b798"
+    },
+    {
+     "file": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+     "sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622"
+    }
+   ]
+  },
+  "AORT": {
+   "dossier_blob": "1ec36425975ce70794698fc9415604ecb01407d2",
+   "transcripts": [
+    {
+     "file": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+     "sha256": "dc2db63502ba1629e8c0a7fc41db130337febe0091e64802336d82672cc9c52d"
+    },
+    {
+     "file": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+     "sha256": "3eafa905c4d7e7380f53723765508cb74dd7725937b14442092b5065e2eab0ac"
+    }
+   ]
+  },
+  "BRBR": {
+   "dossier_blob": "d745b48a75a173e054063f4ef33ab0151fa6855a",
+   "transcripts": [
+    {
+     "file": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+     "sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764"
+    },
+    {
+     "file": "BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+     "sha256": "c35831a5d14632750d481805c9162c52e225ea3f2a939c33522dbc1db3f555c8"
+    }
+   ]
+  },
+  "BURL": {
+   "dossier_blob": "627fe21abd15c8f357e9bc6c92749aeae930715b",
+   "transcripts": [
+    {
+     "file": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+     "sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0"
+    },
+    {
+     "file": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+     "sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c"
+    }
+   ]
+  },
+  "CNXC": {
+   "dossier_blob": "604d559d9252e413dec929203cb24ef6abfd7ff4",
+   "transcripts": [
+    {
+     "file": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+     "sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3"
+    },
+    {
+     "file": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+     "sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5"
+    }
+   ]
+  },
+  "EPAM": {
+   "dossier_blob": "aa0f42f38490147ef549367db59a79c4918179c3",
+   "transcripts": [
+    {
+     "file": "EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+     "sha256": "aafe5349b29498dbf3c406b2b51795b43526fc35a9edbfbc26461e59fadce1ba"
+    },
+    {
+     "file": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+     "sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5"
+    }
+   ]
+  },
+  "FUBO": {
+   "dossier_blob": "acc6718733c6695486547b7887d628a894252e29",
+   "transcripts": [
+    {
+     "file": "FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
+     "sha256": "0bcf986636200f2002e17fbe98f95d89569af6d899b99b4c6dd295ec1d4851ea"
+    },
+    {
+     "file": "FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf",
+     "sha256": "a44adeb449710d793eff99edcf762c549da31d7d96b50a660045a05a70201dff"
+    }
+   ]
+  },
+  "GOOGL": {
+   "dossier_blob": "12efc26b3e7a50ff5e1763e14b69f03dfcd429f8",
+   "transcripts": [
+    {
+     "file": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+     "sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba"
+    },
+    {
+     "file": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+     "sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5"
+    }
+   ]
+  },
+  "IT": {
+   "dossier_blob": "84a8c81203b4eb09873619b1b45fa1f52ef5707c",
+   "transcripts": [
+    {
+     "file": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+     "sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e"
+    },
+    {
+     "file": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+     "sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e"
+    }
+   ]
+  },
+  "LLY": {
+   "dossier_blob": "ef07b22fe5a5eaade4c73e873e2450a3aa1982e5",
+   "transcripts": [
+    {
+     "file": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+     "sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b"
+    },
+    {
+     "file": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+     "sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3"
+    }
+   ]
+  },
+  "MCK": {
+   "dossier_blob": "761787c02f00f12208894d033c7dcc4f2cb704e5",
+   "transcripts": [
+    {
+     "file": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+     "sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74"
+    },
+    {
+     "file": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+     "sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955"
+    }
+   ]
+  },
+  "MVST": {
+   "dossier_blob": "d9f1ca8555f07f4f39da59a4c2e38e75153a0a60",
+   "transcripts": [
+    {
+     "file": "Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf",
+     "sha256": "7023481ecc1ace3da871505e6f752ee7de5fca4864481c71b6977366b8310a8e"
+    },
+    {
+     "file": "Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
+     "sha256": "1184027462cec7031781c651954997de0882b493040e349d770c953f027e2a23"
+    }
+   ]
+  },
+  "NCNO": {
+   "dossier_blob": "3866f687efe4631b9b39371a80f50e602f3a15e4",
+   "transcripts": [
+    {
+     "file": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+     "sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061"
+    },
+    {
+     "file": "nCino, Inc., Q2 2027 Earnings Call, Aug 25, 2026.rtf",
+     "sha256": "b0d8db0bcd4368f1302c58191e463202f5b6342af6afa70178086a1b43f331bb"
+    }
+   ]
+  },
+  "NFLX": {
+   "dossier_blob": "9741b2cdbab6050cbad5e12ab301431659885a51",
+   "transcripts": [
+    {
+     "file": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+     "sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d"
+    },
+    {
+     "file": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+     "sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9"
+    }
+   ]
+  },
+  "NKE": {
+   "dossier_blob": "e418f25ce33adb72342803c9eb44eb14005a40c5",
+   "transcripts": [
+    {
+     "file": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+     "sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8"
+    },
+    {
+     "file": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+     "sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640"
+    }
+   ]
+  },
+  "ORKA": {
+   "dossier_blob": "ffa04401a5e075aea5c96103a6e34d75a8b34a21",
+   "transcripts": []
+  },
+  "PARR": {
+   "dossier_blob": "a2544d74c5a7010b667aa71270b7c1b4ae09cd14",
+   "transcripts": [
+    {
+     "file": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+     "sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253"
+    },
+    {
+     "file": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+     "sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e"
+    }
+   ]
+  },
+  "ROST": {
+   "dossier_blob": "a4bf3989d8677fa4399df623adbb5c1fced3168b",
+   "transcripts": [
+    {
+     "file": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+     "sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa"
+    },
+    {
+     "file": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+     "sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02"
+    }
+   ]
+  },
+  "SMPL": {
+   "dossier_blob": "0b4ff8eb982c7715b8dfd2557f940190a80ae694",
+   "transcripts": [
+    {
+     "file": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+     "sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53"
+    },
+    {
+     "file": "The Simply Good Foods Company, Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+     "sha256": "da5b140806524edb32427a1979c24fbf0dd772aed0d24b55f4f674ae2cca4944"
+    }
+   ]
+  },
+  "TECX": {
+   "dossier_blob": "ff6b195deb4d26576985c53f3715a544e5f807aa",
+   "transcripts": []
+  },
+  "TGT": {
+   "dossier_blob": "cb2ca3c997d6a7e6d8e501cb79c24cc0834222e7",
+   "transcripts": [
+    {
+     "file": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+     "sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e"
+    },
+    {
+     "file": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+     "sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899"
+    }
+   ]
+  },
+  "TJX": {
+   "dossier_blob": "b09e5ab34b1ef62a498b1a6ca09d499e1d45b13c",
+   "transcripts": [
+    {
+     "file": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+     "sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736"
+    },
+    {
+     "file": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+     "sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f"
+    }
+   ]
+  },
+  "UBER": {
+   "dossier_blob": "c07875db5954b708ef72ffdadaf5e4508a1e3a43",
+   "transcripts": [
+    {
+     "file": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+     "sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8"
+    },
+    {
+     "file": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+     "sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d"
+    }
+   ]
+  },
+  "V": {
+   "dossier_blob": "4d7b02b78ca060bab8fb360e48e0d46a34b6f5a7",
+   "transcripts": [
+    {
+     "file": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+     "sha256": "cc5569ddbfaa42419e64c430995de1cdef3d949a4633bf0ff497b030dacbb7b7"
+    },
+    {
+     "file": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+     "sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f"
+    }
+   ]
+  },
+  "VITL": {
+   "dossier_blob": "feb4bbea4ba3eccec34ffaac303d7c0ff97ee912",
+   "transcripts": [
+    {
+     "file": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+     "sha256": "bec9f24a18dd68ce367f9fb617b6abd5f17c663b8e5ee74257ff13f794fba35d"
+    },
+    {
+     "file": "Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+     "sha256": "1a4552f102d48dda15f819c6a12fe97c33b3978dee8435ae77c665faff6be905"
+    }
+   ]
+  },
+  "VRRM": {
+   "dossier_blob": "a835621755c83d2522991f87abf0148ac8a7095d",
+   "transcripts": [
+    {
+     "file": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+     "sha256": "16396acd2599563c571ff133ff3d24bed21ce51d57034d260fbf627e439cee4d"
+    },
+    {
+     "file": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+     "sha256": "69dbc725cb8f30f71d04fa8bf36cd26734850ca77e2aadfcda69eba926991221"
+    }
+   ]
+  },
+  "WERN": {
+   "dossier_blob": "db15a9117228a847569779c552c6d72e6f52f01d",
+   "transcripts": [
+    {
+     "file": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+     "sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98"
+    },
+    {
+     "file": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+     "sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8"
+    }
+   ]
+  },
+  "WLK": {
+   "dossier_blob": "9190dd06ff1a76c5c8aee242b03fb6e1c1eb3538",
+   "transcripts": [
+    {
+     "file": "Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
+     "sha256": "879ce2b3bbaf9c99fd2a41322c62c83aaf633d4f309967e8b4d555490d23ad03"
+    },
+    {
+     "file": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+     "sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96"
+    }
+   ]
+  }
+ }
+}

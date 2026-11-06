@@ -1,0 +1,644 @@
+{"id": "AMZN:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bull_points:8", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bull_points:9", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "NTM TEV/EBITDA 10.46x vs peer median 9.78x and NTM P/E 24.3 vs 17.82 are premiums (peer_comps.trading_multiples)"}
+{"id": "AMZN:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:bear_points:2", "verdict": "SIGN", "material": true, "favours": "bull", "fact": "Non-operating gains raise EPS so DEFLATE P/E; 34.3x is on FY25 EPS 7.17, LTM P/E 20.0x (valuation.pe.note, financial_summary.annual)"}
+{"id": "AMZN:bear_points:3", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Forward basis exists: EV/NTM EBITDA 11.69x at 2.6th percentile (forward_multiple_history.series[1].band)"}
+{"id": "AMZN:bear_points:4", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "No ~400bps Prime Day adjustment in facts; 400bps is shipping cost vs units (operating_drivers.rows[322])"}
+{"id": "AMZN:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Forward EV/EBITDA exists: NTM 10.46x, FY26 12.85x (forward_consensus.current_multiples); EV/NTM EBITDA history too"}
+{"id": "AMZN:key_unknowns:1", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "P/E history exists: P/LTM EPS 20.0x at 0th percentile of 9.5y range (valuation.own_history.value[1])"}
+{"id": "AMZN:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:key_unknowns:5", "verdict": "SELECTIVE", "material": true, "favours": "bear", "fact": "Consensus FY2028E FCF is +$39,185M, a stated crossover (forward_consensus.paths Free Cash Flow FY2028)"}
+{"id": "AMZN:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:key_unknowns:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AMZN:decisive_question:0", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "No field states capex is spent ~two years before servers monetize (mechanical.operating_drivers.rows)"}
+{"id": "AMZN:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:bull_points:1", "verdict": "STALE", "material": true, "favours": "bull", "fact": "Q1 2026 called latest; Q2 2026 release: non-GAAP NI $6.3M vs $10.7M, GAAP loss (mechanical.primary_source.releases[0])"}
+{"id": "AORT:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:bull_points:4", "verdict": "BASIS", "material": true, "favours": "bull", "fact": "Estimate EBITDA implies 3.39x actual D&A; not same basis as trailing (mechanical.financial_summary.ebitda_basis.note)"}
+{"id": "AORT:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:bear_points:0", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "FY26 revenue consensus +1%, EBITDA only -9% while EBIT -79% (mechanical.catalyst_path.acceleration_read)"}
+{"id": "AORT:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:bear_points:3", "verdict": "CONFLICT", "material": true, "favours": "bear", "fact": "Same sheet CFO $58.0M - capex $43.4M = +$14.6M, opposite sign (mechanical.quality.free_cash_flow.note)"}
+{"id": "AORT:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:bear_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:bear_points:6", "verdict": "CONFLICT", "material": true, "favours": "bear", "fact": "CFO-capex positive (LTM +$14.6M); only CIQ levered FCF negative (mechanical.quality.free_cash_flow.note)"}
+{"id": "AORT:bear_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:key_unknowns:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:key_unknowns:2", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "May-07 release parsed lowered guide, adj EBITDA $100-107M (mechanical.primary_source.releases[2].guidance)"}
+{"id": "AORT:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:key_unknowns:4", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Bridge $77M/$408M is EDGAR latest 10-Q, not CIQ; BS is Q1 (ev_bridge.edgar_source)"}
+{"id": "AORT:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:key_unknowns:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "AORT:decisive_question:0", "verdict": "ABSENT", "material": true, "favours": "bull", "fact": "Only revenue guide cross-source verified; EBITDA guide not (mechanical.primary_source.guide_verification; qa_flags)"}
+{"id": "AORT:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bull_points:0", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "Omits input-cost inflation/tariffs, first-cited driver; mgmt calls it sustained (operating_drivers.rows[29], rows[35])"}
+{"id": "BRBR:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bull_points:6", "verdict": "OVERREACH", "material": false, "favours": "neither", "fact": "Forward P/E above trailing because FY26E EPS 1.04 < LTM; logic inverted (mechanical.valuation.forward_multiples)"}
+{"id": "BRBR:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bear_points:1", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "22.7% is one quarter (Q2) incl. one-off inventory charge; structural not established (operating_drivers.rows[29])"}
+{"id": "BRBR:bear_points:2", "verdict": "SELECTIVE", "material": false, "favours": "bear", "fact": "Q3 70% promo share 'in line with historical norms', down sequentially from Q2 (operating_drivers.rows[33].following_context)"}
+{"id": "BRBR:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bear_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bear_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:bear_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "bear", "fact": "Aug-04 release states FY26 Adjusted EBITDA outlook $275-295M (caveats[1])"}
+{"id": "BRBR:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:key_unknowns:2", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "CIQ LTM EBITDA $332M; 6.4x divides ~$338M, not $401M (mechanical.valuation.ev_ebitda_basis; quality.net_debt_to_ebitda)"}
+{"id": "BRBR:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:key_unknowns:4", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "NTM TEV/EBITDA 7.01x exists (mechanical.valuation.implied_expectations.rows[0]; peer_comps.trading_multiples)"}
+{"id": "BRBR:key_unknowns:5", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "No fact says priorities/FY27 guide promised for Q4 call (searched 'Q4 call', 'priorities', operating_drivers)"}
+{"id": "BRBR:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BRBR:key_unknowns:7", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "No fact says protein inflation worsens into Q4; only 'sustained' input inflation (operating_drivers.rows[35])"}
+{"id": "BRBR:decisive_question:0", "verdict": "OVERREACH", "material": true, "favours": "bull", "fact": "Mgmt calls input-cost inflation 'sustained', not transitory (operating_drivers.rows[35].following_context)"}
+{"id": "BRBR:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bull_points:0", "verdict": "LABEL", "material": true, "favours": "bull", "fact": "stock_performance.points: fell ~36% Jul-30\u2192Sep-18, -7.6%/-5.9% on Aug-27/28 earnings; 'gradual bleed' is detector label"}
+{"id": "BURL:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bull_points:6", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "~$1.6B liquidity not in facts; operating_drivers.rows[34] gives ~$1.7B at end-Q1 only"}
+{"id": "BURL:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bull_points:8", "verdict": "OVERREACH", "material": false, "favours": "bull", "fact": "catalyst_path.horizon_read: FQ3/FQ4 EPS revisions 0 up/16 down \u2014 analysts cut near-term estimates"}
+{"id": "BURL:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:bear_points:4", "verdict": "BASIS", "material": false, "favours": "bear", "fact": "$107M is CIQ levered FCF; quality.free_cash_flow.note: CFO\u2212capex LTM = $412.6M"}
+{"id": "BURL:bear_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "forward_multiple_history: EV/NTM EBITDA 13.75x at 21%ile (38 closes); valuation.forward_multiples present"}
+{"id": "BURL:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:key_unknowns:2", "verdict": "STALE", "material": false, "favours": "bear", "fact": "capital_structure.summary: senior bonds $186.1M at Q2 Aug-01-2026 (10-Q 186,071); $297.1M is Mar-2026 panel"}
+{"id": "BURL:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:key_unknowns:4", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "'sharper values' and neutral-to-FY-earnings framing absent; operating_drivers.rows[5] only notes Q3 tariff-refund reinvestment"}
+{"id": "BURL:key_unknowns:5", "verdict": "LABEL", "material": false, "favours": "bull", "fact": "drop clustered on Aug-27 earnings (8-K EX-99.1 filed 2026-08-27; -7.6%/-5.9% days, stock_performance.points)"}
+{"id": "BURL:decisive_question:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "BURL:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:bull_points:2", "verdict": "OVERREACH", "material": false, "favours": "bull", "fact": "quality.margin_trend: absolute EBITDA fell each step 1,295\u21921,266\u21921,245; margins and EBITDA both declined"}
+{"id": "CNXC:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:bull_points:4", "verdict": "ABSENT", "material": true, "favours": "bull", "fact": "$550M+ paydown and ~2.6x year-end net leverage in no field; qa_flags[14] marks 2.6 transcript-only"}
+{"id": "CNXC:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:bear_points:0", "verdict": "BASIS", "material": true, "favours": "bear", "fact": "caveats: 4.0x is CIQ vendor basis incl. $906M leases, not covenant basis; basis_triangulation covenant UNKNOWN"}
+{"id": "CNXC:bear_points:1", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "hyperscaler spend cuts and '-3% to -5% CC' Q4 guide absent; releases[0] gives reported $2.41\u20132.46B only"}
+{"id": "CNXC:bear_points:2", "verdict": "BASIS", "material": false, "favours": "bear", "fact": "capital_allocation.acquisition_consideration $1,914M is FY23 cash net of cash acquired; Webhelp not named"}
+{"id": "CNXC:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:bear_points:4", "verdict": "PATH", "material": true, "favours": "bear", "fact": "catalyst_path.acceleration_read: FY26 EPS 11.2\u219211.1, EBITDA 1,430\u21921,428 over last 3m \u2014 flat; FQ1'27 revisions up"}
+{"id": "CNXC:key_unknowns:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:key_unknowns:1", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "forward_multiple_history EV/NTM EBITDA 4.8x at 25%ile (24 closes); 'trailing only' note in valuation.ev_ebitda"}
+{"id": "CNXC:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:key_unknowns:3", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "$375M amount absent; covenant_term_rows[3] gives Term A-2 maturity Dec-27-2026 with $750M commitment"}
+{"id": "CNXC:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "CNXC:decisive_question:0", "verdict": "ABSENT", "material": true, "favours": "neither", "fact": "~2.6x deleveraging path and hyperscaler Q4 cuts absent; operating_drivers.rows[46] says offshoring 'abating over time'"}
+{"id": "CNXC:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "EPAM:bull_points:0", "verdict": "OVERREACH", "material": false, "favours": "neither", "fact": "Gap-down 2026-06-18 had no company filing; only 2026-08-06 was earnings (mechanical.drawdown_cause.shape)"}
+{"id": "EPAM:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "EPAM:bull_points:2", "verdict": "CONFLICT", "material": false, "favours": "bull", "fact": "primary_source.self_funding reads MIXED (latest-Q OCF<0) vs quality.survival_capacity 'self-funding'"}
+{"id": "EPAM:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "EPAM:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "EPAM:bull_points:5", "verdict": "OVERREACH", "material": true, "favours": "bull", "fact": "fundamental_deltas: earned-vs-residual 'the human judges \u2014 not computed here'; peer set HETEROGENEOUS (peer_comps.comparability)"}
+{"id": "EPAM:bull_points:6", "verdict": "PERIOD", "material": false, "favours": "neither", "fact": "Share-count window starts 2024-10-31, a year before Oct-2025 authorization (quality.share_count_trend; operating_drivers.rows[15])"}
+{"id": "EPAM:bear_points:0", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "No field carries North America commentary or tax/manual-testing shift; transcript prose only (operating_drivers.rows)"}
+{"id": "EPAM:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "EPAM:bear_points:2", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Margins eroded, but no field attributes it to pricing/mix (quality.margin_trend)"}
+{"id": "EPAM:bear_points:3", "verdict": "LABEL", "material": false, "favours": "bear", "fact": "Forward NTM TEV/EBITDA 4.58x exists (forward_consensus.current_multiples) despite valuation.ev_ebitda 'trailing only' note"}
+{"id": "EPAM:bear_points:4", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "No field states AI deals unsigned or contribution deferred to H1 2027 (operating_drivers.rows)"}
+{"id": "EPAM:bear_points:5", "verdict": "SELECTIVE", "material": true, "favours": "bear", "fact": "Revenue/EBIT/EPS FQ2 2026 MET; revenue actual>=floor 62/63; only tax-rate FQ1 missed (catalyst_path.guidance_bridge_rows)"}
+{"id": "EPAM:key_unknowns:0", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Forward anchor exists: NTM 4.58x, FY26 4.61x, FY27 4.42x TEV/EBITDA (forward_consensus.current_multiples)"}
+{"id": "EPAM:key_unknowns:1", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "Segment EBITDA unknown is right; a 'weakening North American book' is in no field (concentration.segments)"}
+{"id": "EPAM:key_unknowns:2", "verdict": "UNIT", "material": false, "favours": "neither", "fact": "213.2x is the TEV/EBITDA peer High, not EBITDA/TEV (peer_comps.trading_multiples)"}
+{"id": "EPAM:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "EPAM:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "EPAM:key_unknowns:5", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "'tokenomics' appears in no dossier field (operating_drivers.rows, all fields searched)"}
+{"id": "EPAM:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "EPAM:decisive_question:0", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "North America decline and H1-2027 deal deferral in no field; EMEA double-digit is Q1 not Q2 (operating_drivers.rows[23])"}
+{"id": "EPAM:evidence_balance:0", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "'North American structural growth gap' in no field; other reasons supported (quality.survival_capacity, valuation.range_position)"}
+{"id": "FUBO:bull_points:0", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "Raise 80-100\u219290-100 supported; '\u2265$300M FY2028 target' in no field (catalyst_path.guidance_bridge; primary_source.releases)"}
+{"id": "FUBO:bull_points:1", "verdict": "OVERREACH", "material": false, "favours": "bull", "fact": "Step-up stated on May Q2 call; no field ties it causally to the August guide raise (operating_drivers.rows[14])"}
+{"id": "FUBO:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "FUBO:bull_points:3", "verdict": "SELECTIVE", "material": false, "favours": "bull", "fact": "Q3 NA ad revenue $108.9M vs $109.4M pro forma \u2014 flat-to-down despite CPM gains (primary_source.releases[0].qa_flags)"}
+{"id": "FUBO:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "FUBO:bull_points:5", "verdict": "OVERREACH", "material": false, "favours": "bull", "fact": "FY25 $4,413M \u2192 LTM $5,712M is +29%, not ~3x (quality.margin_trend; financial_summary.annual)"}
+{"id": "FUBO:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "FUBO:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "FUBO:bear_points:1", "verdict": "PERIOD", "material": false, "favours": "neither", "fact": "\u2212$107.8M FCF is 12m to Sep-27-2025 (FY25); \u2212$456M CFO is LTM, FY25 CFO \u2212$166M (financial_summary.annual)"}
+{"id": "FUBO:bear_points:2", "verdict": "PATH", "material": true, "favours": "bear", "fact": "FY26 EBITDA consensus rose 92.3\u219295.2 latest, inside the 90\u2013100 guide (catalyst_path.acceleration_read; guidance_bridge)"}
+{"id": "FUBO:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "FUBO:bear_points:4", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Reconciler has no actual EBITDA rows; gross margin rose 0%\u21926% LTM (quality.margin_trend)"}
+{"id": "FUBO:bear_points:5", "verdict": "STALE", "material": false, "favours": "bear", "fact": "+2.5% window ends 2025-07-31, pre-merger; S-8s labelled 'routine' (quality.share_count_trend; dilution_pipeline.line)"}
+{"id": "FUBO:bear_points:6", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "No field reports the COO moving to an advisory role (operating_drivers.rows[0-2])"}
+{"id": "FUBO:bear_points:7", "verdict": "STALE", "material": true, "favours": "bear", "fact": "Later 2026-08-11 revision cut FY26 net-debt consensus 164.0\u2192133.5, below 140.5 (catalyst_path.revision_events)"}
+{"id": "FUBO:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Forward NTM TEV/EBITDA 16.19x (peer median 9.87x) exists (peer_comps.trading_multiples; valuation.implied_expectations)"}
+{"id": "FUBO:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "FUBO:key_unknowns:2", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Runway derivable: cash & ST inv $230M vs LTM CFO \u2212$456M (financial_summary.balance_sheet; financial_summary.annual)"}
+{"id": "FUBO:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "FUBO:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "FUBO:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "FUBO:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "FUBO:key_unknowns:7", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "'World Cup' and 'attrition' in no field; Q3 subscriber row gives no cause (operating_drivers.rows[17])"}
+{"id": "FUBO:decisive_question:0", "verdict": "PERIOD", "material": true, "favours": "bear", "fact": "\u2212$107.8M is FY25 FCF, not LTM; LTM CFO \u2212$456M exceeds FY26E \u2212$393M (financial_summary.annual)"}
+{"id": "FUBO:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:bull_points:0", "verdict": "ABSENT", "material": true, "favours": "bull", "fact": "Q3 Cloud margin 36.2% absent; 23.7% is FY2025 Cloud margin (concentration.segment_profit), not Q3-2025"}
+{"id": "GOOGL:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:bull_points:4", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "NTM TEV/EBITDA 11.82 vs peer median 9.39; NTM P/E 20.3 vs 15.95 (peer_comps.trading_multiples)"}
+{"id": "GOOGL:bull_points:5", "verdict": "CONFLICT", "material": true, "favours": "bull", "fact": "survival_capacity says self-funding; primary_source.self_funding says MIXED, LTM levered FCF -$1,162.5M"}
+{"id": "GOOGL:bull_points:6", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "omits LT EPS growth 13% vs peer 22%; trailing P/E carries +$140,237M non-operating (quality.nonoperating_earnings)"}
+{"id": "GOOGL:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:bull_points:8", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "\"inventory built only against committed contracts\" not in facts (operating_drivers.rows[214])"}
+{"id": "GOOGL:bear_points:0", "verdict": "STALE", "material": true, "favours": "bear", "fact": "22.9x is as-of 2026-09-30 (range_position); comps reads 17.5x at 2026-10-30 after ~19% drop (caveats[5])"}
+{"id": "GOOGL:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:bear_points:5", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "$199,025M EBITDA cut is \"broker undisclosed\", not Phillip (catalyst_path.revision_events)"}
+{"id": "GOOGL:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "bear", "fact": "segment operating income IS disclosed: Cloud $13,910M, 23.7% margin (concentration.segment_profit)"}
+{"id": "GOOGL:key_unknowns:1", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "forward EV/NTM EBITDA history exists: 15.56x, 84th pct (forward_multiple_history); NTM 11.82x now"}
+{"id": "GOOGL:key_unknowns:2", "verdict": "CONFLICT", "material": false, "favours": "bull", "fact": "the P/E that \"stands\" is 25.8x (mechanical.valuation.pe); 14.6x is comps; P/LTM EPS 17.3x"}
+{"id": "GOOGL:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "GOOGL:key_unknowns:6", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "net cash -0.6x, AA+, credit health 1/2/1/1; CFO $179,551M exceeds capex \u2014 not debt-funded"}
+{"id": "GOOGL:key_unknowns:7", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "2027 \"significant increase\" not in facts; capex guide is FY 2026 only (catalyst_path.guidance_bridge_rows[4])"}
+{"id": "GOOGL:key_unknowns:8", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "$924B purchase commitments and $152B pre-commencement leases appear nowhere in the facts"}
+{"id": "GOOGL:decisive_question:0", "verdict": "ABSENT", "material": true, "favours": "bull", "fact": "evidence_for Cloud margin 36.2% not in facts (operating_drivers rows 215-222)"}
+{"id": "GOOGL:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:bull_points:0", "verdict": "PATH", "material": true, "favours": "bull", "fact": "EBITDA fell FY18 609\u2192FY19 571 and FY22 1,314\u2192FY23 1,274; flat since FY22 (quality.margin_trend)"}
+{"id": "IT:bull_points:1", "verdict": "STALE", "material": false, "favours": "bull", "fact": "8.0x is as-of 2026-07-17 (range_position); price since +29% to $179; comps 9.2x at 2026-07-29"}
+{"id": "IT:bull_points:2", "verdict": "OVERREACH", "material": true, "favours": "bull", "fact": "ex-Fed CV slowed 4%\u21923.5%; GTS new business -3% ex-Fed (operating_drivers.rows[19,49,29])"}
+{"id": "IT:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:bear_points:1", "verdict": "SELECTIVE", "material": true, "favours": "bear", "fact": "LT EPS growth name 15% vs peer-median 10% \u2014 better (peer_comps.fundamental_deltas)"}
+{"id": "IT:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:bear_points:3", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "aggregate was already Hold: consensus Hold (2.73)\u2192Hold (2.80); only Morningstar downgraded (revision_events)"}
+{"id": "IT:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "bear", "fact": "forward basis exists: EV/NTM EBITDA 7.0x at 3rd pct (forward_multiple_history); NTM 8.09x"}
+{"id": "IT:key_unknowns:1", "verdict": "LABEL", "material": false, "favours": "bear", "fact": "contribution margins given: Insights 78%, Conferences 39%, Consulting 31% (operating_drivers.rows[17,34])"}
+{"id": "IT:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:key_unknowns:3", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "\"CV will accelerate\" guide absent; Q1 call says only \"acceleration from the fourth quarter\" (operating_drivers.rows[15])"}
+{"id": "IT:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "IT:decisive_question:0", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "DOGE and tariffs attributions not in facts; only U.S. federal and geopolitics (operating_drivers.rows[25-33])"}
+{"id": "IT:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:8", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "$6.5B Houston figure not in facts (operating_drivers.rows[24] truncated); Richmond broke ground Oct-22-2026, not Q3 (rows[6])"}
+{"id": "LLY:bull_points:9", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:10", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bull_points:11", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bear_points:1", "verdict": "PERIOD", "material": false, "favours": "neither", "fact": "38.6% is Q3 same-quarter YoY (quality.multi_year_trajectory); LTM YoY is ~+45.5% (financial_summary.quarterly)"}
+{"id": "LLY:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:bear_points:4", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "No driver/transcript row has management confirming a large-deal BD cadence (operating_drivers.rows)"}
+{"id": "LLY:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Forward NTM TEV/EBITDA 23.96x exists (forward_consensus.current_multiples); 27.9x sits 59th pct, above-center (valuation.range_position)"}
+{"id": "LLY:key_unknowns:1", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "\"Trailing only\" contradicted by NTM 23.96x (forward_consensus.current_multiples); LTM P/E 45.8x (valuation.range_position), not 61.5x"}
+{"id": "LLY:key_unknowns:2", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Release 80-83B is the Feb guide, superseded by raises to 91-92B (operating_drivers.rows[0]; primary_source.current_guide)"}
+{"id": "LLY:key_unknowns:3", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "No 2027 net-price headwind or \"more than offset by volume\" statement in operating_drivers.rows"}
+{"id": "LLY:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:key_unknowns:6", "verdict": "OVERREACH", "material": false, "favours": "neither", "fact": "Mounjaro+Zepbound >$16B of Q3 $24,397M revenue sizes concentration (operating_drivers.rows[164]; financial_summary.quarterly)"}
+{"id": "LLY:key_unknowns:7", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "No retatrutide litigation or EMBER-4 2027 date in facts; only Foundayo T2D Q4 action (operating_drivers.rows[172])"}
+{"id": "LLY:key_unknowns:8", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:key_unknowns:9", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "LLY:decisive_question:0", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "No management statement that price headwind continues into 2027 (operating_drivers.rows[156-157])"}
+{"id": "LLY:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MCK:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MCK:bull_points:1", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "NAP ~6% revenue growth not in facts; only op-profit +22% (operating_drivers.rows[41]) and WAC -4% (rows[40])"}
+{"id": "MCK:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MCK:bull_points:3", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "RoCE fell to 42.9% LTM Sep-2026 from 57.4% FY26 (return_ratios.rows[1]; key_ratios); not rising"}
+{"id": "MCK:bull_points:4", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "Option Care $1.4B and cash funding not in facts; OPCH $4.9B joint with CD&R (operating_drivers.rows[6])"}
+{"id": "MCK:bull_points:5", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "\"Raised twice this year\" not in facts; only latest FY27 guide 45.60-46.40 (catalyst_path.guidance_bridge_rows[1])"}
+{"id": "MCK:bull_points:6", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "No ~$5B FY27 repurchase plan in facts (capital_allocation; operating_drivers.rows)"}
+{"id": "MCK:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MCK:bear_points:1", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "\"Trailing-only, no forward basis\" label; NTM TEV/EBITDA 16.87x exists (peer_comps.trading_multiples; valuation.implied_expectations)"}
+{"id": "MCK:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MCK:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MCK:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Repeats trailing-only label; NTM TEV/EBITDA 16.87x and FY27/FY28 P/E exist (valuation.forward_multiples; peer_comps.trading_multiples)"}
+{"id": "MCK:key_unknowns:1", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Segment op profit visible: NAP $1B, O&MS $427M, RxTS $307M in Q2 (operating_drivers.rows[41],[42],[48])"}
+{"id": "MCK:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MCK:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MCK:key_unknowns:4", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "No statement that CMS GLP-1 Bridge volumes are normalising; only payer variability (operating_drivers.rows[38])"}
+{"id": "MCK:key_unknowns:5", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "Precision Medicine only signed Aug-25-2026, not closed (rows[9]); Option Care $1.4B/~49% and accretion absent"}
+{"id": "MCK:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MCK:key_unknowns:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MCK:decisive_question:0", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "Quote that Bridge prior-auth volumes \"have begun to normalize\" not in facts (operating_drivers.rows[31],[38])"}
+{"id": "MCK:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:bull_points:2", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "Other deltas worse: rev growth -13% vs 3%, EBITDA growth -36% vs 5%, debt/EBITDA 4.3 vs 1.6 (mechanical.peer_comps.fundamental_deltas)"}
+{"id": "MVST:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:bear_points:1", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "Same 10-Q line adds a $41.7M bond due Jan 2027; wall ~$146M exceeds $128M cash (primary_source.filing.maturity_wall)"}
+{"id": "MVST:bear_points:2", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Forward basis exists: NTM TEV/EBITDA 3.99x vs peer NTM median 11.52x (forward_consensus.current_multiples; peer_comps.trading_multiples)"}
+{"id": "MVST:bear_points:3", "verdict": "PATH", "material": true, "favours": "bear", "fact": "Drop is Q1 (536->274 MWh); Q2 volume implied ~411->443 MWh, Q2 revenue only -4.5% (operating_drivers.rows[18,19], rows[0])"}
+{"id": "MVST:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:bear_points:5", "verdict": "STALE", "material": false, "favours": "neither", "fact": "Non-op window 2024-09-30..2025-09-30 predates LTM Jun-2026 (NI +51 vs EBIT +8) (quality.nonoperating_earnings; financial_summary.annual)"}
+{"id": "MVST:bear_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:bear_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:key_unknowns:0", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "~$104M omits $41.7M bond due Jan 2027; divergence flagged possible window artifact (primary_source.filing.maturity_wall; qa_flags)"}
+{"id": "MVST:key_unknowns:1", "verdict": "PERIOD", "material": false, "favours": "neither", "fact": "-$1.7M is LTM Jun-2026 CFO, not latest quarter; -$33.3M six-month not in facts (quality.free_cash_flow.note)"}
+{"id": "MVST:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "MVST:decisive_question:0", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "~$104M wall omits $41.7M bond due Jan 2027 in same 10-Q sentence (primary_source.filing.maturity_wall.verbatim)"}
+{"id": "MVST:evidence_balance:0", "verdict": "PATH", "material": false, "favours": "bear", "fact": "'Shrinking volume' is H1 cumulative; Q2 volume implied up ~8% YoY (operating_drivers.rows[18],[19])"}
+{"id": "NCNO:bull_points:0", "verdict": "BASIS", "material": false, "favours": "bull", "fact": "Trailing-vs-forward drop is part definitional; estimate EBITDA not same basis as actual (financial_summary.ebitda_basis.note)"}
+{"id": "NCNO:bull_points:1", "verdict": "BASIS", "material": true, "favours": "bull", "fact": "FY27E consensus EBITDA not same basis as LTM actual (D&A 0.33x); 175.1/71.6 is 2.45x (financial_summary.ebitda_basis)"}
+{"id": "NCNO:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:bull_points:5", "verdict": "OVERREACH", "material": false, "favours": "bull", "fact": "No fact attributes margin gains to subscription-mix leverage; transcript cites AI tooling cutting services hours 40% (operating_drivers.rows[20],[26])"}
+{"id": "NCNO:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:bull_points:8", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:bull_points:9", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:bear_points:1", "verdict": "BASIS", "material": true, "favours": "bull", "fact": "'Forward EBITDA triple' crosses estimate/actual bases (2.45x); also NTM 12.32x exists despite 'no forward basis' (financial_summary.ebitda_basis)"}
+{"id": "NCNO:bear_points:2", "verdict": "SIGN", "material": false, "favours": "neither", "fact": "Revenue FQ2 3m breadth is 2 up / 8 down, written '2\u2191/8\u2191' (catalyst_path.horizon_read)"}
+{"id": "NCNO:bear_points:3", "verdict": "LABEL", "material": false, "favours": "bear", "fact": "'Rising' is one tick 18.5->18.7M after 20.2M on 2026-06-30 (catalyst_path.short_interest)"}
+{"id": "NCNO:key_unknowns:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NCNO:key_unknowns:5", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "No fact says bundles sized to last ~a year; transcript only says packaged to accelerate adoption (operating_drivers.rows[22])"}
+{"id": "NCNO:key_unknowns:6", "verdict": "BASIS", "material": true, "favours": "bear", "fact": "4.1x is CIQ-comps vendor-normalised debt/EBITDA, not covenant basis (no structured source) (primary_source.basis_triangulation; caveats[4])"}
+{"id": "NCNO:decisive_question:0", "verdict": "BASIS", "material": true, "favours": "bull", "fact": "'Tripling of forward EBITDA' crosses non-comparable estimate/actual bases; '~a year bundles' also absent (financial_summary.ebitda_basis)"}
+{"id": "NCNO:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NFLX:bull_points:0", "verdict": "PATH", "material": false, "favours": "bull", "fact": "EBITDA fell FY21 6,403 to FY22 5,970; margin 22% to 19% (quality.margin_trend)"}
+{"id": "NFLX:bull_points:1", "verdict": "PATH", "material": false, "favours": "bull", "fact": "EBITDA margin FY21 22% to FY22 19%, gross 42% to 39% (quality.margin_trend)"}
+{"id": "NFLX:bull_points:2", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Forward basis exists: EV/NTM EBITDA 14.02x at 2.6th percentile (forward_multiple_history.series[1].band)"}
+{"id": "NFLX:bull_points:3", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "Rev growth 15% vs 17%, EBITDA growth 23% vs 25% worse; NTM TEV/EBITDA 14.02 vs 12.97 premium (peer_comps)"}
+{"id": "NFLX:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NFLX:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NFLX:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NFLX:bear_points:0", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Decline is stepwise on earnings days (-9.7% 04-17, -7.3% 07-17) after +24% Feb-Apr rebound (stock_performance.points)"}
+{"id": "NFLX:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NFLX:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NFLX:bear_points:3", "verdict": "SIGN", "material": true, "favours": "bull", "fact": "The +$2,800M is non-operating INCOME inside NonoperatingIncomeExpense (+2,852 Q1), not a drag (financial_summary.filed_ltm[0], caveats[5])"}
+{"id": "NFLX:bear_points:4", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "No field has ads \"behind aggressive target\" or partner-integration delays; only ads growing >80% (operating_drivers.rows[73])"}
+{"id": "NFLX:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Forward EV/EBITDA exists: NTM 14.02x, FY26 15.59x (forward_consensus.current_multiples); EV/NTM EBITDA history"}
+{"id": "NFLX:key_unknowns:1", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "P/LTM EPS 18.1x has a percentile: 2.6th over 9.33y (valuation.own_history.value[1])"}
+{"id": "NFLX:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NFLX:key_unknowns:3", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "No field has management flagging US-slate execution as the weak spot (mechanical.operating_drivers.rows)"}
+{"id": "NFLX:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NFLX:key_unknowns:5", "verdict": "SIGN", "material": false, "favours": "bull", "fact": "Facts resolve it: quarterly +2,800 confirmed by filing as non-operating income, not costs (caveats[5], financial_summary.filed_ltm)"}
+{"id": "NFLX:key_unknowns:6", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "Quotes absent; view hours +2% H1 called \"slight acceleration\" vs 1.5% in 2025 (operating_drivers.rows[33])"}
+{"id": "NFLX:decisive_question:0", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "US-slate weakness and ads behind plan on partner-integration delays appear in no field (mechanical.operating_drivers.rows)"}
+{"id": "NFLX:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NKE:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NKE:bull_points:1", "verdict": "OVERREACH", "material": true, "favours": "bull", "fact": "Q1 dividends ~$610M (~$2.4B/yr) exceed LTM FCF $1,767M — operating_drivers.rows[39], quality.free_cash_flow"}
+{"id": "NKE:bull_points:2", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "'Training' not a named driver; quote lists Running, Global Football, Tennis, Golf — operating_drivers.rows[34].following_context"}
+{"id": "NKE:bull_points:3", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "Dunk-cut motive 'restore scarcity' not stated; decline also 'product underperformance' — operating_drivers.rows[14].following_context"}
+{"id": "NKE:bull_points:4", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "No FY29/FY30 timing for Pace savings anywhere in facts — operating_drivers.rows[27]"}
+{"id": "NKE:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NKE:bull_points:6", "verdict": "SIGN", "material": true, "favours": "bull", "fact": "Peer premium widens forward, no discount: NTM TEV/EBITDA 18.46 vs median 9.21 (LTM 9.6 vs 7.2) — peer_comps.trading_multiples"}
+{"id": "NKE:bear_points:0", "verdict": "PATH", "material": false, "favours": "bear", "fact": "EBITDA troughed FY25 $4,477M (10%) then rose to $4,893M LTM (11%) — financial_summary.annual EBITDA rows"}
+{"id": "NKE:bear_points:1", "verdict": "BASIS", "material": false, "favours": "bear", "fact": "9.6x divides EBITDA+rent; NTM 18.46x divides consensus EBITDA; ex-lease trailing is 11.7x — valuation.ev_ebitda_basis, ev_ebitda_ex_lease_at_price"}
+{"id": "NKE:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NKE:bear_points:3", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "No guide that China worsens; facts say near-term 'impacted', cleanup 'multiple seasons' — operating_drivers.rows[20].following_context"}
+{"id": "NKE:bear_points:4", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "No FY28 warning in facts (FY28E revenue +1%); Sportswear just under half + Jordan 13% — operating_drivers.rows[14],[17]"}
+{"id": "NKE:bear_points:5", "verdict": "OVERREACH", "material": true, "favours": "bear", "fact": "'Structural' unsupported: RoCE 9.1% FY25→10.4% FY26; FY20 11.5% recovered to 19.4% FY21 — return_ratios RoCE row"}
+{"id": "NKE:bear_points:6", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "No management EBIT-vs-revenue guide; only revenue HSD decline and adj EPS $1.15–1.35 — operating_drivers.rows[0], primary_source.releases[0]"}
+{"id": "NKE:bear_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NKE:key_unknowns:0", "verdict": "LABEL", "material": true, "favours": "bull", "fact": "Repeats 'trailing only — no forward basis' while NTM TEV/EBITDA 18.46x exists — valuation.ev_ebitda.note vs forward_consensus.current_multiples[1]"}
+{"id": "NKE:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NKE:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NKE:key_unknowns:3", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "No Investor Day in facts; catalyst_calendar.rows lists note maturities and next print only"}
+{"id": "NKE:key_unknowns:4", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "No FY28 guide or refusal-to-commit in facts; FY28E revenue +1% — financial_summary.annual FY28E"}
+{"id": "NKE:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NKE:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "NKE:decisive_question:0", "verdict": "OVERREACH", "material": true, "favours": "bull", "fact": "11% is LTM EBITDA (not EBIT) margin and not a trough: FY27E EBITDA margin 7% — financial_summary.annual"}
+{"id": "NKE:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bull_points:0", "verdict": "OVERREACH", "material": false, "favours": "bull", "fact": "Data are 'positive interim results' of an ongoing Phase 2a, not a pivotal readout — operating_drivers.rows[2].verbatim"}
+{"id": "ORKA:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bear_points:4", "verdict": "PERIOD", "material": false, "favours": "bear", "fact": "Start points are the 3m values; trend window GAAP EPS -2.44 (12m)→-2.45, EBITDA -162.1 (9m)→-194.3 — catalyst_path.acceleration_read"}
+{"id": "ORKA:bear_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:bear_points:6", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Not round-tripped: rebased 100→411.5 (2026-08-18)→261.8, still +162% over 364d — stock_performance.name_return"}
+{"id": "ORKA:bear_points:7", "verdict": "LABEL", "material": false, "favours": "bear", "fact": "'rising' is one fortnight; SI 8.3M (08-14)→7.8M→7.6M→7.8M, down overall — catalyst_path.short_interest"}
+{"id": "ORKA:key_unknowns:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:key_unknowns:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:decisive_question:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ORKA:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bull_points:8", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bear_points:2", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Lease basis is 'consistent on its own basis'; ex-lease multiple is 3.4x, so not a misread — valuation.ev_ebitda_basis.line, ev_ebitda_ex_lease_at_price"}
+{"id": "PARR:bear_points:3", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Repeats 'trailing only — no forward basis' while NTM TEV/EBITDA 4.8x (peers 6.13x) exists — valuation.ev_ebitda.note vs peer_comps.trading_multiples"}
+{"id": "PARR:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bear_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:bear_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:key_unknowns:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:key_unknowns:1", "verdict": "LABEL", "material": true, "favours": "neither", "fact": "'trailing-only' label while NTM TEV/EBITDA 4.8x and FY26E/FY27E consensus EBITDA exist — peer_comps.trading_multiples, implied_expectations.anchors"}
+{"id": "PARR:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:key_unknowns:3", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "No 'too early to call' quote or September Singapore price-lag in facts — operating_drivers.rows[55] only gives Q3 Hawaii drag"}
+{"id": "PARR:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:decisive_question:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "PARR:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:bear_points:0", "verdict": "BASIS", "material": true, "favours": "bear", "fact": "CIQ $3,657M already EXCLUDES the $253M refund, so EV/EBITDA is not flattered by it — financial_summary.ebitda_reconciliation.line"}
+{"id": "ROST:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:bear_points:3", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "Only tax-refund attribution is in facts; no 'easy February' or 3%–4% long-term comp algorithm — operating_drivers.rows[35-36]"}
+{"id": "ROST:bear_points:4", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "No 6–7%/4–5% comp guide, 9% prior Q4 or freight/fuel headwind; only 'more challenging comparisons' — operating_drivers.rows[1]"}
+{"id": "ROST:key_unknowns:0", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Gap is not opaque: −$253M matches the release's stated $253M IEEPA refund — financial_summary.ebitda_reconciliation.line"}
+{"id": "ROST:key_unknowns:1", "verdict": "LABEL", "material": true, "favours": "bull", "fact": "Quotes 'trailing only' while NTM TEV/EBITDA 18.77x exists (richer than 15.7x) — forward_consensus.current_multiples[1]"}
+{"id": "ROST:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:key_unknowns:4", "verdict": "STALE", "material": false, "favours": "neither", "fact": "$500M 0.875% note matured 2026-04-15; Q2 senior bonds $1,018.5M exclude it; next is $241.2M 2027 — capital_structure.summary, catalyst_calendar.rows[3]"}
+{"id": "ROST:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "ROST:decisive_question:0", "verdict": "BASIS", "material": true, "favours": "bear", "fact": "Premium is struck on CIQ EBITDA that excludes the $253M refund; also 3–4% algorithm, 6–7%/4–5% guides absent — ebitda_reconciliation.line"}
+{"id": "ROST:evidence_balance:0", "verdict": "LABEL", "material": false, "favours": "bear", "fact": "'near-record' amplifies 'near-ceiling': 15.7x vs own-history high 29.0x (87th pct) — valuation.own_history.value[0]"}
+{"id": "SMPL:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:bull_points:3", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "No FY27 250–300bp gross-margin guide in facts; FY27 adj EBITDA guided −9% to −14% — primary_source.current_guide"}
+{"id": "SMPL:bull_points:4", "verdict": "SELECTIVE", "material": false, "favours": "bull", "fact": "Quest Q4 retail takeaway declined 2.1%; penetration 20.5% (Q3) → 20.2% (Q4) — operating_drivers.rows[36],[19],[38]"}
+{"id": "SMPL:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:bear_points:2", "verdict": "PATH", "material": false, "favours": "bear", "fact": "FY27 EBITDA path rose 288.9→294.0 (12m→9m); EBITDA 1m breadth is 0↑/10↓, not 0/6 — forward_consensus.paths/revisions"}
+{"id": "SMPL:bear_points:3", "verdict": "CONFLICT", "material": false, "favours": "bear", "fact": "Tagged impairments 331+38=369 vs brand_split note $391.9M — capital_allocation.intangible/goodwill_impairment, brand_split.note"}
+{"id": "SMPL:bear_points:4", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "Expected continuing distribution losses stated for OWYN only, not Atkins — operating_drivers.rows[26],[40].following_context"}
+{"id": "SMPL:bear_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:bear_points:6", "verdict": "SIGN", "material": true, "favours": "bear", "fact": "Stock UP since underwrite 2026-08-05: 55.35→61.73 rebased (+11.5%); +32% off 9/24 low — stock_performance.points"}
+{"id": "SMPL:bear_points:7", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "'Gradual bleed' though 1y fall includes 4/9–10 gap-downs (−18.1%, −11.5%); +28% since 10/27 — drawdown_cause.anchor.at_anchor"}
+{"id": "SMPL:bear_points:8", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "A forward adj-EBITDA guide (FY27 −9% to −14%) IS parsed — primary_source.current_guide vs ev_ebitda_adjusted_fwd UNKNOWN"}
+{"id": "SMPL:key_unknowns:1", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "Elasticity as 'one of the biggest unknowns' not stated; mgmt says 'remains early… closely monitoring' — operating_drivers.rows[49]"}
+{"id": "SMPL:key_unknowns:2", "verdict": "SIGN", "material": false, "favours": "bull", "fact": "Quest not 'growing': Q4 retail takeaway declined 2.1% — operating_drivers.rows[36]"}
+{"id": "SMPL:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "SMPL:decisive_question:0", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "No 250–300bp GM guide; '80%' is bars+chips share of Quest, not Quest's share — operating_drivers.rows[19].following_context"}
+{"id": "SMPL:evidence_balance:0", "verdict": "PATH", "material": false, "favours": "bear", "fact": "Revisions not unbroken: FY27 EBITDA consensus rose 288.9→294.0 (12m→9m) — forward_consensus.paths"}
+{"id": "TECX:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TECX:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TECX:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TECX:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TECX:bull_points:4", "verdict": "SELECTIVE", "material": false, "favours": "bull", "fact": "FY26 EPS path worsened 12m→latest (−4.82→−5.09); FY27 EPS 1m breadth 3↑/6↓ — catalyst_path.acceleration_read, forward_consensus.revisions"}
+{"id": "TECX:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TECX:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TECX:bear_points:2", "verdict": "STALE", "material": false, "favours": "bull", "fact": "−89/−105 are the 12m-ago EBITDA points; current FY26E/FY27E −108/−138 — forward_consensus.paths, financial_summary.annual"}
+{"id": "TECX:bear_points:3", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Cash guided to fund operations into Q1 2029 'without needing to raise' — caveats[0]"}
+{"id": "TECX:bear_points:4", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "No −40% intraday figure; 2026-08-31 close-to-close fall was −15.9% (235.74→198.15) — stock_performance.points"}
+{"id": "TECX:bear_points:5", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Not single-asset: TX2100 (HHT), fibrosis bispecific, GEODe platform also in development — business_description.value"}
+{"id": "TECX:key_unknowns:0", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "Timing IS disclosed: APEX topline guided to early Q1 2027 — caveats[0]"}
+{"id": "TECX:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TECX:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TECX:key_unknowns:3", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "Runway IS given: $227.1M cash guided to fund operations into Q1 2029 — caveats[0]"}
+{"id": "TECX:key_unknowns:4", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "No −40% figure; 2026-08-31 gap was −15.9% close-to-close — stock_performance.points, drawdown_cause.gap_down_dates"}
+{"id": "TECX:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TECX:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TECX:decisive_question:0", "verdict": "ABSENT", "material": true, "favours": "bear", "fact": "Gap-down was −15.9%, not ~−40%; cash funds ops into Q1 2029, past Q1 2027 readout — stock_performance.points, caveats[0]"}
+{"id": "TECX:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:bull_points:0", "verdict": "PATH", "material": true, "favours": "bull", "fact": "Not durable trend: FY27 EPS 7.98→7.68→8.36 then one step 8.36→10.15 (2m→1m) — forward_consensus.paths"}
+{"id": "TGT:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:bull_points:4", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "'Compound for decades' not in facts — operating_drivers.rows[62],[117]"}
+{"id": "TGT:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:bull_points:7", "verdict": "BASIS", "material": true, "favours": "bull", "fact": "Forward name P/E vs trailing peer median; NTM P/E name 16.95x > peer median 16.48x — peer_comps.trading_multiples"}
+{"id": "TGT:bear_points:0", "verdict": "LABEL", "material": false, "favours": "bull", "fact": "Forward EV/NTM EBITDA exists: 9.49x, up from 7.02x a year ago — forward_multiple_history.series, current_multiples"}
+{"id": "TGT:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:bear_points:2", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "FY22 11% is outlier vs 9–10% FY17–21; quarterly margin up YoY to 9%, FY27E 9% — financial_summary"}
+{"id": "TGT:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:bear_points:4", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "No margin pressure visible: Q1/Q2 EBITDA margin up YoY (8%, 9%); op-margin guided ~6% — financial_summary.quarterly, operating_drivers.rows[20]"}
+{"id": "TGT:bear_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:key_unknowns:0", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Forward peer read exists: NTM TEV/EBITDA 9.49x vs peer median 11.37x — peer_comps.trading_multiples"}
+{"id": "TGT:key_unknowns:1", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Aug-19 guide: net sales ~+5%, op margin ~6%; Mar EPS guide $7.50–8.50 — operating_drivers.rows[20], primary_source.current_guide"}
+{"id": "TGT:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:key_unknowns:3", "verdict": "PERIOD", "material": false, "favours": "neither", "fact": "Panel (filed 2026-03-11) PREDATES the 2026-08-14 Item 1.02 — capital_structure.panel_vintage"}
+{"id": "TGT:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TGT:decisive_question:0", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Spend not shown pressuring margin: quarterly EBITDA margin up YoY to 9% (Q2); op-margin guide ~6% — financial_summary.quarterly"}
+{"id": "TGT:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TJX:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TJX:bull_points:1", "verdict": "CONFLICT", "material": true, "favours": "bull", "fact": "CIQ P/LTM EPS 27.3x sits at 58th pctile of 9.5y (median 26.2x) — valuation.own_history.value[1]"}
+{"id": "TJX:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TJX:bull_points:3", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "FY27 guide raised twice in 2026 (May $5.08–5.15, Aug $5.31–5.36), not three times — primary_source.releases"}
+{"id": "TJX:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TJX:bull_points:5", "verdict": "ABSENT", "material": true, "favours": "bull", "fact": "No self-described execution issue or fix for Marmaxx; only 'lower than we would have liked' — operating_drivers.rows[25].following_context"}
+{"id": "TJX:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TJX:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TJX:bull_points:8", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TJX:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TJX:bear_points:1", "verdict": "ABSENT", "material": true, "favours": "bull", "fact": "No management attribution to merchandise-mix execution misses in facts — operating_drivers.rows[25]"}
+{"id": "TJX:bear_points:2", "verdict": "SIGN", "material": false, "favours": "bear", "fact": "CIQ $8,903M excludes the $331M refund; the filing figure is lifted, not the headline — financial_summary.ebitda_reconciliation.line"}
+{"id": "TJX:bear_points:3", "verdict": "LABEL", "material": false, "favours": "bear", "fact": "'Gradual bleed' label; price fell to 85.4 on 2026-09-16 then rose ~20% to 102.4 by 10-16 — stock_performance.points"}
+{"id": "TJX:key_unknowns:0", "verdict": "LABEL", "material": true, "favours": "bull", "fact": "Repeats 'trailing only' while NTM TEV/EBITDA 18.7x vs peer 9.15x exists — peer_comps.trading_multiples"}
+{"id": "TJX:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TJX:key_unknowns:2", "verdict": "BASIS", "material": false, "favours": "bull", "fact": "0.9x is NET debt/EBITDA; gross total-debt/EBITDA is 1.1x — primary_source.basis_triangulation"}
+{"id": "TJX:key_unknowns:3", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "No management August-trend claim in facts; next print 2026-11-18 is present — catalyst_calendar.rows[0]"}
+{"id": "TJX:key_unknowns:4", "verdict": "OVERREACH", "material": false, "favours": "neither", "fact": "Release isolates it: adj GM 31.4% ex-refund; Q3 guide excludes expected $0.06 refund benefit — operating_drivers.rows[24], primary_source.releases[0]"}
+{"id": "TJX:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "TJX:decisive_question:0", "verdict": "ABSENT", "material": true, "favours": "bull", "fact": "No 'self-inflicted / August improvement / Q4' statement in facts; also HomeGoods 9→7%, Canada 7→6% decelerated — operating_drivers.rows[15-17,25-27]"}
+{"id": "TJX:evidence_balance:0", "verdict": "ABSENT", "material": true, "favours": "bull", "fact": "Marmaxx miss never 'self-described fixable' in facts — operating_drivers.rows[25].following_context"}
+{"id": "UBER:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:bull_points:1", "verdict": "CONFLICT", "material": false, "favours": "neither", "fact": "10-Q states Q2 Gross Bookings +24%; transcript says 22% — operating_drivers.rows[0] vs rows[142]"}
+{"id": "UBER:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:bull_points:7", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:bull_points:8", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:bear_points:0", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Repeats 'trailing only' while NTM TEV/EBITDA 11.99x vs peer 16.34x exists — peer_comps.trading_multiples, forward_consensus.current_multiples[1]"}
+{"id": "UBER:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:bear_points:2", "verdict": "SELECTIVE", "material": true, "favours": "bear", "fact": "FY26 consensus EBITDA +3%, EBIT +2% (12m→latest); EPS flat since 6m (3.31→3.36) — catalyst_path.acceleration_read"}
+{"id": "UBER:bear_points:3", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Idiosyncratic-vs-shared read UNKNOWN (no cohort); only name-vs-SPY available — idiosyncratic_vs_shared.read.note"}
+{"id": "UBER:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:key_unknowns:0", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Forward basis exists: NTM TEV/EBITDA 11.99x, FY26 13.35x (D&A-basis caveat) — forward_consensus.current_multiples[1],[7]"}
+{"id": "UBER:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "UBER:key_unknowns:6", "verdict": "ABSENT", "material": false, "favours": "neither", "fact": "No World Cup benefit or U.S. acceleration statement in facts — operating_drivers rows (no match)"}
+{"id": "UBER:decisive_question:0", "verdict": "PATH", "material": true, "favours": "bear", "fact": "'Now cutting': FY26 normalized EPS flat 3.31 (6m)→3.36; EBITDA +3%, EPS 1m revisions 1↑/0↓ — catalyst_path.acceleration_read, forward_consensus.revisions"}
+{"id": "UBER:evidence_balance:0", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "'Trailing-only, unresolvable multiple' while NTM TEV/EBITDA 11.99x exists — forward_consensus.current_multiples[1]"}
+{"id": "V:bull_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:bull_points:1", "verdict": "PERIOD", "material": false, "favours": "bull", "fact": "~30% of net revenue is the Q2 call figure (VAS then 25%+); Q3 states only 34% growth — operating_drivers.rows[95],[115]"}
+{"id": "V:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:bull_points:5", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "Not every axis: revenue growth 14% vs peer-median 17% — peer_comps.fundamental_deltas.value"}
+{"id": "V:bull_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:bull_points:7", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "No Meta partnership in facts; only OpenAI collaboration — operating_drivers.rows[25]"}
+{"id": "V:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:bear_points:1", "verdict": "PATH", "material": false, "favours": "bear", "fact": "Q2 +17% was a spike: quarterly YoY 11.5%, 14.6%, 17.1%, 14.4%; '2013' and EPS +20% absent — financial_summary.quarterly Revenue"}
+{"id": "V:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:key_unknowns:0", "verdict": "LABEL", "material": false, "favours": "neither", "fact": "Forward basis exists: NTM TEV/EBITDA 20.57x, FY26–FY30 ladder — forward_consensus.current_multiples"}
+{"id": "V:key_unknowns:1", "verdict": "OVERREACH", "material": false, "favours": "neither", "fact": "Normalisation explained: matches LossContingencyLossInPeriod $903M/$708M/$329M — financial_summary.ebitda_reconciliation.line"}
+{"id": "V:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:key_unknowns:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "V:key_unknowns:7", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "PYPL 'does not tag' impairment — no PYPL impairment pattern; FIS wrote down $17.6B — peer_capital_intensity.rows"}
+{"id": "V:decisive_question:0", "verdict": "SIGN", "material": true, "favours": "bear", "fact": "Core payments volume accelerated 9% (Q2) → 10% (Q3) cc, transactions 9%→10% — operating_drivers.rows[93],[104]"}
+{"id": "V:evidence_balance:0", "verdict": "PATH", "material": false, "favours": "bear", "fact": "Q3 revenue +14.4% matches Q1 +14.6% after a Q2 +17.1% spike — financial_summary.quarterly Revenue"}
+{"id": "VITL:bull_points:0", "verdict": "LABEL", "material": true, "favours": "bull", "fact": "'Discrete gap-downs' label, but price faded 109.8→51.9 (Aug-25→2/25) before first gap — stock_performance.points"}
+{"id": "VITL:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VITL:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VITL:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VITL:bull_points:4", "verdict": "OVERREACH", "material": true, "favours": "bull", "fact": "'Fortress' contradicted: CIQ liquidity score 4 (weakest), FCF-negative, latest 10-Q cash $21M — leverage_survival.credit_health, anchor.net_debt"}
+{"id": "VITL:bull_points:5", "verdict": "OVERREACH", "material": true, "favours": "bull", "fact": "Not V-shaped: FY28E EBITDA $74M (2 ests) < FY25 $103M; FY28E EPS 0.49 vs FY25 1.44 — consensus_levels, forward_consensus.paths"}
+{"id": "VITL:bull_points:6", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "Trailing-only discount: NTM TEV/EBITDA 89.3x vs peer median 12.1x; FY26E revenue growth +2% — peer_comps.trading_multiples, financial_summary.annual"}
+{"id": "VITL:bear_points:0", "verdict": "BASIS", "material": false, "favours": "bear", "fact": "1.5x divides unreproduced $393M, not trailing EBITDA $79M (ex-lease 6.2x); consensus row not same basis — valuation.ev_ebitda_basis, financial_summary.ebitda_basis"}
+{"id": "VITL:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VITL:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VITL:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VITL:bear_points:4", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "'Not a one-off'/'ceiling' unsupported; facts cite price-gap levels and an 18% volume response to narrowing — operating_drivers.rows[15]-[18]"}
+{"id": "VITL:bear_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VITL:key_unknowns:0", "verdict": "ABSENT", "material": true, "favours": "bull", "fact": "$113.4M cash not in facts; Q1-26 cash $51.4M, latest 10-Q cash $21M; FY26E FCF −$89M — ev_bridge.lines[1], anchor.net_debt"}
+{"id": "VITL:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VITL:key_unknowns:2", "verdict": "CONFLICT", "material": false, "favours": "neither", "fact": "May-7 EX-99.1 gives adj EBITDA outlook $0–10M; 5.38x is implied D&A ratio — drawdown_cause.filings[1].drivers, financial_summary.ebitda_basis"}
+{"id": "VITL:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VITL:key_unknowns:4", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "No breaker-channel/oversupply/supply-overhang statement anywhere in facts — operating_drivers rows"}
+{"id": "VITL:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VITL:decisive_question:0", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "Revenue −13% is a consensus revision; FY26E revenue still +2% YoY, not a line collapse — financial_summary.annual FY26E"}
+{"id": "VITL:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VRRM:bull_points:0", "verdict": "STALE", "material": false, "favours": "bull", "fact": "4.5x/3.9x use May guide ($380–385M, $1.19–1.25); current Aug-05 guide $360–370M, $1.11–1.17 — primary_source.current_guide"}
+{"id": "VRRM:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VRRM:bull_points:2", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "No management 'primary value-creation engine' label for Government Solutions in facts — operating_drivers.rows[1],[30]"}
+{"id": "VRRM:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VRRM:bull_points:4", "verdict": "SELECTIVE", "material": true, "favours": "bull", "fact": "Omits LTM $358M dip and forward cuts: FY27E EBITDA $331M, guide cut to $360–370M — financial_summary.annual, primary_source.releases[0]"}
+{"id": "VRRM:bull_points:5", "verdict": "OVERREACH", "material": false, "favours": "bull", "fact": "No peer/benchmark ROIC in facts to support 'above-average'; LTM ROIC 11.1% — quality.roic_trend"}
+{"id": "VRRM:bear_points:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VRRM:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VRRM:bear_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VRRM:bear_points:3", "verdict": "CONFLICT", "material": false, "favours": "bull", "fact": "$94.3M is a CFO-adjustment increase; impairments tagged $64.0M + $40.4M = $104.4M — primary_source.releases[0].one_offs, capital_allocation"}
+{"id": "VRRM:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VRRM:bear_points:5", "verdict": "OVERREACH", "material": false, "favours": "neither", "fact": "−$11M non-op item is a loss lowering EPS; P/E distortion is one-time EPS 0.85 — caveats[2], quality.nonoperating_earnings"}
+{"id": "VRRM:bear_points:6", "verdict": "ABSENT", "material": false, "favours": "bear", "fact": "Only current LT growth 1.9% in facts; no prior ~9.5% — consensus_context.revision_history"}
+{"id": "VRRM:key_unknowns:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VRRM:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "VRRM:key_unknowns:2", "verdict": "STALE", "material": true, "favours": "bear", "fact": "Term loan refinanced to 2032-10-15 (filing governs), not 2028; 2.9x is CIQ not GAAP EBITDA — caveats[5], capital_structure.maturity_check"}
+{"id": "VRRM:key_unknowns:3", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "No 'MOSAIC' or promised 2027 margin expansion in facts; FY27E EBITDA margin 35% vs 39% — financial_summary.annual"}
+{"id": "VRRM:key_unknowns:4", "verdict": "CONFLICT", "material": false, "favours": "bull", "fact": "Write-down tags sum $104.4M ($64.0M + $40.4M), not $94.3M — capital_allocation.goodwill_impairment, intangible_impairment"}
+{"id": "VRRM:key_unknowns:5", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Called trailing-only though NTM TEV/EBITDA 4.98x (peer 9.33x) exists; 8.5x is stale 2026-03-31 — implied_expectations.rows[0], caveats[3]"}
+{"id": "VRRM:decisive_question:0", "verdict": "SELECTIVE", "material": true, "favours": "bear", "fact": "Q2 Commercial Services service revenue +5.5% YoY contradicts 'softness extends' from Q1 −4% — operating_drivers.rows[0]"}
+{"id": "VRRM:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:bull_points:0", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Repeats 'trailing only — no forward basis' while NTM TEV/EBITDA 6.49x exists — valuation.ev_ebitda.note vs forward_consensus.current_multiples"}
+{"id": "WERN:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:bull_points:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:bull_points:3", "verdict": "PERIOD", "material": false, "favours": "neither", "fact": "+22.8% is Q2-26 vs Q2-24 (two years), not YoY; Q2 YoY is +24% — quality.multi_year_trajectory, operating_drivers.rows[34]"}
+{"id": "WERN:bull_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:bull_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:bull_points:6", "verdict": "BASIS", "material": false, "favours": "neither", "fact": "8.3x divides EBITDA+rent ($385M); NTM 6.49x divides consensus EBITDA; no company guide exists — valuation.ev_ebitda_basis, primary_source.current_guide"}
+{"id": "WERN:bull_points:7", "verdict": "CONFLICT", "material": false, "favours": "bull", "fact": "Survival read says 'FCF-negative → burning cash' (fcf_sign −1) beside self-funding YES — quality.survival_capacity vs primary_source.self_funding"}
+{"id": "WERN:bear_points:0", "verdict": "SELECTIVE", "material": true, "favours": "bear", "fact": "Ceiling read is on trough EBITDA; NTM TEV/EBITDA 6.49x sits at the 6.7x own-history median — forward_consensus.current_multiples, valuation.range_position"}
+{"id": "WERN:bear_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:bear_points:2", "verdict": "OVERREACH", "material": true, "favours": "bear", "fact": "'Structural, not cyclical' unsupported: management cites 'prolonged downturn'; FY27E EBITDA $536M vs $342M — operating_drivers.rows[26].following_context, financial_summary.annual"}
+{"id": "WERN:bear_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:bear_points:5", "verdict": "PATH", "material": true, "favours": "bear", "fact": "FY26 GAAP EPS troughed 0.71 (6m) then rose to 0.83; EBITDA path +2%, 3m revisions 10↑/2↓ — forward_consensus.paths, revisions"}
+{"id": "WERN:key_unknowns:0", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Forward basis exists: consensus FY26E EBITDA $433.6M, NTM TEV/EBITDA 6.49x — valuation.implied_expectations.anchors, forward_consensus.current_multiples"}
+{"id": "WERN:key_unknowns:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:key_unknowns:3", "verdict": "CONFLICT", "material": false, "favours": "bear", "fact": "Filing states 1 current credit-facility maturity while the page lists 2 — capital_structure.maturity_check.rows[0].note"}
+{"id": "WERN:key_unknowns:4", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Called trailing-only though NTM TEV/EBITDA 6.49x exists — valuation.ev_ebitda.note vs forward_consensus.current_multiples"}
+{"id": "WERN:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:key_unknowns:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WERN:decisive_question:0", "verdict": "PATH", "material": true, "favours": "bear", "fact": "−29% FY26 GAAP EPS cut hides 6m of upward revision (0.71→0.83; normalized 0.74→1.07) — forward_consensus.paths FY 2026"}
+{"id": "WERN:evidence_balance:0", "verdict": "OVERREACH", "material": false, "favours": "bear", "fact": "'Structural collapse' unsupported: management frames a 'prolonged downturn'; consensus EBITDA recovers to $536M FY27E — operating_drivers.rows[26]"}
+{"id": "WLK:bull_points:0", "verdict": "OVERREACH", "material": false, "favours": "bull", "fact": "Print date is a cadence-estimate, not dated; nothing shows price 'does not reflect' it — catalyst_calendar.rows[0].date_basis"}
+{"id": "WLK:bull_points:1", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WLK:bull_points:2", "verdict": "ABSENT", "material": false, "favours": "bull", "fact": "No Q2 gas/ethane cost decline in facts; Q1 gas was 34% higher — operating_drivers.rows[37],[41]"}
+{"id": "WLK:bull_points:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WLK:bull_points:4", "verdict": "ABSENT", "material": true, "favours": "bull", "fact": "No $600M EBITDA-uplift plan or 'ahead of plan' tracking anywhere in facts — operating_drivers, primary_source.current_guide (none)"}
+{"id": "WLK:bull_points:5", "verdict": "PATH", "material": true, "favours": "bull", "fact": "FY26 EPS norm 3.76 (3m)→3.19, EBITDA 2,034→1,914: cut for 3 months; FQ3 EBITDA 1m 1↑/2↓ — catalyst_path.acceleration_read, horizon_read"}
+{"id": "WLK:bull_points:6", "verdict": "CONFLICT", "material": true, "favours": "bull", "fact": "LTM FCF +$23.1M is CIQ levered; CFO−capex same period −$265M, opposite sign; basis unnamed — quality.free_cash_flow.note"}
+{"id": "WLK:bear_points:0", "verdict": "SELECTIVE", "material": true, "favours": "bear", "fact": "Forward NTM TEV/EBITDA 6.78x, below own median 7.7x and peer median 7.63x — peer_comps.trading_multiples"}
+{"id": "WLK:bear_points:1", "verdict": "PATH", "material": true, "favours": "bear", "fact": "Margin recovered: LTM 10%, Q2-26 EBITDA $653M at 20%, FY26E 16% — financial_summary.annual/quarterly"}
+{"id": "WLK:bear_points:2", "verdict": "OVERREACH", "material": true, "favours": "bear", "fact": "'Structural' unsupported: FY25 carries $727M goodwill impairment + $640M restructuring; PEM Q1-26 EBITDA +$36M — financial_summary.annual, operating_drivers.rows[28]"}
+{"id": "WLK:bear_points:3", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "'Moved ALONE' derived from 2 non-peer names (ATKR customer, CLF steel); LYB return null — idiosyncratic_vs_shared.read/cohort"}
+{"id": "WLK:bear_points:4", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WLK:bear_points:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WLK:bear_points:6", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WLK:key_unknowns:0", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Forward valuation exists: NTM TEV/EBITDA 6.78x, P/FY26E 20.2x — peer_comps.trading_multiples, valuation.forward_multiples"}
+{"id": "WLK:key_unknowns:1", "verdict": "CONFLICT", "material": false, "favours": "bear", "fact": "Transcript gives Q1-26 segment EBITDA: PEM $36M, HIP $186M, vs 'no segment EBITDA' note — operating_drivers.rows[28],[29]"}
+{"id": "WLK:key_unknowns:2", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WLK:key_unknowns:3", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WLK:key_unknowns:4", "verdict": "LABEL", "material": true, "favours": "bear", "fact": "Repeats 'trailing only — no forward basis' while NTM TEV/EBITDA 6.78x exists — valuation.ev_ebitda.note vs peer_comps.trading_multiples"}
+{"id": "WLK:key_unknowns:5", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
+{"id": "WLK:key_unknowns:6", "verdict": "OVERREACH", "material": false, "favours": "neither", "fact": "Worse fundamentals cannot 'earn' a premium; NTM it is a discount, 6.78x vs 7.63x — peer_comps.fundamental_deltas, trading_multiples"}
+{"id": "WLK:decisive_question:0", "verdict": "PATH", "material": true, "favours": "bull", "fact": "FY26 EBITDA consensus fell 2,034 (3m)→1,914 latest; +7% is 12m net only. FIFO, gas/ethane fall absent — catalyst_path.acceleration_read"}
+{"id": "WLK:evidence_balance:0", "verdict": "OK", "material": false, "favours": "neither", "fact": ""}
