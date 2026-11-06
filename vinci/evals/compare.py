@@ -173,12 +173,19 @@ def change_names(base_ref: str, cand_ref: str, tickers: Sequence[str],
 
 
 def register(base_ref: str, cand_ref: str, *, targets: Sequence[str], draws: int = 5,
-             transforms: Sequence[str] = (), panel: dict[str, Any] | None = None) -> Registration:
-    """The registration for a comparison of the frozen panel. HELD OUT is per change: the panel
-    pages the change's own commits and records do not name (the corpus holds no page that no fix
-    ever named — record R8)."""
+             transforms: Sequence[str] = (), panel: dict[str, Any] | None = None,
+             pages: Sequence[str] | None = None) -> Registration:
+    """The registration for a comparison of the frozen panel — or, with ``pages``, of a TARGET
+    page outside it (record §6.1: a change whose target never fires on the panel is measured
+    where it does, as #921 on NFLX). Every page must be one the frozen file carries inputs for.
+    HELD OUT is per change: the pages the change's own commits and records do not name (the
+    corpus holds no page that no fix ever named — record R8)."""
     p = panel or rp.load_panel_file()
-    pages = tuple(p["panel"])
+    chosen = tuple(pages) if pages else tuple(p["panel"])
+    unknown = [t for t in chosen if t not in p["pages"]]
+    if unknown:
+        raise rp.ReplayError(f"{unknown}: no frozen inputs in the panel file for these pages")
+    pages = chosen
     named = change_names(base_ref, cand_ref, sorted(p["pages"]))
     return Registration(base_ref=base_ref, cand_ref=cand_ref, transforms=tuple(transforms),
                         pages=pages, draws=draws, targets=tuple(targets),

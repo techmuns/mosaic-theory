@@ -51,7 +51,8 @@ def main(argv: list[str] | None = None) -> int:
         c.add_argument("--base", required=True)
         c.add_argument("--cand", required=True)
         c.add_argument("--transform", action="append", default=[])
-        c.add_argument("--ticker", action="append", help="compare: limit to these panel pages")
+        c.add_argument("--ticker", action="append",
+                       help="limit to these pages (register: a target page outside the panel)")
         if name == "register":
             c.add_argument("--target", action="append", required=True)
             c.add_argument("--draws", type=int, default=5)
@@ -98,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
         from vinci.evals import compare as cm
         rp.refuse_inside_repo(a.out, "the registration")
         reg = cm.register(a.base, a.cand, targets=a.target, draws=a.draws,
-                          transforms=a.transform)
+                          transforms=a.transform, pages=a.ticker)
         cm.write_registration(reg, a.out)
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
               f"condition, targets {list(reg.targets)}, held out from this change "
