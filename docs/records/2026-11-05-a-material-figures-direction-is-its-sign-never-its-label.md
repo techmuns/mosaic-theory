@@ -56,19 +56,25 @@ build: struck there, with this record cited.
   measured, so none is stated.
 - **The backstop (`synthesis.material_direction_flags`, a QA FLAG, wired in `assemble_one` beside
   the GAAP-EPS flag).** For each demanded figure from an identified statement, it reads each claim
-  that states the figure (`_located_claims`, `cited_in`). It blanks the label's own words and the
-  phrases that frame no figure (`_neutral`), then reads the direction words that remain:
-  - cost words: charge, cost, drag, expense, loss, writedown, impairment, with inflections;
-  - gain words: gain, income, benefit, inflate, boost.
+  that states the figure (`_located_claims`, `cited_in`). It blanks the phrases that frame no
+  figure (`_neutral`), then reads the direction words that remain. The rules below are as they
+  stand after review round 2:
+  - **Cost words:** charge, cost, drag, expense, loss, writedown, write-off, impairment, impaired,
+    burden, dilutive, headwind, penalty, "weighs on", and "hit" as a noun.
+  - **Gain words:** gain, benefit, inflate, boost, flatter, tailwind, and the item's own name for
+    a gain ("non-operating income", "other income").
+  - **Income and earnings are the measure, never a direction.** Only what is done to them counts.
+    "Reduces / depresses / cuts / lowers / subtracts … income" is a cost; "adds / lifts / raises /
+    increases … earnings" is a gain, within 40 characters, a period allowed only inside a number.
+    That covers #920's echo, "ADDS $2,800.0M to pre-tax income".
 
   It fires when a claim's words point ONLY against the sign. The phrases blanked first are:
-  - the label itself, matched loosely (the bear point wrote "Restruct. Charge" for "Restruct.
-    Charges");
-  - both-ways forms ("Gain (Loss)", "Income (Expense)");
-  - measure names ("net income", "pre-tax income": the digest's own words, so an echo never trips
-    it);
-  - income as where a cost lands ("a drag on income", "against", "from"). "to income"
-    is kept, because "adds $2.8bn to other income" frames a gain (review round 0).
+  - **the label itself, matched loosely**: "Restruct. Charge" for "Restruct. Charges", "and" for
+    "&". It is blanked only when it does NOT contradict the sign. When it does, as NFLX's
+    "Charges" against +2,800.0 does, calling the figure by the label is the framing.
+  - **both-ways forms:** "Gain (Loss)", "gains and losses", "Income (Expense)";
+  - **loss measures:** "net loss", "operating loss";
+  - **cost lines:** "cost of revenue".
 - **The flag is QA (dev/JSON), like CONTRADICTION.** `MATERIAL-DIRECTION` is on
   `flags._QA_MARKERS`. Without the marker, `flags.partition` would have printed it among the
   READER's caveats in validator-speak (review round 0). Showing it to the reader instead is
@@ -124,12 +130,12 @@ the prompt complete. Bull or bear stays the model's call.
   | SMPL | `-331.0 …` (FY26) | `-331.0 … it SUBTRACTS $331.0M from pre-tax income (a charge) …` |
   | CNXC | `-2,573.3 …` | `-2,573.3 … it SUBTRACTS $2,573.3M from pre-tax income (a charge) …` |
 - **The check over every committed page: 2 flags, both NFLX.**
-  - `bear_point`: `('drag', nothing the other way)`.
-  - `key_unknown`: `('costs', nothing the other way)`.
+  - `bear_point`: `('drag', nothing the other way)` (since round 2, `('charge', 'drag', …)`).
+  - `key_unknown`: `('costs', nothing the other way)` (since round 2, `('charge', 'costs', …)`).
   - It read 7 stating claims in all, and none carried words of both directions. So the
     "only-against" rule and a stricter "any word against" rule give the same answer today.
-  - The label's own "Charge" is not what fires it. With label-blanking switched off, both flags
-    would name 'charge' too.
+  - Before round 2, the label's own "Charge" was not what fired it: "drag" and "costs" did. Since
+    round 2 the contradicting label counts as well, so each flag also names 'charge'.
 - **Fail first.** All 28 first-cut pins (`tests/test_material_figure_direction.py`) fail against main's
   three modules; the 3 added in review fail on the pre-review code.
 - **Mutations.** Each was caught by its pin:
@@ -151,7 +157,26 @@ the prompt complete. Bull or bear stays the model's call.
     income") is now read whole as agreeing with the sign, before the measure name inside it is
     blanked.
   - "write-off" joins the cost words.
-  - The real run is byte-identical after both review rounds.
+  - The real run's output did not change in round 1.
+- **Review round 2** (the coordinator's review of `97b31a78`): 6 items.
+  - **The label used as the noun.** When the label contradicts the sign, the label is no longer
+    blanked. NFLX's bear point cut to "A $2,800.0M Merger & Related Restruct. Charge sits in the
+    LTM …, a one-time item." is now flagged, and so is "merger-related restructuring charge".
+  - **Income is a measure.** LLY "reduces reported income" is no longer flagged as a gain. NFLX
+    "depresses reported income" is now flagged.
+  - **The echo window, every neutraliser and every word** pinned on a claim it decides.
+  - **"and" in the label.**
+  - **The common words** ("hit", "burden", "weighs on", "dilutive", "headwind", "flatters" and
+    "lifts … earnings") are read, and the remaining limits are named.
+  - **DEFERRED:** item 7, above.
+
+  The 13 pins written for the fixes fail on `97b31a78`. A mutation sweep removed each rule in turn
+  (33 mutants): 31 are killed. The 2 survivors are equivalent on the ten labels:
+  - the label separator's parentheses ("Gain (Loss)" is blanked by its both-ways form anyway);
+  - blanking the label after the neutraliser rather than before.
+
+  The real run still flags only NFLX's 2 claims. Each now also names the label's "charge":
+  bear point ('charge', 'drag'), key unknown ('charge', 'costs').
 - The suite (ruff, `mypy --strict vinci`, `pytest -m "not network"`): counts in the PR body.
 
 **BOUNDARY.**
@@ -178,12 +203,30 @@ the prompt complete. Bull or bear stays the model's call.
   refused.
 - **Its limits, stated in the docstring:**
   - a claim with words of both directions reads as two-sided and is not flagged;
-  - a direction word outside the two lists ("weighs", "hit") is not read;
+  - a framing outside the word lists is not read: "a negative for", "a positive for", "paid …
+    outflow", "hit" as a verb ("hit a record");
+  - an effect verb more than 40 characters from its "income"/"earnings" is not read;
   - the check reads the whole claim, not a sentence. A sentence split on CIQ's abbreviations
     ("Restruct.", "Bros.") would cut NFLX's bear point away from its "drag".
 - **The vocabulary is closed.** A label CIQ adds later gets no effect wording and a "not checked"
   flag. `test_every_committed_material_row_is_from_an_identified_statement` reddens on it in CI, so
   the gap cannot sit silently on a committed page.
+- **DEFERRED (coordinator, review round 2): the effect wording can be confidently WRONG on a
+  fiscal-year column.** "(a gain)" / "(a charge)" rests on CIQ's subtotal identity, and the
+  identity still holds when CIQ books an item in the wrong row. NFLX's own annual export reads
+  −2,800.0 on the merger row with +5,554.7 parked under Other Non-Operating, and
+  20,500.3 − 2,800.0 = 17,700.3 still closes.
+  - Only LTM columns get the filed tiebreak. `ltm_quarters` does not run at a fiscal-year end
+    (`ltm_quarters.py:213-216`).
+  - So a material FY column from the annual export could be stated with the wrong direction, and
+    the flag would then fire on a correct "one-time gain" claim.
+  - Not observed on any committed page: all 6 material figures are LTM except SMPL's FY26, whose
+    column is the filed 10-K.
+  - The fix to consider: no effect wording for a row whose two exports disagree and that no filed
+    tiebreak has decided.
+- **Out of scope, noted: MVST and WLK.** Re-running `_mark_material` on their committed tables
+  marks a row material on each, and neither committed synthesis cites the figure. The demand
+  lands at their next assembly.
 - **The sign identity is measured, not pinned in CI.** The committed CIQ fixtures blank the
   subtotal cells, so CI cannot re-measure it. This build cut no new CIQ fixture.
 - **The prompt changes for every page with a material row** (6 of 28 today), so this is

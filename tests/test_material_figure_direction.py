@@ -178,16 +178,16 @@ def test_every_committed_material_row_is_from_an_identified_statement() -> None:
 
 def test_the_check_flags_nflxs_bear_point_and_key_unknown() -> None:
     """(+) THE INCIDENT, on the frozen #918 synthesis: the bear point calls the +2,800.0 a "drag"
-    and the key unknown calls it "costs"; each is flagged, naming the word and the effect. The
-    label's own "Charge" is not what fires it."""
+    and the key unknown calls it "costs"; each is flagged, naming the words and the effect. The
+    label's own "Charge" counts too (review round 2): the label points against the sign, so
+    calling the figure by it is a framing."""
     flags = syn.material_direction_flags(_synth("NFLX"), _mech("NFLX"))
     assert [f.split(")", 1)[0] for f in flags] == [
         "MATERIAL-DIRECTION (bear_point", "MATERIAL-DIRECTION (key_unknown"]
-    assert "('drag', nothing the other way)" in flags[0]
-    assert "('costs', nothing the other way)" in flags[1]
+    assert "('charge', 'drag', nothing the other way)" in flags[0]
+    assert "('charge', 'costs', nothing the other way)" in flags[1]
     for f in flags:
         assert "it ADDS $2,800.0M to pre-tax income (a gain)" in f
-        assert "'charge'" not in f
 
 
 @pytest.mark.parametrize("ticker", NEGATIVES)
@@ -201,19 +201,35 @@ def test_the_check_passes_a_figure_framed_with_its_sign(ticker: str) -> None:
     assert syn.material_direction_flags(synth, mech) == []
 
 
-@pytest.mark.parametrize("ticker", ["AMZN", "GOOGL", "NFLX"])
-def test_a_labels_own_words_never_count(ticker: str) -> None:
+@pytest.mark.parametrize("ticker", ["AMZN", "GOOGL"])
+def test_a_label_that_agrees_with_its_sign_never_counts(ticker: str) -> None:
     """(+) The bite behind the negatives: AMZN's and GOOGL's claims carry "Loss" — a cost word,
-    against a positive — only inside the label "Gain (Loss) On Sale Of Invest.", and NFLX's carry
-    "Charge" only inside "Merger & Related Restruct. Charge". `_neutral` removes both: NFLX's by
-    blanking the label (with it off, its flags name 'charge'); AMZN's and GOOGL's twice over, by
-    the label and by the both-ways "Gain (Loss)" form, so either alone keeps them unflagged."""
+    against a positive — only inside the label "Gain (Loss) On Sale Of Invest.". `_neutral`
+    removes it twice over, by the label and by the both-ways "Gain (Loss)" form."""
     (fig,) = syn.demanded_material_figures(_mech(ticker))
     stating = [t for _w, t in syn._located_claims(_synth(ticker)) if fig.cited_in(t)]
-    word = "Charge" if ticker == "NFLX" else "Loss"
-    assert any(word in syn._direction_words(t)[0] for t in stating), "no label word to blank"
+    assert any("Loss" in syn._direction_words(t)[0] for t in stating), "no label word to blank"
     for t in stating:
-        assert word not in syn._direction_words(syn._neutral(t, label=fig.label))[0]
+        assert "Loss" not in syn._direction_words(syn._neutral(t, label=fig.label))[0]
+
+
+@pytest.mark.parametrize("claim", [
+    "A $2,800.0M Merger & Related Restruct. Charge sits in the LTM to 2026-09-30, a one-time item.",
+    "A $2,800.0M merger-related restructuring charge from the aborted WBD deal will not recur.",
+])
+def test_a_label_that_contradicts_its_sign_is_a_framing(claim: str) -> None:
+    """(-) Review round 2, THE INCIDENT'S OWN SHAPE. When the label's word points against the
+    sign, calling the figure by the label is framing it: NFLX's bear point, cut to the label noun
+    alone, and the label reworded, are each flagged. On 97b31a78 both read as no framing."""
+    assert _flag_one("NFLX", claim)
+
+
+def test_the_label_is_blanked_whether_written_with_and_or_ampersand() -> None:
+    """(-) Review round 2: "Merger and Related Restructuring Charges" is the label as prose
+    writes it; the separator reads "and" as it reads "&"."""
+    label = "Merger & Related Restruct. Charges ($M)"
+    for text in ("Merger & Related Restruct. Charges", "Merger and Related Restructuring Charges"):
+        assert syn._direction_words(syn._neutral(text, label=label))[0] == [], text
 
 
 def test_an_unidentified_statement_is_reported_not_checked(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -250,16 +266,65 @@ def test_an_unidentified_statement_is_reported_not_checked(monkeypatch: pytest.M
      False),
     # review round 1: "write-off" is a cost word
     ("NFLX", "The $2,800.0M merger write-off weighs on the year.", True),
+    # review round 2 — INCOME IS A MEASURE: only what is DONE to it frames the figure
+    ("LLY", "The $8,070.0M acquired IPR&D reduces reported income in the LTM.", False),
+    ("NFLX", "The $2,800.0M merger charge depresses reported income.", True),
+    ("NFLX", "The $2,800.0M lifts reported income for the year.", False),
+    ("LLY", "The $8,070.0M IPR&D line lifts reported earnings.", True),
+    ("LLY", "The $8,070.0M of acquired IPR&D cuts GAAP EPS.", False),
+    ("NFLX", "The $2,800.0M lowers reported earnings.", True),
+    # review round 2 — #920's echo: a figure BETWEEN "ADDS" and "to pre-tax income"
+    ("NFLX", "The fee ADDS $2,800.0M to pre-tax income, a one-off rather than a recurring cost.",
+     False),
+    # … and a longer gap than a few characters
+    ("NFLX", "The fee ADDS $2,800.0M of one-off money to pre-tax income, not a recurring cost.",
+     False),
+    # review round 2 — each neutraliser, pinned on a claim it decides
+    ("NFLX", "The $2,800.0M sits outside operations, so the year's operating loss was wider.",
+     False),
+    ("AMZN", "The $69,158.0M on the Gain (Loss) line is a one-off drag on the multiple.", True),
+    ("GOOGL", "The $129,109.0M of gains and losses on equity stakes is a drag on comparability.",
+     True),
+    ("NFLX", "The $2,800.0M sits in interest and other income (expense), and will not recur.",
+     False),
+    ("NFLX", "The $2,800.0M sits in interest and other income (expense) as a one-off drag.",
+     True),
+    ("NFLX", "The $2,800.0M is outside cost of revenue entirely.", False),
+    # review round 2 — each cost word and gain word, pinned
+    ("NFLX", "The $2,800.0M is a one-off expense.", True),
+    ("NFLX", "The $2,800.0M write-down will not recur.", True),
+    ("NFLX", "The $2,800.0M impairment will not recur.", True),
+    ("NFLX", "The $2,800.0M impaired the year's comparability.", True),
+    ("LLY", "The $8,070.0M of IPR&D is a one-off benefit to the tax line.", True),
+    ("LLY", "IPR&D of $8,070.0M inflates the GAAP P/E.", True),
+    # … and whole words only: "surcharge" and "costly" carry no cost word
+    ("NFLX", "The $2,800.0M arrived with no surcharge attached.", False),
+    ("AMZN", "The $69,158.0M Anthropic mark will not recur, unlike costly capex.", False),
+    # review round 2 — the common words outside the first two lists
+    ("NFLX", "The $2,800.0M is a one-time hit.", True),
+    ("NFLX", "The $2,800.0M is a one-time burden.", True),
+    ("NFLX", "The $2,800.0M weighs on the year.", True),
+    ("NFLX", "The $2,800.0M write-off will not recur.", True),
+    # an AGREEING label is the row's name, not a framing: blanked, so "benefit" stands alone
+    ("SMPL", "The $331.0M asset writedown is a non-cash benefit to future margins.", True),
+    ("NFLX", "The $2,800.0M is dilutive to the year.", True),
+    ("NFLX", "The $2,800.0M is a headwind this year.", True),
+    ("LLY", "The $8,070.0M of IPR&D flatters GAAP returns.", True),
 ])
 def test_the_neutralising_rules(ticker: str, claim: str, flagged: bool) -> None:
     """Hand-written claims (not LLM text) for the rules the frozen corpus does not exercise; the
     corpus pins above are the evidence the check works on real draws."""
+    assert _flag_one(ticker, claim) is flagged
+
+
+def _flag_one(ticker: str, claim: str) -> bool:
+    """Does the check flag ``claim`` as the page's one claim, against its frozen material row?"""
     synth = _synth(ticker).model_copy(update={
         "bull_points": [], "key_unknowns": [], "evidence_balance": "",
         "bear_points": [_synth(ticker).bear_points[0].model_copy(update={"claim": claim})],
         "decisive_question": _synth(ticker).decisive_question.model_copy(update={
-            "evidence_for": [], "evidence_against": []})})
-    assert bool(syn.material_direction_flags(synth, _mech(ticker))) is flagged
+            "question": "", "evidence_for": [], "evidence_against": []})})
+    return bool(syn.material_direction_flags(synth, _mech(ticker)))
 
 
 def test_the_check_runs_at_assembly_on_the_marked_table() -> None:

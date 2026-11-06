@@ -1998,49 +1998,53 @@ def _synthesis_prose(synth: Synthesis) -> str:
 #: The statement a material figure's effect is stated on (`MaterialFigure.statement`).
 INCOME_STATEMENT = "Income Statement"
 
-#: (2026-11-05) THE DIRECTION WORDS `material_direction_flags` reads — the coordinator's two
-#: lists with their inflections. A COST word frames a figure as taking from earnings, a GAIN word
-#: as adding to them. Whole words only: "costly" and "regained" are not read.
+#: (2026-11-05) THE DIRECTION WORDS `material_direction_flags` reads: the coordinator's two
+#: lists with their inflections, plus the common words outside them (review round 2). A COST word
+#: frames a figure as taking from earnings, a GAIN word as adding to them. Whole words only:
+#: "costly", "surcharge" and "regained" are not read.
+#:
+#: INCOME AND EARNINGS ARE THE MEASURE, NEVER A DIRECTION (review round 2). "reduces reported
+#: income" frames a cost and "lifts reported income" a gain, so only what is DONE to the measure
+#: is read (`_EFFECT_COST`, `_EFFECT_GAIN`). The item's own name for a gain, "non-operating
+#: income" or "other income", is read as a gain.
+_EARNINGS = r"(?:income|earnings|profits?|EPS)"
+#: up to 40 characters between the verb and its object, a period only inside a number
+#: ("ADDS $2,800.0M to pre-tax income", #920's echo)
+_GAP = r"(?:[^.;]|\.(?=\d)){0,40}?"
+_EFFECT_COST = (rf"\b(?:subtract|reduc|depress|cut|lower|dent)\w*\b{_GAP}\b{_EARNINGS}\b")
+_EFFECT_GAIN = (rf"\b(?:add(?:s|ed|ing)?|lift(?:s|ed|ing)?|rais(?:e|es|ed|ing)|increas\w*)\b"
+                rf"{_GAP}\b{_EARNINGS}\b")
 _COST_WORD = re.compile(
     r"\b(?:charg(?:e|es|ed)|costs?|drags?|expens(?:e|es|ed)|loss(?:es)?|write-?\s?downs?|"
-    r"write-?\s?offs?|impairments?|impaired)\b", re.IGNORECASE)
-#: The digest's OWN effect wording, echoed into prose (#920: every signed-line draw wrote "ADDS …
-#: to pre-tax income"). It states a direction, so it is read as one, before `_NEUTRAL_DIRECTION`
-#: blanks the measure name inside it.
-_ADDS_TO_PRETAX = re.compile(
-    r"\badd(?:s|ed|ing)?\b(?:[^.;]|\.(?=\d)){0,40}?\bto\s+pre-?tax\s+income\b",
-    re.IGNORECASE)
-_SUBTRACTS_FROM_PRETAX = re.compile(
-    r"\bsubtract(?:s|ed|ing)?\b(?:[^.;]|\.(?=\d)){0,40}?\bfrom\s+pre-?tax\s+income\b",
-    re.IGNORECASE)
+    r"write-?\s?offs?|impairments?|impaired|burdens?|dilut(?:ive|ion|es|ed|ing)|headwinds?|"
+    r"penalt(?:y|ies)|penali[sz]\w*|weigh(?:s|ed|ing)?\s+on|hit(?=\s*(?:[.;,)]|$|to\b|on\b)))\b"
+    rf"|{_EFFECT_COST}", re.IGNORECASE)
 _GAIN_WORD = re.compile(
-    r"\b(?:gains?|income|benefit(?:s|ed|ted)?|inflat(?:e|es|ed|ing)|boost(?:s|ed|ing)?)\b",
-    re.IGNORECASE)
+    r"\b(?:gains?|benefit(?:s|ed|ted)?|inflat(?:e|es|ed|ing)|boost(?:s|ed|ing)?|"
+    r"flatter(?:s|ed|ing)?|tailwinds?|non-?operating\s+income|other\s+income)\b"
+    rf"|{_EFFECT_GAIN}", re.IGNORECASE)
 #: Phrases that carry a direction word and frame NO figure, removed before the words are read:
 #: - BOTH DIRECTIONS AT ONCE, the accounting labels' own form: "Gain (Loss)", "(Gain) Loss",
-#:   "gains and losses", "Income (Expense)", "Inc. (Exp.)";
-#: - A MEASURE NAMED, not a figure framed: "net income", "operating loss" (never "NON-operating
-#:   income", which frames a gain), "pre-tax income" (the digest's echo is read whole first,
-#:   `_ADDS_TO_PRETAX`), "income statement", "income tax", "cost of revenue";
-#: - INCOME AS WHERE A COST LANDS: "a drag ON income", "a charge AGAINST net income", "taken
-#:   FROM income" — the word names where the effect lands, not which way it goes. "to income"
-#:   is NOT blanked: "adds $2.8bn to other income" frames a gain.
+#:   "gains and losses", "Income (Expense)";
+#: - A LOSS MEASURE NAMED, not a figure framed: "net loss", "operating loss", "pre-tax loss";
+#: - a cost LINE named: "cost of revenue", "cost of sales", "cost of goods".
 _NEUTRAL_DIRECTION = re.compile(
     r"\bgains?\s*\(\s*loss(?:es)?\s*\)|\(\s*gains?\s*\)\s*loss(?:es)?"
     r"|\bgains?\s*(?:/|&|\band\b|\bor\b)\s*loss(?:es)?\b"
-    r"|\bincome\s*\(\s*expense\s*\)|\(\s*income\s*\)\s*expense\b|\binc\.?\s*\(\s*exp\.?\s*\)"
-    r"|(?<!non-)\b(?:net|operating|pre-?tax|gross|comprehensive)\s+(?:income|loss(?:es)?)\b"
-    r"|\bincome\s+(?:statement|tax(?:es)?|before)\b|\bcost\s+of\s+(?:revenue|sales|goods)\b"
-    r"|\b(?:on|against|from)\s+(?:[A-Za-z-]+\s+){0,2}?income\b",
+    r"|\bincome\s*\(\s*expense\s*\)|\(\s*income\s*\)\s*expense\b"
+    r"|\b(?:net|operating|pre-?tax|gross|comprehensive)\s+loss(?:es)?\b"
+    r"|\bcost\s+of\s+(?:revenue|sales|goods)\b",
     re.IGNORECASE)
 
 
 def _neutral(text: str, *, label: str | None = None) -> str:
     """``text`` with every phrase that frames no figure blanked: the both-ways and measure
-    phrases (`_NEUTRAL_DIRECTION`) and, given one, the row's own LABEL. A label's words never
+    phrases (`_NEUTRAL_DIRECTION`) and, given one, the row's own LABEL. A label's words do not
     count — "Gain (Loss) On Sale Of Invest." is the row's name, not a framing — so the label is
-    matched as a phrase, loosely, the way prose writes it: case-free, "R&D" for "R & D", a word
-    lengthened ("Restructuring" for "Restruct.") or made singular ("Charge" for "Charges")."""
+    matched as a phrase, loosely, the way prose writes it: case-free, "R&D" for "R & D", "and"
+    for "&", a word lengthened ("Restructuring" for "Restruct.") or made singular ("Charge" for
+    "Charges"). The caller passes no label when the label's own word contradicts the sign
+    (`_framing`): then calling the figure by its label IS a framing."""
     if label and (phrase := _label_phrase(label)) is not None:
         text = phrase.sub(" ", text)
     return _NEUTRAL_DIRECTION.sub(" ", text)
@@ -2053,7 +2057,7 @@ def _label_phrase(label: str) -> re.Pattern[str] | None:
     stems = [w[:-1] if len(w) > 3 and w.lower().endswith("s") else w for w in words]
     if not stems:
         return None
-    phrase = r"[\s&().,/-]*".join(rf"{re.escape(s)}\w*" for s in stems)
+    phrase = r"(?:[\s&().,/-]|\band\b)*".join(rf"{re.escape(s)}\w*" for s in stems)
     return re.compile(rf"\b{phrase}", re.IGNORECASE)
 
 
@@ -2067,13 +2071,13 @@ def _direction_words(text: str) -> tuple[list[str], list[str]]:
     return found(_COST_WORD), found(_GAIN_WORD)
 
 
-def _framing(text: str, *, label: str) -> tuple[list[str], list[str]]:
-    """(cost, gain) direction in a claim: the words left once `_neutral` has blanked what frames
-    no figure, plus an echo of the digest's own effect wording, read whole."""
-    cost, gain = _direction_words(_neutral(text, label=label))
-    gain += [m.group() for m in _ADDS_TO_PRETAX.finditer(text)]
-    cost += [m.group() for m in _SUBTRACTS_FROM_PRETAX.finditer(text)]
-    return cost, gain
+def _framing(text: str, fig: MaterialFigure) -> tuple[list[str], list[str]]:
+    """(cost, gain) direction words in a claim stating ``fig``, once `_neutral` has blanked what
+    frames no figure. The row's label is blanked only when it does not contradict the sign: NFLX's
+    "A $2,800.0M Merger & Related Restruct. Charge …" calls a gain by a cost word (review round 2,
+    the incident's own shape)."""
+    blank = fig.label if fig.label_against_sign is None else None
+    return _direction_words(_neutral(text, label=blank))
 
 
 @dataclass(frozen=True)
@@ -2250,17 +2254,22 @@ def material_direction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[st
 
     WHAT FIRES IT, all deterministic. For each demanded figure from an identified statement, each
     claim stating it (`_located_claims`, `cited_in`) is read for direction words (`_COST_WORD`,
-    `_GAIN_WORD`) once the label's own words and the phrases that frame no figure are blanked
-    (`_neutral`). It fires when the claim's words point ONLY against the sign: a cost word and no
-    gain word for a figure that adds to pre-tax income, or the reverse. A figure from no identified
-    statement is reported as not checked — never read as a pass.
+    `_GAIN_WORD`) once the phrases that frame no figure are blanked (`_neutral`). It fires when the
+    claim's words point ONLY against the sign: a cost word and no gain word for a figure that adds
+    to pre-tax income, or the reverse. The row's label is blanked as its name, UNLESS the label's
+    own word contradicts the sign: then calling the figure by it ("a $2,800.0M Merger & Related
+    Restruct. Charge") is the framing (review round 2). Income and earnings are the measure, not
+    a direction: "reduces reported income" frames a cost and "lifts" it a gain. A figure from no
+    identified statement is reported as not checked — never read as a pass.
 
     THE CLAIM, NOT A SENTENCE: CIQ's labels and company names carry periods ("Restruct.",
     "Invest.", "Bros."), and a sentence split on them cut NFLX's own bear point away from its
     "drag". LIMITS, stated: a claim carrying words of both directions is read as two-sided and not
-    flagged — the check cannot tell which word frames the figure; a direction word outside the two
-    lists ("weighs", "hit") is not read; and a FLAG, not a refusal — the operator rules on HARD.
-    The sign is accounting fact; whether the figure bears for or against the case is not read."""
+    flagged — the check cannot tell which word frames the figure; a framing outside the word lists
+    is not read — "a negative for", "a positive for", "paid … outflow", "hit" as a verb ("hit a
+    record") — and nor is an effect verb more than 40 characters from its "income"/"earnings";
+    and it is a FLAG, not a refusal — the operator rules on HARD. The sign is accounting fact;
+    whether the figure bears for or against the case is not read."""
     flags: list[str] = []
     claims = _located_claims(synth)
     for f in demanded_material_figures(mech):
@@ -2271,7 +2280,7 @@ def material_direction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[st
         for where, text in claims:
             if not f.cited_in(text):
                 continue
-            cost, gain = _framing(text, label=f.label)
+            cost, gain = _framing(text, f)
             if f.value > 0 and cost and not gain:
                 frame, words = "a cost", cost
             elif f.value < 0 and gain and not cost:
