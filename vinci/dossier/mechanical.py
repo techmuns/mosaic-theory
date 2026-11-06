@@ -164,38 +164,29 @@ TRAILING_ONLY_NOTE = (
 def ev_ebitda_note(*, guided_forward: bool, forward_multiples: bool, peer_ntm: Sequence[str],
                    forward_history: ForwardMultipleHistory | None) -> str | None:
     """The note the trailing EV/EBITDA carries — the ONE rule both writers apply
-    (`_valuation`, and `cli`'s multiples-cluster refresh).
+    (`_valuation`, and `cli`'s multiples-cluster refresh): TRAILING_ONLY_NOTE, or None (the
+    multiple keeps its reader's own note).
 
     "TRAILING ONLY" ONLY WHEN THE PAGE HAS NO FORWARD MULTIPLE AT ALL (fix 3a, 2026-11-06). It
     fired on the absence of the guidance-adjusted forward figure alone, so every committed page
     with a trailing multiple and no guided forward (24 of 28 at main bcda7ce3) said "no forward
-    basis" — each of them carrying CIQ's forward-multiple history, 18 a consensus forward P/E, and
-    the 20 whose comps export is on disk the name's numeric NTM cells in the peer comps the
-    synthesis reads. The prompt counts a multiple so
-    tagged as neither bull nor bear, so a cross-checkable multiple was set aside as blind. Now the
-    note states what is absent and names where the page's forward multiples are;
-    TRAILING_ONLY_NOTE stands where none of the three CIQ sources has one.
+    basis" — each of them carrying CIQ's forward-multiple history, 18 a consensus forward P/E as
+    well. The prompt counts a multiple so tagged as neither bull nor bear, so a cross-checkable
+    multiple was set aside as blind. Where a forward multiple exists the note is DELETED, not
+    replaced with an explanation (coordinator, 2026-11-06: prefer deletion to added words): the
+    guided figure's absence is already stated on `ev_ebitda_adjusted_fwd` itself, and the forward
+    multiples are their own facts.
 
-    ``guided_forward``: the guidance-adjusted forward EV/EBITDA is PRESENT — no note, as before.
-    ``forward_multiples``: `valuation.forward_multiples` is PRESENT with a row. ``peer_ntm``: the
-    name's numeric NTM multiples on the comps sheet (`ciq_sheets.comps_ntm_multiples`).
-    ``forward_history``: the CIQ forward-multiple history, which sits beside the synthesis facts,
-    not in them; a series counts when it holds a numeric close."""
-    if guided_forward:
+    ``guided_forward``: the guidance-adjusted forward EV/EBITDA is PRESENT. ``forward_multiples``:
+    `valuation.forward_multiples` is PRESENT with a row. ``peer_ntm``: the name's numeric NTM
+    multiples on the comps sheet (`ciq_sheets.comps_ntm_multiples`). ``forward_history``: the CIQ
+    forward-multiple history; a series counts when it holds a numeric close."""
+    held = any(p.close is not None
+               for s in (forward_history.series if forward_history is not None else [])
+               for p in s.points)
+    if guided_forward or forward_multiples or peer_ntm or held:
         return None
-    bases: list[str] = []
-    if forward_multiples:
-        bases.append("forward P/E (`valuation.forward_multiples`)")
-    if peer_ntm:
-        bases.append(f"the name's {', '.join(peer_ntm)} (`peer_comps.trading_multiples`)")
-    held = [s.metric for s in (forward_history.series if forward_history is not None else [])
-            if any(p.close is not None for p in s.points)]
-    if held:
-        bases.append(f"the {', '.join(held)} history (`forward_multiple_history`)")
-    if not bases:
-        return TRAILING_ONLY_NOTE
-    return ("no guidance-adjusted forward EV/EBITDA; CIQ consensus forward multiples on the page: "
-            + "; ".join(bases))
+    return TRAILING_ONLY_NOTE
 
 
 def _sourced(field: DataField[float] | DataField[int], *, source_ref: str) -> Sourced[float]:
@@ -2541,9 +2532,8 @@ def _survival_capacity(
     *, net_debt: Sourced[float] | None = None,
 ) -> Sourced[str]:
     """Solvency as ONE block — net leverage + self-funding (FCF sign). Each leg is present or
-    fail-loud UNKNOWN, saying why and what it leaves unassessed — never whether that is a risk,
-    which is the human's call. ``net_debt`` (CIQ, $M) lets a non-formable ratio still report the
-    known balance-sheet position. No new data source.
+    fail-loud UNKNOWN — never tagged as a risk, which is the human's call. ``net_debt`` (CIQ, $M)
+    lets a non-formable ratio still report the known balance-sheet position. No new data source.
     (H3) The nearest-maturity year is retired here — the month-precision E2 maturity wall (rendered
     in the survival super-section) supersedes the coarse 'nearest maturity wall: YYYY' line."""
     present = SourceStatus.PRESENT
@@ -2562,21 +2552,19 @@ def _survival_capacity(
         nd = net_debt.value
         pos = f"net cash ${-nd:,.0f}M" if nd < 0 else f"net debt ${nd:,.0f}M"
         parts.append(f"{pos} (CIQ); net-debt/EBITDA N/A ({net_lev.note or 'not derivable'})")
-    # WHAT IS UNKNOWN AND WHY, NEVER A VERDICT (fix 3a, 2026-11-06): each leg used to close on
-    # "— solvency risk" or "(a risk)", the machine's judgment written into the fact the synthesis
-    # reads (9 committed pages carried "(a risk)"). The human decides whether an unknown is a risk.
+    # NO VERDICT IN THE FACT (fix 3a, 2026-11-06): each leg used to close on "— solvency risk" or
+    # "(a risk)", the machine's judgment written into the fact the synthesis reads (9 committed
+    # pages carried "(a risk)"). The tags are DELETED, not reworded: what is unknown is already
+    # said, its reason sits on the leg's own field, and whether it is a risk is the human's call.
     else:
-        parts.append(
-            f"net-debt/EBITDA UNKNOWN ({net_lev.note or 'not derivable'}) — leverage not assessable"
-        )
+        parts.append(f"net-debt/EBITDA UNKNOWN ({net_lev.note or 'not derivable'})")
     if fcf_sign.status is present and fcf_sign.value is not None:
         parts.append(
             "FCF-positive → self-funding" if fcf_sign.value > 0
-            else "FCF-negative → burning cash (no runway derived: this block reads no cash balance)"
+            else "FCF-negative → burning cash"
         )
     else:
-        parts.append(f"FCF sign UNKNOWN ({fcf_sign.note or 'no reason recorded'}) — runway not "
-                     "assessable")
+        parts.append("FCF sign UNKNOWN — runway not assessable")
     return Sourced.present(
         " | ".join(parts),
         source_ref="CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign "
@@ -4416,30 +4404,25 @@ def _dated_operating_events(
     return rows
 
 
-def _drawdown_guide_print_tests(rg: Sourced[str], ps: PrimarySource | None) -> str:
-    """What the next print tests when the drawdown 8-K furnished a revised outlook, LED by that
-    guide's vintage — the mark the prompt puts on the same field (`synthesis._mark_guidance_field`:
-    the release carrying the guide's accession gives its filing date, the newest guide-bearing
-    release the current one, `guidance_vintage_mark` the words).
+def _drawdown_guide_is_current(rg: Sourced[str], ps: PrimarySource | None) -> bool:
+    """Whether the drawdown 8-K's revised outlook is the CURRENT guide, by the derivation the
+    prompt's vintage mark uses on the same field (`synthesis._mark_guidance_field`): the release
+    carrying the guide's accession gives its filing date, the newest guide-bearing release
+    (`newest_guidance_date`) the current one. An undated guide is not current.
 
-    IT CALLED A SUPERSEDED GUIDE "THE COMMITTED REVISED OUTLOOK" (fix 3a, 2026-11-06): on BRBR,
-    VITL and VRRM the drawdown guide had been replaced by a later one, which the same prompt marked
-    SUPERSEDED. A superseded guide is history, so the row no longer calls the print its checkpoint;
-    only a CURRENT one keeps that clause, behind its mark — an undated one is marked "do not read
-    as current", and a checkpoint clause beside it would say the opposite (review of 3a)."""
-    from vinci.dossier.synthesis import guidance_vintage_mark, newest_guidance_date
+    THE PRINT ROW CALLED A SUPERSEDED GUIDE "THE COMMITTED REVISED OUTLOOK" (fix 3a, 2026-11-06):
+    on BRBR, VITL and VRRM the drawdown guide had been replaced by a later one, which the same
+    prompt marked SUPERSEDED. A replaced guide is history, not what the next print tests, so the
+    row now names it only when it is current — otherwise the row is the one every page without a
+    drawdown guide carries. Deleted, not explained (coordinator, 2026-11-06)."""
+    from vinci.dossier.synthesis import newest_guidance_date
 
     acc = _acc_of(rg.source_ref or "")
     filed = None
     if acc is not None and ps is not None:
         filed = next((r.filed for r in ps.releases if acc in (r.source_ref or "")), None)
     newest = newest_guidance_date(ps) if ps is not None else None
-    mark = guidance_vintage_mark(filed, newest).strip()
-    what = "the revised outlook furnished at the drawdown (see Revised guidance"
-    current = filed is not None and (newest is None or filed == newest)
-    if not current:
-        return f"{mark} {what})"
-    return f"{mark} {what} — the print is the checkpoint that confirms or refutes it)"
+    return filed is not None and (newest is None or filed == newest)
 
 
 def _catalyst_calendar(
@@ -4447,7 +4430,7 @@ def _catalyst_calendar(
 ) -> CatalystCalendar:
     """Assemble the DATED catalyst rows — deterministic, source-bound, never weighted:
     A. the next results print (cadence-estimate from the filer's own 2.02 history);
-    B. the committed revised-guidance checkpoint enriches the print row (the print TESTS the guide);
+    B. a CURRENT revised guide from the drawdown enriches the print row (the print TESTS it);
     C. in-horizon debt maturities from the capital-structure panel (stated ISO dates).
     Every miss is a loud qa_flag; an empty calendar is an honest outcome."""
     rows: list[CatalystRow] = []
@@ -4467,8 +4450,10 @@ def _catalyst_calendar(
         else:
             est_date, basis = est
             rg = mech.drawdown_cause.revised_guidance
-            if rg.status is SourceStatus.PRESENT and rg.value:
-                tests = _drawdown_guide_print_tests(rg, mech.primary_source)
+            if (rg.status is SourceStatus.PRESENT and rg.value
+                    and _drawdown_guide_is_current(rg, mech.primary_source)):
+                tests = ("the revised outlook (see Revised guidance — the print is the "
+                         "checkpoint that confirms or refutes it)")
                 src = f"cadence: EDGAR submissions ({basis}) · guide: {rg.source_ref}"
             else:
                 tests = "the next reported quarter against the committed trajectory"

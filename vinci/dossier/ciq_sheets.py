@@ -5032,7 +5032,7 @@ def _comps_deltas(bundle: CiqBundle, src: str) -> Sourced[str]:
         ms = _f(med) if med is not None else "–"
         bits.append(f"{lab} name {ns} vs peer-median {ms}")
     return Sourced.present(
-        "; ".join(bits) + f"  [justified-vs-residual inputs: {_peer_gap_question(bundle)} the "
+        "; ".join(bits) + f"  [justified-vs-residual inputs: {_peer_gap_question(bundle)}the "
         "human judges — not computed here]",
         source_ref=f"{src}→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
     )
@@ -5064,39 +5064,29 @@ def _peer_gaps(tm: Rows, peers: list[int], tgt: int,
 
 
 def _peer_gap_question(bundle: CiqBundle) -> str:
-    """The justified-vs-residual question, in the direction the cross-sectional read shows.
+    """The justified-vs-residual question, in the one direction the cross-sectional read shows,
+    trailed by a space — or "" where it shows none.
 
     IT ASSUMED A DISCOUNT (fix 3a, 2026-11-06): every page asked whether "the discount" is EARNED
-    by "worse fundamentals", and 11 of the 28 committed pages trade at a PREMIUM on EV/EBITDA
-    (ROST +124%, V +119%, LLY +87%). The direction is now the sign of each gap as the headline
-    prints it (rounded to the whole percent, so a "+0%" is neither): one word where every known gap
-    agrees, the multiple named where only some are known or they disagree, and nothing directional
-    where no gap is known."""
+    by "worse fundamentals", and 11 of the 28 committed pages at main bcda7ce3 trade at a PREMIUM on
+    EV/EBITDA (ROST +124%, V +119%, LLY +87%). The direction is now the sign of each gap as the
+    headline prints it (whole percent, so a "+0%" is neither), and it is asked only where every
+    known gap points the same way. Where they disagree, or none is known, the question is DELETED,
+    not reworded (coordinator, 2026-11-06): the signs sit in `cross_sectional` beside it."""
     try:
         tm = bundle.sheet("comps", "Trading Multiples")
     except CiqUnavailableError:
-        tm = None
-    signed: list[tuple[str, int]] = []
-    if tm is not None:
-        _hdr, peers, tgt = _comps_layout(tm, bundle.ticker)
-        if tgt is not None and peers:
-            signed = [(lab, round(gap * 100)) for lab, _nv, _mv, gap in _peer_gaps(tm, peers, tgt)
-                      if gap is not None]
-    prem = [lab for lab, pct in signed if pct > 0]
-    disc = [lab for lab, pct in signed if pct < 0]
-    named = len(prem) + len(disc) < len(_CROSS_SECTIONAL)
-
-    def on(labs: list[str]) -> str:
-        return f" on {' and '.join(labs)}" if named else ""
-
-    if prem and disc:
-        return (f"is the premium on {' and '.join(prem)} and the discount on {' and '.join(disc)} "
-                "EARNED (by the fundamentals) or RESIDUAL (unexplained)?")
-    if prem:
-        return f"is the premium{on(prem)} EARNED (better fundamentals) or RESIDUAL (unexplained)?"
-    if disc:
-        return f"is the discount{on(disc)} EARNED (worse fundamentals) or RESIDUAL (unexplained)?"
-    return "is any gap to the peer median EARNED (by the fundamentals) or RESIDUAL (unexplained)?"
+        return ""
+    _hdr, peers, tgt = _comps_layout(tm, bundle.ticker)
+    if tgt is None or not peers:
+        return ""
+    pcts = [round(gap * 100) for _lab, _nv, _mv, gap in _peer_gaps(tm, peers, tgt)
+            if gap is not None]
+    if pcts and all(p > 0 for p in pcts):
+        return "is the premium EARNED (better fundamentals) or RESIDUAL (unexplained)? "
+    if pcts and all(p < 0 for p in pcts):
+        return "is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? "
+    return ""
 
 
 def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:

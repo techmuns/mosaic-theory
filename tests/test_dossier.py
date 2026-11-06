@@ -799,9 +799,9 @@ def test_synthesis_contract_requires_balance_and_treats_opacity_as_risk() -> Non
 
 def test_survival_capacity_blocks_leverage_with_runway() -> None:
     """Mechanism A.3: leverage is promoted to a SURVIVAL block — net-debt/EBITDA + self-funding in
-    one field; a missing leg fails loud, saying why (since fix 3a, 2026-11-06, never "a risk": that
-    is the human's call — `tests/test_descriptive_labels.py`). (H3) The coarse 'nearest maturity
-    wall' line is retired — the month-precision E2 wall supersedes it in the survival
+    one field; a missing leg fails loud as UNKNOWN (since fix 3a, 2026-11-06, never tagged "a risk":
+    that is the human's call — `tests/test_descriptive_labels.py`). (H3) The coarse 'nearest
+    maturity wall' line is retired — the month-precision E2 wall supersedes it in the survival
     super-section."""
     present, unknown = ds.Sourced.present, ds.Sourced.unknown
     sc = dm._survival_capacity(
@@ -815,8 +815,7 @@ def test_survival_capacity_blocks_leverage_with_runway() -> None:
     risky = dm._survival_capacity(
         unknown(note="no debt/cash"), unknown(note="no guide"), unknown(note="no FCF"))
     rv = risky.value or ""
-    assert "net-debt/EBITDA UNKNOWN (no debt/cash)" in rv and "FCF sign UNKNOWN (no FCF)" in rv
-    assert "risk" not in rv
+    assert rv == "net-debt/EBITDA UNKNOWN (no debt/cash) | FCF sign UNKNOWN — runway not assessable"
 
 
 def test_net_debt_to_ebitda_prefers_ciq(monkeypatch: pytest.MonkeyPatch) -> None:

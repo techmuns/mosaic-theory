@@ -17,9 +17,12 @@ were on the committed pages:
 THE PINS. Each drives the production entry point (`_drawdown_cause`, `_valuation`,
 `_survival_capacity`, `peer_comps`, `_catalyst_calendar`, the CLI's `own-history-refresh`, and the
 prompt `synthesize` sends) on values frozen from real committed pages at main bcda7ce3
-(`tests/fixtures/descriptive_labels/pages.json`) and on four real CIQ comps sheets cut through the
-real decode path (`ciq_comps.json`). Each fix has its negative: the case the old label described
-correctly reads as before. No assertion reads LLM-composed text.
+(`tests/fixtures/descriptive_labels/pages.json`) and on seven real CIQ comps sheets cut through
+the real decode path (`ciq_comps.json`). Where a label cannot be stated neutrally from structured
+data it is DELETED, not explained (coordinator, 2026-11-06) — items 2, 3, 4 (no single direction)
+and 5 (a guide that is not current); only item 1 is reworded, to #920's tested words. Each fix has
+its negative: the case the old label described correctly reads as before. No assertion reads
+LLM-composed text.
 """
 from __future__ import annotations
 
@@ -240,32 +243,19 @@ def _valuation_on(monkeypatch: pytest.MonkeyPatch, t: str, *,
 def test_a_page_with_a_ciq_forward_multiple_is_not_called_trailing_only(
         monkeypatch: pytest.MonkeyPatch, ticker: str) -> None:
     """(+) LLY carries a consensus forward P/E, the name's NTM multiples in its peer comps and the
-    forward-multiple history; EPAM the last two. Both read "no forward basis" on main. Now the note
-    says what is absent — the guidance-adjusted figure — and names where the forward multiples
-    are, the one the synthesis reads (the peer comps' NTM TEV/EBITDA) among them."""
+    forward-multiple history; EPAM the last two. Both read "no forward basis" on main. The note is
+    now DELETED — the multiple carries its reader's own note (none) — not replaced with words."""
     assert "no forward basis" in PAGES[ticker]["valuation"]["ev_ebitda"]["note"]  # as committed
-    note = _valuation_on(monkeypatch, ticker).ev_ebitda.note
-    assert note is not None
-    assert "trailing only" not in note and "no forward basis" not in note
-    assert "no guidance-adjusted forward EV/EBITDA" in note
-    peer = note.split("the name's ", 1)[1].split(" (`peer_comps.trading_multiples`)", 1)[0]
-    assert "NTM TEV/EBITDA" in peer.split(", ")
-    assert "EV/NTM EBITDA" in note
-    assert ("valuation.forward_multiples" in note) is (ticker == "LLY")
+    assert _valuation_on(monkeypatch, ticker).ev_ebitda.note is None
 
 
 @pytest.mark.parametrize("history,comps", [(False, False), (True, False), (False, True)])
 def test_trailing_only_stands_only_where_no_forward_multiple_exists(
         monkeypatch: pytest.MonkeyPatch, history: bool, comps: bool) -> None:
     """(-/+) EPAM (no consensus forward P/E) with its forward sources taken away: with neither,
-    no forward basis exists and the note is the one it always was; either one alone is enough."""
+    no forward basis exists and the note is the one it always was; either one alone removes it."""
     note = _valuation_on(monkeypatch, "EPAM", history=history, comps=comps).ev_ebitda.note
-    if not (history or comps):
-        assert note == mech_mod.TRAILING_ONLY_NOTE
-    else:
-        assert note is not None and "no forward basis" not in note
-        assert ("peer_comps.trading_multiples" in note) is comps
-        assert ("forward_multiple_history" in note) is history
+    assert note == (None if history or comps else mech_mod.TRAILING_ONLY_NOTE)
 
 
 def test_a_guided_forward_figure_leaves_the_multiple_unnoted(
@@ -280,8 +270,8 @@ def test_a_guided_forward_figure_leaves_the_multiple_unnoted(
 def test_the_own_history_refresh_writes_the_same_note(
         monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path, history: bool) -> None:
     """(+/-) The CLI's multiples-cluster refresh writes the note through the same rule: SMPL's
-    frozen page (no consensus forward P/E, no guided forward) with its forward history → the
-    absence named; without it → trailing only."""
+    frozen page (no consensus forward P/E, no guided forward, a stub export with no comps sheet)
+    with its forward history → no note; without it → trailing only."""
     import vinci.cli as cli
     from tests.test_lease_basis import _transform_env
 
@@ -304,14 +294,10 @@ def test_the_own_history_refresh_writes_the_same_note(
     cli._cmd_own_history_refresh(cast(Any, SimpleNamespace(tickers="SMPL", canonical_ciq=None,
                                                            dry_run=False)))
     note = json.loads(page.read_text())["mechanical"]["valuation"]["ev_ebitda"]["note"]
-    if history:
-        assert "no guidance-adjusted forward EV/EBITDA" in note and "EV/NTM EBITDA" in note
-        assert "no forward basis" not in note
-    else:
-        assert note == mech_mod.TRAILING_ONLY_NOTE
+    assert note == (None if history else mech_mod.TRAILING_ONLY_NOTE)
 
 
-# --- 3. the survival read states what is unknown and why, never "a risk" -----------------------
+# --- 3. the survival read: the judgment tags are deleted ---------------------------------------
 
 
 def _survival(t: str) -> str:
@@ -323,34 +309,29 @@ def _survival(t: str) -> str:
     return out.value
 
 
-def test_a_negative_fcf_says_what_the_block_does_not_read() -> None:
-    """(+) WLK's FCF is negative; main appended "(cash not derived — a risk)". The block reads no
-    cash balance, so it derives no runway — stated, without the verdict."""
-    assert "a risk" in PAGES["WLK"]["quality"]["survival_capacity"]["value"]  # as committed
-    text = _survival("WLK")
-    assert "risk" not in text
-    assert "FCF-negative" in text and "no cash balance" in text
+def test_a_negative_fcf_carries_no_verdict() -> None:
+    """(+) WLK's FCF is negative; main appended "(cash not derived — a risk)". Deleted."""
+    committed = PAGES["WLK"]["quality"]["survival_capacity"]["value"]
+    assert committed.endswith("FCF-negative → burning cash (cash not derived — a risk)")
+    assert _survival("WLK") == committed.removesuffix(" (cash not derived — a risk)")
 
 
-def test_an_unknown_fcf_sign_says_why() -> None:
-    """(+) LLY's FCF sign is UNKNOWN in its screen record; the read now carries that field's own
-    reason instead of "(a risk)"."""
-    note = PAGES["LLY"]["quality"]["fcf_sign"]["note"]
-    text = _survival("LLY")
-    assert "risk" not in text
-    assert f"FCF sign UNKNOWN ({note})" in text
+def test_an_unknown_fcf_sign_carries_no_verdict() -> None:
+    """(+) LLY's FCF sign is UNKNOWN in its screen record (its reason on `quality.fcf_sign`)."""
+    committed = PAGES["LLY"]["quality"]["survival_capacity"]["value"]
+    assert committed.endswith(" (a risk)")
+    assert _survival("LLY") == committed.removesuffix(" (a risk)")
 
 
-def test_an_unknown_leverage_says_what_it_leaves_unread() -> None:
-    """(+) A ratio with no CIQ net-debt position wrote "— solvency risk"; it now names what the
-    missing ratio leaves unassessed."""
+def test_an_unknown_leverage_carries_no_verdict() -> None:
+    """(+) A ratio with no CIQ net-debt position wrote "— solvency risk"; deleted."""
     q = PAGES["WLK"]["quality"]
     out = mech_mod._survival_capacity(
         Sourced[float].unknown(note="no CIQ Net Debt/EBITDA"),
         _sourced(q["net_debt_to_ebitda_adjusted"]), _sourced(q["fcf_sign"]))
     assert out.value is not None
+    assert out.value.startswith("net-debt/EBITDA UNKNOWN (no CIQ Net Debt/EBITDA) | ")
     assert "risk" not in out.value
-    assert "net-debt/EBITDA UNKNOWN (no CIQ Net Debt/EBITDA) — leverage not assessable" in out.value
 
 
 def test_a_positive_fcf_reads_as_before() -> None:
@@ -438,7 +419,7 @@ def test_the_lint_reads_the_text_a_fact_carries(tmp_path: pathlib.Path) -> None:
     assert len(hits) == 1 and "a.py:5: 'a risk'" in hits[0], hits
 
 
-# --- 4. the peer-delta question: premium or discount from the sign, nothing when unknown --------
+# --- 4. the peer-delta question: the gaps' one direction, or no question --------------------
 
 
 def _comps_bundle(t: str) -> CiqBundle:
@@ -465,23 +446,23 @@ def test_a_name_at_a_premium_is_asked_about_its_premium() -> None:
 
 
 def test_a_name_at_a_discount_reads_as_before() -> None:
-    """(-) PARR trades at −57% and −70%: the question it was always asked."""
-    want = "is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)?"
-    assert want in _deltas("PARR")
+    """(-) PARR trades at −57% and −70%: byte-identical to its committed line."""
+    committed = json.loads((ROOT / "data" / "dossiers" / "PARR" / "dossier.json").read_text())
+    assert _deltas("PARR") == committed["mechanical"]["peer_comps"]["fundamental_deltas"]["value"]
 
 
-def test_a_premium_on_one_multiple_and_a_discount_on_the_other_names_each() -> None:
-    """(+) GOOGL: +11% on EV/EBITDA, −25% on P/E. One word for both would be false on one."""
-    text = _deltas("GOOGL")
-    assert "the premium on EV/EBITDA and the discount on P/E" in text
-    assert "(worse fundamentals)" not in text and "(better fundamentals)" not in text
+#: What is left of the bracket when no single direction can be stated — the question deleted.
+_NO_QUESTION = "  [justified-vs-residual inputs: the human judges — not computed here]"
 
 
-def test_no_known_gap_says_nothing_directional() -> None:
-    """(+) FUBO's EV/EBITDA and P/E are both NM: neither sign is known, so neither word is used."""
-    text = _deltas("FUBO")
-    assert "premium" not in text and "discount" not in text
-    assert "is any gap to the peer median EARNED" in text
+@pytest.mark.parametrize("ticker", ["GOOGL", "FUBO"])
+def test_no_single_direction_deletes_the_question(ticker: str) -> None:
+    """(+) GOOGL: +11% on EV/EBITDA, −25% on P/E — one word would be false on one of them. FUBO:
+    both NM, no sign known. The question is deleted, not reworded; the signs sit in
+    `cross_sectional` beside it."""
+    text = _deltas(ticker)
+    assert text.endswith(_NO_QUESTION)
+    assert "premium" not in text and "discount" not in text and "EARNED" not in text
 
 
 def test_the_statistics_themselves_are_unchanged() -> None:
@@ -493,7 +474,10 @@ def test_the_statistics_themselves_are_unchanged() -> None:
             "value"].split("  [", 1)[0], t
 
 
-# --- 5. the print row leads with the guide's vintage, never "committed" -------------------------
+# --- 5. the print row names the drawdown guide only when it is current ------------------------
+
+#: The row every page without a drawdown guide carries (unchanged by this fix).
+_NO_GUIDE_ROW = "the next reported quarter against the committed trajectory"
 
 
 class _PrintEdgar:
@@ -511,65 +495,70 @@ class _PrintEdgar:
         return sorted(self.rows, key=lambda f: f.filing_date, reverse=True)
 
 
-def _print_row(t: str, *, newest_only: bool = False) -> str:
+def _releases(t: str, keep: str = "all") -> list[ReleaseExtract]:
+    """The page's releases; ``keep`` "own" leaves only the guide's own release (CURRENT), "other"
+    every release but it (the guide UNDATED)."""
     p = PAGES[t]["print_row"]
-    releases = [ReleaseExtract.model_validate(r) for r in p["releases"]]
+    acc = re.search(r"\d{10}-\d{2}-\d{6}", p["revised_guidance"]["source_ref"] or "")
+    assert acc is not None
+    rel = [ReleaseExtract.model_validate(r) for r in p["releases"]]
+    if keep == "own":
+        return [r for r in rel if acc.group(0) in r.source_ref]
+    if keep == "other":
+        return [r for r in rel if acc.group(0) not in r.source_ref]
+    return rel
+
+
+def _print_row(t: str, keep: str = "all") -> tuple[str, str]:
+    p = PAGES[t]["print_row"]
     rg = Sourced[str].model_validate(p["revised_guidance"])
-    if newest_only:
-        # the drawdown guide's own release is the newest guide-bearing one: CURRENT
-        acc = re.search(r"\d{10}-\d{2}-\d{6}", rg.source_ref or "")
-        assert acc is not None
-        releases = [r for r in releases if acc.group(0) in r.source_ref]
     carrier = _mech({})
     assert carrier.drawdown_cause is not None and carrier.primary_source is not None
     m = carrier.model_copy(update={
         "drawdown_cause": carrier.drawdown_cause.model_copy(update={"revised_guidance": rg}),
-        "primary_source": carrier.primary_source.model_copy(update={"releases": releases}),
+        "primary_source": carrier.primary_source.model_copy(
+            update={"releases": _releases(t, keep)}),
         "capital_structure": None, "operating_drivers": None})
     cal = mech_mod._catalyst_calendar(cast(EdgarClient, _PrintEdgar(t)), p["cik"],
                                       date.fromisoformat(p["reference_date"]), m)
     row = next(r for r in cal.rows if r.event == mech_mod.PRINT_EVENT)
-    return row.tests_what
+    return row.tests_what, row.source_ref
 
 
 @pytest.mark.parametrize("ticker", ["BRBR", "VITL", "VRRM"])
-def test_a_superseded_drawdown_guide_is_marked_superseded_first(ticker: str) -> None:
+def test_a_superseded_drawdown_guide_leaves_the_print_row(ticker: str) -> None:
     """(+) Each page's drawdown guide was replaced by a later one (BRBR's May guide by August's),
-    yet its print row called it "the committed revised outlook". The vintage now LEADS the row,
-    the same mark the prompt puts on the guide itself."""
-    assert "committed" in PAGES[ticker]["print_row"]["catalyst_print_row"]["tests_what"]
-    text = _print_row(ticker)
-    assert text.startswith("[SUPERSEDED — filed ")
-    assert "committed" not in text and "confirms or refutes" not in text
+    yet its print row called it "the committed revised outlook". A replaced guide is not what the
+    next print tests: the row is the one every page with no drawdown guide carries, and cites it
+    no more."""
+    committed = PAGES[ticker]["print_row"]["catalyst_print_row"]
+    assert committed["tests_what"].startswith("the committed revised outlook")
+    tests, src = _print_row(ticker)
+    assert tests == _NO_GUIDE_ROW
+    assert "guide:" not in src
 
 
-def test_a_current_drawdown_guide_is_marked_current_and_still_tested() -> None:
-    """(-) The same guide as the newest one on file: CURRENT, and the print is its checkpoint."""
-    text = _print_row("BRBR", newest_only=True)
-    assert text.startswith("[CURRENT GUIDE, filed 2026-05-05]")
-    assert "confirms or refutes it" in text and "committed" not in text
+def test_a_current_drawdown_guide_is_still_the_checkpoint() -> None:
+    """(-) The same guide as the newest one on file: the row names it, without "committed"."""
+    tests, src = _print_row("BRBR", "own")
+    assert tests == ("the revised outlook (see Revised guidance — the print is the checkpoint "
+                     "that confirms or refutes it)")
+    assert "guide: " in src
 
 
-def test_an_undated_drawdown_guide_is_not_called_the_checkpoint() -> None:
-    """(+) Review of 3a: BRBR's guide with no release carrying its accession is UNDATED — marked
-    "do not read as current" — so the row must not then call the print its checkpoint."""
+def test_an_undated_drawdown_guide_leaves_the_print_row() -> None:
+    """(+) Review of 3a: a guide no release dates is marked "do not read as current" in the
+    prompt, so the row does not call the print its checkpoint."""
+    assert _print_row("BRBR", "other")[0] == _NO_GUIDE_ROW
+
+
+@pytest.mark.parametrize("keep", ["all", "own", "other"])
+def test_the_row_reads_the_guide_as_the_prompt_marks_it(keep: str) -> None:
+    """(+/-) One derivation: the row names the guide exactly when the mark
+    `_mark_drawdown_guidance` puts on the same field in the prompt is CURRENT."""
     p = PAGES["BRBR"]["print_row"]
-    rg = Sourced[str].model_validate(p["revised_guidance"])
-    releases = [ReleaseExtract.model_validate(r) for r in p["releases"]]
-    acc = re.search(r"\d{10}-\d{2}-\d{6}", rg.source_ref or "")
-    assert acc is not None
-    ps = SimpleNamespace(releases=[r for r in releases if acc.group(0) not in r.source_ref])
-    text = mech_mod._drawdown_guide_print_tests(rg, ps)  # type: ignore[arg-type]
-    assert text.startswith("[VINTAGE UNDATED")
-    assert "confirms or refutes" not in text
-
-
-def test_the_row_marks_the_guide_as_the_prompt_does() -> None:
-    """(+) One derivation: the print row's mark is the one `_mark_drawdown_guidance` puts on the
-    same field in the prompt."""
-    p = PAGES["BRBR"]["print_row"]
-    ps = SimpleNamespace(releases=[ReleaseExtract.model_validate(r) for r in p["releases"]])
+    ps = SimpleNamespace(releases=_releases("BRBR", keep))
     dumped = {"drawdown_cause": {"revised_guidance": dict(p["revised_guidance"])}}
     syn._mark_drawdown_guidance(dumped, ps)  # type: ignore[arg-type]
-    prompt_mark = dumped["drawdown_cause"]["revised_guidance"]["value"].split("\n", 1)[0]
-    assert _print_row("BRBR").startswith(prompt_mark)
+    current = dumped["drawdown_cause"]["revised_guidance"]["value"].startswith("[CURRENT GUIDE")
+    assert (_print_row("BRBR", keep)[0] != _NO_GUIDE_ROW) is current

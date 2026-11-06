@@ -533,15 +533,12 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "2026-11-06.descriptive-labels",
         "the fact layer's labels describe and never judge: a rolling drawdown window with no "
         "-10% day reads 'no single-day drop of -10% or worse in the window (detector threshold "
-        "-10%)', not a description of the path; the trailing EV/EBITDA says 'trailing only — "
-        "no forward basis' only where no CIQ forward multiple exists "
-        "(`mechanical.ev_ebitda_note`), else names the absent guidance-adjusted figure and where "
-        "the page's forward multiples are; the survival read states why a leg is unknown and "
-        "passes no verdict on it; the peer-delta "
-        "question takes premium or discount from the sign of each cross-sectional gap, naming "
-        "the multiple where they differ or one is unknown and nothing directional where none "
-        "is known; the catalyst print row leads with the drawdown guide's vintage mark and "
-        "never calls it committed. No figure changes; these strings do",
+        "-10%)'; the trailing EV/EBITDA's blind-flag note stands only where no CIQ forward "
+        "multiple exists (`mechanical.ev_ebitda_note`) and is otherwise deleted; the survival "
+        "read's verdict tags are deleted; the peer-delta question is asked only in the one "
+        "direction every known cross-sectional gap shows, and deleted where none is single; the "
+        "catalyst print row names the drawdown guide only when it is the current guide, without "
+        "'committed'. No figure changes; these strings do, most of them shorter",
     ),
 )
 
