@@ -799,8 +799,10 @@ def test_synthesis_contract_requires_balance_and_treats_opacity_as_risk() -> Non
 
 def test_survival_capacity_blocks_leverage_with_runway() -> None:
     """Mechanism A.3: leverage is promoted to a SURVIVAL block — net-debt/EBITDA + self-funding in
-    one field; a missing leg fails loud as a risk. (H3) The coarse 'nearest maturity wall' line
-    is retired — the month-precision E2 wall supersedes it in the survival super-section."""
+    one field; a missing leg fails loud, saying why (since fix 3a, 2026-11-06, never "a risk": that
+    is the human's call — `tests/test_descriptive_labels.py`). (H3) The coarse 'nearest maturity
+    wall' line is retired — the month-precision E2 wall supersedes it in the survival
+    super-section."""
     present, unknown = ds.Sourced.present, ds.Sourced.unknown
     sc = dm._survival_capacity(
         present(2.9, source_ref="EDGAR"), present("~2.6x fwd-adj", source_ref="99.1"),
@@ -809,11 +811,12 @@ def test_survival_capacity_blocks_leverage_with_runway() -> None:
     v = sc.value or ""
     assert "net-debt/EBITDA 2.9x" in v and "self-funding" in v
     assert "nearest maturity wall" not in v  # (H3) retired
-    # a missing leg fails loud as a risk, never silently dropped
+    # a missing leg fails loud with its reason, never silently dropped
     risky = dm._survival_capacity(
         unknown(note="no debt/cash"), unknown(note="no guide"), unknown(note="no FCF"))
     rv = risky.value or ""
-    assert "UNKNOWN" in rv and "risk" in rv
+    assert "net-debt/EBITDA UNKNOWN (no debt/cash)" in rv and "FCF sign UNKNOWN (no FCF)" in rv
+    assert "risk" not in rv
 
 
 def test_net_debt_to_ebitda_prefers_ciq(monkeypatch: pytest.MonkeyPatch) -> None:

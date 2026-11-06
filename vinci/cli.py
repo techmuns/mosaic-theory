@@ -1291,7 +1291,7 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
     from vinci.dossier.anchor import replace_valuation_fields
     from vinci.dossier.ciq import CiqBundle
     from vinci.dossier.manual_store import LocalFolderStore
-    from vinci.dossier.mechanical import TRAILING_ONLY_NOTE
+    from vinci.dossier.mechanical import ev_ebitda_note
     from vinci.dossier.schemas import SourceStatus
 
     cfg = get_config()
@@ -1331,12 +1331,20 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
         updates: dict[str, Any] = {"own_history": band.model_dump(mode="json")}
         updates["range_position"] = cs.range_position(bundle).model_dump(mode="json")
         ev = cs.ev_ebitda_current(bundle)
-        if ev.status is SourceStatus.PRESENT and (
-                (val_old.get("ev_ebitda_adjusted_fwd") or {}).get("status") != "present"):
-            # mechanical._valuation's trailing-only blind-flag (no forward counterpart), IMPORTED
-            # rather than mirrored: this line used to carry a byte-copy of the string, which is how
-            # one book's vocabulary sat in two places at once and got fixed in neither.
-            ev = ev.model_copy(update={"note": TRAILING_ONLY_NOTE})
+        if ev.status is SourceStatus.PRESENT:
+            # mechanical._valuation's note rule, IMPORTED rather than mirrored: this line used to
+            # carry a byte-copy of the string, which is how one book's vocabulary sat in two places
+            # at once and got fixed in neither. The page's own consensus forward P/E (left as
+            # committed by this refresh) and the exports' NTM multiples decide it (fix 3a).
+            fm = val_old.get("forward_multiples") or {}
+            note = ev_ebitda_note(
+                guided_forward=(val_old.get("ev_ebitda_adjusted_fwd") or {}).get("status")
+                == "present",
+                forward_multiples=fm.get("status") == "present" and bool(fm.get("value")),
+                peer_ntm=cs.comps_ntm_multiples(bundle),
+                forward_history=cs.forward_multiple_history(bundle))
+            if note is not None:
+                ev = ev.model_copy(update={"note": note})
         updates["ev_ebitda"] = ev.model_dump(mode="json")
         # the lease basis reads the SAME quarterly export (its TEV, leases and EBITDA), so it moves
         # with the cluster — a band from one export beside a lease basis from another is the drift

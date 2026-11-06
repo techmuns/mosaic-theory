@@ -827,6 +827,11 @@ def _transform_env(monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path,
         def workbook(self, _kind: str, *, freq: str | None = None) -> Any:
             return SimpleNamespace(path=f)
 
+        def sheet(self, kind: str, sheet: str, **_kw: Any) -> Any:
+            # a sheet this stub export does not hold — what a real bundle raises (the refresh's
+            # forward-history read, fix 3a, takes it as "no history")
+            raise ciq_mod.CiqUnavailableError(f"{kind}→{sheet} not in the stub export")
+
     def _companyfacts(_cik: str) -> Any:
         if isinstance(facts, Exception):
             raise facts
