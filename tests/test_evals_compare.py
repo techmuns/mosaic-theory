@@ -132,3 +132,76 @@ def test_a_truncated_or_incomplete_draw_is_not_scored(nflx: dict[str, Any]) -> N
 def test_a_target_that_is_not_a_metric_is_refused(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="not a deterministic metric"):
         cm.score_run(tmp_path, target="LABEL")
+
+
+# ------------------------------------------------- round 1 (in-session /code-review high, #924)
+
+def _page(t: str) -> dict[str, Any]:
+    page: dict[str, Any] = json.loads((ROOT / f"data/dossiers/{t}/dossier.json").read_text())
+    return page
+
+
+def _lean_raw(raw: dict[str, Any], lean: str) -> dict[str, Any]:
+    out = json.loads(json.dumps(raw))
+    out["evidence_balance"] = f"{lean} — {lean} on balance (test)"
+    return out
+
+
+def _rows(path: Path, rows: list[tuple[str, str, dict[str, Any] | None, str]]) -> Path:
+    path.mkdir()
+    with (path / "draws.jsonl").open("w") as f:
+        for label, cond, raw, stop in rows:
+            f.write(json.dumps({"label": f"{label}:{cond}", "raw": raw, "stop_reason": stop})
+                    + "\n")
+    return path
+
+
+def test_a_rerun_into_a_used_out_dir_is_refused(tmp_path: Path, nflx: dict[str, Any]) -> None:
+    """Draws append; a second run into the same folder would score two runs as one."""
+    base = rp.capture(nflx, None)
+    cand = rp.Request({**base.kwargs, "system": base.system + " "})
+    c = cm.Captured("A", "B", ())
+    c.requests[("NFLX", "BASE")], c.requests[("NFLX", "CAND")] = base, cand
+    c.diffs.append(cm.PageDiff("NFLX", False, 0, False, {}, {}))
+    out = tmp_path / "run"
+    out.mkdir()
+    (out / "draws.jsonl").write_text("{}\n", encoding="utf-8")
+    with pytest.raises(rp.ReplayError, match="already holds draws"):
+        cm.run_compare(c, budget=rp.Budget(1.0, tmp_path / "l.jsonl"), out_dir=out)
+
+
+def test_a_page_with_no_usable_draw_in_a_condition_blocks_never_vanishes(
+        tmp_path: Path, nflx: dict[str, Any]) -> None:
+    raw = nflx["synthesis"]
+    rows = [("NFLX", "BASE", raw, "tool_use")] * 5 + [("NFLX", "CAND", raw, "max_tokens")] * 5
+    s = cm.score_run(_rows(tmp_path / "r", rows), target="M-LABEL",
+                     panel={"panel": ["NFLX"], "motivated": {}}, pages={"NFLX": nflx})
+    assert not s.ships
+    assert any("NFLX" in r and "no usable draw" in r for r in s.reasons), s.reasons
+
+
+def test_a_panel_shift_in_committed_leans_must_be_explained(tmp_path: Path,
+                                                            nflx: dict[str, Any]) -> None:
+    """Record §6.3: two of five draws turn committed on three pages; no modal lean or proposal
+    moves (mixed 3 / bullish 2 proposes nothing), but the panel count does — p 0.022."""
+    raw = nflx["synthesis"]
+    mixed, bull = _lean_raw(raw, "mixed"), _lean_raw(raw, "strongly-bullish")
+    rows: list[tuple[str, str, dict[str, Any] | None, str]] = []
+    for t in ("NFLX", "MCK", "LLY"):
+        rows += [(t, "BASE", mixed, "tool_use")] * 5
+        rows += [(t, "CAND", mixed, "tool_use")] * 3 + [(t, "CAND", bull, "tool_use")] * 2
+    s = cm.score_run(_rows(tmp_path / "r", rows), target="M-LABEL",
+                     panel={"panel": ["NFLX", "MCK", "LLY"], "motivated": {}},
+                     pages={t: _page(t) for t in ("NFLX", "MCK", "LLY")})
+    assert any("committed-lean draws" in r for r in s.reasons), s.reasons
+
+
+def test_an_identical_tally_in_another_order_is_not_a_lean_move(tmp_path: Path,
+                                                                nflx: dict[str, Any]) -> None:
+    raw = nflx["synthesis"]
+    m, b, x = (_lean_raw(raw, k) for k in ("mixed", "strongly-bullish", "strongly-bearish"))
+    rows = [("NFLX", "BASE", r, "tool_use") for r in (m, b, m, b, x)]
+    rows += [("NFLX", "CAND", r, "tool_use") for r in (b, m, b, m, x)]
+    s = cm.score_run(_rows(tmp_path / "r", rows), target="M-LABEL",
+                     panel={"panel": ["NFLX"], "motivated": {}}, pages={"NFLX": nflx})
+    assert not any("lean moved" in r for r in s.reasons), s.reasons

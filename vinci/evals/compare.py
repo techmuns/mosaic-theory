@@ -97,6 +97,9 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, draws: int = 5
     if rp._inside_repo(out_dir):
         raise rp.ReplayError(f"{out_dir} is inside the repository; requests and draws carry "
                              "licensed transcript text")
+    if (out_dir / "draws.jsonl").exists():
+        raise rp.ReplayError(f"{out_dir} already holds draws: draws append, so a second run here "
+                             "would be scored with the first — use a fresh folder")
     out_dir.mkdir(parents=True, exist_ok=True)
     with (out_dir / "requests.jsonl").open("w", encoding="utf-8") as f:
         for (t, cond), req in c.requests.items():
@@ -148,6 +151,17 @@ def usable(row: dict[str, Any]) -> bool:
 def _lean(raw: dict[str, Any]) -> str:
     parts = split_lean(str(_decode_escapes(raw).get("evidence_balance") or ""))
     return parts[0].strip().lower() if parts else ""
+
+
+_COMMITTED = ("strongly-bullish", "strongly-bearish")
+
+
+def _modal_set(tally: Counter[str]) -> frozenset[str]:
+    """Every lean at the top count — a tie is a set, so draw ORDER never reads as a lean move."""
+    if not tally:
+        return frozenset()
+    top = max(tally.values())
+    return frozenset(k for k, v in tally.items() if v == top)
 
 
 def _proposal(tally: Counter[str], sleeve: str) -> str | None:
@@ -209,6 +223,12 @@ def score_run(out_dir: Path, *, target: str, panel: dict[str, Any] | None = None
     motivated = p.get("motivated", {})
     held = (set(p.get("panel", [])) - set(motivated.get("by_commit", {}))
             - set(motivated.get("in_flight", {})))
+    reasons: list[str] = []
+    for t in sorted({row["label"].split(":")[0] for row in rows}):
+        for cond in CONDITIONS:
+            if not sum(leans.get(t, {}).get(cond, Counter()).values()):
+                reasons.append(f"{t}: {cond} has no usable draw — the page cannot be compared, "
+                               "and a panel is never shrunk silently")
     results: dict[str, MetricResult] = {}
     for m, by_page in counts.items():
         pd = [sx.PageDraws(t, tuple(v["BASE"]), tuple(v["CAND"]))
@@ -220,7 +240,6 @@ def score_run(out_dir: Path, *, target: str, panel: dict[str, Any] | None = None
         results[m] = MetricResult(m, r.base_total, r.cand_total, float(r.p_lower),
                                   float(r.p_upper), sum(sum(x.base) for x in ho),
                                   sum(sum(x.cand) for x in ho))
-    reasons: list[str] = []
     tr = results.get(target)
     if tr is None or tr.p_lower > ALPHA:
         reasons.append(f"target {target} does not improve beyond noise "
@@ -233,11 +252,20 @@ def score_run(out_dir: Path, *, target: str, panel: dict[str, Any] | None = None
     for t, by in leans.items():
         sleeve = str(ctxs[t].page.get("sleeve"))
         proposals[t] = {c: _proposal(by[c], sleeve) for c in CONDITIONS}
-        modal = {c: (max(by[c].items(), key=lambda kv: kv[1])[0] if by[c] else None)
-                 for c in CONDITIONS}
+        modal = {c: _modal_set(by[c]) for c in CONDITIONS}
         if modal["BASE"] != modal["CAND"] or proposals[t]["BASE"] != proposals[t]["CAND"]:
             reasons.append(f"{t}: the lean moved ({dict(by['BASE'])} → {dict(by['CAND'])}) — "
                            "explain it in writing before review")
+    committed = [sx.PageDraws(t, *(tuple(int(k in _COMMITTED) for k, v in by[c].items()
+                                         for _ in range(v)) for c in CONDITIONS))
+                 for t, by in sorted(leans.items()) if by["BASE"] and by["CAND"]]
+    if committed:
+        cr = sx.stratified_exact(committed)
+        two_sided = min(1.0, 2 * float(min(cr.p_lower, cr.p_upper)))
+        if two_sided <= ALPHA:
+            reasons.append(f"the panel's committed-lean draws moved {cr.base_total} → "
+                           f"{cr.cand_total} (two-sided p {two_sided:.3g}) — explain it in "
+                           "writing before review (record §6.3)")
     new_echo = {ph: sorted(ts) for ph, ts in echo.get("CAND", {}).items()
                 if ph not in echo.get("BASE", {})}
     return Score(target=target, metrics=results,
