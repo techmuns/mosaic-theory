@@ -5,11 +5,15 @@ registration written before the first draw.
     budget-open --budget-ledger FILE --cap USD --approval "<operator's words>"
                                               one ledger per approval; every run shares it
     compare --base main --cand <ref> [--transform NAME ...]       $0: does CAND's request differ?
-    register --base main --cand <ref> [--transform NAME ...] --target M-LABEL [--target ...]
-             --out FILE                       BEFORE any draw: pages, draws, targets, scorer
+    register --base main --cand <ref> [--transform NAME ...] (--target M-LABEL [--target ...] |
+             --no-worsening) [--ticker T ...] --out FILE
+                                              BEFORE any draw, $0: pages, draws, targets, scorer,
+                                              and every request's bytes (captured here)
     run-compare --registration FILE --budget-ledger FILE --out-dir DIR [--cap USD] --paid
-                                              PAID: the registered draws, page by page
-    score --out-dir DIR --registration FILE   $0: the registered rule, logged
+                                              PAID: the registered draws, page by page, ONCE
+    score --out-dir DIR --registration FILE --budget-ledger FILE
+                                              $0: the registered rule, logged, with every run
+                                              the ledger records under the registration
     capture --ticker T [--code-ref REF] [--transform NAME ...] --out FILE
     prove --ticker T --log FILE [--code-ref REF] [--page-ref REF]
     judge --half dev|test --budget-ledger FILE --out-dir DIR --paid
@@ -54,9 +58,12 @@ def main(argv: list[str] | None = None) -> int:
         c.add_argument("--cand", required=True)
         c.add_argument("--transform", action="append", default=[])
         c.add_argument("--ticker", action="append",
-                       help="limit to these pages (register: a target page outside the panel)")
+                       help="limit to these pages (register: target pages OUTSIDE the panel; "
+                            "the panel is registered whole)")
         if name == "register":
-            c.add_argument("--target", action="append", required=True)
+            c.add_argument("--target", action="append", default=[])
+            c.add_argument("--no-worsening", action="store_true",
+                           help="no target: only that no class metric worsens (§6.1)")
             c.add_argument("--draws", type=int, default=5)
             c.add_argument("--out", required=True, type=Path)
     rc = sub.add_parser("run-compare")
@@ -68,6 +75,7 @@ def main(argv: list[str] | None = None) -> int:
     s = sub.add_parser("score")
     s.add_argument("--out-dir", required=True, type=Path)
     s.add_argument("--registration", required=True, type=Path)
+    s.add_argument("--budget-ledger", required=True, type=Path)
     c = sub.add_parser("capture")
     c.add_argument("--ticker", required=True)
     c.add_argument("--code-ref")
@@ -107,8 +115,14 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "register":
         from vinci.evals import compare as cm
         rp.refuse_inside_repo(a.out, "the registration")
+        if a.out.exists():
+            raise rp.ReplayError(f"{a.out} exists: a registration is written once")
+        pages = cm.registered_pages(a.ticker)
+        cap = cm.compare_requests(a.base, a.cand, tickers=pages, transforms=a.transform)
+        cm.refuse_if_unreached(cap)
         reg = cm.register(a.base, a.cand, targets=a.target, draws=a.draws,
-                          transforms=a.transform, pages=a.ticker)
+                          transforms=a.transform, pages=a.ticker, captured=cap,
+                          no_worsening=a.no_worsening)
         cm.write_registration(reg, a.out)
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
               f"condition, targets {list(reg.targets)}, held out from this change "
@@ -142,12 +156,12 @@ def main(argv: list[str] | None = None) -> int:
         cm.run_compare(cap, budget=budget, out_dir=a.out_dir, registration=run)
         print(f"drawn; the approval's spend is now ${budget.spent():.4f} of "
               f"${budget.cap_usd:.2f}; score with `python -m vinci.evals score --out-dir "
-              f"{a.out_dir} --registration {a.registration}`")
+              f"{a.out_dir} --registration {a.registration} --budget-ledger {a.budget_ledger}`")
         return 0
     if a.cmd == "score":
         from vinci.evals import compare as cm
         reg = cm.Registration.from_json(a.registration.read_text(encoding="utf-8"))
-        print(cm.score_text(cm.score_run(a.out_dir, reg)))
+        print(cm.score_text(cm.score_run(a.out_dir, reg, ledger=a.budget_ledger)))
         return 0
     if a.cmd in ("capture", "prove", "run"):
         if a.cmd == "capture":

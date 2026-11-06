@@ -155,7 +155,11 @@ def transcript_for(ticker: str, *, ciq_root: Path = DEFAULT_CIQ_ROOT,
 # -------------------------------------------------------------------------------------- capture
 
 def wire(kwargs: dict[str, Any]) -> str:
-    """``kwargs`` serialised in insertion order, as the SDK sends them."""
+    """``kwargs`` serialised in insertion order — NOT the SDK's exact bytes. The SDK builds its
+    own body (its own separators, its own top-level key order), and passes each kwarg's VALUE
+    through as given. So this is exact on what the request carries inside its kwargs — the tool
+    schema's field order included — and FAILS SAFE on the top level: two requests whose kwargs
+    differ only in top-level order compare unequal here though the SDK may send them alike."""
     return json.dumps(kwargs, default=str, ensure_ascii=False)
 
 
@@ -182,9 +186,10 @@ class Request:
         return int(self.kwargs["max_tokens"])
 
     def wire(self) -> str:
-        """The request as the SDK serialises it — KEY ORDER INCLUDED. Two requests are the same
-        only if this is: dict equality ignores order, and that is how PR 2's alphabetised tool
-        schema passed an order-blind guard."""
+        """The request's kwargs serialised in order (`wire`: exact inside each kwarg, fail-safe
+        on the top level; not the SDK's own bytes). Two requests are the same only if this is:
+        dict equality ignores order, and that is how PR 2's alphabetised tool schema passed an
+        order-blind guard."""
         return wire(self.kwargs)
 
     def chars(self) -> int:
@@ -412,9 +417,12 @@ class Budget:
         approved = cls.approved_cap(ledger)
         return cls(cap_usd=approved if cap_usd is None else cap_usd, ledger=ledger)
 
+    def rows(self) -> list[dict[str, Any]]:
+        return [json.loads(x) for x in self.ledger.read_text(encoding="utf-8").splitlines()
+                if x.strip()]
+
     def spent(self) -> float:
-        return sum(float(json.loads(x).get("usd", 0.0))
-                   for x in self.ledger.read_text(encoding="utf-8").splitlines() if x.strip())
+        return sum(float(r.get("usd", 0.0)) for r in self.rows())
 
     def record(self, row: dict[str, Any]) -> None:
         with self.ledger.open("a", encoding="utf-8") as f:
@@ -450,7 +458,7 @@ class GuardedSdk:
 
     def create(self, **kwargs: Any) -> Any:
         self.n += 1
-        if wire(jsonable(kwargs)) != self.expected.wire():   # the bytes, order included
+        if wire(jsonable(kwargs)) != self.expected.wire():   # in order (`wire`)
             raise BudgetStop(f"{self.label} draw {self.n}: the request differs from the one "
                              "captured at $0 — STOP")
         bound = (self.prompt_tokens if self.prompt_tokens is not None

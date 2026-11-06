@@ -18,6 +18,7 @@ guard, priced by production's `cost_usd`, one HTTP attempt each.
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import json
 from collections import Counter
 from collections.abc import Sequence
@@ -204,13 +205,15 @@ class Calibration:
     rows: tuple[ClassRow, ...]
 
     def bar(self) -> dict[str, Any]:
-        """Design record §9's pre-registered bar, read on THIS half."""
+        """Design record §9's pre-registered bar, read on THIS half. It is CONJUNCTIVE: a class
+        may gate only if kappa passes AND the class's material recall does — a class that meets
+        its recall while kappa fails gates nothing, and is listed apart, as information."""
         # "within 0.15 of the coders' own 0.76" — the all-claims figure §9 named, not this half's
         kappa_ok = self.kappa_final >= 0.6 and self.kappa_final >= self.kappa_coders_all - 0.15
-        gates = {r.cls: (r.material_gold > 0
-                         and r.material_same / r.material_gold >= 0.5) for r in self.rows}
-        return {"kappa_ok": kappa_ok, "classes_it_may_gate": sorted(c for c, ok in gates.items()
-                                                                    if ok)}
+        recall_ok = sorted(r.cls for r in self.rows
+                           if r.material_gold > 0 and r.material_same / r.material_gold >= 0.5)
+        return {"kappa_ok": kappa_ok, "classes_it_may_gate": recall_ok if kappa_ok else [],
+                "classes_meeting_recall_only": recall_ok}
 
 
 Coding = dict[str, dict[str, Any]]
@@ -227,8 +230,10 @@ def _coders(folder: Path = gd.GOLD_DIR) -> tuple[Coding, Coding]:
 def calibrate(judged: dict[str, Verdict | None], gold: Sequence[gd.GoldClaim],
               half: str, tickers: Sequence[str] | None = None) -> Calibration:
     """The judge against the final labels and each coder, on the claims of ``half``. A claim the
-    judge gave no verdict is MISSING: counted, and coded as an error for kappa (the conservative
-    side — "no answer" is never read as "OK")."""
+    judge gave no verdict is MISSING: counted beside every kappa, and coded as an error — "no
+    answer" is never read as "OK". That is NOT the conservative side: where the gold calls the
+    claim an error it credits the judge with an agreement (TEST's one missing verdict,
+    ``NKE:bull_points:6``, is SIGN in the gold)."""
     a, b = _coders()
     pool = [g for g in gold if (half == "all" or g.half == half)
             and (not tickers or g.page in tickers)]
@@ -275,31 +280,65 @@ def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = N
              tickers: Sequence[str] | None = None) -> dict[str, Verdict | None]:
     """PAID: one judge call per page of ``half`` (each page's claims together, as the coders coded
     a page), behind the guard — or of ``tickers`` within it.
-    Raw outputs go to ``out_dir`` (outside the repository); a page
-    already judged there is not judged again, so a stopped run resumes without paying twice."""
+    Raw outputs go to ``out_dir`` (outside the repository). Each stored row carries the judge
+    version, its request's sha256 and its claim ids; a page already judged there by THIS judge
+    on THIS request is not judged again, so a stopped run resumes without paying twice, and a
+    failed call is retried. A stored row from another version, request or claim set is REFUSED,
+    never re-judged beside it: a folder holds one judge's run.
+
+    TEST IS READ ONCE PER APPROVAL. A TEST run records a marker in the approval's ledger before
+    its first call; a TEST run into any other folder is then refused — as it is when the ledger
+    already holds TEST judge calls from before the marker existed."""
     rp.refuse_inside_repo(out_dir, "the judge's run folder")
-    out_dir.mkdir(parents=True, exist_ok=True)
     pool = [g for g in (gold or gd.load_gold()) if g.half == half
             and (not tickers or g.page in tickers)]
+    todo: dict[str, tuple[list[tuple[str, str]], rp.Request]] = {}
+    for t in sorted({g.page for g in pool}):
+        claims = [(g.id, g.text) for g in pool if g.page == t]
+        page = (pages or {}).get(t) or report._frozen_page(t, report.GOLD_REF)
+        todo[t] = (claims, judge_request(page, claims))
+
+    def stamp(t: str) -> dict[str, Any]:
+        claims, req = todo[t]
+        return {"version": JUDGE_VERSION,
+                "request": hashlib.sha256(req.wire().encode()).hexdigest(),
+                "claims": [i for i, _ in claims]}
+
     done = out_dir / "judged.jsonl"
     have: dict[str, dict[str, Any]] = {}
     if done.exists():
         for x in done.read_text(encoding="utf-8").splitlines():
-            if x.strip():
-                r = json.loads(x)
-                # a failed call is retried, and a verdict from another judge version is not
-                # reused — a resume never mixes versions under one calibration
-                if r.get("raw") is not None and r.get("version") == JUDGE_VERSION:
-                    have[r["page"]] = r
+            if not x.strip():
+                continue
+            r = json.loads(x)
+            if r.get("raw") is None:      # a failed call: retried
+                continue
+            got = {k: r.get(k) for k in ("version", "request", "claims")}
+            if r.get("version") != JUDGE_VERSION or (r["page"] in todo
+                                                    and got != stamp(r["page"])):
+                raise rp.ReplayError(
+                    f"{done}: {r['page']} was judged by judge version {r.get('version')} "
+                    f"on another request or claim set — a resume never mixes judges; judge "
+                    "into a fresh folder")
+            have[r["page"]] = r
+    if half == "test":
+        here = str(out_dir.resolve())
+        rows = budget.rows()
+        marks = {str(r["judge_test_read"]) for r in rows if "judge_test_read" in r}
+        legacy = any(str(r.get("label", "")).startswith("judge:test:") for r in rows)
+        if marks - {here} or (legacy and here not in marks):
+            seen = sorted(marks) or "judge:test calls in the ledger"
+            raise rp.ReplayError(f"TEST has already been read under this approval ({seen}): it "
+                                 "is scored ONCE, and a new judge needs fresh gold")
+        if here not in marks:
+            budget.record({"judge_test_read": here, "usd": 0.0})
+    out_dir.mkdir(parents=True, exist_ok=True)
     judged: dict[str, Verdict | None] = {}
-    for t in sorted({g.page for g in pool}):
-        claims = [(g.id, g.text) for g in pool if g.page == t]
+    for t, (claims, req) in todo.items():
         if t not in have:
-            page = (pages or {}).get(t) or report._frozen_page(t, report.GOLD_REF)
-            req = judge_request(page, claims)
             raw = rp.run_request(req, draws=1, budget=budget, label=f"judge:{half}:{t}",
                                  draws_out=out_dir / "calls.jsonl", sdk=sdk)[0]
-            have[t] = {"page": t, "version": JUDGE_VERSION, "raw": raw}
+            have[t] = {"page": t, **stamp(t), "raw": raw}
             with done.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(have[t]) + "\n")
         judged.update(parse_verdicts(have[t]["raw"], [i for i, _ in claims]))
@@ -331,7 +370,10 @@ def calibration_text(c: Calibration) -> str:
                      f"   {pct(r.precision):>5}     {r.material_caught}/{r.material_gold} · "
                      f"{r.material_same}/{r.material_gold}")
     lines.append(f"  BAR (§9): kappa {'MET' if bar['kappa_ok'] else 'NOT MET'}; classes it may "
-                 f"gate: {bar['classes_it_may_gate'] or 'none'}")
+                 f"gate: {', '.join(bar['classes_it_may_gate']) or 'none'}"
+                 + ("" if bar["kappa_ok"] or not bar["classes_meeting_recall_only"] else
+                    f" (material recall >= 0.5 alone, gating nothing while kappa fails: "
+                    f"{', '.join(bar['classes_meeting_recall_only'])})"))
     return "\n".join(lines)
 
 

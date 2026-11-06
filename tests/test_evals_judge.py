@@ -79,7 +79,8 @@ def test_the_coders_agreement_reproduces_the_diagnosis(gold: list[gd.GoldClaim])
 def test_a_judge_that_says_ok_everywhere_fails_the_bar(gold: list[gd.GoldClaim]) -> None:
     lazy = {g.id: jg.Verdict(g.id, "OK", False, "neither", "") for g in gold}
     c = jg.calibrate(lazy, gold, "test")
-    assert c.kappa_final == 0.0 and c.bar() == {"kappa_ok": False, "classes_it_may_gate": []}
+    assert c.kappa_final == 0.0 and not c.bar()["kappa_ok"]
+    assert c.bar()["classes_it_may_gate"] == []
     silent = jg.calibrate({}, gold, "test")              # no verdicts: missing, coded error
     assert silent.missing == 314 and not silent.bar()["kappa_ok"]
 
@@ -143,21 +144,7 @@ def test_an_unknown_favours_value_is_not_kept() -> None:
 
 # ------------------------------------------------- #925 round 1 (in-session /code-review high)
 
-def test_a_stored_verdict_from_another_judge_version_is_not_reused(
-        tmp_path: Path, gold: list[gd.GoldClaim]) -> None:
-    _history()
-    sub = [g for g in gold if g.page == "TECX"]
-    out = tmp_path / "judge"
-    out.mkdir()
-    stale = {"page": "TECX", "version": 1, "raw": {"verdicts": [
-        {"id": g.id, "verdict": "LABEL", "material": True, "favours": "bull", "fact": "v1"}
-        for g in sub]}}
-    (out / "judged.jsonl").write_text(json.dumps(stale) + "\n")
-    ledger = tmp_path / "ledger.jsonl"
-    rp.Budget.open(ledger, cap_usd=5.0, approval="operator: test")
-    sdk = _FakeJudge([g.id for g in sub])
-    judged = jg.run_half("test", budget=rp.Budget.load(ledger), out_dir=out, sdk=sdk, gold=sub)
-    assert sdk.calls == 1 and all(v is not None and v.verdict == "OK" for v in judged.values())
+# (the stored-version case is refused since #925 round 2: tests/test_evals_pr2_round2.py)
 
 
 def test_a_subset_calibration_names_its_pages(gold: list[gd.GoldClaim]) -> None:
