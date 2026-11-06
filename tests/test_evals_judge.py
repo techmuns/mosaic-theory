@@ -139,3 +139,29 @@ def test_an_unknown_favours_value_is_not_kept() -> None:
     v = jg.parse_verdicts({"verdicts": [{"id": "a", "verdict": "LABEL", "material": True,
                                          "favours": "bullish", "fact": "x"}]}, ["a"])["a"]
     assert v is not None and v.favours == "neither"
+
+
+# ------------------------------------------------- #925 round 1 (in-session /code-review high)
+
+def test_a_stored_verdict_from_another_judge_version_is_not_reused(
+        tmp_path: Path, gold: list[gd.GoldClaim]) -> None:
+    _history()
+    sub = [g for g in gold if g.page == "TECX"]
+    out = tmp_path / "judge"
+    out.mkdir()
+    stale = {"page": "TECX", "version": 1, "raw": {"verdicts": [
+        {"id": g.id, "verdict": "LABEL", "material": True, "favours": "bull", "fact": "v1"}
+        for g in sub]}}
+    (out / "judged.jsonl").write_text(json.dumps(stale) + "\n")
+    ledger = tmp_path / "ledger.jsonl"
+    rp.Budget.open(ledger, cap_usd=5.0, approval="operator: test")
+    sdk = _FakeJudge([g.id for g in sub])
+    judged = jg.run_half("test", budget=rp.Budget.load(ledger), out_dir=out, sdk=sdk, gold=sub)
+    assert sdk.calls == 1 and all(v is not None and v.verdict == "OK" for v in judged.values())
+
+
+def test_a_subset_calibration_names_its_pages(gold: list[gd.GoldClaim]) -> None:
+    perfect = {g.id: jg.Verdict(g.id, g.verdict, g.material, g.favours or "neither", "")
+               for g in gold}
+    text = jg.calibration_text(jg.calibrate(perfect, gold, "dev", tickers=["AMZN", "BRBR"]))
+    assert "2 of 14 pages: AMZN, BRBR" in text.splitlines()[0]

@@ -188,6 +188,8 @@ class ClassRow:
 @dataclass(frozen=True)
 class Calibration:
     half: str
+    pages: tuple[str, ...]
+    half_pages: int
     claims: int
     missing: int
     kappa_final: float
@@ -250,7 +252,9 @@ def calibrate(judged: dict[str, Verdict | None], gold: Sequence[gd.GoldClaim],
             material_caught=sum(1 for g in mat if (v := jv[g.id]) is not None and v.error),
             material_same=sum(1 for g in mat if (v := jv[g.id]) is not None and v.verdict == cls)))
     return Calibration(
-        half=half, claims=len(pool), missing=sum(v is None for v in jv.values()),
+        half=half, pages=tuple(sorted({g.page for g in pool})),
+        half_pages=len({g.page for g in gold if half == "all" or g.half == half}),
+        claims=len(pool), missing=sum(v is None for v in jv.values()),
         kappa_final=cohen_kappa(j_err, f_err), kappa_a=cohen_kappa(j_err, a_err),
         kappa_b=cohen_kappa(j_err, b_err), kappa_coders=cohen_kappa(a_err, b_err),
         kappa_coders_all=cohen_kappa([a[g.id]["verdict"] != "OK" for g in gold],
@@ -283,7 +287,9 @@ def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = N
         for x in done.read_text(encoding="utf-8").splitlines():
             if x.strip():
                 r = json.loads(x)
-                if r.get("raw") is not None:   # a failed call is retried, never read as judged
+                # a failed call is retried, and a verdict from another judge version is not
+                # reused — a resume never mixes versions under one calibration
+                if r.get("raw") is not None and r.get("version") == JUDGE_VERSION:
                     have[r["page"]] = r
     judged: dict[str, Verdict | None] = {}
     for t in sorted({g.page for g in pool}):
@@ -293,7 +299,7 @@ def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = N
             req = judge_request(page, claims)
             raw = rp.run_request(req, draws=1, budget=budget, label=f"judge:{half}:{t}",
                                  draws_out=out_dir / "calls.jsonl", sdk=sdk)[0]
-            have[t] = {"page": t, "raw": raw}
+            have[t] = {"page": t, "version": JUDGE_VERSION, "raw": raw}
             with done.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(have[t]) + "\n")
         judged.update(parse_verdicts(have[t]["raw"], [i for i, _ in claims]))
@@ -304,7 +310,9 @@ def calibration_text(c: Calibration) -> str:
     def pct(x: float | None) -> str:
         return "—" if x is None else f"{x:.0%}"
     bar = c.bar()
-    lines = [f"{c.half.upper()}: {c.claims} claims, {c.missing} without a verdict",
+    scope = (f" ({len(c.pages)} of {c.half_pages} pages: {', '.join(c.pages)})"
+             if len(c.pages) < c.half_pages else f" (all {c.half_pages} pages)")
+    lines = [f"{c.half.upper()}{scope}: {c.claims} claims, {c.missing} without a verdict",
              f"  kappa OK-vs-error: vs final {c.kappa_final:.2f} | vs coder A {c.kappa_a:.2f} | "
              f"vs coder B {c.kappa_b:.2f} | coders' own {c.kappa_coders:.2f} (all claims "
              f"{c.kappa_coders_all:.2f})",

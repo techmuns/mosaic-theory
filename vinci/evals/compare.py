@@ -183,6 +183,8 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str], draws: int
     corpus holds no page that no fix ever named — record R8)."""
     p = panel or rp.load_panel_file()
     chosen = tuple(pages) if pages else tuple(p["panel"])
+    if len(set(chosen)) != len(chosen):
+        raise rp.ReplayError(f"{list(chosen)}: a page is registered more than once")
     unknown = [t for t in chosen if t not in p["pages"]]
     if unknown:
         raise rp.ReplayError(f"{unknown}: no frozen inputs in the panel file for these pages")

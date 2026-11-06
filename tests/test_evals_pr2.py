@@ -121,3 +121,8 @@ def test_a_reordering_reaches_the_comparison() -> None:
     base = rp.capture(nflx, None)
     d = cm.page_diff("NFLX", base, rp.Request(_reordered(base.kwargs)))
     assert not d.identical
+
+
+def test_a_page_registered_twice_is_refused() -> None:
+    with pytest.raises(rp.ReplayError, match="more than once"):
+        cm.register("dc5b8787", "b109e26c", targets=["M-SIGN"], pages=["NFLX", "NFLX"])
