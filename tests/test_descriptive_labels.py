@@ -550,6 +550,20 @@ def test_a_current_drawdown_guide_is_marked_current_and_still_tested() -> None:
     assert "confirms or refutes it" in text and "committed" not in text
 
 
+def test_an_undated_drawdown_guide_is_not_called_the_checkpoint() -> None:
+    """(+) Review of 3a: BRBR's guide with no release carrying its accession is UNDATED — marked
+    "do not read as current" — so the row must not then call the print its checkpoint."""
+    p = PAGES["BRBR"]["print_row"]
+    rg = Sourced[str].model_validate(p["revised_guidance"])
+    releases = [ReleaseExtract.model_validate(r) for r in p["releases"]]
+    acc = re.search(r"\d{10}-\d{2}-\d{6}", rg.source_ref or "")
+    assert acc is not None
+    ps = SimpleNamespace(releases=[r for r in releases if acc.group(0) not in r.source_ref])
+    text = mech_mod._drawdown_guide_print_tests(rg, ps)  # type: ignore[arg-type]
+    assert text.startswith("[VINTAGE UNDATED")
+    assert "confirms or refutes" not in text
+
+
 def test_the_row_marks_the_guide_as_the_prompt_does() -> None:
     """(+) One derivation: the print row's mark is the one `_mark_drawdown_guidance` puts on the
     same field in the prompt."""

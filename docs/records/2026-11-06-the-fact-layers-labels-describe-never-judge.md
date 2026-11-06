@@ -56,7 +56,8 @@ prompt's rules (7, 7b, 8, the follow ASK) are fix 4 — not touched here.
    outlook (… the print is the checkpoint that confirms or refutes it)" on a guide the prompt marks
    SUPERSEDED. The row now LEADS with the same `guidance_vintage_mark` the prompt puts on that
    field (one derivation: the release carrying the guide's accession, the newest guide-bearing
-   release), drops "committed", and keeps the checkpoint clause only for a CURRENT or undated guide.
+   release), drops "committed", and keeps the checkpoint clause only for a CURRENT guide (an
+   undated one is marked "do not read as current"; review of 3a).
 6. **The lint** (`tests/test_descriptive_labels.py::test_no_judgment_word_in_the_fact_layers_prose`):
    no string the fact layer can write — every non-docstring, non-regex string constant in
    vinci/dossier, vinci/edgar and the three field builders outside them that
@@ -76,9 +77,11 @@ and a superseded guide called committed. #920 showed the model copies such a lab
   `tests/fixtures/descriptive_labels/`): every pin drives the production entry point —
   `_drawdown_cause` on the page's own closes, the prompt `synthesize` sends, `_valuation`,
   `own-history-refresh`, `_survival_capacity`, `peer_comps`, `_catalyst_calendar` — on values
-  frozen from the committed pages at main `bcda7ce3` and four (now seven) real CIQ comps sheets cut
-  through the real decode path, each reproducing its page's committed cross-sectional and
-  fundamental-delta lines byte-for-byte. The counts on main are in the PR body. Each fix has its
+  frozen from the committed pages at main `bcda7ce3` and seven real CIQ comps sheets (ROST, PARR,
+  GOOGL, FUBO, LLY, EPAM, VRRM) cut through the real decode path, each reproducing its page's
+  committed cross-sectional and fundamental-delta lines byte-for-byte. Copied into a worktree of
+  main `bcda7ce3`, 21 of the file's 30 tests then failed and the 9 negatives passed; the 31st, the
+  undated-guide pin added in review, fails on main and on the pre-review fix. Each fix has its
   negative: a window with gap-downs (SMPL's April), the dated parts, a page with no forward
   multiple at all, a guided-forward page (VRRM), a positive FCF (AORT), a discount on both
   multiples (PARR), the unchanged statistics, a CURRENT guide.
@@ -91,7 +94,13 @@ and a superseded guide called committed. #920 showed the model copies such a lab
   committed `trading_multiples` / `cross_sectional` lines byte-for-byte (24 of 28 do; AORT, BURL,
   MCK and NCNO's exports on disk are not the ones their pages were built from).
 - **The $0 pre-spend check** (`prespend.run`, what `vinci dossier precheck --ticker <T>` runs) on
-  a sample, with the five labels printed from the page it built: in the PR body.
+  LLY, BRBR, ORKA and MCK on 2026-11-06, the five labels printed from the page it built: LLY exit
+  0 with all five new labels; BRBR exit 1 on `_freshness_check` (its oldest CIQ panel is 46 days
+  old, ceiling 45) and its new note, mixed-sign question and SUPERSEDED-led print row; ORKA exit 1
+  on 2 regressions (`interest_coverage`: its export's latest Interest Expense reads '-') with its
+  new shape, survival read and no-direction question; MCK refused — this checkout's store holds no
+  MCK bars. Run with main `bcda7ce3`'s code on the same data, BRBR and ORKA stop identically and
+  print the old five labels, so neither stop comes from this change.
 
 **MEASURED, ON THE 28 COMMITTED PAGES (main `bcda7ce3`):**
 
@@ -130,7 +139,13 @@ the PR body). Row 52's NFLX rebuild, owed once after the prompt fixes, carries i
   passes. It reads code, not pages: an LLM-written string, a verbatim quote and the rendered
   furniture (render.py) are outside it by construction.
 - **The note names `forward_multiple_history`, which the synthesis does not read.** The pointer
-  it can follow is the peer-comps NTM; the history is named for the human page.
+  it can follow is the peer-comps NTM; the history is named for the human page. The note carries
+  field paths in backticks, and a draw may echo them; it is JSON/prompt-only (no renderer prints
+  `valuation.ev_ebitda.note`).
+- **Two reads repeated (review of 3a, not changed):** `_valuation` builds
+  `forward_multiple_history` again beside `assemble_one`'s own build of it, and
+  `_peer_gap_question` recomputes the gaps `cross_sectional_valuation` already did. Both read
+  cached sheets; passing them through would widen `assemble_mechanical`'s signature.
 - **Found, not fixed (out of scope):** (a) the ranker's own character label "grind/bleed — no
   discrete gap-down" (`vinci/rank/ranker.py:234`) labels the ranked queue
   (`data/snapshots/ranked_queue.jsonl`), reaches no page and no prompt, and is coupled to

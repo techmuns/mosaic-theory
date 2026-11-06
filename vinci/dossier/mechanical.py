@@ -168,9 +168,10 @@ def ev_ebitda_note(*, guided_forward: bool, forward_multiples: bool, peer_ntm: S
 
     "TRAILING ONLY" ONLY WHEN THE PAGE HAS NO FORWARD MULTIPLE AT ALL (fix 3a, 2026-11-06). It
     fired on the absence of the guidance-adjusted forward figure alone, so every committed page
-    with a trailing multiple and no guided forward (24 of 28) said "no forward basis" — each of
-    them carrying the name's NTM TEV/EBITDA in its peer comps, which the synthesis reads, and CIQ's
-    forward-multiple history, 18 a consensus forward P/E as well. The prompt counts a multiple so
+    with a trailing multiple and no guided forward (24 of 28 at main bcda7ce3) said "no forward
+    basis" — each of them carrying CIQ's forward-multiple history, 18 a consensus forward P/E, and
+    the 20 whose comps export is on disk the name's numeric NTM cells in the peer comps the
+    synthesis reads. The prompt counts a multiple so
     tagged as neither bull nor bear, so a cross-checkable multiple was set aside as blind. Now the
     note states what is absent and names where the page's forward multiples are;
     TRAILING_ONLY_NOTE stands where none of the three CIQ sources has one.
@@ -4424,7 +4425,8 @@ def _drawdown_guide_print_tests(rg: Sourced[str], ps: PrimarySource | None) -> s
     IT CALLED A SUPERSEDED GUIDE "THE COMMITTED REVISED OUTLOOK" (fix 3a, 2026-11-06): on BRBR,
     VITL and VRRM the drawdown guide had been replaced by a later one, which the same prompt marked
     SUPERSEDED. A superseded guide is history, so the row no longer calls the print its checkpoint;
-    a current (or undated) one keeps that clause, behind its mark."""
+    only a CURRENT one keeps that clause, behind its mark — an undated one is marked "do not read
+    as current", and a checkpoint clause beside it would say the opposite (review of 3a)."""
     from vinci.dossier.synthesis import guidance_vintage_mark, newest_guidance_date
 
     acc = _acc_of(rg.source_ref or "")
@@ -4434,7 +4436,8 @@ def _drawdown_guide_print_tests(rg: Sourced[str], ps: PrimarySource | None) -> s
     newest = newest_guidance_date(ps) if ps is not None else None
     mark = guidance_vintage_mark(filed, newest).strip()
     what = "the revised outlook furnished at the drawdown (see Revised guidance"
-    if filed is not None and newest is not None and filed != newest:
+    current = filed is not None and (newest is None or filed == newest)
+    if not current:
         return f"{mark} {what})"
     return f"{mark} {what} — the print is the checkpoint that confirms or refutes it)"
 
