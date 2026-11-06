@@ -2420,8 +2420,8 @@ def _valuation(
     # FORWARD multiples, each naming the column and EPS row behind it. The price is read only
     # to DIVIDE by a consensus denominator — no anchor or screen value derives from it.
     fwd = ciq_sheets.forward_multiples(_fwd_table, price=_fwd_price, price_as_of=_fwd_as_of)
-    # the trailing multiple's note, carried ON the value: what forward basis the page has, and
-    # "trailing only" where it has none (`ev_ebitda_note`)
+    # the trailing multiple's blind-flag, carried ON the value: "trailing only" where the page has
+    # no forward multiple at all, else no note from here (`ev_ebitda_note`)
     if ev.status is SourceStatus.PRESENT:
         note = ev_ebitda_note(
             guided_forward=adj_ev.status is SourceStatus.PRESENT,

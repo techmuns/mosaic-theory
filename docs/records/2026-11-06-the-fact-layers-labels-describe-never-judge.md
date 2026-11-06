@@ -138,6 +138,15 @@ evaluation harness (operator, "Build it first").
   is elsewhere in the same facts: the guided figure's absence on `ev_ebitda_adjusted_fwd`, an
   unknown leg's reason on its own field, the gaps' signs in `cross_sectional`, the superseded guide
   in `drawdown_cause.revised_guidance` under the prompt's own SUPERSEDED mark.
+- **The prompt still expects the flag (PR round 1, DEFERRED to fix 4).** The bear_points schema
+  description in `synthesis.py` says a trailing multiple "carries its forward or a 'trailing-only'
+  blind-flag". After this PR, 24 of the 28 pages' EV/EBITDA carries neither on the value itself:
+  their forward multiples are separate facts (`forward_multiples`, the peer comps' NTM row). The
+  wording is a prompt rule, fix 4's, and is not edited here.
+- **A context-only or stale forward history counts as a forward basis (PR round 1, DISMISSED).**
+  `ev_ebitda_note` deletes the flag when any forward series holds a numeric close, P/NTM EPS
+  (context-only) included. That is the brief's rule ("no forward basis at all"), and no committed
+  page reaches the case: every page's history holds a numeric EV/NTM EBITDA series.
 - **Two reads repeated (review of 3a, not changed):** `_valuation` builds
   `forward_multiple_history` again beside `assemble_one`'s own build of it, and
   `_peer_gap_question` recomputes the gaps `cross_sectional_valuation` already did. Both read
