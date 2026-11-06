@@ -279,3 +279,12 @@ in object storage with its manifest in git (the DVC / lakeFS pattern).
   each object by a canonical hash of its ROWS without `source_position`, keeping the order
   separately, and pin the writer's pyarrow. Until then every refresh rewrites every partition, and
   the 50 MB cap test is the brake on what that costs git.
+## Amendments
+
+**2026-11-06 — the held-name exclusion under WHAT and GUARDS is REMOVED.** The operator lifted the
+hold on 2026-11-05: *"i dont want mosaic theory to hold back any names for teamnostra repo, its two
+separate setups"*. `scope.require_exclusions` is gone, and `ingest` no longer takes `--exclude`, so
+a copied command that passes it is refused before anything is read. `parity --exclude` stays as an
+ordinary skip, and its output counts what it leaves out. The committed manifests still state their
+counts (1 of 6). New manifests state 0 and 0. Record:
+`docs/records/2026-11-06-the-fact-layer-holds-back-no-name.md`.

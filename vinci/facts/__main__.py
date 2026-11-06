@@ -1,21 +1,26 @@
 """``python -m vinci.facts {ingest,parity,verify,screen-replay}``: the EDGAR writer, the checks.
 
-    python -m vinci.facts ingest --cache-dir <dir> --exclude <T> ...          # the pages' snapshot
-    python -m vinci.facts ingest --scope screen --run <run_id> --cache-dir <dir> --exclude <T> ...
-    python -m vinci.facts parity --cache-dir <dir> --exclude <T> ...          # every page, shadow
+    python -m vinci.facts ingest --cache-dir <dir>                            # the pages' snapshot
+    python -m vinci.facts ingest --scope screen --run <run_id> --cache-dir <dir>
+    python -m vinci.facts parity --cache-dir <dir> [--exclude <T> ...]        # every page, shadow
     python -m vinci.facts screen-replay --run <run_id> --cache-dir <dir>      # the screen, shadow
     python -m vinci.facts verify [--name screen] [--store r2://]       # manifest against objects
-    python -m vinci.facts upload --name screen --exclude <T> ...       # a snapshot's objects to R2
+    python -m vinci.facts upload [--name screen]                       # a snapshot's objects to R2
 
 ``--cache-dir`` is the directory that holds ``sec/`` (``Config.cache_dir``, ``data/cache`` by
-default). Nothing here fetches: a name the cache does not hold is reported, never requested. Every
-``--exclude`` a current snapshot was written with must be passed again, or the ingest refuses.
+default). Nothing here fetches: a name the cache does not hold is reported, never requested.
+
+NO NAME IS HELD BACK (operator ruling 2026-11-05): an ingest writes its rule's whole population and
+an upload sends a snapshot whole, so neither takes ``--exclude``; a command line that passes it
+(the records carry some, from the lifted hold) is refused by argparse before anything is read.
+``parity``'s ``--exclude`` is an ordinary skip: a page left out of the comparison, counted in its
+output (a committed page the current snapshot does not hold, say).
 
 ``pages`` is written to ``data/facts/objects`` (committed); ``screen``, past the 50 MB committed
 cap, to ``$VINCI_FACTS_STORE`` or the git-ignored ``data/facts/local``, with only its manifest
 committed (:mod:`vinci.facts.store`). ``upload`` copies a snapshot's objects to the R2 bucket the
-four ``R2_*`` variables name, from the machine that wrote them, then reads every one back; the held
-names' ``--exclude`` must be passed again. ``--store r2://`` makes ``verify``, ``parity`` and
+four ``R2_*`` variables name, from the machine that wrote them, then reads every one back.
+``--store r2://`` makes ``verify``, ``parity`` and
 ``screen-replay`` read the objects from R2 (:mod:`vinci.facts.remote`). Run as a module, this loads
 the repository's ``.env`` first (``vinci.config.load_local_env``), as the ``vinci`` CLI does.
 """
@@ -41,8 +46,6 @@ from vinci.facts.reader import FactStore, manifest_summary
 from vinci.facts.scope import (
     RULE,
     ScopeName,
-    require_exclusions,
-    require_upload_exclusions,
     scope_names,
     screen_scope_names,
 )
@@ -69,22 +72,22 @@ SNAPSHOTS = Path("data") / "snapshots"
 STORAGE = {"pages": "git", "screen": "local"}
 
 
-def _scope(a: argparse.Namespace) -> tuple[list[ScopeName], int, str]:
+def _scope(a: argparse.Namespace, *, exclude: frozenset[str] = frozenset()
+           ) -> tuple[list[ScopeName], int, str]:
+    """The names the scope's rule selects less ``exclude``, how many it left out, and the rule.
+    Only the parity passes ``exclude``; it reads the pages' scope alone."""
     if getattr(a, "scope", "pages") == "screen":
         if not a.run:
             raise SystemExit("--scope screen needs --run <run_id>")
-        return screen_scope_names(a.run, SNAPSHOTS, exclude=frozenset(a.exclude))
-    names, excluded = scope_names(DOSSIERS, FOLLOWED, a.cache_dir, exclude=frozenset(a.exclude))
+        names, rule = screen_scope_names(a.run, SNAPSHOTS)
+        return names, 0, rule
+    names, excluded = scope_names(DOSSIERS, FOLLOWED, a.cache_dir, exclude=exclude)
     return names, excluded, RULE
 
 
 def cmd_ingest(a: argparse.Namespace) -> int:
     name = a.scope
-    listed = len(set(a.exclude))
-    names, excluded, rule = _scope(a)
-    # before any response is read or anything written
-    require_exclusions(excluded, listed=listed, rule=rule, selected=len(names) + excluded,
-                       source=SOURCE, name=name)
+    names, _, rule = _scope(a)              # the rule's whole population: no name is held back
     by_cik: dict[str, list[str]] = {}
     unread: list[dict[str, str | None]] = []
     for n in names:
@@ -128,8 +131,11 @@ def cmd_ingest(a: argparse.Namespace) -> int:
         print(f"read {'/'.join(tickers):6} {cik} fetched {resp.fetched_at:%Y-%m-%d} "
               f"{got.rows_in_response:>7,} rows, {got.exact_duplicates_dropped} exact duplicates, "
               f"{got.rows_without_filed} without a filed date", flush=True)
-    scope = {"rule": rule, "names_selected": len(names) + excluded,
-             "excluded_by_operator_instruction": excluded, "exclusions_listed": listed,
+    scope = {"rule": rule, "names_selected": len(names),
+             # Both counts are kept, as 0, so every manifest states one scope shape: the two
+             # written under the lifted hold state 1 and 6, and the screen replay reads the first
+             # (names_selected less it is the population it replays).
+             "excluded_by_operator_instruction": 0, "exclusions_listed": 0,
              "names_ingested": sum(len(e["tickers"]) for e in entities),
              "unread": sorted(unread, key=lambda u: str(u["ticker"]))}
     manifest = build_manifest(source=SOURCE, extractor=EXTRACTOR,
@@ -143,7 +149,8 @@ def cmd_ingest(a: argparse.Namespace) -> int:
 
 def cmd_parity(a: argparse.Namespace) -> int:
     from vinci.facts.parity import as_json, compare_page
-    names, _, _ = _scope(a)
+    # a ticker as typed: `--exclude burl` skips BURL, as inputs-backfill reads its own
+    names, skipped, _ = _scope(a, exclude=frozenset(t.strip().upper() for t in a.exclude))
     results = []
     cuts: list[tuple[date | None, bool]] = [(None, False),
                                              *((date.fromisoformat(d), False) for d in a.also_at),
@@ -176,7 +183,8 @@ def cmd_parity(a: argparse.Namespace) -> int:
             print(f"    {r.ticker}: {e}")
     bad = [r.ticker for r in results if not r.zero_diff]
     print(f"\n{len(results)} page-cuts compared; {len(results) - len(bad)} zero-diff; "
-          f"{len(bad)} with a diff{(': ' + ', '.join(bad)) if bad else ''}")
+          f"{len(bad)} with a diff{(': ' + ', '.join(bad)) if bad else ''}; "
+          f"{skipped} name(s) of the pages' scope left out by --exclude")
     if a.json:
         Path(a.json).write_text(as_json(results))
     return 1 if bad else 0
@@ -228,7 +236,6 @@ def cmd_verify(a: argparse.Namespace) -> int:
 def cmd_upload(a: argparse.Namespace) -> int:
     from vinci.facts.remote import R2Client, bucket_against_manifests, upload_snapshot
     manifest = load_manifest(a.snapshot, name=a.name)
-    require_upload_exclusions(manifest, a.exclude)        # before any request
     root = store_root(a.store, storage=manifest["storage"])
     t = manifest["totals"]
     print(f"snapshot {manifest_summary(manifest)}\n  + {t['order_files']:,} order objects "
@@ -264,8 +271,8 @@ def cmd_upload(a: argparse.Namespace) -> int:
                   f"a manifest, {audit['named_by_none']:,} named by none; "
                   f"{audit['named_and_absent']:,} named and absent; {audit['size_differs']:,} "
                   "with a size other than the manifest's")
-            # the audit is the evidence that only the manifests' objects are in the bucket (and so
-            # no held name's): a key none names, or a named key of another size, fails the run.
+            # the audit is the evidence that only the manifests' objects are in the bucket: a key
+            # none names, or a named key of another size, fails the run.
             # Named-and-absent does not: a committed manifest may not have been uploaded yet.
             if audit["named_by_none"] or audit["size_differs"]:
                 print(f"  FAIL: the bucket holds {audit['named_by_none']:,} key(s) no committed "
@@ -300,10 +307,10 @@ def main(argv: list[str] | None = None) -> int:
                            help="which companies (default: the committed pages)")
         if name in ("ingest", "screen-replay"):
             p.add_argument("--run", default=None, help="the screen run (--scope screen)")
-        if name in ("ingest", "parity", "upload"):
+        if name == "parity":
             p.add_argument("--exclude", action="append", default=[], metavar="TICKER",
-                           help="leave this name out (repeatable); an upload refuses without "
-                                "every exclusion the snapshot was written with")
+                           help="leave this name's page out of the comparison (repeatable): an "
+                                "ordinary skip, counted in the output")
         if name in ("ingest", "parity", "screen-replay"):
             p.add_argument("--cache-dir", type=Path, default=get_config().cache_dir,
                            help="the directory holding the SEC cache's sec/ (read only)")

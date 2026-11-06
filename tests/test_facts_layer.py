@@ -11,6 +11,7 @@ Every assertion reads values out of those real rows; none is hand-rolled.
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -49,6 +50,7 @@ from vinci.facts.store import (
 from vinci.netcache import CachedHttp
 
 FIX = Path(__file__).parent / "fixtures" / "facts"
+COMMITTED = Path(__file__).resolve().parent.parent / "data" / "facts"
 NFLX, FUBO = "0001065280", "0001484769"
 EPS = "us-gaap:EarningsPerShareDiluted"
 FY2023 = Period.duration(date(2023, 1, 1), date(2023, 12, 31))
@@ -341,29 +343,91 @@ def _cache_with(tmp: Path, names: list[str]) -> Path:
     return cache
 
 
-def test_an_ingest_that_drops_an_exclusion_refuses_and_names_only_the_count(
-        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """The held-name exclusion is a CLI flag; a run that forgets it must not write a snapshot that
-    carries the held name. The refusal names the COUNT, never the name, and writes nothing."""
-    from vinci.facts.__main__ import main
+def _two_pages(tmp: Path) -> Path:
+    """FUBO's and NFLX's pages, and a cache holding their frozen slices."""
     for ticker, cik in (("FUBO", FUBO), ("NFLX", NFLX)):
-        (tmp_path / "data" / "dossiers" / ticker).mkdir(parents=True)
-        (tmp_path / "data" / "dossiers" / ticker / "dossier.json").write_text(
-            json.dumps({"cik": cik}))
-    cache = _cache_with(tmp_path, ["FUBO-companyfacts-slice.json", "NFLX-companyfacts-slice.json"])
+        (tmp / "data" / "dossiers" / ticker).mkdir(parents=True)
+        (tmp / "data" / "dossiers" / ticker / "dossier.json").write_text(
+            json.dumps({"cik": cik, "reference_date": "2026-11-02"}))
+    return _cache_with(tmp, ["FUBO-companyfacts-slice.json", "NFLX-companyfacts-slice.json"])
+
+
+def _committed_scope_shapes() -> set[frozenset[str]]:
+    return {frozenset(json.loads(p.read_text())["scope"])
+            for p in (COMMITTED / "manifests").glob("*.json")}
+
+
+# --- mosaic-theory holds back no name (operator ruling 2026-11-05) -------------------------------
+
+@pytest.mark.parametrize("current", ["the committed snapshots", "a snapshot stating no count"])
+def test_an_ingest_needs_no_exclusion_list(tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+                                           current: str) -> None:
+    """On main this run was REFUSED before anything was read: against the two committed
+    snapshots, each written excluding 1 name of a list of 6 under the lifted hold, for passing no
+    `--exclude`; against a current snapshot that states no count, for stating none. It now
+    writes the rule's whole population, and states both counts as 0 in the committed scope shape
+    (the screen replay reads `excluded_by_operator_instruction`)."""
+    from vinci.facts.__main__ import main
+    facts = tmp_path / "data" / "facts"
+    if current == "the committed snapshots":
+        shutil.copytree(COMMITTED / "manifests", facts / "manifests")
+        shutil.copy(COMMITTED / "current.json", facts / "current.json")
+        listed = {json.loads((facts / "manifests" / f"{sid}.json").read_text())["scope"][
+            "exclusions_listed"] for sid in json.loads((facts / "current.json").read_text())
+            .values()}
+        assert listed == {6}
+    else:
+        _publish(facts, [_load("FUBO-companyfacts-slice.json")])  # its scope states no count
+    prior = json.loads((facts / "current.json").read_text())
+    cache = _two_pages(tmp_path)
     monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("VINCI_FACTS_STORE", raising=False)
-    assert main(["ingest", "--cache-dir", str(cache), "--exclude", "NFLX"]) == 0
-    facts = tmp_path / "data" / "facts"
-    before = sorted(p.relative_to(facts).as_posix() for p in facts.rglob("*") if p.is_file())
-    current = (facts / "current.json").read_text()
-    with pytest.raises(FactsStoreError) as refused:
-        main(["ingest", "--cache-dir", str(cache)])
-    assert "exclude 0 name(s)" in str(refused.value) and "excluding 1" in str(refused.value)
-    assert "NFLX" not in str(refused.value)
-    after = sorted(p.relative_to(facts).as_posix() for p in facts.rglob("*") if p.is_file())
-    assert after == before
-    assert (facts / "current.json").read_text() == current
+    assert main(["ingest", "--cache-dir", str(cache)]) == 0
+    pointers = json.loads((facts / "current.json").read_text())
+    assert pointers["edgar"] != prior["edgar"]
+    assert {**pointers, "edgar": prior["edgar"]} == prior        # no other snapshot moved
+    m = json.loads((facts / "manifests" / f"{pointers['edgar']}.json").read_text())
+    assert sorted(t for e in m["entities"] for t in e["tickers"]) == ["FUBO", "NFLX"]
+    assert m["scope"]["names_selected"] == m["scope"]["names_ingested"] == 2
+    assert (m["scope"]["excluded_by_operator_instruction"], m["scope"]["exclusions_listed"]) == (
+        0, 0)
+    assert _committed_scope_shapes() == {frozenset(m["scope"])}
+
+
+def test_an_ingest_given_exclude_fails_loud_and_writes_nothing(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+        ) -> None:
+    """The records carry ingest command lines passing the six names as `--exclude`. On main one
+    copied now is ACCEPTED, and writes a permanent public manifest that silently lacks them: the
+    lifted hold back in force. The flag is gone, so argparse refuses it before anything is read."""
+    from vinci.facts.__main__ import main
+    cache = _two_pages(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("VINCI_FACTS_STORE", raising=False)
+    with pytest.raises(SystemExit) as refused:
+        main(["ingest", "--cache-dir", str(cache), "--exclude", "NFLX"])
+    assert refused.value.code == 2
+    assert "unrecognized arguments: --exclude NFLX" in capsys.readouterr().err
+    assert not (tmp_path / "data" / "facts").exists()
+
+
+def test_the_parity_skip_is_an_ordinary_skip_and_its_output_counts_it(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+        ) -> None:
+    """`--exclude` stays on the parity alone, which writes nothing: a page left out of the
+    comparison, as BURL's must be against the committed pages snapshot, which does not hold it.
+    Under the hold the output said nothing of the pages it left out; it now counts them."""
+    from vinci.facts.__main__ import main
+    _publish(tmp_path / "data" / "facts", [_load("FUBO-companyfacts-slice.json")])  # FUBO only
+    cache = _two_pages(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("VINCI_FACTS_STORE", raising=False)
+    assert main(["parity", "--cache-dir", str(cache)]) == 1          # NFLX: not in the snapshot
+    assert ("2 page-cuts compared; 1 zero-diff; 1 with a diff: NFLX; 0 name(s) of the pages' "
+            "scope left out by --exclude") in capsys.readouterr().out
+    assert main(["parity", "--cache-dir", str(cache), "--exclude", "nflx"]) == 0  # as typed
+    assert ("1 page-cuts compared; 1 zero-diff; 0 with a diff; 1 name(s) of the pages' scope "
+            "left out by --exclude") in capsys.readouterr().out
 
 
 def test_a_same_day_tie_names_the_periodic_report_over_a_proxy(tmp_path: Path) -> None:
@@ -435,12 +499,3 @@ def test_a_malformed_manifest_entry_raises_a_named_error(tmp_path: Path) -> None
     with pytest.raises(FactsStoreError, match="filed_year") as err:
         verify_manifest(manifest, tmp_path / "objects")
     assert path in str(err.value)
-
-
-def test_a_current_snapshot_that_states_no_exclusion_count_refuses(tmp_path: Path) -> None:
-    """An absent count is never read as zero (the zero-coercion lint): the run is refused."""
-    from vinci.facts.scope import require_exclusions
-    _publish(tmp_path, [_load("FUBO-companyfacts-slice.json")])     # scope carries no count
-    with pytest.raises(FactsStoreError, match="states no exclusion count"):
-        require_exclusions(5, listed=5, rule="test", selected=5, source=SOURCE, name="pages",
-                           base=tmp_path)

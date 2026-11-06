@@ -429,8 +429,7 @@ def upload_snapshot(manifest: dict[str, Any], local_root: Path, client: R2Client
     Refused before any request when the local copy does not verify against the manifest (an
     object missing, or its bytes not the sealed ones): only sealed bytes are uploaded. Objects are
     read from the manifest's entries, never by listing ``local_root``, so nothing the manifest
-    does not name (another snapshot's objects, a held name's) can be sent. The caller checks the
-    held-name exclusion first (:func:`vinci.facts.scope.require_upload_exclusions`).
+    does not name (another snapshot's objects, say) can be sent.
 
     Every object's outcome is counted: written, already there with the same bytes, or a problem
     (other bytes under its key are never overwritten). A request that fails outright (a token

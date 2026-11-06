@@ -27,8 +27,9 @@ side's EPS. It is never stored or shown as a price; the percentile needs the run
 and so is UNKNOWN on both sides here, its EDGAR input (the EPS series) compared in full instead.
 
 THE POPULATION IS THE SNAPSHOT'S. Every name the screen snapshot's manifest holds or names as
-unread, and nothing else: a name excluded by operator instruction is in neither, so it is never
-read here and never printed. NOTHING IS SWITCHED: the screen still reads EDGAR (slice 2b).
+unread, and nothing else: a name its ingest left out (only the snapshot written under the hold
+lifted on 2026-11-05 left one out, and its manifest counts it) is in neither, so it is not read
+here. NOTHING IS SWITCHED: the screen still reads EDGAR (slice 2b).
 """
 from __future__ import annotations
 
