@@ -1,14 +1,14 @@
 """THE INPUT-RECORD BACKFILL — every committed page that predates its ``inputs`` block gets one,
 from its OWN stamps and the files on this machine, and nothing else (`inputs.backfill`).
 
-``vinci dossier inputs-backfill --all --exclude <T> … [--ciq-root DIR …] [--write]``
+``vinci dossier inputs-backfill --all [--exclude <T> …] [--ciq-root DIR …] [--write]``
 
 - A page carrying a BUILD's record is left alone: a build's own record is never replaced. A
   page carrying a BACKFILL's record gets a fresh backfill, which changes it only when the code or
   the files changed (review round 2: four pages' string stamps were missed).
-- ``--all`` refuses without ``--exclude``: the held names are the operator's list, not this
-  code's, so a whole-corpus run must name them. Their pages and folders are never opened; the
-  roots' directory NAMES are listed while each ticker's folder is found.
+- ``--all`` backfills every committed page. Mosaic-theory holds back no name (operator ruling
+  2026-11-05, `docs/records/2026-11-05-mosaic-theory-holds-back-no-name.md`), so a whole-corpus run
+  needs no list of names to leave out.
 - A page's 10-hex CIQ stamps are resolved against the CIQ folders and their archives
   (``ciq-archive/replaced-<date>/<T>/``); each root is searched for a folder named after the
   ticker. Default roots: the folder the assembler reads (`LocalFolderStore`) and its
@@ -16,7 +16,8 @@ from its OWN stamps and the files on this machine, and nothing else (`inputs.bac
 - Everything the page never stamped is written as ``unrecorded``, with why.
 - DRY RUN unless ``--write``: the plan is printed and no file is touched. ``--write`` saves the
   page through the one writer (`schemas.write_dossier`), so the only change to it is the block.
-- Excluded names (``--exclude``) are never read: not their page, not their folder.
+- ``--exclude`` is an ordinary skip: a name it lists is not backfilled, and neither its page nor
+  its folder is opened.
 
 No clock is read, so a second run over the same pages and files writes the same bytes.
 
@@ -56,15 +57,11 @@ def run(cfg: Config, *, tickers: Sequence[str], exclude: Sequence[str],
     from vinci.dossier.schemas import Dossier, dossier_json, write_dossier
 
     root = cfg.data_dir / "dossiers"
-    if not tickers and not exclude:
-        emit("=== inputs backfill REFUSED: a whole-corpus run names the held pages with --exclude "
-             "(each one never read) ===")
-        return 1
-    held = {t.upper() for t in exclude}
+    skip = {t.upper() for t in exclude}
     names = ([t.upper() for t in tickers] if tickers
              else sorted(p.parent.name for p in root.glob("*/dossier.json")))
-    skipped = sorted(held & set(names))
-    names = [t for t in names if t not in held]
+    skipped = sorted(skip & set(names))
+    names = [t for t in names if t not in skip]
     search = list(roots) if roots else default_roots(cfg)
     emit(f"=== inputs backfill · {len(names)} page(s) · {len(skipped)} excluded by --exclude · "
          f"{len(search)} CIQ root(s) · {'WRITE' if write else 'dry run — nothing written'} ===")

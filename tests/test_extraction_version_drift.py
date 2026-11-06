@@ -105,7 +105,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/flags.py": "27fde9822fe1",
     "vinci/dossier/freshness.py": "e5852b313d22",
     "vinci/dossier/inputs.py": "fcda11ef218f",
-    "vinci/dossier/inputs_backfill.py": "03c3c6f8c540",
+    "vinci/dossier/inputs_backfill.py": "a3567b23a569",
     "vinci/dossier/inputs_schema.py": "6f7d41f25223",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
     "vinci/dossier/lease_basis.py": "a93d880597ba",
