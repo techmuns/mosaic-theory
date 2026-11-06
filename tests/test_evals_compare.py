@@ -181,10 +181,11 @@ def test_a_rerun_into_a_used_out_dir_is_refused(tmp_path: Path, nflx: dict[str, 
     out = tmp_path / "run"
     out.mkdir()
     (out / "draws.jsonl").write_text("{}\n", encoding="utf-8")
+    reg = cm.Registration(**{**_reg().__dict__, "requests": cm.request_pins(c)})
     with pytest.raises(rp.ReplayError, match="already holds draws"):
         cm.run_compare(c, budget=rp.Budget.open(tmp_path / "l.jsonl", cap_usd=1.0,
                                                 approval="operator: test"),
-                       out_dir=out, registration=_reg())
+                       out_dir=out, registration=reg)
 
 
 def test_a_page_with_no_usable_draw_in_a_condition_blocks_never_vanishes(

@@ -14,7 +14,14 @@ THREE STEPS, the first two at $0:
 3. ``score_run`` — $0: every draw's prose units scored by the deterministic metrics, and the
    pre-registered rule applied: the declared target improves at ``p_lower <= 0.05``; no other
    metric worsens at ``p_upper <= 0.05``; lean tallies, modal leans and proposals per page;
-   instruction echo and prompt size reported; the held-out pages read on their own.
+   instruction echo and prompt size reported; the held-out pages read on their own. A
+   NO-WORSENING-ONLY registration (``no_worsening``, no target) applies the second half alone —
+   for a page set where the change's target cannot fire (#921's on the panel).
+
+ONE REGISTRATION, ONE RUN. A registration pins every page's request bytes (``requests``: the
+sha256 of each request as sent) and is drawn once: ``run_compare`` refuses a sha the approval's
+ledger already records, or a capture whose bytes differ from the pinned ones; ``score_run``, given
+the ledger, reports every run recorded under the sha and refuses when more than one holds draws.
 """
 from __future__ import annotations
 
@@ -81,11 +88,13 @@ def compare_requests(base_ref: str, cand_ref: str, *, tickers: Sequence[str] | N
 
 
 def page_diff(ticker: str, base: rp.Request, cand: rp.Request) -> PageDiff:
-    """Two requests compared WHOLE (every kwarg: SYSTEM, USER, tools, tool_choice, cache) — a
-    change to the system prompt alone reaches the comparison as surely as one to the facts."""
+    """Two requests compared WHOLE and in order (`Request.wire`: every kwarg — SYSTEM, USER,
+    tools, tool_choice, cache — key order included) — a change to the system prompt alone, or to
+    the order of the tool schema's fields, reaches the comparison as surely as one to the
+    facts."""
     diff = list(difflib.unified_diff(base.user.splitlines(), cand.user.splitlines(),
                                      lineterm="", n=0))
-    return PageDiff(ticker, base.kwargs == cand.kwargs, len(diff), base.system == cand.system,
+    return PageDiff(ticker, base.wire() == cand.wire(), len(diff), base.system == cand.system,
                     mt.prompt_size(base), mt.prompt_size(cand))
 
 
@@ -116,11 +125,27 @@ def scorer_fingerprint(root: Path = rp.ROOT) -> str:
     return h.hexdigest()
 
 
+#: Fields added after PR 2's first registrations were written: serialised only when set, so a
+#: registration written before them keeps the sha256 its ledger records.
+_LATER_FIELDS: dict[str, Any] = {"no_worsening": False, "requests": {}}
+
+NO_WORSENING_RULE = ("design record §6.1, no-worsening only (registered where no target can "
+                     "fire): no class metric p_upper <= alpha; every lean, proposal and the "
+                     "panel's committed-lean count explained if moved")
+
+
+def request_pins(c: Captured) -> dict[str, str]:
+    """``TICKER:CONDITION`` → the sha256 of that request serialised in order (`Request.wire`)."""
+    return {f"{t}:{cond}": hashlib.sha256(req.wire().encode()).hexdigest()
+            for (t, cond), req in c.requests.items()}
+
+
 @dataclass(frozen=True)
 class Registration:
     """Written BEFORE any paid draw (record §6): what is compared, how often, which metric(s)
-    must improve, and with what scorer. Its sha256 is recorded in the budget ledger; ``score``
-    reads it, never a target given at score time."""
+    must improve — or, ``no_worsening``, that none may worsen — with what scorer, and the bytes
+    of every request to be drawn. Its sha256 is recorded in the budget ledger; ``score`` reads
+    it, never a target given at score time."""
 
     base_ref: str
     cand_ref: str
@@ -134,17 +159,25 @@ class Registration:
     rule: str = ("design record §6: each target p_lower <= alpha after Holm across the targets; "
                  "no other class metric p_upper <= alpha; every lean, proposal and the panel's "
                  "committed-lean count explained if moved")
+    no_worsening: bool = False
+    requests: dict[str, str] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        bad = [t for t in self.targets if t not in mt.UNIT_METRICS]
-        if bad or not self.targets:
-            raise ValueError(f"target(s) {bad or '(none)'} not a deterministic metric "
-                             f"({sorted(mt.UNIT_METRICS)})")
+        if self.no_worsening:
+            if self.targets:
+                raise ValueError("a no-worsening-only registration declares no target")
+        else:
+            bad = [t for t in self.targets if t not in mt.UNIT_METRICS]
+            if bad or not self.targets:
+                raise ValueError(f"target(s) {bad or '(none)'} not a deterministic metric "
+                                 f"({sorted(mt.UNIT_METRICS)}) — or register no-worsening only")
         if self.draws < 2 or not self.pages:
             raise ValueError("a registration needs pages and at least two draws per condition")
 
     def to_json(self) -> str:
-        return json.dumps(self.__dict__, sort_keys=True, default=list)
+        return json.dumps({k: v for k, v in self.__dict__.items()
+                           if not (k in _LATER_FIELDS and v == _LATER_FIELDS[k])},
+                          sort_keys=True, default=list)
 
     @property
     def sha(self) -> str:
@@ -172,18 +205,55 @@ def change_names(base_ref: str, cand_ref: str, tickers: Sequence[str],
             if re.search(rf"(?<![A-Za-z0-9]){re.escape(t)}(?![A-Za-z0-9])", text)}
 
 
-def register(base_ref: str, cand_ref: str, *, targets: Sequence[str], draws: int = 5,
-             transforms: Sequence[str] = (), panel: dict[str, Any] | None = None) -> Registration:
-    """The registration for a comparison of the frozen panel. HELD OUT is per change: the panel
-    pages the change's own commits and records do not name (the corpus holds no page that no fix
-    ever named — record R8)."""
+def registered_pages(pages: Sequence[str] | None,
+                     panel: dict[str, Any] | None = None) -> tuple[str, ...]:
+    """The pages a registration may name: the frozen panel WHOLE, or TARGET pages outside it
+    (record §6.1: a change whose target never fires on the panel is measured where it does, as
+    #921 on NFLX). A panel page is never chosen — so no panel page can be dropped — and every
+    page must be one the frozen file carries inputs for."""
     p = panel or rp.load_panel_file()
-    pages = tuple(p["panel"])
+    if not pages:
+        return tuple(p["panel"])
+    chosen = tuple(pages)
+    if len(set(chosen)) != len(chosen):
+        raise rp.ReplayError(f"{list(chosen)}: a page is registered more than once")
+    inside = [t for t in chosen if t in p["panel"]]
+    if inside:
+        raise rp.ReplayError(f"{inside}: a panel page is never chosen — the panel is registered "
+                             "whole (no pages given), so none can be dropped; pages given are "
+                             "target pages OUTSIDE it")
+    unknown = [t for t in chosen if t not in p["pages"]]
+    if unknown:
+        raise rp.ReplayError(f"{unknown}: no frozen inputs in the panel file for these pages")
+    return chosen
+
+
+def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws: int = 5,
+             transforms: Sequence[str] = (), panel: dict[str, Any] | None = None,
+             pages: Sequence[str] | None = None, captured: Captured | None = None,
+             no_worsening: bool = False) -> Registration:
+    """The registration for a comparison of the frozen panel, or of target pages outside it
+    (`registered_pages`). ``captured`` — the $0 capture of exactly this comparison — pins every
+    request's bytes; ``run_compare`` refuses a registration without them. HELD OUT is per
+    change: the pages the change's own commits and records do not name (the corpus holds no
+    page that no fix ever named — record R8)."""
+    p = panel or rp.load_panel_file()
+    chosen = registered_pages(pages, p)
+    pins: dict[str, str] = {}
+    if captured is not None:
+        got = (captured.base_ref, captured.cand_ref, captured.transforms,
+               tuple(dict.fromkeys(t for t, _ in captured.requests)))
+        if got != (base_ref, cand_ref, tuple(transforms), chosen):
+            raise rp.ReplayError("the capture is not of the comparison being registered (refs, "
+                                 "transforms or pages differ)")
+        pins = request_pins(captured)
     named = change_names(base_ref, cand_ref, sorted(p["pages"]))
     return Registration(base_ref=base_ref, cand_ref=cand_ref, transforms=tuple(transforms),
-                        pages=pages, draws=draws, targets=tuple(targets),
-                        held_out=tuple(t for t in pages if t not in named),
-                        scorer=scorer_fingerprint())
+                        pages=chosen, draws=draws, targets=tuple(targets),
+                        held_out=tuple(t for t in chosen if t not in named),
+                        scorer=scorer_fingerprint(), no_worsening=no_worsening,
+                        requests=pins,
+                        rule=NO_WORSENING_RULE if no_worsening else Registration.rule)
 
 
 def write_registration(reg: Registration, path: Path) -> None:
@@ -197,8 +267,9 @@ def write_registration(reg: Registration, path: Path) -> None:
 def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: Registration,
                 sdk: Any | None = None) -> None:
     """Step 2, PAID. Page by page, BASE then CAND, so the hours between conditions are bounded by
-    one page's ten draws (#920 could not bound them). Draws exactly what ``registration`` says,
-    and records its sha256 in the budget ledger before the first draw."""
+    one page's ten draws (#920 could not bound them). Draws exactly what ``registration`` says —
+    once, and only the request bytes it pins — and records its sha256 in the budget ledger
+    before the first draw."""
     refuse_if_unreached(c)
     reg = registration
     pages = tuple(dict.fromkeys(t for t, _ in c.requests))
@@ -206,6 +277,22 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
                                                          reg.transforms, reg.pages):
         raise rp.ReplayError("the captured comparison is not the registered one (refs, "
                              "transforms or pages differ) — register it first")
+    prior = [r.get("out_dir") for r in budget.rows() if r.get("registration") == reg.sha]
+    if prior:
+        raise rp.ReplayError(f"registration {reg.sha[:12]} was already drawn under this "
+                             f"approval (into {prior}): a registration is drawn ONCE — "
+                             "re-drawing a completed run is result-shopping; a new run needs a "
+                             "new registration")
+    if not reg.requests:
+        raise rp.ReplayError(f"registration {reg.sha[:12]} pins no request bytes: register it "
+                             "with its $0 capture, so what is drawn is what was registered")
+    pins = request_pins(c)
+    if pins != reg.requests:
+        differ = sorted(k for k in set(pins) | set(reg.requests)
+                        if pins.get(k) != reg.requests.get(k))
+        raise rp.ReplayError(f"the captured requests are not the registered bytes ({differ} "
+                             "differ): the code or inputs moved since registration — a new "
+                             "registration, never a re-draw under this one")
     draws = reg.draws
     rp.refuse_inside_repo(out_dir, "the run folder (requests and draws carry licensed text)")
     if (out_dir / "draws.jsonl").exists():
@@ -248,6 +335,21 @@ class Score:
     echo_new: dict[str, list[str]]
     ships: bool
     reasons: tuple[str, ...]
+    runs: tuple[tuple[str, int], ...] = ()   # every run the ledger records under the sha: draws
+
+
+def runs_under(ledger: Path, sha: str) -> tuple[tuple[str, int], ...]:
+    """Every run an approval's ledger records under registration ``sha``, with the draws its
+    folder holds — so a score reports them all, never one chosen."""
+    out: list[tuple[str, int]] = []
+    for r in rp.Budget.load(ledger).rows():
+        if r.get("registration") == sha:
+            d = Path(str(r.get("out_dir")))
+            f = d / "draws.jsonl"
+            n = (sum(1 for x in f.read_text(encoding="utf-8").splitlines() if x.strip())
+                 if f.exists() else 0)
+            out.append((str(d), n))
+    return tuple(out)
 
 
 def holm(p_values: dict[str, float], alpha: float = ALPHA) -> dict[str, bool]:
@@ -323,12 +425,27 @@ def _check_run(out_dir: Path, reg: Registration, rows: list[dict[str, Any]]) -> 
 
 def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any] | None = None,
               pages: dict[str, dict[str, Any]] | None = None,
-              transcripts: dict[str, str | None] | None = None) -> Score:
+              transcripts: dict[str, str | None] | None = None,
+              ledger: Path | None = None) -> Score:
     """Step 3, $0 — the registered rule, on the registered run, appended to its score log.
     ``pages``/``transcripts`` override the frozen panel inputs (tests); otherwise they are read
-    and checked as the capture read them."""
+    and checked as the capture read them. With the approval's ``ledger`` (the CLI requires it),
+    every run recorded under the registration is reported, and the score is refused when this
+    folder is not one of them or another also holds draws."""
     reg = registration
     p = panel or rp.load_panel_file()
+    runs: tuple[tuple[str, int], ...] = ()
+    if ledger is not None:
+        runs = runs_under(ledger, reg.sha)
+        here = out_dir.resolve()
+        if not any(Path(d).resolve() == here for d, _ in runs):
+            raise rp.ReplayError(f"{out_dir} is not a run the ledger records under registration "
+                                 f"{reg.sha[:12]} (it records {list(runs)})")
+        others = [(d, n) for d, n in runs if Path(d).resolve() != here and n]
+        if others:
+            raise rp.ReplayError(f"registration {reg.sha[:12]} was drawn more than once: "
+                                 f"{list(runs)} — every run under one sha is reported, never "
+                                 "one chosen; none of them is scored")
     rows = [json.loads(x) for x in (out_dir / "draws.jsonl").read_text(encoding="utf-8")
             .splitlines() if x.strip()]
     _check_run(out_dir, reg, rows)
@@ -420,17 +537,19 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
                   proposals=proposals, failed_draws=dict(failed),
                   echo_new={"CAND only": [f"{ph} ({', '.join(ts)})"
                                           for ph, ts in new_echo.items()]},
-                  ships=not reasons, reasons=tuple(reasons))
+                  ships=not reasons, reasons=tuple(reasons), runs=runs)
     with (out_dir / "score_log.jsonl").open("a", encoding="utf-8") as f:
         f.write(json.dumps({"at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
                             "registration": reg.sha, "scorer": reg.scorer,
+                            "runs_under_sha": [list(r) for r in runs],
                             "ships": score.ships, "reasons": list(score.reasons),
                             "metrics": {m: r.__dict__ for m, r in results.items()}}) + "\n")
     return score
 
 
 def score_text(s: Score) -> str:
-    lines = [f"TARGETS {', '.join(s.targets)}; ships: {s.ships}"]
+    lines = [f"TARGETS {', '.join(s.targets) or 'none (no-worsening only)'}; ships: {s.ships}"]
+    lines += [f"  run under this registration: {d} ({n} draws)" for d, n in s.runs]
     for m, r in sorted(s.metrics.items()):
         lines.append(f"  {m:8} BASE {r.base_total:3} → CAND {r.cand_total:3} | p_lower "
                      f"{r.p_lower:.3g} p_upper {r.p_upper:.3g} | held-out {r.held_out_base} → "
