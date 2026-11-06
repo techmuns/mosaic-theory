@@ -83,6 +83,7 @@ def main(argv: list[str] | None = None) -> int:
     jd.add_argument("--budget-ledger", required=True, type=Path)
     jd.add_argument("--cap", type=float, help="may only LOWER the approved cap")
     jd.add_argument("--out-dir", required=True, type=Path)
+    jd.add_argument("--ticker", action="append", help="limit to these pages of the half")
     jd.add_argument("--paid", action="store_true")
     sub.add_parser("gold")
     sub.add_parser("panel")
@@ -192,8 +193,9 @@ def main(argv: list[str] | None = None) -> int:
         if not _paid(a):
             return 2
         gold = gd.load_gold()
-        judged = jg.run_half(a.half, budget=budget, out_dir=a.out_dir, gold=gold)
-        print(jg.calibration_text(jg.calibrate(judged, gold, a.half)))
+        judged = jg.run_half(a.half, budget=budget, out_dir=a.out_dir, gold=gold,
+                             tickers=a.ticker)
+        print(jg.calibration_text(jg.calibrate(judged, gold, a.half, tickers=a.ticker)))
         print(f"the approval's spend is now ${budget.spent():.4f} of ${budget.cap_usd:.2f}")
         return 0
     if a.cmd == "gold":

@@ -37,6 +37,11 @@ FAVOURS = ("bull", "bear", "neither")
 #: input manifest, the price-store stamp.
 NOT_FACTS = ("synthesis", "inputs", "price_store")
 
+#: v1 (a45ace8e) asked for the verdict alone; on DEV it called 11.5% of claims errors against the
+#: gold's 46.1% (kappa 0.19) while writing ~1,200 output tokens for ~23 claims — it did not look
+#: the figures up. v2 makes the lookup the first field of every verdict.
+JUDGE_VERSION = 2
+
 JUDGE_TOOL: dict[str, Any] = {
     "name": "record_fidelity_verdicts",
     "description": "Record one fidelity verdict for EVERY claim id given, judged only against "
@@ -50,13 +55,17 @@ JUDGE_TOOL: dict[str, Any] = {
                     "type": "object",
                     "properties": {
                         "id": {"type": "string"},
+                        "checked": {"type": "string", "description": (
+                            "FIRST, before the verdict: every figure, date, period, direction and "
+                            "label the claim asserts, each with the JSON path and value where the "
+                            "facts state it, or 'NOT IN FACTS' (<=80 words)")},
                         "verdict": {"type": "string", "enum": list(VERDICTS)},
                         "material": {"type": "boolean"},
                         "favours": {"type": "string", "enum": list(FAVOURS)},
                         "fact": {"type": "string", "description": "<=20 words naming the fact "
                                  "it contradicts or lacks, with its JSON path; empty for OK"},
                     },
-                    "required": ["id", "verdict", "material", "favours", "fact"],
+                    "required": ["id", "checked", "verdict", "material", "favours", "fact"],
                 },
             },
         },
@@ -76,6 +85,14 @@ def judge_system(taxonomy: str | None = None) -> str:
         "only whether each figure, date, period, direction and judgment is supported by the facts "
         "as stated. Give EVERY claim id exactly one verdict through the tool — OK claims too, "
         "with material false, favours \"neither\" and an empty fact.\n\n"
+        "HOW TO CHECK EACH CLAIM (v2, revised on the DEV half). Before its verdict, fill "
+        "`checked`: take every figure, date, period, direction and label the claim asserts and "
+        "find each one in the facts, writing its JSON path and the value there — or NOT IN FACTS. "
+        "Then apply the taxonomy to what you found: an asserted figure or statement the facts do "
+        "not hold is ABSENT; a value the facts mark superseded, or older than another they give, "
+        "is STALE; a direction against the stated sign is SIGN; a label the code wrote, repeated "
+        "where the page's own facts contradict it, is LABEL; and so on. A claim is OK only when "
+        "every item you listed is found and read as the facts state it.\n\n"
         "=== THE TAXONOMY (frozen 2026-11-05) ===\n" + tax)
 
 
@@ -205,12 +222,13 @@ def _coders(folder: Path = gd.GOLD_DIR) -> tuple[Coding, Coding]:
 
 
 def calibrate(judged: dict[str, Verdict | None], gold: Sequence[gd.GoldClaim],
-              half: str) -> Calibration:
+              half: str, tickers: Sequence[str] | None = None) -> Calibration:
     """The judge against the final labels and each coder, on the claims of ``half``. A claim the
     judge gave no verdict is MISSING: counted, and coded as an error for kappa (the conservative
     side — "no answer" is never read as "OK")."""
     a, b = _coders()
-    pool = [g for g in gold if half == "all" or g.half == half]
+    pool = [g for g in gold if (half == "all" or g.half == half)
+            and (not tickers or g.page in tickers)]
     ids = [g.id for g in pool]
     jv = {i: judged.get(i) for i in ids}
     j_err = [(v.error if v is not None else True) for v in jv.values()]
@@ -248,13 +266,16 @@ def calibrate(judged: dict[str, Verdict | None], gold: Sequence[gd.GoldClaim],
 
 def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = None,
              gold: Sequence[gd.GoldClaim] | None = None,
-             pages: dict[str, dict[str, Any]] | None = None) -> dict[str, Verdict | None]:
+             pages: dict[str, dict[str, Any]] | None = None,
+             tickers: Sequence[str] | None = None) -> dict[str, Verdict | None]:
     """PAID: one judge call per page of ``half`` (each page's claims together, as the coders coded
-    a page), behind the guard. Raw outputs go to ``out_dir`` (outside the repository); a page
+    a page), behind the guard — or of ``tickers`` within it.
+    Raw outputs go to ``out_dir`` (outside the repository); a page
     already judged there is not judged again, so a stopped run resumes without paying twice."""
     rp.refuse_inside_repo(out_dir, "the judge's run folder")
     out_dir.mkdir(parents=True, exist_ok=True)
-    pool = [g for g in (gold or gd.load_gold()) if g.half == half]
+    pool = [g for g in (gold or gd.load_gold()) if g.half == half
+            and (not tickers or g.page in tickers)]
     done = out_dir / "judged.jsonl"
     have: dict[str, dict[str, Any]] = {}
     if done.exists():

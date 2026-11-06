@@ -42,6 +42,8 @@ def test_the_request_is_the_taxonomy_the_facts_and_the_claims(gold: list[gd.Gold
     assert '"synthesis"' not in req.user and '"price_store"' not in req.user
     assert req.kwargs["tool_choice"] == {"type": "tool", "name": jg.JUDGE_TOOL["name"]}
     assert "cache_control" not in req.kwargs                              # one call per page
+    props = req.kwargs["tools"][0]["input_schema"]["properties"]["verdicts"]["items"]
+    assert list(props["properties"])[:3] == ["id", "checked", "verdict"]  # lookup BEFORE verdict
 
 
 def test_a_missing_or_invalid_verdict_is_never_ok() -> None:
@@ -89,7 +91,8 @@ class _FakeJudge:
     def create(self, **kwargs: Any) -> Any:
         self.calls += 1
         block = SimpleNamespace(type="tool_use", input={"verdicts": [
-            {"id": i, "verdict": "OK", "material": False, "favours": "neither", "fact": ""}
+            {"id": i, "checked": "all found", "verdict": "OK", "material": False,
+             "favours": "neither", "fact": ""}
             for i in self.ids]})
         usage = SimpleNamespace(input_tokens=60000, output_tokens=2000,
                                 cache_creation_input_tokens=0, cache_read_input_tokens=0)
