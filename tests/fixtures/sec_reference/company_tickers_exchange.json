@@ -43,6 +43,12 @@
    "NYSE"
   ],
   [
+   927653,
+   "MCKESSON CORP",
+   "MCK",
+   "NYSE"
+  ],
+  [
    865752,
    "Monster Beverage Corp",
    "MNST",
@@ -139,15 +145,15 @@
    "Nasdaq"
   ],
   [
-   1682745,
-   "VERRA MOBILITY Corp",
-   "VRRM",
-   "Nasdaq"
-  ],
-  [
    1579733,
    "Vital Farms, Inc.",
    "VITL",
+   "Nasdaq"
+  ],
+  [
+   1682745,
+   "VERRA MOBILITY Corp",
+   "VRRM",
    "Nasdaq"
   ],
   [
@@ -157,16 +163,16 @@
    "Nasdaq"
   ],
   [
-   1484769,
-   "FuboTV Inc.",
-   "FUBO",
-   "NYSE"
-  ],
-  [
    1760689,
    "Microvast Holdings, Inc.",
    "MVST",
    "Nasdaq"
+  ],
+  [
+   1484769,
+   "FuboTV Inc.",
+   "FUBO",
+   "NYSE"
   ],
   [
    1652044,

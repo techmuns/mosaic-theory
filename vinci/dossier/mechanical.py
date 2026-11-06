@@ -36,6 +36,9 @@ from vinci.dossier.ciq import CiqBundle
 # See the note at `_ITEM_TERMINATION` for why it moved.
 from vinci.dossier.ciq_sheets import _cs_panel_filed
 from vinci.dossier.ebitda_basis import read_basis as read_ebitda_basis
+from vinci.dossier.filed_tiebreak import SAME_END_DAYS as FILED_SAME_END_DAYS
+from vinci.dossier.filed_tiebreak import _quarter_ref as _filed_quarter_ref
+from vinci.dossier.filed_tiebreak import filed_quarter
 from vinci.dossier.freshness import _COVERAGE_GAP_DAYS
 from vinci.dossier.midcycle import MIN_YEARS as _MIDCYCLE_MIN_YEARS
 from vinci.dossier.schemas import (
@@ -103,6 +106,7 @@ from vinci.edgar.concepts import (
     currency_withheld,
     extract_points,
     facts_as_of,
+    fiscal_calendar,
     foreign_currency,
     points_for_tag,
     superseded,
@@ -1315,14 +1319,6 @@ _NONOP_PRETAX_SHARE = 0.20
 _NONOP_REVENUE_SHARE = 0.05
 
 
-def _nonop_common(op: dict[date, float], pre: dict[date, float], rev: dict[date, float],
-                  reference_date: date) -> list[date]:
-    """The quarters for which ALL THREE totals were filed, up to the reference date, oldest first.
-    ONE PERIOD BY CONSTRUCTION: the subtraction is within one period because there was never
-    another option (see `_nonoperating_earnings`)."""
-    return sorted(d for d in (set(op) & set(pre) & set(rev)) if d <= reference_date)
-
-
 def _nonop_arms(d: date, op: dict[date, float], pre: dict[date, float],
                 rev: dict[date, float]) -> tuple[float, float | None, float | None]:
     """``(gap, share of pre-tax, share of revenue)``.
@@ -1371,7 +1367,10 @@ def _quarterly_map(facts: dict[str, Any], concept: str) -> dict[date, float]:
 
     Duration-bounded at 80-100 days rather than trusting ``fp``: EDGAR stamps quarterly points
     inside a 10-K with ``fp="FY"``, the trapdoor `ConceptPoint.is_annual` documents at length. A
-    10-Q's own quarter and a 10-K's embedded Q4 both land correctly because DURATION is the check.
+    10-K's embedded Q4 lands here only where the 10-K TAGS one — and on 2026-11-05 none of the 26
+    committed pages with a fiscal-year end among their six latest quarters did (FUBO has none
+    there): each 10-K states its fourth quarter only inside the year. A quarter this map lacks is
+    derived by :func:`_nonop_window`, never left out.
     """
     out: dict[date, float] = {}
     for tag in CONCEPT_ALIASES[concept]:
@@ -1381,6 +1380,177 @@ def _quarterly_map(facts: dict[str, Any], concept: str) -> dict[date, float]:
             if 80 <= (p.period_end - p.period_start).days <= 100:
                 out.setdefault(p.period_end, float(p.value))
     return out
+
+
+#: The three totals the non-operating block is derived from: (the name the page gives it, concept).
+_NONOP_TOTALS = (("operating income", "operating_income"), ("pre-tax income", "pretax_income"),
+                 ("revenue", "revenue"))
+
+
+@dataclass(frozen=True)
+class _NonopWindow:
+    """THE TRAILING FOUR QUARTERS the non-operating read is made over — ONE window, built once by
+    :func:`_nonop_window` and read by the prose (`_nonoperating_earnings`) and the structured count
+    (`_nonoperating_quarters`), so the two cannot disagree.
+
+    ``quarters`` are the quarters of the four that carry all three totals, oldest first, the
+    window's end last; ``op`` / ``pre`` / ``rev`` hold each total for them, a derived quarter's
+    included. ``derived`` cites, per quarter, the parts of each total no ~quarterly fact states;
+    ``missing`` names the quarters of the four that cannot be read and the totals each lacks;
+    ``uncalendared`` counts the quarters of the four that no filing's calendar places at all."""
+
+    quarters: list[date]
+    op: dict[date, float]
+    pre: dict[date, float]
+    rev: dict[date, float]
+    derived: dict[date, list[str]]
+    missing: list[tuple[date, list[str]]]
+    uncalendared: int
+
+    @property
+    def end(self) -> date:
+        return self.quarters[-1]
+
+    @property
+    def short(self) -> bool:
+        return len(self.quarters) < 4
+
+    def shortfall(self) -> str:
+        """Why the window holds fewer than four quarters, in words — "" when it holds four."""
+        why = [f"{d} has no {' or '.join(absent)} filed or derivable"
+               for d, absent in self.missing]
+        if self.uncalendared:
+            why.append(f"{self.uncalendared} {'sits' if self.uncalendared == 1 else 'sit'} on no "
+                       "filing's calendar")
+        return "; ".join(why)
+
+    def source_ref(self) -> str:
+        """The cite both readers carry: the window, every derived quarter with its parts, and every
+        quarter of the four the window could not read."""
+        ref = f"EDGAR XBRL pre-tax − operating, quarters {self.quarters[0]}..{self.end}"
+        for d, parts in self.derived.items():
+            how = ("is DERIVED, the longer period less the shorter on one tag"
+                   if not any(_NEARBY in part for part in parts)  # no part stated days off it
+                   else "has no 80-100-day fact on its date: each part is DERIVED, the longer "
+                        "period less the shorter on one tag, unless marked stated")
+            ref += f"; the quarter to {d} {how}: {' · '.join(parts)}"
+        if self.short:
+            ref += (f"; {len(self.quarters)} of the trailing four quarters to {self.end} are read "
+                    f"— {self.shortfall()}")
+        return ref
+
+
+#: Marks a part `filed_tiebreak.filed_quarter` read as a STATED quarter ending a few days off the
+#: calendar's date (a 52/53-week filer), so the cite never calls it derived.
+_NEARBY = "stated for a quarter ending within a week of"
+
+
+def _derived_quarter(facts: dict[str, Any], concept: str, q: date,
+                     ) -> tuple[float, bool, tuple[ConceptPoint, ...]] | None:
+    """($, derived, the points read) — the quarter ending ``q`` where no ~quarterly fact states it,
+    read by `filed_tiebreak.filed_quarter`: the longer period ending there less the period one
+    quarter shorter from the same start, on ONE tag, the shorter filed on or before the longer (a
+    fourth quarter is the fiscal year less the nine months). Aliases in their order of meaning, as
+    in :func:`_quarterly_map`. None — an absence, never a zero — when no alias states the parts.
+    The cite is built by the caller, and only for a quarter it keeps (`_filed_quarter_ref` looks
+    each part's restatements up across its whole tag).
+
+    A DERIVED REVENUE BELOW ZERO IS NO QUARTER (review of #916, 2026-11-05). Revenue is the
+    revenue arm's denominator, and a quarter cannot sell less than nothing: a negative difference
+    says the two parts are not one basis. FUBO's quarter to 2019-12-31 read −1.563M as filed by
+    2020-08-15 (its year and nine months on `RevenueFromContractWithCustomerExcludingAssessedTax`),
+    and its quarter to 2024-12-31 −777.2M (a Q1-2025 10-Q fact dated as the whole of 2024, which
+    `filed_quarter` now refuses as a restated year). A derived ZERO stands: both parts filed as
+    zero is a pre-revenue quarter (ORKA's 2021, FUBO's shell years), and the revenue arm already
+    reads a zero denominator as undefined, never material."""
+    for tag in CONCEPT_ALIASES[concept]:
+        got = filed_quarter(points_for_tag(facts, tag), q)
+        if got is not None:
+            if concept == "revenue" and got[1] and got[0] < 0:
+                return None
+            return got
+    return None
+
+
+def _nonop_window(facts: dict[str, Any], reference_date: date) -> _NonopWindow | str:
+    """THE TRAILING FOUR QUARTERS, as the filer's own calendar places them — or, where no window
+    exists, the UNKNOWN note that says why (a str).
+
+    WHY (2026-11-05). The window was the newest four quarters carrying a ~quarterly fact for all
+    three totals. A 10-K states its fourth quarter only inside the year, so that skipped every
+    filer's fiscal Q4 and reached a year back for a fourth quarter: GOOGL's page of 2026-11-02 read
+    2025-09-30, 2026-03-31, 2026-06-30 and 2026-09-30, netting +$140,237M with 4 of 4 material,
+    where the trailing four (2025-12-31 in place of 2025-09-30) net +$130,661M with 3 of 4 — the
+    fourth quarter's block is 8% of pre-tax, under the 20% bar. R4's eligibility reads that count.
+
+    THE QUARTERS ARE THE CALENDAR'S. Every period end a 10-Q or 10-K states as its own
+    (`concepts.fiscal_calendar`) and every ~quarterly fact's end, up to the reference date; two ends
+    within `filed_tiebreak.SAME_END_DAYS` are one quarter (a 52/53-week filer lands a few days off
+    a calendar date), dated as the calendar dates it. A quarter whose total no ~quarterly fact
+    states is DERIVED from the filings that state its parts (:func:`_derived_quarter`) and cited
+    with them.
+
+    THE END is the newest quarter for which all three totals are filed or derivable — ONE PERIOD
+    BY CONSTRUCTION, as before: the subtraction is within one period because there was never
+    another option. THE FOUR are the calendar's quarters ending there, within the span four
+    quarter-ends cover (`lease_basis._LTM_SPAN_DAYS`). A quarter among them that cannot be read
+    leaves the window SHORT — said in the count and the prose — and no older quarter is read in its
+    place: "3 of 3 available" is a finding, a fourth quarter from a year back is not."""
+    maps = {concept: _quarterly_map(facts, concept) for _, concept in _NONOP_TOTALS}
+    missing = " + ".join(name for name, concept in _NONOP_TOTALS if not maps[concept])
+    if missing:
+        return (f"no quarterly {missing} in EDGAR XBRL — the non-operating share cannot be "
+                f"derived without all three from ONE period")
+    calendar = set(fiscal_calendar(facts).values())
+    ends: list[date] = []
+    for d in sorted(d for d in calendar.union(*maps.values()) if d <= reference_date):
+        if ends and (d - ends[-1]).days <= FILED_SAME_END_DAYS:
+            if d in calendar or ends[-1] not in calendar:  # one quarter, dated as the calendar does
+                ends[-1] = d
+            continue
+        ends.append(d)
+
+    derived: dict[date, list[str]] = {}
+
+    def read(d: date) -> list[str]:
+        """The totals the quarter ending ``d`` lacks — [] once each is in ``maps``, filed or
+        derived (a derived value is kept only when all three are there)."""
+        got: dict[str, tuple[str, float, bool, tuple[ConceptPoint, ...]]] = {}
+        absent: list[str] = []
+        for name, concept in _NONOP_TOTALS:
+            if d in maps[concept]:
+                continue
+            q = _derived_quarter(facts, concept, d)
+            if q is None:
+                absent.append(name)
+            else:
+                got[concept] = (name, *q)
+        if not absent:
+            for concept, (_, v, _, _) in got.items():
+                maps[concept][d] = v
+            if got:
+                derived[d] = [f"{name} {_filed_quarter_ref(pts, facts)}"
+                              + ("" if is_derived else f", {_NEARBY} {d}")
+                              for name, _, is_derived, pts in got.values()]
+        return absent
+
+    end = next((d for d in reversed(ends) if not read(d)), None)
+    if end is None:
+        return ("operating income, pre-tax income and revenue never share a quarter in EDGAR "
+                "XBRL, filed or derived — subtracting across periods would not be a non-operating "
+                "figure")
+    four = [d for d in ends if 0 <= (end - d).days <= lease_basis._LTM_SPAN_DAYS[1]][-4:]
+    quarters, lacking = [], []
+    for d in four:
+        absent = read(d) if d != end else []
+        if absent:
+            lacking.append((d, absent))
+        else:
+            quarters.append(d)
+    return _NonopWindow(
+        quarters=quarters, op=maps["operating_income"], pre=maps["pretax_income"],
+        rev=maps["revenue"], derived={d: derived[d] for d in quarters if d in derived},
+        missing=lacking, uncalendared=4 - len(four))
 
 
 def _nonop_share_txt(share: float, *, compact: bool = False) -> str:
@@ -1417,32 +1587,28 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
         facts = edgar.companyfacts(cik)
     except (HttpError, KeyError):
         return Sourced.unknown(note="EDGAR companyfacts unavailable")
-    op = _quarterly_map(facts, "operating_income")
-    pre = _quarterly_map(facts, "pretax_income")
-    rev = _quarterly_map(facts, "revenue")
-    missing = " + ".join(n for n, m in (("operating income", op), ("pre-tax income", pre),
-                                        ("revenue", rev)) if not m)
-    if missing:
-        return Sourced.unknown(
-            note=f"no quarterly {missing} in EDGAR XBRL — the non-operating share cannot be "
-                 f"derived without all three from ONE period")
     # ONE PERIOD BY CONSTRUCTION, not by checking afterwards. Taking each concept's own latest
     # quarter and then asserting they agree is the same discipline stated worse: one stale
     # straggler refuses a name whose data is fine (it refused UBER, the case this exists for).
     # Intersecting first asks the right question — the newest quarter for which ALL THREE totals
     # were filed — so the subtraction is within one period because there was never another option.
-    common = _nonop_common(op, pre, rev, reference_date)
-    if not common:
-        return Sourced.unknown(
-            note="operating income, pre-tax income and revenue never share a quarter in EDGAR "
-                 "XBRL — subtracting across periods would not be a non-operating figure")
+    #
     # THE TRAILING FOUR QUARTERS, not just the newest — because the figure a reader is about to
     # divide by is an LTM one. NFLX settled it: the $2.59bn Warner Bros. Discovery termination fee
     # lands in Q1-2026, so a latest-quarter-only read reports Q2's ordinary -$124M and says
     # nothing, while the LTM EPS under a P/E still carries the whole fee. The analyst's objection
-    # was to FY26 GAAP EPS, which is exactly this window.
-    window = common[-4:]
-    src = f"EDGAR XBRL pre-tax − operating, quarters {window[0]}..{window[-1]}"
+    # was to FY26 GAAP EPS, which is exactly this window. The four are the CALENDAR's, a fourth
+    # quarter derived from the year that states it (`_nonop_window`, 2026-11-05).
+    w = _nonop_window(facts, reference_date)
+    if isinstance(w, str):
+        return Sourced.unknown(note=w)
+    window, op, pre, rev = w.quarters, w.op, w.pre, w.rev
+    src = w.source_ref()
+    n = len(window)
+    # A SHORT WINDOW SAYS SO: how many quarters were read, to which end, and why the rest were not
+    span = ("the four quarters" if not w.short
+            else f"the {n} available quarters of the trailing four")
+    short = f" The window is short: {w.shortfall()}." if w.short else ""
 
     def _arms(d: date) -> tuple[float, float | None, float | None]:
         return _nonop_arms(d, op, pre, rev)
@@ -1452,8 +1618,9 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
         end = window[-1]
         gap = _arms(end)[0]
         return Sourced.present(
-            f"no material non-operating item in the four quarters to {end} — in the latest, "
-            f"${gap / 1e6:,.0f}M against ${pre[end] / 1e6:,.0f}M pre-tax", source_ref=src)
+            f"no material non-operating item in {span} to {end} — in the latest, "
+            f"${gap / 1e6:,.0f}M against ${pre[end] / 1e6:,.0f}M pre-tax"
+            f"{'.' + short if short else ''}", source_ref=src)
     # EVERY MATERIAL QUARTER, NOT THE LARGEST ONE (2026-08-12). Naming only the biggest was chosen
     # for a reason that does not survive its own live case: UBER carries THREE material quarters —
     # 2025-09-30 +$1,507M, 2026-03-31 −$1,427M, 2026-06-30 +$1,387M — and the page named the first,
@@ -1473,11 +1640,14 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
         items = " · ".join(
             f"{d} {signed(g)} ({_nonop_share_txt(s, compact=True)} · {r:.0%} of revenue)"
             for d, g, s, r in material)  # chronological — `material` is built in window order
+        of = ("of the trailing four quarters" if not w.short
+              else f"of the {n} available quarters of the trailing four to {window[-1]}")
         return Sourced.present(
-            f"{len(material)} of the trailing four quarters carry a material block from BELOW the "
-            f"operating line — {items} — netting {signed(net)} across the four. A trailing "
+            f"{len(material)} {of} carry a material block from BELOW the "
+            f"operating line — {items} — netting {signed(net)} across the "
+            f"{'four' if not w.short else n}. A trailing "
             f"EPS or P/E spanning them is not an operating anchor, and the LTM figure carries the "
-            f"SUM, not the largest of them.",
+            f"SUM, not the largest of them.{short}",
             source_ref=src)
     end, gap, share, rev_share = material[0]
     assert share is not None and rev_share is not None
@@ -1488,7 +1658,7 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
         f"${gap / 1e6:,.0f}M of the quarter ended {end} came from BELOW the operating line — "
         f"{share_txt}, and {rev_share:.0%} of revenue. Operating income ${op[end] / 1e6:,.0f}M → "
         f"pre-tax ${pre[end] / 1e6:,.0f}M. This is {where}, so a trailing EPS or P/E spanning it "
-        f"is not an operating anchor.",
+        f"is not an operating anchor.{short}",
         source_ref=src)
 
 
@@ -2418,24 +2588,19 @@ def _nonoperating_quarters(edgar: EdgarClient, cik: str,
     only into a sentence, so the one number R4's eligibility rule needs ("earnings from below the
     operating line are material", ruled at ≥2 of the trailing four) could be read back only by
     parsing prose — the parse this repo forbids. Same window, same arms, same materiality test as
-    the prose (`_nonop_common`, `_nonop_material`), so the two cannot disagree. None where the
-    prose itself is UNKNOWN: no count is invented for a window that does not exist."""
+    the prose (`_nonop_window`, `_nonop_material`), so the two cannot disagree. None where the
+    prose itself is UNKNOWN: no count is invented for a window that does not exist. ``window`` is
+    the quarters READ: under four, the window is short and the cite says why (2026-11-05)."""
     try:
         facts = edgar.companyfacts(cik)
     except (HttpError, KeyError):
         return None
-    op = _quarterly_map(facts, "operating_income")
-    pre = _quarterly_map(facts, "pretax_income")
-    rev = _quarterly_map(facts, "revenue")
-    if not (op and pre and rev):
-        return None
-    window = _nonop_common(op, pre, rev, reference_date)[-4:]
-    if not window:
+    w = _nonop_window(facts, reference_date)
+    if isinstance(w, str):
         return None
     return NonOperatingQuarters(
-        material=len(_nonop_material(window, op, pre, rev)), window=len(window),
-        window_end=window[-1].isoformat(),
-        source_ref=f"EDGAR XBRL pre-tax − operating, quarters {window[0]}..{window[-1]}")
+        material=len(_nonop_material(w.quarters, w.op, w.pre, w.rev)), window=len(w.quarters),
+        window_end=w.end.isoformat(), source_ref=w.source_ref())
 
 def _money_m(v: float) -> str:
     return f"−${abs(v):,.0f}M" if v < 0 else f"${v:,.0f}M"
