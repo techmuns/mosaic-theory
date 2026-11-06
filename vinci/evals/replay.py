@@ -154,6 +154,11 @@ def transcript_for(ticker: str, *, ciq_root: Path = DEFAULT_CIQ_ROOT,
 
 # -------------------------------------------------------------------------------------- capture
 
+def wire(kwargs: dict[str, Any]) -> str:
+    """``kwargs`` serialised in insertion order, as the SDK sends them."""
+    return json.dumps(kwargs, default=str, ensure_ascii=False)
+
+
 @dataclass(frozen=True)
 class Request:
     """One synthesis request as the SDK would receive it."""
@@ -176,6 +181,12 @@ class Request:
     def max_tokens(self) -> int:
         return int(self.kwargs["max_tokens"])
 
+    def wire(self) -> str:
+        """The request as the SDK serialises it — KEY ORDER INCLUDED. Two requests are the same
+        only if this is: dict equality ignores order, and that is how PR 2's alphabetised tool
+        schema passed an order-blind guard."""
+        return wire(self.kwargs)
+
     def chars(self) -> int:
         """Characters the prompt carries — SYSTEM, USER and the tool schema as JSON."""
         return len(self.system) + len(self.user) + len(json.dumps(self.kwargs.get("tools")))
@@ -185,7 +196,7 @@ def _one(calls: list[dict[str, Any]], draws: int) -> Request:
     if len(calls) != draws:
         raise ReplayError(f"captured {len(calls)} requests for {draws} draws")
     first = jsonable(calls[0])
-    if any(jsonable(c) != first for c in calls[1:]):
+    if any(wire(jsonable(c)) != wire(first) for c in calls[1:]):
         raise ReplayError("the draws of one capture sent different requests")
     return Request(first)
 
@@ -439,7 +450,7 @@ class GuardedSdk:
 
     def create(self, **kwargs: Any) -> Any:
         self.n += 1
-        if jsonable(kwargs) != self.expected.kwargs:
+        if wire(jsonable(kwargs)) != self.expected.wire():   # the bytes, order included
             raise BudgetStop(f"{self.label} draw {self.n}: the request differs from the one "
                              "captured at $0 — STOP")
         bound = (self.prompt_tokens if self.prompt_tokens is not None

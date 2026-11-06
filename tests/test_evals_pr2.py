@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import subprocess
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -52,7 +53,6 @@ def test_the_captured_request_keeps_productions_key_order() -> None:
 def test_run_request_sends_the_tool_in_productions_order(tmp_path: Path) -> None:
     import json
     from types import SimpleNamespace
-    from typing import Any
 
     from vinci.dossier.synthesis import tool_for
     nflx = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
@@ -76,3 +76,48 @@ def test_run_request_sends_the_tool_in_productions_order(tmp_path: Path) -> None
     rp.run_request(rp.capture(nflx, None, draws=1), draws=1, budget=rp.Budget.load(ledger),
                    label="t", draws_out=tmp_path / "d.jsonl", sdk=Sdk())
     assert json.dumps(sent[0]["tools"]) == json.dumps([tool_for(nflx["sleeve"])])
+
+
+def _reordered(kwargs: dict[str, Any]) -> dict[str, Any]:
+    """The same request with the tool schema's top-level properties in REVERSED order — equal as a
+    dict, different as the bytes the SDK sends."""
+    import json
+    kw = json.loads(json.dumps(kwargs))
+    props = kw["tools"][0]["input_schema"]["properties"]
+    kw["tools"][0]["input_schema"]["properties"] = dict(reversed(list(props.items())))
+    return kw
+
+
+def test_the_guard_refuses_a_reordered_request(tmp_path: Path) -> None:
+    """Order-blind dict equality let PR 2's alphabetised schema through. The guard compares the
+    serialised request — the bytes the SDK sends — so a reordering is refused before forwarding."""
+    import json
+    from types import SimpleNamespace
+
+    from vinci.graph.llm import AnthropicLlmClient
+    nflx = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    req = rp.capture(nflx, None)
+    kw = _reordered(req.kwargs)
+    assert kw == req.kwargs                                   # equal as dicts …
+    assert json.dumps(kw) != json.dumps(req.kwargs)           # … not as bytes
+    calls = []
+    sdk = SimpleNamespace(create=lambda **k: calls.append(k))
+    sdk.messages = sdk
+    ledger = tmp_path / "l.jsonl"
+    rp.Budget.open(ledger, cap_usd=5.0, approval="operator: test")
+    guard = rp.GuardedSdk(sdk, req, rp.Budget.load(ledger), label="t",
+                          draws_out=tmp_path / "d.jsonl",
+                          client=AnthropicLlmClient(model="claude-opus-4-8", api_key="x"))
+    with pytest.raises(rp.BudgetStop, match="differs from the one captured"):
+        guard.create(**kw)
+    assert calls == []
+
+
+def test_a_reordering_reaches_the_comparison() -> None:
+    import json
+
+    from vinci.evals import compare as cm
+    nflx = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    base = rp.capture(nflx, None)
+    d = cm.page_diff("NFLX", base, rp.Request(_reordered(base.kwargs)))
+    assert not d.identical

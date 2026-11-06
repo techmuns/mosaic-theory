@@ -81,11 +81,12 @@ def compare_requests(base_ref: str, cand_ref: str, *, tickers: Sequence[str] | N
 
 
 def page_diff(ticker: str, base: rp.Request, cand: rp.Request) -> PageDiff:
-    """Two requests compared WHOLE (every kwarg: SYSTEM, USER, tools, tool_choice, cache) — a
-    change to the system prompt alone reaches the comparison as surely as one to the facts."""
+    """Two requests compared WHOLE and as SENT (every kwarg, key order included: SYSTEM, USER,
+    tools, tool_choice, cache) — a change to the system prompt alone, or to the order of the tool
+    schema's fields, reaches the comparison as surely as one to the facts."""
     diff = list(difflib.unified_diff(base.user.splitlines(), cand.user.splitlines(),
                                      lineterm="", n=0))
-    return PageDiff(ticker, base.kwargs == cand.kwargs, len(diff), base.system == cand.system,
+    return PageDiff(ticker, base.wire() == cand.wire(), len(diff), base.system == cand.system,
                     mt.prompt_size(base), mt.prompt_size(cand))
 
 
