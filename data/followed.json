@@ -80,5 +80,10 @@
   "followed_since": "2026-11-02",
   "sleeve": "quality",
   "reason": "Monster Beverage, the energy-drink company, followed under the QUALITY book by operator decision 2026-11-02, in the operator's words: \"trigger following assembly in a new session (files already added in manual folder) - MNST (quality) · CELH (overshoot)\". The quality book asks what today's price already assumes and whether the runway is longer than that, not whether a de-rating is overdone. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it."
+ },
+ "MCK": {
+  "followed_since": "2026-10-29",
+  "sleeve": "quality",
+  "reason": "McKesson, the US drug distributor, followed under the QUALITY book by operator decision 2026-10-29: the operator named it in the Phase 1 rebuild list, in the operator's words: \"PARR, UBER, GOOGL, NKE, ROST, AMZN, V, TJX, NFLX, LLY, MCK, SMPL, ORKA, CNXC … we can ignore the others as we are not pursuing those names anymore\", and ruled its sleeve `quality` the same day (STATE.md §5.0 row 41). The quality book asks what today's price already assumes and whether the runway is longer than that, not whether a de-rating is overdone. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it."
  }
 }
