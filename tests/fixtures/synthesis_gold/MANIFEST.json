@@ -73,5 +73,6 @@
  "not_copied": {
   "disagreements.jsonl": "each disagreement's claim text and both codings \u2014 derivable from claims + coder_a + coder_b",
   "agree.py / full.py": "the diagnosis's scripts; vinci/evals/gold.py reproduces their counts"
- }
+ },
+ "durable_copy": "the session family's git-ignored data/session-notes/fidelity-gold-2026-11-06/ (in the ai-agent-team-practices worktree): its 8 source files byte-equal source_sha256 (checked 2026-11-06), and its final.py gives the same 283/644 errors and 117/644 material"
 }

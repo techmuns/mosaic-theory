@@ -663,22 +663,25 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    once the judge is calibrated (record §9). The record's R2 says which metrics can be a target:
    today only `M-LABEL` on the panel.
 2. **$0 first.** `python -m vinci.evals panel` (the rule still yields the frozen six), then
-   `python -m vinci.evals capture --ticker <T> --out <scratch>/<T>.json` for each panel page at
-   BASE (main) and at CAND (the branch). The panel inputs are frozen (page blob + transcript
-   sha256s); a refusal means an input moved — stop, do not re-freeze silently. A
-   **mechanical-layer** change does not reach a replay of the committed layer: the PR ships a
-   variant transform that calls its own new code, plus a $0 check that the transform equals the
-   candidate builder's fields on a `vinci dossier precheck` build of the same page (record §3).
+   `python -m vinci.evals compare --base origin/main --cand <branch> [--transform NAME]`: every
+   panel page captured at both refs from the frozen inputs (page blob + transcript sha256s; a
+   refusal means an input moved — stop, do not re-freeze silently). **It refuses when no page's
+   request differs.** A **mechanical-layer** change does not reach a replay of the committed layer:
+   name a transform from `vinci/evals/variants.py` that re-reads the field from the ref's own code
+   (`relabel_drawdown_shape` does the drawdown shape), or ship one with the change, plus a $0 check
+   that it equals the candidate builder's fields on a `vinci dossier precheck` build of the same
+   page (record §3, R7). Say in the PR which of the change's fields the comparison covers.
 3. **Report prompt size per section** (`metrics.prompt_size`) BASE vs CAND, and the diff of the two
    requests — a change must touch only the span it claims (#920 §3's standard).
-4. **Paid draws only on the operator's approval and a stated cap.** `python -m vinci.evals run
-   --ticker <T> --cap <USD> --ledger <outside the repo> --draws-out <outside the repo> --label
-   <BASE|CAND> --paid`, five draws per page per condition, BASE and CAND interleaved page by page.
+4. **Paid draws only on the operator's approval and a stated cap.** `python -m vinci.evals
+   run-compare --base origin/main --cand <branch> [--transform NAME] --cap <USD> --out-dir <outside
+   the repo> --paid`: five draws per page per condition, BASE then CAND page by page, the
+   $0-captured requests sent through production's client (`replay.run_request`).
    The guard refuses any request other than the $0 capture, refuses a draw whose worst case would
    cross the cap, stops on a model mismatch, and prices each call with production's `cost_usd`.
    Raw draws can quote licensed transcripts: they never enter the repository.
-5. **Score at $0** (`metrics.score_units` over `units.draw_units` of each draw) and apply the rule
-   (record §6): the target improves at `p_lower ≤ 0.05` (`stats.stratified_exact`); no other
+5. **Score at $0** — `python -m vinci.evals score --out-dir <dir> --target M-LABEL` — which
+   applies the rule (record §6): the target improves at `p_lower ≤ 0.05` (`stats.stratified_exact`); no other
    metric worsens at `p_upper ≤ 0.05`; any page's modal lean or proposal change, or a panel shift
    in committed-lean draws at p ≤ 0.05, is explained in writing; prompt size and every `M-ECHO`
    phrase are reported. Report the held-out pages (CNXC, MCK, NKE, ROST) separately.

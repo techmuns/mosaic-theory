@@ -525,6 +525,41 @@ Units flagged per draw, scored at the page each build read (unmarked before #865
    (CNXC) to $2.43 (LLY); with the steps 1–2 cap at $45 against ~$32 expected, the headroom (~$13)
    exceeds any one draw's worst case.
 
+### R7. Main against a branch — the first comparison the harness runs ($0 steps shown)
+
+Asked for by the coordinating session after the first results: fix 3a (the label fix) waits on this
+harness, so a two-version comparison must be the first thing it can run. `vinci/evals/compare.py`:
+
+- **`python -m vinci.evals compare --base <ref> --cand <ref> [--transform NAME]`** ($0) captures
+  every panel page at both refs (`capture_at`, frozen inputs) and REFUSES when no page's request
+  differs. **`run-compare … --cap USD --out-dir DIR --paid`** draws them page by page, BASE then
+  CAND, five each, under one guard and cap, sending the $0-captured request itself through
+  production's `AnthropicLlmClient.extract` (`replay.run_request`) — so a branch without the
+  harness is drawn by this one. **`score --out-dir DIR --target M-LABEL`** ($0) applies §6.
+- **Real runs, 2026-11-06:**
+  - `--base origin/main --cand HEAD` (this branch changes no synthesis code): IDENTICAL on all six
+    pages → **REFUSED**, as designed.
+  - `--cand claude/awesome-kilby-7c25a5` (fix 3a at `818c1cc7`), no transform: IDENTICAL on all six
+    → **REFUSED** — its changes are to `mechanical.py`'s words, which a replay of the committed
+    layer cannot see.
+  - The same with `--transform relabel_drawdown_shape` (`variants.py`, which re-reads the no-gap-down
+    shape from the ref's OWN `mechanical._CURRENT_WORDS`, so it is the identity at main): **differs
+    on LLY, MCK, NKE, ROST and SMPL** — one USER line each (a 5-line `-n0` diff), +25 characters, the
+    drawdown shape only; SYSTEM equal; **CNXC unchanged** (its window has gap-downs).
+- **What that does and does not cover:** fix 3a rewrites five labels; the transform re-derives ONE
+  (the drawdown shape — #920's V2, the one with evidence). The trailing EV/EBITDA note, the survival
+  read, the peer-gap question and the catalyst print row need their own transforms (or the
+  rebuilt-layer mode, §10) before a paid comparison measures them; a comparison run now measures
+  fix 3a's drawdown wording alone, and its PR must say so.
+- **Tests** (`tests/test_evals_compare.py`, $0): an unreached comparison is refused; the transform
+  is the identity at main and, with the code's words changed, changes exactly the one escaped JSON
+  span; a gap-down window is untouched; the scorer, on draws built from NFLX's COMMITTED synthesis
+  text, ships a CAND whose "bleed" wording is gone (M-LABEL down on every draw, lean unchanged) and
+  blocks one that adds a quote no fact carries (M-ABSENT worsens).
+- **The gold copy:** the coordinating session named a durable copy of the gold set; its 8 source
+  files are byte-equal to the frozen ones and its `final.py` gives 283/644 and 117/644
+  (`MANIFEST.json`, `durable_copy`).
+
 **BOUNDARY (results).** Proofs: the 8 logs in the session-notes `llm-logs/` folder (copied
 2026-11-06), at the codes and page commits in R1. Gold P/R: 644 claims at `bcda7ce3`'s pages,
 metric code `a677d1a1`, DEV = 330 claims / 14 pages, TEST = 314 / 14. Noise floor: 40 draws, unit =
