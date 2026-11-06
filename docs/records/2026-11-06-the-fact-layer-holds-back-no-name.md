@@ -93,6 +93,17 @@ The committed tree is still checked in CI: `tests/test_facts_contract.py` holds 
 `current.json` resolves. A dangling pointer in an uncommitted store now surfaces at the next
 `load_manifest` of that name, which raises *"no manifest"*.
 
+**ALSO RECORDED HERE: THE OPERATOR'S GIT-GROWTH RULING FOR SLICE 2b (2026-11-06).** The ruling,
+verbatim: *"Yes, keep newest only"*. This record carries it because the coordinator relayed it to
+this change; nothing here implements it.
+- **What it means.** 2b's git-growth policy keeps only the NEWEST screen manifest in the repo
+  tree. Older screen manifests stay in git history and in R2. The 10.1 MB committed screen
+  manifest, `edgar-6e0e4626855b9fce`, is today's newest.
+- **Who implements it.** The 2b build, which writes the next screen snapshot.
+- **STATE row 44** now reads that item as ruled. Its other two sub-items stay open for 2b to
+  propose with numbers: `fetched_at` inside the snapshot id, and `extractor_version` inside every
+  object's name.
+
 **HOW VERIFIED.** All on branch `claude/distracted-hellman-b11386`, off main `7a79c091` (#919
 merged).
 1. **Nine new pins, each failing on main first for the guard's own reason.** The branch's three
