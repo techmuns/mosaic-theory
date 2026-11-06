@@ -26,6 +26,7 @@ from functools import cached_property
 from typing import Any
 
 from vinci.dossier import synthesis as syn
+from vinci.dossier.mechanical import TRAILING_ONLY_NOTE
 from vinci.dossier.schemas import DecisiveQuestion, MechanicalLayer, Synthesis
 from vinci.evals.panel import has_forward_basis
 from vinci.evals.units import Unit
@@ -214,11 +215,23 @@ def _without_series(o: Any) -> Any:
 _SEGMENT_PROFIT_FACT = re.compile(
     r"operating (?:profit|income)|contribution margin|segment (?:profit|margin|operating)", I)
 
+#: The trailing-only family reads the CODE'S OWN caveat (`mechanical.TRAILING_ONLY_NOTE`), split
+#: into its clauses — never a retyped copy, which `test_sleeves` forbids and which would stop
+#: following the code version under test.
+_NOTE_PARTS = [p.strip() for p in re.split(r"[;—]", TRAILING_ONLY_NOTE) if p.strip()]
+
+
+def _loose(phrase: str) -> str:
+    """``phrase`` as a pattern that tolerates a hyphen or any spacing between its words."""
+    return r"\b" + r"[-\s]+".join(re.escape(w) for w in phrase.split()) + r"\b"
+
+
 LABEL_FAMILIES: dict[str, re.Pattern[str]] = {
     "trailing-only": re.compile(
-        r"trailing[- ]only|\bno forward basis\b|temporarily depressed (?:level )?(?:from|vs\.?|"
-        r"versus|or) (?:a )?permanently impaired|cannot (?:by itself )?distinguish (?:a )?"
-        r"temporarily depressed|until a forward basis|without a forward (?:basis|anchor)", I),
+        "|".join([*(_loose(p) for p in _NOTE_PARTS),
+                  r"temporarily depressed (?:level )?(?:from|vs\.?|versus|or) (?:a )?permanently "
+                  r"impaired|cannot (?:by itself )?distinguish (?:a )?temporarily depressed|"
+                  r"until a forward basis|without a forward (?:basis|anchor)"]), I),
     "bleed": re.compile(r"\bbleed\w*", I),
     "no-adjusted-forward": re.compile(
         r"ev_ebitda_adjusted_fwd|adjusted_eps\b[^.;]{0,24}UNKNOWN|\bno (?:revised |post-drawdown |"

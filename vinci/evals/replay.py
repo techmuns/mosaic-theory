@@ -11,7 +11,7 @@ the request captured at $0 for that page and code, and (2) refuses it when spend
 worst case of one more draw would cross the cap. After each response it checks the served model,
 prices the call with production's ``cost_usd`` and appends to a spend ledger outside the repo.
 ``BudgetStop`` is a ``BaseException``, so ``synthesize`` — which survives an ``LlmError`` draw —
-cannot swallow it: the run stops.
+cannot swallow it, and neither can ``run_request``'s per-draw ``LlmError`` handling: the run stops.
 """
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ from typing import Any
 from vinci.config import LLM_PRICE_PER_MTOK
 from vinci.dossier.schemas import MechanicalLayer
 from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, DEFAULT_MODEL, capture_calls, jsonable
-from vinci.graph.llm import cost_usd
+from vinci.graph.llm import AnthropicLlmClient, LlmError, cost_usd
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -171,15 +171,17 @@ def _one(calls: list[dict[str, Any]], draws: int) -> Request:
 
 def capture(page: dict[str, Any], transcript: str | None, *, model: str = DEFAULT_MODEL,
             max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
-            transform: Callable[[MechanicalLayer], MechanicalLayer] | None = None) -> Request:
-    """The request production builds for ``page`` with the code this module is imported from."""
+            transform: Callable[[MechanicalLayer], MechanicalLayer] | None = None,
+            transforms: Sequence[str] = ()) -> Request:
+    """The request production builds for ``page`` with the code this module is imported from;
+    ``transforms`` are named variants (`variants.py`), applied in order."""
     return _one(capture_calls(page, transcript, model=model, max_tokens=max_tokens, draws=draws,
-                              transform=transform), draws)
+                              transform=transform, transforms=transforms), draws)
 
 
 def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
                model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
-               repo: Path = ROOT) -> Request:
+               transforms: Sequence[str] = (), repo: Path = ROOT) -> Request:
     """``capture`` with the code at ``code_ref``: its ``vinci/`` is extracted by ``git archive``
     into a temporary folder and `capture_child.py` runs there in a child process (``-P``: the
     script's own folder is not put on the path), refusing to run against any other ``vinci``. A ref
@@ -204,6 +206,8 @@ def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
                 "--page", str(root / "page.json"), "--out", str(root / "out.json"),
                 "--model", model, "--max-tokens", str(max_tokens), "--draws", str(draws),
                 "--expect-root", str(root / "code")] + (["--unmark-material"] if older else [])
+        for t in transforms:
+            args += ["--transform", t]
         if transcript is not None:
             (root / "transcript.txt").write_text(transcript, encoding="utf-8")
             args += ["--transcript", str(root / "transcript.txt")]
@@ -367,10 +371,11 @@ class GuardedSdk:
     """Wraps the real SDK object (``client._client``) for ONE page and code version."""
 
     def __init__(self, inner: Any, expected: Request, budget: Budget, *, label: str,
-                 draws_out: Path) -> None:
+                 draws_out: Path, client: AnthropicLlmClient) -> None:
         if _inside_repo(draws_out):
             raise ReplayError(f"raw draws {draws_out} would land inside the repository")
         self.inner, self.expected, self.budget, self.label = inner, expected, budget, label
+        self.client = client   # its `_record_usage` reads a response's tokens — one reader
         self.draws_out = draws_out
         self.messages = self
         self.n = 0
@@ -390,10 +395,12 @@ class GuardedSdk:
                              f"${worst:.4f} would cross the ${self.budget.cap_usd:.2f} cap — STOP")
         t0 = time.monotonic()
         msg = self.inner.messages.create(**kwargs)
-        u = getattr(msg, "usage", None)
-        usage = {k: int(getattr(u, k, 0) or 0) for k in
-                 ("input_tokens", "output_tokens", "cache_creation_input_tokens",
-                  "cache_read_input_tokens")}
+        self.client._record_usage(msg)        # production's reader; `extract` repeats it
+        recorded = self.client.last_usage
+        if recorded is None:
+            raise BudgetStop(f"{self.label} draw {self.n}: the response carried no usage — the "
+                             "call cannot be priced, so the run stops")
+        usage = {k: v for k, v in recorded.items() if k != "max_tokens"}
         self.prompt_tokens = (usage["input_tokens"] + usage["cache_creation_input_tokens"]
                               + usage["cache_read_input_tokens"])
         usd = cost_usd(self.expected.model, {**usage, "max_tokens": self.expected.max_tokens})
@@ -415,30 +422,31 @@ class GuardedSdk:
         return msg
 
 
-def run_paid(page: dict[str, Any], transcript: str | None, *, budget: Budget, label: str,
-             draws_out: Path, model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS,
-             draws: int = 5, transform: Callable[[MechanicalLayer], MechanicalLayer] | None = None,
-             sdk: Any | None = None) -> tuple[Any, list[str], str]:
-    """``draws`` PAID draws of ``page`` through production's ``synthesize``, every one behind
-    ``GuardedSdk``. The request is first captured at $0 from the same inputs; the guard then
-    refuses anything else. ``sdk`` replaces the real SDK object (tests); without it the client
-    reads ``ANTHROPIC_API_KEY`` from the environment and the call costs money."""
-    from vinci.dossier.synthesis import synthesize
-    from vinci.evals.capture_child import pre_synthesis_mech
-    from vinci.graph.llm import AnthropicLlmClient
-
-    expected = capture(page, transcript, model=model, max_tokens=max_tokens, draws=draws,
-                       transform=transform)
-    client = AnthropicLlmClient(model=model, max_tokens=max_tokens,
+def run_request(req: Request, *, draws: int, budget: Budget, label: str, draws_out: Path,
+                sdk: Any | None = None) -> list[dict[str, Any] | None]:
+    """``draws`` PAID draws of ONE request captured at $0, sent sequentially (the build's own
+    loop: the first writes the prompt cache, the rest read it) through production's
+    ``AnthropicLlmClient.extract``, each behind ``GuardedSdk``. Returns each draw's raw tool
+    output, or None for a draw the model answered unusably (``LlmError``, as `synthesize` counts
+    it). The request may have been built at any code ref (`capture_at`), so main and a branch are
+    drawn by one process under one cap. ``sdk`` replaces the real SDK object (tests); without it
+    the client reads ``ANTHROPIC_API_KEY`` and the call costs money."""
+    tools = req.kwargs.get("tools") or []
+    if len(tools) != 1:
+        raise ReplayError(f"{label}: a synthesis request carries one tool, this one {len(tools)}")
+    client = AnthropicLlmClient(model=req.model, max_tokens=req.max_tokens,
                                 api_key="test-sdk-not-a-key" if sdk is not None else None)
     inner = sdk if sdk is not None else client._client
-    client._client = GuardedSdk(inner, expected, budget, label=label,  # type: ignore[assignment]
-                                draws_out=draws_out)
-    mech = pre_synthesis_mech(page)
-    if transform is not None:
-        mech = transform(mech)
-    return synthesize(mech, llm=client, ticker=str(page["ticker"]), name=str(page["name"]),
-                      transcript=transcript, sleeve=str(page["sleeve"]), draws=draws)
+    client._client = GuardedSdk(inner, req, budget, label=label,  # type: ignore[assignment]
+                                draws_out=draws_out, client=client)
+    out: list[dict[str, Any] | None] = []
+    for _ in range(draws):
+        try:
+            out.append(client.extract(system=req.system, user=req.user, tool=tools[0],
+                                      cache=draws > 1))
+        except LlmError:
+            out.append(None)
+    return out
 
 
 def load_panel_file(path: Path = PANEL_FILE) -> dict[str, Any]:

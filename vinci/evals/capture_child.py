@@ -23,9 +23,11 @@ table's rows, the only ones ``_mark_material`` marks).
 from __future__ import annotations
 
 import argparse
+import importlib
+import importlib.util
 import json
 import sys
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -68,11 +70,39 @@ class Recorder:
         raise LlmError("capture-only: no request sent")
 
 
+Transform = Callable[[MechanicalLayer], MechanicalLayer]
+
+
+def resolve_transforms(names: Sequence[str]) -> list[Transform]:
+    """Each name → a transform: a key of ``variants.TRANSFORMS`` (``variants.py`` beside this file,
+    loaded BY PATH so it binds to whichever ``vinci`` is importable — the code under test), or
+    ``module:function`` naming one in that code. An unknown name raises; nothing is skipped."""
+    out: list[Transform] = []
+    table: dict[str, Transform] | None = None
+    for name in names:
+        if ":" in name:
+            mod, _, fn = name.partition(":")
+            out.append(getattr(importlib.import_module(mod), fn))
+            continue
+        if table is None:
+            spec = importlib.util.spec_from_file_location(
+                "_evals_variants", Path(__file__).with_name("variants.py"))
+            if spec is None or spec.loader is None:
+                raise RuntimeError("variants.py not found beside capture_child.py")
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            table = dict(module.TRANSFORMS)
+        if name not in table:
+            raise KeyError(f"no transform {name!r}; known: {sorted(table)}")
+        out.append(table[name])
+    return out
+
+
 def capture_calls(
     page: dict[str, Any], transcript: str | None, *, model: str = DEFAULT_MODEL,
     max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
     transform: Callable[[MechanicalLayer], MechanicalLayer] | None = None,
-    unmark_material: bool = False,
+    unmark_material: bool = False, transforms: Sequence[str] = (),
 ) -> list[dict[str, Any]]:
     """Every request ``synthesize`` would send for ``page``, recorded at $0.
 
@@ -84,6 +114,8 @@ def capture_calls(
     rec = Recorder()
     client._client = rec  # type: ignore[assignment]  # the one swapped object
     mech = pre_synthesis_mech(page, unmark_material=unmark_material)
+    for t in resolve_transforms(transforms):
+        mech = t(mech)
     if transform is not None:
         mech = transform(mech)
     syn.synthesize(mech, llm=client, ticker=str(page["ticker"]), name=str(page["name"]),
@@ -107,6 +139,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS)
     ap.add_argument("--draws", type=int, default=5)
     ap.add_argument("--unmark-material", action="store_true")
+    ap.add_argument("--transform", action="append", default=[],
+                    help="a variants.py name or module:function, applied in order")
     ap.add_argument("--expect-root", type=Path,
                     help="refuse unless the imported vinci package lives under this folder")
     a = ap.parse_args(argv)
@@ -119,7 +153,7 @@ def main(argv: list[str] | None = None) -> int:
     page = json.loads(a.page.read_text(encoding="utf-8"))
     tx = a.transcript.read_text(encoding="utf-8") if a.transcript else None
     calls = capture_calls(page, tx, model=a.model, max_tokens=a.max_tokens, draws=a.draws,
-                          unmark_material=a.unmark_material)
+                          unmark_material=a.unmark_material, transforms=a.transform)
     a.out.write_text(json.dumps({"calls": [jsonable(c) for c in calls]}), encoding="utf-8")
     return 0
 
