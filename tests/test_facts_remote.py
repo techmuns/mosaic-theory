@@ -665,7 +665,7 @@ def test_a_snapshot_naming_no_exclusion_uploads_beside_the_committed_ones(
     assert main(["upload", "--snapshot", sid, "--workers", "2"]) == 0
     assert {k: _sha(v) for k, v in bucket.objects.items()} == {
         e["path"]: e["sha256"] for e in manifest_objects(manifest)}
-    assert "0 named by none" in capsys.readouterr().out
+    assert "a manifest, 0 named by none;" in capsys.readouterr().out
 
 
 def test_the_upload_fails_when_the_bucket_holds_what_no_manifest_names(

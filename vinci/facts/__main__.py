@@ -149,7 +149,8 @@ def cmd_ingest(a: argparse.Namespace) -> int:
 
 def cmd_parity(a: argparse.Namespace) -> int:
     from vinci.facts.parity import as_json, compare_page
-    names, skipped, _ = _scope(a, exclude=frozenset(a.exclude))
+    # a ticker as typed: `--exclude burl` skips BURL, as inputs-backfill reads its own
+    names, skipped, _ = _scope(a, exclude=frozenset(t.strip().upper() for t in a.exclude))
     results = []
     cuts: list[tuple[date | None, bool]] = [(None, False),
                                              *((date.fromisoformat(d), False) for d in a.also_at),

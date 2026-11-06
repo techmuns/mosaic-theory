@@ -425,7 +425,7 @@ def test_the_parity_skip_is_an_ordinary_skip_and_its_output_counts_it(
     assert main(["parity", "--cache-dir", str(cache)]) == 1          # NFLX: not in the snapshot
     assert ("2 page-cuts compared; 1 zero-diff; 1 with a diff: NFLX; 0 name(s) of the pages' "
             "scope left out by --exclude") in capsys.readouterr().out
-    assert main(["parity", "--cache-dir", str(cache), "--exclude", "NFLX"]) == 0
+    assert main(["parity", "--cache-dir", str(cache), "--exclude", "nflx"]) == 0  # as typed
     assert ("1 page-cuts compared; 1 zero-diff; 0 with a diff; 1 name(s) of the pages' scope "
             "left out by --exclude") in capsys.readouterr().out
 
