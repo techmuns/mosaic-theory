@@ -392,3 +392,46 @@ class GuardedSdk:
             raise BudgetStop(f"{self.label} draw {self.n}: served by {served!r}, asked for "
                              f"{self.expected.model!r} — STOP")
         return msg
+
+
+def run_paid(page: dict[str, Any], transcript: str | None, *, budget: Budget, label: str,
+             draws_out: Path, model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS,
+             draws: int = 5, transform: Callable[[MechanicalLayer], MechanicalLayer] | None = None,
+             sdk: Any | None = None) -> tuple[Any, list[str], str]:
+    """``draws`` PAID draws of ``page`` through production's ``synthesize``, every one behind
+    ``GuardedSdk``. The request is first captured at $0 from the same inputs; the guard then
+    refuses anything else. ``sdk`` replaces the real SDK object (tests); without it the client
+    reads ``ANTHROPIC_API_KEY`` from the environment and the call costs money."""
+    from vinci.dossier.synthesis import synthesize
+    from vinci.evals.capture_child import pre_synthesis_mech
+    from vinci.graph.llm import AnthropicLlmClient
+
+    expected = capture(page, transcript, model=model, max_tokens=max_tokens, draws=draws,
+                       transform=transform)
+    client = AnthropicLlmClient(model=model, max_tokens=max_tokens,
+                                api_key="test-sdk-not-a-key" if sdk is not None else None)
+    inner = sdk if sdk is not None else client._client
+    client._client = GuardedSdk(inner, expected, budget, label=label,  # type: ignore[assignment]
+                                draws_out=draws_out)
+    mech = pre_synthesis_mech(page)
+    if transform is not None:
+        mech = transform(mech)
+    return synthesize(mech, llm=client, ticker=str(page["ticker"]), name=str(page["name"]),
+                      transcript=transcript, sleeve=str(page["sleeve"]), draws=draws)
+
+
+def load_panel_file(path: Path = PANEL_FILE) -> dict[str, Any]:
+    data: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    return data
+
+
+def panel_inputs(ticker: str, *, panel: dict[str, Any] | None = None,
+                 ciq_root: Path = DEFAULT_CIQ_ROOT) -> tuple[dict[str, Any], str | None]:
+    """A panel page and its transcripts exactly as frozen: the page blob and every transcript's
+    sha256 are checked, so the replay can never silently read today's inputs."""
+    p = panel or load_panel_file()
+    if ticker not in p["pages"]:
+        raise ReplayError(f"{ticker} is not in the frozen panel file")
+    meta = p["pages"][ticker]
+    page = page_at(ticker, p["freeze_ref"], expect_blob=meta["dossier_blob"])
+    return page, transcript_for(ticker, ciq_root=ciq_root, expected=meta["transcripts"], page=page)

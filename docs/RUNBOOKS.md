@@ -649,6 +649,46 @@ pointed into the retired loop (the shortlist step, and ratification of a theme b
 
 ---
 
+## n. CHANGING THE SYNTHESIS PROMPT — measured on the panel before it ships (2026-11-06)
+
+**Applies to** any change that moves the synthesis REQUEST: `vinci/dossier/synthesis.py` (the
+system template, a digest, a material or anchor line, the tool schema) or a word the mechanical
+layer writes into the facts (`vinci/dossier/mechanical.py` labels). The harness is `vinci/evals/`;
+the design, its pre-registered decision rule and every measured number are
+`docs/records/2026-11-06-synthesis-eval-harness-design.md`. Operator ruling 2026-11-06: **"Build it
+first"** — no prompt change or paid rebuild ships unmeasured.
+
+1. **Declare the TARGET in the PR before any draw** — one deterministic metric (`M-LABEL`; a
+   material-direction change targets `M-SIGN` on NFLX, the page where it fires), or a judged class
+   once the judge is calibrated (record §9). The record's R2 says which metrics can be a target:
+   today only `M-LABEL` on the panel.
+2. **$0 first.** `python -m vinci.evals panel` (the rule still yields the frozen six), then
+   `python -m vinci.evals capture --ticker <T> --out <scratch>/<T>.json` for each panel page at
+   BASE (main) and at CAND (the branch). The panel inputs are frozen (page blob + transcript
+   sha256s); a refusal means an input moved — stop, do not re-freeze silently. A
+   **mechanical-layer** change does not reach a replay of the committed layer: the PR ships a
+   variant transform that calls its own new code, plus a $0 check that the transform equals the
+   candidate builder's fields on a `vinci dossier precheck` build of the same page (record §3).
+3. **Report prompt size per section** (`metrics.prompt_size`) BASE vs CAND, and the diff of the two
+   requests — a change must touch only the span it claims (#920 §3's standard).
+4. **Paid draws only on the operator's approval and a stated cap.** `python -m vinci.evals run
+   --ticker <T> --cap <USD> --ledger <outside the repo> --draws-out <outside the repo> --label
+   <BASE|CAND> --paid`, five draws per page per condition, BASE and CAND interleaved page by page.
+   The guard refuses any request other than the $0 capture, refuses a draw whose worst case would
+   cross the cap, stops on a model mismatch, and prices each call with production's `cost_usd`.
+   Raw draws can quote licensed transcripts: they never enter the repository.
+5. **Score at $0** (`metrics.score_units` over `units.draw_units` of each draw) and apply the rule
+   (record §6): the target improves at `p_lower ≤ 0.05` (`stats.stratified_exact`); no other
+   metric worsens at `p_upper ≤ 0.05`; any page's modal lean or proposal change, or a panel shift
+   in committed-lean draws at p ≤ 0.05, is explained in writing; prompt size and every `M-ECHO`
+   phrase are reported. Report the held-out pages (CNXC, MCK, NKE, ROST) separately.
+6. **Write the result into a record** with the counts' boundary (pages, draws, code refs, cost).
+   A held-out page may not be cited as a change's motivating case; if one must be, re-draw the
+   panel by its rule with that page counted motivated, and say so.
+7. **A change to a metric** re-scores the gold (`python -m vinci.evals gold`), moves
+   `tests/fixtures/synthesis_gold/metric_hits.json` deliberately, and states DEV vs TEST again —
+   TEST was scored once at `a677d1a1`; a metric tuned after that reads TEST in-sample, and says so.
+
 ## KNOWN GAP
 
 **None open.** Every loop above is now reproducible from the repo. Items resolved since the first cut

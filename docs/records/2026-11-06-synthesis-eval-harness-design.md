@@ -359,3 +359,175 @@ committed, 180 calendar days back from the last point.
 ## RESULTS
 
 *Nothing below this line existed when the pre-registration above was pushed.*
+
+**Order of events (git).** Pre-registration `8c18fb42` (2026-11-06 17:21:42 +05:30) → metric code
+revised on DEV only → metric code FROZEN `a677d1a1` (17:39:58) → TEST scored once → the noise
+floor, the #920 check and the panel's baseline requests. Every number below is from those runs.
+
+**THE RESULT IN SEVEN LINES.**
+- **The replay is exact:** all 8 saved build logs reproduce byte for byte at the code that wrote
+  them (SYSTEM, USER, model, max_tokens), $0.
+- **M-LABEL generalises** — TEST precision 22/32 (69%), recall 22/27 (81%), material recall 14/17.
+- **M-SIGN and M-PATH are narrow** — on TEST they fire on 0 and 3 claims, recall 0/5 and 1/12:
+  each catches one form of its class, and TEST's errors are mostly the other forms.
+- **M-ABSENT does not generalise** — DEV precision 15/18, recall 15/45; TEST 3/14 and 3/32.
+- **So the deterministic metrics gate LABEL; ABSENT, PATH's other forms, SELECTIVE, OVERREACH,
+  BASIS, STALE and CONFLICT need the judge** — §9's fallback sentence was too generous, measured.
+- **The noise floor:** on the 40 logged draws a uniform 1-unit-per-draw reduction is detectable for
+  M-LABEL, M-ABSENT and M-ECHO; M-SIGN and M-PATH almost never fire on the panel pages (0 and 1 of
+  25 draws), so a fix aimed at them must be measured on a page where they fire.
+- **#920 check: two pre-registered expectations FAIL** (§R5): the bleed family reaches 4/5 → 1/5
+  draws (p 0.206), not #920's 5/5 → 1/5; and M-SIGN agrees with #920's M1 reading on 13 of 20.
+
+### R1. The byte-identity proofs ($0; `python -m vinci.evals prove`)
+
+| page | code (build) | page at | SYSTEM chars | USER chars | SYSTEM / USER sha256 (16) | identical |
+|---|---|---|---:|---:|---|---|
+| NFLX | `c4c9f432` | `bcda7ce3` | 7,364 | 474,921 | `8fcfd615fd0dff95` / `618e478112ec0f1d` | **yes** (= #920 §2) |
+| MCK | `c4c9f432` | `bcda7ce3` | 7,395 | 468,215 | `c39f5394e3bc6c9a` / `88710212607580c7` | **yes** |
+| CNXC | `8d351bb8` | `bcda7ce3` | 5,270 | 348,558 | `2cb3c22d1150784d` / `93854093723dffd1` | **yes** |
+| NKE | `8d351bb8` | `bcda7ce3` | 5,270 | 498,011 | `2cb3c22d1150784d` / `27c193aa27d43e6e` | **yes** |
+| ROST | `8d351bb8` | `bcda7ce3` | 5,301 | 443,339 | `b38004f0750d2510` / `5f49eb901b3ad488` | **yes** |
+| TJX | `8d351bb8` | `bcda7ce3` | 5,270 | 437,727 | `2cb3c22d1150784d` / `8f65a9df6eb82a55` | **yes** |
+| GOOGL | `c3721704^` | `c3721704` | 5,301 | 669,729 | `b38004f0750d2510` / `ca9156b3cb3cebe2` | **yes** |
+| LLY | `11cbc939^` | `11cbc939` | 5,301 | 623,008 | `b38004f0750d2510` / `27399f24f6edc822` | **yes** |
+
+- Each: the full sha256 equal, a 0-line unified diff, the model equal, max_tokens equal to every
+  logged draw's usage; five draws, one identical request. GOOGL's and LLY's logs are of builds the
+  committed pages superseded; their pages are at the artifact commits those builds wrote
+  (`c3721704`, `11cbc939`), and the code is each commit's parent.
+- **A third post-synthesis attachment, found by the proof.** CNXC first differed on ONE line of
+  348,558 characters: a financial-summary row read `"material": false` in the log and `true` on the
+  page. At `8d351bb8` `assemble.py` ran `_mark_material` AFTER `synthesize` (lines 1095 → 1119);
+  #865 (`a15a2abf`, 2026-10-30) moved it before. §3 named two attachments; there are three for a
+  pre-#865 build. `capture_at` now clears the annual table's marks for a ref older than `a15a2abf`
+  (`git merge-base --is-ancestor`); the replay at current code reads the committed marks, as
+  current assembly does.
+
+### R2. The metrics on the gold — DEV in-sample, TEST held out (the headline)
+
+`python -m vinci.evals gold`. Positive = the metric fires on the claim; gold-positive = the final
+verdict is its class. Brackets: Wilson 95%.
+
+| metric | half | fired | TP | FP | FN | precision | recall | material recall | any-error precision |
+|---|---|---:|---:|---:|---:|---|---|---|---|
+| M-LABEL | DEV | 37 | 26 | 11 | 3 | 70% [54–83] | 90% [74–96] | 6/6 | 32/37 |
+| **M-LABEL** | **TEST** | 32 | 22 | 10 | 5 | **69% [51–82]** | **81% [63–92]** | **14/17** | 25/32 |
+| M-SIGN | DEV | 2 | 2 | 0 | 2 | 100% [34–100] | 50% [15–85] | 1/2 | 2/2 |
+| **M-SIGN** | **TEST** | 0 | 0 | 0 | 5 | — | **0% [0–43]** | 0/3 | — |
+| M-PATH | DEV | 3 | 3 | 0 | 4 | 100% [44–100] | 43% [16–75] | 1/4 | 3/3 |
+| **M-PATH** | **TEST** | 3 | 1 | 2 | 11 | **33% [6–79]** | **8% [1–35]** | 0/6 | 3/3 |
+| M-ABSENT | DEV | 18 | 15 | 3 | 30 | 83% [61–94] | 33% [21–48] | 3/9 | 16/18 |
+| **M-ABSENT** | **TEST** | 14 | 3 | 11 | 29 | **21% [8–48]** | **9% [3–24]** | 1/12 | 7/14 |
+
+- **The DEV revisions before the freeze** (each made on a DEV claim, listed so the in-sample
+  figures can be discounted): M-ABSENT — the universe drops numeric-only dated series of ≥30 points
+  (daily prices, quarterly multiples), admits money at ×1/×10⁶ only, reads figures written inside
+  fact strings at face ("$578 billion"), lets a range's first figure borrow the second's scale
+  word, and gains the QUOTE family (a quoted phrase of ≥3 words no fact's text carries), with
+  possessives never read as quotes; M-LABEL — segment-undisclosed is not misleading on a
+  single-segment filer, "gradual" counts only in a decline clause with no rise word, "until/without
+  a forward basis" joins trailing-only, "EBITDA" joins no-adjusted-forward, and a sixth family,
+  runway-not-derivable (a fix-3a label), was added; M-PATH — a hedge ("almost unbroken") is not a
+  monotone claim, and the margin series is matched after "operating/EBIT margin".
+- **Why TEST falls (read, not tuned on):**
+  - *M-SIGN* is #921's flag — a MATERIAL financial-summary figure framed against its sign. None of
+    TEST's five SIGN errors is that form (NKE's peer-gap direction, VRRM's P/E read against its
+    non-operating part, SMPL ×2, V ×1); it fires on NFLX's two claims and nothing else in 644, as
+    #921 recorded.
+  - *M-PATH*: of TEST's 11 misses, 5 are a CUMULATIVE consensus revision written as the current
+    state (SMPL, TGT, UBER, WERN, WLK) — the form §10 pre-registered as not in v1 — 2 a
+    deceleration read as a trend (V), and 4 other path readings (NKE, TGT, WERN, WLK). The
+    monotone-wording form M-PATH reads is the one TEST hit.
+  - *M-ABSENT*: TEST's false positives are consensus-history start points and net-debt bridge
+    figures. Most of its false negatives carry no figure and no quote — paraphrased management
+    statements — which no deterministic check reads.
+- **EXPLORATORY, not pre-registered — M-ABSENT with the WHOLE PAGE as its universe** (the coders
+  read `dossier.json`; the spec reads the layer the model saw): TEST precision 3/9, recall 3/32;
+  DEV 13/15, 13/45. The mismatch explains some TEST false positives, not the recall.
+
+### R3. The noise floor ($0, the 40 logged draws: 8 builds × 5 draws on one identical request)
+
+Units flagged per draw, scored at the page each build read (unmarked before #865):
+
+| metric | units / draw (mean) | mean within-page SD | draws with any | MDR, 8 pages | MDR, the 5 panel pages with a log |
+|---|---:|---:|---:|---|---|
+| M-LABEL | 3.02 | 0.75 | 40/40 | 1 unit/draw (p < 0.001) | 1 (p < 0.001) |
+| M-SIGN | 0.12 | 0.08 | 4/40 (all NFLX) | 2 (p 0.024) | none: 0/25 draws fire |
+| M-PATH | 0.17 | 0.24 | 6/40 | 1 (p 0.034) | none: 1/25 draws fire |
+| M-ABSENT | 1.62 | 0.94 | 27/40 | 1 (p 0.002) | 1 (p 0.013) |
+| M-ECHO | 0.95 | 0.76 | 26/40 | 1 (p < 0.001) | 1 (p 0.001) |
+
+- **MDR** = the smallest uniform reduction (flagged units per draw, floored at 0) the §6 test sees
+  at p ≤ 0.05 with the logged draws as base. The "panel pages with a log" are CNXC, LLY (its
+  superseded build), MCK, NKE, ROST — SMPL has none.
+- **Per page, per draw** (units): M-LABEL CNXC 1,1,2,1,2 · NKE 5,4,4,4,5 · ROST 2,1,1,4,2 ·
+  TJX 3,3,2,3,4 · NFLX 4,4,6,5,4 · MCK 3,3,4,3,4 · GOOGL 3,4,3,3,6 · LLY 1,1,1,3,2.
+- **Leans in the logs:** ROST 3 bullish / 2 mixed and MCK 4/1, GOOGL 4/1 — the committed tallies.
+- **Chars per prompt token**, SYSTEM + USER over draw 1's prompt tokens: 2.541 (LLY) to 2.601 (MCK,
+  ROST) across the 8. The guard bounds a prompt at 2.0 chars per token before its first response —
+  over-estimating tokens by ~27% — and at the response's own count after it.
+
+### R4. M-ECHO and M-SIZE
+
+- **Echoes found in the logged draws** (5-word instruction shingles absent from the facts): "a
+  confidence-gated input, not …" on all 8 pages; "the cause named at the follow" (NFLX, MCK — the
+  anchor ASK #920 §14 suspected); "a genuine counter-point, outweighed by the …" (TJX, LLY — rule
+  7); "a risk, not a neutral gap" (MCK — the opacity rule); "… x net leverage leaving reinvestment"
+  (NFLX — rule 13's old LLY example, which V3 replaced). Some shingles are digest templates once the
+  numbers drop out ("10-Q states $M due $M"); the phrase is always printed so a reader can tell.
+- **The panel's baseline requests at main's synthesis code** (in-process capture; the frozen
+  inputs, blobs and transcript sha256s checked), characters:
+
+| page | SYSTEM | tool | facts | primary source | drivers | transcripts | material | anchor | total | est. tokens |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| CNXC | 7,364 | 8,488 | 266,787 | 5,362 | 16,336 | 60,095 | 1,146 | — | 365,578 | ~142K |
+| LLY | 7,395 | 8,659 | 452,630 | 1,475 | 53,062 | 123,471 | 1,145 | — | 647,837 | ~252K |
+| MCK | 7,395 | 8,659 | 338,147 | 1,398 | 15,202 | 110,887 | — | 2,581 | 484,269 | ~188K |
+| NKE | 7,364 | 8,488 | 351,264 | 1,364 | 34,458 | 110,948 | — | — | 513,886 | ~200K |
+| ROST | 7,395 | 8,659 | 312,639 | 1,274 | 16,351 | 113,098 | — | — | 459,416 | ~179K |
+| SMPL | 7,364 | 8,488 | 319,322 | 6,116 | 20,788 | 111,505 | 1,134 | 3,239 | 477,956 | ~186K |
+
+  MCK's USER sha256 equals its log's (`88710212…`): it carries no material row, so #921 did not
+  change its request.
+
+### R5. The wiring check against #920 (pre-registered expectations, scored as written)
+
+#920's 20 NFLX draws (control + V1–V3, local), scored by the harness at NFLX's page:
+
+| check | expectation | result |
+|---|---|---|
+| M-LABEL bleed, control vs V2 | 5/5 vs ≤1/5, p ≤ 0.05 | **4/5 vs 1/5, p 0.206 — FAILS**; units 9 → 1 |
+| bleed per draw vs #920's M2a | ≤1 in 5 disagree | 19/20 agree (misses C5's "gradual multiple de-rate") |
+| M-PATH per draw vs #920's PATH | ≤1 in 5 disagree | 18/20 agree (V1-4, V2-4: harness yes, #920 a borderline no) |
+| M-SIGN per draw vs #920's M1 | ≤1 in 5 disagree | **13/20 — FAILS**: 7 draws the harness flags, #920 did not |
+
+- **Why M-SIGN differs:** #920's M1 rule removed the verbatim plural label ("…Restruct. Charges")
+  before reading cost words; production's flag, by #921's review round 2, counts calling the figure
+  by a label whose word contradicts its sign as the framing. The two measure different things; the
+  harness carries production's.
+- **Why the bleed check fails at draw level:** "gradual" in C5 sits in a clause the frozen rule
+  reads as not a decline. The unit count (9 → 1) carries the effect; the draw count does not reach
+  #920's.
+
+### R6. What this changes, stated for the coordinator (a proposal — the pre-registered rule is NOT edited)
+
+1. **Targets.** Only M-LABEL is fit to be a change's TARGET metric. A change aimed at ABSENT, PATH's
+   revision form or any judged class has no valid deterministic target until the judge is
+   calibrated; a change aimed at #921's material-direction form is measured on NFLX (where it fires
+   2/5 draws), not the panel.
+2. **The no-worsening gates (§6.2) stay as pre-registered**, read as PROXIES: M-ABSENT counts
+   figures and quotes the facts do not state (TEST precision 21% against ABSENT errors); a
+   worsening blocks pending a written explanation, which is the safe direction.
+3. **§9's fallback sentence is superseded by R2:** without the judge, a change is gated on LABEL
+   and on these proxies only.
+4. **PR 2's caps hold** (§8). The guard's pre-response bound makes its worst case per draw $1.55
+   (CNXC) to $2.43 (LLY); with the steps 1–2 cap at $45 against ~$32 expected, the headroom (~$13)
+   exceeds any one draw's worst case.
+
+**BOUNDARY (results).** Proofs: the 8 logs in the session-notes `llm-logs/` folder (copied
+2026-11-06), at the codes and page commits in R1. Gold P/R: 644 claims at `bcda7ce3`'s pages,
+metric code `a677d1a1`, DEV = 330 claims / 14 pages, TEST = 314 / 14. Noise floor: 40 draws, unit =
+prose units of `units.draw_units`, counted as distinct units with ≥1 hit per draw. #920: its 20
+local draws, NFLX page at `bcda7ce3` (= #918's). Sizes: characters of the captured request at main's
+synthesis code; tokens estimated at 2.57 chars per token (the logs' mean). No API call was made.
