@@ -147,7 +147,8 @@ def parse_verdicts(raw: dict[str, Any] | None, ids: Sequence[str]) -> dict[str, 
             continue
         out[v["id"]] = Verdict(id=v["id"], verdict=v["verdict"],
                                material=bool(v.get("material")) and v["verdict"] != "OK",
-                               favours=str(v.get("favours") or "neither"),
+                               favours=(v["favours"] if v.get("favours") in FAVOURS
+                                        else "neither"),
                                fact=str(v.get("fact") or ""))
     return out
 
@@ -282,7 +283,8 @@ def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = N
         for x in done.read_text(encoding="utf-8").splitlines():
             if x.strip():
                 r = json.loads(x)
-                have[r["page"]] = r
+                if r.get("raw") is not None:   # a failed call is retried, never read as judged
+                    have[r["page"]] = r
     judged: dict[str, Verdict | None] = {}
     for t in sorted({g.page for g in pool}):
         claims = [(g.id, g.text) for g in pool if g.page == t]
@@ -312,11 +314,14 @@ def calibration_text(c: Calibration) -> str:
              f"{c.material_agree_on_both_error[0]}/{c.material_agree_on_both_error[1]}",
              "  class | gold | judged | agree | recall | precision | material: caught / same "
              "class"]
-    for r in c.rows:
-        if r.gold or r.judged:
-            lines.append(f"  {r.cls:9} {r.gold:4} {r.judged:6} {r.agree:5}   {pct(r.recall):>5}"
-                         f"   {pct(r.precision):>5}     {r.material_caught}/{r.material_gold} · "
-                         f"{r.material_same}/{r.material_gold}")
+    shown = [r for r in c.rows if r.gold or r.judged]
+    if len(shown) < len(c.rows):
+        lines.append(f"  (showing {len(shown)} of {len(c.rows)} classes; not shown, 0 gold and 0 "
+                     f"judged: {', '.join(r.cls for r in c.rows if r not in shown)})")
+    for r in shown:
+        lines.append(f"  {r.cls:9} {r.gold:4} {r.judged:6} {r.agree:5}   {pct(r.recall):>5}"
+                     f"   {pct(r.precision):>5}     {r.material_caught}/{r.material_gold} · "
+                     f"{r.material_same}/{r.material_gold}")
     lines.append(f"  BAR (§9): kappa {'MET' if bar['kappa_ok'] else 'NOT MET'}; classes it may "
                  f"gate: {bar['classes_it_may_gate'] or 'none'}")
     return "\n".join(lines)

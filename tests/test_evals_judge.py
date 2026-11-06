@@ -119,3 +119,23 @@ def test_a_half_is_judged_behind_the_guard_and_resumes_free(tmp_path: Path,
                     gold=sub)
     rows = [json.loads(x) for x in (out / "judged.jsonl").read_text().splitlines()]
     assert [r["page"] for r in rows] == ["TECX"]
+
+
+def test_a_failed_judge_call_is_retried_on_resume(tmp_path: Path,
+                                                  gold: list[gd.GoldClaim]) -> None:
+    _history()
+    sub = [g for g in gold if g.page == "TECX"]
+    out = tmp_path / "judge"
+    out.mkdir()
+    (out / "judged.jsonl").write_text(json.dumps({"page": "TECX", "raw": None}) + "\n")
+    ledger = tmp_path / "ledger.jsonl"
+    rp.Budget.open(ledger, cap_usd=5.0, approval="operator: test")
+    sdk = _FakeJudge([g.id for g in sub])
+    judged = jg.run_half("test", budget=rp.Budget.load(ledger), out_dir=out, sdk=sdk, gold=sub)
+    assert sdk.calls == 1 and all(v is not None for v in judged.values())
+
+
+def test_an_unknown_favours_value_is_not_kept() -> None:
+    v = jg.parse_verdicts({"verdicts": [{"id": "a", "verdict": "LABEL", "material": True,
+                                         "favours": "bullish", "fact": "x"}]}, ["a"])["a"]
+    assert v is not None and v.favours == "neither"
