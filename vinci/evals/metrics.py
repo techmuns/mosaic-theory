@@ -120,6 +120,11 @@ class PageContext:
         return sorted(leaves), sorted(written), nums.years, nums.ranks
 
     @cached_property
+    def direction_baseline(self) -> frozenset[str]:
+        """The material-direction flags an EMPTY synthesis raises — claim-independent notices."""
+        return frozenset(syn.material_direction_flags(_carrier(""), self.mech))
+
+    @cached_property
     def facts_norm(self) -> str:
         """Every string the layer carries, folded as `_norm` folds a quote."""
         strings: list[str] = []
@@ -280,12 +285,18 @@ def _carrier(text: str) -> Synthesis:
                      key_unknowns=[text] if text else [])
 
 
+def _cut(text: str, n: int) -> str:
+    """``text`` to ``n`` characters, saying so when it was cut (CLAUDE.md: a truncated output
+    prints its own truncation)."""
+    return text if len(text) <= n else f"{text[:n]}… [cut, {len(text):,} chars]"
+
+
 def material_direction(u: Unit, ctx: PageContext) -> list[Hit]:
     """Production's ``material_direction_flags`` on a one-unit carrier; the flags an EMPTY carrier
     also raises (a figure "not checked") are claim-independent and subtracted as a set."""
-    base = set(syn.material_direction_flags(_carrier(""), ctx.mech))
     flags = syn.material_direction_flags(_carrier(u.text), ctx.mech)
-    return [Hit("M-SIGN", u.id, "material-direction", f[:160]) for f in flags if f not in base]
+    return [Hit("M-SIGN", u.id, "material-direction", _cut(f, 160)) for f in flags
+            if f not in ctx.direction_baseline]
 
 
 # ------------------------------------------------------------------------------------- M-PATH
@@ -483,7 +494,7 @@ def absent_quotes(u: Unit, ctx: PageContext) -> list[Hit]:
         if len(q.split()) < QUOTE_MIN_WORDS or q in ctx.facts_norm:
             continue
         where = ("transcript-only" if ctx.transcript and q in ctx.transcript_norm else "nowhere")
-        out.append(Hit("M-ABSENT", u.id, f"quote:{where}", span[:80]))
+        out.append(Hit("M-ABSENT", u.id, f"quote:{where}", _cut(span, 80)))
     return out
 
 

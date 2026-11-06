@@ -36,6 +36,22 @@ from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, DEFAULT_MODEL, capture
 from vinci.graph.llm import cost_usd
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def _checkouts() -> tuple[Path, ...]:
+    """This checkout and the primary one it is a worktree of (the git common dir's parent), so a
+    path in either — or in any worktree under the primary — counts as inside the repository."""
+    out = [ROOT]
+    done = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--path-format=absolute",
+                           "--git-common-dir"], capture_output=True, text=True)
+    if done.returncode == 0 and done.stdout.strip():
+        out.append(Path(done.stdout.strip()).resolve().parent)
+    return tuple(out)
+
+
+def _inside_repo(path: Path) -> bool:
+    here = path.resolve()
+    return any(c == here or c in here.parents for c in _checkouts())
 PANEL_FILE = Path(__file__).resolve().parent / "synthesis_panel.json"
 #: The assembler's CIQ copy, which every build reads (RUNBOOKS preamble).
 DEFAULT_CIQ_ROOT = Path.home() / "Documents/GitHub/mosaic-theory-ta/data/manual/ciq"
@@ -168,8 +184,13 @@ def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
     into a temporary folder and `capture_child.py` runs there in a child process (``-P``: the
     script's own folder is not put on the path), refusing to run against any other ``vinci``. A ref
     older than #865 clears the material marks its synthesis never read."""
-    older = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor",
-                            MATERIAL_MARKED_BEFORE_SYNTHESIS, code_ref]).returncode != 0
+    rc = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor",
+                         MATERIAL_MARKED_BEFORE_SYNTHESIS, code_ref],
+                        capture_output=True).returncode
+    if rc not in (0, 1):   # an unknown ref, or #865 absent from a shallow history: never a guess
+        raise ReplayError(f"cannot tell whether {code_ref} is before #865 "
+                          f"({MATERIAL_MARKED_BEFORE_SYNTHESIS}): git merge-base exited {rc}")
+    older = rc == 1
     with tempfile.TemporaryDirectory(prefix="evals-code-") as tmp:
         root = Path(tmp)
         tar = subprocess.run(["git", "-C", str(repo), "archive", "--format=tar", code_ref, "vinci"],
@@ -317,9 +338,9 @@ class Budget:
     ledger: Path
 
     def __post_init__(self) -> None:
-        here = self.ledger.resolve()
-        if ROOT in here.parents:
-            raise ReplayError(f"the spend ledger {here} is inside the repository; keep it outside")
+        if _inside_repo(self.ledger):
+            raise ReplayError(f"the spend ledger {self.ledger} is inside the repository; keep it "
+                              "outside")
 
     def spent(self) -> float:
         if not self.ledger.exists():
@@ -347,7 +368,7 @@ class GuardedSdk:
 
     def __init__(self, inner: Any, expected: Request, budget: Budget, *, label: str,
                  draws_out: Path) -> None:
-        if ROOT in draws_out.resolve().parents:
+        if _inside_repo(draws_out):
             raise ReplayError(f"raw draws {draws_out} would land inside the repository")
         self.inner, self.expected, self.budget, self.label = inner, expected, budget, label
         self.draws_out = draws_out

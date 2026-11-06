@@ -58,6 +58,9 @@ def test_capture_at_a_ref_runs_that_refs_code_and_matches_in_process(nflx: dict[
     """The child-process path, at HEAD, against the in-process capture — byte for byte. (At an
     older ref it proved the eight saved build logs; those logs hold licensed transcripts and stay
     out of the repository.)"""
+    if subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e",
+                       f"{rp.MATERIAL_MARKED_BEFORE_SYNTHESIS}^{{commit}}"]).returncode != 0:
+        pytest.skip("#865 is not in this history (shallow clone): capture_at refuses to guess")
     here = rp.capture(nflx, None)
     there = rp.capture_at("HEAD", nflx, None)
     assert there.kwargs == here.kwargs
@@ -193,9 +196,19 @@ def test_the_ledger_and_raw_draws_never_land_in_the_repository(tmp_path: Path,
                                                               nflx: dict[str, Any]) -> None:
     with pytest.raises(rp.ReplayError, match="inside the repository"):
         rp.Budget(cap_usd=1.0, ledger=ROOT / "data" / "ledger.jsonl")
+    primary = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--path-format=absolute",
+                              "--git-common-dir"], capture_output=True, text=True,
+                             check=True).stdout.strip()
+    with pytest.raises(rp.ReplayError, match="inside the repository"):
+        rp.Budget(cap_usd=1.0, ledger=Path(primary).parent / "data" / "ledger.jsonl")
     with pytest.raises(rp.ReplayError, match="inside the repository"):
         rp.GuardedSdk(_FakeSdk(), rp.capture(nflx, None), rp.Budget(1.0, tmp_path / "l.jsonl"),
                      label="t", draws_out=ROOT / "draws.jsonl")
+
+
+def test_an_unknown_code_ref_is_refused_not_guessed(nflx: dict[str, Any]) -> None:
+    with pytest.raises(rp.ReplayError, match="cannot tell whether"):
+        rp.capture_at("no-such-ref-anywhere", nflx, None)
 
 
 def test_the_worst_case_has_no_guessed_price() -> None:
