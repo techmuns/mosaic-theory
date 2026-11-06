@@ -634,6 +634,8 @@ earlier number stands as measured.
     - **M-PATH** — monotone wording over an annual series; not the cumulative-revision form.
     - **M-ABSENT** — a no-worsening proxy (TEST precision 3/14); never a target.
 
+- **CI and local resolve different `anthropic` SDKs:** `pyproject`'s unpinned `anthropic>=0.112` gives 2.6.0 (on `httpx2`) on CI and 0.112.0 (on `httpx` 0.28.1) locally; #924's gate failed once on that (a test-only fix, `9bcdded1`, passing on both), and whether to pin is the operator's call.
+
 **BOUNDARY (results).** R8's panel: the same 28 frozen rows at `bcda7ce3` with `motivated` recomputed (subjects + bodies of the prompt commits to `bcda7ce3`, the fix-3a record at `4449189d`). Proofs: the 8 logs in the session-notes `llm-logs/` folder (copied
 2026-11-06), at the codes and page commits in R1. Gold P/R: 644 claims at `bcda7ce3`'s pages,
 metric code `a677d1a1`, DEV = 330 claims / 14 pages, TEST = 314 / 14. Noise floor: 40 draws, unit =
