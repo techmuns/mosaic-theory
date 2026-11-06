@@ -17,6 +17,7 @@ the dossier writes nothing to the ledger.
 
 from __future__ import annotations
 
+import functools
 import json
 import re
 import time
@@ -27,6 +28,7 @@ from datetime import date
 from decimal import ROUND_FLOOR, Decimal
 from typing import Any, cast
 
+from vinci.dossier.materiality import UNUSUAL_ITEM_LABELS
 from vinci.dossier.schemas import (
     FIGURE_OPERATIONS,
     DecisiveQuestion,
@@ -1993,6 +1995,91 @@ def _synthesis_prose(synth: Synthesis) -> str:
     return " ".join(out)
 
 
+#: The statement a material figure's effect is stated on (`MaterialFigure.statement`).
+INCOME_STATEMENT = "Income Statement"
+
+#: (2026-11-05) THE DIRECTION WORDS `material_direction_flags` reads: the coordinator's two
+#: lists with their inflections, plus the common words outside them (review round 2). A COST word
+#: frames a figure as taking from earnings, a GAIN word as adding to them. Whole words only:
+#: "costly", "surcharge" and "regained" are not read.
+#:
+#: INCOME AND EARNINGS ARE THE MEASURE, NEVER A DIRECTION (review round 2). "reduces reported
+#: income" frames a cost and "lifts reported income" a gain, so only what is DONE to the measure
+#: is read (`_EFFECT_COST`, `_EFFECT_GAIN`). The item's own name for a gain, "non-operating
+#: income" or "other income", is read as a gain.
+_EARNINGS = r"(?:income|earnings|profits?|EPS)"
+#: up to 40 characters between the verb and its object, a period only inside a number
+#: ("ADDS $2,800.0M to pre-tax income", #920's echo)
+_GAP = r"(?:[^.;]|\.(?=\d)){0,40}?"
+_EFFECT_COST = (rf"\b(?:subtract|reduc|depress|cut|lower|dent)\w*\b{_GAP}\b{_EARNINGS}\b")
+_EFFECT_GAIN = (rf"\b(?:add(?:s|ed|ing)?|lift(?:s|ed|ing)?|rais(?:e|es|ed|ing)|increas\w*)\b"
+                rf"{_GAP}\b{_EARNINGS}\b")
+_COST_WORD = re.compile(
+    r"\b(?:charg(?:e|es|ed)|costs?|drags?|expens(?:e|es|ed)|loss(?:es)?|write-?\s?downs?|"
+    r"write-?\s?offs?|impairments?|impaired|burdens?|dilut(?:ive|ion|es|ed|ing)|headwinds?|"
+    r"penalt(?:y|ies)|penali[sz]\w*|weigh(?:s|ed|ing)?\s+on|hit(?=\s*(?:[.;,)]|$|to\b|on\b)))\b"
+    rf"|{_EFFECT_COST}", re.IGNORECASE)
+_GAIN_WORD = re.compile(
+    r"\b(?:gains?|benefit(?:s|ed|ted)?|inflat(?:e|es|ed|ing)|boost(?:s|ed|ing)?|"
+    r"flatter(?:s|ed|ing)?|tailwinds?|non-?operating\s+income|other\s+income)\b"
+    rf"|{_EFFECT_GAIN}", re.IGNORECASE)
+#: Phrases that carry a direction word and frame NO figure, removed before the words are read:
+#: - BOTH DIRECTIONS AT ONCE, the accounting labels' own form: "Gain (Loss)", "(Gain) Loss",
+#:   "gains and losses", "Income (Expense)";
+#: - A LOSS MEASURE NAMED, not a figure framed: "net loss", "operating loss", "pre-tax loss";
+#: - a cost LINE named: "cost of revenue", "cost of sales", "cost of goods".
+_NEUTRAL_DIRECTION = re.compile(
+    r"\bgains?\s*\(\s*loss(?:es)?\s*\)|\(\s*gains?\s*\)\s*loss(?:es)?"
+    r"|\bgains?\s*(?:/|&|\band\b|\bor\b)\s*loss(?:es)?\b"
+    r"|\bincome\s*\(\s*expense\s*\)|\(\s*income\s*\)\s*expense\b"
+    r"|\b(?:net|operating|pre-?tax|gross|comprehensive)\s+loss(?:es)?\b"
+    r"|\bcost\s+of\s+(?:revenue|sales|goods)\b",
+    re.IGNORECASE)
+
+
+def _neutral(text: str, *, label: str | None = None) -> str:
+    """``text`` with every phrase that frames no figure blanked: the both-ways and measure
+    phrases (`_NEUTRAL_DIRECTION`) and, given one, the row's own LABEL. A label's words do not
+    count — "Gain (Loss) On Sale Of Invest." is the row's name, not a framing — so the label is
+    matched as a phrase, loosely, the way prose writes it: case-free, "R&D" for "R & D", "and"
+    for "&", a word lengthened ("Restructuring" for "Restruct.") or made singular ("Charge" for
+    "Charges"). The caller passes no label when the label's own word contradicts the sign
+    (`_framing`): then calling the figure by its label IS a framing."""
+    if label and (phrase := _label_phrase(label)) is not None:
+        text = phrase.sub(" ", text)
+    return _NEUTRAL_DIRECTION.sub(" ", text)
+
+
+@functools.lru_cache(maxsize=64)
+def _label_phrase(label: str) -> re.Pattern[str] | None:
+    """The row label as a loose phrase (`_neutral`), built once per label."""
+    words = re.findall(r"[A-Za-z]+", label.removesuffix(" ($M)"))
+    stems = [w[:-1] if len(w) > 3 and w.lower().endswith("s") else w for w in words]
+    if not stems:
+        return None
+    phrase = r"(?:[\s&().,/-]|\band\b)*".join(rf"{re.escape(s)}\w*" for s in stems)
+    return re.compile(rf"\b{phrase}", re.IGNORECASE)
+
+
+def _direction_words(text: str) -> tuple[list[str], list[str]]:
+    """(cost words, gain words) in ``text``, each once (case-free), as first written."""
+    def found(rx: re.Pattern[str]) -> list[str]:
+        out: dict[str, str] = {}
+        for m in rx.finditer(text):
+            out.setdefault(m.group().lower(), m.group())
+        return list(out.values())
+    return found(_COST_WORD), found(_GAIN_WORD)
+
+
+def _framing(text: str, fig: MaterialFigure) -> tuple[list[str], list[str]]:
+    """(cost, gain) direction words in a claim stating ``fig``, once `_neutral` has blanked what
+    frames no figure. The row's label is blanked only when it does not contradict the sign: NFLX's
+    "A $2,800.0M Merger & Related Restruct. Charge …" calls a gain by a cost word (review round 2,
+    the incident's own shape)."""
+    blank = fig.label if fig.label_against_sign is None else None
+    return _direction_words(_neutral(text, label=blank))
+
+
 @dataclass(frozen=True)
 class MaterialFigure:
     """One figure item 19c demands the synthesis prose state: a material row's value, the actual
@@ -2007,8 +2094,48 @@ class MaterialFigure:
     def stated(self) -> str:
         """How the prompt asks for it: millions to one decimal, the EXACT form. Never the 1-dp
         billions form the guard also accepts — a ±$50M bucket in which one citation could
-        satisfy two demands (`_figure_cited`); the prompt must not invite it."""
+        satisfy two demands (`_figure_cited`); the prompt must not invite it.
+
+        UNSIGNED, AND IT STAYS UNSIGNED (2026-11-05). A reader writes "a $2,800.0M gain", never
+        "+$2,800.0M", and the guard matches the absolute value. The direction is stated BESIDE
+        this form (`effect`) and read back by a flag (`material_direction_flags`); putting it in
+        the form the guard demands would make the framing a refusal, which needs a ruling."""
         return f"${abs(self.value):,.1f}M"
+
+    @property
+    def statement(self) -> str | None:
+        """The statement the row is read from, or None when that cannot be told. Only CIQ's
+        Income Statement unusual-items rows are named (`materiality.UNUSUAL_ITEM_LABELS`): every
+        material row on the 28 committed pages is one, and no other row's sign convention has been
+        measured. A Cash Flow row is never material today (`_CORE_BRIEF_LABELS`)."""
+        base = self.label.removesuffix(" ($M)")
+        return INCOME_STATEMENT if base in UNUSUAL_ITEM_LABELS else None
+
+    @property
+    def effect(self) -> str | None:
+        """Which way the figure moves pre-tax income, read off the SIGN alone — accounting fact,
+        not a view. On CIQ's Income Statement an unusual item adds to pre-tax income when positive
+        and subtracts when negative (measured, `UNUSUAL_ITEM_LABELS`). None for a row from no
+        identified statement: a direction stated without the convention would be a guess."""
+        if self.statement != INCOME_STATEMENT:
+            return None
+        if self.value > 0:
+            return f"it ADDS {self.stated} to pre-tax income (a gain)"
+        return f"it SUBTRACTS {self.stated} from pre-tax income (a charge)"
+
+    @property
+    def label_against_sign(self) -> str | None:
+        """The label's own direction word, when it points against the sign — NFLX's +2,800.0 on
+        'Merger & Related Restruct. Charges'. None for a label with no direction word of its own
+        ('Gain (Loss) …' names both, 'Legal Settlements' neither) or one that agrees."""
+        if self.effect is None:
+            return None
+        cost, gain = _direction_words(_neutral(self.label.removesuffix(" ($M)")))
+        if self.value > 0 and cost and not gain:
+            return cost[0]
+        if self.value < 0 and gain and not cost:
+            return gain[0]
+        return None
 
     def cited_in(self, prose: str) -> bool:
         return _figure_cited(prose, self.value)
@@ -2115,6 +2242,59 @@ def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[st
     return [str(f) for f in demanded_material_figures(mech) if not f.cited_in(prose)]
 
 
+def material_direction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
+    """A claim that states a MATERIAL figure and frames it only AGAINST its sign — a QA FLAG.
+
+    THE INCIDENT (NFLX, PR #918, 2026-11-05). The table held +2,800.0 on 'Merger & Related
+    Restruct. Charges' — the WBD termination fee, which ADDS to pre-tax income — and the synthesis
+    called it "a one-time rather than recurring drag" and "restructuring/aborted-deal costs". The
+    presence guard passed: the figure was stated, at the wrong sign. The prompt now states each
+    figure's effect (`MaterialFigure.effect`); this reads the draw back, because synthesis
+    correctness is stochastic and a told model can still misread.
+
+    WHAT FIRES IT, all deterministic. For each demanded figure from an identified statement, each
+    claim stating it (`_located_claims`, `cited_in`) is read for direction words (`_COST_WORD`,
+    `_GAIN_WORD`) once the phrases that frame no figure are blanked (`_neutral`). It fires when the
+    claim's words point ONLY against the sign: a cost word and no gain word for a figure that adds
+    to pre-tax income, or the reverse. The row's label is blanked as its name, UNLESS the label's
+    own word contradicts the sign: then calling the figure by it ("a $2,800.0M Merger & Related
+    Restruct. Charge") is the framing (review round 2). Income and earnings are the measure, not
+    a direction: "reduces reported income" frames a cost and "lifts" it a gain. A figure from no
+    identified statement is reported as not checked — never read as a pass.
+
+    THE CLAIM, NOT A SENTENCE: CIQ's labels and company names carry periods ("Restruct.",
+    "Invest.", "Bros."), and a sentence split on them cut NFLX's own bear point away from its
+    "drag". LIMITS, stated: a claim carrying words of both directions is read as two-sided and not
+    flagged — the check cannot tell which word frames the figure; a framing outside the word lists
+    is not read — "a negative for", "a positive for", "paid … outflow", "hit" as a verb ("hit a
+    record") — and nor is an effect verb more than 40 characters from its "income"/"earnings";
+    and it is a FLAG, not a refusal — the operator rules on HARD. The sign is accounting fact;
+    whether the figure bears for or against the case is not read."""
+    flags: list[str] = []
+    claims = _located_claims(synth)
+    for f in demanded_material_figures(mech):
+        if f.effect is None:
+            flags.append(f"MATERIAL-DIRECTION: {f} not checked — the row's statement is not "
+                         "identified, so its sign gives no direction here")
+            continue
+        for where, text in claims:
+            if not f.cited_in(text):
+                continue
+            cost, gain = _framing(text, f)
+            if f.value > 0 and cost and not gain:
+                frame, words = "a cost", cost
+            elif f.value < 0 and gain and not cost:
+                frame, words = "a gain", gain
+            else:
+                continue
+            quoted = ", ".join(f"'{w.lower()}'" for w in words)
+            flags.append(
+                f"MATERIAL-DIRECTION ({where}): frames {f} as {frame} ({quoted}, nothing the other "
+                f"way) — but on the {f.statement} {f.effect}, whatever its label says. Read the "
+                f"sign, not the label. Claim: “{_snip(text, 120)}”")
+    return flags
+
+
 #: Opens the prompt section that names the figures 19c demands — present only when one is.
 MATERIAL_FIGURES_HEADER = "=== MATERIAL FIGURES — STATE EACH ONE ==="
 
@@ -2205,21 +2385,44 @@ def _drawdown_anchor_digest(dumped: dict[str, Any]) -> str | None:
 
 def _material_figures_digest(figs: list[MaterialFigure]) -> str:
     """The prompt section: each figure the guard will demand, in a form it accepts, with the ref a
-    point stating it cites. No direction: where a figure bears is the model's to frame."""
+    point stating it cites — and its SIGNED value with which way it moves pre-tax income.
+
+    THE SIGN IS ACCOUNTING FACT, NOT A VIEW (2026-11-05). Each line states the signed value and,
+    for an Income Statement unusual item, its effect on pre-tax income, derived from the sign
+    alone (`MaterialFigure.effect`); where the label's own direction word points the other way,
+    the line says so. The first cut printed NFLX's +2,800.0 'Merger & Related Restruct. Charges'
+    as `2,800.0 in the table; write "$2,800.0M"` and called itself directionless — so the label's
+    "Charges" was the only direction the line gave, and the synthesis called a gain a charge. A
+    row from no identified statement gets its signed value and no effect: a direction stated
+    without its convention would be a guess. Whether a figure bears FOR or AGAINST the case stays
+    the model's to frame; nothing here names a lean or a verdict."""
     lines = [
         MATERIAL_FIGURES_HEADER,
         "Each row below is marked material in the annual financial summary of the facts above. "
         "State EVERY figure listed, written as shown, in at least one entry of "
         f"{', '.join(SYNTHESIS_CLAIM_LISTS)}: wherever it bears on the argument, or in "
         "key_unknowns where it bears on neither case. A point that states one cites the listed "
-        "source_ref. A synthesis that does not state each listed figure is REFUSED.",
+        "source_ref. A synthesis that does not state each listed figure is REFUSED. Each line "
+        "gives the figure's SIGNED value in the table and, for an Income Statement unusual item, "
+        "which way it moves pre-tax income: accounting fact, read off the sign, never off the "
+        "row's label (on CIQ's Income Statement an unusual item printed positive adds to pre-tax "
+        "income and one printed negative subtracts). Describe each figure the way it moves; "
+        "whether that bears for or against the case is yours to frame.",
     ]
     for f in figs:
         # A form the guard would not accept would ask for a refusal; never offer one.
         if not f.cited_in(f.stated):
             raise ValueError(f"{f}: the stated form {f.stated!r} fails `_figure_cited`")
         ref = f"; source_ref: {f.source_ref}" if f.source_ref else ""
-        lines.append(f"- {f.label}, {'/'.join(f.periods)}: {f.value:,.1f} in the table; "
+        if f.effect is None:
+            how = ("from a statement this line cannot identify, so no effect on pre-tax income "
+                   "is stated")
+        else:
+            how = f"an {f.statement} unusual item: {f.effect}, whatever the row's label says"
+            if (word := f.label_against_sign) is not None:
+                how += (f'; the label\'s own word "{word}" points the other way, and the sign '
+                        "decides")
+        lines.append(f"- {f.label}, {'/'.join(f.periods)}: {f.value:+,.1f} in the table, {how}; "
                      f'write "{f.stated}"{ref}')
     return "\n".join(lines)
 
