@@ -49,7 +49,9 @@ held-name exclusion cannot be forgotten"*.
   the hold) nor MCK (its page came after the snapshot, #918). Parity's output now COUNTS what the
   skip leaves out: *"N name(s) of the pages' scope left out by --exclude"*. `inputs-backfill`
   prints its skip the same way. Under the hold the output said nothing about these names, because
-  a held name was never to be named.
+  a held name was never to be named. A ticker is read as typed and upper-cased, as
+  `inputs-backfill` reads its own, so `--exclude burl` skips BURL. On main the match was
+  case-sensitive and skipped nothing (review round 0, 45fd3c9d; the parity pin passes `nflx`).
 - **Every other upload guard.** These are the local pre-verify, `If-None-Match`, the PUT's
   re-hash, the sha256 read-back, and the bucket audit that fails the run on a key no committed
   manifest names. They are untouched; HOW VERIFIED shows them still caught.
@@ -161,7 +163,18 @@ merged).
      `test_the_upload_fails_when_the_bucket_holds_what_no_manifest_names` and
      `test_the_bucket_is_listed_across_pages_and_a_stray_key_is_counted`;
    - the audit's FAIL disabled: caught by the first of those two.
-6. **The gate.** ruff, `mypy --strict` and `pytest -m "not network"`: counts in the PR body.
+6. **The gate.**
+   - `ruff check vinci tests frontend` is clean, and `mypy --strict vinci` reports no issues in
+     189 files.
+   - `pytest -m "not network"` ran locally on `34e070aa` (21 min 46 s): 9,459 passed, 4 failed,
+     112 skipped, 39 deselected, 8 xfailed.
+   - The 4 failures fail the same way on main `7a79c091`, run against the same git-ignored local
+     inputs this worktree holds (a `data/manual` CIQ link, `data/cache` and a `vinci.db`). They
+     are GOOGL's and LLY's consensus spreads (`test_forward_consensus`), the forward-multiple
+     refresh (`test_forward_multiple_history`), and the gated price-store freshness check
+     (`test_store_freshness`, the local store 7–24 days behind). None reads `vinci/facts`.
+   - After round 0 and the row-44 docs commit, the three fact test files (105 tests) and the
+     record and STATE guards (880) pass again.
 
 **BOUNDARY.**
 - **Committed manifests.** The two at main `7a79c091`:
