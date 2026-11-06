@@ -340,6 +340,16 @@ const EXTRACTION_VERSIONS = [
     "absolute local path that named the user and the session; the rendered page is unchanged, " +
     "and the pages stamped before it were rewritten in place to the same form. No extracted " +
     "value changes"],
+  ["2026-11-05.nonop-window-fourth-quarter",
+    "the non-operating read's trailing four are the filer's calendar quarters ending at its" +
+    " window end: a quarter no 80-100-day fact states — each 10-K's fiscal Q4 on the 26 " +
+    "committed pages checked, which the 10-K states only inside the year — is derived as " +
+    "the longer period less the shorter on one tag (`filed_tiebreak.filed_quarter`; Q4 = " +
+    "the year less the nine months) and cited with both filings; a year restated after its " +
+    "nine months were filed is never paired with them, and a derived revenue below zero is " +
+    "no quarter; a quarter that cannot be read leaves the window short, said in the count " +
+    "(`nonoperating_quarters.window`), the prose and the cite, and no older quarter is read" +
+    " in its place"],
   ["2026-11-05.material-figure-direction",
     "each material-figure line of the synthesis prompt states the figure's SIGNED value " +
     "and, for a row of CIQ's Income Statement unusual-items block " +

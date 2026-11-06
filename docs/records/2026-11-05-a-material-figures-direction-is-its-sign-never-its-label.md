@@ -13,8 +13,10 @@ superseded-by:
 termination fee: its Q1 2026 10-Q shows pre-tax income about $2.6B above operating income, so it
 ADDS to earnings. The page's table, its caveat and its first bear point have the direction right.
 Its synthesis still called the figure "a Charge … a one-time rather than recurring drag" (bear
-point) and "restructuring/aborted-deal costs" (key unknown). **NFLX is rebuilt ONCE, after this fix
-and #916 (the non-operating window) have both landed. That rebuild is not part of this build.**
+point) and "restructuring/aborted-deal costs" (key unknown). **NFLX is rebuilt ONCE, after the prompt fixes (operator,
+via the coordinator, 2026-11-06). #916, the non-operating window, has landed. That rebuild is not
+part of this build.** #918's STATE row-41 "DEFECT, AWAITING THE OPERATOR" item is closed by this
+build: struck there, with this record cited.
 
 **WHAT.**
 - **The source.** `MaterialFigure.stated` returns the unsigned form, `f"${abs(self.value):,.1f}M"`.
@@ -72,9 +74,19 @@ and #916 (the non-operating window) have both landed. That rebuild is not part o
   READER's caveats in validator-speak (review round 0). Showing it to the reader instead is
   one line, and the operator's call.
 - **Extraction version `2026-11-05.material-figure-direction`**, in Python and its `dossier.js`
-  twin, re-pinned. The re-pin moved exactly `assemble.py`, `materiality.py` and `synthesis.py`.
-  #916 adds `2026-11-05.nonop-window-fourth-quarter`; whichever merges second keeps both rows, in
-  merge order.
+  twin, re-pinned. Against main the re-pin moves exactly `assemble.py`, `flags.py`,
+  `materiality.py` and `synthesis.py`. #916's `2026-11-05.nonop-window-fourth-quarter` merged
+  first, and both tables keep the two rows in merge order, each a whole block.
+
+**#920'S CAUSALITY TEST, RUN BESIDE THIS BUILD.** #920 (`docs/records/2026-11-05-nflx-synthesis-
+causality-test.md`) drew NFLX five times on a signed line close to this one (its V1). That line
+lacked the label clause.
+- **The direction.** Every V1 draw stated the row as a gain, against 2 of 5 control draws. #920
+  calls this suggestive, not evidence (p = 0.167, n = 5).
+- **An echo.** Every V1 draw wrote "ADDS … to pre-tax income", and one wrote "whatever the
+  'Merger & Related Restruct. Charges' label says": the instruction's words reached the prose.
+  This build keeps the brief's wording and leaves the echo to the coordinator. The check is
+  indifferent to it: an echo reads as agreeing with the sign.
 
 **WHY.** The 19c guard proves a material figure is STATED; it never asked which way the figure was
 stated. NFLX passed the guard with the right number at the wrong sign. The sign of a CIQ
@@ -134,8 +146,10 @@ the prompt complete. Bull or bear stays the model's call.
 - The suite (ruff, `mypy --strict vinci`, `pytest -m "not network"`): counts in the PR body.
 
 **BOUNDARY.**
-- **The 28 pages:** main `3e97ee7d`'s 27 `data/dossiers/*/dossier.json`, with NFLX and MCK taken
-  from #918's head `0dbe8f97`. 6 have a material row; MCK has none.
+- **The 28 pages:** first measured on main `3e97ee7d`'s 27 `data/dossiers/*/dossier.json`, with
+  NFLX and MCK taken from #918's head `0dbe8f97`. Re-run on the merge with main `dc5b8787`, where
+  #918 has landed, with all 28 read from the tree: the output was byte-identical. 6 pages have a
+  material row; MCK has none.
 - **The 7 stating claims:** entries of `_located_claims` in which `_figure_cited` finds a demanded
   figure. NFLX has 2; AMZN, CNXC, GOOGL, LLY and SMPL have 1 each.
 - **The 36 exports:** every ticker folder of the primary checkout's CIQ folder on 2026-11-05,

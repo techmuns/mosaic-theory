@@ -20,3 +20,9 @@ a test reads the file here first, and the tracking fixture only when none is her
 - `AMZN.json` — the tracking fixture as committed at main `9e996d7f` (cash instant 2026-06-30, the
   date CIQ's frozen AMZN figures carry). Frozen 2026-11-03, when AMZN's page moved to its
   September-quarter 10-Q. Refreeze it together with the CIQ side, never alone.
+- `nonop_window/` — GOOGL, ORKA, WOR, UBER and FUBO, the tracking fixtures as committed at main
+  `c4c9f432`. Frozen 2026-11-05 for the non-operating window's value pins
+  (`tests/test_nonoperating_earnings.py`, `tests/test_r4_machine_proposal.py`; #916 review
+  round 2). A subfolder, not `<T>.json` here, because GOOGL.json above is a different vintage
+  frozen for the CIQ side. Each pin cuts its copy at a stated date (`concepts.facts_as_of`), so
+  these are refrozen only when a pin's own date moves.
