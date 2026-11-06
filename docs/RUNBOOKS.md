@@ -649,6 +649,52 @@ pointed into the retired loop (the shortlist step, and ratification of a theme b
 
 ---
 
+## n. CHANGING THE SYNTHESIS PROMPT — measured on the panel before it ships (2026-11-06)
+
+**Applies to** any change that moves the synthesis REQUEST: `vinci/dossier/synthesis.py` (the
+system template, a digest, a material or anchor line, the tool schema) or a word the mechanical
+layer writes into the facts (`vinci/dossier/mechanical.py` labels). The harness is `vinci/evals/`;
+the design, its pre-registered decision rule and every measured number are
+`docs/records/2026-11-06-synthesis-eval-harness-design.md`. Operator ruling 2026-11-06: **"Build it
+first"** — no prompt change or paid rebuild ships unmeasured.
+
+1. **Declare the TARGET in the PR before any draw** — one deterministic metric (`M-LABEL`; a
+   material-direction change targets `M-SIGN` on NFLX, the page where it fires), or a judged class
+   once the judge is calibrated (record §9). The record's R2 says which metrics can be a target:
+   today only `M-LABEL` on the panel.
+2. **$0 first.** `python -m vinci.evals panel` (the rule still yields the frozen six), then
+   `python -m vinci.evals compare --base origin/main --cand <branch> [--transform NAME]` (its
+   capture child holds no key and no network): every
+   panel page captured at both refs from the frozen inputs (page blob + transcript sha256s; a
+   refusal means an input moved — stop, do not re-freeze silently). **It refuses when no page's
+   request differs.** A **mechanical-layer** change does not reach a replay of the committed layer:
+   name a transform from `vinci/evals/variants.py` that re-reads the field from the ref's own code
+   (`relabel_drawdown_shape` does the drawdown shape), or ship one with the change, plus a $0 check
+   that it equals the candidate builder's fields on a `vinci dossier precheck` build of the same
+   page (record §3, R7). Say in the PR which of the change's fields the comparison covers.
+3. **Report prompt size per section** (`metrics.prompt_size`) BASE vs CAND, and the diff of the two
+   requests — a change must touch only the span it claims (#920 §3's standard).
+4. **Paid draws only on the operator's approval and a stated cap — opened ONCE, shared by every
+   run.** `python -m vinci.evals budget-open --budget-ledger <outside the repo> --cap <USD>
+   --approval "<the operator's words>"`. Then, BEFORE any draw, `register --base origin/main
+   --cand <branch> [--transform NAME] --target M-LABEL --out <outside>/registration.json` (pages,
+   draws, targets, scorer fingerprint, the change's held-out pages, hashed), and `run-compare
+   --registration <file> --budget-ledger <file> --out-dir <a fresh folder outside the repo>
+   --paid`. A stop or resume runs again into a fresh out-dir under the SAME ledger and
+   registration; the cap is the approval's, never one run's.
+5. **Score at $0** — `python -m vinci.evals score --out-dir <dir> --registration <file>` — from
+   the registered scorer; it refuses unregistered pages, counts or targets, and logs every score.
+   It applies the rule (record §6, R8): each target improves at `p_lower ≤ 0.05` after Holm; no
+   other class metric worsens at `p_upper ≤ 0.05`; any page's modal lean or proposal change, or a
+   panel shift in committed-lean draws at p ≤ 0.05, is explained in writing; prompt size and
+   every `M-ECHO` phrase are reported. The held-out pages are the CHANGE's (`register` names
+   them); no page of the corpus is held out from the diagnosis-era fixes (record R8).
+6. **Write the result into a record** with the counts' boundary (pages, draws, code refs, cost,
+   the registration's sha256).
+7. **A change to a metric** re-scores the gold (`python -m vinci.evals gold`), moves
+   `tests/fixtures/synthesis_gold/metric_hits.json` deliberately, and states DEV vs TEST again —
+   TEST was scored once at `a677d1a1`; a metric tuned after that reads TEST in-sample, and says so.
+
 ## KNOWN GAP
 
 **None open.** Every loop above is now reproducible from the repo. Items resolved since the first cut

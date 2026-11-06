@@ -119,6 +119,15 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Eval panel / held-out page / M-LABEL … M-ECHO / MDR** (2026-11-06, the synthesis eval
+  harness). Plain words: *the six pages every synthesis-prompt change is drawn on, chosen by a
+  rule over page attributes; a held-out page is a panel page the CHANGE under test never names in
+  its commits or records (none of the corpus is held out from the diagnosis-era fixes); M-… are the
+  deterministic fidelity checks run on each draw's prose (a code label repeated against the page's
+  facts, a material figure framed against its sign, monotone wording, a figure or quote the facts
+  do not state, the prompt's own instruction words); MDR is the smallest per-draw reduction the
+  panel's exact test can see*. `vinci/evals/`, RUNBOOKS §n,
+  `docs/records/2026-11-06-synthesis-eval-harness-design.md`.
 - **Input manifest / the `inputs` block** (2026-11-05, workstream B). Plain words: *the list of
   everything a page was built from, each by the full sha256 of its bytes — every CIQ export, every
   SEC/Polygon/FINRA response (hashed as the fact layer hashes it), every price series — or

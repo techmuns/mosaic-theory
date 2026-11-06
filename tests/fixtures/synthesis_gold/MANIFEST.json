@@ -1,0 +1,78 @@
+{
+ "schema": 1,
+ "what": "The 2026-11-05/06 fidelity diagnosis's gold set: 644 synthesis claims on the 28 committed pages, coded twice blind against TAXONOMY.md, 172 disagreements (verdict or materiality) adjudicated blind.",
+ "graded_against": "main 3e97ee7d plus #918's NFLX and MCK pages (= the 28 dossier.json files at bcda7ce3)",
+ "final_label": "the adjudicated record where one exists, else the agreed coding (coder_a == coder_b on every claim not adjudicated)",
+ "counts": {
+  "claims": 644,
+  "pages": 28,
+  "adjudicated": 172,
+  "errors": 283,
+  "material": 117
+ },
+ "split": {
+  "dev": {
+   "pages": [
+    "AMZN",
+    "AORT",
+    "BRBR",
+    "BURL",
+    "CNXC",
+    "EPAM",
+    "FUBO",
+    "GOOGL",
+    "IT",
+    "LLY",
+    "MCK",
+    "MVST",
+    "NCNO",
+    "NFLX"
+   ],
+   "claims": 330,
+   "source": "A_half1/B_half1"
+  },
+  "test": {
+   "pages": [
+    "NKE",
+    "ORKA",
+    "PARR",
+    "ROST",
+    "SMPL",
+    "TECX",
+    "TGT",
+    "TJX",
+    "UBER",
+    "V",
+    "VITL",
+    "VRRM",
+    "WERN",
+    "WLK"
+   ],
+   "claims": 314,
+   "source": "A_half2/B_half2"
+  },
+  "rule": "metric code may be revised against DEV only; TEST is scored once, at a frozen commit, and is the headline"
+ },
+ "files": {
+  "claims.jsonl": "claims.jsonl",
+  "coder_a.jsonl": "A_half1.jsonl + A_half2.jsonl, concatenated",
+  "coder_b.jsonl": "B_half1.jsonl + B_half2.jsonl, concatenated",
+  "adjudicated.jsonl": "adjudicated.jsonl",
+  "TAXONOMY.md": "TAXONOMY.md"
+ },
+ "source_sha256": {
+  "A_half1.jsonl": "bc0c09d689ef2c87a2ded0cd5efeaf4aa28a8e50d409ecd8e3703b87ad5dd7e6",
+  "A_half2.jsonl": "5dbdd75f28697e3c6e88ae72e2303db3997a1f68c02508f066799b1dbe5bb580",
+  "B_half1.jsonl": "4fe1abd5f085103d4462fe767774975854131ec93085b4936642b9d4215e0209",
+  "B_half2.jsonl": "3384e6abfa7bed19f26725723c564d900788ff24f6bfcf577828a81951693b54",
+  "TAXONOMY.md": "943622b65e1a4c22e58c006f748f325b2a3edfc0814cd9d6b91bd32bc951a735",
+  "adjudicated.jsonl": "5b8e82e76cbc2dbdd7e375d378b61c8642411189e2cdfc138ddbb1a026dd72cd",
+  "claims.jsonl": "dfba058400a0fda9fa834d3160bc3bc4f6ee8a5c7b2ca18b7010780243dc7192",
+  "disagreements.jsonl": "d4300e7e15d293a26499bc90125e5e723867847aff7d7ccab9d118e6ecadb225"
+ },
+ "not_copied": {
+  "disagreements.jsonl": "each disagreement's claim text and both codings \u2014 derivable from claims + coder_a + coder_b",
+  "agree.py / full.py": "the diagnosis's scripts; vinci/evals/gold.py reproduces their counts"
+ },
+ "durable_copy": "the session family's git-ignored data/session-notes/fidelity-gold-2026-11-06/ (in the ai-agent-team-practices worktree): its 8 source files byte-equal source_sha256 (checked 2026-11-06), and its final.py gives the same 283/644 errors and 117/644 material"
+}
