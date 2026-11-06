@@ -90,7 +90,7 @@ from vinci.dossier.schemas import (
     Sourced,
     Supports,
 )
-from vinci.edgar.concepts import ConceptPoint, facts_as_of, filed_at, points_for_tag
+from vinci.edgar.concepts import ConceptPoint, _same_figure, facts_as_of, filed_at, points_for_tag
 
 #: A filed period ends on CIQ's quarter end, or within a week of it (a 52/53-week filer's quarter
 #: lands a few days off a calendar date, and CIQ names it by its fiscal end).
@@ -237,11 +237,23 @@ def filed_quarter(points: list[ConceptPoint], end: date,
     """($ as filed, derived, the point(s) read) — the discrete quarter ending ``end`` on one tag's
     points, or None when the filer stated nothing it can be read from.
 
-    A DERIVED QUARTER PAIRS FILINGS OF ONE VINTAGE (Codex, #891 round 2): the shorter period is the
-    one filed on or before the longer — as `quality.sources.release._figures` pairs them — never a
-    later comparative. MVST's 9M-2024 non-operating line was restated from +7.864 to -0.293 in a
-    10-Q filed after its 10-K, and pairing the 10-K's year with that comparative stated a fourth
-    quarter, 0.449, that no filing as of then stated (the 10-K's own: -7.708)."""
+    A DERIVED QUARTER IS READ FROM THE LATEST LONGER PERIOD and the latest shorter one filed on or
+    before it, under TWO rules:
+
+    - THE SHORTER IS NEVER A LATER COMPARATIVE (Codex, #891 round 2) — as
+      `quality.sources.release._figures` pairs them. MVST's 9M-2024 non-operating line was restated
+      from +7.864 to -0.293 in a 10-Q filed after its 10-K, and pairing the 10-K's year with that
+      comparative stated a fourth quarter, 0.449, that no filing as of then stated (the 10-K's own:
+      -7.708).
+    - A RESTATED LONGER PERIOD IS NEVER PAIRED WITH A SHORTER ONE FILED BEFORE THE RESTATEMENT
+      (review of #916, 2026-11-05). The first rule alone does not make the pair one basis: a
+      10-K/A, an 8-K recast or a later 10-K can restate the YEAR before any restated nine months
+      exist, and the whole restatement then lands in the quarter. UBER's FY2019 revenue was 14,147
+      in its 10-K and 13,000 in its 8-K recast of 2021-01-14, while its nine months, 10,078, were
+      filed before the recast: 13,000 − 10,078 = 2,922 is a fourth quarter on neither basis (as
+      filed, 4,069). Such a quarter is None — an absence — never an older vintage read in its
+      place. "Restated" is `concepts.superseded`'s rule, read off these points: the period's first
+      filing stated another figure."""
     near = [p for p in points if p.period_start is not None
             and abs((p.period_end - end).days) <= SAME_END_DAYS]
     three = [p for p in near if QUARTER_DAYS[0] <= _days(p) <= QUARTER_DAYS[1]]
@@ -254,8 +266,22 @@ def filed_quarter(points: list[ConceptPoint], end: date,
                    and QUARTER_DAYS[0] <= (p.period_end - x.period_end).days <= QUARTER_DAYS[1]]
         if shorter:
             q = max(shorter, key=_latest)
+            restated = _restated_on(points, p)
+            if restated is not None and q.filed < restated:
+                return None
             return p.value - q.value, True, (p, q)
     return None
+
+
+def _restated_on(points: list[ConceptPoint], p: ConceptPoint) -> date | None:
+    """The day ``p``'s own figure was first filed, where its period's FIRST filing (same tag, unit
+    and dates, among ``points``) stated another figure — None when ``p`` restates nothing. A figure
+    restated and restated back is the figure first filed (`concepts.superseded`)."""
+    same = [x for x in points if x.unit == p.unit and x.period_start == p.period_start
+            and x.period_end == p.period_end and x.filed <= p.filed]
+    if _same_figure(min(same, key=_latest).value, p.value):
+        return None
+    return min(x.filed for x in same if _same_figure(x.value, p.value))
 
 
 def ciq_readings_ref(row: lq.LtmCheck) -> str:
