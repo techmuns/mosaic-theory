@@ -14,8 +14,12 @@ from types import SimpleNamespace
 from typing import Any
 
 import anthropic
-import httpx
 import pytest
+
+try:   # the SDK's own HTTP library: httpx2 from anthropic 1.x on (CI: 2.6.0), httpx before (0.112)
+    import httpx2 as httpx  # type: ignore[import-not-found]
+except ImportError:
+    import httpx
 
 from vinci.evals import compare as cm
 from vinci.evals import gold as gd
