@@ -25,6 +25,7 @@ the ledger, reports every run recorded under the sha and refuses when more than 
 """
 from __future__ import annotations
 
+import dataclasses
 import difflib
 import hashlib
 import json
@@ -47,6 +48,8 @@ from vinci.evals.units import draw_units
 
 CONDITIONS = ("BASE", "CAND")
 ALPHA = 0.05
+REPLICATION_REQUIRED = "replication required"
+DOES_NOT_SHIP = "does not ship"
 
 
 @dataclass(frozen=True)
@@ -66,6 +69,9 @@ class Captured:
     transforms: tuple[str, ...]
     requests: dict[tuple[str, str], rp.Request] = field(default_factory=dict)
     diffs: list[PageDiff] = field(default_factory=list)
+    #: What the requests were built from beyond the code: the CIQ root, and per page the comps
+    #: export handed to the transforms and the transcripts, each by sha256.
+    inputs: dict[str, Any] = field(default_factory=dict)
 
     @property
     def reaches(self) -> bool:
@@ -75,15 +81,23 @@ class Captured:
 def compare_requests(base_ref: str, cand_ref: str, *, tickers: Sequence[str] | None = None,
                      transforms: Sequence[str] = (), panel: dict[str, Any] | None = None,
                      ciq_root: Path = rp.DEFAULT_CIQ_ROOT) -> Captured:
-    """Step 1, $0. Inputs are the frozen panel's (blob and transcript sha256s checked)."""
+    """Step 1, $0. Inputs are the frozen panel's (blob and transcript sha256s checked); with
+    transforms, each page's comps export in ``ciq_root`` is handed to them (proved the page's own
+    where it is read, `variants.own_comps`)."""
     p = panel or rp.load_panel_file()
     out = Captured(base_ref, cand_ref, tuple(transforms))
+    out.inputs = {"ciq_root": str(ciq_root), "pages": {}}
     for t in tickers or p["panel"]:
         page, tx = rp.panel_inputs(t, panel=p, ciq_root=ciq_root)
-        base = rp.capture_at(base_ref, page, tx, transforms=transforms)
-        cand = rp.capture_at(cand_ref, page, tx, transforms=transforms)
+        comps = rp.comps_export(t, ciq_root=ciq_root) if transforms else None
+        base = rp.capture_at(base_ref, page, tx, transforms=transforms, comps=comps)
+        cand = rp.capture_at(cand_ref, page, tx, transforms=transforms, comps=comps)
         out.requests[(t, "BASE")], out.requests[(t, "CAND")] = base, cand
         out.diffs.append(page_diff(t, base, cand))
+        out.inputs["pages"][t] = {
+            "comps": ({"file": comps.name, "sha256": hashlib.sha256(comps.read_bytes()).hexdigest()}
+                      if comps is not None else None),
+            "transcripts": p["pages"][t]["transcripts"]}
     return out
 
 
@@ -127,7 +141,15 @@ def scorer_fingerprint(root: Path = rp.ROOT) -> str:
 
 #: Fields added after PR 2's first registrations were written: serialised only when set, so a
 #: registration written before them keeps the sha256 its ledger records.
-_LATER_FIELDS: dict[str, Any] = {"no_worsening": False, "requests": {}}
+_LATER_FIELDS: dict[str, Any] = {"no_worsening": False, "requests": {}, "ship_alpha": None,
+                                 "replicates": None, "inputs": {}, "note": None}
+
+REPLICATION_RULE = ("design record §6 under the replication rule (coordinator, 2026-11-07): each "
+                    "target p_lower <= ship_alpha after Holm across the targets ships; ship_alpha "
+                    "< p_lower <= alpha counts only if a FRESH, separately registered replication "
+                    "of the same design (`replicates`) reaches p_lower <= alpha; above alpha it "
+                    "does not ship; no other class metric p_upper <= alpha; every lean, proposal "
+                    "and the panel's committed-lean count explained if moved")
 
 NO_WORSENING_RULE = ("design record §6.1, no-worsening only (registered where no target can "
                      "fire): no class metric p_upper <= alpha; every lean, proposal and the "
@@ -161,8 +183,25 @@ class Registration:
                  "committed-lean count explained if moved")
     no_worsening: bool = False
     requests: dict[str, str] = field(default_factory=dict)
+    #: The replication rule: a first run ships at p_lower <= ship_alpha, needs a replication in
+    #: (ship_alpha, alpha], and fails above alpha.
+    ship_alpha: float | None = None
+    #: A replication's: the sha256 of the registration it replicates (the same design, drawn
+    #: fresh); its target needs p_lower <= alpha.
+    replicates: str | None = None
+    inputs: dict[str, Any] = field(default_factory=dict)
+    #: What the registration states in words before the draw — what the target covers and what
+    #: it does not. Part of the sha, so it cannot be written after the result.
+    note: str | None = None
 
     def __post_init__(self) -> None:
+        if self.ship_alpha is not None and not 0 < self.ship_alpha < self.alpha:
+            raise ValueError(f"ship_alpha {self.ship_alpha} must lie in (0, alpha {self.alpha})")
+        if self.ship_alpha is not None and self.no_worsening:
+            raise ValueError("the replication rule decides a target; a no-worsening-only "
+                             "registration has none")
+        if self.replicates is not None and self.ship_alpha is None:
+            raise ValueError("a replication is of a registration under the replication rule")
         if self.no_worsening:
             if self.targets:
                 raise ValueError("a no-worsening-only registration declares no target")
@@ -231,29 +270,69 @@ def registered_pages(pages: Sequence[str] | None,
 def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws: int = 5,
              transforms: Sequence[str] = (), panel: dict[str, Any] | None = None,
              pages: Sequence[str] | None = None, captured: Captured | None = None,
-             no_worsening: bool = False) -> Registration:
+             no_worsening: bool = False, ship_alpha: float | None = None,
+             replicates: Registration | None = None,
+             first_run: Path | None = None, note: str | None = None) -> Registration:
     """The registration for a comparison of the frozen panel, or of target pages outside it
     (`registered_pages`). ``captured`` — the $0 capture of exactly this comparison — pins every
-    request's bytes; ``run_compare`` refuses a registration without them. HELD OUT is per
-    change: the pages the change's own commits and records do not name (the corpus holds no
-    page that no fix ever named — record R8)."""
+    request's bytes and records its inputs; ``run_compare`` refuses a registration without the
+    pins. HELD OUT is per change: the pages the change's own commits and records do not name
+    (the corpus holds no page that no fix ever named — record R8).
+
+    ``ship_alpha`` registers the replication rule. ``replicates`` registers a REPLICATION of a
+    registration under it: the same design in every field — refs, transforms, pages, draws,
+    targets, both alphas, scorer and the request bytes — and only for a first run whose own score
+    (``first_run``'s log) decided "replication required"; a replication of any other outcome is
+    result-shopping and is refused."""
     p = panel or rp.load_panel_file()
     chosen = registered_pages(pages, p)
     pins: dict[str, str] = {}
+    inputs: dict[str, Any] = {}
     if captured is not None:
         got = (captured.base_ref, captured.cand_ref, captured.transforms,
                tuple(dict.fromkeys(t for t, _ in captured.requests)))
         if got != (base_ref, cand_ref, tuple(transforms), chosen):
             raise rp.ReplayError("the capture is not of the comparison being registered (refs, "
                                  "transforms or pages differ)")
-        pins = request_pins(captured)
+        pins, inputs = request_pins(captured), dict(captured.inputs)
     named = change_names(base_ref, cand_ref, sorted(p["pages"]))
-    return Registration(base_ref=base_ref, cand_ref=cand_ref, transforms=tuple(transforms),
-                        pages=chosen, draws=draws, targets=tuple(targets),
-                        held_out=tuple(t for t in chosen if t not in named),
-                        scorer=scorer_fingerprint(), no_worsening=no_worsening,
-                        requests=pins,
-                        rule=NO_WORSENING_RULE if no_worsening else Registration.rule)
+    rule = (NO_WORSENING_RULE if no_worsening else
+            REPLICATION_RULE if ship_alpha is not None else Registration.rule)
+    reg = Registration(base_ref=base_ref, cand_ref=cand_ref, transforms=tuple(transforms),
+                       pages=chosen, draws=draws, targets=tuple(targets),
+                       held_out=tuple(t for t in chosen if t not in named),
+                       scorer=scorer_fingerprint(), no_worsening=no_worsening,
+                       requests=pins, rule=rule, ship_alpha=ship_alpha, inputs=inputs,
+                       note=note)
+    if replicates is None:
+        return reg
+    first = replicates
+    design = ("base_ref", "cand_ref", "transforms", "pages", "draws", "targets", "alpha",
+              "ship_alpha", "scorer", "requests", "no_worsening", "rule")
+    differ = [k for k in design if getattr(reg, k) != getattr(first, k)]
+    if first.replicates is not None or differ:
+        raise rp.ReplayError(f"a replication is of a FIRST run's registration, in the same "
+                             f"design: {differ or 'that registration is itself a replication'}")
+    _first_run_decided(first, first_run)
+    return dataclasses.replace(reg, replicates=first.sha)
+
+
+def _first_run_decided(first: Registration, out_dir: Path | None) -> None:
+    """A replication is registered only for a first run whose own score decided "replication
+    required" — read from that run's folder, under that registration."""
+    if out_dir is None:
+        raise rp.ReplayError("a replication names the first run's folder, whose score decided it")
+    rec = out_dir / "registration.json"
+    if not rec.exists() or Registration.from_json(rec.read_text(encoding="utf-8")).sha != first.sha:
+        raise rp.ReplayError(f"{out_dir} is not a run of registration {first.sha[:12]}")
+    log = out_dir / "score_log.jsonl"
+    rows = [json.loads(x) for x in log.read_text(encoding="utf-8").splitlines()
+            if x.strip()] if log.exists() else []
+    mine = [r for r in rows if r.get("registration") == first.sha]
+    if not mine or mine[-1].get("decision") != REPLICATION_REQUIRED:
+        got = mine[-1].get("decision") if mine else "never scored"
+        raise rp.ReplayError(f"the first run decided {got!r}, not {REPLICATION_REQUIRED!r}: only "
+                             "a result in the replication band is replicated")
 
 
 def write_registration(reg: Registration, path: Path) -> None:
@@ -336,6 +415,9 @@ class Score:
     ships: bool
     reasons: tuple[str, ...]
     runs: tuple[tuple[str, int], ...] = ()   # every run the ledger records under the sha: draws
+    #: The registered rule's outcome: "ships", "ships once the moves listed are explained",
+    #: "replication required", "replicated: ships" or "does not ship".
+    decision: str = ""
 
 
 def runs_under(ledger: Path, sha: str) -> tuple[tuple[str, int], ...]:
@@ -501,16 +583,30 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
         results[m] = MetricResult(m, r.base_total, r.cand_total, float(r.p_lower),
                                   float(r.p_upper), sum(sum(x.base) for x in ho),
                                   sum(sum(x.cand) for x in ho))
-    passed = holm({t: results[t].p_lower for t in reg.targets if t in results}, reg.alpha)
+    hard = list(reasons)   # a page that cannot be compared, a class that worsens: never ships
+    target_p = {t: results[t].p_lower for t in reg.targets if t in results}
+    at_alpha = holm(target_p, reg.alpha)
+    first_run_rule = reg.ship_alpha is not None and reg.replicates is None
+    at_ship = holm(target_p, reg.ship_alpha) if first_run_rule and reg.ship_alpha else at_alpha
+    band = ("ship" if all(at_ship.get(t) for t in reg.targets) else
+            "replicate" if first_run_rule and all(at_alpha.get(t) for t in reg.targets) else
+            "fail")
     for t in reg.targets:
-        if not passed.get(t):
-            got = f"p_lower {results[t].p_lower:.3g}" if t in results else "not scored"
+        got = f"p_lower {results[t].p_lower:.3g}" if t in results else "not scored"
+        if not at_alpha.get(t):
             reasons.append(f"target {t} does not improve beyond noise ({got}; Holm across "
-                           f"{len(reg.targets)} target(s))")
+                           f"{len(reg.targets)} target(s))"
+                           + (" — the replication does not replicate" if reg.replicates else ""))
+        elif not at_ship.get(t):
+            reasons.append(f"target {t}: {got} is in the replication band ({reg.ship_alpha}, "
+                           f"{reg.alpha}] — it counts only if a fresh, separately registered "
+                           f"replication of the same design reaches p_lower <= {reg.alpha}")
     for m, r in results.items():
         if m not in reg.targets and m in mt.GOLD_CLASS and r.p_upper <= reg.alpha:
-            reasons.append(f"{m} worsens beyond noise: {r.base_total} → {r.cand_total} "
-                           f"(p_upper {r.p_upper:.3g})")
+            hard.append(f"{m} worsens beyond noise: {r.base_total} → {r.cand_total} "
+                        f"(p_upper {r.p_upper:.3g})")
+            reasons.append(hard[-1])
+    explain_from = len(reasons)
     proposals: dict[str, dict[str, str | None]] = {}
     for t, by in leans.items():
         sleeve = str(ctxs[t].page.get("sleeve"))
@@ -532,23 +628,31 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
                            "writing before review (record §6.3)")
     new_echo = {ph: sorted(ts) for ph, ts in echo.get("CAND", {}).items()
                 if ph not in echo.get("BASE", {})}
+    explain = reasons[explain_from:]
+    decision = (DOES_NOT_SHIP if band == "fail" or hard else
+                REPLICATION_REQUIRED if band == "replicate" else
+                ("replicated: ships" if reg.replicates else "ships")
+                + (" once the moves listed are explained in writing" if explain else ""))
     score = Score(targets=reg.targets, metrics=results,
                   leans={t: {c: dict(v) for c, v in by.items()} for t, by in leans.items()},
                   proposals=proposals, failed_draws=dict(failed),
                   echo_new={"CAND only": [f"{ph} ({', '.join(ts)})"
                                           for ph, ts in new_echo.items()]},
-                  ships=not reasons, reasons=tuple(reasons), runs=runs)
+                  ships=not reasons, reasons=tuple(reasons), runs=runs, decision=decision)
     with (out_dir / "score_log.jsonl").open("a", encoding="utf-8") as f:
         f.write(json.dumps({"at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
                             "registration": reg.sha, "scorer": reg.scorer,
                             "runs_under_sha": [list(r) for r in runs],
-                            "ships": score.ships, "reasons": list(score.reasons),
+                            "ships": score.ships, "decision": score.decision,
+                            "ship_alpha": reg.ship_alpha, "replicates": reg.replicates,
+                            "reasons": list(score.reasons),
                             "metrics": {m: r.__dict__ for m, r in results.items()}}) + "\n")
     return score
 
 
 def score_text(s: Score) -> str:
-    lines = [f"TARGETS {', '.join(s.targets) or 'none (no-worsening only)'}; ships: {s.ships}"]
+    lines = [f"TARGETS {', '.join(s.targets) or 'none (no-worsening only)'}; ships: {s.ships}; "
+             f"decision: {s.decision}"]
     lines += [f"  run under this registration: {d} ({n} draws)" for d, n in s.runs]
     for m, r in sorted(s.metrics.items()):
         lines.append(f"  {m:8} BASE {r.base_total:3} → CAND {r.cand_total:3} | p_lower "

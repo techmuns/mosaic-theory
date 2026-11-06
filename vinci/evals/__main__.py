@@ -6,7 +6,8 @@ registration written before the first draw.
                                               one ledger per approval; every run shares it
     compare --base main --cand <ref> [--transform NAME ...]       $0: does CAND's request differ?
     register --base main --cand <ref> [--transform NAME ...] (--target M-LABEL [--target ...] |
-             --no-worsening) [--ticker T ...] --out FILE
+             --no-worsening) [--ticker T ...] [--ciq-root DIR] [--ship-alpha 0.01
+             [--replicates FIRST.json --first-run DIR]] --out FILE
                                               BEFORE any draw, $0: pages, draws, targets, scorer,
                                               and every request's bytes (captured here)
     run-compare --registration FILE --budget-ledger FILE --out-dir DIR [--cap USD] --paid
@@ -57,6 +58,9 @@ def main(argv: list[str] | None = None) -> int:
         c.add_argument("--base", required=True)
         c.add_argument("--cand", required=True)
         c.add_argument("--transform", action="append", default=[])
+        c.add_argument("--ciq-root", type=Path,
+                       help="the CIQ folders transcripts and comps exports are read from "
+                            "(default: the assembler's copy)")
         c.add_argument("--ticker", action="append",
                        help="limit to these pages (register: target pages OUTSIDE the panel; "
                             "the panel is registered whole)")
@@ -64,6 +68,16 @@ def main(argv: list[str] | None = None) -> int:
             c.add_argument("--target", action="append", default=[])
             c.add_argument("--no-worsening", action="store_true",
                            help="no target: only that no class metric worsens (§6.1)")
+            c.add_argument("--ship-alpha", type=float,
+                           help="the replication rule: ship at p_lower <= this; up to alpha, "
+                                "a fresh registered replication must reach alpha")
+            c.add_argument("--replicates", type=Path,
+                           help="register a REPLICATION of this registration (same design)")
+            c.add_argument("--note", help="what the registration states before the draw (in "
+                                          "its sha): what the target covers and does not")
+            c.add_argument("--first-run", type=Path,
+                           help="with --replicates: the first run's folder, whose score decided "
+                                "'replication required'")
             c.add_argument("--draws", type=int, default=5)
             c.add_argument("--out", required=True, type=Path)
     rc = sub.add_parser("run-compare")
@@ -71,6 +85,7 @@ def main(argv: list[str] | None = None) -> int:
     rc.add_argument("--budget-ledger", required=True, type=Path)
     rc.add_argument("--cap", type=float, help="may only LOWER the approved cap")
     rc.add_argument("--out-dir", required=True, type=Path)
+    rc.add_argument("--ciq-root", type=Path)
     rc.add_argument("--paid", action="store_true")
     s = sub.add_parser("score")
     s.add_argument("--out-dir", required=True, type=Path)
@@ -118,11 +133,15 @@ def main(argv: list[str] | None = None) -> int:
         if a.out.exists():
             raise rp.ReplayError(f"{a.out} exists: a registration is written once")
         pages = cm.registered_pages(a.ticker)
-        cap = cm.compare_requests(a.base, a.cand, tickers=pages, transforms=a.transform)
+        cap = cm.compare_requests(a.base, a.cand, tickers=pages, transforms=a.transform,
+                                  ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
         cm.refuse_if_unreached(cap)
+        first = (cm.Registration.from_json(a.replicates.read_text(encoding="utf-8"))
+                 if a.replicates else None)
         reg = cm.register(a.base, a.cand, targets=a.target, draws=a.draws,
                           transforms=a.transform, pages=a.ticker, captured=cap,
-                          no_worsening=a.no_worsening)
+                          no_worsening=a.no_worsening, ship_alpha=a.ship_alpha,
+                          replicates=first, first_run=a.first_run, note=a.note)
         cm.write_registration(reg, a.out)
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
               f"condition, targets {list(reg.targets)}, held out from this change "
@@ -139,7 +158,8 @@ def main(argv: list[str] | None = None) -> int:
             budget = rp.Budget.load(a.budget_ledger, cap_usd=a.cap)
         else:
             base, cand, transforms, tickers = a.base, a.cand, tuple(a.transform), a.ticker
-        cap = cm.compare_requests(base, cand, tickers=tickers, transforms=transforms)
+        cap = cm.compare_requests(base, cand, tickers=tickers, transforms=transforms,
+                                  ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
         for d in cap.diffs:
             delta = {k: d.cand_sizes.get(k, 0) - v for k, v in d.base_sizes.items()
                      if d.cand_sizes.get(k, 0) != v}

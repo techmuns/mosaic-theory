@@ -209,16 +209,18 @@ def _one(calls: list[dict[str, Any]], draws: int) -> Request:
 def capture(page: dict[str, Any], transcript: str | None, *, model: str = DEFAULT_MODEL,
             max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
             transform: Callable[[MechanicalLayer], MechanicalLayer] | None = None,
-            transforms: Sequence[str] = ()) -> Request:
+            transforms: Sequence[str] = (), comps: Path | None = None) -> Request:
     """The request production builds for ``page`` with the code this module is imported from;
-    ``transforms`` are named variants (`variants.py`), applied in order."""
+    ``transforms`` are named variants (`variants.py`), applied in order; ``comps`` is the page's
+    own comps export, for the transforms that read it."""
     return _one(capture_calls(page, transcript, model=model, max_tokens=max_tokens, draws=draws,
-                              transform=transform, transforms=transforms), draws)
+                              transform=transform, transforms=transforms, comps=comps), draws)
 
 
 def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
                model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
-               transforms: Sequence[str] = (), repo: Path = ROOT) -> Request:
+               transforms: Sequence[str] = (), comps: Path | None = None,
+               repo: Path = ROOT) -> Request:
     """``capture`` with the code at ``code_ref``: its ``vinci/`` is extracted by ``git archive``
     into a temporary folder and `capture_child.py` runs there in a child process (``-P``: the
     script's own folder is not put on the path), refusing to run against any other ``vinci``. A ref
@@ -245,6 +247,8 @@ def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
                 "--expect-root", str(root / "code")] + (["--unmark-material"] if older else [])
         for t in transforms:
             args += ["--transform", t]
+        if comps is not None:
+            args += ["--comps", str(comps.resolve())]
         if transcript is not None:
             (root / "transcript.txt").write_text(transcript, encoding="utf-8")
             args += ["--transcript", str(root / "transcript.txt")]
@@ -530,6 +534,21 @@ def run_request(req: Request, *, draws: int, budget: Budget, label: str, draws_o
         except (LlmError, anthropic.APIError):
             out.append(None)
     return out
+
+
+def comps_export(ticker: str, *, ciq_root: Path = DEFAULT_CIQ_ROOT) -> Path | None:
+    """The one CIQ comps export in ``ciq_root/<ticker>`` (the reader's own filename rule), or None
+    when there is none. Two are refused, never chosen between. Whether it is the PAGE's own is
+    proved where it is read (`variants.own_comps`), by the code under test."""
+    from vinci.dossier.ciq import _WORKBOOK_KEYWORDS
+    folder = ciq_root / ticker
+    found = sorted(f for f in folder.glob("*") if f.is_file() and not f.name.startswith((".", "~$"))
+                   and any(w in f.name.lower() for w in _WORKBOOK_KEYWORDS["comps"])) \
+        if folder.is_dir() else []
+    if len(found) > 1:
+        raise ReplayError(f"{ticker}: {len(found)} comps exports in {folder}: "
+                          f"{[f.name for f in found]}")
+    return found[0] if found else None
 
 
 def load_panel_file(path: Path = PANEL_FILE) -> dict[str, Any]:

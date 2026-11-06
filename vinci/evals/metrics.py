@@ -19,6 +19,7 @@ the prose). M-SIZE (prompt size per section) reads a request, not a unit.
 from __future__ import annotations
 
 import bisect
+import hashlib
 import re
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
@@ -215,9 +216,17 @@ def _without_series(o: Any) -> Any:
 _SEGMENT_PROFIT_FACT = re.compile(
     r"operating (?:profit|income)|contribution margin|segment (?:profit|margin|operating)", I)
 
-#: The trailing-only family reads the CODE'S OWN caveat (`mechanical.TRAILING_ONLY_NOTE`), split
-#: into its clauses — never a retyped copy, which `test_sleeves` forbids and which would stop
-#: following the code version under test.
+#: The trailing-only family reads the caveat's text from `mechanical.TRAILING_ONLY_NOTE`, split into
+#: its clauses — never a retyped copy, which `test_sleeves` forbids. It is the SCORER's import,
+#: never the code under test's (a comparison scores in its own process), and it is FIXED: the
+#: family counts this wording whatever a later code writes (coordinator, 2026-11-07, for #923's
+#: measurement — CAND prose echoing the OLD label must still count). The sha256 below is that
+#: wording; a changed constant makes the scorer refuse to load, and moving it is a metric change
+#: (RUNBOOKS §n step 7: the gold re-scored, DEV vs TEST stated again).
+TRAILING_ONLY_SHA256 = "cbf0eed933cf5404bff6b923ae0a221ea785933982c0b13ccd931e604128229f"
+if hashlib.sha256(TRAILING_ONLY_NOTE.encode()).hexdigest() != TRAILING_ONLY_SHA256:
+    raise RuntimeError("mechanical.TRAILING_ONLY_NOTE is not the wording M-LABEL's trailing-only "
+                       "family was defined on: a metric change (RUNBOOKS §n step 7), never silent")
 _NOTE_PARTS = [p.strip() for p in re.split(r"[;—]", TRAILING_ONLY_NOTE) if p.strip()]
 
 
