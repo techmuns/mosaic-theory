@@ -660,8 +660,9 @@ first"** — no prompt change or paid rebuild ships unmeasured.
 
 1. **Declare the TARGET in the PR before any draw** — one deterministic metric (`M-LABEL`; a
    material-direction change targets `M-SIGN` on NFLX, the page where it fires), or a judged class
-   once the judge is calibrated (record §9). The record's R2 says which metrics can be a target:
-   today only `M-LABEL` on the panel.
+   once a judge passes its bar (record §9). The record's R2 says which metrics can be a target:
+   today only `M-LABEL` on the panel. The LLM judge FAILED its bar on TEST (PR 2: kappa 0.23), so
+   no judged class can be a target or a gate.
 2. **$0 first.** `python -m vinci.evals panel` (the rule still yields the frozen six), then
    `python -m vinci.evals compare --base origin/main --cand <branch> [--transform NAME]` (its
    capture child holds no key and no network): every
@@ -678,12 +679,18 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    run.** `python -m vinci.evals budget-open --budget-ledger <outside the repo> --cap <USD>
    --approval "<the operator's words>"`. Then, BEFORE any draw, `register --base origin/main
    --cand <branch> [--transform NAME] --target M-LABEL --out <outside>/registration.json` (pages,
-   draws, targets, scorer fingerprint, the change's held-out pages, hashed), and `run-compare
-   --registration <file> --budget-ledger <file> --out-dir <a fresh folder outside the repo>
-   --paid`. A stop or resume runs again into a fresh out-dir under the SAME ledger and
-   registration; the cap is the approval's, never one run's.
-5. **Score at $0** — `python -m vinci.evals score --out-dir <dir> --registration <file>` — from
-   the registered scorer; it refuses unregistered pages, counts or targets, and logs every score.
+   draws, targets, scorer fingerprint, the change's held-out pages and every request's bytes,
+   captured at $0 — hashed), and `run-compare --registration <file> --budget-ledger <file>
+   --out-dir <a fresh folder outside the repo> --paid`. The pages are the panel WHOLE, or
+   `--ticker` target pages OUTSIDE it (a panel page is never chosen, so none is dropped); where
+   the target cannot fire, register `--no-worsening` instead of a target. **A registration is
+   drawn ONCE:** `run-compare` refuses a sha the ledger already records, and a capture whose bytes
+   differ from the registered ones. A stopped run is reported as stopped; drawing again needs a
+   NEW registration, said so in the record. The cap is the approval's, never one run's.
+5. **Score at $0** — `python -m vinci.evals score --out-dir <dir> --registration <file>
+   --budget-ledger <file>` — from the registered scorer; it reports every run the ledger records
+   under the registration (refusing when more than one holds draws), refuses unregistered pages,
+   counts or targets, and logs every score.
    It applies the rule (record §6, R8): each target improves at `p_lower ≤ 0.05` after Holm; no
    other class metric worsens at `p_upper ≤ 0.05`; any page's modal lean or proposal change, or a
    panel shift in committed-lean draws at p ≤ 0.05, is explained in writing; prompt size and

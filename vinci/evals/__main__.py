@@ -5,13 +5,19 @@ registration written before the first draw.
     budget-open --budget-ledger FILE --cap USD --approval "<operator's words>"
                                               one ledger per approval; every run shares it
     compare --base main --cand <ref> [--transform NAME ...]       $0: does CAND's request differ?
-    register --base main --cand <ref> [--transform NAME ...] --target M-LABEL [--target ...]
-             --out FILE                       BEFORE any draw: pages, draws, targets, scorer
+    register --base main --cand <ref> [--transform NAME ...] (--target M-LABEL [--target ...] |
+             --no-worsening) [--ticker T ...] --out FILE
+                                              BEFORE any draw, $0: pages, draws, targets, scorer,
+                                              and every request's bytes (captured here)
     run-compare --registration FILE --budget-ledger FILE --out-dir DIR [--cap USD] --paid
-                                              PAID: the registered draws, page by page
-    score --out-dir DIR --registration FILE   $0: the registered rule, logged
+                                              PAID: the registered draws, page by page, ONCE
+    score --out-dir DIR --registration FILE --budget-ledger FILE
+                                              $0: the registered rule, logged, with every run
+                                              the ledger records under the registration
     capture --ticker T [--code-ref REF] [--transform NAME ...] --out FILE
     prove --ticker T --log FILE [--code-ref REF] [--page-ref REF]
+    judge --half dev|test --budget-ledger FILE --out-dir DIR --paid
+                                              PAID: the judge on one gold half, calibrated
     gold                                      each metric's P/R, DEV and TEST, at the freeze
     panel                                     re-run the panel rule on the frozen rows
     run --ticker T [--code-ref REF] --budget-ledger FILE --draws-out FILE --label L [--cap USD]
@@ -51,9 +57,13 @@ def main(argv: list[str] | None = None) -> int:
         c.add_argument("--base", required=True)
         c.add_argument("--cand", required=True)
         c.add_argument("--transform", action="append", default=[])
-        c.add_argument("--ticker", action="append", help="compare: limit to these panel pages")
+        c.add_argument("--ticker", action="append",
+                       help="limit to these pages (register: target pages OUTSIDE the panel; "
+                            "the panel is registered whole)")
         if name == "register":
-            c.add_argument("--target", action="append", required=True)
+            c.add_argument("--target", action="append", default=[])
+            c.add_argument("--no-worsening", action="store_true",
+                           help="no target: only that no class metric worsens (§6.1)")
             c.add_argument("--draws", type=int, default=5)
             c.add_argument("--out", required=True, type=Path)
     rc = sub.add_parser("run-compare")
@@ -65,6 +75,7 @@ def main(argv: list[str] | None = None) -> int:
     s = sub.add_parser("score")
     s.add_argument("--out-dir", required=True, type=Path)
     s.add_argument("--registration", required=True, type=Path)
+    s.add_argument("--budget-ledger", required=True, type=Path)
     c = sub.add_parser("capture")
     c.add_argument("--ticker", required=True)
     c.add_argument("--code-ref")
@@ -75,6 +86,13 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument("--log", required=True, type=Path)
     pr.add_argument("--code-ref")
     pr.add_argument("--page-ref")
+    jd = sub.add_parser("judge")
+    jd.add_argument("--half", required=True, choices=("dev", "test"))
+    jd.add_argument("--budget-ledger", required=True, type=Path)
+    jd.add_argument("--cap", type=float, help="may only LOWER the approved cap")
+    jd.add_argument("--out-dir", required=True, type=Path)
+    jd.add_argument("--ticker", action="append", help="limit to these pages of the half")
+    jd.add_argument("--paid", action="store_true")
     sub.add_parser("gold")
     sub.add_parser("panel")
     r = sub.add_parser("run")
@@ -97,8 +115,14 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "register":
         from vinci.evals import compare as cm
         rp.refuse_inside_repo(a.out, "the registration")
+        if a.out.exists():
+            raise rp.ReplayError(f"{a.out} exists: a registration is written once")
+        pages = cm.registered_pages(a.ticker)
+        cap = cm.compare_requests(a.base, a.cand, tickers=pages, transforms=a.transform)
+        cm.refuse_if_unreached(cap)
         reg = cm.register(a.base, a.cand, targets=a.target, draws=a.draws,
-                          transforms=a.transform)
+                          transforms=a.transform, pages=a.ticker, captured=cap,
+                          no_worsening=a.no_worsening)
         cm.write_registration(reg, a.out)
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
               f"condition, targets {list(reg.targets)}, held out from this change "
@@ -132,12 +156,12 @@ def main(argv: list[str] | None = None) -> int:
         cm.run_compare(cap, budget=budget, out_dir=a.out_dir, registration=run)
         print(f"drawn; the approval's spend is now ${budget.spent():.4f} of "
               f"${budget.cap_usd:.2f}; score with `python -m vinci.evals score --out-dir "
-              f"{a.out_dir} --registration {a.registration}`")
+              f"{a.out_dir} --registration {a.registration} --budget-ledger {a.budget_ledger}`")
         return 0
     if a.cmd == "score":
         from vinci.evals import compare as cm
         reg = cm.Registration.from_json(a.registration.read_text(encoding="utf-8"))
-        print(cm.score_text(cm.score_run(a.out_dir, reg)))
+        print(cm.score_text(cm.score_run(a.out_dir, reg, ledger=a.budget_ledger)))
         return 0
     if a.cmd in ("capture", "prove", "run"):
         if a.cmd == "capture":
@@ -175,6 +199,19 @@ def main(argv: list[str] | None = None) -> int:
               f"IDENTICAL {proof.identical} (the log carries no tools, tool_choice or "
               "cache_control: those are compared only between a capture and its paid request)")
         return 0 if proof.identical else 1
+    if a.cmd == "judge":
+        from vinci.evals import gold as gd
+        from vinci.evals import judge as jg
+        rp.refuse_inside_repo(a.out_dir, "the judge's run folder")
+        budget = rp.Budget.load(a.budget_ledger, cap_usd=a.cap)
+        if not _paid(a):
+            return 2
+        gold = gd.load_gold()
+        judged = jg.run_half(a.half, budget=budget, out_dir=a.out_dir, gold=gold,
+                             tickers=a.ticker)
+        print(jg.calibration_text(jg.calibrate(judged, gold, a.half, tickers=a.ticker)))
+        print(f"the approval's spend is now ${budget.spent():.4f} of ${budget.cap_usd:.2f}")
+        return 0
     if a.cmd == "gold":
         from vinci.evals.report import gold_report
         print(gold_report())
