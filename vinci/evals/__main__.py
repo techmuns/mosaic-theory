@@ -7,7 +7,7 @@ registration written before the first draw.
     compare --base main --cand <ref> [--transform NAME ...]       $0: does CAND's request differ?
     register --base main --cand <ref> [--transform NAME ...] (--target M-LABEL [--target ...] |
              --no-worsening) [--ticker T ...] [--ciq-root DIR] [--ship-alpha 0.01
-             [--replicates FIRST.json --first-run DIR]] --out FILE
+             [--replicates FIRST.json --budget-ledger FILE]] --out FILE
                                               BEFORE any draw, $0: pages, draws, targets, scorer,
                                               and every request's bytes (captured here)
     run-compare --registration FILE --budget-ledger FILE --out-dir DIR [--cap USD] --paid
@@ -75,9 +75,9 @@ def main(argv: list[str] | None = None) -> int:
                            help="register a REPLICATION of this registration (same design)")
             c.add_argument("--note", help="what the registration states before the draw (in "
                                           "its sha): what the target covers and does not")
-            c.add_argument("--first-run", type=Path,
-                           help="with --replicates: the first run's folder, whose score decided "
-                                "'replication required'")
+            c.add_argument("--budget-ledger", type=Path,
+                           help="with --replicates: the approval's ledger, which records the "
+                                "first run and its ledger-backed score")
             c.add_argument("--draws", type=int, default=5)
             c.add_argument("--out", required=True, type=Path)
     rc = sub.add_parser("run-compare")
@@ -141,7 +141,7 @@ def main(argv: list[str] | None = None) -> int:
         reg = cm.register(a.base, a.cand, targets=a.target, draws=a.draws,
                           transforms=a.transform, pages=a.ticker, captured=cap,
                           no_worsening=a.no_worsening, ship_alpha=a.ship_alpha,
-                          replicates=first, first_run=a.first_run, note=a.note)
+                          replicates=first, ledger=a.budget_ledger, note=a.note)
         cm.write_registration(reg, a.out)
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
               f"condition, targets {list(reg.targets)}, held out from this change "

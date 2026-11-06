@@ -203,6 +203,23 @@ def _replaced(module: Any, **attrs: Any) -> Iterator[None]:
 
 
 _CADENCE = "cadence: EDGAR submissions ("
+_GUIDE = ") · guide: "
+
+
+def cadence_basis(source_ref: str) -> str:
+    """The cadence basis inside a print row's source — the ONE reading of it, the inverse of the
+    two forms `mechanical._catalyst_calendar` writes: "cadence: EDGAR submissions (BASIS)" and
+    "cadence: EDGAR submissions (BASIS) · guide: REF". The row carries the basis in no structured
+    field, so the string is read here and nowhere else; anything else is refused (#926 review F8:
+    harness-only, the identity on 28 of 28 pages)."""
+    if not source_ref.startswith(_CADENCE):
+        raise TransformError(f"the print row's source is not the cadence read: {source_ref!r}")
+    rest = source_ref[len(_CADENCE):]
+    if _GUIDE in rest:
+        return rest.split(_GUIDE, 1)[0]
+    if not rest.endswith(")"):
+        raise TransformError(f"the print row's source is not the cadence read: {source_ref!r}")
+    return rest[:-1]
 
 
 def print_row_guide(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
@@ -211,8 +228,8 @@ def print_row_guide(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
     the builder's two EDGAR reads (the 8-K list and the cadence estimate from it) are replaced, for
     this one call, by the committed estimate and its stated basis, so only what the row TESTS — and
     the source it names for that — is re-derived. The basis is read back from the committed row's
-    own source (its one string read); the pins show the rebuilt row equals the committed one at
-    main on every corpus page."""
+    own source by `cadence_basis`; the pins show the rebuilt row equals the committed one at main
+    on every corpus page."""
     calendar = mech.catalyst_calendar
     if calendar is None:
         return mech
@@ -222,12 +239,7 @@ def print_row_guide(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
     if len(rows) != 1:
         raise TransformError(f"{len(rows)} print rows on one calendar")
     row = rows[0]
-    src = row.source_ref or ""
-    if not src.startswith(_CADENCE):
-        raise TransformError(f"the print row's source is not the cadence read: {src!r}")
-    rest = src[len(_CADENCE):]
-    basis = rest.split(") · guide: ", 1)[0] if ") · guide: " in rest else rest.removesuffix(")")
-    est = (date.fromisoformat(row.expected_date), basis)
+    est = (date.fromisoformat(row.expected_date), cadence_basis(row.source_ref or ""))
     with _replaced(mechanical,
                    eight_k_events=lambda *_a, **_k: [SimpleNamespace(filing_date=est[0],
                                                                      items=["2.02"])],

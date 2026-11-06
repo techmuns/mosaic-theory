@@ -22,9 +22,10 @@ scratch folder only. The cap was not raised, and no other approval was opened.
 - **No class worsened beyond noise:** M-ABSENT 60 → 48, M-PATH 7 → 4, M-SIGN 0 → 0.
 - **Two modal leans moved, and no proposal did.** MCK went mixed 4/1 → bullish 4/1, and SMPL mixed
   3/2 → bearish 4/1. Each is within one page's noise (§5).
-- **The fall is real but partial.** The bleed family fell 14 → 1 and the trailing-only family
-  37 → 13. The "no adjusted forward" family ROSE 12 → 27, so some of the old framing moved into
-  other words (§4).
+- **The fall is real but partial.** Counted on every unit each family matches: bleed 14 → 1,
+  trailing-only 37 → 13, "no adjusted forward" 40 → 29. No family rose. A first draft reported
+  "no adjusted forward" RISING 12 → 27; that was an artefact of filing each unit under its first
+  family only (§4, corrected in #926's review).
 - **What the measurement does not cover:** items 3–4 (the "(a risk)" tags and the discount
   question) are read only through the no-worsening checks; no metric counts them. Item 5 (the
   print row) is not exercised on the panel (§6).
@@ -154,16 +155,45 @@ run's result made one unnecessary.
   | ROST | 1, 1, 2, 2, 1 | 2, 2, 1, 1, 1 |
   | SMPL | 3, 3, 4, 3, 4 | 2, 1, 3, 1, 2 |
 
-- **By family** (each unit counted once, under its first family): bleed 14 → 1; trailing-only
-  37 → 13; no-adjusted-forward **12 → 27**; segment-undisclosed 5 → 5; runway-not-derivable 1 → 1.
+- **By family.** A unit can match more than one family. M-LABEL counts it once, so the totals
+  are 69 → 47 either way.
+
+  | family | BASE → CAND, every unit it matches | under its first family only |
+  |---|---|---|
+  | bleed | 14 → 1 | 14 → 1 |
+  | trailing-only | 37 → 13 | 37 → 13 |
+  | no-adjusted-forward | **40 → 29** | 12 → 27 |
+  | segment-undisclosed | 5 → 5 | 5 → 5 |
+  | runway-not-derivable | 1 → 1 | 1 → 1 |
+
+  **Correction (coordinator's review of #926).** The first draft read the right-hand column alone
+  and called "no adjusted forward" a rise. In BASE, 28 of that family's 40 units also match an
+  earlier family (trailing-only or bleed) and are filed there. In CAND, with fewer such matches,
+  more of its units are filed under it. The family itself fell.
 - **The two labels #923 targets mostly leave the prose,** but not wholly, and not cleanly:
   - "Trailing only" survives in 13 units, even though the note is deleted on all six pages. The
     synthesis schema still asks a trailing multiple to carry "its forward or a 'trailing-only'
     blind-flag" (`synthesis.py`'s `bear_points` text). That is fix 4's prompt rule, which #923
     names as its dependency.
-  - The rise in "no adjusted forward" (+15 units) looks like the same framing restated as the
-    absence of a guided forward. It is still counted, inside the target, and the target still
-    falls 22 units net.
+  - **"No adjusted forward" in CAND has two readings, and its precision on CAND output is
+    untested** (the gold is coded on the old pages' syntheses).
+    - **Field state:** most CAND units in the family state the company-adjusted forward field's
+      state. 9 name the field `ev_ebitda_adjusted_fwd`; 17 say "no (forward / revised) adjusted
+      EV/EBITDA, EBITDA or EPS"; 3 say no revised or post-drawdown guidance was parsed. That is
+      narrower than "no forward basis" and, as a field state, true.
+    - **Trailing conclusion:** a few still conclude that the valuation rests on trailing: 3 of
+      CAND's 29 units, against 25 of BASE's 40 (a crude scan for "trailing
+      only/multiple/basis" and "rests on trailing").
+    - "The same framing restated" was one reading in the first draft, not the finding.
+  - **The coordinator's sweep for wording M-LABEL does not count** ($0, the scorer's units at
+    `fc79a7be`, these 60 draws, only pages where each family's condition holds; theirs, not
+    re-derived here):
+    - forward-absence in broad wording fell 63 → 40 units; the part M-LABEL does not count fell
+      14 → 9, mostly regex false positives on reading;
+    - price-path wording in decline clauses went 31 → 30 units. All but one are about
+      fundamentals (price erosion, volume decline), and the one CAND share-path claim, BURL's, is
+      correctly hedged;
+    - so no migration into uncounted words was found.
 - **What n cannot show here:**
   - which of items 1–2 moved which family beyond the counts above;
   - anything about items 3–5 (§6);
@@ -202,6 +232,43 @@ run's result made one unnecessary.
   panel.
 - **The transforms cover the panel and the pages they can rebuild.** They refuse FUBO, ORKA, TECX
   (survival) and NCNO, UBER (the question), none of which is on the panel.
+- **CAND draws are scored against BASE's layer** (DEFERRED, STATE row 53). `score_run` builds one
+  layer per page, `pre_synthesis_mech(page)` with no transforms, for both conditions. That tilts
+  M-ABSENT's "quote: nowhere" and M-ECHO against CAND. The reviewer's LLY probe: a draw quoting
+  #923's drawdown wording gets 1 hit as scored, and 0 against the layer CAND saw.
+  - M-LABEL is unaffected: its conditions read the comps (`forward_basis`) and `gap_down_dates`
+    (`no_gap_down`), which no transform touches.
+  - M-ABSENT improved 60 → 48 despite the tilt.
+  - The fix scores each condition against the layer its own request carried, in its own PR.
+
+## 7. The harness after #926's review (round 2, $0)
+
+- **The holes were not used.** Ledger `ledger-fix3a.jsonl` holds the approval, ONE registration
+  row (`cceba9d9`) and 60 draws; ONE run folder exists. Checked on disk by the coordinator, and by
+  this session from the ledger.
+- **A design is drawn once per approval** (F1).
+  - `run_compare` reads every recorded run's own `registration.json` and refuses the same design
+    (`DESIGN_FIELDS`) whatever its note or inputs. A first run's one replication is the only other
+    draw of a design, and it too is drawn once.
+  - The CIQ root is recorded resolved, so `/ciq` and `/ciq/` are one root.
+- **A replication counts only as one of a real first run** (F2, F3). `register --replicates` and
+  `score` both require that the approval's ledger records the first run, complete (pages ×
+  conditions × draws), under its own registration file. The first run's last score under that
+  registration must have been scored WITH a ledger and have decided "replication required".
+- **Pins** for every design field, Holm over two targets, and the transforms' surviving mutants
+  (the PR's dispositions table).
+- **The comps fixture is cut to what its pins read** (F5): 1,428 → 936 non-empty cells.
+  - The reviewer's 372: the Trading Multiples peer columns 1, 6, 7, 8 (228) and the Operating
+    Statistics summary values (144).
+  - Also removed: the 24 Operating Statistics summary labels, the 78 column headers on the two
+    "Summary Statistics" label rows, and 18 cells of two ticker-less rows that no reader admits as
+    peers.
+  - Re-verified: each page's committed `cross_sectional`, `trading_multiples` and
+    `fundamental_deltas` rebuild from the cut.
+- **The scorer fingerprint now covers what the score runs** (F7): `capture_child.py`,
+  `replay.py`, `synthesis_panel.json` and `schemas.py`. The registered run stays scored by the
+  files at `fc79a7be`; a re-score of it runs from there.
+- **The print row's basis is read by one tested helper** (F8, `variants.cadence_basis`).
 
 **BOUNDARY.**
 - **Draws:** 60, `claude-opus-4-8`, 2026-11-07, between the ledger's opening (01:29 +05:30) and
@@ -209,7 +276,9 @@ run's result made one unnecessary.
 - **Requests:** main `e00db8cd` and #923 `e91490ae`, each with the five `FIX_3A` transforms, all
   12 pinned in the registration. Pages: the frozen panel v2, freeze `bcda7ce3`.
 - **Units:** prose units of `units.draw_units` with at least one hit, per draw. The family
-  breakdown counts a unit once, under its first family.
+  table counts a unit under every family it matches, and under its first family alone. The
+  field-state split of "no adjusted forward" reads each matched phrase, at the scorer of
+  `fc79a7be`, on these 60 draws, where the family's condition holds.
 - **Scorer:** the files at `fc79a7be`. p: the exact stratified permutation test over each page's
   ten draws.
 - **Cross-check deltas:** USER characters, draws=1, at each ref with each transform alone, against
@@ -219,6 +288,8 @@ run's result made one unnecessary.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - $30.7161 of $40.
-- **Accepted, with its falsifier: the "no adjusted forward" substitution.** The target improved
-  net, while one family inside it rose. It is falsified as harmless if fix 4, which retires the
-  prompt's trailing-only rule, is measured and the substitution does not fall with it.
+- **Accepted, with its falsifier: M-LABEL's "no adjusted forward" family on CAND output.** Most of
+  its CAND hits state a true field state, so the family may count CAND prose that is not a misread;
+  its precision there is untested. This biases the target AGAINST #923, so it cannot have made the
+  result. It is falsified as harmless if a coded sample of CAND units in the family shows
+  precision well below the gold's.

@@ -86,7 +86,7 @@ def compare_requests(base_ref: str, cand_ref: str, *, tickers: Sequence[str] | N
     where it is read, `variants.own_comps`)."""
     p = panel or rp.load_panel_file()
     out = Captured(base_ref, cand_ref, tuple(transforms))
-    out.inputs = {"ciq_root": str(ciq_root), "pages": {}}
+    out.inputs = {"ciq_root": str(Path(ciq_root).resolve()), "pages": {}}
     for t in tickers or p["panel"]:
         page, tx = rp.panel_inputs(t, panel=p, ciq_root=ciq_root)
         comps = rp.comps_export(t, ciq_root=ciq_root) if transforms else None
@@ -123,13 +123,19 @@ def refuse_if_unreached(c: Captured) -> None:
 
 # ------------------------------------------------------------------------- the registration
 
-#: The files whose definitions decide a score: the harness's scorer and the production modules it
+#: The files whose definitions decide a score: the harness's scorer, the production modules it
 #: reads its definitions from (`TRAILING_ONLY_NOTE`, `material_direction_flags`, `SYNTHESIS_TOOL`,
-#: `split_lean`/`derive_proposal`). A score is refused unless they are byte-identical to the
-#: registered ones.
+#: `split_lean`/`derive_proposal`), and what builds the layer and the inputs a draw is scored
+#: against. A score is refused unless they are byte-identical to the registered ones. (Fix 3a's
+#: run, `cceba9d9`, was registered and scored by the files at fc79a7be, before this list grew.)
 SCORER_FILES = ("vinci/evals/metrics.py", "vinci/evals/units.py", "vinci/evals/compare.py",
                 "vinci/evals/stats.py", "vinci/evals/panel.py", "vinci/dossier/synthesis.py",
-                "vinci/dossier/mechanical.py", "vinci/dossier/verdict.py")
+                "vinci/dossier/mechanical.py", "vinci/dossier/verdict.py",
+                # #926 review F7: what the score also runs — the layer a draw is scored against
+                # (`capture_child.pre_synthesis_mech`), the frozen inputs (`replay.panel_inputs`
+                # and the panel file) and the schemas the layer is validated by
+                "vinci/evals/capture_child.py", "vinci/evals/replay.py",
+                "vinci/evals/synthesis_panel.json", "vinci/dossier/schemas.py")
 
 
 def scorer_fingerprint(root: Path = rp.ROOT) -> str:
@@ -143,6 +149,30 @@ def scorer_fingerprint(root: Path = rp.ROOT) -> str:
 #: registration written before them keeps the sha256 its ledger records.
 _LATER_FIELDS: dict[str, Any] = {"no_worsening": False, "requests": {}, "ship_alpha": None,
                                  "replicates": None, "inputs": {}, "note": None}
+
+#: The fields that make two registrations THE SAME COMPARISON: what is drawn, how often, what must
+#: improve and by what rule and scorer. Everything else — the words (`note`), the record of what
+#: was read (`inputs`, a path's spelling included), the derived `held_out` and the replication link
+#: (`replicates`) — can differ between two registrations of one design (#926 review: two shas over
+#: one design were each drawable once).
+DESIGN_FIELDS = ("base_ref", "cand_ref", "transforms", "pages", "draws", "targets", "alpha",
+                 "ship_alpha", "scorer", "requests", "no_worsening", "rule")
+
+
+def design_differs(a: Any, b: Any) -> list[str]:
+    """The design fields on which ``a`` and ``b`` differ — [] when they are one design."""
+    return [k for k in DESIGN_FIELDS if getattr(a, k) != getattr(b, k)]
+
+
+def run_registration(out_dir: str | Path) -> Registration:
+    """The registration a run folder was drawn under (its own ``registration.json``). A run the
+    ledger records must be checkable: a missing file is refused, never skipped."""
+    rec = Path(out_dir) / "registration.json"
+    if not rec.exists():
+        raise rp.ReplayError(f"the ledger records a run at {out_dir} with no registration.json: "
+                             "every recorded run must be checkable")
+    return Registration.from_json(rec.read_text(encoding="utf-8"))
+
 
 REPLICATION_RULE = ("design record §6 under the replication rule (coordinator, 2026-11-07): each "
                     "target p_lower <= ship_alpha after Holm across the targets ships; ship_alpha "
@@ -272,7 +302,7 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
              pages: Sequence[str] | None = None, captured: Captured | None = None,
              no_worsening: bool = False, ship_alpha: float | None = None,
              replicates: Registration | None = None,
-             first_run: Path | None = None, note: str | None = None) -> Registration:
+             ledger: Path | None = None, note: str | None = None) -> Registration:
     """The registration for a comparison of the frozen panel, or of target pages outside it
     (`registered_pages`). ``captured`` — the $0 capture of exactly this comparison — pins every
     request's bytes and records its inputs; ``run_compare`` refuses a registration without the
@@ -281,8 +311,9 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
 
     ``ship_alpha`` registers the replication rule. ``replicates`` registers a REPLICATION of a
     registration under it: the same design in every field — refs, transforms, pages, draws,
-    targets, both alphas, scorer and the request bytes — and only for a first run whose own score
-    (``first_run``'s log) decided "replication required"; a replication of any other outcome is
+    targets, both alphas, scorer and the request bytes (`DESIGN_FIELDS`) — and only for a first
+    run the approval's ``ledger`` records, complete, whose own ledger-backed score decided
+    "replication required" (`first_run_verdict`); a replication of any other outcome is
     result-shopping and is refused."""
     p = panel or rp.load_panel_file()
     chosen = registered_pages(pages, p)
@@ -306,33 +337,46 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
                        note=note)
     if replicates is None:
         return reg
-    first = replicates
-    design = ("base_ref", "cand_ref", "transforms", "pages", "draws", "targets", "alpha",
-              "ship_alpha", "scorer", "requests", "no_worsening", "rule")
-    differ = [k for k in design if getattr(reg, k) != getattr(first, k)]
-    if first.replicates is not None or differ:
-        raise rp.ReplayError(f"a replication is of a FIRST run's registration, in the same "
-                             f"design: {differ or 'that registration is itself a replication'}")
-    _first_run_decided(first, first_run)
+    if replicates.replicates is not None:
+        raise rp.ReplayError("a replication is of a FIRST run's registration; that registration "
+                             "is itself a replication")
+    if ledger is None:
+        raise rp.ReplayError("a replication is registered against the approval's ledger, which "
+                             "records the first run")
+    first, _ = first_run_verdict(replicates.sha, ledger)
+    differ = design_differs(reg, first)
+    if differ:
+        raise rp.ReplayError(f"a replication is of the same design; these differ: {differ}")
     return dataclasses.replace(reg, replicates=first.sha)
 
 
-def _first_run_decided(first: Registration, out_dir: Path | None) -> None:
-    """A replication is registered only for a first run whose own score decided "replication
-    required" — read from that run's folder, under that registration."""
-    if out_dir is None:
-        raise rp.ReplayError("a replication names the first run's folder, whose score decided it")
-    rec = out_dir / "registration.json"
-    if not rec.exists() or Registration.from_json(rec.read_text(encoding="utf-8")).sha != first.sha:
-        raise rp.ReplayError(f"{out_dir} is not a run of registration {first.sha[:12]}")
-    log = out_dir / "score_log.jsonl"
+def first_run_verdict(first_sha: str, ledger: Path) -> tuple[Registration, Path]:
+    """The FIRST run a replication replicates, as the approval's ledger records it — or a refusal.
+    Exactly one run under ``first_sha`` holds draws; its own ``registration.json`` is that sha and
+    is not itself a replication; it holds every registered draw (pages × conditions × draws); and
+    its LAST score under that registration, scored WITH a ledger, decided "replication required".
+    A folder's word alone, another registration's rows, or a score with no ledger never count."""
+    runs = [(d, n) for d, n in runs_under(ledger, first_sha) if n]
+    if len(runs) != 1:
+        raise rp.ReplayError(f"the ledger records {len(runs)} run(s) of {first_sha[:12]} holding "
+                             "draws; a replication replicates exactly one")
+    folder, n = Path(runs[0][0]), runs[0][1]
+    first = run_registration(folder)
+    if first.sha != first_sha or first.replicates is not None:
+        raise rp.ReplayError(f"{folder} holds registration {first.sha[:12]}, not the first run "
+                             f"{first_sha[:12]} the ledger records there")
+    want = len(first.pages) * len(CONDITIONS) * first.draws
+    if n != want:
+        raise rp.ReplayError(f"{folder} holds {n} draws; {first_sha[:12]} registered {want}")
+    log = folder / "score_log.jsonl"
     rows = [json.loads(x) for x in log.read_text(encoding="utf-8").splitlines()
             if x.strip()] if log.exists() else []
-    mine = [r for r in rows if r.get("registration") == first.sha]
+    mine = [r for r in rows if r.get("registration") == first_sha and r.get("ledger")]
     if not mine or mine[-1].get("decision") != REPLICATION_REQUIRED:
-        got = mine[-1].get("decision") if mine else "never scored"
+        got = mine[-1].get("decision") if mine else "never scored with a ledger"
         raise rp.ReplayError(f"the first run decided {got!r}, not {REPLICATION_REQUIRED!r}: only "
                              "a result in the replication band is replicated")
+    return first, folder
 
 
 def write_registration(reg: Registration, path: Path) -> None:
@@ -356,12 +400,23 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
                                                          reg.transforms, reg.pages):
         raise rp.ReplayError("the captured comparison is not the registered one (refs, "
                              "transforms or pages differ) — register it first")
-    prior = [r.get("out_dir") for r in budget.rows() if r.get("registration") == reg.sha]
+    recorded = [r for r in budget.rows() if "registration" in r and "out_dir" in r]
+    prior = [r["out_dir"] for r in recorded if r["registration"] == reg.sha]
     if prior:
         raise rp.ReplayError(f"registration {reg.sha[:12]} was already drawn under this "
                              f"approval (into {prior}): a registration is drawn ONCE — "
                              "re-drawing a completed run is result-shopping; a new run needs a "
                              "new registration")
+    for r in recorded:   # ... and so is a DESIGN, whatever its note or inputs say
+        other = run_registration(r["out_dir"])
+        if other.sha != r["registration"]:
+            raise rp.ReplayError(f"{r['out_dir']} holds registration {other.sha[:12]}, not the "
+                                 f"{r['registration'][:12]} the ledger records there")
+        if not design_differs(reg, other) and other.replicates == reg.replicates:
+            raise rp.ReplayError(
+                f"this design was already drawn under this approval, as {other.sha[:12]} into "
+                f"{r['out_dir']}: a design is drawn ONCE whatever its note or inputs (a "
+                "replication of a first run is the one other draw, and it too is drawn once)")
     if not reg.requests:
         raise rp.ReplayError(f"registration {reg.sha[:12]} pins no request bytes: register it "
                              "with its $0 capture, so what is drawn is what was registered")
@@ -517,6 +572,13 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
     reg = registration
     p = panel or rp.load_panel_file()
     runs: tuple[tuple[str, int], ...] = ()
+    if reg.replicates is not None:   # a replication counts only as one of a real first run
+        if ledger is None:
+            raise rp.ReplayError("a replication is scored against the approval's ledger, which "
+                                 "records the first run it replicates")
+        first, _ = first_run_verdict(reg.replicates, ledger)
+        if differ := design_differs(reg, first):
+            raise rp.ReplayError(f"a replication is of the same design; these differ: {differ}")
     if ledger is not None:
         runs = runs_under(ledger, reg.sha)
         here = out_dir.resolve()
@@ -643,6 +705,7 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
         f.write(json.dumps({"at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
                             "registration": reg.sha, "scorer": reg.scorer,
                             "runs_under_sha": [list(r) for r in runs],
+                            "ledger": str(ledger.resolve()) if ledger is not None else None,
                             "ships": score.ships, "decision": score.decision,
                             "ship_alpha": reg.ship_alpha, "replicates": reg.replicates,
                             "reasons": list(score.reasons),

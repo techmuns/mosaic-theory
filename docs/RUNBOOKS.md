@@ -693,9 +693,11 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    NEW registration, said so in the record. The cap is the approval's, never one run's.
    **The replication rule** (coordinator, 2026-11-07): `register --ship-alpha 0.01` — a first run
    ships at p_lower ≤ 0.01; in (0.01, 0.05] its score decides "replication required", and it
-   counts only if `register --replicates <first> --first-run <its folder>` (the same design in
-   every field, refused for any other first-run outcome) reaches p_lower ≤ 0.05; above 0.05 it does
-   not ship. If the replication will not fit in what the approval has left, STOP and report —
+   counts only if `register --replicates <first> --budget-ledger <the same ledger>` (the same
+   design in every field; refused unless the ledger records that first run, complete, with a
+   ledger-backed score of "replication required") reaches p_lower ≤ 0.05 — `score` checks the
+   same link again; above 0.05 it does not ship. A DESIGN is drawn once per approval, whatever
+   its note or inputs; its one replication is drawn once too. If the replication will not fit in what the approval has left, STOP and report —
    never raise the cap. `--note` states, inside the sha, what the target covers and does not.
 5. **Score at $0** — `python -m vinci.evals score --out-dir <dir> --registration <file>
    --budget-ledger <file>` — from the registered scorer; it reports every run the ledger records

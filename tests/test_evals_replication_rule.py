@@ -104,17 +104,7 @@ def test_a_worsening_blocks_whatever_the_target_does(tmp_path: Path,
     assert s.decision == cm.DOES_NOT_SHIP and any("M-ABSENT worsens" in r for r in s.reasons)
 
 
-def test_a_replication_ships_at_alpha_and_says_it_replicated(tmp_path: Path,
-                                                             nflx: dict[str, Any]) -> None:
-    raw = nflx["synthesis"]
-    rep = _reg(replicates="f" * 64)
-    s = cm.score_run(_run(tmp_path / "r", rep, [raw] * 5, [_clean(raw)] * 4 + [raw]), rep,
-                     pages={"NFLX": nflx})
-    assert s.decision == "replicated: ships" and s.ships
-    s2 = cm.score_run(_run(tmp_path / "r2", rep, [raw] * 5, [raw] * 5), rep,
-                      pages={"NFLX": nflx})
-    assert s2.decision == cm.DOES_NOT_SHIP
-    assert any("does not replicate" in r for r in s2.reasons)
+# (a replication's score — the link to a real first run — is pinned in test_evals_pr926_round2.py)
 
 
 def test_the_rule_refuses_an_incoherent_registration() -> None:
@@ -132,37 +122,7 @@ def _history() -> None:
         pytest.skip("needs the full history")
 
 
-def _first_run(tmp_path: Path, reg: cm.Registration, decision: str) -> Path:
-    d = tmp_path / decision.replace(" ", "-")
-    d.mkdir()
-    (d / "registration.json").write_text(reg.to_json(), encoding="utf-8")
-    (d / "score_log.jsonl").write_text(json.dumps({"registration": reg.sha,
-                                                   "decision": decision}) + "\n")
-    return d
-
-
-def test_a_replication_is_registered_only_for_a_first_run_in_the_band(tmp_path: Path) -> None:
-    _history()
-    first = cm.register("dc5b8787", "b109e26c", targets=["M-LABEL"], pages=["NFLX"],
-                        ship_alpha=0.01)
-    assert first.rule == cm.REPLICATION_RULE
-    run = _first_run(tmp_path, first, cm.REPLICATION_REQUIRED)
-    rep = cm.register("dc5b8787", "b109e26c", targets=["M-LABEL"], pages=["NFLX"],
-                      ship_alpha=0.01, replicates=first, first_run=run)
-    assert rep.replicates == first.sha and rep.sha != first.sha
-    shipped = _first_run(tmp_path, first, "ships")
-    with pytest.raises(rp.ReplayError, match="not 'replication required'"):
-        cm.register("dc5b8787", "b109e26c", targets=["M-LABEL"], pages=["NFLX"],
-                    ship_alpha=0.01, replicates=first, first_run=shipped)
-    with pytest.raises(rp.ReplayError, match="same design: \\['draws'\\]"):
-        cm.register("dc5b8787", "b109e26c", targets=["M-LABEL"], pages=["NFLX"], draws=4,
-                    ship_alpha=0.01, replicates=first, first_run=run)
-    with pytest.raises(rp.ReplayError, match="first run's folder"):
-        cm.register("dc5b8787", "b109e26c", targets=["M-LABEL"], pages=["NFLX"],
-                    ship_alpha=0.01, replicates=first)
-    with pytest.raises(rp.ReplayError, match="itself a replication"):
-        cm.register("dc5b8787", "b109e26c", targets=["M-LABEL"], pages=["NFLX"],
-                    ship_alpha=0.01, replicates=rep, first_run=run)
+# (a replication's registration against the ledger: test_evals_pr926_round2.py)
 
 
 def test_a_registration_records_the_inputs_its_capture_read() -> None:

@@ -27,8 +27,9 @@ import pytest
 
 from vinci.dossier import ciq_sheets, mechanical
 from vinci.dossier.ciq import CiqBundle, CiqFormat, CiqWorkbook
-from vinci.dossier.schemas import MechanicalLayer, Sourced
+from vinci.dossier.schemas import CatalystRow, MechanicalLayer, Sourced
 from vinci.evals import capture_child as cc
+from vinci.evals import compare as cm
 from vinci.evals import replay as rp
 from vinci.evals import variants as vr
 from vinci.evals.capture_child import pre_synthesis_mech
@@ -220,10 +221,15 @@ def test_print_row_guide_moves_only_the_print_rows_test_and_source(
     edgar_reads = (mechanical.eight_k_events, mechanical._next_print_estimate)
 
     def not_current(e: Any, cik: str, ref: Any, m: MechanicalLayer) -> Any:
+        """…and rebuilds a calendar whose OTHER rows differ from the committed ones (V18: the
+        whole rebuilt calendar replacing the committed rows): only the print row may be taken."""
         dc = m.drawdown_cause
         assert dc is not None
-        return main_cal(e, cik, ref, m.model_copy(update={"drawdown_cause": dc.model_copy(
+        cal = main_cal(e, cik, ref, m.model_copy(update={"drawdown_cause": dc.model_copy(
             update={"revised_guidance": Sourced.unknown(note="superseded")})}))
+        extra = CatalystRow(event="a row only the rebuild has", expected_date="2099-01-01",
+                            date_basis="stated", tests_what="nothing", source_ref="test")
+        return cal.model_copy(update={"rows": [*cal.rows, extra]})
     monkeypatch.setattr(mechanical, "_catalyst_calendar", not_current)
     out = vr.print_row_guide(mech, ctx)
     i = next(i for i, r in enumerate(mech.catalyst_calendar.rows)  # type: ignore[union-attr]
@@ -282,3 +288,122 @@ def test_comps_export_finds_one_export_and_refuses_two(tmp_path: Path) -> None:
     (d / "Company Comparable Analysis Eli Lilly (2).xls").write_bytes(b"x")
     with pytest.raises(rp.ReplayError, match="2 comps exports"):
         rp.comps_export("LLY", ciq_root=tmp_path)
+
+
+# ------------------------------------------------ #926 review round 2: the surviving mutants
+
+def test_a_note_that_is_not_the_trailing_only_note_is_never_rewritten(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """V2: the reader's own note is left as committed, whatever the ref's rule returns."""
+    mech, ctx = _ctx("LLY")
+    v = mech.valuation
+    own = mech.model_copy(update={"valuation": v.model_copy(update={
+        "ev_ebitda": v.ev_ebitda.model_copy(update={"note": "the reader's own caveat"})})})
+    monkeypatch.setattr(mechanical, "ev_ebitda_note", lambda **kw: None, raising=False)
+    assert vr.trailing_only_note(own, ctx) == own
+
+
+def test_the_ntm_cells_are_read_only_from_the_pages_proved_export(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """V3: an export that does not rebuild the page's comps lines is never read for NTM cells."""
+    mech, _ctx_own = _ctx("LLY")
+    _m, wrong = _ctx("LLY", comps="SMPL")
+    monkeypatch.setattr(mechanical, "ev_ebitda_note",
+                        lambda **kw: None if kw["peer_ntm"] else mechanical.TRAILING_ONLY_NOTE,
+                        raising=False)
+    monkeypatch.setattr(ciq_sheets, "comps_ntm_multiples", lambda b: ["NTM P/E"],
+                        raising=False)
+    with pytest.raises(vr.TransformError, match="not the page's own export"):
+        vr.trailing_only_note(mech, wrong)
+
+
+def test_an_export_whose_peer_medians_differ_is_not_the_pages_own() -> None:
+    """V12: every peer's TEV/EBITDA moved — the name row and the summary rows (all that
+    `trading_multiples` reads) unchanged, so only the cross_sectional check can refuse it."""
+    mech, ctx = _ctx("LLY")
+    moved = _comps("LLY")
+    tm = moved.sheet("comps", "Trading Multiples")
+    _hdr, peers, _tgt = ciq_sheets._comps_layout(tm, "LLY")
+    for i in peers:
+        tm[i][2] = 1.0
+    assert ciq_sheets._comps_multiples(moved, vr.COMPS_SRC).value == \
+        mech.peer_comps.trading_multiples.value
+    with pytest.raises(vr.TransformError, match="cross_sectional"):
+        vr.own_comps(mech, vr.Context(page=ctx.page, comps=moved))
+
+
+def _garbage_comps(tmp_path: Path) -> Path:
+    d = tmp_path / "LLY"
+    d.mkdir()
+    wb = d / "Company Comparable Analysis Eli Lilly and Company.xls"
+    wb.write_bytes(b"not a workbook")
+    return wb
+
+
+def test_capture_at_hands_the_child_the_comps_export(tmp_path: Path) -> None:
+    """X2: with `--comps` dropped the child reports "none was given"; given, it reads the file
+    and refuses it as not the page's own."""
+    page = _page("LLY")
+    wb = _garbage_comps(tmp_path)
+    with pytest.raises(rp.ReplayError) as got:
+        rp.capture_at("HEAD", page, None, draws=1, transforms=["peer_gap_question"], comps=wb)
+    assert "not the page's own export" in str(got.value), str(got.value)[-400:]
+    with pytest.raises(rp.ReplayError, match="none was given"):
+        rp.capture_at("HEAD", page, None, draws=1, transforms=["peer_gap_question"])
+
+
+def test_compare_requests_hands_each_page_its_comps_export(tmp_path: Path) -> None:
+    """X3: `compare_requests` finds the page's export under the CIQ root and passes it on."""
+    _history()
+    wb = _garbage_comps(tmp_path)
+    panel = {"freeze_ref": PANEL["freeze_ref"], "panel": ["LLY"],
+             "pages": {"LLY": {"dossier_blob": PANEL["pages"]["LLY"]["dossier_blob"],
+                               "transcripts": []}}}
+    with pytest.raises(rp.ReplayError) as got:
+        cm.compare_requests("HEAD", "HEAD", transforms=["peer_gap_question"], panel=panel,
+                            ciq_root=tmp_path)
+    assert "not the page's own export" in str(got.value), str(got.value)[-400:]
+    assert wb.exists()
+
+
+def test_a_survival_copy_that_is_not_the_builders_copy_is_refused(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """V7: `leverage_survival.survival` is the builder's copy of `quality.survival_capacity`; a
+    page where they differ is refused, never half-rewritten."""
+    mech, ctx = _ctx("LLY")
+    ls = mech.leverage_survival
+    assert ls is not None
+    odd = mech.model_copy(update={"leverage_survival": ls.model_copy(update={
+        "survival": ls.survival.model_copy(update={"value": "another line"})})})
+    main = mechanical._survival_capacity
+    monkeypatch.setattr(mechanical, "_survival_capacity", lambda *a, **k: main(*a, **k).model_copy(
+        update={"value": str(main(*a, **k).value).replace(" (a risk)", "")}))
+    with pytest.raises(vr.TransformError, match="not the copy"):
+        vr.survival_read(odd, ctx)
+
+
+def test_a_rebuilt_print_row_on_another_date_is_refused(monkeypatch: pytest.MonkeyPatch) -> None:
+    """V15: only what the row tests is re-derived; a rebuild that moves its date is refused."""
+    mech, ctx = _brbr()
+    main_cal = mechanical._catalyst_calendar
+
+    def moved(e: Any, cik: str, ref: Any, m: MechanicalLayer) -> Any:
+        cal = main_cal(e, cik, ref, m)
+        return cal.model_copy(update={"rows": [
+            r.model_copy(update={"expected_date": "2099-12-31"})
+            if r.event == mechanical.PRINT_EVENT else r for r in cal.rows]})
+    monkeypatch.setattr(mechanical, "_catalyst_calendar", moved)
+    with pytest.raises(vr.TransformError, match="committed date"):
+        vr.print_row_guide(mech, ctx)
+
+
+def test_a_calendar_with_two_print_rows_is_refused() -> None:
+    """V17: one calendar, one print row — two are refused, never one chosen."""
+    mech, ctx = _brbr()
+    cal = mech.catalyst_calendar
+    assert cal is not None
+    row = next(r for r in cal.rows if r.event == mechanical.PRINT_EVENT)
+    two = mech.model_copy(update={"catalyst_calendar": cal.model_copy(
+        update={"rows": [*cal.rows, row]})})
+    with pytest.raises(vr.TransformError, match="2 print rows"):
+        vr.print_row_guide(two, ctx)
