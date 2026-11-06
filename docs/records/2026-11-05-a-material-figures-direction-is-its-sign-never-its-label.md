@@ -143,6 +143,15 @@ the prompt complete. Bull or bear stays the model's call.
   on the pre-fix code (QA routing, a case-free word list, the narrowed "to income" rule) plus
   a cached label regex; 1 skipped (a structured statement field needs a schema change and every
   page re-assembled). The real run's output is byte-identical after the fixes.
+- **Review round 1** (Codex hit its usage limit, so `/code-review high` ran in-session on the PR
+  head): 5 findings, 3 fixed behind 4 pins that fail on that head, 2 dismissed.
+  - "non-operating income" was blanked as the measure "operating income". It now counts as a
+    gain framing.
+  - The digest's own echoed wording ("ADDS … to pre-tax income", "SUBTRACTS … from pre-tax
+    income") is now read whole as agreeing with the sign, before the measure name inside it is
+    blanked.
+  - "write-off" joins the cost words.
+  - The real run is byte-identical after both review rounds.
 - The suite (ruff, `mypy --strict vinci`, `pytest -m "not network"`): counts in the PR body.
 
 **BOUNDARY.**

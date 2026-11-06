@@ -241,6 +241,15 @@ def test_an_unidentified_statement_is_reported_not_checked(monkeypatch: pytest.M
     # "to income" frames a GAIN (review round 0): kept, so a right framing is not flagged
     ("NFLX", "The $2,800.0M flowed to other income, not a restructuring charge.", False),
     ("LLY", "The $8,070.0M IPR&D line adds to income.", True),
+    # review round 1: "non-operating income" is a gain framing, not the measure "operating income"
+    ("NFLX", "The $2,800.0M is non-operating income, not a recurring charge.", False),
+    # review round 1: the digest's own effect wording, echoed, reads as agreeing with the sign
+    ("NFLX", "The $2,800.0M ADDS to pre-tax income, a one-off rather than a recurring cost.",
+     False),
+    ("LLY", "IPR&D SUBTRACTS $8,070.0M from pre-tax income, an income-statement benefit lost.",
+     False),
+    # review round 1: "write-off" is a cost word
+    ("NFLX", "The $2,800.0M merger write-off weighs on the year.", True),
 ])
 def test_the_neutralising_rules(ticker: str, claim: str, flagged: bool) -> None:
     """Hand-written claims (not LLM text) for the rules the frozen corpus does not exercise; the

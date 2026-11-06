@@ -2003,16 +2003,25 @@ INCOME_STATEMENT = "Income Statement"
 #: as adding to them. Whole words only: "costly" and "regained" are not read.
 _COST_WORD = re.compile(
     r"\b(?:charg(?:e|es|ed)|costs?|drags?|expens(?:e|es|ed)|loss(?:es)?|write-?\s?downs?|"
-    r"impairments?|impaired)\b", re.IGNORECASE)
+    r"write-?\s?offs?|impairments?|impaired)\b", re.IGNORECASE)
+#: The digest's OWN effect wording, echoed into prose (#920: every signed-line draw wrote "ADDS …
+#: to pre-tax income"). It states a direction, so it is read as one, before `_NEUTRAL_DIRECTION`
+#: blanks the measure name inside it.
+_ADDS_TO_PRETAX = re.compile(
+    r"\badd(?:s|ed|ing)?\b(?:[^.;]|\.(?=\d)){0,40}?\bto\s+pre-?tax\s+income\b",
+    re.IGNORECASE)
+_SUBTRACTS_FROM_PRETAX = re.compile(
+    r"\bsubtract(?:s|ed|ing)?\b(?:[^.;]|\.(?=\d)){0,40}?\bfrom\s+pre-?tax\s+income\b",
+    re.IGNORECASE)
 _GAIN_WORD = re.compile(
     r"\b(?:gains?|income|benefit(?:s|ed|ted)?|inflat(?:e|es|ed|ing)|boost(?:s|ed|ing)?)\b",
     re.IGNORECASE)
 #: Phrases that carry a direction word and frame NO figure, removed before the words are read:
 #: - BOTH DIRECTIONS AT ONCE, the accounting labels' own form: "Gain (Loss)", "(Gain) Loss",
 #:   "gains and losses", "Income (Expense)", "Inc. (Exp.)";
-#: - A MEASURE NAMED, not a figure framed: "net income", "operating loss", "pre-tax income" (the
-#:   digest's own wording, so an echo of it never reads as framing), "income statement",
-#:   "income tax", "cost of revenue";
+#: - A MEASURE NAMED, not a figure framed: "net income", "operating loss" (never "NON-operating
+#:   income", which frames a gain), "pre-tax income" (the digest's echo is read whole first,
+#:   `_ADDS_TO_PRETAX`), "income statement", "income tax", "cost of revenue";
 #: - INCOME AS WHERE A COST LANDS: "a drag ON income", "a charge AGAINST net income", "taken
 #:   FROM income" — the word names where the effect lands, not which way it goes. "to income"
 #:   is NOT blanked: "adds $2.8bn to other income" frames a gain.
@@ -2020,7 +2029,7 @@ _NEUTRAL_DIRECTION = re.compile(
     r"\bgains?\s*\(\s*loss(?:es)?\s*\)|\(\s*gains?\s*\)\s*loss(?:es)?"
     r"|\bgains?\s*(?:/|&|\band\b|\bor\b)\s*loss(?:es)?\b"
     r"|\bincome\s*\(\s*expense\s*\)|\(\s*income\s*\)\s*expense\b|\binc\.?\s*\(\s*exp\.?\s*\)"
-    r"|\b(?:net|operating|pre-?tax|gross|comprehensive)\s+(?:income|loss(?:es)?)\b"
+    r"|(?<!non-)\b(?:net|operating|pre-?tax|gross|comprehensive)\s+(?:income|loss(?:es)?)\b"
     r"|\bincome\s+(?:statement|tax(?:es)?|before)\b|\bcost\s+of\s+(?:revenue|sales|goods)\b"
     r"|\b(?:on|against|from)\s+(?:[A-Za-z-]+\s+){0,2}?income\b",
     re.IGNORECASE)
@@ -2056,6 +2065,15 @@ def _direction_words(text: str) -> tuple[list[str], list[str]]:
             out.setdefault(m.group().lower(), m.group())
         return list(out.values())
     return found(_COST_WORD), found(_GAIN_WORD)
+
+
+def _framing(text: str, *, label: str) -> tuple[list[str], list[str]]:
+    """(cost, gain) direction in a claim: the words left once `_neutral` has blanked what frames
+    no figure, plus an echo of the digest's own effect wording, read whole."""
+    cost, gain = _direction_words(_neutral(text, label=label))
+    gain += [m.group() for m in _ADDS_TO_PRETAX.finditer(text)]
+    cost += [m.group() for m in _SUBTRACTS_FROM_PRETAX.finditer(text)]
+    return cost, gain
 
 
 @dataclass(frozen=True)
@@ -2253,7 +2271,7 @@ def material_direction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[st
         for where, text in claims:
             if not f.cited_in(text):
                 continue
-            cost, gain = _direction_words(_neutral(text, label=f.label))
+            cost, gain = _framing(text, label=f.label)
             if f.value > 0 and cost and not gain:
                 frame, words = "a cost", cost
             elif f.value < 0 and gain and not cost:
