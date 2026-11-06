@@ -5043,12 +5043,14 @@ _CROSS_SECTIONAL = (("EV/EBITDA", 2), ("P/E", 4))
 
 
 def _peer_gaps(tm: Rows, peers: list[int], tgt: int,
+               cols: tuple[tuple[str, int], ...] = _CROSS_SECTIONAL,
                ) -> list[tuple[str, float | str | None, float | None, float | None]]:
     """(label, the name's cell, the peer median as the headline states it, the gap) for each
-    cross-sectional multiple — the ONE computation `cross_sectional_valuation` prints and
-    `_peer_gap_question` reads the sign of. The gap is None unless both sides are numbers."""
+    multiple in ``cols`` — the ONE computation `cross_sectional_valuation` prints (its two) and
+    `_peer_gap_question` reads the signs of (all six trading multiples, LTM and NTM). The gap is
+    None unless both sides are numbers."""
     out: list[tuple[str, float | str | None, float | None, float | None]] = []
-    for lab, col in _CROSS_SECTIONAL:
+    for lab, col in cols:
         # (L1) peer median SELF-COMPUTED from the per-peer rows via the shared _peer_col_median
         # primitive — the SAME source + peer set the grid footer's _med_mult uses — NOT CIQ's opaque
         # summary "Median" row, so the headline "peer median" and the grid agree, verifiable from
@@ -5070,9 +5072,13 @@ def _peer_gap_question(bundle: CiqBundle) -> str:
     IT ASSUMED A DISCOUNT (fix 3a, 2026-11-06): every page asked whether "the discount" is EARNED
     by "worse fundamentals", and 11 of the 28 committed pages at main bcda7ce3 trade at a PREMIUM on
     EV/EBITDA (ROST +124%, V +119%, LLY +87%). The direction is now the sign of each gap as the
-    headline prints it (whole percent, so a "+0%" is neither), and it is asked only where every
+    headline prints it (whole percent, so a "+0%" is neither), over EVERY multiple the trading
+    multiples carry — trailing AND forward (review of #923: WLK's one known trailing gap is +27%
+    while its NTM TEV/EBITDA is −11%, and the prompt tells the model to read NTM beside LTM) — on
+    the self-computed peer median the headline and the grid use. It is asked only where every
     known gap points the same way. Where they disagree, or none is known, the question is DELETED,
-    not reworded (coordinator, 2026-11-06): the signs sit in `cross_sectional` beside it."""
+    not reworded (coordinator, 2026-11-06): the signs sit in `cross_sectional` and
+    `trading_multiples` beside it."""
     try:
         tm = bundle.sheet("comps", "Trading Multiples")
     except CiqUnavailableError:
@@ -5080,8 +5086,8 @@ def _peer_gap_question(bundle: CiqBundle) -> str:
     _hdr, peers, tgt = _comps_layout(tm, bundle.ticker)
     if tgt is None or not peers:
         return ""
-    pcts = [round(gap * 100) for _lab, _nv, _mv, gap in _peer_gaps(tm, peers, tgt)
-            if gap is not None]
+    pcts = [round(gap * 100) for _lab, _nv, _mv, gap
+            in _peer_gaps(tm, peers, tgt, _COMPS_MULTIPLES) if gap is not None]
     if pcts and all(p > 0 for p in pcts):
         return "is the premium EARNED (better fundamentals) or RESIDUAL (unexplained)? "
     if pcts and all(p < 0 for p in pcts):

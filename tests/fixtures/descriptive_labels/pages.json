@@ -1,5 +1,5 @@
 {
- "_about": "Frozen copies for the descriptive-label pins (fix 3a, 2026-11-06): each subtree copied verbatim from data/dossiers/<T>/dossier.json at main bcda7ce36e02369d2d67aaba6ff2004c3777d40e, except where a key says it is cut: `stock_performance_points` keeps each point's date and rebased name close (the benchmark column dropped), and `releases` keeps each release's filed date, source_ref and first guide row. These track NO page and are never regenerated (CLAUDE.md TEST-LAYER RULE).",
+ "_about": "Frozen copies for the descriptive-label pins (fix 3a, 2026-11-06): each subtree copied verbatim from data/dossiers/<T>/dossier.json at main bcda7ce36e02369d2d67aaba6ff2004c3777d40e, except where a key says it is cut: `stock_performance_points` keeps each point's date and rebased name close (the benchmark column dropped), and `releases` keeps each release's filed date, source_ref and first guide row; `peer` holds each comps name's committed `cross_sectional` and `fundamental_deltas`. These track NO page and are refrozen only with the pins that read them (CLAUDE.md TEST-LAYER RULE).",
  "commit": "bcda7ce36e02369d2d67aaba6ff2004c3777d40e",
  "pages": {
   "LLY": {
@@ -2058,6 +2058,20 @@
      "status": "present",
      "note": null
     }
+   },
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA 28x vs peer median 15.0x (+87%); P/E 46x vs peer median 29.0x (+59%)",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name 54% vs peer-median 37%; rev growth name 46% vs peer-median 6%; EBITDA growth name 66% vs peer-median 5%; Debt/EBITDA name 1.1 vs peer-median 2.2; LT EPS growth name 21% vs peer-median 6%; beta name 0.4 vs peer-median 0.2  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+     "status": "present",
+     "note": null
+    }
    }
   },
   "NFLX": {
@@ -3094,6 +3108,20 @@
      "status": "present",
      "note": null
     }
+   },
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA 15.9x vs peer median 18.2x (-13%); P/E 18.1x vs peer median 21.9x (-18%)",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name 32% vs peer-median 21%; rev growth name 15% vs peer-median 17%; EBITDA growth name 23% vs peer-median 25%; Debt/EBITDA name 1.0 vs peer-median 0.8; LT EPS growth name 21% vs peer-median 16%; beta name 1.6 vs peer-median 1.4  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+     "status": "present",
+     "note": null
+    }
    }
   },
   "SMPL": {
@@ -4046,6 +4074,20 @@
     "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)",
     "latest_close_quarter_end": false,
     "history_through": "2026-06-30"
+   },
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA 5.4x vs peer median 7.1x (-24%); P/E 13.2x vs peer median 15.3x (-14%)",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name 13% vs peer-median 15%; rev growth name 11% vs peer-median 1%; EBITDA growth name 5% vs peer-median -0%; Debt/EBITDA name 0.2 vs peer-median 2.1; LT EPS growth name 10% vs peer-median 8%; beta name 1.4 vs peer-median 0.8  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+     "status": "present",
+     "note": null
+    }
    }
   },
   "VRRM": {
@@ -4689,6 +4731,248 @@
       ]
      }
     ]
+   },
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA 4.6x vs peer median 11.6x (-60%); P/E 5.1x vs peer median 18.1x (-72%)",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name 37% vs peer-median 18%; rev growth name 10% vs peer-median 9%; EBITDA growth name 4% vs peer-median 9%; Debt/EBITDA name 3.0 vs peer-median 1.9; LT EPS growth name 2% vs peer-median 10%; beta name 0.4 vs peer-median 0.8  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+     "status": "present",
+     "note": null
+    }
+   }
+  },
+  "ORKA": {
+   "forward_multiple_history": {
+    "as_of": "2026-06-30",
+    "series": [
+     {
+      "metric": "EV/NTM Revenue",
+      "row_label": "TEV/NTM Total Revenues",
+      "context_only": false,
+      "note": null,
+      "points": [
+       {
+        "date": "2024-09-30",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2024-12-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-03-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-06-30",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-09-30",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-12-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2026-03-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2026-06-30",
+        "close": null,
+        "cell": "NM"
+       }
+      ],
+      "band": null
+     },
+     {
+      "metric": "EV/NTM EBITDA",
+      "row_label": "TEV/NTM EBITDA",
+      "context_only": false,
+      "note": null,
+      "points": [
+       {
+        "date": "2024-09-30",
+        "close": null,
+        "cell": "-"
+       },
+       {
+        "date": "2024-12-31",
+        "close": null,
+        "cell": "-"
+       },
+       {
+        "date": "2025-03-31",
+        "close": null,
+        "cell": "-"
+       },
+       {
+        "date": "2025-06-30",
+        "close": null,
+        "cell": "-"
+       },
+       {
+        "date": "2025-09-30",
+        "close": null,
+        "cell": "-"
+       },
+       {
+        "date": "2025-12-31",
+        "close": null,
+        "cell": "-"
+       },
+       {
+        "date": "2026-03-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2026-06-30",
+        "close": null,
+        "cell": "NM"
+       }
+      ],
+      "band": null
+     },
+     {
+      "metric": "EV/NTM EBIT",
+      "row_label": "TEV/NTM EBIT",
+      "context_only": false,
+      "note": null,
+      "points": [
+       {
+        "date": "2024-09-30",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2024-12-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-03-31",
+        "close": 0.045735,
+        "cell": null
+       },
+       {
+        "date": "2025-06-30",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-09-30",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-12-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2026-03-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2026-06-30",
+        "close": null,
+        "cell": "NM"
+       }
+      ],
+      "band": null
+     },
+     {
+      "metric": "P/NTM EPS",
+      "row_label": "P/NTM EPS",
+      "context_only": true,
+      "note": "CONTEXT ONLY — may not anchor a multiple leg. BASIS MATCH: LIMITED: the row is labelled only 'P/NTM EPS', and the workbook does not show that it shares the normalized-EPS denominator of the current Estimates P/E. EV/NTM EBIT is the admissible cross-check (docs/records/2026-09-03-percentiles-demoted-ev-ebit-replaces.md).",
+      "points": [
+       {
+        "date": "2024-09-30",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2024-12-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-03-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-06-30",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-09-30",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2025-12-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2026-03-31",
+        "close": null,
+        "cell": "NM"
+       },
+       {
+        "date": "2026-06-30",
+        "close": null,
+        "cell": "NM"
+       }
+      ],
+      "band": null
+     }
+    ],
+    "withheld": [
+     "EV/NTM Revenue: no own-history band — the latest close [2026-06-30] reads 'NM' — no current, and an older close is not one",
+     "EV/NTM EBITDA: no own-history band — the latest close [2026-06-30] reads 'NM' — no current, and an older close is not one",
+     "EV/NTM EBIT: no own-history band — the latest close [2026-06-30] reads 'NM' — no current, and an older close is not one",
+     "P/NTM EPS: no own-history band — the latest close [2026-06-30] reads 'NM' — no current, and an older close is not one"
+    ],
+    "source_file": "Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls",
+    "source_sha256": "add437d7e3",
+    "source_ref": "CIQ Financials→Multiples (quarterly Close; forward rows, exact label)",
+    "latest_close_quarter_end": true,
+    "history_through": "2026-06-30"
+   },
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA NM vs peer median 23.8; P/E NM vs peer median 5.2",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name – vs peer-median 62%; rev growth name – vs peer-median -93%; EBITDA growth name – vs peer-median –; Debt/EBITDA name NM vs peer-median 4.1; LT EPS growth name – vs peer-median –; beta name -0.1 vs peer-median 0.8  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+     "status": "present",
+     "note": null
+    }
    }
   },
   "WLK": {
@@ -4714,6 +4998,20 @@
     "survival_capacity": {
      "value": "net-debt/EBITDA 3.6x (CIQ) | FCF-negative → burning cash (cash not derived — a risk)",
      "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+     "status": "present",
+     "note": null
+    }
+   },
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA 10.7x vs peer median 8.4x (+27%); P/E NM vs peer median 18.15",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name 10% vs peer-median 12%; rev growth name -4% vs peer-median -0%; EBITDA growth name -13% vs peer-median 1%; Debt/EBITDA name 4.7 vs peer-median 3.8; LT EPS growth name – vs peer-median 20%; beta name 0.6 vs peer-median 0.9  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
      "status": "present",
      "note": null
     }
@@ -4921,6 +5219,86 @@
       ]
      }
     ]
+   }
+  },
+  "ROST": {
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA 15.7x vs peer median 7.0x (+124%); P/E 28.6x vs peer median 13.8x (+108%)",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name 15% vs peer-median 11%; rev growth name 14% vs peer-median 9%; EBITDA growth name 20% vs peer-median 13%; Debt/EBITDA name 1.0 vs peer-median 1.7; LT EPS growth name 15% vs peer-median 10%; beta name 0.9 vs peer-median 1.3  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+     "status": "present",
+     "note": null
+    }
+   }
+  },
+  "PARR": {
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA 3.5x vs peer median 8.2x (-57%); P/E 5x vs peer median 16.9x (-70%)",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name 15% vs peer-median 9%; rev growth name 13% vs peer-median 15%; EBITDA growth name 525% vs peer-median 130%; Debt/EBITDA name 0.8 vs peer-median 2.1; LT EPS growth name – vs peer-median 37%; beta name 0.8 vs peer-median 0.6  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+     "status": "present",
+     "note": null
+    }
+   }
+  },
+  "GOOGL": {
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA 17.5x vs peer median 15.7x (+11%); P/E 14.6x vs peer median 19.4x (-25%)",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name 39% vs peer-median 27%; rev growth name 22% vs peer-median 15%; EBITDA growth name 29% vs peer-median 24%; Debt/EBITDA name 0.8 vs peer-median 1.0; LT EPS growth name 13% vs peer-median 22%; beta name 1.2 vs peer-median 1.4  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+     "status": "present",
+     "note": null
+    }
+   }
+  },
+  "FUBO": {
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA NM vs peer median 12.4; P/E NM vs peer median 13",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name – vs peer-median 11%; rev growth name 31% vs peer-median 8%; EBITDA growth name – vs peer-median 17%; Debt/EBITDA name NM vs peer-median 3.4; LT EPS growth name – vs peer-median 20%; beta name 2.4 vs peer-median 1.5  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+     "status": "present",
+     "note": null
+    }
+   }
+  },
+  "AMZN": {
+   "peer": {
+    "cross_sectional": {
+     "value": "EV/EBITDA 13.8x vs peer median 14.6x (-5%); P/E 19.4x vs peer median 20.6x (-6%)",
+     "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+     "status": "present",
+     "note": null
+    },
+    "fundamental_deltas": {
+     "value": "EBITDA margin name 23% vs peer-median 22%; rev growth name 15% vs peer-median 15%; EBITDA growth name 33% vs peer-median 20%; Debt/EBITDA name 1.5 vs peer-median 1.6; LT EPS growth name 23% vs peer-median 13%; beta name 1.5 vs peer-median 1.3  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+     "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+     "status": "present",
+     "note": null
+    }
    }
   }
  }

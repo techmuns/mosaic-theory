@@ -31,6 +31,7 @@ import copy
 import json
 import pathlib
 import re
+import shutil
 from datetime import date, timedelta
 from types import SimpleNamespace
 from typing import Any, cast
@@ -258,6 +259,54 @@ def test_trailing_only_stands_only_where_no_forward_multiple_exists(
     assert note == (None if history or comps else mech_mod.TRAILING_ONLY_NOTE)
 
 
+def test_a_consensus_forward_pe_alone_removes_the_flag(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(+) Review of #923 (a surviving mutant dropped `forward_multiples` from the rule): LLY's
+    consensus forward P/E, with its comps and history taken away, is a forward basis by itself."""
+    assert _valuation_on(monkeypatch, "LLY", history=False, comps=False).ev_ebitda.note is None
+
+
+def _history(t: str, *, keep: Any = None) -> ForwardMultipleHistory:
+    h = ForwardMultipleHistory.model_validate(PAGES[t]["forward_multiple_history"])
+    return h if keep is None else h.model_copy(update={"series": [s for s in h.series if keep(s)]})
+
+
+def test_a_history_with_no_current_close_is_no_forward_basis() -> None:
+    """(+) Review of #923: ORKA's forward history is NM at the latest close on every series (its
+    only number a 2025 EV/NTM EBIT); a series counts only when it has a band, so alone it leaves
+    the multiple trailing only."""
+    h = _history("ORKA")
+    assert any(p.close is not None for s in h.series for p in s.points)  # a number, but stale
+    assert all(s.band is None for s in h.series)
+    note = mech_mod.ev_ebitda_note(guided_forward=False, forward_multiples=False, peer_ntm=[],
+                                   forward_history=h)
+    assert note == mech_mod.TRAILING_ONLY_NOTE
+
+
+def test_a_context_only_history_is_no_forward_basis() -> None:
+    """(+/-) Review of #923: EPAM's P/NTM EPS series is context-only (it may not anchor a leg) —
+    alone it is no forward basis; EPAM's banded EV/NTM EBITDA series alone is one."""
+    ctx = _history("EPAM", keep=lambda s: s.context_only)
+    ev = _history("EPAM", keep=lambda s: s.metric == "EV/NTM EBITDA")
+    assert ctx.series and all(s.band is not None for s in ctx.series)
+    kw: dict[str, Any] = {"guided_forward": False, "forward_multiples": False, "peer_ntm": []}
+    assert mech_mod.ev_ebitda_note(forward_history=ctx, **kw) == mech_mod.TRAILING_ONLY_NOTE
+    assert mech_mod.ev_ebitda_note(forward_history=ev, **kw) is None
+
+
+@pytest.mark.parametrize("ticker,want", [
+    ("ROST", ["NTM TEV/Rev", "NTM TEV/EBITDA", "NTM P/E"]),
+    ("FUBO", ["NTM TEV/Rev", "NTM TEV/EBITDA"]),
+    ("ORKA", []),
+])
+def test_the_names_ntm_multiples_are_its_numeric_forward_cells(ticker: str,
+                                                                want: list[str]) -> None:
+    """(+/-) Review of #923 (surviving mutants: counting 'NM' cells, counting trailing cells): the
+    labels of the name's own NUMERIC NTM cells, in sheet order. ROST's six cells are all numbers
+    (its trailing three are not NTM); FUBO's NTM P/E is 'NM'; ORKA's NTM TEV/EBITDA and P/E are
+    'NM' and its NTM TEV/Rev blank."""
+    assert cs.comps_ntm_multiples(_comps_bundle(ticker)) == want
+
+
 def test_a_guided_forward_figure_leaves_the_multiple_unnoted(
         monkeypatch: pytest.MonkeyPatch) -> None:
     """(-) VRRM has the guidance-adjusted forward EV/EBITDA; its multiple carries no note, as on
@@ -266,12 +315,16 @@ def test_a_guided_forward_figure_leaves_the_multiple_unnoted(
     assert _valuation_on(monkeypatch, "VRRM").ev_ebitda.note is None
 
 
-@pytest.mark.parametrize("history", [True, False])
+@pytest.mark.parametrize("history,peer,fwd_pe", [
+    (True, False, False), (False, False, False), (False, True, False), (False, False, True)])
 def test_the_own_history_refresh_writes_the_same_note(
-        monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path, history: bool) -> None:
+        monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path, history: bool, peer: bool,
+        fwd_pe: bool) -> None:
     """(+/-) The CLI's multiples-cluster refresh writes the note through the same rule: SMPL's
     frozen page (no consensus forward P/E, no guided forward, a stub export with no comps sheet)
-    with its forward history → no note; without it → trailing only."""
+    → trailing only; with any ONE forward source — its forward history, the export's NTM cells,
+    or LLY's frozen consensus forward P/E written onto the page — no note (review of #923: a
+    refresh passing `peer_ntm=[]` or `forward_multiples=False` survived every other pin)."""
     import vinci.cli as cli
     from tests.test_lease_basis import _transform_env
 
@@ -279,6 +332,9 @@ def test_the_own_history_refresh_writes_the_same_note(
     page = tmp_path / "dossiers" / "SMPL" / "dossier.json"
     page.parent.mkdir(parents=True)
     doc = _carrier()
+    if fwd_pe:
+        doc["mechanical"]["valuation"]["forward_multiples"] = PAGES["LLY"]["valuation"][
+            "forward_multiples"]
     page.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n")
     page_mech = Dossier.model_validate(doc).mechanical
     assert page_mech is not None and page_mech.valuation is not None
@@ -291,10 +347,12 @@ def test_the_own_history_refresh_writes_the_same_note(
     monkeypatch.setattr(cs, "ev_ebitda_percentile", lambda _b: v.ev_ebitda_percentile_5y)
     fmh = ForwardMultipleHistory.model_validate(doc["forward_multiple_history"])
     monkeypatch.setattr(cs, "forward_multiple_history", lambda _b: fmh if history else None)
+    monkeypatch.setattr(cs, "comps_ntm_multiples",
+                        lambda _b: ["NTM TEV/EBITDA"] if peer else [])
     cli._cmd_own_history_refresh(cast(Any, SimpleNamespace(tickers="SMPL", canonical_ciq=None,
                                                            dry_run=False)))
     note = json.loads(page.read_text())["mechanical"]["valuation"]["ev_ebitda"]["note"]
-    assert note == (None if history else mech_mod.TRAILING_ONLY_NOTE)
+    assert note == (None if history or peer or fwd_pe else mech_mod.TRAILING_ONLY_NOTE)
 
 
 # --- 3. the survival read: the judgment tags are deleted ---------------------------------------
@@ -310,10 +368,12 @@ def _survival(t: str) -> str:
 
 
 def test_a_negative_fcf_carries_no_verdict() -> None:
-    """(+) WLK's FCF is negative; main appended "(cash not derived — a risk)". Deleted."""
+    """(+) WLK's FCF is negative; main appended "(cash not derived — a risk)". The verdict is
+    deleted; "cash not derived", what the machine did not compute, stays (review of #923)."""
     committed = PAGES["WLK"]["quality"]["survival_capacity"]["value"]
     assert committed.endswith("FCF-negative → burning cash (cash not derived — a risk)")
-    assert _survival("WLK") == committed.removesuffix(" (cash not derived — a risk)")
+    assert _survival("WLK") == committed.replace(" (cash not derived — a risk)",
+                                                 " (cash not derived)")
 
 
 def test_an_unknown_fcf_sign_carries_no_verdict() -> None:
@@ -341,10 +401,19 @@ def test_a_positive_fcf_reads_as_before() -> None:
 
 # --- 3b. the lint: no judgment word in a string the fact layer writes ---------------------------
 
-#: THE JUDGMENT VOCABULARY — a closed list, so the lint can only refuse a word it names: a new
-#: judgment word passes it (stated, not hidden). The four the 2026-11-06 audit found in fact text
-#: ("bleed", "a risk", "solvency risk", and the brief's "bearish"/"concern"/"red flag"), and the
-#: words of the same kind a fact layer might write.
+#: THE JUDGMENT VOCABULARY — and its limits, stated rather than hidden:
+#:   * a CLOSED LIST: it refuses only a word it names; a new judgment word passes it. The entries
+#:     are the four the 2026-11-06 audit found in fact text ("bleed", "a risk", "solvency risk")
+#:     and the brief's ("bearish", "concern", "red flag"), plus words of the same kind; each entry
+#:     is pinned live (`test_every_entry_of_the_judgment_list_is_live`);
+#:   * PYTHON STRING CONSTANTS ONLY: it reads no JS and no rendered page, so the web furniture is
+#:     pinned on its own (`test_the_web_page_assumes_no_discount`), and an LLM-written string or a
+#:     verbatim quote is outside it by construction;
+#:   * the FACT LAYER ONLY (`_SCANNED`). Over all of vinci/ at #923's head it also finds the
+#:     ranker's "bleed" (`vinci/rank/ranker.py:234`, the ranked queue), the screen's "distress"
+#:     (`vinci/screens/run.py:195`), the sleeves' and the prompt's "value trap", the scoring
+#:     report's "concern" and theme intelligence's "a risk" — none of them a dossier fact, none
+#:     changed here.
 _JUDGMENT = re.compile(
     r"\b(?:a\s+risk|solvency\s+risk|bleed\w*|bearish|bullish|red[- ]flags?|"
     r"(?<!going[- ])concerns?|concerning|alarm\w*|worr\w*|distress\w*|value[- ]trap)\b", re.I)
@@ -403,6 +472,25 @@ def test_no_judgment_word_in_the_fact_layers_prose() -> None:
     assert judgment_words() == []
 
 
+@pytest.mark.parametrize("phrase", [
+    "a risk", "solvency risk", "gradual bleed", "bearish", "bullish", "a red flag", "red-flags",
+    "a concern", "concerns", "concerning", "alarming", "worrying", "distressed", "a value trap",
+    "value-trap"])
+def test_every_entry_of_the_judgment_list_is_live(phrase: str) -> None:
+    """(+) Review of #923: dropping `bleed\\w*` or `solvency\\s+risk` from the regex passed every
+    other pin. One phrase per entry, each matching that entry and no other."""
+    hits = [m.group(0) for m in _JUDGMENT.finditer(phrase)]
+    assert len(hits) == 1, (phrase, hits)
+
+
+@pytest.mark.parametrize("phrase", ["going concern", "going-concern", "riskless", "bleeding-edge"])
+def test_the_judgment_list_spares_terms_of_art(phrase: str) -> None:
+    """(-) The going-concern term of art, and words that only begin like a listed one, except
+    `bleed`'s own forms (`bleed\\w*`: "bleeding-edge" is a hit, stated here)."""
+    hit = _JUDGMENT.search(phrase)
+    assert (hit is not None) is (phrase == "bleeding-edge"), phrase
+
+
 def test_the_lint_reads_the_text_a_fact_carries(tmp_path: pathlib.Path) -> None:
     """(-/+) Its precision, on a tree: a judgment word in a fact string is found; the same word in
     a docstring, a regex pattern, a going-concern term or the prompt is not."""
@@ -445,33 +533,78 @@ def test_a_name_at_a_premium_is_asked_about_its_premium() -> None:
     assert "is the premium EARNED (better fundamentals) or RESIDUAL (unexplained)?" in text
 
 
+def _frozen_deltas(t: str) -> str:
+    """The page's `fundamental_deltas` as committed at main bcda7ce3 — FROZEN (`pages.json`), never
+    the living page: a rebuild that moves the page must not move the pin (review of #923)."""
+    return str(PAGES[t]["peer"]["fundamental_deltas"]["value"])
+
+
 def test_a_name_at_a_discount_reads_as_before() -> None:
-    """(-) PARR trades at −57% and −70%: byte-identical to its committed line."""
-    committed = json.loads((ROOT / "data" / "dossiers" / "PARR" / "dossier.json").read_text())
-    assert _deltas("PARR") == committed["mechanical"]["peer_comps"]["fundamental_deltas"]["value"]
+    """(-) PARR trades below its peer median on all six trading multiples, LTM and NTM:
+    byte-identical to its frozen committed line."""
+    assert _deltas("PARR") == _frozen_deltas("PARR")
 
 
 #: What is left of the bracket when no single direction can be stated — the question deleted.
 _NO_QUESTION = "  [justified-vs-residual inputs: the human judges — not computed here]"
 
 
-@pytest.mark.parametrize("ticker", ["GOOGL", "FUBO"])
+@pytest.mark.parametrize("ticker", ["GOOGL", "FUBO", "WLK", "AMZN"])
 def test_no_single_direction_deletes_the_question(ticker: str) -> None:
-    """(+) GOOGL: +11% on EV/EBITDA, −25% on P/E — one word would be false on one of them. FUBO:
-    both NM, no sign known. The question is deleted, not reworded; the signs sit in
-    `cross_sectional` beside it."""
+    """(+) One word would be false on some multiple, or no sign is known:
+    GOOGL +11% on EV/EBITDA, −25% on P/E; FUBO −80% on TEV/Rev, +64% on NTM TEV/EBITDA;
+    WLK's ONE known trailing gap of its two cross-sectional multiples (+27% EV/EBITDA, P/E NM)
+    against −11% on NTM TEV/EBITDA; AMZN at a discount on all three trailing multiples and a
+    premium on NTM TEV/EBITDA and NTM P/E (review of #923: the trailing gaps alone asked WLK about
+    its "premium"). The question is deleted, not reworded; the signs sit in `cross_sectional` and
+    `trading_multiples` beside it."""
     text = _deltas(ticker)
     assert text.endswith(_NO_QUESTION)
     assert "premium" not in text and "discount" not in text and "EARNED" not in text
 
 
+def test_a_gap_that_rounds_to_zero_has_no_direction() -> None:
+    """(+) Review of #923 (a surviving mutant dropped `round()`): a gap is signed as the headline
+    prints it, so +0.3% — "+0%" — is neither. PARR's real sheet with every one of the name's six
+    multiples set 'NM' but its EV/EBITDA, put 0.3% above the peer median."""
+    b = _comps_bundle("PARR")
+    tm = b.sheet("comps", "Trading Multiples")
+    _hdr, peers, tgt = cs._comps_layout(tm, "PARR")
+    assert tgt is not None
+    for _lab, col in cs._COMPS_MULTIPLES:
+        tm[tgt][col] = "NM"
+    med = cs._peer_col_median(tm, peers, 2)
+    assert med is not None
+    tm[tgt][2] = round(float(f"{med:g}") * 1.003, 4)
+    assert "(+0%)" in (cs.cross_sectional_valuation(b).value or "")
+    assert _deltas_of(b).endswith(_NO_QUESTION)
+
+
+def _deltas_of(b: CiqBundle) -> str:
+    v = cs.peer_comps(b).fundamental_deltas.value
+    assert isinstance(v, str)
+    return v
+
+
 def test_the_statistics_themselves_are_unchanged() -> None:
-    """(-) Only the bracketed question moves: every name-vs-peer statistic is byte-identical."""
+    """(-) Only the bracketed question moves: every name-vs-peer statistic is byte-identical to
+    the FROZEN committed line, and so is the cross-sectional headline."""
     for t in COMPS:
-        stats = _deltas(t).split("  [", 1)[0]
-        committed = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
-        assert stats == committed["mechanical"]["peer_comps"]["fundamental_deltas"][
-            "value"].split("  [", 1)[0], t
+        assert _deltas(t).split("  [", 1)[0] == _frozen_deltas(t).split("  [", 1)[0], t
+        assert (cs.cross_sectional_valuation(_comps_bundle(t)).value
+                == PAGES[t]["peer"]["cross_sectional"]["value"]), t
+
+
+@pytest.mark.skipif(not shutil.which("node"), reason="node unavailable")
+def test_the_web_page_assumes_no_discount(tmp_path: pathlib.Path) -> None:
+    """(+) END TO END through the web twin (`renderDossier` in node) on SMPL's frozen page: the
+    Peer comparison subtitle read "the reader judges whether the discount is earned or residual"
+    on every page, premium or not (review of #923). The render keeps the section."""
+    from tests.test_layer_refreshes import _web
+
+    html = _web(_carrier(), tmp_path)
+    assert "Peer comparison" in html
+    assert "the discount is earned" not in html
 
 
 # --- 5. the print row names the drawdown guide only when it is current ------------------------
@@ -497,13 +630,18 @@ class _PrintEdgar:
 
 def _releases(t: str, keep: str = "all") -> list[ReleaseExtract]:
     """The page's releases; ``keep`` "own" leaves only the guide's own release (CURRENT), "other"
-    every release but it (the guide UNDATED)."""
+    every release but it (the guide UNDATED), "own-unparsed" only the guide's own release with no
+    guide row parsed from it (no newest guide-bearing release at all: CURRENT, as the prompt's
+    mark reads it)."""
     p = PAGES[t]["print_row"]
     acc = re.search(r"\d{10}-\d{2}-\d{6}", p["revised_guidance"]["source_ref"] or "")
     assert acc is not None
     rel = [ReleaseExtract.model_validate(r) for r in p["releases"]]
     if keep == "own":
         return [r for r in rel if acc.group(0) in r.source_ref]
+    if keep == "own-unparsed":
+        return [r.model_copy(update={"guidance": []}) for r in rel
+                if acc.group(0) in r.source_ref]
     if keep == "other":
         return [r for r in rel if acc.group(0) not in r.source_ref]
     return rel
@@ -552,10 +690,12 @@ def test_an_undated_drawdown_guide_leaves_the_print_row() -> None:
     assert _print_row("BRBR", "other")[0] == _NO_GUIDE_ROW
 
 
-@pytest.mark.parametrize("keep", ["all", "own", "other"])
+@pytest.mark.parametrize("keep", ["all", "own", "other", "own-unparsed"])
 def test_the_row_reads_the_guide_as_the_prompt_marks_it(keep: str) -> None:
     """(+/-) One derivation: the row names the guide exactly when the mark
-    `_mark_drawdown_guidance` puts on the same field in the prompt is CURRENT."""
+    `_mark_drawdown_guidance` puts on the same field in the prompt is CURRENT — a guide with no
+    newest guide-bearing release to replace it included (review of #923: a mutant reading that
+    as not current survived)."""
     p = PAGES["BRBR"]["print_row"]
     ps = SimpleNamespace(releases=_releases("BRBR", keep))
     dumped = {"drawdown_cause": {"revised_guidance": dict(p["revised_guidance"])}}

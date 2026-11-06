@@ -179,11 +179,14 @@ def ev_ebitda_note(*, guided_forward: bool, forward_multiples: bool, peer_ntm: S
 
     ``guided_forward``: the guidance-adjusted forward EV/EBITDA is PRESENT. ``forward_multiples``:
     `valuation.forward_multiples` is PRESENT with a row. ``peer_ntm``: the name's numeric NTM
-    multiples on the comps sheet (`ciq_sheets.comps_ntm_multiples`). ``forward_history``: the CIQ
-    forward-multiple history; a series counts when it holds a numeric close."""
-    held = any(p.close is not None
-               for s in (forward_history.series if forward_history is not None else [])
-               for p in s.points)
+    multiples on the comps sheet (`ciq_sheets.comps_ntm_multiples`). These two sit in the facts the
+    synthesis reads. ``forward_history``: the CIQ forward-multiple history, which sits beside them
+    (`Dossier`, not `MechanicalLayer`). A series counts only when it may anchor a leg (not
+    `context_only`) and has a band, i.e. a numeric LATEST close (review of #923: ORKA's history is
+    NM at the latest close on every series, its one number a 2025 EV/NTM EBIT, and counting any
+    numeric close would have deleted the flag on it)."""
+    held = any(not s.context_only and s.band is not None
+               for s in (forward_history.series if forward_history is not None else []))
     if guided_forward or forward_multiples or peer_ntm or held:
         return None
     return TRAILING_ONLY_NOTE
@@ -2554,14 +2557,15 @@ def _survival_capacity(
         parts.append(f"{pos} (CIQ); net-debt/EBITDA N/A ({net_lev.note or 'not derivable'})")
     # NO VERDICT IN THE FACT (fix 3a, 2026-11-06): each leg used to close on "— solvency risk" or
     # "(a risk)", the machine's judgment written into the fact the synthesis reads (9 committed
-    # pages carried "(a risk)"). The tags are DELETED, not reworded: what is unknown is already
-    # said, its reason sits on the leg's own field, and whether it is a risk is the human's call.
+    # pages carried "(a risk)"). The tags are DELETED, not reworded; what the machine did not
+    # compute stays said ("cash not derived", "runway not assessable"), and whether either is a
+    # risk is the human's call.
     else:
         parts.append(f"net-debt/EBITDA UNKNOWN ({net_lev.note or 'not derivable'})")
     if fcf_sign.status is present and fcf_sign.value is not None:
         parts.append(
             "FCF-positive → self-funding" if fcf_sign.value > 0
-            else "FCF-negative → burning cash"
+            else "FCF-negative → burning cash (cash not derived)"
         )
     else:
         parts.append("FCF sign UNKNOWN — runway not assessable")
