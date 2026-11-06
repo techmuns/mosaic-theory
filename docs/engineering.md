@@ -121,7 +121,8 @@ PR (CLAUDE.md: coin-time translation).
 
 - **Eval panel / held-out page / M-LABEL … M-ECHO / MDR** (2026-11-06, the synthesis eval
   harness). Plain words: *the six pages every synthesis-prompt change is drawn on, chosen by a
-  rule over page attributes; a held-out page is one no fix may cite as its case; M-… are the
+  rule over page attributes; a held-out page is a panel page the CHANGE under test never names in
+  its commits or records (none of the corpus is held out from the diagnosis-era fixes); M-… are the
   deterministic fidelity checks run on each draw's prose (a code label repeated against the page's
   facts, a material figure framed against its sign, monotone wording, a figure or quote the facts
   do not state, the prompt's own instruction words); MDR is the smallest per-draw reduction the

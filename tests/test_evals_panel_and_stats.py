@@ -23,9 +23,10 @@ FROZEN = rp.load_panel_file()
 
 
 def test_the_rule_reproduces_the_frozen_panel() -> None:
-    sel = pn.select_panel(pn.rows_from_json(FROZEN["rows"]))
-    assert list(sel.panel) == FROZEN["panel"] == ["CNXC", "LLY", "MCK", "NKE", "ROST", "SMPL"]
-    assert (sel.eligible, sel.subsets, sel.feasible, sel.tied_at_best) == (16, 8008, 812, 7)
+    sel = pn.select_panel(pn.rows_from_json(FROZEN["rows"]), salt=FROZEN["salt"])
+    assert list(sel.panel) == FROZEN["panel"] == ["BURL", "CNXC", "LLY", "MCK", "ROST", "SMPL"]
+    assert (sel.eligible, sel.subsets, sel.feasible, sel.tied_at_best) == (16, 8008, 906, 7)
+    assert FROZEN["v1"]["panel"] == ["CNXC", "LLY", "MCK", "NKE", "ROST", "SMPL"]
     assert [list(t) for t in sel.tied] == FROZEN["search"]["tied_in_hash_order"]
 
 
@@ -48,7 +49,7 @@ def test_each_unmoved_page_still_yields_its_frozen_row() -> None:
 def test_a_rule_no_subset_meets_is_refused_never_relaxed() -> None:
     rows = [r for r in pn.rows_from_json(FROZEN["rows"]) if r.sleeve != "quality"]
     with pytest.raises(ValueError, match="meets the rule"):
-        pn.select_panel(rows)
+        pn.select_panel(rows, salt=FROZEN["salt"])
 
 
 @pytest.mark.parametrize(("draws", "modal", "proposal"), [

@@ -30,6 +30,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+import anthropic
+
 from vinci.config import LLM_PRICE_PER_MTOK
 from vinci.dossier.schemas import MechanicalLayer
 from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, DEFAULT_MODEL, capture_calls, jsonable
@@ -52,6 +54,25 @@ def _checkouts() -> tuple[Path, ...]:
 def _inside_repo(path: Path) -> bool:
     here = path.resolve()
     return any(c == here or c in here.parents for c in _checkouts())
+
+
+def refuse_inside_repo(path: Path, what: str) -> None:
+    """Requests, logs, ledgers and raw draws carry licensed transcript text: never in the repo."""
+    if _inside_repo(path):
+        raise ReplayError(f"{what} {path} is inside the repository; keep it outside")
+
+
+#: Credentials a capture child must never hold: it builds requests, it sends none.
+_SECRET_ENV = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_PROFILE",
+               "ANTHROPIC_IDENTITY_TOKEN", "ANTHROPIC_IDENTITY_TOKEN_FILE")
+
+
+def child_env(code_root: str) -> dict[str, str]:
+    """The $0 capture child's environment: this one, less every Anthropic credential, with the
+    extracted code first on the path."""
+    env = {k: v for k, v in os.environ.items() if k not in _SECRET_ENV}
+    env["PYTHONPATH"] = code_root
+    return env
 PANEL_FILE = Path(__file__).resolve().parent / "synthesis_panel.json"
 #: The assembler's CIQ copy, which every build reads (RUNBOOKS preamble).
 DEFAULT_CIQ_ROOT = Path.home() / "Documents/GitHub/mosaic-theory-ta/data/manual/ciq"
@@ -211,7 +232,7 @@ def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
         if transcript is not None:
             (root / "transcript.txt").write_text(transcript, encoding="utf-8")
             args += ["--transcript", str(root / "transcript.txt")]
-        env = {**os.environ, "PYTHONPATH": str(root / "code")}
+        env = child_env(str(root / "code"))   # no key: it captures, it never sends
         done = subprocess.run(args, env=env, capture_output=True, text=True)
         if done.returncode != 0:
             raise ReplayError(f"capture at {code_ref} failed: {done.stderr.strip()[-2000:]}")
@@ -334,26 +355,57 @@ def prove(rebuilt: Request, logged: LoggedBuild) -> Proof:
 
 @dataclass
 class Budget:
-    """A hard cap in USD over a spend ledger (one JSON line per paid call), kept OUTSIDE the
-    repository: the cap holds across processes, and raw draws — which can quote licensed
-    transcripts — never land in a tracked folder."""
+    """A hard cap in USD over ONE spend ledger per operator-approved budget, kept OUTSIDE the
+    repository. The ledger's first line records the approval — its cap, its words, when it was
+    opened (`Budget.open`) — and every run and resume under that approval reads and appends the
+    same file (`Budget.load`), so the cap is the budget's, never one run's: three $3 runs cannot
+    spend $4.90 under a $3 approval. A cap above the recorded approval is refused."""
 
     cap_usd: float
     ledger: Path
 
     def __post_init__(self) -> None:
-        if _inside_repo(self.ledger):
-            raise ReplayError(f"the spend ledger {self.ledger} is inside the repository; keep it "
-                              "outside")
+        refuse_inside_repo(self.ledger, "the spend ledger")
+        approved = self.approved_cap(self.ledger)
+        if self.cap_usd > approved:
+            raise ReplayError(f"a cap of ${self.cap_usd:.2f} is above the approved "
+                              f"${approved:.2f} recorded in {self.ledger}")
+
+    @staticmethod
+    def approved_cap(ledger: Path) -> float:
+        first = (ledger.read_text(encoding="utf-8").splitlines()[:1]
+                 if ledger.exists() else [])
+        row = json.loads(first[0]) if first else {}
+        if "approval" not in row:
+            raise ReplayError(f"no approved budget at {ledger}: open one with the operator's "
+                              "approval and cap (`python -m vinci.evals budget-open`)")
+        return float(row["approval"]["cap_usd"])
+
+    @classmethod
+    def open(cls, ledger: Path, *, cap_usd: float, approval: str) -> Budget:
+        refuse_inside_repo(ledger, "the spend ledger")
+        if ledger.exists():
+            raise ReplayError(f"{ledger} already exists: one ledger per approval — resume with "
+                              "`--budget-ledger`, or open a new approval in a new file")
+        if not approval.strip() or cap_usd <= 0:
+            raise ReplayError("an approval needs the operator's words and a positive cap")
+        ledger.parent.mkdir(parents=True, exist_ok=True)
+        ledger.write_text(json.dumps({"approval": {
+            "cap_usd": cap_usd, "approved": approval.strip(),
+            "opened_at": time.strftime("%Y-%m-%dT%H:%M:%S%z")}}) + "\n", encoding="utf-8")
+        return cls(cap_usd=cap_usd, ledger=ledger)
+
+    @classmethod
+    def load(cls, ledger: Path, cap_usd: float | None = None) -> Budget:
+        """The approved budget at ``ledger``; ``cap_usd`` may only LOWER its cap."""
+        approved = cls.approved_cap(ledger)
+        return cls(cap_usd=approved if cap_usd is None else cap_usd, ledger=ledger)
 
     def spent(self) -> float:
-        if not self.ledger.exists():
-            return 0.0
-        return sum(float(json.loads(x)["usd"])
+        return sum(float(json.loads(x).get("usd", 0.0))
                    for x in self.ledger.read_text(encoding="utf-8").splitlines() if x.strip())
 
     def record(self, row: dict[str, Any]) -> None:
-        self.ledger.parent.mkdir(parents=True, exist_ok=True)
         with self.ledger.open("a", encoding="utf-8") as f:
             f.write(json.dumps(row, sort_keys=True) + "\n")
 
@@ -372,14 +424,18 @@ class GuardedSdk:
 
     def __init__(self, inner: Any, expected: Request, budget: Budget, *, label: str,
                  draws_out: Path, client: AnthropicLlmClient) -> None:
-        if _inside_repo(draws_out):
-            raise ReplayError(f"raw draws {draws_out} would land inside the repository")
+        refuse_inside_repo(draws_out, "raw draws")
         self.inner, self.expected, self.budget, self.label = inner, expected, budget, label
         self.client = client   # its `_record_usage` reads a response's tokens — one reader
         self.draws_out = draws_out
         self.messages = self
         self.n = 0
         self.prompt_tokens: int | None = None   # known after the first response
+
+    def _write(self, row: dict[str, Any]) -> None:
+        self.draws_out.parent.mkdir(parents=True, exist_ok=True)
+        with self.draws_out.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(row) + "\n")
 
     def create(self, **kwargs: Any) -> Any:
         self.n += 1
@@ -394,7 +450,12 @@ class GuardedSdk:
             raise BudgetStop(f"{self.label} draw {self.n}: ${spent:.4f} spent + worst case "
                              f"${worst:.4f} would cross the ${self.budget.cap_usd:.2f} cap — STOP")
         t0 = time.monotonic()
-        msg = self.inner.messages.create(**kwargs)
+        try:
+            msg = self.inner.messages.create(**kwargs)
+        except anthropic.APIError as exc:   # no response body to price: a failed draw, recorded
+            self._write({"label": self.label, "draw": self.n, "usd": 0.0, "raw": None,
+                         "stop_reason": None, "error": f"{type(exc).__name__}: {exc}"[:400]})
+            raise
         self.client._record_usage(msg)        # production's reader; `extract` repeats it
         recorded = self.client.last_usage
         if recorded is None:
@@ -413,9 +474,7 @@ class GuardedSdk:
         self.budget.record(row)
         raw = next((dict(b.input) for b in getattr(msg, "content", [])
                     if getattr(b, "type", None) == "tool_use"), None)
-        self.draws_out.parent.mkdir(parents=True, exist_ok=True)
-        with self.draws_out.open("a", encoding="utf-8") as f:
-            f.write(json.dumps({**row, "raw": raw}) + "\n")
+        self._write({**row, "raw": raw})
         if served != self.expected.model:
             raise BudgetStop(f"{self.label} draw {self.n}: served by {served!r}, asked for "
                              f"{self.expected.model!r} — STOP")
@@ -437,6 +496,11 @@ def run_request(req: Request, *, draws: int, budget: Budget, label: str, draws_o
     client = AnthropicLlmClient(model=req.model, max_tokens=req.max_tokens,
                                 api_key="test-sdk-not-a-key" if sdk is not None else None)
     inner = sdk if sdk is not None else client._client
+    # ONE GUARDED CALL IS ONE HTTP ATTEMPT. The SDK retries on its own (max_retries=2): each
+    # retry is a request the guard never saw. Retries are off; a failed attempt is a failed draw,
+    # recorded, and the next draw is checked like any other.
+    if hasattr(inner, "with_options"):
+        inner = inner.with_options(max_retries=0)
     client._client = GuardedSdk(inner, req, budget, label=label,  # type: ignore[assignment]
                                 draws_out=draws_out, client=client)
     out: list[dict[str, Any] | None] = []
@@ -444,7 +508,7 @@ def run_request(req: Request, *, draws: int, budget: Budget, label: str, draws_o
         try:
             out.append(client.extract(system=req.system, user=req.user, tool=tools[0],
                                       cache=draws > 1))
-        except LlmError:
+        except (LlmError, anthropic.APIError):
             out.append(None)
     return out
 

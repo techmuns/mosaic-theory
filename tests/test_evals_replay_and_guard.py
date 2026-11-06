@@ -131,6 +131,11 @@ def test_a_page_blob_other_than_the_frozen_one_is_refused() -> None:
 
 # ------------------------------------------------------------------------------- the guard
 
+def _budget(ledger: Path, cap: float) -> rp.Budget:
+    """An opened approval — every paid path needs one (review round 2)."""
+    return rp.Budget.open(ledger, cap_usd=cap, approval="operator: test approval")
+
+
 def _client() -> AnthropicLlmClient:
     return AnthropicLlmClient(model="claude-opus-4-8", api_key="test-not-a-key")
 
@@ -156,11 +161,12 @@ class _FakeSdk:
 def test_paid_draws_are_priced_by_production_and_ledgered(tmp_path: Path,
                                                           nflx: dict[str, Any]) -> None:
     sdk = _FakeSdk()
-    budget = rp.Budget(cap_usd=20.0, ledger=tmp_path / "ledger.jsonl")
+    budget = _budget(tmp_path / "ledger.jsonl", 20.0)
     raws = rp.run_request(rp.capture(nflx, None), draws=5, budget=budget, label="t",
                           draws_out=tmp_path / "d.jsonl", sdk=sdk)
     assert raws == [{"evidence_balance": "mixed — fake"}] * 5
-    rows = [json.loads(x) for x in (tmp_path / "ledger.jsonl").read_text().splitlines()]
+    rows = [r for r in (json.loads(x) for x in (tmp_path / "ledger.jsonl").read_text()
+                        .splitlines()) if "usage" in r]      # the approval line is not a call
     assert sdk.calls == 5 and len(rows) == 5
     want = sum(cost_usd("claude-opus-4-8", {**r["usage"], "max_tokens": 16384}) or 0
                for r in rows)
@@ -170,11 +176,11 @@ def test_paid_draws_are_priced_by_production_and_ledgered(tmp_path: Path,
 def test_the_cap_refuses_before_forwarding_and_the_draw_loop_cannot_swallow_it(
         tmp_path: Path, nflx: dict[str, Any]) -> None:
     ledger = tmp_path / "ledger.jsonl"
-    ledger.write_text(json.dumps({"usd": 18.5}) + "\n", encoding="utf-8")
+    _budget(ledger, 20.0).record({"usd": 18.5})
     sdk = _FakeSdk()
     with pytest.raises(rp.BudgetStop, match="would cross the \\$20.00 cap"):
         rp.run_request(rp.capture(nflx, None), draws=5,
-                       budget=rp.Budget(cap_usd=20.0, ledger=ledger), label="t",
+                       budget=rp.Budget.load(ledger), label="t",
                        draws_out=tmp_path / "d.jsonl", sdk=sdk)
     assert sdk.calls == 0
 
@@ -183,7 +189,7 @@ def test_a_request_other_than_the_captured_one_is_refused(tmp_path: Path,
                                                           nflx: dict[str, Any]) -> None:
     mck = json.loads((ROOT / "data/dossiers/MCK/dossier.json").read_text())
     sdk = _FakeSdk()
-    guard = rp.GuardedSdk(sdk, rp.capture(mck, None), rp.Budget(20.0, tmp_path / "l.jsonl"),
+    guard = rp.GuardedSdk(sdk, rp.capture(mck, None), _budget(tmp_path / "l.jsonl", 20.0),
                           label="t", draws_out=tmp_path / "d.jsonl", client=_client())
     with pytest.raises(rp.BudgetStop, match="differs from the one captured"):
         guard.create(**rp.capture(nflx, None).kwargs)
@@ -195,9 +201,10 @@ def test_a_draw_served_by_another_model_stops_the_run(tmp_path: Path,
     sdk = _FakeSdk(served="claude-opus-5")
     with pytest.raises(rp.BudgetStop, match="served by 'claude-opus-5'"):
         rp.run_request(rp.capture(nflx, None), draws=5,
-                       budget=rp.Budget(20.0, tmp_path / "l.jsonl"), label="t",
+                       budget=_budget(tmp_path / "l.jsonl", 20.0), label="t",
                        draws_out=tmp_path / "d.jsonl", sdk=sdk)
-    assert sdk.calls == 1 and len((tmp_path / "l.jsonl").read_text().splitlines()) == 1
+    rows = (tmp_path / "l.jsonl").read_text().splitlines()
+    assert sdk.calls == 1 and len(rows) == 2          # the approval line + the one priced call
 
 
 def test_the_ledger_and_raw_draws_never_land_in_the_repository(tmp_path: Path,
@@ -210,7 +217,7 @@ def test_the_ledger_and_raw_draws_never_land_in_the_repository(tmp_path: Path,
     with pytest.raises(rp.ReplayError, match="inside the repository"):
         rp.Budget(cap_usd=1.0, ledger=Path(primary).parent / "data" / "ledger.jsonl")
     with pytest.raises(rp.ReplayError, match="inside the repository"):
-        rp.GuardedSdk(_FakeSdk(), rp.capture(nflx, None), rp.Budget(1.0, tmp_path / "l.jsonl"),
+        rp.GuardedSdk(_FakeSdk(), rp.capture(nflx, None), _budget(tmp_path / "l.jsonl", 1.0),
                       label="t", draws_out=ROOT / "draws.jsonl", client=_client())
 
 

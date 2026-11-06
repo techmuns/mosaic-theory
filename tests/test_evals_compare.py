@@ -28,12 +28,18 @@ def nflx() -> dict[str, Any]:
     return page
 
 
+def _reg(pages: tuple[str, ...] = ("NFLX",), base: str = "A", cand: str = "B") -> cm.Registration:
+    return cm.Registration(base_ref=base, cand_ref=cand, transforms=(), pages=pages, draws=5,
+                           targets=("M-LABEL",), held_out=(), scorer=cm.scorer_fingerprint())
+
+
 def _has_865() -> bool:
     return subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e",
                            f"{rp.MATERIAL_MARKED_BEFORE_SYNTHESIS}^{{commit}}"]).returncode == 0
 
 
-def test_a_comparison_that_reaches_no_request_is_refused(nflx: dict[str, Any]) -> None:
+def test_a_comparison_that_reaches_no_request_is_refused(tmp_path: Path,
+                                                         nflx: dict[str, Any]) -> None:
     if not _has_865():
         pytest.skip("#865 is not in this history (shallow clone)")
     req = rp.capture_at("HEAD", nflx, None)
@@ -43,8 +49,9 @@ def test_a_comparison_that_reaches_no_request_is_refused(nflx: dict[str, Any]) -
     with pytest.raises(rp.ReplayError, match="does not reach the synthesis request"):
         cm.refuse_if_unreached(c)
     with pytest.raises(rp.ReplayError, match="does not reach"):
-        cm.run_compare(c, budget=rp.Budget(1.0, Path("/nonexistent-outside/l.jsonl")),
-                       out_dir=Path("/nonexistent-outside/run"))
+        cm.run_compare(c, budget=rp.Budget.open(tmp_path / "l.jsonl", cap_usd=1.0,
+                                                approval="operator: test"),
+                       out_dir=tmp_path / "run", registration=_reg(base="HEAD", cand="HEAD"))
 
 
 def test_the_relabel_transform_reads_the_code_under_tests_own_words(
@@ -84,6 +91,7 @@ def _draws(tmp_path: Path, raw_base: dict[str, Any], raw_cand: dict[str, Any],
            name: str = "run") -> Path:
     out = tmp_path / name
     out.mkdir()
+    (out / "registration.json").write_text(_reg().to_json(), encoding="utf-8")
     with (out / "draws.jsonl").open("w") as f:
         for cond, raw in (("BASE", raw_base), ("CAND", raw_cand)):
             for n in range(5):
@@ -102,9 +110,7 @@ def test_the_scorer_applies_the_rule_to_real_synthesis_text(tmp_path: Path,
     text = json.dumps(raw)
     assert "bleed" in text
     cand = json.loads(text.replace("gradual bleed", "decline").replace("bleed", "decline"))
-    panel = {"panel": ["NFLX"], "motivated": {"by_commit": {"NFLX": ["x"]}, "in_flight": {}}}
-    s = cm.score_run(_draws(tmp_path, raw, cand), target="M-LABEL", panel=panel,
-                     pages={"NFLX": nflx})
+    s = cm.score_run(_draws(tmp_path, raw, cand), _reg(), pages={"NFLX": nflx})
     r = s.metrics["M-LABEL"]
     assert r.cand_total < r.base_total and r.p_lower <= cm.ALPHA
     assert s.ships, s.reasons
@@ -114,8 +120,7 @@ def test_the_scorer_applies_the_rule_to_real_synthesis_text(tmp_path: Path,
     worse["key_unknowns"] = [
         *worse["key_unknowns"],
         "Management said 'we will double the dividend next spring' on the call."]
-    s2 = cm.score_run(_draws(tmp_path, raw, worse, name="worse"), target="M-LABEL", panel=panel,
-                      pages={"NFLX": nflx})
+    s2 = cm.score_run(_draws(tmp_path, raw, worse, name="worse"), _reg(), pages={"NFLX": nflx})
     assert not s2.ships
     assert any("M-ABSENT worsens" in x for x in s2.reasons)
     assert any("target M-LABEL does not improve" in x for x in s2.reasons)
@@ -129,9 +134,10 @@ def test_a_truncated_or_incomplete_draw_is_not_scored(nflx: dict[str, Any]) -> N
     assert not cm.usable({"raw": None, "stop_reason": "tool_use"})
 
 
-def test_a_target_that_is_not_a_metric_is_refused(tmp_path: Path) -> None:
+def test_a_target_that_is_not_a_metric_is_refused() -> None:
     with pytest.raises(ValueError, match="not a deterministic metric"):
-        cm.score_run(tmp_path, target="LABEL")
+        cm.Registration(base_ref="A", cand_ref="B", transforms=(), pages=("NFLX",), draws=5,
+                        targets=("LABEL",), held_out=(), scorer="x")
 
 
 # ------------------------------------------------- round 1 (in-session /code-review high, #924)
@@ -147,8 +153,10 @@ def _lean_raw(raw: dict[str, Any], lean: str) -> dict[str, Any]:
     return out
 
 
-def _rows(path: Path, rows: list[tuple[str, str, dict[str, Any] | None, str]]) -> Path:
+def _rows(path: Path, rows: list[tuple[str, str, dict[str, Any] | None, str]],
+          reg: cm.Registration) -> Path:
     path.mkdir()
+    (path / "registration.json").write_text(reg.to_json(), encoding="utf-8")
     with (path / "draws.jsonl").open("w") as f:
         for label, cond, raw, stop in rows:
             f.write(json.dumps({"label": f"{label}:{cond}", "raw": raw, "stop_reason": stop})
@@ -167,15 +175,16 @@ def test_a_rerun_into_a_used_out_dir_is_refused(tmp_path: Path, nflx: dict[str, 
     out.mkdir()
     (out / "draws.jsonl").write_text("{}\n", encoding="utf-8")
     with pytest.raises(rp.ReplayError, match="already holds draws"):
-        cm.run_compare(c, budget=rp.Budget(1.0, tmp_path / "l.jsonl"), out_dir=out)
+        cm.run_compare(c, budget=rp.Budget.open(tmp_path / "l.jsonl", cap_usd=1.0,
+                                                approval="operator: test"),
+                       out_dir=out, registration=_reg())
 
 
 def test_a_page_with_no_usable_draw_in_a_condition_blocks_never_vanishes(
         tmp_path: Path, nflx: dict[str, Any]) -> None:
     raw = nflx["synthesis"]
     rows = [("NFLX", "BASE", raw, "tool_use")] * 5 + [("NFLX", "CAND", raw, "max_tokens")] * 5
-    s = cm.score_run(_rows(tmp_path / "r", rows), target="M-LABEL",
-                     panel={"panel": ["NFLX"], "motivated": {}}, pages={"NFLX": nflx})
+    s = cm.score_run(_rows(tmp_path / "r", rows, _reg()), _reg(), pages={"NFLX": nflx})
     assert not s.ships
     assert any("NFLX" in r and "no usable draw" in r for r in s.reasons), s.reasons
 
@@ -190,8 +199,8 @@ def test_a_panel_shift_in_committed_leans_must_be_explained(tmp_path: Path,
     for t in ("NFLX", "MCK", "LLY"):
         rows += [(t, "BASE", mixed, "tool_use")] * 5
         rows += [(t, "CAND", mixed, "tool_use")] * 3 + [(t, "CAND", bull, "tool_use")] * 2
-    s = cm.score_run(_rows(tmp_path / "r", rows), target="M-LABEL",
-                     panel={"panel": ["NFLX", "MCK", "LLY"], "motivated": {}},
+    reg = _reg(pages=("NFLX", "MCK", "LLY"))
+    s = cm.score_run(_rows(tmp_path / "r", rows, reg), reg,
                      pages={t: _page(t) for t in ("NFLX", "MCK", "LLY")})
     assert any("committed-lean draws" in r for r in s.reasons), s.reasons
 
@@ -202,6 +211,5 @@ def test_an_identical_tally_in_another_order_is_not_a_lean_move(tmp_path: Path,
     m, b, x = (_lean_raw(raw, k) for k in ("mixed", "strongly-bullish", "strongly-bearish"))
     rows = [("NFLX", "BASE", r, "tool_use") for r in (m, b, m, b, x)]
     rows += [("NFLX", "CAND", r, "tool_use") for r in (b, m, b, m, x)]
-    s = cm.score_run(_rows(tmp_path / "r", rows), target="M-LABEL",
-                     panel={"panel": ["NFLX"], "motivated": {}}, pages={"NFLX": nflx})
+    s = cm.score_run(_rows(tmp_path / "r", rows, _reg()), _reg(), pages={"NFLX": nflx})
     assert not any("lean moved" in r for r in s.reasons), s.reasons

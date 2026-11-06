@@ -34,16 +34,16 @@ def by_id(gold: list[gd.GoldClaim]) -> dict[str, gd.GoldClaim]:
     return {g.id: g for g in gold}
 
 
-def _unmoved(ticker: str) -> bool:
-    path = ROOT / f"data/dossiers/{ticker}/dossier.json"
-    blob = subprocess.run(["git", "hash-object", str(path)], capture_output=True, text=True,
-                          check=True).stdout.strip()
-    return bool(blob == HITS["pages"][ticker])
+def _history() -> None:
+    if subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e", f"{report.GOLD_REF}^{{commit}}"],
+                      capture_output=True).returncode != 0:
+        pytest.skip("the gold's freeze commit is not in this history (shallow clone)")
 
 
 def _fires(metric: str, claim: gd.GoldClaim) -> list[mt.Hit]:
-    if not _unmoved(claim.page):
-        pytest.skip(f"{claim.page}'s page moved since the freeze; its gold reading no longer holds")
+    """The metric on a gold claim against its page AT THE GOLD'S FREEZE — never skipped because
+    the living page has since moved (review round 2: that skipped 8 of 13 pins)."""
+    _history()
     return mt.UNIT_METRICS[metric](claim.unit(), report.gold_context(claim.page))
 
 
@@ -130,16 +130,17 @@ def test_metric_is_silent_on_a_true_claim(metric: str, claim_id: str,
     assert _fires(metric, by_id[claim_id]) == []
 
 
-def test_every_frozen_fired_set_reproduces_on_unmoved_pages(gold: list[gd.GoldClaim]) -> None:
-    """The metrics as frozen at a677d1a1, on every page whose facts have not moved: the fired
+def test_every_frozen_fired_set_reproduces_at_the_freeze(gold: list[gd.GoldClaim]) -> None:
+    """The metrics as frozen at a677d1a1, on all 28 pages read at the gold's freeze: the fired
     claim ids must equal the frozen ones. A metric change moves this pin and owes the record a
     re-measurement on the gold (RUNBOOKS, "Changing the synthesis prompt")."""
-    unmoved = {t for t in HITS["pages"] if _unmoved(t)}
-    assert unmoved, "every gold page has moved — re-freeze the fixture"
-    fired = report.fired_on_gold(gold, tickers=unmoved)
+    _history()
+    from vinci.evals.replay import git_blob
+    for t, blob in HITS["pages"].items():
+        assert git_blob(report.GOLD_REF, f"data/dossiers/{t}/dossier.json") == blob, t
+    fired = report.fired_on_gold(gold)
     for metric, ids in HITS["fired"].items():
-        want = {i for i in ids if i.split(":")[0] in unmoved}
-        assert fired[metric] == want, (metric, sorted(fired[metric] ^ want))
+        assert fired[metric] == set(ids), (metric, sorted(fired[metric] ^ set(ids)))
 
 
 def test_precision_recall_counts_against_the_gold_class(gold: list[gd.GoldClaim]) -> None:

@@ -27,23 +27,30 @@ THE ATTRIBUTES, each read from the committed page (``page_row``):
   unless the draws are unanimous (`verdict.derive_proposal`): a unanimous committed lean (5-0,
   one dissent withholds it) or a 4-1 committed lean (one more agreeing draw makes it propose);
 - ``transcripts`` — the CIQ transcripts the replay will read (a page needs at least one);
-- ``motivated`` — the page MOTIVATED A FIX: its ticker is named in the subject of a commit on main
-  that changed ``vinci/dossier/synthesis.py`` or ``vinci/dossier/mechanical.py``, or in the title
-  of a ``docs/records/`` file such a commit added, or in the record of a fix in flight at the
-  freeze (``motivated_from_git``; the in-flight set is stated in the frozen panel file).
+- ``motivated`` — the page MOTIVATED A FIX: its ticker is named in the subject OR BODY of a
+  commit on main that changed ``vinci/dossier/synthesis.py`` or ``vinci/dossier/mechanical.py``,
+  or in the title of a ``docs/records/`` file such a commit added, or anywhere in the record of a
+  fix in flight at the freeze (``motivated_from_git``, ``in_flight_names``). APPLIED AS WRITTEN
+  (review round 2, #924) it names ALL 28 pages: fix 3a's record, committed eleven minutes before
+  the pre-registration, names 27, and commit bodies name the 28th. No page of this corpus is held
+  out from the fixes the diagnosis produced, so the attribute is reported, never a constraint,
+  and holding out is PER CHANGE (`compare.register`: the panel pages the change's own commits and
+  records do not name).
 
 ELIGIBLE: sleeve quality or overshoot, built under the five-draw gate, at least one transcript.
 
-CONSTRAINTS (all must hold): 3 quality and 3 overshoot; at least 2 held out (not motivated) and at
-least 2 motivated; 1 or 2 modal-boundary pages; at least 2 pages with a material row and 2
-without; at least 2 rising and 2 falling windows; at least one page without a forward basis WHEN
-an eligible page lacks one (none does on the freeze commit — the constraint is then vacuous, and
-the frozen file says so).
+CONSTRAINTS (all must hold): 3 quality and 3 overshoot; 1 or 2 modal-boundary pages; at least 2
+pages with a material row and 2 without; at least 2 rising and 2 falling windows; at least one
+page without a forward basis WHEN an eligible page lacks one (none does on the freeze commit — the
+constraint is then vacuous, and the frozen file says so). The v1 constraint "at least 2 held out
+and 2 motivated" is DROPPED, stated in the frozen file: under its own rule as written no page is
+held out, so it admits no panel (review round 2).
 
 OBJECTIVE, lexicographic: (1) the most distinct sectors; (2) at least one proposal-boundary page;
 (3) the smallest material / non-material imbalance; (4) the smallest rising / falling imbalance.
-TIE-BREAK: the smallest sha256 of ``SALT + ",".join(sorted(tickers))`` — fixed before the search
-ran, so the choice among equals is neither alphabetical nor the experimenter's.
+TIE-BREAK: the smallest sha256 of ``salt + ",".join(sorted(tickers))``, the salt being the
+FREEZE COMMIT's full sha — a value nobody chose. v1's hand-written salt string was steerable:
+salt variants reached all seven tied panels (review round 2).
 """
 from __future__ import annotations
 
@@ -59,7 +66,6 @@ from pathlib import Path
 from typing import Any
 
 PANEL_SIZE = 6
-SALT = "mosaic-theory synthesis-eval panel v1 2026-11-06"
 WINDOW_BAND = 0.05
 ELIGIBLE_SLEEVES = ("quality", "overshoot")
 #: The files whose change moves the synthesis request: its builder, and the layer whose words it
@@ -181,9 +187,6 @@ def _satisfies(sub: Sequence[PanelRow], pool: Sequence[PanelRow]) -> bool:
     sleeves = [r.sleeve for r in sub]
     if sleeves.count("quality") != 3 or sleeves.count("overshoot") != 3:
         return False
-    held = sum(not r.motivated for r in sub)
-    if held < 2 or len(sub) - held < 2:
-        return False
     if not 1 <= sum(r.modal_boundary for r in sub) <= 2:
         return False
     mat = sum(r.material for r in sub)
@@ -202,8 +205,8 @@ def _score(sub: Sequence[PanelRow]) -> tuple[int, int, int, int]:
             -abs(mat - (len(sub) - mat)), -abs(dirs.count("rising") - dirs.count("falling")))
 
 
-def tie_key(tickers: Iterable[str]) -> str:
-    return hashlib.sha256((SALT + ",".join(sorted(tickers))).encode()).hexdigest()
+def tie_key(tickers: Iterable[str], salt: str) -> str:
+    return hashlib.sha256((salt + ",".join(sorted(tickers))).encode()).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -217,7 +220,7 @@ class Selection:
     tied: tuple[tuple[str, ...], ...] = ()
 
 
-def select_panel(rows: Sequence[PanelRow], size: int = PANEL_SIZE) -> Selection:
+def select_panel(rows: Sequence[PanelRow], *, salt: str, size: int = PANEL_SIZE) -> Selection:
     """The rule (module docstring), exhaustively. Raises when no subset satisfies it — a panel
     is never relaxed silently."""
     pool = sorted((r for r in rows if r.eligible), key=lambda r: r.ticker)
@@ -229,7 +232,7 @@ def select_panel(rows: Sequence[PanelRow], size: int = PANEL_SIZE) -> Selection:
             continue
         feasible += 1
         names = tuple(r.ticker for r in sub)
-        best.append((_score(sub), tie_key(names), names))
+        best.append((_score(sub), tie_key(names, salt), names))
     if not best:
         raise ValueError(f"no {size}-page subset of {len(pool)} eligible pages meets the rule")
     top = max(s for s, _, _ in best)
@@ -251,7 +254,8 @@ def _named(text: str, tickers: Iterable[str]) -> set[str]:
 
 
 def motivated_from_git(repo: Path, ref: str, tickers: Sequence[str]) -> dict[str, list[str]]:
-    """ticker → the commits (short sha) whose subject, or whose added record's title, names it,
+    """ticker → the commits (short sha) whose subject or BODY, or whose added record title, names
+    it,
     over every commit on ``ref`` that changed one of ``PROMPT_FILES``. Needs full history: a
     shallow clone raises rather than reading a partial log as "nobody was ever named"."""
     if _git(repo, "rev-parse", "--is-shallow-repository").strip() == "true":
@@ -259,7 +263,7 @@ def motivated_from_git(repo: Path, ref: str, tickers: Sequence[str]) -> dict[str
     out: dict[str, list[str]] = {}
     for line in _git(repo, "log", ref, "--format=%h%x09%s", "--", *PROMPT_FILES).splitlines():
         sha, _, subject = line.partition("\t")
-        named = _named(subject, tickers)
+        named = _named(subject + "\n" + _git(repo, "log", "-1", "--format=%b", sha), tickers)
         added = _git(repo, "show", "--name-only", "--diff-filter=A", "--format=", sha).split()
         for rec in (p for p in added if p.startswith("docs/records/") and p.endswith(".md")):
             body = _git(repo, "show", f"{sha}:{rec}")
@@ -267,6 +271,15 @@ def motivated_from_git(repo: Path, ref: str, tickers: Sequence[str]) -> dict[str
             named |= _named(title, tickers)
         for t in named:
             out.setdefault(t, []).append(sha)
+    return out
+
+
+def in_flight_names(repo: Path, records: Sequence[str], tickers: Sequence[str]) -> set[str]:
+    """The tickers named ANYWHERE in the records of fixes in flight (``ref:path`` each) — a fix
+    not yet merged has no commit on main to read, but its record says which pages it rests on."""
+    out: set[str] = set()
+    for spec in records:
+        out |= _named(_git(repo, "show", spec), tickers)
     return out
 
 

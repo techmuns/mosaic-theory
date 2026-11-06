@@ -560,7 +560,81 @@ harness, so a two-version comparison must be the first thing it can run. `vinci/
   files are byte-equal to the frozen ones and its `final.py` gives 283/644 and 117/644
   (`MANIFEST.json`, `durable_copy`).
 
-**BOUNDARY (results).** Proofs: the 8 logs in the session-notes `llm-logs/` folder (copied
+### R8. Review round 2 (the coordinator's, on `58e97056`): what changed, and what it changes
+
+The panel, held-out set and paid path above are SUPERSEDED where this section says so; every
+earlier number stands as measured.
+
+1. **The cap was per run; it is now per approval.** Each `run-compare` built its ledger in its own
+   out-dir, and a used out-dir is refused, so every run started at $0 (three $3-capped runs spent
+   $4.90 under the reviewer's mock). Now ONE ledger per operator approval: `budget-open` writes
+   the approved cap and the operator's words as its first line, and every paid command needs
+   `--budget-ledger`, reads that cap (`--cap` may only lower it) and appends to the same file —
+   a resume included. **Retries are metered:** the SDK's own `max_retries=2` sent attempts the
+   guard never saw (seven HTTP attempts behind five ledger rows); the guarded client now runs at
+   `max_retries=0`, and a failed attempt is a recorded, unpriced, failed draw.
+2. **`score` is bound to a registration written before any draw** (`register`): base and
+   candidate refs, transforms, pages, draws per condition, target metric(s) (Holm when more than
+   one, as §6.1 says), the rule, the scorer's fingerprint and the change's held-out pages, hashed.
+   `run-compare` draws exactly it and records its sha256 in the budget ledger. `score` takes no
+   target: it refuses draws on other pages or in other counts, a run drawn under another
+   registration, and a scorer whose files differ, and appends every score to `score_log.jsonl`.
+3. **The held-out rule, applied as written, holds out NOTHING.** The motivated set now reads the
+   subjects AND bodies of the prompt commits and the full record of the fix in flight (fix 3a's,
+   `4449189d`, committed eleven minutes before this pre-registration). Bodies alone name 28 of
+   28 pages and fix 3a's record names 27, so **no page of this corpus is held out from the
+   diagnosis-era fixes**, and the v1 constraint (≥2 held out, ≥2 motivated) admits no panel. It is
+   dropped, stated in the panel file, and holding out becomes **per change**: the panel pages the
+   change's own commits and records do not name, computed at registration. The v1 tie-break salt
+   was a written string, and variants of it reached all seven tied panels; the salt is now the
+   freeze commit's full sha, a value nobody chose.
+
+   | | panel | feasible / tied | held out |
+   |---|---|---|---|
+   | v1 (`8c18fb42`) | CNXC, LLY, MCK, NKE, ROST, SMPL | 812 / 7 | CNXC, MCK, NKE, ROST |
+   | **v2 (this round)** | **BURL, CNXC, LLY, MCK, ROST, SMPL** | 906 / 7 | none from the corpus; per change |
+
+   NKE leaves and BURL (overshoot, Consumer Discretionary, a falling window, a 3–2 modal
+   boundary) joins; strata coverage is unchanged (5 sectors, a proposal-boundary page, 3/3
+   material, 2/2 rising-falling). The coordinator's own re-run, which kept the held-out constraint
+   with only MCK, NKE and ROST made motivated, gave BRBR, CNXC, LLY, MCK, NFLX, TGT; under the rule
+   as written that reading is not available. The DEV/TEST re-split the review asked for is moot:
+   it applied only if CNXC or MCK stayed held out, and nothing is. **But four of v2's six pages
+   (BURL, CNXC, LLY, MCK) are DEV pages that shaped the metrics**, so the metrics read their draws
+   in-sample (item 10 below).
+4. **The gold reads its pages at the freeze**, `bcda7ce3`, by git — never the living tree, where a
+   one-byte rebuild silently skipped 8 of 13 per-claim pins and every M-SIGN and M-PATH pin.
+   `gold` prints which living pages have moved since; the score does not move with them.
+5. **Five mutants survived round 1's 59 tests**: the paid guard comparing SYSTEM only, or refusing
+   only when SYSTEM and USER both differ; `compare` judging identity on USER only; an M-PATH or
+   M-SIGN worsening never blocking; a proposal change alone never blocking. Each is now pinned,
+   and each mutant fails its pin, as do six more on this round's guards (retries back on, a cap
+   above the approval, the child keeping its key, the child's network open, an unchecked scorer,
+   draws on unregistered pages). The earlier "7 guards mutation-checked" counted round 0's seven
+   only; it was never a claim about every guard.
+6. **The $0 capture child holds no key and no network:** `child_env` strips every Anthropic
+   credential and the child disables socket connects at its entry point, so a candidate whose
+   code built its own client inside `synthesize` cannot spend during `compare`.
+7. **`capture --out` refuses a path inside the repository** before it captures (it had written a
+   whole request, transcripts included, into `tests/fixtures/` under the reviewer's run).
+8. **The scorer's definitions are pinned:** `TRAILING_ONLY_NOTE`, `material_direction_flags`,
+   `SYNTHESIS_TOOL`, `split_lean`/`derive_proposal` come from the checkout running `score`; the
+   registration records a sha256 over those files and the scorer's own, and `score` refuses
+   another.
+9. **What byte identity covers:** SYSTEM, USER, model and max_tokens against the build logs. The
+   logs hold no tools, tool_choice or cache_control; those are compared only between a $0 capture
+   and its paid request (the guard), never against a log.
+10. **What each metric can gate, plainly:**
+    - **M-LABEL** — the only target. TEST precision 22/32 and recall 22/27 overall; on v1's TEST
+      pages 4/11 and 4/4; on v2's TEST pages (ROST, SMPL) 3/6 and 3/3; on v2's DEV pages 9/10 and
+      9/10, in-sample. Its false positives are mostly claims the gold files under another error.
+    - **M-SIGN** — one narrow form: a MATERIAL financial-summary figure, from an identified
+      statement, cited by its value, framed only against its sign. TEST recall 0/5 is by
+      construction: none of TEST's SIGN errors is that form. It gates #921's form and nothing else.
+    - **M-PATH** — monotone wording over an annual series; not the cumulative-revision form.
+    - **M-ABSENT** — a no-worsening proxy (TEST precision 3/14); never a target.
+
+**BOUNDARY (results).** R8's panel: the same 28 frozen rows at `bcda7ce3` with `motivated` recomputed (subjects + bodies of the prompt commits to `bcda7ce3`, the fix-3a record at `4449189d`). Proofs: the 8 logs in the session-notes `llm-logs/` folder (copied
 2026-11-06), at the codes and page commits in R1. Gold P/R: 644 claims at `bcda7ce3`'s pages,
 metric code `a677d1a1`, DEV = 330 claims / 14 pages, TEST = 314 / 14. Noise floor: 40 draws, unit =
 prose units of `units.draw_units`, counted as distinct units with ≥1 hit per draw. #920: its 20

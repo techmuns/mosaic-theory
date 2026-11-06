@@ -130,6 +130,19 @@ def jsonable(kwargs: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def block_network() -> None:
+    """No socket from this process can connect: a capture builds requests and sends none. A
+    candidate whose code built its own client inside ``synthesize`` would otherwise spend,
+    unguarded, during a $0 ``compare`` (the parent also strips the key: `replay.child_env`)."""
+    import socket
+
+    def refuse(*_a: Any, **_k: Any) -> Any:
+        raise RuntimeError("network is blocked in the $0 capture child")
+    socket.socket.connect = refuse  # type: ignore[method-assign]
+    socket.socket.connect_ex = refuse  # type: ignore[method-assign]
+    socket.create_connection = refuse
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--page", required=True, type=Path)
@@ -159,4 +172,5 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    block_network()   # the child process only — never a caller that imports `main`
     raise SystemExit(main())
