@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from vinci.dossier.synthesis import _decode_escapes
+from vinci.dossier.synthesis import SYNTHESIS_TOOL, _decode_escapes
 from vinci.dossier.verdict import derive_proposal, split_lean
 from vinci.evals import metrics as mt
 from vinci.evals import replay as rp
@@ -134,6 +134,17 @@ class Score:
     reasons: tuple[str, ...]
 
 
+def usable(row: dict[str, Any]) -> bool:
+    """A draw `synthesize` would have kept: the call stopped on its tool (a ``max_tokens`` stop
+    is a truncated, partial tool input — production's client raises on it) and the output carries
+    every required field but ``evidence_balance`` (production's INCOMPLETE rule)."""
+    raw = row.get("raw")
+    if not raw or row.get("stop_reason") != "tool_use":
+        return False
+    required = SYNTHESIS_TOOL["input_schema"]["required"]
+    return all(k in raw for k in required if k != "evidence_balance")
+
+
 def _lean(raw: dict[str, Any]) -> str:
     parts = split_lean(str(_decode_escapes(raw).get("evidence_balance") or ""))
     return parts[0].strip().lower() if parts else ""
@@ -171,6 +182,7 @@ def score_run(out_dir: Path, *, target: str, panel: dict[str, Any] | None = None
     failed: Counter[str] = Counter()
     echo: dict[str, dict[str, set[str]]] = {}
     ctxs: dict[str, mt.PageContext] = {}
+    indexes: dict[tuple[str, str], mt.EchoIndex] = {}
     for row in rows:
         t, cond = row["label"].split(":")
         if t not in ctxs:
@@ -180,11 +192,13 @@ def score_run(out_dir: Path, *, target: str, panel: dict[str, Any] | None = None
                 page, tx = rp.panel_inputs(t, panel=p)
             ctxs[t] = mt.PageContext(page=page, mech=pre_synthesis_mech(page), transcript=tx)
         ctx = ctxs[t]
-        if not row.get("raw"):
+        if not usable(row):
             failed[row["label"]] += 1
             continue
         req = reqs.get((t, cond))
-        index = mt.EchoIndex.of(req, ctx) if req is not None else None
+        if req is not None and (t, cond) not in indexes:
+            indexes[(t, cond)] = mt.EchoIndex.of(req, ctx)
+        index = indexes.get((t, cond))
         sc = mt.score_units(draw_units(row["raw"]), ctx, echo=index)
         for m, hits in sc.items():
             counts.setdefault(m, {}).setdefault(t, {c: [] for c in CONDITIONS})[cond].append(

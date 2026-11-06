@@ -80,13 +80,15 @@ def test_an_unknown_transform_is_refused(nflx: dict[str, Any]) -> None:
         rp.capture(nflx, None, transforms=["no_such_variant"])
 
 
-def _draws(tmp_path: Path, raw_base: dict[str, Any], raw_cand: dict[str, Any]) -> Path:
-    out = tmp_path / "run"
+def _draws(tmp_path: Path, raw_base: dict[str, Any], raw_cand: dict[str, Any],
+           name: str = "run") -> Path:
+    out = tmp_path / name
     out.mkdir()
     with (out / "draws.jsonl").open("w") as f:
         for cond, raw in (("BASE", raw_base), ("CAND", raw_cand)):
             for n in range(5):
-                f.write(json.dumps({"label": f"NFLX:{cond}", "draw": n + 1, "raw": raw}) + "\n")
+                f.write(json.dumps({"label": f"NFLX:{cond}", "draw": n + 1, "raw": raw,
+                                    "stop_reason": "tool_use"}) + "\n")
     return out
 
 
@@ -109,13 +111,22 @@ def test_the_scorer_applies_the_rule_to_real_synthesis_text(tmp_path: Path,
     assert s.leans["NFLX"]["BASE"] == s.leans["NFLX"]["CAND"]
 
     worse = json.loads(text)
-    worse["key_unknowns"] = [*worse["key_unknowns"],
-                             "Management said 'we will double the dividend next spring' on the call."]
-    s2 = cm.score_run(_draws(tmp_path / "w", raw, worse) if (tmp_path / "w").mkdir() is None
-                      else tmp_path, target="M-LABEL", panel=panel, pages={"NFLX": nflx})
+    worse["key_unknowns"] = [
+        *worse["key_unknowns"],
+        "Management said 'we will double the dividend next spring' on the call."]
+    s2 = cm.score_run(_draws(tmp_path, raw, worse, name="worse"), target="M-LABEL", panel=panel,
+                      pages={"NFLX": nflx})
     assert not s2.ships
     assert any("M-ABSENT worsens" in x for x in s2.reasons)
     assert any("target M-LABEL does not improve" in x for x in s2.reasons)
+
+
+def test_a_truncated_or_incomplete_draw_is_not_scored(nflx: dict[str, Any]) -> None:
+    raw = nflx["synthesis"]
+    assert cm.usable({"raw": raw, "stop_reason": "tool_use"})
+    assert not cm.usable({"raw": raw, "stop_reason": "max_tokens"})       # partial tool input
+    assert not cm.usable({"raw": {"evidence_balance": "mixed — x"}, "stop_reason": "tool_use"})
+    assert not cm.usable({"raw": None, "stop_reason": "tool_use"})
 
 
 def test_a_target_that_is_not_a_metric_is_refused(tmp_path: Path) -> None:
