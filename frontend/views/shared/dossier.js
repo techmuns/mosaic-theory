@@ -350,6 +350,15 @@ const EXTRACTION_VERSIONS = [
     "no quarter; a quarter that cannot be read leaves the window short, said in the count " +
     "(`nonoperating_quarters.window`), the prose and the cite, and no older quarter is read" +
     " in its place"],
+  ["2026-11-05.material-figure-direction",
+    "each material-figure line of the synthesis prompt states the figure's SIGNED value " +
+    "and, for a row of CIQ's Income Statement unusual-items block " +
+    "(`materiality.UNUSUAL_ITEM_LABELS`), which way it moves pre-tax income, read off the " +
+    "sign and never the label, naming a label word that points the other way (NFLX's " +
+    "+2,800.0 on 'Merger & Related Restruct. Charges' ADDS $2,800.0M); " +
+    "`material_direction_flags` adds a MATERIAL-DIRECTION QA flag where a claim stating " +
+    "a material figure frames it only against its sign. No extracted value changes; the " +
+    "prompt and the QA flags do"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
