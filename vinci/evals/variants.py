@@ -224,7 +224,7 @@ def print_row_guide(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
     row = rows[0]
     src = row.source_ref or ""
     if not src.startswith(_CADENCE):
-        raise TransformError(f"the print row's source is not the cadence read: {src[:80]!r}")
+        raise TransformError(f"the print row's source is not the cadence read: {src!r}")
     rest = src[len(_CADENCE):]
     basis = rest.split(") · guide: ", 1)[0] if ") · guide: " in rest else rest.removesuffix(")")
     est = (date.fromisoformat(row.expected_date), basis)
