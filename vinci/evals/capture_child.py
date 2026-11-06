@@ -125,8 +125,11 @@ def capture_calls(
 
 def jsonable(kwargs: dict[str, Any]) -> dict[str, Any]:
     """A request as JSON would carry it — the form two captures, or a capture and a guard's live
-    request, are compared in."""
-    out: dict[str, Any] = json.loads(json.dumps(kwargs, default=str, sort_keys=True))
+    request, are compared in. KEY ORDER IS KEPT: the paid path SENDS this form, and the SDK
+    serialises dicts in insertion order, so a sorted copy would send production's tool schema
+    with its fields reordered (PR 2 found its steps 1–2 drawn that way). Equality of two such
+    dicts ignores order, so comparing never needed the sort."""
+    out: dict[str, Any] = json.loads(json.dumps(kwargs, default=str))
     return out
 
 
