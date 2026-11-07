@@ -1839,6 +1839,24 @@ def segments(bundle: CiqBundle) -> Sourced[str]:
     return _segment_section(bundle, "Revenues")
 
 
+def segment_count(bundle: CiqBundle) -> int | None:
+    """How many ways the Segments sheet's revenue roster splits — the structured count the gap
+    test reads (`vinci.dossier.gaps`), from the roster :func:`segments` renders, never from its
+    string. 1 is a lone segment at ≥99.5% of revenue (the ``lean`` collapse, so this and the
+    rendered "— single segment" can never disagree); a lone item short of that is None, as is a
+    roster that cannot be read."""
+    try:
+        rows = bundle.sheet("financials", "Segments", freq="annual")
+    except CiqUnavailableError:
+        return None
+    roster = _segment_roster(rows, _period_header(rows))
+    if roster is None:
+        return None
+    if len(roster) == 1:
+        return 1 if roster[0][1] >= 0.995 else None
+    return len(roster)
+
+
 def segment_ebitda(bundle: CiqBundle) -> Sourced[str]:
     """Segment EBITDA mix — each share is of the SEGMENT-EBITDA sum (pre-corporate), explicitly
     distinguished from the CONSOLIDATED EBITDA behind the multiples/leverage; the reconciling

@@ -40,6 +40,7 @@ from vinci.dossier.filed_tiebreak import SAME_END_DAYS as FILED_SAME_END_DAYS
 from vinci.dossier.filed_tiebreak import _quarter_ref as _filed_quarter_ref
 from vinci.dossier.filed_tiebreak import filed_quarter
 from vinci.dossier.freshness import _COVERAGE_GAP_DAYS
+from vinci.dossier.gaps import disclosure_gaps
 from vinci.dossier.midcycle import MIN_YEARS as _MIDCYCLE_MIN_YEARS
 from vinci.dossier.schemas import (
     CHECK_AGREE,
@@ -6553,4 +6554,9 @@ def assemble_mechanical(
     flags += maturity_caveats(mech.capital_structure)  # each governed / springing maturity
     if line_flag is not None:
         flags.append(line_flag)
+    # (fix 4a) THE GAP TEST, LAST: it reads the finished layer — the releases, CIQ's guides, the
+    # drawdown windows, the survival legs — plus the CIQ segment roster the layer carries only as
+    # a display string (`vinci.dossier.gaps`)
+    mech = mech.model_copy(update={"disclosure_gaps": disclosure_gaps(
+        mech, segment_count=ciq_sheets.segment_count(bundle))})
     return mech, flags

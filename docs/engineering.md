@@ -119,6 +119,14 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Gap test / `disclosure_gaps` / our gap · does not apply · company's normal practice · change
+  or deviation · type not determined** (2026-11-07, fix 4a, operator ruling "Yes, use the test").
+  Plain words: *before the synthesis may treat a missing fact as a risk, the code sorts WHY it is
+  missing — our pipeline did not read it; it has no meaning for this filer; the company has not
+  disclosed it in anything we read; it was disclosed before and is absent now — or says it cannot
+  tell. Only the last may be raised as a risk, with what, where and when it stopped*.
+  `vinci/dossier/gaps.py`, rule 8 in `vinci/dossier/synthesis.py`,
+  `docs/records/2026-11-07-fix4a-the-gap-test.md`.
 - **Eval panel / held-out page / M-LABEL … M-ECHO / MDR** (2026-11-06, the synthesis eval
   harness). Plain words: *the six pages every synthesis-prompt change is drawn on, chosen by a
   rule over page attributes; a held-out page is a panel page the CHANGE under test never names in

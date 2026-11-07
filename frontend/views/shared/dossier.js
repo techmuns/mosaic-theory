@@ -371,6 +371,16 @@ const EXTRACTION_VERSIONS = [
     "and deleted where none is single; the web's peer subtitle assumes no discount; the " +
     "catalyst print row names the drawdown guide only when it is the current guide, without " +
     "'committed'. No figure changes; these strings do, most of them shorter"],
+  ["2026-11-07.gap-test",
+    "each missing item the synthesis prompt's rule 8 governs is sorted by the gap test " +
+    "(operator ruling 2026-11-07): `disclosure_gaps` types a segment-profit gap, the " +
+    "drawdown outlook and its company-adjusted figures, the newest release's adjusted-EPS" +
+    " guide, the current guide, the FCF sign and net debt / EBITDA as our gap, does not " +
+    "apply, the company's normal practice, a change or deviation, or type not determined," +
+    " read from statuses, lists, dates and table cells and never a note, CIQ's Guidance " +
+    "sheet being the second read both company types need; rule 8 lets only a change or " +
+    "deviation lower confidence, and the prompt asks no trailing multiple for a blind-" +
+    "flag. No extracted value changes; a new field and the prompt do"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
