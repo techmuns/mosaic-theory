@@ -473,3 +473,23 @@ def test_the_layer_drops_the_field_until_built() -> None:
     from vinci.dossier.schemas import DROP_WHEN_NONE
     assert ("", "disclosure_gaps") in DROP_WHEN_NONE
     assert "disclosure_gaps" not in _page("MCK")["mechanical"]
+
+
+# ------------------------------------------------------------- review round 0 (code-review high)
+
+def test_a_filing_that_cannot_be_placed_decides_neither_drawdown_item() -> None:
+    """(−) CNXC with its gap-down 8-K's date unreadable: the outlook AND the company-adjusted
+    EBITDA read 'type not determined'. The adjusted item used to read the filing as absent and fall
+    through to the company's practice off the release history alone."""
+    def edit(m: dict[str, Any]) -> None:
+        m["drawdown_cause"]["filings"][0]["filing_date"] = "n/a"
+    gs = _gaps("CNXC", edit)
+    assert _entry(gs, "drawdown_cause.revised_guidance").type == UNDETERMINED
+    assert _entry(gs, "valuation.ev_ebitda_adjusted_fwd").type == UNDETERMINED
+
+
+def test_a_segment_gap_claims_no_xbrl_read_it_did_not_make() -> None:
+    """EPAM's `segment_profit` is absent — a single-segment instance, no CIK, or no annual report
+    all look alike — so its basis states only what the page shows."""
+    g = _entry(_gaps("EPAM"), "concentration.segment_ebitda")
+    assert g.type == OUR and "states no segment profit" in g.basis and "axis" not in g.basis

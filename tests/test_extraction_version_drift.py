@@ -104,7 +104,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/filed_tiebreak.py": "228959ebaf1d",
     "vinci/dossier/flags.py": "27fde9822fe1",
     "vinci/dossier/freshness.py": "e5852b313d22",
-    "vinci/dossier/gaps.py": "aa3f650dbc24",
+    "vinci/dossier/gaps.py": "41fe4eece6d6",
     "vinci/dossier/inputs.py": "fcda11ef218f",
     "vinci/dossier/inputs_backfill.py": "a3567b23a569",
     "vinci/dossier/inputs_schema.py": "6f7d41f25223",

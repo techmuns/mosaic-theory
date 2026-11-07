@@ -44,8 +44,11 @@ every page with a CIQ forward multiple (STATE row 54, item 2).
 
 ## 2. How the type is decided
 
-From statuses, lists, dates and table cells the layer already carries — **never a note or a
-display string**. One pin blanks every fact's note on all 28 pages and the gaps do not move. Where
+From statuses, lists, dates and table cells the layer already carries — **never a note, and never a
+figure out of a display string**. It does match LABELS as keys: CIQ's metric names on its Guidance
+sheet ("EPS Normalized", "EBITDA", "DPS"), the annual table's row labels ("FCF ($M)") and its "LTM"
+column; a renamed label would change a type, which the pins on the 28 pages would show. One pin
+blanks every fact's note on all 28 pages and the gaps do not move. Where
 a rule cannot decide, the entry says "type not determined", which rule 8 reads as an unknown. No
 rule defaults to type 4.
 
@@ -139,7 +142,42 @@ In CI the same check runs on the six panel pages' own Segments sheets, cut to th
 (`tests/fixtures/ciq_segments_eval_panel.json`: 19–36 cells of 403–778 per page). Each cut is proved
 by rebuilding its page's committed lines.
 
-<!-- COMPARE -->
+**The precheck build was not run.** RUNBOOKS §n step 2's check against a `vinci dossier precheck`
+build was not run. A precheck builds from today's inputs, so its layer differs from the frozen one
+in fields this change does not touch, and it cannot isolate the gap list. The builder and the
+transform call the same function on the same layer. The one input they read differently is the
+segment count, compared above on every page's own export.
+
+**The $0 compare.** `python -m vinci.evals compare --base origin/main --cand 36f6b1ee`, on the
+frozen panel v2, with the CIQ root at the primary checkout's `data/manual/ciq`, read only. (The
+default root's LLY comps export is not the page's own, and `FIX_3A`'s transforms refuse it, as
+#926 found.)
+- **Bare, no transforms:** every page differs by SYSTEM +285, tool schema +20, and facts +27. The
+  +27 is `"disclosure_gaps": null`, because the committed layer carries no gaps.
+- **With `FIX_3A` + `FIX_4A` at both refs:**
+  - USER moves only in its facts section;
+  - with the `disclosure_gaps` value removed, the branch's request equals its `FIX_3A`-only
+    request byte for byte, on all six pages;
+  - `FIX_3A` alone at main reproduces #926's per-page deltas exactly (−92, −117, −110, −163, −92,
+    −92).
+- **SYSTEM and the tool schema:** in every one of the five books, SYSTEM moves only in rule 7b
+  (−23 characters) and rule 8 (256 → 564, +308), and the tool schema only in the `bear_points`
+  clause (+20). Shown by substituting the old spans with the new and getting the branch's text byte
+  for byte.
+- **Rule 8 is longer by 308 characters.** The ruling's four types and its evidence demand do not
+  fit in fewer words; the trailing-only ask was deleted from both places it lived.
+
+| page | the typed gaps the request carries | facts Δ | request total, base → cand |
+|---|---|--:|---|
+| BURL | segment: does not apply · drawdown fields: does not apply | +712 | 452,904 → 453,921 (+0.23%) |
+| CNXC | segment: does not apply · outlook: our gap · company-adjusted EBITDA: practice | +1,084 | 365,461 → 366,850 (+0.38%) |
+| LLY | segment: does not apply · drawdown: does not apply · adjusted EPS: our gap · FCF sign: our gap | +1,347 | 647,727 → 649,379 (+0.26%) |
+| MCK | segment: **our gap** · drawdown (3 windows): does not apply · adjusted EPS: our gap · current guide: our gap | +1,653 | 484,106 → 486,064 (+0.40%) |
+| ROST | segment: does not apply · drawdown: does not apply · adjusted EPS: our gap · current guide: our gap | +1,392 | 459,324 → 461,021 (+0.37%) |
+| SMPL | segment: does not apply · drawdown (2 windows): does not apply · adjusted EPS: **practice** | +1,188 | 477,864 → 479,357 (+0.31%) |
+
+Over the panel: SYSTEM +1,710, tool schema +120, facts +7,376 characters. A request total is
+SYSTEM + the tool schema's JSON + USER, at draws=1, with the frozen transcripts.
 
 ## 5. Pins and mutation
 
@@ -166,7 +204,64 @@ asserts their absence. That is the ruling's intended reversal.
 
 ## 6. The measurement — PROPOSED, not run (the operator approves any paid run and its cap)
 
-<!-- PROPOSAL -->
+**The target, and why M-LABEL alone cannot read this change.**
+- Today's only calibrated target is M-LABEL. On #926's 30 CAND draws it counts 47 units: "no
+  adjusted forward" 29, trailing-only 13, segment-undisclosed 5, runway-not-derivable 1, bleed 1.
+- **Item (c)** removes the prompt's ask behind the 13 trailing-only units. That family is precise:
+  the old label's words, on a page that carries a CIQ forward multiple. So M-LABEL can read (c).
+- **Items (a)–(b)** act on the other three families, but M-LABEL counts some of the very output
+  the ruling asks for. Shown at $0 on MCK's frozen page (the scorer's `label_echo`), on three
+  compliant, typed `key_unknowns` lines:
+  - "Segment profit by segment (concentration.segment_profit) is our gap: …" is a hit
+    (segment-undisclosed, `segment_profit`);
+  - "ev_ebitda_adjusted_fwd does not apply: no gap-down 8-K is in the window …" is a hit
+    (no-adjusted-forward);
+  - "valuation.adjusted_eps is our gap … CIQ records an EPS guide dated 2026-11-04 …" is not.
+  - The families' conditions hold on every panel page.
+  - So M-LABEL can fall from (c), and from the model dropping inapplicable gaps. It cannot see the
+    ruling's own effect, a gap that is no longer called a risk, and it can count compliance as a
+    misread.
+- **Precision.** On gold, M-LABEL is right 22 of 32 TEST hits. On output written under the gap
+  test its precision is untested, and it is biased AGAINST this change.
+
+**So the ruling's effect needs a new metric, and a new metric needs fresh gold first.** RUNBOOKS §n
+step 7: TEST was read once at `a677d1a1`, so a metric designed now would read it in-sample.
+- **Proposed metric: M-GAP.** A unit frames a gap that is not a stated change as a risk, or rests a
+  bear point on one.
+- **The gold, at $0 to draw:** the units of #926's 60 existing draws (registration `cceba9d9`):
+  - every `key_unknowns` and `bear_points` unit that speaks about a rule-8 subject. A crude selector
+    finds 147 + 14 = 161 (52 of the `key_unknowns` carry a risk word: 30 BASE, 22 CAND);
+  - plus a random 60 of the remaining units of those two fields, to measure recall;
+  - **about 220 claims**, double-coded, split DEV/TEST by page before coding (three pages each). The
+    metric is fit on DEV and TEST is scored once.
+  - Boundary: those 60 draws, units by `units.draw_units` at `fc79a7be`, the selector kept in the
+    session family's notes folder (`fix4a-gap-test.md`).
+
+**The registration, once the target is chosen** (with M-LABEL alone it can be registered today,
+the bias stated in its `--note`):
+
+```
+python -m vinci.evals budget-open --budget-ledger <notes>/ledger-fix4a.jsonl --cap 35 \
+  --approval "<the operator's words>"
+python -m vinci.evals register --base origin/main --cand <this PR's head> \
+  --transform relabel_drawdown_shape --transform trailing_only_note --transform survival_read \
+  --transform peer_gap_question --transform print_row_guide --transform gap_types \
+  --target M-LABEL [--target M-GAP] --ship-alpha 0.01 \
+  --ciq-root /Users/work/Documents/GitHub/mosaic-theory/data/manual/ciq \
+  --note "<what the target covers and does not>" --budget-ledger <notes>/ledger-fix4a.jsonl \
+  --out <notes>/registration-fix4a.json
+python -m vinci.evals run-compare --registration <…> --budget-ledger <…> --out-dir <fresh> --paid
+python -m vinci.evals score --out-dir <…> --registration <…> --budget-ledger <…>
+```
+
+- **Both arms carry `FIX_3A`.** The frozen pages predate #923, and a rebuilt page carries its
+  labels, so the comparison isolates fix 4a.
+- **Design:** panel v2, 5 draws per page per arm, 60 calls.
+- **Cost:** #926 drew the same design for **$30.72** (60 calls, $4.55–$6.23 a page). This change
+  moves each request by 0.23–0.40% (§4), so **≈$31**.
+- **Cap proposed: $35** for the first run. A replication (p_lower in (0.01, 0.05]) would cost ≈$31
+  more and does not fit $35; RUNBOOKS §n stops rather than raise a cap. So **$70** if the operator
+  wants it to fit one approval.
 
 **BOUNDARY.**
 - **Pages:** the 28 committed at `bcda7ce3` (the panel's `freeze_ref`); the panel is v2 (BURL,

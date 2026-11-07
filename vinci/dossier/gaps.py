@@ -9,8 +9,11 @@ of four types (operator ruling 2026-11-07, verbatim: "Yes, use the test"):
 
 A type the structured values cannot decide is "type not determined", which the prompt treats as an
 unknown. NO RULE DEFAULTS TO TYPE 4 AND NONE GUESSES: each reads statuses, lists, dates and table
-cells the layer already carries — never a note or a display string (CLAUDE.md) — and a value it
-needs and cannot read leaves the entry "type not determined".
+cells the layer already carries — never a note, and never a figure out of a display string
+(CLAUDE.md). It does match LABELS as keys: CIQ's own metric names on its Guidance sheet ("EPS
+Normalized", "EBITDA", "DPS"), the annual table's row labels ("FCF ($M)") and its "LTM" column, so
+a renamed label changes a type, which the pins on the 28 pages would show. A value it needs and
+cannot read leaves the entry "type not determined".
 
 TWO READS BEFORE A COMPANY TYPE. The release parser misses guides companies give: on the 28 frozen
 pages (freeze bcda7ce3) it reads no guide from any release of MCK, ROST or V, on whose newest
@@ -273,7 +276,8 @@ def _segment_gap(c: Concentration, segment_count: int | None) -> DisclosureGap |
         return DisclosureGap(item="segment profit by segment", fields=fields, type=NA,
                              basis="CIQ's Segments sheet reads one segment, and the 10-K XBRL "
                                    "instance tags fewer than two; there is no breakout to give")
-    how = ("failed" if sp is not None else "found fewer than two segments on its axis")
+    # None is also no CIK or no annual report yet: say what is on the page, never a read not made
+    how = ("failed" if sp is not None else "states no segment profit")
     return DisclosureGap(item="segment profit by segment", fields=fields, type=OUR,
                          basis=f"CIQ's Segments sheet splits revenue into {segment_count} lines, "
                                "and a filer reporting more than one segment discloses a profit "
@@ -335,11 +339,17 @@ def _drawdown_gaps(mech: MechanicalLayer, rels: list[ReleaseExtract] | None,
                            f"({where} empty), and these read only the outlook such an 8-K "
                            "furnishes"))
     if adjusted and not current_na:
-        dates = _filing_dates(mech.drawdown_cause.filings) or []
-        out.append(_guide_gap(_Guide(
-            item="a company adjusted-EBITDA guide at the gap-down", fields=adjusted,
-            read_at=dates, fills=_adj_ebitda_level, guides=_adj_ebitda, family=_ciq_ebitda,
-            noun="an adjusted-EBITDA guide"), rels, ciq))
+        item = "a company adjusted-EBITDA guide at the gap-down"
+        dates = _filing_dates(mech.drawdown_cause.filings)
+        if dates is None:   # as the outlook's entry: a filing that cannot be placed decides nothing
+            out.append(DisclosureGap(item=item, fields=adjusted, type=UNDETERMINED,
+                                     basis="a filing date in drawdown_cause.filings does not "
+                                           "parse"))
+        else:
+            out.append(_guide_gap(_Guide(
+                item=item, fields=adjusted, read_at=dates, fills=_adj_ebitda_level,
+                guides=_adj_ebitda, family=_ciq_ebitda, noun="an adjusted-EBITDA guide"),
+                rels, ciq))
     return out
 
 
