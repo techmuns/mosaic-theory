@@ -56,6 +56,9 @@ main.*
   in `tests/` and `vinci/evals/*.py` at `a9c59287`.
 - **Its result:** 49 resolve as commits in the main-only clone; 9 resolve only in this machine's
   object store.
+- **The command,** run in the main-only clone:
+  `grep -rhoE "[\"'\` ]([0-9a-f]{8,40})[\"':\`^ ]" tests vinci/evals/*.py | grep -oE "[0-9a-f]{8,40}" | sort -u`,
+  then `git cat-file -e <sha>^{commit}` on each, in the clone and in this checkout.
 - **The ticker counts:** `in_flight_names` over the frozen panel file's page list, at each ref.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
