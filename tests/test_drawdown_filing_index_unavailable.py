@@ -179,7 +179,9 @@ def test_a_healthy_feed_that_finds_nothing_still_says_no_company_filing() -> Non
 def test_a_name_with_no_gap_downs_is_unaffected() -> None:
     cause = _cause(_WorkingEdgar(), [])
 
-    assert cause.shape.value == "gradual bleed — no discrete gap-down detected"
+    # the detector's finding, stated (fix 3a, 2026-11-06 — it read "gradual bleed" until then)
+    assert cause.shape.value == (
+        "no single-day drop of -10% or worse in the window (detector threshold -10%)")
     assert cause.gap_down_dates.value is None
 
 

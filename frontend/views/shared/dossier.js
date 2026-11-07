@@ -359,6 +359,18 @@ const EXTRACTION_VERSIONS = [
     "`material_direction_flags` adds a MATERIAL-DIRECTION QA flag where a claim stating " +
     "a material figure frames it only against its sign. No extracted value changes; the " +
     "prompt and the QA flags do"],
+  ["2026-11-06.descriptive-labels",
+    "the fact layer's labels describe and never judge: a rolling drawdown window with no " +
+    "-10% day reads 'no single-day drop of -10% or worse in the window (detector threshold " +
+    "-10%)'; the trailing EV/EBITDA's blind-flag note stands only where the page has no " +
+    "consensus forward P/E, no numeric NTM cell for the name on its comps sheet and no banded, " +
+    "non-context forward history (`mechanical.ev_ebitda_note`), and is otherwise deleted; the " +
+    "survival read's verdict tags are deleted, 'cash not derived' kept; the peer-delta " +
+    "question is asked only in the one direction every known trading-multiple gap, " +
+    "LTM and NTM, shows, " +
+    "and deleted where none is single; the web's peer subtitle assumes no discount; the " +
+    "catalyst print row names the drawdown guide only when it is the current guide, without " +
+    "'committed'. No figure changes; these strings do, most of them shorter"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
@@ -3846,7 +3858,9 @@ function peerRosterFact(label, s) {
 
 function peerComps(pc) {
   if (!pc) return "";
-  return sec("Peer comparison", "The roster, the comparability gate, and the per-peer grid — the reader judges whether the discount is earned or residual.",
+  // (fix 3a, review of #923) the subtitle assumed a discount on every page; 11 of 28 trade at a
+  // premium on EV/EBITDA. The clause is deleted, not reworded — the facts below carry the signs.
+  return sec("Peer comparison", "The roster, the comparability gate, and the per-peer grid.",
     peerRosterFact("Peer set (roster · caps · business)", pc.peer_set) +
     fact("Comparability (confidence gate)", pc.comparability, null, { hi: true }) +
     peerMultiplesFact(pc.peer_grid

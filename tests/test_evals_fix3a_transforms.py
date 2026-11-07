@@ -5,10 +5,15 @@ Two properties, pinned on the FROZEN panel pages (`synthesis_panel.json`'s freez
 comps sheets (`tests/fixtures/ciq_comps_eval_panel.json`, cut from the exports that rebuild each
 page's committed comps lines):
 
-- AT MAIN EACH TRANSFORM IS THE IDENTITY: main's code regenerates exactly the committed field;
-- AT A CODE THAT REWRITES THE LABEL, ONLY THAT FIELD MOVES. The code under test here is main, so a
-  stand-in for #923's rule is installed where the transform looks for it; the real #923 code is
-  read by the $0 cross-check (`compare main e91490ae`), not by a unit test.
+- UNDER THE CHECKOUT'S CODE EACH TRANSFORM MOVES ONLY ITS OWN FIELD, IS IDEMPOTENT, AND WRITES THAT
+  CODE'S LABEL (a deterministic anchor per transform). Identity at the measured BASE ref
+  (`e00db8cd`, the code that built the frozen pages) is #926's recorded evidence — shown on 28 pages
+  and run by its CI — and cannot hold in-process once the checkout writes #923's labels (merged
+  into #923, 2026-11-07, coordinator ruling); idempotence is that identity for a page already
+  carrying the checkout's labels, which is what every rebuilt page will be;
+- AT A CODE THAT REWRITES THE LABEL, ONLY THAT FIELD MOVES. A stand-in for each rule is installed
+  where the transform looks for it, so these pins hold at main and at #923 alike; the real #923
+  code is also read by the $0 cross-check (`compare main e91490ae`).
 
 A transform never guesses: a field it cannot regenerate from the ref's code and the page's own
 facts is refused (`TransformError`) — a comps export that is not the page's own, or a survival line
@@ -82,17 +87,80 @@ def _moved(a: MechanicalLayer, b: MechanicalLayer) -> set[str]:
     return {k for k in la.keys() | lb.keys() if la.get(k) != lb.get(k)}
 
 
-# ------------------------------------------------------------- 1. the identity at main
+# ------------------------------- 1. under the checkout's code: own field, idempotent, its label
+
+def _print_row(mech: MechanicalLayer) -> int:
+    cal = mech.catalyst_calendar
+    assert cal is not None
+    return next(i for i, r in enumerate(cal.rows) if r.event == mechanical.PRINT_EVENT)
+
+
+def _own(name: str, mech: MechanicalLayer) -> set[str]:
+    """The fields each transform may move — and no other."""
+    if name == "print_row_guide":
+        i = _print_row(mech)
+        return {f"catalyst_calendar.rows[{i}].tests_what",
+                f"catalyst_calendar.rows[{i}].source_ref"}
+    return {"relabel_drawdown_shape": {"drawdown_cause.shape.value"},
+            "trailing_only_note": {"valuation.ev_ebitda.note"},
+            "survival_read": {"quality.survival_capacity.value",
+                              "leverage_survival.survival.value"},
+            "peer_gap_question": {"peer_comps.fundamental_deltas.value"}}[name]
+
 
 @pytest.mark.parametrize("t", PANEL["panel"])
-def test_each_fix3a_transform_is_the_identity_at_main(t: str) -> None:
+def test_each_fix3a_transform_moves_only_its_own_field_and_is_idempotent(t: str) -> None:
+    """Under the checkout's code, on every frozen panel page: each transform moves a subset of its
+    own field(s), and applying it to its own output changes nothing; so does the five in order.
+    (Identity at the measured BASE ref, `e00db8cd`, is #926's recorded evidence; the in-process pin
+    is own-field, idempotence and the anchor, the last in
+    `test_each_fix3a_transform_writes_the_checkouts_label`.)"""
     mech, ctx = _ctx(t)
-    for name in vr.FIX_3A:
-        assert vr.TRANSFORMS[name](mech, ctx) == mech, (t, name)
     out = mech
     for name in vr.FIX_3A:
+        one = vr.TRANSFORMS[name](mech, ctx)
+        assert _moved(mech, one) <= _own(name, mech), (t, name, _moved(mech, one))
+        assert vr.TRANSFORMS[name](one, ctx) == one, (t, name, "not idempotent")
         out = vr.TRANSFORMS[name](out, ctx)
-    assert out == mech
+    assert _moved(mech, out) <= set().union(*(_own(n, mech) for n in vr.FIX_3A))
+    again = out
+    for name in vr.FIX_3A:
+        again = vr.TRANSFORMS[name](again, ctx)
+    assert again == out
+
+
+def test_each_fix3a_transform_writes_the_checkouts_label() -> None:
+    """One deterministic anchor per transform, on a frozen page where it moves, under the
+    checkout's code (#923's): code-written strings, so exact values. (Identity at the measured BASE
+    ref, `e00db8cd`, is #926's recorded evidence; this pin is the in-process one.)"""
+    mech, ctx = _ctx("LLY")
+    assert mech.drawdown_cause is not None and mech.drawdown_cause.shape.value != (
+        mechanical._CURRENT_WORDS.none_shape)   # the frozen page carries the BASE wording
+    shape = vr.relabel_drawdown_shape(mech, ctx).drawdown_cause
+    assert shape is not None and shape.shape.value == (
+        "no single-day drop of -10% or worse in the window (detector threshold -10%)")
+    assert mech.valuation.ev_ebitda.note == mechanical.TRAILING_ONLY_NOTE
+    assert vr.trailing_only_note(mech, ctx).valuation.ev_ebitda.note is None  # forward P/E there
+    line = vr.survival_read(mech, ctx).quality.survival_capacity.value
+    assert line == "net-debt/EBITDA 0.9x (CIQ) | FCF sign UNKNOWN — runway not assessable"
+    assert "(a risk)" not in str(line)
+    def deltas(t: str) -> str:
+        m, c = _ctx(t)
+        return str(vr.peer_gap_question(m, c).peer_comps.fundamental_deltas.value)
+    tail = "the human judges — not computed here]"
+    # LLY: every known gap of the six trading multiples above the peer median — the premium
+    assert deltas("LLY").endswith("  [justified-vs-residual inputs: is the premium EARNED (better "
+                                  f"fundamentals) or RESIDUAL (unexplained)? {tail}")
+    # MCK: its six gaps are MIXED on its own export — the question is deleted (what the paid
+    # measurement drew; the cut once nulled the peers' NTM cells, which turned it "premium")
+    assert deltas("MCK").endswith(f"  [justified-vs-residual inputs: {tail}")
+    # SMPL: every known gap below the peer median — the discount question, as committed
+    assert deltas("SMPL").endswith("  [justified-vs-residual inputs: is the discount EARNED (worse "
+                                   f"fundamentals) or RESIDUAL (unexplained)? {tail}")
+    b, bctx = _brbr()   # BRBR's drawdown guide is superseded: the row names it no more
+    row = vr.print_row_guide(b, bctx).catalyst_calendar.rows[_print_row(b)]  # type: ignore[union-attr]
+    assert row.tests_what == "the next reported quarter against the committed trajectory"
+    assert " · guide: " not in str(row.source_ref)
 
 
 def test_fix3a_names_its_five_transforms_in_order() -> None:
@@ -242,9 +310,15 @@ def test_print_row_guide_moves_only_the_print_rows_test_and_source(
     assert (mechanical.eight_k_events, mechanical._next_print_estimate) == edgar_reads
 
 
-def test_print_row_guide_is_the_identity_at_main_on_a_superseded_guide() -> None:
+def test_print_row_guide_on_a_superseded_guide_moves_only_the_row_and_is_idempotent() -> None:
+    """BRBR's superseded drawdown guide, under the checkout's code: only the print row's test and
+    source move, and a second application changes nothing. (Identity at the measured BASE ref,
+    `e00db8cd`, is #926's recorded evidence; the in-process pin is own-field, idempotence and the
+    anchor in `test_each_fix3a_transform_writes_the_checkouts_label`.)"""
     mech, ctx = _brbr()
-    assert vr.print_row_guide(mech, ctx) == mech
+    out = vr.print_row_guide(mech, ctx)
+    assert _moved(mech, out) <= _own("print_row_guide", mech)
+    assert vr.print_row_guide(out, ctx) == out
 
 
 # ------------------------------------------------- 4. the capture child hands them the context
@@ -267,9 +341,18 @@ def test_a_capture_hands_the_transforms_the_page_and_its_comps(
         opened.append(paths)
         return _comps(ticker)
     monkeypatch.setattr(CiqBundle, "from_files", staticmethod(from_files))
-    base = rp.capture(page, None, draws=1)
+    def five(m: MechanicalLayer) -> MechanicalLayer:   # the same five, in-process, on the page
+        ctx = vr.Context(page=page, comps=_comps("LLY"))
+        for name in vr.FIX_3A:
+            m = vr.TRANSFORMS[name](m, ctx)
+        return m
+    want = rp.capture(page, None, draws=1, transform=five)
     got = rp.capture(page, None, draws=1, transforms=list(vr.FIX_3A), comps=wb)
-    assert opened == [[wb]] and got.wire() == base.wire()     # at main: the identity, end to end
+    # the child opened the page's export and handed it, with the page, to the five transforms: its
+    # request is the transformed layer's, end to end (identity at the measured BASE ref, e00db8cd,
+    # is #926's recorded evidence — merged into #923, 2026-11-07)
+    assert opened == [[wb]] and got.wire() == want.wire()
+    assert got.wire() != rp.capture(page, None, draws=1).wire()   # and the five did move LLY
     # the capture's TransformError is the by-path module's own class: a RuntimeError either way
     with pytest.raises(RuntimeError, match="none was given"):
         rp.capture(page, None, draws=1, transforms=["peer_gap_question"])

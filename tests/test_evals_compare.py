@@ -56,18 +56,25 @@ def test_a_comparison_that_reaches_no_request_is_refused(tmp_path: Path,
 
 def test_the_relabel_transform_reads_the_code_under_tests_own_words(
         nflx: dict[str, Any], monkeypatch: pytest.MonkeyPatch) -> None:
-    """At main the transform is the identity (the committed shape IS main's wording); with the
-    code's words changed — as fix 3a changes them — the request changes in that span only."""
+    """With the code's words equal to the committed shape (main's wording) the transform is the
+    identity; with the code's words changed — as fix 3a changes them — the request changes in that
+    span only. Both wordings are set here, so the pin holds on main and on fix 3a's branch alike
+    (merged into #923, 2026-11-06: the first cut read the code's words as main's)."""
+    old = "gradual bleed — no discrete gap-down detected"
+    new = "no single-day drop of -10% or worse in the window (detector threshold -10%)"
+
+    def words(none_shape: str) -> None:
+        monkeypatch.setattr(mechanical, "_CURRENT_WORDS", mechanical._CURRENT_WORDS.__class__(
+            **{**mechanical._CURRENT_WORDS.__dict__, "none_shape": none_shape}))
+
+    words(old)
     base = rp.capture(nflx, None, transforms=["relabel_drawdown_shape"])
     assert base.kwargs == rp.capture(nflx, None).kwargs
-    new = "no single-day drop of -10% or worse in the window (detector threshold -10%)"
-    monkeypatch.setattr(mechanical, "_CURRENT_WORDS", mechanical._CURRENT_WORDS.__class__(
-        **{**mechanical._CURRENT_WORDS.__dict__, "none_shape": new}))
+    words(new)
     cand = rp.capture(nflx, None, transforms=["relabel_drawdown_shape"])
     assert base.system == cand.system
     assert new not in base.user
     assert new in cand.user and cand.user.count(new) == 1
-    old = "gradual bleed — no discrete gap-down detected"
     # the prompt carries the facts as JSON (the dash escaped): ONE span changes, #920 V2's
     assert base.user.count(json.dumps(old)) == 1
     assert base.user.replace(json.dumps(old), json.dumps(new)) == cand.user

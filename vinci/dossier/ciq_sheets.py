@@ -4973,6 +4973,22 @@ def _fmt_cap(m: float | None) -> str:
     return f"${m / 1000:.1f}B" if m >= 1000 else f"${m:.0f}M"
 
 
+def comps_ntm_multiples(bundle: CiqBundle) -> list[str]:
+    """The labels of the name's own NUMERIC NTM multiples on the comps Trading Multiples sheet —
+    the forward cells `peer_comps.trading_multiples` prints as 'NTM …: name X' (the trailing note's
+    forward basis, `mechanical.ev_ebitda_note`). [] when the sheet or the name's row cannot be read
+    or no NTM cell is a number ('NM' is a real state, not a multiple)."""
+    try:
+        tm = bundle.sheet("comps", "Trading Multiples")
+    except CiqUnavailableError:
+        return []
+    _hdr, _peers, tgt = _comps_layout(tm, bundle.ticker)
+    if tgt is None:
+        return []
+    return [lab for lab, col in _COMPS_MULTIPLES
+            if lab.startswith("NTM ") and isinstance(_comps_cell(tm, tgt, col), int | float)]
+
+
 def _comps_multiples(bundle: CiqBundle, src: str) -> Sourced[str]:
     try:
         tm = bundle.sheet("comps", "Trading Multiples")
@@ -5016,10 +5032,67 @@ def _comps_deltas(bundle: CiqBundle, src: str) -> Sourced[str]:
         ms = _f(med) if med is not None else "–"
         bits.append(f"{lab} name {ns} vs peer-median {ms}")
     return Sourced.present(
-        "; ".join(bits) + "  [justified-vs-residual inputs: is the discount EARNED (worse "
-        "fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+        "; ".join(bits) + f"  [justified-vs-residual inputs: {_peer_gap_question(bundle)}the "
+        "human judges — not computed here]",
         source_ref=f"{src}→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
     )
+
+
+#: The cross-sectional read's multiples: (label, Trading Multiples column).
+_CROSS_SECTIONAL = (("EV/EBITDA", 2), ("P/E", 4))
+
+
+def _peer_gaps(tm: Rows, peers: list[int], tgt: int,
+               cols: tuple[tuple[str, int], ...] = _CROSS_SECTIONAL,
+               ) -> list[tuple[str, float | str | None, float | None, float | None]]:
+    """(label, the name's cell, the peer median as the headline states it, the gap) for each
+    multiple in ``cols`` — the ONE computation `cross_sectional_valuation` prints (its two) and
+    `_peer_gap_question` reads the signs of (all six trading multiples, LTM and NTM). The gap is
+    None unless both sides are numbers."""
+    out: list[tuple[str, float | str | None, float | None, float | None]] = []
+    for lab, col in cols:
+        # (L1) peer median SELF-COMPUTED from the per-peer rows via the shared _peer_col_median
+        # primitive — the SAME source + peer set the grid footer's _med_mult uses — NOT CIQ's opaque
+        # summary "Median" row, so the headline "peer median" and the grid agree, verifiable from
+        # the shown peers. (CIQ's own Low/Median/Mean/High stay in the labeled table.)
+        nv = _comps_cell(tm, tgt, col)
+        # round-trip the median through the SAME :g→float path the grid stores it as, so the 1dp
+        # display matches the grid footer exactly at .5 boundaries (float(median) alone can differ).
+        m = _peer_col_median(tm, peers, col)
+        mv = float(f"{m:g}") if m is not None else None
+        gap = nv / mv - 1 if isinstance(nv, (int, float)) and mv else None
+        out.append((lab, nv, mv, gap))
+    return out
+
+
+def _peer_gap_question(bundle: CiqBundle) -> str:
+    """The justified-vs-residual question, in the one direction the cross-sectional read shows,
+    trailed by a space — or "" where it shows none.
+
+    IT ASSUMED A DISCOUNT (fix 3a, 2026-11-06): every page asked whether "the discount" is EARNED
+    by "worse fundamentals", and 11 of the 28 committed pages at main bcda7ce3 trade at a PREMIUM on
+    EV/EBITDA (ROST +124%, V +119%, LLY +87%). The direction is now the sign of each gap as the
+    headline prints it (whole percent, so a "+0%" is neither), over EVERY multiple the trading
+    multiples carry — trailing AND forward (review of #923: WLK's one known trailing gap is +27%
+    while its NTM TEV/EBITDA is −11%, and the prompt tells the model to read NTM beside LTM) — on
+    the self-computed peer median the headline and the grid use. It is asked only where every
+    known gap points the same way. Where they disagree, or none is known, the question is DELETED,
+    not reworded (coordinator, 2026-11-06): the signs sit in `cross_sectional` and
+    `trading_multiples` beside it."""
+    try:
+        tm = bundle.sheet("comps", "Trading Multiples")
+    except CiqUnavailableError:
+        return ""
+    _hdr, peers, tgt = _comps_layout(tm, bundle.ticker)
+    if tgt is None or not peers:
+        return ""
+    pcts = [round(gap * 100) for _lab, _nv, _mv, gap
+            in _peer_gaps(tm, peers, tgt, _COMPS_MULTIPLES) if gap is not None]
+    if pcts and all(p > 0 for p in pcts):
+        return "is the premium EARNED (better fundamentals) or RESIDUAL (unexplained)? "
+    if pcts and all(p < 0 for p in pcts):
+        return "is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? "
+    return ""
 
 
 def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
@@ -5037,18 +5110,9 @@ def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
     if tgt is None or not peers:
         return Sourced.unknown(note="Trading Multiples: no target row / peer rows")
     bits: list[str] = []
-    for lab, col in (("EV/EBITDA", 2), ("P/E", 4)):
-        # (L1) peer median SELF-COMPUTED from the per-peer rows via the shared _peer_col_median
-        # primitive — the SAME source + peer set the grid footer's _med_mult uses — NOT CIQ's opaque
-        # summary "Median" row, so the headline "peer median" and the grid agree, verifiable from
-        # the shown peers. (CIQ's own Low/Median/Mean/High stay in the labeled table.)
-        nv = _comps_cell(tm, tgt, col)
-        # round-trip the median through the SAME :g→float path the grid stores it as, so the 1dp
-        # display matches the grid footer exactly at .5 boundaries (float(median) alone can differ).
-        m = _peer_col_median(tm, peers, col)
-        mv = float(f"{m:g}") if m is not None else None
-        if isinstance(nv, (int, float)) and mv:
-            bits.append(f"{lab} {nv:g}x vs peer median {mv:.1f}x ({nv / mv - 1:+.0%})")
+    for lab, nv, mv, gap in _peer_gaps(tm, peers, tgt):
+        if isinstance(nv, (int, float)) and mv is not None and gap is not None:
+            bits.append(f"{lab} {nv:g}x vs peer median {mv:.1f}x ({gap:+.0%})")
         else:
             bits.append(f"{lab} {_tok(nv)} vs peer median {_tok(mv)}")
     # source_ref MUST stay byte-identical to the string the synthesis copies into its valuation
