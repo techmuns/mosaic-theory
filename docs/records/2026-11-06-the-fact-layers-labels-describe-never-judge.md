@@ -246,3 +246,10 @@ deferred there (PR round 1), and fix 4 should retire or re-point it.
     "committed" with no referent.
   - **"FCF-negative → burning cash" and "FCF-positive → self-funding" stay;** the second is 3b's
     item 7.
+
+## Amendments
+
+- **2026-11-07 — measured; ships by the registered rule.** #926, $30.72 of $40, main `e00db8cd` →
+  #923 `e91490ae` on panel v2, 30 v 30 draws: M-LABEL 69 → 47 units, p_lower 7.5 × 10⁻⁵, under the
+  0.01 ship bar. The target measures items 1–2; items 3–4 are read only by the no-worsening checks;
+  item 5 is not exercised. See `docs/records/2026-11-07-fix3a-measured-on-the-panel.md`.

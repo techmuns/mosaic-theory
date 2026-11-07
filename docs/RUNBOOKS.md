@@ -670,9 +670,13 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    refusal means an input moved — stop, do not re-freeze silently). **It refuses when no page's
    request differs.** A **mechanical-layer** change does not reach a replay of the committed layer:
    name a transform from `vinci/evals/variants.py` that re-reads the field from the ref's own code
-   (`relabel_drawdown_shape` does the drawdown shape), or ship one with the change, plus a $0 check
-   that it equals the candidate builder's fields on a `vinci dossier precheck` build of the same
-   page (record §3, R7). Say in the PR which of the change's fields the comparison covers.
+   (`relabel_drawdown_shape` does the drawdown shape; `FIX_3A` names fix 3a's five), or ship one
+   with the change, plus a $0 check that it equals the candidate builder's fields on a `vinci
+   dossier precheck` build of the same page (record §3, R7). Each transform is the identity at
+   main and moves only its own field, pinned. A transform that reads the comps sheet uses the
+   page's OWN export (`--ciq-root`, read only), proved by rebuilding the committed comps lines, or
+   refuses. Say in the PR which of the change's fields the comparison covers — and which it does
+   not (fix 3a: `docs/records/2026-11-07-fix3a-measured-on-the-panel.md` §6).
 3. **Report prompt size per section** (`metrics.prompt_size`) BASE vs CAND, and the diff of the two
    requests — a change must touch only the span it claims (#920 §3's standard).
 4. **Paid draws only on the operator's approval and a stated cap — opened ONCE, shared by every
@@ -687,11 +691,20 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    drawn ONCE:** `run-compare` refuses a sha the ledger already records, and a capture whose bytes
    differ from the registered ones. A stopped run is reported as stopped; drawing again needs a
    NEW registration, said so in the record. The cap is the approval's, never one run's.
+   **The replication rule** (coordinator, 2026-11-07): `register --ship-alpha 0.01` — a first run
+   ships at p_lower ≤ 0.01; in (0.01, 0.05] its score decides "replication required", and it
+   counts only if `register --replicates <first> --budget-ledger <the same ledger>` (the same
+   design in every field; refused unless the ledger records that first run, complete, with a
+   ledger-backed score of "replication required") reaches p_lower ≤ 0.05 — `score` checks the
+   same link again; above 0.05 it does not ship. A DESIGN is drawn once per approval, whatever
+   its note or inputs; its one replication is drawn once too. If the replication will not fit in what the approval has left, STOP and report —
+   never raise the cap. `--note` states, inside the sha, what the target covers and does not.
 5. **Score at $0** — `python -m vinci.evals score --out-dir <dir> --registration <file>
    --budget-ledger <file>` — from the registered scorer; it reports every run the ledger records
    under the registration (refusing when more than one holds draws), refuses unregistered pages,
-   counts or targets, and logs every score.
-   It applies the rule (record §6, R8): each target improves at `p_lower ≤ 0.05` after Holm; no
+   counts or targets, and logs every score with its `decision`.
+   It applies the rule (record §6, R8): each target improves at `p_lower ≤ 0.05` after Holm (or
+   at the ship alpha, under the replication rule); no
    other class metric worsens at `p_upper ≤ 0.05`; any page's modal lean or proposal change, or a
    panel shift in committed-lean draws at p ≤ 0.05, is explained in writing; prompt size and
    every `M-ECHO` phrase are reported. The held-out pages are the CHANGE's (`register` names
