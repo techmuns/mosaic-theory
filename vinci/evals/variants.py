@@ -266,25 +266,31 @@ def print_row_guide(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
 # ------------------------------------------------------------------- 6. the gap test (fix 4a)
 
 _SINGLE = " — single segment"
-_SHARE = re.compile(r"[^%;]+ -?\d+%")   # a name carries no share of its own
+_SHARE = re.compile(r"([^%;]+) (-?\d+)%")   # a name carries no share of its own
 
 
 def segment_count_from_line(segments: Sourced[str]) -> int | None:
     """The segment count inside the committed `concentration.segments` line — the ONE reading of
     it, the inverse of the lean form `ciq_sheets._segment_section` writes: "<name> — single
-    segment" is 1, "<a> 59%; <b> 23%; …" is the number of shares, a lone share short of the
-    collapse is None, as is a line that is not PRESENT. Anything else is refused. HARNESS ONLY: the
-    builder reads the roster itself (`ciq_sheets.segment_count`), and the pins show the two agree
-    on every panel page's own export."""
+    segment" is 1; "<a> 59%; <b> 23%; …" counts its shares less the reconciling lines
+    (`ciq_sheets.is_segment_line`, the builder's own test), a lone segment then short of the
+    collapse (a share under 100% as printed) being None; a line that is not PRESENT is None.
+    Anything else is refused. HARNESS ONLY: the builder reads the roster itself
+    (`ciq_sheets.segment_count`), and the pins show the two agree on every panel page's own
+    export."""
     if segments.status is not PRESENT or segments.value is None:
         return None
     line = segments.value
     if line.endswith(_SINGLE) and ";" not in line:
         return 1
     parts = line.split("; ")
-    if not all(_SHARE.fullmatch(p) for p in parts):
+    shares = [_SHARE.fullmatch(p) for p in parts]
+    if not all(shares):
         raise TransformError(f"the segments line is not the lean roster: {line!r}")
-    return len(parts) if len(parts) > 1 else None
+    named = [int(m.group(2)) for m in shares if m and ciq_sheets.is_segment_line(m.group(1))]
+    if len(named) == 1:
+        return 1 if named[0] >= 100 else None
+    return len(named) or None
 
 
 def gap_types(mech: MechanicalLayer, ctx: Context | None = None) -> MechanicalLayer:

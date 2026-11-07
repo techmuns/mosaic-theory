@@ -551,9 +551,10 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         " guide, the current guide, the FCF sign and net debt / EBITDA as our gap, does not "
         "apply, the company's normal practice, a change or deviation, or type not determined,"
         " read from statuses, lists, dates and table cells and never a note, CIQ's Guidance "
-        "sheet being the second read both company types need; rule 8 lets only a change or "
-        "deviation lower confidence, and the prompt asks no trailing multiple for a blind-"
-        "flag. No extracted value changes; a new field and the prompt do",
+        "sheet being the second read the practice type needs, as of the page's price date, "
+        "and no path emitting a change, whose evidence the layer cannot yet show; rule 8 lets"
+        " only a change or deviation lower confidence, and the prompt asks no trailing "
+        "multiple for a blind-flag. No extracted value changes; a new field and the prompt do",
     ),
 )
 

@@ -38,7 +38,7 @@ every page with a CIQ forward multiple (STATE row 54, item 2).
 | (a) the fact layer states each gap's type | **SHIPPED**, change-over-time half only | `vinci/dossier/gaps.py`; `MechanicalLayer.disclosure_gaps` (last key, absent until built) |
 | (b) rule 8 rewritten to the test | **SHIPPED** | rule 8 is THE GAP TEST, symmetric ("a disclosure added is a dated fact, never a bull point by itself") |
 | (c) the "trailing-only" ask removed | **SHIPPED** | rule 7b's example and the `bear_points` text; a trailing multiple "is read beside the forward (NTM) multiple wherever the page carries one" |
-| (d) pins + a lint for rule 8's old wording | **SHIPPED** | `tests/test_gap_test.py`: each type +/−, end to end on pages at the panel's freeze; a real type-3 page (SMPL); **no real type-4 page exists** (§3) |
+| (d) pins + a lint for rule 8's old wording | **SHIPPED** | `tests/test_gap_test.py`: each type +/−, end to end on pages at the panel's freeze; a real type-3 page (SMPL); **no real type-4 page exists, and no path emits type 4** (§3, §7 F5); rule 8 pinned by sha256 |
 | (e) a transform + the $0 cross-check | **SHIPPED** | `variants.gap_types` (`FIX_4A`); §4 |
 | (f) the measurement | **PROPOSED, not run** | §6 |
 
@@ -49,21 +49,22 @@ figure out of a display string**. It does match LABELS as keys: CIQ's metric nam
 sheet ("EPS Normalized", "EBITDA", "DPS"), the annual table's row labels ("FCF ($M)") and its "LTM"
 column; a renamed label would change a type, which the pins on the 28 pages would show. One pin
 blanks every fact's note on all 28 pages and the gaps do not move. Where
-a rule cannot decide, the entry says "type not determined", which rule 8 reads as an unknown. No
-rule defaults to type 4.
+a rule cannot decide, the entry says "type not determined", which rule 8 reads as an unknown. **No
+path emits type 4** (§7, F5). Every read is cut at the page's price date (`stock_info.as_of`, else
+the drawdown window's end): a release filed, or a CIQ guide dated, after it is not read (F12).
 
 **Two reads before a company type.** The release parser misses guides companies give: it reads
 no guide from any release of MCK, ROST or V, while CIQ records one on their newest release's date.
 So "no guide in any release we read" cannot by itself tell our gap from the company's practice.
 CIQ's Guidance sheet (`catalyst_path.guidance_bridge_rows`: the latest guide CIQ records per
-metric, with its date) is the second read. Types 3 and 4 both need the two reads to agree over a
-span CIQ's export reaches (its freshest row's date).
+metric, with its date) is the second read. "Company's normal practice" needs the two reads to agree
+over a span CIQ's export reaches (its freshest row's date).
 
 | item | fields | our gap | does not apply | company's normal practice | change or deviation |
 |---|---|---|---|---|---|
-| segment profit | `concentration.segment_profit`, `segment_ebitda` | CIQ's roster splits revenue 2+ ways and the 10-K XBRL read failed or found <2 segments (a multi-segment filer reports a profit measure per segment, ASC 280-10-50-22) | CIQ reads one segment and the XBRL tags <2 | (segment EBITDA only) the filer's segment measure is another one, stated at `segment_profit` | not built (a recast needs two 10-Ks) |
-| the outlook at a gap-down | `drawdown_cause[.anchor.*].revised_guidance` | the release parser read a guide from that 8-K's release, or CIQ records one on its date and the parser read none | the window holds no gap-down 8-K | the ladder below | the ladder below |
-| the company-adjusted EBITDA at the gap-down | `valuation.ev_ebitda_adjusted_fwd`, `quality.net_debt_to_ebitda_adjusted` | as above, for an adjusted-EBITDA level guide | (with the outlook) no gap-down 8-K | ladder | ladder |
+| segment profit | `concentration.segment_profit`, `segment_ebitda` | CIQ's roster names 2+ segments, its reconciling lines left out (F11), and the page lacks a 10-K segment profit (a multi-segment filer reports a profit measure per segment, ASC 280-10-50-22) | CIQ reads one segment and the page states no 10-K segment profit | — (segment EBITDA beside a 10-K segment measure is *not determined*: one read, F3) | not built (a recast needs two 10-Ks) |
+| the outlook at a gap-down | `drawdown_cause[.anchor.*].revised_guidance` | the release parser read a guide from that 8-K's release, or CIQ records one on its date and the parser read none; or the window's read is UNKNOWN (`shape`: the index lookup failed, no CIK, or the window was not read — F1) | the window was READ and holds no gap-down 8-K | the ladder below | the ladder below |
+| the company-adjusted figures | `valuation.ev_ebitda_adjusted_fwd`, `quality.net_debt_to_ebitda_adjusted` | they read only a gap-down 8-K's outlook, so a company adjusted-EBITDA guide in any release read, or on CIQ in that span, is our scope (F2) | — | ladder | ladder |
 | the newest release's adjusted-EPS guide | `valuation.adjusted_eps` | CIQ records an EPS guide on the newest release's date, from which the parser read no guide | — | ladder | ladder |
 | a current guide | `primary_source.current_guide` | CIQ records a guide on the date of a release the parser read none from | — | ladder | ladder |
 | the FCF sign (the runway leg) | `quality.fcf_sign` | the page's annual table states LTM cash flow | — | — | — |
@@ -71,53 +72,59 @@ span CIQ's export reaches (its freshest row's date).
 
 **The ladder**, for each guide item:
 - **Type 3:** two or more releases were read, none states the guide, and CIQ, reaching the newest,
-  records none since the oldest.
-- **Type 4:** a release states the guide; every release read since states none; those releases
-  span at least 75 days (`FULL_QUARTER`, so a non-results 8-K a month later is no stop); and CIQ,
-  reaching the last of them, records none after it. The entry carries what (`disclosed`), where
-  (`source_ref`) and when it stopped (`stopped`, `stopped_ref`). The schema refuses a type-4 entry
-  without all of them, and any other type that carries them.
+  records none since the oldest. Where CIQ records an earlier guide, the basis states its date
+  (F10). **The coordinator's default** (review of #927, 2026-11-08, within the ruling; the operator
+  may overrule it): a last guide more than four quarters before the page's price date is the
+  company's practice now; one inside four quarters would be a change, so it reads *not
+  determined*.
+- **Type 4 — no path.** A release that states the guide, every release since for a full quarter
+  stating none, and CIQ silent after it, is the shape a change would leave. It reads *not
+  determined*, saying why (§7, F5). The schema still refuses a type-4 entry without what, where and
+  when, and any other type that carries them.
 - **Otherwise:** type not determined, with the reason.
 
 **Not built, stated:**
 - **The peer half of type 4.** The layer carries peers' multiples, never their disclosures.
 - **A change in a filing** (a segment recast, a dropped KPI, a late filing). The layer reads one
   10-K's segment instance and holds no KPI history.
-- **A release's 8-K item codes**, which `ReleaseExtract` does not store. A non-results 8-K after a
-  guided one is told apart only by time.
+- **A release's 8-K item codes**, which `ReleaseExtract` does not store. The releases are the
+  EX-99.1s of the 10 newest 8-Ks carrying item 2.02 or 8.01 (`mechanical._primary_source`), so an
+  outlook furnished under 7.01 is never read; a non-results 8-K after a guided one is told apart
+  only by time.
 - **Coverage.** The registry covers the subjects rule 8 named. Rule 8 reads every other UNKNOWN as
   "type not determined" ("every other gap, listed or not").
 
 ## 3. Measured at $0 on the 28 pages committed at the panel's freeze (`bcda7ce3`)
 
-96 entries on 28 pages (VRRM carries none):
+115 entries on 28 pages (VRRM carries none), at this PR's round-2 code (the round-1 head
+`72d5b3b7` read 96; §7 says what moved):
 
 | item | our gap | does not apply | practice | change | not determined |
 |---|--:|--:|--:|--:|--:|
-| segment profit (incl. segment EBITDA) | 4 | 13 | 6 | 0 | 2 |
+| segment profit | 4 | 13 | 0 | 0 | 2 |
+| segment EBITDA beside a 10-K segment measure | 0 | 0 | 0 | 0 | 6 |
 | the outlook at a gap-down | 6 | 19 | 0 | 0 | 0 |
-| company-adjusted EBITDA at the gap-down | 3 | (in the outlook's entry) | 2 | 0 | 3 |
+| the company-adjusted figures | 7 | 0 | 16 | 0 | 4 |
 | adjusted-EPS guide, newest release | 6 | — | 8 | 0 | 9 |
 | a current guide | 8 | — | 0 | 0 | 2 |
 | the FCF sign | 2 | — | — | — | 0 |
 | net debt / EBITDA | 0 | 2 | — | — | 1 |
-| **total** | **29** | **34** | **16** | **0** | **17** |
+| **total** | **33** | **34** | **24** | **0** | **24** |
 
-- **MCK's segment gap reads type 1.** CIQ splits its revenue into 5 lines; the 10-K XBRL read
-  failed ("segment contexts exist but no profit measure … is tagged on two or more").
+- **MCK's segment gap reads type 1.** CIQ splits its revenue across 5 segments; the page's 10-K
+  segment-profit read is UNKNOWN ("segment contexts exist but no profit measure … is tagged on two
+  or more").
 - **A single-segment filer reads type 2:** all 13 (BRBR, BURL, CNXC, FUBO, LLY, MVST, NCNO, NFLX,
   ROST, SMPL, TGT, V, VITL).
 - **A real type-3 page: SMPL** (on the panel). None of its six releases read (2025-07-10 to
-  2026-10-27) states an adjusted-EPS guide, and CIQ, reaching 2026-10-27, records none since. It
-  guides net sales and adjusted EBITDA. The same type on AMZN, AORT, BRBR, FUBO, GOOGL, WERN, WLK.
-- **No real type-4 page exists** on the 28.
-  - The nearest is FUBO. Its 2026-04-06 release states a Fiscal 2026 adjusted-EBITDA guide, and
-    the two releases since (05-06, 08-05) state none. But CIQ records an EBITDA guide dated
-    2026-08-05, so FUBO's gap reads ours (the parser missed it), not a withdrawal.
-  - MVST's revenue guide is absent after 2026-05-11, but CIQ's export reaches only 2026-03-16, so
-    it cannot agree: type not determined.
-  - The positive pin moves FUBO's one CIQ EBITDA row to the April release's date, the shape a
-    withdrawn guide would leave, on FUBO's otherwise real page.
+  2026-10-27) states an adjusted-EPS guide; CIQ, reaching 2026-10-27, records none since, and its
+  last EPS guide is dated 2023-06-29, which the basis states. SMPL guides net sales and adjusted
+  EBITDA. The same type for adjusted EPS on AMZN, AORT, BRBR, FUBO, GOOGL, WERN, WLK.
+- **The company-adjusted figures (F2).** They read our gap where the company guides adjusted
+  EBITDA: on SMPL (its 2026-10-27 release) and UBER (2026-08-05) on the panel, and on AORT, BRBR
+  (CIQ, 2026-08-04), FUBO, IT (CIQ) and VITL. They read the company's practice on 16 pages where
+  neither read shows such a guide (CNXC guides adjusted operating income).
+- **No page reads type 4, and no path emits it** (§7, F5).
 - **LLY's runway leg reads type 1.** Its FCF-sign read is UNKNOWN ("no OCF/capex"), while its own
   annual table states LTM CFO, capex and FCF. IT is the same.
 
@@ -148,8 +155,9 @@ in fields this change does not touch, and it cannot isolate the gap list. The bu
 transform call the same function on the same layer. The one input they read differently is the
 segment count, compared above on every page's own export.
 
-**The $0 compare.** `python -m vinci.evals compare --base origin/main --cand 36f6b1ee`, on the
-frozen panel v2, with the CIQ root at the primary checkout's `data/manual/ciq`, read only. (The
+**The $0 compare.** `python -m vinci.evals compare --base origin/main --cand 36f6b1ee` (round 1),
+re-run for round 2 with the candidate captured in-process from this PR's round-2 tree (the same
+`replay.capture`, the base through `capture_at`), on the frozen panel v2, with the CIQ root at the primary checkout's `data/manual/ciq`, read only. (The
 default root's LLY comps export is not the page's own, and `FIX_3A`'s transforms refuse it, as
 #926 found.)
 - **Bare, no transforms:** every page differs by SYSTEM +285, tool schema +20, and facts +27. The
@@ -157,7 +165,7 @@ default root's LLY comps export is not the page's own, and `FIX_3A`'s transforms
 - **With `FIX_3A` + `FIX_4A` at both refs:**
   - USER moves only in its facts section;
   - with the `disclosure_gaps` value removed, the branch's request equals its `FIX_3A`-only
-    request byte for byte, on all six pages;
+    request byte for byte, on all six pages (rounds 1 and 2);
   - `FIX_3A` alone at main reproduces #926's per-page deltas exactly (−92, −117, −110, −163, −92,
     −92).
 - **SYSTEM and the tool schema:** in every one of the five books, SYSTEM moves only in rule 7b
@@ -167,17 +175,18 @@ default root's LLY comps export is not the page's own, and `FIX_3A`'s transforms
 - **Rule 8 is longer by 308 characters.** The ruling's four types and its evidence demand do not
   fit in fewer words; the trailing-only ask was deleted from both places it lived.
 
-| page | the typed gaps the request carries | facts Δ | request total, base → cand |
+| page | the typed gaps the request carries (round 2) | facts Δ | request total, base → cand |
 |---|---|--:|---|
-| BURL | segment: does not apply · drawdown fields: does not apply | +712 | 452,904 → 453,921 (+0.23%) |
-| CNXC | segment: does not apply · outlook: our gap · company-adjusted EBITDA: practice | +1,084 | 365,461 → 366,850 (+0.38%) |
-| LLY | segment: does not apply · drawdown: does not apply · adjusted EPS: our gap · FCF sign: our gap | +1,347 | 647,727 → 649,379 (+0.26%) |
-| MCK | segment: **our gap** · drawdown (3 windows): does not apply · adjusted EPS: our gap · current guide: our gap | +1,653 | 484,106 → 486,064 (+0.40%) |
-| ROST | segment: does not apply · drawdown: does not apply · adjusted EPS: our gap · current guide: our gap | +1,392 | 459,324 → 461,021 (+0.37%) |
-| SMPL | segment: does not apply · drawdown (2 windows): does not apply · adjusted EPS: **practice** | +1,188 | 477,864 → 479,357 (+0.31%) |
+| BURL | segment: does not apply · outlook: does not apply · adjusted figures: practice | +1,177 | 452,904 → 454,386 (+0.33%) |
+| CNXC | segment: does not apply · outlook: our gap · adjusted figures: practice | +1,073 | 365,461 → 366,839 (+0.38%) |
+| LLY | segment: does not apply · outlook: does not apply · adjusted figures: practice · adjusted EPS: our gap · FCF sign: our gap | +1,702 | 647,727 → 649,734 (+0.31%) |
+| MCK | segment: **our gap** · outlook (3 windows): does not apply · adjusted figures: practice · adjusted EPS: our gap · current guide: our gap | +2,045 | 484,106 → 486,456 (+0.49%) |
+| ROST | segment: does not apply · outlook: does not apply · adjusted figures: practice · adjusted EPS: our gap · current guide: our gap | +1,747 | 459,324 → 461,376 (+0.45%) |
+| SMPL | segment: does not apply · outlook (2 windows): does not apply · adjusted figures: **our gap** · adjusted EPS: **practice** | +1,642 | 477,864 → 479,811 (+0.41%) |
 
-Over the panel: SYSTEM +1,710, tool schema +120, facts +7,376 characters. A request total is
-SYSTEM + the tool schema's JSON + USER, at draws=1, with the frozen transcripts.
+Over the panel: SYSTEM +1,710, tool schema +120, facts +9,386 characters (round 1: +7,376). A
+request total is SYSTEM + the tool schema's JSON + USER, at draws=1, with the frozen transcripts;
+base is main `a9c59287`, cand this PR's round-2 tree, both with `FIX_3A` + `FIX_4A`.
 
 ## 5. Pins and mutation
 
@@ -201,6 +210,36 @@ helper; and a rule that reads the segment note. Boundary: one mutant at a time o
 `aed508e5` (the PR head after review round 0), `tests/test_gap_test.py` with `-x`. The same 13
 were caught before round 0, on the tree committed as `36f6b1ee`. Round 0's two code fixes carry
 their own pins, each shown failing on `36f6b1ee`.
+
+**Round 2 (the coordinator's review): 37 of 37 mutants are caught**, one at a time on the round-2
+tree, with `tests/test_gap_test.py`, every `tests/test_evals_*.py` and the `test_dossier.py`
+contract pin (the reviewer's runner; the HEAD-vs-tree capture test deselected). The reviewer's 23
+carry their ids, a `*` marking one re-pointed to code that moved.
+
+| id | what it breaks | first run | after round 2's last pins |
+|---|---|---|---|
+| G1* | an unreadable CIQ date skipped, not refused | survived | killed |
+| G2 | an undated release not refused | survived | killed |
+| G3 | CIQ's EPS family narrowed to "EPS Normalized" | killed | killed |
+| G4 | a declared dividend counted as a guide | survived | killed |
+| G5 | the 1c skip of a release the parser read | killed | killed |
+| G6 | the full quarter of a stop | killed | killed |
+| G7 | CIQ's reach on a stop | killed | killed |
+| G8 | practice from one release | killed | killed |
+| G9 | CIQ's reach on practice | killed | killed |
+| G10 | the span from the oldest release | killed | killed |
+| G11 | two segments read as one | survived | killed |
+| G12* | a failed 10-K read on a one-segment filer | killed | killed |
+| G13 | leverage on non-positive EBITDA | killed | killed |
+| G14 | the FCF sign with no LTM cash flow | killed | killed |
+| G15* | an unread window as "does not apply" (F1) | killed | killed |
+| S1, S2 | the schema's evidence legs | killed | killed |
+| R1, R2 | rule 8's meaning (F6) | killed | killed |
+| T1, T2* | the transform's identity; the line's lone segment | killed | killed |
+| W1 | the builder handed no segment count (F7) | killed | killed |
+| C1* | a lone segment short of 99.5% read as one | killed | killed |
+| mine, round 0 (6 not above) | practice without CIQ; single → ours; multi → nothing; the blind-flag ask; a loose line helper; a note read | killed | killed |
+| round 2 (8) | no scope rung (F2); segment EBITDA as practice (F3); the stop shape as practice (F5); a tiebreak row read (F8); no four-quarter window (F10); no reconciling lines (F11); releases uncut; CIQ uncut (F12) | killed | killed |
 
 `tests/test_dossier.py`'s old pin, which asserted "OPACITY-AS-SIGNAL" and "BEARISH risk", now
 asserts their absence. That is the ruling's intended reversal.
@@ -261,10 +300,77 @@ python -m vinci.evals score --out-dir <…> --registration <…> --budget-ledger
   labels, so the comparison isolates fix 4a.
 - **Design:** panel v2, 5 draws per page per arm, 60 calls.
 - **Cost:** #926 drew the same design for **$30.72** (60 calls, $4.55–$6.23 a page). This change
-  moves each request by 0.23–0.40% (§4), so **≈$31**.
+  moves each request by 0.31–0.49% (§4, round 2), so **≈$31**.
 - **Cap proposed: $35** for the first run. A replication (p_lower in (0.01, 0.05]) would cost ≈$31
   more and does not fit $35; RUNBOOKS §n stops rather than raise a cap. So **$70** if the operator
   wants it to fit one approval.
+
+## 7. The coordinator's review (round 2, the last): F1–F13
+
+On the round-1 head `72d5b3b7`. One commit, $0. Each FIX has a pin that fails on `72d5b3b7`.
+
+- **F1, FIX. "Does not apply" when our own lookup failed.** `filings == []` is also what
+  `mechanical._read_gaps` writes when the 8-K index lookup failed or there is no CIK, and what
+  `_gap_window` writes for a window it never read. In both, `shape` is UNKNOWN. A window now reads
+  "does not apply" only when it was READ (`shape` PRESENT); otherwise it is our gap. Pinned on
+  BRBR's real page with the lookup marked failed, and on MCK's with the at-anchor window unread.
+- **F2, FIX. The company-adjusted figures.** `_adjusted_facts` reads only a gap-down 8-K's outlook,
+  so they are their own item. Where the company guides adjusted EBITDA in a release read, or on
+  CIQ in that span, they are our gap, and the basis names the guide and its release. SMPL and UBER
+  are pinned as our gap; BRBR on CIQ alone.
+- **F3, FIX. Segment EBITDA from one read.** Beside a 10-K segment measure it read "practice", but
+  the instance read tries `OperatingIncomeLoss` first, so one read cannot show the filer discloses
+  no segment EBITDA. It is now not determined, pinned on AMZN, AORT, GOOGL, NKE, TJX and WLK.
+- **F4, FIX. Guards pinned with the real entries they decide.**
+  - G9 (CIQ's reach): IT, MVST ×2, PARR ×2, VITL;
+  - G10 (the span from the oldest release): NCNO's adjusted EPS;
+  - G13 (non-positive EBITDA): ORKA and TECX.
+  - Four more guards decide no real entry and are pinned on one-field edits: G6 (the full
+    quarter), G7 (CIQ's reach on a stop), G12 (a failed 10-K read on a one-segment filer), G14 (an
+    FCF sign with no LTM cash flow).
+- **F5, FIX. Type 4's evidence rests on parser blanks.**
+  - **Measured at $0 on the 28 pages: does CIQ re-date a guide reaffirmed unchanged?** Two pairs
+    where the parser read the same low and high in two releases have CIQ data to compare:
+    - AORT's 2026 revenue (480–496, 2026-05-07 and 08-06): CIQ dates it 2026-08-06, so it
+      re-dated;
+    - VITL's 2026 revenue (775–800, 05-07 and 08-06): CIQ dates it 05-07, but its export reaches
+      only 05-07, so this shows nothing.
+    - Five other repeated guides were superseded by a later changed guide.
+    - So re-dating is shown once, and never shown otherwise.
+  - The coordinator found the parser's blanks mostly misses (20 of 20 where CIQ can see the
+    release).
+  - **So no path emits type 4.** The stop shape reads not determined, saying why. Pinned on TGT's
+    real page with its two refuting CIQ EPS rows moved to March.
+  - The false comment ("the release list holds every EX-99.1") now states that the releases are the
+    10 newest 2.02/8.01 8-Ks, so 7.01 outlooks are never read.
+- **F6, FIX.** Rule 8 is pinned by sha256 (`RULE_8_SHA256`, every book). R1 ("practice may be
+  raised as a risk") and R2 ("read as bearish") now fail it.
+- **F7, FIX.** The assembly is pinned with LLY's real cut Segments sheet: the count reaches the
+  builder, and W1 (`segment_count=None`) fails it.
+- **F8, NO CHANGE NEEDED, pinned.** `filed_tiebreak.apply` rewrites only its `MAPPING` and
+  `CONTAINING` rows: "Other Unusual Items", "Restructuring Charges" and "Merger & Related Restruct.
+  Charges". The survival items read none of those (`gaps.ANNUAL_ROWS_READ`). A pin keeps the two
+  sets disjoint, so a stale entry cannot occur.
+- **F9, FIX.** The segment bases claim no read that may not have happened. An absent
+  `segment_profit` says "the page states no segment profit from the 10-K"; an UNKNOWN one says
+  "the 10-K segment-profit read is UNKNOWN".
+- **F10, FIX.** The practice basis states CIQ's last guide date: SMPL's EPS, 2023-06-29. The
+  coordinator's default (four quarters) is in §2 and in `gaps.FOUR_QUARTERS`, pinned on a GOOGL
+  edit inside the window.
+- **F11, FIX.** The segment count leaves out reconciling lines (eliminations, intersegment,
+  corporate, unallocated: `ciq_sheets.is_segment_line`). One test serves the builder and the
+  harness; WLK now reads 2. No type moved.
+- **F12, FIX.** Releases and CIQ guide rows dated after the page's price date are not read here.
+  ORKA's 2026-10-26 release on its 2026-10-23 page is pinned, with an SMPL edit. **Found, not
+  fixed:** the layer itself does not cut `primary_source.releases` or CIQ's guide rows at the price
+  date (STATE row 57).
+- **F13, FIX.**
+  - S1 (a type-4 entry without `source_ref`) and S2 (another type carrying `stopped_ref` or
+    `disclosed`) are pinned.
+  - `tests/fixtures/ciq_segments_eval_panel.json` is re-cut by nulling. Every non-empty cell whose
+    loss leaves four readings unchanged is null: `segments` and `segment_ebitda` against the
+    committed lines, `segment_count` and `stated_currency` against the full sheet. 17–26 cells are
+    kept per page, of 403–778.
 
 **BOUNDARY.**
 - **Pages:** the 28 committed at `bcda7ce3` (the panel's `freeze_ref`); the panel is v2 (BURL,

@@ -1839,12 +1839,25 @@ def segments(bundle: CiqBundle) -> Sourced[str]:
     return _segment_section(bundle, "Revenues")
 
 
+#: A Segments-roster line that reconciles the segments to the total rather than naming one: CIQ
+#: lists eliminations, intersegment sales, corporate and unallocated lines beside the segments
+#: (WLK's "Intersegment Sales", PARR's "Corporate and Other", GOOGL's "Unallocated Hedging Gains
+#: (Losses)", WERN's "Elimination of Inter-Segment Revenues"). Matched on CIQ's own row label.
+_RECONCILING = re.compile(r"eliminat|inter-?segment|corporate|unallocated|reconcil", re.I)
+
+
+def is_segment_line(name: str) -> bool:
+    """Whether a roster line names a segment — the ONE test `segment_count` and the harness's
+    reading of the rendered line both apply."""
+    return _RECONCILING.search(name) is None
+
+
 def segment_count(bundle: CiqBundle) -> int | None:
-    """How many ways the Segments sheet's revenue roster splits — the structured count the gap
+    """How many segments the Segments sheet's revenue roster names — the structured count the gap
     test reads (`vinci.dossier.gaps`), from the roster :func:`segments` renders, never from its
-    string. 1 is a lone segment at ≥99.5% of revenue (the ``lean`` collapse, so this and the
-    rendered "— single segment" can never disagree); a lone item short of that is None, as is a
-    roster that cannot be read."""
+    string, its reconciling lines left out (`is_segment_line`). 1 is a lone segment at ≥99.5% of
+    revenue (the ``lean`` collapse, so this and a rendered "— single segment" can never disagree);
+    a lone segment short of that is None, as is a roster that cannot be read."""
     try:
         rows = bundle.sheet("financials", "Segments", freq="annual")
     except CiqUnavailableError:
@@ -1852,9 +1865,10 @@ def segment_count(bundle: CiqBundle) -> int | None:
     roster = _segment_roster(rows, _period_header(rows))
     if roster is None:
         return None
-    if len(roster) == 1:
-        return 1 if roster[0][1] >= 0.995 else None
-    return len(roster)
+    named = [(n, s) for n, s in roster if is_segment_line(n)]
+    if len(named) == 1:
+        return 1 if named[0][1] >= 0.995 else None
+    return len(named) or None
 
 
 def segment_ebitda(bundle: CiqBundle) -> Sourced[str]:
