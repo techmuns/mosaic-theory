@@ -197,7 +197,10 @@ SYSTEM + the tool schema's JSON + USER, at draws=1, with the frozen transcripts.
 13 of 13 mutants are caught: the wiring removed; each type-4 guard (CIQ's reach, the full
 quarter); each type-3 guard (one release, no CIQ); the 1b skip; single-segment → ours;
 multi-segment → nothing; the FCF rule; rule 8's old wording; the blind-flag ask; a loose roster
-helper; and a rule that reads the segment note.
+helper; and a rule that reads the segment note. Boundary: one mutant at a time on the code at
+`aed508e5` (the PR head after review round 0), `tests/test_gap_test.py` with `-x`. The same 13
+were caught before round 0, on the tree committed as `36f6b1ee`. Round 0's two code fixes carry
+their own pins, each shown failing on `36f6b1ee`.
 
 `tests/test_dossier.py`'s old pin, which asserted "OPACITY-AS-SIGNAL" and "BEARISH risk", now
 asserts their absence. That is the ruling's intended reversal.
