@@ -1,7 +1,7 @@
 ---
 status: open
 date: 2026-11-10
-prs: []
+prs: [943]
 supersedes:
 superseded-by:
 ---
@@ -107,8 +107,11 @@ scored 2026-12-14 (STATE §5.0 row 38). Two other choices were considered and no
     confirmation added no Tiingo lookup: in the second dry run it read 0 symbols live.
   - Polygon: 2 splits references before (VRRM, SMPL) and 4 after (adding IWM, MDY, SPY), plus the
     monitor's grouped-daily days and aggregates.
-- ruff and `mypy --strict vinci` are clean. The full offline suite passes: 9,647 passed, 567
-  skipped and 8 xfailed, exit 0, before the review round.
+- ruff and `mypy --strict vinci` are clean. The gate (`bin/commit`, after review round 0) passed:
+  9,654 passed, 567 skipped and 8 xfailed. Its first run failed one test,
+  `tests/test_sec_pacing.py::test_two_processes_on_one_machine_share_one_budget` (#854's
+  cross-process SEC timing: a 0.080s gap against 0.1s), while three suites shared the CPU. It
+  passed 3 of 3 alone and on the rerun. It is not this change's: reported, not fixed.
 
 **BOUNDARY.**
 - **Ledger:** `data/snapshots/decision_ledger.jsonl` at `6fbbb4a2`: 7 rows, 5 decisions and 2
