@@ -31,6 +31,15 @@ def page_price_date(price_as_of: date | None, reference_date: date) -> date:
     return price_as_of or reference_date
 
 
+def within_cut(when: date, cut: date | None) -> bool:
+    """THE CUT RULE, the one comparison every cut makes: an input dated ON OR BEFORE the page's
+    price date is read, one dated after it is not; with no price date (``cut`` None) everything
+    is. The EDGAR view below, the CIQ guidance reads (`ciq_sheets._guidance_reads`), the release
+    list (`gaps.releases_by_cut`) and the gap test (`gaps`) all make it through this function, so
+    the boundary day cannot be inclusive in one reader and exclusive in another (STATE row 57)."""
+    return cut is None or when <= cut
+
+
 class AsOfEdgar:
     """An :class:`EdgarClient` that sees EDGAR as it stood on ``cut``.
 
@@ -69,7 +78,7 @@ class AsOfEdgar:
                        since: date | None = None) -> list[Filing]:
         rows = (self.inner.recent_filings(cik, forms=forms) if since is None
                 else self.inner.recent_filings(cik, forms=forms, since=since))
-        return [f for f in rows if f.filing_date <= self.cut]
+        return [f for f in rows if within_cut(f.filing_date, self.cut)]
 
     def fulltext_search(self, phrase: str, *, forms: str = "8-K", ciks: str | None = None,
                         startdt: str | None = None, enddt: str | None = None,
