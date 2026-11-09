@@ -135,7 +135,9 @@ SCORER_FILES = ("vinci/evals/metrics.py", "vinci/evals/units.py", "vinci/evals/c
                 # (`capture_child.pre_synthesis_mech`), the frozen inputs (`replay.panel_inputs`
                 # and the panel file) and the schemas the layer is validated by
                 "vinci/evals/capture_child.py", "vinci/evals/replay.py",
-                "vinci/evals/synthesis_panel.json", "vinci/dossier/schemas.py")
+                "vinci/evals/synthesis_panel.json", "vinci/dossier/schemas.py",
+                # M-GAP reads each frozen page's gap types (fix 4a's gap test, frozen 2026-11-09)
+                "vinci/evals/synthesis_gap_types.json")
 
 
 def scorer_fingerprint(root: Path = rp.ROOT) -> str:
@@ -148,7 +150,8 @@ def scorer_fingerprint(root: Path = rp.ROOT) -> str:
 #: Fields added after PR 2's first registrations were written: serialised only when set, so a
 #: registration written before them keeps the sha256 its ledger records.
 _LATER_FIELDS: dict[str, Any] = {"no_worsening": False, "requests": {}, "ship_alpha": None,
-                                 "replicates": None, "inputs": {}, "note": None}
+                                 "replicates": None, "inputs": {}, "note": None,
+                                 "no_worsening_families": {}}
 
 #: The fields that make two registrations THE SAME COMPARISON: what is drawn, how often, what must
 #: improve and by what rule and scorer. Everything else — the words (`note`), the record of what
@@ -156,7 +159,19 @@ _LATER_FIELDS: dict[str, Any] = {"no_worsening": False, "requests": {}, "ship_al
 #: (`replicates`) — can differ between two registrations of one design (#926 review: two shas over
 #: one design were each drawable once).
 DESIGN_FIELDS = ("base_ref", "cand_ref", "transforms", "pages", "draws", "targets", "alpha",
-                 "ship_alpha", "scorer", "requests", "no_worsening", "rule")
+                 "ship_alpha", "scorer", "requests", "no_worsening", "rule",
+                 "no_worsening_families")
+
+
+def gated(metric: str, families: Sequence[str]) -> str:
+    """The name a metric's GATED series is scored and reported under."""
+    return f"{metric}[{'+'.join(families)}]"
+
+
+def ungated(metric: str, families: Sequence[str]) -> str:
+    """The name of the rest of its families, reported, never gated."""
+    rest = [f for f in mt.METRIC_FAMILIES.get(metric, ()) if f not in families]
+    return f"{metric}[reported: {'+'.join(rest)}]"
 
 
 def design_differs(a: Any, b: Any) -> list[str]:
@@ -223,6 +238,10 @@ class Registration:
     #: What the registration states in words before the draw — what the target covers and what
     #: it does not. Part of the sha, so it cannot be written after the result.
     note: str | None = None
+    #: A metric whose no-worsening check counts only these families (#929, the coordinator's
+    #: ruling for #927: M-LABEL gated on bleed, trailing-only and pe-percentile-blocked; its
+    #: gap-statement families reported, not gated). The whole metric is still reported.
+    no_worsening_families: dict[str, list[str]] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if self.ship_alpha is not None and not 0 < self.ship_alpha < self.alpha:
@@ -242,6 +261,15 @@ class Registration:
                                  f"({sorted(mt.UNIT_METRICS)}) — or register no-worsening only")
         if self.draws < 2 or not self.pages:
             raise ValueError("a registration needs pages and at least two draws per condition")
+        for m, fams in self.no_worsening_families.items():
+            known = mt.METRIC_FAMILIES.get(m)
+            if known is None or m not in mt.GOLD_CLASS:
+                raise ValueError(f"{m}: only a no-worsening metric with named families can be "
+                                 f"gated on some of them ({sorted(mt.METRIC_FAMILIES)})")
+            if m in self.targets:
+                raise ValueError(f"{m} is a target; its no-worsening families do not apply")
+            if not fams or len(set(fams)) != len(fams) or [f for f in fams if f not in known]:
+                raise ValueError(f"{m}: families {fams} must be distinct names from {known}")
 
     def to_json(self) -> str:
         return json.dumps({k: v for k, v in self.__dict__.items()
@@ -302,7 +330,8 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
              pages: Sequence[str] | None = None, captured: Captured | None = None,
              no_worsening: bool = False, ship_alpha: float | None = None,
              replicates: Registration | None = None,
-             ledger: Path | None = None, note: str | None = None) -> Registration:
+             ledger: Path | None = None, note: str | None = None,
+             no_worsening_families: dict[str, list[str]] | None = None) -> Registration:
     """The registration for a comparison of the frozen panel, or of target pages outside it
     (`registered_pages`). ``captured`` — the $0 capture of exactly this comparison — pins every
     request's bytes and records its inputs; ``run_compare`` refuses a registration without the
@@ -317,6 +346,13 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
     result-shopping and is refused."""
     p = panel or rp.load_panel_file()
     chosen = registered_pages(pages, p)
+    for t in targets:
+        blobs = {x: (p["pages"].get(x) or {}).get("dossier_blob") for x in chosen}
+        if t in mt.PAGE_LIMITED and (off := [x for x in chosen
+                                             if mt.gap_entries(x, blobs[x]) is None]):
+            raise rp.ReplayError(f"{t} is defined only on the pages whose gap types are frozen "
+                                 f"(`{mt.GAP_TYPES_FILE.name}`); not on {off} — never scored as "
+                                 "zero there")
     pins: dict[str, str] = {}
     inputs: dict[str, Any] = {}
     if captured is not None:
@@ -329,12 +365,16 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
     named = change_names(base_ref, cand_ref, sorted(p["pages"]))
     rule = (NO_WORSENING_RULE if no_worsening else
             REPLICATION_RULE if ship_alpha is not None else Registration.rule)
+    nwf = {m: list(f) for m, f in (no_worsening_families or {}).items()}
+    for m, fams in nwf.items():
+        rule += (f"; {m}'s no-worsening check counts only its families {fams}, the rest "
+                 "reported, never gated")
     reg = Registration(base_ref=base_ref, cand_ref=cand_ref, transforms=tuple(transforms),
                        pages=chosen, draws=draws, targets=tuple(targets),
                        held_out=tuple(t for t in chosen if t not in named),
                        scorer=scorer_fingerprint(), no_worsening=no_worsening,
                        requests=pins, rule=rule, ship_alpha=ship_alpha, inputs=inputs,
-                       note=note)
+                       note=note, no_worsening_families=nwf)
     if replicates is None:
         return reg
     if replicates.replicates is not None:
@@ -590,6 +630,12 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
             raise rp.ReplayError(f"registration {reg.sha[:12]} was drawn more than once: "
                                  f"{list(runs)} — every run under one sha is reported, never "
                                  "one chosen; none of them is scored")
+    for m in reg.targets:
+        if m in mt.PAGE_LIMITED and (off := [
+                t for t in reg.pages
+                if mt.gap_entries(t, (p["pages"].get(t) or {}).get("dossier_blob")) is None]):
+            raise rp.ReplayError(f"{m} is a target, but {off} are not the pages its gap types "
+                                 "were frozen on (ticker and blob): it cannot be scored there")
     rows = [json.loads(x) for x in (out_dir / "draws.jsonl").read_text(encoding="utf-8")
             .splitlines() if x.strip()]
     _check_run(out_dir, reg, rows)
@@ -611,8 +657,9 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
             if pages is not None:
                 page, tx = pages[t], (transcripts or {}).get(t)
             else:
-                page, tx = rp.panel_inputs(t, panel=p)
-            ctxs[t] = mt.PageContext(page=page, mech=pre_synthesis_mech(page), transcript=tx)
+                page, tx = rp.panel_inputs(t, panel=p)   # read BY the panel's blob, checked
+            ctxs[t] = mt.PageContext(page=page, mech=pre_synthesis_mech(page), transcript=tx,
+                                     blob=(p["pages"].get(t) or {}).get("dossier_blob"))
         ctx = ctxs[t]
         if not usable(row):
             failed[row["label"]] += 1
@@ -621,7 +668,12 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
         if req is not None and (t, cond) not in indexes:
             indexes[(t, cond)] = mt.EchoIndex.of(req, ctx)
         sc = mt.score_units(draw_units(row["raw"]), ctx, echo=indexes.get((t, cond)))
-        for m, hits in sc.items():
+        series = dict(sc)
+        for m, fams in reg.no_worsening_families.items():   # the gated families, and the rest
+            if m in sc:
+                series[gated(m, fams)] = [h for h in sc[m] if h.family in fams]
+                series[ungated(m, fams)] = [h for h in sc[m] if h.family not in fams]
+        for m, hits in series.items():
             counts.setdefault(m, {}).setdefault(t, {c: [] for c in CONDITIONS})[cond].append(
                 len({h.unit for h in hits}))
         leans.setdefault(t, {c: Counter() for c in CONDITIONS})[cond][_lean(row["raw"])] += 1
@@ -663,9 +715,11 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
             reasons.append(f"target {t}: {got} is in the replication band ({reg.ship_alpha}, "
                            f"{reg.alpha}] — it counts only if a fresh, separately registered "
                            f"replication of the same design reaches p_lower <= {reg.alpha}")
-    for m, r in results.items():
-        if m not in reg.targets and m in mt.GOLD_CLASS and r.p_upper <= reg.alpha:
-            hard.append(f"{m} worsens beyond noise: {r.base_total} → {r.cand_total} "
+    checked = {m: (gated(m, reg.no_worsening_families[m]) if m in reg.no_worsening_families
+                   else m) for m in mt.GOLD_CLASS if m not in reg.targets}
+    for name in checked.values():
+        if (r := results.get(name)) is not None and r.p_upper <= reg.alpha:
+            hard.append(f"{name} worsens beyond noise: {r.base_total} → {r.cand_total} "
                         f"(p_upper {r.p_upper:.3g})")
             reasons.append(hard[-1])
     explain_from = len(reasons)

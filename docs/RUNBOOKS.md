@@ -711,7 +711,10 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    them); no page of the corpus is held out from the diagnosis-era fixes (record R8).
 6. **Write the result into a record** with the counts' boundary (pages, draws, code refs, cost,
    the registration's sha256).
-7. **A change to a metric** re-scores the gold (`python -m vinci.evals gold`), moves
+7. **A new metric** needs FRESH gold, never the 644-claim gold's TEST half (read once): M-GAP's was
+   drawn from #926's draws by a pre-registered rule, double-coded blind, split by page, fit on DEV
+   and scored on TEST once against a bar written first
+   (`docs/records/2026-11-09-m-gap-gold-and-metric.md`). **A change to a metric** re-scores the gold (`python -m vinci.evals gold`), moves
    `tests/fixtures/synthesis_gold/metric_hits.json` deliberately, and states DEV vs TEST again —
    TEST was scored once at `a677d1a1`; a metric tuned after that reads TEST in-sample, and says so.
 

@@ -73,6 +73,10 @@ def main(argv: list[str] | None = None) -> int:
                                 "a fresh registered replication must reach alpha")
             c.add_argument("--replicates", type=Path,
                            help="register a REPLICATION of this registration (same design)")
+            c.add_argument("--no-worsening-families", action="append", default=[],
+                           metavar="METRIC=FAMILY,FAMILY",
+                           help="gate METRIC's no-worsening check on these families only; the "
+                                "rest are reported, never gated")
             c.add_argument("--note", help="what the registration states before the draw (in "
                                           "its sha): what the target covers and does not")
             c.add_argument("--budget-ledger", type=Path,
@@ -141,7 +145,10 @@ def main(argv: list[str] | None = None) -> int:
         reg = cm.register(a.base, a.cand, targets=a.target, draws=a.draws,
                           transforms=a.transform, pages=a.ticker, captured=cap,
                           no_worsening=a.no_worsening, ship_alpha=a.ship_alpha,
-                          replicates=first, ledger=a.budget_ledger, note=a.note)
+                          replicates=first, ledger=a.budget_ledger, note=a.note,
+                          no_worsening_families={
+                              m: f.split(",") for m, _, f in
+                              (x.partition("=") for x in a.no_worsening_families)})
         cm.write_registration(reg, a.out)
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
               f"condition, targets {list(reg.targets)}, held out from this change "

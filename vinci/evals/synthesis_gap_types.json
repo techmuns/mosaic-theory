@@ -1,0 +1,254 @@
+{
+ "_about": "Each frozen panel page's disclosure gaps, typed by the gap test (fix 4a, #927): `gaps.disclosure_gaps` via `variants.gap_types` at #927's 601d2f7e, on the page frozen at synthesis_panel.json's freeze_ref (blob checked), after the five FIX_3A transforms (the types are identical without them), with the page's own comps export. The PAGE's truth, the same for both arms; M-GAP reads it and imports nothing from #927. No panel page has a 'change or deviation' entry.",
+ "computed_at": "601d2f7e",
+ "pages": {
+  "BURL": {
+   "dossier_blob": "627fe21abd15c8f357e9bc6c92749aeae930715b",
+   "comps_sha256": "e302c4c0be914ba2e56c893e82a627e8dfd3150862554062c4516d9bae24af80",
+   "gaps": [
+    {
+     "item": "segment profit by segment",
+     "fields": [
+      "concentration.segment_ebitda"
+     ],
+     "type": "does not apply",
+     "basis": "CIQ's Segments sheet reads one segment, and the page states no segment profit from the 10-K; there is no breakout to give"
+    },
+    {
+     "item": "the outlook a gap-down's 8-K furnished",
+     "fields": [
+      "drawdown_cause.revised_guidance"
+     ],
+     "type": "does not apply",
+     "basis": "no gap-down 8-K is in the window (drawdown_cause.filings empty, each window read), and this reads only the outlook such an 8-K furnishes"
+    },
+    {
+     "item": "a company adjusted-EBITDA guide",
+     "fields": [
+      "valuation.ev_ebitda_adjusted_fwd",
+      "quality.net_debt_to_ebitda_adjusted"
+     ],
+     "type": "company's normal practice",
+     "basis": "none of the 6 releases read (2025-08-28 to 2026-08-27) states an adjusted-EBITDA guide, and catalyst_path.guidance_bridge_rows, which reaches 2026-08-27, records none since 2025-08-28; CIQ's last such guide is dated 2017-10-30, more than four quarters before the page's price date (2026-10-23)"
+    }
+   ]
+  },
+  "CNXC": {
+   "dossier_blob": "604d559d9252e413dec929203cb24ef6abfd7ff4",
+   "comps_sha256": "aa822ebf0da4c6e9c47f9c0799042a2d9933a5742b6ab40b8a54d32285c32e66",
+   "gaps": [
+    {
+     "item": "segment profit by segment",
+     "fields": [
+      "concentration.segment_ebitda"
+     ],
+     "type": "does not apply",
+     "basis": "CIQ's Segments sheet reads one segment, and the page states no segment profit from the 10-K; there is no breakout to give"
+    },
+    {
+     "item": "the outlook a gap-down's 8-K furnished",
+     "fields": [
+      "drawdown_cause.revised_guidance"
+     ],
+     "type": "our gap",
+     "basis": "the release parser read a guide from the release filed 2026-06-29; this field did not take it",
+     "source_ref": "8-K 0001803599-26-000133 EX-99.1"
+    },
+    {
+     "item": "a company adjusted-EBITDA guide",
+     "fields": [
+      "valuation.ev_ebitda_adjusted_fwd",
+      "quality.net_debt_to_ebitda_adjusted"
+     ],
+     "type": "company's normal practice",
+     "basis": "none of the 4 releases read (2026-02-13 to 2026-09-29) states an adjusted-EBITDA guide, and catalyst_path.guidance_bridge_rows, which reaches 2026-09-29, records none since 2026-02-13"
+    }
+   ]
+  },
+  "LLY": {
+   "dossier_blob": "ef07b22fe5a5eaade4c73e873e2450a3aa1982e5",
+   "comps_sha256": "ce7897dc0ba715c45e200ea3b9f097ef9f95a3753fd42d952f74f10812f76c39",
+   "gaps": [
+    {
+     "item": "segment profit by segment",
+     "fields": [
+      "concentration.segment_ebitda"
+     ],
+     "type": "does not apply",
+     "basis": "CIQ's Segments sheet reads one segment, and the page states no segment profit from the 10-K; there is no breakout to give"
+    },
+    {
+     "item": "the outlook a gap-down's 8-K furnished",
+     "fields": [
+      "drawdown_cause.revised_guidance"
+     ],
+     "type": "does not apply",
+     "basis": "no gap-down 8-K is in the window (drawdown_cause.filings empty, each window read), and this reads only the outlook such an 8-K furnishes"
+    },
+    {
+     "item": "a company adjusted-EBITDA guide",
+     "fields": [
+      "valuation.ev_ebitda_adjusted_fwd",
+      "quality.net_debt_to_ebitda_adjusted"
+     ],
+     "type": "company's normal practice",
+     "basis": "none of the 6 releases read (2025-08-07 to 2026-10-29) states an adjusted-EBITDA guide, and catalyst_path.guidance_bridge_rows, which reaches 2026-10-29, records none since 2025-08-07"
+    },
+    {
+     "item": "an annual adjusted-EPS guide in the newest release",
+     "fields": [
+      "valuation.adjusted_eps"
+     ],
+     "type": "our gap",
+     "basis": "CIQ records EPS Normalized guidance dated 2026-10-29 (catalyst_path.guidance_bridge_rows), at the release filed 2026-10-29, from which the release parser read no guide"
+    },
+    {
+     "item": "the FCF sign behind the survival line's runway leg",
+     "fields": [
+      "quality.fcf_sign"
+     ],
+     "type": "our gap",
+     "basis": "the FCF-sign read is UNKNOWN while the page's annual table (financial_summary.annual) states LTM cash flow"
+    }
+   ]
+  },
+  "MCK": {
+   "dossier_blob": "761787c02f00f12208894d033c7dcc4f2cb704e5",
+   "comps_sha256": "158bc7e18c5163f9a8886467f6a3d9efeb873c5c2c5dad54a59dfb305c0171b3",
+   "gaps": [
+    {
+     "item": "segment profit by segment",
+     "fields": [
+      "concentration.segment_profit",
+      "concentration.segment_ebitda"
+     ],
+     "type": "our gap",
+     "basis": "CIQ's Segments sheet splits revenue across 5 segments, and a filer reporting more than one discloses a profit measure for each; the 10-K segment-profit read is UNKNOWN (concentration.segment_profit)"
+    },
+    {
+     "item": "the outlook a gap-down's 8-K furnished",
+     "fields": [
+      "drawdown_cause.revised_guidance",
+      "drawdown_cause.anchor.at_anchor.revised_guidance",
+      "drawdown_cause.anchor.since.revised_guidance"
+     ],
+     "type": "does not apply",
+     "basis": "no gap-down 8-K is in the windows (drawdown_cause.filings, drawdown_cause.anchor.at_anchor.filings, drawdown_cause.anchor.since.filings empty, each window read), and this reads only the outlook such an 8-K furnishes"
+    },
+    {
+     "item": "a company adjusted-EBITDA guide",
+     "fields": [
+      "valuation.ev_ebitda_adjusted_fwd",
+      "quality.net_debt_to_ebitda_adjusted"
+     ],
+     "type": "company's normal practice",
+     "basis": "none of the 3 releases read (2026-05-07 to 2026-11-04) states an adjusted-EBITDA guide, and catalyst_path.guidance_bridge_rows, which reaches 2026-11-04, records none since 2026-05-07"
+    },
+    {
+     "item": "an annual adjusted-EPS guide in the newest release",
+     "fields": [
+      "valuation.adjusted_eps"
+     ],
+     "type": "our gap",
+     "basis": "CIQ records EPS Normalized guidance dated 2026-11-04 (catalyst_path.guidance_bridge_rows), at the release filed 2026-11-04, from which the release parser read no guide"
+    },
+    {
+     "item": "a current guide",
+     "fields": [
+      "primary_source.current_guide"
+     ],
+     "type": "our gap",
+     "basis": "CIQ records EPS Normalized guidance dated 2026-11-04 (catalyst_path.guidance_bridge_rows), at the release filed 2026-11-04, from which the release parser read no guide"
+    }
+   ]
+  },
+  "ROST": {
+   "dossier_blob": "a4bf3989d8677fa4399df623adbb5c1fced3168b",
+   "comps_sha256": "7171baefb59f7f06fab7d5ea2d3616769120a02e2694c1aa47afad5a51202046",
+   "gaps": [
+    {
+     "item": "segment profit by segment",
+     "fields": [
+      "concentration.segment_ebitda"
+     ],
+     "type": "does not apply",
+     "basis": "CIQ's Segments sheet reads one segment, and the page states no segment profit from the 10-K; there is no breakout to give"
+    },
+    {
+     "item": "the outlook a gap-down's 8-K furnished",
+     "fields": [
+      "drawdown_cause.revised_guidance"
+     ],
+     "type": "does not apply",
+     "basis": "no gap-down 8-K is in the window (drawdown_cause.filings empty, each window read), and this reads only the outlook such an 8-K furnishes"
+    },
+    {
+     "item": "a company adjusted-EBITDA guide",
+     "fields": [
+      "valuation.ev_ebitda_adjusted_fwd",
+      "quality.net_debt_to_ebitda_adjusted"
+     ],
+     "type": "company's normal practice",
+     "basis": "none of the 5 releases read (2025-08-21 to 2026-08-20) states an adjusted-EBITDA guide, and catalyst_path.guidance_bridge_rows, which reaches 2026-08-20, records none since 2025-08-21"
+    },
+    {
+     "item": "an annual adjusted-EPS guide in the newest release",
+     "fields": [
+      "valuation.adjusted_eps"
+     ],
+     "type": "our gap",
+     "basis": "CIQ records EPS (GAAP) guidance dated 2026-08-20 (catalyst_path.guidance_bridge_rows), at the release filed 2026-08-20, from which the release parser read no guide"
+    },
+    {
+     "item": "a current guide",
+     "fields": [
+      "primary_source.current_guide"
+     ],
+     "type": "our gap",
+     "basis": "CIQ records Same Store Sales Growth % guidance dated 2026-08-20 (catalyst_path.guidance_bridge_rows), at the release filed 2026-08-20, from which the release parser read no guide"
+    }
+   ]
+  },
+  "SMPL": {
+   "dossier_blob": "0b4ff8eb982c7715b8dfd2557f940190a80ae694",
+   "comps_sha256": "647fa7075524cccb662b2ffa7095a027c2b943b9bd321ea0e8a3995bb94842b3",
+   "gaps": [
+    {
+     "item": "segment profit by segment",
+     "fields": [
+      "concentration.segment_ebitda"
+     ],
+     "type": "does not apply",
+     "basis": "CIQ's Segments sheet reads one segment, and the page states no segment profit from the 10-K; there is no breakout to give"
+    },
+    {
+     "item": "the outlook a gap-down's 8-K furnished",
+     "fields": [
+      "drawdown_cause.revised_guidance",
+      "drawdown_cause.anchor.since.revised_guidance"
+     ],
+     "type": "does not apply",
+     "basis": "no gap-down 8-K is in the windows (drawdown_cause.filings, drawdown_cause.anchor.since.filings empty, each window read), and this reads only the outlook such an 8-K furnishes"
+    },
+    {
+     "item": "a company adjusted-EBITDA guide",
+     "fields": [
+      "valuation.ev_ebitda_adjusted_fwd",
+      "quality.net_debt_to_ebitda_adjusted"
+     ],
+     "type": "our gap",
+     "basis": "the release filed 2026-10-27 states an adjusted ebitda guide for next-fy; this field reads only the outlook a gap-down's 8-K furnished",
+     "source_ref": "8-K 0001702744-26-000028 EX-99.1"
+    },
+    {
+     "item": "an annual adjusted-EPS guide in the newest release",
+     "fields": [
+      "valuation.adjusted_eps"
+     ],
+     "type": "company's normal practice",
+     "basis": "none of the 6 releases read (2025-07-10 to 2026-10-27) states an adjusted-EPS guide, and catalyst_path.guidance_bridge_rows, which reaches 2026-10-27, records none since 2025-07-10; CIQ's last such guide is dated 2023-06-29, more than four quarters before the page's price date (2026-11-03)"
+    }
+   ]
+  }
+ }
+}
