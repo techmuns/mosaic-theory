@@ -135,7 +135,9 @@ SCORER_FILES = ("vinci/evals/metrics.py", "vinci/evals/units.py", "vinci/evals/c
                 # (`capture_child.pre_synthesis_mech`), the frozen inputs (`replay.panel_inputs`
                 # and the panel file) and the schemas the layer is validated by
                 "vinci/evals/capture_child.py", "vinci/evals/replay.py",
-                "vinci/evals/synthesis_panel.json", "vinci/dossier/schemas.py")
+                "vinci/evals/synthesis_panel.json", "vinci/dossier/schemas.py",
+                # M-GAP reads each frozen page's gap types (fix 4a's gap test, frozen 2026-11-09)
+                "vinci/evals/synthesis_gap_types.json")
 
 
 def scorer_fingerprint(root: Path = rp.ROOT) -> str:
@@ -317,6 +319,11 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
     result-shopping and is refused."""
     p = panel or rp.load_panel_file()
     chosen = registered_pages(pages, p)
+    for t in targets:
+        if t in mt.PAGE_LIMITED and (off := [x for x in chosen if mt.gap_entries(x) is None]):
+            raise rp.ReplayError(f"{t} is defined only on the pages whose gap types are frozen "
+                                 f"(`{mt.GAP_TYPES_FILE.name}`); not on {off} — never scored as "
+                                 "zero there")
     pins: dict[str, str] = {}
     inputs: dict[str, Any] = {}
     if captured is not None:

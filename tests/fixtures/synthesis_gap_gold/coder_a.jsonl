@@ -1,0 +1,221 @@
+{"id": "g000", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'unresolved on valuation alone'; adjusted fwd EV/EBITDA and adjusted EPS stated UNKNOWN, no weighing"}
+{"id": "g001", "gap": true, "item": "other", "framing": "bearish", "type4": false, "error": true, "note": "covenant basis UNKNOWN called 'a bearish disclosure gap'"}
+{"id": "g002", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "future uncertainty about back-half comps; not a gap"}
+{"id": "g003", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "vintage-coherence UNKNOWN; read peers as confidence-gated, no weighing against company"}
+{"id": "g004", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "risk", "type4": false, "error": true, "note": "'a material gap given a windfall-flattered headline' - caution on clean run-rate"}
+{"id": "g005", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "relative drawdown figures; no missing item"}
+{"id": "g006", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "vintage-coherence UNKNOWN, export date unverified; 'timing caveat' only"}
+{"id": "g007", "gap": true, "item": "other", "framing": "bearish", "type4": false, "error": true, "note": "covenant-basis leverage UNKNOWN '(a bearish disclosure gap)'"}
+{"id": "g008", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'no forward basis - a neutral fact the human must resolve'"}
+{"id": "g009", "gap": true, "item": "segment profit by segment", "framing": "neutral", "type4": false, "error": false, "note": "'absent and limits durability analysis' - analytic limit, not called risk"}
+{"id": "g010", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fwd and adjusted leverage UNKNOWN; 'no cross-check', no weighing"}
+{"id": "g011", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant terms UNKNOWN, headroom 'cannot be assessed'; no weighing"}
+{"id": "g012", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "insider selling figures; no missing item"}
+{"id": "g013", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "states tariff-refund figures; no missing item"}
+{"id": "g014", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "no segment breakout '(an opacity risk)'"}
+{"id": "g015", "gap": true, "item": "the FCF sign behind the survival line's runway leg", "framing": "bearish", "type4": false, "error": true, "note": "FCF sign UNKNOWN 'a bearish-leaning gap to resolve'"}
+{"id": "g016", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "earned-vs-residual is a judgment for the human, not a missing item"}
+{"id": "g017", "gap": true, "item": "the outlook a gap-down's 8-K furnished", "framing": "neutral", "type4": false, "error": false, "note": "revised_guidance UNKNOWN; trigger 'not isolable', stated neutrally"}
+{"id": "g018", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'treat this missing disclosure as a risk, not a neutral gap'"}
+{"id": "g019", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "consensus multiples stated; no missing item"}
+{"id": "g020", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "vintage-coherence UNKNOWN; anchors 'only loosely dated', no weighing"}
+{"id": "g021", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'treat this missing breakout as a risk, not a neutral gap'"}
+{"id": "g022", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "basis mismatch between stated figures; no missing item"}
+{"id": "g023", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'a genuine neutral unknown, not a directional point'"}
+{"id": "g024", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant terms extraction failed, basis undisclosed; stated without weighing"}
+{"id": "g025", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "execution continuity under new CFO is a future uncertainty"}
+{"id": "g026", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'a neutral gap, not a directional fact'"}
+{"id": "g027", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "FCF guide and capex figures stated; no missing item"}
+{"id": "g028", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "peer multiples stated; no missing item"}
+{"id": "g029", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "FCF vs EBITDA figures stated; no missing item"}
+{"id": "g030", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "segment profit UNKNOWN 'an opacity risk'"}
+{"id": "g031", "gap": true, "item": "segment profit by segment", "framing": "neutral", "type4": false, "error": false, "note": "'a missing expected disclosure'; economics cannot be isolated, not called risk"}
+{"id": "g032", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "overshoot-vs-terminal 'unresolved'; adjusted fields UNKNOWN stated neutrally"}
+{"id": "g033", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "basis comparability of stated multiples; no missing item"}
+{"id": "g034", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "forward multiple 'only estimable, not confirmed'; no weighing"}
+{"id": "g035", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'UNRESOLVED... belongs to the human, not either case'"}
+{"id": "g036", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "management turnover; no missing item"}
+{"id": "g037", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "margin guide stated; no missing item"}
+{"id": "g038", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "forward multiple 'cannot be struck on a company-adjusted basis'; no weighing"}
+{"id": "g039", "gap": true, "item": "the FCF sign behind the survival line's runway leg", "framing": "neutral", "type4": false, "error": false, "note": "quotes panel's 'a risk' but unit frames it as reconcile-which-read-governs"}
+{"id": "g040", "gap": true, "item": "segment profit by segment", "framing": "neutral", "type4": false, "error": false, "note": "no segment breakout; chains' margins 'opaque' - stated, not weighed"}
+{"id": "g041", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant basis UNKNOWN; FCC covenant 'cannot be tested', no weighing"}
+{"id": "g042", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "revenue decline and guide stated; no missing item"}
+{"id": "g043", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; earnings base 'cannot be pinned', no weighing"}
+{"id": "g044", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "non-operating share UNKNOWN; 'only partially triangulated'"}
+{"id": "g045", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant terms UNKNOWN, basis undisclosed; low leverage noted, no weighing"}
+{"id": "g046", "gap": true, "item": "the FCF sign behind the survival line's runway leg", "framing": "bearish", "type4": false, "error": true, "note": "FCF sign UNKNOWN 'a bearish opacity until clarified'"}
+{"id": "g047", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'it is a neutral fact, not a bull signal'"}
+{"id": "g048", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "question 'cannot be resolved'; adjusted fields UNKNOWN stated"}
+{"id": "g049", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; overshoot judgement cannot be made, no weighing"}
+{"id": "g050", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "management comp guide stated; no missing item"}
+{"id": "g051", "gap": true, "item": "the FCF sign behind the survival line's runway leg", "framing": "neutral", "type4": false, "error": false, "note": "fcf_sign UNKNOWN; 'the human must resolve which FCF basis'"}
+{"id": "g052", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant terms UNKNOWN; 'immaterial here'"}
+{"id": "g053", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "export date unverified; snapshot 'may be staler', no weighing"}
+{"id": "g054", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'an opacity risk given concentration in Mounjaro/Zepbound'"}
+{"id": "g055", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; leverage 'cannot be struck'"}
+{"id": "g056", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "current guide figures stated; no missing item"}
+{"id": "g057", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "ev_ebitda_adjusted_fwd UNKNOWN; question 'unresolved on multiples alone'"}
+{"id": "g058", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'treat as a bearish opacity risk, not neutral'"}
+{"id": "g059", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'an opacity that hides...; a bearish disclosure gap'"}
+{"id": "g060", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "gap-down catalyst 'not cleanly attributed'; no outlook named, no weighing"}
+{"id": "g061", "gap": true, "item": "an annual adjusted-EPS guide in the newest release", "framing": "neutral", "type4": false, "error": false, "note": "adjusted_eps and adjusted leverage UNKNOWN; bare statement"}
+{"id": "g062", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "multiple-basis argument on stated figures; no missing item"}
+{"id": "g063", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "own-history percentile stated; no missing item"}
+{"id": "g064", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'treat as a risk, not neutral'"}
+{"id": "g065", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "whether further write-downs follow is a future uncertainty"}
+{"id": "g066", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'an opacity to treat as risk, not neutral'"}
+{"id": "g067", "gap": true, "item": "segment profit by segment", "framing": "neutral", "type4": false, "error": false, "note": "no segment breakout; 'no finer visibility', not weighed"}
+{"id": "g068", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'an opacity risk, not a neutral gap'"}
+{"id": "g069", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted leverage/valuation basis 'unavailable'; no weighing"}
+{"id": "g070", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "earned-vs-residual peer judgment for the human; not a missing item"}
+{"id": "g071", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "revenue pass-through figures; no missing item"}
+{"id": "g072", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'this opacity is a bearish gap'"}
+{"id": "g073", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "price elasticity not yet observable - a future outcome"}
+{"id": "g074", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant basis UNKNOWN; headroom 'cannot be confirmed', no weighing"}
+{"id": "g075", "gap": true, "item": "segment profit by segment", "framing": "neutral", "type4": false, "error": false, "note": "'an expected-granularity gap' limiting a read; not weighed"}
+{"id": "g076", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "bearish", "type4": false, "error": true, "note": "'this is a bearish opacity gap, not a neutral one'"}
+{"id": "g077", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; cushion 'cannot be assessed', no weighing"}
+{"id": "g078", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "insider motive an open interpretation, not a missing item"}
+{"id": "g079", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; 'cannot be struck'"}
+{"id": "g080", "gap": true, "item": "an annual adjusted-EPS guide in the newest release", "framing": "risk", "type4": false, "error": true, "note": "'an expected disclosure absent at this richness is a risk, not a neutral gap'"}
+{"id": "g081", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted EV/EBITDA absent stated; no weighing of the gap"}
+{"id": "g082", "gap": true, "item": "the FCF sign behind the survival line's runway leg", "framing": "neutral", "type4": false, "error": false, "note": "FCF sign UNKNOWN 'an opacity to resolve'"}
+{"id": "g083", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'an expected disclosure gap that leans bearish'"}
+{"id": "g084", "gap": true, "item": "segment profit by segment", "framing": "neutral", "type4": false, "error": false, "note": "durability 'cannot be independently sized'; not weighed"}
+{"id": "g085", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "estimate revisions stated; no missing item"}
+{"id": "g086", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "impairments stated; no missing item"}
+{"id": "g087", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "peer earned-vs-residual judgment; not a missing item"}
+{"id": "g088", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "P/E percentile UNKNOWN; 'no meaningful earnings multiple anchor'"}
+{"id": "g089", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; 'cannot be struck from guidance directly'"}
+{"id": "g090", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'this is a neutral fact, not directional'"}
+{"id": "g091", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'a NEUTRAL multiple-basis fact... not directional'"}
+{"id": "g092", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "cash conversion figures; no missing item"}
+{"id": "g093", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'an expected-disclosure gap that is bearish'"}
+{"id": "g094", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "own-history percentiles stated; no missing item"}
+{"id": "g095", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant terms UNKNOWN; 'require confirmation', no weighing"}
+{"id": "g096", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'opaque, a bearish disclosure gap given Atkins decline'"}
+{"id": "g097", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "no adjusted forward basis; cannot distinguish levels, no weighing"}
+{"id": "g098", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'the forward valuation anchor is missing' - bare statement"}
+{"id": "g099", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'a bearish transparency gap'"}
+{"id": "g100", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "leverage figures stated; no missing item"}
+{"id": "g101", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "insider selling stated; no missing item"}
+{"id": "g102", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "EBITDA figures stated; no missing item"}
+{"id": "g103", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "targets and forward ladder stated; no missing item"}
+{"id": "g104", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant-basis EBITDA UNKNOWN; cushion 'cannot be confirmed'"}
+{"id": "g105", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'a genuine unresolved neutral, not a directional point'"}
+{"id": "g106", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; reconciliations noted, no weighing"}
+{"id": "g107", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; cannot compare to forward, no weighing"}
+{"id": "g108", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "estimate revisions stated; no missing item"}
+{"id": "g109", "gap": true, "item": "an annual adjusted-EPS guide in the newest release", "framing": "neutral", "type4": false, "error": false, "note": "adjusted EPS/EBITDA UNKNOWN; multiple 'cannot be struck', no weighing"}
+{"id": "g110", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "FCF guide stated; no missing item"}
+{"id": "g111", "gap": true, "item": "other", "framing": "risk", "type4": false, "error": true, "note": "'an opacity that is a downside risk given reported leverage near the cap'"}
+{"id": "g112", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "forward multiples stated; no missing item"}
+{"id": "g113", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; leverage picture 'cannot be struck'"}
+{"id": "g114", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'unresolved (neutral, not directional)'"}
+{"id": "g115", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "question 'cannot be resolved'; no weighing"}
+{"id": "g116", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields 'cannot be struck'; bare statement"}
+{"id": "g117", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "leverage/credit figures stated; no missing item"}
+{"id": "g118", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'unresolved (neutral, not directional)'"}
+{"id": "g119", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'this is a neutral gap, not evidence either way'"}
+{"id": "g120", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; cushion 'unquantified', no weighing"}
+{"id": "g121", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "export date unverified; figures 'may be staler'"}
+{"id": "g122", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'an expected-disclosure gap that bears bearishly'"}
+{"id": "g123", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'an unresolved neutral, not a directional fact'"}
+{"id": "g124", "gap": true, "item": "the FCF sign behind the survival line's runway leg", "framing": "risk", "type4": false, "error": true, "note": "'surfaced as a risk, not a neutral gap'"}
+{"id": "g125", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "risk", "type4": false, "error": true, "note": "'an opacity to resolve, not a neutral gap' - explicitly rejects neutral"}
+{"id": "g126", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "overshoot UNRESOLVED; human cannot distinguish, no weighing"}
+{"id": "g127", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'no stated forward basis... (a neutral fact, not directional)'"}
+{"id": "g128", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'treat this disclosure gap as a risk, not comfort'"}
+{"id": "g129", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "own-history percentile stated; no missing item"}
+{"id": "g130", "gap": true, "item": "the FCF sign behind the survival line's runway leg", "framing": "neutral", "type4": false, "error": false, "note": "FCF sign UNKNOWN; 'resolve before leaning'"}
+{"id": "g131", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "net_debt_to_ebitda_adjusted UNKNOWN; headroom 'cannot be verified'"}
+{"id": "g132", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'an opaque gap, a bearish disclosure risk'"}
+{"id": "g133", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "policy outcome a future uncertainty"}
+{"id": "g134", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "per-brand impairment split not in XBRL; 'opaque', not weighed"}
+{"id": "g135", "gap": true, "item": "segment profit by segment", "framing": "neutral", "type4": false, "error": false, "note": "'cuts against being able to validate' - verification limit, not called risk"}
+{"id": "g136", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant basis UNKNOWN; headroom 'not verifiable', no weighing"}
+{"id": "g137", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'UNRESOLVED and belongs to the human, not either side'"}
+{"id": "g138", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'a neutral unresolved fact, not directional evidence'"}
+{"id": "g139", "gap": true, "item": "segment profit by segment", "framing": "neutral", "type4": false, "error": false, "note": "'a disclosure gap that limits risk decomposition' - analytic limit"}
+{"id": "g140", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'this opacity is a bearish gap, not neutral'"}
+{"id": "g141", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'this neutral floor belongs here, not in either case'"}
+{"id": "g142", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'treat as a bearish opacity, not a neutral gap'"}
+{"id": "g143", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "leverage and rent figures stated; no missing item"}
+{"id": "g144", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; cannot distinguish levels"}
+{"id": "g145", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant basis UNKNOWN; cushion 'cannot be verified'"}
+{"id": "g146", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "forward P/E and PEG stated; no missing item"}
+{"id": "g147", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'a neutral fact belonging here, not on either side'"}
+{"id": "g148", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "price erosion stated; no missing item"}
+{"id": "g149", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "forward P/E stated; no missing item"}
+{"id": "g150", "gap": true, "item": "segment profit by segment", "framing": "neutral", "type4": false, "error": false, "note": "durability 'cannot be independently verified'; not weighed"}
+{"id": "g151", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'treat as a bearish opacity'"}
+{"id": "g152", "gap": true, "item": "the FCF sign behind the survival line's runway leg", "framing": "neutral", "type4": false, "error": false, "note": "FCF sign not assessable; basis 'unresolved'"}
+{"id": "g153", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "risk", "type4": false, "error": true, "note": "'treat the gap as a risk, not neutral'"}
+{"id": "g154", "gap": true, "item": "an annual adjusted-EPS guide in the newest release", "framing": "neutral", "type4": false, "error": false, "note": "'limits how cheap or expensive' - two-sided, not weighed against"}
+{"id": "g155", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "rent add-back arithmetic on stated figures; no missing item"}
+{"id": "g156", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; cannot separate levels"}
+{"id": "g157", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "geographic split UNKNOWN; 'limiting any read'"}
+{"id": "g158", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'a neutral fact for the human, not directional'"}
+{"id": "g159", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "FCF and capex figures stated; no missing item"}
+{"id": "g160", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'a bearish disclosure gap given the thesis'"}
+{"id": "g161", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "forward multiple 'cannot be pinned down'"}
+{"id": "g162", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant terms UNKNOWN; headroom cannot be verified, leverage minimal"}
+{"id": "g163", "gap": true, "item": "the FCF sign behind the survival line's runway leg", "framing": "neutral", "type4": false, "error": false, "note": "FCF sign UNKNOWN; must state basis, no weighing"}
+{"id": "g164", "gap": true, "item": "other", "framing": "bearish", "type4": false, "error": true, "note": "'an undisclosed cushion is a bearish gap, not a neutral one'"}
+{"id": "g165", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "own-history percentiles stated; no missing item"}
+{"id": "g166", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted leverage UNKNOWN; read leans on CIQ, no weighing"}
+{"id": "g167", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant basis UNKNOWN; only vendor bases available"}
+{"id": "g168", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; cushion 'cannot be verified'"}
+{"id": "g169", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "program durability and adherence are future uncertainties"}
+{"id": "g170", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "ROIC figures stated; no missing item"}
+{"id": "g171", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'unresolved on the data'"}
+{"id": "g172", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'this disclosure gap is a bearish risk, not neutral'"}
+{"id": "g173", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "'an expected-disclosure gap on the survival/refi leg' - stated, not weighed"}
+{"id": "g174", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "upcoming print is a future catalyst"}
+{"id": "g175", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "states trailing-only percentile; no item stated missing"}
+{"id": "g176", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "price run-up stated; no missing item"}
+{"id": "g177", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; 'cannot be independently struck'"}
+{"id": "g178", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'a bearish disclosure gap, not a neutral one'"}
+{"id": "g179", "gap": true, "item": "segment profit by segment", "framing": "neutral", "type4": false, "error": false, "note": "'a disclosure gap on franchise concentration' - stated, not weighed"}
+{"id": "g180", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "leverage and maturities stated; no missing item"}
+{"id": "g181", "gap": true, "item": "an annual adjusted-EPS guide in the newest release", "framing": "neutral", "type4": false, "error": false, "note": "clean base 'not directly disclosed - the human must strip it'"}
+{"id": "g182", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "one-time items stated; no missing item"}
+{"id": "g183", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'a missing disclosure that is a bearish gap, not neutral'"}
+{"id": "g184", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'opaque, lean bearish'"}
+{"id": "g185", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'a bearish opacity, not neutral'"}
+{"id": "g186", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; 'the human must verify headroom'"}
+{"id": "g187", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "FCF consensus and capex stated; no missing item"}
+{"id": "g188", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "'a missing disclosure that bears on the survival read' - relevance only"}
+{"id": "g189", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant terms partially surfaced; headroom 'not fully visible'"}
+{"id": "g190", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'an OPACITY risk masking how much... depends on the eroding brands'"}
+{"id": "g191", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant terms UNKNOWN; 'low-stakes but remains undisclosed'"}
+{"id": "g192", "gap": true, "item": "the FCF sign behind the survival line's runway leg", "framing": "neutral", "type4": false, "error": false, "note": "fcf_sign UNKNOWN; must state basis, no weighing"}
+{"id": "g193", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'this neutral... fact is unresolved, not directional'"}
+{"id": "g194", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'treat as a bearish opacity risk'"}
+{"id": "g195", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'a bearish gap requiring the 10-K impairment note'"}
+{"id": "g196", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "estimate breadth and guidance miss stated; no missing item"}
+{"id": "g197", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "export date a floor, unstamped; schedule dated, no weighing"}
+{"id": "g198", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "target dispersion stated; no missing item"}
+{"id": "g199", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "terminal comp rate 'undisclosed'; long-term algorithm, not current guide"}
+{"id": "g200", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'OPAQUE, a bearish disclosure gap'"}
+{"id": "g201", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "question 'cannot be closed from the supplied facts'"}
+{"id": "g202", "gap": true, "item": "other", "framing": "bearish", "type4": false, "error": true, "note": "covenant-basis EBITDA UNKNOWN 'a bearish disclosure gap'"}
+{"id": "g203", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN 'limiting a clean forward valuation'; no weighing"}
+{"id": "g204", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'a disclosure gap that leans bearish'"}
+{"id": "g205", "gap": true, "item": "the outlook a gap-down's 8-K furnished", "framing": "neutral", "type4": false, "error": false, "note": "no revised-guidance 8-K; inflection driver 'not identified'"}
+{"id": "g206", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'an opacity risk'"}
+{"id": "g207", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "covenant basis UNKNOWN; only vendor bases available"}
+{"id": "g208", "gap": true, "item": "other", "framing": "risk", "type4": false, "error": true, "note": "'a risk rather than a neutral absence, though mitigated'"}
+{"id": "g209", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "go-forward tariff cost base 'not disclosed'; stated, not weighed"}
+{"id": "g210", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'a bearish opacity'"}
+{"id": "g211", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "peer earned-vs-residual judgment; not a missing item"}
+{"id": "g212", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "adjusted fields UNKNOWN; question rests on trailing figures"}
+{"id": "g213", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "integration track is a future uncertainty"}
+{"id": "g214", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'an opacity to weigh as risk'"}
+{"id": "g215", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "insider selling stated; no missing item"}
+{"id": "g216", "gap": true, "item": "segment profit by segment", "framing": "risk", "type4": false, "error": true, "note": "'surface this opacity as a risk, not a neutral gap'"}
+{"id": "g217", "gap": true, "item": "segment profit by segment", "framing": "bearish", "type4": false, "error": true, "note": "'treat as a bearish visibility risk'"}
+{"id": "g218", "gap": true, "item": "a company adjusted-EBITDA guide", "framing": "neutral", "type4": false, "error": false, "note": "'a neutral mid-range read that resolves neither case'"}
+{"id": "g219", "gap": true, "item": "other", "framing": "neutral", "type4": false, "error": false, "note": "'a gap in the survival read despite low reported leverage'"}
+{"id": "g220", "gap": false, "item": null, "framing": null, "type4": null, "error": false, "note": "EBITDA figures stated; no missing item"}

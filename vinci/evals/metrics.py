@@ -14,16 +14,20 @@ same text is the bug class CLAUDE.md names; these metrics borrow, never re-imple
 THE METRICS: M-LABEL (a code-written label repeated against the page's facts), M-SIGN (#921's
 material-direction flag), M-PATH (monotone wording against the page's series), M-ABSENT (a figure
 the facts do not state; transcript-only or nowhere), M-ECHO (the prompt's instruction words in
-the prose). M-SIZE (prompt size per section) reads a request, not a unit.
+the prose), M-GAP (a gap the page's gap test does not type a change, framed as a risk or carried
+by a bear point — on the pages whose gap types are frozen). M-SIZE (prompt size per section)
+reads a request, not a unit.
 """
 from __future__ import annotations
 
 import bisect
 import hashlib
+import json
 import re
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
-from functools import cached_property
+from functools import cache, cached_property
+from pathlib import Path
 from typing import Any
 
 from vinci.dossier import synthesis as syn
@@ -608,11 +612,100 @@ def prompt_size(request: Any) -> dict[str, int]:
     return sizes
 
 
+# -------------------------------------------------------------------------------------- M-GAP
+
+#: Each frozen panel page's gap entries, typed by fix 4a's gap test (#927's code at 601d2f7e):
+#: the PAGE's truth, the same for both arms. M-GAP imports nothing from #927.
+GAP_TYPES_FILE = Path(__file__).with_name("synthesis_gap_types.json")
+GAP_CHANGE = "change or deviation"
+
+
+@cache
+def _gap_pages() -> dict[str, list[dict[str, Any]]]:
+    data = json.loads(GAP_TYPES_FILE.read_text(encoding="utf-8"))
+    return {t: list(v["gaps"]) for t, v in data["pages"].items()}
+
+
+def gap_entries(ticker: str | None) -> list[dict[str, Any]] | None:
+    """The page's frozen gap entries — None for a page whose types were never frozen, where M-GAP
+    is UNDEFINED (never zero): `score_units` leaves it out, and a registration refuses it."""
+    return _gap_pages().get(str(ticker)) if ticker else None
+
+
+#: Fit on the gold's DEV half only (CNXC, LLY, MCK; 2026-11-09), then frozen before TEST was read
+#: (`docs/records/2026-11-09-m-gap-gold-and-metric.md`).
+#: A unit STATES A GAP: an item missing, unknown, undisclosed, unreadable or not derivable.
+_GAP_STATED = re.compile(
+    r"UNKNOWN|\bmissing\b|not disclosed|undisclosed|no segment|segment[- ]EBITDA breakout|"
+    r"single[- ]segment|not (?:readable|parse|available|assessable|derivable)|unavailable|"
+    r"cannot be (?:struck|assessed|verified|confirmed|read)|extraction failed|opaque|opacity|"
+    r"\bno (?:forward|revised|adjusted|company)", I)
+#: ... and FRAMES it against the company: a risk, a concern, opacity that hides something.
+_GAP_RISK = re.compile(r"\brisks?\b|opaque|opacity|red flag|\bconcern|caution|weakness|"
+                       r"blind spot|obscur|\bmask|\bhid(?:e|es|den|ing)\b", I)
+_GAP_BEARISH = re.compile(r"\bbearish\w*", I)
+#: ... unless it calls the gap neutral or an open question ("a risk, NOT a neutral gap" is a risk).
+_GAP_NEUTRAL = re.compile(r"(?<!not a )(?<!not )(?<!rather than a )(?<!rather than )\bneutral\b|"
+                          r"not directional|non-directional|neither case|either way|to resolve|"
+                          r"must resolve|resolve before", I)
+#: A label the unit QUOTES ('not assessable (a risk)') is the page's word, not the unit's framing.
+#: A possessive ("company's") never opens a quote.
+_GAP_QUOTED = re.compile(r"(?<![A-Za-z])'[^']{1,80}'(?![A-Za-z])")
+#: Which of the page's entries a unit names (the taxonomy's hints); a unit naming only type-4
+#: entries frames a change, which the gap test lets be raised.
+GAP_ITEM_WORDS: dict[str, re.Pattern[str]] = {
+    "segment profit by segment": re.compile(
+        r"segment[- _](?:level )?(?:ebitda|profit|operating|margin)|single[- ]segment", I),
+    "the outlook a gap-down's 8-K furnished": re.compile(
+        r"revised[- ]guid\w*|revised outlook|(?:gap[- ]down|drawdown)[^.;]{0,40}(?:outlook|guid)",
+        I),
+    "a company adjusted-EBITDA guide": re.compile(
+        r"ev_ebitda_adjusted_fwd|net_debt_to_ebitda_adjusted|adjusted[- ](?:forward[- ])?"
+        r"(?:EV/)?EBITDA|company[- ]adjusted", I),
+    "an annual adjusted-EPS guide in the newest release": re.compile(r"adjusted[- _]eps", I),
+    "the FCF sign behind the survival line's runway leg": re.compile(r"fcf[_ ]sign|runway", I),
+    "a current guide": re.compile(r"current[_ ]guide|current outlook", I),
+}
+
+
+def gap_framing(u: Unit, ctx: PageContext) -> list[Hit]:
+    """M-GAP: a `key_unknowns` line or a bear point that STATES a gap and holds it against the
+    company — calls it a risk or bearish, or (a bear point) rests on it — where the page's gap test
+    types none of the named entries a change (`GAP_CHANGE`). The gap test (fix 4a) lets only a
+    change be raised as a risk, so every other such framing is the misread. A gap the page's list
+    does not name is "type not determined", which counts. Empty off the frozen pages."""
+    entries = gap_entries(ctx.page.get("ticker"))
+    if entries is None or u.section not in ("key_unknowns", "bear_points"):
+        return []
+    text = _GAP_QUOTED.sub("", u.text)
+    if not (stated := _GAP_STATED.search(text)):
+        return []
+    if u.section == "bear_points":
+        framing, phrase = "bear-rest", stated.group(0)
+    elif m := _GAP_BEARISH.search(text):
+        framing, phrase = "bearish", m.group(0)
+    elif (m := _GAP_RISK.search(text)) and not _GAP_NEUTRAL.search(text):
+        framing, phrase = "risk", m.group(0)
+    else:
+        return []
+    named = [e for e in entries if (w := GAP_ITEM_WORDS.get(e["item"])) and w.search(text)]
+    if named and all(e["type"] == GAP_CHANGE for e in named):
+        return []
+    types = "; ".join(f"{e['item']}: {e['type']}" for e in named) or "not on the page's list"
+    return [Hit("M-GAP", u.id, framing, phrase,
+                f"the page's gap test types it {types} — only a change may be raised as a risk")]
+
+
 # ----------------------------------------------------------------------------------- registry
 
 UNIT_METRICS: dict[str, Callable[[Unit, PageContext], list[Hit]]] = {
     "M-LABEL": label_echo, "M-SIGN": material_direction, "M-PATH": path_monotone,
-    "M-ABSENT": absent_number,
+    "M-ABSENT": absent_number, "M-GAP": gap_framing,
+}
+#: A metric defined only on some pages: (its test of the page). Off them it is left out of a
+#: score — undefined, never zero.
+PAGE_LIMITED: dict[str, Callable[[PageContext], bool]] = {
+    "M-GAP": lambda ctx: gap_entries(ctx.page.get("ticker")) is not None,
 }
 #: The gold class each unit metric is measured against.
 GOLD_CLASS = {"M-LABEL": "LABEL", "M-SIGN": "SIGN", "M-PATH": "PATH", "M-ABSENT": "ABSENT"}
@@ -621,10 +714,11 @@ GOLD_CLASS = {"M-LABEL": "LABEL", "M-SIGN": "SIGN", "M-PATH": "PATH", "M-ABSENT"
 def score_units(units: Sequence[Unit], ctx: PageContext, *,
                 echo: EchoIndex | None = None) -> dict[str, list[Hit]]:
     """Every metric over ``units``: metric → hits (M-ECHO only when an index is given)."""
-    out: dict[str, list[Hit]] = {m: [] for m in UNIT_METRICS}
+    names = [m for m in UNIT_METRICS if m not in PAGE_LIMITED or PAGE_LIMITED[m](ctx)]
+    out: dict[str, list[Hit]] = {m: [] for m in names}
     for u in units:
-        for name, fn in UNIT_METRICS.items():
-            out[name] += fn(u, ctx)
+        for name in names:
+            out[name] += UNIT_METRICS[name](u, ctx)
     if echo is not None:
         out["M-ECHO"] = [h for u in units for h in instruction_echo(u, ctx, echo)]
     return out
