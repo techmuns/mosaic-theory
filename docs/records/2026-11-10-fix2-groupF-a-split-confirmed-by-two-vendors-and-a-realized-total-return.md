@@ -25,9 +25,13 @@ superseded-by:
       that refused an unread reference refuses it.
     - Where that lands: a resolved row raises `SplitsUnreadError`; an interim row is pending and
       named; the basket is refused, with the reason; the monitor stops; close-position refuses.
-  - Every Tiingo session in the span needs a row. A missing row makes the record unknown, never
-    "no split". Tiingo may trail the calendar's newest session by one market closure (four days),
-    because Polygon posts first.
+  - Every session the calendar holds in the span needs Tiingo's row, the newest included. A
+    missing row makes the record unknown, never "no split". Polygon posts a session hours before
+    Tiingo does, so a run in that gap refuses, loudly and temporarily: re-run once Tiingo has
+    posted.
+    - Review round 0 had let Tiingo trail by a market closure. Codex (round 1, P1) showed that a
+      split ON the unserved session, with Polygon late on both feeds, then confirms as none and
+      scores −50% again. Round 1 removed the allowance (`test_a_split_on_a_session_tiingo_has_not_served_is_never_scored`).
   - Ratios of two STORED closes now get the check too: each row's benchmark leg in scoring and in
     the monitor, and each basket member. Before, these had no split check at all.
     - With no split in the window, the ratio stands as before.
@@ -87,8 +91,8 @@ scored 2026-12-14 (STATE §5.0 row 38). Two other choices were considered and no
     `tests/test_realized_total_return.py`.
   - `tests/test_scoring_pending_reasons.py` fails 2 of 3 on a clean `main` checkout; the negative
     pin passes on both.
-  - The Tiingo-lag fix from the code review: restoring the whole-span reading reddens its three
-    pins.
+  - The round-1 regression (Codex P1) fails on the PR head ("DID NOT RAISE": a flat 2-for-1 on the
+    session Tiingo had not served scored −0.5000) and passes after the round's fix.
 - **On the committed ledger, as a dry run, never written.** The data was a `.backup` copy of the
   primary's `data/vinci.db`, its ledger rebuilt from `data/snapshots/` as `run_monthly` does.
   Vendor reads were held to the ledger's names and benchmarks. `main` (`6fbbb4a2`) and this

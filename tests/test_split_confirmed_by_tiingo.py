@@ -523,32 +523,28 @@ def test_an_unconfirmed_record_is_an_unknown_one_for_every_caller() -> None:
     assert issubclass(SplitsUnconfirmedError, SplitsUnknownError)
 
 
-# --- review round 0: Tiingo posts a session after Polygon does ---------------------------------
+# --- review rounds 0 and 1: Tiingo posts a session after Polygon does ---------------------------
 
 
-def test_tiingo_a_session_behind_the_calendar_is_no_hole() -> None:
-    """Polygon has posted the newest session and Tiingo has not yet: on the whole-span reading
-    every symbol was unknown, and a resolved row whose window ended months earlier stopped the
-    run. Tiingo's record is read through the last day it served, within a market closure."""
+def test_tiingo_a_session_behind_the_calendar_is_unknown_until_it_posts() -> None:
+    """Polygon has posted the newest session and Tiingo has not yet. Round 0 read Tiingo through
+    its last served day; round 1 (Codex P1 on #943) showed that reopens RF-D1 for a split on that
+    very session. So the record is UNKNOWN — loudly, naming both days — until Tiingo serves it."""
     newest = date(2026, 7, 10)
     tiingo = _Tiingo(split=False, lost=frozenset({newest}))
-    assert _source(reference=[], tiingo=tiingo, end=newest)("SPLT") == []
+    with pytest.raises(SplitsUnknownError, match="2026-07-10 is not served yet"):
+        _source(reference=[], tiingo=tiingo, end=newest)("SPLT")
 
 
-def test_a_split_the_reference_records_after_tiingos_last_row_is_unconfirmed() -> None:
-    """...but a split the reference records on the session Tiingo has not served has nothing to
-    confirm it — refused, as any split one vendor alone records is."""
+def test_once_tiingo_serves_the_newest_session_the_record_reads() -> None:
+    """THE NEGATIVE PIN: the same span, Tiingo caught up — confirmed, no split."""
+    assert _source(reference=[], tiingo=_Tiingo(split=False), end=date(2026, 7, 10))("SPLT") == []
+
+
+def test_a_tiingo_hole_inside_the_span_is_unknown() -> None:
     newest = date(2026, 7, 10)
-    on_it = Split(execution_date=newest, split_from=1, split_to=2)
-    tiingo = _Tiingo(split=False, lost=frozenset({newest}))
-    with pytest.raises(SplitsUnconfirmedError, match="served through 2026-07-09"):
-        _source(reference=[on_it], tiingo=tiingo, end=newest)("SPLT")
-
-
-def test_a_tiingo_silence_longer_than_a_closure_is_a_hole() -> None:
-    newest = date(2026, 7, 10)
-    lost = frozenset(newest - timedelta(days=i) for i in range(10))
-    with pytest.raises(SplitsUnknownError, match="longer than any market closure"):
+    lost = frozenset({date(2026, 5, 6)})
+    with pytest.raises(SplitsUnknownError, match="no row for 1 session"):
         _source(reference=[], tiingo=_Tiingo(split=False, lost=lost), end=newest)("SPLT")
 
 
@@ -567,3 +563,45 @@ def test_a_wrapper_that_forwards_the_close_keeps_the_anchor() -> None:
     note = leg_on_basis(who="w", symbol="SPLT", start=ENTRY, start_close=50.0, end=AS_OF,
                         basis_through=AS_OF, splits=_Logged())
     assert note is not None and "ON ONE SPLIT BASIS" in note
+
+
+# --- review round 1 (Codex P1 on #943): a window crossing a session Tiingo has not served -------
+
+
+class _LateOnTheNewest(_Feed):
+    """A 2-for-1 executed on the NEWEST session, AS_OF: Polygon serves that bar as traded (50)
+    and never restates the ones before it (100), and its reference lists nothing."""
+
+    def grouped_daily(self, day: date) -> dict[str, RawBar]:
+        if day.weekday() >= 5:
+            return {}
+        px, vol = (50.0, 2000.0) if day >= AS_OF else (100.0, 1000.0)
+        return {"SPLT": _raw("SPLT", px, vol), "IWM": _raw("IWM", 200.0, 1e6)}
+
+
+class _TiingoBehind(_Tiingo):
+    """Tiingo's record of the same split — on the session it has not served yet."""
+
+    def daily_rows(self, symbol: str, *, start: date, end: date,
+                   ttl_seconds: float | None = 86_400.0) -> list[dict[str, Any]]:
+        return [r for r in super().daily_rows(symbol, start=start, end=end)
+                if not r["date"].startswith(AS_OF.isoformat())]
+
+
+def test_a_split_on_a_session_tiingo_has_not_served_is_never_scored(tmp_path: Path) -> None:
+    """Codex P1 on #943. Round 0 let Tiingo trail the calendar by a market closure, reading its
+    record only through the last day it served. A split ON the session it had not served, with
+    Polygon late on both feeds, then left both compared records empty: confirmed, and the flat
+    2-for-1 scored −0.5000, resolved — RF-D1 back, through the lag. A session Tiingo has not served
+    leaves the record UNKNOWN until it has."""
+    with Store(tmp_path / "s.db") as store:
+        store.append_ledger(LedgerEntry(
+            entry_id="V-SPLT", candidate_id="SPLT-c", internal_id=X.internal_id, ticker="SPLT",
+            verdict=Verdict.BUY, twin_call="t", entry_price=100.0, entry_price_as_of=ENTRY,
+            thesis="t", kill_criteria="k", horizon_days=(AS_OF - ENTRY).days,
+            confidence=Confidence.MEDIUM, decided_at=datetime(2026, 1, 5)))
+        ingest_prices(_LateOnTheNewest(split=True, restated=False), store, [X, IWM],
+                      start=ENTRY, end=AS_OF)
+        src = _source(reference=[], tiingo=_TiingoBehind(split=False))
+        with pytest.raises(SplitsUnreadError, match="not served"):
+            score_ledger(store, as_of=AS_OF, dividends=no_dividends, splits=src)

@@ -62,7 +62,7 @@ from pydantic import BaseModel
 
 from vinci.config import Config
 from vinci.eod.client import RESTATE_TOL, EodError, PolygonEodClient, SessionCalendar
-from vinci.eod.dividends import MAX_SESSION_GAP_DAYS, TIINGO_LEAD
+from vinci.eod.dividends import TIINGO_LEAD
 from vinci.eod.tiingo import TiingoEodClient
 from vinci.netcache import HttpError
 
@@ -277,34 +277,29 @@ class ConfirmedSplits:
         except (HttpError, EodError, ValueError) as exc:
             raise SplitsUnknownError(f"{symbol}: the calendar could not be read "
                                      f"({type(exc).__name__})") from exc
-        # TIINGO MAY TRAIL THE CALENDAR BY A DAY (review round 0): Polygon posts a session before
-        # Tiingo does, so the newest one in the span can have a bar and no row yet. Tiingo's
-        # record is read through the last day it served — when that is within a market closure
-        # (`MAX_SESSION_GAP_DAYS`) of the calendar's newest session — and a split the reference
-        # records after it has nothing to confirm it, so it disagrees. A longer silence is a hole.
+        # A SESSION TIINGO HAS NOT SERVED IS UNKNOWN UNTIL IT HAS (review round 1, Codex P1 on
+        # #943). Round 0 let Tiingo trail the calendar by a market closure and read its record only
+        # through the last day it served. But a split ON a session it had not served, with Polygon
+        # late on both feeds, left both compared records empty — confirmed — and a flat 2-for-1
+        # scored −50% again: RF-D1 through the lag. So every session the calendar holds in the
+        # span needs Tiingo's row. The cost is a loud, temporary refusal in the hours between
+        # Polygon posting a session and Tiingo posting it: re-run once Tiingo has.
         served = [d for r in rows if self.start <= (d := _row_day(r, symbol)) <= self.end]
         newest = max((d for d in sessions if self.start <= d <= self.end), default=None)
-        if not served or newest is None:
+        if served and newest is not None and max(served) < newest:
             raise SplitsUnknownError(
-                f"{symbol}: Tiingo serves no row in {self.start} → {self.end}"
-                if not served else f"{symbol}: the calendar holds no session in {self.start} → "
-                                   f"{self.end}, so Tiingo's split record cannot be checked")
-        through = min(max(served), self.end)
-        if (newest - through).days > MAX_SESSION_GAP_DAYS:
-            raise SplitsUnknownError(
-                f"{symbol}: Tiingo's rows end {through}, {(newest - through).days} days before the "
-                f"name's newest session {newest} — longer than any market closure, so its split "
-                f"record is unknown")
-        second = tiingo_split_record(rows, start=self.start, end=through,
+                f"{symbol}: Tiingo's rows end {max(served)}, and the name's newest session "
+                f"{newest} is not served yet — a split there could not be confirmed, so its split "
+                f"record is unknown until Tiingo serves it (re-run once it has)")
+        second = tiingo_split_record(rows, start=self.start, end=self.end,
                                      sessions=sessions, symbol=symbol)
         first = splits_between(recorded, self.start, self.end)
         if not _agree(first, second):
             raise SplitsUnconfirmedError(
                 f"{symbol}: in ({self.start}, {self.end}] Polygon's splits reference records "
-                f"{_named(first)} and Tiingo's rows (served through {through}) record "
-                f"{_named(second)}, so the split record cannot be confirmed — a split one vendor "
-                f"alone records may be one the other has not caught up with, and no return is "
-                f"read across it.")
+                f"{_named(first)} and Tiingo's rows record {_named(second)}, so the split record "
+                f"cannot be confirmed — a split one vendor alone records may be one the other has "
+                f"not caught up with, and no return is read across it.")
         self._closes[symbol] = {date.fromisoformat(str(r["date"])[:10]): float(r["close"])
                                 for r in rows if _positive_number(r.get("close"))}
         return recorded
