@@ -46,6 +46,7 @@ them describes removed code; restore by reverting #910's squash commit (`docs/re
 - **Entity resolver** (`vinci/resolver`) — US SEC CIK↔ticker↔name, fail-loud on unknown/ambiguous —
   *ran `resolve AAPL GOOGL GOOG BRK.B ZZZZZ`: GOOGL/GOOG→one CIK, BRK.B→BRK-B, ZZZZZ fails loud.*
 - **Polygon EOD** (`vinci/eod`) — whole-market grouped-daily, 5y history (Starter) — *universe/screen ran on 5y bars.*
+- **A point guide is the range [low, low] (RE1-D16, 2026-11-10)** (`vinci/edgar/primary_source.py` `guide_verification_read`): a missing high is never a high of zero — a CIQ point of −0.05 against a release −0.05–0.00 read VERIFIED, and a range of one against its point read MISMATCH; 0 of the 28 pages frozen at `bcda7ce3` move. *Record: `docs/records/2026-11-10-fix2-e1-a-point-guide-is-a-range-of-one.md`.*
 - **EDGAR** (`vinci/edgar`) — XBRL `companyfacts`/`frames` + 8-K full-text + submissions — *feeds G3; module + tests.*
 - **Universe builder** (`vinci/universe`) — market cap = close × XBRL shares, cap-band + $3M ADV +
   an **operating-cos-only gate on TWO fail-closed axes** — *`build-universe` ran → 1,727 names (drifts

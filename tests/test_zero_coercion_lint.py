@@ -79,12 +79,6 @@ ALLOWED: tuple[tuple[str, str, str, str], ...] = (
     ("vinci/edgar/net_debt.py", "_unread_debt", "b.current_total or 0.0",
      "inside max(long-term, current): an absent current total leaves the long-term total to "
      "hold; no figure is stated"),
-    ("vinci/edgar/primary_source.py", "guide_verification_read", "ciq_high or 0.0",
-     REPORTED + "a point guide has no high on either side (0 − 0 matches); one side's high "
-                "against the other's none is a mismatch, as it should be"),
-    ("vinci/edgar/primary_source.py", "guide_verification_read", "release_high or 0.0",
-     REPORTED + "a point guide has no high on either side (0 − 0 matches); one side's high "
-                "against the other's none is a mismatch, as it should be"),
     ("vinci/graph/llm.py", "_record_usage", "getattr(u, 'input_tokens', 0) or 0", COST),
     ("vinci/graph/llm.py", "_record_usage", "getattr(u, 'output_tokens', 0) or 0", COST),
     ("vinci/graph/llm.py", "_record_usage", "getattr(u, 'cache_creation_input_tokens', 0) or 0",
