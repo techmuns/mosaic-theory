@@ -197,6 +197,12 @@ def reserved_symbols(data_dir: Path) -> dict[str, tuple[str, ...]]:
     return {s: tuple(sorted(r)) for s, r in sorted(why.items())}
 
 
+#: A week of slack before the earliest window, so its entry session's row is always inside the span
+#: Tiingo is asked for. `eod.splits.default_splits` asks for the SAME span (RF-D1), so its rows are
+#: the response this read cached: one request, and one symbol against the plan's monthly cap.
+TIINGO_LEAD = timedelta(days=7)
+
+
 def default_dividends(*, start: date, end: date, sessions: SessionCalendar) -> DividendSource:
     """Tiingo where ``TIINGO_API_KEY`` is set, its coverage checked against ``sessions``. Without
     it, a source that raises on every window — so a total return that cannot be read fails where it
@@ -206,6 +212,5 @@ def default_dividends(*, start: date, end: date, sessions: SessionCalendar) -> D
             raise DividendsUnknownError(f"{symbol}: no TIINGO_API_KEY in the environment — total "
                                    f"return needs Tiingo's dividends")
         return unavailable
-    # a week of slack before the earliest window, so its entry session's row is always inside
-    return tiingo_dividends(TiingoEodClient.from_config(), start=start - timedelta(days=7),
+    return tiingo_dividends(TiingoEodClient.from_config(), start=start - TIINGO_LEAD,
                             end=end, sessions=sessions)

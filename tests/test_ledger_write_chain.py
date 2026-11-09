@@ -28,7 +28,7 @@ from datetime import date, datetime
 
 import pytest
 
-from tests.dividend_support import no_splits
+from tests.dividend_support import no_dividends, no_splits
 from vinci.config import Config
 from vinci.ledger import LedgerError, close_position
 from vinci.monitor import close_rows, decision_rows, pair_closes
@@ -43,10 +43,13 @@ OPEN_CANDIDATE = "SMPL-screen2-20260729"
 
 @pytest.fixture(autouse=True)
 def _no_recorded_splits(monkeypatch: pytest.MonkeyPatch) -> None:
-    """`close-position` reads Polygon's splits reference before it writes (audit item F-D1); no
-    close in this file spans a split."""
+    """`close-position` reads the split record (audit item F-D1, RF-D2) and the dividends
+    (RF-D3) before it writes; no close in this file spans a split or an ex-date."""
     from vinci import cli
     monkeypatch.setattr(cli, "default_splits", lambda *_a, **_k: no_splits)
+    monkeypatch.setattr(cli, "default_dividends", lambda **_k: no_dividends)
+    # stubbed vendors, so no key — the exit-session check reads Polygon only with one
+    monkeypatch.delenv("POLYGON_API_KEY", raising=False)
 
 
 @pytest.fixture
@@ -133,7 +136,7 @@ def test_the_close_pairs_with_its_decision_and_carries_its_provenance(tree: Conf
     # provenance COPIED, so the realized view can pair and price it
     assert (close.ticker, close.verdict, close.entry_price) == ("SMPL", close.verdict, 11.33)
     assert close.machine_proposal is None and close.disposition is None
-    paired = pair_closes(raw, splits=no_splits)
+    paired = pair_closes(raw, splits=no_splits, dividends=no_dividends)
     assert len(paired) == len(close_rows(raw)), "the close did not pair"
     assert len(decision_rows(raw)) == before, "a close was counted as a decision row"
 

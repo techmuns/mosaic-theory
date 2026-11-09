@@ -23,6 +23,8 @@ from typing import Any
 
 import pytest
 
+from tests.dividend_support import no_dividends
+
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 LIB = ROOT / "frontend" / "lib" / "snapshots.js"
 LEDGER = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
@@ -206,7 +208,8 @@ def test_a_real_split_close_shows_what_pair_closes_derives() -> None:
             "exit_price": exit_, "exit_price_as_of": "2026-08-12"}),
     ]
     splits = parse_splits(fx["splits"], symbol="MNST")
-    derived = next(r for r in pair_closes(ledger, splits=lambda s: splits if s == "MNST" else [])
+    derived = next(r for r in pair_closes(ledger, splits=lambda s: splits if s == "MNST" else [],
+                                          dividends=no_dividends)
                    if r["ticker"] == "MNST")
     assert round(derived["entry_price"], 2) == round(sealed / ratio, 2), derived
 
