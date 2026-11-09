@@ -1705,6 +1705,21 @@ def _cache_misses(sends: list[tuple[int, dict[str, Any], float]]) -> list[str]:
     return out
 
 
+#: What the facts dump never carries. ``primary_source`` goes as its curated digest instead
+#: (verbatims are provenance, not input), and ``catalyst_path.guidance_after_price_date`` holds the
+#: guides CIQ dated AFTER the page's price date (STATE row 57): the cut's audit tier, which the
+#: model must not read — sending it would hand the synthesis exactly what the cut withholds. The
+#: releases' twin (`primary_source.releases_after_price_date`) is inside the excluded block, and
+#: the digest never reads it. ``concentration.customers_listed`` (audit RBC-D1) is the display
+#: twin of the roster the model already reads: the renderers print it, and sending it — a count,
+#: or a null on a page without one — would change every synthesis request, which row 53 says is
+#: measured on the panel before it ships. This build changes what the PAGE prints, not what the
+#: model reads.
+NOT_SENT: dict[str, Any] = {"primary_source": True,
+                            "catalyst_path": {"guidance_after_price_date": True},
+                            "concentration": {"customers_listed": True}}
+
+
 def synthesize(
     mech: MechanicalLayer, *, llm: LlmClient, ticker: str, name: str,
     transcript: str | None = None, sleeve: str = DEFAULT_SLEEVE, draws: int = 1,
@@ -1721,7 +1736,7 @@ def synthesize(
     # (RC-1 C) the raw primary_source (releases/filing) carries VERBATIMS — provenance, not input.
     # Exclude it from the dump and feed the curated term→value→source_ref digest instead. Its
     # source_refs still live in `mech`, so a cited primary-source ref traces through validation.
-    _dumped = mech.model_dump(exclude={"primary_source"})
+    _dumped = mech.model_dump(exclude=NOT_SENT)
     _mark_drawdown_guidance(_dumped, mech.primary_source)
     facts = json.dumps(_dumped, indent=2, default=str)
     user = (

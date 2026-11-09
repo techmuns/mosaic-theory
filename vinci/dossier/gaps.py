@@ -33,8 +33,11 @@ direction. The schema, the prompt's rule 8 and this module's ladder keep the typ
 second read whose silence is evidence exists.
 
 AS OF THE PAGE'S PRICE DATE (F12): a release filed, or a CIQ guide dated, after the page's price
-date (`stock_info.as_of`, else the drawdown window's end) is not read here. The layer itself does
-not cut `primary_source.releases` or CIQ's guide rows at that date (STATE row 57).
+date (`stock_info.as_of`, else the drawdown window's end) is not read here. Since STATE row 57 the
+assembly cuts both where it builds them, through the same rule (`vinci.edgar.asof.within_cut`,
+`releases_by_cut` below), so on a page built since, these cuts find nothing; they still hold the
+line on a page built before it (ORKA's, at the panel's freeze, holds a release filed 2026-10-26
+beside its 2026-10-23 price date).
 
 NOT BUILT, stated rather than implied:
 - the PEER half of type 4 ("something peers disclose that this filer does not"): the layer carries
@@ -67,6 +70,7 @@ from vinci.dossier.schemas import (
     Sourced,
     SourceStatus,
 )
+from vinci.edgar.asof import within_cut
 
 OUR, NA, PRACTICE, CHANGE, UNDETERMINED = GAP_TYPES
 PRESENT = SourceStatus.PRESENT
@@ -136,10 +140,29 @@ def _ciq(mech: MechanicalLayer, cut: date | None) -> _Ciq | None:
             out.append((r.metric, date.fromisoformat(r.dated)))
         except ValueError:
             return None
-    out = [(m, d) for m, d in out if cut is None or d <= cut]
+    out = [(m, d) for m, d in out if within_cut(d, cut)]
     if not out:
         return None
     return _Ciq(tuple(out), max(d for _, d in out))
+
+
+def releases_by_cut(releases: Sequence[ReleaseExtract], cut: date | None,
+                    ) -> tuple[list[ReleaseExtract], list[ReleaseExtract]]:
+    """THE RELEASE CUT (STATE row 57): (the releases filed on or before the page's price date,
+    those filed after it), each in its given order. The gap test reads the first; the assembly
+    keeps only the first in `primary_source.releases` and states the second
+    (`mechanical._primary_source`). Raises on a release with no filing date while a cut applies:
+    it cannot be placed on either side, and every release an assembly parses carries its 8-K's
+    date, so only a page built before that field could hold one (`releases_read` reads it as
+    no read)."""
+    if cut is not None and any(r.filed is None for r in releases):
+        raise ValueError("a release carries no filing date, so it cannot be cut at the page's "
+                         "price date")
+    kept: list[ReleaseExtract] = []
+    after: list[ReleaseExtract] = []
+    for r in releases:
+        (kept if r.filed is None or within_cut(r.filed, cut) else after).append(r)
+    return kept, after
 
 
 def releases_read(mech: MechanicalLayer) -> list[ReleaseExtract] | None:
@@ -149,9 +172,8 @@ def releases_read(mech: MechanicalLayer) -> list[ReleaseExtract] | None:
     rels = list(ps.releases) if ps is not None else []
     if any(r.filed is None for r in rels):
         return None
-    cut = price_date(mech)
-    return sorted((r for r in rels if cut is None or _filed(r) <= cut),
-                  key=lambda r: (_filed(r), r.source_ref))
+    kept, _after = releases_by_cut(rels, price_date(mech))
+    return sorted(kept, key=lambda r: (_filed(r), r.source_ref))
 
 
 def _filed(r: ReleaseExtract) -> date:

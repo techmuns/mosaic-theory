@@ -66,6 +66,7 @@ from vinci.dossier.schemas import (
     ForwardMultiple,
     ForwardMultipleHistory,
     GuidanceRow,
+    GuideAfterPriceDate,
     HistoricalForecastError,
     ImpliedRow,
     ImpliedValuation,
@@ -83,6 +84,7 @@ from vinci.dossier.schemas import (
     SourceStatus,
     TrendPoint,
 )
+from vinci.edgar.asof import within_cut
 
 Rows = list[list[Any]]
 
@@ -2061,45 +2063,115 @@ def multi_year_trajectory(bundle: CiqBundle) -> Sourced[str]:
     )
 
 
+#: A LISTING's block header on Estimates→Surprise: "<exchange>:<symbol> (<currency>)", as CIQ
+#: heads each listing's per-share rows ("NYSE:PARR (USD)", "OTCPK:DPTR.Q (USD)"). The company-wide
+#: rows sit under "Company Level (USD)", which is no listing.
+_SURPRISE_LISTING = re.compile(r"^([A-Za-z]+):(\S+) \(([A-Z]{3})\)$")
+
+
+def _share_symbol(text: str) -> str:
+    """A listing's symbol with its punctuation dropped: 'BRK.B' and 'BRK-B' are one share class."""
+    return re.sub(r"[^A-Z0-9]", "", text.upper())
+
+
+class _EpsBlock(NamedTuple):
+    """The Surprise sheet's block for the company's own listing."""
+
+    row: int | None            # its "EPS (GAAP)" row; None where the block carries none
+    header: int                # its own header row, which carries the block's fiscal years
+    listing: str               # the header as CIQ writes it, e.g. "NYSE:PARR (USD)"
+    passed_over: str | None    # the sheet's FIRST listing, where that is another listing's
+
+
+def _surprise_eps_block(rows: Rows, heads: list[int], ticker: str, *,
+                        end: int) -> _EpsBlock | str:
+    """The block CIQ heads with the company's OWN listing, never the sheet's first — or why none.
+
+    WHY (2026-11-09, audit RA-D1): this read the first "EPS (GAAP)" row anywhere in the sheet. On
+    Par Pacific the first block is the predecessor's OTC listing (OTCPK:DPTR.Q), so the page stated
+    that listing's FY2006–FY2010 as PARR's surprise history and dropped NYSE:PARR's FY2014–FY2025.
+    A sheet whose blocks name no listing of the company's refuses the EPS read, naming what it
+    holds: whose EPS a block carries is then something the page cannot say. ``heads`` are the
+    fiscal-year table's header rows, and ``end`` is where that table ends."""
+    named = [(i, m) for i in heads
+             if (m := _SURPRISE_LISTING.match(str(rows[i][0]).strip())) is not None]
+    own = [(i, m.group(0)) for i, m in named
+           if _share_symbol(m.group(2)) == _share_symbol(ticker)]
+    if not own:
+        return (f"the Surprise sheet heads no block with {ticker}'s own listing ("
+                + (f"its listings: {', '.join(dict.fromkeys(m.group(0) for _i, m in named))}"
+                   if named
+                   else "its blocks name no listing")
+                + "), so no GAAP-EPS surprise is read")
+    hdr, listing = own[0]
+    stop = next((i for i in heads if i > hdr), end)
+    ri = next((i for i in range(hdr + 1, stop)
+               if rows[i] and str(rows[i][0]).strip().startswith("EPS (GAAP)")), None)
+    first = named[0][1].group(0)
+    return _EpsBlock(row=ri, header=hdr, listing=listing,
+                     passed_over=first if first != listing else None)
+
+
 def surprise_history(bundle: CiqBundle) -> Sourced[str]:
     """Estimate beat/miss history from Estimates→Surprise — the pre-catalyst 'cracks' (EPS & revenue
     actual-vs-consensus). The sheet is by FISCAL YEAR (no quarterly view) — annual surprise;
-    +beat / −miss. Fail loud if the sheet/rows are absent."""
+    +beat / −miss. Fail loud if the sheet/rows are absent. The EPS row is the company's own
+    listing's (:func:`_surprise_eps_block`)."""
     try:
         rows = bundle.sheet("estimates", "Surprise")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "estimates", exc)
-    yhdr = next(
-        (
-            i for i, r in enumerate(rows)
-            if sum(1 for c in r[1:10] if (n := clean_num(c)) is not None and 2000 < n < 2100) >= 3
-        ),
-        None,
-    )
-    if yhdr is None:
+    heads = [
+        i for i, r in enumerate(rows)
+        if sum(1 for c in r[1:10] if (n := clean_num(c)) is not None and 2000 < n < 2100) >= 3
+    ]
+    if not heads:
         return Sourced.unknown(note="Surprise sheet has no fiscal-year header row")
+    yhdr = heads[0]
+    # the FISCAL-year table only: CIQ repeats every block under "Calendar Years" further down, and
+    # a listing missing from the fiscal table must not be found there and printed as "FY"
+    cal = next((i for i in range(yhdr + 1, len(rows))
+                if any(str(c).strip() == "Calendar Years" for c in rows[i][:3])), len(rows))
 
-    def series(ri: int | None) -> str | None:
+    def series(ri: int | None, hdr: int) -> str | None:
         if ri is None:
             return None
         out = [
             f"FY{int(yr)} {v:+.0%}"
             for j in range(1, len(rows[ri]))
             if (v := clean_num(rows[ri][j])) is not None
-            and j < len(rows[yhdr]) and (yr := clean_num(rows[yhdr][j])) is not None
+            and j < len(rows[hdr]) and (yr := clean_num(rows[hdr][j])) is not None
         ]
         return ", ".join(out) if out else None  # full series; the render windows it
 
+    fiscal = [i for i in heads if i < cal]
+    block = _surprise_eps_block(rows, fiscal, bundle.ticker, end=cal)
+    refused = block if isinstance(block, str) else None
+    if isinstance(block, _EpsBlock) and block.row is None:
+        refused = (f"the {block.listing} block carries no 'EPS (GAAP)' row, so no GAAP-EPS "
+                   "surprise is read")
     parts: list[str] = []
-    if (e := series(_find_row_prefix(rows, "EPS (GAAP)"))) is not None:
-        parts.append(f"GAAP-EPS surprise: {e}")
-    if (rv := series(_find_row(rows, "Revenue"))) is not None:
+    eps = (series(block.row, block.header) if isinstance(block, _EpsBlock) else None)
+    if eps is not None:
+        parts.append(f"GAAP-EPS surprise: {eps}")
+    # Revenue too is read in the FISCAL table only, against its own block's header — a Revenue row
+    # found under "Calendar Years" sits one column off the fiscal header and would print shifted FYs
+    rev = _find_row(rows[:cal], "Revenue")
+    rev_hdr = max((i for i in fiscal if rev is not None and i < rev), default=yhdr)
+    if (rv := series(rev, rev_hdr)) is not None:
         parts.append(f"Revenue surprise: {rv}")
     if not parts:
-        return Sourced.unknown(note="no EPS/Revenue surprise series in the Surprise sheet")
+        return Sourced.unknown(note=refused or "no EPS/Revenue surprise series in the Surprise "
+                                               "sheet")
+    # the listing is named only where the sheet's FIRST listing block is another one's — the case
+    # the old read got wrong — so a single-listing page's stamp is unchanged
+    ref = ("CIQ Estimates→Surprise (annual)"
+           if not isinstance(block, _EpsBlock) or block.passed_over is None or eps is None else
+           f"CIQ Estimates→Surprise (annual; GAAP EPS from the {block.listing} block — the "
+           f"sheet's first, {block.passed_over}, is another listing's)")
     return Sourced.present(
         "; ".join(parts) + " (GAAP-EPS basis; +beat / −miss)",
-        source_ref="CIQ Estimates→Surprise (annual)",
+        source_ref=ref, note=refused,
     )
 
 
@@ -4021,6 +4093,23 @@ def _guidance_rows(rows: Rows, bi: int, end: int) -> tuple[int | None, int | Non
     return gdate, guide, actual
 
 
+def _guidance_cell_ref(row: int, col: int) -> str:
+    """Where a Guidance cell sits on the export — 1-based, the sheet's own grid."""
+    return f"CIQ Estimates→Guidance, row {row + 1}, column {col + 1}"
+
+
+def _actual_date_row(rows: Rows, bi: int, end: int) -> int | None:
+    """The 'Actual/Latest Date' row of a Guidance metric block [bi, end) — CIQ's date for each
+    period's reported actual, under the 'Actual/Latest' sub-block (STATE row 57: the cut reads it,
+    so an outcome reported after the page's price date never enters its delivery record)."""
+    hdr = next((k for k in range(bi, end)
+                if rows[k] and str(rows[k][0]).strip() == "Actual/Latest"), None)
+    if hdr is None:
+        return None
+    return next((k for k in range(hdr, end)
+                 if rows[k] and str(rows[k][0]).strip() == "Actual/Latest Date"), None)
+
+
 class _GuidanceRead(NamedTuple):
     """The per-metric guidance read the string AND the table both format from (single source, no
     drift). Raw values; each formatter derives its own display (age phrasing, record phrasing)."""
@@ -4042,16 +4131,31 @@ class _GuidanceRead(NamedTuple):
 
 
 def _guidance_reads(
-    rows: Rows, starts: list[int], reference_date: date | None, stale_after_days: int
+    rows: Rows, starts: list[int], reference_date: date | None, stale_after_days: int,
+    *, cut: date | None = None, after: list[GuideAfterPriceDate] | None = None,
 ) -> list[_GuidanceRead]:
     """Per guidance-metric block: the latest guide + the sign-aware delivery record + most-recent
     resolved outcome. Counts ONLY resolved periods (range AND actual); parens are negative; a
-    present-but-empty block yields no read. Shared by the string and the table (H4).
+    present-but-empty block yields no read. Shared by the string, the table (H4) and the revenue
+    guide the check reads, so the three cannot cut differently.
 
     A LABEL IS READ AT ITS FIRST BLOCK. CIQ repeats a per-share block under each listing (GOOGL's
     sheet carries EPS Normalized, EPS (GAAP) and DPS under GOOGL twice and DPS under GOOG); the
     first is the one a label search found before blocks were discovered by structure (A-D8), and
-    each block still ends where the next one, repeated or not, begins."""
+    each block still ends where the next one, repeated or not, begins.
+
+    CELLS DATED AFTER ``cut`` ARE NOT READ (STATE row 57) — the walk only; `_reads_at_cut` is
+    what every caller uses, and it withholds the whole read when a GUIDE is among them. A guide
+    CIQ dates after ``cut`` is read neither as the latest guide nor in the delivery record, whose
+    actual it could only follow; an actual CIQ dates after ``cut`` (its 'Actual/Latest Date') is
+    kept out of the record, under a guide that is still read. CIQ's export is taken when it is
+    taken, so it can hold what the market had not seen on the price date: on disk 2026-11-09,
+    UBER's carries two guides and two actuals dated 2026-11-04 beside its page's 2026-10-23 close,
+    NCNO's five guides and two actuals dated 2026-08-25 beside 2026-08-17. Each cell left out is
+    appended to ``after``, so the caller states it rather than losing it. A cell whose date does
+    not parse cannot be placed after the cut and is read as before (an undated guide is never the
+    latest, and counts in the record) — none on the 25 Guidance sheets the frozen pages have on
+    disk (0 of 3,782 resolved periods). ``cut`` None reads every cell."""
     reads: list[_GuidanceRead] = []
     seen: set[str] = set()
     for idx, bi in enumerate(starts):
@@ -4061,6 +4165,7 @@ def _guidance_reads(
             continue
         seen.add(metric)
         gdate, guide, actual = _guidance_rows(rows, bi, end)
+        adate = _actual_date_row(rows, bi, end)
         header = _nearest_period_header(rows, bi)
         if gdate is None or guide is None or header is None:
             continue
@@ -4080,10 +4185,29 @@ def _guidance_reads(
             cost_like = higher_is_delivery is False or rng[1] < 0
             gd = excel_date(rows[gdate][j]) if j < len(rows[gdate]) else None
             per_j = str(header[j]).strip()
+            if gd is not None and not within_cut(gd, cut):
+                if after is not None:
+                    after.append(GuideAfterPriceDate(
+                        metric=metric, period=per_j, read="guide",
+                        value=str(rows[guide][j]).strip(), dated=gd.isoformat(),
+                        source_ref=_guidance_cell_ref(guide, j)))
+                continue
             if gd is not None and (latest is None or gd > latest[0]):
                 latest = (gd, per_j, str(rows[guide][j]).strip(), cost_like)
             av = _cell_at(rows, actual, j)
             if av is not None and higher_is_delivery is not None:
+                # an outcome CIQ dates after the cut was not known on the price date: the period
+                # stays out of the record (UBER's FQ3 2026, reported 2026-11-04, on a 10-23 page)
+                ad = (excel_date(rows[adate][j]) if adate is not None and j < len(rows[adate])
+                      else None)
+                if ad is not None and not within_cut(ad, cut):
+                    if after is not None:
+                        assert actual is not None   # `_cell_at` read a value from that row
+                        after.append(GuideAfterPriceDate(
+                            metric=metric, period=per_j, read="actual",
+                            value=str(rows[actual][j]).strip(), dated=ad.isoformat(),
+                            source_ref=_guidance_cell_ref(actual, j)))
+                    continue
                 # A POINT GUIDE INSIDE ITS OWN ROUNDING NOISE IS REFUSED, NOT ADJUDICATED — see
                 # `_POINT_DECISION_BAND`. Outside the band a point call is as decidable as a range
                 # call (a −20% shortfall against a forecast is a miss on any reading), so only the
@@ -4118,9 +4242,38 @@ def _guidance_reads(
     return reads
 
 
+#: Why a Guidance sheet is not read at the page's price date. Written into the synthesis's facts
+#: (the bridge and its rows), so it names no date, count or value of what came after.
+GUIDANCE_NOT_AT_CUT = ("Estimates→Guidance not read at the page's price date: the export holds "
+                       "guidance dated after it, and CIQ keeps only each period's latest guide, "
+                       "so the guidance standing on the price date is not on this export")
+
+
+def _reads_at_cut(
+    rows: Rows, starts: list[int], reference_date: date | None, stale_after_days: int,
+    cut: date | None,
+) -> tuple[list[_GuidanceRead] | None, list[GuideAfterPriceDate]]:
+    """(the guidance reads as they stood on ``cut``, every cell the cut leaves out). THE READS
+    ARE NONE WHEN ANY GUIDE IS DATED AFTER THE CUT (STATE row 57). CIQ keeps ONE guide per period,
+    its latest, so a guide revised after the price date has overwritten the one that stood on it:
+    on LLY's export (on disk 2026-11-09) FY 2026's EPS guide is 35.00–36.00, dated 2026-10-29, and
+    the guides given for FY 2026 before it are gone. Cutting that cell leaves FY 2025's guide of
+    2025-10-30 as the "latest" at a 2026-10-16 price date, which is false. Nothing on the sheet
+    tells a guide first given after the cut (UBER's FQ4 2026, 2026-11-04) from one revised, so no
+    guide is read: the bridge, its rows and the revenue guide all read UNKNOWN
+    (`GUIDANCE_NOT_AT_CUT`), and the gap test then has no second read, never a false one. An
+    ACTUAL dated after the cut is exact to cut — CIQ dates each period's one actual — so only its
+    period leaves the delivery record, and the sheet is still read."""
+    after: list[GuideAfterPriceDate] = []
+    reads = _guidance_reads(rows, starts, reference_date, stale_after_days, cut=cut, after=after)
+    if any(a.read == "guide" for a in after):
+        return None, after
+    return reads, after
+
+
 def guidance_bridge(
     bundle: CiqBundle, *, as_of: str | None = None,
-    reference_date: date | None = None, stale_after_days: int = 45,
+    reference_date: date | None = None, stale_after_days: int = 45, cut: date | None = None,
 ) -> Sourced[str]:
     """(d) GUIDANCE BRIDGE — per metric: the LATEST guide {range, date} + a delivery track-record.
     SIGN-AWARE: a revenue-like (positive) guide is met when actual ≥ floor; a cost-like (negative)
@@ -4136,8 +4289,11 @@ def guidance_bridge(
     starts = _guidance_starts(rows)
     if not starts:
         return Sourced.unknown(note="no guidance metric blocks in Estimates→Guidance")
+    reads, _after = _reads_at_cut(rows, starts, reference_date, stale_after_days, cut)
+    if reads is None:
+        return Sourced.unknown(note=GUIDANCE_NOT_AT_CUT)
     lines: list[str] = []
-    for r in _guidance_reads(rows, starts, reference_date, stale_after_days):
+    for r in reads:
         seg = f"{r.metric}: latest guide {r.guide} for {r.period} (dated {r.dated.isoformat()})"
         if r.stale_days is not None:
             seg += f" (stale — {r.stale_days}d old)"  # R3: age once, no date repeat
@@ -4168,7 +4324,7 @@ def guidance_bridge(
 
 
 def revenue_guide_lohi(
-    bundle: CiqBundle, *, reference_date: date | None = None
+    bundle: CiqBundle, *, reference_date: date | None = None, cut: date | None = None,
 ) -> tuple[float | None, float | None, str | None, date | None]:
     """The latest CIQ revenue guide as (low, high, PERIOD, DATED) — a POINT guide reads (v, v,
     period, dated), a RANGE reads (lo, hi, period, dated), absent reads (None, None, None, None).
@@ -4191,7 +4347,8 @@ def revenue_guide_lohi(
         rows = bundle.sheet("estimates", "Guidance")
     except CiqUnavailableError:
         return (None, None, None, None)
-    for r in _guidance_reads(rows, _guidance_starts(rows), reference_date, 45):
+    reads, _after = _reads_at_cut(rows, _guidance_starts(rows), reference_date, 45, cut)
+    for r in reads or []:
         if r.metric != "Revenue":  # exactly the block the fixed list held (A-D8 widened the rest)
             continue
         if r.guide_num is not None:
@@ -4225,6 +4382,7 @@ def revenue_guide_from_rows(
 
 def guidance_bridge_rows(
     bundle: CiqBundle, *, reference_date: date | None = None, stale_after_days: int = 45,
+    cut: date | None = None,
 ) -> Sourced[list[GuidanceRow]]:
     """(H4) The guidance bridge as structured rows for the TABLE — SAME reads as the flat string,
     formatted per column (metric | latest guide | for | dated | age | record | most recent). UNKNOWN
@@ -4235,7 +4393,10 @@ def guidance_bridge_rows(
         s: Sourced[str] = _miss_or_unknown(bundle, "estimates", exc)
         return Sourced.unknown(note=s.note or "Estimates→Guidance unavailable")
     starts = _guidance_starts(rows)
-    reads = _guidance_reads(rows, starts, reference_date, stale_after_days) if starts else []
+    reads, _after = (_reads_at_cut(rows, starts, reference_date, stale_after_days, cut)
+                     if starts else ([], []))
+    if reads is None:
+        return Sourced.unknown(note=GUIDANCE_NOT_AT_CUT)
     if not reads:
         return Sourced.unknown(note="no parseable guidance ranges in Estimates→Guidance")
     out: list[GuidanceRow] = []
@@ -4253,6 +4414,19 @@ def guidance_bridge_rows(
             age=age, record=record, most_recent=recent))
     return Sourced.present(
         out, source_ref=GUIDANCE_BASIS_REF)
+
+
+def guidance_after_cut(bundle: CiqBundle, *, cut: date) -> list[GuideAfterPriceDate]:
+    """Every Guidance cell CIQ dates after the page's price date — what the three guidance reads
+    above leave out at ``cut``, found by the SAME walk (`_reads_at_cut`), so the list is exactly
+    their omissions (STATE row 57); a guide among them is why they read UNKNOWN. Empty when the
+    sheet is absent or holds none: nothing on it can then have been read past the cut either."""
+    try:
+        rows = bundle.sheet("estimates", "Guidance")
+    except CiqUnavailableError:
+        return []
+    starts = _guidance_starts(rows)
+    return _reads_at_cut(rows, starts, None, 45, cut)[1] if starts else []
 
 
 def revision_events(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[list[RevisionEvent]]:
@@ -4324,11 +4498,9 @@ def _listing_rating(bundle: CiqBundle) -> tuple[str | None, str | None, str | No
         return None
     heads = [i for i in range(sec + 1, len(rows)) if len(rows[i]) > 1
              and str(rows[i][1]).strip() == "Current" and ":" in str(rows[i][0])]
-    def symbol(text: str) -> str:  # 'BRK.B' and 'BRK-B' are one share class
-        return re.sub(r"[^A-Z0-9]", "", text.upper())
-
     own = next((i for i in heads
-                if symbol(str(rows[i][0]).strip().rsplit(":", 1)[1]) == symbol(bundle.ticker)),
+                if _share_symbol(str(rows[i][0]).strip().rsplit(":", 1)[1])
+                == _share_symbol(bundle.ticker)),
                None)
     if own is None:
         held = ", ".join(str(rows[i][0]).strip() for i in heads) or "none"
@@ -4524,8 +4696,18 @@ def _parse_relationship_sheet(rows: list[list[Any]]) -> list[str] | None:
 
 
 def customers(bundle: CiqBundle) -> Sourced[str]:
+    """The roster alone — :func:`customer_roster` without its count."""
+    return customer_roster(bundle)[0]
+
+
+def customer_roster(bundle: CiqBundle) -> tuple[Sourced[str], int | None]:
     """Customer concentration from the CIQ Business-Relationships export — parsed into readable
     lines (name / relationship / industry), not a raw pipe-dump. Fail loud if unparsed.
+
+    RETURNED WITH ITS COUNT (2026-11-09, audit RBC-D1): how many recently disclosed rows parsed,
+    taken from the parsed list BEFORE :func:`_roster` caps it at 30. The roster is a display string,
+    and the renderers counted its ";" pieces, so every list over 30 printed "31". The count is None
+    wherever the roster is not PRESENT.
 
     ROUTED BY FORMAT (item 21). The export ships as .rtf for most names and as a .xls SPREADSHEET
     for others (SMPL today, WERN next). ``read_text`` refuses a spreadsheet by design — and this
@@ -4544,14 +4726,14 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
             note=(f"no Customers export for {bundle.ticker} — pull it and re-run"
                   if cands else
                   f"no Customers & Suppliers export for {bundle.ticker} — pull it and re-run")
-        )
+        ), None
     parsed: list[str] | None
     prior: list[str] = []
     if wb.fmt in (CiqFormat.BIFF_XLS, CiqFormat.OOXML):
         try:
             sheets = read_sheets(wb.path, wb.fmt)
         except CiqParseError as exc:
-            return Sourced.unknown(note=str(exc))
+            return Sourced.unknown(note=str(exc)), None
         parsed = next(
             (p for rows in sheets.values() if (p := _parse_relationship_sheet(rows))), None
         )
@@ -4559,7 +4741,7 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
         try:
             raw = read_text(wb.path, wb.fmt)
         except CiqParseError as exc:
-            return Sourced.unknown(note=str(exc))
+            return Sourced.unknown(note=str(exc)), None
         rel = _relationships(raw)
         parsed, prior = (rel.recent, rel.prior) if rel is not None else (None, [])
         # the recent section's own statement once rows parse; the whole view's when none did
@@ -4576,7 +4758,7 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
                     f"CIQ discloses no recently disclosed customers for {bundle.ticker} — the "
                     f"recent section says so in CIQ's own words, not unparsed")
             return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
-                                   source_ref=f"CIQ Customers&Suppliers {wb.path.name}")
+                                   source_ref=f"CIQ Customers&Suppliers {wb.path.name}"), None
     if not parsed:
         # rows parsed only under the prior head: the table was read, so never "could not parse"
         said = (f"{wb.path.name}'s recent section lists no customer and does not say it has none"
@@ -4585,9 +4767,9 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
         # a note naming the file's prior rows makes a claim about the file: cite it (round 2)
         return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
                                source_ref=(f"CIQ Customers&Suppliers {wb.path.name}" if prior
-                                           else None))
-    return Sourced.present(_roster(parsed), source_ref=f"CIQ Customers&Suppliers {wb.path.name}",
-                           note=_prior_note(prior) or None)
+                                           else None)), None
+    return (Sourced.present(_roster(parsed), source_ref=f"CIQ Customers&Suppliers {wb.path.name}",
+                            note=_prior_note(prior) or None), len(parsed))
 
 
 def _roster(rows: list[str]) -> str:

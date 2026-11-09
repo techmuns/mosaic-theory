@@ -1,6 +1,6 @@
 # Dossier — NETFLIX INC (Nasdaq: NFLX)
 
-_November 5, 2026 · extraction 2026-11-05.input-record_
+_November 5, 2026 · extraction 2026-11-05.input-record · layers refreshed to 2026-11-09.order2-pages_
 
 # Brief — first cut
 
@@ -154,7 +154,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 ## Business quality
 - **Segments (revenue share):** Streaming Entertainment Service — single segment [1]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — single-segment reporting (Streaming Entertainment Service) — no segment EBITDA to break out; the consolidated EBITDA is the whole business
-- **Customers:** 31 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [36]
+- **Customers:** 49 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [36]
 - **Geographic:** United States and Canada (UCAN) 44%; Europe, Middle East, and Africa (EMEA) 32%; Latin America (LATAM) 12%; Asia-Pacific (APAC) 12% [2]
 
 ## The argument
@@ -458,7 +458,7 @@ _16 undated / later aggregate line item(s) in the appendix panel_
 _10 to verify._
 
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Global streaming network followed as an OVERSHOOT candidate: down ~41% from its high with EV/EBITDA at the 7.9th percentile of its own history, the question is whether the de-rating overshoots a business whose mechanism is intact. Re-tagged from `quality` 2026-08-19 — the anchor already selects R1 (drawdown reversion), so the sleeve was the only thing out of place. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.
-- CIQ READING CONFIRMED BY THE FILING — Merger & Related Restruct. Charges ($M), LTM to 2026-09-30: the page states +2,800.0, the quarterly export's reading, because CIQ's two exports disagree: the annual export's LTM reads -2,800.0. No filed concept states the item alone; the filings carry it inside us-gaap:NonoperatingIncomeExpense, a wider line, and the quarterly export's breakdown of that line (Interest and Invest. Income, Currency Exchange Gains (Loss), Other Non-Operating Inc. (Exp.) and this row) reproduces it in every quarter within 0.5 $M — 45.5 against 45.473 filed (2025-12-31); 2,852.2 against 2,852.166 filed (2026-03-31); 51.7 against 51.661 filed (2026-06-30); 43.0 against 43.006 filed (2026-09-30) (0001065280-26-000034; 0001065280-25-000406; 0001065280-26-000138; 0001065280-26-000212; 0001065280-26-000291). The annual export reaches the same LTM total, 2,992.3 against 2,992.3 filed, only by carrying Currency Exchange Gains (Loss) -58.4 where the quarterly export's four quarters carry -76.6; Other Non-Operating Inc. (Exp.) +5,554.7 where the quarterly export's four quarters carry -27.0: the filed total alone cannot tell the two exports apart; the quarterly export's breakdown can be set against each quarter, and it reconciles in every one
+- CIQ'S BREAKDOWN RECONCILES TO THE FILED LINE; THE ROW'S OWN FIGURE IS CIQ'S, NOT THE FILING'S — Merger & Related Restruct. Charges ($M), LTM to 2026-09-30: the page states +2,800.0, the quarterly export's reading, because CIQ's two exports disagree: the annual export's LTM reads -2,800.0. No filed concept states the item alone; the filings carry it inside us-gaap:NonoperatingIncomeExpense, a wider line, and the quarterly export's breakdown of that line (Interest and Invest. Income, Currency Exchange Gains (Loss), Other Non-Operating Inc. (Exp.) and this row) reproduces it in every quarter within 0.5 $M — 45.5 against 45.473 filed (2025-12-31); 2,852.2 against 2,852.166 filed (2026-03-31); 51.7 against 51.661 filed (2026-06-30); 43.0 against 43.006 filed (2026-09-30) (0001065280-26-000034; 0001065280-25-000406; 0001065280-26-000138; 0001065280-26-000212; 0001065280-26-000291). The annual export reaches the same LTM total, 2,992.3 against 2,992.3 filed, only by carrying Currency Exchange Gains (Loss) -58.4 where the quarterly export's four quarters carry -76.6; Other Non-Operating Inc. (Exp.) +5,554.7 where the quarterly export's four quarters carry -27.0: the filed total alone cannot tell the two exports apart; the quarterly export's breakdown can be set against each quarter, and it reconciles in every one
 - Untraceable figure 166 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'Against a HETEROGENEOUS peer set (caps $166M–$3,900.0B, 23,480x span; name $256.7B), NFLX carries BETTER fundamentals than the peer median on margin (32% vs 21%) and LT EPS growth (21% vs 16%) yet trades at EV/EBITDA 15.9x vs peer median 18.2x — posing whether that discount is RESIDUAL (overshoot) rather than EARNED; the human must judge, not computed here.'
 - Untraceable figure 3900 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'Against a HETEROGENEOUS peer set (caps $166M–$3,900.0B, 23,480x span; name $256.7B), NFLX carries BETTER fundamentals than the peer median on margin (32% vs 21%) and LT EPS growth (21% vs 16%) yet trades at EV/EBITDA 15.9x vs peer median 18.2x — posing whether that discount is RESIDUAL (overshoot) rather than EARNED; the human must judge, not computed here.'
 - Untraceable figure 51124 (a bull point) — footnoted to CIQ Financials→Income Statement (annual) + Estimates→Trends (FY E), which does not contain it; verify the source before relying on it: 'Revenue growth remains double-digit — Q3 Sep-30-2026 up +11.8% YoY — with FY26E revenue $51,124M and FY27E $56,601M, so top-line deceleration is modest, not a terminal roll-over.'
@@ -644,6 +644,9 @@ _Source §: 8-K 0001193125-25-327462 · d82688dex101.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-11-05 11:58 UTC
 - **Extraction:** 2026-11-05.input-record — every page records what it was built from (`inputs`, JSON-only): the full sha256 of each CIQ export, HTTP response and price series the build read, cut on the page to the fact layer's sources plus a digest of the rest (the build's run record carries them all); a page built before it is backfilled from its own stamps, the rest `unrecorded`. No extracted value changes
+- **Refreshed since assembly** (oldest first):
+  - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
+  - 2026-11-09 · caveats — caveat-reword at 2026-11-09.order2-pages
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-11-04
 - **Panel age:** oldest panel 9d old — 2026-10-27 (valuation.implied_expectations.tev_as_of), against a 2026-11-05 build
 - **Consensus age:** consensus 9d old (2026-10-27, valuation.implied_expectations.multiples_as_of) — within the ceiling

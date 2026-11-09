@@ -1,6 +1,6 @@
 # Dossier — MCKESSON CORP (NYSE: MCK)
 
-_November 5, 2026 · extraction 2026-11-05.input-record_
+_November 5, 2026 · extraction 2026-11-05.input-record · layers refreshed to 2026-11-09.order2-pages_
 
 # Brief — first cut
 
@@ -639,6 +639,8 @@ _Source §: 8-K 0001193125-13-450016 · d629383dex101.htm · amended by 00009276
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-11-05 12:20 UTC
 - **Extraction:** 2026-11-05.input-record — every page records what it was built from (`inputs`, JSON-only): the full sha256 of each CIQ export, HTTP response and price series the build read, cut on the page to the fact layer's sources plus a digest of the rest (the build's run record carries them all); a page built before it is backfilled from its own stamps, the rest `unrecorded`. No extracted value changes
+- **Refreshed since assembly** (oldest first):
+  - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-11-04
 - **Panel age:** oldest panel 1d old — 2026-11-04 (valuation.implied_expectations.tev_as_of), against a 2026-11-05 build
 - **Consensus age:** consensus 1d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling

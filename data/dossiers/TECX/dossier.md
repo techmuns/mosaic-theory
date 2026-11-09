@@ -146,7 +146,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 
 ## Business quality
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section, and its revenue roster could not be read either — the reason for the absence is undetermined
-- **Customers:** 2 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [23]
+- **Customers:** mapped client relationships (count not recorded on this page) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [23]
 
 ## The argument
 

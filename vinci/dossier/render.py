@@ -404,15 +404,20 @@ def _forward_multiples_md(s: Sourced[list[ForwardMultiple]] | None) -> str:
             f"{_cite(s.source_ref)}")
 
 
-def _fmt_customers(v: Any) -> str:
+def _fmt_customers(v: Any, listed: int | None = None) -> str:
     """A raw relationship dump ('A (KOSE:X) — the name · Client Services · src: …; B …') → a count.
-    The Brief already treats raw customer names as noise; the roster stays in dossier.json."""
+    The Brief already treats raw customer names as noise; the roster stays in dossier.json.
+
+    THE COUNT IS THE STRUCTURED ONE (2026-11-09, audit RBC-D1): `Concentration.customers_listed`,
+    every row the export lists. This counted the roster's ";" pieces, and the roster keeps 30 rows
+    plus "…(+N more)", so eight pages printed "31" for lists of 34 to 726. A page built before the
+    field carries no count, and says so rather than reading one back out of the display string."""
     text = str(v)
     if "src:" not in text:
         return text
-    n = len([seg for seg in text.split(";") if seg.strip()])
-    return (f"{n} mapped client relationship(s) — roster in JSON; concentration %, when disclosed, "
-            "is the 10-Q read above")
+    head = (f"{listed} mapped client relationship(s)" if listed is not None else
+            "mapped client relationships (count not recorded on this page)")
+    return f"{head} — roster in JSON; concentration %, when disclosed, is the 10-Q read above"
 
 
 def _fmt_shape(v: Any) -> str:
@@ -4539,7 +4544,8 @@ def _business_quality_lines(m: MechanicalLayer) -> list[str]:
         *([_fact("Segments (profit — the filer's own measure, 10-K)",
                  m.concentration.segment_profit, lambda v: str(v.line))]
           if m.concentration.segment_profit is not None else []),
-        _fact("Customers", m.concentration.customers, _fmt_customers),
+        _fact("Customers", m.concentration.customers,
+              lambda v: _fmt_customers(v, m.concentration.customers_listed)),
         _fact("Geographic", m.concentration.geographic),
         "",
     ]

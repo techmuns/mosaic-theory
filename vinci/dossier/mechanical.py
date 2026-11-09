@@ -67,6 +67,7 @@ from vinci.dossier.schemas import (
     ForwardMultipleHistory,
     GapDown,
     GuidanceItem,
+    GuideAfterPriceDate,
     IdiosyncraticVsShared,
     ImpliedExpectationRow,
     ImpliedExpectations,
@@ -85,6 +86,7 @@ from vinci.dossier.schemas import (
     Quality,
     ReconciliationValue,
     RegistrationFiling,
+    ReleaseAfterPriceDate,
     ReleaseExtract,
     SbcLine,
     SegmentEconomics,
@@ -97,7 +99,7 @@ from vinci.dossier.schemas import (
 )
 from vinci.edgar import cover_count, filing_sections, primary_source, release_parse, segment_facts
 from vinci.edgar import debt_maturities as dmx
-from vinci.edgar.asof import AsOfEdgar, page_price_date
+from vinci.edgar.asof import AsOfEdgar, page_price_date, within_cut
 from vinci.edgar.client import EdgarClient, Filing, annual_report
 from vinci.edgar.client import events as eight_k_events
 from vinci.edgar.concepts import (
@@ -2278,13 +2280,7 @@ def _adjusted_facts(
     src = revised_guidance.source_ref or "EDGAR 8-K Ex-99.1"
     text = revised_guidance.value or ""
     eb, eps = _ADJ_EBITDA.search(text), _ADJ_EPS.search(text)
-    # SAY WHICH ABSENCE (2026-10-21). 26 of 27 pages read "adjusted figure not in the 99.1 revised
-    # guidance", and on most of them no revised guidance had been read at all — the note claimed a
-    # read that never happened (TJX and Burlington among them, while their releases state one).
-    unk: Sourced[str] = Sourced.unknown(
-        note="adjusted figure not in the 99.1 revised guidance"
-        if revised_guidance.status is SourceStatus.PRESENT
-        else "no revised guidance at the drawdown to read an adjusted figure from")
+    unk = no_adjusted_figure(revised_guidance)
     price = record.prices.last.value if record.prices.last.is_known else None
 
     adj_eps = unk
@@ -2347,6 +2343,19 @@ def _adjusted_facts(
                     source_ref=f"{src} (adj-EBITDA) + EDGAR net debt + EOD price × shares",
                 )
     return adj_eps, ev_adj, nd_adj
+
+
+def no_adjusted_figure(revised_guidance: Sourced[str]) -> Sourced[str]:
+    """The adjusted figures' UNKNOWN where the drawdown's guidance yields none — the ``absent``
+    `_release_adjusted_eps` then extends. SAY WHICH ABSENCE (2026-10-21): 26 of 27 pages read
+    "adjusted figure not in the 99.1 revised guidance", and on most of them no revised guidance
+    had been read at all — the note claimed a read that never happened (TJX and Burlington among
+    them, while their releases state one). One function, so the as-of cut's harness transform
+    (`vinci/evals/variants.asof_cut`) words it as the assembly does."""
+    return Sourced.unknown(
+        note="adjusted figure not in the 99.1 revised guidance"
+        if revised_guidance.status is SourceStatus.PRESENT
+        else "no revised guidance at the drawdown to read an adjusted figure from")
 
 
 def _release_adjusted_eps(
@@ -2741,12 +2750,14 @@ def _segment_profit(edgar: EdgarClient, http: CachedHttp,
 
 def _concentration(bundle: CiqBundle, edgar: EdgarClient, http: CachedHttp,
                    cik: str | None) -> Concentration:
+    customers, listed = ciq_sheets.customer_roster(bundle)
     return Concentration(
         segments=ciq_sheets.segments(bundle),
         segment_ebitda=ciq_sheets.segment_ebitda(bundle),
-        customers=ciq_sheets.customers(bundle),
+        customers=customers,
         geographic=ciq_sheets.geographic(bundle),
         segment_profit=_segment_profit(edgar, http, cik),
+        customers_listed=listed,
     )
 
 
@@ -4238,12 +4249,18 @@ def _catalyst_path(
     *,
     insider_activity: Sourced[str] | None = None,
     short_interest: Sourced[str] | None = None,
+    cut: date | None = None,
 ) -> CatalystPath:
     """Assemble the horizon-matched estimates/guidance/revision view from the five new Estimates
     sheets. The workbook as-of (freshest embedded data date) is resolved ONCE and threaded into
     every sub-field's source_ref. Each sub-field independently reads UNKNOWN/MISSING when its sheet
     is absent — a FRESH assembly always builds the block; raggedness lives one level down. The (F)
-    positioning inputs are assembled upstream (they need EDGAR/FINRA + the record), slotted in."""
+    positioning inputs are assembled upstream (they need EDGAR/FINRA + the record), slotted in.
+
+    The guidance reads are CUT AT THE PAGE'S PRICE DATE (``cut``, STATE row 57): a guide CIQ dates
+    after it reaches neither the bridge nor its rows, and is kept in `guidance_after_price_date`
+    for the caveat to name (`ciq_sheets.guidance_after_cut`). With no ``cut`` the field stays
+    absent: nothing was cut, so nothing is stated."""
     asof = ciq_sheets.estimates_as_of(bundle)
     aod = asof.value
     return CatalystPath(
@@ -4252,15 +4269,18 @@ def _catalyst_path(
         acceleration_read=ciq_sheets.acceleration_read(bundle, as_of=aod),
         cross_name_anchor=ciq_sheets.cross_name_anchor(bundle, as_of=aod),
         guidance_bridge=ciq_sheets.guidance_bridge(
-            bundle, as_of=aod, reference_date=reference_date, stale_after_days=_STALE_CLOSE_DAYS
+            bundle, as_of=aod, reference_date=reference_date, stale_after_days=_STALE_CLOSE_DAYS,
+            cut=cut,
         ),
         guidance_bridge_rows=ciq_sheets.guidance_bridge_rows(
-            bundle, reference_date=reference_date, stale_after_days=_STALE_CLOSE_DAYS
+            bundle, reference_date=reference_date, stale_after_days=_STALE_CLOSE_DAYS, cut=cut,
         ),
         revision_events=ciq_sheets.revision_events(bundle, as_of=aod),
         consensus_stats=ciq_sheets.consensus_stats(bundle, as_of=aod),
         insider_activity=insider_activity,
         short_interest=short_interest,
+        guidance_after_price_date=(ciq_sheets.guidance_after_cut(bundle, cut=cut)
+                                   if cut is not None else None),
     )
 
 
@@ -5649,7 +5669,7 @@ def _latest_balance_date(facts: dict[str, Any] | None) -> date | None:
 
 def _release_lines(releases: list[ReleaseExtract], *, bundle: CiqBundle,
                    nde: Sourced[float] | None, card: Any | None,
-                   reference_date: date | None,
+                   reference_date: date | None, cut: date | None = None,
                    ) -> tuple[str, primary_source.GuideVerification]:
     """(`basis_triangulation`, the guide check whole — `guide_verification` and its outcome
     `guide_verification_check`) — the two primary-source lines built FROM THE
@@ -5660,7 +5680,10 @@ def _release_lines(releases: list[ReleaseExtract], *, bundle: CiqBundle,
 
     Triangulation: each leverage row basis-labelled; the FY margins, the impairment and the LTM
     adjusted EBITDA from the releases. Guide: CIQ's revenue guide (point OR range) against the
-    release guide of its own date and the prior-FY actual (:func:`_guide_verification`)."""
+    release guide of its own date and the prior-FY actual (:func:`_guide_verification`). CIQ's
+    guide is read as it stood on ``cut``, the page's price date (STATE row 57): a refresh that
+    re-reads a newer export passes the page's own, so it checks the guide the page was priced
+    against, never one CIQ dated since."""
     tde = ciq_sheets.comps_total_debt_ebitda_value(bundle)
     net_debt = ciq_sheets.net_debt(bundle)
     fy = _fy_reconciliation(releases)
@@ -5672,7 +5695,7 @@ def _release_lines(releases: list[ReleaseExtract], *, bundle: CiqBundle,
         gaap_gross_margin=fy.get("gross margin"), impairment=_fy_impairment(releases),
         revenue=fy.get("revenue"), covenant_basis=_covenant_basis(card))
     ciq_lo, ciq_hi, ciq_period, ciq_dated = ciq_sheets.revenue_guide_lohi(
-        bundle, reference_date=reference_date)
+        bundle, reference_date=reference_date, cut=cut)
     guide = _guide_verification(releases, ciq_lo=ciq_lo, ciq_hi=ciq_hi, ciq_period=ciq_period,
                                 ciq_dated=ciq_dated)
     return tri, guide
@@ -5914,7 +5937,7 @@ def _covenant_basis(card: Any | None) -> str | None:
 def _primary_source(
     record: DataRecord, edgar: EdgarClient, http: CachedHttp,
     bundle: CiqBundle, reference_date: date, mech: MechanicalLayer,
-    card: Any | None = None,
+    card: Any | None = None, *, cut: date | None = None,
 ) -> tuple[PrimarySource, float, OperatingDriversExtract]:
     """(RC-1 C) Fetch the primary-source filings (recent 8-K EX-99.1 releases + the latest 10-Q),
     parse them, and run the four cross-source derivations over them + the CIQ/EDGAR mechanical
@@ -5930,7 +5953,15 @@ def _primary_source(
 
     Also assembles the (PR-B) operating-driver rows over the SAME already-fetched text
     (A1 releases + A2 10-Q MD&A) plus CIQ Key Developments (A3) — zero extra I/O. Returns
-    (PrimarySource, fetch-latency seconds, OperatingDriversExtract)."""
+    (PrimarySource, fetch-latency seconds, OperatingDriversExtract).
+
+    CUT AT THE PAGE'S PRICE DATE (``cut``, STATE row 57), AND THE CUT STATED. A results 8-K filed
+    after it is never fetched, so no release, driver row, guide or line below reads it; it is
+    named in `releases_after_price_date` instead. On an assembly the client is EDGAR as it stood on
+    the cut (`AsOfEdgar`), which lists no such 8-K, so they are read from the index as it stands
+    now (`AsOfEdgar.uncut`, which says what the cut LEFT OUT) — the filing list only, never an
+    exhibit. A caller holding an uncut client (the refresh's rebuild) meets them in its own list
+    and skips them there. With no ``cut`` nothing is cut and the field stays absent."""
     cik = record.identity.cik
     # read before the clock starts, as it was: the latency counts the filings, not companyfacts
     facts = _companyfacts_or_none(edgar, cik)
@@ -5943,12 +5974,16 @@ def _primary_source(
     driver_rows: list[OperatingDriver] = []
     driver_qa: list[str] = []
     saw_release = saw_10q = False
+    unread: list[ReleaseAfterPriceDate] = []   # results 8-Ks filed after the cut (row 57)
     # (1) recent 8-K EX-99.1 earnings/event releases (one failing exhibit never drops the rest) -
     if cik:
         try:
             # 8-Ks, and an 8-K/A for the codes it adds (E1-D7)
-            for f in eight_k_events(edgar, cik)[:10]:
-                if not (set(f.items) & {"2.02", "8.01"}):
+            # the cut BEFORE the window: an uncut client's newest 8-Ks would otherwise take the
+            # slots of the ones an assembly's cut view reads (the refresh's rebuild)
+            in_cut, unread = _events_by_cut(eight_k_events(edgar, cik), cut)
+            for f in in_cut[:10]:
+                if not (set(f.items) & _RESULTS_ITEMS):
                     continue
                 try:
                     urls = release_parse.exhibit_991_urls(http, cik, f.accession)
@@ -5958,7 +5993,7 @@ def _primary_source(
                         # often than a filing that truly has none — and a silent zero here reads
                         # downstream as "this company said nothing", which is a different claim.
                         qa.append(f"primary-source: 8-K {f.accession} carries "
-                                  f"{'/'.join(sorted(set(f.items) & {'2.02', '8.01'}))} but no "
+                                  f"{'/'.join(sorted(set(f.items) & _RESULTS_ITEMS))} but no "
                                   f"EX-99.1 exhibit was found")
                     for url in urls:
                         txt = normalize_text(html_to_text(http.get_text(url, ttl_seconds=_PS_TTL)))
@@ -5974,6 +6009,16 @@ def _primary_source(
                               f"({type(exc).__name__})")
         except Exception as exc:
             qa.append(f"primary-source: 8-K enumeration failed ({type(exc).__name__})")
+    after: list[ReleaseAfterPriceDate] | None = None
+    if cut is not None:
+        listed = _results_8ks_after(edgar, cik, cut) if cik else []
+        if listed is None:
+            qa.append("primary-source: the results 8-Ks filed after the page's price date "
+                      f"({cut.isoformat()}) could not be listed, so the page cannot say which "
+                      "it does not read")
+        else:
+            seen = {u.source_ref for u in unread}
+            after = unread + [u for u in listed if u.source_ref not in seen]
     # (2) latest 10-Q filing sections — or, for a filer that files none, its latest annual report
     # when that is a 20-F (FPI1a). A 40-F is not read: its primary document is a cover, its MD&A
     # an exhibit; and a filer that now files 40-Fs is not read on an old 20-F (DNN's of 2005). The
@@ -6034,7 +6079,7 @@ def _primary_source(
     # the releases (`refresh.release_figures_transform`)
     nde = mech.leverage_survival.net_debt_to_ebitda if mech.leverage_survival is not None else None
     tri, guide = _release_lines(releases, bundle=bundle, nde=nde, card=card,
-                                reference_date=reference_date)
+                                reference_date=reference_date, cut=cut)
     # ITEM 18's RED, as a coherence assertion rather than a hope. It can only fire if this wiring
     # breaks — a typed fact present while the rendered line still claims ignorance of it. That is
     # the false UNKNOWN, and a build that would print one must fail rather than ship the page.
@@ -6060,8 +6105,77 @@ def _primary_source(
             guide.line, source_ref="CIQ revenue guide vs release actual/outlook"),
         guide_verification_check=guide.check,
         current_guide=_current_guide(releases),
-        qa_flags=qa)
+        qa_flags=qa, releases_after_price_date=after)
     return ps, latency, op_drivers
+
+
+#: The 8-K item codes whose EX-99.1 the primary-source layer reads: results (2.02) and other
+#: events (8.01).
+_RESULTS_ITEMS = frozenset({"2.02", "8.01"})
+
+
+def _unread_release(f: Filing) -> ReleaseAfterPriceDate:
+    """A results 8-K the cut leaves unread, named by its filing — never fetched."""
+    return ReleaseAfterPriceDate(filed=f.filing_date, source_ref=f"{f.form} {f.accession}",
+                                 items=list(f.items))
+
+
+def _events_by_cut(events: list[Filing], cut: date | None,
+                   ) -> tuple[list[Filing], list[ReleaseAfterPriceDate]]:
+    """(the 8-Ks filed on or before ``cut``, each results 8-K filed after it, named), each newest
+    first. Split BEFORE `_primary_source` takes its ten newest, so a client that lists filings
+    made after the cut reads the same ten an `AsOfEdgar` view would (STATE row 57)."""
+    kept = [f for f in events if within_cut(f.filing_date, cut)]
+    unread = [_unread_release(f) for f in events
+              if set(f.items) & _RESULTS_ITEMS and not within_cut(f.filing_date, cut)]
+    return kept, unread
+
+
+def _results_8ks_after(edgar: EdgarClient, cik: str, cut: date,
+                       ) -> list[ReleaseAfterPriceDate] | None:
+    """The results 8-Ks filed after ``cut`` that EDGAR as it stood on the cut does not list —
+    read from the index as it stands now through the view's `uncut`, filing dates and item codes
+    only (STATE row 57). Empty when ``edgar`` is no cut view: an uncut client lists them itself,
+    and `_primary_source` skips them there. None when the index cannot be read."""
+    inner = edgar.uncut if isinstance(edgar, AsOfEdgar) else None
+    if inner is None:
+        return []
+    try:
+        events = eight_k_events(inner, cik)
+    except Exception:
+        return None
+    return [_unread_release(f) for f in events
+            if set(f.items) & _RESULTS_ITEMS and not within_cut(f.filing_date, cut)]
+
+
+#: Where each list of what the cut left out lives in `dossier.json` — named by the caveat.
+RELEASES_AFTER = "primary_source.releases_after_price_date"
+GUIDANCE_AFTER = "catalyst_path.guidance_after_price_date"
+
+
+def after_price_date_flags(cut: date, releases: list[ReleaseAfterPriceDate] | None,
+                           guides: list[GuideAfterPriceDate] | None) -> list[str]:
+    """THE CAVEAT (STATE row 57): one line per kind of input the cut left out, naming EACH one
+    and where the JSON keeps it — never "N inputs", which would leave the reader to find them.
+    Nothing left out is no line. A human caveat by default (`flags.partition`): the reader sees
+    that the page was priced before something it does not read; the synthesis never sees it."""
+    out: list[str] = []
+    if releases:
+        named = "; ".join(f"{r.source_ref} (filed {r.filed.isoformat()})" for r in releases)
+        out.append(f"as-of cut: {len(releases)} results 8-K(s) filed after the page's price date "
+                   f"({cut.isoformat()}) are not read — {named}; listed in {RELEASES_AFTER}")
+    if guides:
+        named = "; ".join(f"{g.metric} {g.period} {g.read} {g.value} (dated {g.dated})"
+                          for g in guides)
+        # a GUIDE after the cut withholds the whole read (`ciq_sheets._reads_at_cut`); an actual
+        # alone only leaves the record
+        why = (" — so CIQ's guidance is not read at all: CIQ keeps each period's latest guide "
+               "only, and the guides standing on the price date are not on this export"
+               if any(g.read == "guide" for g in guides) else "")
+        out.append(f"as-of cut: {len(guides)} CIQ Guidance cell(s) dated after the page's price "
+                   f"date ({cut.isoformat()}) are not read — {named}{why}; kept in "
+                   f"{GUIDANCE_AFTER}")
+    return out
 
 
 def _wall_panel(cs_layer: CapitalStructure | None) -> list[primary_source.PanelInstrument]:
@@ -6410,6 +6524,7 @@ def assemble_mechanical(
             # in ADSs for a depositary line: FINRA counts the short position in the traded unit
             shares_out=in_traded_units(_edgar_shares_outstanding(
                 edgar, record.identity.cik, as_of=cut, http=http), record.ads)[0]),
+        cut=cut,  # CIQ's guides as they stood on the price date (STATE row 57)
     )
     valuation = _valuation(
         record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None,
@@ -6474,7 +6589,7 @@ def assemble_mechanical(
     # the four cross-source derivations over them + this mechanical layer. Resilient: a fetch/parse
     # miss becomes an UNKNOWN line + QA flag, never an abort. Attached via model_copy (frozen).
     primary, ps_latency, op_drivers = _primary_source(
-        record, edgar, http, bundle, reference_date, mech, card)
+        record, edgar, http, bundle, reference_date, mech, card, cut=cut)
     mech = mech.model_copy(update={
         "primary_source": primary, "operating_drivers": op_drivers})  # (PR-B) mechanism tier
     mech = _enrich_drawdown_drivers(mech, primary)  # (B1) gap-downs → parsed EX-99.1 drivers
@@ -6506,6 +6621,8 @@ def assemble_mechanical(
     if (cur_flag := ciq_sheets.currency_flag(currency)) is not None:
         flags.append(cur_flag)
     flags += guidance_refusal_flags(primary.releases)
+    flags += after_price_date_flags(cut, primary.releases_after_price_date,
+                                    catalyst.guidance_after_price_date)
     flags += op_drivers.qa_flags  # (PR-B) operating-driver per-source honest-miss flags → QA
     flags += calendar.qa_flags  # (catalyst calendar) cadence/maturity honest-miss flags → QA
     si_asof = mech.stock_info.as_of if mech.stock_info is not None else None

@@ -586,6 +586,12 @@ class Concentration(BaseModel):
     # a breakdown it does not have is not a gap — and dropped from the JSON when None, so the
     # committed pages it does not apply to stay byte-identical (DROP_WHEN_NONE).
     segment_profit: Sourced[SegmentEconomics] | None = None
+    # (2026-11-09, audit RBC-D1) how many recently disclosed relationships the export LISTS — every
+    # row parsed, before `customers` caps its roster at 30 and appends "…(+N more)". The renderers
+    # print this, never a count of the roster's pieces: eight pages printed "31" for lists of 34 to
+    # 726 rows. None where the roster is not PRESENT, and ABSENT (`DROP_WHEN_NONE`) on a page built
+    # before it, which then prints no count rather than one read back out of the display string.
+    customers_listed: int | None = None
 
     model_config = {"frozen": True}
 
@@ -1444,6 +1450,29 @@ class GuidanceRow(BaseModel):
     model_config = {"frozen": True}
 
 
+class GuideAfterPriceDate(BaseModel):
+    """One cell of CIQ's Guidance sheet dated AFTER the page's price date (STATE row 57), which no
+    guidance read on the page takes — not the bridge, its rows, nor the revenue guide the check
+    reads — so it is kept here, in the JSON's audit tier, and named in a caveat, never dropped
+    silently. Never sent to the synthesis (`synthesis.NOT_SENT`).
+
+    ``read`` says which cell: a GUIDE dated after the price date (its period is not read at all;
+    any actual it has came later still), or an ACTUAL dated after it under a guide given before
+    — the guide is read, and the period stays out of the delivery record, which on the price date
+    had no outcome for it."""
+
+    metric: str  # CIQ's metric label, as on its Guidance sheet
+    period: str  # the fiscal period the cell is FOR
+    read: Literal["guide", "actual"]
+    value: str  # the cell, verbatim (a guide's range or point; an actual's figure)
+    dated: str  # ISO — CIQ's Guidance Date (a guide) or Actual/Latest Date (an actual)
+    # the cell's address on the sheet, as published CIQ-derived values carry it (operator ruling
+    # 2026-11-04): "CIQ Estimates→Guidance, row R, column C" (1-based, the export's own grid)
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
 class CatalystPath(BaseModel):
     """Horizon-matched estimates / guidance / revision-event view (CIQ Estimates: Revisions, Trends,
     Guidance, Multiples, Recent-Changes, Consensus). The Edge-2 revision-breadth evidence ASSEMBLED
@@ -1467,6 +1496,10 @@ class CatalystPath(BaseModel):
     # Counts / shares / dates only — no interpretation, no direction.
     insider_activity: Sourced[str] | None = None  # g. EDGAR Form 4 (6m): open-market P/S + routine
     short_interest: Sourced[str] | None = None  # h. FINRA settlement: shares short, Δ%, DTC vs ADV
+    # (STATE row 57) the guide cells dated after the page's price date, which the guidance reads
+    # above do not take: the audit tier. ABSENT until built (`DROP_WHEN_NONE`); [] is a page built
+    # with the cut that dropped none.
+    guidance_after_price_date: list[GuideAfterPriceDate] | None = None
 
     model_config = {"frozen": True}
 
@@ -2211,6 +2244,21 @@ class ReleaseExtract(BaseModel):
     model_config = {"frozen": True}
 
 
+class ReleaseAfterPriceDate(BaseModel):
+    """One results 8-K (item 2.02 or 8.01) filed AFTER the page's price date, which the page does
+    not read (STATE row 57): kept in the JSON's audit tier and named in a caveat, never dropped
+    silently. A POINTER, not a parse: the assembly reads EDGAR as it stood on the price date
+    (`vinci.edgar.asof.AsOfEdgar`), so the exhibit was never fetched and nothing in it reaches the
+    page. ``items`` is the 8-K's codes where they were listed (an assembly), empty where the
+    release was cut from a list already parsed (a page built before the cut)."""
+
+    filed: date
+    source_ref: str  # "8-K <accession>" (listed, not fetched) | the release's own source_ref
+    items: list[str] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
 # --- RC-1 (B): filing-section extraction — 10-Q/10-K, DETERMINISTIC / anchored --------------------
 
 
@@ -2418,6 +2466,10 @@ class PrimarySource(BaseModel):
     # VERIFIED / MISMATCH, else not run — every refusal and flag is a check that did not run
     guide_verification_check: CrossCheck | None = None
     qa_flags: list[str] = Field(default_factory=list)
+    # (STATE row 57) the results 8-Ks filed after the page's price date, which `releases` does not
+    # hold: the audit tier. ABSENT until built (`DROP_WHEN_NONE`); [] is a page built with the
+    # statement that found none.
+    releases_after_price_date: list[ReleaseAfterPriceDate] | None = None
 
     model_config = {"frozen": True}
 
@@ -3092,7 +3144,7 @@ class PriceStoreStamp(BaseModel):
 #: The writers that change a committed page WITHOUT re-assembling it. Each one records itself in
 #: `Dossier.layer_refreshes`; a full assembly writes a fresh page and carries none forward.
 LAYER_REFRESH_WRITERS = ("refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
-                         "anchor-retag")
+                         "anchor-retag", "ciq-reread", "caveat-reword")
 
 
 class LayerRefresh(BaseModel):
@@ -3115,7 +3167,7 @@ class LayerRefresh(BaseModel):
     date: str                       # ISO date (UTC) the writer ran
     extraction_version: str         # the declared extraction version current when it ran
     writer: Literal["refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
-                    "anchor-retag"]
+                    "anchor-retag", "ciq-reread", "caveat-reword"]
     layers: list[str]
 
     model_config = {"frozen": True}
@@ -3260,6 +3312,7 @@ class Dossier(BaseModel):
 #: Moved here from `vinci/dossier/refresh.py` with `dossier_json` below, which both writers use.
 DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("concentration", "segment_profit"),
+    ("concentration", "customers_listed"),
     ("consensus_context", "consensus_levels"),
     ("financial_summary", "ebitda_basis"),
     ("financial_summary", "ebitda_reconciliation"),
@@ -3289,6 +3342,9 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("primary_source.filing.maturity_wall", "basis"),
     # each gap sorted by the gap test (`DisclosureGap`, fix 4a, 2026-11-07)
     ("", "disclosure_gaps"),
+    # what the as-of cut left out (STATE row 57, 2026-11-09)
+    ("primary_source", "releases_after_price_date"),
+    ("catalyst_path", "guidance_after_price_date"),
 )
 
 

@@ -640,7 +640,8 @@
         "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Sep-30-2025)",
         "status": "present",
         "note": null
-      }
+      },
+      "customers_listed": 5
     },
     "ev_gap": {
       "vintages": {
@@ -12673,6 +12674,14 @@
       "layers": [
         "mechanical.financial_summary",
         "mechanical.valuation"
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "extraction_version": "2026-11-09.order2-pages",
+      "writer": "ciq-reread",
+      "layers": [
+        "mechanical.concentration"
       ]
     }
   ],

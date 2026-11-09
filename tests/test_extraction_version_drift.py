@@ -80,7 +80,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "63d574e0cddc"
+PINNED_TABLE = "f819a828710b"
 PINNED_AT = "2026-11-09.stale-and-conflicting"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
@@ -92,7 +92,8 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/capital_allocation.py": "8640066d9ec4",
     "vinci/dossier/ciq.py": "6a636c11c2f3",
     "vinci/dossier/ciq_balance.py": "7bf163fd7abe",
-    "vinci/dossier/ciq_sheets.py": "b4b92e68ce55",
+    "vinci/dossier/ciq_reread.py": "4ebcadca0987",
+    "vinci/dossier/ciq_sheets.py": "9a25fe536aed",
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
@@ -101,10 +102,10 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/edgar_fundamentals.py": "6054321e6ca4",
     "vinci/dossier/ev_ebitda_basis.py": "4acf3d7a1bde",
     "vinci/dossier/ev_gap.py": "c1cd503b7723",
-    "vinci/dossier/filed_tiebreak.py": "228959ebaf1d",
+    "vinci/dossier/filed_tiebreak.py": "65d2da06e516",
     "vinci/dossier/flags.py": "27fde9822fe1",
     "vinci/dossier/freshness.py": "e5852b313d22",
-    "vinci/dossier/gaps.py": "e80723e30a0f",
+    "vinci/dossier/gaps.py": "9f61184df018",
     "vinci/dossier/inputs.py": "fcda11ef218f",
     "vinci/dossier/inputs_backfill.py": "a3567b23a569",
     "vinci/dossier/inputs_schema.py": "6f7d41f25223",
@@ -113,18 +114,18 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ltm_quarters.py": "976073b15fc6",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "c91b8d44c5fe",
-    "vinci/dossier/mechanical.py": "f3933fe4ca94",
+    "vinci/dossier/mechanical.py": "2a40d749e856",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
-    "vinci/dossier/refresh.py": "680b6e6ac4b7",
+    "vinci/dossier/refresh.py": "3877f15bb48d",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "d80156a9b1a9",
+    "vinci/dossier/schemas.py": "970c06340367",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "1d9289584c11",
+    "vinci/dossier/synthesis.py": "5d0368eeaf5a",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
     "vinci/dossier/verdict.py": "0b43167d2044",
-    "vinci/edgar/asof.py": "b8166e456b80",
+    "vinci/edgar/asof.py": "9032bd415542",
     "vinci/edgar/client.py": "49703bf31602",
     "vinci/edgar/concepts.py": "11278504f70c",
     "vinci/edgar/cover_count.py": "24d1e9a7d94a",

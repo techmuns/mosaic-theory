@@ -253,7 +253,9 @@ python -m vinci.evals score --out-dir <…> --registration <…> --budget-ledger
 - **#927 merged first (`622786a2`), so this PR is the second, and carried both.** Its merge
   commit keeps #927's `gap_types`/`FIX_4A` beside `current_buybacks`/`FIX_3B`, main's version rows
   before this one, and main's STATE rows exactly. This PR's row moved from 58 (main's M-GAP holds
-  it) to 59.
+  it) to 59. At the second merge of main (`6fbbb4a2`), #936 held 59 and #934 held 60, and a
+  row 61 put §5.0 at 61 lines, over its 60-line cap (`tests/test_state_open_now.py`). So the row
+  is folded into row 54's item (1), whose open item this PR is, with its text kept whole.
 - **#927's gap registry named a leg this PR deletes, and the merge commit rewords it**
   (coordinator, after #927 merged; the brief's "don't touch `gaps.py`" held until then).
   - `gaps._survival_gaps` typed "the FCF sign behind the survival line's runway leg". After 3b

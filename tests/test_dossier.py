@@ -5035,8 +5035,11 @@ def test_pe_reconciliation_resolves_with_forward_adjusted() -> None:
 def test_surprise_history_parsed_and_gaap_labelled() -> None:
     """Annual estimate surprise (Estimates→Surprise) parses by fiscal year, EPS labelled GAAP-basis
     (distinct from the 99.1 adjusted guide); +beat / −miss."""
+    # the block is headed with the bundle's OWN listing, as CIQ heads it ("<exchange>:<ticker>
+    # (<ccy>)"): a block naming another listing is not read (audit RA-D1,
+    # tests/test_surprise_listing_block.py)
     surprise: list[list[typing.Any]] = [
-        ["NasdaqCM:VRRM", 2023.0, 2024.0, 2025.0],
+        ["NasdaqCM:X (USD)", 2023.0, 2024.0, 2025.0],
         ["EPS (GAAP)", -0.32, -0.76, -0.11],
         ["Revenue", 0.01, 0.0, 0.02],
     ]
@@ -8205,7 +8208,8 @@ def test_display_transforms_read_plain() -> None:
     assert dr._fmt_insider("Open-market buys 2 · sells 1") == "Open-market buys 2 · sells 1"
     dump = ("A Co (KOSE:X) — The Name · Client Services · src: Banks; "
             "B Co (IBSE:Y) — The Name Sub · Client Services · src: Software")
-    out = dr._fmt_customers(dump)
+    # the count is the STRUCTURED one (`customers_listed`, audit RBC-D1), never the dump's pieces
+    out = dr._fmt_customers(dump, 2)
     assert "2 mapped client relationship(s)" in out and "src:" not in out
     assert dr._fmt_customers("top customer 28% of revenue") == "top customer 28% of revenue"
     assert dr._fmt_shape("discrete gap-downs — 2026-02-03 earnings (2.02) + Reg-FD (7.01)") == \

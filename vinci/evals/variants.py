@@ -36,6 +36,11 @@ FIX 3B rewrites two fields; `FIX_3B` names their transforms:
    transform fix 3a's item 3 already applies: it reads THIS ref's `_survival_capacity`);
 2. ``current_buybacks`` — the three buyback fields, a leg more than a year before the page's
    price date no longer stated (`capital_allocation.buyback_legs`).
+
+THE AS-OF CUT (STATE row 57), `ASOF_CUT`'s ``asof_cut``: a page built before the cut keeps the
+releases filed after its price date; this moves them out of `primary_source.releases` and
+re-derives the two fields the assembly takes from that list (`current_guide`, a release-read
+`adjusted_eps`). It refuses wherever it cannot write what a builder at the cut would.
 """
 from __future__ import annotations
 
@@ -49,7 +54,8 @@ from datetime import date
 from types import SimpleNamespace
 from typing import Any
 
-from vinci.dossier import capital_allocation, ciq_sheets, mechanical
+from vinci.dossier import capital_allocation, ciq_sheets, gaps, mechanical
+from vinci.dossier import schemas as _schemas
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import ForwardMultipleHistory, MechanicalLayer, Sourced, SourceStatus
 from vinci.edgar.concepts import ConceptPoint
@@ -380,6 +386,106 @@ def current_buybacks(mech: MechanicalLayer, ctx: Context | None = None) -> Mecha
         "buyback_cash": cash, "buyback_shares": shares, "buyback_avg_price": avg})})
 
 
+# ------------------------------------------------------------------- 7. the as-of cut (row 57)
+
+#: The fields `asof_cut` rewrites; a dropped release cited ANYWHERE ELSE on the layer is a read
+#: it cannot regenerate, so it refuses.
+_CUT_REWRITES: dict[str, Any] = {"primary_source": {"releases", "current_guide"},
+                                 "valuation": {"adjusted_eps"}, "disclosure_gaps": True}
+
+
+#: An EDGAR accession number, as a release's ``source_ref`` carries it ("8-K <accession> EX-99.1").
+_ACCESSION = re.compile(r"\d{10}-\d{2}-\d{6}")
+
+
+def asof_cut(mech: MechanicalLayer, ctx: Context | None = None) -> MechanicalLayer:
+    """The release list as THIS code's assembly holds it at the page's price date
+    (`gaps.price_date`, cut by `gaps.releases_by_cut`): a release filed after it leaves
+    `primary_source.releases` for `releases_after_price_date`, and the two fields the assembly
+    derives from the list are re-derived from what is left — `primary_source.current_guide`
+    (`mechanical._current_guide`) and, where the page read it from the releases, `valuation.
+    adjusted_eps` (`mechanical._release_adjusted_eps`). The identity at main (no
+    `releases_by_cut`) and on every page with nothing after its price date.
+
+    Before re-deriving, THIS code must rebuild both fields byte for byte from the page's own
+    committed list — the proof that the page was built by these readers. It REFUSES
+    (`TransformError`) where it cannot write what a builder at the cut would:
+    - a CIQ guide row dated after the price date: the guide standing on the price date is on the
+      export, not the page (`ciq_sheets._guidance_reads` picks it there);
+    - a dropped release carrying a guide, a reconciliation, a one-off or an event impact, which
+      readers it does not re-derive take (the triangulation, the guide check, the EBITDA
+      reconciliation, the digest's blocks);
+    - a dropped release cited by any field outside the three it rewrites;
+    - a release with no filing date (`releases_by_cut` cannot place it)."""
+    cut_rule = getattr(gaps, "releases_by_cut", None)
+    if cut_rule is None:
+        return mech
+    # the ref's own rule; absent at main, so imported only past the check above
+    from vinci.edgar.asof import within_cut
+
+    cut = gaps.price_date(mech)
+    ps = mech.primary_source
+    if cut is None:
+        return mech
+    cp = mech.catalyst_path
+    rows = cp.guidance_bridge_rows if cp is not None else None
+    try:
+        late = [r for r in (rows.value or [] if rows is not None else [])
+                if not within_cut(date.fromisoformat(r.dated), cut)]
+    except ValueError as exc:   # a row it cannot place on either side of the cut
+        raise TransformError(f"a CIQ guide row's date does not parse: {exc}") from exc
+    if late:
+        raise TransformError(f"{len(late)} CIQ guide row(s) dated after the page's price date "
+                             f"({cut.isoformat()}): the guide standing on it is on the export")
+    if ps is None or not ps.releases:
+        return mech
+    try:
+        kept, after = cut_rule(ps.releases, cut)
+    except ValueError as exc:
+        raise TransformError(str(exc)) from exc
+    if not after:
+        return mech
+    full = [r for r in after if r.guidance or r.reconciliation or r.one_offs or r.event_impacts]
+    if full:
+        raise TransformError(f"{full[0].source_ref}, filed after the price date, carries content "
+                             "readers this does not re-derive take")
+    rest = mech.model_dump_json(exclude=_CUT_REWRITES)
+    # by ACCESSION, dashed or not: a field may cite the 8-K without the exhibit suffix
+    cited = [r.source_ref for r in after
+             if any(a in rest or a.replace("-", "") in rest
+                    for a in _ACCESSION.findall(r.source_ref) or [r.source_ref])]
+    if cited:
+        raise TransformError(f"{cited[0]}, filed after the price date, is cited by a field this "
+                             "does not re-derive")
+    v, dc = mech.valuation, mech.drawdown_cause
+    absent = mechanical.no_adjusted_figure(dc.revised_guidance)
+    rec = _last_close(mech)
+    eps = v.adjusted_eps
+    if mechanical._release_adjusted_eps(list(ps.releases), rec, absent) == eps:
+        eps = mechanical._release_adjusted_eps(kept, rec, absent)
+    elif not (eps.status is PRESENT
+              and eps.source_ref == (dc.revised_guidance.source_ref or "EDGAR 8-K Ex-99.1")):
+        raise TransformError("valuation.adjusted_eps reproduces from neither the releases nor "
+                             "the drawdown guide")
+    if mechanical._current_guide(list(ps.releases)) != ps.current_guide:
+        raise TransformError("primary_source.current_guide does not reproduce from the page's "
+                             "own releases")
+    gone = [_schemas.ReleaseAfterPriceDate(filed=r.filed, source_ref=r.source_ref) for r in after]
+    ps2 = ps.model_copy(update={"releases": kept, "current_guide": mechanical._current_guide(kept),
+                                "releases_after_price_date": gone})
+    return mech.model_copy(update={"primary_source": ps2,
+                                   "valuation": v.model_copy(update={"adjusted_eps": eps})})
+
+
+def _last_close(mech: MechanicalLayer) -> Any:
+    """The record `_release_adjusted_eps` reads — its latest close only — from the page's own
+    price box, which shows that close."""
+    si = mech.stock_info
+    price = si.price.value if si is not None and si.price.status is PRESENT else None
+    return SimpleNamespace(prices=SimpleNamespace(last=SimpleNamespace(
+        is_known=price is not None, value=price, as_of=si.as_of if si is not None else None)))
+
+
 Transform = Callable[[MechanicalLayer, Context], MechanicalLayer]
 
 TRANSFORMS: dict[str, Transform] = {
@@ -390,6 +496,7 @@ TRANSFORMS: dict[str, Transform] = {
     "print_row_guide": print_row_guide,
     "gap_types": gap_types,
     "current_buybacks": current_buybacks,
+    "asof_cut": asof_cut,
 }
 
 #: Fix 3a's five labels (#923), in the order applied.
@@ -403,3 +510,7 @@ FIX_4A: tuple[str, ...] = ("gap_types",)
 #: Fix 3b's two fields, in the order applied: the survival line (`survival_read`, shared with
 #: `FIX_3A`) and the buyback legs.
 FIX_3B: tuple[str, ...] = ("survival_read", "current_buybacks")
+
+#: STATE row 57's one transform: the release list cut at the page's price date. Applied FIRST,
+#: before the transforms that read the releases (`print_row_guide`, `gap_types`).
+ASOF_CUT: tuple[str, ...] = ("asof_cut",)
