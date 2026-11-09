@@ -188,7 +188,10 @@ def test_the_motivated_rule_reads_commit_bodies_and_in_flight_records() -> None:
     tickers = sorted(rp.load_panel_file()["pages"])
     mot = pn.motivated_from_git(ROOT, FREEZE, tickers)
     assert "CNXC" in mot                       # named in commit BODIES only
-    flight = pn.in_flight_names(ROOT, ["4449189d:docs/records/"
+    # The record as MERGED (#923's squash, a9c59287, on main): the in-flight ref the freeze read,
+    # 4449189d, was #923's branch head, and a squash merge leaves it outside every clone's history
+    # — main's own gate went red on it (2026-11-07). The merged record names the same five.
+    flight = pn.in_flight_names(ROOT, ["a9c59287:docs/records/"
                                        "2026-11-06-the-fact-layers-labels-describe-never-judge.md"],
                                 tickers)
     assert {"MCK", "NKE", "ROST", "CNXC", "LLY"} <= flight
