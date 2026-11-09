@@ -393,3 +393,10 @@ On the round-1 head `72d5b3b7`. One commit, $0. Each FIX has a pin that fails on
   gaps as built. No page carries the field until it is rebuilt.
 - **A type-1 that is really type 3 is possible** where CIQ dates a GAAP-only guide at a release
   (ROST's adjusted-EPS entry). Both types are neutral, so rule 8's behaviour is the same.
+
+## Amendments
+
+- **2026-11-09 — measured; ships by the registered rule.** $30.31 of $70, panel v2, #927 frozen at
+  `564baad8`: M-GAP 37 → 4 units, p_lower 2.6 × 10⁻¹¹ against the 0.01 ship bar, so no
+  replication; M-LABEL's gated families 10 → 1; no class worsened. See
+  `docs/records/2026-11-09-fix4a-measured-on-the-panel.md`.
