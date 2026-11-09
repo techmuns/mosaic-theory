@@ -142,6 +142,10 @@ def html_to_text(html: str) -> str:
     return normalize_text(_drop_page_furniture(text) if marked else text)
 
 
+#: The excerpt cap: what `relevant_excerpts` keeps, and `excerpt_cut` measures against.
+_EXCERPT_CAP = 24_000
+
+
 def _excerpt_sentences(text: str, max_chars: int) -> tuple[list[str], int]:
     """The supply-chain sentences kept under the cap, and how many matched in the whole text."""
     sentences = re.split(r"(?<=[.;])\s+", text)
@@ -156,20 +160,24 @@ def _excerpt_sentences(text: str, max_chars: int) -> tuple[list[str], int]:
     return kept, len(matching)
 
 
-def relevant_excerpts(text: str, *, max_chars: int = 24_000) -> str:
+def relevant_excerpts(text: str, *, max_chars: int = _EXCERPT_CAP) -> str:
     """Keep sentences mentioning supply-chain terms, concatenated up to ``max_chars``."""
     return "\n".join(_excerpt_sentences(text, max_chars)[0])
 
 
-def excerpt_cut(text: str, *, max_chars: int = 24_000) -> str | None:
+def excerpt_cut(text: str, *, max_chars: int = _EXCERPT_CAP) -> str | None:
     """What the cap left out of :func:`relevant_excerpts`, or None when it kept every matching
     sentence (TeamNostra fix request 2, RE1-D14: 600 matching sentences kept 400 and nothing said
     so). Said beside the excerpt, never inside it — the excerpt is what an extractor quotes."""
     kept, matched = _excerpt_sentences(text, max_chars)
-    if len(kept) == matched:
+    return _cut_line(len(kept), matched, max_chars)
+
+
+def _cut_line(kept: int, matched: int, max_chars: int) -> str | None:
+    if kept == matched:
         return None
-    return (f"the {max_chars:,}-character excerpt cap kept {len(kept)} of {matched} matching "
-            f"sentences; the {matched - len(kept)} after it were not read")
+    return (f"the {max_chars:,}-character excerpt cap kept {kept} of {matched} matching "
+            f"sentences; the {matched - kept} after it were not read")
 
 
 def latest_10k_excerpts(
@@ -195,5 +203,7 @@ def latest_10k_excerpts(
         cik=int(pad_cik(latest.cik)), acc=latest.accession.replace("-", ""), doc=latest.primary_doc
     )
     html = sec.get_text(url, ttl_seconds=None)  # filings are immutable → cache forever
-    text = html_to_text(html)
-    return latest.accession, relevant_excerpts(text), read.pointer, excerpt_cut(text)
+    # one pass over the text for both: the excerpt and what its cap left out
+    kept, matched = _excerpt_sentences(html_to_text(html), _EXCERPT_CAP)
+    return (latest.accession, "\n".join(kept), read.pointer,
+            _cut_line(len(kept), matched, _EXCERPT_CAP))

@@ -109,9 +109,13 @@ class AsOfEdgar:
         the cut. So the view asks for the window [cut − the recent page's span, cut], reading the
         older pages that window overlaps. A cut on or after the page's newest filing reads the
         recent page alone, exactly as before. A test double that is not an EdgarClient has no
-        pages, and is read as it is."""
-        if since is None and isinstance(self.inner, EdgarClient):
-            span = self.inner.recent_page_span(cik)
+        pages, and is read as it is. A view of a view (the drawdown anchor's) reaches back from
+        ITS cut on the client both wrap, and hands the window down, so the inner view keeps it."""
+        root: Any = self.inner
+        while isinstance(root, AsOfEdgar):
+            root = root.inner
+        if since is None and isinstance(root, EdgarClient):
+            span = root.recent_page_span(cik)
             if span is not None and span[1] > self.cut:
                 since = self.cut - (span[1] - span[0])
         rows = (self.inner.recent_filings(cik, forms=forms) if since is None

@@ -36,8 +36,7 @@ superseded-by:
   - a later 10-Q/A is always named (`AnnualRead.pointer`).
 
   The page's primary-source 10-Q read (`dossier/mechanical.py`) now uses it and puts the pointer
-  in its source, as its 20-F branch already did. The refresh path's 10-Q lookup by accession
-  (`dossier/refresh.py`) lists `10-Q/A` too.
+  in its source, as its 20-F branch already did.
 - **RE1-D13, and E1-D7's residual.** `graph/filings.latest_10k_excerpts` reads the annual report
   through `client.annual_report`, the operator's /A rule of 2026-11-01. It returns the amendment
   pointer as a third value, and `graph/extract.py` records it in the edge info as `amendments`.
@@ -47,8 +46,12 @@ superseded-by:
   excerpt text is unchanged: the statement sits beside the excerpt, never inside it, because the
   excerpt is what an extractor quotes and its quotes are matched against it.
 - **Files outside the five this group owns:** `dossier/mechanical.py` (one import and one block,
-  not line 4915), `dossier/refresh.py` (one line), `graph/extract.py` (three lines), and
-  `tests/test_verbatim.py` (a stub of the new return shape).
+  not line 4915), `graph/extract.py` (a few lines), and `tests/test_verbatim.py` (a stub of the
+  new return shape).
+- **A view over a view (review round 0).** `mechanical._drawdown_anchor` cuts a page's view again
+  at an anchor date. The reach is taken from the innermost `EdgarClient` and applied from the
+  view's own cut, so the nested view reaches back from the anchor, not from the page's price
+  date.
 
 **WHY.**
 - **RE1-D8 (TeamNostra's reproduction, rewritten here on the committed fixture).** Gartner's
@@ -130,6 +133,19 @@ superseded-by:
   0.4 s each at the new pace.
 - **The frames refusal can surface a reader nobody has written yet.** That is intended: it
   raises at once rather than mixing today's share counts into a past page.
+- **Two readers still list the original 10-Q only (review round 0, deferred).**
+  - The covenant pointer's periodic source (`mechanical.py`, `periodic_forms`) can read the
+    original 10-Q of a quarter whose 10-Q/A the page's sections read.
+  - `dossier/refresh.py`'s 10-Q lookup by accession would not find a 10-Q/A. It then falls back to
+    the latest balance-sheet date, the same instant for an /A of the same quarter.
+
+  No frozen page has a 10-Q/A, and the second needs a page-shaped test that is not built.
+- **A statements-carrying /A replaces the original for a NARRATIVE reader too (review round 0, for
+  the operator).** The rule judges an /A by its XBRL. A 10-K/A that re-files only Item 8 would give
+  the graph its restated statements and no Item 1. The operator's rule of 2026-11-01 is applied as
+  written.
+- **`UncutReadError` is a RuntimeError,** so a broad `except Exception` in a reader can still
+  record it as a QA line rather than stop the build. No reader calls the refused names today.
 - **Not done here:** RE1-D7, RE1-D10, RE1-D11 and RE1-D16 (order 4). RE1-D14 is done here
   because it is the same reader. Whether real 10-Ks exceed the cap is not determined (no full
   10-K is committed); the reproduction is TeamNostra's constructed 600-sentence text.

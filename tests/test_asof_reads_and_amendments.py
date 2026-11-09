@@ -116,6 +116,20 @@ def test_a_cut_on_or_after_the_newest_filing_reads_the_recent_page_alone() -> No
     assert not any("-submissions-0" in u for u in sec.urls)
 
 
+def test_a_view_of_a_view_reaches_back_from_its_own_cut() -> None:
+    """⊖ the drawdown anchor cuts a second view over the page's (`mechanical._drawdown_anchor`):
+    its inner client is a view, not an EdgarClient, so it took no reach of its own and read only
+    what the page's cut reached back to — at a 2021-11-30 anchor under a 2026-08-01 page cut, the
+    7 8-Ks on older page -001 were missed. It reaches back from its own cut, as a view of the
+    client does."""
+    client, _ = _gartner()
+    nested = AsOfEdgar(cast(EdgarClient, AsOfEdgar(client, date(2026, 8, 1))), date(2021, 11, 30))
+    direct = AsOfEdgar(client, date(2021, 11, 30))
+    assert ({f.accession for f in nested.recent_filings(_IT, forms=("8-K",))}
+            == {f.accession for f in direct.recent_filings(_IT, forms=("8-K",))}
+            == _page1("8-K"))
+
+
 def test_a_window_the_caller_names_is_kept() -> None:
     """⊕ a reader that asks for a window gets that window, cut — the reach applies only when it
     asked for none."""
