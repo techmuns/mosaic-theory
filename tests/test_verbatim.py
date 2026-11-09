@@ -433,20 +433,21 @@ def test_every_edge_in_the_coverage_report_keeps_its_judges_reason(
     assert rep["judge_errors"] == 1 and rep["evidence_precision"] is None
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
-    "audit RG-D16: the committed map was written before the reason was kept, so its 27 "
-    "'unsupported' edges carry none — it regenerates only through paid judge calls, proposed to "
-    "the operator and not run (STATE.md §5.0 row 61); remove this mark when it does"))
 def test_the_committed_exposure_map_carries_every_judges_reason() -> None:
-    """END TO END on the committed artifact: every edge of `data/graph_coverage.json` names the
-    reason for its verdict, so a judge failure can be told from evidence that does not hold."""
+    """END TO END on the committed artifact (audit RG-D16): every edge of
+    `data/graph_coverage.json` names the reason for its verdict, so a judge failure can be told from
+    evidence that does not hold. A map written before the reason was kept carries the key on no
+    edge, and is an expected failure until it is re-judged (`vinci graph-rejudge`); one key on any
+    edge means the writer kept them, and from then on every edge must carry one."""
     import json
     import pathlib
 
     edges = json.loads((pathlib.Path(__file__).resolve().parents[1] / "data"
                         / "graph_coverage.json").read_text())["edges"]
     assert edges, "the committed map holds no edge"
-    lacking = [e for e in edges if not e.get("reason")]
+    if not any("reason" in e for e in edges):
+        pytest.xfail("the committed map predates the kept reason (audit RG-D16): re-judge it")
+    lacking = [e for e in edges if not str(e.get("reason") or "").strip()]
     assert not lacking, f"{len(lacking)} of {len(edges)} committed edges carry no reason"
 
 

@@ -11,6 +11,7 @@ judge is the only precision instrument.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
 
 from vinci.edgar.client import EdgarClient
@@ -70,31 +71,98 @@ def graph_coverage(
         }
         for e, j in zip(all_edges, jrep["judged"], strict=True)
     ]
-    real_edges = [e for e in edges_out if e["verdict"] == "real_supply_chain"]
-
     n = len(focals)
-    real = len(real_edges)
-    us_listed = sum(1 for e in real_edges if e["node_kind"] == "us_listed")
-    sn = shared_node_map(real_edges, super_connector_degree=super_connector_degree)
     return {
         "model": llm.model,
         "n_names": n,
         "names_with_edges": sum(1 for p in per_name if p["edges"]),
         "total_edges": len(all_edges),
         "evidence_refused": sum(p["evidence_refused"] for p in per_name),
+        **_verdict_figures(edges_out, jrep, n_names=n,
+                           super_connector_degree=super_connector_degree),
+        "per_name": per_name,
+        "edges": edges_out,
+    }
+
+
+def _verdict_figures(edges: list[dict[str, Any]], jrep: dict[str, Any], *, n_names: int,
+                     super_connector_degree: int) -> dict[str, Any]:
+    """Every figure of a coverage report derived from its judged ``edges`` — ONE copy of the
+    arithmetic, shared by `graph_coverage` and `rejudge`, so a re-judged map cannot be derived
+    differently from a freshly built one."""
+    real_edges = [e for e in edges if e["verdict"] == "real_supply_chain"]
+    real = len(real_edges)
+    us_listed = sum(1 for e in real_edges if e["node_kind"] == "us_listed")
+    sn = shared_node_map(real_edges, super_connector_degree=super_connector_degree)
+    return {
         "real_edges": real,
         "real_us_listed": us_listed,  # real edge to a position-eligible US node
         "real_global": real - us_listed,  # real edge to a foreign/private connector node
-        "edges_per_name": round(len(all_edges) / n, 2) if n else 0.0,
-        "real_edges_per_name": round(real / n, 2) if n else 0.0,  # moat-relevant density
+        "edges_per_name": round(len(edges) / n_names, 2) if n_names else 0.0,
+        "real_edges_per_name": round(real / n_names, 2) if n_names else 0.0,  # moat-relevant
         "evidence_precision": jrep["evidence_precision"],
         "judge_errors": jrep["judge_errors"],
         "by_class": jrep["by_class"],
         "shared_nodes": sn["shared_nodes"],
         "super_connectors": sn["super_connectors"],
-        "per_name": per_name,
-        "edges": edges_out,
     }
+
+
+@dataclass(frozen=True)
+class CommittedEdge:
+    """A committed map's edge as the judge reads it (`judge.Judgeable`)."""
+
+    focal_ticker: str | None
+    focal_name: str
+    counterparty_name: str
+    relationship_type: str
+    direction: str
+    evidence: str
+
+
+def rejudge(report: dict[str, Any], llm: LlmClient, *, on: str,
+            super_connector_degree: int = 6) -> dict[str, Any]:
+    """The committed coverage ``report`` with the JUDGE alone re-run on each of its edges, against
+    the edge's own committed evidence and through the same prompt; the extraction is held fixed.
+
+    WHY (2026-11-09, audit RG-D16; operator: "approve the graph re-judge with $3 cap"). The
+    committed map was written before the judge's reasons were kept, so its "unsupported" edges
+    could not be told from failed calls. Re-extracting would answer that too, but it would also
+    change the map itself; this changes only each edge's verdict and reason, and recomputes every
+    figure derived from the verdicts through `graph_coverage`'s own arithmetic. The filer's name
+    the prompt carries is the map's own (`per_name`); an edge whose filer it does not name is
+    refused before any call. ``judged_by`` records which judge ran, and when.
+
+    ``super_connector_degree`` defaults to `Config.graph_super_connector_degree` (6), the value
+    the CLI passed when the committed map was built."""
+    names = {p["focal"]: p["name"] for p in report["per_name"] if p.get("name")}
+    if missing := sorted({str(e["focal_ticker"]) for e in report["edges"]
+                          if not names.get(e["focal_ticker"])}):
+        raise ValueError(f"the map names no filer for {missing} in per_name, so their edges "
+                         "cannot be put to the judge as they were")
+    jrep = judge_edges(llm, [CommittedEdge(
+        focal_ticker=e["focal_ticker"], focal_name=names[e["focal_ticker"]],
+        counterparty_name=e["counterparty_name"], relationship_type=e["relationship_type"],
+        direction=e["direction"], evidence=e["evidence"]) for e in report["edges"]])
+    edges: list[dict[str, Any]] = []
+    for e, j in zip(report["edges"], jrep["judged"], strict=True):
+        row: dict[str, Any] = {}
+        for k, v in e.items():
+            if k == "reason":
+                continue
+            row[k] = j["verdict"] if k == "verdict" else v
+            if k == "verdict":
+                row["reason"] = j["reason"]   # beside its verdict, as `graph_coverage` writes
+        edges.append(row)
+    out = dict(report)
+    out.update({
+        **_verdict_figures(edges, jrep, n_names=report["n_names"],
+                           super_connector_degree=super_connector_degree),
+        "edges": edges,
+        "judged_by": {"model": llm.model, "on": on, "edges": len(edges),
+                      "note": "the judge alone, re-run on the committed edges and their committed "
+                              "evidence; the extraction (`model`) is held fixed"}})
+    return out
 
 
 def super_connectors(real_edges: list[dict[str, Any]], *, degree: int) -> set[str]:

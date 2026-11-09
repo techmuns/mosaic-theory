@@ -15,10 +15,28 @@ constants, not tuned values; the judge model is the swappable ``graph_llm_model`
 from __future__ import annotations
 
 from collections import Counter
-from typing import Any
+from collections.abc import Sequence
+from typing import Any, Protocol
 
-from vinci.graph.extract import GraphEdge
 from vinci.graph.llm import LlmClient
+
+
+class Judgeable(Protocol):
+    """What the judge reads of an edge: a fresh extraction's `GraphEdge`, or a committed map's
+    edge re-judged with its extraction held fixed (`coverage.rejudge`)."""
+
+    @property
+    def focal_ticker(self) -> str | None: ...
+    @property
+    def focal_name(self) -> str: ...
+    @property
+    def counterparty_name(self) -> str: ...
+    @property
+    def relationship_type(self) -> str: ...
+    @property
+    def direction(self) -> str: ...
+    @property
+    def evidence(self) -> str: ...
 
 # The judge's verdict taxonomy. The noise classes are exactly the failure modes Test 0 surfaced.
 VERDICTS = ("real_supply_chain", "competitor", "bio_or_governance", "ma_or_legal", "unsupported")
@@ -26,6 +44,9 @@ VERDICTS = ("real_supply_chain", "competitor", "bio_or_governance", "ma_or_legal
 # true edge. Everything else — competitors, bio/governance mentions, M&A/legal context, or evidence
 # that doesn't support the claim — is a false positive.
 REAL_VERDICTS = frozenset({"real_supply_chain"})
+#: The judge's output ceiling for a capped run (`vinci graph-rejudge`): its tool answer is a verdict
+#: and a short reason, tens of tokens; a longer answer is cut, raises, and is a judge error.
+JUDGE_MAX_TOKENS = 1024
 #: A JUDGE CALL THAT RETURNED NO VERDICT (2026-11-09, audit RG-D16): it raised, or answered outside
 #: `VERDICTS` or without one. Not one of the judge's classes — it says nothing about the edge, so
 #: it counts toward no precision. Each of these read as "unsupported", an evidence verdict, and
@@ -83,7 +104,7 @@ def _bounded(text: object) -> str:
     return s if len(s) <= REASON_CAP else s[:REASON_CAP] + f"… (cut at {REASON_CAP} characters)"
 
 
-def judge_edge(llm: LlmClient, edge: GraphEdge) -> tuple[str, str]:
+def judge_edge(llm: LlmClient, edge: Judgeable) -> tuple[str, str]:
     """Classify one edge against its own evidence. Returns (verdict, reason) — `JUDGE_ERROR` and
     what the judge answered when that is no verdict."""
     user = (
@@ -105,7 +126,7 @@ def judge_edge(llm: LlmClient, edge: GraphEdge) -> tuple[str, str]:
     return str(verdict), reason
 
 
-def judge_edges(llm: LlmClient, edges: list[GraphEdge]) -> dict[str, Any]:
+def judge_edges(llm: LlmClient, edges: Sequence[Judgeable]) -> dict[str, Any]:
     """Judge every edge against its evidence → evidence-grounded precision + a class breakdown.
 
     ``precision`` is the share of JUDGED edges whose evidence supports a genuine supply-chain link
