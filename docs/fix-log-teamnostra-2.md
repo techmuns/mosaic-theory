@@ -114,7 +114,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). R
 | RE2-D20 | 4 | open | — | — | — |
 | RF-D3 | 4 | open | — | — | — |
 | RF-D4 | 4 | open | — | — | — |
-| RF-D7 | 4 | open | — | — | — |
+| RF-D7 | 4 | in progress (#947) | #947 | `tests/test_seal_is_current.py::test_every_committed_seal_read_against_the_rule[V-GOOGL]` | none; GOOGL's sealed row untouched (operator ruling, STATE row 60 item (4)) |
 | RF-D9 | 4 | open | — | — | — |
 | RF-D13 | 4 | open | — | — | — |
 | RE1-D7 | 4 | open | — | — | — |
