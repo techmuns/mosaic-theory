@@ -80,8 +80,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "6715392a1954"
-PINNED_AT = "2026-11-06.descriptive-labels"
+PINNED_TABLE = "d9cdc7b7946c"
+PINNED_AT = "2026-11-07.gap-test"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -92,7 +92,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/capital_allocation.py": "ba165ad2af55",
     "vinci/dossier/ciq.py": "6a636c11c2f3",
     "vinci/dossier/ciq_balance.py": "7bf163fd7abe",
-    "vinci/dossier/ciq_sheets.py": "e5151077b628",
+    "vinci/dossier/ciq_sheets.py": "b4b92e68ce55",
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
@@ -104,6 +104,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/filed_tiebreak.py": "228959ebaf1d",
     "vinci/dossier/flags.py": "27fde9822fe1",
     "vinci/dossier/freshness.py": "e5852b313d22",
+    "vinci/dossier/gaps.py": "d4eec161a2fd",
     "vinci/dossier/inputs.py": "fcda11ef218f",
     "vinci/dossier/inputs_backfill.py": "a3567b23a569",
     "vinci/dossier/inputs_schema.py": "6f7d41f25223",
@@ -112,14 +113,14 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ltm_quarters.py": "976073b15fc6",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "c91b8d44c5fe",
-    "vinci/dossier/mechanical.py": "5be3dfdc2d26",
+    "vinci/dossier/mechanical.py": "4c37507e8cd4",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "614e5530df26",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "2b67b815aef1",
+    "vinci/dossier/schemas.py": "d80156a9b1a9",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "e2951602162a",
+    "vinci/dossier/synthesis.py": "1d9289584c11",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
     "vinci/dossier/verdict.py": "0b43167d2044",

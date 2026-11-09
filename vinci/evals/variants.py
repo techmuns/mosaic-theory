@@ -26,9 +26,13 @@ page does not carry. They read the page's OWN export only: before using it, the 
 rebuild the page's committed `valuation.cross_sectional` and `peer_comps.trading_multiples` from
 it byte for byte, or the transform refuses (#923 found four pages whose export on its disk was not
 their own).
+
+FIX 4A writes one new field, `FIX_4A`'s ``gap_types``: `disclosure_gaps` (the gap test,
+`vinci.dossier.gaps`), from the layer and the segment count its committed segments line states.
 """
 from __future__ import annotations
 
+import re
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -38,7 +42,7 @@ from typing import Any
 
 from vinci.dossier import ciq_sheets, mechanical
 from vinci.dossier.ciq import CiqBundle
-from vinci.dossier.schemas import ForwardMultipleHistory, MechanicalLayer, SourceStatus
+from vinci.dossier.schemas import ForwardMultipleHistory, MechanicalLayer, Sourced, SourceStatus
 
 PRESENT = SourceStatus.PRESENT
 
@@ -259,6 +263,49 @@ def print_row_guide(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
         update={"rows": rows_out})})
 
 
+# ------------------------------------------------------------------- 6. the gap test (fix 4a)
+
+_SINGLE = " — single segment"
+_SHARE = re.compile(r"([^%;]+) (-?\d+)%")   # a name carries no share of its own
+
+
+def segment_count_from_line(segments: Sourced[str]) -> int | None:
+    """The segment count inside the committed `concentration.segments` line — the ONE reading of
+    it, the inverse of the lean form `ciq_sheets._segment_section` writes: "<name> — single
+    segment" is 1; "<a> 59%; <b> 23%; …" counts its shares less the reconciling lines
+    (`ciq_sheets.is_segment_line`, the builder's own test), a lone segment then short of the
+    collapse (a share under 100% as printed) being None; a line that is not PRESENT is None.
+    Anything else is refused. HARNESS ONLY: the builder reads the roster itself
+    (`ciq_sheets.segment_count`), and the pins show the two agree on every panel page's own
+    export."""
+    if segments.status is not PRESENT or segments.value is None:
+        return None
+    line = segments.value
+    if line.endswith(_SINGLE) and ";" not in line:
+        return 1
+    parts = line.split("; ")
+    shares = [_SHARE.fullmatch(p) for p in parts]
+    if not all(shares):
+        raise TransformError(f"the segments line is not the lean roster: {line!r}")
+    named = [int(m.group(2)) for m in shares if m and ciq_sheets.is_segment_line(m.group(1))]
+    if len(named) == 1:
+        return 1 if named[0] >= 100 else None
+    return len(named) or None
+
+
+def gap_types(mech: MechanicalLayer, ctx: Context | None = None) -> MechanicalLayer:
+    """`disclosure_gaps` as THIS code's `mechanical.disclosure_gaps` writes it from the page's own
+    layer and its segment roster (`segment_count_from_line`). A ref without the gap test is left
+    unchanged — the identity at main. Only that one field is written."""
+    rule = getattr(mechanical, "disclosure_gaps", None)
+    if rule is None:
+        return mech
+    gaps = rule(mech, segment_count=segment_count_from_line(mech.concentration.segments))
+    if gaps == mech.disclosure_gaps:
+        return mech
+    return mech.model_copy(update={"disclosure_gaps": gaps})
+
+
 Transform = Callable[[MechanicalLayer, Context], MechanicalLayer]
 
 TRANSFORMS: dict[str, Transform] = {
@@ -267,8 +314,13 @@ TRANSFORMS: dict[str, Transform] = {
     "survival_read": survival_read,
     "peer_gap_question": peer_gap_question,
     "print_row_guide": print_row_guide,
+    "gap_types": gap_types,
 }
 
 #: Fix 3a's five labels (#923), in the order applied.
 FIX_3A: tuple[str, ...] = ("relabel_drawdown_shape", "trailing_only_note", "survival_read",
                            "peer_gap_question", "print_row_guide")
+
+#: Fix 4a's one mechanical field (the gap test). Its other two changes — rule 8 and the
+#: trailing-only ask — live in the prompt itself and reach a replay without a transform.
+FIX_4A: tuple[str, ...] = ("gap_types",)

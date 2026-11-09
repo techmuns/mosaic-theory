@@ -2741,6 +2741,55 @@ class CiqCurrency(BaseModel, frozen=True):
     check: CrossCheck
 
 
+#: THE GAP TEST (operator ruling 2026-11-07, verbatim: "Yes, use the test"): a missing item is ONE
+#: of four types, or the code says it cannot tell. Only a "change or deviation" may be raised as a
+#: risk, and only with the evidence its entry carries; every other gap is an unknown. Sorted by
+#: `vinci.dossier.gaps.disclosure_gaps`, from structured values only.
+GapType = Literal["our gap", "does not apply", "company's normal practice",
+                  "change or deviation", "type not determined"]
+GAP_TYPES: tuple[GapType, ...] = ("our gap", "does not apply", "company's normal practice",
+                                  "change or deviation", "type not determined")
+
+
+class DisclosureGap(BaseModel):
+    """ONE missing item, sorted by the gap test. ``fields`` are the layer fields whose UNKNOWN it
+    explains; ``basis`` says which structured values decided the type, and ``source_ref`` where
+    the deciding evidence is. A "change or deviation" also carries what the ruling demands of one:
+    what was disclosed (``disclosed``), where (``source_ref``) and when it stopped (``stopped``,
+    the first source read without it, at ``stopped_ref``); no other type carries them."""
+
+    item: str
+    fields: list[str]
+    type: GapType
+    basis: str
+    source_ref: str | None = None
+    disclosed: str | None = None
+    stopped: str | None = None  # ISO
+    stopped_ref: str | None = None
+
+    model_config = {"frozen": True}
+
+    @model_validator(mode="after")
+    def _evidence_only_on_a_change(self) -> DisclosureGap:
+        legs = (self.disclosed, self.stopped, self.stopped_ref, self.source_ref)
+        if self.type == "change or deviation" and any(v is None for v in legs):
+            raise ValueError(f"{self.item}: a change or deviation names what was disclosed, "
+                             "where, and when it stopped")
+        if self.type != "change or deviation" and any(
+                v is not None for v in (self.disclosed, self.stopped, self.stopped_ref)):
+            raise ValueError(f"{self.item}: only a change or deviation carries a stop")
+        return self
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict):
+            for key in ("source_ref", "disclosed", "stopped", "stopped_ref"):
+                if out.get(key) is None:
+                    out.pop(key, None)
+        return out
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 
@@ -2836,6 +2885,10 @@ class MechanicalLayer(BaseModel):
     # (2026-10-27) the currency each CIQ money panel states — read off the export, never assumed
     # to be USD. ABSENT until built (`DROP_WHEN_NONE`).
     ciq_currency: CiqCurrency | None = None
+    # (fix 4a, 2026-11-07) each gap the prompt's rule 8 governs, sorted by the gap test
+    # (`vinci.dossier.gaps`). LAST, so the facts before it keep their place in the prompt. ABSENT
+    # until built (`DROP_WHEN_NONE`); an empty list is a page with no such gap.
+    disclosure_gaps: list[DisclosureGap] | None = None
 
     model_config = {"frozen": True}
 
@@ -3234,6 +3287,8 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("stock_info", "ads_ratio"),
     # a ≤12m wall stated on a basis other than principal (`MaturityWall.basis`, audit E2-D15)
     ("primary_source.filing.maturity_wall", "basis"),
+    # each gap sorted by the gap test (`DisclosureGap`, fix 4a, 2026-11-07)
+    ("", "disclosure_gaps"),
 )
 
 
