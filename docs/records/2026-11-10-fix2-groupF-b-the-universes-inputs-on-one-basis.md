@@ -23,9 +23,15 @@ superseded-by:
   - Why a frame cannot be adjusted: it does not say which day its count is from. SEC's frames API
     serves the fact that best aligns with the calendar quarter. So a split anywhere since the
     earliest frame could reach (a quarter before its quarter end) leaves the count's basis unknown.
-  - The fix: such a line is sized on Polygon's CURRENT issuer-wide count,
-    `weighted_shares_outstanding`, which counts every class in the line's units. That is the same
-    kind of count as the filed one it replaces.
+  - The fix: such a line is sized on Polygon's issuer-wide count, `weighted_shares_outstanding`,
+    which counts every class in the line's units. That is the same kind of count as the filed one
+    it replaces. It is read AS OF THE BUILD'S REFERENCE DATE, so a back-dated build is never
+    sized on a later count (review round 1, Codex P1 on #946).
+  - **A split AFTER the reference date** (a back-dated build, the audit's own case) moves the close,
+    which is restated to the day of the read, and not the filed count. Every frame predates it, so
+    the count is put on the close's basis exactly, by that split's factor; a Polygon count is
+    multiplied by it too. So the breadth read runs through the day of the read, not the reference
+    date.
     - Where Polygon serves no count, the line is dropped as `split_basis_unresolved`.
     - Where neither reading of the filed count could put the line in the band, it is dropped
       `out_of_band`, naming both caps, without a request.
@@ -35,10 +41,9 @@ superseded-by:
 - **RF-D9, ADV and the stale close.**
   - The fault: ADV was dollar volume over the days the NAME traded. A line trading 3 of 65 sessions
     read $4.0M against $0.18M and cleared the $3M floor. Its latest close was kept however old.
-  - The fix: ADV is averaged over the market's sessions (the days the grouped-daily read returned
-    bars), counted from the name's first trade in the lookback.
-    - A session the name did not trade adds $0.
-    - A line listed 19 sessions ago is averaged over those 19, never the 64 the market had.
+  - The fix: ADV is averaged over every market session in the lookback (the days the
+    grouped-daily read returned bars), the audit's own fix. A session the name did not trade adds
+    $0.
   - A close the name has not printed in the newest 10 sessions is no latest close. The line drops
     as `stale_price`, naming its last trade. Ten sessions is the SEC suspension limit the price
     scorecard uses (`GAP_SESSIONS`).
@@ -46,10 +51,14 @@ superseded-by:
 **WHY.** These are TeamNostra's fix request 2 (document 15): order 3 (RF-D8), and order 4's
 prices (RF-D4, RF-D9). The universe is the validation population, so a mis-sized line enters or
 leaves the population the spread accumulates against.
-- **The first ADV fix was measured and revised before shipping.** Averaged over all 64 sessions,
-  ADV would have dropped SWRD ($3.96M → $1.67M) and SVIA ($7.47M → $2.22M) from the committed
-  population. Both traded every session since they first did, so they are new listings, not thin
-  names. The denominator now starts at each name's first trade.
+- **ADV: a refinement tried and reverted.** Averaged over all 64 sessions, ADV drops SWRD
+  ($3.96M → $1.67M) and SVIA ($7.47M → $2.22M) from the committed population: they traded every
+  session since their first, under these tickers. Starting the denominator at each name's first
+  trade kept them. But Codex (round 1, P2) showed it also reads a long-listed line that resumed
+  after a halt as new. Absence before a bar proves nothing. Polygon's `list_date` cannot tell
+  either, since it is the share class's listing: SVIA's reads 2025-12-08, from before its rename
+  (`resolver/aliases.py`). So the full window stands, and a line with under a lookback of trading
+  history reads low until it has one.
 - **The first RF-D4 fix used the per-class count, also revised before shipping.** It would have
   cut Tootsie Roll's cap 43% and Astronics' 16% by leaving out their unlisted classes. The
   universe sizes a single-listed-class issuer on its issuer-wide count, so the replacement is
@@ -77,8 +86,8 @@ leaves the population the spread accumulates against.
   grouped-daily requests `latest_close_and_adv` makes for that date, fetched into a scratch cache
   on 2026-11-10:
   - 64 market sessions;
-  - 0 admitted lines fall below the floor and 0 are stale. The defect is latent here, as the audit
-    said.
+  - 2 admitted lines fall below the floor, SWRD and SVIA, both with under a lookback of trading
+    under their tickers (27 and 19 sessions), and 0 are stale.
 - **RF-D4 on the same population.**
   - **The splits read:** one breadth read of Polygon's splits reference for 2025-03-30 →
     2026-10-16 returned 2,624 splits across 2,169 tickers.
@@ -111,6 +120,17 @@ leaves the population the spread accumulates against.
   - `tests/test_retention.py`'s stage allowlist was not updated.
   - It also moved split-row parsing to the line that reads it, so a bad row for a ticker the build
     never sizes cannot abort it.
+- **Codex review round 1 on #946: two findings, both fixed behind tests red on the PR head
+  (`e37b188a`).**
+  - P1: a back-dated build sized a past close on today's count. A split after the reference date
+    is now applied to the count, and Polygon's count is read as of the reference date.
+  - P2: the first-trade ADV denominator. Reverted to every market session.
+  - The pins: `test_a_split_after_the_reference_date_moves_the_filed_count_onto_the_closes_basis`
+    ($400M on the head, $800M after), `test_the_current_count_is_read_as_of_the_reference_date`, and
+    `test_a_line_that_trades_only_its_newest_sessions_is_averaged_over_the_window` ($4.0M on the
+    head, $0.18M after).
+  - The 42 counts tabled above were read undated (2026-11-10). The six split factors that leave the
+    band (2× to 80×) are far beyond the drift between the two dates.
 - ruff and `mypy --strict vinci` are clean, and the full offline suite passes (`bin/commit`).
 
 **BOUNDARY.**
@@ -134,9 +154,10 @@ leaves the population the spread accumulates against.
 - **Polygon's current count can itself lag a split.** Where it does, the line is mis-sized as
   before. This is the same residual as RF-D1's both-feeds-late case: a vendor that has not caught
   up. A count that resolves to nothing drops loudly.
-- **A name that resumed trading after a long halt** is averaged from its first trade back, so a
-  burst of trades in the newest sessions reads like a new listing. On the committed population,
-  no admitted line is in that state.
+- **A line with less than a lookback of trading history reads low** for its first quarter: a new
+  listing, or a rename the alias tables do not record. SWRD and SVIA leave the committed population
+  at the next weekly build for this reason. Falsifier of "seasoning is the right error": a name
+  so dropped that then clears the floor on the full window within one build.
 - **The dashboard's universe funnel** (`frontend/lib/snapshots.js` `getUniverseStats`) lists a
   fixed set of gates. `stale_price` and `split_basis_unresolved` are not among them, so after the
   next weekly build its rows will not add up to `considered`. It is a render change, which under

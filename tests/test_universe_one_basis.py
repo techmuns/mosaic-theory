@@ -15,9 +15,10 @@ frame could reach leaves a filed count's basis unknown: such a line is sized on 
 issuer-wide count (`weighted_shares_outstanding`: every class in the line's units, the same kind of
 count as the filed one) or dropped loudly when none resolves; when neither reading of the filed
 count could put it in the band it is dropped there without the request. Every split in the window
-comes from ONE breadth read (`PolygonEodClient.splits_executed`). ADV is over the market's
-sessions since the name's first trade in the lookback, and a close older than
-`STALE_CLOSE_SESSIONS` is no latest close (`stale_price`).
+comes from ONE breadth read (`PolygonEodClient.splits_executed`), read through the day of the
+read so a back-dated build moves the count across a later split as the close moved. ADV is over
+every market session in the lookback, and a close older than `STALE_CLOSE_SESSIONS` is no latest
+close (`stale_price`).
 
 MEASURED ON THE COMMITTED POPULATION (`universe_snapshot.jsonl`, as_of 2026-10-16, 2,065 lines):
 42 filed-count lines carry a split in the window; on Polygon's issuer-wide count 6 leave the band
@@ -51,13 +52,14 @@ def _ident() -> Identity:
 
 
 def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, splits: list[dict[str, Any]],
-           current: float | None, floor: float = 300e6, traded_on: date = REF,
+           current: float | None, floor: float = 300e6, traded_on: date | None = None,
            retain: bool = False,
            tag: str = "dei:EntityCommonStockSharesOutstanding") -> dict[str, Any]:
     """The real `build_universe` over one line: close 80 on REF ($8M a day), a filed count of
     5,000,000 for 2026-06-30, ``splits`` in Polygon's breadth read, ``current`` Polygon's
     issuer-wide count. Returns the stats, the snapshot rows and every per-ticker count request."""
     asked: list[list[str]] = []
+    asked_as_of: list[date | None] = []
 
     class _R:
         @classmethod
@@ -83,13 +85,16 @@ def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, splits: list[dict
                 return {}
             # the MARKET trades every weekday (a session exists whether or not SPLT traded it)
             out = {"MKT": RawBar(ticker="MKT", open=1, high=1, low=1, close=1, volume=1)}
-            if day == traded_on:
+            # SPLT trades every session ($8M a day) unless ``traded_on`` names its one day
+            if (day == traded_on) if traded_on is not None else day <= REF:
                 out["SPLT"] = RawBar(ticker="SPLT", open=80, high=80, low=80, close=80,
                                      volume=100_000)
             return out
 
         def splits_executed(self, start: date, end: date) -> list[dict[str, Any]]:
-            assert end == REF and start <= date(2026, 6, 30) - timedelta(days=92)
+            # read through TODAY, not the reference date: the close is restated to the day of the
+            # read, so a split after REF moves it too (review round 1, Codex P1 on #946)
+            assert end >= REF and start <= date(2026, 6, 30) - timedelta(days=92)
             return splits
 
         def security_types(self) -> dict[str, str]:
@@ -98,8 +103,10 @@ def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, splits: list[dict
         def share_class_counts(self, tickers: list[str]) -> dict[str, float]:
             return {}                       # a single-class domestic line: no per-class count
 
-        def issuer_share_counts(self, tickers: list[str]) -> dict[str, float]:
+        def issuer_share_counts(self, tickers: list[str], *,
+                                as_of: date | None = None) -> dict[str, float]:
             asked.append(list(tickers))
+            asked_as_of.append(as_of)
             return {"SPLT": current} if current is not None else {}
 
     class _Ed:
@@ -125,7 +132,7 @@ def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, splits: list[dict
     with Store(cfg.db_path) as store:
         rows = [dict(r) for r in store._conn.execute(
             "SELECT market_cap, source FROM universe_snapshot WHERE in_universe = 1")]
-    return {"stats": stats, "rows": rows, "asked": asked}
+    return {"stats": stats, "rows": rows, "asked": asked, "asked_as_of": asked_as_of}
 
 
 _TWO_FOR_ONE = [{"execution_date": "2026-08-01", "split_from": 1, "split_to": 2,
@@ -138,7 +145,8 @@ def test_a_split_since_the_filed_count_is_sized_on_the_current_count(
     r = _build(monkeypatch, tmp_path, splits=_TWO_FOR_ONE, current=10_000_000.0)
     (row,) = r["rows"]
     assert row["market_cap"] == pytest.approx(800e6)
-    assert "CURRENT, ISSUER-WIDE" in row["source"] and "2-for-1 on 2026-08-01" in row["source"]
+    assert "ISSUER-WIDE" in row["source"] and "as of 2026-09-22" in row["source"]
+    assert "2-for-1 on 2026-08-01" in row["source"]
     assert r["stats"]["split_count_used"] == 1
 
 
@@ -229,7 +237,7 @@ def _market(traded: set[date], ref: date, n: int = 65) -> Any:
 
 def test_adv_is_over_the_markets_sessions_not_the_days_a_name_traded() -> None:
     """RF-D9: THIN trades 3 scattered sessions of 65 at $4.0M each — $4.0M on main, $0.18M over
-    the market's sessions since its first trade (the oldest session)."""
+    the market's 65 sessions."""
     ref = date(2026, 10, 9)
     _eod, sessions = _market(set(), ref)
     eod, _s = _market({sessions[64], sessions[30], sessions[0]}, ref)
@@ -239,15 +247,18 @@ def test_adv_is_over_the_markets_sessions_not_the_days_a_name_traded() -> None:
     assert p.adv["BUSY"] == pytest.approx(10_000_000.0)        # the negative pin: unchanged
 
 
-def test_a_new_listing_is_averaged_over_the_sessions_since_it_first_traded() -> None:
-    """THE FENCE (measured: SWRD and SVIA on the committed 2026-10-16 population): a line listed
-    19 sessions ago and trading every one since is averaged over those 19, not the 65 the market
-    had — the 46 before it existed are no days it could have traded."""
+def test_a_line_that_trades_only_its_newest_sessions_is_averaged_over_the_window() -> None:
+    """REVIEW ROUND 1 (Codex P2 on #946). The denominator had started at the name's first trade
+    in the lookback, so a long-listed line that resumed trading three sessions ago read its $4.0M
+    over 3 and cleared the floor: absence before that bar is no proof the line did not exist. ADV
+    is over every market session in the lookback — the audit's own fix — and a line with less
+    than a lookback of history reads low until it has one (SWRD and SVIA on the committed
+    2026-10-16 population; the record)."""
     ref = date(2026, 10, 9)
     _eod, sessions = _market(set(), ref)
-    eod, _s = _market(set(sessions[:19]), ref)
+    eod, _s = _market(set(sessions[:3]), ref)
     p = latest_close_and_adv(eod, ref, lookback_days=95)
-    assert p.adv["THIN"] == pytest.approx(4_000_000.0)
+    assert p.adv["THIN"] == pytest.approx(3 * 4_000_000.0 / 65)
 
 
 def test_a_close_older_than_the_stale_bound_is_no_latest_close() -> None:
@@ -261,3 +272,30 @@ def test_a_close_older_than_the_stale_bound_is_no_latest_close() -> None:
     # THE EDGE: a close inside the bound is still the latest
     eod, _s = _market({sessions[STALE_CLOSE_SESSIONS - 1]}, ref)
     assert latest_close_and_adv(eod, ref, lookback_days=95).closes["THIN"] == 20.0
+
+
+# --- review round 1 (Codex P1 on #946): a build dated before the read --------------------------
+
+
+_LATER = [{"execution_date": "2026-10-15", "split_from": 1, "split_to": 2, "ticker": "SPLT",
+           "id": "y"}]
+
+
+def test_a_split_after_the_reference_date_moves_the_filed_count_onto_the_closes_basis(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """RF-D4's back-dated build: built for REF (2026-09-22) after a 2-for-1 on 2026-10-15, the
+    close is restated to the read's day and the filed count (frames up to 2026-06-30) is not. On
+    the PR head the window ended at REF and the cap read $400M; the count is now put on the
+    close's basis by the later split, exactly — the count predates it for certain."""
+    r = _build(monkeypatch, tmp_path, splits=_LATER, current=99.0)
+    (row,) = r["rows"]
+    assert row["market_cap"] == pytest.approx(800e6)
+    assert "2-for-1 on 2026-10-15" in row["source"] and r["asked"] == []
+
+
+def test_the_current_count_is_read_as_of_the_reference_date(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """Codex P1 on #946: the replacement count was today's record, so a back-dated build sized a
+    past close on today's issuance and buybacks. It is read as of the build's reference date."""
+    r = _build(monkeypatch, tmp_path, splits=_TWO_FOR_ONE, current=10_000_000.0)
+    assert r["asked_as_of"] == [REF]

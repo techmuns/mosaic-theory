@@ -605,7 +605,8 @@ class PolygonEodClient(EodClient):
                 out[t] = float(n)
         return out
 
-    def issuer_share_counts(self, tickers: Sequence[str]) -> dict[str, float]:
+    def issuer_share_counts(self, tickers: Sequence[str], *,
+                            as_of: date | None = None) -> dict[str, float]:
         """``{ticker: the ISSUER's shares outstanding in this line's units}`` — Polygon's
         ``weighted_shares_outstanding`` ("all shares of other share classes converted to this share
         class"), from the same cached details call as `share_class_counts`. The current-basis
@@ -613,10 +614,11 @@ class PolygonEodClient(EodClient):
         (TeamNostra fix request 2, RF-D4): a per-class count would leave an unlisted class out —
         measured on the committed 2026-10-16 population, Tootsie Roll's cap fell 43% and
         Astronics' 16% on it. Absent/zero is OMITTED; a failed lookup is skipped, as in
-        `share_class_counts`."""
+        `share_class_counts`. ``as_of`` reads the record as of that date (cached for good), so a
+        back-dated build is never sized on a later count (Codex P1 on #946)."""
         out: dict[str, float] = {}
         for t in tickers:
-            n = (self.ticker_details(t) or {}).get("weighted_shares_outstanding")
+            n = (self.ticker_details(t, as_of) or {}).get("weighted_shares_outstanding")
             if n:
                 out[t] = float(n)
         return out
