@@ -148,7 +148,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 - **Segments (revenue share):** Mobility 57%; Delivery 33%; Freight 10% [1]
 - **Segments (EBITDA share — where profit sits):** Mobility 7,899 (90%); Delivery 3,572 (41%); Freight -33 (-0%); Corporate G&A and Platform R&D -2,708 (-31%) of segment-EBITDA sum (pre-corporate) 8,730; consolidated EBITDA 6,312 (~2,418 unallocated corporate) [31]
 - **Segments (profit — the filer's own measure, 10-K):** FY2025 segment profit on the filer's own measure, uber:AdjustedEarningsBeforeInterestTaxesDepreciationAndAmortization (10-K XBRL): Mobility $7,899M (26.6% margin) · Delivery $3,572M (20.7% margin) · Freight −$33M (−0.6% margin) — segments sum $11,438M = the filer's segments total $11,438M. [32]
-- **Customers:** 31 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [33]
+- **Customers:** mapped client relationships (count not recorded on this page) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [33]
 - **Geographic:** United States and Canada 51%; Europe, Middle East and Africa (EMEA) 31%; Asia Pacific (APAC) 11%; Latin America (LATAM) 6% [2]
 
 ## The argument

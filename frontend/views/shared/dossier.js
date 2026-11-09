@@ -392,6 +392,17 @@ const EXTRACTION_VERSIONS = [
     "`catalyst_path.guidance_after_price_date`, never sent to the synthesis, and a caveat " +
     "names each input. A page with nothing dated after its price date changes in no " +
     "value; two new fields do"],
+  ["2026-11-09.order2-pages",
+    "the customer count is a structured field (audit RBC-D1): " +
+    "`concentration.customers_listed` holds every recently disclosed row the Customers " +
+    "export lists, and both renderers print it, never a count of the capped roster's " +
+    "pieces (a page without it prints no count); the Estimates→Surprise GAAP-EPS series " +
+    "is read from the block CIQ heads with the company's own listing in the fiscal-year " +
+    "table (audit RA-D1), naming that block when the sheet's first is another listing's " +
+    "and refusing the EPS read where no block is the company's; the containing-line " +
+    "tie-break's caveat says the filing reconciles the wider line and the row's own " +
+    "figure is CIQ's, never that the filing confirmed it (audit RBC-D8). Among the " +
+    "exports on file only PARR's surprise history moves; the rest is a new field and words"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
@@ -2551,12 +2562,15 @@ function fmtInsider(v) {
   return String(v).slice(0, m.index) + `other filings ${total}`;
 }
 
-function fmtCustomers(v) {
+// THE COUNT IS THE STRUCTURED ONE (2026-11-09, audit RBC-D1) — twin of render.py _fmt_customers:
+// `concentration.customers_listed`, never a count of the capped roster's ";" pieces (which made
+// every list over 30 rows print "31"). A page built before the field prints no count.
+function fmtCustomers(v, listed) {
   const text = String(v);
   if (!text.includes("src:")) return text;
-  const n = text.split(";").filter((x) => x.trim()).length;
-  return `${n} mapped client relationship(s) — roster in JSON; concentration %, when disclosed, `
-    + "is the 10-Q read above";
+  const head = listed != null ? `${listed} mapped client relationship(s)`
+    : "mapped client relationships (count not recorded on this page)";
+  return `${head} — roster in JSON; concentration %, when disclosed, is the 10-Q read above`;
 }
 
 function fmtShape(v) { return String(v).replace(/\s*\(\d\.\d{2}\)/g, ""); }
@@ -3772,7 +3786,7 @@ function concentration(c) {
       ? fact("Segment profit (the filer's own measure, 10-K)", c.segment_profit,
              (v) => escapeHtml(v.line), { hi: true })
       : "") +
-    fact("Customers", c.customers, fmtCustomers) +
+    fact("Customers", c.customers, (v) => fmtCustomers(v, c.customers_listed)) +
     fact("Geographic", c.geographic));
 }
 

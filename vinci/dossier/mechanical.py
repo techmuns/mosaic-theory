@@ -2750,12 +2750,14 @@ def _segment_profit(edgar: EdgarClient, http: CachedHttp,
 
 def _concentration(bundle: CiqBundle, edgar: EdgarClient, http: CachedHttp,
                    cik: str | None) -> Concentration:
+    customers, listed = ciq_sheets.customer_roster(bundle)
     return Concentration(
         segments=ciq_sheets.segments(bundle),
         segment_ebitda=ciq_sheets.segment_ebitda(bundle),
-        customers=ciq_sheets.customers(bundle),
+        customers=customers,
         geographic=ciq_sheets.geographic(bundle),
         segment_profit=_segment_profit(edgar, http, cik),
+        customers_listed=listed,
     )
 
 

@@ -586,6 +586,12 @@ class Concentration(BaseModel):
     # a breakdown it does not have is not a gap — and dropped from the JSON when None, so the
     # committed pages it does not apply to stay byte-identical (DROP_WHEN_NONE).
     segment_profit: Sourced[SegmentEconomics] | None = None
+    # (2026-11-09, audit RBC-D1) how many recently disclosed relationships the export LISTS — every
+    # row parsed, before `customers` caps its roster at 30 and appends "…(+N more)". The renderers
+    # print this, never a count of the roster's pieces: eight pages printed "31" for lists of 34 to
+    # 726 rows. None where the roster is not PRESENT, and ABSENT (`DROP_WHEN_NONE`) on a page built
+    # before it, which then prints no count rather than one read back out of the display string.
+    customers_listed: int | None = None
 
     model_config = {"frozen": True}
 
@@ -3138,7 +3144,7 @@ class PriceStoreStamp(BaseModel):
 #: The writers that change a committed page WITHOUT re-assembling it. Each one records itself in
 #: `Dossier.layer_refreshes`; a full assembly writes a fresh page and carries none forward.
 LAYER_REFRESH_WRITERS = ("refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
-                         "anchor-retag")
+                         "anchor-retag", "ciq-reread", "caveat-reword")
 
 
 class LayerRefresh(BaseModel):
@@ -3161,7 +3167,7 @@ class LayerRefresh(BaseModel):
     date: str                       # ISO date (UTC) the writer ran
     extraction_version: str         # the declared extraction version current when it ran
     writer: Literal["refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
-                    "anchor-retag"]
+                    "anchor-retag", "ciq-reread", "caveat-reword"]
     layers: list[str]
 
     model_config = {"frozen": True}
@@ -3306,6 +3312,7 @@ class Dossier(BaseModel):
 #: Moved here from `vinci/dossier/refresh.py` with `dossier_json` below, which both writers use.
 DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("concentration", "segment_profit"),
+    ("concentration", "customers_listed"),
     ("consensus_context", "consensus_levels"),
     ("financial_summary", "ebitda_basis"),
     ("financial_summary", "ebitda_reconciliation"),

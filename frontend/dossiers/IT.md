@@ -1,6 +1,6 @@
 # Dossier — GARTNER INC (NYSE: IT)
 
-_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
+_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-09.order2-pages_
 
 # Brief — first cut
 
@@ -681,6 +681,7 @@ _Source §: 8-K 0000930413-17-000070 · c86994_ex10-1.htm_
   - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
+  - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 20d old — 2026-07-29 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 22d old (2026-07-27, valuation.implied_expectations.multiples_as_of) — within the ceiling

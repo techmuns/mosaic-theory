@@ -2063,45 +2063,101 @@ def multi_year_trajectory(bundle: CiqBundle) -> Sourced[str]:
     )
 
 
+#: A LISTING's block header on Estimates→Surprise: "<exchange>:<symbol> (<currency>)", as CIQ
+#: heads each listing's per-share rows ("NYSE:PARR (USD)", "OTCPK:DPTR.Q (USD)"). The company-wide
+#: rows sit under "Company Level (USD)", which is no listing.
+_SURPRISE_LISTING = re.compile(r"^([A-Za-z]+):(\S+) \(([A-Z]{3})\)$")
+
+
+class _EpsBlock(NamedTuple):
+    """The Surprise sheet's block for the company's own listing."""
+
+    row: int | None            # its "EPS (GAAP)" row; None where the block carries none
+    header: int                # its own header row, which carries the block's fiscal years
+    listing: str               # the header as CIQ writes it, e.g. "NYSE:PARR (USD)"
+    passed_over: str | None    # the sheet's FIRST listing, where that is another listing's
+
+
+def _surprise_eps_block(rows: Rows, heads: list[int], ticker: str, *,
+                        end: int) -> _EpsBlock | str:
+    """The block CIQ heads with the company's OWN listing, never the sheet's first — or why none.
+
+    WHY (2026-11-09, audit RA-D1): this read the first "EPS (GAAP)" row anywhere in the sheet. On
+    Par Pacific the first block is the predecessor's OTC listing (OTCPK:DPTR.Q), so the page stated
+    that listing's FY2006–FY2010 as PARR's surprise history and dropped NYSE:PARR's FY2014–FY2025.
+    A sheet whose blocks name no listing of the company's refuses the EPS read, naming what it
+    holds: whose EPS a block carries is then something the page cannot say. ``heads`` are the
+    fiscal-year table's header rows, and ``end`` is where that table ends."""
+    named = [(i, str(rows[i][0]).strip()) for i in heads
+             if _SURPRISE_LISTING.match(str(rows[i][0]).strip())]
+    own = [(i, h) for i, h in named
+           if (m := _SURPRISE_LISTING.match(h)) is not None
+           and m.group(2).upper() == ticker.upper()]
+    if not own:
+        return (f"the Surprise sheet heads no block with {ticker}'s own listing ("
+                + (f"its listings: {', '.join(dict.fromkeys(h for _i, h in named))}" if named
+                   else "its blocks name no listing")
+                + "), so no GAAP-EPS surprise is read")
+    hdr, listing = own[0]
+    stop = next((i for i in heads if i > hdr), end)
+    ri = next((i for i in range(hdr + 1, stop)
+               if rows[i] and str(rows[i][0]).strip().startswith("EPS (GAAP)")), None)
+    first = named[0][1]
+    return _EpsBlock(row=ri, header=hdr, listing=listing,
+                     passed_over=first if first != listing else None)
+
+
 def surprise_history(bundle: CiqBundle) -> Sourced[str]:
     """Estimate beat/miss history from Estimates→Surprise — the pre-catalyst 'cracks' (EPS & revenue
     actual-vs-consensus). The sheet is by FISCAL YEAR (no quarterly view) — annual surprise;
-    +beat / −miss. Fail loud if the sheet/rows are absent."""
+    +beat / −miss. Fail loud if the sheet/rows are absent. The EPS row is the company's own
+    listing's (:func:`_surprise_eps_block`)."""
     try:
         rows = bundle.sheet("estimates", "Surprise")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "estimates", exc)
-    yhdr = next(
-        (
-            i for i, r in enumerate(rows)
-            if sum(1 for c in r[1:10] if (n := clean_num(c)) is not None and 2000 < n < 2100) >= 3
-        ),
-        None,
-    )
-    if yhdr is None:
+    heads = [
+        i for i, r in enumerate(rows)
+        if sum(1 for c in r[1:10] if (n := clean_num(c)) is not None and 2000 < n < 2100) >= 3
+    ]
+    if not heads:
         return Sourced.unknown(note="Surprise sheet has no fiscal-year header row")
+    yhdr = heads[0]
+    # the FISCAL-year table only: CIQ repeats every block under "Calendar Years" further down, and
+    # a listing missing from the fiscal table must not be found there and printed as "FY"
+    cal = next((i for i in range(yhdr + 1, len(rows))
+                if any(str(c).strip() == "Calendar Years" for c in rows[i][:3])), len(rows))
 
-    def series(ri: int | None) -> str | None:
+    def series(ri: int | None, hdr: int) -> str | None:
         if ri is None:
             return None
         out = [
             f"FY{int(yr)} {v:+.0%}"
             for j in range(1, len(rows[ri]))
             if (v := clean_num(rows[ri][j])) is not None
-            and j < len(rows[yhdr]) and (yr := clean_num(rows[yhdr][j])) is not None
+            and j < len(rows[hdr]) and (yr := clean_num(rows[hdr][j])) is not None
         ]
         return ", ".join(out) if out else None  # full series; the render windows it
 
+    block = _surprise_eps_block(rows, [i for i in heads if i < cal], bundle.ticker, end=cal)
+    refused = block if isinstance(block, str) else None
     parts: list[str] = []
-    if (e := series(_find_row_prefix(rows, "EPS (GAAP)"))) is not None:
+    if isinstance(block, _EpsBlock) and (e := series(block.row, block.header)) is not None:
         parts.append(f"GAAP-EPS surprise: {e}")
-    if (rv := series(_find_row(rows, "Revenue"))) is not None:
+    if (rv := series(_find_row(rows, "Revenue"), yhdr)) is not None:
         parts.append(f"Revenue surprise: {rv}")
     if not parts:
-        return Sourced.unknown(note="no EPS/Revenue surprise series in the Surprise sheet")
+        return Sourced.unknown(note=refused or "no EPS/Revenue surprise series in the Surprise "
+                                               "sheet")
+    # the listing is named only where the sheet's FIRST listing block is another one's — the case
+    # the old read got wrong — so a single-listing page's stamp is unchanged
+    ref = ("CIQ Estimates→Surprise (annual)"
+           if not isinstance(block, _EpsBlock) or block.passed_over is None else
+           f"CIQ Estimates→Surprise (annual; GAAP EPS from the {block.listing} block — the "
+           f"sheet's first, {block.passed_over}, is another listing's)")
     return Sourced.present(
         "; ".join(parts) + " (GAAP-EPS basis; +beat / −miss)",
-        source_ref="CIQ Estimates→Surprise (annual)",
+        source_ref=ref, note=refused,
     )
 
 
@@ -4628,8 +4684,18 @@ def _parse_relationship_sheet(rows: list[list[Any]]) -> list[str] | None:
 
 
 def customers(bundle: CiqBundle) -> Sourced[str]:
+    """The roster alone — :func:`customer_roster` without its count."""
+    return customer_roster(bundle)[0]
+
+
+def customer_roster(bundle: CiqBundle) -> tuple[Sourced[str], int | None]:
     """Customer concentration from the CIQ Business-Relationships export — parsed into readable
     lines (name / relationship / industry), not a raw pipe-dump. Fail loud if unparsed.
+
+    RETURNED WITH ITS COUNT (2026-11-09, audit RBC-D1): how many recently disclosed rows parsed,
+    taken from the parsed list BEFORE :func:`_roster` caps it at 30. The roster is a display string,
+    and the renderers counted its ";" pieces, so every list over 30 printed "31". The count is None
+    wherever the roster is not PRESENT.
 
     ROUTED BY FORMAT (item 21). The export ships as .rtf for most names and as a .xls SPREADSHEET
     for others (SMPL today, WERN next). ``read_text`` refuses a spreadsheet by design — and this
@@ -4648,14 +4714,14 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
             note=(f"no Customers export for {bundle.ticker} — pull it and re-run"
                   if cands else
                   f"no Customers & Suppliers export for {bundle.ticker} — pull it and re-run")
-        )
+        ), None
     parsed: list[str] | None
     prior: list[str] = []
     if wb.fmt in (CiqFormat.BIFF_XLS, CiqFormat.OOXML):
         try:
             sheets = read_sheets(wb.path, wb.fmt)
         except CiqParseError as exc:
-            return Sourced.unknown(note=str(exc))
+            return Sourced.unknown(note=str(exc)), None
         parsed = next(
             (p for rows in sheets.values() if (p := _parse_relationship_sheet(rows))), None
         )
@@ -4663,7 +4729,7 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
         try:
             raw = read_text(wb.path, wb.fmt)
         except CiqParseError as exc:
-            return Sourced.unknown(note=str(exc))
+            return Sourced.unknown(note=str(exc)), None
         rel = _relationships(raw)
         parsed, prior = (rel.recent, rel.prior) if rel is not None else (None, [])
         # the recent section's own statement once rows parse; the whole view's when none did
@@ -4680,7 +4746,7 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
                     f"CIQ discloses no recently disclosed customers for {bundle.ticker} — the "
                     f"recent section says so in CIQ's own words, not unparsed")
             return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
-                                   source_ref=f"CIQ Customers&Suppliers {wb.path.name}")
+                                   source_ref=f"CIQ Customers&Suppliers {wb.path.name}"), None
     if not parsed:
         # rows parsed only under the prior head: the table was read, so never "could not parse"
         said = (f"{wb.path.name}'s recent section lists no customer and does not say it has none"
@@ -4689,9 +4755,9 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
         # a note naming the file's prior rows makes a claim about the file: cite it (round 2)
         return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
                                source_ref=(f"CIQ Customers&Suppliers {wb.path.name}" if prior
-                                           else None))
-    return Sourced.present(_roster(parsed), source_ref=f"CIQ Customers&Suppliers {wb.path.name}",
-                           note=_prior_note(prior) or None)
+                                           else None)), None
+    return (Sourced.present(_roster(parsed), source_ref=f"CIQ Customers&Suppliers {wb.path.name}",
+                            note=_prior_note(prior) or None), len(parsed))
 
 
 def _roster(rows: list[str]) -> str:

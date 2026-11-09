@@ -1357,7 +1357,8 @@
         "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Dec-31-2025)",
         "status": "present",
         "note": null
-      }
+      },
+      "customers_listed": 49
     },
     "ev_gap": {
       "vintages": {
@@ -11071,7 +11072,7 @@
     "primary-source: 8-K 0001065280-26-000189 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001065280-26-000139 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+1.4s fetch)",
-    "CIQ READING CONFIRMED BY THE FILING — Merger & Related Restruct. Charges ($M), LTM to 2026-09-30: the page states +2,800.0, the quarterly export's reading, because CIQ's two exports disagree: the annual export's LTM reads -2,800.0. No filed concept states the item alone; the filings carry it inside us-gaap:NonoperatingIncomeExpense, a wider line, and the quarterly export's breakdown of that line (Interest and Invest. Income, Currency Exchange Gains (Loss), Other Non-Operating Inc. (Exp.) and this row) reproduces it in every quarter within 0.5 $M — 45.5 against 45.473 filed (2025-12-31); 2,852.2 against 2,852.166 filed (2026-03-31); 51.7 against 51.661 filed (2026-06-30); 43.0 against 43.006 filed (2026-09-30) (0001065280-26-000034; 0001065280-25-000406; 0001065280-26-000138; 0001065280-26-000212; 0001065280-26-000291). The annual export reaches the same LTM total, 2,992.3 against 2,992.3 filed, only by carrying Currency Exchange Gains (Loss) -58.4 where the quarterly export's four quarters carry -76.6; Other Non-Operating Inc. (Exp.) +5,554.7 where the quarterly export's four quarters carry -27.0: the filed total alone cannot tell the two exports apart; the quarterly export's breakdown can be set against each quarter, and it reconciles in every one",
+    "CIQ'S BREAKDOWN RECONCILES TO THE FILED LINE; THE ROW'S OWN FIGURE IS CIQ'S, NOT THE FILING'S — Merger & Related Restruct. Charges ($M), LTM to 2026-09-30: the page states +2,800.0, the quarterly export's reading, because CIQ's two exports disagree: the annual export's LTM reads -2,800.0. No filed concept states the item alone; the filings carry it inside us-gaap:NonoperatingIncomeExpense, a wider line, and the quarterly export's breakdown of that line (Interest and Invest. Income, Currency Exchange Gains (Loss), Other Non-Operating Inc. (Exp.) and this row) reproduces it in every quarter within 0.5 $M — 45.5 against 45.473 filed (2025-12-31); 2,852.2 against 2,852.166 filed (2026-03-31); 51.7 against 51.661 filed (2026-06-30); 43.0 against 43.006 filed (2026-09-30) (0001065280-26-000034; 0001065280-25-000406; 0001065280-26-000138; 0001065280-26-000212; 0001065280-26-000291). The annual export reaches the same LTM total, 2,992.3 against 2,992.3 filed, only by carrying Currency Exchange Gains (Loss) -58.4 where the quarterly export's four quarters carry -76.6; Other Non-Operating Inc. (Exp.) +5,554.7 where the quarterly export's four quarters carry -27.0: the filed total alone cannot tell the two exports apart; the quarterly export's breakdown can be set against each quarter, and it reconciles in every one",
     "Untraceable figure 166 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'Against a HETEROGENEOUS peer set (caps $166M–$3,900.0B, 23,480x span; name $256.7B), NFLX carries BETTER fundamentals than the peer median on margin (32% vs 21%) and LT EPS growth (21% vs 16%) yet trades at EV/EBITDA 15.9x vs peer median 18.2x — posing whether that discount is RESIDUAL (overshoot) rather than EARNED; the human must judge, not computed here.'",
     "Untraceable figure 3900 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'Against a HETEROGENEOUS peer set (caps $166M–$3,900.0B, 23,480x span; name $256.7B), NFLX carries BETTER fundamentals than the peer median on margin (32% vs 21%) and LT EPS growth (21% vs 16%) yet trades at EV/EBITDA 15.9x vs peer median 18.2x — posing whether that discount is RESIDUAL (overshoot) rather than EARNED; the human must judge, not computed here.'",
     "Untraceable figure 51124 (a bull point) — footnoted to CIQ Financials→Income Statement (annual) + Estimates→Trends (FY E), which does not contain it; verify the source before relying on it: 'Revenue growth remains double-digit — Q3 Sep-30-2026 up +11.8% YoY — with FY26E revenue $51,124M and FY27E $56,601M, so top-line deceleration is modest, not a terminal roll-over.'",
@@ -16164,6 +16165,24 @@
     ],
     "unrecorded": []
   },
+  "layer_refreshes": [
+    {
+      "date": "2026-11-09",
+      "extraction_version": "2026-11-09.order2-pages",
+      "writer": "ciq-reread",
+      "layers": [
+        "mechanical.concentration"
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "extraction_version": "2026-11-09.order2-pages",
+      "writer": "caveat-reword",
+      "layers": [
+        "caveats"
+      ]
+    }
+  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,

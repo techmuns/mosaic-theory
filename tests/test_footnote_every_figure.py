@@ -323,6 +323,8 @@ def test_the_prompts_literal_example_checks_clean_against_the_facts_it_cites() -
 NOT_A_FACT: dict[str, str] = {
     "CapitalStructure.detail_as_of": "a date label",
     "CatalystCalendar.qa_flags": "machine QA",
+    "Concentration.customers_listed": ("the structured twin of `concentration.customers` — the "
+                                       "count of the roster it cites (audit RBC-D1)"),
     "DilutionPipeline.window_days": "a parameter of the read",
     "DrawdownCause.gap_threshold": "a parameter of the read",
     "DrawdownCause.gap_window_days": "a parameter of the read",

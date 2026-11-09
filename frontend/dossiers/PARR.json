@@ -1270,7 +1270,8 @@
         "source_ref": "EDGAR 10-K 0000821483-26-000005 XBRL instance parr-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31",
         "status": "present",
         "note": null
-      }
+      },
+      "customers_listed": 4
     },
     "ev_gap": {
       "vintages": {
@@ -1680,8 +1681,8 @@
         "note": null
       },
       "surprise_history": {
-        "value": "GAAP-EPS surprise: FY2006 +0%, FY2007 +0%, FY2008 +0%, FY2009 +0%, FY2010 +0%; Revenue surprise: FY2003 -3%, FY2004 -0%, FY2006 -3%, FY2007 -20%, FY2008 +16%, FY2009 +19%, FY2010 +23%, FY2014 +2%, FY2015 +1%, FY2016 -1%, FY2017 +4%, FY2018 -1%, FY2019 +2%, FY2020 +1%, FY2021 +1%, FY2022 +3%, FY2023 +0%, FY2024 +2%, FY2025 +2% (GAAP-EPS basis; +beat / −miss)",
-        "source_ref": "CIQ Estimates→Surprise (annual)",
+        "value": "GAAP-EPS surprise: FY2014 +0%, FY2015 +0%, FY2016 +0%, FY2018 -15%, FY2020 +0%, FY2021 +0%, FY2022 -7%, FY2023 +52%, FY2024 +0%, FY2025 +18%; Revenue surprise: FY2003 -3%, FY2004 -0%, FY2006 -3%, FY2007 -20%, FY2008 +16%, FY2009 +19%, FY2010 +23%, FY2014 +2%, FY2015 +1%, FY2016 -1%, FY2017 +4%, FY2018 -1%, FY2019 +2%, FY2020 +1%, FY2021 +1%, FY2022 +3%, FY2023 +0%, FY2024 +2%, FY2025 +2% (GAAP-EPS basis; +beat / −miss)",
+        "source_ref": "CIQ Estimates→Surprise (annual; GAAP EPS from the NYSE:PARR (USD) block — the sheet's first, OTCPK:DPTR.Q (USD), is another listing's)",
         "status": "present",
         "note": null
       }
@@ -14352,6 +14353,22 @@
       "writer": "refresh",
       "layers": [
         "mechanical.financial_summary"
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "extraction_version": "2026-11-09.order2-pages",
+      "writer": "ciq-reread",
+      "layers": [
+        "mechanical.concentration"
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "extraction_version": "2026-11-09.order2-pages",
+      "writer": "ciq-reread",
+      "layers": [
+        "mechanical.consensus_context"
       ]
     }
   ],
