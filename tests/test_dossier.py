@@ -2487,9 +2487,10 @@ def test_operating_drivers_feed_synthesis_but_render_no_standalone_block() -> No
                  verbatim="Revenue decreased 48% due to a sales-volume reduction.",
                  source_ref="10-Q Z")]
     import pathlib as _pl
-    pth = _pl.Path("data/dossiers/AORT/dossier.json")
+    # AORT's page as committed on 2026-10-26, frozen when the name was retired (2026-11-09)
+    pth = _pl.Path("tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json")
     if not pth.exists():
-        pytest.skip("AORT committed dossier absent")
+        pytest.skip("AORT frozen dossier absent")
     d = ds.Dossier.model_validate_json(pth.read_text())
     od = ds.OperatingDriversExtract(rows=rows, qa_flags=[])
     inj = d.model_copy(update={"mechanical": d.mechanical.model_copy(
