@@ -130,3 +130,11 @@ superseded-by:
   The note reads "restating 218,000,000 first filed …", which is what the filings say.
   *Falsifier:* a page reader who checks a named restatement and finds it a re-rounding to one
   significant figure.
+- **Codex's review (round 1, P1, deferred): the significant-figure floor is itself a guess.** A
+  first filing of "$0.1 billion" then "$106 million" is now named a restatement, where the filer
+  may only have re-rounded. The honest answer there is a third result, "not determined: one
+  figure is stated to one significant figure and companyfacts carries no precision", in place of
+  either guess. That needs `_same_figure` to return it and every reader of it to print it:
+  `filed_at`, the EDGAR fallback's notes, the SBC line and the tie-break's restatement date. Four
+  of those five readers lie outside `concepts.py`. Reading XBRL `decimals` (above) removes the
+  guess altogether. Both are proposed, not built.
