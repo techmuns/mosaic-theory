@@ -31,7 +31,7 @@ superseded-by:
 | (b) two self-funding reads | **SHIPPED** | The survival line's FCF leg is deleted. `_survival_capacity` takes no FCF sign; `quality.fcf_sign` and `primary_source.self_funding` are unchanged |
 | `FIX_3B` transform | **SHIPPED** | `FIX_3B = ("survival_read", "current_buybacks")` in `vinci/evals/variants.py` |
 | the $0 compare | **SHIPPED** | §3 |
-| the measurement | **PROPOSED, not run** | §5 |
+| the measurement | **PROPOSED, not run** here | §5; run since by #935 at this PR's `e205bf66` (`docs/records/2026-11-09-fix3b-measured-on-the-panel.md`) |
 
 ## 2. The two defects, as found
 
@@ -255,14 +255,19 @@ python -m vinci.evals score --out-dir <…> --registration <…> --budget-ledger
   before this one, and main's STATE rows exactly. This PR's row moved from 58 (main's M-GAP holds
   it) to 59. At the second merge of main (`6fbbb4a2`), #936 held 59 and #934 held 60, and a
   row 61 put §5.0 at 61 lines, over its 60-line cap (`tests/test_state_open_now.py`). So the row
-  is folded into row 54's item (1), whose open item this PR is, with its text kept whole.
+  is folded into row 54's item (1), whose open item this PR is. Three parts were rewritten to
+  carry #935's result: the header ("PROPOSED, NOT RUN" → measured by #935), one clause of the body
+  ("the proposed run is no-worsening only (≈$31, cap $35)" → "the run was no-worsening only
+  ($30.72 of $35, #935)") and the owner cell (now the merge approval only). The rest of the body
+  is unchanged.
 - **#927's gap registry named a leg this PR deletes, and the merge commit rewords it**
   (coordinator, after #927 merged; the brief's "don't touch `gaps.py`" held until then).
   - `gaps._survival_gaps` typed "the FCF sign behind the survival line's runway leg". After 3b
     the survival line has no such leg, so the item now names its field: "the FCF sign
     (quality.fcf_sign)". Its type logic is untouched.
-  - On the 28 frozen pages the gap test's 115 entries are unchanged except that text, which
-    moves on the two pages that carry the entry (IT and LLY, both "our gap", fields and basis
+  - On the 28 frozen pages (code at `e205bf66`, re-counted at `25123560`: our gap 33, does not
+    apply 34, the company's normal practice 24, change 0, type not determined 24) the gap test's
+    115 entries are unchanged except that text, which moves on the two pages that carry the entry (IT and LLY, both "our gap", fields and basis
     identical). Pinned: `tests/test_fix3b_stale_and_conflicting.py`.
   - The frozen M-GAP gold keeps the old words: `vinci/evals/synthesis_gap_types.json` (#927's
     types at `601d2f7e`) and `metrics.GAP_ITEM_WORDS`, which keys on them. They are the gold's
