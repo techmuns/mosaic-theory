@@ -120,3 +120,117 @@ def test_parrs_committed_page_states_its_own_listings_surprise_history() -> None
     assert "GAAP-EPS surprise: FY2014 " in line, line
     for y in range(2006, 2011):
         assert f"GAAP-EPS surprise: FY{y}" not in line, line
+
+
+# --- review of the branch (2026-11-09): three edges of the block read ----------------------------
+
+
+def test_a_share_class_spelled_with_a_dash_still_finds_its_own_block() -> None:
+    """(+) 'BRK.B' and 'BRK-B' are one share class (the Trends reader's rule, audit A-D10): a
+    bundle ticker spelled with a dash still reads the block CIQ heads with the dotted symbol."""
+    rows = _rows("PARR")
+    own = next(i for i, r in enumerate(rows) if r and str(r[0]).strip() == "NYSE:PARR (USD)")
+    rows[own][0] = "NYSE:PA.RR (USD)"
+    path = pathlib.Path("/frozen") / FIX["_about"]["exports"]["PARR"]["file"]
+    wb = CiqWorkbook(kind="estimates", path=path, fmt=CiqFormat.BIFF_XLS, freq=None)
+    got = cs.surprise_history(CiqBundle(ticker="PA-RR", workbooks=(wb,),
+                                        _cache={path: {"Surprise": rows}}))
+    assert got.value is not None and got.value.startswith("GAAP-EPS surprise: FY2014 +0%")
+    assert got.note is None
+
+
+def test_an_own_block_with_no_eps_row_says_so_and_never_cites_the_block() -> None:
+    """(-) PARR's own block with its "EPS (GAAP)" row blanked: no GAAP-EPS series is stated, the
+    note says why, and the stamp never claims an EPS read from the NYSE:PARR block."""
+    rows = _rows("PARR")
+    own = next(i for i, r in enumerate(rows) if r and str(r[0]).strip() == "NYSE:PARR (USD)")
+    eps = next(i for i in range(own + 1, len(rows))
+               if rows[i] and str(rows[i][0]).startswith("EPS (GAAP)"))
+    rows[eps] = []
+    got = cs.surprise_history(_bundle("PARR", rows))
+    assert got.value is not None and got.value.startswith("Revenue surprise: ")
+    assert got.source_ref == "CIQ Estimates→Surprise (annual)"
+    assert got.note == ("the NYSE:PARR (USD) block carries no 'EPS (GAAP)' row, so no GAAP-EPS "
+                        "surprise is read")
+
+
+def test_a_revenue_row_only_under_calendar_years_is_never_printed_as_fiscal() -> None:
+    """(-) The fiscal table's Revenue row blanked: the only Revenue row left is the Calendar Years
+    table's, one column off the fiscal header. It is not read — before, it printed every year
+    shifted (calendar 2003's -2% as "FY2000 -2%")."""
+    rows = _rows("PARR")
+    cal = next(i for i, r in enumerate(rows) if r and "Calendar Years" in [str(c) for c in r[:3]])
+    fiscal_rev = next(i for i in range(cal) if rows[i] and str(rows[i][0]).strip() == "Revenue")
+    rows[fiscal_rev] = []
+    got = cs.surprise_history(_bundle("PARR", rows))
+    assert got.value is not None and "Revenue surprise" not in got.value
+    assert "FY2000" not in got.value
+
+
+# --- the $0 writer's surprise guards (`vinci ciq-reread --field surprise_history`) ---------------
+
+
+def _reread_page(tmp: pathlib.Path, monkeypatch: pytest.MonkeyPatch, *, stamp: str | None,
+                 cite: bool = False) -> tuple[pathlib.Path, str]:
+    """PARR's committed page in ``tmp`` with its surprise history set back to the predecessor
+    block's read, served the frozen rows from a file on disk whose sha256 the page stamps (or
+    ``stamp``)."""
+    import hashlib
+
+    from vinci.dossier import ciq_reread
+    from vinci.dossier.schemas import dossier_json
+
+    export = tmp / "ciq" / "PARR" / FIX["_about"]["exports"]["PARR"]["file"]
+    export.parent.mkdir(parents=True)
+    export.write_bytes(b"frozen surprise rows")
+    wb = CiqWorkbook(kind="estimates", path=export, fmt=CiqFormat.BIFF_XLS, freq=None)
+    bundle = CiqBundle(ticker="PARR", workbooks=(wb,), _cache={export: {"Surprise": _rows("PARR")}})
+    monkeypatch.setattr(ciq_reread, "_bundle", lambda _t, _root: bundle)
+    page = json.loads((ROOT / "data" / "dossiers" / "PARR" / "dossier.json").read_text())
+    page["mechanical"]["consensus_context"]["surprise_history"] = {
+        "value": "GAAP-EPS surprise: FY2006 +0%", "source_ref": "CIQ Estimates→Surprise (annual)",
+        "status": "present", "note": None}
+    sha = hashlib.sha256(export.read_bytes()).hexdigest()
+    for c in page["inputs"]["ciq"]:
+        if c["kind"] == "estimates":
+            c["sha256"] = sha if stamp is None else stamp
+    if cite:
+        page["synthesis"]["bull_points"][0]["source_ref"] = "CIQ Estimates→Surprise (annual)"
+    jp = tmp / "dossiers" / "PARR" / "dossier.json"
+    jp.parent.mkdir(parents=True)
+    jp.write_text(dossier_json(Dossier.model_validate(page)))
+    return jp, jp.read_text()
+
+
+def test_the_writer_rereads_the_surprise_history_from_the_stamped_export(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """(+) The export on disk hashes to the page's stamp and no claim cites the field: the field is
+    re-read, recorded as `ciq-reread`, and a second run is a no-op."""
+    from vinci.dossier import ciq_reread
+
+    jp, _raw = _reread_page(tmp_path, monkeypatch, stamp=None)
+    o = ciq_reread.reread(jp, "surprise_history", tmp_path / "ciq")
+    assert o.status == "written", o
+    doc = json.loads(jp.read_text())
+    assert doc["mechanical"]["consensus_context"]["surprise_history"]["value"].startswith(
+        "GAAP-EPS surprise: FY2014 +0%")
+    assert doc["layer_refreshes"][-1]["writer"] == "ciq-reread"
+    again = ciq_reread.reread(jp, "surprise_history", tmp_path / "ciq")
+    assert again.status == "unchanged", again
+
+
+@pytest.mark.parametrize(("stamp", "cite", "why"), [
+    ("0" * 64, False, "is not the one the page stamps"),
+    (None, True, "a synthesis claim cites the surprise history"),
+])
+def test_the_writer_refuses_an_unproven_export_or_a_cited_field(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch, stamp: str | None, cite: bool,
+        why: str) -> None:
+    """(-) NEGATIVE PINS: an export whose sha256 is not the page's stamp, and a page whose synthesis
+    cites the field, are refused — and the page is byte-identical."""
+    from vinci.dossier import ciq_reread
+
+    jp, raw = _reread_page(tmp_path, monkeypatch, stamp=stamp, cite=cite)
+    o = ciq_reread.reread(jp, "surprise_history", tmp_path / "ciq")
+    assert o.status == "refused" and why in o.detail, o
+    assert jp.read_text() == raw

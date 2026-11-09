@@ -2069,6 +2069,11 @@ def multi_year_trajectory(bundle: CiqBundle) -> Sourced[str]:
 _SURPRISE_LISTING = re.compile(r"^([A-Za-z]+):(\S+) \(([A-Z]{3})\)$")
 
 
+def _share_symbol(text: str) -> str:
+    """A listing's symbol with its punctuation dropped: 'BRK.B' and 'BRK-B' are one share class."""
+    return re.sub(r"[^A-Z0-9]", "", text.upper())
+
+
 class _EpsBlock(NamedTuple):
     """The Surprise sheet's block for the company's own listing."""
 
@@ -2088,21 +2093,21 @@ def _surprise_eps_block(rows: Rows, heads: list[int], ticker: str, *,
     A sheet whose blocks name no listing of the company's refuses the EPS read, naming what it
     holds: whose EPS a block carries is then something the page cannot say. ``heads`` are the
     fiscal-year table's header rows, and ``end`` is where that table ends."""
-    named = [(i, str(rows[i][0]).strip()) for i in heads
-             if _SURPRISE_LISTING.match(str(rows[i][0]).strip())]
-    own = [(i, h) for i, h in named
-           if (m := _SURPRISE_LISTING.match(h)) is not None
-           and m.group(2).upper() == ticker.upper()]
+    named = [(i, m) for i in heads
+             if (m := _SURPRISE_LISTING.match(str(rows[i][0]).strip())) is not None]
+    own = [(i, m.group(0)) for i, m in named
+           if _share_symbol(m.group(2)) == _share_symbol(ticker)]
     if not own:
         return (f"the Surprise sheet heads no block with {ticker}'s own listing ("
-                + (f"its listings: {', '.join(dict.fromkeys(h for _i, h in named))}" if named
+                + (f"its listings: {', '.join(dict.fromkeys(m.group(0) for _i, m in named))}"
+                   if named
                    else "its blocks name no listing")
                 + "), so no GAAP-EPS surprise is read")
     hdr, listing = own[0]
     stop = next((i for i in heads if i > hdr), end)
     ri = next((i for i in range(hdr + 1, stop)
                if rows[i] and str(rows[i][0]).strip().startswith("EPS (GAAP)")), None)
-    first = named[0][1]
+    first = named[0][1].group(0)
     return _EpsBlock(row=ri, header=hdr, listing=listing,
                      passed_over=first if first != listing else None)
 
@@ -2139,12 +2144,21 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
         ]
         return ", ".join(out) if out else None  # full series; the render windows it
 
-    block = _surprise_eps_block(rows, [i for i in heads if i < cal], bundle.ticker, end=cal)
+    fiscal = [i for i in heads if i < cal]
+    block = _surprise_eps_block(rows, fiscal, bundle.ticker, end=cal)
     refused = block if isinstance(block, str) else None
+    if isinstance(block, _EpsBlock) and block.row is None:
+        refused = (f"the {block.listing} block carries no 'EPS (GAAP)' row, so no GAAP-EPS "
+                   "surprise is read")
     parts: list[str] = []
-    if isinstance(block, _EpsBlock) and (e := series(block.row, block.header)) is not None:
-        parts.append(f"GAAP-EPS surprise: {e}")
-    if (rv := series(_find_row(rows, "Revenue"), yhdr)) is not None:
+    eps = (series(block.row, block.header) if isinstance(block, _EpsBlock) else None)
+    if eps is not None:
+        parts.append(f"GAAP-EPS surprise: {eps}")
+    # Revenue too is read in the FISCAL table only, against its own block's header — a Revenue row
+    # found under "Calendar Years" sits one column off the fiscal header and would print shifted FYs
+    rev = _find_row(rows[:cal], "Revenue")
+    rev_hdr = max((i for i in fiscal if rev is not None and i < rev), default=yhdr)
+    if (rv := series(rev, rev_hdr)) is not None:
         parts.append(f"Revenue surprise: {rv}")
     if not parts:
         return Sourced.unknown(note=refused or "no EPS/Revenue surprise series in the Surprise "
@@ -2152,7 +2166,7 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
     # the listing is named only where the sheet's FIRST listing block is another one's — the case
     # the old read got wrong — so a single-listing page's stamp is unchanged
     ref = ("CIQ Estimates→Surprise (annual)"
-           if not isinstance(block, _EpsBlock) or block.passed_over is None else
+           if not isinstance(block, _EpsBlock) or block.passed_over is None or eps is None else
            f"CIQ Estimates→Surprise (annual; GAAP EPS from the {block.listing} block — the "
            f"sheet's first, {block.passed_over}, is another listing's)")
     return Sourced.present(
@@ -4484,11 +4498,9 @@ def _listing_rating(bundle: CiqBundle) -> tuple[str | None, str | None, str | No
         return None
     heads = [i for i in range(sec + 1, len(rows)) if len(rows[i]) > 1
              and str(rows[i][1]).strip() == "Current" and ":" in str(rows[i][0])]
-    def symbol(text: str) -> str:  # 'BRK.B' and 'BRK-B' are one share class
-        return re.sub(r"[^A-Z0-9]", "", text.upper())
-
     own = next((i for i in heads
-                if symbol(str(rows[i][0]).strip().rsplit(":", 1)[1]) == symbol(bundle.ticker)),
+                if _share_symbol(str(rows[i][0]).strip().rsplit(":", 1)[1])
+                == _share_symbol(bundle.ticker)),
                None)
     if own is None:
         held = ", ".join(str(rows[i][0]).strip() for i in heads) or "none"

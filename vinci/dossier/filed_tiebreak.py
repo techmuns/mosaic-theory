@@ -168,8 +168,9 @@ CONTAINING: dict[str, ContainingLine] = {
 CONTAINING_HEADLINE = ("CIQ'S BREAKDOWN RECONCILES TO THE FILED LINE; THE ROW'S OWN FIGURE IS "
                        "CIQ'S, NOT THE FILING'S")
 #: Headlines this module no longer writes, each to the one that replaced it. A committed caveat is
-#: reworded by `vinci caveat-reword` (:func:`reworded`) only where the replacement leaves the rest
-#: of the caveat as this code writes it.
+#: reworded by `vinci caveat-reword` (:func:`reworded`), which swaps the headline alone and checks
+#: nothing after it: an entry belongs here only while the retired headline was written by ONE body,
+#: the one the current code still writes (true of the one below — one version wrote it, #891).
 RETIRED_HEADLINES: dict[str, str] = {
     "CIQ READING CONFIRMED BY THE FILING": CONTAINING_HEADLINE,
 }

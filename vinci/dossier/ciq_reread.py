@@ -23,13 +23,13 @@ Each write goes through the one serializer and records itself (`layer_refresh`, 
 from __future__ import annotations
 
 import contextlib
-import hashlib
 import io
 import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from vinci import provenance
 from vinci.dossier import ciq_sheets
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.manual_store import LocalFolderStore
@@ -93,7 +93,7 @@ def _surprise(doc: dict[str, Any], bundle: CiqBundle) -> tuple[str, str, Any]:
     if not stamped:
         return "refused", "the page stamps no Estimates export, so the one on disk cannot be " \
                           "shown to be the one it was built from", None
-    sha = hashlib.sha256(wb.path.read_bytes()).hexdigest()
+    sha, _size = provenance.file_sha256(wb.path)
     if sha != stamped[0].get("sha256"):
         return "refused", (f"the Estimates export on disk ({wb.path.name}, sha256 {sha[:12]}) is "
                            f"not the one the page stamps ({str(stamped[0].get('sha256'))[:12]}) — "
