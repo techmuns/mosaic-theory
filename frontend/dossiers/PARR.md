@@ -1,6 +1,6 @@
 # Dossier — PAR PACIFIC HOLDINGS, INC. (NYSE: PARR)
 
-_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-10-09.3_
+_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-09.order2-pages_
 
 # Brief — first cut
 
@@ -371,7 +371,7 @@ _CIQ states every guide as a LEVEL in the metric's own units. Where management g
 
 _+12 more broker-days in JSON_
 
-- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2006 +0%, FY2007 +0%, FY2008 +0%, FY2009 +0%, FY2010 +0%; Revenue surprise: FY2003 -3%, FY2004 -0%, FY2006 -3%, FY2007 -20%, FY2008 +16%, FY2009 +19%, FY2010 +23%, FY2014 +2%, FY2015 +1%, FY2016 -1%, FY2017 +4%, FY2018 -1%, FY2019 +2%, FY2020 +1%, FY2021 +1%, FY2022 +3%, FY2023 +0%, FY2024 +2%, FY2025 +2% (GAAP-EPS basis; +beat / −miss) [52]
+- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2014 +0%, FY2015 +0%, FY2016 +0%, FY2018 -15%, FY2020 +0%, FY2021 +0%, FY2022 -7%, FY2023 +52%, FY2024 +0%, FY2025 +18%; Revenue surprise: FY2003 -3%, FY2004 -0%, FY2006 -3%, FY2007 -20%, FY2008 +16%, FY2009 +19%, FY2010 +23%, FY2014 +2%, FY2015 +1%, FY2016 -1%, FY2017 +4%, FY2018 -1%, FY2019 +2%, FY2020 +1%, FY2021 +1%, FY2022 +3%, FY2023 +0%, FY2024 +2%, FY2025 +2% (GAAP-EPS basis; +beat / −miss) [52]
 
 ## Leverage & survival
 - **Net debt / EBITDA [NET]:** 0.7x [7]
@@ -596,6 +596,8 @@ _Source §: 8-K 0001193125-23-158690 · d292719dex102.htm_
   - 2026-10-27 · caveats, mechanical.capital_structure, mechanical.catalyst_calendar, mechanical.quality — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
+  - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
+  - 2026-11-09 · mechanical.consensus_context — ciq-reread at 2026-11-09.order2-pages
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 40d old — 2026-09-16 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 42d old (2026-09-14, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -659,7 +661,7 @@ _Source §: 8-K 0001193125-23-158690 · d292719dex102.htm_
 [49] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
 [50] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
 [51] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-09-14 · export date unverified]`
-[52] `CIQ Estimates→Surprise (annual)`
+[52] `CIQ Estimates→Surprise (annual; GAAP EPS from the NYSE:PARR (USD) block — the sheet's first, OTCPK:DPTR.Q (USD), is another listing's)`
 [53] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-16`
 [54] `CIQ Net Debt $949M [Q2 Jun-30-2026] ÷ CIQ OCF $555M [LTM 12 months Jun-30-2026]`
 [55] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]`

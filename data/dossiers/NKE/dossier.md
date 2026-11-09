@@ -1,6 +1,6 @@
 # Dossier — NIKE, Inc. (NYSE: NKE)
 
-_October 29, 2026 · extraction 2026-10-29.G-D3_
+_October 29, 2026 · extraction 2026-10-29.G-D3 · layers refreshed to 2026-11-09.order2-pages_
 
 # Brief — first cut
 
@@ -152,7 +152,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 - **Segments (revenue share):** NIKE Brand - North America 44%; NIKE Brand - Europe, Middle East & Africa 27%; NIKE Brand - Asia Pacific & Latin America 13%; NIKE Brand - Greater China 13%; Converse 3%; NIKE Brand - Global Brand Divisions 0%; Corporate 0% [1]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — reports 7 segments (NIKE Brand - North America; NIKE Brand - Europe, Middle East & Africa; NIKE Brand - Asia Pacific & Latin America; NIKE Brand - Greater China; Converse; NIKE Brand - Global Brand Divisions; Corporate) but discloses no segment EBITDA — revenue is segmented in the filing and EBITDA is not
 - **Segments (profit — the filer's own measure, 10-K):** FY2026 segment profit on the filer's own measure, nke:EarningsBeforeInterestAndTaxes (10-K XBRL): NIKE Brand $5,855M (12.9% margin) · Converse $18M (1.5% margin) — segments sum $5,873M. [30]
-- **Customers:** 31 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [31]
+- **Customers:** 34 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [31]
 - **Geographic:** Outside United States 56%; United States 44% [2]
 
 ## The argument
@@ -619,6 +619,8 @@ _Source §: 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm · amende
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-10-29 17:59 UTC
 - **Extraction:** 2026-10-29.G-D3 — each earnings call reaches the driver extraction and the synthesis WHOLE — prepared remarks and the full Q&A — where it was cut at 12,000 characters unmarked; a call past the 100,000-character ceiling ends in a marker and a QA flag, and a call on file that does not read is named in a QA flag (audit G-D3, G-D4)
+- **Refreshed since assembly** (oldest first):
+  - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-10-28
 - **Panel age:** oldest panel 1d old — 2026-10-28 (valuation.implied_expectations.tev_as_of), against a 2026-10-29 build
 - **Consensus age:** consensus 2d old (2026-10-27, valuation.implied_expectations.multiples_as_of) — within the ceiling

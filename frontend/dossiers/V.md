@@ -149,7 +149,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 ## Business quality
 - **Segments (revenue share):** Payment Services — single segment [1]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — single-segment reporting (Payment Services) — no segment EBITDA to break out; the consolidated EBITDA is the whole business
-- **Customers:** 31 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [27]
+- **Customers:** mapped client relationships (count not recorded on this page) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [27]
 - **Geographic:** International 61%; United States (U.S.) 39% [2]
 
 ## The argument

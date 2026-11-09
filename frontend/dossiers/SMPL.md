@@ -1,6 +1,6 @@
 # Dossier — Simply Good Foods Co (Nasdaq: SMPL)
 
-_November 4, 2026 · extraction 2026-11-04.drawdown-window-at-price-date · layers refreshed to 2026-11-05.consensus-ref-names-its-sheet_
+_November 4, 2026 · extraction 2026-11-04.drawdown-window-at-price-date · layers refreshed to 2026-11-09.order2-pages_
 
 # Brief — first cut
 
@@ -696,6 +696,7 @@ _Source §: 8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm · amended by 0001
 - **Extraction:** 2026-11-04.drawdown-window-at-price-date — the rolling drawdown window ends on the page's price date, not the screen's reference date: the screen's detector over the 180 days ending on the stored close the price box shows, so a drop after the last screen run is classified, not only charted (`drawdown_cause.gap_window_end`)
 - **Refreshed since assembly** (oldest first):
   - 2026-11-05 · mechanical.consensus_context — refresh at 2026-11-05.consensus-ref-names-its-sheet
+  - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
 - **Price store:** `busy-goldstine-88c81c` · reaching 2026-11-03
 - **Panel age:** oldest panel 1d old — 2026-11-03 (valuation.implied_expectations.tev_as_of), against a 2026-11-04 build
 - **Consensus age:** consensus 6d old (2026-10-29, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -1,6 +1,6 @@
 # Dossier — Concentrix Corp (Nasdaq: CNXC)
 
-_October 29, 2026 · extraction 2026-10-29.G-D3_
+_October 29, 2026 · extraction 2026-10-29.G-D3 · layers refreshed to 2026-11-09.order2-pages_
 
 # Brief — first cut
 
@@ -644,6 +644,8 @@ _Source §: 8-K 0001803599-21-000215 · exhibit101122721.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-10-29 17:34 UTC
 - **Extraction:** 2026-10-29.G-D3 — each earnings call reaches the driver extraction and the synthesis WHOLE — prepared remarks and the full Q&A — where it was cut at 12,000 characters unmarked; a call past the 100,000-character ceiling ends in a marker and a QA flag, and a call on file that does not read is named in a QA flag (audit G-D3, G-D4)
+- **Refreshed since assembly** (oldest first):
+  - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-10-28
 - **Panel age:** oldest panel 6d old — 2026-10-23 (valuation.implied_expectations.tev_as_of), against a 2026-10-29 build
 - **Consensus age:** consensus 22d old (2026-10-07, valuation.implied_expectations.multiples_as_of) — within the ceiling

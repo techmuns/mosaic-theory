@@ -570,3 +570,70 @@ def test_a_derived_quarter_pairs_filings_of_one_vintage() -> None:
 
     assert q4(date(2025, 12, 1)) == (-7.708, ["0001760689-25-000010", "0001760689-25-000006"])
     assert q4(date(2026, 11, 4)) == (0.449, ["0001628280-26-018264", "0001628280-25-051119"])
+
+
+# --- the containing line's headline says what was checked (audit RBC-D8, 2026-11-09) -------------
+
+
+def _nflx_split_moved(delta: float) -> CiqBundle:
+    """SYNTHETIC, ON THE REAL TYPE: NFLX's real quarterly export with ``delta`` $M of its Q1 2026
+    merger cell moved into Other Non-Operating — a different split of the SAME filed line."""
+    b = _bundle("NFLX")
+    sheet = _nflx_sheet(b, "quarterly")
+    j = next(i for i, h in enumerate(sheet[0]) if "Mar-31-2026" in str(h))
+    merger = next(r for r in sheet if str(r[0]).strip() == MERGER.removesuffix(" ($M)"))
+    other = next(r for r in sheet if str(r[0]).strip() == NONOP[2])
+    merger[j], other[j] = float(merger[j]) - delta, float(other[j]) + delta
+    return b
+
+
+def test_the_containing_line_caveat_never_says_the_filing_confirmed_the_row() -> None:
+    """(+) NFLX: the filing states only `NonoperatingIncomeExpense`, so its check is that CIQ's
+    quarterly breakdown reproduces the line. The caveat's headline says that — the row's figure is
+    CIQ's, not the filing's — and never "CONFIRMED BY THE FILING"."""
+    text = _decide("NFLX", MERGER).caveat()
+    assert text.startswith(f"{ft.CONTAINING_HEADLINE} — {MERGER}, LTM to 2026-09-30: "), text[:160]
+    assert "CONFIRMED BY THE FILING" not in text
+    assert "THE ROW'S OWN FIGURE IS CIQ'S, NOT THE FILING'S" in ft.CONTAINING_HEADLINE
+
+
+def test_a_different_split_of_the_same_line_passes_and_the_words_do_not_claim_it() -> None:
+    """THE AUDIT'S REPRODUCTION (BC-D8): 1,000 of the Q1 merger cell moved into Other Non-Operating
+    leaves every quarter's breakdown equal to the filed line, so the check still passes and the page
+    states +1,800.0. The value is CIQ's to stand behind — the headline says so — because no filed
+    concept can tell the two splits apart."""
+    d = _decide("NFLX", MERGER, bundle=_nflx_split_moved(1000.0))
+    assert d.figure is not None and d.figure.value.value == 1800.0
+    text = d.caveat()
+    assert text.startswith(ft.CONTAINING_HEADLINE) and "CONFIRMED" not in text
+
+
+def test_a_retired_headline_rewords_to_exactly_what_the_code_writes_now() -> None:
+    """The $0 path onto a committed page (`vinci caveat-reword`): a caveat under the retired
+    headline becomes, byte for byte, the caveat this code writes from the same inputs; a caveat
+    under any other headline is left alone (NEGATIVE PIN)."""
+    now = _decide("NFLX", MERGER).caveat()
+    old = "CIQ READING CONFIRMED BY THE FILING" + now[len(ft.CONTAINING_HEADLINE):]
+    assert ft.reworded(old) == now
+    assert ft.reworded(now) is None
+    assert ft.reworded(_decide("CELH", OUI).caveat()) is None
+    assert ft.reworded("CIQ READING CONFIRMED BY THE FILINGS — not the retired headline") is None
+
+
+def test_nflxs_committed_page_carries_the_caveat_the_code_writes() -> None:
+    """END TO END (TEST-LAYER RULE): NFLX's committed page printed "CIQ READING CONFIRMED BY THE
+    FILING". Its stored caveat is now the one this code writes from NFLX's frozen inputs — checked
+    whenever the page's filed figure is the fixture's — and its rendered page prints no claim of
+    confirmation."""
+    from vinci.dossier.render import render_markdown
+
+    page = json.loads((ROOT / "data" / "dossiers" / "NFLX" / "dossier.json").read_text())
+    d = _decide("NFLX", MERGER, cut=date(2026, 11, 4))
+    assert d.figure is not None
+    filed = page["mechanical"]["financial_summary"].get("filed_ltm") or []
+    if filed != [json.loads(d.figure.model_dump_json())]:
+        pytest.skip("NFLX's page states another filed figure than the frozen fixture decides")
+    assert d.caveat() in page["caveats"]
+    md = render_markdown(Dossier.model_validate(page))
+    assert "CONFIRMED BY THE FILING" not in md
+    assert ft.CONTAINING_HEADLINE in md

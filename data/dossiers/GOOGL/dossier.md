@@ -1,6 +1,6 @@
 # Dossier — Alphabet Inc. (Nasdaq: GOOGL)
 
-_November 3, 2026 · extraction 2026-11-03.ex-lease-share-cut_
+_November 3, 2026 · extraction 2026-11-03.ex-lease-share-cut · layers refreshed to 2026-11-09.order2-pages_
 
 # Brief — first cut
 
@@ -210,7 +210,7 @@ _Company-specific or market-wide?_
 - **Segments (revenue share):** Google Services 85%; Google Cloud 15%; Other Bets 0%; Unallocated Hedging Gains (Losses) -0% [1]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — reports 4 segments (Google Services; Google Cloud; Other Bets; Unallocated Hedging Gains (Losses)) but discloses no segment EBITDA — revenue is segmented in the filing and EBITDA is not
 - **Segments (profit — the filer's own measure, 10-K):** FY2025 segment operating income (10-K XBRL): Google Services $139,404M (40.7% margin) · Google Cloud $13,910M (23.7% margin) · All Other −$7,515M (margin n.m.) — segments sum $145,799M vs consolidated $129,039M (−$16,760M not allocated to segments). [30]
-- **Customers:** 31 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [31]
+- **Customers:** 653 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [31]
 - **Geographic:** United States 48%; Europe, The Middle East, and Africa (EMEA) 29%; Asia-Pacific (APAC) 17%; Other Americas 6%; Unallocated -0% [2]
 
 ## The argument
@@ -645,6 +645,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-11-03 12:46 UTC
 - **Extraction:** 2026-11-03.ex-lease-share-cut — the at-price ex-lease multiple reads its share count as filed by the price date of the page: `ex_lease_at_price` cuts the companyfacts once at the date of the stored close, so its share count and its net debt read the same filings — the valuation-bases refresh, which hands it the uncut blob, no longer divides by the average of a later 10-Q
+- **Refreshed since assembly** (oldest first):
+  - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
 - **Price store:** `busy-goldstine-88c81c` · reaching 2026-11-02
 - **Panel age:** oldest panel 4d old — 2026-10-30 (valuation.implied_expectations.tev_as_of), against a 2026-11-03 build
 - **Consensus age:** consensus 2d old (2026-11-01, valuation.implied_expectations.multiples_as_of) — within the ceiling

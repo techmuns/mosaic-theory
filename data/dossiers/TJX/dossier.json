@@ -1440,7 +1440,8 @@
         "source_ref": "EDGAR 10-K 0000109198-26-000008 XBRL instance tjx-20260131_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2026-01-31",
         "status": "present",
         "note": null
-      }
+      },
+      "customers_listed": 1
     },
     "ev_gap": {
       "vintages": {
@@ -15358,6 +15359,16 @@
       }
     ]
   },
+  "layer_refreshes": [
+    {
+      "date": "2026-11-09",
+      "extraction_version": "2026-11-09.order2-pages",
+      "writer": "ciq-reread",
+      "layers": [
+        "mechanical.concentration"
+      ]
+    }
+  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
