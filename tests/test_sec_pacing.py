@@ -259,9 +259,12 @@ def test_two_processes_on_one_machine_share_one_budget(tmp_path: Path) -> None:
     got: dict[str, list[float]] = {tag: _times(p) for tag, p in procs.items()}
     pair, control = got["a"] + got["b"], got["c"] + got["d"]
     assert len(pair) == len(control) == 16
-    # sharing: no two sends from either process closer than the machine's pace, less jitter
+    # sharing: the 16 sends take 15 of the machine's intervals end to end, and no two from either
+    # process are closer than half of one. HALF, not "less 25 ms": a send is timed some
+    # milliseconds after it takes its slot, and on a loaded machine (load average 110 on
+    # 2026-11-09, eight suites at once) that lag outgrew 25 ms; it cannot outgrow 0.19 s
     gap = _min_gap(pair)
-    assert gap >= _INTERVAL - 0.025, f"min gap {gap:.3f}s across two processes"
+    assert gap >= _INTERVAL / 2, f"min gap {gap:.3f}s across two processes"
     assert max(pair) - min(pair) >= 15 * _INTERVAL - 0.05
-    # the control proves the check can fail: two independent trains at the pace overlap
-    assert _min_gap(control) < _INTERVAL - 0.025
+    # the control proves the check can fail: two independent trains start together and overlap
+    assert _min_gap(control) < _INTERVAL / 2

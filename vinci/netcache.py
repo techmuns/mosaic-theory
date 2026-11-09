@@ -441,6 +441,9 @@ class CachedHttp:
                 sec = resp.request.url.host in SEC_HOSTS
                 if resp.status_code == 200:
                     return resp.text
+                # a failure names the page that answered, and the URL asked for when they differ
+                where = (url if resp.request.url == httpx.URL(url)
+                         else f"{resp.request.url} (redirected from {url})")
                 if sec and resp.status_code in (403, 429):
                     # SEC REFUSED THE IP, NOT THIS REQUEST (2026-10-29). SEC documents no status
                     # for excess traffic; it answers with a 403 page, and a 429 means the same
@@ -452,7 +455,7 @@ class CachedHttp:
                     sec_pace().hold_off(min(hold, _SEC_MAX_HOLD_SEC))
                     if refused or hold > _SEC_MAX_HOLD_SEC:
                         _SEC_STOPPED = SecRateLimitedError(
-                            f"SEC refused {url} with {resp.status_code}"
+                            f"SEC refused {where} with {resp.status_code}"
                             + (f" after every SEC request was held off {hold:.0f}s"
                                if refused else f" and asked for {hold:.0f}s")
                             + " — stopping rather than sending into a fair-access block "
@@ -482,11 +485,11 @@ class CachedHttp:
                     last_exc = HttpError(f"{resp.status_code} from {url}")
                     backoff = min(backoff * 2, 30.0)
                 elif resp.status_code == 404:
-                    raise HttpNotFoundError(f"Non-retryable 404 from {url}: {resp.text[:200]}")
+                    raise HttpNotFoundError(f"Non-retryable 404 from {where}: {resp.text[:200]}")
                 else:
                     # 401/403 etc. — permanent; fail loud immediately.
                     raise HttpError(
-                        f"Non-retryable {resp.status_code} from {url}: {resp.text[:200]}"
+                        f"Non-retryable {resp.status_code} from {where}: {resp.text[:200]}"
                     )
             if attempt >= self._max_retries:
                 raise HttpError(f"Exhausted retries for {url}") from last_exc

@@ -26,6 +26,7 @@ from pathlib import Path
 import httpx
 import pytest
 
+from tests.test_sec_pacing import _peak_per_second, _VirtualClock
 from vinci import netcache
 from vinci.netcache import CachedHttp
 
@@ -33,33 +34,6 @@ _REPO = Path(__file__).resolve().parent.parent
 
 #: SEC's published ceiling, per user, whatever the number of machines (sec.gov/privacy).
 _SEC_CEILING_PER_USER = 10
-
-
-class _VirtualClock:
-    """Per-thread virtual time (as `test_sec_pacing.py`): only sleeping moves a thread's clock."""
-
-    def __init__(self) -> None:
-        self._local = threading.local()
-
-    def time(self) -> float:
-        return float(getattr(self._local, "now", 0.0))
-
-    def monotonic(self) -> float:
-        return self.time()
-
-    def sleep(self, seconds: float) -> None:
-        self._local.now = self.time() + max(0.0, seconds)
-        time.sleep(0.001)
-
-
-def _peak_per_second(times: list[float]) -> int:
-    """The most sends in any half-open one-second window (t - 1, t]."""
-    ts, best, lo = sorted(times), 0, 0
-    for hi, t in enumerate(ts):
-        while ts[lo] <= t - 1.0:
-            lo += 1
-        best = max(best, hi - lo + 1)
-    return best
 
 
 @pytest.fixture
@@ -138,8 +112,9 @@ def test_two_machines_sending_at_once_stay_under_secs_ceiling_per_user(tmp_path:
 
 def _redirecting(clock: _VirtualClock, sent: list[tuple[float, str]],
                  to_host: str = "data.sec.gov") -> httpx.Client:
-    """The production client's redirect setting (`follow_redirects=True`) over a mock: every
-    `/old/…` answers 301 to `/new/…` on ``to_host``, which answers 200."""
+    """A mock client that would follow redirects ITSELF (`follow_redirects=True`), so a hop sent
+    unpaced by httpx would show here: every `/old/…` answers 301 to `/new/…` on ``to_host``, which
+    answers 200. Production builds its client with `follow_redirects=False`."""
     def handler(request: httpx.Request) -> httpx.Response:
         sent.append((clock.time(), str(request.url)))
         if request.url.path.startswith("/old/"):
@@ -213,3 +188,21 @@ def test_a_redirect_loop_fails_loud_rather_than_reading_on(tmp_path: Path,
                                 follow_redirects=True)
     with pytest.raises(netcache.HttpError, match="loop.json"):
         http.get_text("https://www.sec.gov/loop.json")
+
+
+def test_a_refusal_after_a_redirect_names_the_page_that_answered(
+        tmp_path: Path, clock: _VirtualClock) -> None:
+    """⊖ a failure is classified by the host that ANSWERED, so it must name that host too: a 403
+    from the hop off SEC is that host's, and the error says so beside the URL asked for."""
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.host == "www.sec.gov":
+            return httpx.Response(301, headers={"Location": "https://mirror.example.test/x.json"})
+        return httpx.Response(403, text="no")
+    http = CachedHttp(cache_dir=tmp_path, user_agent="t t@x.org", min_interval_sec=0.0,
+                      namespace="sec")
+    http._client = httpx.Client(transport=httpx.MockTransport(handler))  # noqa: SLF001
+    with pytest.raises(netcache.HttpError) as err:
+        http.get_text("https://www.sec.gov/x.json")
+    assert "https://mirror.example.test/x.json (redirected from https://www.sec.gov/x.json)" \
+        in str(err.value)
+    assert netcache.sec_refusal() is None  # another host's 403 never stops SEC traffic
