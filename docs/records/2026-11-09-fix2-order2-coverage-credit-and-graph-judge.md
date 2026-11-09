@@ -79,6 +79,10 @@ map cannot say whether its "unsupported" edges were judged at all.
       are what lets each family row be reconciled to its pages;
     - the panel table is looked up per panel (too small to change).
   - The regenerated snapshot reproduces byte for byte after these fixes.
+- **Codex, round 1 (one P2, fixed):** a recognised verdict with no reason, or a blank one,
+  was stored as "" and counted as decided. The tool schema requires a reason but the adapter
+  does not validate it. Such a call is now `judge_error`
+  (`tests/test_graph.py::test_a_verdict_with_no_reason_is_a_judge_error`).
 
 **BOUNDARY.**
 - Snapshot: 28 pages, `data/dossiers/*/dossier.json` at `cb8139ee`, measured 2026-11-09. 26 of

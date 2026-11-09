@@ -97,7 +97,12 @@ def judge_edge(llm: LlmClient, edge: GraphEdge) -> tuple[str, str]:
     if verdict not in VERDICTS:
         return JUDGE_ERROR, (f"{JUDGE_ERROR}: the judge answered verdict {verdict!r}, not one of "
                              f"{list(VERDICTS)}; its reason: {_bounded(out.get('reason'))}")
-    return str(verdict), str(out.get("reason", ""))
+    # the schema REQUIRES a reason, and the adapter returns the tool input unvalidated: a verdict
+    # with none is a failed call, never a decided edge with a blank reason (Codex on #937)
+    reason = out.get("reason")
+    if not isinstance(reason, str) or not reason.strip():
+        return JUDGE_ERROR, f"{JUDGE_ERROR}: the judge answered verdict {verdict!r} with no reason"
+    return str(verdict), reason
 
 
 def judge_edges(llm: LlmClient, edges: list[GraphEdge]) -> dict[str, Any]:

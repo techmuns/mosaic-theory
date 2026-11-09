@@ -236,3 +236,18 @@ def test_usage_is_recorded_even_when_the_call_raises() -> None:
         "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0}, (
         "usage was lost on the raising path — recorded after the guard instead of before it")
 
+
+
+def test_a_verdict_with_no_reason_is_a_judge_error() -> None:
+    """(Codex P2 on #937, round 1) The tool schema requires a reason, but the adapter returns the
+    tool input unvalidated: a recognised verdict with no reason, or a blank one, is a judge error —
+    never an edge counted as decided with an empty reason published beside it."""
+    from vinci.graph.judge import JUDGE_ERROR
+
+    rep = judge_edges(_ScriptedJudge([{"verdict": "real_supply_chain"},
+                                      {"verdict": "competitor", "reason": "   "}]),
+                      [_graph_edge("0000000001"), _graph_edge("0000000002")])
+    assert rep["by_class"] == {JUDGE_ERROR: 2} and rep["evidence_precision"] is None
+    assert [j["reason"] for j in rep["judged"]] == [
+        "judge_error: the judge answered verdict 'real_supply_chain' with no reason",
+        "judge_error: the judge answered verdict 'competitor' with no reason"]
