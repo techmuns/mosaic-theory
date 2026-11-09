@@ -160,6 +160,30 @@ CONTAINING: dict[str, ContainingLine] = {
 }
 
 
+#: THE CONTAINING-LINE CAVEAT'S HEADLINE STATES WHAT WAS CHECKED (2026-11-09, audit RBC-D8). The
+#: filing states only the wider line, so the check is that CIQ's quarterly breakdown of that line
+#: reproduces the line's filed total in every quarter. Any split of the line between the row and
+#: its parts passes it, so the row's own figure is CIQ's quarterly reading — never "confirmed by the
+#: filing", which NFLX's page said of its +2,800.0.
+CONTAINING_HEADLINE = ("CIQ'S BREAKDOWN RECONCILES TO THE FILED LINE; THE ROW'S OWN FIGURE IS "
+                       "CIQ'S, NOT THE FILING'S")
+#: Headlines this module no longer writes, each to the one that replaced it. A committed caveat is
+#: reworded by `vinci caveat-reword` (:func:`reworded`), which swaps the headline alone and checks
+#: nothing after it: an entry belongs here only while the retired headline was written by ONE body,
+#: the one the current code still writes (true of the one below — one version wrote it, #891).
+RETIRED_HEADLINES: dict[str, str] = {
+    "CIQ READING CONFIRMED BY THE FILING": CONTAINING_HEADLINE,
+}
+
+
+def reworded(caveat: str) -> str | None:
+    """``caveat`` under its current headline, where it opens with a retired one; else None."""
+    for old, new in RETIRED_HEADLINES.items():
+        if caveat.startswith(f"{old} — "):
+            return new + caveat[len(old):]
+    return None
+
+
 @dataclass(frozen=True)
 class Decision:
     """The filing's answer for one refused row: a figure, or why the filing cannot decide."""
@@ -196,7 +220,7 @@ class Decision:
                 + f" sum to {v:,.1f}")
 
     def _containing_caveat(self, f: FiledLtmFigure, v: float) -> str:
-        return (f"CIQ READING CONFIRMED BY THE FILING — {f.label}, LTM to {f.ltm_end}: the page "
+        return (f"{CONTAINING_HEADLINE} — {f.label}, LTM to {f.ltm_end}: the page "
                 f"states {v:+,.1f}, the quarterly export's reading, because CIQ's two exports "
                 f"disagree: the annual export's LTM reads {f.ciq_annual:+,.1f}. No filed concept "
                 f"states the item alone; the filings carry it inside us-gaap:{f.tag}, a wider "

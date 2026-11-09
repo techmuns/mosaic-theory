@@ -1,6 +1,6 @@
 # Dossier — VERRA MOBILITY Corp (Nasdaq: VRRM)
 
-_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
+_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-09.order2-pages_
 
 # Brief — first cut
 
@@ -578,6 +578,7 @@ _Source §: 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm_
   - 2026-10-27 · caveats, mechanical.capital_structure, mechanical.catalyst_calendar, mechanical.quality — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary, mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 21d old — 2026-07-28 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 36d old (2026-07-13, valuation.implied_expectations.multiples_as_of) — within the ceiling

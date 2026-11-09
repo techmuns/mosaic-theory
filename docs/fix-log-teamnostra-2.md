@@ -51,7 +51,7 @@ no row of its own.
 - **E2-D15**: `disagree` on its NFLX half (record §3).
 - **RE2-D18**: `disagree` on its unbounded-read half, which was already bounded at `622786a2` (record §6, item 6).
 
-Order 2 is being worked by a session that has no PR yet. Its PR updates those seven rows.
+Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). RD-D1 waits for #930, which rewrites the same `capital_allocation.py` sites; RG-D19 waits for an operator ruling (STATE rows 59 and 61).
 
 ## The log
 
@@ -64,10 +64,10 @@ Order 2 is being worked by a session that has no PR yet. Its PR updates those se
 | E2-D11 | 1, 3 | open | — | — | — |
 | E2-D15 | 1, 3 | disagree: NFLX's half is fixed on its page — `maturity_wall` reads located, 3194.0, principal and interest (rebuilt 2026-11-05 in #918), read through the pin's own `_filing()`; WERN's half, the millions-only readers and V2-N1 stay open (record §3) | 4634df3d (#918) | `tests/test_pages_await_parser_rebuild.py::test_the_stated_twelve_month_walls_are_located` | NFLX |
 | D-D1 | 1 | open | — | — | — |
-| RBC-D1 | 2 | open | — | — | — |
+| RBC-D1 | 2 | in progress (#936) | #936 | `tests/test_customer_count.py::test_every_committed_page_prints_its_structured_count_or_none` | count written at $0: AMZN, BRBR, CNXC, FUBO, GOOGL, IT, LLY, MCK, MVST, NFLX, NKE, ORKA, PARR, ROST, SMPL, TGT, TJX, VITL, VRRM, WERN; no count until re-assembled (paid; prechecks STOP): AORT, EPAM, NCNO, TECX, UBER, V, WLK; all 27 roster pages re-rendered |
 | RD-D1 | 2 | open | — | — | — |
-| RA-D1 | 2 | open | — | — | — |
-| RBC-D8 | 2 | open | — | — | — |
+| RA-D1 | 2 | in progress (#936) | #936 | `tests/test_surprise_listing_block.py::test_parrs_committed_page_states_its_own_listings_surprise_history` | PARR |
+| RBC-D8 | 2 | in progress (#936) | #936 | `tests/test_filed_tiebreak.py::test_nflxs_committed_page_carries_the_caveat_the_code_writes` | NFLX |
 | RBC-D9 | 2 | open | — | — | — |
 | RG-D16 | 2 | open | — | — | — |
 | RG-D19 | 2 | open | — | — | — |

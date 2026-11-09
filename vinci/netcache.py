@@ -61,8 +61,9 @@ SEC_USER_MAX_REQUESTS_PER_SEC = 8.0
 SEC_MACHINES = 3
 
 #: The TOTAL every client, thread and `vinci` process on THIS machine may send to SEC_HOSTS: its
-#: share of the user's budget, 8/3 ≈ 2.67 a second. Its one-token bucket lets ceil(2.67) = 3
-#: through any one-second window, so all three machines flat out send at most 9 in any second.
+#: share of the user's budget, 8/3 ≈ 2.67 a second. Its one-token bucket hands out ceil(2.67) = 3
+#: slots in any one-second window, so all three machines flat out take at most 9 in any second
+#: (a send leaves some milliseconds after its slot, so a loaded machine can bunch a few).
 SEC_MAX_REQUESTS_PER_SEC = SEC_USER_MAX_REQUESTS_PER_SEC / SEC_MACHINES
 
 #: The most redirect hops one request follows (httpx's own default), each paced as a request.

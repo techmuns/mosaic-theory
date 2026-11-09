@@ -568,6 +568,19 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "names each input. A page with nothing dated after its price date changes in no "
         "value; two new fields do"
     ),
+    (
+        "2026-11-09.order2-pages",
+        "the customer count is a structured field (audit RBC-D1): "
+        "`concentration.customers_listed` holds every recently disclosed row the Customers "
+        "export lists, and both renderers print it, never a count of the capped roster's "
+        "pieces (a page without it prints no count); the Estimates→Surprise GAAP-EPS series "
+        "is read from the block CIQ heads with the company's own listing in the fiscal-year "
+        "table (audit RA-D1), naming that block when the sheet's first is another listing's "
+        "and refusing the EPS read where no block is the company's; the containing-line "
+        "tie-break's caveat says the filing reconciles the wider line and the row's own "
+        "figure is CIQ's, never that the filing confirmed it (audit RBC-D8). Among the "
+        "exports on file only PARR's surprise history moves; the rest is a new field and words",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

@@ -115,7 +115,11 @@ superseded-by:
   this Mac, 2026-11-09, at `7c87164a`:
   - the 17 is from 2 processes × 24 requests, real clock;
   - the 16 is from 4 threads × 6 reads × 2 hops, virtual clock.
-- **9:** arithmetic over the three declared machines (3 × ceil(8/3)), not a measurement.
+- **9:** arithmetic over the three declared machines (3 × ceil(8/3)), not a measurement. It counts
+  a send at the moment it takes its slot. A send leaves some milliseconds later, and on a loaded
+  machine that delay bunches sends. The full suite, run on this Mac at the same commit, measured
+  **8** in one second from the two-machine test, whose slots allow 6. So the window figures are
+  what the pacing permits, and SEC's limiter sees the wire.
 - **0.379–0.380 s:** the 5 gaps between 6 live requests, 2026-11-09 on this Mac.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
