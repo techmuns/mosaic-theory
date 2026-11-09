@@ -57,16 +57,18 @@ def graph_coverage(
         )
 
     jrep = judge_edges(llm, all_edges)
-    verdicts = [j["verdict"] for j in jrep["judged"]]
+    # THE JUDGE'S REASON TRAVELS WITH ITS VERDICT (2026-11-09, audit RG-D16): it was dropped here,
+    # so the committed map's 27 "unsupported" edges could not be told from failed judge calls
     edges_out = [
         {
             "focal_ticker": e.focal_ticker, "focal_cik": e.focal_cik,
             "counterparty_name": e.counterparty_name, "counterparty_ticker": e.counterparty_ticker,
             "counterparty_cik": e.counterparty_cik, "node_id": e.node_id, "node_kind": e.node_kind,
             "relationship_type": e.relationship_type, "direction": e.direction,
-            "resolution": e.resolution, "verdict": v, "evidence": e.evidence,
+            "resolution": e.resolution, "verdict": j["verdict"], "reason": j["reason"],
+            "evidence": e.evidence,
         }
-        for e, v in zip(all_edges, verdicts, strict=True)
+        for e, j in zip(all_edges, jrep["judged"], strict=True)
     ]
     real_edges = [e for e in edges_out if e["verdict"] == "real_supply_chain"]
 
@@ -86,6 +88,7 @@ def graph_coverage(
         "edges_per_name": round(len(all_edges) / n, 2) if n else 0.0,
         "real_edges_per_name": round(real / n, 2) if n else 0.0,  # moat-relevant density
         "evidence_precision": jrep["evidence_precision"],
+        "judge_errors": jrep["judge_errors"],
         "by_class": jrep["by_class"],
         "shared_nodes": sn["shared_nodes"],
         "super_connectors": sn["super_connectors"],

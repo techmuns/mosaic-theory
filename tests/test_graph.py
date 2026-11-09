@@ -112,6 +112,63 @@ def test_judge_edges_counts_only_real_supply_chain() -> None:
     assert rep["by_class"] == {"real_supply_chain": 1, "competitor": 1, "bio_or_governance": 1}
 
 
+class _ScriptedJudge(LlmClient):
+    """Answers each judge call with the next item: a dict is the tool's answer, an exception is
+    raised — the shape of a transient failure (a 529, a malformed tool block)."""
+
+    def __init__(self, script: list[Any]) -> None:
+        self._script = iter(script)
+
+    @property
+    def model(self) -> str:
+        return "fake-judge"
+
+    def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
+        step = next(self._script)
+        if isinstance(step, Exception):
+            raise step
+        return dict(step)
+
+
+def test_a_judge_failure_is_its_own_verdict_never_an_unsupported_edge() -> None:
+    """(audit RG-D16) A call that raises is `judge_error`, with the exception in its reason — never
+    "unsupported", which is the judge's verdict that the EVIDENCE does not support the edge. It
+    counts toward no precision: one real edge of the two judged is 0.5, not 1 of 3."""
+    from vinci.graph.judge import JUDGE_ERROR
+
+    edges = [_graph_edge("0000000001"), _graph_edge("0000000002"), _graph_edge("0000000003")]
+    rep = judge_edges(_ScriptedJudge([
+        {"verdict": "real_supply_chain", "reason": "named supplier"},
+        KeyError("content"),
+        {"verdict": "unsupported", "reason": "no relationship stated"},
+    ]), edges)
+    assert rep["by_class"] == {"real_supply_chain": 1, JUDGE_ERROR: 1, "unsupported": 1}
+    assert rep["judge_errors"] == 1 and rep["real_edges"] == 1
+    assert rep["evidence_precision"] == 0.5
+    assert [j["reason"] for j in rep["judged"]] == [
+        "named supplier", "judge_error: KeyError: 'content'", "no relationship stated"]
+
+
+def test_an_answer_outside_the_taxonomy_is_a_judge_error() -> None:
+    """(-) No verdict, or one the taxonomy does not name: a judge error naming what came back —
+    this too was coerced to "unsupported"."""
+    from vinci.graph.judge import JUDGE_ERROR
+
+    rep = judge_edges(_ScriptedJudge([{"reason": "no verdict key"}, {"verdict": "maybe"}]),
+                      [_graph_edge("0000000001"), _graph_edge("0000000002")])
+    assert rep["by_class"] == {JUDGE_ERROR: 2} and "unsupported" not in rep["by_class"]
+    assert rep["judged"][0]["reason"].startswith("judge_error: the judge answered verdict None")
+    assert rep["judged"][1]["reason"].startswith("judge_error: the judge answered verdict 'maybe'")
+
+
+def test_with_no_edge_judged_there_is_no_precision() -> None:
+    """(-) Every call failed, or there were no edges: the precision is None, never a 0.0 that reads
+    as "every edge judged and none real"."""
+    assert judge_edges(_ScriptedJudge([]), [])["evidence_precision"] is None
+    rep = judge_edges(_ScriptedJudge([RuntimeError("down")]), [_graph_edge("0000000001")])
+    assert rep["evidence_precision"] is None and rep["judge_errors"] == 1
+
+
 # --- token usage (the 2026-08-04 rider) ---------------------------------------------------------
 
 

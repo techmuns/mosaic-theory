@@ -26,6 +26,12 @@ VERDICTS = ("real_supply_chain", "competitor", "bio_or_governance", "ma_or_legal
 # true edge. Everything else — competitors, bio/governance mentions, M&A/legal context, or evidence
 # that doesn't support the claim — is a false positive.
 REAL_VERDICTS = frozenset({"real_supply_chain"})
+#: A JUDGE CALL THAT RETURNED NO VERDICT (2026-11-09, audit RG-D16): it raised, or answered outside
+#: `VERDICTS` or without one. Not one of the judge's classes — it says nothing about the edge, so
+#: it counts toward no precision. Each of these read as "unsupported", an evidence verdict, and
+#: the reason was then dropped on the way into `data/graph_coverage.json`, so its 27 "unsupported"
+#: edges cannot be told apart from judge failures.
+JUDGE_ERROR = "judge_error"
 
 JUDGE_TOOL: dict[str, Any] = {
     "name": "classify_edge",
@@ -67,7 +73,8 @@ _JUDGE_SYSTEM = (
 
 
 def judge_edge(llm: LlmClient, edge: GraphEdge) -> tuple[str, str]:
-    """Classify one edge against its own evidence. Returns (verdict, reason)."""
+    """Classify one edge against its own evidence. Returns (verdict, reason) — `JUDGE_ERROR` and
+    what the judge answered when that is no verdict."""
     user = (
         f"Filer: {edge.focal_name} ({edge.focal_ticker})\n"
         f"Counterparty: {edge.counterparty_name}\n"
@@ -75,17 +82,20 @@ def judge_edge(llm: LlmClient, edge: GraphEdge) -> tuple[str, str]:
         f'Evidence (verbatim from the filer\'s 10-K): "{edge.evidence}"'
     )
     out = llm.extract(system=_JUDGE_SYSTEM, user=user, tool=JUDGE_TOOL)
-    verdict = str(out.get("verdict", "unsupported"))
+    verdict = out.get("verdict")
     if verdict not in VERDICTS:
-        verdict = "unsupported"
-    return verdict, str(out.get("reason", ""))
+        return JUDGE_ERROR, (f"{JUDGE_ERROR}: the judge answered verdict {verdict!r}, not one of "
+                             f"{list(VERDICTS)}")
+    return str(verdict), str(out.get("reason", ""))
 
 
 def judge_edges(llm: LlmClient, edges: list[GraphEdge]) -> dict[str, Any]:
     """Judge every edge against its evidence → evidence-grounded precision + a class breakdown.
 
-    ``precision`` is the share of edges whose evidence supports a genuine supply-chain link
-    (``REAL_VERDICTS``). The ``judged`` list keeps each edge's verdict + reason for eyeballing.
+    ``precision`` is the share of JUDGED edges whose evidence supports a genuine supply-chain link
+    (``REAL_VERDICTS``) — an edge whose call failed (`JUDGE_ERROR`) is counted in ``judge_errors``
+    and in no denominator, and with no edge judged the precision is None, never 0.0. The ``judged``
+    list keeps each edge's verdict + reason, the failure's included.
     """
     by_class: Counter[str] = Counter()
     judged: list[dict[str, Any]] = []
@@ -93,7 +103,7 @@ def judge_edges(llm: LlmClient, edges: list[GraphEdge]) -> dict[str, Any]:
         try:
             verdict, reason = judge_edge(llm, e)
         except Exception as exc:  # a transient judge failure must not drop the whole batch
-            verdict, reason = "unsupported", f"judge_error:{type(exc).__name__}"
+            verdict, reason = JUDGE_ERROR, f"{JUDGE_ERROR}: {type(exc).__name__}: {exc}"
         by_class[verdict] += 1
         judged.append(
             {
@@ -106,12 +116,13 @@ def judge_edges(llm: LlmClient, edges: list[GraphEdge]) -> dict[str, Any]:
             }
         )
     real = sum(by_class[v] for v in REAL_VERDICTS)
-    precision = real / len(edges) if edges else 0.0
+    decided = len(edges) - by_class[JUDGE_ERROR]
     return {
         "model": llm.model,
         "n_edges": len(edges),
+        "judge_errors": by_class[JUDGE_ERROR],
         "real_edges": real,
-        "evidence_precision": round(precision, 3),
+        "evidence_precision": round(real / decided, 3) if decided else None,
         "by_class": dict(by_class),
         "judged": judged,
     }

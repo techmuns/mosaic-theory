@@ -406,6 +406,50 @@ def test_coverage_report_states_the_refusals(monkeypatch: pytest.MonkeyPatch) ->
     assert rep["per_name"][0]["evidence_refused"] == 1
 
 
+def test_every_edge_in_the_coverage_report_keeps_its_judges_reason(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """(audit RG-D16) The report is what `data/graph_coverage.json` is written from: each edge
+    carries its verdict AND the reason beside it, and a failed judge call is `judge_error` with
+    the failure named — so an unsupported edge can be told from a call that never judged it."""
+    _serve_atom_excerpts(monkeypatch)
+    rep = gcov.graph_coverage(
+        typing.cast(typing.Any, None), typing.cast(typing.Any, _UnresolvingResolver()),
+        _GraphLlm(_atom_payload()), [_ATOM])
+    assert [(e["verdict"], e["reason"]) for e in rep["edges"]] == [("real_supply_chain", "named")]
+
+    class _FailingJudge(_GraphLlm):
+        def extract(self, *, system: str, user: str,
+                    tool: dict[str, typing.Any]) -> dict[str, typing.Any]:
+            if tool["name"] == gx.EXTRACT_TOOL["name"]:
+                return self._payload
+            raise TimeoutError("judge timed out")
+
+    rep = gcov.graph_coverage(
+        typing.cast(typing.Any, None), typing.cast(typing.Any, _UnresolvingResolver()),
+        _FailingJudge(_atom_payload()), [_ATOM])
+    assert [(e["verdict"], e["reason"]) for e in rep["edges"]] == [
+        ("judge_error", "judge_error: TimeoutError: judge timed out")]
+    assert rep["judge_errors"] == 1 and rep["evidence_precision"] is None
+
+
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
+    "audit RG-D16: the committed map was written before the reason was kept, so its 27 "
+    "'unsupported' edges carry none — it regenerates only through paid judge calls, proposed to "
+    "the operator and not run (STATE.md §5.0); remove this mark when it does"))
+def test_the_committed_exposure_map_carries_every_judges_reason() -> None:
+    """END TO END on the committed artifact: every edge of `data/graph_coverage.json` names the
+    reason for its verdict, so a judge failure can be told from evidence that does not hold."""
+    import json
+    import pathlib
+
+    edges = json.loads((pathlib.Path(__file__).resolve().parents[1] / "data"
+                        / "graph_coverage.json").read_text())["edges"]
+    assert edges, "the committed map holds no edge"
+    lacking = [e for e in edges if not e.get("reason")]
+    assert not lacking, f"{len(lacking)} of {len(edges)} committed edges carry no reason"
+
+
 # --- provenance: the fixture is the real text ----------------------------------------------------
 
 

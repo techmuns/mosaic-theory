@@ -3019,9 +3019,11 @@ def _cmd_graph_coverage(args: argparse.Namespace) -> int:
         f"{rep['edges_per_name']}/name · real {rep['real_edges_per_name']}/name · "
         f"{rep['evidence_refused']} refused (evidence not in the 10-K excerpts)"
     )
+    prec = rep["evidence_precision"]
     print(
-        f"evidence-precision {rep['evidence_precision']:.0%} ({rep['real_edges']} real = "
-        f"{rep['real_us_listed']} US-listed + {rep['real_global']} global) · {rep['by_class']}"
+        f"evidence-precision {'n/a (no edge judged)' if prec is None else f'{prec:.0%}'} "
+        f"({rep['real_edges']} real = {rep['real_us_listed']} US-listed + {rep['real_global']} "
+        f"global; {rep['judge_errors']} judge error(s), in no denominator) · {rep['by_class']}"
     )
     sc = rep["super_connectors"]
     if sc:
