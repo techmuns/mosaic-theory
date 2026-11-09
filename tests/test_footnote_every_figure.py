@@ -348,6 +348,19 @@ NOT_A_FACT: dict[str, str] = {
 }
 _REF_KEYS = ("source_ref", "accession", "url")
 
+#: Text fields of a class that CARRIES an optional ref, whose numbers are not facts a point cites —
+#: read by the PAGE guard only. The schema guard stops at a ref-carrying class (it covers its
+#: subtree), so these never reach `_refless_fields` and cannot sit in NOT_A_FACT; on a page, each
+#: instance that carries no ref reaches the page guard with its text's numbers. Each with why.
+NOT_A_FACT_UNDER_AN_OPTIONAL_REF: dict[str, str] = {
+    "DisclosureGap.item": ("the gap test's name for the missing item; its one number is a form "
+                           "('8-K')"),
+    "DisclosureGap.basis": ("the gap test's reasoning: the count and dates of the reads and the "
+                            "forms read are parameters of the read, each restating a field the "
+                            "layer cites; rule 8 lets a point raise only a change or deviation, "
+                            "which must carry its source_ref (the schema's validator)"),
+}
+
 
 def _leaves(tp: Any) -> list[Any]:
     o = typing.get_origin(tp)
@@ -403,12 +416,9 @@ def _before_this_version(raw: dict[str, Any]) -> bool:
     return v not in order or order.index(v) < order.index(_THIS_VERSION)
 
 
-@pytest.mark.parametrize("path", _COMMITTED, ids=lambda p: p.parent.name)
-def test_no_committed_page_states_a_figure_no_point_could_cite(path: Path) -> None:
-    """THE GUARD, on the pages: every number with no ref above it is a not-a-fact field, the note of
-    a fact that came back UNKNOWN, or — on a page assembled before this change — one of the blocks
-    that now carry a ref and gain it at the page's next assembly."""
-    raw = json.loads(path.read_text())
+def _uncitable(raw: dict[str, Any]) -> set[str]:
+    """Each `<Class>.<field>` of the page's layer stating a number with no ref above it that is no
+    not-a-fact field, no note of a fact that came back UNKNOWN and no block pending its ref."""
     legacy = _before_this_version(raw)
     bad: set[str] = set()
 
@@ -432,12 +442,87 @@ def test_no_committed_page_states_a_figure_no_point_could_cite(path: Path) -> No
             nums = syn._FactNumbers()
             syn._stated_numbers(o, nums)
             key = f"{owner}.{field}"
-            if nums.values and key not in NOT_A_FACT and not unknown and not pending:
+            if (nums.values and key not in NOT_A_FACT
+                    and key not in NOT_A_FACT_UNDER_AN_OPTIONAL_REF and not unknown
+                    and not pending):
                 bad.add(key)
 
     rec(ds.MechanicalLayer.model_validate(raw["mechanical"]), "MechanicalLayer", "", False, False,
         False)
+    return bad
+
+
+@pytest.mark.parametrize("path", _COMMITTED, ids=lambda p: p.parent.name)
+def test_no_committed_page_states_a_figure_no_point_could_cite(path: Path) -> None:
+    """THE GUARD, on the pages: every number with no ref above it is a not-a-fact field, the note of
+    a fact that came back UNKNOWN, or — on a page assembled before this change — one of the blocks
+    that now carry a ref and gain it at the page's next assembly."""
+    bad = _uncitable(json.loads(path.read_text()))
     assert not bad, f"{path.parent.name}: numbers no point can cite — {sorted(bad)}"
+
+
+#: The gaps EPAM's and WLK's 2026-11-09 builds wrote (`mechanical.disclosure_gaps`, #927), verbatim:
+#: assembly runs 53365700 and 29d2fce2, on main cb8139ee — the first pages to carry the field.
+_GAPS_2026_11_09 = ROOT / "tests/fixtures/disclosure_gaps/2026-11-09.json"
+
+
+@pytest.mark.parametrize("ticker", ["EPAM", "WLK"])
+def test_a_page_carrying_the_gap_test_states_no_figure_no_point_could_cite(ticker: str) -> None:
+    """(F, 2026-11-09) A gap with no ref states the "8" of "8-K" in its `item`, and the count and
+    dates of its reads in its `basis` — the gap test's own words, exempt by FIELD. On main's page
+    with the gaps the name's rebuild wrote, nothing is uncitable; a number in a gap's `fields` is
+    still flagged, so the exemption is per field, never the class."""
+    raw = json.loads((ROOT / f"data/dossiers/{ticker}/dossier.json").read_text())
+    gaps: list[dict[str, Any]] = json.loads(_GAPS_2026_11_09.read_text())[ticker]
+    assert any("source_ref" not in g for g in gaps), "no ref-less gap — the shape this pins"
+    raw["mechanical"]["disclosure_gaps"] = gaps
+    assert _uncitable(raw) == set()
+    raw["mechanical"]["disclosure_gaps"] = [{**g, "fields": [*g["fields"], "12.5%"]} for g in gaps]
+    assert _uncitable(raw) == {"DisclosureGap.fields"}
+
+
+def _layer_classes() -> dict[str, type[BaseModel]]:
+    """Every class of the mechanical layer by name, a ref-carrying one's subtree included."""
+    out: dict[str, type[BaseModel]] = {}
+
+    def walk(cls: type[BaseModel]) -> None:
+        if cls.__name__ in out:
+            return
+        out[cls.__name__] = cls
+        for f in cls.model_fields.values():
+            for t in _leaves(f.annotation):
+                if isinstance(t, type) and issubclass(t, BaseModel):
+                    walk(t)
+
+    walk(ds.MechanicalLayer)
+    return out
+
+
+def _text_under_an_optional_ref(key: str) -> bool:
+    """`<Class>.<field>` is a `str` field of a layer class that has a ref key, every one of which is
+    optional — the only shape whose instance can reach the page guard with no ref above it."""
+    owner, _, field = key.partition(".")
+    cls = _layer_classes().get(owner)
+    if cls is None or field not in cls.model_fields:
+        return False
+    if cls.model_fields[field].annotation is not str:
+        return False
+    refs = [cls.model_fields[k] for k in _REF_KEYS if k in cls.model_fields]
+    return bool(refs) and all(not r.is_required() and type(None) in typing.get_args(r.annotation)
+                              for r in refs)
+
+
+def test_each_field_under_an_optional_ref_is_text_under_a_class_with_one() -> None:
+    assert NOT_A_FACT_UNDER_AN_OPTIONAL_REF, "nothing exempt — the page test above says why"
+    assert [k for k in NOT_A_FACT_UNDER_AN_OPTIONAL_REF if not _text_under_an_optional_ref(k)] == []
+    assert not set(NOT_A_FACT_UNDER_AN_OPTIONAL_REF) & set(NOT_A_FACT)
+    # what the shape refuses: a list, a closed set of labels, text under a REQUIRED ref (it never
+    # reaches the page guard ref-less), a number, TEXT under a class with no ref, a field the class
+    # does not have, and a class the layer does not have
+    for bad in ("DisclosureGap.fields", "DisclosureGap.type", "GoingConcern.verbatim",
+                "DilutionPipeline.window_days", "PanelCurrency.panel", "DisclosureGap.no_such",
+                "NoSuchClass.item"):
+        assert not _text_under_an_optional_ref(bad), bad
 
 
 def test_the_ebitda_bases_and_the_ex_lease_multiple_carry_their_computation_ref() -> None:
