@@ -189,6 +189,37 @@ def log_verdict(
             f"no price to freeze an entry for {ident.ticker} "
             f"({ident.internal_id}) — refresh EOD bars first"
         )
+    # A STALE CLOSE IS NO ENTRY (TeamNostra fix request 2, RF-D7, 2026-11-09). `close_as_of` marks
+    # a bar older than ``staleness_days`` STALE, and this checked `is_known` — true for a stale
+    # value — so the parameter had no effect: a 31-day-old close was sealed, and the row's forward
+    # clock (scored from `entry_price_as_of`) started 31 days before the decision. Live on the
+    # committed ledger: GOOGL's BUY, decided 2026-08-28, sealed the 2026-08-14 close. A seal is
+    # now the price the decision was made at, or nothing: refresh the bars and log again. The
+    # sealed rows are never rewritten — how GOOGL's is read is the operator's ruling.
+    if not close.is_evaluable:
+        age = (reference_date - close.as_of).days
+        raise LedgerError(
+            f"REFUSED: the latest close for {ident.ticker} on or before {reference_date} is "
+            f"{close.value:,.2f} from {close.as_of}, {age} days old (more than the "
+            f"{staleness_days} a seal allows). Sealing it would start this decision's forward "
+            f"clock {age} days before it was made — refresh EOD bars "
+            f"(`vinci refresh {ident.ticker} --start {close.as_of} --end {reference_date}`) and "
+            f"log again."
+        )
+    # ...AND STALE AGAINST THE DECISION ITSELF (review round 0). The bound above is measured from
+    # ``reference_date``, which the CLI takes from `--ref`; a `--ref` set back before the day the
+    # verdict is logged would seal that old close as fresh while ``decided_at`` is today — RF-D7's
+    # failure through another input, and a door to deciding with hindsight. The one decision
+    # moment this code knows is ``decided_at``, so the close is held to it as well.
+    lag = (decided_at.date() - close.as_of).days
+    if lag > staleness_days:
+        raise LedgerError(
+            f"REFUSED: {ident.ticker}'s seal would be the {close.value:,.2f} close of "
+            f"{close.as_of}, {lag} days before this verdict is logged ({decided_at.date()}; "
+            f"the reference date given is {reference_date}). A decision is sealed at the price it "
+            f"is made at: more than {staleness_days} days back is a back-dated decision, never "
+            f"logged unmarked — log it at a current reference date."
+        )
 
     # THE STATED-LIMIT GATE, and its seat is mechanical rather than stylistic. The entry price is
     # frozen HERE, inside this function; the CLI's pre-write gates (the edge-basis check) run
