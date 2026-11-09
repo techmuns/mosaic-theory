@@ -1,7 +1,7 @@
 ---
 status: open
 date: 2026-11-10
-prs: []
+prs: [946]
 supersedes:
 superseded-by:
 ---

@@ -73,7 +73,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). R
 | RG-D19 | 2 | open | — | — | — |
 | RF-D1 | 3 | open | — | — | — |
 | RF-D2 | 3 | open | — | — | — |
-| RF-D8 | 3 | open | — | — | — |
+| RF-D8 | 3 | in progress (#946) | #946 | `tests/test_ads_ratio.py::test_a_mixed_number_is_its_whole_and_its_fraction` | none (no committed page carries an ADS ratio) |
 | V2-N1 | 3 | open | — | — | — |
 | RE1-D6 | 3 | open | — | — | — |
 | RE1-D1 | 3 | open | — | — | — |
@@ -113,9 +113,9 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). R
 | RE2-D18 | 4 | disagree: the unbounded-read half (order 4) was bounded at 622786a2 by #884's `AsOfEdgar`, which cuts `recent_filings` at the price date — LLY at a 2026-10-16 price date fetches neither its 2026-10-29 8-K nor its 10-Q, and both are fetched with the cut removed; #932 added the 10-Q to the pin; the acceptance-time half is §4 (record §6) | ae016a68 (#884); cb8139ee (#932) | `tests/test_asof_cut.py::test_the_page_reads_no_release_filed_after_its_price_date`, `tests/test_asof_cut.py::test_a_results_8k_filed_after_the_price_date_is_named_and_never_read` | — |
 | RE2-D20 | 4 | open | — | — | — |
 | RF-D3 | 4 | open | — | — | — |
-| RF-D4 | 4 | open | — | — | — |
+| RF-D4 | 4 | in progress (#946) | #946 | `tests/test_universe_one_basis.py::test_a_split_since_the_filed_count_is_sized_on_the_current_count` | none; the universe snapshot is re-sized at the next weekly build (6 lines leave the band) |
 | RF-D7 | 4 | open | — | — | — |
-| RF-D9 | 4 | open | — | — | — |
+| RF-D9 | 4 | in progress (#946) | #946 | `tests/test_universe_one_basis.py::test_adv_is_over_the_markets_sessions_not_the_days_a_name_traded` | none |
 | RF-D13 | 4 | open | — | — | — |
 | RE1-D7 | 4 | open | — | — | — |
 | RE1-D10 | 4 | open | — | — | — |
