@@ -14,6 +14,7 @@ per-instance pacer and shows the 64 it allowed (audit item E1-D1).
 from __future__ import annotations
 
 import json
+import math
 import os
 import subprocess
 import sys
@@ -32,6 +33,10 @@ from vinci.sec import build_sec_http
 
 _REPO = Path(__file__).resolve().parent.parent
 _SEC_HOSTS = ("data.sec.gov", "www.sec.gov", "efts.sec.gov")
+#: The most sends this machine's one-token bucket lets through any one-second window: ceil of its
+#: declared share of the user's budget (2.67 a second since RE1-D1; 8 before it).
+_SHARE = math.ceil(netcache.SEC_MAX_REQUESTS_PER_SEC)
+_INTERVAL = 1.0 / netcache.SEC_MAX_REQUESTS_PER_SEC
 
 
 class _VirtualClock:
@@ -116,7 +121,7 @@ def _fetches(http: CachedHttp, host: str, tag: str, n: int) -> Callable[[], None
     return fn
 
 
-def test_eight_clients_on_eight_threads_send_at_most_eight_a_second(
+def test_eight_clients_on_eight_threads_send_at_most_the_machines_share_a_second(
         tmp_path: Path, clock: _VirtualClock) -> None:
     """⊖ the shape the dossier assembly runs (8 workers, each building its own clients) and the
     theme scans run: eight clients from the REAL factory, eight threads each, across all three SEC
@@ -128,10 +133,10 @@ def test_eight_clients_on_eight_threads_send_at_most_eight_a_second(
                   for i, c in enumerate(clients) for j in range(8)])
     assert len(sent) == 8 * 8 * 3
     peak = _peak_per_second(sent)
-    assert peak <= 8, f"peak {peak} SEC requests in one second across 8 clients x 8 threads"
+    assert peak <= _SHARE, f"peak {peak} SEC requests in one second across 8 clients x 8 threads"
 
 
-def test_one_client_shared_by_eight_threads_sends_at_most_eight_a_second(
+def test_one_client_shared_by_eight_threads_sends_at_most_the_machines_share_a_second(
         tmp_path: Path, clock: _VirtualClock) -> None:
     """⊖ the shape `themes/exposure.py` runs: ONE client driven from a thread pool. An unlocked
     "last request at" let every thread read the same value and send together."""
@@ -140,7 +145,7 @@ def test_one_client_shared_by_eight_threads_sends_at_most_eight_a_second(
     _run_threads([_fetches(http, "data.sec.gov", f"t{j}", 6) for j in range(8)])
     assert len(sent) == 8 * 6
     peak = _peak_per_second(sent)
-    assert peak <= 8, f"peak {peak} SEC requests in one second from 1 client x 8 threads"
+    assert peak <= _SHARE, f"peak {peak} SEC requests in one second from 1 client x 8 threads"
 
 
 def test_a_client_built_without_any_pace_still_shares_the_sec_budget(
@@ -154,7 +159,7 @@ def test_a_client_built_without_any_pace_still_shares_the_sec_budget(
                for i in range(4)]
     _run_threads([_fetches(c, "www.sec.gov", f"z{i}", 8) for i, c in enumerate(clients)])
     peak = _peak_per_second(sent)
-    assert peak <= 8, f"peak {peak} from four unpaced clients"
+    assert peak <= _SHARE, f"peak {peak} from four unpaced clients"
 
 
 def test_a_host_outside_sec_is_not_held_to_the_sec_budget(
@@ -245,7 +250,7 @@ def test_two_processes_on_one_machine_share_one_budget(tmp_path: Path) -> None:
     """⊖ two `vinci` processes on one machine share one IP, so they share SEC's ceiling. REAL
     clock, REAL processes, mock transport. A PAIR sharing a pace file must interleave at the shared
     pace; a CONTROL pair with a file each must not — which is what shows this check can see the
-    failure at all (each control process alone paces at 8 a second, so together they overlap)."""
+    failure at all (each control process alone paces at its share, so together they overlap)."""
     start = time.time() + 5.0  # past every interpreter's start-up, so they begin together
     shared = tmp_path / "shared-pace"
     procs = {tag: _spawn(start, tag, tmp_path, shared if tag in ("a", "b") else
@@ -254,8 +259,9 @@ def test_two_processes_on_one_machine_share_one_budget(tmp_path: Path) -> None:
     got: dict[str, list[float]] = {tag: _times(p) for tag, p in procs.items()}
     pair, control = got["a"] + got["b"], got["c"] + got["d"]
     assert len(pair) == len(control) == 16
-    # sharing: no two sends from either process closer than the pace (8 a second), less jitter
-    assert _min_gap(pair) >= 0.1, f"min gap {_min_gap(pair):.3f}s across two processes"
-    assert max(pair) - min(pair) >= 15 * 0.125 - 0.05
-    # the control proves the check can fail: two independent 8-a-second trains overlap
-    assert _min_gap(control) < 0.1 and _peak_per_second(control) > 8
+    # sharing: no two sends from either process closer than the machine's pace, less jitter
+    gap = _min_gap(pair)
+    assert gap >= _INTERVAL - 0.025, f"min gap {gap:.3f}s across two processes"
+    assert max(pair) - min(pair) >= 15 * _INTERVAL - 0.05
+    # the control proves the check can fail: two independent trains at the pace overlap
+    assert _min_gap(control) < _INTERVAL - 0.025

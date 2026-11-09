@@ -5,8 +5,10 @@ Why this exists
 ---------------
 - **Pacing.** SEC fair-access is 10 req/s IN TOTAL per user, however many clients, threads or
   machines send them; Polygon's plan ~5 req/min. Each client keeps its own minimum interval
-  (thread-safe), and every request to an SEC host ALSO takes a slot from ONE budget shared by
-  every client, thread and process on the machine (:class:`SharedPace`).
+  (thread-safe), and every request to an SEC host — every redirect hop included — ALSO takes a
+  slot from ONE budget shared by every client, thread and process on the machine
+  (:class:`SharedPace`). That budget is this machine's DECLARED SHARE of the user's total
+  (:data:`SEC_MACHINES`), because nothing on one machine can see another's traffic.
 - **Caching.** SEC reference files and immutable filings should not be refetched every run; an
   on-disk cache (with optional TTL) keeps reruns fast and idempotent.
 - **Fail-loud.** Auth/permanent errors raise immediately; only transient errors (429/5xx) retry
@@ -42,10 +44,29 @@ _RATE_LIMIT_WAIT_SEC = 61.0
 #: machines, so the three share it: a full-text search spends what a companyfacts read can't.
 SEC_HOSTS = frozenset({"www.sec.gov", "data.sec.gov", "efts.sec.gov"})
 
-#: The TOTAL every client, thread and `vinci` process on this machine may send to SEC_HOSTS.
-#: SEC's published ceiling is 10 a second per user; 8 keeps two in hand for jitter and for
-#: anything else on the machine that reads SEC (a browser, a notebook).
-SEC_MAX_REQUESTS_PER_SEC = 8.0
+#: The TOTAL this USER may send to SEC_HOSTS, from every machine together. SEC's Internet Security
+#: Policy (sec.gov/privacy, read 2026-11-09): "Current guidelines limit users to a total of no more
+#: than 10 requests per second, regardless of the number of machines used to submit requests." 8
+#: keeps two in hand for jitter and for anything else that reads SEC (a browser, a notebook).
+SEC_USER_MAX_REQUESTS_PER_SEC = 8.0
+
+#: The machines that may send to SEC AT ONCE as this user, each taking an EQUAL share of
+#: SEC_USER_MAX_REQUESTS_PER_SEC (TeamNostra fix request 2, RE1-D1). Three: the operator's two Macs
+#: and one GitHub Actions runner, since every SEC-reading workflow is operator-triggered and may be
+#: started while a Mac is working. A share cannot be raised per machine — it is this committed
+#: number, so every machine reads the same one from git. A fourth sender at once (a third Mac, or
+#: two SEC workflows running together) is outside it; holding the cap then needs a coordinator
+#: every machine asks for its share, proposed in
+#: `docs/records/2026-11-09-fix2-e1-sec-budget-across-machines.md`.
+SEC_MACHINES = 3
+
+#: The TOTAL every client, thread and `vinci` process on THIS machine may send to SEC_HOSTS: its
+#: share of the user's budget, 8/3 ≈ 2.67 a second. Its one-token bucket lets ceil(2.67) = 3
+#: through any one-second window, so all three machines flat out send at most 9 in any second.
+SEC_MAX_REQUESTS_PER_SEC = SEC_USER_MAX_REQUESTS_PER_SEC / SEC_MACHINES
+
+#: The most redirect hops one request follows (httpx's own default), each paced as a request.
+_MAX_REDIRECTS = 20
 
 #: How long EVERY SEC request is held off after SEC refuses one, when SEC sends no `Retry-After`.
 #: SEC's policy: access resumes once the rate has stayed below the threshold for TEN MINUTES — so
@@ -246,7 +267,8 @@ class CachedHttp:
         headers = {"User-Agent": user_agent, "Accept-Encoding": "gzip, deflate"}
         if extra_headers:
             headers.update(extra_headers)
-        self._client = httpx.Client(headers=headers, timeout=timeout_sec, follow_redirects=True)
+        # redirects are followed by `_send`, one paced hop at a time — never by httpx unpaced
+        self._client = httpx.Client(headers=headers, timeout=timeout_sec, follow_redirects=False)
         #: url -> when the copy this instance last read or wrote was fetched (`fetched_at`)
         self._fetched: dict[str, float] = {}
 
@@ -368,33 +390,54 @@ class CachedHttp:
         if at > now:
             time.sleep(at - now)
 
+    def _pace(self, url: httpx.URL) -> None:
+        """Take ``url``'s turn: this instance's own interval, and a slot of the SEC budget when it
+        is an SEC host — refused unsent once SEC has stopped this process."""
+        sec = url.host in SEC_HOSTS
+        if sec and _SEC_STOPPED is not None:
+            raise SecRateLimitedError(
+                f"not sent: {url} — SEC refused this process earlier ({_SEC_STOPPED})")
+        self._throttle()
+        if sec:
+            sec_pace().acquire()
+
+    def _send(self, url: str, json_body: dict[str, Any] | None) -> httpx.Response:
+        """One request and every redirect it is answered with, EACH HOP PACED AS A REQUEST of its
+        own (TeamNostra fix request 2, RE1-D2). httpx followed redirects inside one `get`, so a
+        301 → 200 read took one slot for two requests and sent 16 a second from one process; and a
+        hop to (or from) SEC is paced by its OWN host, not the one first asked for."""
+        resp = (self._client.post(url, json=json_body, follow_redirects=False)
+                if json_body is not None else self._client.get(url, follow_redirects=False))
+        for _ in range(_MAX_REDIRECTS):
+            hop = resp.next_request
+            if hop is None:
+                return resp
+            self._pace(hop.url)
+            resp = self._client.send(hop, follow_redirects=False)
+        if resp.next_request is None:
+            return resp
+        raise httpx.TooManyRedirects(f"more than {_MAX_REDIRECTS} redirects from {url}",
+                                     request=resp.request)
+
     def _fetch_with_retries(
         self, url: str, *, json_body: dict[str, Any] | None = None
     ) -> str:
         global _SEC_STOPPED
-        sec = httpx.URL(url).host in SEC_HOSTS
         backoff = 1.0
         last_exc: Exception | None = None
         attempt = 0
         refused = False
         while True:
-            if sec and _SEC_STOPPED is not None:
-                raise SecRateLimitedError(
-                    f"not sent: {url} — SEC refused this process earlier ({_SEC_STOPPED})")
-            self._throttle()
-            if sec:
-                sec_pace().acquire()
+            self._pace(httpx.URL(url))
             wait = backoff
             try:
-                resp = (
-                    self._client.post(url, json=json_body)
-                    if json_body is not None
-                    else self._client.get(url)
-                )
-            except httpx.HTTPError as exc:  # transport-level (timeout, connection)
+                resp = self._send(url, json_body)
+            except httpx.HTTPError as exc:  # transport-level (timeout, connection, redirect loop)
                 last_exc = exc
                 backoff = min(backoff * 2, 30.0)
             else:
+                # a refusal is SEC's when the page that answered is SEC's, wherever the read began
+                sec = resp.request.url.host in SEC_HOSTS
                 if resp.status_code == 200:
                     return resp.text
                 if sec and resp.status_code in (403, 429):
