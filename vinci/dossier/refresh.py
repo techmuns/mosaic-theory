@@ -734,14 +734,17 @@ def capital_allocation_transform(cik: str | None) -> Transform:
         # So: write NOTHING. Absent already has a meaning — NOT YET REFRESHED — and that is exactly
         # what a failed fetch leaves behind. `refresh_dossier` then sees no change and reports the
         # name as unmoved, which is honest; re-running when EDGAR answers writes the block.
-        if not cik:
+        # The buyback legs are dated against the page's OWN price date (fix 3b): no price date,
+        # no block — written against any other date it would not be the page's.
+        as_of = (out.get("stock_info") or {}).get("as_of")
+        if not cik or not as_of:
             return out
         try:
             facts = EdgarClient.from_config().companyfacts(cik)
         except (HttpError, KeyError, ValueError):   # `_companyfacts_or_none`'s own exception set
             return out
-        out["capital_allocation"] = json.loads(
-            build_capital_allocation(facts).model_dump_json())
+        out["capital_allocation"] = json.loads(build_capital_allocation(
+            facts, as_of=date.fromisoformat(str(as_of)[:10])).model_dump_json())
         return out
 
     return _apply

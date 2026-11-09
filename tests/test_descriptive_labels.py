@@ -361,26 +361,26 @@ def test_the_own_history_refresh_writes_the_same_note(
 def _survival(t: str) -> str:
     q = PAGES[t]["quality"]
     out = mech_mod._survival_capacity(_sourced(q["net_debt_to_ebitda"]),
-                                      _sourced(q["net_debt_to_ebitda_adjusted"]),
-                                      _sourced(q["fcf_sign"]))
+                                      _sourced(q["net_debt_to_ebitda_adjusted"]))
     assert out.value is not None
     return out.value
 
 
 def test_a_negative_fcf_carries_no_verdict() -> None:
     """(+) WLK's FCF is negative; main appended "(cash not derived — a risk)". The verdict is
-    deleted; "cash not derived", what the machine did not compute, stays (review of #923)."""
+    deleted — and since fix 3b the whole FCF leg with it, the one-input self-funding read the
+    two-input one replaced (`tests/test_fix3b_stale_and_conflicting.py`)."""
     committed = PAGES["WLK"]["quality"]["survival_capacity"]["value"]
     assert committed.endswith("FCF-negative → burning cash (cash not derived — a risk)")
-    assert _survival("WLK") == committed.replace(" (cash not derived — a risk)",
-                                                 " (cash not derived)")
+    assert _survival("WLK") == committed.split(" | ")[0]
 
 
 def test_an_unknown_fcf_sign_carries_no_verdict() -> None:
-    """(+) LLY's FCF sign is UNKNOWN in its screen record (its reason on `quality.fcf_sign`)."""
+    """(+) LLY's FCF sign is UNKNOWN in its screen record (its reason on `quality.fcf_sign`); the
+    leg that carried the tag is deleted by fix 3b."""
     committed = PAGES["LLY"]["quality"]["survival_capacity"]["value"]
     assert committed.endswith(" (a risk)")
-    assert _survival("LLY") == committed.removesuffix(" (a risk)")
+    assert _survival("LLY") == committed.split(" | ")[0]
 
 
 def test_an_unknown_leverage_carries_no_verdict() -> None:
@@ -388,15 +388,15 @@ def test_an_unknown_leverage_carries_no_verdict() -> None:
     q = PAGES["WLK"]["quality"]
     out = mech_mod._survival_capacity(
         Sourced[float].unknown(note="no CIQ Net Debt/EBITDA"),
-        _sourced(q["net_debt_to_ebitda_adjusted"]), _sourced(q["fcf_sign"]))
-    assert out.value is not None
-    assert out.value.startswith("net-debt/EBITDA UNKNOWN (no CIQ Net Debt/EBITDA) | ")
-    assert "risk" not in out.value
+        _sourced(q["net_debt_to_ebitda_adjusted"]))
+    assert out.value == "net-debt/EBITDA UNKNOWN (no CIQ Net Debt/EBITDA)"
 
 
 def test_a_positive_fcf_reads_as_before() -> None:
-    """(-) AORT's read had no judgment tag; it rebuilds byte-identical."""
-    assert _survival("AORT") == PAGES["AORT"]["quality"]["survival_capacity"]["value"]
+    """(-) AORT's leverage leg had no judgment tag; it rebuilds byte-identical (its FCF leg is
+    deleted by fix 3b)."""
+    assert _survival("AORT") == PAGES["AORT"]["quality"]["survival_capacity"]["value"].split(
+        " | ")[0]
 
 
 # --- 3b. the lint: no judgment word in a string the fact layer writes ---------------------------

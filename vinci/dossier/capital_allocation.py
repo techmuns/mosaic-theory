@@ -26,7 +26,7 @@ scopes, and the source_ref must say which.
 """
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import date, timedelta
 from statistics import median
 from typing import Any
 
@@ -141,6 +141,12 @@ def _span(p: ConceptPoint) -> str:
     return f"{p.period_start}→{p.period_end}, {(p.period_end - p.period_start).days}d"
 
 
+def _ref(p: ConceptPoint, tag: str) -> str:
+    """The source a companyfacts value carries: the tag that answered and the span it covers —
+    one format, which the eval harness reads back (`vinci/evals/variants.py`, `_LEG_REF`)."""
+    return f"EDGAR companyfacts {tag} ({_span(p)})"
+
+
 def _money(facts: dict[str, Any], tags: tuple[str, ...], label: str, *,
            kind: str = "flow") -> Sourced[float]:
     """A $-denominated value in $M, or UNKNOWN NAMING EVERY TAG TRIED.
@@ -154,30 +160,61 @@ def _money(facts: dict[str, Any], tags: tuple[str, ...], label: str, *,
             note=f"no {label} under any of {', '.join(tags)} — EDGAR XBRL companyfacts")
     p, tag = got
     return Sourced.present(
-        round(p.value / _USD_M, 3),
-        source_ref=f"EDGAR companyfacts {tag} ({_span(p)})")
+        round(p.value / _USD_M, 3), source_ref=_ref(p, tag))
 
 
-def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
-    """Assemble the block from EDGAR companyfacts. No CIQ, no LLM, no derivation beyond one ratio.
+#: A buyback figure whose period ENDS more than this many days before the page's price date is not
+#: stated (fix 3b, 2026-11-09). `_pick` takes a tag's LATEST period however old it is, so a filer
+#: that stopped using a tag keeps its last value forever: on the 28 pages frozen at bcda7ce3,
+#: NFLX's average price is from **2011**, before two splits, beside a 2026 close; V's from 2015,
+#: across its 2015 split; AORT's cash and share count from 2014. The source_ref carried the date
+#: and nothing else did. The line is the block's own trailing year — the impairment STALE rule
+#: below uses the same 366 days — and on those pages it falls in a gap: every leg kept ends at most
+#: 361 days before its price date, every leg dropped at least 671.
+CURRENT_DAYS = 366
 
-    THE ONE DERIVATION IS GUARDED. `buyback_avg_price` prefers the filer's OWN direct tag; only
-    when that is absent AND both legs are present is it computed as cash ÷ shares. It is NEVER
-    imputed from one leg — a cash figure without a share count says nothing about price, and a
-    fabricated average here would be a decision figure in the strict sense.
-    """
-    shares_pt = _pick(facts, BUYBACK_SHARES, kind="flow")
-    cash_pt = _pick(facts, BUYBACK_CASH, kind="flow")
-    cash = _money(facts, BUYBACK_CASH, "share-repurchase cash")
+
+def _current(got: tuple[ConceptPoint, str] | None,
+             as_of: date) -> tuple[tuple[ConceptPoint, str] | None, str | None]:
+    """The leg if its period ends within `CURRENT_DAYS` of the price date; else no leg, and the
+    note its field states instead. DELETED, NOT CAVEATED (coordinator, 2026-11-09: a value that
+    cannot be stated on its own current basis is stated with its date and basis, or deleted, and
+    deletion is preferred): a per-share figure from before a split is on another share basis, and
+    a caveat beside it still hands the reader the number."""
+    if got is None:
+        return None, None
+    p, tag = got
+    days = (as_of - p.period_end).days
+    if days <= CURRENT_DAYS:
+        return got, None
+    return None, (f"no current figure — the latest {tag} covers {_span(p)}, which ends {days} "
+                  f"days before the price date {as_of}")
+
+
+def buyback_legs(cash_pt: tuple[ConceptPoint, str] | None,
+                 shares_pt: tuple[ConceptPoint, str] | None,
+                 direct: tuple[ConceptPoint, str] | None, *,
+                 as_of: date) -> tuple[Sourced[float], Sourced[float], Sourced[float]]:
+    """The three buyback fields — cash ($M), share count, the filer's average price — from the
+    point `_pick` chose for each tag family, as at the page's price date ``as_of``. A leg whose
+    period ends more than `CURRENT_DAYS` before it is not stated (`_current`), and the PERIOD
+    MISMATCH notes compare only the legs that are. One function, so the eval harness rebuilds the
+    three fields through this code rather than a copy of it (`vinci/evals/variants.py`)."""
+    cash_pt, cash_stale = _current(cash_pt, as_of)
+    shares_pt, shares_stale = _current(shares_pt, as_of)
+    direct, direct_stale = _current(direct, as_of)
+    cash = (Sourced.present(round(cash_pt[0].value / _USD_M, 3), source_ref=_ref(*cash_pt))
+            if cash_pt is not None else
+            Sourced.unknown(note=cash_stale or f"no share-repurchase cash under any of "
+                                               f"{', '.join(BUYBACK_CASH)} — EDGAR XBRL "
+                                               f"companyfacts"))
     shares = (
-        Sourced.present(
-            shares_pt[0].value,
-            source_ref=f"EDGAR companyfacts {shares_pt[1]} ({_span(shares_pt[0])})")
+        Sourced.present(shares_pt[0].value, source_ref=_ref(*shares_pt))
         if shares_pt is not None else
-        Sourced.unknown(note=f"no annual repurchased-share count under {', '.join(BUYBACK_SHARES)} "
-                             f"— EDGAR XBRL companyfacts"))
+        Sourced.unknown(note=shares_stale or f"no annual repurchased-share count under "
+                                             f"{', '.join(BUYBACK_SHARES)} — EDGAR XBRL "
+                                             f"companyfacts"))
 
-    direct = _pick(facts, BUYBACK_AVG_PRICE, kind="flow")
     # THE VINTAGE SUPPRESSION IS GONE, and removing it is forced by refusing the derivation.
     #
     # It read: if the filer's own average is OLDER than the repurchase cash and both legs align on
@@ -189,9 +226,10 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
     # affirmative claim that the filer reports none, about a filer that reports one.
     #
     # THAT IS THE SAME CLASS THIS CHANGE FIXES IN `ebitda_basis`, one module over: not-detected is
-    # not agreement there, suppressed is not absent here. A stale figure carried WITH its staleness
-    # stated beats a false absence, and the PERIOD MISMATCH note below already says it — a direct
-    # tag on a different window than the cash beside it is exactly what that branch prints.
+    # not agreement there, suppressed is not absent here. A direct tag on a different window than
+    # the cash beside it is carried with the PERIOD MISMATCH note below. One whose period ends more
+    # than `CURRENT_DAYS` before the price date is not stated (fix 3b), and its note names the tag
+    # and its period — so the absence is never the false "reports none" this paragraph retired.
     if direct is not None:
         p, tag = direct
         # THE THREE BUYBACK FIELDS MUST NAME THE SAME WINDOW, OR SAY THEY DO NOT. The filer's
@@ -208,8 +246,10 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
                         f"window and must not be divided into each other")
         avg = Sourced.present(
             round(p.value, 4),
-            source_ref=f"EDGAR companyfacts {tag} ({_span(p)})",
+            source_ref=_ref(p, tag),
             note=AVG_PRICE_BASIS + mismatch)
+    elif direct_stale is not None:
+        avg = Sourced.unknown(note=direct_stale)
     else:
         # THE DERIVATION IS REFUSED OUTRIGHT — operator ruling 2026-08-10, and the period guard
         # below is why it had to go rather than be tightened.
@@ -239,9 +279,10 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
                    f"unpaid, so the quotient is not a purchase price and does not reproduce the "
                    f"filer's own figure")
         elif cash.value is None:
-            why = "the cash leg is absent"
+            why = "the cash leg is not current" if cash_stale else "the cash leg is absent"
         elif not shares.value:
-            why = "the share-count leg is absent"
+            why = ("the share-count leg is not current" if shares_stale
+                   else "the share-count leg is absent")
         else:
             why = "its legs are incomplete"
         avg = Sourced.unknown(
@@ -261,6 +302,20 @@ def build_capital_allocation(facts: dict[str, Any]) -> CapitalAllocation:
                 f"each other")
         cash = cash.model_copy(update={"note": (cash.note or "") + pair})
         shares = shares.model_copy(update={"note": (shares.note or "") + pair})
+    return cash, shares, avg
+
+
+def build_capital_allocation(facts: dict[str, Any], *, as_of: date) -> CapitalAllocation:
+    """Assemble the block from EDGAR companyfacts, as at the page's price date ``as_of`` (the cut
+    `assemble_mechanical` reads EDGAR at). No CIQ, no LLM, no derivation.
+
+    THE AVERAGE PRICE IS NEVER DERIVED. `buyback_avg_price` is the filer's OWN direct tag or an
+    absence that names why (`buyback_legs`) — never cash ÷ shares, and never imputed from one leg.
+    A buyback leg older than `CURRENT_DAYS` before ``as_of`` is not stated.
+    """
+    cash, shares, avg = buyback_legs(
+        _pick(facts, BUYBACK_CASH, kind="flow"), _pick(facts, BUYBACK_SHARES, kind="flow"),
+        _pick(facts, BUYBACK_AVG_PRICE, kind="flow"), as_of=as_of)
 
     # A CHARGE OLDER THAN THE BALANCE IT SITS BESIDE IS NOT A MEASUREMENT OF THIS PERIOD, and the
     # render cannot tell without help: EPAM's goodwill impairment is $0.7M from **FY2022** against

@@ -542,6 +542,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "and deleted where none is single; the web's peer subtitle assumes no discount; the "
         "catalyst print row names the drawdown guide only when it is the current guide, without "
         "'committed'. No figure changes; these strings do, most of them shorter",
+    ),    (
+        "2026-11-09.stale-and-conflicting",
+        "a buyback leg whose period ends more than a year (366 days) before the page's price "
+        "date is no longer stated: its field reads UNKNOWN, naming the tag and the period it "
+        "covers (`capital_allocation.CURRENT_DAYS`), and a PERIOD MISMATCH note names only "
+        "legs still stated; the survival line carries net leverage only, its one-input "
+        "FCF-sign leg deleted, so the two-input self-funding read is the only one. Figures "
+        "leave the page; none changes",
     ),
 )
 

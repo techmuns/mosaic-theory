@@ -798,24 +798,21 @@ def test_synthesis_contract_requires_balance_and_treats_opacity_as_risk() -> Non
 
 
 def test_survival_capacity_blocks_leverage_with_runway() -> None:
-    """Mechanism A.3: leverage is promoted to a SURVIVAL block — net-debt/EBITDA + self-funding in
-    one field; a missing leg fails loud as UNKNOWN (since fix 3a, 2026-11-06, never tagged "a risk":
-    that is the human's call — `tests/test_descriptive_labels.py`). (H3) The coarse 'nearest
-    maturity wall' line is retired — the month-precision E2 wall supersedes it in the survival
-    super-section."""
+    """Mechanism A.3: leverage is promoted to a SURVIVAL block; a missing leg fails loud as UNKNOWN
+    (since fix 3a, 2026-11-06, never tagged "a risk": that is the human's call —
+    `tests/test_descriptive_labels.py`). Since fix 3b the block reads no FCF sign: the
+    self-funding question has one answer, `primary_source.self_funding`
+    (`tests/test_fix3b_stale_and_conflicting.py`). (H3) The coarse 'nearest maturity wall' line is
+    retired — the month-precision E2 wall supersedes it in the survival super-section."""
     present, unknown = ds.Sourced.present, ds.Sourced.unknown
     sc = dm._survival_capacity(
-        present(2.9, source_ref="EDGAR"), present("~2.6x fwd-adj", source_ref="99.1"),
-        present(1.0, source_ref="EDGAR"),  # FCF sign +1 → self-funding
-    )
+        present(2.9, source_ref="EDGAR"), present("~2.6x fwd-adj", source_ref="99.1"))
     v = sc.value or ""
-    assert "net-debt/EBITDA 2.9x" in v and "self-funding" in v
+    assert v == "net-debt/EBITDA 2.9x (GAAP); ~2.6x fwd-adj"
     assert "nearest maturity wall" not in v  # (H3) retired
     # a missing leg fails loud with its reason, never silently dropped
-    risky = dm._survival_capacity(
-        unknown(note="no debt/cash"), unknown(note="no guide"), unknown(note="no FCF"))
-    rv = risky.value or ""
-    assert rv == "net-debt/EBITDA UNKNOWN (no debt/cash) | FCF sign UNKNOWN — runway not assessable"
+    risky = dm._survival_capacity(unknown(note="no debt/cash"), unknown(note="no guide"))
+    assert risky.value == "net-debt/EBITDA UNKNOWN (no debt/cash)"
 
 
 def test_net_debt_to_ebitda_prefers_ciq(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -861,12 +858,12 @@ def test_survival_capacity_ciq_basis_and_net_cash_readout() -> None:
     present, unknown = ds.Sourced.present, ds.Sourced.unknown
     sc = dm._survival_capacity(
         present(3.9, source_ref="CIQ Net Debt $200M ÷ CIQ LTM EBITDA $52M"),
-        unknown(note="no guide"), present(1.0, source_ref="EDGAR"),
+        unknown(note="no guide"),
     )
     assert "net-debt/EBITDA 3.9x (CIQ)" in (sc.value or "")
     sc2 = dm._survival_capacity(
         unknown(note="no EBITDA in XBRL"), unknown(note="no guide"),
-        present(1.0, source_ref="EDGAR"), net_debt=present(200.0, source_ref="CIQ BS"),
+        net_debt=present(200.0, source_ref="CIQ BS"),
     )
     v2 = sc2.value or ""
     assert "net debt $200M (CIQ)" in v2 and "N/A" in v2 and "solvency risk" not in v2
