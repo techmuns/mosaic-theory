@@ -72,6 +72,17 @@ _JUDGE_SYSTEM = (
 )
 
 
+#: How much of a failure's own text a stored reason keeps. The reason is written to the committed,
+#: public `data/graph_coverage.json`, and an SDK error can carry a multi-kilobyte response body: the
+#: class and the head of the message say what failed, and the cut says that it was cut.
+REASON_CAP = 200
+
+
+def _bounded(text: object) -> str:
+    s = "" if text is None else str(text)
+    return s if len(s) <= REASON_CAP else s[:REASON_CAP] + f"… (cut at {REASON_CAP} characters)"
+
+
 def judge_edge(llm: LlmClient, edge: GraphEdge) -> tuple[str, str]:
     """Classify one edge against its own evidence. Returns (verdict, reason) — `JUDGE_ERROR` and
     what the judge answered when that is no verdict."""
@@ -85,7 +96,7 @@ def judge_edge(llm: LlmClient, edge: GraphEdge) -> tuple[str, str]:
     verdict = out.get("verdict")
     if verdict not in VERDICTS:
         return JUDGE_ERROR, (f"{JUDGE_ERROR}: the judge answered verdict {verdict!r}, not one of "
-                             f"{list(VERDICTS)}")
+                             f"{list(VERDICTS)}; its reason: {_bounded(out.get('reason'))}")
     return str(verdict), str(out.get("reason", ""))
 
 
@@ -103,7 +114,8 @@ def judge_edges(llm: LlmClient, edges: list[GraphEdge]) -> dict[str, Any]:
         try:
             verdict, reason = judge_edge(llm, e)
         except Exception as exc:  # a transient judge failure must not drop the whole batch
-            verdict, reason = JUDGE_ERROR, f"{JUDGE_ERROR}: {type(exc).__name__}: {exc}"
+            verdict, reason = (JUDGE_ERROR,
+                               f"{JUDGE_ERROR}: {type(exc).__name__}: {_bounded(str(exc))}")
         by_class[verdict] += 1
         judged.append(
             {

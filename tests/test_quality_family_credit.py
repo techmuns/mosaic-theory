@@ -147,6 +147,28 @@ def test_a_per_family_check_must_say_whose_its_units_are() -> None:
     with pytest.raises(ValueError, match="which do not list it"):
         core.scorecard(stray, core.Corpus({"X": {}}, "r", "page", "0"), measured_on="d",
                        git_head=None, inputs_match_head=None)
+    # the credits reconcile to the counts: a unit credited to no family, or a family handed more
+    # units than the name has, raises
+    dropped = _source(_check(lambda _p: core.ItemResult(
+        counts={core.CONFIRMED: 2}, by_family={"a": {core.CONFIRMED: 1}}), per_family=True), fams)
+    invented = _source(_check(lambda _p: core.ItemResult(
+        counts={core.CONFIRMED: 1}, by_family={"a": {core.CONFIRMED: 2}}), per_family=True), fams)
+    for bad in (dropped, invented):
+        with pytest.raises(ValueError, match="credited the families"):
+            core.scorecard(bad, core.Corpus({"X": {}}, "r", "page", "0"), measured_on="d",
+                           git_head=None, inputs_match_head=None)
+    # a shared unit credited to both families reconciles
+    shared = _source(_check(lambda _p: core.ItemResult(
+        counts={core.CONFIRMED: 1}, by_family={"a": {core.CONFIRMED: 1}, "b": {core.CONFIRMED: 1}}),
+        per_family=True), fams)
+    core.scorecard(shared, core.Corpus({"X": {}}, "r", "page", "0"), measured_on="d",
+                   git_head=None, inputs_match_head=None)
+    # by_family from a check that does not credit per family would be ignored: refused
+    ignored = _source(_check(lambda _p: core.ItemResult(
+        counts={core.CONFIRMED: 1}, by_family={"a": {core.CONFIRMED: 1}})), fams)
+    with pytest.raises(ValueError, match="does not credit per family"):
+        core.scorecard(ignored, core.Corpus({"X": {}}, "r", "page", "0"), measured_on="d",
+                       git_head=None, inputs_match_head=None)
     with pytest.raises(ValueError, match="per_family and joint"):
         core.validate(_source(_check(lambda _p: core.one(core.CONFIRMED), per_family=True,
                                      joint=True), fams))
@@ -183,3 +205,23 @@ def test_the_newest_committed_ciq_snapshot_credits_each_family_its_own_units() -
         assert row.get("credited") == "family" and row["units"] == got, e["family"]
     seg = _row(_family(card, "financials.segments"), "currency_stated_usd")
     assert seg["units"] < check["fleet"]["units"]
+
+
+def test_a_family_whose_every_unit_is_unchecked_takes_no_class_from_that_check() -> None:
+    """(review round 0) An UNCHECKED unit had no second figure, so it stored no verdict: a family
+    whose only check found every unit unchecked is not classed by it — on a committed page's real
+    record, its currency panels all set to `not_run`."""
+    t, page = next((t, p) for t, p in PAGES.items() if _panels(p))
+    page = json.loads(json.dumps(page))
+    for pnl in page["mechanical"]["ciq_currency"]["panels"]:
+        pnl["check"] = "not_run"
+    seg = _family(_card({t: page}), "financials.segments")
+    assert _row(seg, "currency_stated_usd")["units"] >= 1
+    assert seg["classification"] == core.UNVERIFIED
+    assert seg["failure_guard"]["wrong_unit"] == "none"
+
+
+def test_the_printed_map_says_a_joint_row_is_one_comparison() -> None:
+    text = core.render(_card(PAGES))
+    assert "(one comparison per unit, credited in full to every family listing it)" in text
+

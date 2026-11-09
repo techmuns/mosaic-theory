@@ -159,6 +159,20 @@ def test_an_answer_outside_the_taxonomy_is_a_judge_error() -> None:
     assert rep["by_class"] == {JUDGE_ERROR: 2} and "unsupported" not in rep["by_class"]
     assert rep["judged"][0]["reason"].startswith("judge_error: the judge answered verdict None")
     assert rep["judged"][1]["reason"].startswith("judge_error: the judge answered verdict 'maybe'")
+    rep = judge_edges(_ScriptedJudge([{"verdict": "customer", "reason": "sells to X"}]),
+                      [_graph_edge("0000000001")])
+    assert rep["judged"][0]["reason"].endswith("its reason: sells to X")   # the judge's own words
+
+
+def test_a_failures_stored_text_is_bounded_and_says_so() -> None:
+    """The reason reaches the committed, public map: a long error body is cut, and the cut is
+    stated — never a multi-kilobyte provider payload, never a silent truncation."""
+    from vinci.graph.judge import REASON_CAP
+
+    rep = judge_edges(_ScriptedJudge([RuntimeError("x" * 5000)]), [_graph_edge("0000000001")])
+    reason = rep["judged"][0]["reason"]
+    assert reason.endswith(f"… (cut at {REASON_CAP} characters)")
+    assert len(reason) < REASON_CAP + 80
 
 
 def test_with_no_edge_judged_there_is_no_precision() -> None:

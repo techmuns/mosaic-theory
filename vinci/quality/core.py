@@ -279,10 +279,23 @@ def _score_check(c: Check, items: dict[str, Any], families: tuple[str, ...] = ()
                 if unknown := sorted(set(got) - set(STATUSES)):
                     raise ValueError(f"check {c.id!r} credited {fam!r} on {t!r} with {unknown} "
                                      f"— not a status ({list(STATUSES)})")
+            # THE CREDITS RECONCILE TO THE COUNTS, per status: no family is handed more units than
+            # the name has, and every unit is some family's (the credits together cover it) — a
+            # by_family that drops or invents a unit is refused, never summed into the map
+            for s in STATUSES:
+                credits, have = [got.get(s, 0) for got in r.by_family.values()], r.counts.get(s, 0)
+                if max(credits, default=0) > have or sum(credits) < have:
+                    raise ValueError(f"check {c.id!r} scored {t!r} with {have} "
+                                     f"{s} unit(s) but credited the families {credits} — a "
+                                     "family's share exceeds them or no family is credited one")
+            for fam, got in r.by_family.items():
                 fam_units[fam].update(got)
                 fam_items[fam] += sum(got.values()) > 0
             row["by_family"] = {f: {s: v.get(s, 0) for s in STATUSES}
                                 for f, v in sorted(r.by_family.items())}
+        elif r.by_family is not None:
+            raise ValueError(f"check {c.id!r} scored {t!r} with by_family but does not credit "
+                             "per family (Check.per_family) — its credits would be ignored")
         by_name[t] = row
         fleet.update(r.counts)
         excluded += r.excluded
@@ -318,17 +331,24 @@ def _family_credit(c: dict[str, Any], family: str, sharing: int) -> dict[str, An
             "units": got["units"], "confirmed": got[CONFIRMED], "credited": credited}
 
 
+def _compared(c: dict[str, Any], family: str) -> int:
+    """The units a check COMPARED for ``family`` — every status but unchecked."""
+    got = c["by_family"][family] if "by_family" in c else c["fleet"]
+    return sum(got[s] for s in STATUSES if s != UNCHECKED)
+
+
 def scorecard(src: Source, corpus: Corpus, *, measured_on: str, git_head: str | None,
               inputs_match_head: bool | None) -> dict[str, Any]:
     """The scorecard: a pure function of the corpus plus the boundary stamp it is given."""
     listing = {c.id: tuple(f.id for f in src.families if c.id in f.checks) for c in src.checks}
     checks = [_score_check(c, corpus.items, listing[c.id]) for c in src.checks]
-    by_id = {c["id"]: {**c, "joint": next(x.joint for x in src.checks if x.id == c["id"])}
-             for c in checks}
+    by_id = {s["id"]: {**s, "joint": c.joint} for c, s in zip(src.checks, checks, strict=True)}
     coverage = []
     for f in src.families:
         rows = [_family_credit(by_id[cid], f.id, len(listing[cid])) for cid in f.checks]
-        judged = {r["id"] for r in rows if r["units"]}
+        # JUDGED = a unit COMPARED for this family: an unchecked unit had no second figure, so it
+        # stored no verdict and gives no class (review round 0 on the RBC-D9 fix)
+        judged = {cid for cid in f.checks if _compared(by_id[cid], f.id)}
         entry: dict[str, Any] = {
             "family": f.id, "origin": f.origin, "cited_as": list(f.cited_as),
             "carries": f.carries, "classification": classify(src, f, judged),
@@ -437,8 +457,10 @@ def render(card: dict[str, Any]) -> str:
     for e in card["coverage"]:
         checks = "; ".join(f"{x['id']} on {x['items_run']}/{b['items']} {noun}s, {x['confirmed']} "
                            f"of {x['units']} confirmed"
-                           + (" (the whole check's, shared with the other families listing it)"
-                              if x.get("credited") == "whole_check" else "")
+                           + {"whole_check": " (the whole check's, shared with the other "
+                                             "families listing it)",
+                              "joint": " (one comparison per unit, credited in full to every "
+                                       "family listing it)"}.get(str(x.get("credited")), "")
                            for x in e["checks"]) or "no scored check"
         mark = {INDEPENDENT: "ind", INTERNAL: "int", "none": "no"}
         guards = " ".join(f"{_FC_SHORT[fc]}:{mark[g]}" for fc, g in e["failure_guard"].items())

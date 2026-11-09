@@ -61,6 +61,25 @@ map cannot say whether its "unsupported" edges were judged at all.
 - **The committed exposure map** stays as it is: 339 edges, 27 "unsupported", 0 reasons. Its pin is
   a strict xfail naming this record, so the regeneration that fixes it must remove the mark.
 
+- **Code review (round 0, `/code-review high --fix`):** 10 findings.
+  - Fixed (7):
+    - a per-family check's credits must match its counts, status by status: no unit is credited
+      to no family, and no family gets more units than the name has;
+    - `by_family` from a check not declared per-family raises, never ignored;
+    - a unit counts as judged only if it was COMPARED; an all-unchecked check gives no class;
+    - a failure's stored text is capped at 200 characters and says it was cut, because the map is
+      committed and public;
+    - an off-taxonomy answer keeps the judge's own reason;
+    - joint rows print that they are one comparison;
+    - `by_id` is zipped.
+  - Not changed (3):
+    - the density line still counts a judge-error edge as not real; the judge-error count prints
+      beside it;
+    - the per-name `by_family` rows grow the CIQ snapshot by about half (117 KB → 178 KB). They
+      are what lets each family row be reconciled to its pages;
+    - the panel table is looked up per panel (too small to change).
+  - The regenerated snapshot reproduces byte for byte after these fixes.
+
 **BOUNDARY.**
 - Snapshot: 28 pages, `data/dossiers/*/dossier.json` at `cb8139ee`, measured 2026-11-09. 26 of
   them carry `mechanical.ciq_currency`; FUBO and TECX do not.
