@@ -403,6 +403,13 @@ const EXTRACTION_VERSIONS = [
     "tie-break's caveat says the filing reconciles the wider line and the row's own " +
     "figure is CIQ's, never that the filing confirmed it (audit RBC-D8). Among the " +
     "exports on file only PARR's surprise history moves; the rest is a new field and words"],
+  ["2026-11-09.restatement-precision",
+    "a restatement of a round figure is named (TeamNostra fix request 2, RE1-D6): " +
+    "`concepts._same_figure` reads a figure's precision from its trailing zeros but never " +
+    "coarser than its second significant figure, and a per-share figure's never coarser " +
+    "than a cent, so NFLX's $900,000 thousand of debt restated to $885,849 thousand and " +
+    "HLF's 3.30 EPS restated to 3.32 are named where they were read as the same figure. " +
+    "On the 28 pages frozen at bcda7ce3 no cited figure moves"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

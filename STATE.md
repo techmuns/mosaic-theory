@@ -47,6 +47,7 @@ them describes removed code; restore by reverting #910's squash commit (`docs/re
   *ran `resolve AAPL GOOGL GOOG BRK.B ZZZZZ`: GOOGL/GOOG→one CIK, BRK.B→BRK-B, ZZZZZ fails loud.*
 - **Polygon EOD** (`vinci/eod`) — whole-market grouped-daily, 5y history (Starter) — *universe/screen ran on 5y bars.*
 - **EDGAR** (`vinci/edgar`) — XBRL `companyfacts`/`frames` + 8-K full-text + submissions — *feeds G3; module + tests.*
+- **A round figure is not a coarse one (RE1-D6, 2026-11-09)** (`vinci/edgar/concepts.py` `_same_figure`): a restatement is told from a re-rounding at no coarser than a figure's second significant figure, a per-share one at the cent — on the 30 non-test companyfacts fixtures, changes >0.5% read as "the same figure" 70 → 35 of 1,769; 0 of the 28 pages frozen at `bcda7ce3` move. The 35 left need each filing's XBRL `decimals` (proposed, not built). *Record: `docs/records/2026-11-09-fix2-e1-round-figure-restatements-are-named.md`.*
 - **Universe builder** (`vinci/universe`) — market cap = close × XBRL shares, cap-band + $3M ADV +
   an **operating-cos-only gate on TWO fail-closed axes** — *`build-universe` ran → 1,727 names (drifts
   a few as SEC data updates).*
