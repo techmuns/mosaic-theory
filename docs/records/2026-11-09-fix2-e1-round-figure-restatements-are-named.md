@@ -21,7 +21,10 @@ superseded-by:
   Two limits are added:
   - **never coarser than the value's second significant figure**: 900,000,000 is read as stated
     to $10 million, not $100 million;
-  - **a per-share value (`unit` containing "/") never coarser than a cent**: 3.3 is read as 3.30.
+  - **a per-share value (`unit` containing "/") at the cent, or finer where its own digits
+    are**: 3.3 is read as 3.30, and 0.05 as stated to the cent, not to a tenth of one (the
+    significant-figure limit would read it to 0.001 and name 0.054 a restatement of it; review
+    round 0 — no per-share pair on the fixtures reads differently either way).
 - A zero carries no precision of its own, and the other figure's decides. Two equal figures are
   the same figure.
 - `superseded` passes the point's unit. The tie-break (`dossier/filed_tiebreak.py`) is not edited,

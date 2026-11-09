@@ -122,6 +122,16 @@ def test_a_rounding_or_an_equal_figure_is_the_same_figure(a: float, b: float, un
     assert _same_figure(a, b, unit=unit)
 
 
+def test_a_per_share_figure_under_a_dime_is_stated_to_the_cent() -> None:
+    """⊕ 0.05 per share is stated to the cent, not to a tenth of one: a later filing's 0.054 (or a
+    dividend's 0.0525) re-reports it. Read at its second significant figure, 0.001, it was named a
+    restatement; a move of a whole cent still is."""
+    assert _same_figure(0.05, 0.054, unit="USD/shares")
+    assert _same_figure(0.05, 0.0525, unit="USD/shares")
+    assert not _same_figure(0.05, 0.06, unit="USD/shares")
+    assert not _same_figure(0.05, 0.04, unit="USD/shares")
+
+
 def test_a_zero_carries_no_precision_of_its_own() -> None:
     """⊖ 0.0 has every trailing zero there is: read as stated to the dollar, it absorbed 0.40 per
     share (and, read at its own step, any figure under half of one)."""
@@ -156,4 +166,5 @@ def test_every_per_share_change_of_a_cent_is_named_across_the_corpus() -> None:
                                 if _same_figure(first["val"], r["val"], unit=unit):
                                     missed.append(f"{path.stem} {tag} {r['end']}")
     assert seen > 0, "no per-share change in the corpus — the pin reads nothing"
-    assert missed == [], f"{len(missed)} of {seen} per-share changes unnamed: {missed[:5]}"
+    assert missed == [], (f"{len(missed)} of {seen} per-share changes unnamed, showing "
+                          f"{min(5, len(missed))} of {len(missed)}: {missed[:5]}")

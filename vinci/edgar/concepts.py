@@ -960,13 +960,14 @@ _CENT = Decimal("0.01")
 
 def _precision(x: float, per_share: bool) -> Decimal:
     """The step ``x`` is taken to be stated at: its trailing zeros, but NEVER COARSER THAN ITS
-    SECOND SIGNIFICANT FIGURE, and a per-share figure's never coarser than a cent. A zero has no
-    precision of its own (0), so the other figure's decides."""
+    SECOND SIGNIFICANT FIGURE — and a per-share figure's at the cent, or finer where its own
+    digits are (0.05 is stated to the cent, not to a tenth of one, so 0.054 re-reports it). A zero
+    has no precision of its own (0), so the other figure's decides."""
     d = Decimal(repr(x)).normalize()
     if not d:
         return Decimal(0)
-    step = min(Decimal(1).scaleb(int(d.as_tuple().exponent)), Decimal(1).scaleb(d.adjusted() - 1))
-    return min(step, _CENT) if per_share else step
+    trailing = Decimal(1).scaleb(int(d.as_tuple().exponent))
+    return min(trailing, _CENT if per_share else Decimal(1).scaleb(d.adjusted() - 1))
 
 
 def _same_figure(a: float, b: float, *, unit: str = "") -> bool:

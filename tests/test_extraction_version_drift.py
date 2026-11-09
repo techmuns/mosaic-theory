@@ -127,7 +127,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/verdict.py": "0b43167d2044",
     "vinci/edgar/asof.py": "9032bd415542",
     "vinci/edgar/client.py": "49703bf31602",
-    "vinci/edgar/concepts.py": "a373e210035f",
+    "vinci/edgar/concepts.py": "65e2452fe3d4",
     "vinci/edgar/cover_count.py": "24d1e9a7d94a",
     "vinci/edgar/debt_maturities.py": "a0b1d84be715",
     "vinci/edgar/filing_sections.py": "568c36df04a2",
