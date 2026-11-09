@@ -38,13 +38,13 @@ def test_a_range_against_a_point_at_its_low_is_a_mismatch() -> None:
 ])
 def test_a_point_or_a_range_that_agrees_still_verifies(
         ciq: tuple[float, float | None], release: tuple[float, float | None]) -> None:
-    """⊕ the negative pins: agreement reads VERIFIED as before."""
+    """⊕ the positive pins: agreement reads VERIFIED as before."""
     r = ps.guide_verification_read("revenue", ciq[0], ciq[1],
                                    release_low=release[0], release_high=release[1])
     assert r.check == CHECK_AGREE and "VERIFIED" in r.line
 
 
-def test_a_range_against_a_wider_one_is_still_a_mismatch() -> None:
-    """⊕ unchanged: −0.05..None against −0.05..0.10 differed before and differs now."""
+def test_a_point_against_a_wider_range_is_still_a_mismatch() -> None:
+    """⊖ unchanged: the point −0.05..None against −0.05..0.10 differed before and differs now."""
     r = ps.guide_verification_read("eps", -0.05, None, release_low=-0.05, release_high=0.1)
     assert r.check == CHECK_DIFFER

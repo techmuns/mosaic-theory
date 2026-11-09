@@ -33,8 +33,8 @@ superseded-by:
   - its mirror (CIQ −0.05–0.00 against a release point −0.05);
   - the range of one against a point.
 
-  The 3 passing are guards: a point against itself, a range against itself, and a range against a
-  wider one still differing. All 6 pass after, and so do `test_cross_check.py`,
+  The 3 passing are guards: a point against itself, a range against itself, and a point against
+  a wider range still differing. All 6 pass after, and so do `test_cross_check.py`,
   `test_primary_source.py` and the zero-coercion lint.
 - **$0 page compare.** The 28 pages frozen at `bcda7ce3` each print one guide-verification line,
   each read on 2026-11-10:
@@ -43,12 +43,14 @@ superseded-by:
   - every other page's line is a check that did not run.
 
   No page sets a point against anything, so no page moves. None needs a refresh or a rebuild.
+- **The live pages too.** The same 28 lines read the same at `6fbbb4a2`, this branch's base (#936
+  rewrote 20 page records after `bcda7ce3` and moved no guide line).
 - **The version.** Row `2026-11-10.point-guide`, re-pinned.
 - **The full offline suite** ran green before commit (`bin/commit`).
 
 **BOUNDARY.**
 - **28 pages:** `data/dossiers/*/dossier.json` at `bcda7ce3`. The lines were found by the text
-  "guide verification (" in each page.
+  "guide verification (" in each page. The same read at `6fbbb4a2` (the live pages this merges onto).
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **A point now agrees only with a point or a range of one.** A CIQ point that sits inside a
