@@ -147,3 +147,19 @@ def test_a_stale_direct_tag_is_kept_and_dated_never_suppressed_into_a_false_abse
     assert gone.status is SourceStatus.UNKNOWN and gone.value is None
     assert f"no {DIRECT}" not in (gone.note or "")
     assert f"the latest {DIRECT} covers 2022-01-01→2022-12-31" in (gone.note or ""), gone.note
+
+
+@pytest.mark.parametrize(("days", "stated"), [(366, True), (367, False)])
+def test_the_year_line_is_366_days_exactly(days: int, stated: bool) -> None:
+    """FIX 3B's LINE, AT ITS EDGE (review round 1 of #930): the frozen pages put legs at 361 days
+    (kept) and 671 (dropped), so they pin nothing between — `CURRENT_DAYS` = 600, or `<` for `<=`,
+    passed every other test. A leg ending exactly 366 days before the price date is stated; one
+    ending 367 days before is not, on all three fields."""
+    as_of = END + timedelta(days=days)
+    ca = build_capital_allocation(_facts(**{
+        DIRECT: [_flow(27.41)], CASH: [_flow(137.2e6)], SHARES: [_flow(4_860_000.0)]}),
+        as_of=as_of)
+    for f in (ca.buyback_cash, ca.buyback_shares, ca.buyback_avg_price):
+        assert (f.status is SourceStatus.PRESENT) is stated, (days, f)
+        if not stated:
+            assert f"ends {days} days before the price date {as_of}" in str(f.note), f.note

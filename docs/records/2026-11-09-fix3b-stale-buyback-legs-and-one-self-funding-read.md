@@ -102,6 +102,9 @@ that stopped using a tag keeps its last value forever, and only the `source_ref`
   - **(b), negative:** on the 25 pages `survival_read` reaches, the line is the committed
     leverage leg byte for byte. Its source names no FCF sign, and `quality.fcf_sign` and
     `primary_source` are unchanged.
+  - **(a), at its edge** (`tests/test_buyback_average.py`, review round 1): a leg ending 366 days
+    before the price date is stated, 367 is not. The frozen pages sit at 361 and 671, so
+    `CURRENT_DAYS` = 600 or `<` for `<=` passed every other pin; both now fail.
   - **The harness parse** is pinned by a round trip.
   - **The transform** is pinned as own-field only, idempotent, the identity at a ref without the
     rule, and refusing a page with no price date or a malformed source.
@@ -244,7 +247,7 @@ python -m vinci.evals score --out-dir <…> --registration <…> --budget-ledger
 
 **BOUNDARY.**
 - **Pages:** the 28 pages committed at the panel's freeze `bcda7ce3`
-  (`git ls-tree bcda7ce3 data/dossiers/`), read through this PR's code at its head.
+  (`git ls-tree bcda7ce3 data/dossiers/`), read through this PR's code at `d6e29ce5` (review round 1 adds a test only, and moves no count).
 - **Fields:** the three buyback fields on each, with each leg's age in days from its period end
   to the page's `stock_info.as_of`. Self-funding: the survival line's text after its last " | ",
   against `primary_source.self_funding`'s word.
