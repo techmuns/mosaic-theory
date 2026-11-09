@@ -270,3 +270,13 @@ here.**
 - **Two rows for one defect** (the "=" pairs, and RA-D10 with RBC-D2) can drift apart. The lint
   does not check that they agree; the log's header names the pairs.
 - $0. No model call, no page rebuilt, no product code changed.
+## Amendments
+
+### 2026-11-10: R2 bucket privacy settled
+
+R2 bucket privacy settled: private (operator, 2026-11-09).
+- This closes §5's "Still open: whether the R2 bucket is private". It is settled by the
+  operator's statement, not by a probe; none was made.
+- It is recorded by the RG-D19 / RG-D8 stream (`docs/records/2026-11-10-driver-facts-not-quotes.md`),
+  whose private evidence store relies on it.
+- How SEC treats two machines stays open.

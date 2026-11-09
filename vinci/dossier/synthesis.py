@@ -36,6 +36,7 @@ from vinci.dossier.schemas import (
     FigureCite,
     ForwardConsensus,
     MechanicalLayer,
+    OperatingDriver,
     OperatingDriversExtract,
     PrimarySource,
     SourcedPoint,
@@ -102,7 +103,12 @@ def _label_year(m: re.Match[str]) -> float | None:
 # "2,026" or "$2026" — those are amounts.
 _BARE_YEAR = re.compile(r"(?<![\d$.,])(?:19|20)\d\d(?!\d|[.,]\d)")
 # Keys whose values identify a fact rather than state one of its numbers.
-_ID_KEYS = frozenset({"accession", "url", "cik", "id"})
+# ``locator`` (RG-D19) is a transcript row's address — a file name, two sha256 hex digests and a
+# paragraph index — never a figure the row states: walked as one, its hex digit runs ("96750",
+# "35", "54612808977") entered the cited call's number universe and traced any claim that wrote one.
+# ``unknown_reason`` (RG-D8) says which check refused a row's value, and may print a count that is
+# no figure of the row ("its quote states 23 2 times"); an unknown row's figures are none.
+_ID_KEYS = frozenset({"accession", "url", "cik", "id", "locator", "unknown_reason"})
 # The mechanical layer's fields that state a PERCENTILE as a 0..1 fraction (`Valuation.
 # pe_percentile_5y` / `ev_ebitda_percentile_5y`, `OwnHistoryBand.percentile`). A
 # percentile is written as its whole-number rank — 0.026 is "the 3rd percentile" — and the trace's
@@ -1360,7 +1366,8 @@ def _operating_drivers_digest(od: OperatingDriversExtract) -> str:
            "before characterising the fact above it, because it frequently qualifies, reverses or "
            "seasonally normalises the number, and a point that contradicts it is unsupported. ==="]
     for r in od.rows:
-        val = r.value if len(r.value) <= 130 else r.value[:127].rstrip() + "…"
+        v = prompt_driver_value(r)
+        val = v if len(v) <= 130 else v[:127].rstrip() + "…"
         out.append(f"[{r.kind.value}] {r.metric}: {val} → {r.source_ref}")
         # SURFACED HERE, not left to the facts dump. BRBR's quote — "70% of RTD shake category
         # volumes were sold on price promotion" — is exact and correctly cited, and the sentence
@@ -1715,9 +1722,36 @@ def _cache_misses(sends: list[tuple[int, dict[str, Any], float]]) -> list[str]:
 #: or a null on a page without one — would change every synthesis request, which row 53 says is
 #: measured on the panel before it ships. This build changes what the PAGE prints, not what the
 #: model reads.
+#: ``operating_drivers.rows[*]``'s structured fact and locator (RG-D8/RG-D19) are for the PAGE:
+#: the prompt keeps the row shape it always had, and what the check concluded reaches it through
+#: ONE field — an ``unknown`` row's value reads UNKNOWN with its reason (`prompt_driver_value`),
+#: in the facts and in the digest alike. So a verified row is sent byte for byte as before.
 NOT_SENT: dict[str, Any] = {"primary_source": True,
                             "catalyst_path": {"guidance_after_price_date": True},
-                            "concentration": {"customers_listed": True}}
+                            "concentration": {"customers_listed": True},
+                            "operating_drivers": {"rows": {"__all__": {
+                                "figures": True, "value_status": True, "unknown_reason": True,
+                                "locator": True}}}}
+
+
+def prompt_driver_value(r: OperatingDriver) -> str:
+    """A driver row's value as the synthesis reads it. A transcript row whose value code could
+    not verify against its quote (`driver_extract.check_fact`) is not handed over as a value —
+    "up 7%" read off "down 7%" was, under the header "validated, cited facts" (RG-D8). Every other
+    row's value is unchanged."""
+    if r.value_status == "unknown":
+        return f"UNKNOWN — not verified against its quote: {r.unknown_reason}"
+    return r.value
+
+
+def _mark_unverified_drivers(dumped: dict[str, Any], od: OperatingDriversExtract | None) -> None:
+    """Write `prompt_driver_value` into the facts dump's driver rows, which `model_dump` emits in
+    ``od.rows`` order."""
+    rows = (dumped.get("operating_drivers") or {}).get("rows")
+    if od is None or not rows:
+        return
+    for r, d in zip(od.rows, rows, strict=True):
+        d["value"] = prompt_driver_value(r)
 
 
 def synthesize(
@@ -1738,6 +1772,7 @@ def synthesize(
     # source_refs still live in `mech`, so a cited primary-source ref traces through validation.
     _dumped = mech.model_dump(exclude=NOT_SENT)
     _mark_drawdown_guidance(_dumped, mech.primary_source)
+    _mark_unverified_drivers(_dumped, mech.operating_drivers)
     facts = json.dumps(_dumped, indent=2, default=str)
     user = (
         f"Name: {name} ({ticker}). The ONLY facts you may use — each carries a source_ref to copy "
