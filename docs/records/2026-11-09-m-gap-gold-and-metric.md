@@ -183,8 +183,9 @@ neutral. So a compliant CAND arm can raise those families and read as a worsenin
 the change. The other families (bleed, trailing-only, pe-percentile-blocked) count labels #927 does
 not ask for, and its item (c) should lower trailing-only.
 
-**PROPOSED, for the coordinator's review (not decided here, and pre-registered before any draw):**
-- **(A, recommended)** M-GAP is the target. M-LABEL's no-worsening check counts only the families
+**RULED (coordinator, 2026-11-09): option A.** Built in #929's review round (§8): the registration
+field `no_worsening_families`. The options as proposed:
+- **(A, recommended, RULED)** M-GAP is the target. M-LABEL's no-worsening check counts only the families
   #927 does not ask the model to write: bleed, trailing-only and pe-percentile-blocked. The three
   gap-statement families are reported, not gated.
   - This needs a small scorer field (a registration's no-worsening families), its own pinned code
@@ -203,7 +204,9 @@ not ask for, and its item (c) should lower trailing-only.
 - **Design:** main → #927's head, on the frozen panel v2. Both arms carry the five `FIX_3A`
   transforms and `gap_types` (`FIX_4A`). Five draws per page per arm, 60 calls. Ship alpha 0.01
   (the replication rule).
-- **Target: M-GAP.** M-LABEL is handled as §6 is ruled. The `--note` states that the target covers
+- **Target: M-GAP.** M-LABEL's no-worsening check counts only bleed, trailing-only and
+  pe-percentile-blocked (§6, ruled); the whole metric and its three gap-statement families are
+  reported. The `--note` states that the target covers
   the gap framing and that M-GAP is defined on these six pages.
 
 ```
@@ -213,6 +216,7 @@ python -m vinci.evals register --base origin/main --cand <#927's head> \
   --transform relabel_drawdown_shape --transform trailing_only_note --transform survival_read \
   --transform peer_gap_question --transform print_row_guide --transform gap_types \
   --target M-GAP --ship-alpha 0.01 \
+  --no-worsening-families M-LABEL=bleed,trailing-only,pe-percentile-blocked \
   --ciq-root /Users/work/Documents/GitHub/mosaic-theory/data/manual/ciq \
   --note "<what the target covers and does not>" --out <notes>/registration-fix4a.json
 python -m vinci.evals run-compare --registration <…> --budget-ledger <…> --out-dir <fresh> \
@@ -232,6 +236,42 @@ python -m vinci.evals score --out-dir <…> --registration <…> --budget-ledger
     unflagged CAND gap-subject units, by the same taxonomy, before the score is read.
   - If its precision there falls below 0.80, the result is reported as unproven rather than read as
     a pass or a block.
+
+## 8. Review round 1 (the coordinator's, 2026-11-09)
+
+The coordinator re-scored DEV and TEST, re-derived the split, read 12 random gold labels and agreed
+with all 12, and killed 5 mutants.
+
+- **F1 — a negated framing word is no framing.** Rule 8's new text says "never bearish", and a model
+  echoes its instructions. M-GAP counted "never bearish", "an unknown rather than a risk" and
+  "carries no risk signal" as framing: 4 of the coordinator's 6 compliant MCK lines hit.
+  - The fix is a negation window: never, not, no, nor, rather than, instead of or without, within
+    three words before the framing word and inside the same clause.
+  - "a risk, NOT a neutral gap" and "not neutral — surface it as a BEARISH risk" still frame.
+  - Motivated by rule 8's wording, not by TEST.
+  - **The gold's DEV and TEST hit sets are IDENTICAL, unit for unit, framing labels included**
+    (`m_gap_hits.json`, saved from the frozen metric before the change and pinned). So TEST was not
+    re-read: the scores in §4 stand.
+  - Before the change, 13 of 18 compliant typed lines fired (the coordinator's 6, plus 12 in rule
+    8's own wording, every type, each with what would resolve it). After it, none does. Seven
+    old-rule-8 controls still fire.
+  - `metrics.py` sha256 moves from `80e5357f…` (the metric scored on TEST) to its committed value;
+    the hit-set pin is the proof they agree on the gold.
+- **F2 — option A, built.** A registration's `no_worsening_families` gates a metric's no-worsening
+  check on the named families only, scored as `M-LABEL[bleed+trailing-only+pe-percentile-blocked]`.
+  - The rest is reported as `M-LABEL[reported: …]`, and the whole metric is still reported.
+  - The field is part of the design (a replication must match it) and is serialised only when set,
+    so old shas are kept.
+  - Pinned on NFLX's real synthesis: a CAND that states one more gap blocks under the whole metric
+    and is reported, not gated, under the ruling; a CAND that adds a "bleed" still blocks.
+  - Falsifier unchanged (§6).
+- **F3 — M-GAP needs the frozen PAGE, not just its ticker.** The gap types apply only where the
+  page's git blob is the one the fixture records (`PageContext.blob`, set by `score_run` from the
+  panel file it read the page by). Elsewhere M-GAP is undefined, and a registration or a score with
+  M-GAP as target refuses.
+- **Mutants for this round:** 8 run, 8 killed — the negation dropped (bearish; risk), the window
+  crossing clause punctuation, the blob ignored, the score's check dropped, the families ignored in
+  the gate, the gated series taking every family, the field left out of the design.
 
 **BOUNDARY.**
 - **Gold:** the 221 units above, #926's 60 draws, `units.draw_units` at `fc79a7be`, both arms; the

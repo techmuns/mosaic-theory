@@ -57,6 +57,9 @@ class PageContext:
     mech: MechanicalLayer
     transcript: str | None = None
     request: Any | None = None
+    #: The page's git blob, where the caller read the page by it (the frozen panel's): M-GAP is
+    #: defined only on a page whose blob is the one its gap types were frozen on.
+    blob: str | None = None
 
     @cached_property
     def dumped(self) -> dict[str, Any]:
@@ -621,15 +624,20 @@ GAP_CHANGE = "change or deviation"
 
 
 @cache
-def _gap_pages() -> dict[str, list[dict[str, Any]]]:
+def _gap_pages() -> dict[str, tuple[str, list[dict[str, Any]]]]:
     data = json.loads(GAP_TYPES_FILE.read_text(encoding="utf-8"))
-    return {t: list(v["gaps"]) for t, v in data["pages"].items()}
+    return {t: (str(v["dossier_blob"]), list(v["gaps"])) for t, v in data["pages"].items()}
 
 
-def gap_entries(ticker: str | None) -> list[dict[str, Any]] | None:
-    """The page's frozen gap entries — None for a page whose types were never frozen, where M-GAP
-    is UNDEFINED (never zero): `score_units` leaves it out, and a registration refuses it."""
-    return _gap_pages().get(str(ticker)) if ticker else None
+def gap_entries(ticker: str | None, blob: str | None) -> list[dict[str, Any]] | None:
+    """The page's frozen gap entries — None unless the page IS the one they were frozen on: its
+    ticker is in the file and its git blob is the file's (#929 review F3: a re-assembled page of
+    the same ticker would otherwise read freeze-time types). Where None, M-GAP is UNDEFINED, never
+    zero: `score_units` leaves it out, and a registration and a score refuse it as a target."""
+    frozen = _gap_pages().get(str(ticker)) if ticker else None
+    if frozen is None or blob is None or blob != frozen[0]:
+        return None
+    return frozen[1]
 
 
 #: Fit on the gold's DEV half only (CNXC, LLY, MCK; 2026-11-09), then frozen before TEST was read
@@ -648,6 +656,22 @@ _GAP_BEARISH = re.compile(r"\bbearish\w*", I)
 _GAP_NEUTRAL = re.compile(r"(?<!not a )(?<!not )(?<!rather than a )(?<!rather than )\bneutral\b|"
                           r"not directional|non-directional|neither case|either way|to resolve|"
                           r"must resolve|resolve before", I)
+#: A NEGATED framing word is no framing: "never bearish", "an unknown rather than a risk", "carries
+#: no risk signal". The negator stands within three words before it, inside the same clause (no
+#: comma, colon, semicolon, dash or bracket between), so "a risk, NOT a neutral gap" and "not
+#: neutral — surface it as a BEARISH risk" still frame (#929 review F1: rule 8's new text says
+#: "never bearish", and a model echoes its instructions; motivated by that wording, not by TEST —
+#: the change leaves the gold's DEV and TEST hit sets identical, unit for unit).
+_GAP_NEGATED = re.compile(r"\b(?:never|not|no|nor|rather than|instead of|without)"
+                          r"(?:\s+[^\s,;:.()\[\]—–-]+){0,3}\s*$", I)
+
+
+def _framed(rx: re.Pattern[str], text: str) -> re.Match[str] | None:
+    """The first match of ``rx`` in ``text`` that no negator governs."""
+    return next((m for m in rx.finditer(text)
+                 if not _GAP_NEGATED.search(text[max(0, m.start() - 60):m.start()])), None)
+
+
 #: A label the unit QUOTES ('not assessable (a risk)') is the page's word, not the unit's framing.
 #: A possessive ("company's") never opens a quote.
 _GAP_QUOTED = re.compile(r"(?<![A-Za-z])'[^']{1,80}'(?![A-Za-z])")
@@ -674,7 +698,7 @@ def gap_framing(u: Unit, ctx: PageContext) -> list[Hit]:
     types none of the named entries a change (`GAP_CHANGE`). The gap test (fix 4a) lets only a
     change be raised as a risk, so every other such framing is the misread. A gap the page's list
     does not name is "type not determined", which counts. Empty off the frozen pages."""
-    entries = gap_entries(ctx.page.get("ticker"))
+    entries = gap_entries(ctx.page.get("ticker"), ctx.blob)
     if entries is None or u.section not in ("key_unknowns", "bear_points"):
         return []
     text = _GAP_QUOTED.sub("", u.text)
@@ -682,9 +706,9 @@ def gap_framing(u: Unit, ctx: PageContext) -> list[Hit]:
         return []
     if u.section == "bear_points":
         framing, phrase = "bear-rest", stated.group(0)
-    elif m := _GAP_BEARISH.search(text):
+    elif m := _framed(_GAP_BEARISH, text):
         framing, phrase = "bearish", m.group(0)
-    elif (m := _GAP_RISK.search(text)) and not _GAP_NEUTRAL.search(text):
+    elif (m := _framed(_GAP_RISK, text)) and not _GAP_NEUTRAL.search(text):
         framing, phrase = "risk", m.group(0)
     else:
         return []
@@ -705,8 +729,11 @@ UNIT_METRICS: dict[str, Callable[[Unit, PageContext], list[Hit]]] = {
 #: A metric defined only on some pages: (its test of the page). Off them it is left out of a
 #: score — undefined, never zero.
 PAGE_LIMITED: dict[str, Callable[[PageContext], bool]] = {
-    "M-GAP": lambda ctx: gap_entries(ctx.page.get("ticker")) is not None,
+    "M-GAP": lambda ctx: gap_entries(ctx.page.get("ticker"), ctx.blob) is not None,
 }
+#: The families a metric's hits are filed under, where a registration may gate on some of them
+#: only (`Registration.no_worsening_families`).
+METRIC_FAMILIES: dict[str, tuple[str, ...]] = {"M-LABEL": tuple(LABEL_FAMILIES)}
 #: The gold class each unit metric is measured against.
 GOLD_CLASS = {"M-LABEL": "LABEL", "M-SIGN": "SIGN", "M-PATH": "PATH", "M-ABSENT": "ABSENT"}
 
