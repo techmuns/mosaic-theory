@@ -1,0 +1,33 @@
+{
+ "cik": "0001682745",
+ "name": "VERRA MOBILITY Corp",
+ "filings": {
+  "recent": {
+   "accessionNumber": [
+    "0001193125-23-282249",
+    "0000950170-23-062105"
+   ],
+   "filingDate": [
+    "2023-11-22",
+    "2023-11-09"
+   ],
+   "reportDate": [
+    "2023-09-30",
+    "2023-09-30"
+   ],
+   "form": [
+    "10-Q/A",
+    "10-Q"
+   ],
+   "items": [
+    "",
+    ""
+   ],
+   "primaryDocument": [
+    "d675931d10qa.htm",
+    "vrrm-20230930.htm"
+   ]
+  },
+  "files": []
+ }
+}

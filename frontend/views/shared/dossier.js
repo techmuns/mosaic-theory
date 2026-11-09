@@ -403,6 +403,17 @@ const EXTRACTION_VERSIONS = [
     "tie-break's caveat says the filing reconciles the wider line and the row's own " +
     "figure is CIQ's, never that the filing confirmed it (audit RBC-D8). Among the " +
     "exports on file only PARR's surprise history moves; the rest is a new field and words"],
+  ["2026-11-09.asof-reach-and-quarterly-amendments",
+    "EDGAR as it stood on the price date reaches as far back as EDGAR showed then " +
+    "(TeamNostra fix request 2, RE1-D8): a read with no window reaches back from the cut as " +
+    "far as the submissions recent page reaches back from its newest filing, reading the " +
+    "older pages that overlaps; reads the view cannot cut (the frames API, the share " +
+    "readers on it, the submissions document) raise (RE1-D9); a 10-Q/A is read in its " +
+    "original's place when it carries the quarter's statements and is named otherwise, on " +
+    "the page's 10-Q read (RE1-D12); the exposure graph's annual excerpts take the same /A " +
+    "rule and name a later /A (RE1-D13) and say what their character cap left out " +
+    "(RE1-D14). On the 28 pages frozen at bcda7ce3 no field moves: the catalyst counts on " +
+    "EPAM, IT and PARR, which the old view would now undercount, are reproduced"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

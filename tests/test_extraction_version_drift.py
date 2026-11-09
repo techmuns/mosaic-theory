@@ -80,8 +80,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "ed78a1205285"
-PINNED_AT = "2026-11-09.order2-pages"
+PINNED_TABLE = "c0d5d015f985"
+PINNED_AT = "2026-11-09.asof-reach-and-quarterly-amendments"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -114,10 +114,10 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ltm_quarters.py": "976073b15fc6",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "c91b8d44c5fe",
-    "vinci/dossier/mechanical.py": "99271f6556e5",
+    "vinci/dossier/mechanical.py": "b6559027a8b0",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
-    "vinci/dossier/refresh.py": "dd925c119cb3",
+    "vinci/dossier/refresh.py": "b9389087b3c7",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
     "vinci/dossier/schemas.py": "970c06340367",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
@@ -125,8 +125,8 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
     "vinci/dossier/verdict.py": "0b43167d2044",
-    "vinci/edgar/asof.py": "9032bd415542",
-    "vinci/edgar/client.py": "49703bf31602",
+    "vinci/edgar/asof.py": "5153677fa772",
+    "vinci/edgar/client.py": "3d2d70cf31fd",
     "vinci/edgar/concepts.py": "11278504f70c",
     "vinci/edgar/cover_count.py": "24d1e9a7d94a",
     "vinci/edgar/debt_maturities.py": "a0b1d84be715",

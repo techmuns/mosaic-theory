@@ -378,8 +378,8 @@ def _atom_payload() -> dict[str, typing.Any]:
 
 def _serve_atom_excerpts(monkeypatch: pytest.MonkeyPatch) -> None:
     c = _case("atom-sentences-reordered")
-    monkeypatch.setattr(gx, "latest_10k_excerpts",
-                        lambda edgar, cik, http=None: ("0001683168-26-001291", c["window"]))
+    served = ("0001683168-26-001291", c["window"], None, None)  # no amendment, nothing cut
+    monkeypatch.setattr(gx, "latest_10k_excerpts", lambda edgar, cik, http=None: served)
 
 
 def test_graph_edge_with_reordered_evidence_is_refused_end_to_end(

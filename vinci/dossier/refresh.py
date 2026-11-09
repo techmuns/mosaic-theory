@@ -1537,7 +1537,8 @@ def cross_check_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str]
         # (2) wall coherence — the window is the 10-Q the page names, else the latest instant
         acc = dm._acc_of(ps_m.filing.source_ref) if ps_m.filing is not None else None
         try:
-            filed = edgar.recent_filings(cik, forms=("10-Q",)) if cik and acc else []
+            # the page's filing may be a 10-Q/A read in its original's place (RE1-D12)
+            filed = edgar.recent_filings(cik, forms=("10-Q", "10-Q/A")) if cik and acc else []
         except HttpError:
             filed = []
         tenq = next((f for f in filed if f.accession == acc), None)

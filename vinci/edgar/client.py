@@ -156,7 +156,8 @@ class Filing(BaseModel, frozen=True):
 
 class AnnualRead(BaseModel, frozen=True):
     """The annual report a DOCUMENT reader reads, and every amendment of it (audit E1-D7,
-    operator ruling 2026-11-01).
+    operator ruling 2026-11-01) — or, under the same rule, a 10-Q and its 10-Q/As
+    (:func:`quarterly_report`, RE1-D12).
 
     The original is read. An annual /A takes its place only when it carries the period's
     FINANCIAL STATEMENTS — judged by what its accession carries in companyfacts, never by its form
@@ -799,6 +800,21 @@ class EdgarClient:
         return code, str(sub.get("stateOfIncorporationDescription") or "").strip()
 
     # --- recent filings (8-K detection via submissions) ---------------------------------------
+    def recent_page_span(self, cik: int | str) -> tuple[date, date] | None:
+        """The first and last filing dates on the submissions document's RECENT page, or None
+        when it holds no dated row. SEC: the recent page "contains at least one year's of filing
+        or to 1,000 (whichever is more) of the most recent filings" (sec.gov's EDGAR API page) —
+        so its span is how far a no-window read reaches back from the newest filing, the reach a
+        view cut in the past applies from its cut (:class:`vinci.edgar.asof.AsOfEdgar`, RE1-D8).
+        Same cached document as :meth:`recent_filings`."""
+        recent = self._submissions(cik).get("filings", {}).get("recent", {})
+        try:
+            dates = [date.fromisoformat(d) for d in recent.get("filingDate") or [] if d]
+        except ValueError as exc:
+            raise HttpError(f"the submissions document for CIK{pad_cik(cik)} carries a filing "
+                            f"date that is not a date: {exc}") from exc
+        return (min(dates), max(dates)) if dates else None
+
     def recent_filings(
         self, cik: int | str, *, forms: tuple[str, ...] = ("8-K",), since: date | None = None
     ) -> list[Filing]:
@@ -938,6 +954,18 @@ def annual_report(edgar: EdgarClient, cik: int | str, *, forms: tuple[str, ...],
                key=lambda f: f.filing_date, default=orig)
     return AnnualRead(filing=read, original=orig, later=later, restating=restating,
                       unjudged=unjudged)
+
+
+def quarterly_report(edgar: EdgarClient, cik: int | str, *,
+                     through: date | None = None) -> AnnualRead | None:
+    """The newest 10-Q filed by ``through`` (any day when None), as a DOCUMENT reader reads it,
+    under the SAME rule as :func:`annual_report` (TeamNostra fix request 2, RE1-D12): the original
+    is read; a 10-Q/A takes its place only when it carries the quarter's financial statements,
+    judged from companyfacts (a balance-sheet total at the quarter's end, an income line, and half
+    the original's tags — :func:`_statement_accessions`); a later 10-Q/A is always named
+    (:attr:`AnnualRead.pointer`). The readers listed ``forms=("10-Q",)``, so a 10-Q/A was neither
+    read nor named. None when the filer has filed no 10-Q."""
+    return annual_report(edgar, cik, forms=("10-Q",), through=through)
 
 
 #: The balance-sheet totals and income-statement lines whose presence, for the period, marks an

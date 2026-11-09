@@ -20,6 +20,21 @@ from typing import Any
 from vinci.edgar.client import FTS_MAX_PAGES, EdgarClient, Filing, FtsResult, FundamentalSnapshot
 from vinci.edgar.concepts import facts_as_of
 
+
+class UncutReadError(RuntimeError):
+    """A read the view cannot cut at its price date was asked of it (RE1-D9). Never an
+    ``HttpError``: it is a reader asking for today's values on a page priced in the past, not a
+    feed that failed, so no "degrade to UNKNOWN" handler may turn it into missing data."""
+
+
+#: Reads the view CANNOT cut, so it refuses them rather than pass them through (TeamNostra fix
+#: request 2, RE1-D9). The frames API serves each filer's LATEST value for a period and carries no
+#: filing date, and the share-count readers are built on it; the submissions document is the
+#: uncut filing list itself. A reader that must say what such a read holds TODAY reads it from
+#: :attr:`AsOfEdgar.uncut`.
+_UNCUTTABLE = frozenset({"frame", "shares_outstanding_with_provenance",
+                         "shares_outstanding_by_cik", "_submissions"})
+
 #: The earliest day efts full-text search covers; a bounded search must name a start.
 _FTS_EPOCH = "2001-01-01"
 
@@ -44,14 +59,21 @@ class AsOfEdgar:
     """An :class:`EdgarClient` that sees EDGAR as it stood on ``cut``.
 
     Every read that carries a filing date is cut there; a read that describes the filer as it is
-    now (its incorporation, its registrant names) passes through unchanged. Unknown attributes are
-    the wrapped client's own, so the view is a drop-in for it."""
+    now (its incorporation, its registrant names) passes through unchanged, and so do the raw HTTP
+    clients, which readers use for an accession's own archive files (they exist only once filed).
+    A read that cannot be cut RAISES (:data:`_UNCUTTABLE`). Other attributes are the wrapped
+    client's own, so the view is a drop-in for it."""
 
     def __init__(self, inner: EdgarClient, cut: date) -> None:
         self.inner = inner
         self.cut = cut
 
     def __getattr__(self, name: str) -> Any:
+        if name in _UNCUTTABLE:
+            raise UncutReadError(
+                f"`{name}` cannot be read as EDGAR stood on {self.cut}: the frames API serves "
+                "each filer's latest value and no filing date, and the submissions document is "
+                "the uncut filing list. Read it through `.uncut` only to say what it holds today.")
         return getattr(self.inner, name)
 
     @property
@@ -76,6 +98,22 @@ class AsOfEdgar:
 
     def recent_filings(self, cik: int | str, *, forms: tuple[str, ...] = ("8-K",),
                        since: date | None = None) -> list[Filing]:
+        """The filings of ``forms`` filed on or before the cut (and on or after ``since``).
+
+        A READ WITH NO WINDOW REACHES BACK FROM THE CUT AS THE RECENT PAGE DOES FROM ITS NEWEST
+        FILING (TeamNostra fix request 2, RE1-D8). With no ``since`` the client reads the recent
+        page alone, which ends where TODAY's newest ~1,000 filings end — so a cut before it found
+        nothing (Gartner's page starts 2021-12-02: at a 2021-11-30 cut no 8-K, no 10-Q and no
+        annual report), and a cut just inside it found only its few weeks. At the cut, the recent
+        page then held "at least one year's of filing or to 1,000 (whichever is more)" (SEC) up to
+        the cut. So the view asks for the window [cut − the recent page's span, cut], reading the
+        older pages that window overlaps. A cut on or after the page's newest filing reads the
+        recent page alone, exactly as before. A test double that is not an EdgarClient has no
+        pages, and is read as it is."""
+        if since is None and isinstance(self.inner, EdgarClient):
+            span = self.inner.recent_page_span(cik)
+            if span is not None and span[1] > self.cut:
+                since = self.cut - (span[1] - span[0])
         rows = (self.inner.recent_filings(cik, forms=forms) if since is None
                 else self.inner.recent_filings(cik, forms=forms, since=since))
         return [f for f in rows if within_cut(f.filing_date, self.cut)]
