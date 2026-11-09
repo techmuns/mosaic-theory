@@ -786,13 +786,16 @@ def test_false_balance_flags_strong_lean_with_symmetric_body_both_directions() -
     assert not any("near-symmetric" in f for f in fd)
 
 
-def test_synthesis_contract_requires_balance_and_treats_opacity_as_risk() -> None:
+def test_synthesis_contract_requires_balance_and_sorts_a_gap_before_reading_it() -> None:
     """Mechanism B lives in the synthesis CONTRACT (prompt + tool schema): evidence_balance is a
-    required tool field; opacity is a bearish risk; anti-balance + contrarian-reconciliation are
-    instructed. evidence_balance carries no conclusion token (the no-verdict line still holds)."""
+    required tool field; a missing item is sorted by the gap test, and only a change or deviation
+    may be raised as a risk (fix 4a, operator ruling 2026-11-07, "Yes, use the test" — rule 8 used
+    to call every missing disclosure a bearish risk; `tests/test_gap_test.py`); anti-balance +
+    contrarian-reconciliation are instructed. evidence_balance carries no conclusion token (the
+    no-verdict line still holds)."""
     assert "evidence_balance" in syn.SYNTHESIS_TOOL["input_schema"]["required"]
     sys = syn._SYSTEM
-    assert "OPACITY-AS-SIGNAL" in sys and "BEARISH risk" in sys
+    assert "THE GAP TEST" in sys and "OPACITY-AS-SIGNAL" not in sys and "BEARISH risk" not in sys
     assert "ANTI-BALANCE" in sys and "CONTRARIAN-RECONCILIATION" in sys
     assert not any(tok in "evidence_balance" for tok in _FORBIDDEN)  # not a verdict-shaped field
 

@@ -290,7 +290,7 @@ def test_a_first_run_must_be_complete_and_scored_with_its_ledger(
 
 #: Written out, not read from `cm.DESIGN_FIELDS`, so a field dropped from it fails here.
 DESIGN = ["base_ref", "cand_ref", "transforms", "pages", "draws", "targets", "alpha",
-          "ship_alpha", "scorer", "requests", "no_worsening", "rule"]
+          "ship_alpha", "scorer", "requests", "no_worsening", "rule", "no_worsening_families"]
 
 
 @pytest.mark.parametrize("name", DESIGN)

@@ -329,3 +329,42 @@ def test_survival_read_still_hands_a_pre_3b_ref_its_fcf_sign(
 def test_fix3b_names_its_transforms() -> None:
     assert vr.FIX_3B == ("survival_read", "current_buybacks")
     assert set(vr.FIX_3B) <= set(vr.TRANSFORMS)
+
+
+# ---------------------------------------- the gap test's FCF-sign item, after #927 merged (#930)
+
+FCF_ITEM = "the FCF sign (quality.fcf_sign)"
+OLD_FCF_ITEM = "the FCF sign behind the survival line's runway leg"
+
+
+def test_no_gap_entry_names_a_survival_line_leg() -> None:
+    """(+) #927's gap test named its FCF-sign item "the FCF sign behind the survival line's runway
+    leg"; this PR deletes that leg, so the item names its field instead. On all 28 frozen pages no
+    entry names the survival line or a runway, and the two pages whose FCF sign is UNKNOWN (IT,
+    LLY) carry the field's name — in the request the model is sent, too."""
+    named = []
+    for t in _frozen():
+        mech, ctx = _ctx(t)
+        for g in vr.gap_types(mech, ctx).disclosure_gaps or []:
+            assert "runway" not in g.item and "survival line" not in g.item, (t, g.item)
+            if "quality.fcf_sign" in g.fields:
+                named.append((t, g.item))
+    assert named == [("IT", FCF_ITEM), ("LLY", FCF_ITEM)]
+    sent = _request("LLY", ["gap_types"])
+    assert f'"item": "{FCF_ITEM}"' in sent and "runway leg" not in sent
+
+
+def test_the_fcf_sign_entry_keeps_its_type_and_basis() -> None:
+    """(−) Only the words moved: LLY's entry has the type, fields and basis the frozen M-GAP gold
+    recorded at #927's 601d2f7e (`vinci/evals/synthesis_gap_types.json`), which keeps the old item
+    text on purpose — it is the gold's own vocabulary, and `metrics.GAP_ITEM_WORDS` keys on it. A
+    future re-freeze of the gap types takes the new wording."""
+    from vinci.evals import metrics as mt
+    frozen = json.loads(mt.GAP_TYPES_FILE.read_text())["pages"]["LLY"]["gaps"]
+    (old,) = [g for g in frozen if "quality.fcf_sign" in g["fields"]]
+    assert old["item"] == OLD_FCF_ITEM and OLD_FCF_ITEM in mt.GAP_ITEM_WORDS
+    mech, ctx = _ctx("LLY")
+    (new,) = [g for g in vr.gap_types(mech, ctx).disclosure_gaps or []
+              if "quality.fcf_sign" in g.fields]
+    assert new.item == FCF_ITEM
+    assert (new.fields, new.type, new.basis) == (old["fields"], old["type"], old["basis"])

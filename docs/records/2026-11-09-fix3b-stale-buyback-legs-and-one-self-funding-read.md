@@ -170,6 +170,10 @@ that stopped using a tag keeps its last value forever, and only the `source_ref`
   VITL. Both legs agree, so "mixed" misdescribes them. But `tests/test_cross_check.py:55` pins
   that wording deliberately ("two negative legs AGREE as a cross-check while the line still reads
   MIXED"), so changing it is a decision for the owner of that read, not for this fix.
+- **One negative quarter reads MIXED too** (coordinator review of #930). The kept two-input read
+  turns MIXED when the latest quarter's OCF is negative even with LTM FCF positive: EPAM and
+  MVST. A seasonal quarter is enough, so MIXED there says less about self-funding than it seems.
+  Not fixed, with the two-negatives item above: both are the owner's call on that read.
 - **Acquisition consideration is the largest on record, however old** (`_pick(kind="largest")`).
   It is not a per-share figure, and the brief's (a) names buyback and per-share figures. The
   original 3b list asked for "largest since <year>" with the window stated. Left for the
@@ -212,7 +216,8 @@ python -m vinci.evals budget-open --budget-ledger <notes>/ledger-fix3b.jsonl --c
   --approval "<the operator's words>"
 python -m vinci.evals register --base origin/main --cand <this PR's head> \
   --transform relabel_drawdown_shape --transform trailing_only_note --transform survival_read \
-  --transform peer_gap_question --transform print_row_guide --transform current_buybacks \
+  --transform peer_gap_question --transform print_row_guide --transform gap_types \
+  --transform current_buybacks \
   --no-worsening --ship-alpha 0.01 \
   --ciq-root /Users/work/Documents/GitHub/mosaic-theory/data/manual/ciq \
   --note "fix 3b: no target can fire on the panel (3 units in #926's 60 draws, all LLY); the run reads the no-worsening checks only" \
@@ -221,10 +226,16 @@ python -m vinci.evals run-compare --registration <…> --budget-ledger <…> --o
 python -m vinci.evals score --out-dir <…> --registration <…> --budget-ledger <…>
 ```
 
-- **Both arms carry `FIX_3A` and `current_buybacks`.**
-  - The frozen pages predate #923, and `survival_read` reads each arm's own builder.
+- **Both arms carry `FIX_3A`, `gap_types` and `current_buybacks`.**
+  - The frozen pages predate #923 and #927; `survival_read` and `gap_types` read each arm's own
+    builder.
   - `current_buybacks` is the identity on main.
-  - So the arms differ in 3b only.
+  - So the arms differ in 3b only: the survival line, the buyback fields and, on LLY, the
+    reworded FCF-sign gap item.
+- **Re-checked after #927 merged** (main `622786a2` against this PR's merge commit, $0, the
+  frozen panel). With `FIX_3A` + `current_buybacks` the per-page deltas equal §3's table exactly.
+  Adding `gap_types`, LLY moves 19 characters more (the item's 50 → 31), and every other page is
+  unchanged. SYSTEM and the tool schema are equal throughout.
 - **Design:** panel v2, 5 draws per page per arm, 60 calls.
 - **Cost:** #926 drew the same design for $30.72. This change moves the request by 0.020% to 0.161% of USER
   (§3), so ≈$31. **Cap proposed: $35.**
@@ -239,11 +250,23 @@ python -m vinci.evals score --out-dir <…> --registration <…> --budget-ledger
   takes main and carries its own lines.
 - **STATE row 54:** both re-point one of its open items (#927 item 2, this PR item 1). The second
   to merge carries main's edit beside its own.
-- **#927's gap registry names a leg this PR deletes.** `gaps._survival_gaps` types "the FCF sign
-  behind the survival line's runway leg". After 3b the survival line has no runway leg, so that
-  item's words describe a line that no longer exists, though its field (`quality.fcf_sign`)
-  still does. Whichever merges second rewords it in that PR. This PR does not touch `gaps.py`
-  (brief).
+- **#927 merged first (`622786a2`), so this PR is the second, and carried both.** Its merge
+  commit keeps #927's `gap_types`/`FIX_4A` beside `current_buybacks`/`FIX_3B`, main's version rows
+  before this one, and main's STATE rows exactly. This PR's row moved from 58 (main's M-GAP holds
+  it) to 59.
+- **#927's gap registry named a leg this PR deletes, and the merge commit rewords it**
+  (coordinator, after #927 merged; the brief's "don't touch `gaps.py`" held until then).
+  - `gaps._survival_gaps` typed "the FCF sign behind the survival line's runway leg". After 3b
+    the survival line has no such leg, so the item now names its field: "the FCF sign
+    (quality.fcf_sign)". Its type logic is untouched.
+  - On the 28 frozen pages the gap test's 115 entries are unchanged except that text, which
+    moves on the two pages that carry the entry (IT and LLY, both "our gap", fields and basis
+    identical). Pinned: `tests/test_fix3b_stale_and_conflicting.py`.
+  - The frozen M-GAP gold keeps the old words: `vinci/evals/synthesis_gap_types.json` (#927's
+    types at `601d2f7e`) and `metrics.GAP_ITEM_WORDS`, which keys on them. They are the gold's
+    own vocabulary, and M-GAP never reads `gaps.py`: it scores the gold identically, unit for unit
+    (`m_gap_hits.json`, `tests/test_evals_m_gap.py`). **A future re-freeze of the gap types takes
+    the new wording.**
 
 **BOUNDARY.**
 - **Pages:** the 28 pages committed at the panel's freeze `bcda7ce3`
