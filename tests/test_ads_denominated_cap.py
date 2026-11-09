@@ -62,6 +62,8 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, ticker: str, sec_ty
         def grouped_daily(self, day: date) -> dict[str, RawBar]:
             return ({ticker: RawBar(ticker=ticker, open=close, high=close, low=close,
                                     close=close, volume=1_000_000)} if day == _REF else {})
+        def splits_executed(self, *_a: object) -> list[dict[str, object]]:
+            return []   # no split in any window (RF-D4)
         def security_types(self) -> dict[str, str]: return {ticker: sec_type}
         def share_class_counts(self, tickers: object) -> dict[str, float]:
             # the same reference field serves both paths: the ADS count for a depositary

@@ -402,7 +402,10 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # rest; the count is asserted so ADDING a stage stays a deliberate act. Per-class sizing
     # (2026-09-01) deliberately added NO stage: a line whose class count will not resolve keeps
     # the sizing it already had rather than being dropped — see `_per_class_count`.
-    assert len(DROP_STAGES) == 10, DROP_STAGES
+    # 12 since 2026-11-09 (TeamNostra fix request 2): `stale_price` (RF-D9 — a close older than
+    # `STALE_CLOSE_SESSIONS` sizes no cap) and `split_basis_unresolved` (RF-D4 — a split since the
+    # filed count's frames, and no current count to size the line on). Both drop through `_drop`.
+    assert len(DROP_STAGES) == 12, DROP_STAGES
     tree = ast.parse(inspect.getsource(build_universe).lstrip())
     fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
               and n.name == "build_universe")
@@ -431,6 +434,9 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # `_drop`, exactly as before.
     # `dual_class_count_used` (2026-09-01) is the same shape once more: lines of a multi-class
     # issuer sized by their OWN class count instead of the issuer-wide one.
+    # `split_count_used` (2026-11-09, RF-D4) is the same shape: lines sized on Polygon's current
+    # issuer-wide count because a split since the filed count's frames left its basis unknown. Its
+    # FAILURE case, `split_basis_unresolved`, IS a drop stage and goes through `_drop`.
     #
     # THESE THREE COUNT SIZING, NOT ADMISSION, and the distinction is load-bearing because the
     # committed `universe_stats.json` is read as a health snapshot. `ads_count_used`,
@@ -443,7 +449,8 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # A stage missing its row is still the failure this guard exists to catch.
     assert set(loose) <= {"considered", "in_universe", "shares_period_average",
                           "out_of_band_period_average", "ads_count_used",
-                          "polygon_count_fallback", "dual_class_count_used"}, (
+                          "polygon_count_fallback", "dual_class_count_used",
+                          "split_count_used"}, (
         f"these stats are incremented outside _drop: {sorted(set(loose))} — a drop that counts "
         "without emitting a row leaves that stage with no evidence trail")
     # and the guard that refuses a run when the two diverge anyway

@@ -605,6 +605,22 @@ class PolygonEodClient(EodClient):
                 out[t] = float(n)
         return out
 
+    def issuer_share_counts(self, tickers: Sequence[str]) -> dict[str, float]:
+        """``{ticker: the ISSUER's shares outstanding in this line's units}`` — Polygon's
+        ``weighted_shares_outstanding`` ("all shares of other share classes converted to this share
+        class"), from the same cached details call as `share_class_counts`. The current-basis
+        analogue of the issuer-wide EDGAR count the universe sizes a single-listed-class line on
+        (TeamNostra fix request 2, RF-D4): a per-class count would leave an unlisted class out —
+        measured on the committed 2026-10-16 population, Tootsie Roll's cap fell 43% and
+        Astronics' 16% on it. Absent/zero is OMITTED; a failed lookup is skipped, as in
+        `share_class_counts`."""
+        out: dict[str, float] = {}
+        for t in tickers:
+            n = (self.ticker_details(t) or {}).get("weighted_shares_outstanding")
+            if n:
+                out[t] = float(n)
+        return out
+
     def ticker_details(self, ticker: str, as_of: date | None = None) -> dict[str, Any] | None:
         """``/v3/reference/tickers/<T>`` — today's record (cached a day), or the record AS OF a
         date, which is how a renamed ticker's share class is read after the ticker is gone (cached
@@ -660,6 +676,28 @@ class PolygonEodClient(EodClient):
                                                             params=params))
             if data.get("status") != "OK":
                 raise EodError(f"splits {symbol}: status={data.get('status')!r} "
+                               f"({data.get('error') or data})")
+            out.extend(data.get("results") or [])
+            url, params, pages = data.get("next_url"), None, pages + 1
+        return out
+
+    def splits_executed(self, start: date, end: date) -> list[dict[str, Any]]:
+        """Every split ``/v3/reference/splits`` records as executed in [``start``, ``end``], EVERY
+        ticker at once, as served — the universe's breadth read (TeamNostra fix request 2, RF-D4:
+        a filed share count from before a split is on another basis than today's close). Cached a
+        day; pages followed; fail-loud on a non-OK status."""
+        out: list[dict[str, Any]] = []
+        url: str | None = _SPLITS
+        params: dict[str, Any] | None = {"execution_date.gte": start.isoformat(),
+                                         "execution_date.lte": end.isoformat(), "limit": 1000}
+        pages = 0
+        while url:
+            if pages == 50:   # a safety stop: ~50,000 splits in one window is no real market
+                raise EodError(f"splits {start} → {end}: more than {pages} pages")
+            data = cast(dict[str, Any], self._http.get_json(url, ttl_seconds=_ONE_DAY,
+                                                            params=params))
+            if data.get("status") != "OK":
+                raise EodError(f"splits {start} → {end}: status={data.get('status')!r} "
                                f"({data.get('error') or data})")
             out.extend(data.get("results") or [])
             url, params, pages = data.get("next_url"), None, pages + 1
