@@ -78,10 +78,10 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). R
 | RE1-D6 | 3 | open | — | — | — |
 | RE1-D1 | 3 | open | — | — | — |
 | RE1-D2 | 3 | open | — | — | — |
-| RE1-D8 | 3 | open | — | — | — |
-| RE1-D9 | 3 | open | — | — | — |
-| RE1-D12 | 3 | open | — | — | — |
-| RE1-D13 | 3 | open | — | — | — |
+| RE1-D8 | 3 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_a_cut_before_the_recent_page_reads_the_older_page` | none (0 of 28 move; the catalyst counts on EPAM, IT, PARR are reproduced where the old view now undercounts) |
+| RE1-D9 | 3 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_a_read_the_view_cannot_cut_is_refused` | none (0 of 28 frozen pages move) |
+| RE1-D12 | 3 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_the_pages_ten_q_read_names_the_amendment_it_read` | none (no frozen page's 10-Q has a later 10-Q/A) |
+| RE1-D13 | 3 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
 | RA-D3 | 3 | open | — | — | — |
 | RA-D8 | 3 | open | — | — | — |
 | RA-D11 | 3 | open | — | — | — |
@@ -92,7 +92,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). R
 | BC-D7 | 3 | open | — | — | — |
 | BC-D10 | 3 | open | — | — | — |
 | D-D3 | 3 | open | — | — | — |
-| E1-D7 | 3 | open | — | — | — |
+| E1-D7 | 3 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
 | E2-D19 | 3 | open | — | — | — |
 | RE2-D1 | 4 | open | — | — | — |
 | RE2-D2 | 4 | open | — | — | — |
@@ -120,7 +120,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). R
 | RE1-D7 | 4 | open | — | — | — |
 | RE1-D10 | 4 | open | — | — | — |
 | RE1-D11 | 4 | open | — | — | — |
-| RE1-D14 | 4 | open | — | — | — |
+| RE1-D14 | 4 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_the_excerpt_cap_says_how_much_it_left_unread` | none (graph only) |
 | RE1-D16 | 4 | open | — | — | — |
 | RA-D2 | 4 | open | — | — | — |
 | RA-D4 | 4 | open | — | — | — |

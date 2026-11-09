@@ -84,7 +84,7 @@ superseded-by:
   - The 3 that passed are negative pins: a cut on the newest filing reads the recent page alone,
     a caller's own window is kept, and the filer's current names pass through.
 
-  After the fix all 18 pass, along with `test_asof_cut.py`, `test_amended_filings.py`,
+  After the fix all 18 pass, and 19 with review round 0's nested-view pin, along with `test_asof_cut.py`, `test_amended_filings.py`,
   `test_submissions_older_pages.py`, `test_fpi1a_annual_report_currency.py`,
   `test_verbatim.py` and `test_graph.py`.
 - **Real filings behind the 10-Q/A pins**, new fixtures cut from this machine's SEC cache:
