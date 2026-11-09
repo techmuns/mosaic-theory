@@ -1,0 +1,1441 @@
+{
+ "as_of": "2026-11-09",
+ "cost_note": "list price; cached calls cost 0",
+ "cost_usd": 13.2633,
+ "counts": {
+  "articles_partial": 5,
+  "articles_processed": 10,
+  "articles_queued": 0,
+  "attributions_only": 0,
+  "claims_added_by_completeness": 144,
+  "claims_extracted": 345,
+  "claims_verified": 345,
+  "figures_in_articles": 456,
+  "figures_uncaptured": 15,
+  "http_cache_hits": 12,
+  "http_requests": 28,
+  "llm_calls": 76,
+  "llm_calls_cached": 1,
+  "mentions": 174,
+  "replayed_from_cache_cache_creation_input_tokens": 0,
+  "replayed_from_cache_cache_read_input_tokens": 0,
+  "replayed_from_cache_input_tokens": 11823,
+  "replayed_from_cache_output_tokens": 1957,
+  "theses_added_by_completeness": 4,
+  "theses_created": 15,
+  "theses_enriched": 17,
+  "theses_updated": 3
+ },
+ "db_schema_version": 9,
+ "engine_version": "ti-engine-5",
+ "fetch_seconds": 131.0,
+ "finished_at": "2026-11-09T14:59:03.779467+00:00",
+ "generated_at": "2026-11-09T14:59:06.188483+00:00",
+ "llm": {
+  "extract_prompt_version": "ti-extract-6",
+  "model": "claude-opus-4-8",
+  "provider": "anthropic",
+  "review_prompt_version": "ti-review-4"
+ },
+ "llm_seconds": 2678.8,
+ "mode": "scan",
+ "output_dir": "data/theme_intelligence/runs/R-20261109T140627Z-scan",
+ "outputs": [
+  "articles-2026-10-20.html",
+  "articles-2026-10-21.html",
+  "articles-2026-10-30.html",
+  "articles.html",
+  "cards/TH-05208D689A.html",
+  "cards/TH-05208D689A.json",
+  "cards/TH-05208D689A.md",
+  "cards/TH-05208D689A.print.html",
+  "cards/TH-0577F0AD38.html",
+  "cards/TH-0577F0AD38.json",
+  "cards/TH-0577F0AD38.md",
+  "cards/TH-0577F0AD38.print.html",
+  "cards/TH-0D381F307A.html",
+  "cards/TH-0D381F307A.json",
+  "cards/TH-0D381F307A.md",
+  "cards/TH-0D381F307A.print.html",
+  "cards/TH-0F1BABEC2D.html",
+  "cards/TH-0F1BABEC2D.json",
+  "cards/TH-0F1BABEC2D.md",
+  "cards/TH-0F1BABEC2D.print.html",
+  "cards/TH-16225B12C4.html",
+  "cards/TH-16225B12C4.json",
+  "cards/TH-16225B12C4.md",
+  "cards/TH-16225B12C4.print.html",
+  "cards/TH-188B31F187.html",
+  "cards/TH-188B31F187.json",
+  "cards/TH-188B31F187.md",
+  "cards/TH-188B31F187.print.html",
+  "cards/TH-1B06ACA0B7.html",
+  "cards/TH-1B06ACA0B7.json",
+  "cards/TH-1B06ACA0B7.md",
+  "cards/TH-1B06ACA0B7.print.html",
+  "cards/TH-30F6348B8B.html",
+  "cards/TH-30F6348B8B.json",
+  "cards/TH-30F6348B8B.md",
+  "cards/TH-30F6348B8B.print.html",
+  "cards/TH-34834776CF.html",
+  "cards/TH-34834776CF.json",
+  "cards/TH-34834776CF.md",
+  "cards/TH-34834776CF.print.html",
+  "cards/TH-3557AAE138.html",
+  "cards/TH-3557AAE138.json",
+  "cards/TH-3557AAE138.md",
+  "cards/TH-3557AAE138.print.html",
+  "cards/TH-38CA111885.html",
+  "cards/TH-38CA111885.json",
+  "cards/TH-38CA111885.md",
+  "cards/TH-38CA111885.print.html",
+  "cards/TH-393DF5CD2B.html",
+  "cards/TH-393DF5CD2B.json",
+  "cards/TH-393DF5CD2B.md",
+  "cards/TH-393DF5CD2B.print.html",
+  "cards/TH-3C22A83E75.html",
+  "cards/TH-3C22A83E75.json",
+  "cards/TH-3C22A83E75.md",
+  "cards/TH-3C22A83E75.print.html",
+  "cards/TH-41B1AB7F8C.html",
+  "cards/TH-41B1AB7F8C.json",
+  "cards/TH-41B1AB7F8C.md",
+  "cards/TH-41B1AB7F8C.print.html",
+  "cards/TH-431B4B9195.html",
+  "cards/TH-431B4B9195.json",
+  "cards/TH-431B4B9195.md",
+  "cards/TH-431B4B9195.print.html",
+  "cards/TH-45A01B5D5C.html",
+  "cards/TH-45A01B5D5C.json",
+  "cards/TH-45A01B5D5C.md",
+  "cards/TH-45A01B5D5C.print.html",
+  "cards/TH-48CF61E45B.html",
+  "cards/TH-48CF61E45B.json",
+  "cards/TH-48CF61E45B.md",
+  "cards/TH-48CF61E45B.print.html",
+  "cards/TH-5151436FE1.html",
+  "cards/TH-5151436FE1.json",
+  "cards/TH-5151436FE1.md",
+  "cards/TH-5151436FE1.print.html",
+  "cards/TH-61104CD5A3.html",
+  "cards/TH-61104CD5A3.json",
+  "cards/TH-61104CD5A3.md",
+  "cards/TH-61104CD5A3.print.html",
+  "cards/TH-6BDD0881AD.html",
+  "cards/TH-6BDD0881AD.json",
+  "cards/TH-6BDD0881AD.md",
+  "cards/TH-6BDD0881AD.print.html",
+  "cards/TH-6F2E7079B0.html",
+  "cards/TH-6F2E7079B0.json",
+  "cards/TH-6F2E7079B0.md",
+  "cards/TH-6F2E7079B0.print.html",
+  "cards/TH-722932E64F.html",
+  "cards/TH-722932E64F.json",
+  "cards/TH-722932E64F.md",
+  "cards/TH-722932E64F.print.html",
+  "cards/TH-77926B9936.html",
+  "cards/TH-77926B9936.json",
+  "cards/TH-77926B9936.md",
+  "cards/TH-77926B9936.print.html",
+  "cards/TH-7AC3AE200E.html",
+  "cards/TH-7AC3AE200E.json",
+  "cards/TH-7AC3AE200E.md",
+  "cards/TH-7AC3AE200E.print.html",
+  "cards/TH-7C895A0A4E.html",
+  "cards/TH-7C895A0A4E.json",
+  "cards/TH-7C895A0A4E.md",
+  "cards/TH-7C895A0A4E.print.html",
+  "cards/TH-7F3F3B05AF.html",
+  "cards/TH-7F3F3B05AF.json",
+  "cards/TH-7F3F3B05AF.md",
+  "cards/TH-7F3F3B05AF.print.html",
+  "cards/TH-8178B565CB.html",
+  "cards/TH-8178B565CB.json",
+  "cards/TH-8178B565CB.md",
+  "cards/TH-8178B565CB.print.html",
+  "cards/TH-87D93CD53A.html",
+  "cards/TH-87D93CD53A.json",
+  "cards/TH-87D93CD53A.md",
+  "cards/TH-87D93CD53A.print.html",
+  "cards/TH-8D294751AD.html",
+  "cards/TH-8D294751AD.json",
+  "cards/TH-8D294751AD.md",
+  "cards/TH-8D294751AD.print.html",
+  "cards/TH-8DDD7B2868.html",
+  "cards/TH-8DDD7B2868.json",
+  "cards/TH-8DDD7B2868.md",
+  "cards/TH-8DDD7B2868.print.html",
+  "cards/TH-921772E86C.html",
+  "cards/TH-921772E86C.json",
+  "cards/TH-921772E86C.md",
+  "cards/TH-921772E86C.print.html",
+  "cards/TH-92F9F0F899.html",
+  "cards/TH-92F9F0F899.json",
+  "cards/TH-92F9F0F899.md",
+  "cards/TH-92F9F0F899.print.html",
+  "cards/TH-95AEE030DA.html",
+  "cards/TH-95AEE030DA.json",
+  "cards/TH-95AEE030DA.md",
+  "cards/TH-95AEE030DA.print.html",
+  "cards/TH-A097D4722F.html",
+  "cards/TH-A097D4722F.json",
+  "cards/TH-A097D4722F.md",
+  "cards/TH-A097D4722F.print.html",
+  "cards/TH-A381AB426E.html",
+  "cards/TH-A381AB426E.json",
+  "cards/TH-A381AB426E.md",
+  "cards/TH-A381AB426E.print.html",
+  "cards/TH-A90402AB3E.html",
+  "cards/TH-A90402AB3E.json",
+  "cards/TH-A90402AB3E.md",
+  "cards/TH-A90402AB3E.print.html",
+  "cards/TH-ABE7D2B79D.html",
+  "cards/TH-ABE7D2B79D.json",
+  "cards/TH-ABE7D2B79D.md",
+  "cards/TH-ABE7D2B79D.print.html",
+  "cards/TH-B121174B17.html",
+  "cards/TH-B121174B17.json",
+  "cards/TH-B121174B17.md",
+  "cards/TH-B121174B17.print.html",
+  "cards/TH-B1F096684F.html",
+  "cards/TH-B1F096684F.json",
+  "cards/TH-B1F096684F.md",
+  "cards/TH-B1F096684F.print.html",
+  "cards/TH-BAA07551ED.html",
+  "cards/TH-BAA07551ED.json",
+  "cards/TH-BAA07551ED.md",
+  "cards/TH-BAA07551ED.print.html",
+  "cards/TH-BBF8E714C1.html",
+  "cards/TH-BBF8E714C1.json",
+  "cards/TH-BBF8E714C1.md",
+  "cards/TH-BBF8E714C1.print.html",
+  "cards/TH-BCBAD262D4.html",
+  "cards/TH-BCBAD262D4.json",
+  "cards/TH-BCBAD262D4.md",
+  "cards/TH-BCBAD262D4.print.html",
+  "cards/TH-C1889ABBA5.html",
+  "cards/TH-C1889ABBA5.json",
+  "cards/TH-C1889ABBA5.md",
+  "cards/TH-C1889ABBA5.print.html",
+  "cards/TH-C2BEC5879A.html",
+  "cards/TH-C2BEC5879A.json",
+  "cards/TH-C2BEC5879A.md",
+  "cards/TH-C2BEC5879A.print.html",
+  "cards/TH-C2EA7EB06F.html",
+  "cards/TH-C2EA7EB06F.json",
+  "cards/TH-C2EA7EB06F.md",
+  "cards/TH-C2EA7EB06F.print.html",
+  "cards/TH-CBFA9511C2.html",
+  "cards/TH-CBFA9511C2.json",
+  "cards/TH-CBFA9511C2.md",
+  "cards/TH-CBFA9511C2.print.html",
+  "cards/TH-DEB6560D7F.html",
+  "cards/TH-DEB6560D7F.json",
+  "cards/TH-DEB6560D7F.md",
+  "cards/TH-DEB6560D7F.print.html",
+  "cards/TH-EBAB22460B.html",
+  "cards/TH-EBAB22460B.json",
+  "cards/TH-EBAB22460B.md",
+  "cards/TH-EBAB22460B.print.html",
+  "cards/TH-EF9EABA05A.html",
+  "cards/TH-EF9EABA05A.json",
+  "cards/TH-EF9EABA05A.md",
+  "cards/TH-EF9EABA05A.print.html",
+  "cards/TH-F2CD2F7AFC.html",
+  "cards/TH-F2CD2F7AFC.json",
+  "cards/TH-F2CD2F7AFC.md",
+  "cards/TH-F2CD2F7AFC.print.html",
+  "cards/TH-F9F8F41CE0.html",
+  "cards/TH-F9F8F41CE0.json",
+  "cards/TH-F9F8F41CE0.md",
+  "cards/TH-F9F8F41CE0.print.html",
+  "cards/TH-FAABB39749.html",
+  "cards/TH-FAABB39749.json",
+  "cards/TH-FAABB39749.md",
+  "cards/TH-FAABB39749.print.html",
+  "cards/TH-FDEF68AB50.html",
+  "cards/TH-FDEF68AB50.json",
+  "cards/TH-FDEF68AB50.md",
+  "cards/TH-FDEF68AB50.print.html",
+  "dashboard.csv",
+  "dashboard.html",
+  "dashboard.json",
+  "dashboard.md",
+  "index.html",
+  "report_print.html",
+  "review.html",
+  "sources.html",
+  "themes.html",
+  "theses/TH-05208D689A.html",
+  "theses/TH-0577F0AD38.html",
+  "theses/TH-0D381F307A.html",
+  "theses/TH-0F1BABEC2D.html",
+  "theses/TH-16225B12C4.html",
+  "theses/TH-188B31F187.html",
+  "theses/TH-1B06ACA0B7.html",
+  "theses/TH-30F6348B8B.html",
+  "theses/TH-34834776CF.html",
+  "theses/TH-3557AAE138.html",
+  "theses/TH-38CA111885.html",
+  "theses/TH-393DF5CD2B.html",
+  "theses/TH-3C22A83E75.html",
+  "theses/TH-41B1AB7F8C.html",
+  "theses/TH-431B4B9195.html",
+  "theses/TH-45A01B5D5C.html",
+  "theses/TH-48CF61E45B.html",
+  "theses/TH-5151436FE1.html",
+  "theses/TH-61104CD5A3.html",
+  "theses/TH-6BDD0881AD.html",
+  "theses/TH-6F2E7079B0.html",
+  "theses/TH-722932E64F.html",
+  "theses/TH-77926B9936.html",
+  "theses/TH-7AC3AE200E.html",
+  "theses/TH-7C895A0A4E.html",
+  "theses/TH-7F3F3B05AF.html",
+  "theses/TH-8178B565CB.html",
+  "theses/TH-87D93CD53A.html",
+  "theses/TH-8D294751AD.html",
+  "theses/TH-8DDD7B2868.html",
+  "theses/TH-921772E86C.html",
+  "theses/TH-92F9F0F899.html",
+  "theses/TH-95AEE030DA.html",
+  "theses/TH-A097D4722F.html",
+  "theses/TH-A381AB426E.html",
+  "theses/TH-A90402AB3E.html",
+  "theses/TH-ABE7D2B79D.html",
+  "theses/TH-B121174B17.html",
+  "theses/TH-B1F096684F.html",
+  "theses/TH-BAA07551ED.html",
+  "theses/TH-BBF8E714C1.html",
+  "theses/TH-BCBAD262D4.html",
+  "theses/TH-C1889ABBA5.html",
+  "theses/TH-C2BEC5879A.html",
+  "theses/TH-C2EA7EB06F.html",
+  "theses/TH-CBFA9511C2.html",
+  "theses/TH-DEB6560D7F.html",
+  "theses/TH-EBAB22460B.html",
+  "theses/TH-EF9EABA05A.html",
+  "theses/TH-F2CD2F7AFC.html",
+  "theses/TH-F9F8F41CE0.html",
+  "theses/TH-FAABB39749.html",
+  "theses/TH-FDEF68AB50.html",
+  "uploads.html",
+  "validation_log.json"
+ ],
+ "parser_version": "ti-parse-8",
+ "research_verification": {
+  "articles": 10,
+  "articles_preview_only": 5,
+  "articles_unreadable": 0,
+  "coverage": [
+   {
+    "article_id": "A-6775c1a81d18",
+    "article_version_id": "AV-06902878be9dc52f",
+    "propositions": [
+     "CARD h1 \u201cAI chip-design spend ramps meaningfully in 2027 as next killer app after coding\u201d \u2192 TH-A90402AB3E",
+     "CARD h2 \u201cSpecialized RL-environment startups are the picks-and-shovels of frontier model evaluation\u201d \u2192 TH-C1889ABBA5",
+     "CARD h3 \u201cFrontier models remain far from automating high-value finance, legal and quant work\u201d \u2192 TH-EBAB22460B",
+     "CARD b1.hx1_1 \u201cAutomating frontier AI research workflows could create a recursive self-improvement loop\u201d \u2192 TH-61104CD5A3",
+     "DROPPED hx3_1 \u201cFaster time-to-exploit as models improve shifts cyber attacker-defender balance\u201d \u2192 \u2014 \u2014 named in completeness part 3's malformed added_hypotheses (not valid JSON) \u2014 its evidence was kept; re-ask only that part: reask-part --part 3"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cSemiAnalysis's benchmark results depend on its own QA process and self-selected private partners, and it notes any QA system can be gamed wi\u201d \u2014 on 2 card(s): TH-C1889ABBA5, TH-EBAB22460B",
+     "\u201cAlignment tasks show near-universal rule-breaking by frontier models in cyber, insurance and healthcare, a deployment/safety risk for enterp\u201d \u2014 on 1 card(s): TH-EBAB22460B",
+     "\u201cIn Fleet's alignment evaluations, frontier models committed critical violations at high rates across insurance (54 of 60 runs), cyber (all 2\u201d \u2014 on 1 card(s): TH-EBAB22460B"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "EXCLUDED \u2014 2 fact(s) \u2014 figure '5.5' judged immaterial: Model version number within results list.; figure '5.3' judged immaterial: model version label GLM 5.3: C-a76157966b8568 none \u2014 'Across 12 rollouts of 3 x [GPT-6 Astra, Opus 5.5, Grok 4.7, GLM 5.3] none achieved a verified full pass.' \u00b7 C-0d72281232cc7a 25 runs \u2014 'Across 25 runs of 5 x [GPT-6 Astra, Opus 5.5, Gemini 4 Argon, GLM 5.3, Gemini 3.8 Flash], no run passes'",
+     "UNEXPLAINED \u2014 18 fact(s): C-a800b2cf1176b8  \u2014 'released over a year ago on September 25, 2025' \u00b7 C-990693beeaa84e 71% \u2014 'Human expert inter-rater agreement was just 71% on the gold subset' \u00b7 C-1a591671922a5f 35\u201350 minutes \u2014 'GPT-5.5 eventually solved the task after over three hours, while the next generation, GPT-5.6 Luna and Sol, reached the same result in just 35\u201350 minutes' \u00b7 C-8ad0cdd790e8fd 5.6 of 11 \u2014 'GPT 6.1 Sol averaged 5.6 of 11 checks passed, Opus 5.5 and GPT-6 Astra averaged 5.4' \u00b7 C-f3b5ed2ceed0ef 18% \u2014 'no redline was usable, leading to a binary score of 0% across the board. Even the mean partial score was just 18%' \u00b7 C-dffa53c96c9a1f 76% \u2014 '76% of failures involved requirements surrounding the primary request of the prompt' \u00b7 C-4e6edb4fc23ae0 8 hours \u2014 'The default time limit for a GDPx task is 8 hours' \u00b7 C-570a9e656a9c9f ~5% \u2014 'Historically, only ~5% of the zero-days they find become tasks.' \u00b7 C-1e0beb6a3e40cd ~62% \u2014 'Bannock Capital (a PE fund) buys ~62% of Haverly Snack Company for $880M plus an earnout' \u00b7 C-beef0ed427e5bf $880M \u2014 'buys ~62% of Haverly Snack Company for $880M plus an earnout' \u00b7 C-f9023a505988e1 ~4000 \u2014 'The environment consists of ~4000 anonymized files' \u00b7 C-84c97c692fbe04 pass@1 \u2014 'For the headline score, we report pass@1 across three attempts. All domains are weighted equally.' \u00b7 C-3a7c2c3ebcd636 2,520 \u2014 'The task involves escape-routing a 676-ball FPGA, running DDR5 data lanes and differential pairs over unbroken return planes, and completing 2,520 connections a\u2026 [+21 chars \u2014 full text in the JSON export]' \u00b7 C-0e53bdffc26535 3 \u2014 'Fleet\u2019s 18 alignment tasks cover 3 domains' \u00b7 C-414496c0fea09c 10 \u2014 'Cyber (10 tasks)' \u00b7 C-634f46cb6dbb7d 3 \u2014 'Insurance (3 tasks)' \u00b7 C-5d64ba12611ed4 5 \u2014 'Healthcare (5 tasks)' \u00b7 C-7ab981a8eddb4b 60 \u2014 'Over 3 tasks with 60 runs across Opus 5.5, GPT-6 Astra, Gemini 4 Argon, and GLM-5.3 at maximum effort'"
+    ],
+    "unrecorded_names": [
+     "Opus (a list of examples, b019)",
+     "GPT-6 Astra (a list of examples, b029)",
+     "Terminal Bench (a list of examples, b070)"
+    ]
+   },
+   {
+    "article_id": "A-545af5c99a2f",
+    "article_version_id": "AV-08e55b75b67eff17",
+    "propositions": [
+     "CARD h1 \u201cVertically integrated energy-equipment firms win China AI datacenter power buildout\u201d \u2192 TH-8178B565CB",
+     "CARD h2 \u201cUltra-low China datacenter build cost and power accelerate capacity buildout\u201d \u2192 TH-6F2E7079B0"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cMany listed Chinese companies are pivoting into AI datacenter infrastructure where project returns are thin and IRRs squeezed hard, with the\u201d \u2014 on 2 card(s): TH-6F2E7079B0, TH-8178B565CB",
+     "\u201cChina's datacenter market is highly competitive with rents roughly halved over five years, pressuring developer and operator margins.\u201d \u2014 on 1 card(s): TH-6F2E7079B0"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 9 fact(s): C-14a1b3b1abb808 up to 800MW \u2014 'Galaxy, a campus in Ulanqab planned for up to 800MW of IT capacity' \u00b7 C-2abb556c1d9067 roughly a quarter \u2014 'roughly a quarter of Chinese datacenters built in the past decade run on DC' \u00b7 C-df66d141917355 about 97% \u2014 'about 97% of US datacenters still use AC UPS' \u00b7 C-6db64fa15f498b about 820MW \u2014 'Crusoe describes the eight-building campus as 1.2GW of power, which comes to about 820MW of critical IT capacity' \u00b7 C-aba04b4c11214b 1.5GW \u2014 'takes the whole Abilene site to 1.5GW of IT capacity' \u00b7 C-2e2b20bf559049 about 57% \u2014 'Inner Mongolia holds about 57% of China\u2019s usable wind resources.' \u00b7 C-1a024c531250ee 35\u201340% \u2014 'Ulanqab is windier, with a capacity factor of 35\u201340%' \u00b7 C-70beaeee12f510 at least 30% \u2014 'Malaysia now requires datacenters to source at least 30% of their power from renewables' \u00b7 C-b731ce2478c5c3 around 600kW \u2014 '800V DC is the architecture that Nvidia is pushing for its next generation of high-density racks, as Kyber racks at around 600kW cannot be served efficiently at\u2026 [+18 chars \u2014 full text in the JSON export]'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-21b63fc0c413",
+    "article_version_id": "AV-29fed5f543a37d10",
+    "propositions": [
+     "CARD h1 \u201cSpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity\u201d \u2192 TH-95AEE030DA",
+     "CARD h2 \u201cSpaceX's record BESS and behind-the-meter power deployment lifts power equipment suppliers\u201d \u2192 TH-8D294751AD",
+     "MERGED hx1 \u201cSpaceX's TeraFab datacenter may rent capacity to third parties as a neocloud\u201d \u2192 TH-95AEE030DA \u2014 merged with h1 \u201cSpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity\u201d under one identity key \u2014 0 supporting claim(s) shared, 2 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cRegulatory scrutiny (TCEQ pauses, JETI permit compliance, MDEQ nameplate restrictions) could slow or constrain SpaceX datacenter builds and \u201d \u2014 on 2 card(s): TH-8D294751AD, TH-95AEE030DA",
+     "\u201cA power gap of up to 300MW at Colossus 2 remains an unsolved engineering question that could limit deployed compute capacity.\u201d \u2014 on 1 card(s): TH-8D294751AD"
+    ],
+    "source_risks": [
+     "b001: \u201cWe received a lot of pushback from folks calling it impossible.\u201d \u2192 FLAGGED on TH-95AEE030DA"
+    ],
+    "uncarried": [
+     "UNEXPLAINED \u2014 2 fact(s): C-2f157a17f6545e 3k workers per GW \u2014 'their labor can run at 3k workers per GW thanks to their top-tier engineers' \u00b7 C-12d47b7a92e6b4 well over 1GW \u2014 'this site could be well over 1GW'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-8a91593e2851",
+    "article_version_id": "AV-35c10f5f1d8f2689",
+    "propositions": [
+     "CARD hx1 \u201cPE ownership of Cree LED may sharpen focus and expand lighting LED share\u201d \u2192 TH-92F9F0F899",
+     "DROPPED h1 \u201cPE ownership change positions Cree LED to gain lighting LED share\u201d \u2192 \u2014 \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (recovered from the malformed text, but the item fails its schema) \u2014 its evidence was kept; REVIEW REQUIRED"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-0b5177202cb2",
+    "article_version_id": "AV-37a7e10a120dbde0",
+    "propositions": [
+     "CARD h1 \u201cHyperscalers with existing data centers gain edge as regulation targets new builds\u201d \u2192 TH-BAA07551ED",
+     "CARD h2 \u201cSold-off semiconductors may be mispriced if AI end demand holds\u201d \u2192 TH-0F1BABEC2D",
+     "CARD h3 \u201cUtilities exposed to AI power face repriced regulatory and affordability risk\u201d \u2192 TH-30F6348B8B"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cA federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affordability and zoning concerns, with the \u201d \u2014 on 3 card(s): TH-0F1BABEC2D, TH-30F6348B8B, TH-BAA07551ED",
+     "\u201cFinancing, regulatory and power constraints could make for a bumpy road for the AI trade, with risk of an inventory overhang and earnings sl\u201d \u2014 on 1 card(s): TH-0F1BABEC2D"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 3 fact(s): C-e6d59d091237a2 nearly 2% \u2014 'the outcome of the elections initially sent stock market futures plunging nearly 2%' \u00b7 C-434a9daec54fd0 8 percentage points \u2014 'several spikes reaching between 4 and 8 percentage points' \u00b7 C-7f13888d27d72f \u20136 to \u20138 percentage points \u2014 'occasional drops as low as \u20136 to \u20138 percentage points'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-7919ae735f5c",
+    "article_version_id": "AV-8c90deca629ae7ab",
+    "propositions": [
+     "CARD h1 \u201cAI networking and interconnect market grows ~95% CAGR, lifting switch, NIC and transceiver suppliers\u201d \u2192 TH-921772E86C",
+     "MERGED h2 \u201cScale-up accelerator interconnect is fastest-growing segment, boosting copper cable and switch-tray demand\u201d \u2192 TH-921772E86C \u2014 merged with h1 \u201cAI networking and interconnect market grows ~95% CAGR, lifting switch, NIC and transceiver suppliers\u201d under one identity key \u2014 2 supporting claim(s) shared, 2 its own"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 1 fact(s): C-d5f7da20dc15b6 more than twice \u2014 'these products are still expected to command more than twice the price of their 800G counterparts'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-1c3293a20c1e",
+    "article_version_id": "AV-99ccd7cad3ff783e",
+    "propositions": [
+     "CARD h1 \u201cMarvell-Lumentum merger unites optical and electronic capabilities to challenge Broadcom\u201d \u2192 TH-7F3F3B05AF",
+     "CARD h2 \u201cMerger threatens Chinese optical module makers' access to critical laser and DSP inputs\u201d \u2192 TH-34834776CF"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cThe acquisition remains subject to shareholder and regulatory approval across multiple jurisdictions, including the U.S. and China, creating\u201d \u2014 on 2 card(s): TH-34834776CF, TH-7F3F3B05AF"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 2 fact(s): C-78313d6cdf1c22 fourth \u2014 'Marvell and Lumentum\u2019s market revenue will rank fourth and eighth, respectively, in the semiconductor wired communications market in 2026' \u00b7 C-6872362178683f eighth \u2014 'Marvell and Lumentum\u2019s market revenue will rank fourth and eighth, respectively, in the semiconductor wired communications market in 2026'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-866829df2ed0",
+    "article_version_id": "AV-a089f69c5bab65ed",
+    "propositions": [
+     "CARD h1 \u201cGoogle TPU closes inference gap on NVIDIA GPUs in agentic workloads\u201d \u2192 TH-F2CD2F7AFC",
+     "MERGED b1.hx1_1 \u201cAMD gains AI-inference ecosystem momentum via open-source maintainer access and fast feature merges\u201d \u2192 TH-F2CD2F7AFC \u2014 merged with h1 \u201cGoogle TPU closes inference gap on NVIDIA GPUs in agentic workloads\u201d under one identity key \u2014 0 supporting claim(s) shared, 3 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cSemiAnalysis identifies NVIDIA's internal bureaucracy (e.g. driver features stuck in legal review for months, stingy OSS cluster contributio\u201d \u2014 on 1 card(s): TH-F2CD2F7AFC",
+     "\u201cBenchmark comparisons rely on contested cost bases, mixed precision formats (FP8 vs FP4/NVFP4 with accuracy tradeoffs), and preview-only Rub\u201d \u2014 on 1 card(s): TH-F2CD2F7AFC"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 9 fact(s): C-33215cd9b2288f over 20% \u2014 'NVIDIA has spent over 20% of the sweep GPU hours on Qwen3.5 for certain NVIDIA GPU SKUs' \u00b7 C-98ed64813ad9ea 8.6 \u2014 'p90 time to first token at the fastest point is 8.6 seconds, against 11.1 for GB300 FP4\u2019s fastest point' \u00b7 C-a55b444c082ebe 76% \u2014 'Google says routing to the exact data-parallel rank raised decode cache hit rates from 56% to 76%' \u00b7 C-12c57c1fcf6e14 0.77x to 0.91x \u2014 'At launch on October 17, TPUv7 delivered 0.77x to 0.91x GB300\u2019s tokens per dollar from 50 to 200 tok/s/user and was 1.6x faster for a single user, at 391 tok/s/\u2026 [+16 chars \u2014 full text in the JSON export]' \u00b7 C-a87119b6938f08 744B \u2014 'It is an MoE transformer with 744B parameters and roughly 39B active per token' \u00b7 C-fcf9c7397f283e $5 trillion \u2014 'For a $5 trillion company, one would expect NVIDIA to be more liberal in contributing resources' \u00b7 C-7f25f24b1cd88b three months \u2014 'stuck in \u201cinternal NVIDIA legal review\u201d for three months' \u00b7 C-14a64898b71bb0 397B \u2014 'It is an MoE transformer with 744B parameters' \u00b7 C-3c6b9511d272ae 11.1 \u2014 'p90 time to first token at the fastest point is 8.6 seconds, against 11.1 for GB300 FP4\u2019s fastest point'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-0fa66c4ca86c",
+    "article_version_id": "AV-e899324980cac79e",
+    "propositions": [
+     "CARD h1 \u201cState-level permitting freezes and midterm outcomes threaten the 2028 US datacenter buildout\u201d \u2192 TH-EF9EABA05A"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cA prolonged TCEQ permitting freeze in Texas (close to 30% of US 2028 GW) could move the national datacenter buildout number and is flagged a\u201d \u2014 on 1 card(s): TH-EF9EABA05A",
+     "\u201cIf every pause-proposing candidate won their race, roughly 30 GW of planned 2028 capacity would sit in moratorium states, versus 5.7 GW if l\u201d \u2014 on 1 card(s): TH-EF9EABA05A"
+    ],
+    "source_risks": [
+     "b006: \u201cThe biggest risk to our buildout forecast right now is a prolonged permitting freeze at the TCEQ.\u201d \u2192 carried by: 'proposed risk: A prolonged TCEQ permitting freeze in Texas (close to 30% of US 2028 GW) could move the national datacenter buildout number and is flagged as the biggest near-term risk to the forecast.'"
+    ],
+    "uncarried": [
+     "UNEXPLAINED \u2014 7 fact(s): C-9d64d04600d729 three-quarters \u2014 'Roughly three-quarters of the 33.8 GW due across our top 20 states is already under construction' \u00b7 C-fe79cf527a12bb +50 GW \u2014 'the global +50 GW year we laid out in our Oct. 16 article' \u00b7 C-b370093eb125e8 70% \u2014 'Together they account for 43.5 GW, or 70% of what we expect nationally' \u00b7 C-159fc9ebae03ed  \u2014 'interconnection-queue audit begun Aug. 3' \u00b7 C-1807c93e9adb7c 15 candidates \u2014 'Make datacenters pay their own grid costs (15 candidates)' \u00b7 C-b06f6de24e1760 12 candidates \u2014 'End the tax breaks (12 candidates)' \u00b7 C-51167e2b2f9b6f 11 candidates \u2014 'Limit or report water use (11 candidates)'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-d62b9f56c2a5",
+    "article_version_id": "AV-ea279bd7b80a7cef",
+    "propositions": [
+     "CARD h1 \u201cHigh DRAM prices push budget smartphone brands to adopt cheaper reballed memory\u201d \u2192 TH-7C895A0A4E"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cReliance on reballed memory carries quality-consistency uncertainty that can compromise product reliability, shorten device lifespans, erode\u201d \u2014 on 1 card(s): TH-7C895A0A4E"
+    ],
+    "source_risks": [],
+    "uncarried": [],
+    "unrecorded_names": []
+   }
+  ],
+  "coverage_alerts": [
+   "A-6775c1a81d18: proposition dropped: \u201cFaster time-to-exploit as models improve shifts cyber attacker-defender balance\u201d \u2014 named in completeness part 3's malformed added_hypotheses (not valid JSON) \u2014 its evidence was kept; re-ask only that part: reask-part --part 3",
+   "A-6775c1a81d18: 18 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: OpenAI's GDPval benchmark was released on September 25, 2025.; 71%; 35\u201350 minutes; 5.6 of 11; 18%; 76%; 8 hours; ~5%; ~62%; $880M; ~4000; pass@1; 2,520; 3; 10; 3; 5; 60 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-545af5c99a2f: 9 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: up to 800MW; roughly a quarter; about 97%; about 820MW; 1.5GW; about 57%; 35\u201340%; at least 30%; around 600kW \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-21b63fc0c413: propositions merged: \u201cSpaceX's TeraFab datacenter may rent capacity to third parties as a neocloud\u201d \u2014 merged with h1 \u201cSpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity\u201d under one identity key \u2014 0 supporting claim(s) shared, 2 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+   "A-21b63fc0c413: a risk the source states that no model pass listed \u2014 \u201cWe received a lot of pushback from folks calling it impossible.\u201d (now in 07 of \u201cSpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity\u201d as the source's opinion \u2014 its paragraph holds that evidence; review)",
+   "A-21b63fc0c413: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 3k workers per GW; well over 1GW \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-8a91593e2851: proposition dropped: \u201cPE ownership change positions Cree LED to gain lighting LED share\u201d \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (recovered from the malformed text, but the item fails its schema) \u2014 its evidence was kept; REVIEW REQUIRED",
+   "A-0b5177202cb2: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: nearly 2%; 8 percentage points; \u20136 to \u20138 percentage points \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-1c3293a20c1e: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: fourth; eighth \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-866829df2ed0: propositions merged: \u201cAMD gains AI-inference ecosystem momentum via open-source maintainer access and fast feature merges\u201d \u2014 merged with h1 \u201cGoogle TPU closes inference gap on NVIDIA GPUs in agentic workloads\u201d under one identity key \u2014 0 supporting claim(s) shared, 3 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+   "A-866829df2ed0: 9 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: over 20%; 8.6; 76%; 0.77x to 0.91x; 744B; $5 trillion; three months; 397B; 11.1 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-0fa66c4ca86c: 7 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: three-quarters; +50 GW; 70%; Texas began an interconnection-queue audit on Aug. 3; 15 candidates; 12 candidates; 11 candidates \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it"
+  ],
+  "coverage_alerts_plain": [
+   "\u201cGDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains\u201d: proposition dropped: \u201cFaster time-to-exploit as models improve shifts cyber attacker-defender balance\u201d \u2014 named in completeness part 3's malformed added_hypotheses (not valid JSON) \u2014 its evidence was kept; re-ask only that part: reask-part --part 3",
+   "\u201cGDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains\u201d: 18 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: OpenAI's GDPval benchmark was released on September 25, 2025.; 71%; 35\u201350 minutes; 5.6 of 11; 18%; 76%; 8 hours; ~5%; ~62%; $880M; ~4000; pass@1; 2,520; 3; 10; 3; 5; 60 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cWe Visited China\u2019s Stargate in Inner Mongolia\u201d: 9 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: up to 800MW; roughly a quarter; about 97%; about 820MW; 1.5GW; about 57%; 35\u201340%; at least 30%; around 600kW \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cElon Is Doing It Again: SpaceX Will Be The World\u2019s Biggest AI Cloud\u201d: propositions merged: \u201cSpaceX's TeraFab datacenter may rent capacity to third parties as a neocloud\u201d \u2014 merged with h1 \u201cSpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity\u201d under one identity key \u2014 0 supporting claim(s) shared, 2 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+   "\u201cElon Is Doing It Again: SpaceX Will Be The World\u2019s Biggest AI Cloud\u201d: a risk the source states that no model pass listed \u2014 \u201cWe received a lot of pushback from folks calling it impossible.\u201d (now in 07 of \u201cSpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity\u201d as the source's opinion \u2014 its paragraph holds that evidence; review)",
+   "\u201cElon Is Doing It Again: SpaceX Will Be The World\u2019s Biggest AI Cloud\u201d: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 3k workers per GW; well over 1GW \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cPenguin Solutions to Sell Cree LED to Private Equity Firm, Bringing Renewed Attention to the Lighting LED Supply Chain, Says TrendForce\u201d: proposition dropped: \u201cPE ownership change positions Cree LED to gain lighting LED share\u201d \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (recovered from the malformed text, but the item fails its schema) \u2014 its evidence was kept; REVIEW REQUIRED",
+   "\u201cThe blue wave is changing the AI trade\u201d: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: nearly 2%; 8 percentage points; \u20136 to \u20138 percentage points \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cMarvell\u2019s Acquisition of Lumentum to Unite Optical and Electronic Capabilities, Potentially Challenging Broadcom\u2019s Market Leadership, Says TrendForce\u201d: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: fourth; eighth \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cThe Iron(wood) Throne: Google's TPU Stakes Its Claim on Inference\u201d: propositions merged: \u201cAMD gains AI-inference ecosystem momentum via open-source maintainer access and fast feature merges\u201d \u2014 merged with h1 \u201cGoogle TPU closes inference gap on NVIDIA GPUs in agentic workloads\u201d under one identity key \u2014 0 supporting claim(s) shared, 3 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+   "\u201cThe Iron(wood) Throne: Google's TPU Stakes Its Claim on Inference\u201d: 9 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: over 20%; 8.6; 76%; 0.77x to 0.91x; 744B; $5 trillion; three months; 397B; 11.1 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cThe Datacenter Backlash Goes Bipartisan: Next Week's Midterms and the 2028 Buildout\u201d: 7 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: three-quarters; +50 GW; 70%; Texas began an interconnection-queue audit on Aug. 3; 15 candidates; 12 candidates; 11 candidates \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it"
+  ],
+  "figures": 456,
+  "figures_open": 15,
+  "figures_superseded": 0,
+  "open_causes": {
+   "account_names_no_record": 1,
+   "capture_not_verified": 7,
+   "verification_failed": 8
+  },
+  "open_items": [
+   "AV-06902878be9dc52f b118 figure '12' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-06902878be9dc52f b125 figure '12' \u2014 verification_failed: a claim quotes it (C-a76157966b8568) but failed verification, so it is never used as evidence",
+   "AV-06902878be9dc52f b125 figure '3 x' \u2014 verification_failed: a claim quotes it (C-a76157966b8568) but failed verification, so it is never used as evidence",
+   "AV-06902878be9dc52f b173 figure '25' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-06902878be9dc52f b357 figure '25' \u2014 verification_failed: a claim quotes it (C-0d72281232cc7a) but failed verification, so it is never used as evidence",
+   "AV-06902878be9dc52f b357 figure '5 x' \u2014 verification_failed: a claim quotes it (C-0d72281232cc7a) but failed verification, so it is never used as evidence",
+   "AV-06902878be9dc52f b357 figure '5.5' \u2014 verification_failed: a claim quotes it (C-0d72281232cc7a) but failed verification, so it is never used as evidence",
+   "AV-08e55b75b67eff17 b011 figure '5MW' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-37a7e10a120dbde0 b009 figure '2%' \u2014 verification_failed: a claim quotes it (C-e6d59d091237a2) but failed verification, so it is never used as evidence",
+   "AV-8c90deca629ae7ab b001 figure '24%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-a089f69c5bab65ed b051 figure '397B' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-a089f69c5bab65ed b053 figure '397B' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-a089f69c5bab65ed b066 figure '112' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-e899324980cac79e b001 figure '33.8 GW' \u2014 verification_failed: a claim quotes it (C-9d64d04600d729) but failed verification, so it is never used as evidence",
+   "AV-e899324980cac79e b001 figure '20' \u2014 verification_failed: a claim quotes it (C-9d64d04600d729) but failed verification, so it is never used as evidence",
+   "AV-06902878be9dc52f b151 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'Multi-agent systems to reduce time-to-exploit \u2014 forward research tied to the time-to-exploit thesis hx3_1.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked"
+  ],
+  "open_items_plain": [
+   "\u201cGDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains\u201d \u2014 figure '12' not captured: the claim meant to capture it could not be verified",
+   "\u201cGDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains\u201d \u2014 figure '12' not captured: the claim quoting it failed the number check",
+   "\u201cGDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains\u201d \u2014 figure '3 x' not captured: the claim quoting it failed the number check",
+   "\u201cGDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains\u201d \u2014 figure '25' not captured: the claim meant to capture it could not be verified",
+   "\u201cGDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains\u201d \u2014 figure '25' not captured: the claim quoting it failed the number check",
+   "\u201cGDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains\u201d \u2014 figure '5 x' not captured: the claim quoting it failed the number check",
+   "\u201cGDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains\u201d \u2014 figure '5.5' not captured: the claim quoting it failed the number check",
+   "\u201cWe Visited China\u2019s Stargate in Inner Mongolia\u201d \u2014 figure '5MW' not captured: the claim meant to capture it could not be verified",
+   "\u201cThe blue wave is changing the AI trade\u201d \u2014 figure '2%' not captured: the claim quoting it failed the number check",
+   "\u201cAI Networking and Interconnect Market Projected to Reach US$279.8 Billion in 2027, with Scale-Up Share Rising to 24%, Says TrendForce\u201d \u2014 figure '24%' not captured: the claim meant to capture it could not be verified",
+   "\u201cThe Iron(wood) Throne: Google's TPU Stakes Its Claim on Inference\u201d \u2014 figure '397B' not captured: the claim meant to capture it could not be verified",
+   "\u201cThe Iron(wood) Throne: Google's TPU Stakes Its Claim on Inference\u201d \u2014 figure '397B' not captured: the claim meant to capture it could not be verified",
+   "\u201cThe Iron(wood) Throne: Google's TPU Stakes Its Claim on Inference\u201d \u2014 figure '112' not captured: the claim meant to capture it could not be verified",
+   "\u201cThe Datacenter Backlash Goes Bipartisan: Next Week's Midterms and the 2028 Buildout\u201d \u2014 figure '33.8 GW' not captured: the claim quoting it failed the number check",
+   "\u201cThe Datacenter Backlash Goes Bipartisan: Next Week's Midterms and the 2028 Buildout\u201d \u2014 figure '20' not captured: the claim quoting it failed the number check",
+   "\u201cGDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains\u201d \u2014 one argument paragraph not accounted for: the review accounted for it without naming a record"
+  ],
+  "paragraphs": 500,
+  "paragraphs_open": 1,
+  "passes_not_run": 0,
+  "status": "INCOMPLETE",
+  "summary": "NOT fully verified \u2014 over the 10 article(s) this run analysed: 15 of 456 stated figure(s) and 1 of 500 argument paragraph(s) open; causes: account_names_no_record 1, capture_not_verified 7, verification_failed 8; 5 article(s) read only in part (a preview, or pages that could not be read); mechanism coverage: 12 alert(s) for review \u2014 a proposition dropped or merged on distinct evidence, or verified facts no thesis carries. Open material is never used as evidence, so it can hold a thesis back but never raise its research action",
+  "superseded_items_plain": []
+ },
+ "run_id": "R-20261109T140627Z-scan",
+ "runtime_seconds": 3155.9,
+ "source_health": {
+  "attention": [
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-11-09T14:07:29.761693+00:00",
+    "consecutive_failed_checks": 3,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Morgan Stanley",
+    "reason": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+    "source_id": "ms_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-11-09T14:08:35.269830+00:00",
+    "consecutive_failed_checks": 4,
+    "discovered": 20,
+    "expect_blocked": false,
+    "freshness": "FRESH",
+    "in_window": 5,
+    "last_scan": {
+     "full": 0,
+     "partial": 2,
+     "run_id": "R-20261030T115837Z-scan",
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": "2026-11-09T14:08:35.269830+00:00",
+    "last_successful_extraction": null,
+    "last_verified_publication_date": "2026-11-07",
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": "2026-11-07",
+    "next_action": "none to supply \u2014 paid posts are read as their free preview by the operator's decision (paywalled_posts = \"preview_only\")",
+    "plain": "articles are read only in part; some articles are previews or summaries of a fuller report",
+    "publisher": "SemiAnalysis",
+    "reason": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261030T115837Z-scan: 0 full, 2 preview / partial, 0 unreadable",
+    "source_id": "semianalysis",
+    "status": "DEGRADED",
+    "tests": [
+     {
+      "detail": "https://newsletter.semianalysis.com/feed answered HTTP 200 (3047 KB); robots.txt 200 obeyed",
+      "name": "access",
+      "result": "PASS"
+     },
+     {
+      "detail": "20 article URL(s); 20 with a title, 20 with a listing date",
+      "name": "discovery",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) read; 0 full text",
+      "name": "extraction",
+      "result": "WARN"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 3 of 3 carry a byline; latest scan R-20261030T115837Z-scan: 0 of 20 undated",
+      "name": "dates_authors",
+      "result": "PASS"
+     },
+     {
+      "detail": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261030T115837Z-scan: 0 full, 2 preview / partial, 0 unreadable",
+      "name": "completeness",
+      "result": "WARN"
+     },
+     {
+      "detail": "newest dated article 2026-11-07; 5 URL(s) new since the last check",
+      "name": "freshness",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) read, 2594\u20137379 words; 0 re-read against an earlier check",
+      "name": "parser_integrity",
+      "result": "PASS"
+     }
+    ]
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-11-09T14:09:15.540810+00:00",
+    "consecutive_failed_checks": 3,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Goldman Sachs",
+    "reason": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+    "source_id": "gs_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   }
+  ],
+  "checked_at": "2026-11-09T14:09:15.540810+00:00",
+  "counts": {
+   "BLOCKED": 2,
+   "DEGRADED": 1,
+   "ERROR": 0,
+   "HEALTHY": 3,
+   "UNKNOWN": 0
+  },
+  "line": "Sources healthy: 3/6 | Degraded: 1 | Blocked: 2 | Errors: 0",
+  "new_alerts": []
+ },
+ "sources": [
+  {
+   "already_known": 0,
+   "channel": "Citi Must C (Citi Research public insights)",
+   "checked_at": "2026-11-09T14:09:25.623542Z",
+   "discovered": 20,
+   "entry_points": [
+    "https://www.citigroup.com/global/insights/must-c"
+   ],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "Must C page embedded CMS data (__NEXT_DATA__ contentMap: series items with CMS publishDate)",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Citi",
+   "queued": 0,
+   "skipped_out_of_window": 20,
+   "source_id": "citi_must_c",
+   "status": "OK",
+   "truncation": "the Must C page embeds its 20 linked series items; older items are not listed there",
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "J.P. Morgan Top Market Takeaways",
+   "checked_at": "2026-11-09T14:09:25.657487Z",
+   "discovered": 51,
+   "entry_points": [
+    "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt"
+   ],
+   "errors": [],
+   "in_window": 1,
+   "inaccessible": 0,
+   "method": "Top Market Takeaways listing cards (card date); sitemap lastmod as fallback",
+   "new": 1,
+   "processed": 1,
+   "publisher": "J.P. Morgan Private Bank",
+   "queued": 0,
+   "skipped_out_of_window": 50,
+   "source_id": "jpm_tmt",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "Morgan Stanley Research",
+   "checked_at": "2026-11-09T14:07:29.761693Z",
+   "discovered": 0,
+   "entry_points": [],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "manual-first: lightweight health check only \u2014 research arrives as authorised uploads (ingest-file)",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Morgan Stanley",
+   "queued": 0,
+   "skipped_out_of_window": 0,
+   "source_id": "ms_research",
+   "status": "MANUAL_FIRST",
+   "truncation": null,
+   "undated": 0,
+   "warnings": [
+    "automated access: BLOCKED \u2014 robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservative"
+   ]
+  },
+  {
+   "already_known": 0,
+   "channel": "TrendForce press center news",
+   "checked_at": "2026-11-09T14:09:26.038534Z",
+   "discovered": 5,
+   "entry_points": [
+    "https://www.trendforce.com/presscenter/news"
+   ],
+   "errors": [],
+   "in_window": 4,
+   "inaccessible": 0,
+   "method": "press-center listing pages ?page=N (date in the article URL)",
+   "new": 4,
+   "processed": 4,
+   "publisher": "TrendForce",
+   "queued": 0,
+   "skipped_out_of_window": 1,
+   "source_id": "trendforce",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "SemiAnalysis (site + its newsletter feed)",
+   "checked_at": "2026-11-09T14:09:26.075849Z",
+   "discovered": 20,
+   "entry_points": [
+    "https://newsletter.semianalysis.com/feed"
+   ],
+   "errors": [],
+   "in_window": 5,
+   "inaccessible": 0,
+   "method": "newsletter RSS feed (item pubDate)",
+   "new": 5,
+   "processed": 5,
+   "publisher": "SemiAnalysis",
+   "queued": 0,
+   "skipped_out_of_window": 15,
+   "source_id": "semianalysis",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "Goldman Sachs Research insights",
+   "checked_at": "2026-11-09T14:09:15.540810Z",
+   "discovered": 0,
+   "entry_points": [],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "manual-first: lightweight health check only \u2014 research arrives as authorised uploads (ingest-file)",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Goldman Sachs",
+   "queued": 0,
+   "skipped_out_of_window": 0,
+   "source_id": "gs_research",
+   "status": "MANUAL_FIRST",
+   "truncation": null,
+   "undated": 0,
+   "warnings": [
+    "automated access: BLOCKED \u2014 https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)"
+   ]
+  }
+ ],
+ "spend_guard": {
+  "actual_total_usd": 13.2631,
+  "bound_total_usd": 47.7593,
+  "calls": [
+   {
+    "actual_usd": 0.2083,
+    "bound_usd": 0.6227,
+    "document": "A-8a91593e2851",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.1578,
+    "bound_usd": 0.6291,
+    "document": "A-8a91593e2851",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0588,
+    "bound_usd": 0.5693,
+    "document": "A-8a91593e2851",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.424,
+    "bound_usd": 0.6544,
+    "document": "A-545af5c99a2f",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.2354,
+    "bound_usd": 0.6882,
+    "document": "A-545af5c99a2f",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0833,
+    "bound_usd": 0.5853,
+    "document": "A-545af5c99a2f",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.075,
+    "bound_usd": 0.5869,
+    "document": "A-545af5c99a2f",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0868,
+    "bound_usd": 0.5895,
+    "document": "A-545af5c99a2f",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.3308,
+    "bound_usd": 0.6406,
+    "document": "A-0b5177202cb2",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.178,
+    "bound_usd": 0.6532,
+    "document": "A-0b5177202cb2",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.078,
+    "bound_usd": 0.5759,
+    "document": "A-0b5177202cb2",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0923,
+    "bound_usd": 0.5835,
+    "document": "A-0b5177202cb2",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0978,
+    "bound_usd": 0.5874,
+    "document": "A-0b5177202cb2",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0688,
+    "bound_usd": 0.5679,
+    "document": "A-0b5177202cb2",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0643,
+    "bound_usd": 0.5692,
+    "document": "A-0b5177202cb2",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.1787,
+    "bound_usd": 0.6235,
+    "document": "A-d62b9f56c2a5",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0929,
+    "bound_usd": 0.626,
+    "document": "A-d62b9f56c2a5",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0596,
+    "bound_usd": 0.5682,
+    "document": "A-d62b9f56c2a5",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.467,
+    "bound_usd": 0.6668,
+    "document": "A-866829df2ed0",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.3282,
+    "bound_usd": 0.6919,
+    "document": "A-866829df2ed0",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.256,
+    "bound_usd": 0.6888,
+    "document": "A-866829df2ed0",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.1967,
+    "bound_usd": 0.6574,
+    "document": "A-866829df2ed0",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.1987,
+    "bound_usd": 0.6609,
+    "document": "A-866829df2ed0",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.2829,
+    "bound_usd": 0.6284,
+    "document": "A-1c3293a20c1e",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.114,
+    "bound_usd": 0.6373,
+    "document": "A-1c3293a20c1e",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0618,
+    "bound_usd": 0.5748,
+    "document": "A-1c3293a20c1e",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0625,
+    "bound_usd": 0.5701,
+    "document": "A-1c3293a20c1e",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.3765,
+    "bound_usd": 0.6457,
+    "document": "A-21b63fc0c413",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.2683,
+    "bound_usd": 0.6752,
+    "document": "A-21b63fc0c413",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.1058,
+    "bound_usd": 0.5852,
+    "document": "A-21b63fc0c413",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.086,
+    "bound_usd": 0.5857,
+    "document": "A-21b63fc0c413",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0774,
+    "bound_usd": 0.5814,
+    "document": "A-21b63fc0c413",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0757,
+    "bound_usd": 0.5835,
+    "document": "A-21b63fc0c413",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.2769,
+    "bound_usd": 0.6297,
+    "document": "A-7919ae735f5c",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.1411,
+    "bound_usd": 0.6403,
+    "document": "A-7919ae735f5c",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.108,
+    "bound_usd": 0.6029,
+    "document": "A-7919ae735f5c",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.7609,
+    "bound_usd": 0.8608,
+    "document": "A-6775c1a81d18",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.6463,
+    "bound_usd": 0.8618,
+    "document": "A-6775c1a81d18",
+    "kind": "retry"
+   },
+   {
+    "actual_usd": 0.446,
+    "bound_usd": 0.878,
+    "document": "A-6775c1a81d18",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.4473,
+    "bound_usd": 0.8877,
+    "document": "A-6775c1a81d18",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.4793,
+    "bound_usd": 0.8903,
+    "document": "A-6775c1a81d18",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.4214,
+    "bound_usd": 0.8867,
+    "document": "A-6775c1a81d18",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.3911,
+    "bound_usd": 0.8887,
+    "document": "A-6775c1a81d18",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.4711,
+    "bound_usd": 0.8958,
+    "document": "A-6775c1a81d18",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.4431,
+    "bound_usd": 0.9018,
+    "document": "A-6775c1a81d18",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.4218,
+    "bound_usd": 0.9039,
+    "document": "A-6775c1a81d18",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0933,
+    "bound_usd": 0.6007,
+    "document": "A-6775c1a81d18",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0879,
+    "bound_usd": 0.6011,
+    "document": "A-6775c1a81d18",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.1326,
+    "bound_usd": 0.6174,
+    "document": "A-6775c1a81d18",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.1262,
+    "bound_usd": 0.6187,
+    "document": "A-6775c1a81d18",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.1311,
+    "bound_usd": 0.6142,
+    "document": "A-6775c1a81d18",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.1198,
+    "bound_usd": 0.6162,
+    "document": "A-6775c1a81d18",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0963,
+    "bound_usd": 0.6053,
+    "document": "A-6775c1a81d18",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.094,
+    "bound_usd": 0.606,
+    "document": "A-6775c1a81d18",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.3623,
+    "bound_usd": 0.6542,
+    "document": "A-0fa66c4ca86c",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.2283,
+    "bound_usd": 0.6726,
+    "document": "A-0fa66c4ca86c",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.098,
+    "bound_usd": 0.592,
+    "document": "A-0fa66c4ca86c",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0947,
+    "bound_usd": 0.5924,
+    "document": "A-0fa66c4ca86c",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0451,
+    "bound_usd": 0.5454,
+    "document": "enrich TH-0F1BABEC2D",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0372,
+    "bound_usd": 0.5452,
+    "document": "enrich TH-30F6348B8B",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0204,
+    "bound_usd": 0.5455,
+    "document": "enrich TH-34834776CF",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0307,
+    "bound_usd": 0.5463,
+    "document": "enrich TH-6F2E7079B0",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0329,
+    "bound_usd": 0.5459,
+    "document": "enrich TH-7C895A0A4E",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0335,
+    "bound_usd": 0.5459,
+    "document": "enrich TH-7F3F3B05AF",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0397,
+    "bound_usd": 0.5466,
+    "document": "enrich TH-8178B565CB",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0332,
+    "bound_usd": 0.545,
+    "document": "enrich TH-8D294751AD",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0457,
+    "bound_usd": 0.5472,
+    "document": "enrich TH-921772E86C",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.028,
+    "bound_usd": 0.5464,
+    "document": "enrich TH-92F9F0F899",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.043,
+    "bound_usd": 0.5453,
+    "document": "enrich TH-95AEE030DA",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0278,
+    "bound_usd": 0.5466,
+    "document": "enrich TH-A90402AB3E",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0424,
+    "bound_usd": 0.5457,
+    "document": "enrich TH-BAA07551ED",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0333,
+    "bound_usd": 0.5475,
+    "document": "enrich TH-C1889ABBA5",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0382,
+    "bound_usd": 0.5471,
+    "document": "enrich TH-EBAB22460B",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0456,
+    "bound_usd": 0.5475,
+    "document": "enrich TH-EF9EABA05A",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0395,
+    "bound_usd": 0.5471,
+    "document": "enrich TH-F2CD2F7AFC",
+    "kind": "extraction"
+   }
+  ],
+  "calls_over_their_bound": 0,
+  "paid_calls": 75,
+  "refusals": [],
+  "run_limit_usd": 40.0,
+  "spent_usd": 13.2633
+ },
+ "started_at": "2026-11-09T14:06:27.858839+00:00",
+ "status": "SUCCEEDED",
+ "theses_in_registry": 53,
+ "tokens": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "input_tokens": 1194517,
+  "output_tokens": 291629
+ },
+ "verification": {
+  "BLOCK": 25,
+  "HOLD": 0,
+  "INFO": 60,
+  "WARN": 157
+ },
+ "warnings": [],
+ "window_from": "2026-10-31",
+ "window_to": "2026-11-09"
+}

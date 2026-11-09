@@ -1,0 +1,5049 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.optical_networking"
+   ],
+   "evidence_direction": "MIXED",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T08:22:56.263932Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-02",
+   "latest_article_date": "2026-11-02",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Optical interconnects, transceivers and datacenter networking",
+   "status": "ACTIVE",
+   "thesis_id": "TH-921772E86C",
+   "title": "CPO mass production shifts value to integrated optical-electrical test platform suppliers"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-e5cc0fdc7c2143",
+     "C-b59b95affce9ba",
+     "C-3f01a7042c78ab"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce says growing AI data center high-speed transmission demand is accelerating CPO toward mass production, raising demand for integrated optical-electrical test equipment and software, with 2027 pivotal and 2028 critical for large-scale production readiness. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-8b7a6aefc8de73",
+     "C-be38d83cda0880"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce expects suppliers that integrate test equipment and provide production-scale services to strengthen their strategic positions as customers emphasize testing efficiency, quality and cost."
+   },
+   {
+    "claim_ids": [
+     "C-01386a1f0bb84b",
+     "C-c2e46637404655",
+     "C-d26e4fcfa0d9e2",
+     "C-4becc2f2e9fab7",
+     "C-3e40fb243150c5",
+     "C-c61f38231bb180"
+    ],
+    "provenance": "FORECAST",
+    "text": "\u27e8update 2026-11-02 \u00b7 TrendForce\u27e9 TrendForce forecasts the AI networking and interconnect market to grow from US$37.9bn in 2024 to US$279.8bn in 2027 (95% CAGR), with switches at US$105bn, pluggable optical transceivers at US$84.1bn, and NICs/DPUs at US$57.4bn in 2027. \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "new",
+     "claim_ids": [
+      "C-c2e46637404655"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "AI networking and interconnect market revenue projected for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "new",
+     "claim_ids": [
+      "C-500d1e46eb6be4"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Primary revenue driver for transceivers shifts from 800G to 1.6T in 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "new",
+     "claim_ids": [
+      "C-3f0041f9a0039a"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Scale-up networking revenue share forecast for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "new",
+     "claim_ids": [
+      "C-01386a1f0bb84b"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2024",
+     "provenance": "FORECAST",
+     "text": "AI networking and interconnect market revenue in 2024 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "new",
+     "claim_ids": [
+      "C-d26e4fcfa0d9e2"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2024-2027",
+     "provenance": "FORECAST",
+     "text": "AI networking and interconnect market CAGR 2024-2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "new",
+     "claim_ids": [
+      "C-4becc2f2e9fab7"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Switch revenue forecast for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "new",
+     "claim_ids": [
+      "C-5de5b84a549f4e"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Switches' share of AI networking market in 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "new",
+     "claim_ids": [
+      "C-3e40fb243150c5"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "NICs/DPUs revenue forecast for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "new",
+     "claim_ids": [
+      "C-c61f38231bb180"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Pluggable optical transceiver revenue forecast for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "new",
+     "claim_ids": [
+      "C-1ff6a5fb571bfe"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Combined share of switches, NICs/DPUs and transceivers in 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 10 of 19 pieces of evidence from A-7919ae735f5c \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+   "vs_prior": "v1 held 17 claim(s); this source adds: contradictory \u00d72, new \u00d717"
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-e5cc0fdc7c2143",
+     "C-72e0056978231a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "AI data center high-speed transmission demand accelerates CPO toward mass production, requiring coordinated electrical and optical testing."
+   },
+   {
+    "claim_ids": [
+     "C-4becc2f2e9fab7",
+     "C-3e40fb243150c5",
+     "C-c61f38231bb180"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Higher deployment volumes and bandwidth upgrades lift shipments of switches, NICs/DPUs and transceivers. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-500d1e46eb6be4",
+     "C-5013b8a071db0c"
+    ],
+    "provenance": "FORECAST",
+    "step": "pricing",
+    "text": "Migration to higher-speed 1.6T transceivers, priced more than twice 800G, lifts transceiver revenue 76% YoY in 2027. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Rising networking equipment revenue would flow to suppliers' revenues, though the article does not name or quantify specific listed beneficiaries."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2305ad3d030b6c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "PIC full test time",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "over"
+    ],
+    "quote": "a complete test of a single photonic integrated circuit (PIC) can still take over 100 seconds",
+    "role": "supports",
+    "unit": "seconds",
+    "value": 100.0,
+    "value_text": "over 100 seconds"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-bbcb177b28d7b1",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "CPO testing supply chain segments",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "TrendForce identifies seven major segments in the CPO testing supply chain",
+    "role": "supports",
+    "unit": "segments",
+    "value": 7.0,
+    "value_text": "seven"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b005",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-01386a1f0bb84b",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AI networking and interconnect market revenue",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2024",
+    "qualifiers": [],
+    "quote": "Market revenue is projected to climb from US$37.9 billion in 2024 to US$279.8 billion in 2027",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 37.9,
+    "value_text": "US$37.9 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b008",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-1ff6a5fb571bfe",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "combined revenue share",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "switches, NICs/DPUs, and pluggable optical transceivers will account for approximately 88% of total AI networking and interconnect revenue",
+    "role": "supports",
+    "unit": "%",
+    "value": 88.0,
+    "value_text": "approximately 88%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b007",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-3e40fb243150c5",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "NICs/DPUs revenue",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [
+     "more than double YoY"
+    ],
+    "quote": "Revenue from these products is forecast to more than double YoY to US$57.4 billion in 2027",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 57.4,
+    "value_text": "US$57.4 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b007",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-4becc2f2e9fab7",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "switch revenue",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "Switches are expected to remain the largest revenue contributor, generating US$105 billion in 2027",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 105.0,
+    "value_text": "US$105 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b012",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-5013b8a071db0c",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "transceiver revenue YoY growth",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [
+     "outpacing shipment growth"
+    ],
+    "quote": "pluggable optical transceiver revenue will surge 76% YoY in 2027, outpacing shipment growth",
+    "role": "supports",
+    "unit": "%",
+    "value": 76.0,
+    "value_text": "76%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b010",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-52f799be5f9f05",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "scale-up networking revenue share",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2024",
+    "qualifiers": [],
+    "quote": "scale-up networking's share of AI networking and interconnect revenue will grow from 11% in 2024 to 24% in 2027",
+    "role": "supports",
+    "unit": "%",
+    "value": 11.0,
+    "value_text": "11%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b012",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-540cba9eea3bd4",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "1.6T share of transceiver revenue",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "1.6T products contributing approximately 56% of pluggable transceiver revenue",
+    "role": "supports",
+    "unit": "%",
+    "value": 56.0,
+    "value_text": "approximately 56%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b007",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-5de5b84a549f4e",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "switch revenue share",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [
+     "nearly"
+    ],
+    "quote": "accounting for nearly 38% of the market",
+    "role": "supports",
+    "unit": "%",
+    "value": 38.0,
+    "value_text": "nearly 38%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b008",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-c61f38231bb180",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "pluggable optical transceiver revenue",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "continued migration toward higher-speed specifications is expected to lift pluggable optical transceiver revenue to US$84.1 billion in 2027",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 84.1,
+    "value_text": "US$84.1 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b005",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-d26e4fcfa0d9e2",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "revenue CAGR",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2024-2027",
+    "qualifiers": [],
+    "quote": "representing a CAGR of 95% over the period",
+    "role": "supports",
+    "unit": "%",
+    "value": 95.0,
+    "value_text": "95%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b021",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3f01a7042c78ab",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2028",
+    "qualifiers": [],
+    "quote": "2028 will serve as a critical period for validating readiness for large-scale mass production",
+    "role": "catalyst",
+    "unit": null,
+    "value": 2028.0,
+    "value_text": "2028"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b59b95affce9ba",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "pivotal year"
+    ],
+    "quote": "TrendForce expects 2027 to be a pivotal year for the convergence of CPO testing architectures.",
+    "role": "catalyst",
+    "unit": null,
+    "value": 2027.0,
+    "value_text": "2027"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b010",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-3f0041f9a0039a",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "scale-up networking revenue share",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "scale-up networking's share of AI networking and interconnect revenue will grow from 11% in 2024 to 24% in 2027",
+    "role": "catalyst",
+    "unit": "%",
+    "value": 24.0,
+    "value_text": "24%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b005",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-c2e46637404655",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AI networking and interconnect market revenue",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "Market revenue is projected to climb from US$37.9 billion in 2024 to US$279.8 billion in 2027",
+    "role": "catalyst",
+    "unit": "$bn",
+    "value": 279.8,
+    "value_text": "US$279.8 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0183ab791418b5",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "The partners subsequently demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-09527de2fa37bb",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "A key CPO mass-production challenge is precise optical coupling, which depends on alignment module suppliers with multi-axis control.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "One key challenge in mass production is ensuring precise optical coupling, which depends on alignment module suppliers equipped with multi-axis control.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-48b7f7865ed63c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The mass-production bottleneck is shifting from alignment accuracy to testing speed.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the bottleneck in mass production is now shifting from alignment accuracy to testing speed",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-72e0056978231a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Optical-electrical test integration relies on unified software plus optical path switching and instrument sharing across test stations to improve equipment utilization and reduce cost.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The key to optical-electrical test integration lies in using unified software to coordinate electrical and optical measurements, supported by optical path switching and instrument sharing across multiple test stations to improve equipment utilization.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b021",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8b7a6aefc8de73",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Suppliers able to integrate different test equipment and provide production-scale services are expected to strengthen their strategic positions.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Suppliers that can integrate different test equipment and provide production-scale services are expected to strengthen their strategic positions in the supply chain",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-be38d83cda0880",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Industry value is shifting from individual instrument performance to the ability to integrate complete production testing platforms.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "industry value is gradually shifting from individual instrument performance to the ability to integrate complete production testing platforms",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e5cc0fdc7c2143",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Growing demand for high-speed transmission in AI data centers is accelerating CPO's transition toward mass production.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "growing demand for high-speed transmission in AI data centers is accelerating the transition of co-packaged optics (CPO) toward mass production",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-efdfd32558ded0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "September 2026",
+    "qualifiers": [],
+    "quote": "In September 2026, the company announced a collaboration with VIAVI and SENKO to combine automated testing, optical measurement, and detachable optical interfaces",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f3c0412bd8c73e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "CPO testing currently requires multiple separate instruments (laser sources, optical switches, optical power meters, optical spectrum analyzers).",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "CPO testing currently requires multiple instruments, including laser sources, optical switches, optical power meters, and optical spectrum analyzers.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f469d4818f8bc4",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025",
+    "qualifiers": [],
+    "quote": "Teradyne acquired Quantifi Photonics in 2025 to strengthen its optical measurement capabilities",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b006",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-76d777fcbb1adf",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Market growth momentum is extending from switches/transceivers toward high-speed accelerator interconnects and network interface cards.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "market momentum is increasingly extending to high-speed accelerator interconnects and network interface cards",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b014",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-782b111fb63cb4",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Emerging optical technologies CPO and OCS address distinct interconnect requirements and are lifting overall market revenue, with CPO shifting optical value into switching equipment.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Co-packaged optics (CPO) and OCSs, for example, address distinct interconnect requirements",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b010",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-e10f3c779e4762",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Copper cables remain dominant interconnect medium in GPU racks in 2027",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "Copper cables are expected to remain the dominant interconnect medium within GPU racks in 2027",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b009",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-f8dc9be3d636b2",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "As GPU platforms move to rack-scale architectures, accelerator interconnects expand into dedicated switch trays, creating added demand for switching equipment and copper cables.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "accelerator interconnects are expanding beyond server motherboards into dedicated switch trays, creating additional demand for switching equipment and copper cables",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7919ae735f5c",
+    "block_id": "b011",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-500d1e46eb6be4",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Primary revenue driver for transceivers shifts from 800G to 1.6T in 2027",
+    "measured_as_of": null,
+    "origin": "TrendForce",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "Ongoing bandwidth upgrades are expected to shift the primary revenue driver for pluggable optical transceivers from 800G to 1.6T products in 2027",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-92bb1df0b767df",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research publisher and author of the report."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7ad4c4a5c0a6d6",
+     "name_as_written": "Quantifi Photonics",
+     "other_securities": [],
+     "quote": "Quantifi Photonics",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Optical measurement company acquired by Teradyne."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1ae8eda71124d2",
+     "name_as_written": "RoboTechnik",
+     "other_securities": [],
+     "quote": "RoboTechnik completed its full acquisition of Germany-based ficonTEC in 2025",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Acquirer of ficonTEC, entering optoelectronic packaging and test equipment."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-766440dcff4797",
+     "name_as_written": "ficonTEC",
+     "other_securities": [],
+     "quote": "Germany-based ficonTEC",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "German optoelectronic packaging and test equipment company acquired by RoboTechnik."
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "cik": "0001835632",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-28 (accession 0001835632-26-000025) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.002 per share",
+       "ticker": "MRVL"
+      }
+     ],
+     "mention_id": "M-963ffa231012ff",
+     "name_as_written": "Marvell",
+     "other_securities": [],
+     "quote": "Marvell\u2019s Acquisition of Lumentum to Unite Optical and Electronic Capabilities",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Named in adjacent-article navigation teaser as acquirer of Lumentum; not part of this article's analysis."
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "cik": "0001633978",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069615) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value of $0.001 per share",
+       "ticker": "LITE"
+      }
+     ],
+     "mention_id": "M-97a5da43f2be14",
+     "name_as_written": "Lumentum",
+     "other_securities": [],
+     "quote": "Marvell\u2019s Acquisition of Lumentum to Unite Optical and Electronic Capabilities",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Named in adjacent-article navigation teaser as acquisition target."
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "cik": "0001730168",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-10 (accession 0001730168-26-000080) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value",
+       "ticker": "AVGO"
+      }
+     ],
+     "mention_id": "M-a3c95ab967adf1",
+     "name_as_written": "Broadcom",
+     "other_securities": [],
+     "quote": "Potentially Challenging Broadcom\u2019s Market Leadership",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Named in adjacent-article navigation teaser as incumbent market leader."
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": "0000097210",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-31 (accession 0001193125-26-327715) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock",
+       "ticker": "TER"
+      }
+     ],
+     "mention_id": "M-fbbafadbfe65d3",
+     "name_as_written": "Teradyne",
+     "other_securities": [],
+     "quote": "Teradyne acquired Quantifi Photonics in 2025",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Traditional ATE supplier expanding into CPO testing via acquisition."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": "0001158838",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-4a30c8ed3c40fb",
+     "name_as_written": "Advantest",
+     "other_securities": [],
+     "quote": "Advantest is integrating optical instruments",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "ATE supplier integrating optical instruments and partnering for CPO testing."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": "0000912093",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-08-13 (accession 0001628280-26-056765) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value of $0.001 per share",
+       "ticker": "VIAV"
+      }
+     ],
+     "mention_id": "M-4335c69c98fa63",
+     "name_as_written": "VIAVI",
+     "other_securities": [],
+     "quote": "a collaboration with VIAVI and SENKO",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "supplier",
+     "role_detail": "Partner in Advantest's CPO testing collaboration (optical measurement)."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-b9bdf968a92371",
+     "name_as_written": "SENKO",
+     "other_securities": [],
+     "quote": "VIAVI and SENKO",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Partner providing detachable optical interfaces in the collaboration."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-092915eab31f65",
+     "name_as_written": "GMT Global",
+     "other_securities": [],
+     "quote": "GMT Global provides multi-axis optical coupling and alignment modules",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Taiwanese supplier of optical coupling and alignment modules."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-a63c27677da197",
+     "name_as_written": "MPI",
+     "other_securities": [],
+     "quote": "MPI offers probing equipment and optical alignment solutions",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Taiwanese supplier of probing equipment and optical alignment solutions."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-4c5066d44859f7",
+     "name_as_written": "WinWay",
+     "other_securities": [],
+     "quote": "WinWay specializes in test interfaces",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Taiwanese supplier specializing in test interfaces."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-0662c341e6d89d",
+     "name_as_written": "Chroma",
+     "other_securities": [],
+     "quote": "Chroma has capabilities in automated testing and burn-in testing",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Taiwanese supplier with automated testing and burn-in capabilities."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-55588683ce3cc3",
+     "name_as_written": "MSS",
+     "other_securities": [],
+     "quote": "MSS, MA-tek, and iST",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Third-party testing provider."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-73ab6099ca50ce",
+     "name_as_written": "MA-tek",
+     "other_securities": [],
+     "quote": "MSS, MA-tek, and iST",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Third-party testing and materials analysis provider."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-7405de578551a2",
+     "name_as_written": "iST",
+     "other_securities": [],
+     "quote": "MSS, MA-tek, and iST",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Third-party testing provider (failure analysis, reliability)."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-bb20aa1de08c7a",
+     "name_as_written": "ASE",
+     "other_securities": [],
+     "quote": "Packaging and testing providers such as ASE",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Packaging and testing provider bridging packaging and production testing."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-cfd0bea4060ece",
+     "name_as_written": "Semight Instruments",
+     "other_securities": [],
+     "quote": "Semight Instruments has introduced a 65 GHz sampling oscilloscope",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Chinese supplier making progress in high-speed measurement."
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "sector example",
+     "listings": [],
+     "mention_id": "M-b5f0f3d5a06b1d",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Google, however, is already scaling its TPU clusters",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Named as scaling TPU clusters with optical interconnects (ICI) and optical circuit switches"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "claim_ids": [
+      "C-be38d83cda0880"
+     ],
+     "direction": "positive",
+     "name": "ATE",
+     "provenance": "SOURCE OPINION",
+     "quote": "ATE"
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "claim_ids": [
+      "C-bbcb177b28d7b1"
+     ],
+     "direction": "positive",
+     "name": "core optical coupling and alignment modules",
+     "provenance": "SOURCE OPINION",
+     "quote": "core optical coupling and alignment modules"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "claim_ids": [
+      "C-4becc2f2e9fab7",
+      "C-5de5b84a549f4e"
+     ],
+     "direction": "positive",
+     "name": "switches",
+     "provenance": "FORECAST",
+     "quote": "switches, NICs/DPUs, and pluggable optical transceivers"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "claim_ids": [
+      "C-c61f38231bb180",
+      "C-5013b8a071db0c"
+     ],
+     "direction": "positive",
+     "name": "pluggable optical transceivers",
+     "provenance": "FORECAST",
+     "quote": "pluggable optical transceiver revenue"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "claim_ids": [
+      "C-3e40fb243150c5"
+     ],
+     "direction": "positive",
+     "name": "NICs/DPUs",
+     "provenance": "FORECAST",
+     "quote": "Network interface cards and data processing units (NICs/DPUs)"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "claim_ids": [
+      "C-52f799be5f9f05",
+      "C-3f0041f9a0039a"
+     ],
+     "direction": "positive",
+     "name": "scale-up networking",
+     "provenance": "FORECAST",
+     "quote": "known as scale-up networking, are seeing the fastest revenue growth"
+    },
+    {
+     "article_id": "A-7919ae735f5c",
+     "claim_ids": [
+      "C-e10f3c779e4762"
+     ],
+     "direction": "positive",
+     "name": "copper cables",
+     "provenance": "FORECAST",
+     "quote": "creating additional demand for switching equipment and copper cables"
+    }
+   ],
+   "sectors": [
+    "Semiconductors",
+    "Semiconductor test equipment",
+    "CPO testing supply chain",
+    "AI networking and interconnect",
+    "switches",
+    "NICs/DPUs",
+    "pluggable optical transceivers"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-500d1e46eb6be4",
+      "C-5013b8a071db0c",
+      "C-540cba9eea3bd4"
+     ],
+     "provenance": "FORECAST",
+     "text": "Transceiver revenue is forecast to surge 76% YoY in 2027 driven by the 800G-to-1.6T shift, with 1.6T products contributing ~56% of transceiver revenue. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-efdfd32558ded0",
+      "C-0183ab791418b5",
+      "C-3f01a7042c78ab",
+      "C-b59b95affce9ba"
+     ],
+     "provenance": "FORECAST",
+     "text": "September 2026 Advantest-VIAVI-SENKO collaboration and ECOC 2026 demonstration show near-term platform integration momentum, but mass production readiness is a 2027-2028 story. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-52f799be5f9f05",
+      "C-3f0041f9a0039a",
+      "C-b43d5d45ac889c"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Scale-up networking's share rises from 11% in 2024 to 24% in 2027, and CPO/OCS architectures reshape where optical value is captured across the supply chain. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-be38d83cda0880"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Industry value is gradually shifting from individual instrument performance to integrated production testing platforms."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-ff1e5eb7255780",
+      "C-204e3b6371f409"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "It remains uncertain whether optical module testing experience extends to complete CPO mass production platforms; customer adoption, test efficiency and long-term stability are still to be proven."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 5 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    },
+    {
+     "claim_ids": [
+      "C-3aae166fff2370"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Growth in AI chip shipments will not translate proportionally into networking revenue, as networking value per accelerator varies by topology, switch configuration and NIC bandwidth."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-ff1e5eb7255780"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China still relies heavily on imports for high-end measurement instruments."
+    },
+    {
+     "claim_ids": [
+      "C-3aae166fff2370"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI chip shipment growth does not translate proportionally into networking revenue"
+    },
+    {
+     "claim_ids": [
+      "C-97d0a4fe6f71a8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Google is scaling TPU clusters with optical interconnects (ICI) and OCS"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CPO mass production slips beyond 2028"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Test times fail to fall enough to lower per-unit costs"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Customers favor fragmented instrument suppliers over integrated platforms"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Slower-than-forecast AI server cluster deployment"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "1.6T transceiver adoption lagging 800G displacement"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Networking revenue decoupling from AI chip shipment growth"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-ff1e5eb7255780",
+      "C-e0647dc4945425"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China relies heavily on imports for high-end measurement instruments, and it is uncertain whether optical module testing experience extends to full CPO mass production platforms; RoboTechnik's acquisition of ficonTEC may influence European/U.S. procurement decisions. (scope: CPO testing supply chain execution and geopolitical/procurement uncertainty; no quantified earnings impact.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether any named supplier's revenue, margins or earnings reflect CPO testing demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether optical module testing experience extends to full CPO mass-production platforms"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which suppliers actually capture the integration share"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether listed valuations already price this shift"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed companies capture the switch, NIC/DPU and transceiver revenue growth"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether suppliers' valuations already reflect these forecasts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "How CPO adoption redistributes value and which incumbents gain or lose"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CPO mass production delayed beyond 2028"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Integration advantage fails to materialize into orders"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI server cluster deployment estimates cut"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Networking ASP deflation outpaces mix upgrade"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed suppliers of AI datacenter switches, NICs/DPUs and 1.6T optical transceivers and compare their consensus revenue growth to TrendForce's 2027 forecasts."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Named suppliers disclose CPO testing orders or revenue"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CSP CPO adoption timelines confirmed for 2027"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "1.6T transceiver ramp confirmed ahead of schedule"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscaler networking capex guidance accelerates"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-0b9c4a3220b7",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-0183ab791418b5",
+     "C-09527de2fa37bb",
+     "C-204e3b6371f409",
+     "C-2305ad3d030b6c",
+     "C-3f01a7042c78ab",
+     "C-48b7f7865ed63c",
+     "C-72e0056978231a",
+     "C-8b7a6aefc8de73",
+     "C-b59b95affce9ba",
+     "C-bbcb177b28d7b1",
+     "C-be38d83cda0880",
+     "C-e0647dc4945425",
+     "C-e5cc0fdc7c2143",
+     "C-efdfd32558ded0",
+     "C-f3c0412bd8c73e",
+     "C-f469d4818f8bc4",
+     "C-ff1e5eb7255780"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-13T16:20:02+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Integrated Optical-Electrical Testing Platforms Become Key to CPO Mass Production, Reshaping the Test Equipment Supply Chain, Says TrendForce",
+    "upstream_origins": [
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261013-13267.html",
+    "version_dates": []
+   },
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-7919ae735f5c",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-c2e46637404655",
+     "C-500d1e46eb6be4",
+     "C-3f0041f9a0039a",
+     "C-01386a1f0bb84b",
+     "C-d26e4fcfa0d9e2",
+     "C-4becc2f2e9fab7",
+     "C-5de5b84a549f4e",
+     "C-3e40fb243150c5",
+     "C-c61f38231bb180",
+     "C-1ff6a5fb571bfe",
+     "C-52f799be5f9f05",
+     "C-5013b8a071db0c",
+     "C-540cba9eea3bd4",
+     "C-76d777fcbb1adf",
+     "C-782b111fb63cb4",
+     "C-e10f3c779e4762",
+     "C-f8dc9be3d636b2",
+     "C-3aae166fff2370",
+     "C-97d0a4fe6f71a8"
+    ],
+    "contribution": "contradictory",
+    "published_at": "2026-11-02T16:33:38+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "AI Networking and Interconnect Market Projected to Reach US$279.8 Billion in 2027, with Scale-Up Share Rising to 24%, Says TrendForce",
+    "upstream_origins": [
+     "TrendForce",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261102-13291.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-14 (0000820318-26-000020)",
+    "business": "optical components and transceiver maker for datacom",
+    "direction": "positive",
+    "enrichment_id": "EC-3e1409974a5336",
+    "evidence": "s03.2: Migration to higher-speed 1.6T transceivers, priced more than twice 800G, lifts transceiver revenue 76% YoY in 2027.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-04 (accession 0000820318-26-000023) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, no par value",
+      "ticker": "COHR"
+     }
+    ],
+    "name": "Coherent Corp",
+    "rationale": "Migration to 1.6T transceivers priced far above 800G lifts datacom transceiver revenue, a core and growing segment of its sales.",
+    "registrant": "COHERENT CORP.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3827); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacom optical transceivers",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-921772E86C",
+    "ticker_hint": "COHR"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales",
+    "basis_quote": [
+     "We generate revenue from sales of our products, which incorporate our EOS software and accessories such as cables and optics, to direct customers and channel partners together with PCS.",
+     "We generate revenue from sales of our products, which incorporate our EOS software and accessories such as cables and optics, to direct customers and channel partners together with post-contract customer support (\u201cPCS\u201d)."
+    ],
+    "basis_source": "10-K filed 2026-02-17 (0001596532-26-000013)",
+    "business": "high-speed datacenter Ethernet switches",
+    "direction": "positive",
+    "enrichment_id": "EC-47b5b1cec3cf11",
+    "evidence": "s03.1: Higher deployment volumes and bandwidth upgrades lift shipments of switches, NICs/DPUs and transceivers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-04 (accession 0001596532-26-000254) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.0001 par value",
+      "ticker": "ANET"
+     }
+    ],
+    "name": "Arista Networks",
+    "rationale": "Higher AI datacenter deployment volumes and bandwidth upgrades lift shipments of high-speed switches, Arista's core product line.",
+    "registrant": "Arista Networks, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3576); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter switching systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-921772E86C",
+    "ticker_hint": "ANET"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-06-15 (0001628280-26-043303)",
+    "business": "high-speed connectivity solutions, active electrical cables",
+    "direction": "positive",
+    "enrichment_id": "EC-5417e7ffeb630a",
+    "evidence": "s03.1: Higher deployment volumes and bandwidth upgrades lift shipments of switches, NICs/DPUs and transceivers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-02 (accession 0001628280-26-060111) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary shares, par value $0.00005 per share",
+      "ticker": "CRDO"
+     }
+    ],
+    "name": "Credo Technology",
+    "rationale": "Higher deployment volumes and bandwidth upgrades lift demand for active electrical cables and SerDes connectivity, Credo's core AI datacenter business.",
+    "registrant": "Credo Technology Group Holding Ltd",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "active electrical cables and connectivity",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-921772E86C",
+    "ticker_hint": "CRDO"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-20 (0001736297-26-000010)",
+    "business": "connectivity semiconductors for AI datacenter infrastructure",
+    "direction": "positive",
+    "enrichment_id": "EC-e957ba782f3aec",
+    "evidence": "s03.1: Higher deployment volumes and bandwidth upgrades lift shipments of switches, NICs/DPUs and transceivers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-04 (accession 0001736297-26-000045) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.0001 per share",
+      "ticker": "ALAB"
+     }
+    ],
+    "name": "Astera Labs",
+    "rationale": "Scale-up networking and higher AI deployment volumes lift demand for its connectivity chips and modules, its core revenue line.",
+    "registrant": "Astera Labs, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "scale-up connectivity chips and modules",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-921772E86C",
+    "ticker_hint": "ALAB"
+   }
+  ],
+  "created_at": "2026-11-09T14:56:58.533002Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "NVIDIA: more than 4 on one side \u2014 set aside",
+   "Cisco Systems: more than 4 on one side \u2014 set aside",
+   "Amphenol: more than 4 on one side \u2014 set aside",
+   "Keysight Technologies: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-28fc5118546739",
+  "thesis_id": "TH-921772E86C",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-11-09 14:59 UTC from the registry (ti-engine-5; run R-20261109T140627Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-21",
+   "change_summary": "Initial record \u2014 created from A-0b9c4a3220b7",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-21",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.optical_networking"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:22:56.263932Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-13",
+     "latest_article_date": "2026-10-13",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Optical interconnects, transceivers and datacenter networking",
+     "status": "ACTIVE",
+     "thesis_id": "TH-921772E86C",
+     "title": "CPO mass production shifts value to integrated optical-electrical test platform suppliers"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-e5cc0fdc7c2143",
+       "C-b59b95affce9ba",
+       "C-3f01a7042c78ab"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce says growing AI data center high-speed transmission demand is accelerating CPO toward mass production, raising demand for integrated optical-electrical test equipment and software, with 2027 pivotal and 2028 critical for large-scale production readiness. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-8b7a6aefc8de73",
+       "C-be38d83cda0880"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce expects suppliers that integrate test equipment and provide production-scale services to strengthen their strategic positions as customers emphasize testing efficiency, quality and cost."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Suppliers able to integrate electrical and optical test on a single platform (ATE leaders, Taiwanese modules/interfaces, OSAT) could gain CPO testing share, but the article gives no revenue, margin or earnings quantification."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f469d4818f8bc4"
+       ],
+       "original_date": "2026-10-13",
+       "period": "2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-efdfd32558ded0"
+       ],
+       "original_date": "2026-10-13",
+       "period": "September 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0183ab791418b5"
+       ],
+       "original_date": "2026-10-13",
+       "period": "2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b59b95affce9ba"
+       ],
+       "original_date": "2026-10-13",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-2305ad3d030b6c"
+       ],
+       "original_date": "2026-10-13",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "A complete test of a single PIC can still take over 100 seconds."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3f01a7042c78ab"
+       ],
+       "original_date": "2026-10-13",
+       "period": "2028",
+       "provenance": "FORECAST",
+       "text": "TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 14 pieces of evidence from A-0b9c4a3220b7 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:22 UTC, analysed as of 2026-10-21, from a source published 2026-10-13; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-e5cc0fdc7c2143",
+       "C-72e0056978231a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AI data center high-speed transmission demand accelerates CPO toward mass production, requiring coordinated electrical and optical testing."
+     },
+     {
+      "claim_ids": [
+       "C-8b7a6aefc8de73"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "Demand for integrated test equipment and software rises; platform-integration suppliers would see higher equipment volumes, though the article does not quantify revenue or earnings."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2305ad3d030b6c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "PIC full test time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "over"
+      ],
+      "quote": "a complete test of a single photonic integrated circuit (PIC) can still take over 100 seconds",
+      "role": "supports",
+      "unit": "seconds",
+      "value": 100.0,
+      "value_text": "over 100 seconds"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-bbcb177b28d7b1",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "CPO testing supply chain segments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "TrendForce identifies seven major segments in the CPO testing supply chain",
+      "role": "supports",
+      "unit": "segments",
+      "value": 7.0,
+      "value_text": "seven"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3f01a7042c78ab",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2028",
+      "qualifiers": [],
+      "quote": "2028 will serve as a critical period for validating readiness for large-scale mass production",
+      "role": "catalyst",
+      "unit": null,
+      "value": 2028.0,
+      "value_text": "2028"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b59b95affce9ba",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "pivotal year"
+      ],
+      "quote": "TrendForce expects 2027 to be a pivotal year for the convergence of CPO testing architectures.",
+      "role": "catalyst",
+      "unit": null,
+      "value": 2027.0,
+      "value_text": "2027"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0183ab791418b5",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "The partners subsequently demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-09527de2fa37bb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "A key CPO mass-production challenge is precise optical coupling, which depends on alignment module suppliers with multi-axis control.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "One key challenge in mass production is ensuring precise optical coupling, which depends on alignment module suppliers equipped with multi-axis control.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-48b7f7865ed63c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The mass-production bottleneck is shifting from alignment accuracy to testing speed.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the bottleneck in mass production is now shifting from alignment accuracy to testing speed",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-72e0056978231a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Optical-electrical test integration relies on unified software plus optical path switching and instrument sharing across test stations to improve equipment utilization and reduce cost.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The key to optical-electrical test integration lies in using unified software to coordinate electrical and optical measurements, supported by optical path switching and instrument sharing across multiple test stations to improve equipment utilization.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8b7a6aefc8de73",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Suppliers able to integrate different test equipment and provide production-scale services are expected to strengthen their strategic positions.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Suppliers that can integrate different test equipment and provide production-scale services are expected to strengthen their strategic positions in the supply chain",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-be38d83cda0880",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Industry value is shifting from individual instrument performance to the ability to integrate complete production testing platforms.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "industry value is gradually shifting from individual instrument performance to the ability to integrate complete production testing platforms",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e5cc0fdc7c2143",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Growing demand for high-speed transmission in AI data centers is accelerating CPO's transition toward mass production.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "growing demand for high-speed transmission in AI data centers is accelerating the transition of co-packaged optics (CPO) toward mass production",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-efdfd32558ded0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "September 2026",
+      "qualifiers": [],
+      "quote": "In September 2026, the company announced a collaboration with VIAVI and SENKO to combine automated testing, optical measurement, and detachable optical interfaces",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f3c0412bd8c73e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "CPO testing currently requires multiple separate instruments (laser sources, optical switches, optical power meters, optical spectrum analyzers).",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "CPO testing currently requires multiple instruments, including laser sources, optical switches, optical power meters, and optical spectrum analyzers.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f469d4818f8bc4",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [],
+      "quote": "Teradyne acquired Quantifi Photonics in 2025 to strengthen its optical measurement capabilities",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-92bb1df0b767df",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research publisher and author of the report."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7ad4c4a5c0a6d6",
+       "name_as_written": "Quantifi Photonics",
+       "other_securities": [],
+       "quote": "Quantifi Photonics",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Optical measurement company acquired by Teradyne."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1ae8eda71124d2",
+       "name_as_written": "RoboTechnik",
+       "other_securities": [],
+       "quote": "RoboTechnik completed its full acquisition of Germany-based ficonTEC in 2025",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Acquirer of ficonTEC, entering optoelectronic packaging and test equipment."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-766440dcff4797",
+       "name_as_written": "ficonTEC",
+       "other_securities": [],
+       "quote": "Germany-based ficonTEC",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "German optoelectronic packaging and test equipment company acquired by RoboTechnik."
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": "0000097210",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0001193125-26-327715) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock",
+         "ticker": "TER"
+        }
+       ],
+       "mention_id": "M-fbbafadbfe65d3",
+       "name_as_written": "Teradyne",
+       "other_securities": [],
+       "quote": "Teradyne acquired Quantifi Photonics in 2025",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Traditional ATE supplier expanding into CPO testing via acquisition."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": "0001158838",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-4a30c8ed3c40fb",
+       "name_as_written": "Advantest",
+       "other_securities": [],
+       "quote": "Advantest is integrating optical instruments",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "ATE supplier integrating optical instruments and partnering for CPO testing."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": "0000912093",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-08-13 (accession 0001628280-26-056765) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value of $0.001 per share",
+         "ticker": "VIAV"
+        }
+       ],
+       "mention_id": "M-4335c69c98fa63",
+       "name_as_written": "VIAVI",
+       "other_securities": [],
+       "quote": "a collaboration with VIAVI and SENKO",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "Partner in Advantest's CPO testing collaboration (optical measurement)."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-b9bdf968a92371",
+       "name_as_written": "SENKO",
+       "other_securities": [],
+       "quote": "VIAVI and SENKO",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Partner providing detachable optical interfaces in the collaboration."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-092915eab31f65",
+       "name_as_written": "GMT Global",
+       "other_securities": [],
+       "quote": "GMT Global provides multi-axis optical coupling and alignment modules",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier of optical coupling and alignment modules."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-a63c27677da197",
+       "name_as_written": "MPI",
+       "other_securities": [],
+       "quote": "MPI offers probing equipment and optical alignment solutions",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier of probing equipment and optical alignment solutions."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-4c5066d44859f7",
+       "name_as_written": "WinWay",
+       "other_securities": [],
+       "quote": "WinWay specializes in test interfaces",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier specializing in test interfaces."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-0662c341e6d89d",
+       "name_as_written": "Chroma",
+       "other_securities": [],
+       "quote": "Chroma has capabilities in automated testing and burn-in testing",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier with automated testing and burn-in capabilities."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-55588683ce3cc3",
+       "name_as_written": "MSS",
+       "other_securities": [],
+       "quote": "MSS, MA-tek, and iST",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Third-party testing provider."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-73ab6099ca50ce",
+       "name_as_written": "MA-tek",
+       "other_securities": [],
+       "quote": "MSS, MA-tek, and iST",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Third-party testing and materials analysis provider."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-7405de578551a2",
+       "name_as_written": "iST",
+       "other_securities": [],
+       "quote": "MSS, MA-tek, and iST",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Third-party testing provider (failure analysis, reliability)."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-bb20aa1de08c7a",
+       "name_as_written": "ASE",
+       "other_securities": [],
+       "quote": "Packaging and testing providers such as ASE",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Packaging and testing provider bridging packaging and production testing."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-cfd0bea4060ece",
+       "name_as_written": "Semight Instruments",
+       "other_securities": [],
+       "quote": "Semight Instruments has introduced a 65 GHz sampling oscilloscope",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Chinese supplier making progress in high-speed measurement."
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "claim_ids": [
+        "C-be38d83cda0880"
+       ],
+       "direction": "positive",
+       "name": "ATE",
+       "provenance": "SOURCE OPINION",
+       "quote": "ATE"
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "claim_ids": [
+        "C-bbcb177b28d7b1"
+       ],
+       "direction": "positive",
+       "name": "core optical coupling and alignment modules",
+       "provenance": "SOURCE OPINION",
+       "quote": "core optical coupling and alignment modules"
+      }
+     ],
+     "sectors": [
+      "Semiconductors",
+      "Semiconductor test equipment",
+      "CPO testing supply chain"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 convergence year; 2028 validation for large-scale mass production [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-efdfd32558ded0",
+        "C-0183ab791418b5",
+        "C-3f01a7042c78ab",
+        "C-b59b95affce9ba"
+       ],
+       "provenance": "FORECAST",
+       "text": "September 2026 Advantest-VIAVI-SENKO collaboration and ECOC 2026 demonstration show near-term platform integration momentum, but mass production readiness is a 2027-2028 story. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-be38d83cda0880"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Industry value is gradually shifting from individual instrument performance to integrated production testing platforms."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-ff1e5eb7255780",
+        "C-204e3b6371f409"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "It remains uncertain whether optical module testing experience extends to complete CPO mass production platforms; customer adoption, test efficiency and long-term stability are still to be proven."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 5 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-ff1e5eb7255780"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China still relies heavily on imports for high-end measurement instruments."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CPO mass production slips beyond 2028"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Test times fail to fall enough to lower per-unit costs"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Customers favor fragmented instrument suppliers over integrated platforms"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-ff1e5eb7255780",
+        "C-e0647dc4945425"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China relies heavily on imports for high-end measurement instruments, and it is uncertain whether optical module testing experience extends to full CPO mass production platforms; RoboTechnik's acquisition of ficonTEC may influence European/U.S. procurement decisions. (scope: CPO testing supply chain execution and geopolitical/procurement uncertainty; no quantified earnings impact.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether any named supplier's revenue, margins or earnings reflect CPO testing demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether optical module testing experience extends to full CPO mass-production platforms"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which suppliers actually capture the integration share"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether listed valuations already price this shift"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CPO mass production delayed beyond 2028"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Integration advantage fails to materialize into orders"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify which listed ATE, test interface and OSAT names have disclosed CPO testing revenue or order pipelines and compare to current valuations."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Named suppliers disclose CPO testing orders or revenue"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CSP CPO adoption timelines confirmed for 2027"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-0b9c4a3220b7",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-b59b95affce9ba",
+       "C-3f01a7042c78ab",
+       "C-e5cc0fdc7c2143",
+       "C-2305ad3d030b6c",
+       "C-48b7f7865ed63c",
+       "C-bbcb177b28d7b1",
+       "C-be38d83cda0880",
+       "C-8b7a6aefc8de73",
+       "C-09527de2fa37bb",
+       "C-f3c0412bd8c73e",
+       "C-72e0056978231a",
+       "C-f469d4818f8bc4",
+       "C-efdfd32558ded0",
+       "C-0183ab791418b5",
+       "C-ff1e5eb7255780",
+       "C-e0647dc4945425"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-13T16:20:02+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Integrated Optical-Electrical Testing Platforms Become Key to CPO Mass Production, Reshaping the Test Equipment Supply Chain, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261013-13267.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "63e6f7226f07392f7c0979fb15f2a212719df4064475ff96d4821353d1bcc2b5",
+   "created_at": "2026-10-21T08:23:18.026730Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-2305ad3d030b6c",
+       "C-8b7a6aefc8de73",
+       "C-f3c0412bd8c73e",
+       "C-f469d4818f8bc4",
+       "C-efdfd32558ded0",
+       "C-0183ab791418b5",
+       "C-b59b95affce9ba",
+       "C-3f01a7042c78ab"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "8"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-2305ad3d030b6c",
+       "C-efdfd32558ded0",
+       "C-0183ab791418b5"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-2305ad3d030b6c: measured 2026-10-13 (8 days before the as-of); C-efdfd32558ded0: measured 2026-09-30 (21 days before the as-of); C-0183ab791418b5: measured 2026-10-13 (8 days before the as-of)); 1 claim(s) whose window runs past them; 1 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Teradyne (TER), VIAVI (VIAV), sector: ATE, sector: core optical coupling and alignment modules",
+      "value": "2 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 2 offered but NOT counted (opinion, forecast figure or stale reading): C-b59b95affce9ba, C-3f01a7042c78ab",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-ff1e5eb7255780"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 8 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261021T080508Z-scan",
+   "thesis_id": "TH-921772E86C",
+   "version": 1
+  },
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "A-7919ae735f5c: contradictory \u00d72, new \u00d717",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.optical_networking"
+     ],
+     "evidence_direction": "MIXED",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:22:56.263932Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-02",
+     "latest_article_date": "2026-11-02",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Optical interconnects, transceivers and datacenter networking",
+     "status": "ACTIVE",
+     "thesis_id": "TH-921772E86C",
+     "title": "CPO mass production shifts value to integrated optical-electrical test platform suppliers"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-e5cc0fdc7c2143",
+       "C-b59b95affce9ba",
+       "C-3f01a7042c78ab"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce says growing AI data center high-speed transmission demand is accelerating CPO toward mass production, raising demand for integrated optical-electrical test equipment and software, with 2027 pivotal and 2028 critical for large-scale production readiness. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-8b7a6aefc8de73",
+       "C-be38d83cda0880"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce expects suppliers that integrate test equipment and provide production-scale services to strengthen their strategic positions as customers emphasize testing efficiency, quality and cost."
+     },
+     {
+      "claim_ids": [
+       "C-01386a1f0bb84b",
+       "C-c2e46637404655",
+       "C-d26e4fcfa0d9e2",
+       "C-4becc2f2e9fab7",
+       "C-3e40fb243150c5",
+       "C-c61f38231bb180"
+      ],
+      "provenance": "FORECAST",
+      "text": "\u27e8update 2026-11-02 \u00b7 TrendForce\u27e9 TrendForce forecasts the AI networking and interconnect market to grow from US$37.9bn in 2024 to US$279.8bn in 2027 (95% CAGR), with switches at US$105bn, pluggable optical transceivers at US$84.1bn, and NICs/DPUs at US$57.4bn in 2027. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "new",
+       "claim_ids": [
+        "C-c2e46637404655"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "AI networking and interconnect market revenue projected for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "new",
+       "claim_ids": [
+        "C-500d1e46eb6be4"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Primary revenue driver for transceivers shifts from 800G to 1.6T in 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "new",
+       "claim_ids": [
+        "C-3f0041f9a0039a"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Scale-up networking revenue share forecast for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "new",
+       "claim_ids": [
+        "C-01386a1f0bb84b"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2024",
+       "provenance": "FORECAST",
+       "text": "AI networking and interconnect market revenue in 2024 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "new",
+       "claim_ids": [
+        "C-d26e4fcfa0d9e2"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2024-2027",
+       "provenance": "FORECAST",
+       "text": "AI networking and interconnect market CAGR 2024-2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "new",
+       "claim_ids": [
+        "C-4becc2f2e9fab7"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Switch revenue forecast for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "new",
+       "claim_ids": [
+        "C-5de5b84a549f4e"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Switches' share of AI networking market in 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "new",
+       "claim_ids": [
+        "C-3e40fb243150c5"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "NICs/DPUs revenue forecast for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "new",
+       "claim_ids": [
+        "C-c61f38231bb180"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Pluggable optical transceiver revenue forecast for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "new",
+       "claim_ids": [
+        "C-1ff6a5fb571bfe"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Combined share of switches, NICs/DPUs and transceivers in 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 10 of 19 pieces of evidence from A-7919ae735f5c \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+     "vs_prior": "v1 held 17 claim(s); this source adds: contradictory \u00d72, new \u00d717"
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-e5cc0fdc7c2143",
+       "C-72e0056978231a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AI data center high-speed transmission demand accelerates CPO toward mass production, requiring coordinated electrical and optical testing."
+     },
+     {
+      "claim_ids": [
+       "C-4becc2f2e9fab7",
+       "C-3e40fb243150c5",
+       "C-c61f38231bb180"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Higher deployment volumes and bandwidth upgrades lift shipments of switches, NICs/DPUs and transceivers. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-500d1e46eb6be4",
+       "C-5013b8a071db0c"
+      ],
+      "provenance": "FORECAST",
+      "step": "pricing",
+      "text": "Migration to higher-speed 1.6T transceivers, priced more than twice 800G, lifts transceiver revenue 76% YoY in 2027. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Rising networking equipment revenue would flow to suppliers' revenues, though the article does not name or quantify specific listed beneficiaries."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2305ad3d030b6c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "PIC full test time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "over"
+      ],
+      "quote": "a complete test of a single photonic integrated circuit (PIC) can still take over 100 seconds",
+      "role": "supports",
+      "unit": "seconds",
+      "value": 100.0,
+      "value_text": "over 100 seconds"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-bbcb177b28d7b1",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "CPO testing supply chain segments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "TrendForce identifies seven major segments in the CPO testing supply chain",
+      "role": "supports",
+      "unit": "segments",
+      "value": 7.0,
+      "value_text": "seven"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b005",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-01386a1f0bb84b",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AI networking and interconnect market revenue",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2024",
+      "qualifiers": [],
+      "quote": "Market revenue is projected to climb from US$37.9 billion in 2024 to US$279.8 billion in 2027",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 37.9,
+      "value_text": "US$37.9 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b008",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-1ff6a5fb571bfe",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "combined revenue share",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "switches, NICs/DPUs, and pluggable optical transceivers will account for approximately 88% of total AI networking and interconnect revenue",
+      "role": "supports",
+      "unit": "%",
+      "value": 88.0,
+      "value_text": "approximately 88%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b007",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-3e40fb243150c5",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "NICs/DPUs revenue",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [
+       "more than double YoY"
+      ],
+      "quote": "Revenue from these products is forecast to more than double YoY to US$57.4 billion in 2027",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 57.4,
+      "value_text": "US$57.4 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b007",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-4becc2f2e9fab7",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "switch revenue",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "Switches are expected to remain the largest revenue contributor, generating US$105 billion in 2027",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 105.0,
+      "value_text": "US$105 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b012",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-5013b8a071db0c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "transceiver revenue YoY growth",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [
+       "outpacing shipment growth"
+      ],
+      "quote": "pluggable optical transceiver revenue will surge 76% YoY in 2027, outpacing shipment growth",
+      "role": "supports",
+      "unit": "%",
+      "value": 76.0,
+      "value_text": "76%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b010",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-52f799be5f9f05",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "scale-up networking revenue share",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2024",
+      "qualifiers": [],
+      "quote": "scale-up networking's share of AI networking and interconnect revenue will grow from 11% in 2024 to 24% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": 11.0,
+      "value_text": "11%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b012",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-540cba9eea3bd4",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "1.6T share of transceiver revenue",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "1.6T products contributing approximately 56% of pluggable transceiver revenue",
+      "role": "supports",
+      "unit": "%",
+      "value": 56.0,
+      "value_text": "approximately 56%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b007",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-5de5b84a549f4e",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "switch revenue share",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [
+       "nearly"
+      ],
+      "quote": "accounting for nearly 38% of the market",
+      "role": "supports",
+      "unit": "%",
+      "value": 38.0,
+      "value_text": "nearly 38%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b008",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-c61f38231bb180",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "pluggable optical transceiver revenue",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "continued migration toward higher-speed specifications is expected to lift pluggable optical transceiver revenue to US$84.1 billion in 2027",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 84.1,
+      "value_text": "US$84.1 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b005",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-d26e4fcfa0d9e2",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "revenue CAGR",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2024-2027",
+      "qualifiers": [],
+      "quote": "representing a CAGR of 95% over the period",
+      "role": "supports",
+      "unit": "%",
+      "value": 95.0,
+      "value_text": "95%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3f01a7042c78ab",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2028",
+      "qualifiers": [],
+      "quote": "2028 will serve as a critical period for validating readiness for large-scale mass production",
+      "role": "catalyst",
+      "unit": null,
+      "value": 2028.0,
+      "value_text": "2028"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b59b95affce9ba",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "pivotal year"
+      ],
+      "quote": "TrendForce expects 2027 to be a pivotal year for the convergence of CPO testing architectures.",
+      "role": "catalyst",
+      "unit": null,
+      "value": 2027.0,
+      "value_text": "2027"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b010",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-3f0041f9a0039a",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "scale-up networking revenue share",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "scale-up networking's share of AI networking and interconnect revenue will grow from 11% in 2024 to 24% in 2027",
+      "role": "catalyst",
+      "unit": "%",
+      "value": 24.0,
+      "value_text": "24%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b005",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-c2e46637404655",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AI networking and interconnect market revenue",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "Market revenue is projected to climb from US$37.9 billion in 2024 to US$279.8 billion in 2027",
+      "role": "catalyst",
+      "unit": "$bn",
+      "value": 279.8,
+      "value_text": "US$279.8 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0183ab791418b5",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "The partners subsequently demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-09527de2fa37bb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "A key CPO mass-production challenge is precise optical coupling, which depends on alignment module suppliers with multi-axis control.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "One key challenge in mass production is ensuring precise optical coupling, which depends on alignment module suppliers equipped with multi-axis control.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-48b7f7865ed63c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The mass-production bottleneck is shifting from alignment accuracy to testing speed.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the bottleneck in mass production is now shifting from alignment accuracy to testing speed",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-72e0056978231a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Optical-electrical test integration relies on unified software plus optical path switching and instrument sharing across test stations to improve equipment utilization and reduce cost.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The key to optical-electrical test integration lies in using unified software to coordinate electrical and optical measurements, supported by optical path switching and instrument sharing across multiple test stations to improve equipment utilization.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8b7a6aefc8de73",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Suppliers able to integrate different test equipment and provide production-scale services are expected to strengthen their strategic positions.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Suppliers that can integrate different test equipment and provide production-scale services are expected to strengthen their strategic positions in the supply chain",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-be38d83cda0880",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Industry value is shifting from individual instrument performance to the ability to integrate complete production testing platforms.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "industry value is gradually shifting from individual instrument performance to the ability to integrate complete production testing platforms",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e5cc0fdc7c2143",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Growing demand for high-speed transmission in AI data centers is accelerating CPO's transition toward mass production.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "growing demand for high-speed transmission in AI data centers is accelerating the transition of co-packaged optics (CPO) toward mass production",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-efdfd32558ded0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "September 2026",
+      "qualifiers": [],
+      "quote": "In September 2026, the company announced a collaboration with VIAVI and SENKO to combine automated testing, optical measurement, and detachable optical interfaces",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f3c0412bd8c73e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "CPO testing currently requires multiple separate instruments (laser sources, optical switches, optical power meters, optical spectrum analyzers).",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "CPO testing currently requires multiple instruments, including laser sources, optical switches, optical power meters, and optical spectrum analyzers.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f469d4818f8bc4",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [],
+      "quote": "Teradyne acquired Quantifi Photonics in 2025 to strengthen its optical measurement capabilities",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b006",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-76d777fcbb1adf",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Market growth momentum is extending from switches/transceivers toward high-speed accelerator interconnects and network interface cards.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "market momentum is increasingly extending to high-speed accelerator interconnects and network interface cards",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b014",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-782b111fb63cb4",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Emerging optical technologies CPO and OCS address distinct interconnect requirements and are lifting overall market revenue, with CPO shifting optical value into switching equipment.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Co-packaged optics (CPO) and OCSs, for example, address distinct interconnect requirements",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b010",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-e10f3c779e4762",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Copper cables remain dominant interconnect medium in GPU racks in 2027",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "Copper cables are expected to remain the dominant interconnect medium within GPU racks in 2027",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b009",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-f8dc9be3d636b2",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "As GPU platforms move to rack-scale architectures, accelerator interconnects expand into dedicated switch trays, creating added demand for switching equipment and copper cables.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "accelerator interconnects are expanding beyond server motherboards into dedicated switch trays, creating additional demand for switching equipment and copper cables",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7919ae735f5c",
+      "block_id": "b011",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-500d1e46eb6be4",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Primary revenue driver for transceivers shifts from 800G to 1.6T in 2027",
+      "measured_as_of": null,
+      "origin": "TrendForce",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "Ongoing bandwidth upgrades are expected to shift the primary revenue driver for pluggable optical transceivers from 800G to 1.6T products in 2027",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-92bb1df0b767df",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research publisher and author of the report."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7ad4c4a5c0a6d6",
+       "name_as_written": "Quantifi Photonics",
+       "other_securities": [],
+       "quote": "Quantifi Photonics",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Optical measurement company acquired by Teradyne."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1ae8eda71124d2",
+       "name_as_written": "RoboTechnik",
+       "other_securities": [],
+       "quote": "RoboTechnik completed its full acquisition of Germany-based ficonTEC in 2025",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Acquirer of ficonTEC, entering optoelectronic packaging and test equipment."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-766440dcff4797",
+       "name_as_written": "ficonTEC",
+       "other_securities": [],
+       "quote": "Germany-based ficonTEC",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "German optoelectronic packaging and test equipment company acquired by RoboTechnik."
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "cik": "0001835632",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-28 (accession 0001835632-26-000025) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.002 per share",
+         "ticker": "MRVL"
+        }
+       ],
+       "mention_id": "M-963ffa231012ff",
+       "name_as_written": "Marvell",
+       "other_securities": [],
+       "quote": "Marvell\u2019s Acquisition of Lumentum to Unite Optical and Electronic Capabilities",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Named in adjacent-article navigation teaser as acquirer of Lumentum; not part of this article's analysis."
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "cik": "0001633978",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069615) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value of $0.001 per share",
+         "ticker": "LITE"
+        }
+       ],
+       "mention_id": "M-97a5da43f2be14",
+       "name_as_written": "Lumentum",
+       "other_securities": [],
+       "quote": "Marvell\u2019s Acquisition of Lumentum to Unite Optical and Electronic Capabilities",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Named in adjacent-article navigation teaser as acquisition target."
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "cik": "0001730168",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-10 (accession 0001730168-26-000080) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value",
+         "ticker": "AVGO"
+        }
+       ],
+       "mention_id": "M-a3c95ab967adf1",
+       "name_as_written": "Broadcom",
+       "other_securities": [],
+       "quote": "Potentially Challenging Broadcom\u2019s Market Leadership",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Named in adjacent-article navigation teaser as incumbent market leader."
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": "0000097210",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0001193125-26-327715) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock",
+         "ticker": "TER"
+        }
+       ],
+       "mention_id": "M-fbbafadbfe65d3",
+       "name_as_written": "Teradyne",
+       "other_securities": [],
+       "quote": "Teradyne acquired Quantifi Photonics in 2025",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Traditional ATE supplier expanding into CPO testing via acquisition."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": "0001158838",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-4a30c8ed3c40fb",
+       "name_as_written": "Advantest",
+       "other_securities": [],
+       "quote": "Advantest is integrating optical instruments",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "ATE supplier integrating optical instruments and partnering for CPO testing."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": "0000912093",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-08-13 (accession 0001628280-26-056765) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value of $0.001 per share",
+         "ticker": "VIAV"
+        }
+       ],
+       "mention_id": "M-4335c69c98fa63",
+       "name_as_written": "VIAVI",
+       "other_securities": [],
+       "quote": "a collaboration with VIAVI and SENKO",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "Partner in Advantest's CPO testing collaboration (optical measurement)."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-b9bdf968a92371",
+       "name_as_written": "SENKO",
+       "other_securities": [],
+       "quote": "VIAVI and SENKO",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Partner providing detachable optical interfaces in the collaboration."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-092915eab31f65",
+       "name_as_written": "GMT Global",
+       "other_securities": [],
+       "quote": "GMT Global provides multi-axis optical coupling and alignment modules",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier of optical coupling and alignment modules."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-a63c27677da197",
+       "name_as_written": "MPI",
+       "other_securities": [],
+       "quote": "MPI offers probing equipment and optical alignment solutions",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier of probing equipment and optical alignment solutions."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-4c5066d44859f7",
+       "name_as_written": "WinWay",
+       "other_securities": [],
+       "quote": "WinWay specializes in test interfaces",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier specializing in test interfaces."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-0662c341e6d89d",
+       "name_as_written": "Chroma",
+       "other_securities": [],
+       "quote": "Chroma has capabilities in automated testing and burn-in testing",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier with automated testing and burn-in capabilities."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-55588683ce3cc3",
+       "name_as_written": "MSS",
+       "other_securities": [],
+       "quote": "MSS, MA-tek, and iST",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Third-party testing provider."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-73ab6099ca50ce",
+       "name_as_written": "MA-tek",
+       "other_securities": [],
+       "quote": "MSS, MA-tek, and iST",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Third-party testing and materials analysis provider."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-7405de578551a2",
+       "name_as_written": "iST",
+       "other_securities": [],
+       "quote": "MSS, MA-tek, and iST",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Third-party testing provider (failure analysis, reliability)."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-bb20aa1de08c7a",
+       "name_as_written": "ASE",
+       "other_securities": [],
+       "quote": "Packaging and testing providers such as ASE",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Packaging and testing provider bridging packaging and production testing."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-cfd0bea4060ece",
+       "name_as_written": "Semight Instruments",
+       "other_securities": [],
+       "quote": "Semight Instruments has introduced a 65 GHz sampling oscilloscope",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Chinese supplier making progress in high-speed measurement."
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "sector example",
+       "listings": [],
+       "mention_id": "M-b5f0f3d5a06b1d",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Google, however, is already scaling its TPU clusters",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Named as scaling TPU clusters with optical interconnects (ICI) and optical circuit switches"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "claim_ids": [
+        "C-be38d83cda0880"
+       ],
+       "direction": "positive",
+       "name": "ATE",
+       "provenance": "SOURCE OPINION",
+       "quote": "ATE"
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "claim_ids": [
+        "C-bbcb177b28d7b1"
+       ],
+       "direction": "positive",
+       "name": "core optical coupling and alignment modules",
+       "provenance": "SOURCE OPINION",
+       "quote": "core optical coupling and alignment modules"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "claim_ids": [
+        "C-4becc2f2e9fab7",
+        "C-5de5b84a549f4e"
+       ],
+       "direction": "positive",
+       "name": "switches",
+       "provenance": "FORECAST",
+       "quote": "switches, NICs/DPUs, and pluggable optical transceivers"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "claim_ids": [
+        "C-c61f38231bb180",
+        "C-5013b8a071db0c"
+       ],
+       "direction": "positive",
+       "name": "pluggable optical transceivers",
+       "provenance": "FORECAST",
+       "quote": "pluggable optical transceiver revenue"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "claim_ids": [
+        "C-3e40fb243150c5"
+       ],
+       "direction": "positive",
+       "name": "NICs/DPUs",
+       "provenance": "FORECAST",
+       "quote": "Network interface cards and data processing units (NICs/DPUs)"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "claim_ids": [
+        "C-52f799be5f9f05",
+        "C-3f0041f9a0039a"
+       ],
+       "direction": "positive",
+       "name": "scale-up networking",
+       "provenance": "FORECAST",
+       "quote": "known as scale-up networking, are seeing the fastest revenue growth"
+      },
+      {
+       "article_id": "A-7919ae735f5c",
+       "claim_ids": [
+        "C-e10f3c779e4762"
+       ],
+       "direction": "positive",
+       "name": "copper cables",
+       "provenance": "FORECAST",
+       "quote": "creating additional demand for switching equipment and copper cables"
+      }
+     ],
+     "sectors": [
+      "Semiconductors",
+      "Semiconductor test equipment",
+      "CPO testing supply chain",
+      "AI networking and interconnect",
+      "switches",
+      "NICs/DPUs",
+      "pluggable optical transceivers"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-500d1e46eb6be4",
+        "C-5013b8a071db0c",
+        "C-540cba9eea3bd4"
+       ],
+       "provenance": "FORECAST",
+       "text": "Transceiver revenue is forecast to surge 76% YoY in 2027 driven by the 800G-to-1.6T shift, with 1.6T products contributing ~56% of transceiver revenue. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-efdfd32558ded0",
+        "C-0183ab791418b5",
+        "C-3f01a7042c78ab",
+        "C-b59b95affce9ba"
+       ],
+       "provenance": "FORECAST",
+       "text": "September 2026 Advantest-VIAVI-SENKO collaboration and ECOC 2026 demonstration show near-term platform integration momentum, but mass production readiness is a 2027-2028 story. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-52f799be5f9f05",
+        "C-3f0041f9a0039a",
+        "C-b43d5d45ac889c"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Scale-up networking's share rises from 11% in 2024 to 24% in 2027, and CPO/OCS architectures reshape where optical value is captured across the supply chain. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-be38d83cda0880"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Industry value is gradually shifting from individual instrument performance to integrated production testing platforms."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-ff1e5eb7255780",
+        "C-204e3b6371f409"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "It remains uncertain whether optical module testing experience extends to complete CPO mass production platforms; customer adoption, test efficiency and long-term stability are still to be proven."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 5 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      },
+      {
+       "claim_ids": [
+        "C-3aae166fff2370"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Growth in AI chip shipments will not translate proportionally into networking revenue, as networking value per accelerator varies by topology, switch configuration and NIC bandwidth."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-ff1e5eb7255780"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China still relies heavily on imports for high-end measurement instruments."
+      },
+      {
+       "claim_ids": [
+        "C-3aae166fff2370"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI chip shipment growth does not translate proportionally into networking revenue"
+      },
+      {
+       "claim_ids": [
+        "C-97d0a4fe6f71a8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Google is scaling TPU clusters with optical interconnects (ICI) and OCS"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CPO mass production slips beyond 2028"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Test times fail to fall enough to lower per-unit costs"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Customers favor fragmented instrument suppliers over integrated platforms"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Slower-than-forecast AI server cluster deployment"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "1.6T transceiver adoption lagging 800G displacement"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Networking revenue decoupling from AI chip shipment growth"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-ff1e5eb7255780",
+        "C-e0647dc4945425"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China relies heavily on imports for high-end measurement instruments, and it is uncertain whether optical module testing experience extends to full CPO mass production platforms; RoboTechnik's acquisition of ficonTEC may influence European/U.S. procurement decisions. (scope: CPO testing supply chain execution and geopolitical/procurement uncertainty; no quantified earnings impact.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether any named supplier's revenue, margins or earnings reflect CPO testing demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether optical module testing experience extends to full CPO mass-production platforms"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which suppliers actually capture the integration share"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether listed valuations already price this shift"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies capture the switch, NIC/DPU and transceiver revenue growth"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether suppliers' valuations already reflect these forecasts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "How CPO adoption redistributes value and which incumbents gain or lose"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CPO mass production delayed beyond 2028"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Integration advantage fails to materialize into orders"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI server cluster deployment estimates cut"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Networking ASP deflation outpaces mix upgrade"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed suppliers of AI datacenter switches, NICs/DPUs and 1.6T optical transceivers and compare their consensus revenue growth to TrendForce's 2027 forecasts."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Named suppliers disclose CPO testing orders or revenue"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CSP CPO adoption timelines confirmed for 2027"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "1.6T transceiver ramp confirmed ahead of schedule"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscaler networking capex guidance accelerates"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-0b9c4a3220b7",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-0183ab791418b5",
+       "C-09527de2fa37bb",
+       "C-204e3b6371f409",
+       "C-2305ad3d030b6c",
+       "C-3f01a7042c78ab",
+       "C-48b7f7865ed63c",
+       "C-72e0056978231a",
+       "C-8b7a6aefc8de73",
+       "C-b59b95affce9ba",
+       "C-bbcb177b28d7b1",
+       "C-be38d83cda0880",
+       "C-e0647dc4945425",
+       "C-e5cc0fdc7c2143",
+       "C-efdfd32558ded0",
+       "C-f3c0412bd8c73e",
+       "C-f469d4818f8bc4",
+       "C-ff1e5eb7255780"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-13T16:20:02+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Integrated Optical-Electrical Testing Platforms Become Key to CPO Mass Production, Reshaping the Test Equipment Supply Chain, Says TrendForce",
+      "upstream_origins": [
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261013-13267.html",
+      "version_dates": []
+     },
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-7919ae735f5c",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-c2e46637404655",
+       "C-500d1e46eb6be4",
+       "C-3f0041f9a0039a",
+       "C-01386a1f0bb84b",
+       "C-d26e4fcfa0d9e2",
+       "C-4becc2f2e9fab7",
+       "C-5de5b84a549f4e",
+       "C-3e40fb243150c5",
+       "C-c61f38231bb180",
+       "C-1ff6a5fb571bfe",
+       "C-52f799be5f9f05",
+       "C-5013b8a071db0c",
+       "C-540cba9eea3bd4",
+       "C-76d777fcbb1adf",
+       "C-782b111fb63cb4",
+       "C-e10f3c779e4762",
+       "C-f8dc9be3d636b2",
+       "C-3aae166fff2370",
+       "C-97d0a4fe6f71a8"
+      ],
+      "contribution": "contradictory",
+      "published_at": "2026-11-02T16:33:38+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "AI Networking and Interconnect Market Projected to Reach US$279.8 Billion in 2027, with Scale-Up Share Rising to 24%, Says TrendForce",
+      "upstream_origins": [
+       "TrendForce",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261102-13291.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "bb585f984f36d9c6ae2c3ef428eb628d7565b0c7bbbf34c684d881ac2d49bfc2",
+   "created_at": "2026-11-09T14:33:20.266832Z",
+   "diffs": [
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-01386a1f0bb84b"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "AI networking and interconnect market revenue: US$37.9 billion",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-1ff6a5fb571bfe"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "combined revenue share: approximately 88%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-3e40fb243150c5"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "NICs/DPUs revenue: US$57.4 billion",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-4becc2f2e9fab7"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "switch revenue: US$105 billion",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-5013b8a071db0c"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "transceiver revenue YoY growth: 76%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-52f799be5f9f05"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "scale-up networking revenue share: 11%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-540cba9eea3bd4"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "1.6T share of transceiver revenue: approximately 56%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-5de5b84a549f4e"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "switch revenue share: nearly 38%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-c61f38231bb180"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "pluggable optical transceiver revenue: US$84.1 billion",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-d26e4fcfa0d9e2"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "revenue CAGR: 95%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-3f0041f9a0039a"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "scale-up networking revenue share: 24%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-c2e46637404655"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "AI networking and interconnect market revenue: US$279.8 billion",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-76d777fcbb1adf"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Market growth momentum is extending from switches/transceivers toward high-speed accelerator interconnects and network interface cards.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-782b111fb63cb4"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Emerging optical technologies CPO and OCS address distinct interconnect requirements and are lifting overall market revenue, with CPO shifting optical value into switching equipment.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-e10f3c779e4762"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Copper cables remain dominant interconnect medium in GPU racks in 2027:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-f8dc9be3d636b2"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "As GPU platforms move to rack-scale architectures, accelerator interconnects expand into dedicated switch trays, creating added demand for switching equipment and copper cables.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-500d1e46eb6be4"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Primary revenue driver for transceivers shifts from 800G to 1.6T in 2027:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-3aae166fff2370"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "AI chip shipment growth does not translate proportionally into networking revenue",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-97d0a4fe6f71a8"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "Google is scaling TPU clusters with optical interconnects (ICI) and OCS",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-500d1e46eb6be4",
+      "C-5013b8a071db0c",
+      "C-540cba9eea3bd4",
+      "C-efdfd32558ded0",
+      "C-0183ab791418b5",
+      "C-3f01a7042c78ab",
+      "C-b59b95affce9ba"
+     ],
+     "field_id": "s06_why_now.catalyst_window",
+     "new": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "note": "",
+     "old": "2027 convergence year; 2028 validation for large-scale mass production [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window"
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "Google (sector_example)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-4becc2f2e9fab7",
+      "C-5de5b84a549f4e"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "switches (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-c61f38231bb180",
+      "C-5013b8a071db0c"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "pluggable optical transceivers (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-3e40fb243150c5"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "NICs/DPUs (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-52f799be5f9f05",
+      "C-3f0041f9a0039a"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "scale-up networking (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-e10f3c779e4762"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "copper cables (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-e5cc0fdc7c2143",
+      "C-b59b95affce9ba",
+      "C-3f01a7042c78ab",
+      "C-8b7a6aefc8de73",
+      "C-be38d83cda0880",
+      "C-01386a1f0bb84b",
+      "C-c2e46637404655",
+      "C-d26e4fcfa0d9e2",
+      "C-4becc2f2e9fab7",
+      "C-3e40fb243150c5",
+      "C-c61f38231bb180"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "\u27e8update 2026-11-02 \u00b7 TrendForce\u27e9 TrendForce forecasts the AI networking and interconnect market to grow from US$37.9bn in 2024 to US$279.8bn in 2027 (95% CAGR), with switches at US$105bn, pluggable optical transceivers at US$84.1bn, and NICs/DPUs at US$57.4bn in 2027. \u27e8cited figures: forecast\u27e9",
+     "note": "",
+     "old": "Suppliers able to integrate electrical and optical test on a single platform (ATE leaders, Taiwanese modules/interfaces, OSAT) could gain CPO testing share, but the article gives no revenue, margin or earnings quantification."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "MIXED",
+   "prior_content_sha": "63e6f7226f07392f7c0979fb15f2a212719df4064475ff96d4821353d1bcc2b5",
+   "priority": {
+    "change_reason": "no change in action (F2_material_evidence 8\u219222; F3_independent_origins 1\u21922; F4_profit_transmission inferred\u2192source-shown; F6_recognizable_exposures 2 listed \u00b7 2 sector \u00b7 0 instrument\u21922 listed \u00b7 7 sector \u00b7 0 instrument; F8_counterevidence 0\u21921)",
+    "evidence_direction": "MIXED",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-0183ab791418b5",
+       "C-2305ad3d030b6c",
+       "C-8b7a6aefc8de73",
+       "C-efdfd32558ded0",
+       "C-f3c0412bd8c73e",
+       "C-f469d4818f8bc4",
+       "C-01386a1f0bb84b",
+       "C-d26e4fcfa0d9e2",
+       "C-4becc2f2e9fab7",
+       "C-5de5b84a549f4e",
+       "C-3e40fb243150c5",
+       "C-c61f38231bb180",
+       "C-1ff6a5fb571bfe",
+       "C-52f799be5f9f05",
+       "C-5013b8a071db0c",
+       "C-540cba9eea3bd4",
+       "C-e10f3c779e4762",
+       "C-3f01a7042c78ab",
+       "C-b59b95affce9ba",
+       "C-c2e46637404655",
+       "C-500d1e46eb6be4",
+       "C-3f0041f9a0039a"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "22"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-68e13d46ba1d, ES-80d1e591e420",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-0183ab791418b5",
+       "C-2305ad3d030b6c",
+       "C-efdfd32558ded0"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-0183ab791418b5: measured 2026-10-13 (27 days before the as-of); C-2305ad3d030b6c: measured 2026-10-13 (27 days before the as-of); C-efdfd32558ded0: measured 2026-09-30 (40 days before the as-of)); 12 claim(s) whose window runs past them; 2 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Teradyne (TER), VIAVI (VIAV), sector: ATE, sector: core optical coupling and alignment modules, sector: switches, sector: pluggable optical transceivers, sector: NICs/DPUs, sector: scale-up networking, sector: copper cables",
+      "value": "2 listed \u00b7 7 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 5 offered but NOT counted (opinion, forecast figure or stale reading): C-3f01a7042c78ab, C-b59b95affce9ba, C-c2e46637404655, C-500d1e46eb6be4, C-3f0041f9a0039a",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-ff1e5eb7255780",
+       "C-3aae166fff2370",
+       "C-97d0a4fe6f71a8"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (3 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 22 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-921772E86C",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 12,
+ "other_cited_evidence": [
+  "C-b43d5d45ac889c",
+  "C-ff1e5eb7255780",
+  "C-3aae166fff2370",
+  "C-97d0a4fe6f71a8",
+  "C-204e3b6371f409",
+  "C-e0647dc4945425"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.2": "Switches cited as US$105bn (nearly 38%) but the sentence states 'switches at US$105bn' which is supported; however it lists 'NICs/DPUs at US$57.4bn' from a span reading 'these products... US$57.4 billion' which doesn't name NICs/DPUs in the cited span. The NICs/DPU identity is not established by the cited spans.",
+  "s02.7": "The cited span 'Revenue from these products is forecast to more than double YoY to US$57.4 billion in 2027' does not name NICs/DPUs; the identity as NICs/DPUs is not supported by the cited span alone.",
+  "s03.1": "The sentence claims shipments of switches, NICs/DPUs and transceivers are lifted, but the cited spans are revenue figures, not shipment figures; also NICs/DPUs not named in cited span. Overstates as shipment increases.",
+  "s03.2": "The '76% YoY' and 1.6T shift are supported, but 'priced more than twice 800G' is not in the cited spans (that is C-d5f7da20dc15b6, not cited here).",
+  "s06.1": "Line carries FORECAST label; the September 2026 collaboration and ECOC 2026 demonstration are MEASURED OBSERVATIONS \u2014 but the weakest label among cited is actually MEASURED OBSERVATION/FORECAST, and FORECAST is being applied to observed facts, making the label stronger than content for those observations. Content itself is supported.",
+  "s07.5": "The core claim is supported, but the elaboration 'networking value per accelerator varies by topology, switch configuration and NIC bandwidth' is not in the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {}
+}

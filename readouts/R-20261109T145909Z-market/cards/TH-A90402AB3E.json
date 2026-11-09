@@ -1,0 +1,3301 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.semicap_foundry"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:48:45.508071Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-02",
+   "latest_article_date": "2026-11-02",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Semiconductor equipment and foundry capacity",
+   "status": "ACTIVE",
+   "thesis_id": "TH-A90402AB3E",
+   "title": "AI chip-design spend ramps meaningfully in 2027 as next killer app after coding"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-e009edb594bcac"
+    ],
+    "provenance": "FORECAST",
+    "text": "SemiAnalysis believes AI spend on chip design will start ramping meaningfully in 2027, calling it the next killer app after coding, and overweighted the domain in GDPx."
+   },
+   {
+    "claim_ids": [
+     "C-e009edb594bcac",
+     "C-092980dfc98f12"
+    ],
+    "provenance": "FORECAST",
+    "text": "SemiAnalysis frames chip design as a near-term high-ROI AI deployment domain worth tracking via benchmarks and its revenue demand model."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article names no listed EDA or chip-design-tooling company and quantifies no revenue effect, so the investable link to public equities is unestablished."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-6775c1a81d18",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-e009edb594bcac"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "SemiAnalysis believes AI spend on chip design will start ramping meaningfully in 2027, calling it the next killer app after coding."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-092980dfc98f12"
+     ],
+     "original_date": "2026-11-02",
+     "period": "2027-2028",
+     "provenance": "FORECAST",
+     "text": "SemiAnalysis is building a demand model projecting OpenAI and Anthropic revenue in 2027 and 2028, closely tied to the domains selected for GDPx."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-38864f2aad8a7b"
+     ],
+     "original_date": "2026-11-02",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Chip design is the only GDPx domain with 3 contributing partners"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:48 UTC, analysed as of 2026-11-09, from a source published 2026-11-02; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-e009edb594bcac"
+    ],
+    "provenance": "FORECAST",
+    "step": "industry_shift",
+    "text": "AI spend on chip design starts ramping meaningfully in 2027 as a new killer application."
+   },
+   {
+    "claim_ids": [
+     "C-e009edb594bcac"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "Rising AI-assisted chip design demand would lift usage of EDA tooling and AI-for-chip-design vendors; magnitude unstated."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-6775c1a81d18",
+    "block_id": "b177",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-38864f2aad8a7b",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "chip design partners",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Chip design is the only domain where we have 3 partners who contributed tasks.",
+    "role": "supports",
+    "unit": "partners",
+    "value": 3.0,
+    "value_text": "3"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-6775c1a81d18",
+    "block_id": "b068",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-092980dfc98f12",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "SemiAnalysis is building a demand model projecting OpenAI and Anthropic revenue in 2027 and 2028, closely tied to the domains selected for GDPx.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027-2028",
+    "qualifiers": [
+     "OpenAI and Anthropic revenue"
+    ],
+    "quote": "a demand model we\u2019re building for Tokenomics subscribers which projects OpenAI and Anthropic revenue in 2027 and 2028",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-6775c1a81d18",
+    "block_id": "b178",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e009edb594bcac",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "SemiAnalysis believes AI spend on chip design will start ramping meaningfully in 2027, calling it the next killer app after coding.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "next killer app after coding"
+    ],
+    "quote": "We believe AI spend on chip design will start ramping meaningfully in 2027. It\u2019s the next \u201ckiller app\u201d after coding",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d512c158ae28e9",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "SemiAnalysis partnered with specialized RL environment startups",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author of GDPx benchmark and this newsletter"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-016bcdd59811d4",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "OpenAI\u2019s GDPval",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "Maker of GDPval benchmark and GPT-6 Astra models evaluated"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-409acceb6e3a4e",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "OpenAI and Anthropic generally dominate the top of the ranking",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "Maker of Opus/Claude models evaluated"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-71d0df02454b1d",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Gemini 4 Carbon is a real improvement from Google",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "Maker of Gemini models evaluated"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": "0001326801",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-3e5e54af1d3b02",
+     "name_as_written": "Meta",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page, but 1 8-A12B registration(s) fell between it and 2026-11-09 \u2014 undecidable here",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "METAM"
+      }
+     ],
+     "quote": "SpaceXAI, Meta, and open-weight models are all meaningfully behind",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Maker of models that trailed in GDPx ranking"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ca31e7c2e40f66",
+     "name_as_written": "SpaceXAI",
+     "other_securities": [],
+     "quote": "SpaceXAI, Meta, and open-weight models are all meaningfully behind",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "AI model maker trailing in GDPx ranking"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8b1602b37d85d4",
+     "name_as_written": "Fireworks",
+     "other_securities": [],
+     "quote": "we\u2019d like to thank Fireworks for providing inference for all the open source models",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Provided inference for open source models"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5cc29725a778bb",
+     "name_as_written": "Modal",
+     "other_securities": [],
+     "quote": "Modal for providing the sandbox infra needed to run our tasks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Provided sandbox infrastructure"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d321b580892ee3",
+     "name_as_written": "Extrapolate",
+     "other_securities": [],
+     "quote": "provided exclusively by Extrapolate",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "RSI task partner; neolab for data"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-030ba91485d349",
+     "name_as_written": "Beautiful Machines",
+     "other_securities": [],
+     "quote": "Beautiful Machines is an applied AI lab for hardware engineering",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Hardware design task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e184011f1abeec",
+     "name_as_written": "Arithmetic",
+     "other_securities": [],
+     "quote": "Arithmetic is an SF-based team of veteran cyber operators",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Cybersecurity task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-be76a28191d8f5",
+     "name_as_written": "LatchBio",
+     "other_securities": [],
+     "quote": "LatchBio builds benchmarks to measure how well frontier models do real biology",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Biology task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-36e68ea5f3cc8b",
+     "name_as_written": "Living Context",
+     "other_securities": [],
+     "quote": "Living Context transforms enterprise workflows into high-quality training and evaluation data",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Finance task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-cc58b199c114c2",
+     "name_as_written": "Chakra Labs",
+     "other_securities": [],
+     "quote": "provided exclusively by Chakra Labs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Legal task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7e5a0adea7fd1e",
+     "name_as_written": "Third Moment",
+     "other_securities": [],
+     "quote": "provided exclusively by Third Moment",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Quant trading task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5e960c9e0341dd",
+     "name_as_written": "Datacurve",
+     "other_securities": [],
+     "quote": "provided exclusively by Datacurve",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Software engineering task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-599c4da38f5c80",
+     "name_as_written": "Fleet",
+     "other_securities": [],
+     "quote": "provided exclusively by Fleet , an applied research lab which studies agent behavior",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Alignment task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d04a6359878ee6",
+     "name_as_written": "Arcverex",
+     "other_securities": [],
+     "quote": "Arcverex is an SF-based team of hardware engineers",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Chip design task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-17be7f7b3640c0",
+     "name_as_written": "ValenceForge",
+     "other_securities": [],
+     "quote": "ValenceForge is a nascent AI for materials science initiative",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Materials science task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9bd50c5f600e48",
+     "name_as_written": "Emulated",
+     "other_securities": [],
+     "quote": "Emulated builds post-training data and RL environments for AI R&D and science",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Materials science task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-35cb0a086c215a",
+     "name_as_written": "Hudson River Trading",
+     "other_securities": [],
+     "quote": "previously Head of Semi-systematic Options at Hudson River Trading",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Former employer of Third Moment co-founder"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-13574b71f7d441",
+     "name_as_written": "Jane Street",
+     "other_securities": [],
+     "quote": "former quant researchers and traders from Jane Street",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Former employer of Third Moment team"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-236cbf47256f42",
+     "name_as_written": "D. E. Shaw",
+     "other_securities": [],
+     "quote": "Hudson River Trading and D. E. Shaw",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Former employer of Third Moment team"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-cbfbecac4255f3",
+     "name_as_written": "xAI",
+     "other_securities": [],
+     "quote": "kickstarted RSI efforts at xAI in February 2026",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Former employer of Extrapolate CEO; maker of Grok models"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-53730fa5c85db8",
+     "name_as_written": "Scale AI",
+     "other_securities": [],
+     "quote": "firsthand experience from xAI, Scale AI, and Meta AI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Former employer of Extrapolate team"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a74f2d709373fb",
+     "name_as_written": "Neuralink",
+     "other_securities": [],
+     "quote": "prior experience at Neuralink, Diode Computers, and Cartesia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Former employer of Beautiful Machines founders"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e8c3e7d9a080cd",
+     "name_as_written": "Diode Computers",
+     "other_securities": [],
+     "quote": "Beautiful Machines partnered with Diode Computers on PCB tasks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Partner on PCB tasks"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-578e9344781e60",
+     "name_as_written": "Antmicro",
+     "other_securities": [],
+     "quote": "a 12-layer DDR5 memory tester from Antmicro",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Source of reference DDR5 tester board"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c08990bc759cdb",
+     "name_as_written": "Uncountable",
+     "other_securities": [],
+     "quote": "was an early employee at Uncountable",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Former employer of ValenceForge founder"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2b43a3d71a0155",
+     "name_as_written": "Wachtell",
+     "other_securities": [],
+     "quote": "senior-level partners at Wachtell and other large US law firms",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Source of Chakra legal experts"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": "0001045810",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-47f42e61dca9bf",
+     "name_as_written": "NVIDIA",
+     "other_securities": [],
+     "quote": "Engineers at NVIDIA, Qualcomm, and Apple",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Engineers consulted for Ergodex task sanity checks"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": "0000804328",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-11-04 (accession 0000804328-26-000128) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.0001 par value",
+       "ticker": "QCOM"
+      }
+     ],
+     "mention_id": "M-1632945861db05",
+     "name_as_written": "Qualcomm",
+     "other_securities": [],
+     "quote": "NVIDIA, Qualcomm, and Apple",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Engineers consulted for Ergodex task sanity checks"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": "0000320193",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-11-03 (accession 0000320193-26-000026) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.00001 par value per share",
+       "ticker": "AAPL"
+      }
+     ],
+     "mention_id": "M-760c471cf58eb4",
+     "name_as_written": "Apple",
+     "other_securities": [],
+     "quote": "NVIDIA, Qualcomm, and Apple",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Engineers consulted for Ergodex task sanity checks"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4cc619566a0a07",
+     "name_as_written": "Xilinx",
+     "other_securities": [],
+     "quote": "taken projects through tapeout at previous employers like Xilinx",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Former employer of Arcverex engineers"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9ce8e81dbd6b03",
+     "name_as_written": "IEX DEEP+",
+     "other_securities": [],
+     "quote": "built on the IEX DEEP+ event tape",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Order-book event tape used for quant trading tasks"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3d546d75b36c78",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "Luna and DeepSeek fight for the low end",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "model named as competing at the low end of the cost-performance frontier"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-040e991122cce8",
+     "name_as_written": "Cartesia",
+     "other_securities": [],
+     "quote": "prior experience at Neuralink, Diode Computers, and Cartesia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Prior employer of Beautiful Machines founders."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-fd572e3e44dc79",
+     "name_as_written": "SOLIDWORKS",
+     "other_securities": [],
+     "quote": "including SOLIDWORKS, Siemens Designcenter NX, Autodesk Fusion 360, KiCad, AMD Vivado, and the Cadence suite",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CAD software used in Beautiful Machines sandboxed task environments."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-58ec30f0fe64a2",
+     "name_as_written": "Siemens Designcenter NX",
+     "other_securities": [],
+     "quote": "SOLIDWORKS, Siemens Designcenter NX, Autodesk Fusion 360",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CAD/CAE software used in task environments."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1e7f6db3e1475b",
+     "name_as_written": "Autodesk Fusion 360",
+     "other_securities": [],
+     "quote": "Siemens Designcenter NX, Autodesk Fusion 360, KiCad",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CAD/CAM software used in task environments."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d7b12ae0130870",
+     "name_as_written": "KiCad",
+     "other_securities": [],
+     "quote": "Autodesk Fusion 360, KiCad, AMD Vivado",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Open-source PCB design software used in task environments."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7d2da1a88c7623",
+     "name_as_written": "AMD Vivado",
+     "other_securities": [],
+     "quote": "KiCad, AMD Vivado, and the Cadence suite",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "FPGA design software used in task environments."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f29c62f2ff74f6",
+     "name_as_written": "Cadence",
+     "other_securities": [],
+     "quote": "AMD Vivado, and the Cadence suite",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "EDA software suite used in task environments."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f52b119a0da1f7",
+     "name_as_written": "Haas",
+     "other_securities": [],
+     "quote": "on a Haas VF-2 with an indexed fourth axis",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "CNC machine (Haas VF-2) referenced in a CAM example task."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-01a9ed7966d0a1",
+     "name_as_written": "Brannock Capital",
+     "other_securities": [],
+     "quote": "Brannock Capital, a PE fund",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Fictional PE fund in the Living Context finance deal-world scenario (anonymized from a real transaction)."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0bfb973b2d1057",
+     "name_as_written": "Haverly Snack Company",
+     "other_securities": [],
+     "quote": "Haverly Snack Company, a family-owned snack manufacturer",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Fictional target company in the Living Context finance deal-world scenario."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b50905a61ecb6e",
+     "name_as_written": "Eakin Lowry",
+     "other_securities": [],
+     "quote": "Eakin Lowry is the sell-side banker",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Fictional sell-side banker in the Living Context finance deal-world scenario."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7a1a8222f1109a",
+     "name_as_written": "Marbury Kline",
+     "other_securities": [],
+     "quote": "Marbury Kline the accounting advisor",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Fictional accounting advisor in the Living Context finance deal-world scenario."
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1063f6edc64c93",
+     "name_as_written": "OpenROAD",
+     "other_securities": [],
+     "quote": "The founders made significant contributions to OpenROAD\u2014the leading OSS physical design stack.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "leading open-source physical design EDA stack Ergodex founders contributed to and benchmark against"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": "0000883241",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0000883241-26-000025) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock (par value of $0.01 per share)",
+       "ticker": "SNPS"
+      }
+     ],
+     "mention_id": "M-38d4402900cbb1",
+     "name_as_written": "Synopsys",
+     "other_securities": [],
+     "quote": "its tools work alongside flows built on Cadence, Synopsys and open-source EDA",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "commercial EDA vendor whose flows Ergodex tools work alongside"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b10cb6273c22df",
+     "name_as_written": "Innovus",
+     "other_securities": [],
+     "quote": "One Innovus run takes days to weeks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "proprietary physical design tool cited as too slow"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-13d9210800f45f",
+     "name_as_written": "UCSD",
+     "other_securities": [],
+     "quote": "researchers at UCSD, UCLA, ETH Zurich, and EPFL were consulted for input and sanity checks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "researchers consulted for Ergodex task input"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d3f3dbe8affa78",
+     "name_as_written": "UCLA",
+     "other_securities": [],
+     "quote": "researchers at UCSD, UCLA, ETH Zurich, and EPFL were consulted for input and sanity checks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "researchers consulted for Ergodex task input"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-004392a7cf6afd",
+     "name_as_written": "ETH Zurich",
+     "other_securities": [],
+     "quote": "researchers at UCSD, UCLA, ETH Zurich, and EPFL were consulted for input and sanity checks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "researchers consulted for Ergodex task input"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1b19973b2e6405",
+     "name_as_written": "EPFL",
+     "other_securities": [],
+     "quote": "researchers at UCSD, UCLA, ETH Zurich, and EPFL were consulted for input and sanity checks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "researchers consulted for Ergodex task input"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6aff3711d893df",
+     "name_as_written": "Fable",
+     "other_securities": [],
+     "quote": "Claude Opus and Fable were far behind at 0.135 and 0.07 respectively",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "AI model benchmarked on Ergodex ECO task"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-daa49703e2d033",
+     "name_as_written": "Kristen Severson",
+     "other_securities": [],
+     "quote": "Kristen Severson et al . found data features in the discharge voltage curves",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Researcher cited for 2019 battery cycle-life prediction work"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6e9ebb566cc7c1",
+     "name_as_written": "University of Pennsylvania",
+     "other_securities": [],
+     "quote": "thank George Hollyer at the University of Pennsylvania",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Acknowledged for advice and the STEM Bank TEM dataset"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6504f8aca669ff",
+     "name_as_written": "Stanford",
+     "other_securities": [],
+     "quote": "closed-loop optimization for batteries at Stanford",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Where ValenceForge founder previously worked on battery optimization"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-dc7ce427be8664",
+     "name_as_written": "Karapetyan et al.",
+     "other_securities": [],
+     "quote": "Emulated thanks Karapetyan et al. for publishing the data behind this task",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Authors of the Nature Communications 2026 paper whose data underlies Emulated's public transistor reconstruction task"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d3e2166a2dcb1a",
+     "name_as_written": "Nature Communications",
+     "other_securities": [],
+     "quote": "Nature Communications, 2026",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Journal that published the data behind Emulated's public task"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7068a7cceea642",
+     "name_as_written": "SEC EDGAR",
+     "other_securities": [],
+     "quote": "public sources such as SEC EDGAR filings",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Public filing source Chakra draws on to generate legal task documents"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8116502ebed1dc",
+     "name_as_written": "LightGBM",
+     "other_securities": [],
+     "quote": "crosses the spread when its LightGBM model predicts enough edge",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "gradient-boosting library used in the reference AAPL quant strategy"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": "0000002488",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-04 (accession 0000002488-26-000191) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "AMD"
+      }
+     ],
+     "mention_id": "M-da289acbb19b10",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "for AAPL, AMD, META and TSLA",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "stock whose order-book tape seeds quant trading tasks"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": "0001318605",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066775) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock",
+       "ticker": "TSLA"
+      }
+     ],
+     "mention_id": "M-bcd71706dd1f35",
+     "name_as_written": "TSLA",
+     "other_securities": [],
+     "quote": "for AAPL, AMD, META and TSLA",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "stock whose order-book tape seeds quant trading tasks"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f19c665e921971",
+     "name_as_written": "QQQ",
+     "other_securities": [],
+     "quote": "with QQQ for cross-asset signals",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "ETF used for cross-asset signals in quant tasks"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-ebb0d23596520b",
+     "name_as_written": "Aria",
+     "other_securities": [],
+     "quote": "Aria is a team of researchers and electrical engineers dedicated to achieving hardware RSI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Chip design task partner"
+    },
+    {
+     "article_id": "A-6775c1a81d18",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-823a0f5f439342",
+     "name_as_written": "Ergodex",
+     "other_securities": [],
+     "quote": "Ergodex builds RL environments and evals for chip design",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Chip design task partner"
+    }
+   ],
+   "sector_exposures": [],
+   "sectors": [
+    "chip design",
+    "EDA tooling"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027 ramp in AI chip-design spend [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-e009edb594bcac"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "Article asserts a 2027 ramp but offers no current dislocation or 12-month catalyst a buyer could act on now."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-e009edb594bcac"
+     ],
+     "provenance": "FORECAST",
+     "text": "If AI becomes superhuman at chip design, abstraction barriers in the design flow erode, expanding addressable automation of EDA/backend work."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-6975927886e213",
+      "C-e009edb594bcac"
+     ],
+     "provenance": "FORECAST",
+     "text": "GDPx shows models still fail chip-design verification, PPA and backend tasks, implying the capability needed to drive the 2027 spend ramp is not yet present."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-77926B9936: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift); no overlapping timeframe \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 21 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-6975927886e213"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "On Ergodex's vt01 chip backend task, GPT-6 Astra averaged 0.34, Claude Opus 0.135 and Fable 0.07."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Models continue to fail chip-design verification/PPA tasks in later GDPx versions"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No measurable chip-design AI spend ramp materializes in 2027"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No listed company named as beneficiary"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No sizing of chip-design AI spend or vendor revenue"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether current model failures resolve by 2027"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Model chip-design scores stay near current low levels"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI chip-design spend remains negligible into 2027"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed EDA / chip-design-tooling vendors and check whether consensus already prices a 2027 AI chip-design spend ramp."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Frontier models cross reliability thresholds on chip-design PPA/verification tasks"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Labs or EDA vendors announce AI chip-design spend commitments for 2027"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-e009edb594bcac: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; contested: 1 independent source(s) directly contradict it, against 1 supporting; retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-6775c1a81d18",
+    "authors": [
+     "Max Kan",
+     "Andrew Megalaa",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-e009edb594bcac",
+     "C-092980dfc98f12",
+     "C-38864f2aad8a7b",
+     "C-6975927886e213"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-02T01:51:42Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "GDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains",
+    "upstream_origins": [
+     "Ergodex",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/gdpx-measuring-frontier-model-capabilities",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "FILING_NAMES_OTHER",
+    "basis_note": "its revenue-source sentences name product sales \u2014 not licences and maintenance",
+    "basis_quote": [
+     "We primarily generate revenue from the sale of products (hardware and/or software), services, or a combination thereof."
+    ],
+    "basis_source": "10-K filed 2025-12-17 (0001601046-25-000127)",
+    "business": "electronic design, test and measurement software and instruments",
+    "direction": "positive",
+    "enrichment_id": "EC-6ce9fd5ffd4a74",
+    "evidence": "s03.1: Rising AI-assisted chip design demand would lift usage of EDA tooling and AI-for-chip-design vendors; magnitude unstated.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-02 (accession 0001601046-26-000036) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.01 per share",
+      "ticker": "KEYS"
+     }
+    ],
+    "name": "Keysight Technologies",
+    "rationale": "EDA and design-verification software (incl. acquired PathWave/EDA assets) would see rising usage as AI-assisted chip-design workflows expand.",
+    "registrant": "Keysight Technologies, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3823); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "electronic design automation and verification software",
+    "revenue_model": "licences",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-A90402AB3E",
+    "ticker_hint": "KEYS"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "engineering simulation software for chip, electronics and physics",
+    "direction": "positive",
+    "enrichment_id": "EC-84d17247752e28",
+    "evidence": "s03.1: Rising AI-assisted chip design demand would lift usage of EDA tooling and AI-for-chip-design vendors; magnitude unstated.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Ansys",
+    "rationale": "Semiconductor simulation tools (RedHawk, Totem) used in chip design would see higher demand as AI-assisted design volumes rise.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "semiconductor and electronics simulation software",
+    "revenue_model": "licences",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-A90402AB3E",
+    "ticker_hint": "ANSS"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names licences and maintenance",
+    "basis_quote": [
+     "We generate the majority of our revenue from customers who enter into license agreements, pursuant to which we receive royalty fees based on average selling price of the customer\u2019s Arm-based chip or a fixed fee per chip.",
+     "our revenue is earned as a percentage of the license fee received by Arm China, we categorize such revenue as our license revenue."
+    ],
+    "basis_source": "20-F filed 2026-05-26 (0001973239-26-000097)",
+    "business": "licenses CPU and chip IP cores for processor design",
+    "direction": "positive",
+    "enrichment_id": "EC-9e615b42b9de67",
+    "evidence": "s03.1: Rising AI-assisted chip design demand would lift usage of EDA tooling and AI-for-chip-design vendors; magnitude unstated.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Arm Holdings",
+    "rationale": "More chip-design activity lifts licensing and royalty demand for its IP, a core input to AI-assisted silicon design.",
+    "registrant": "ARM HOLDINGS PLC /UK",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['ARM'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "processor IP licensing and royalties",
+    "revenue_model": "licences",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-A90402AB3E",
+    "ticker_hint": "ARM"
+   }
+  ],
+  "created_at": "2026-11-09T14:57:38.922650Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-eb7e1ead11a2e8",
+  "thesis_id": "TH-A90402AB3E",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 15:21 UTC from the registry (ti-engine-5; run R-20261109T145909Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-6775c1a81d18",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.semicap_foundry"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:48:45.508071Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-02",
+     "latest_article_date": "2026-11-02",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Semiconductor equipment and foundry capacity",
+     "status": "ACTIVE",
+     "thesis_id": "TH-A90402AB3E",
+     "title": "AI chip-design spend ramps meaningfully in 2027 as next killer app after coding"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-e009edb594bcac"
+      ],
+      "provenance": "FORECAST",
+      "text": "SemiAnalysis believes AI spend on chip design will start ramping meaningfully in 2027, calling it the next killer app after coding, and overweighted the domain in GDPx."
+     },
+     {
+      "claim_ids": [
+       "C-e009edb594bcac",
+       "C-092980dfc98f12"
+      ],
+      "provenance": "FORECAST",
+      "text": "SemiAnalysis frames chip design as a near-term high-ROI AI deployment domain worth tracking via benchmarks and its revenue demand model."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article names no listed EDA or chip-design-tooling company and quantifies no revenue effect, so the investable link to public equities is unestablished."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-6775c1a81d18",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-e009edb594bcac"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "SemiAnalysis believes AI spend on chip design will start ramping meaningfully in 2027, calling it the next killer app after coding."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-092980dfc98f12"
+       ],
+       "original_date": "2026-11-02",
+       "period": "2027-2028",
+       "provenance": "FORECAST",
+       "text": "SemiAnalysis is building a demand model projecting OpenAI and Anthropic revenue in 2027 and 2028, closely tied to the domains selected for GDPx."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-38864f2aad8a7b"
+       ],
+       "original_date": "2026-11-02",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Chip design is the only GDPx domain with 3 contributing partners"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:48 UTC, analysed as of 2026-11-09, from a source published 2026-11-02; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-e009edb594bcac"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "AI spend on chip design starts ramping meaningfully in 2027 as a new killer application."
+     },
+     {
+      "claim_ids": [
+       "C-e009edb594bcac"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "Rising AI-assisted chip design demand would lift usage of EDA tooling and AI-for-chip-design vendors; magnitude unstated."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-6775c1a81d18",
+      "block_id": "b177",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-38864f2aad8a7b",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "chip design partners",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Chip design is the only domain where we have 3 partners who contributed tasks.",
+      "role": "supports",
+      "unit": "partners",
+      "value": 3.0,
+      "value_text": "3"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-6775c1a81d18",
+      "block_id": "b068",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-092980dfc98f12",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "SemiAnalysis is building a demand model projecting OpenAI and Anthropic revenue in 2027 and 2028, closely tied to the domains selected for GDPx.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027-2028",
+      "qualifiers": [
+       "OpenAI and Anthropic revenue"
+      ],
+      "quote": "a demand model we\u2019re building for Tokenomics subscribers which projects OpenAI and Anthropic revenue in 2027 and 2028",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-6775c1a81d18",
+      "block_id": "b178",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e009edb594bcac",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "SemiAnalysis believes AI spend on chip design will start ramping meaningfully in 2027, calling it the next killer app after coding.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "next killer app after coding"
+      ],
+      "quote": "We believe AI spend on chip design will start ramping meaningfully in 2027. It\u2019s the next \u201ckiller app\u201d after coding",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d512c158ae28e9",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "SemiAnalysis partnered with specialized RL environment startups",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of GDPx benchmark and this newsletter"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-016bcdd59811d4",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "OpenAI\u2019s GDPval",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "Maker of GDPval benchmark and GPT-6 Astra models evaluated"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-409acceb6e3a4e",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "OpenAI and Anthropic generally dominate the top of the ranking",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "Maker of Opus/Claude models evaluated"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-71d0df02454b1d",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Gemini 4 Carbon is a real improvement from Google",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "Maker of Gemini models evaluated"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": "0001326801",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-3e5e54af1d3b02",
+       "name_as_written": "Meta",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page, but 1 8-A12B registration(s) fell between it and 2026-11-09 \u2014 undecidable here",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "METAM"
+        }
+       ],
+       "quote": "SpaceXAI, Meta, and open-weight models are all meaningfully behind",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Maker of models that trailed in GDPx ranking"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ca31e7c2e40f66",
+       "name_as_written": "SpaceXAI",
+       "other_securities": [],
+       "quote": "SpaceXAI, Meta, and open-weight models are all meaningfully behind",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "AI model maker trailing in GDPx ranking"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8b1602b37d85d4",
+       "name_as_written": "Fireworks",
+       "other_securities": [],
+       "quote": "we\u2019d like to thank Fireworks for providing inference for all the open source models",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Provided inference for open source models"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5cc29725a778bb",
+       "name_as_written": "Modal",
+       "other_securities": [],
+       "quote": "Modal for providing the sandbox infra needed to run our tasks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Provided sandbox infrastructure"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d321b580892ee3",
+       "name_as_written": "Extrapolate",
+       "other_securities": [],
+       "quote": "provided exclusively by Extrapolate",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "RSI task partner; neolab for data"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-030ba91485d349",
+       "name_as_written": "Beautiful Machines",
+       "other_securities": [],
+       "quote": "Beautiful Machines is an applied AI lab for hardware engineering",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Hardware design task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e184011f1abeec",
+       "name_as_written": "Arithmetic",
+       "other_securities": [],
+       "quote": "Arithmetic is an SF-based team of veteran cyber operators",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Cybersecurity task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-be76a28191d8f5",
+       "name_as_written": "LatchBio",
+       "other_securities": [],
+       "quote": "LatchBio builds benchmarks to measure how well frontier models do real biology",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Biology task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-36e68ea5f3cc8b",
+       "name_as_written": "Living Context",
+       "other_securities": [],
+       "quote": "Living Context transforms enterprise workflows into high-quality training and evaluation data",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Finance task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-cc58b199c114c2",
+       "name_as_written": "Chakra Labs",
+       "other_securities": [],
+       "quote": "provided exclusively by Chakra Labs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Legal task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7e5a0adea7fd1e",
+       "name_as_written": "Third Moment",
+       "other_securities": [],
+       "quote": "provided exclusively by Third Moment",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Quant trading task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5e960c9e0341dd",
+       "name_as_written": "Datacurve",
+       "other_securities": [],
+       "quote": "provided exclusively by Datacurve",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Software engineering task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-599c4da38f5c80",
+       "name_as_written": "Fleet",
+       "other_securities": [],
+       "quote": "provided exclusively by Fleet , an applied research lab which studies agent behavior",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Alignment task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d04a6359878ee6",
+       "name_as_written": "Arcverex",
+       "other_securities": [],
+       "quote": "Arcverex is an SF-based team of hardware engineers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Chip design task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-17be7f7b3640c0",
+       "name_as_written": "ValenceForge",
+       "other_securities": [],
+       "quote": "ValenceForge is a nascent AI for materials science initiative",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Materials science task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9bd50c5f600e48",
+       "name_as_written": "Emulated",
+       "other_securities": [],
+       "quote": "Emulated builds post-training data and RL environments for AI R&D and science",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Materials science task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-35cb0a086c215a",
+       "name_as_written": "Hudson River Trading",
+       "other_securities": [],
+       "quote": "previously Head of Semi-systematic Options at Hudson River Trading",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Former employer of Third Moment co-founder"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-13574b71f7d441",
+       "name_as_written": "Jane Street",
+       "other_securities": [],
+       "quote": "former quant researchers and traders from Jane Street",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Former employer of Third Moment team"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-236cbf47256f42",
+       "name_as_written": "D. E. Shaw",
+       "other_securities": [],
+       "quote": "Hudson River Trading and D. E. Shaw",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Former employer of Third Moment team"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-cbfbecac4255f3",
+       "name_as_written": "xAI",
+       "other_securities": [],
+       "quote": "kickstarted RSI efforts at xAI in February 2026",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Former employer of Extrapolate CEO; maker of Grok models"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-53730fa5c85db8",
+       "name_as_written": "Scale AI",
+       "other_securities": [],
+       "quote": "firsthand experience from xAI, Scale AI, and Meta AI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Former employer of Extrapolate team"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a74f2d709373fb",
+       "name_as_written": "Neuralink",
+       "other_securities": [],
+       "quote": "prior experience at Neuralink, Diode Computers, and Cartesia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Former employer of Beautiful Machines founders"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e8c3e7d9a080cd",
+       "name_as_written": "Diode Computers",
+       "other_securities": [],
+       "quote": "Beautiful Machines partnered with Diode Computers on PCB tasks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Partner on PCB tasks"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-578e9344781e60",
+       "name_as_written": "Antmicro",
+       "other_securities": [],
+       "quote": "a 12-layer DDR5 memory tester from Antmicro",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Source of reference DDR5 tester board"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c08990bc759cdb",
+       "name_as_written": "Uncountable",
+       "other_securities": [],
+       "quote": "was an early employee at Uncountable",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Former employer of ValenceForge founder"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2b43a3d71a0155",
+       "name_as_written": "Wachtell",
+       "other_securities": [],
+       "quote": "senior-level partners at Wachtell and other large US law firms",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Source of Chakra legal experts"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": "0001045810",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-47f42e61dca9bf",
+       "name_as_written": "NVIDIA",
+       "other_securities": [],
+       "quote": "Engineers at NVIDIA, Qualcomm, and Apple",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Engineers consulted for Ergodex task sanity checks"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": "0000804328",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-11-04 (accession 0000804328-26-000128) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.0001 par value",
+         "ticker": "QCOM"
+        }
+       ],
+       "mention_id": "M-1632945861db05",
+       "name_as_written": "Qualcomm",
+       "other_securities": [],
+       "quote": "NVIDIA, Qualcomm, and Apple",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Engineers consulted for Ergodex task sanity checks"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": "0000320193",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-11-03 (accession 0000320193-26-000026) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.00001 par value per share",
+         "ticker": "AAPL"
+        }
+       ],
+       "mention_id": "M-760c471cf58eb4",
+       "name_as_written": "Apple",
+       "other_securities": [],
+       "quote": "NVIDIA, Qualcomm, and Apple",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Engineers consulted for Ergodex task sanity checks"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4cc619566a0a07",
+       "name_as_written": "Xilinx",
+       "other_securities": [],
+       "quote": "taken projects through tapeout at previous employers like Xilinx",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Former employer of Arcverex engineers"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9ce8e81dbd6b03",
+       "name_as_written": "IEX DEEP+",
+       "other_securities": [],
+       "quote": "built on the IEX DEEP+ event tape",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Order-book event tape used for quant trading tasks"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3d546d75b36c78",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "Luna and DeepSeek fight for the low end",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "model named as competing at the low end of the cost-performance frontier"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-040e991122cce8",
+       "name_as_written": "Cartesia",
+       "other_securities": [],
+       "quote": "prior experience at Neuralink, Diode Computers, and Cartesia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Prior employer of Beautiful Machines founders."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-fd572e3e44dc79",
+       "name_as_written": "SOLIDWORKS",
+       "other_securities": [],
+       "quote": "including SOLIDWORKS, Siemens Designcenter NX, Autodesk Fusion 360, KiCad, AMD Vivado, and the Cadence suite",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CAD software used in Beautiful Machines sandboxed task environments."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-58ec30f0fe64a2",
+       "name_as_written": "Siemens Designcenter NX",
+       "other_securities": [],
+       "quote": "SOLIDWORKS, Siemens Designcenter NX, Autodesk Fusion 360",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CAD/CAE software used in task environments."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1e7f6db3e1475b",
+       "name_as_written": "Autodesk Fusion 360",
+       "other_securities": [],
+       "quote": "Siemens Designcenter NX, Autodesk Fusion 360, KiCad",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CAD/CAM software used in task environments."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d7b12ae0130870",
+       "name_as_written": "KiCad",
+       "other_securities": [],
+       "quote": "Autodesk Fusion 360, KiCad, AMD Vivado",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Open-source PCB design software used in task environments."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d2da1a88c7623",
+       "name_as_written": "AMD Vivado",
+       "other_securities": [],
+       "quote": "KiCad, AMD Vivado, and the Cadence suite",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "FPGA design software used in task environments."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f29c62f2ff74f6",
+       "name_as_written": "Cadence",
+       "other_securities": [],
+       "quote": "AMD Vivado, and the Cadence suite",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "EDA software suite used in task environments."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f52b119a0da1f7",
+       "name_as_written": "Haas",
+       "other_securities": [],
+       "quote": "on a Haas VF-2 with an indexed fourth axis",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "CNC machine (Haas VF-2) referenced in a CAM example task."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-01a9ed7966d0a1",
+       "name_as_written": "Brannock Capital",
+       "other_securities": [],
+       "quote": "Brannock Capital, a PE fund",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Fictional PE fund in the Living Context finance deal-world scenario (anonymized from a real transaction)."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0bfb973b2d1057",
+       "name_as_written": "Haverly Snack Company",
+       "other_securities": [],
+       "quote": "Haverly Snack Company, a family-owned snack manufacturer",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Fictional target company in the Living Context finance deal-world scenario."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b50905a61ecb6e",
+       "name_as_written": "Eakin Lowry",
+       "other_securities": [],
+       "quote": "Eakin Lowry is the sell-side banker",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Fictional sell-side banker in the Living Context finance deal-world scenario."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7a1a8222f1109a",
+       "name_as_written": "Marbury Kline",
+       "other_securities": [],
+       "quote": "Marbury Kline the accounting advisor",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Fictional accounting advisor in the Living Context finance deal-world scenario."
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1063f6edc64c93",
+       "name_as_written": "OpenROAD",
+       "other_securities": [],
+       "quote": "The founders made significant contributions to OpenROAD\u2014the leading OSS physical design stack.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "leading open-source physical design EDA stack Ergodex founders contributed to and benchmark against"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": "0000883241",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0000883241-26-000025) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock (par value of $0.01 per share)",
+         "ticker": "SNPS"
+        }
+       ],
+       "mention_id": "M-38d4402900cbb1",
+       "name_as_written": "Synopsys",
+       "other_securities": [],
+       "quote": "its tools work alongside flows built on Cadence, Synopsys and open-source EDA",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "commercial EDA vendor whose flows Ergodex tools work alongside"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b10cb6273c22df",
+       "name_as_written": "Innovus",
+       "other_securities": [],
+       "quote": "One Innovus run takes days to weeks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "proprietary physical design tool cited as too slow"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-13d9210800f45f",
+       "name_as_written": "UCSD",
+       "other_securities": [],
+       "quote": "researchers at UCSD, UCLA, ETH Zurich, and EPFL were consulted for input and sanity checks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "researchers consulted for Ergodex task input"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d3f3dbe8affa78",
+       "name_as_written": "UCLA",
+       "other_securities": [],
+       "quote": "researchers at UCSD, UCLA, ETH Zurich, and EPFL were consulted for input and sanity checks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "researchers consulted for Ergodex task input"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-004392a7cf6afd",
+       "name_as_written": "ETH Zurich",
+       "other_securities": [],
+       "quote": "researchers at UCSD, UCLA, ETH Zurich, and EPFL were consulted for input and sanity checks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "researchers consulted for Ergodex task input"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1b19973b2e6405",
+       "name_as_written": "EPFL",
+       "other_securities": [],
+       "quote": "researchers at UCSD, UCLA, ETH Zurich, and EPFL were consulted for input and sanity checks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "researchers consulted for Ergodex task input"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6aff3711d893df",
+       "name_as_written": "Fable",
+       "other_securities": [],
+       "quote": "Claude Opus and Fable were far behind at 0.135 and 0.07 respectively",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "AI model benchmarked on Ergodex ECO task"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-daa49703e2d033",
+       "name_as_written": "Kristen Severson",
+       "other_securities": [],
+       "quote": "Kristen Severson et al . found data features in the discharge voltage curves",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Researcher cited for 2019 battery cycle-life prediction work"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6e9ebb566cc7c1",
+       "name_as_written": "University of Pennsylvania",
+       "other_securities": [],
+       "quote": "thank George Hollyer at the University of Pennsylvania",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Acknowledged for advice and the STEM Bank TEM dataset"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6504f8aca669ff",
+       "name_as_written": "Stanford",
+       "other_securities": [],
+       "quote": "closed-loop optimization for batteries at Stanford",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Where ValenceForge founder previously worked on battery optimization"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dc7ce427be8664",
+       "name_as_written": "Karapetyan et al.",
+       "other_securities": [],
+       "quote": "Emulated thanks Karapetyan et al. for publishing the data behind this task",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Authors of the Nature Communications 2026 paper whose data underlies Emulated's public transistor reconstruction task"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d3e2166a2dcb1a",
+       "name_as_written": "Nature Communications",
+       "other_securities": [],
+       "quote": "Nature Communications, 2026",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Journal that published the data behind Emulated's public task"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7068a7cceea642",
+       "name_as_written": "SEC EDGAR",
+       "other_securities": [],
+       "quote": "public sources such as SEC EDGAR filings",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Public filing source Chakra draws on to generate legal task documents"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8116502ebed1dc",
+       "name_as_written": "LightGBM",
+       "other_securities": [],
+       "quote": "crosses the spread when its LightGBM model predicts enough edge",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "gradient-boosting library used in the reference AAPL quant strategy"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": "0000002488",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-04 (accession 0000002488-26-000191) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-da289acbb19b10",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "for AAPL, AMD, META and TSLA",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "stock whose order-book tape seeds quant trading tasks"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": "0001318605",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066775) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock",
+         "ticker": "TSLA"
+        }
+       ],
+       "mention_id": "M-bcd71706dd1f35",
+       "name_as_written": "TSLA",
+       "other_securities": [],
+       "quote": "for AAPL, AMD, META and TSLA",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "stock whose order-book tape seeds quant trading tasks"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f19c665e921971",
+       "name_as_written": "QQQ",
+       "other_securities": [],
+       "quote": "with QQQ for cross-asset signals",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "ETF used for cross-asset signals in quant tasks"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-ebb0d23596520b",
+       "name_as_written": "Aria",
+       "other_securities": [],
+       "quote": "Aria is a team of researchers and electrical engineers dedicated to achieving hardware RSI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Chip design task partner"
+      },
+      {
+       "article_id": "A-6775c1a81d18",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-823a0f5f439342",
+       "name_as_written": "Ergodex",
+       "other_securities": [],
+       "quote": "Ergodex builds RL environments and evals for chip design",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Chip design task partner"
+      }
+     ],
+     "sector_exposures": [],
+     "sectors": [
+      "chip design",
+      "EDA tooling"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 ramp in AI chip-design spend [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-e009edb594bcac"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "Article asserts a 2027 ramp but offers no current dislocation or 12-month catalyst a buyer could act on now."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-e009edb594bcac"
+       ],
+       "provenance": "FORECAST",
+       "text": "If AI becomes superhuman at chip design, abstraction barriers in the design flow erode, expanding addressable automation of EDA/backend work."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-6975927886e213",
+        "C-e009edb594bcac"
+       ],
+       "provenance": "FORECAST",
+       "text": "GDPx shows models still fail chip-design verification, PPA and backend tasks, implying the capability needed to drive the 2027 spend ramp is not yet present."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-77926B9936: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift); no overlapping timeframe \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 21 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-6975927886e213"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "On Ergodex's vt01 chip backend task, GPT-6 Astra averaged 0.34, Claude Opus 0.135 and Fable 0.07."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Models continue to fail chip-design verification/PPA tasks in later GDPx versions"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No measurable chip-design AI spend ramp materializes in 2027"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No listed company named as beneficiary"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No sizing of chip-design AI spend or vendor revenue"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether current model failures resolve by 2027"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Model chip-design scores stay near current low levels"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI chip-design spend remains negligible into 2027"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed EDA / chip-design-tooling vendors and check whether consensus already prices a 2027 AI chip-design spend ramp."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Frontier models cross reliability thresholds on chip-design PPA/verification tasks"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Labs or EDA vendors announce AI chip-design spend commitments for 2027"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-e009edb594bcac: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; contested: 1 independent source(s) directly contradict it, against 1 supporting; retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-6775c1a81d18",
+      "authors": [
+       "Max Kan",
+       "Andrew Megalaa",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-e009edb594bcac",
+       "C-092980dfc98f12",
+       "C-38864f2aad8a7b",
+       "C-6975927886e213"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-02T01:51:42Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "GDPx: Measuring Frontier Model Capabilities Across the Most Valuable Domains",
+      "upstream_origins": [
+       "Ergodex",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/gdpx-measuring-frontier-model-capabilities",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "9dc7ffed6384f1eae77b169c84132b6cdce92175fb552fa6e040ceefb7115691",
+   "created_at": "2026-11-09T14:49:12.293122Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-e009edb594bcac: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; contested: 1 independent source(s) directly contradict it, against 1 supporting; retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-092980dfc98f12",
+       "C-38864f2aad8a7b",
+       "C-e009edb594bcac"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-e009edb594bcac"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 1 claim(s) whose window runs past them; 1 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "runs_past"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-e009edb594bcac",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-6975927886e213"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "1 material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 3 supporting; 1 independent contradicting source(s) vs 1 supporting",
+      "value": "contested"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-e009edb594bcac: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; contested: 1 independent source(s) directly contradict it, against 1 supporting; retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "window_runs_past",
+      "kind": "held",
+      "text": "near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-e009edb594bcac: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window"
+     },
+     {
+      "code": "no_exposure",
+      "kind": "held",
+      "text": "no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names)"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "contested",
+      "kind": "held",
+      "text": "contested: 1 independent source(s) directly contradict it, against 1 supporting"
+     },
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-A90402AB3E",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-6975927886e213"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The cited span supports the 2027 ramp and 'next killer app after coding', but the claim that SemiAnalysis 'overweighted the domain in GDPx' is not in the cited span.",
+  "s02.1": "The cited span supports the demand model projecting OpenAI and Anthropic revenue in 2027 and 2028, but 'closely tied to the domains selected for GDPx' is not supported by the cited span.",
+  "s07.0": "The cited span supports GPT-6 Astra 0.34, Claude Opus 0.135, Fable 0.07, but the claim's attribution to 'Ergodex's vt01 chip backend task' is not supported by the cited span.",
+  "s07.1": "The cited spans show one benchmark score (0.34 etc) and the 2027 forecast, but the broad claim that 'GDPx shows models still fail chip-design verification, PPA and backend tasks' is not supported by these two cited spans alone, and 'implying capability not yet present' overreaches."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Timing \u2014 its dated figures run past the next four quarters; a full-year or multi-quarter figure is not a 2-4-quarter window.",
+  "Exposure \u2014 the source names no company or sector as exposed.",
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Counter-evidence \u2014 independent sources directly contradict it, at least as many as support it.",
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {
+  "s06.1": "REVIEW_UNSUPPORTED \u2014 s06.1: UNSUPPORTED \u2014 The cited span only mentions AI spend ramping in 2027 as next killer app; nothing about AI becoming superhuman at chip design, abstraction barriers eroding, or expanding automation of EDA/backend work. | 'If AI becomes superhuman at chip design, abstraction barriers in the design flow erode, expanding ad'"
+ }
+}

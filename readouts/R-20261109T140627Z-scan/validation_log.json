@@ -1,0 +1,2422 @@
+[
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:27:17.089297Z",
+  "detail": "s06.0: Cited span supports that China's regulatory review is a central consideration, but 'the outcome hinges on' is a stronger framing than the span states; still reasonably anchored. | \"Near term, the outcome hinges on China's regulatory review of the deal.\"",
+  "issue_id": "VI-0065605c2b50a4",
+  "ref_id": "TH-34834776CF:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:54:30.127155Z",
+  "detail": "s07.2: first check REVIEW_PARTIAL (s07.2: The 'three-quarters under construction' claim is not in the cited spans (it is pool C-9d64d04600d729). The 1.5 GW of 20 GW and hyperscaler affordability ) \u2014 re-anchored to ; after re-anchoring: STILL UNSUPPORTED \u2014 withheld",
+  "issue_id": "VI-006ab92bd2179e",
+  "ref_id": "TH-EF9EABA05A:s07.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:51:17.408783Z",
+  "detail": "18 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: OpenAI's GDPval benchmark was released on September 25, 2025.; 71%; 35\u201350 minutes; 5.6 of 11; 18%; 76%; 8 hours; ~5%; ~62%; $880M; ~4000; pass@1; 2,520; 3; 10; 3; 5; 60 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-007eda3416f4d1",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:50:48.853065Z",
+  "detail": "s07.2: The cited span only supports that the QA process flags ~50% of Terminal Bench 4.0 tasks as broken / QA can be gamed. It does not support 'depends on self-selected private partners' or that rankings 'may not generalize' \u2014 those are added claims not in the cited span. | \"SemiAnalysis's benchmark results depend on its own QA process and self-selected private partners, an\"",
+  "issue_id": "VI-022df6a33a4468",
+  "ref_id": "TH-EBAB22460B:s07.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:51:17.411049Z",
+  "detail": "b173: '25' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Across a selection of 25 attempts, no model solved it.'",
+  "issue_id": "VI-0245e445d7d3a8",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:18:28.671823Z",
+  "detail": "s06.0: 'especially those exposed to Texas and Georgia' and 'affordability' not in cited span or pool. | 'AI-linked utilities, especially those exposed to Texas and Georgia, face near-term regulatory and af'",
+  "issue_id": "VI-0447e16ce105d6",
+  "ref_id": "TH-30F6348B8B:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:53:50.362022Z",
+  "detail": "text-credited author 'Dylan Patel' is not a verbatim span naming them ('The 2027 datacenter boom') \u2014 not added",
+  "issue_id": "VI-0454c409e454c2",
+  "ref_id": "A-0fa66c4ca86c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-11-09T14:24:05.855806Z",
+  "detail": "b2.k2_1: number check failed: value=397.0 value_text='397B' vs quote \u2014 quote 'It is an MoE transformer with 744B parameters'",
+  "issue_id": "VI-065af80ca1ce9c",
+  "ref_id": "C-14a64898b71bb0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:18.430313Z",
+  "detail": "s03.0: Cited spans support Democrats winning House and Senate and near-term uncertainty for AI-linked sectors, but 'raises likelihood of tougher scrutiny on new data center development, affordability and grid costs' specifics are not in the cited spans. | 'Democratic control of House and Senate raises likelihood of tougher scrutiny on new data center deve'",
+  "issue_id": "VI-08815d54e57def",
+  "ref_id": "TH-BAA07551ED:s03.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:51:17.411260Z",
+  "detail": "b357: '25' \u2014 a claim quotes it (C-0d72281232cc7a) but failed verification, so it is never used as evidence \u2014 sentence 'Across 25 runs of 5 x [GPT-6 Astra, Opus 5.5, Gemini 4 Argon, GLM 5.3, Gemini 3.8 Flash], no run passes, demonstrating capability gaps in solution completeness and accurate self-testing.'",
+  "issue_id": "VI-0bab1c0e7cc25e",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:12.292199Z",
+  "detail": "s07.1: The cited spans show one benchmark score (0.34 etc) and the 2027 forecast, but the broad claim that 'GDPx shows models still fail chip-design verification, PPA and backend tasks' is not supported by these two cited spans alone, and 'implying capability not yet present' overreaches. | 'GDPx shows models still fail chip-design verification, PPA and backend tasks, implying the capabilit'",
+  "issue_id": "VI-0c0df897b08dd1",
+  "ref_id": "TH-A90402AB3E:s07.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:33:20.264907Z",
+  "detail": "s03.1: The sentence claims shipments of switches, NICs/DPUs and transceivers are lifted, but the cited spans are revenue figures, not shipment figures; also NICs/DPUs not named in cited span. Overstates as shipment increases. | 'Higher deployment volumes and bandwidth upgrades lift shipments of switches, NICs/DPUs and transceiv'",
+  "issue_id": "VI-0dc1a3ddda905b",
+  "ref_id": "TH-921772E86C:s03.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:25:17.635777Z",
+  "detail": "b051: '397B' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Qwen3.5 397B AgentX'",
+  "issue_id": "VI-0fa9a6d4cfdae9",
+  "ref_id": "A-866829df2ed0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-11-09T14:24:05.859749Z",
+  "detail": "h1 Google TPU closes inference gap on NVIDIA GPUs in  cites ['C-c76cb54a24b837', 'C-c58183a4c223ef'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-0fc2b5c31e7a2b",
+  "ref_id": "h1 Google TPU closes inference gap on NVIDIA GPUs in ",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:17:00.033972Z",
+  "detail": "k4: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-107db3e15d6e98",
+  "ref_id": "C-cee15ab7c61c12",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:51:17.402065Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: Cited span only supports RSI being an important capability; it does not say models 'still struggle to diagnose training failures' or that 'the loop is no) \u2014 re-anchored to C-642a7752a6ba79; after re-anchoring: supported",
+  "issue_id": "VI-1081af60fe80cb",
+  "ref_id": "TH-61104CD5A3:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617706Z",
+  "detail": "s07.15: 'Rubin NVL72 up to 6x better perf per dollar than TPUv7' is supported, but the 'comparison SemiAnalysis calls unfair' qualifier is not in the cited span. | 'In a comparison SemiAnalysis calls unfair, Rubin NVL72 is up to 6x better perf per dollar than TPUv7'",
+  "issue_id": "VI-118774f6b48de1",
+  "ref_id": "TH-F2CD2F7AFC:s07.15",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:50:48.853029Z",
+  "detail": "s02.3: 98%/87% and 200 runs are supported, but the attribution to 'Fleet cyber alignment tasks' is not in the cited spans. | 'On Fleet cyber alignment tasks (200 runs), 98% broke at least one behavior rule and 87% broke a rule'",
+  "issue_id": "VI-12786cc1d2dd45",
+  "ref_id": "TH-EBAB22460B:s02.3",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:31:20.929543Z",
+  "detail": "s01.1: first check REVIEW_PARTIAL (s01.1: The cited span supports only 'Tesla will likely become more than a BESS merchant.' The claim about SpaceX solving power-on-the-fly by orchestrating gas a) \u2014 re-anchored to C-79125074146736; after re-anchoring: supported",
+  "issue_id": "VI-141e2d403b6fce",
+  "ref_id": "TH-8D294751AD:s01.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-11-09T14:49:57.112395Z",
+  "detail": "s07.3: UNSUPPORTED \u2014 The cited span is about QA flagging nearly 50% of Terminal Bench 4.0 tasks as broken; it does not state that QA can be gamed with iteration or that many prominent vendors failed first-try QA, nor the inference about uneven moats. Labelled MEASURED OBSERVATION but states an interpretation not in the span. | 'QA can be gamed with iteration and many prominent vendors failed first-try QA, implying quality/moat'",
+  "issue_id": "VI-16a59e52f5512c",
+  "ref_id": "TH-C1889ABBA5:s07.3",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:54:30.126835Z",
+  "detail": "s07.2: The 'three-quarters under construction' claim is not in the cited spans (s07.2 cites only the 1.5/20 GW and hyperscaler spans). That fact is in pool C-9d64d04600d729. | 'Much of the 2027 pipeline already has a head start (three-quarters under construction), moratoriums '",
+  "issue_id": "VI-16aa6ac0182556",
+  "ref_id": "TH-EF9EABA05A:s07.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:33:20.270347Z",
+  "detail": "b001: '24%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'AI Networking and Interconnect Market Projected to Reach US$279.8 Billion in 2027, with Scale-Up Share Rising to 24%, Says TrendForce'",
+  "issue_id": "VI-16cb401de4361c",
+  "ref_id": "A-7919ae735f5c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:18.430321Z",
+  "detail": "s06.0: Cited spans support hyperscalers having the edge and the ~9pp record spread, but 'secured power and customers' and 'as investors reprice regulatory risk' go beyond the cited spans. | 'Hyperscalers with existing compute, secured power and customers are better positioned than build-out'",
+  "issue_id": "VI-16dc83f669622d",
+  "ref_id": "TH-BAA07551ED:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:31:20.934067Z",
+  "detail": "2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 3k workers per GW; well over 1GW \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-173f97ff1fc1ca",
+  "ref_id": "A-21b63fc0c413",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:17:59.518488Z",
+  "detail": "s06.7: first check REVIEW_PARTIAL (s06.7: The claim about 'scale of economic growth limiting willingness to curb development' matches C-b8ad332c72bb41, not the cited C-81ed4982c3222a which covers) \u2014 re-anchored to C-b8ad332c72bb41; after re-anchoring: supported",
+  "issue_id": "VI-1815134ed53aed",
+  "ref_id": "TH-0F1BABEC2D:s06.7",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:50:48.853430Z",
+  "detail": "s07.3: first check NUMBER_NOT_IN_CITED_CLAIMS (s07.3 prints '200', which none of its cited claims carry: 'Alignment tasks show near-universal rule-breaking by frontier models in cyber, insurance and healthc') \u2014 re-anchored to C-41e292351beb7e; after re-anchoring: supported",
+  "issue_id": "VI-1aab150ef4c89a",
+  "ref_id": "TH-EBAB22460B:s07.3",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:27:17.089290Z",
+  "detail": "s03.0: Cited spans mention DSPs and EML/CW laser sources but not 'InP' lasers specifically, and do not mention owning Cloud Light / a competing module maker. The InP detail is in pool C-ec24f98b2639ef but Cloud Light ownership is not in the pool at all. | 'Merged company controls critical DSP and InP laser inputs on which Chinese module makers depend, and'",
+  "issue_id": "VI-1c01039affb73b",
+  "ref_id": "TH-34834776CF:s03.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:18.430329Z",
+  "detail": "s07.0: Cited span supports near-term uncertainty for sectors like utilities, but 'especially those exposed to fast-growing markets like Texas and Georgia' is not in the cited span. | 'Democratic gains create near-term uncertainty for sectors that trade in line with AI developments, l'",
+  "issue_id": "VI-1e089c885d31e3",
+  "ref_id": "TH-BAA07551ED:s07.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:33:20.264922Z",
+  "detail": "s06.1: Line carries FORECAST label; the September 2026 collaboration and ECOC 2026 demonstration are MEASURED OBSERVATIONS \u2014 but the weakest label among cited is actually MEASURED OBSERVATION/FORECAST, and FORECAST is being applied to observed facts, making the label stronger than content for those observations. Content itself is supported. | 'September 2026 Advantest-VIAVI-SENKO collaboration and ECOC 2026 demonstration show near-term platfo'",
+  "issue_id": "VI-1e32eb0342fab2",
+  "ref_id": "TH-921772E86C:s06.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:54:30.126775Z",
+  "detail": "s01.1: Cited spans say the biggest risk is a prolonged TCEQ freeze and that moratoriums can block projects needing approval; they do not support 'tells subscribers which companies are most at risk' or 'directs research to identify which real campuses still need approval.' Overstated. | 'The article tells subscribers which companies are most at risk from the current pause and directs re'",
+  "issue_id": "VI-1e93610e6a54f9",
+  "ref_id": "TH-EF9EABA05A:s01.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "ANSWER_SALVAGED",
+  "created_at": "2026-11-09T14:10:19.399407Z",
+  "detail": "extraction: hypotheses: 4,441 characters of text where a list belongs, not valid JSON (Expecting property name enclosed in double quotes, character 777) \u2014 RECOVERED by deletion only: deleted an unkeyed object at characters 777\u20131,022 (245 characters; it began '{\"text\": \"Private ownership and a sharpened focus could help Cree LED gain lighting LED sh'); its 1 item(s) validated one by one",
+  "issue_id": "VI-1ec6153e01ae9b",
+  "ref_id": "A-8a91593e2851",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617689Z",
+  "detail": "s07.12: 3.5x GB200 FP4 at 100 tok/s/user supported, but 'GLM-5.3' model scope is not in the cited span. | 'On GLM-5.3 at 100 tok/s/user, GB200 FP4 delivers 3.5x the tokens per dollar of TPUv7.'",
+  "issue_id": "VI-207d3a7b2cbab5",
+  "ref_id": "TH-F2CD2F7AFC:s07.12",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-11-09T14:51:17.401773Z",
+  "detail": "s07.0: UNSUPPORTED \u2014 The cited span only says RSI is an important capability to evaluate as labs approach superintelligence. It does not support that existing RSI benchmarks only test narrow toy problems, nor that models failed to diagnose a known harness bug on GDPx's RSI tasks. | \"Existing RSI benchmarks only test narrow model-training on toy problems, and models on GDPx's RSI ta\"",
+  "issue_id": "VI-20b65583c9286c",
+  "ref_id": "TH-61104CD5A3:s07.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "PARTIAL_RETRIEVAL",
+  "created_at": "2026-11-09T14:53:50.363832Z",
+  "detail": "only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "issue_id": "VI-21db7dd7a77404",
+  "ref_id": "A-0fa66c4ca86c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "PARTIAL_RETRIEVAL",
+  "created_at": "2026-11-09T14:48:40.309457Z",
+  "detail": "only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "issue_id": "VI-23f5eeb83b147a",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SAME_KEY_IN_ARTICLE",
+  "created_at": "2026-11-09T14:24:08.043378Z",
+  "detail": "2 hypotheses share one identity key in one article \u2014 merged as one thesis contribution: \u201cGoogle TPU closes inference gap on NVIDIA GPUs in agentic workloads\u201d (kept); \u201cAMD gains AI-inference ecosystem momentum via open-source maintainer access and fast feature merges\u201d (merged with h1 \u201cGoogle TPU closes inference gap on NVIDIA GPUs in agentic workloads\u201d under one identity key \u2014 0 supporting claim(s) shared, 3 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis)",
+  "issue_id": "VI-25d3704d525772",
+  "ref_id": "ai_infrastructure.compute_semis|competitive_share_shift|positive|Global",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "ANSWER_SALVAGED",
+  "created_at": "2026-11-09T14:10:19.398995Z",
+  "detail": "extraction: the answer failed its schema at the top level (hypotheses: Input should be a valid list) \u2014 salvaged field by field",
+  "issue_id": "VI-26a701780f5a22",
+  "ref_id": "A-8a91593e2851",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:53:50.361935Z",
+  "detail": "text-credited author 'Maya Barkin' is not a verbatim span naming them ('The 2027 datacenter boom') \u2014 not added",
+  "issue_id": "VI-280cb9c2df88c7",
+  "ref_id": "A-0fa66c4ca86c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:50:48.853005Z",
+  "detail": "s02.2: Cited span supports '70 of 111 graded runs did worse than reference strategy' but does not attribute it to 'Third Moment quant trading tasks' \u2014 that attribution is not in the cited span. | 'On Third Moment quant trading tasks, 70 of 111 graded runs did worse than the reference strategy.'",
+  "issue_id": "VI-2a5ad1666ee639",
+  "ref_id": "TH-EBAB22460B:s02.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-11-09T14:53:50.361883Z",
+  "detail": "h1 State-level permitting freezes and midterm outcome cites c1, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-2b544db2e0ab7a",
+  "ref_id": "h1 State-level permitting freezes and midterm outcome",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:25:17.634166Z",
+  "detail": "propositions merged: \u201cAMD gains AI-inference ecosystem momentum via open-source maintainer access and fast feature merges\u201d \u2014 merged with h1 \u201cGoogle TPU closes inference gap on NVIDIA GPUs in agentic workloads\u201d under one identity key \u2014 0 supporting claim(s) shared, 3 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+  "issue_id": "VI-2c8a681594793d",
+  "ref_id": "A-866829df2ed0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:18.430276Z",
+  "detail": "s01.1: The cited spans say hyperscalers with existing projects have the edge and investment is expected to continue, but 'secured power and established customers' and 'parts of the tech trade reliant on incremental build-out' go beyond the cited spans' content. | 'The publisher says companies with operational data centers, secured power and established customers '",
+  "issue_id": "VI-2e13f017992d0e",
+  "ref_id": "TH-BAA07551ED:s01.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-11-09T14:54:12.371371Z",
+  "detail": "s06.0 prints '2028', which none of its cited claims carry: 'The Nov. 3 governor, legislature and utility-commission races and the TCEQ/ERCOT timeline are near-t'",
+  "issue_id": "VI-2ecc5f0fdd2130",
+  "ref_id": "TH-EF9EABA05A:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:18.430288Z",
+  "detail": "s02.1: The cited span supports Democrats winning both House and Senate, but 'setting up gridlock with a Republican president' is not in the cited span. | 'In the 2026 US midterm elections the Democratic party won control of both the House and the Senate, '",
+  "issue_id": "VI-317dbd3faf0840",
+  "ref_id": "TH-BAA07551ED:s02.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:25:17.636258Z",
+  "detail": "b053: '397B' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence \"NVIDIA may try to claim that it doesn't care about the Qwen3.5 397B model, but from analyzing our upstream InferenceX submission analytics datalake, the reality is that NVIDIA has spent over 20% of the sweep GPU hours on Qwen3.5 for certain\"",
+  "issue_id": "VI-31b025e4be30fd",
+  "ref_id": "A-866829df2ed0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:18.430248Z",
+  "detail": "s01.0: The cited spans support the ~9pp spread on Nov 4 and that hyperscalers have the edge, but 'After Democratic midterm gains raised the likelihood of tougher data center scrutiny' is not supported by the cited C-d949f4c97f4235 (which only states Democrats gained control) \u2014 the 'raised likelihood of tougher scrutiny' causal framing is not in the cited spans. | 'After Democratic midterm gains raised the likelihood of tougher data center scrutiny, the hyperscale'",
+  "issue_id": "VI-31e6f9a3a4b2c8",
+  "ref_id": "TH-BAA07551ED:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:53:50.361745Z",
+  "detail": "h1 State-level permitting freezes and midterm outcome: sector exposure 'datacenters' is not a verbatim span naming it ('these campuses visible') \u2014 dropped",
+  "issue_id": "VI-324dcb1abb0b3a",
+  "ref_id": "h1 State-level permitting freezes and midterm outcome",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "COMPLETENESS_IN_PARTS",
+  "created_at": "2026-11-09T14:48:40.262996Z",
+  "detail": "part 3: recovered 10 claim(s), 4 mention(s), 0 risk(s), 0 hypothesis(-es), 2 addition(s) to hypotheses, 22 figure and 28 paragraph review(s) field by field from its malformed answer \u2014 not shown to later parts, so their requests stay exactly as paid; re-ask only this part with `reask-part`",
+  "issue_id": "VI-352cdf49662d78",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:33:20.264879Z",
+  "detail": "s01.2: Switches cited as US$105bn (nearly 38%) but the sentence states 'switches at US$105bn' which is supported; however it lists 'NICs/DPUs at US$57.4bn' from a span reading 'these products... US$57.4 billion' which doesn't name NICs/DPUs in the cited span. The NICs/DPU identity is not established by the cited spans. | '\u27e8update 2026-11-02 \u00b7 TrendForce\u27e9 TrendForce forecasts the AI networking and interconnect market to g'",
+  "issue_id": "VI-37a3a5e2e43a3c",
+  "ref_id": "TH-921772E86C:s01.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:14:30.139304Z",
+  "detail": "s03.0: first check REVIEW_UNSUPPORTED (s03.0: UNSUPPORTED \u2014 Cited span says only that it is too early to say whether vertical integration will become a meaningful advantage. The sentence asserts powe) \u2014 re-anchored to C-e4952f6e390699; after re-anchoring: supported",
+  "issue_id": "VI-3843ee58ec2868",
+  "ref_id": "TH-8178B565CB:s03.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-11-09T14:48:40.271374Z",
+  "detail": "b2.k2_9: number check failed: value=0.0 value_text='none' vs quote \u2014 quote 'Across 12 rollouts of 3 x [GPT-6 Astra, Opus 5.5, Grok 4.7, GLM 5.3] none achiev'",
+  "issue_id": "VI-3922f08576eb6d",
+  "ref_id": "C-a76157966b8568",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:50:48.853439Z",
+  "detail": "s07.4: first check REVIEW_PARTIAL (s07.4: Cited C-05fb58c96dc1cf supports 'the other 54 committing a critical violation' (insurance 54 runs plausible with C-62f99ad7eef71f's 'only 6 scoring above) \u2014 re-anchored to C-239cd3523a8329; after re-anchoring: supported",
+  "issue_id": "VI-3a99362f5a7d2a",
+  "ref_id": "TH-EBAB22460B:s07.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:50:48.853078Z",
+  "detail": "s07.4: 54 of 60 runs critical violation (3 tasks, 60 runs) and all 20 cyber attempts are supported, but '54 of 60 runs' attribution to insurance is not in cited spans, and the healthcare domain claim relies on the '6 scoring above 0' span without domain context. 'Insurance' label not supported by cited spans. | \"In Fleet's alignment evaluations, frontier models committed critical violations at high rates across\"",
+  "issue_id": "VI-3aad11a39ac48f",
+  "ref_id": "TH-EBAB22460B:s07.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:53:50.362002Z",
+  "detail": "text-credited author 'Jeremie Eliahou Ontiveros' is not a verbatim span naming them ('The 2027 datacenter boom') \u2014 not added",
+  "issue_id": "VI-3ab3b8def255d3",
+  "ref_id": "A-0fa66c4ca86c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:14:30.138749Z",
+  "detail": "s02.0: Cited span does not attribute the wind farms to 'Galaxy'; the name is not in the cited span. | \"Galaxy's wind farms have 420MW combined capacity, about 1.75x the 240MW datacenter load\"",
+  "issue_id": "VI-3ab61b161ef762",
+  "ref_id": "TH-8178B565CB:s02.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "MALFORMED_ITEM_DROPPED",
+  "created_at": "2026-11-09T14:24:05.847199Z",
+  "detail": "completeness pass: part 2: block_reviews: b074 is not a gap of this part \u2014 verdict ignored",
+  "issue_id": "VI-3ac6349f85c569",
+  "ref_id": "A-866829df2ed0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:48:40.289721Z",
+  "detail": "text-credited author 'Max Kan' is not a verbatim span naming them ('Andrew and Max\u2019s previous experience co-founding an RL environment startup') \u2014 not added",
+  "issue_id": "VI-3afb4425393e8f",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:25:17.618438Z",
+  "detail": "s01.2: first check REVIEW_PARTIAL (s01.2: Label MEASURED OBSERVATION but the sentence makes a sweeping characterization ('competitive or superior ... across four models') and adds the customer-wi) \u2014 re-anchored to C-bb10099d468bb8; after re-anchoring: supported",
+  "issue_id": "VI-3d6a4278746f43",
+  "ref_id": "TH-F2CD2F7AFC:s01.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-11-09T14:53:50.350599Z",
+  "detail": "c1: number check failed: value=75.0 value_text='three-quarters' vs quote \u2014 quote 'Roughly three-quarters of the 33.8 GW due across our top 20 states is already un'",
+  "issue_id": "VI-3f4d569c0286bb",
+  "ref_id": "C-9d64d04600d729",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617695Z",
+  "detail": "s07.13: 'GB300 FP4 now leads by 1.5x to 2.6x after four NVIDIA refreshes' is supported; the 'on Kimi K3' model scope is not in the cited span. | 'After four NVIDIA refreshes, GB300 FP4 now leads TPUv7 by 1.5x to 2.6x on Kimi K3.'",
+  "issue_id": "VI-3f4d8d642fbddf",
+  "ref_id": "TH-F2CD2F7AFC:s07.13",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-11-09T14:50:28.167581Z",
+  "detail": "s06.1 prints '6', which none of its cited claims carry: 'Benchmark is intended to be living, re-tested every 3-6 months; the gap to enterprise-grade judgment'",
+  "issue_id": "VI-4013de347662ea",
+  "ref_id": "TH-EBAB22460B:s06.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:49:57.112746Z",
+  "detail": "s06.2: first check REVIEW_PARTIAL (s06.2: Cited span only supports labs paying $5k+ per task; the claims about pushing knowledge boundaries, requiring scarce domain expertise, and entrenching ven) \u2014 re-anchored to C-60e3a8ba187e4f; after re-anchoring: supported",
+  "issue_id": "VI-40a7ae6e52f835",
+  "ref_id": "TH-C1889ABBA5:s06.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:27:17.089280Z",
+  "detail": "s01.1: Cited span says 'central consideration in China's regulatory review'; 'implying this could gate or condition the deal' is an added inference beyond the span, but the core TrendForce claim is supported. | 'TrendForce expects the competitive threat to Chinese optical module suppliers to be central to China'",
+  "issue_id": "VI-411fa92cc7e552",
+  "ref_id": "TH-34834776CF:s01.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:59.517862Z",
+  "detail": "s07.7: The inventory-overhang/earnings-slowdown-if-end-demand-falters portion is supported by C-e0d0632df981aa. But 'financing, regulatory and power constraints could make for a bumpy road for the AI trade' is not contained in the single cited span. | 'Financing, regulatory and power constraints could make for a bumpy road for the AI trade, with risk '",
+  "issue_id": "VI-421ad5c637ade9",
+  "ref_id": "TH-0F1BABEC2D:s07.7",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:51:17.401764Z",
+  "detail": "s06.0: Cited spans support that four models struggled, but do not say the models struggle 'to diagnose training failures' specifically nor that 'the loop is not yet operative'; the conclusion overstates the cited spans. | \"The article's RSI tasks show frontier models still struggle to diagnose training failures, so the lo\"",
+  "issue_id": "VI-461f447f074c4f",
+  "ref_id": "TH-61104CD5A3:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:17:00.031985Z",
+  "detail": "c7: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-4732bc373cb055",
+  "ref_id": "C-9fdfab456898b8",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:12.292147Z",
+  "detail": "s01.0: The cited span supports the 2027 ramp and 'next killer app after coding', but the claim that SemiAnalysis 'overweighted the domain in GDPx' is not in the cited span. | 'SemiAnalysis believes AI spend on chip design will start ramping meaningfully in 2027, calling it th'",
+  "issue_id": "VI-4747511e542c2b",
+  "ref_id": "TH-A90402AB3E:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:17:00.031776Z",
+  "detail": "c6: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-47590128153460",
+  "ref_id": "C-4f0091eda6257f",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:25:17.636709Z",
+  "detail": "b066: '112' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Speed comes from capping how many requests each decode host runs, from one at a time at the low-latency end up to 112 at the high-throughput end.'",
+  "issue_id": "VI-4876fca3c72a54",
+  "ref_id": "A-866829df2ed0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_LABEL_ONLY",
+  "created_at": "2026-11-09T14:19:24.821077Z",
+  "detail": "h1 High DRAM prices push budget smartphone brands to : sector exposure 'Semiconductors' rests only on a page label (b003, a paragraph that reads 'Semiconductors') \u2014 a category or tag names a sector, it does not say the sector is exposed; dropped",
+  "issue_id": "VI-490f31ff894ee1",
+  "ref_id": "h1 High DRAM prices push budget smartphone brands to ",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:25:17.618430Z",
+  "detail": "s01.0: first check REVIEW_PARTIAL (s01.0: Cited spans don't support the 'native PyTorch (TorchNeuron) experience on Trainium3' framing; the course-correction span is generic, and the MFU/throughp) \u2014 re-anchored to C-7a13343dc2f9ec; after re-anchoring: supported",
+  "issue_id": "VI-4a0c84ab6cc855",
+  "ref_id": "TH-F2CD2F7AFC:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:51:17.401729Z",
+  "detail": "s02.4: Cited span says 'Qasim and others'; card attributes the debugging to 'the Extrapolate team', which is not stated in the cited span. | 'During Grok 4.5 development, the Extrapolate team spent two weeks debugging a single large-scale RL '",
+  "issue_id": "VI-4a994caa93c8ff",
+  "ref_id": "TH-61104CD5A3:s02.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-11-09T14:26:52.372706Z",
+  "detail": "c4: number check failed: value=8.0 value_text='eighth' vs quote \u2014 quote 'Marvell and Lumentum\u2019s market revenue will rank fourth and eighth, respectively,'",
+  "issue_id": "VI-4e39b20fd846e8",
+  "ref_id": "C-6872362178683f",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-11-09T14:24:41.879928Z",
+  "detail": "s07.16 prints '100', which none of its cited claims carry: 'The stack still has real friction (long compile times, missing TokenSwitch/MXFP8 support, <100% QA p'",
+  "issue_id": "VI-4e3ec219ff51bc",
+  "ref_id": "TH-F2CD2F7AFC:s07.16",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:51:17.401753Z",
+  "detail": "s02.5: Cited span only mentions a large-scale GRPO run with ~1,000 rollouts; it does not say 'Extrapolate recreated an RSI task'. | 'Extrapolate recreated an RSI task using a large-scale GRPO run with approximately 1,000 rollouts on '",
+  "issue_id": "VI-4f7dacda7b942e",
+  "ref_id": "TH-61104CD5A3:s02.5",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:27:17.094614Z",
+  "detail": "2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: fourth; eighth \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-50b1055bd18b97",
+  "ref_id": "A-1c3293a20c1e",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:57.112408Z",
+  "detail": "s07.6: The cited span supports QA flagging nearly 50% of Terminal Bench tasks as broken, but the claims about self-selected private partners, QA being gameable, and rankings not generalizing are not in the cited span. | \"SemiAnalysis's benchmark results depend on its own QA process and self-selected private partners, an\"",
+  "issue_id": "VI-519f817bf6b3ec",
+  "ref_id": "TH-C1889ABBA5:s07.6",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:30:55.609017Z",
+  "detail": "s06.0: Sentence names 'Project SPAM, Gun Range, Starbase' but cited spans only cover Gun Range (~4 months) and MiniHard substation (Dec 31 2026) plus an Oct 5 2026 start date; 'Project SPAM' and 'Starbase' are not in the cited spans. | 'Multiple sites (Project SPAM, Gun Range, Starbase) are targeting online dates and completion within '",
+  "issue_id": "VI-51c8909e4f4f04",
+  "ref_id": "TH-95AEE030DA:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:11:06.146913Z",
+  "detail": "s07.0: The cited span supports uncertainty on integration/pricing/R&D, but does not state that Transom 'brings carve-out experience'; that claim is unsupported by the cited span. | 'Transom brings carve-out experience, but its integration approach, future pricing strategies, and lo'",
+  "issue_id": "VI-51dc7df5104eb2",
+  "ref_id": "TH-92F9F0F899:s07.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:18:28.671769Z",
+  "detail": "s01.0: Cited spans support Democratic control and near-term uncertainty for AI-linked utilities, but 'especially those exposed to Texas and Georgia' is not in the cited spans or anywhere in the pool. | 'Democratic midterm gains increase the likelihood of tougher scrutiny on electricity affordability an'",
+  "issue_id": "VI-5293b4bf978920",
+  "ref_id": "TH-30F6348B8B:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-11-09T14:48:40.289562Z",
+  "detail": "h3 Frontier models remain far from automating high-va cites b7.k7_13, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-52a499286b727c",
+  "ref_id": "h3 Frontier models remain far from automating high-va",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617700Z",
+  "detail": "s07.14: 'VR200 delivers 4.3x to 5.6x TPUv7' supported; 'on Kimi K3' model scope not in cited span. | 'VR200 delivers 4.3x to 5.6x the tokens per dollar of TPUv7 on Kimi K3.'",
+  "issue_id": "VI-53323e1564f7fd",
+  "ref_id": "TH-F2CD2F7AFC:s07.14",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:14:00.693881Z",
+  "detail": "text-credited author 'Everlyn Tan' is not a verbatim span naming them ('we visited one') \u2014 not added",
+  "issue_id": "VI-5462e01783a1e9",
+  "ref_id": "A-545af5c99a2f",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:17:59.518465Z",
+  "detail": "s02.2: first check REVIEW_PARTIAL (s02.2: Cited span says 'lowest point on the chart, just below 12' but does not identify the subject as the 25 largest US semiconductor companies; that scope com) \u2014 re-anchored to C-61ce37cea9e4c0; after re-anchoring: supported",
+  "issue_id": "VI-56310a2a9e7de5",
+  "ref_id": "TH-0F1BABEC2D:s02.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:25:17.618445Z",
+  "detail": "s06.2: first check REVIEW_PARTIAL (s06.2: Benchmarks, 93% pass rate, compile-time friction (27m17s) and the 2-orders-of-magnitude improvement target are supported, but 'broad library support' is ) \u2014 re-anchored to C-c43041301a37f3; after re-anchoring: supported",
+  "issue_id": "VI-580d9bc76bf064",
+  "ref_id": "TH-F2CD2F7AFC:s06.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617592Z",
+  "detail": "s01.0: The cited spans support MFU figures, 93% FlexAttention pass rate, SOTA profiler, and 'nowhere close to CUDA maturity.' But '30.47% MFU on Qwen3-32B' and '93% FlexAttention pass rate' \u2014 the 93% span (89/96 test cases) is not tied to FlexAttention in its cited span; FlexAttention pass rate is not explicitly supported by cited spans. The MFU figures come from Qwen3-32B training per cited span C-a0502962445309, so that part holds. | 'Amazon has made a major course correction toward a first-class native PyTorch (TorchNeuron) experien'",
+  "issue_id": "VI-5900a4976cdfc9",
+  "ref_id": "TH-F2CD2F7AFC:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-11-09T14:48:40.289522Z",
+  "detail": "h3 Frontier models remain far from automating high-va cites b2.k2_9, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-5942d4b4827527",
+  "ref_id": "h3 Frontier models remain far from automating high-va",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-11-09T14:54:12.371644Z",
+  "detail": "s06.1 prints '2027', which none of its cited claims carry: \"2028, not 2027, is the contested year: much of 2028's 62.2 GW is unstarted and concentrated in state\"",
+  "issue_id": "VI-59f08a9e666660",
+  "ref_id": "TH-EF9EABA05A:s06.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:14:44.716688Z",
+  "detail": "s06.0: Cited span says 'initial phase delivered in August 2026'; card says 'first phase delivered August 2026' which matches, but 'construction accelerating' is not stated in cited spans. | 'First phase delivered August 2026; construction accelerating across 22 projects with ~30,000 workers'",
+  "issue_id": "VI-5aa3468d742552",
+  "ref_id": "TH-6F2E7079B0:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:14:30.138784Z",
+  "detail": "s06.1: Cited span supports the 'too early / unproven' claim but not the EV-industry-playbook assertion, which is not in cited spans. | 'Over the longer term, owning more of the value chain is one way to differentiate in a competitive Ch'",
+  "issue_id": "VI-5b576d2092beb5",
+  "ref_id": "TH-8178B565CB:s06.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-11-09T14:49:12.292185Z",
+  "detail": "s06.1: UNSUPPORTED \u2014 The cited span only mentions AI spend ramping in 2027 as next killer app; nothing about AI becoming superhuman at chip design, abstraction barriers eroding, or expanding automation of EDA/backend work. | 'If AI becomes superhuman at chip design, abstraction barriers in the design flow erode, expanding ad'",
+  "issue_id": "VI-5da847866e1fb0",
+  "ref_id": "TH-A90402AB3E:s06.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:10:55.344508Z",
+  "detail": "c1: as-of 2026-11-04 not found in the cited source note \u2014 dropped",
+  "issue_id": "VI-5f61ca951dad87",
+  "ref_id": "C-560d34c2472a33",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SECTOR_LABEL_ONLY",
+  "created_at": "2026-11-09T14:48:40.289352Z",
+  "detail": "h3 Frontier models remain far from automating high-va: sector exposure 'Finance' rests only on a page label (b007, a list_item that reads 'Finance') \u2014 a category or tag names a sector, it does not say the sector is exposed; dropped",
+  "issue_id": "VI-60ae62646e8fcd",
+  "ref_id": "h3 Frontier models remain far from automating high-va",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:30:09.810443Z",
+  "detail": "h2 SpaceX's record BESS and behind-the-meter power de: sector exposure 'behind-the-meter power' is not a verbatim span naming it ('8GW+ of likely behind-the-meter capacity for SpaceX') \u2014 dropped",
+  "issue_id": "VI-635816cab0ad2c",
+  "ref_id": "h2 SpaceX's record BESS and behind-the-meter power de",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "PARTIAL_RETRIEVAL",
+  "created_at": "2026-11-09T14:14:00.696906Z",
+  "detail": "only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "issue_id": "VI-639e9241348c3e",
+  "ref_id": "A-545af5c99a2f",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:25:17.634658Z",
+  "detail": "9 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: over 20%; 8.6; 76%; 0.77x to 0.91x; 744B; $5 trillion; three months; 397B; 11.1 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-64777444a47f2a",
+  "ref_id": "A-866829df2ed0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:14:30.138774Z",
+  "detail": "s02.4: Cited span does not mention 'Chifeng'; location is not supported. | 'Envision built a 2GW off-grid wind/solar/storage system in Chifeng feeding a green ammonia plant'",
+  "issue_id": "VI-669ce7e7c89d39",
+  "ref_id": "TH-8178B565CB:s02.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:50:48.853414Z",
+  "detail": "s02.3: first check REVIEW_PARTIAL (s02.3: Cited C-091f121af71ba3 supports 98% broke at least one rule and 87% broke a severely misaligned rule. But '(200 runs)' is not in the cited span (98% bein) \u2014 re-anchored to C-41e292351beb7e; after re-anchoring: supported",
+  "issue_id": "VI-66cee8e8011387",
+  "ref_id": "TH-EBAB22460B:s02.3",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:30:55.609843Z",
+  "detail": "s07.0: first check REVIEW_PARTIAL (s07.0: Only ~13GW target (C-0a3561a3e67291) is cited. 'Private company', 'pushed back on as impossible' and 'TCEQ regulatory pauses' are not in the cited span. ) \u2014 re-anchored to C-31941e05c4e012; after re-anchoring: supported",
+  "issue_id": "VI-698cf48ff7116e",
+  "ref_id": "TH-95AEE030DA:s07.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:17:59.518474Z",
+  "detail": "s02.5: first check REVIEW_PARTIAL (s02.5: Span says 'peak of 22.5 times forward earnings in June' but does not attribute it to the MVIS US Listed Semiconductor Index; index attribution comes from) \u2014 re-anchored to C-29e10156b962c2; after re-anchoring: supported",
+  "issue_id": "VI-6c705ec65f3dd3",
+  "ref_id": "TH-0F1BABEC2D:s02.5",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:49:12.292477Z",
+  "detail": "s07.1: first check REVIEW_PARTIAL (s07.1: Labelled MEASURED OBSERVATION but the sentence draws an interpretation ('implying the capability needed to drive the 2027 spend ramp is not yet present')) \u2014 re-anchored to C-e009edb594bcac; after re-anchoring: supported",
+  "issue_id": "VI-6ca7f63a844ab0",
+  "ref_id": "TH-A90402AB3E:s07.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:24:05.854636Z",
+  "detail": "c28: quote found in b026, not the cited b028",
+  "issue_id": "VI-6d8f971f2ac637",
+  "ref_id": "C-81bf6db529c583",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-11-09T14:17:00.030736Z",
+  "detail": "c2: number check failed: value=-2.0 value_text='nearly 2%' vs quote \u2014 quote 'the outcome of the elections initially sent stock market futures plunging nearly'",
+  "issue_id": "VI-6daeba434bab08",
+  "ref_id": "C-e6d59d091237a2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:51:17.410623Z",
+  "detail": "b125: '12' \u2014 a claim quotes it (C-a76157966b8568) but failed verification, so it is never used as evidence \u2014 sentence 'Across 12 rollouts of 3 x [GPT-6 Astra, Opus 5.5, Grok 4.7, GLM 5.3] none achieved a verified full pass.'",
+  "issue_id": "VI-6f692f793a19d2",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:50:48.853058Z",
+  "detail": "s07.1: Same issue: 'cyber, biology and alignment' detail not in the cited span; 'refusals rather than pure capability limits' is a reasonable reading of sandbagging but the domain list is unsupported. | 'Safety classifiers sandbag scores in cyber, biology and alignment, so measured gaps partly reflect r'",
+  "issue_id": "VI-71e4294f41ff8c",
+  "ref_id": "TH-EBAB22460B:s07.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:14:44.722919Z",
+  "detail": "b011: '5MW' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'In one 5MW hall, we saw the 800V system at work.'",
+  "issue_id": "VI-726c12676ad8e0",
+  "ref_id": "A-545af5c99a2f",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-11-09T14:30:09.810572Z",
+  "detail": "h2 SpaceX's record BESS and behind-the-meter power de cites ['C-7aa58b9c302bbe', 'C-da9ae065596cf5'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-775631f87d8237",
+  "ref_id": "h2 SpaceX's record BESS and behind-the-meter power de",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:57.112347Z",
+  "detail": "s02.0: The cited span supports the demand model projecting OpenAI and Anthropic revenue in 2027 and 2028, but it does not state the model is 'closely tied to the domains selected for GDPx'. | 'SemiAnalysis is building a demand model projecting OpenAI and Anthropic revenue in 2027 and 2028, cl'",
+  "issue_id": "VI-7769b573003467",
+  "ref_id": "TH-C1889ABBA5:s02.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:54:30.126814Z",
+  "detail": "s03.0: Label is MEASURED OBSERVATION but the sentence asserts an interpretation ('Growing bipartisan anti-datacenter backlash drives permitting freezes... and campaign platforms'), stronger than the observational cited facts. Cited spans do support the TCEQ/Oregon freezes and the nine/11 nominee split. | 'Growing bipartisan anti-datacenter backlash drives permitting freezes (TCEQ, Oregon) and campaign pl'",
+  "issue_id": "VI-7795b4b0a39029",
+  "ref_id": "TH-EF9EABA05A:s03.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:14:44.716679Z",
+  "detail": "s03.0: 'fastest-growing datacenter region' is not in the cited spans; 25GW and labor are supported but the superlative is unsupported. | \"Inner Mongolia is China's fastest-growing datacenter region with 25GW announced projects and abundan\"",
+  "issue_id": "VI-797ff4c7c97989",
+  "ref_id": "TH-6F2E7079B0:s03.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-11-09T14:14:00.693497Z",
+  "detail": "h1 Vertically integrated energy-equipment firms win C cites c48, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-7b31219dd183a1",
+  "ref_id": "h1 Vertically integrated energy-equipment firms win C",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:18.430305Z",
+  "detail": "s02.3: Cited span supports hyperscalers having the edge, but 'because regulatory proposals target new developments, not existing ones' is an added rationale not in the cited span. | 'Companies with existing compute and data center projects, like the hyperscalers, have the edge becau'",
+  "issue_id": "VI-7bd48a13ed04ab",
+  "ref_id": "TH-BAA07551ED:s02.3",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SAME_KEY_IN_ARTICLE",
+  "created_at": "2026-11-09T14:33:00.266724Z",
+  "detail": "2 hypotheses share one identity key in one article \u2014 merged as one thesis contribution: \u201cAI networking and interconnect market grows ~95% CAGR, lifting switch, NIC and transceiver suppliers\u201d (kept); \u201cScale-up accelerator interconnect is fastest-growing segment, boosting copper cable and switch-tray demand\u201d (merged with h1 \u201cAI networking and interconnect market grows ~95% CAGR, lifting switch, NIC and transceiver suppliers\u201d under one identity key \u2014 2 supporting claim(s) shared, 2 its own)",
+  "issue_id": "VI-7c801654bfc5d1",
+  "ref_id": "ai_infrastructure.optical_networking|demand_volume_shift|positive|Global",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:18:28.672496Z",
+  "detail": "s01.1: first check REVIEW_PARTIAL (s01.1: Cited span only mentions near-term uncertainty for AI-linked utilities; the specific policy changes (grid-connection costs, tax exemptions, financial com) \u2014 re-anchored to C-8d47a1955681b5; after re-anchoring: supported",
+  "issue_id": "VI-7e12bc85a4810b",
+  "ref_id": "TH-30F6348B8B:s01.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:51:17.410813Z",
+  "detail": "b125: '3 x' \u2014 a claim quotes it (C-a76157966b8568) but failed verification, so it is never used as evidence \u2014 sentence 'Across 12 rollouts of 3 x [GPT-6 Astra, Opus 5.5, Grok 4.7, GLM 5.3] none achieved a verified full pass.'",
+  "issue_id": "VI-7fb8182b0a191b",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:50:48.853046Z",
+  "detail": "s06.1: Cited span only gives the 12% score. The claim that the benchmark is living and re-tested every 3-6 months is not in the cited span. | 'Benchmark is intended to be living, re-tested every 3-6 months; the gap to enterprise-grade judgment'",
+  "issue_id": "VI-81bda7b38016b8",
+  "ref_id": "TH-EBAB22460B:s06.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:30:55.609007Z",
+  "detail": "s03.1: Label is FORECAST but line mixes a MEASURED OBSERVATION (91 days/210MW, actual) and a forecast (~4-5 month greenfield). The '~4-5 month greenfield' blends ~5 months (MiniHard, actual) and ~4 months (Gun Range, forecast); acceptable range. Label FORECAST is not stronger than content. Supported overall. | 'Record build times (91 days for 210MW; ~4-5 month greenfield) drive rapid capacity additions. \u27e8cited'",
+  "issue_id": "VI-824811ff23bd81",
+  "ref_id": "TH-95AEE030DA:s03.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617678Z",
+  "detail": "s07.10: Cited span supports 'NVIDIA NVFP4 still beats TPUv7 FP8, but with accuracy/quality loss.' The 'on GLM-5.2' model scope is added and not in the cited span. | 'NVIDIA NVFP4 still beats TPUv7 FP8 on GLM-5.2, but with accuracy/quality loss.'",
+  "issue_id": "VI-833546c420d4f0",
+  "ref_id": "TH-F2CD2F7AFC:s07.10",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617620Z",
+  "detail": "s01.2: The cited spans support the tokens-per-dollar comparisons and the Oracle/OpenAI/Anthropic/Meta customers, but 'across four models' and 'winning external TPU inference customers' are not clearly tied to the customer span. The label MEASURED OBSERVATION is acceptable as the weakest among cited figures. | \"\u27e8update 2026-11-05 \u00b7 SemiAnalysis\u27e9 SemiAnalysis's own AgentX benchmarks show TPUv7 Ironwood deliveri\"",
+  "issue_id": "VI-84ffe22b12c3f8",
+  "ref_id": "TH-F2CD2F7AFC:s01.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:18:28.671815Z",
+  "detail": "s03.0: Cited spans cover Democratic control and near-term uncertainty for utilities, but 'scrutiny of data center power demand, affordability and grid-cost allocation' is not stated in the cited spans. | 'Democratic gains raise scrutiny of data center power demand, affordability and grid-cost allocation.'",
+  "issue_id": "VI-86c46aadbfc5cd",
+  "ref_id": "TH-30F6348B8B:s03.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:30:55.609026Z",
+  "detail": "s07.5: Cited span C-7aa58b9c302bbe supports the MDEQ nameplate restriction (1.24GW by July 2027), but 'TCEQ pauses' and 'JETI permit compliance' are not in the cited span. | 'Regulatory scrutiny (TCEQ pauses, JETI permit compliance, MDEQ nameplate restrictions) could slow or'",
+  "issue_id": "VI-8700cce5b8d7f9",
+  "ref_id": "TH-95AEE030DA:s07.5",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:33:20.264914Z",
+  "detail": "s03.2: The '76% YoY' and 1.6T shift are supported, but 'priced more than twice 800G' is not in the cited spans (that is C-d5f7da20dc15b6, not cited here). | 'Migration to higher-speed 1.6T transceivers, priced more than twice 800G, lifts transceiver revenue '",
+  "issue_id": "VI-8710e1f1d10a56",
+  "ref_id": "TH-921772E86C:s03.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:31:20.929603Z",
+  "detail": "s06.1: first check REVIEW_PARTIAL (s06.1: The cited span only supports the BESS deployment figure. Orchestration of gas with BESS and SLA uptime tiering to maximize capacity are not in the cited ) \u2014 re-anchored to C-79125074146736; after re-anchoring: supported",
+  "issue_id": "VI-87eee445b3996f",
+  "ref_id": "TH-8D294751AD:s06.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SAME_KEY_IN_ARTICLE",
+  "created_at": "2026-11-09T14:30:11.413730Z",
+  "detail": "2 hypotheses share one identity key in one article \u2014 merged as one thesis contribution: \u201cSpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity\u201d (kept); \u201cSpaceX's TeraFab datacenter may rent capacity to third parties as a neocloud\u201d (merged with h1 \u201cSpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity\u201d under one identity key \u2014 0 supporting claim(s) shared, 2 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis)",
+  "issue_id": "VI-895e59b97f1a1d",
+  "ref_id": "ai_infrastructure.datacenter_physical|capex_spending_cycle|positive|US",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "COMPLETENESS_IN_PARTS",
+  "created_at": "2026-11-09T14:24:05.846794Z",
+  "detail": "86 open gaps after pass 1 (figures not captured + argument paragraphs not anchored) exceed one call's 50 \u2014 reviewed in 2 parts",
+  "issue_id": "VI-8bbce7b4703ff9",
+  "ref_id": "A-866829df2ed0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-11-09T14:26:52.372404Z",
+  "detail": "c3: number check failed: value=4.0 value_text='fourth' vs quote \u2014 quote 'Marvell and Lumentum\u2019s market revenue will rank fourth and eighth, respectively,'",
+  "issue_id": "VI-8c915ae9774f4e",
+  "ref_id": "C-78313d6cdf1c22",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:54:30.126805Z",
+  "detail": "s02.4: Cited span supports only 'five to nine additional months compared with restarting in December.' The claims about reopening in late summer and freeze lasting 'close to a year' are not in the cited span. | 'If reopening waits for new rules in late summer, the Texas freeze would last close to a year \u2014 five '",
+  "issue_id": "VI-8ca716d6e80d92",
+  "ref_id": "TH-EF9EABA05A:s02.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:14:44.716697Z",
+  "detail": "s06.1: Model tracks over 1,000 facilities through 2032, but the cited span does not say the model is a 'China Datacenter Model' nor that these facilities relate specifically to China \u2014 otherwise figures supported. | 'Through 2032 the China Datacenter Model tracks over 1,000 facilities and Inner Mongolia has 25GW of '",
+  "issue_id": "VI-8d976efed0cb81",
+  "ref_id": "TH-6F2E7079B0:s06.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:57.112384Z",
+  "detail": "s06.1: The cited span supports likely material revenue acceleration for leading AI labs and token vendors, but does not specify the year 2027. | 'The source expects likely material revenue acceleration for leading AI labs and other token vendors '",
+  "issue_id": "VI-8e0c1ce90edda3",
+  "ref_id": "TH-C1889ABBA5:s06.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:48:40.289756Z",
+  "detail": "text-credited author 'Andrew Megalaa' is not a verbatim span naming them ('Andrew and Max\u2019s previous experience co-founding an RL environment startup') \u2014 not added",
+  "issue_id": "VI-8e9787c932603c",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:59.517843Z",
+  "detail": "s07.0: The second half (inventory overhang / earnings slowdown if end demand falters) is supported by C-e0d0632df981aa. But the first half \u2014 'market questioning the durability of the industry's earnings and continued capex growth' \u2014 is not in the single cited span; it is an added characterization not anchored to the cited text. | \"The low multiple reflects a market questioning the durability of the industry's earnings and continu\"",
+  "issue_id": "VI-8f4fd455481b7e",
+  "ref_id": "TH-0F1BABEC2D:s07.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "ARGUMENT_UNACCOUNTED",
+  "created_at": "2026-11-09T14:51:17.411899Z",
+  "detail": "b151: pass 1b called it covered \u2014 'Multi-agent systems to reduce time-to-exploit \u2014 forward research tied to the time-to-exploit thesis hx3_1.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+  "issue_id": "VI-8f7e20993e7a40",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-11-09T14:54:12.372043Z",
+  "detail": "s07.2 prints '2027', which none of its cited claims carry: 'Much of the 2027 pipeline already has a head start (three-quarters under construction), moratoriums '",
+  "issue_id": "VI-90e0e6d48883f5",
+  "ref_id": "TH-EF9EABA05A:s07.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617713Z",
+  "detail": "s07.20: Cited spans support 'one of the biggest risks to NVIDIA's moat' and that NVIDIA is slower to external input. But 'driver features stuck in legal review for months' is not in the cited spans (that is C-7f25f24b1cd88b in the pool). | \"SemiAnalysis identifies NVIDIA's internal bureaucracy (e.g. driver features stuck in legal review fo\"",
+  "issue_id": "VI-91a055082cf19d",
+  "ref_id": "TH-F2CD2F7AFC:s07.20",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:25:17.618402Z",
+  "detail": "s02.3: first check REVIEW_PARTIAL (s02.3: The cited span supports 'up to 50% better perf per dollar than B200 and B300' but does not specify 'Qwen 3.5 397B single-turn' scope; that model/turn det) \u2014 re-anchored to C-7d400bfcc93a1a, C-049146e4b952f9; after re-anchoring: supported",
+  "issue_id": "VI-9535deca5f4fb0",
+  "ref_id": "TH-F2CD2F7AFC:s02.3",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:17:00.031547Z",
+  "detail": "c5: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-983057256da80d",
+  "ref_id": "C-29e10156b962c2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-11-09T14:48:40.289677Z",
+  "detail": "b1.hx1_1 Automating frontier AI research workflows could cr cites ['C-642a7752a6ba79'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-997cfd01bae736",
+  "ref_id": "b1.hx1_1 Automating frontier AI research workflows could cr",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:19:35.886924Z",
+  "detail": "s03.2: Cited span only states LPDDR4X 4GB goes into sub-CNY1,299 4G phones; it does not state that rising DRAM prices raise BOM costs or that reballed memory eases the burden. That rationale is not in the cited span. | 'Rising DRAM prices increase smartphone BOM costs; reballed memory eases this burden in budget models'",
+  "issue_id": "VI-9c9fd90c24d54a",
+  "ref_id": "TH-7C895A0A4E:s03.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NAMED_NOT_RECORDED",
+  "created_at": "2026-11-09T14:51:17.409383Z",
+  "detail": "Terminal Bench (a list of examples, b070) \u2014 named in a cited paragraph, not recorded as a mention",
+  "issue_id": "VI-9d17c8dfde8b03",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:25:17.618421Z",
+  "detail": "s02.9: first check REVIEW_PARTIAL (s02.9: Cited span supports '1.67x better perf per dollar than FP4 GB300 NVL72' but does not name 'Qwen3.5 397B AgentX ... FP8 vLLM'; added scope. | 'On Qwen3.5 ) \u2014 re-anchored to C-049146e4b952f9; after re-anchoring: supported",
+  "issue_id": "VI-9d7a99434ce1f3",
+  "ref_id": "TH-F2CD2F7AFC:s02.9",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:17:00.035538Z",
+  "detail": "h2 Sold-off semiconductors may be mispriced if AI end: sector exposure 'semiconductors' is not a verbatim span naming it ('Chip valuations have fallen to their lowest in years') \u2014 dropped",
+  "issue_id": "VI-9e2772f3d2cb92",
+  "ref_id": "h2 Sold-off semiconductors may be mispriced if AI end",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLASS_DISAGREES",
+  "created_at": "2026-11-09T14:26:38.399181Z",
+  "detail": "model classifies publisher_commentary (TrendForce commentary analyzing Marvell's acquisition of Lumentum and its competitive implications, with the publisher's own estimates and v); the record keeps industry_data_report (channel default for trendforce)",
+  "issue_id": "VI-9e5010c1c14b3b",
+  "ref_id": "A-1c3293a20c1e",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:57.112370Z",
+  "detail": "s02.8: The cited span supports layout engines passing foundry-certified third-party signoff at <10 nm, but 'predictive CAD tools run in minutes to hours' is not in the cited span. | \"Ergodex's predictive CAD tools run in minutes to hours with layout engines that can pass foundry-cer\"",
+  "issue_id": "VI-a08c1845075fd9",
+  "ref_id": "TH-C1889ABBA5:s02.8",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "PARTIAL_RETRIEVAL",
+  "created_at": "2026-11-09T14:24:05.865422Z",
+  "detail": "only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "issue_id": "VI-a1fb0ef039677a",
+  "ref_id": "A-866829df2ed0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:57.112364Z",
+  "detail": "s02.7: The cited span supports OpenROAD failing on designs of even 100K cells at ICCAD 2025, but the proprietary Innovus runs taking 'days to weeks' is not in the cited span. | 'At ICCAD 2025, the open-source OpenROAD tool failed on designs of even 100K cells, while proprietary'",
+  "issue_id": "VI-a3b86c742ba37a",
+  "ref_id": "TH-C1889ABBA5:s02.7",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-11-09T14:50:28.167561Z",
+  "detail": "s06.1 prints '3', which none of its cited claims carry: 'Benchmark is intended to be living, re-tested every 3-6 months; the gap to enterprise-grade judgment'",
+  "issue_id": "VI-a3daf0403bfad8",
+  "ref_id": "TH-EBAB22460B:s06.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "CLASS_DISAGREES",
+  "created_at": "2026-11-09T14:39:23.969295Z",
+  "detail": "model classifies publisher_commentary (SemiAnalysis newsletter introducing its own GDPx benchmark, describing methodology, partners and model results; author's own analysis and op); the record keeps independent_research (channel default for semianalysis)",
+  "issue_id": "VI-a44f5a5b49ed37",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "COMPLETENESS_IN_PARTS",
+  "created_at": "2026-11-09T14:48:40.262751Z",
+  "detail": "394 open gaps after pass 1 (figures not captured + argument paragraphs not anchored) exceed one call's 50 \u2014 reviewed in 8 parts",
+  "issue_id": "VI-a4737a6a9cbbb0",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:57.112357Z",
+  "detail": "s02.6: The cited span supports sourcing through Arithmetic's own bug bounty platform for open-source software, but 'zero-days for cyber tasks' and 'its internal research team' are not in the cited span. | 'Arithmetic sources zero-days for cyber tasks from its own bug bounty platform for open-source softwa'",
+  "issue_id": "VI-a6fe759db7d48a",
+  "ref_id": "TH-C1889ABBA5:s02.6",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-11-09T14:17:18.430339Z",
+  "detail": "s07.1: UNSUPPORTED \u2014 Neither cited span mentions a federal moratorium, mirroring state-led efforts, restricting existing players, or slowing AI growth. This claim is not supported by the cited spans. | 'A federal moratorium mirroring state-led efforts to curb the build-out could broaden to restrict eve'",
+  "issue_id": "VI-a7826f10837019",
+  "ref_id": "TH-BAA07551ED:s07.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SECTOR_LABEL_ONLY",
+  "created_at": "2026-11-09T14:48:40.289407Z",
+  "detail": "h3 Frontier models remain far from automating high-va: sector exposure 'Quant trading' rests only on a page label (b009, a list_item that reads 'Quant trading') \u2014 a category or tag names a sector, it does not say the sector is exposed; dropped",
+  "issue_id": "VI-a808b97426a166",
+  "ref_id": "h3 Frontier models remain far from automating high-va",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617664Z",
+  "detail": "s07.3: The cited span says MoE combine/dispatch take 60-70% of communication volume but does not specify 'training/inference' scope; the card adds that scope unsupported. Also labelled MEASURED OBSERVATION with approximate=True, which matches. | 'MoE combine and dispatch operations account for 60-70% of communication volume in MoE training/infer'",
+  "issue_id": "VI-a88576556abd08",
+  "ref_id": "TH-F2CD2F7AFC:s07.3",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:54:30.126822Z",
+  "detail": "s03.2: Cited spans support a costly-but-available route to approval and the tax-exemption lever; they do not mention grid upgrades, cooling redesign, or upfront commitments specifically. | 'Conditions-only outcomes raise development costs (grid upgrades, cooling redesign, lost tax breaks, '",
+  "issue_id": "VI-aa8e62e291e371",
+  "ref_id": "TH-EF9EABA05A:s03.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:31:20.929593Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: The 1.24GW by July 2027 and ~300MW gap are supported, but 'SpaceX plans to bridge with BESS and gas' is not in either cited span. | 'Southaven power plan) \u2014 re-anchored to C-79125074146736; after re-anchoring: supported",
+  "issue_id": "VI-ac990af5135c4f",
+  "ref_id": "TH-8D294751AD:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NAMED_NOT_RECORDED",
+  "created_at": "2026-11-09T14:51:17.408996Z",
+  "detail": "Opus (a list of examples, b019) \u2014 named in a cited paragraph, not recorded as a mention",
+  "issue_id": "VI-ada1a70ebc39b1",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:18:28.677479Z",
+  "detail": "b009: '2%' \u2014 a claim quotes it (C-e6d59d091237a2) but failed verification, so it is never used as evidence \u2014 sentence \"So, it's only natural that the outcome of the elections initially sent stock market futures plunging nearly 2% before rebounding with significant volatility in technology companies even days after the result.\"",
+  "issue_id": "VI-ae9943d5a74e32",
+  "ref_id": "A-0b5177202cb2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_METADATA_DISCREPANCY",
+  "created_at": "2026-11-09T14:17:00.037306Z",
+  "detail": "author metadata disagrees: JSON-LD Article.author credits Kriti Gupta; also credited on the page: Nick Roberts (by schema.org/Person microdata)",
+  "issue_id": "VI-af6e7e249b0862",
+  "ref_id": "A-0b5177202cb2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:50:48.853052Z",
+  "detail": "s07.0: Cited span supports Opus 5.5 and GPT-6 Astra sandbagging scores via safety classifiers, but 'in cyber, biology and alignment' specificity is not in the cited span. | 'Models like Opus 5.5 and GPT-6 Astra have depressed overall GDPx scores due to their safety classifi'",
+  "issue_id": "VI-af7a99b6ca3025",
+  "ref_id": "TH-EBAB22460B:s07.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:54:30.126828Z",
+  "detail": "s06.0: Cited spans support ERCOT Dec. 10 report and conditions-only candidate favored in several states (as of the article), but do not support 'Nov. 3 governor, legislature and utility-commission races' as catalysts or the specific 'as of Oct. 30' date. | 'The Nov. 3 governor, legislature and utility-commission races and the TCEQ/ERCOT timeline are near-t'",
+  "issue_id": "VI-b0157649d5016d",
+  "ref_id": "TH-EF9EABA05A:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:50:48.853071Z",
+  "detail": "s07.3: 98% of 200 runs broke a rule and 19/100 healthcare runs above zero are supported, but the cited spans do not attribute these to 'cyber, insurance and healthcare' specifically; insurance is not in cited spans. | 'Alignment tasks show near-universal rule-breaking by frontier models in cyber, insurance and healthc'",
+  "issue_id": "VI-b0a302b5deaa11",
+  "ref_id": "TH-EBAB22460B:s07.3",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:51:17.411445Z",
+  "detail": "b357: '5 x' \u2014 a claim quotes it (C-0d72281232cc7a) but failed verification, so it is never used as evidence \u2014 sentence 'Across 25 runs of 5 x [GPT-6 Astra, Opus 5.5, Gemini 4 Argon, GLM 5.3, Gemini 3.8 Flash], no run passes, demonstrating capability gaps in solution completeness and accurate self-testing.'",
+  "issue_id": "VI-b0cc3b9e8b0fe5",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNSUPPORTED_ENTITY",
+  "created_at": "2026-11-09T14:53:50.361345Z",
+  "detail": "'Ohio\u2019s Power Siting Board' does not occur in the article text \u2014 dropped (no unnamed entity may be source-mentioned)",
+  "issue_id": "VI-b13f32c43f0164",
+  "ref_id": "Ohio\u2019s Power Siting Board",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "mention",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-11-09T14:54:12.371354Z",
+  "detail": "s06.0 prints '3', which none of its cited claims carry: 'The Nov. 3 governor, legislature and utility-commission races and the TCEQ/ERCOT timeline are near-t'",
+  "issue_id": "VI-b1ad9fd4713e1c",
+  "ref_id": "TH-EF9EABA05A:s06.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:31:20.933892Z",
+  "detail": "a risk the source states that no model pass listed \u2014 \u201cWe received a lot of pushback from folks calling it impossible.\u201d (now in 07 of \u201cSpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity\u201d as the source's opinion \u2014 its paragraph holds that evidence; review)",
+  "issue_id": "VI-b3f3464fadbe99",
+  "ref_id": "A-21b63fc0c413",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:14:00.693403Z",
+  "detail": "h1 Vertically integrated energy-equipment firms win C: sector exposure 'datacenters' is not a verbatim span naming it ('pivoting into AI infrastructure') \u2014 dropped",
+  "issue_id": "VI-b4c4b597910cb0",
+  "ref_id": "h1 Vertically integrated energy-equipment firms win C",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:17:59.518481Z",
+  "detail": "s06.4: first check REVIEW_PARTIAL (s06.4: Cited span lacks the '25 largest US semiconductor companies' scope; that comes from C-61ce37cea9e4c0. | 'Dislocation evidence: The 2-year forward P/E of ) \u2014 re-anchored to C-61ce37cea9e4c0; after re-anchoring: supported",
+  "issue_id": "VI-b4fbcf4a9de23e",
+  "ref_id": "TH-0F1BABEC2D:s06.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "CLASS_DISAGREES",
+  "created_at": "2026-11-09T14:10:19.400072Z",
+  "detail": "model classifies publisher_commentary (TrendForce commentary on an M&A transaction in the lighting LED supply chain, citing its own report and drawing industry implications.); the record keeps industry_data_report (channel default for trendforce)",
+  "issue_id": "VI-b4fc861b493908",
+  "ref_id": "A-8a91593e2851",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:10:55.345636Z",
+  "detail": "c8: unparseable as-of '2026-08' dropped",
+  "issue_id": "VI-b53d5edd9a852a",
+  "ref_id": "C-7873dcc724733a",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:33:20.264929Z",
+  "detail": "s07.5: The core claim is supported, but the elaboration 'networking value per accelerator varies by topology, switch configuration and NIC bandwidth' is not in the cited span. | 'Growth in AI chip shipments will not translate proportionally into networking revenue, as networking'",
+  "issue_id": "VI-b557e475d5ae3c",
+  "ref_id": "TH-921772E86C:s07.5",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:17:00.032439Z",
+  "detail": "c9: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-b77c1f2672f5f2",
+  "ref_id": "C-a43e37718b6868",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-11-09T14:48:40.280858Z",
+  "detail": "b7.k7_13: number check failed: value=0.0 value_text='25 runs' vs quote \u2014 quote 'Across 25 runs of 5 x [GPT-6 Astra, Opus 5.5, Gemini 4 Argon, GLM 5.3, Gemini 3.'",
+  "issue_id": "VI-b7f5a02e596ccb",
+  "ref_id": "C-0d72281232cc7a",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:51:17.408560Z",
+  "detail": "proposition dropped: \u201cFaster time-to-exploit as models improve shifts cyber attacker-defender balance\u201d \u2014 named in completeness part 3's malformed added_hypotheses (not valid JSON) \u2014 its evidence was kept; re-ask only that part: reask-part --part 3",
+  "issue_id": "VI-b8a1cb654d791c",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:17:00.032673Z",
+  "detail": "c10: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-b8b6bb57b8ff64",
+  "ref_id": "C-63eb1d469991ad",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:33:20.265227Z",
+  "detail": "s03.2: first check REVIEW_PARTIAL (s03.2: The '76% YoY' and 1.6T shift are supported, but 'priced more than twice 800G' is not in the cited spans (that is C-d5f7da20dc15b6, not cited here). | 'Mi) \u2014 re-anchored to ; after re-anchoring: supported",
+  "issue_id": "VI-ba4ca1655dda1f",
+  "ref_id": "TH-921772E86C:s03.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617637Z",
+  "detail": "s02.4: The tokens-per-dollar range and tok/s/user range match C-4910e57ae3f8d9, but that span does not mention 'GLM-5.2' model scope; the model attribution is unsupported by the cited span. | 'On GLM-5.2 vLLM AgentX FP8, TPUv7 delivers 1.2x to 2.7x the tokens per dollar of B200, B300 and MI35'",
+  "issue_id": "VI-bb6b75d802d940",
+  "ref_id": "TH-F2CD2F7AFC:s02.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLASS_DISAGREES",
+  "created_at": "2026-11-09T14:53:01.770744Z",
+  "detail": "model classifies industry_data_report (A subscription research/industry report from SemiAnalysis built on its own Datacenter Industry Model, forecasting GW buildout and analyzing ); the record keeps independent_research (channel default for semianalysis)",
+  "issue_id": "VI-bba46962b9d8b5",
+  "ref_id": "A-0fa66c4ca86c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "EXTRACTION_COMPACT",
+  "created_at": "2026-11-09T14:39:23.969072Z",
+  "detail": "the full extraction overran the output cap (21333 output tokens, discarded) \u2014 this article was extracted in the declared COMPACT mode (at most 25 claims); the completeness pass re-reads the whole article for what that leaves out",
+  "issue_id": "VI-bd2dced74e7cd3",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:59.517810Z",
+  "detail": "s01.0: The cited spans C-29e10156b962c2, C-4f0091eda6257f, C-9fdfab456898b8 and C-90eced31447a61 all refer to the MVIS US Listed Semiconductor Index (halved from 22.5x in June to 11.4x, below prior stress-episode lows). But C-a43e37718b6868 (just below 12 by late 2026) is about the 25-largest-companies chart, a different series. The 'halved since June' and 'from 22.5x to 11.4x' figures plus the below-stress-lows claim are all supported; the regulatory/ROI repricing is in the pool (C-5ca5f490cf5b25) but not cited here. | 'The semiconductor 24-month forward P/E has halved since June, from a 22.5x peak to 11.4x, below prio'",
+  "issue_id": "VI-bf27ae5f48b0a7",
+  "ref_id": "TH-0F1BABEC2D:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:33:20.264897Z",
+  "detail": "s02.7: The cited span 'Revenue from these products is forecast to more than double YoY to US$57.4 billion in 2027' does not name NICs/DPUs; the identity as NICs/DPUs is not supported by the cited span alone. | 'NICs/DPUs revenue forecast for 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited'",
+  "issue_id": "VI-bf4b27ae795471",
+  "ref_id": "TH-921772E86C:s02.7",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-11-09T14:30:09.810540Z",
+  "detail": "h2 SpaceX's record BESS and behind-the-meter power de cites c41, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-bf4c5ee2fbc57f",
+  "ref_id": "h2 SpaceX's record BESS and behind-the-meter power de",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617648Z",
+  "detail": "s06.2: Supports throughput/MFU, 93% pass rate, 27min compile time, and the 2-orders-of-magnitude reduction target. But 'broad library support now' relies on C-c43041301a37f3 (100k+ HF models collected), which is a list AWS collected, not demonstrated broad support \u2014 an overstatement. | 'Hands-on benchmarks show decent training performance and broad library support now, with compilation'",
+  "issue_id": "VI-c0087f9f4221c6",
+  "ref_id": "TH-F2CD2F7AFC:s06.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:57.112401Z",
+  "detail": "s07.5: The cited span supports memory and logic possibly becoming the new #1 constraint in 2027-28, but 'beyond datacenters and power' and the 'Silicon Shortage view' framing are not in the cited span. | 'Memory and logic (semiconductors) may become the new #1 constraint on the buildout in 2027-28, beyon'",
+  "issue_id": "VI-c2ded5f10b800c",
+  "ref_id": "TH-C1889ABBA5:s07.5",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:53:50.361979Z",
+  "detail": "text-credited author 'Reyk Knuhtsen' is not a verbatim span naming them ('The 2027 datacenter boom') \u2014 not added",
+  "issue_id": "VI-c3a88175494cb3",
+  "ref_id": "A-0fa66c4ca86c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:50:48.853447Z",
+  "detail": "s01.0: first check REVIEW_PARTIAL (s01.0: The sentence states '70 of 111 quant runs trailed the reference' (adding '111' and 'quant' context is fine, matches C-18bbbfe7bce175) and 'alignment viol) \u2014 re-anchored to C-5f4068ee3798c3; after re-anchoring: supported",
+  "issue_id": "VI-c4255c369f2087",
+  "ref_id": "TH-EBAB22460B:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:14:44.721872Z",
+  "detail": "9 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: up to 800MW; roughly a quarter; about 97%; about 820MW; 1.5GW; about 57%; 35\u201340%; at least 30%; around 600kW \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-c43a8624834d16",
+  "ref_id": "A-545af5c99a2f",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:49:57.112729Z",
+  "detail": "s01.2: first check REVIEW_PARTIAL (s01.2: Cited spans support $5k+ per task and the 2027-2028 OpenAI/Anthropic revenue model, but the '14 vendors' partnership and tying domain selection to that m) \u2014 re-anchored to C-2a8b76a150b431; after re-anchoring: supported",
+  "issue_id": "VI-c46c3480ee5950",
+  "ref_id": "TH-C1889ABBA5:s01.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:14:44.716704Z",
+  "detail": "s07.6: Cited span supports rents roughly halved; 'highly competitive' and 'pressuring margins' are interpretations beyond the cited span. | \"China's datacenter market is highly competitive with rents roughly halved over five years, pressurin\"",
+  "issue_id": "VI-c4b7a3628991b6",
+  "ref_id": "TH-6F2E7079B0:s07.6",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:17:00.034236Z",
+  "detail": "k5: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-c4cbc8bd07abf2",
+  "ref_id": "C-8315c9ebe919d4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NAMED_NOT_RECORDED",
+  "created_at": "2026-11-09T14:51:17.409179Z",
+  "detail": "GPT-6 Astra (a list of examples, b029) \u2014 named in a cited paragraph, not recorded as a mention",
+  "issue_id": "VI-c52cb093473ee5",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:17:59.518449Z",
+  "detail": "s03.0: first check REVIEW_UNSUPPORTED (s03.0: UNSUPPORTED \u2014 Cited span is about inventory/earnings risk being baked in unless demand falters; it does not state investors repriced on regulatory risk o) \u2014 re-anchored to C-5ca5f490cf5b25; after re-anchoring: supported",
+  "issue_id": "VI-c693b7b0596ee7",
+  "ref_id": "TH-0F1BABEC2D:s03.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "PARTIAL_RETRIEVAL",
+  "created_at": "2026-11-09T14:30:09.813857Z",
+  "detail": "only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "issue_id": "VI-c7b90074be6901",
+  "ref_id": "A-21b63fc0c413",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:27:17.089255Z",
+  "detail": "s01.0: Cited spans support the leading-supplier/reliance claim and the restriction-risk opinion, but 'Lumentum's ownership of Cloud Light' is not in the cited spans (nor in the pool). | 'Chinese optical module makers are leading suppliers of 800G and 1.6T transceivers but rely heavily o'",
+  "issue_id": "VI-cb37a8c0769908",
+  "ref_id": "TH-34834776CF:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-11-09T14:53:50.361958Z",
+  "detail": "text-credited author 'Wayne Ma' is not a verbatim span naming them ('The 2027 datacenter boom') \u2014 not added",
+  "issue_id": "VI-ce12e9a6aadc3c",
+  "ref_id": "A-0fa66c4ca86c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-11-09T14:27:17.089307Z",
+  "detail": "s07.1: UNSUPPORTED \u2014 The cited span is about NVIDIA/CSPs gaining broader options and reducing Broadcom reliance; it does not state the merged company may maintain sourcing flexibility or continue supplying the broader market rather than restricting competitors. No pool span supports this. | 'The merged company may maintain sourcing flexibility and continue supplying the broader market rathe'",
+  "issue_id": "VI-ce3a7583536030",
+  "ref_id": "TH-34834776CF:s07.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:54:30.131843Z",
+  "detail": "7 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: three-quarters; +50 GW; 70%; Texas began an interconnection-queue audit on Aug. 3; 15 candidates; 12 candidates; 11 candidates \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-ce6f5f0841da2b",
+  "ref_id": "A-0fa66c4ca86c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:31:20.929255Z",
+  "detail": "s07.4: The cited span only supports the binding nameplate reduction to 1.24GW by July 2027 (MDEQ-type restriction). It does not mention TCEQ pauses or JETI permit compliance; those specific regulatory items are not in the cited span, so the sentence's enumeration of regulatory scrutiny is only partly supported. | 'Regulatory scrutiny (TCEQ pauses, JETI permit compliance, MDEQ nameplate restrictions) could slow or'",
+  "issue_id": "VI-cfdd5630068ce4",
+  "ref_id": "TH-8D294751AD:s07.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "ANSWER_SALVAGED",
+  "created_at": "2026-11-09T14:10:19.399739Z",
+  "detail": "extraction: hypotheses[0] dropped \u2014 bottom_line_inference: Field required (got \"{'local_id': 'h1', 'title': 'PE ownership change positions C\")",
+  "issue_id": "VI-d0426c346f7c6d",
+  "ref_id": "A-8a91593e2851",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REANCHORED",
+  "created_at": "2026-11-09T14:53:50.358874Z",
+  "detail": "k4: re-anchored: the quote is not verbatim in the article; replaced by the verbatim source sentence in b010 (content overlap 100%; model quote was 'it gives projects a route to approval. That can be expensive and time-consuming')",
+  "issue_id": "VI-d04784e244180e",
+  "ref_id": "C-319f6566ae0797",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:54:30.132400Z",
+  "detail": "b001: '33.8 GW' \u2014 a claim quotes it (C-9d64d04600d729) but failed verification, so it is never used as evidence \u2014 sentence 'Roughly three-quarters of the 33.8 GW due across our top 20 states is already under construction, which is why we remain comfortable with the global +50 GW year we laid out in our Oct.'",
+  "issue_id": "VI-d0f0c434c0f4af",
+  "ref_id": "A-0fa66c4ca86c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:18:28.671796Z",
+  "detail": "s02.0: Cited span supports Democratic control of House and Senate, but '2026', 'won', 'gridlock with a Republican president' are not in the cited span; the gridlock claim is unsupported. | 'In the 2026 US midterm elections the Democratic party won control of both the House and the Senate, '",
+  "issue_id": "VI-d47c0fcf14b602",
+  "ref_id": "TH-30F6348B8B:s02.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:18:28.672513Z",
+  "detail": "s07.1: first check REVIEW_PARTIAL (s07.1: Cited span supports the structural backdrop (hyperscaler investment, electrification, grid build-out), but the claim about 'scale of economic growth... m) \u2014 re-anchored to C-b8ad332c72bb41; after re-anchoring: supported",
+  "issue_id": "VI-d5c80ae6bd34a9",
+  "ref_id": "TH-30F6348B8B:s07.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:57.112377Z",
+  "detail": "s02.9: The cited span supports cutting OpenROAD's median PPA gap to 15% at up to 500K cells on PDKs down to 7 nm, but 'TCL scripts' is not in the cited span. | \"At ICCAD 2026, TCL scripts using Ergodex's tools cut OpenROAD's median PPA gap vs commercial tools t\"",
+  "issue_id": "VI-d6d37d66202519",
+  "ref_id": "TH-C1889ABBA5:s02.9",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-11-09T14:17:00.035573Z",
+  "detail": "h2 Sold-off semiconductors may be mispriced if AI end cites c30, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-d8f6f4e87069cb",
+  "ref_id": "h2 Sold-off semiconductors may be mispriced if AI end",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MALFORMED_ITEM_DROPPED",
+  "created_at": "2026-11-09T14:48:40.263376Z",
+  "detail": "completeness pass: part 3: added_hypotheses: the whole field discarded \u2014 3,846 characters of text where a list belongs, not valid JSON (Expecting property name enclosed in double quotes: line 1 column 754, character 753); it named 1 item(s): hx3_1",
+  "issue_id": "VI-d995c5be0b9631",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-11-09T14:54:30.127139Z",
+  "detail": "s03.2: first check REVIEW_PARTIAL (s03.2: Cited span only supports the equipment sales-tax exemption lever (lost tax breaks) worth billions per GW; it does not support 'grid upgrades, cooling red) \u2014 re-anchored to C-319f6566ae0797; after re-anchoring: supported",
+  "issue_id": "VI-da024f72410e65",
+  "ref_id": "TH-EF9EABA05A:s03.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:11:06.150854Z",
+  "detail": "proposition dropped: \u201cPE ownership change positions Cree LED to gain lighting LED share\u201d \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (recovered from the malformed text, but the item fails its schema) \u2014 its evidence was kept; REVIEW REQUIRED",
+  "issue_id": "VI-daa289d55b29e2",
+  "ref_id": "A-8a91593e2851",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-11-09T14:17:59.517855Z",
+  "detail": "s07.6: UNSUPPORTED \u2014 The cited spans support only that Democrats gained control of House and Senate (C-d949f4c97f4235) and the late-2026 multiple low (C-a43e37718b6868). Nothing in the cited spans mentions a federal moratorium, state-led initiatives, affordability/zoning concerns, or that the magnitude of Democratic gains was not fully priced in. These claims are not anchored by the cited spans, and no pool span supports a federal moratorium or pricing-in claim. | 'A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affo'",
+  "issue_id": "VI-daf6dd94bbd708",
+  "ref_id": "TH-0F1BABEC2D:s07.6",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:18:28.671807Z",
+  "detail": "s02.1: 'especially those exposed to fast-growing markets like Texas and Georgia' is not in the cited span or pool. | 'Democratic gains create near-term uncertainty for sectors that trade in line with AI developments, l'",
+  "issue_id": "VI-dbc86c7268457d",
+  "ref_id": "TH-30F6348B8B:s02.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-11-09T14:53:50.361909Z",
+  "detail": "h1 State-level permitting freezes and midterm outcome cites ['C-319f6566ae0797', 'C-2b83af9fee8c2f', 'C-cfc61adbbf2f86', 'C-34541898dd082a'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-dcf81c12dca1e9",
+  "ref_id": "h1 State-level permitting freezes and midterm outcome",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-11-09T14:14:00.693851Z",
+  "detail": "h2 Ultra-low China datacenter build cost and power ac cites ['C-c9c6b39dbfa5bd'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-deb789963c2670",
+  "ref_id": "h2 Ultra-low China datacenter build cost and power ac",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:57.112321Z",
+  "detail": "s01.0: The cited span only supports 'likely material revenue acceleration for leading AI labs and other token vendors'; the claims about more compute supply, cheaper/smarter AI, and faster model progress are not in this single cited span. | 'The article argues the datacenter acceleration means significantly more compute supply, cheaper and '",
+  "issue_id": "VI-decb841f97b30d",
+  "ref_id": "TH-C1889ABBA5:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:18:28.676542Z",
+  "detail": "3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: nearly 2%; 8 percentage points; \u20136 to \u20138 percentage points \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-df6645c3c3e6bd",
+  "ref_id": "A-0b5177202cb2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:17:00.031993Z",
+  "detail": "c7: as-of 2026-11-05 not found in the cited source note \u2014 dropped",
+  "issue_id": "VI-dfc0a7c70bb4d5",
+  "ref_id": "C-9fdfab456898b8",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:50:48.853037Z",
+  "detail": "s02.4: 'only 19 of 100 runs scored above zero' matches cited span, but 'Fleet healthcare alignment tasks' attribution is not in the cited span. | 'On Fleet healthcare alignment tasks, only 19 of 100 runs scored above zero.'",
+  "issue_id": "VI-e0143141b83f2d",
+  "ref_id": "TH-EBAB22460B:s02.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-11-09T14:19:24.905815Z",
+  "detail": "s01.0 prints '299', which none of its cited claims carry: 'TrendForce estimates reballed memory penetration in smartphones at ~3-4% in 2026, potentially 7-9% i'",
+  "issue_id": "VI-e031c87b1a974b",
+  "ref_id": "TH-7C895A0A4E:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SECTOR_LABEL_ONLY",
+  "created_at": "2026-11-09T14:48:40.289378Z",
+  "detail": "h3 Frontier models remain far from automating high-va: sector exposure 'Legal' rests only on a page label (b008, a list_item that reads 'Legal') \u2014 a category or tag names a sector, it does not say the sector is exposed; dropped",
+  "issue_id": "VI-e20e649301cd7b",
+  "ref_id": "h3 Frontier models remain far from automating high-va",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:17:18.430297Z",
+  "detail": "s02.2: Cited span supports hyperscaler investment continuing and electrification/grid build-out being pressing needs, but 'to support higher power demand and capital spending' is an added rationale not in the cited span. | 'Hyperscaler investment is expected to continue, and electrification and grid build-out remain pressi'",
+  "issue_id": "VI-e2479b6c515f64",
+  "ref_id": "TH-BAA07551ED:s02.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:30:55.608976Z",
+  "detail": "s01.0: Claims '91 days for 210MW' is a record retrofit time, but the cited span C-3044098a3d0180 only says SpaceX cut 8-12-month build times in half; '91 days' is a specific retrofit figure, not framed as a record. Also 'building faster than any peer' and 'record retrofit times' are embellishments beyond the cited spans. Core figures (3.6GW, ~13GW 2027, 91 days/210MW) are supported. | 'SpaceX has 3.6GW under construction and has revised its 2027 target up to ~13GW, building faster tha'",
+  "issue_id": "VI-e3cf9cef95b25f",
+  "ref_id": "TH-95AEE030DA:s01.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:27:04.154483Z",
+  "detail": "s07.1: Cited span supports the general 'extensive portfolio spanning optical and electronic technologies' and competitive strength, but the specific product list (Tomahawk switches, DSPs, EMLs, CW lasers) and 'commanding position hard to displace' are not in the cited span. | \"Broadcom's extensive portfolio spanning optical and electronic technologies (Tomahawk switches, DSPs\"",
+  "issue_id": "VI-e4f9994d97b652",
+  "ref_id": "TH-7F3F3B05AF:s07.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:19:35.886958Z",
+  "detail": "s07.3: Cited span supports quality uncertainty, compromised reliability, and shortened lifespans, but not the added claims of eroding consumer confidence, damaging brand reputation, or raising warranty/repair costs. | 'Reliance on reballed memory carries quality-consistency uncertainty that can compromise product reli'",
+  "issue_id": "VI-e515a9e4cdca05",
+  "ref_id": "TH-7C895A0A4E:s07.3",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_LABEL_ONLY",
+  "created_at": "2026-11-09T14:48:40.288795Z",
+  "detail": "h1 AI chip-design spend ramps meaningfully in 2027 as: sector exposure 'Chip design' rests only on a page label (b004, a list_item that reads 'Chip design') \u2014 a category or tag names a sector, it does not say the sector is exposed; dropped",
+  "issue_id": "VI-e5b77e651235cf",
+  "ref_id": "h1 AI chip-design spend ramps meaningfully in 2027 as",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:19:35.886949Z",
+  "detail": "s07.1: Cited span supports that reballed use won't disrupt prices, but the claim that spreading adoption 'could theoretically dampen DRAM demand' is not in the cited span. | 'Spreading adoption of reballed and lower-spec memory could theoretically dampen DRAM demand, but the'",
+  "issue_id": "VI-e5e42e5f6a825e",
+  "ref_id": "TH-7C895A0A4E:s07.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-11-09T14:18:28.671836Z",
+  "detail": "s07.4: UNSUPPORTED \u2014 Cited spans cover Democratic control and a forward P/E multiple 'just below 12' in late 2026; neither supports a 'federal moratorium', 'state-led initiatives', 'affordability and zoning concerns', or that 'magnitude of Democratic gains not fully priced in'. The cited multiple figure is unrelated to the claim. Pool contains no moratorium/pricing spans either. | 'A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affo'",
+  "issue_id": "VI-e6bbab419fb777",
+  "ref_id": "TH-30F6348B8B:s07.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:12.292192Z",
+  "detail": "s07.0: The cited span supports GPT-6 Astra 0.34, Claude Opus 0.135, Fable 0.07, but the claim's attribution to 'Ergodex's vt01 chip backend task' is not supported by the cited span. | \"On Ergodex's vt01 chip backend task, GPT-6 Astra averaged 0.34, Claude Opus 0.135 and Fable 0.07.\"",
+  "issue_id": "VI-e75d0f7949d345",
+  "ref_id": "TH-A90402AB3E:s07.0",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "MALFORMED_ITEM_DROPPED",
+  "created_at": "2026-11-09T14:48:40.263200Z",
+  "detail": "completeness pass: part 3: the answer failed as a whole (added_hypotheses: Input should be a valid list) \u2014 recovered field by field:",
+  "issue_id": "VI-e786566b385a22",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:49:12.292173Z",
+  "detail": "s02.1: The cited span supports the demand model projecting OpenAI and Anthropic revenue in 2027 and 2028, but 'closely tied to the domains selected for GDPx' is not supported by the cited span. | 'SemiAnalysis is building a demand model projecting OpenAI and Anthropic revenue in 2027 and 2028, cl'",
+  "issue_id": "VI-e78b1e7c557b6a",
+  "ref_id": "TH-A90402AB3E:s02.1",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617630Z",
+  "detail": "s02.3: The cited C-0ebc2279393608 supports 'up to 50% better performance per dollar than B200 and B300.' But the 'FP8 on Qwen 3.5 397B single-turn' scoping is only loosely supported by C-049146e4b952f9 (Qwen3.5 397B FP8). The label SOURCE OPINION is weakest cited and fine. | 'In FP8 on Qwen 3.5 397B single-turn, TPUv7 Ironwood delivered up to 50% better performance per dolla'",
+  "issue_id": "VI-e9d6166248ce70",
+  "ref_id": "TH-F2CD2F7AFC:s02.3",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-11-09T14:26:52.374268Z",
+  "detail": "h1 Marvell-Lumentum merger unites optical and electro cites c3, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-ebf0712a6b4e51",
+  "ref_id": "h1 Marvell-Lumentum merger unites optical and electro",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:51:17.410428Z",
+  "detail": "b118: '12' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'The largest board is a 12-layer DDR5 memory tester from Antmicro.'",
+  "issue_id": "VI-ec16fd348c67e7",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:51:17.411694Z",
+  "detail": "b357: '5.5' \u2014 a claim quotes it (C-0d72281232cc7a) but failed verification, so it is never used as evidence \u2014 sentence 'Across 25 runs of 5 x [GPT-6 Astra, Opus 5.5, Gemini 4 Argon, GLM 5.3, Gemini 3.8 Flash], no run passes, demonstrating capability gaps in solution completeness and accurate self-testing.'",
+  "issue_id": "VI-ecfd451d18caec",
+  "ref_id": "A-6775c1a81d18",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:14:30.138791Z",
+  "detail": "s07.2: The claim that hyperscalers choose vendors mainly on resources and track record is not in the cited spans; rest is supported. | 'Hyperscalers still choose vendors mainly on resources and track record, not vertical integration; pr'",
+  "issue_id": "VI-eda127d1aa6805",
+  "ref_id": "TH-8178B565CB:s07.2",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-11-09T14:33:00.116799Z",
+  "detail": "c1: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-eef93495113509",
+  "ref_id": "C-01386a1f0bb84b",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617684Z",
+  "detail": "s07.11: The 3.6x GB300 FP4 vs TPUv7 at 100 tok/s/user is supported, but the 'GLM-5.3' model scope is not present in the cited span. | 'On GLM-5.3 at 100 tok/s/user, GB300 FP4 delivers 3.6x the tokens per dollar of TPUv7.'",
+  "issue_id": "VI-f41a3cbd97757a",
+  "ref_id": "TH-F2CD2F7AFC:s07.11",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-11-09T14:31:20.933689Z",
+  "detail": "propositions merged: \u201cSpaceX's TeraFab datacenter may rent capacity to third parties as a neocloud\u201d \u2014 merged with h1 \u201cSpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity\u201d under one identity key \u2014 0 supporting claim(s) shared, 2 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+  "issue_id": "VI-f51e7f36fb25e2",
+  "ref_id": "A-21b63fc0c413",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-11-09T14:33:00.118858Z",
+  "detail": "c14: number check failed: value=2.0 value_text='more than twice' vs quote \u2014 quote 'these products are still expected to command more than twice the price of their '",
+  "issue_id": "VI-f5720738420201",
+  "ref_id": "C-d5f7da20dc15b6",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SOURCE_RISK_OMITTED",
+  "created_at": "2026-11-09T14:31:20.934241Z",
+  "detail": "(b001) of A-21b63fc0c413: \u201cWe received a lot of pushback from folks calling it impossible.\u201d \u2014 a risk the source states beside this thesis's evidence that no model pass listed; now in 07 as SOURCE OPINION \u2014 review",
+  "issue_id": "VI-f5eb32da0f2275",
+  "ref_id": "TH-95AEE030DA",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:14:44.716654Z",
+  "detail": "s02.5: Cited span mentions 22 projects and nearly 30,000 workers but does not name the Chahar High-tech Zone. | 'The Chahar High-tech Zone had nearly 30,000 construction workers across 22 datacenter projects \u27e8cite'",
+  "issue_id": "VI-f6187e72afd495",
+  "ref_id": "TH-6F2E7079B0:s02.5",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-11-09T14:17:00.035589Z",
+  "detail": "h2 Sold-off semiconductors may be mispriced if AI end cites ['C-e0d0632df981aa'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-f984f954c20409",
+  "ref_id": "h2 Sold-off semiconductors may be mispriced if AI end",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-11-09T14:25:17.617672Z",
+  "detail": "s07.6: Cited span supports 99.99% CI vs below 5% actual gating parity, but does not identify this as 'one unnamed hardware vendor'; the vendor framing is added, though not contradicted. | 'At one unnamed hardware vendor, CI numbers shown to leadership were 99.99% while actual gating parit'",
+  "issue_id": "VI-f9988177abbd7e",
+  "ref_id": "TH-F2CD2F7AFC:s07.6",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-11-09T14:26:52.374277Z",
+  "detail": "h1 Marvell-Lumentum merger unites optical and electro cites c4, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-fb169037211e96",
+  "ref_id": "h1 Marvell-Lumentum merger unites optical and electro",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-11-09T14:54:30.132605Z",
+  "detail": "b001: '20' \u2014 a claim quotes it (C-9d64d04600d729) but failed verification, so it is never used as evidence \u2014 sentence 'Roughly three-quarters of the 33.8 GW due across our top 20 states is already under construction, which is why we remain comfortable with the global +50 GW year we laid out in our Oct.'",
+  "issue_id": "VI-fcde21b64a916a",
+  "ref_id": "A-0fa66c4ca86c",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-11-09T14:17:18.430349Z",
+  "detail": "s07.4: UNSUPPORTED \u2014 Cited spans support Democrats gaining control and the late-2026 multiple falling just below 12, but the federal moratorium, affordability/zoning concerns, 'magnitude of Democratic gains not fully priced in', and 'much uncertainty priced in before the election' are not in the cited spans. | 'A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affo'",
+  "issue_id": "VI-feff19c51ad329",
+  "ref_id": "TH-BAA07551ED:s07.4",
+  "run_id": "R-20261109T140627Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ }
+]

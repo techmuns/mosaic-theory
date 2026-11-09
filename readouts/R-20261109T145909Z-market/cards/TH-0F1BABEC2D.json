@@ -1,0 +1,1966 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.compute_semis"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:17:18.436837Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-06",
+   "latest_article_date": "2026-11-06",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+   "status": "ACTIVE",
+   "thesis_id": "TH-0F1BABEC2D",
+   "title": "Sold-off semiconductors may be mispriced if AI end demand holds"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-29e10156b962c2",
+     "C-4f0091eda6257f",
+     "C-9fdfab456898b8",
+     "C-90eced31447a61",
+     "C-a43e37718b6868"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The semiconductor 24-month forward P/E has halved since June, from a 22.5x peak to 11.4x, below prior stress-episode lows, as the 'picks and shovels' AI trade repriced on regulatory and ROI concerns. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-e0d0632df981aa"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The publisher suggests the opportunity may lie in the beaten-down semiconductor/picks-and-shovels trade, since inventory and earnings risks may already be priced unless end demand falters."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article frames the valuation compression as a potential opportunity if demand holds, but does not quantify fair value or demonstrate that the sell-off overshot fundamentals."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-29e10156b962c2"
+     ],
+     "original_date": "2026-11-06",
+     "period": "since June",
+     "provenance": "FORECAST",
+     "text": "The 24-month forward P/E of the MVIS US Listed Semiconductor Index has halved since June. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-9fdfab456898b8"
+     ],
+     "original_date": "2026-11-06",
+     "period": "current",
+     "provenance": "FORECAST",
+     "text": "The MVIS US Listed Semiconductor Index currently trades at 11.4x forward earnings. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a43e37718b6868",
+      "C-61ce37cea9e4c0"
+     ],
+     "original_date": "2026-11-06",
+     "period": "late 2026",
+     "provenance": "FORECAST",
+     "text": "The 2-year forward P/E of the 25 largest US semiconductor companies fell to its chart low, just below 12, by late 2026. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-cee15ab7c61c12"
+     ],
+     "original_date": "2026-11-06",
+     "period": "early 2022",
+     "provenance": "FORECAST",
+     "text": "The semiconductor 2-year forward P/E multiple started near 20 in early 2022. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8315c9ebe919d4"
+     ],
+     "original_date": "2026-11-06",
+     "period": "later 2022",
+     "provenance": "FORECAST",
+     "text": "The semiconductor 2-year forward P/E multiple dipped to around 12-14 later in 2022. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-4f0091eda6257f",
+      "C-29e10156b962c2"
+     ],
+     "original_date": "2026-11-06",
+     "period": "June",
+     "provenance": "FORECAST",
+     "text": "The MVIS US Listed Semiconductor Index peaked at 22.5x forward earnings in June. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 10 pieces of evidence from A-0b5177202cb2 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:17 UTC, analysed as of 2026-11-09, from a source published 2026-11-06; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-e0d0632df981aa",
+     "C-5ca5f490cf5b25"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Investors repriced the 'picks and shovels' AI infrastructure trade on regulatory risk and questions over return on investment."
+   },
+   {
+    "claim_ids": [
+     "C-e0d0632df981aa"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "The thesis depends on AI end demand holding so that feared inventory overhang and earnings slowdown do not materialize; the article does not quantify demand."
+   },
+   {
+    "claim_ids": [
+     "C-29e10156b962c2",
+     "C-9fdfab456898b8",
+     "C-90eced31447a61"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "market_reaction",
+    "text": "Semiconductor 24-month forward P/E halved since June to 11.4x, below prior stress-episode lows. \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-29e10156b962c2",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "MVIS US Listed Semiconductor Index \u2014 24-month forward P/E",
+    "measured_as_of": null,
+    "origin": "Bloomberg Finance L.P.",
+    "period": "since June",
+    "qualifiers": [
+     "has halved since June"
+    ],
+    "quote": "The 24-month forward price-to-earnings ratio of the MVIS US Listed Semiconductor Index has halved since June.",
+    "role": "dislocation",
+    "unit": "x",
+    "value": null,
+    "value_text": "halved"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b029",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-8315c9ebe919d4",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "2-year forward P/E multiple",
+    "measured_as_of": "2026-11-05",
+    "origin": "Bloomberg Finance L.P.",
+    "period": "later 2022",
+    "qualifiers": [
+     "around"
+    ],
+    "quote": "dips to around 12\u201314 later that year",
+    "role": "dislocation",
+    "unit": "x",
+    "value": null,
+    "value_text": "around 12\u201314"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9fdfab456898b8",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "MVIS US Listed Semiconductor Index \u2014 24-month forward P/E",
+    "measured_as_of": null,
+    "origin": "Bloomberg Finance L.P.",
+    "period": "current",
+    "qualifiers": [],
+    "quote": "the index currently trades at 11.4 times forward earnings",
+    "role": "dislocation",
+    "unit": "x",
+    "value": 11.4,
+    "value_text": "11.4 times"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b029",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-a43e37718b6868",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "25 largest and most liquid US semiconductor companies \u2014 2-year forward P/E",
+    "measured_as_of": "2026-11-05",
+    "origin": "Bloomberg Finance L.P.",
+    "period": "late 2026",
+    "qualifiers": [
+     "lowest point on the chart"
+    ],
+    "quote": "by late 2026 the multiple falls sharply to its lowest point on the chart, just below 12",
+    "role": "dislocation",
+    "unit": "x",
+    "value": 12.0,
+    "value_text": "just below 12"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b029",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-cee15ab7c61c12",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "2-year forward P/E multiple",
+    "measured_as_of": "2026-11-05",
+    "origin": "Bloomberg Finance L.P.",
+    "period": "early 2022",
+    "qualifiers": [
+     "near"
+    ],
+    "quote": "The line starts near 20 in early 2022",
+    "role": "dislocation",
+    "unit": "x",
+    "value": 20.0,
+    "value_text": "near 20"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-4f0091eda6257f",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "MVIS US Listed Semiconductor Index \u2014 24-month forward P/E",
+    "measured_as_of": null,
+    "origin": "Bloomberg Finance L.P.",
+    "period": "June",
+    "qualifiers": [
+     "peak"
+    ],
+    "quote": "After trading at a peak of 22.5 times forward earnings in June",
+    "role": "supports",
+    "unit": "x",
+    "value": 22.5,
+    "value_text": "22.5 times"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b027",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-61ce37cea9e4c0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "number of index constituents",
+    "measured_as_of": null,
+    "origin": "Bloomberg Finance L.P.",
+    "period": null,
+    "qualifiers": [
+     "largest and most liquid",
+     "U.S."
+    ],
+    "quote": "Includes the 25 largest and most liquid semiconductor companies in the U.S.",
+    "role": "supports",
+    "unit": "companies",
+    "value": 25.0,
+    "value_text": "25"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-90eced31447a61",
+    "comparator": "Iran conflict, Liberation Day, 2022 lows",
+    "epistemic": "opinion",
+    "label": "MVIS US Listed Semiconductor Index \u2014 24-month forward P/E",
+    "measured_as_of": null,
+    "origin": "Bloomberg Finance L.P.",
+    "period": "current vs prior episodes",
+    "qualifiers": [
+     "lower than prior stress episodes"
+    ],
+    "quote": "That\u2019s at a valuation lower than when investors were digesting the beginning of the conflict in Iran, Liberation Day and the stock market lows of 2022.",
+    "role": "dislocation",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b030",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b8ad332c72bb41",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The scale of economic growth from the semiconductor/AI sector may limit policymakers' willingness to curb its development, underpinning the opportunity.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "may bear some impact"
+    ],
+    "quote": "the scale of economic growth that has come from this sector alone may bear some impact on the level and willingness to limit continued development",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e0d0632df981aa",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Unless end demand falters, the risk of an inventory overhang and earnings slowdown may already be priced into semiconductor valuations.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "conditional on end demand"
+    ],
+    "quote": "unless end demand falters, the risk of an inventory overhang and earnings slowdown may already be baked into valuations",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2e75e927f13674",
+     "name_as_written": "Goldman Sachs",
+     "other_securities": [],
+     "quote": "Bloomberg Finance L.P., Goldman Sachs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of the hyperscaler vs data center equities basket and chart data"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": "0000019617",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock",
+       "ticker": "JPM"
+      }
+     ],
+     "mention_id": "M-4394acbd464bbe",
+     "name_as_written": "JPMorgan Chase & Co.",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 5.75% Non-Cumulative Preferred Stock, Series DD",
+       "ticker": "JPM PR D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 6.00% Non-Cumulative Preferred Stock, Series EE",
+       "ticker": "JPM PR C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.75% Non-Cumulative Preferred Stock, Series GG",
+       "ticker": "JPM PR J"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.55% Non-Cumulative Preferred Stock, Series JJ",
+       "ticker": "JPM PR K"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.625% Non-Cumulative Preferred Stock, Series LL",
+       "ticker": "JPM PR L"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.20% Non-Cumulative Preferred Stock, Series MM",
+       "ticker": "JPM PR M"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Callable Fixed Rate Notes due June 10, 2032 of JPMorgan Chase Financial Company LLC",
+       "ticker": "JPM/32"
+      },
+      {
+       "exchange": "NYSE Arca",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Alerian MLP Index ETNs due January 28, 2044 of JPMorgan Chase Financial Company LLC",
+       "ticker": "AMJB"
+      },
+      {
+       "exchange": "NYSE Arca",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Inverse VIX Short-Term Futures ETNs due March 22, 2045 of JPMorgan Chase Financial Company LLC",
+       "ticker": "VYLD"
+      }
+     ],
+     "quote": "JPMorgan Chase & Co. (\u201cJPM\u201d)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher of the commentary via its private banking business"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-a43e37718b6868",
+      "C-63eb1d469991ad"
+     ],
+     "provenance": "FORECAST",
+     "text": "The 25 largest and most liquid US semiconductor companies, whose 2-year forward P/E fell to a chart low just below 12. (constituents not named by the source)"
+    }
+   ],
+   "companies": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "data source",
+     "listings": [],
+     "mention_id": "M-cafa7e1bc9a65e",
+     "name_as_written": "Bloomberg Finance L.P.",
+     "other_securities": [],
+     "quote": "Source: Bloomberg Finance L.P.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Data source for chart figures"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "cited basket",
+     "listings": [],
+     "mention_id": "M-3be71e37f43ff0",
+     "name_as_written": "MVIS US Listed Semiconductor Index",
+     "other_securities": [],
+     "quote": "the MVIS US Listed Semiconductor Index",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "cited_basket",
+     "role_detail": "Index whose 24-month forward P/E is cited to show semiconductor valuation compression"
+    }
+   ],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "claim_ids": [
+      "C-e0d0632df981aa"
+     ],
+     "direction": "positive",
+     "name": "picks and shovels AI infrastructure",
+     "provenance": "SOURCE OPINION",
+     "quote": "the \u201cpicks and shovels\u201d AI infrastructure trade"
+    }
+   ],
+   "sectors": [
+    "semiconductors",
+    "AI infrastructure picks and shovels"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-e0d0632df981aa"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Beaten-down semiconductor valuations may represent an opportunity if AI end demand holds and feared risks are already priced."
+    },
+    {
+     "claim_ids": [
+      "C-29e10156b962c2"
+     ],
+     "provenance": "FORECAST",
+     "text": "Dislocation evidence: The 24-month forward P/E of the MVIS US Listed Semiconductor Index has halved since June. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-9fdfab456898b8"
+     ],
+     "provenance": "FORECAST",
+     "text": "Dislocation evidence: The MVIS US Listed Semiconductor Index currently trades at 11.4x forward earnings. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-90eced31447a61"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Dislocation evidence: The current semiconductor valuation is lower than during the Iran conflict onset, Liberation Day, and the 2022 stock-market lows."
+    },
+    {
+     "claim_ids": [
+      "C-a43e37718b6868",
+      "C-61ce37cea9e4c0"
+     ],
+     "provenance": "FORECAST",
+     "text": "Dislocation evidence: The 2-year forward P/E of the 25 largest US semiconductor companies fell to its chart low, just below 12, by late 2026. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-cee15ab7c61c12"
+     ],
+     "provenance": "FORECAST",
+     "text": "Dislocation evidence: The semiconductor 2-year forward P/E multiple started near 20 in early 2022. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-8315c9ebe919d4"
+     ],
+     "provenance": "FORECAST",
+     "text": "Dislocation evidence: The semiconductor 2-year forward P/E multiple dipped to around 12-14 later in 2022. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-81ed4982c3222a",
+      "C-b8ad332c72bb41"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The scale of economic growth from the semiconductor sector may limit willingness to curb development, and the AI build-out backdrop remains structurally in place."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-e0d0632df981aa"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The low multiple reflects a market questioning the durability of the industry's earnings and continued capex growth; if end demand falters, an inventory overhang and earnings slowdown could still materialize."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-0577F0AD38: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs valuation_dislocation) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-B121174B17: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs valuation_dislocation); a different geography (China vs US); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-CBFA9511C2: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs valuation_dislocation) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-F2CD2F7AFC: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs valuation_dislocation) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 11 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Signs of AI end demand faltering"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Inventory overhang or earnings downgrades in semiconductor names"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Further contraction of the forward P/E without stabilization"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-d949f4c97f4235",
+      "C-a43e37718b6868"
+     ],
+     "provenance": "FORECAST",
+     "text": "A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affordability and zoning concerns, with the magnitude of Democratic midterm gains not fully priced in, creating volatility across the AI/tech trade. (scope: US AI-linked technology, semiconductor, utility and data center equities; article says much uncertainty was priced in before the election but the magnitude of Democratic gains was not.)"
+    },
+    {
+     "claim_ids": [
+      "C-e0d0632df981aa"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Financing, regulatory and power constraints could make for a bumpy road for the AI trade, with risk of an inventory overhang and earnings slowdown if end demand falters. (scope: AI infrastructure and semiconductor equities; conditional on AI end demand holding.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: Unless end demand falters, the risk of inventory overhang and earnings slowdown may already be baked into semiconductor valuations"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether AI end demand will hold"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether consensus semiconductor earnings estimates have been cut"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "What fair value for the semiconductor multiple is"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the valuation compression reflects durable earnings risk rather than mispricing"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Signs of AI demand deceleration"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Semiconductor earnings downgrades accelerate"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Assess AI end-demand indicators and semiconductor consensus earnings revisions to judge whether the forward P/E compression overstates fundamental risk."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI end-demand data remains robust"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Semiconductor earnings estimates stabilize or rise"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-0b5177202cb2",
+    "authors": [
+     "Kriti Gupta (Executive Director, Global Investment Strategist)",
+     "Nick Roberts (Portfolio Manager, Specialized Strategies)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-29e10156b962c2",
+     "C-9fdfab456898b8",
+     "C-90eced31447a61",
+     "C-a43e37718b6868",
+     "C-cee15ab7c61c12",
+     "C-8315c9ebe919d4",
+     "C-4f0091eda6257f",
+     "C-e0d0632df981aa",
+     "C-61ce37cea9e4c0",
+     "C-b8ad332c72bb41",
+     "C-d949f4c97f4235"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-06T11:30:00+05:30",
+    "published_status": "KNOWN",
+    "publisher": "J.P. Morgan Private Bank",
+    "retrieval_state": "FULL",
+    "title": "The blue wave is changing the AI trade",
+    "upstream_origins": [
+     "Bloomberg Finance L.P.",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/the-blue-wave-is-changing-the-ai-trade",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales",
+    "basis_quote": [
+     "We derive our revenue primarily from product sales including hardware and systems."
+    ],
+    "basis_source": "10-K filed 2026-02-25 (0001045810-26-000021)",
+    "business": "designs AI accelerators and GPUs for data centers",
+    "direction": "positive",
+    "enrichment_id": "EC-cd3ff0c1fec833",
+    "evidence": "s03.1: The thesis depends on AI end demand holding so that feared inventory overhang and earnings slowdown do not materialize; the article does not quantify demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "NVDA"
+     }
+    ],
+    "name": "NVIDIA",
+    "rationale": "If AI end demand holds, data-center GPU revenue avoids the feared slowdown; the dominant picks-and-shovels earnings beneficiary.",
+    "registrant": "NVIDIA CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "data-center AI GPU and accelerator sales",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-0F1BABEC2D",
+    "ticker_hint": "NVDA"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-04 (0000002488-26-000018)",
+    "business": "designs CPUs, GPUs and AI data-center accelerators",
+    "direction": "positive",
+    "enrichment_id": "EC-2da6c52ba663cb",
+    "evidence": "s03.1: The thesis depends on AI end demand holding so that feared inventory overhang and earnings slowdown do not materialize; the article does not quantify demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-04 (accession 0000002488-26-000191) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.01 par value per share",
+      "ticker": "AMD"
+     }
+    ],
+    "name": "Advanced Micro Devices",
+    "rationale": "Holding AI demand sustains MI-series accelerator ramp and data-center sales, avoiding inventory and earnings cuts priced into the stock.",
+    "registrant": "ADVANCED MICRO DEVICES INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "data-center AI accelerators and server CPUs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-0F1BABEC2D",
+    "ticker_hint": "AMD"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2025-12-18 (0001730168-25-000121)",
+    "business": "custom silicon (ASICs) and networking chips",
+    "direction": "positive",
+    "enrichment_id": "EC-efefe9ca15aa4f",
+    "evidence": "s03.1: The thesis depends on AI end demand holding so that feared inventory overhang and earnings slowdown do not materialize; the article does not quantify demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-10 (accession 0001730168-26-000080) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value",
+      "ticker": "AVGO"
+     }
+    ],
+    "name": "Broadcom",
+    "rationale": "Custom AI silicon and AI networking revenue holds if hyperscaler demand persists, countering the ROI-driven repricing.",
+    "registrant": "Broadcom Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "custom AI ASICs and networking chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-0F1BABEC2D",
+    "ticker_hint": "AVGO"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-10-09 (0000723125-26-000023)",
+    "business": "memory chip maker (DRAM, NAND, HBM)",
+    "direction": "positive",
+    "enrichment_id": "EC-3b90e947e0ca6a",
+    "evidence": "s03.1: The thesis depends on AI end demand holding so that feared inventory overhang and earnings slowdown do not materialize; the article does not quantify demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-10-09 (accession 0000723125-26-000023) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.10 per share",
+      "ticker": "MU"
+     }
+    ],
+    "name": "Micron Technology",
+    "rationale": "Sustained AI demand supports HBM shipments and memory pricing, avoiding the inventory overhang feared in the sell-off.",
+    "registrant": "MICRON TECHNOLOGY INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "HBM and DRAM memory for AI servers",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-0F1BABEC2D",
+    "ticker_hint": "MU"
+   }
+  ],
+  "created_at": "2026-11-09T14:54:49.861322Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Marvell Technology: more than 4 on one side \u2014 set aside",
+   "Lam Research: more than 4 on one side \u2014 set aside",
+   "Applied Materials: more than 4 on one side \u2014 set aside",
+   "Taiwan Semiconductor Manufacturing: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-5aafef7463a9ba",
+  "thesis_id": "TH-0F1BABEC2D",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 15:21 UTC from the registry (ti-engine-5; run R-20261109T145909Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-0b5177202cb2",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.compute_semis"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:17:18.436837Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-06",
+     "latest_article_date": "2026-11-06",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+     "status": "ACTIVE",
+     "thesis_id": "TH-0F1BABEC2D",
+     "title": "Sold-off semiconductors may be mispriced if AI end demand holds"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-29e10156b962c2",
+       "C-4f0091eda6257f",
+       "C-9fdfab456898b8",
+       "C-90eced31447a61",
+       "C-a43e37718b6868"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The semiconductor 24-month forward P/E has halved since June, from a 22.5x peak to 11.4x, below prior stress-episode lows, as the 'picks and shovels' AI trade repriced on regulatory and ROI concerns. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-e0d0632df981aa"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The publisher suggests the opportunity may lie in the beaten-down semiconductor/picks-and-shovels trade, since inventory and earnings risks may already be priced unless end demand falters."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article frames the valuation compression as a potential opportunity if demand holds, but does not quantify fair value or demonstrate that the sell-off overshot fundamentals."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-29e10156b962c2"
+       ],
+       "original_date": "2026-11-06",
+       "period": "since June",
+       "provenance": "FORECAST",
+       "text": "The 24-month forward P/E of the MVIS US Listed Semiconductor Index has halved since June. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9fdfab456898b8"
+       ],
+       "original_date": "2026-11-06",
+       "period": "current",
+       "provenance": "FORECAST",
+       "text": "The MVIS US Listed Semiconductor Index currently trades at 11.4x forward earnings. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a43e37718b6868",
+        "C-61ce37cea9e4c0"
+       ],
+       "original_date": "2026-11-06",
+       "period": "late 2026",
+       "provenance": "FORECAST",
+       "text": "The 2-year forward P/E of the 25 largest US semiconductor companies fell to its chart low, just below 12, by late 2026. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-cee15ab7c61c12"
+       ],
+       "original_date": "2026-11-06",
+       "period": "early 2022",
+       "provenance": "FORECAST",
+       "text": "The semiconductor 2-year forward P/E multiple started near 20 in early 2022. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8315c9ebe919d4"
+       ],
+       "original_date": "2026-11-06",
+       "period": "later 2022",
+       "provenance": "FORECAST",
+       "text": "The semiconductor 2-year forward P/E multiple dipped to around 12-14 later in 2022. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-4f0091eda6257f",
+        "C-29e10156b962c2"
+       ],
+       "original_date": "2026-11-06",
+       "period": "June",
+       "provenance": "FORECAST",
+       "text": "The MVIS US Listed Semiconductor Index peaked at 22.5x forward earnings in June. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 10 pieces of evidence from A-0b5177202cb2 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:17 UTC, analysed as of 2026-11-09, from a source published 2026-11-06; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-e0d0632df981aa",
+       "C-5ca5f490cf5b25"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Investors repriced the 'picks and shovels' AI infrastructure trade on regulatory risk and questions over return on investment."
+     },
+     {
+      "claim_ids": [
+       "C-e0d0632df981aa"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "The thesis depends on AI end demand holding so that feared inventory overhang and earnings slowdown do not materialize; the article does not quantify demand."
+     },
+     {
+      "claim_ids": [
+       "C-29e10156b962c2",
+       "C-9fdfab456898b8",
+       "C-90eced31447a61"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "market_reaction",
+      "text": "Semiconductor 24-month forward P/E halved since June to 11.4x, below prior stress-episode lows. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-29e10156b962c2",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "MVIS US Listed Semiconductor Index \u2014 24-month forward P/E",
+      "measured_as_of": null,
+      "origin": "Bloomberg Finance L.P.",
+      "period": "since June",
+      "qualifiers": [
+       "has halved since June"
+      ],
+      "quote": "The 24-month forward price-to-earnings ratio of the MVIS US Listed Semiconductor Index has halved since June.",
+      "role": "dislocation",
+      "unit": "x",
+      "value": null,
+      "value_text": "halved"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-8315c9ebe919d4",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "2-year forward P/E multiple",
+      "measured_as_of": "2026-11-05",
+      "origin": "Bloomberg Finance L.P.",
+      "period": "later 2022",
+      "qualifiers": [
+       "around"
+      ],
+      "quote": "dips to around 12\u201314 later that year",
+      "role": "dislocation",
+      "unit": "x",
+      "value": null,
+      "value_text": "around 12\u201314"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9fdfab456898b8",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "MVIS US Listed Semiconductor Index \u2014 24-month forward P/E",
+      "measured_as_of": null,
+      "origin": "Bloomberg Finance L.P.",
+      "period": "current",
+      "qualifiers": [],
+      "quote": "the index currently trades at 11.4 times forward earnings",
+      "role": "dislocation",
+      "unit": "x",
+      "value": 11.4,
+      "value_text": "11.4 times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-a43e37718b6868",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "25 largest and most liquid US semiconductor companies \u2014 2-year forward P/E",
+      "measured_as_of": "2026-11-05",
+      "origin": "Bloomberg Finance L.P.",
+      "period": "late 2026",
+      "qualifiers": [
+       "lowest point on the chart"
+      ],
+      "quote": "by late 2026 the multiple falls sharply to its lowest point on the chart, just below 12",
+      "role": "dislocation",
+      "unit": "x",
+      "value": 12.0,
+      "value_text": "just below 12"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-cee15ab7c61c12",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "2-year forward P/E multiple",
+      "measured_as_of": "2026-11-05",
+      "origin": "Bloomberg Finance L.P.",
+      "period": "early 2022",
+      "qualifiers": [
+       "near"
+      ],
+      "quote": "The line starts near 20 in early 2022",
+      "role": "dislocation",
+      "unit": "x",
+      "value": 20.0,
+      "value_text": "near 20"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4f0091eda6257f",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "MVIS US Listed Semiconductor Index \u2014 24-month forward P/E",
+      "measured_as_of": null,
+      "origin": "Bloomberg Finance L.P.",
+      "period": "June",
+      "qualifiers": [
+       "peak"
+      ],
+      "quote": "After trading at a peak of 22.5 times forward earnings in June",
+      "role": "supports",
+      "unit": "x",
+      "value": 22.5,
+      "value_text": "22.5 times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-61ce37cea9e4c0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "number of index constituents",
+      "measured_as_of": null,
+      "origin": "Bloomberg Finance L.P.",
+      "period": null,
+      "qualifiers": [
+       "largest and most liquid",
+       "U.S."
+      ],
+      "quote": "Includes the 25 largest and most liquid semiconductor companies in the U.S.",
+      "role": "supports",
+      "unit": "companies",
+      "value": 25.0,
+      "value_text": "25"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-90eced31447a61",
+      "comparator": "Iran conflict, Liberation Day, 2022 lows",
+      "epistemic": "opinion",
+      "label": "MVIS US Listed Semiconductor Index \u2014 24-month forward P/E",
+      "measured_as_of": null,
+      "origin": "Bloomberg Finance L.P.",
+      "period": "current vs prior episodes",
+      "qualifiers": [
+       "lower than prior stress episodes"
+      ],
+      "quote": "That\u2019s at a valuation lower than when investors were digesting the beginning of the conflict in Iran, Liberation Day and the stock market lows of 2022.",
+      "role": "dislocation",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b030",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b8ad332c72bb41",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The scale of economic growth from the semiconductor/AI sector may limit policymakers' willingness to curb its development, underpinning the opportunity.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "may bear some impact"
+      ],
+      "quote": "the scale of economic growth that has come from this sector alone may bear some impact on the level and willingness to limit continued development",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e0d0632df981aa",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Unless end demand falters, the risk of an inventory overhang and earnings slowdown may already be priced into semiconductor valuations.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "conditional on end demand"
+      ],
+      "quote": "unless end demand falters, the risk of an inventory overhang and earnings slowdown may already be baked into valuations",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2e75e927f13674",
+       "name_as_written": "Goldman Sachs",
+       "other_securities": [],
+       "quote": "Bloomberg Finance L.P., Goldman Sachs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of the hyperscaler vs data center equities basket and chart data"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": "0000019617",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock",
+         "ticker": "JPM"
+        }
+       ],
+       "mention_id": "M-4394acbd464bbe",
+       "name_as_written": "JPMorgan Chase & Co.",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 5.75% Non-Cumulative Preferred Stock, Series DD",
+         "ticker": "JPM PR D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 6.00% Non-Cumulative Preferred Stock, Series EE",
+         "ticker": "JPM PR C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.75% Non-Cumulative Preferred Stock, Series GG",
+         "ticker": "JPM PR J"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.55% Non-Cumulative Preferred Stock, Series JJ",
+         "ticker": "JPM PR K"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.625% Non-Cumulative Preferred Stock, Series LL",
+         "ticker": "JPM PR L"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.20% Non-Cumulative Preferred Stock, Series MM",
+         "ticker": "JPM PR M"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Callable Fixed Rate Notes due June 10, 2032 of JPMorgan Chase Financial Company LLC",
+         "ticker": "JPM/32"
+        },
+        {
+         "exchange": "NYSE Arca",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Alerian MLP Index ETNs due January 28, 2044 of JPMorgan Chase Financial Company LLC",
+         "ticker": "AMJB"
+        },
+        {
+         "exchange": "NYSE Arca",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Inverse VIX Short-Term Futures ETNs due March 22, 2045 of JPMorgan Chase Financial Company LLC",
+         "ticker": "VYLD"
+        }
+       ],
+       "quote": "JPMorgan Chase & Co. (\u201cJPM\u201d)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher of the commentary via its private banking business"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-a43e37718b6868",
+        "C-63eb1d469991ad"
+       ],
+       "provenance": "FORECAST",
+       "text": "The 25 largest and most liquid US semiconductor companies, whose 2-year forward P/E fell to a chart low just below 12. (constituents not named by the source)"
+      }
+     ],
+     "companies": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-cafa7e1bc9a65e",
+       "name_as_written": "Bloomberg Finance L.P.",
+       "other_securities": [],
+       "quote": "Source: Bloomberg Finance L.P.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Data source for chart figures"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "cited basket",
+       "listings": [],
+       "mention_id": "M-3be71e37f43ff0",
+       "name_as_written": "MVIS US Listed Semiconductor Index",
+       "other_securities": [],
+       "quote": "the MVIS US Listed Semiconductor Index",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "cited_basket",
+       "role_detail": "Index whose 24-month forward P/E is cited to show semiconductor valuation compression"
+      }
+     ],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "claim_ids": [
+        "C-e0d0632df981aa"
+       ],
+       "direction": "positive",
+       "name": "picks and shovels AI infrastructure",
+       "provenance": "SOURCE OPINION",
+       "quote": "the \u201cpicks and shovels\u201d AI infrastructure trade"
+      }
+     ],
+     "sectors": [
+      "semiconductors",
+      "AI infrastructure picks and shovels"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-e0d0632df981aa"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Beaten-down semiconductor valuations may represent an opportunity if AI end demand holds and feared risks are already priced."
+      },
+      {
+       "claim_ids": [
+        "C-29e10156b962c2"
+       ],
+       "provenance": "FORECAST",
+       "text": "Dislocation evidence: The 24-month forward P/E of the MVIS US Listed Semiconductor Index has halved since June. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-9fdfab456898b8"
+       ],
+       "provenance": "FORECAST",
+       "text": "Dislocation evidence: The MVIS US Listed Semiconductor Index currently trades at 11.4x forward earnings. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-90eced31447a61"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Dislocation evidence: The current semiconductor valuation is lower than during the Iran conflict onset, Liberation Day, and the 2022 stock-market lows."
+      },
+      {
+       "claim_ids": [
+        "C-a43e37718b6868",
+        "C-61ce37cea9e4c0"
+       ],
+       "provenance": "FORECAST",
+       "text": "Dislocation evidence: The 2-year forward P/E of the 25 largest US semiconductor companies fell to its chart low, just below 12, by late 2026. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-cee15ab7c61c12"
+       ],
+       "provenance": "FORECAST",
+       "text": "Dislocation evidence: The semiconductor 2-year forward P/E multiple started near 20 in early 2022. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-8315c9ebe919d4"
+       ],
+       "provenance": "FORECAST",
+       "text": "Dislocation evidence: The semiconductor 2-year forward P/E multiple dipped to around 12-14 later in 2022. \u27e8cited figures: forecast; approximate, read from a chart; data as of 2026-11-05\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-81ed4982c3222a",
+        "C-b8ad332c72bb41"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The scale of economic growth from the semiconductor sector may limit willingness to curb development, and the AI build-out backdrop remains structurally in place."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-e0d0632df981aa"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The low multiple reflects a market questioning the durability of the industry's earnings and continued capex growth; if end demand falters, an inventory overhang and earnings slowdown could still materialize."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-0577F0AD38: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs valuation_dislocation) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-B121174B17: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs valuation_dislocation); a different geography (China vs US); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-CBFA9511C2: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs valuation_dislocation) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-F2CD2F7AFC: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs valuation_dislocation) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 11 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Signs of AI end demand faltering"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Inventory overhang or earnings downgrades in semiconductor names"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Further contraction of the forward P/E without stabilization"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-d949f4c97f4235",
+        "C-a43e37718b6868"
+       ],
+       "provenance": "FORECAST",
+       "text": "A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affordability and zoning concerns, with the magnitude of Democratic midterm gains not fully priced in, creating volatility across the AI/tech trade. (scope: US AI-linked technology, semiconductor, utility and data center equities; article says much uncertainty was priced in before the election but the magnitude of Democratic gains was not.)"
+      },
+      {
+       "claim_ids": [
+        "C-e0d0632df981aa"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Financing, regulatory and power constraints could make for a bumpy road for the AI trade, with risk of an inventory overhang and earnings slowdown if end demand falters. (scope: AI infrastructure and semiconductor equities; conditional on AI end demand holding.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: Unless end demand falters, the risk of inventory overhang and earnings slowdown may already be baked into semiconductor valuations"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether AI end demand will hold"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether consensus semiconductor earnings estimates have been cut"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "What fair value for the semiconductor multiple is"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the valuation compression reflects durable earnings risk rather than mispricing"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Signs of AI demand deceleration"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Semiconductor earnings downgrades accelerate"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Assess AI end-demand indicators and semiconductor consensus earnings revisions to judge whether the forward P/E compression overstates fundamental risk."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI end-demand data remains robust"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Semiconductor earnings estimates stabilize or rise"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-0b5177202cb2",
+      "authors": [
+       "Kriti Gupta (Executive Director, Global Investment Strategist)",
+       "Nick Roberts (Portfolio Manager, Specialized Strategies)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-29e10156b962c2",
+       "C-9fdfab456898b8",
+       "C-90eced31447a61",
+       "C-a43e37718b6868",
+       "C-cee15ab7c61c12",
+       "C-8315c9ebe919d4",
+       "C-4f0091eda6257f",
+       "C-e0d0632df981aa",
+       "C-61ce37cea9e4c0",
+       "C-b8ad332c72bb41",
+       "C-d949f4c97f4235"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-06T11:30:00+05:30",
+      "published_status": "KNOWN",
+      "publisher": "J.P. Morgan Private Bank",
+      "retrieval_state": "FULL",
+      "title": "The blue wave is changing the AI trade",
+      "upstream_origins": [
+       "Bloomberg Finance L.P.",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/the-blue-wave-is-changing-the-ai-trade",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "17405f035bdbc65b2b5ea8b3f9198110e69441a0c4ade89402f9b3f8150be6b0",
+   "created_at": "2026-11-09T14:17:59.519650Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-4f0091eda6257f",
+       "C-61ce37cea9e4c0",
+       "C-29e10156b962c2",
+       "C-9fdfab456898b8",
+       "C-a43e37718b6868",
+       "C-cee15ab7c61c12",
+       "C-8315c9ebe919d4"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "7"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-aab273bf90d4, ES-fc428945cc0a",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-a43e37718b6868",
+       "C-61ce37cea9e4c0"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-a43e37718b6868: forecast window 2026-01-01..2026-12-31 (2026); C-61ce37cea9e4c0: measured 2026-11-06 (3 days before the as-of)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: instrument: MVIS US Listed Semiconductor Index, sector: picks and shovels AI infrastructure",
+      "value": "0 listed \u00b7 1 sector \u00b7 1 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 6 offered but NOT counted (opinion, forecast figure or stale reading): C-29e10156b962c2, C-9fdfab456898b8, C-90eced31447a61, C-a43e37718b6868, C-cee15ab7c61c12, C-8315c9ebe919d4",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 7 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "premise_conditional",
+      "kind": "held",
+      "text": "premise is conditional in the source"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-0F1BABEC2D",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-5ca5f490cf5b25",
+  "C-63eb1d469991ad",
+  "C-81ed4982c3222a",
+  "C-d949f4c97f4235"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The cited spans C-29e10156b962c2, C-4f0091eda6257f, C-9fdfab456898b8 and C-90eced31447a61 all refer to the MVIS US Listed Semiconductor Index (halved from 22.5x in June to 11.4x, below prior stress-episode lows). But C-a43e37718b6868 (just below 12 by late 2026) is about the 25-largest-companies chart, a different series. The 'halved since June' and 'from 22.5x to 11.4x' figures plus the below-stress-lows claim are all supported; the regulatory/ROI repricing is in the pool (C-5ca5f490cf5b25) but not cited here.",
+  "s07.0": "The second half (inventory overhang / earnings slowdown if end demand falters) is supported by C-e0d0632df981aa. But the first half \u2014 'market questioning the durability of the industry's earnings and continued capex growth' \u2014 is not in the single cited span; it is an added characterization not anchored to the cited text.",
+  "s07.7": "The inventory-overhang/earnings-slowdown-if-end-demand-falters portion is supported by C-e0d0632df981aa. But 'financing, regulatory and power constraints could make for a bumpy road for the AI trade' is not contained in the single cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Premise \u2014 conditional in the source."
+ ],
+ "withheld_sentences": {
+  "s07.6": "REVIEW_UNSUPPORTED \u2014 s07.6: UNSUPPORTED \u2014 The cited spans support only that Democrats gained control of House and Senate (C-d949f4c97f4235) and the late-2026 multiple low (C-a43e37718b6868). Nothing in the cited spans mentions a federal moratorium, state-led initiatives, affordability/zoning concerns, or that the magnitude of Democratic gains was not fully priced in. These claims are not anchored by the cited spans, and no pool span supports a federal moratorium or pricing-in claim. | 'A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affo'"
+ }
+}

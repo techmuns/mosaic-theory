@@ -1,0 +1,2319 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.power_grid"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:14:02.663842Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-07",
+   "latest_article_date": "2026-11-07",
+   "region": "China",
+   "research_action": "WATCH",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-8178B565CB",
+   "title": "Vertically integrated energy-equipment firms win China AI datacenter power buildout"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-06751dd2c089c3",
+     "C-72aeb709f39235",
+     "C-38d3ff6a878302",
+     "C-090890385e240b",
+     "C-1728bdc01591fc",
+     "C-bdceda92ec026f"
+    ],
+    "provenance": "FORECAST",
+    "text": "Chinese industrial groups with roots in energy, construction and electrical equipment (Envision; the CATL/VNET/Zhongheng tie-up) are pivoting into AI datacenter infrastructure, pairing captive wind/solar/storage with in-hall power conversion. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article suggests vertical integration gives integrated players more cost and schedule control and could matter more as power becomes harder to secure and the datacenter power system is redesigned."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If power access and the DC power-architecture shift become central to winning hyperscaler orders, integrated energy-equipment players could gain share and schedule/cost control, but the article says it is too early to confirm this and does not quantify any earnings effect."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1728bdc01591fc"
+     ],
+     "original_date": "2026-11-07",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Galaxy's wind farms have 420MW combined capacity, about 1.75x the 240MW datacenter load"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-bdceda92ec026f"
+     ],
+     "original_date": "2026-11-07",
+     "period": "2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "In 2026 CATL became VNET's largest shareholder and announced a 49% stake in Zhongheng Electric's controlling shareholder"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7de00415bb80e9"
+     ],
+     "original_date": "2026-11-07",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Envision's prefabricated substation takes under 3 months to connect vs about 6 months conventionally"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-06751dd2c089c3"
+     ],
+     "original_date": "2026-11-07",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Envision Group has more than 100GW of wind turbines installed worldwide"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-72aeb709f39235"
+     ],
+     "original_date": "2026-11-07",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Envision built a 2GW off-grid wind/solar/storage system in Chifeng feeding a green ammonia plant"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-38d3ff6a878302"
+     ],
+     "original_date": "2026-11-07",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Envision's datacenter plans in Inner Mongolia add up to 3GW"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 12 pieces of evidence from A-545af5c99a2f \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:14 UTC, analysed as of 2026-11-09, from a source published 2026-11-07; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-b356275768fc8f",
+     "C-e4952f6e390699"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Access to power and redesigned grid-to-rack DC architecture are becoming part of what a datacenter developer sells, favoring integrated players."
+   },
+   {
+    "claim_ids": [
+     "C-c5f1554389f518",
+     "C-7de00415bb80e9"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "costs",
+    "text": "Factory pre-configuration and prefab substations cut commissioning and deployment time (vs 3-6 months and ~6 months conventionally), giving cost and schedule control."
+   },
+   {
+    "claim_ids": [
+     "C-a21bba7c8b18f0"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Would translate into datacenter and power-equipment orders/revenue for integrated players, but the article does not quantify any earnings effect and notes thin IRRs."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-06751dd2c089c3",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "installed wind turbines",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "more than"
+    ],
+    "quote": "a renewable systems integrator with more than 100GW of wind turbines installed worldwide",
+    "role": "supports",
+    "unit": "GW",
+    "value": 100.0,
+    "value_text": "more than 100GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-090890385e240b",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "wind power share target",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "over",
+     "aims to"
+    ],
+    "quote": "Envision aims to supply over 60% of the first two phases\u2019 power use with its own wind farms",
+    "role": "supports",
+    "unit": "%",
+    "value": 60.0,
+    "value_text": "over 60%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b034",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1728bdc01591fc",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "wind capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "1.75 times",
+     "240MW load"
+    ],
+    "quote": "The wind farms have a combined 420MW of installed capacity, about 1.75 times the 240MW datacenter load.",
+    "role": "supports",
+    "unit": "MW",
+    "value": 420.0,
+    "value_text": "420MW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-38d3ff6a878302",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "planned datacenter capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Its datacenter plans in Inner Mongolia add up to 3GW.",
+    "role": "supports",
+    "unit": "GW",
+    "value": 3.0,
+    "value_text": "3GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b046",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-4f8c8d8fbd6d83",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "SST pilot capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "only",
+     "live hyperscaler site"
+    ],
+    "quote": "Galaxy\u2019s SST pilot is only 5MW, but it already runs 800V DC all the way to the rack at a live hyperscaler site.",
+    "role": "supports",
+    "unit": "MW",
+    "value": 5.0,
+    "value_text": "5MW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b022",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-72aeb709f39235",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "off-grid system capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "off-grid"
+    ],
+    "quote": "Envision built a 2GW off-grid wind, solar and storage system that feeds a green ammonia plant",
+    "role": "supports",
+    "unit": "GW",
+    "value": 2.0,
+    "value_text": "2GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7b987a5e602dee",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "wind capacity factor",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "per year",
+    "qualifiers": [
+     "on average",
+     "about 2,800 full-load hours"
+    ],
+    "quote": "A wind farm here runs on average about 2,800 full-load hours a year, a capacity factor of roughly 32%.",
+    "role": "supports",
+    "unit": "%",
+    "value": 32.0,
+    "value_text": "roughly 32%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b047",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7de00415bb80e9",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "substation deployment time",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "less than",
+     "versus about 6 months conventional"
+    ],
+    "quote": "This takes less than 3 months, versus about 6 months for a conventional indoor substation.",
+    "role": "supports",
+    "unit": "months",
+    "value": 3.0,
+    "value_text": "less than 3 months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b053",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-bdceda92ec026f",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "stake",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "CATL became VNET\u2019s largest shareholder and announced a deal to take a 49% stake in Zhongheng Electric\u2019s controlling shareholder",
+    "role": "supports",
+    "unit": "%",
+    "value": 49.0,
+    "value_text": "49%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b044",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c5f1554389f518",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "commissioning time",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "getting the parts to work together falls to on-site commissioning, which can take 3\u20136 months",
+    "role": "supports",
+    "unit": "months",
+    "value": null,
+    "value_text": "3\u20136 months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b035",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e9690477401490",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "battery storage duration",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "A 4-hour battery storage system shifts power from windy hours into calm ones.",
+    "role": "supports",
+    "unit": "hours",
+    "value": 4.0,
+    "value_text": "4-hour"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b056",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-eac424df79fbae",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "power cost",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "all-in",
+     "among the lowest in the world"
+    ],
+    "quote": "Power in Inner Mongolia costs about $0.055/kWh all-in, among the lowest in the world.",
+    "role": "supports",
+    "unit": "$/kWh",
+    "value": 0.055,
+    "value_text": "about $0.055/kWh"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d877ace3489d0a",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Galaxy's initial phase was delivered in August 2026 and full campus expected complete by end of 2027",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "August 2026 to end of 2027",
+    "qualifiers": [
+     "full campus expected"
+    ],
+    "quote": "Its initial phase was delivered in August 2026, and the full campus is expected to be completed by the end of 2027.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8cd0613fe1916b",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "built for OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "Stargate Abilene campus built for OpenAI"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7abfa1e9d23ed2",
+     "name_as_written": "Envision AESC",
+     "other_securities": [],
+     "quote": "Its affiliate, Envision AESC",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Envision affiliate developing batteries, energy storage and power electronics"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ef824bcfade288",
+     "name_as_written": "China Telecom",
+     "other_securities": [],
+     "quote": "China Telecom\u2019s 240V DC pilots in 2007",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Early adopter of DC power pilots in Chinese datacenters"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": "0001577552",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2b0fe736c824c1",
+     "name_as_written": "Alibaba",
+     "other_securities": [],
+     "quote": "Alibaba\u2019s Panama power system in 2018",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "DC power system pioneer; also customer of Zhongheng Electric"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": "0001045810",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-02fb13e0a6db5a",
+     "name_as_written": "Nvidia",
+     "other_securities": [],
+     "quote": "Nvidia says Vera Rubin can run on 45\u00b0C water without chillers",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Chip/rack vendor pushing 800V DC and liquid cooling specs"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9f8a6e462df682",
+     "name_as_written": "Tencent",
+     "other_securities": [],
+     "quote": " synchronous generator. A small pilot datacenter built with Tencent\u2019s modular T-Block units runs on the same system. Galaxy is ",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Modular T-Block datacenter units used in Envision pilot"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0509bd14325242",
+     "name_as_written": "Crusoe",
+     "other_securities": [],
+     "quote": "Crusoe began building Abilene in mid-2024",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "Developer of Abilene Stargate campus"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": "0001341439",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.01 per share",
+       "ticker": "ORCL"
+      }
+     ],
+     "mention_id": "M-4b39486102d977",
+     "name_as_written": "Oracle",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+       "ticker": "ORCL PRD"
+      }
+     ],
+     "quote": "leased it to Oracle",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Leases Abilene campus and runs it for OpenAI"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2d3be724292278",
+     "name_as_written": "ByteDance",
+     "other_securities": [],
+     "quote": "working with both Alibaba and ByteDance",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "Datacenter customer of Zhongheng Electric"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-070b58403d1a84",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "CATL is also one of DeepSeek\u2019s largest outside investors",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "AI model developer in which CATL is a large outside investor"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": "0001445162",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1c59a06aeeb7a6",
+     "name_as_written": "BYD",
+     "other_securities": [
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-09 in the SEC submissions index); never use in a historical basket",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "BYDDF"
+      }
+     ],
+     "quote": "players like BYD make much of what goes into their cars",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "Vertical integration analogy from China EV market"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ca4a0a09dccdd8",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "The SemiAnalysis China Datacenter Model",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher and author of report and proprietary datacenter model"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-2179cfc5512771",
+     "name_as_written": "CATL",
+     "other_securities": [],
+     "quote": "CATL is the world\u2019s largest EV battery maker",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Largest EV battery maker leading green power/storage in datacenter tie-up; VNET largest shareholder; DeepSeek investor"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": "0001508475",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-0dd3e20a8cde64",
+     "name_as_written": "VNET",
+     "other_securities": [],
+     "quote": "the tie-up between VNET, CATL and Zhongheng Electric",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Leading colocation operator in CATL/Zhongheng tie-up building gigawatt-scale campuses"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-cede017b14685b",
+     "name_as_written": "Zhongheng Electric",
+     "other_securities": [],
+     "quote": "Zhongheng Electric is China\u2019s largest supplier of HVDC power systems for datacenters",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Largest China HVDC datacenter power systems supplier working with Alibaba and ByteDance"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-c9716f88332d2c",
+     "name_as_written": "Envision Group",
+     "other_securities": [],
+     "quote": "The datacenter is owned by Envision Group",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "Vertically integrated renewable systems integrator owning and building Galaxy datacenter"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-545af5c99a2f",
+     "claim_ids": [],
+     "direction": "positive",
+     "name": "power and equipment",
+     "provenance": "SOURCE OPINION",
+     "quote": "datacenters create new demand for the power and equipment it already produces"
+    }
+   ],
+   "sectors": [
+    "datacenters",
+    "renewable energy equipment",
+    "power electronics",
+    "battery storage"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "full Galaxy campus expected completed by end of 2027 [SOURCE OPINION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-d877ace3489d0a",
+      "C-bdceda92ec026f"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Galaxy's first phase delivered August 2026; CATL's 2026 deals with VNET and Zhongheng are current developments to investigate now."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-b356275768fc8f"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Over the longer term, owning more of the value chain is one way to differentiate in a competitive China datacenter market, a playbook from China's EV industry, but its advantage is unproven."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-a21bba7c8b18f0",
+      "C-abe0eaa86a17f9",
+      "C-b356275768fc8f"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Hyperscalers still choose vendors mainly on resources and track record, not vertical integration; project returns are thin with IRRs squeezed, so for many listed firms the real draw is the stock market rather than project economics."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 12 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-a21bba7c8b18f0"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China datacenter project returns are thin with IRRs squeezed hard"
+    },
+    {
+     "claim_ids": [
+      "C-b356275768fc8f"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "It is too early to say whether vertical integration will be a meaningful advantage in China's datacenter market"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscalers continuing to award orders on resources and track record regardless of integration"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence that integrated players' project IRRs remain uneconomic"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Stalled China approvals for compute-plus-green-power projects"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-4434f298455ee3",
+      "C-a21bba7c8b18f0",
+      "C-abe0eaa86a17f9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Many listed Chinese companies are pivoting into AI datacenter infrastructure where project returns are thin and IRRs squeezed hard, with the stock market being the draw for many of them, raising the risk that equity enthusiasm outruns project economics. (scope: China listed companies entering datacenter/AI infrastructure; the article does not quantify valuations or name which listed names are affected.)"
+    }
+   ],
+   "price_context": [
+    {
+     "claim_ids": [
+      "C-abe0eaa86a17f9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "For many listed companies, the draw of pivoting into AI infrastructure is the stock market"
+    }
+   ],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: if power access and redesigned in-datacenter power architecture become decisive in vendor selection"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the named players' earnings or valuations reflect the vertical-integration advantage"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether vertical integration actually wins hyperscaler orders vs resources/track record"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether thin IRRs allow adequate project returns"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the association between integration and cost/schedule control is demonstrated causation"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscalers keep selecting vendors purely on resources/track record"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Project IRRs remain too thin to justify investment"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify the listed Chinese power-electronics, battery and colocation names (e.g. CATL, VNET, Zhongheng) exposed to the SGLS/vertical-integration datacenter buildout and check whether consensus reflects datacenter-driven demand and project economics."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscalers begin awarding orders partly on power/integration"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "China approvals increasingly require compute paired with green power"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Further CATL/VNET/Zhongheng-style tie-ups announced"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-545af5c99a2f",
+    "authors": [
+     "Everlyn Tan",
+     "Jeremie Eliahou Ontiveros",
+     "Xiaopeng Laoban",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-d877ace3489d0a",
+     "C-06751dd2c089c3",
+     "C-72aeb709f39235",
+     "C-38d3ff6a878302",
+     "C-090890385e240b",
+     "C-1728bdc01591fc",
+     "C-c5f1554389f518",
+     "C-7de00415bb80e9",
+     "C-bdceda92ec026f",
+     "C-eac424df79fbae",
+     "C-4f8c8d8fbd6d83",
+     "C-7b987a5e602dee",
+     "C-e9690477401490",
+     "C-a21bba7c8b18f0",
+     "C-abe0eaa86a17f9",
+     "C-b356275768fc8f",
+     "C-4434f298455ee3"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-07T19:01:39Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "We Visited China\u2019s Stargate in Inner Mongolia",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/we-visited-chinas-stargate-in-inner",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0001551182-26-000007)",
+    "business": "electrical power management, datacenter power distribution equipment",
+    "direction": "positive",
+    "enrichment_id": "EC-1a2749caca5633",
+    "evidence": "s03.1: Factory pre-configuration and prefab substations cut commissioning and deployment time (vs 3-6 months and ~6 months conventionally), giving cost and schedule control.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-03 (accession 0001551182-26-000040) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary shares ($0.01 par value)",
+      "ticker": "ETN"
+     }
+    ],
+    "name": "Eaton Corporation",
+    "rationale": "Prefab substations and in-hall power conversion for AI datacenters lift demand for Eaton's switchgear, busway and power distribution products.",
+    "registrant": "Eaton Corp plc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3590); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter electrical power distribution equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MEASURED OBSERVATION",
+    "thesis_id": "TH-8178B565CB",
+    "ticker_hint": "ETN"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0001674101-26-000008)",
+    "business": "datacenter power, cooling and grid-to-rack infrastructure",
+    "direction": "positive",
+    "enrichment_id": "EC-2c02b8577e4c81",
+    "evidence": "s03.0: Access to power and redesigned grid-to-rack DC architecture are becoming part of what a datacenter developer sells, favoring integrated players.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001628280-26-067893) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A common stock, $0.0001 par value per share",
+      "ticker": "VRT"
+     }
+    ],
+    "name": "Vertiv Holdings",
+    "rationale": "Redesigned grid-to-rack DC power architecture is Vertiv's core offering; architecture shift drives power conversion and distribution revenue.",
+    "registrant": "Vertiv Holdings Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3679); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter power and thermal infrastructure",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-8178B565CB",
+    "ticker_hint": "VRT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-01-29 (0001996810-26-000015)",
+    "business": "power generation, grid equipment, wind turbines",
+    "direction": "positive",
+    "enrichment_id": "EC-cc083a9b9c056c",
+    "evidence": "s03.0: Access to power and redesigned grid-to-rack DC architecture are becoming part of what a datacenter developer sells, favoring integrated players.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001996810-26-000163) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $0.01 per share",
+      "ticker": "GEV"
+     }
+    ],
+    "name": "GE Vernova",
+    "rationale": "Scarce power access and grid buildout for datacenters lift demand for GE Vernova's turbines, grid transformers and interconnection equipment.",
+    "registrant": "GE Vernova Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3600); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "grid and power-generation equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-8178B565CB",
+    "ticker_hint": "GEV"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "electrical distribution and prefabricated datacenter power systems",
+    "direction": "positive",
+    "enrichment_id": "EC-6724a28339c78f",
+    "evidence": "s03.1: Factory pre-configuration and prefab substations cut commissioning and deployment time (vs 3-6 months and ~6 months conventionally), giving cost and schedule control.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Schneider Electric",
+    "rationale": "Factory pre-configured prefab power modules and substations for datacenters are a Schneider specialty; schedule-cut trend favors its products.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "prefabricated datacenter power systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MEASURED OBSERVATION",
+    "thesis_id": "TH-8178B565CB",
+    "ticker_hint": "SBGSY"
+   }
+  ],
+  "created_at": "2026-11-09T14:56:26.691998Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Bloom Energy: more than 4 on one side \u2014 set aside",
+   "Quanta Services: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-35ba87a352685b",
+  "thesis_id": "TH-8178B565CB",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 14:59 UTC from the registry (ti-engine-5; run R-20261109T140627Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-545af5c99a2f",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.power_grid"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:14:02.663842Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-07",
+     "latest_article_date": "2026-11-07",
+     "region": "China",
+     "research_action": "WATCH",
+     "sector": "Power generation, grid and interconnection for AI datacenters",
+     "status": "ACTIVE",
+     "thesis_id": "TH-8178B565CB",
+     "title": "Vertically integrated energy-equipment firms win China AI datacenter power buildout"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-06751dd2c089c3",
+       "C-72aeb709f39235",
+       "C-38d3ff6a878302",
+       "C-090890385e240b",
+       "C-1728bdc01591fc",
+       "C-bdceda92ec026f"
+      ],
+      "provenance": "FORECAST",
+      "text": "Chinese industrial groups with roots in energy, construction and electrical equipment (Envision; the CATL/VNET/Zhongheng tie-up) are pivoting into AI datacenter infrastructure, pairing captive wind/solar/storage with in-hall power conversion. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article suggests vertical integration gives integrated players more cost and schedule control and could matter more as power becomes harder to secure and the datacenter power system is redesigned."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If power access and the DC power-architecture shift become central to winning hyperscaler orders, integrated energy-equipment players could gain share and schedule/cost control, but the article says it is too early to confirm this and does not quantify any earnings effect."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1728bdc01591fc"
+       ],
+       "original_date": "2026-11-07",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Galaxy's wind farms have 420MW combined capacity, about 1.75x the 240MW datacenter load"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-bdceda92ec026f"
+       ],
+       "original_date": "2026-11-07",
+       "period": "2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "In 2026 CATL became VNET's largest shareholder and announced a 49% stake in Zhongheng Electric's controlling shareholder"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7de00415bb80e9"
+       ],
+       "original_date": "2026-11-07",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Envision's prefabricated substation takes under 3 months to connect vs about 6 months conventionally"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-06751dd2c089c3"
+       ],
+       "original_date": "2026-11-07",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Envision Group has more than 100GW of wind turbines installed worldwide"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-72aeb709f39235"
+       ],
+       "original_date": "2026-11-07",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Envision built a 2GW off-grid wind/solar/storage system in Chifeng feeding a green ammonia plant"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-38d3ff6a878302"
+       ],
+       "original_date": "2026-11-07",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Envision's datacenter plans in Inner Mongolia add up to 3GW"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 12 pieces of evidence from A-545af5c99a2f \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:14 UTC, analysed as of 2026-11-09, from a source published 2026-11-07; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-b356275768fc8f",
+       "C-e4952f6e390699"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Access to power and redesigned grid-to-rack DC architecture are becoming part of what a datacenter developer sells, favoring integrated players."
+     },
+     {
+      "claim_ids": [
+       "C-c5f1554389f518",
+       "C-7de00415bb80e9"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "costs",
+      "text": "Factory pre-configuration and prefab substations cut commissioning and deployment time (vs 3-6 months and ~6 months conventionally), giving cost and schedule control."
+     },
+     {
+      "claim_ids": [
+       "C-a21bba7c8b18f0"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Would translate into datacenter and power-equipment orders/revenue for integrated players, but the article does not quantify any earnings effect and notes thin IRRs."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-06751dd2c089c3",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "installed wind turbines",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "more than"
+      ],
+      "quote": "a renewable systems integrator with more than 100GW of wind turbines installed worldwide",
+      "role": "supports",
+      "unit": "GW",
+      "value": 100.0,
+      "value_text": "more than 100GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-090890385e240b",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "wind power share target",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "over",
+       "aims to"
+      ],
+      "quote": "Envision aims to supply over 60% of the first two phases\u2019 power use with its own wind farms",
+      "role": "supports",
+      "unit": "%",
+      "value": 60.0,
+      "value_text": "over 60%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b034",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1728bdc01591fc",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "wind capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "1.75 times",
+       "240MW load"
+      ],
+      "quote": "The wind farms have a combined 420MW of installed capacity, about 1.75 times the 240MW datacenter load.",
+      "role": "supports",
+      "unit": "MW",
+      "value": 420.0,
+      "value_text": "420MW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-38d3ff6a878302",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "planned datacenter capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Its datacenter plans in Inner Mongolia add up to 3GW.",
+      "role": "supports",
+      "unit": "GW",
+      "value": 3.0,
+      "value_text": "3GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b046",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4f8c8d8fbd6d83",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "SST pilot capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "only",
+       "live hyperscaler site"
+      ],
+      "quote": "Galaxy\u2019s SST pilot is only 5MW, but it already runs 800V DC all the way to the rack at a live hyperscaler site.",
+      "role": "supports",
+      "unit": "MW",
+      "value": 5.0,
+      "value_text": "5MW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-72aeb709f39235",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "off-grid system capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "off-grid"
+      ],
+      "quote": "Envision built a 2GW off-grid wind, solar and storage system that feeds a green ammonia plant",
+      "role": "supports",
+      "unit": "GW",
+      "value": 2.0,
+      "value_text": "2GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7b987a5e602dee",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "wind capacity factor",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "per year",
+      "qualifiers": [
+       "on average",
+       "about 2,800 full-load hours"
+      ],
+      "quote": "A wind farm here runs on average about 2,800 full-load hours a year, a capacity factor of roughly 32%.",
+      "role": "supports",
+      "unit": "%",
+      "value": 32.0,
+      "value_text": "roughly 32%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b047",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7de00415bb80e9",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "substation deployment time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "less than",
+       "versus about 6 months conventional"
+      ],
+      "quote": "This takes less than 3 months, versus about 6 months for a conventional indoor substation.",
+      "role": "supports",
+      "unit": "months",
+      "value": 3.0,
+      "value_text": "less than 3 months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b053",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-bdceda92ec026f",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "stake",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "CATL became VNET\u2019s largest shareholder and announced a deal to take a 49% stake in Zhongheng Electric\u2019s controlling shareholder",
+      "role": "supports",
+      "unit": "%",
+      "value": 49.0,
+      "value_text": "49%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b044",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c5f1554389f518",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "commissioning time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "getting the parts to work together falls to on-site commissioning, which can take 3\u20136 months",
+      "role": "supports",
+      "unit": "months",
+      "value": null,
+      "value_text": "3\u20136 months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b035",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e9690477401490",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "battery storage duration",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "A 4-hour battery storage system shifts power from windy hours into calm ones.",
+      "role": "supports",
+      "unit": "hours",
+      "value": 4.0,
+      "value_text": "4-hour"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b056",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-eac424df79fbae",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "power cost",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "all-in",
+       "among the lowest in the world"
+      ],
+      "quote": "Power in Inner Mongolia costs about $0.055/kWh all-in, among the lowest in the world.",
+      "role": "supports",
+      "unit": "$/kWh",
+      "value": 0.055,
+      "value_text": "about $0.055/kWh"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d877ace3489d0a",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Galaxy's initial phase was delivered in August 2026 and full campus expected complete by end of 2027",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "August 2026 to end of 2027",
+      "qualifiers": [
+       "full campus expected"
+      ],
+      "quote": "Its initial phase was delivered in August 2026, and the full campus is expected to be completed by the end of 2027.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8cd0613fe1916b",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "built for OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "Stargate Abilene campus built for OpenAI"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7abfa1e9d23ed2",
+       "name_as_written": "Envision AESC",
+       "other_securities": [],
+       "quote": "Its affiliate, Envision AESC",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Envision affiliate developing batteries, energy storage and power electronics"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ef824bcfade288",
+       "name_as_written": "China Telecom",
+       "other_securities": [],
+       "quote": "China Telecom\u2019s 240V DC pilots in 2007",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Early adopter of DC power pilots in Chinese datacenters"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": "0001577552",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2b0fe736c824c1",
+       "name_as_written": "Alibaba",
+       "other_securities": [],
+       "quote": "Alibaba\u2019s Panama power system in 2018",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "DC power system pioneer; also customer of Zhongheng Electric"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": "0001045810",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-02fb13e0a6db5a",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "Nvidia says Vera Rubin can run on 45\u00b0C water without chillers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Chip/rack vendor pushing 800V DC and liquid cooling specs"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9f8a6e462df682",
+       "name_as_written": "Tencent",
+       "other_securities": [],
+       "quote": " synchronous generator. A small pilot datacenter built with Tencent\u2019s modular T-Block units runs on the same system. Galaxy is ",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Modular T-Block datacenter units used in Envision pilot"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0509bd14325242",
+       "name_as_written": "Crusoe",
+       "other_securities": [],
+       "quote": "Crusoe began building Abilene in mid-2024",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "Developer of Abilene Stargate campus"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": "0001341439",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.01 per share",
+         "ticker": "ORCL"
+        }
+       ],
+       "mention_id": "M-4b39486102d977",
+       "name_as_written": "Oracle",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+         "ticker": "ORCL PRD"
+        }
+       ],
+       "quote": "leased it to Oracle",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Leases Abilene campus and runs it for OpenAI"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2d3be724292278",
+       "name_as_written": "ByteDance",
+       "other_securities": [],
+       "quote": "working with both Alibaba and ByteDance",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "Datacenter customer of Zhongheng Electric"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-070b58403d1a84",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "CATL is also one of DeepSeek\u2019s largest outside investors",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "AI model developer in which CATL is a large outside investor"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": "0001445162",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1c59a06aeeb7a6",
+       "name_as_written": "BYD",
+       "other_securities": [
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-09 in the SEC submissions index); never use in a historical basket",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "BYDDF"
+        }
+       ],
+       "quote": "players like BYD make much of what goes into their cars",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "Vertical integration analogy from China EV market"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ca4a0a09dccdd8",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "The SemiAnalysis China Datacenter Model",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher and author of report and proprietary datacenter model"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-2179cfc5512771",
+       "name_as_written": "CATL",
+       "other_securities": [],
+       "quote": "CATL is the world\u2019s largest EV battery maker",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Largest EV battery maker leading green power/storage in datacenter tie-up; VNET largest shareholder; DeepSeek investor"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": "0001508475",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-0dd3e20a8cde64",
+       "name_as_written": "VNET",
+       "other_securities": [],
+       "quote": "the tie-up between VNET, CATL and Zhongheng Electric",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Leading colocation operator in CATL/Zhongheng tie-up building gigawatt-scale campuses"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-cede017b14685b",
+       "name_as_written": "Zhongheng Electric",
+       "other_securities": [],
+       "quote": "Zhongheng Electric is China\u2019s largest supplier of HVDC power systems for datacenters",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Largest China HVDC datacenter power systems supplier working with Alibaba and ByteDance"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-c9716f88332d2c",
+       "name_as_written": "Envision Group",
+       "other_securities": [],
+       "quote": "The datacenter is owned by Envision Group",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "Vertically integrated renewable systems integrator owning and building Galaxy datacenter"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-545af5c99a2f",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "power and equipment",
+       "provenance": "SOURCE OPINION",
+       "quote": "datacenters create new demand for the power and equipment it already produces"
+      }
+     ],
+     "sectors": [
+      "datacenters",
+      "renewable energy equipment",
+      "power electronics",
+      "battery storage"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "full Galaxy campus expected completed by end of 2027 [SOURCE OPINION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-d877ace3489d0a",
+        "C-bdceda92ec026f"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Galaxy's first phase delivered August 2026; CATL's 2026 deals with VNET and Zhongheng are current developments to investigate now."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-b356275768fc8f"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Over the longer term, owning more of the value chain is one way to differentiate in a competitive China datacenter market, a playbook from China's EV industry, but its advantage is unproven."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-a21bba7c8b18f0",
+        "C-abe0eaa86a17f9",
+        "C-b356275768fc8f"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Hyperscalers still choose vendors mainly on resources and track record, not vertical integration; project returns are thin with IRRs squeezed, so for many listed firms the real draw is the stock market rather than project economics."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 12 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-a21bba7c8b18f0"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China datacenter project returns are thin with IRRs squeezed hard"
+      },
+      {
+       "claim_ids": [
+        "C-b356275768fc8f"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "It is too early to say whether vertical integration will be a meaningful advantage in China's datacenter market"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers continuing to award orders on resources and track record regardless of integration"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that integrated players' project IRRs remain uneconomic"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Stalled China approvals for compute-plus-green-power projects"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-4434f298455ee3",
+        "C-a21bba7c8b18f0",
+        "C-abe0eaa86a17f9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Many listed Chinese companies are pivoting into AI datacenter infrastructure where project returns are thin and IRRs squeezed hard, with the stock market being the draw for many of them, raising the risk that equity enthusiasm outruns project economics. (scope: China listed companies entering datacenter/AI infrastructure; the article does not quantify valuations or name which listed names are affected.)"
+      }
+     ],
+     "price_context": [
+      {
+       "claim_ids": [
+        "C-abe0eaa86a17f9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "For many listed companies, the draw of pivoting into AI infrastructure is the stock market"
+      }
+     ],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: if power access and redesigned in-datacenter power architecture become decisive in vendor selection"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the named players' earnings or valuations reflect the vertical-integration advantage"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether vertical integration actually wins hyperscaler orders vs resources/track record"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether thin IRRs allow adequate project returns"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the association between integration and cost/schedule control is demonstrated causation"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers keep selecting vendors purely on resources/track record"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Project IRRs remain too thin to justify investment"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify the listed Chinese power-electronics, battery and colocation names (e.g. CATL, VNET, Zhongheng) exposed to the SGLS/vertical-integration datacenter buildout and check whether consensus reflects datacenter-driven demand and project economics."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers begin awarding orders partly on power/integration"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "China approvals increasingly require compute paired with green power"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Further CATL/VNET/Zhongheng-style tie-ups announced"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-545af5c99a2f",
+      "authors": [
+       "Everlyn Tan",
+       "Jeremie Eliahou Ontiveros",
+       "Xiaopeng Laoban",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-d877ace3489d0a",
+       "C-06751dd2c089c3",
+       "C-72aeb709f39235",
+       "C-38d3ff6a878302",
+       "C-090890385e240b",
+       "C-1728bdc01591fc",
+       "C-c5f1554389f518",
+       "C-7de00415bb80e9",
+       "C-bdceda92ec026f",
+       "C-eac424df79fbae",
+       "C-4f8c8d8fbd6d83",
+       "C-7b987a5e602dee",
+       "C-e9690477401490",
+       "C-a21bba7c8b18f0",
+       "C-abe0eaa86a17f9",
+       "C-b356275768fc8f",
+       "C-4434f298455ee3"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-07T19:01:39Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "We Visited China\u2019s Stargate in Inner Mongolia",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/we-visited-chinas-stargate-in-inner",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "3f73c2dd507950fef67a4622779026bce6973e8dbf0de356b384fc51822a5fc7",
+   "created_at": "2026-11-09T14:14:30.140292Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-06751dd2c089c3",
+       "C-72aeb709f39235",
+       "C-38d3ff6a878302",
+       "C-090890385e240b",
+       "C-1728bdc01591fc",
+       "C-c5f1554389f518",
+       "C-7de00415bb80e9",
+       "C-bdceda92ec026f",
+       "C-eac424df79fbae",
+       "C-4f8c8d8fbd6d83",
+       "C-7b987a5e602dee",
+       "C-e9690477401490",
+       "C-d877ace3489d0a"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "13"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-06751dd2c089c3",
+       "C-72aeb709f39235",
+       "C-38d3ff6a878302",
+       "C-1728bdc01591fc",
+       "C-c5f1554389f518",
+       "C-7de00415bb80e9",
+       "C-bdceda92ec026f",
+       "C-eac424df79fbae",
+       "C-7b987a5e602dee"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "9 claim(s) inside the next 2-4 quarters (C-06751dd2c089c3: measured 2026-11-07 (2 days before the as-of); C-72aeb709f39235: measured 2026-11-07 (2 days before the as-of); C-38d3ff6a878302: measured 2026-11-07 (2 days before the as-of); C-1728bdc01591fc: measured 2026-11-07 (2 days before the as-of); showing 4 of 9); 1 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: power and equipment",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-d877ace3489d0a",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-a21bba7c8b18f0",
+       "C-abe0eaa86a17f9",
+       "C-b356275768fc8f"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (3 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 13 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "premise_conditional",
+      "kind": "held",
+      "text": "premise is conditional in the source"
+     },
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-8178B565CB",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-545af5c99a2f",
+   "block_ids": [
+    "b058"
+   ],
+   "claim_ids": [],
+   "excerpt": "\u2026players more control over cost and schedule, but hyperscalers still choose vendors mainly on resources\u2026",
+   "name": "hyperscalers"
+  },
+  {
+   "article_id": "A-545af5c99a2f",
+   "block_ids": [
+    "b058",
+    "b044"
+   ],
+   "claim_ids": [],
+   "excerpt": "\u2026cost and schedule, but hyperscalers still choose vendors mainly on resources and track record.\u2026",
+   "name": "vendors"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-b356275768fc8f",
+  "C-e4952f6e390699",
+  "C-a21bba7c8b18f0",
+  "C-abe0eaa86a17f9",
+  "C-4434f298455ee3"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s02.0": "Cited span does not attribute the wind farms to 'Galaxy'; the name is not in the cited span.",
+  "s02.4": "Cited span does not mention 'Chifeng'; location is not supported.",
+  "s06.1": "Cited span supports the 'too early / unproven' claim but not the EV-industry-playbook assertion, which is not in cited spans.",
+  "s07.2": "The claim that hyperscalers choose vendors mainly on resources and track record is not in the cited spans; rest is supported."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Premise \u2014 conditional in the source.",
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {}
+}

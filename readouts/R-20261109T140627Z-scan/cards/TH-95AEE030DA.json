@@ -1,0 +1,2287 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.datacenter_physical"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:30:11.414063Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-03",
+   "latest_article_date": "2026-11-03",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-95AEE030DA",
+   "title": "SpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-c332752cf58b65",
+     "C-0a3561a3e67291",
+     "C-3044098a3d0180",
+     "C-f07942111a7cfe"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SpaceX has 3.6GW under construction and has revised its 2027 target up to ~13GW, building faster than any peer with record retrofit times of 91 days for 210MW. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-e9890f7b867d43",
+     "C-0a3561a3e67291",
+     "C-89e09a999ee87c",
+     "C-5c863d0f3b4907"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SpaceX may become the world's biggest AI cloud and the fastest datacenter builder, with over $300bn ARR potential. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The buildout implies large demand pulls for datacenter construction, power equipment and suppliers, though the article quantifies no listed-company earnings effect for most suppliers."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c332752cf58b65"
+     ],
+     "original_date": "2026-11-03",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "3.6GW is under construction across multiple SpaceX sites"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0a3561a3e67291"
+     ],
+     "original_date": "2026-11-03",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "SpaceX revised its 2027 capacity estimate up to ~13GW \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-2adcefad13472e"
+     ],
+     "original_date": "2026-11-03",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Colossus 1 retrofit took 122 days for 150MW"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f07942111a7cfe"
+     ],
+     "original_date": "2026-11-03",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Colossus 2 retrofit took 91 days for 210MW"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0bd967e8360fce"
+     ],
+     "original_date": "2026-11-03",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "TeraFab is Elon's 100M sqft, 10GW+ chip fab project in Texas"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-e9890f7b867d43"
+     ],
+     "original_date": "2026-11-03",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "SpaceX's 10GW-in-2027 plan could pave the way for over $300bn ARR \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 14 pieces of evidence from A-21b63fc0c413 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:30 UTC, analysed as of 2026-11-09, from a source published 2026-11-03; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-0a3561a3e67291",
+     "C-460f538f705f49",
+     "C-c0045b1d13161c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "SpaceX accelerates datacenter buildout to ~13GW in 2027 using behind-the-meter power and modular build methods. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-5da3621457bba1",
+     "C-06fac4833442b8",
+     "C-f07942111a7cfe"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Record build times (91 days for 210MW; ~4-5 month greenfield) drive rapid capacity additions. \u27e8cited figures: approximate; forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-e9890f7b867d43"
+    ],
+    "provenance": "FORECAST",
+    "step": "listed_earnings",
+    "text": "Rapid capacity drives potential ARR over $300bn for SpaceX; supplier earnings effect not quantified. \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0a3561a3e67291",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "datacenter capacity",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "2027",
+    "qualifiers": [
+     "~"
+    ],
+    "quote": "SpaceX has even revised its estimate up to ~13GW in 2027",
+    "role": "supports",
+    "unit": "GW",
+    "value": 13.0,
+    "value_text": "~13GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0bd967e8360fce",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "chip fab size",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "100M sqft",
+     "+"
+    ],
+    "quote": "TeraFab , Elon\u2019s 100M sqft, 10GW+ chip fab project in Texas",
+    "role": "supports",
+    "unit": "GW",
+    "value": 10.0,
+    "value_text": "10GW+"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-208319ad6402ed",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "incremental order",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "incremental",
+     "floating around the supply chain"
+    ],
+    "quote": "a 5-10GW incremental order for 2027 was floating around the supply chain",
+    "role": "supports",
+    "unit": "GW",
+    "value": null,
+    "value_text": "5-10GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b004",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-262cd27ed2a6c4",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "power under management",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Energy Model",
+    "period": null,
+    "qualifiers": [
+     ">"
+    ],
+    "quote": "power under Elon\u2019s management (>8GW) is less than our total datacenter power coming online (>9GW)",
+    "role": "supports",
+    "unit": "GW",
+    "value": 8.0,
+    "value_text": ">8GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2adcefad13472e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "build time",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "150MW"
+    ],
+    "quote": "SpaceX\u2019s first retrofit at Colossus 1 took 122 days for 150MW, and Colossus 2 took just 91 days for 210MW",
+    "role": "supports",
+    "unit": "days",
+    "value": 122.0,
+    "value_text": "122 days"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3044098a3d0180",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "build time",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "cut them in half"
+    ],
+    "quote": "While most are fighting for 8-12-month build times, SpaceX has cut them in half",
+    "role": "supports",
+    "unit": "months",
+    "value": null,
+    "value_text": "8-12-month"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-460f538f705f49",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "behind-the-meter datacenter capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "by 2028",
+    "qualifiers": [
+     "+"
+    ],
+    "quote": "the behind-the-meter playbook was going to spread to 40GW+ of behind-the-meter datacenters by 2028",
+    "role": "supports",
+    "unit": "GW",
+    "value": 40.0,
+    "value_text": "40GW+"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b003",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-74031c8f5799f5",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "capacity added",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "just under one year",
+    "qualifiers": [
+     "nearly",
+     "two Stargate Abilenes"
+    ],
+    "quote": "Colossus 2 adds nearly two Stargate Abilenes (2GW) in just under one year",
+    "role": "supports",
+    "unit": "GW",
+    "value": 2.0,
+    "value_text": "2GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-89e09a999ee87c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "datacenter capacity identified",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     ">"
+    ],
+    "quote": "have already identified >9GW of capacity",
+    "role": "supports",
+    "unit": "GW",
+    "value": 9.0,
+    "value_text": ">9GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-be18490d0eae5d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "fresh site capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "September 14",
+    "qualifiers": [
+     "more than",
+     "Colossus 2 and Starbase"
+    ],
+    "quote": "we identified >2GW of fresh sites , both at Colossus 2 and SpaceX\u2019s Starbase campus",
+    "role": "supports",
+    "unit": "GW",
+    "value": 2.0,
+    "value_text": ">2GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c332752cf58b65",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "datacenter capacity under construction",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "we\u2019re already seeing 3.6GW under construction across multiple sites",
+    "role": "supports",
+    "unit": "GW",
+    "value": 3.6,
+    "value_text": "3.6GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e9890f7b867d43",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "ARR",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "+"
+    ],
+    "quote": "SpaceX\u2019s plans for 10GW in 2027 was feasible , paving the way for 300b+ ARR",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 300.0,
+    "value_text": "300b+"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f07942111a7cfe",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "build time",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "210MW"
+    ],
+    "quote": "Colossus 2 took just 91 days for 210MW",
+    "role": "supports",
+    "unit": "days",
+    "value": 91.0,
+    "value_text": "91 days"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b036",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5a9884a9bd3572",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "500kV GIS substation at MiniHard scheduled to finish by December 31, 2026",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "December 31, 2026",
+    "qualifiers": [
+     "500kV"
+    ],
+    "quote": "building out the 500kV gas-insulated substation (GIS) to the left of MiniHard, which is scheduled to finish construction by December 31, 2026",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": "December 31, 2026"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5c863d0f3b4907",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "SpaceX representatives left open that the TeraFab datacenter capacity could be rented to third parties.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "third-party rental",
+     "not confirmed SpaceX-only"
+    ],
+    "quote": "the representatives do not confirm that the datacenter will be for SpaceX\u2019s use only, leaving room for third parties to rent the capacity too",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-eed17009a1cdac",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Project SPAM has a construction start date of October 5, 2026",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "October 5, 2026",
+    "qualifiers": [],
+    "quote": "a construction start date of October 5, 2026",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e1d43cf292b10d",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "all of Google\u2019s datacenter capacity from 1999-2026",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "Used as a comparator for scale of datacenter capacity; also a deal counterparty"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c6779581dd069b",
+     "name_as_written": "xAI",
+     "other_securities": [],
+     "quote": "how xAI bypassed the grid",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Elon company that bypassed the grid with truck-mounted turbines at Colossus 2"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-56dad7b9d405bc",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "the Anthropic and Google deals turned SpaceX into the most profitable neocloud",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Deal counterparty making SpaceX a profitable neocloud"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-89554235508668",
+     "name_as_written": "Crusoe",
+     "other_securities": [],
+     "quote": "like Crusoe manufacturing their own Switchgear to skip lead times",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "Compared to SpaceX/Tesla vertical integration of manufacturing"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c516547adf7273",
+     "name_as_written": "TVA",
+     "other_securities": [],
+     "quote": "According to TVA (the region\u2019s utility)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Regional utility citing grid service requests"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-062ab05a32e57a",
+     "name_as_written": "MDEQ",
+     "other_securities": [],
+     "quote": "Source: SemiAnalysis Energy Model , MDEQ",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Mississippi environmental regulator; source of power nameplate data"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2e94894a1d13e4",
+     "name_as_written": "TCEQ",
+     "other_securities": [],
+     "quote": "they may be subject to the TCEQ pauses",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "risk",
+     "role_detail": "Texas regulator whose pauses pose a risk to construction"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f4c32b0cbad12f",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "Source: SemiAnalysis Datacenter Industry Model",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher of the research and proprietary models"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b70a84854f84a4",
+     "name_as_written": "Grimes County",
+     "other_securities": [],
+     "quote": "SpaceX representatives talking to Grimes County officials",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "County officials SpaceX representatives spoke to about the TeraFab project"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": "0001318605",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066775) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock",
+       "ticker": "TSLA"
+      }
+     ],
+     "mention_id": "M-6723225373ae8c",
+     "name_as_written": "Tesla",
+     "other_securities": [],
+     "quote": "we also believe that Tesla is manufacturing modular MEP equipment",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "supplier",
+     "role_detail": "Supplier of modular MEP equipment and BESS to SpaceX"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-9ce170fa55a722",
+     "name_as_written": "FTAI",
+     "other_securities": [],
+     "quote": "This includes deals such as FTAI, Solaris, and others",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Power/turbine supplier in SpaceX behind-the-meter deals"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": "0001697500",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-06 (accession 0001628280-26-071604) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.01 par value",
+       "ticker": "SEI"
+      }
+     ],
+     "mention_id": "M-d2fa3247147cdd",
+     "name_as_written": "Solaris",
+     "other_securities": [],
+     "quote": "deals such as FTAI, Solaris, and others",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "supplier",
+     "role_detail": "Power supplier in SpaceX behind-the-meter deals"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-88052e9a58cecb",
+     "name_as_written": "SpaceX",
+     "other_securities": [],
+     "quote": "SpaceX\u2019s plans for 10GW in 2027",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "Company building the datacenter capacity and positioned to become world's biggest AI cloud"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-21b63fc0c413",
+     "claim_ids": [
+      "C-3044098a3d0180"
+     ],
+     "direction": "positive",
+     "name": "datacenter builder",
+     "provenance": "SOURCE OPINION",
+     "quote": "SpaceX may be the fastest datacenter builder in the world"
+    }
+   ],
+   "sectors": [
+    "datacenter construction",
+    "AI infrastructure"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "December 2026 - Project SPAM first tranches online; grid substation finish by Dec 31 2026 [FORECAST]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-06fac4833442b8",
+      "C-eed17009a1cdac",
+      "C-5a9884a9bd3572"
+     ],
+     "provenance": "FORECAST",
+     "text": "Multiple sites (Project SPAM, Gun Range, Starbase) are targeting online dates and completion within the next few months. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-46eeb6a99bad98",
+      "C-c0045b1d13161c"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "SpaceX's vertical integration with Tesla modular MEP and behind-the-meter power is a structural advantage over peers."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-0a3561a3e67291",
+      "C-31941e05c4e012"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "SpaceX is a private company; the 13GW target was pushed back on as impossible and regulatory pauses (TCEQ) could slow builds. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-3557AAE138: the same claim at an overlapping but different geography (US vs Global) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-6F2E7079B0: same value-chain node, not the same claim \u2014 a different geography (China vs US) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-B1F096684F: same value-chain node, not the same claim \u2014 a different mechanism (supply_constraint vs capex_spending_cycle) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 17 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Construction delays past targeted online dates"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Regulatory pauses halting Texas sites"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "SpaceX revising capacity targets downward"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-7aa58b9c302bbe"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Regulatory scrutiny (TCEQ pauses, JETI permit compliance, MDEQ nameplate restrictions) could slow or constrain SpaceX datacenter builds and their power supply. (scope: Specific to SpaceX Texas and Mississippi sites; affects timeline and achievable capacity, not quantified for listed equities.)"
+    },
+    {
+     "claim_ids": [
+      "C-31941e05c4e012"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "We received a lot of pushback from folks calling it impossible. (scope: \u27e8the source's own words \u2014 a risk no model pass listed (risk scan)\u27e9)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the ~13GW target is actually achievable given SemiAnalysis has identified only >9GW"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed suppliers benefit and the magnitude of their earnings"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether SpaceX (private) exposes public investors at all"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "SpaceX scales back 2027 target"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Regulatory delays confirmed"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify which publicly listed suppliers (turbine, BESS, switchgear, EPC) hold SpaceX contracts and size the revenue exposure."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Public supplier contracts with SpaceX disclosed"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "SpaceX confirms 13GW target with orders"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-21b63fc0c413",
+    "authors": [
+     "Reyk Knuhtsen",
+     "Jeremie Eliahou Ontiveros",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-eed17009a1cdac",
+     "C-5a9884a9bd3572",
+     "C-e9890f7b867d43",
+     "C-c332752cf58b65",
+     "C-0a3561a3e67291",
+     "C-89e09a999ee87c",
+     "C-262cd27ed2a6c4",
+     "C-460f538f705f49",
+     "C-3044098a3d0180",
+     "C-2adcefad13472e",
+     "C-f07942111a7cfe",
+     "C-74031c8f5799f5",
+     "C-208319ad6402ed",
+     "C-be18490d0eae5d",
+     "C-0bd967e8360fce",
+     "C-5c863d0f3b4907",
+     "C-7aa58b9c302bbe",
+     "C-31941e05c4e012"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-03T20:44:53Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Elon Is Doing It Again: SpaceX Will Be The World\u2019s Biggest AI Cloud",
+    "upstream_origins": [
+     "MDEQ",
+     "SemiAnalysis Energy Model",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/elon-is-doing-it-again-spacex-will",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0001674101-26-000008)",
+    "business": "datacenter power and thermal management equipment maker",
+    "direction": "positive",
+    "enrichment_id": "EC-c3383001d2d5cd",
+    "evidence": "s03.1: Record build times (91 days for 210MW; ~4-5 month greenfield) drive rapid capacity additions.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001628280-26-067893) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A common stock, $0.0001 par value per share",
+      "ticker": "VRT"
+     }
+    ],
+    "name": "Vertiv Holdings",
+    "rationale": "Rapid behind-the-meter datacenter buildout pulls demand for power distribution, UPS and liquid cooling systems supplied by Vertiv.",
+    "registrant": "Vertiv Holdings Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3679); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter power and cooling infrastructure",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-95AEE030DA",
+    "ticker_hint": "VRT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0001551182-26-000007)",
+    "business": "electrical power management equipment manufacturer",
+    "direction": "positive",
+    "enrichment_id": "EC-4a79c625443d42",
+    "evidence": "s03.1: Record build times (91 days for 210MW; ~4-5 month greenfield) drive rapid capacity additions.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-03 (accession 0001551182-26-000040) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary shares ($0.01 par value)",
+      "ticker": "ETN"
+     }
+    ],
+    "name": "Eaton",
+    "rationale": "Fast GW-scale buildout drives orders for switchgear, busway and electrical distribution gear used in datacenter power systems.",
+    "registrant": "Eaton Corp plc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3590); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "electrical equipment for datacenters",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-95AEE030DA",
+    "ticker_hint": "ETN"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-19 (0001050915-26-000006)",
+    "business": "electric power infrastructure construction services",
+    "direction": "positive",
+    "enrichment_id": "EC-071222e34cf6ed",
+    "evidence": "s03.1: Record build times (91 days for 210MW; ~4-5 month greenfield) drive rapid capacity additions.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0001050915-26-000041) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.00001 par value",
+      "ticker": "PWR"
+     }
+    ],
+    "name": "Quanta Services",
+    "rationale": "Behind-the-meter power connection and datacenter electrical construction at record speed pulls demand for Quanta's installation services.",
+    "registrant": "QUANTA SERVICES, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 1731); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "electrical and datacenter construction services",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-95AEE030DA",
+    "ticker_hint": "PWR"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-19 (0001104659-26-017530)",
+    "business": "mechanical, electrical and HVAC construction contractor",
+    "direction": "positive",
+    "enrichment_id": "EC-757472839dd801",
+    "evidence": "s03.1: Record build times (91 days for 210MW; ~4-5 month greenfield) drive rapid capacity additions.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-22 (accession 0001104659-26-118159) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.01 par value",
+      "ticker": "FIX"
+     }
+    ],
+    "name": "Comfort Systems USA",
+    "rationale": "Modular fast datacenter retrofits require mechanical and cooling install work, a growing part of Comfort Systems' datacenter backlog.",
+    "registrant": "COMFORT SYSTEMS USA INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 1731); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter mechanical and cooling construction",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-95AEE030DA",
+    "ticker_hint": "FIX"
+   }
+  ],
+  "created_at": "2026-11-09T14:57:26.581573Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "GE Vernova: more than 4 on one side \u2014 set aside",
+   "Super Micro Computer: more than 4 on one side \u2014 set aside",
+   "nVent Electric: more than 4 on one side \u2014 set aside",
+   "Eagle Materials: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-43220c5a3db2a9",
+  "thesis_id": "TH-95AEE030DA",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 14:59 UTC from the registry (ti-engine-5; run R-20261109T140627Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-21b63fc0c413",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.datacenter_physical"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:30:11.414063Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-03",
+     "latest_article_date": "2026-11-03",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Datacenter construction, cooling, racks and physical inputs",
+     "status": "ACTIVE",
+     "thesis_id": "TH-95AEE030DA",
+     "title": "SpaceX's record-fast behind-the-meter datacenter buildout drives massive AI cloud capacity"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-c332752cf58b65",
+       "C-0a3561a3e67291",
+       "C-3044098a3d0180",
+       "C-f07942111a7cfe"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SpaceX has 3.6GW under construction and has revised its 2027 target up to ~13GW, building faster than any peer with record retrofit times of 91 days for 210MW. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-e9890f7b867d43",
+       "C-0a3561a3e67291",
+       "C-89e09a999ee87c",
+       "C-5c863d0f3b4907"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SpaceX may become the world's biggest AI cloud and the fastest datacenter builder, with over $300bn ARR potential. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The buildout implies large demand pulls for datacenter construction, power equipment and suppliers, though the article quantifies no listed-company earnings effect for most suppliers."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c332752cf58b65"
+       ],
+       "original_date": "2026-11-03",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "3.6GW is under construction across multiple SpaceX sites"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0a3561a3e67291"
+       ],
+       "original_date": "2026-11-03",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "SpaceX revised its 2027 capacity estimate up to ~13GW \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-2adcefad13472e"
+       ],
+       "original_date": "2026-11-03",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Colossus 1 retrofit took 122 days for 150MW"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f07942111a7cfe"
+       ],
+       "original_date": "2026-11-03",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Colossus 2 retrofit took 91 days for 210MW"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0bd967e8360fce"
+       ],
+       "original_date": "2026-11-03",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "TeraFab is Elon's 100M sqft, 10GW+ chip fab project in Texas"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-e9890f7b867d43"
+       ],
+       "original_date": "2026-11-03",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "SpaceX's 10GW-in-2027 plan could pave the way for over $300bn ARR \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 14 pieces of evidence from A-21b63fc0c413 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:30 UTC, analysed as of 2026-11-09, from a source published 2026-11-03; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-0a3561a3e67291",
+       "C-460f538f705f49",
+       "C-c0045b1d13161c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "SpaceX accelerates datacenter buildout to ~13GW in 2027 using behind-the-meter power and modular build methods. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-5da3621457bba1",
+       "C-06fac4833442b8",
+       "C-f07942111a7cfe"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Record build times (91 days for 210MW; ~4-5 month greenfield) drive rapid capacity additions. \u27e8cited figures: approximate; forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-e9890f7b867d43"
+      ],
+      "provenance": "FORECAST",
+      "step": "listed_earnings",
+      "text": "Rapid capacity drives potential ARR over $300bn for SpaceX; supplier earnings effect not quantified. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0a3561a3e67291",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "datacenter capacity",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "2027",
+      "qualifiers": [
+       "~"
+      ],
+      "quote": "SpaceX has even revised its estimate up to ~13GW in 2027",
+      "role": "supports",
+      "unit": "GW",
+      "value": 13.0,
+      "value_text": "~13GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0bd967e8360fce",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "chip fab size",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "100M sqft",
+       "+"
+      ],
+      "quote": "TeraFab , Elon\u2019s 100M sqft, 10GW+ chip fab project in Texas",
+      "role": "supports",
+      "unit": "GW",
+      "value": 10.0,
+      "value_text": "10GW+"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-208319ad6402ed",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "incremental order",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "incremental",
+       "floating around the supply chain"
+      ],
+      "quote": "a 5-10GW incremental order for 2027 was floating around the supply chain",
+      "role": "supports",
+      "unit": "GW",
+      "value": null,
+      "value_text": "5-10GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-262cd27ed2a6c4",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "power under management",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Energy Model",
+      "period": null,
+      "qualifiers": [
+       ">"
+      ],
+      "quote": "power under Elon\u2019s management (>8GW) is less than our total datacenter power coming online (>9GW)",
+      "role": "supports",
+      "unit": "GW",
+      "value": 8.0,
+      "value_text": ">8GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2adcefad13472e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "build time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "150MW"
+      ],
+      "quote": "SpaceX\u2019s first retrofit at Colossus 1 took 122 days for 150MW, and Colossus 2 took just 91 days for 210MW",
+      "role": "supports",
+      "unit": "days",
+      "value": 122.0,
+      "value_text": "122 days"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3044098a3d0180",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "build time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "cut them in half"
+      ],
+      "quote": "While most are fighting for 8-12-month build times, SpaceX has cut them in half",
+      "role": "supports",
+      "unit": "months",
+      "value": null,
+      "value_text": "8-12-month"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-460f538f705f49",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "behind-the-meter datacenter capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "by 2028",
+      "qualifiers": [
+       "+"
+      ],
+      "quote": "the behind-the-meter playbook was going to spread to 40GW+ of behind-the-meter datacenters by 2028",
+      "role": "supports",
+      "unit": "GW",
+      "value": 40.0,
+      "value_text": "40GW+"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b003",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-74031c8f5799f5",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "capacity added",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "just under one year",
+      "qualifiers": [
+       "nearly",
+       "two Stargate Abilenes"
+      ],
+      "quote": "Colossus 2 adds nearly two Stargate Abilenes (2GW) in just under one year",
+      "role": "supports",
+      "unit": "GW",
+      "value": 2.0,
+      "value_text": "2GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-89e09a999ee87c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "datacenter capacity identified",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       ">"
+      ],
+      "quote": "have already identified >9GW of capacity",
+      "role": "supports",
+      "unit": "GW",
+      "value": 9.0,
+      "value_text": ">9GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-be18490d0eae5d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "fresh site capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "September 14",
+      "qualifiers": [
+       "more than",
+       "Colossus 2 and Starbase"
+      ],
+      "quote": "we identified >2GW of fresh sites , both at Colossus 2 and SpaceX\u2019s Starbase campus",
+      "role": "supports",
+      "unit": "GW",
+      "value": 2.0,
+      "value_text": ">2GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c332752cf58b65",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "datacenter capacity under construction",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "we\u2019re already seeing 3.6GW under construction across multiple sites",
+      "role": "supports",
+      "unit": "GW",
+      "value": 3.6,
+      "value_text": "3.6GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e9890f7b867d43",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "ARR",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "+"
+      ],
+      "quote": "SpaceX\u2019s plans for 10GW in 2027 was feasible , paving the way for 300b+ ARR",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 300.0,
+      "value_text": "300b+"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f07942111a7cfe",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "build time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "210MW"
+      ],
+      "quote": "Colossus 2 took just 91 days for 210MW",
+      "role": "supports",
+      "unit": "days",
+      "value": 91.0,
+      "value_text": "91 days"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b036",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5a9884a9bd3572",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "500kV GIS substation at MiniHard scheduled to finish by December 31, 2026",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "December 31, 2026",
+      "qualifiers": [
+       "500kV"
+      ],
+      "quote": "building out the 500kV gas-insulated substation (GIS) to the left of MiniHard, which is scheduled to finish construction by December 31, 2026",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": "December 31, 2026"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5c863d0f3b4907",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "SpaceX representatives left open that the TeraFab datacenter capacity could be rented to third parties.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "third-party rental",
+       "not confirmed SpaceX-only"
+      ],
+      "quote": "the representatives do not confirm that the datacenter will be for SpaceX\u2019s use only, leaving room for third parties to rent the capacity too",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-eed17009a1cdac",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Project SPAM has a construction start date of October 5, 2026",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "October 5, 2026",
+      "qualifiers": [],
+      "quote": "a construction start date of October 5, 2026",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e1d43cf292b10d",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "all of Google\u2019s datacenter capacity from 1999-2026",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "Used as a comparator for scale of datacenter capacity; also a deal counterparty"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c6779581dd069b",
+       "name_as_written": "xAI",
+       "other_securities": [],
+       "quote": "how xAI bypassed the grid",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Elon company that bypassed the grid with truck-mounted turbines at Colossus 2"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-56dad7b9d405bc",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "the Anthropic and Google deals turned SpaceX into the most profitable neocloud",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Deal counterparty making SpaceX a profitable neocloud"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-89554235508668",
+       "name_as_written": "Crusoe",
+       "other_securities": [],
+       "quote": "like Crusoe manufacturing their own Switchgear to skip lead times",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "Compared to SpaceX/Tesla vertical integration of manufacturing"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c516547adf7273",
+       "name_as_written": "TVA",
+       "other_securities": [],
+       "quote": "According to TVA (the region\u2019s utility)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Regional utility citing grid service requests"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-062ab05a32e57a",
+       "name_as_written": "MDEQ",
+       "other_securities": [],
+       "quote": "Source: SemiAnalysis Energy Model , MDEQ",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Mississippi environmental regulator; source of power nameplate data"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2e94894a1d13e4",
+       "name_as_written": "TCEQ",
+       "other_securities": [],
+       "quote": "they may be subject to the TCEQ pauses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "risk",
+       "role_detail": "Texas regulator whose pauses pose a risk to construction"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f4c32b0cbad12f",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "Source: SemiAnalysis Datacenter Industry Model",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher of the research and proprietary models"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b70a84854f84a4",
+       "name_as_written": "Grimes County",
+       "other_securities": [],
+       "quote": "SpaceX representatives talking to Grimes County officials",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "County officials SpaceX representatives spoke to about the TeraFab project"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": "0001318605",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066775) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock",
+         "ticker": "TSLA"
+        }
+       ],
+       "mention_id": "M-6723225373ae8c",
+       "name_as_written": "Tesla",
+       "other_securities": [],
+       "quote": "we also believe that Tesla is manufacturing modular MEP equipment",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "Supplier of modular MEP equipment and BESS to SpaceX"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-9ce170fa55a722",
+       "name_as_written": "FTAI",
+       "other_securities": [],
+       "quote": "This includes deals such as FTAI, Solaris, and others",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Power/turbine supplier in SpaceX behind-the-meter deals"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": "0001697500",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-06 (accession 0001628280-26-071604) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.01 par value",
+         "ticker": "SEI"
+        }
+       ],
+       "mention_id": "M-d2fa3247147cdd",
+       "name_as_written": "Solaris",
+       "other_securities": [],
+       "quote": "deals such as FTAI, Solaris, and others",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "Power supplier in SpaceX behind-the-meter deals"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-88052e9a58cecb",
+       "name_as_written": "SpaceX",
+       "other_securities": [],
+       "quote": "SpaceX\u2019s plans for 10GW in 2027",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "Company building the datacenter capacity and positioned to become world's biggest AI cloud"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-21b63fc0c413",
+       "claim_ids": [
+        "C-3044098a3d0180"
+       ],
+       "direction": "positive",
+       "name": "datacenter builder",
+       "provenance": "SOURCE OPINION",
+       "quote": "SpaceX may be the fastest datacenter builder in the world"
+      }
+     ],
+     "sectors": [
+      "datacenter construction",
+      "AI infrastructure"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "December 2026 - Project SPAM first tranches online; grid substation finish by Dec 31 2026 [FORECAST]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-06fac4833442b8",
+        "C-eed17009a1cdac",
+        "C-5a9884a9bd3572"
+       ],
+       "provenance": "FORECAST",
+       "text": "Multiple sites (Project SPAM, Gun Range, Starbase) are targeting online dates and completion within the next few months. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-46eeb6a99bad98",
+        "C-c0045b1d13161c"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "SpaceX's vertical integration with Tesla modular MEP and behind-the-meter power is a structural advantage over peers."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-0a3561a3e67291",
+        "C-31941e05c4e012"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "SpaceX is a private company; the 13GW target was pushed back on as impossible and regulatory pauses (TCEQ) could slow builds. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-3557AAE138: the same claim at an overlapping but different geography (US vs Global) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-6F2E7079B0: same value-chain node, not the same claim \u2014 a different geography (China vs US) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-B1F096684F: same value-chain node, not the same claim \u2014 a different mechanism (supply_constraint vs capex_spending_cycle) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 17 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Construction delays past targeted online dates"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Regulatory pauses halting Texas sites"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SpaceX revising capacity targets downward"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-7aa58b9c302bbe"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Regulatory scrutiny (TCEQ pauses, JETI permit compliance, MDEQ nameplate restrictions) could slow or constrain SpaceX datacenter builds and their power supply. (scope: Specific to SpaceX Texas and Mississippi sites; affects timeline and achievable capacity, not quantified for listed equities.)"
+      },
+      {
+       "claim_ids": [
+        "C-31941e05c4e012"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "We received a lot of pushback from folks calling it impossible. (scope: \u27e8the source's own words \u2014 a risk no model pass listed (risk scan)\u27e9)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the ~13GW target is actually achievable given SemiAnalysis has identified only >9GW"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed suppliers benefit and the magnitude of their earnings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether SpaceX (private) exposes public investors at all"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SpaceX scales back 2027 target"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Regulatory delays confirmed"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify which publicly listed suppliers (turbine, BESS, switchgear, EPC) hold SpaceX contracts and size the revenue exposure."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Public supplier contracts with SpaceX disclosed"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SpaceX confirms 13GW target with orders"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-21b63fc0c413",
+      "authors": [
+       "Reyk Knuhtsen",
+       "Jeremie Eliahou Ontiveros",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-eed17009a1cdac",
+       "C-5a9884a9bd3572",
+       "C-e9890f7b867d43",
+       "C-c332752cf58b65",
+       "C-0a3561a3e67291",
+       "C-89e09a999ee87c",
+       "C-262cd27ed2a6c4",
+       "C-460f538f705f49",
+       "C-3044098a3d0180",
+       "C-2adcefad13472e",
+       "C-f07942111a7cfe",
+       "C-74031c8f5799f5",
+       "C-208319ad6402ed",
+       "C-be18490d0eae5d",
+       "C-0bd967e8360fce",
+       "C-5c863d0f3b4907",
+       "C-7aa58b9c302bbe",
+       "C-31941e05c4e012"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-03T20:44:53Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Elon Is Doing It Again: SpaceX Will Be The World\u2019s Biggest AI Cloud",
+      "upstream_origins": [
+       "MDEQ",
+       "SemiAnalysis Energy Model",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/elon-is-doing-it-again-spacex-will",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "8c84c56c629c7e468546c99b5d2dd20f522d4bcdfcb49bdd967258449edfbd63",
+   "created_at": "2026-11-09T14:30:55.610596Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-e9890f7b867d43",
+       "C-c332752cf58b65",
+       "C-0a3561a3e67291",
+       "C-89e09a999ee87c",
+       "C-262cd27ed2a6c4",
+       "C-460f538f705f49",
+       "C-2adcefad13472e",
+       "C-f07942111a7cfe",
+       "C-74031c8f5799f5",
+       "C-208319ad6402ed",
+       "C-be18490d0eae5d",
+       "C-0bd967e8360fce",
+       "C-eed17009a1cdac",
+       "C-5a9884a9bd3572"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "14"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-78e9a9132853",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-5a9884a9bd3572",
+       "C-eed17009a1cdac",
+       "C-c332752cf58b65",
+       "C-2adcefad13472e",
+       "C-f07942111a7cfe",
+       "C-0bd967e8360fce"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "6 claim(s) inside the next 2-4 quarters (C-5a9884a9bd3572: forecast window 2026-12-31..2026-12-31 (december 31, 2026); C-eed17009a1cdac: measured 2026-10-05 (35 days before the as-of); C-c332752cf58b65: measured 2026-11-03 (6 days before the as-of); C-2adcefad13472e: measured 2026-11-03 (6 days before the as-of); showing 4 of 6); 3 claim(s) whose window runs past them; 1 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Tesla (TSLA), Solaris (SEI), sector: datacenter builder",
+      "value": "2 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-eed17009a1cdac",
+       "C-5a9884a9bd3572"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "2 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 14 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-95AEE030DA",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-c0045b1d13161c",
+  "C-5da3621457bba1",
+  "C-06fac4833442b8",
+  "C-46eeb6a99bad98",
+  "C-31941e05c4e012",
+  "C-7aa58b9c302bbe"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "Claims '91 days for 210MW' is a record retrofit time, but the cited span C-3044098a3d0180 only says SpaceX cut 8-12-month build times in half; '91 days' is a specific retrofit figure, not framed as a record. Also 'building faster than any peer' and 'record retrofit times' are embellishments beyond the cited spans. Core figures (3.6GW, ~13GW 2027, 91 days/210MW) are supported.",
+  "s03.1": "Label is FORECAST but line mixes a MEASURED OBSERVATION (91 days/210MW, actual) and a forecast (~4-5 month greenfield). The '~4-5 month greenfield' blends ~5 months (MiniHard, actual) and ~4 months (Gun Range, forecast); acceptable range. Label FORECAST is not stronger than content. Supported overall.",
+  "s06.0": "Sentence names 'Project SPAM, Gun Range, Starbase' but cited spans only cover Gun Range (~4 months) and MiniHard substation (Dec 31 2026) plus an Oct 5 2026 start date; 'Project SPAM' and 'Starbase' are not in the cited spans.",
+  "s07.5": "Cited span C-7aa58b9c302bbe supports the MDEQ nameplate restriction (1.24GW by July 2027), but 'TCEQ pauses' and 'JETI permit compliance' are not in the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {}
+}

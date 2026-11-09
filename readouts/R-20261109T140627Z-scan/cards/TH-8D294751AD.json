@@ -1,0 +1,2044 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.power_grid"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:30:55.612349Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-03",
+   "latest_article_date": "2026-11-03",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-8D294751AD",
+   "title": "SpaceX's record BESS and behind-the-meter power deployment lifts power equipment suppliers"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-0663c4d928e4aa",
+     "C-c0045b1d13161c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SpaceX tracks 8GW+ of behind-the-meter capacity via deals with FTAI, Solaris and others, and is installing 5.9GWh of BESS (largest US deployment) at Colossus 2."
+   },
+   {
+    "claim_ids": [
+     "C-1490c7ee19909d",
+     "C-79125074146736"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SpaceX solves its power-on-the-fly needs by orchestrating gas and oversized BESS, with Tesla likely becoming more than a BESS merchant. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Turbine, BESS and substation suppliers to SpaceX see volume demand, but the article does not quantify supplier revenue."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0663c4d928e4aa"
+     ],
+     "original_date": "2026-11-03",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Colossus 2 could house the world's largest BESS deployment, with 5.9GWh already being installed"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c0045b1d13161c"
+     ],
+     "original_date": "2026-11-03",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "SemiAnalysis tracks 8GW+ of likely behind-the-meter capacity for SpaceX including FTAI and Solaris deals"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-262cd27ed2a6c4"
+     ],
+     "original_date": "2026-11-03",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Power under Elon's management (>8GW) is less than total datacenter power coming online (>9GW)"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-92d4cb7d2b8e12"
+     ],
+     "original_date": "2026-11-03",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Macrohard (700MW) and MiniHard (450MW) requested grid service from TVA"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-5a9884a9bd3572"
+     ],
+     "original_date": "2026-11-03",
+     "period": "December 31, 2026",
+     "provenance": "FORECAST",
+     "text": "500kV GIS substation at MiniHard scheduled to finish by December 31, 2026 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7aa58b9c302bbe"
+     ],
+     "original_date": "2026-11-03",
+     "period": "by July 2027",
+     "provenance": "SOURCE OPINION",
+     "text": "Southaven power plant can operate 2.7GW nameplate now, cut to 1.24GW by July 2027"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 12 pieces of evidence from A-21b63fc0c413 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:30 UTC, analysed as of 2026-11-09, from a source published 2026-11-03; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-0663c4d928e4aa",
+     "C-c0045b1d13161c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "SpaceX deploys behind-the-meter power (turbines, APRs) and record BESS to power rapid datacenter builds."
+   },
+   {
+    "claim_ids": [
+     "C-0663c4d928e4aa",
+     "C-c0045b1d13161c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "8GW+ behind-the-meter and 5.9GWh BESS drive supplier volume demand."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Supplier earnings effect not quantified by the article."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0663c4d928e4aa",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "BESS deployment",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "already being installed"
+    ],
+    "quote": "Colossus 2 could soon house the largest BESS deployment in the world, with 5.9GWh already being installed",
+    "role": "supports",
+    "unit": "GWh",
+    "value": 5.9,
+    "value_text": "5.9GWh"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b004",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-262cd27ed2a6c4",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "power under management",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Energy Model",
+    "period": null,
+    "qualifiers": [
+     ">"
+    ],
+    "quote": "power under Elon\u2019s management (>8GW) is less than our total datacenter power coming online (>9GW)",
+    "role": "supports",
+    "unit": "GW",
+    "value": 8.0,
+    "value_text": ">8GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5c944e0f83ce53",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "grid connection capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "approximately",
+     "grid connection"
+    ],
+    "quote": "after subtracting the ~1.2GW grid connection",
+    "role": "supports",
+    "unit": "GW",
+    "value": 1.2,
+    "value_text": "~1.2GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b041",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-79125074146736",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "BESS capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "nearing"
+    ],
+    "quote": "With the BESS nearing 6GWh, we think the site will orchestrate gas and BESS to increase baseload",
+    "role": "supports",
+    "unit": "GWh",
+    "value": 6.0,
+    "value_text": "6GWh"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b034",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8200f32bd1a3a4",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "APR power capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "more than",
+     "APRs",
+     "judged by building size"
+    ],
+    "quote": "The site may use >1GW of APRs, but judging by building size, this will not be enough.",
+    "role": "supports",
+    "unit": "GW",
+    "value": 1.0,
+    "value_text": ">1GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b035",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-92d4cb7d2b8e12",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "grid service requested",
+    "measured_as_of": null,
+    "origin": "TVA",
+    "period": null,
+    "qualifiers": [
+     "Macrohard"
+    ],
+    "quote": "Macrohard (700MW) and MiniHard (450MW) have both requested service for their facilities",
+    "role": "supports",
+    "unit": "MW",
+    "value": 700.0,
+    "value_text": "700MW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a7726477c3e6f5",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "compute load",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "remaining compute"
+    ],
+    "quote": "we\u2019re left with 1.3GW of compute",
+    "role": "supports",
+    "unit": "GW",
+    "value": 1.3,
+    "value_text": "1.3GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b043",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b2ad5207a79d57",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "PUE",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "~",
+     "ultralow"
+    ],
+    "quote": "an ultralow PUE of ~1.10-1.15",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "~1.10-1.15"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c0045b1d13161c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "behind-the-meter capacity",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Energy Model",
+    "period": null,
+    "qualifiers": [
+     "+",
+     "likely"
+    ],
+    "quote": "we track 8GW+ of likely behind-the-meter capacity for SpaceX . This includes deals such as FTAI, Solaris, and others",
+    "role": "supports",
+    "unit": "GW",
+    "value": 8.0,
+    "value_text": "8GW+"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-da9ae065596cf5",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "power gap",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "upwards of"
+    ],
+    "quote": "There could be a gap upwards of 300MW",
+    "role": "supports",
+    "unit": "MW",
+    "value": 300.0,
+    "value_text": "300MW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b036",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5a9884a9bd3572",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "500kV GIS substation at MiniHard scheduled to finish by December 31, 2026",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "December 31, 2026",
+    "qualifiers": [
+     "500kV"
+    ],
+    "quote": "building out the 500kV gas-insulated substation (GIS) to the left of MiniHard, which is scheduled to finish construction by December 31, 2026",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": "December 31, 2026"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-21b63fc0c413",
+    "block_id": "b038",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7aa58b9c302bbe",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "nameplate power capacity",
+    "measured_as_of": null,
+    "origin": "MDEQ",
+    "period": "by July 2027",
+    "qualifiers": [
+     "binding requirement signed July 30, 2026"
+    ],
+    "quote": "The site can legally operate 2.7GW nameplate right now, but only 1.24GW nameplate by July 2027, due to the binding requirement signed July 30, 2026",
+    "role": "catalyst",
+    "unit": "GW",
+    "value": 1.24,
+    "value_text": "1.24GW"
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-88052e9a58cecb",
+     "name_as_written": "SpaceX",
+     "other_securities": [],
+     "quote": "SpaceX\u2019s plans for 10GW in 2027",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "Company building the datacenter capacity and positioned to become world's biggest AI cloud"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e1d43cf292b10d",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "all of Google\u2019s datacenter capacity from 1999-2026",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "Used as a comparator for scale of datacenter capacity; also a deal counterparty"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c6779581dd069b",
+     "name_as_written": "xAI",
+     "other_securities": [],
+     "quote": "how xAI bypassed the grid",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Elon company that bypassed the grid with truck-mounted turbines at Colossus 2"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-56dad7b9d405bc",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "the Anthropic and Google deals turned SpaceX into the most profitable neocloud",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Deal counterparty making SpaceX a profitable neocloud"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-89554235508668",
+     "name_as_written": "Crusoe",
+     "other_securities": [],
+     "quote": "like Crusoe manufacturing their own Switchgear to skip lead times",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "Compared to SpaceX/Tesla vertical integration of manufacturing"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c516547adf7273",
+     "name_as_written": "TVA",
+     "other_securities": [],
+     "quote": "According to TVA (the region\u2019s utility)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Regional utility citing grid service requests"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-062ab05a32e57a",
+     "name_as_written": "MDEQ",
+     "other_securities": [],
+     "quote": "Source: SemiAnalysis Energy Model , MDEQ",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Mississippi environmental regulator; source of power nameplate data"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2e94894a1d13e4",
+     "name_as_written": "TCEQ",
+     "other_securities": [],
+     "quote": "they may be subject to the TCEQ pauses",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "risk",
+     "role_detail": "Texas regulator whose pauses pose a risk to construction"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f4c32b0cbad12f",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "Source: SemiAnalysis Datacenter Industry Model",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher of the research and proprietary models"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b70a84854f84a4",
+     "name_as_written": "Grimes County",
+     "other_securities": [],
+     "quote": "SpaceX representatives talking to Grimes County officials",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "County officials SpaceX representatives spoke to about the TeraFab project"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": "0001318605",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066775) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock",
+       "ticker": "TSLA"
+      }
+     ],
+     "mention_id": "M-6723225373ae8c",
+     "name_as_written": "Tesla",
+     "other_securities": [],
+     "quote": "we also believe that Tesla is manufacturing modular MEP equipment",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "supplier",
+     "role_detail": "Supplier of modular MEP equipment and BESS to SpaceX"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-9ce170fa55a722",
+     "name_as_written": "FTAI",
+     "other_securities": [],
+     "quote": "This includes deals such as FTAI, Solaris, and others",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Power/turbine supplier in SpaceX behind-the-meter deals"
+    },
+    {
+     "article_id": "A-21b63fc0c413",
+     "cik": "0001697500",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-06 (accession 0001628280-26-071604) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.01 par value",
+       "ticker": "SEI"
+      }
+     ],
+     "mention_id": "M-d2fa3247147cdd",
+     "name_as_written": "Solaris",
+     "other_securities": [],
+     "quote": "deals such as FTAI, Solaris, and others",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "supplier",
+     "role_detail": "Power supplier in SpaceX behind-the-meter deals"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-21b63fc0c413",
+     "claim_ids": [
+      "C-0663c4d928e4aa"
+     ],
+     "direction": "positive",
+     "name": "BESS",
+     "provenance": "SOURCE OPINION",
+     "quote": "the largest BESS deployment in the world, with 5.9GWh already being installed"
+    }
+   ],
+   "sectors": [
+    "power equipment",
+    "BESS",
+    "turbines"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "December 31, 2026 GIS substation completion; July 2027 Southaven nameplate reduction [FORECAST]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-7aa58b9c302bbe",
+      "C-da9ae065596cf5",
+      "C-79125074146736"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Southaven power plant must cut to 1.24GW nameplate by July 2027, creating a potential ~300MW gap SpaceX plans to bridge with BESS and gas. \u27e8cited figures: approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-0663c4d928e4aa",
+      "C-79125074146736"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Oversized BESS orchestrated with gas and SLA uptime tiering enables SpaceX to maximize datacenter capacity from constrained power. \u27e8cited figures: approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-7aa58b9c302bbe",
+      "C-da9ae065596cf5"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A power gap of up to 300MW remains unsolved and binding nameplate reductions could constrain capacity."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-30F6348B8B: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (policy_regulation vs capex_spending_cycle); a different segment (Grid-connected utilities vs Behind-the-meter / on-site generation) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8178B565CB: same value-chain node, not the same claim \u2014 a different segment (no named segment vs Behind-the-meter / on-site generation); a different geography (China vs US) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 19 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Southaven nameplate cut not mitigated"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "BESS orchestration fails to cover shortfall"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Grid service denied"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-7aa58b9c302bbe"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Regulatory scrutiny (TCEQ pauses, JETI permit compliance, MDEQ nameplate restrictions) could slow or constrain SpaceX datacenter builds and their power supply. (scope: Specific to SpaceX Texas and Mississippi sites; affects timeline and achievable capacity, not quantified for listed equities.)"
+    },
+    {
+     "claim_ids": [
+      "C-da9ae065596cf5"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A power gap of up to 300MW at Colossus 2 remains an unsolved engineering question that could limit deployed compute capacity. (scope: Specific to Colossus 2 site; the article presents proposed mitigations but acknowledges the gap is not yet resolved.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the ~300MW power gap is actually solved"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Supplier revenue magnitude from FTAI, Solaris, Tesla"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether grid connection requests are approved and on schedule"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Power gap resolved internally with no new supplier orders"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Behind-the-meter deals delayed"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Size turbine (FTAI, Solaris) and BESS (Tesla) contract revenue from SpaceX and check against company disclosures."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Supplier backlog mentions SpaceX datacenter deals"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Additional BESS or turbine orders confirmed"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-21b63fc0c413",
+    "authors": [
+     "Reyk Knuhtsen",
+     "Jeremie Eliahou Ontiveros",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-5a9884a9bd3572",
+     "C-7aa58b9c302bbe",
+     "C-262cd27ed2a6c4",
+     "C-0663c4d928e4aa",
+     "C-c0045b1d13161c",
+     "C-92d4cb7d2b8e12",
+     "C-da9ae065596cf5",
+     "C-b2ad5207a79d57",
+     "C-8200f32bd1a3a4",
+     "C-5c944e0f83ce53",
+     "C-a7726477c3e6f5",
+     "C-79125074146736"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-03T20:44:53Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Elon Is Doing It Again: SpaceX Will Be The World\u2019s Biggest AI Cloud",
+    "upstream_origins": [
+     "MDEQ",
+     "SemiAnalysis Energy Model",
+     "TVA",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/elon-is-doing-it-again-spacex-will",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-01-29 (0001996810-26-000015)",
+    "business": "gas turbine and grid equipment manufacturer",
+    "direction": "positive",
+    "enrichment_id": "EC-cf17bf367e6071",
+    "evidence": "s03.1: 8GW+ behind-the-meter and 5.9GWh BESS drive supplier volume demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001996810-26-000163) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $0.01 per share",
+      "ticker": "GEV"
+     }
+    ],
+    "name": "GE Vernova",
+    "rationale": "Behind-the-meter gas power buildout drives orders for aeroderivative and heavy-duty gas turbines plus grid substation equipment, lifting Power and Electrification revenue.",
+    "registrant": "GE Vernova Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3600); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "gas turbines and grid substation equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-8D294751AD",
+    "ticker_hint": "GEV"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2025-11-25 (0001868941-25-000081)",
+    "business": "grid-scale battery energy storage systems integrator",
+    "direction": "positive",
+    "enrichment_id": "EC-7d935bb9c43707",
+    "evidence": "s03.1: 8GW+ behind-the-meter and 5.9GWh BESS drive supplier volume demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-05 (accession 0001868941-26-000029) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A common stock, $0.00001 par value",
+      "ticker": "FLNC"
+     }
+    ],
+    "name": "Fluence Energy",
+    "rationale": "Record BESS deployment for datacenters drives demand for utility-scale storage systems, its core product line.",
+    "registrant": "Fluence Energy, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3690); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "grid-scale battery storage systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-8D294751AD",
+    "ticker_hint": "FLNC"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0001551182-26-000007)",
+    "business": "electrical power management equipment maker",
+    "direction": "positive",
+    "enrichment_id": "EC-0f1e57975662f4",
+    "evidence": "s03.1: 8GW+ behind-the-meter and 5.9GWh BESS drive supplier volume demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-03 (accession 0001551182-26-000040) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary shares ($0.01 par value)",
+      "ticker": "ETN"
+     }
+    ],
+    "name": "Eaton",
+    "rationale": "Behind-the-meter and datacenter power buildout drives demand for switchgear, transformers and electrical distribution gear, a large Electrical segment share.",
+    "registrant": "Eaton Corp plc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3590); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter electrical distribution and switchgear",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-8D294751AD",
+    "ticker_hint": "ETN"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "dry-type transformer and substation equipment maker",
+    "direction": "positive",
+    "enrichment_id": "EC-f98a810e264f89",
+    "evidence": "s03.1: 8GW+ behind-the-meter and 5.9GWh BESS drive supplier volume demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Hammond Power Solutions",
+    "rationale": "Substation and transformer demand from behind-the-meter datacenter power lifts transformer product sales.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "transformers and substation equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-8D294751AD",
+    "ticker_hint": "HPS"
+   }
+  ],
+  "created_at": "2026-11-09T14:56:40.617800Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Stem: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-6803555f54293e",
+  "thesis_id": "TH-8D294751AD",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 14:59 UTC from the registry (ti-engine-5; run R-20261109T140627Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-21b63fc0c413",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.power_grid"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:30:55.612349Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-03",
+     "latest_article_date": "2026-11-03",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Power generation, grid and interconnection for AI datacenters",
+     "status": "ACTIVE",
+     "thesis_id": "TH-8D294751AD",
+     "title": "SpaceX's record BESS and behind-the-meter power deployment lifts power equipment suppliers"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-0663c4d928e4aa",
+       "C-c0045b1d13161c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SpaceX tracks 8GW+ of behind-the-meter capacity via deals with FTAI, Solaris and others, and is installing 5.9GWh of BESS (largest US deployment) at Colossus 2."
+     },
+     {
+      "claim_ids": [
+       "C-1490c7ee19909d",
+       "C-79125074146736"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SpaceX solves its power-on-the-fly needs by orchestrating gas and oversized BESS, with Tesla likely becoming more than a BESS merchant. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Turbine, BESS and substation suppliers to SpaceX see volume demand, but the article does not quantify supplier revenue."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0663c4d928e4aa"
+       ],
+       "original_date": "2026-11-03",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Colossus 2 could house the world's largest BESS deployment, with 5.9GWh already being installed"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c0045b1d13161c"
+       ],
+       "original_date": "2026-11-03",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "SemiAnalysis tracks 8GW+ of likely behind-the-meter capacity for SpaceX including FTAI and Solaris deals"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-262cd27ed2a6c4"
+       ],
+       "original_date": "2026-11-03",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Power under Elon's management (>8GW) is less than total datacenter power coming online (>9GW)"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-92d4cb7d2b8e12"
+       ],
+       "original_date": "2026-11-03",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Macrohard (700MW) and MiniHard (450MW) requested grid service from TVA"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-5a9884a9bd3572"
+       ],
+       "original_date": "2026-11-03",
+       "period": "December 31, 2026",
+       "provenance": "FORECAST",
+       "text": "500kV GIS substation at MiniHard scheduled to finish by December 31, 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7aa58b9c302bbe"
+       ],
+       "original_date": "2026-11-03",
+       "period": "by July 2027",
+       "provenance": "SOURCE OPINION",
+       "text": "Southaven power plant can operate 2.7GW nameplate now, cut to 1.24GW by July 2027"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 12 pieces of evidence from A-21b63fc0c413 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:30 UTC, analysed as of 2026-11-09, from a source published 2026-11-03; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-0663c4d928e4aa",
+       "C-c0045b1d13161c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "SpaceX deploys behind-the-meter power (turbines, APRs) and record BESS to power rapid datacenter builds."
+     },
+     {
+      "claim_ids": [
+       "C-0663c4d928e4aa",
+       "C-c0045b1d13161c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "8GW+ behind-the-meter and 5.9GWh BESS drive supplier volume demand."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Supplier earnings effect not quantified by the article."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0663c4d928e4aa",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "BESS deployment",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "already being installed"
+      ],
+      "quote": "Colossus 2 could soon house the largest BESS deployment in the world, with 5.9GWh already being installed",
+      "role": "supports",
+      "unit": "GWh",
+      "value": 5.9,
+      "value_text": "5.9GWh"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-262cd27ed2a6c4",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "power under management",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Energy Model",
+      "period": null,
+      "qualifiers": [
+       ">"
+      ],
+      "quote": "power under Elon\u2019s management (>8GW) is less than our total datacenter power coming online (>9GW)",
+      "role": "supports",
+      "unit": "GW",
+      "value": 8.0,
+      "value_text": ">8GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5c944e0f83ce53",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "grid connection capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "approximately",
+       "grid connection"
+      ],
+      "quote": "after subtracting the ~1.2GW grid connection",
+      "role": "supports",
+      "unit": "GW",
+      "value": 1.2,
+      "value_text": "~1.2GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b041",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-79125074146736",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "BESS capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "nearing"
+      ],
+      "quote": "With the BESS nearing 6GWh, we think the site will orchestrate gas and BESS to increase baseload",
+      "role": "supports",
+      "unit": "GWh",
+      "value": 6.0,
+      "value_text": "6GWh"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b034",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8200f32bd1a3a4",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "APR power capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "more than",
+       "APRs",
+       "judged by building size"
+      ],
+      "quote": "The site may use >1GW of APRs, but judging by building size, this will not be enough.",
+      "role": "supports",
+      "unit": "GW",
+      "value": 1.0,
+      "value_text": ">1GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b035",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-92d4cb7d2b8e12",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "grid service requested",
+      "measured_as_of": null,
+      "origin": "TVA",
+      "period": null,
+      "qualifiers": [
+       "Macrohard"
+      ],
+      "quote": "Macrohard (700MW) and MiniHard (450MW) have both requested service for their facilities",
+      "role": "supports",
+      "unit": "MW",
+      "value": 700.0,
+      "value_text": "700MW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a7726477c3e6f5",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "compute load",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "remaining compute"
+      ],
+      "quote": "we\u2019re left with 1.3GW of compute",
+      "role": "supports",
+      "unit": "GW",
+      "value": 1.3,
+      "value_text": "1.3GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b2ad5207a79d57",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "PUE",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "~",
+       "ultralow"
+      ],
+      "quote": "an ultralow PUE of ~1.10-1.15",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "~1.10-1.15"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c0045b1d13161c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "behind-the-meter capacity",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Energy Model",
+      "period": null,
+      "qualifiers": [
+       "+",
+       "likely"
+      ],
+      "quote": "we track 8GW+ of likely behind-the-meter capacity for SpaceX . This includes deals such as FTAI, Solaris, and others",
+      "role": "supports",
+      "unit": "GW",
+      "value": 8.0,
+      "value_text": "8GW+"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-da9ae065596cf5",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "power gap",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "upwards of"
+      ],
+      "quote": "There could be a gap upwards of 300MW",
+      "role": "supports",
+      "unit": "MW",
+      "value": 300.0,
+      "value_text": "300MW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b036",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5a9884a9bd3572",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "500kV GIS substation at MiniHard scheduled to finish by December 31, 2026",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "December 31, 2026",
+      "qualifiers": [
+       "500kV"
+      ],
+      "quote": "building out the 500kV gas-insulated substation (GIS) to the left of MiniHard, which is scheduled to finish construction by December 31, 2026",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": "December 31, 2026"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-21b63fc0c413",
+      "block_id": "b038",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7aa58b9c302bbe",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "nameplate power capacity",
+      "measured_as_of": null,
+      "origin": "MDEQ",
+      "period": "by July 2027",
+      "qualifiers": [
+       "binding requirement signed July 30, 2026"
+      ],
+      "quote": "The site can legally operate 2.7GW nameplate right now, but only 1.24GW nameplate by July 2027, due to the binding requirement signed July 30, 2026",
+      "role": "catalyst",
+      "unit": "GW",
+      "value": 1.24,
+      "value_text": "1.24GW"
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-88052e9a58cecb",
+       "name_as_written": "SpaceX",
+       "other_securities": [],
+       "quote": "SpaceX\u2019s plans for 10GW in 2027",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "Company building the datacenter capacity and positioned to become world's biggest AI cloud"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e1d43cf292b10d",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "all of Google\u2019s datacenter capacity from 1999-2026",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "Used as a comparator for scale of datacenter capacity; also a deal counterparty"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c6779581dd069b",
+       "name_as_written": "xAI",
+       "other_securities": [],
+       "quote": "how xAI bypassed the grid",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Elon company that bypassed the grid with truck-mounted turbines at Colossus 2"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-56dad7b9d405bc",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "the Anthropic and Google deals turned SpaceX into the most profitable neocloud",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Deal counterparty making SpaceX a profitable neocloud"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-89554235508668",
+       "name_as_written": "Crusoe",
+       "other_securities": [],
+       "quote": "like Crusoe manufacturing their own Switchgear to skip lead times",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "Compared to SpaceX/Tesla vertical integration of manufacturing"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c516547adf7273",
+       "name_as_written": "TVA",
+       "other_securities": [],
+       "quote": "According to TVA (the region\u2019s utility)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Regional utility citing grid service requests"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-062ab05a32e57a",
+       "name_as_written": "MDEQ",
+       "other_securities": [],
+       "quote": "Source: SemiAnalysis Energy Model , MDEQ",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Mississippi environmental regulator; source of power nameplate data"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2e94894a1d13e4",
+       "name_as_written": "TCEQ",
+       "other_securities": [],
+       "quote": "they may be subject to the TCEQ pauses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "risk",
+       "role_detail": "Texas regulator whose pauses pose a risk to construction"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f4c32b0cbad12f",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "Source: SemiAnalysis Datacenter Industry Model",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher of the research and proprietary models"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b70a84854f84a4",
+       "name_as_written": "Grimes County",
+       "other_securities": [],
+       "quote": "SpaceX representatives talking to Grimes County officials",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "County officials SpaceX representatives spoke to about the TeraFab project"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": "0001318605",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066775) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock",
+         "ticker": "TSLA"
+        }
+       ],
+       "mention_id": "M-6723225373ae8c",
+       "name_as_written": "Tesla",
+       "other_securities": [],
+       "quote": "we also believe that Tesla is manufacturing modular MEP equipment",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "Supplier of modular MEP equipment and BESS to SpaceX"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-9ce170fa55a722",
+       "name_as_written": "FTAI",
+       "other_securities": [],
+       "quote": "This includes deals such as FTAI, Solaris, and others",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Power/turbine supplier in SpaceX behind-the-meter deals"
+      },
+      {
+       "article_id": "A-21b63fc0c413",
+       "cik": "0001697500",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-06 (accession 0001628280-26-071604) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.01 par value",
+         "ticker": "SEI"
+        }
+       ],
+       "mention_id": "M-d2fa3247147cdd",
+       "name_as_written": "Solaris",
+       "other_securities": [],
+       "quote": "deals such as FTAI, Solaris, and others",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "Power supplier in SpaceX behind-the-meter deals"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-21b63fc0c413",
+       "claim_ids": [
+        "C-0663c4d928e4aa"
+       ],
+       "direction": "positive",
+       "name": "BESS",
+       "provenance": "SOURCE OPINION",
+       "quote": "the largest BESS deployment in the world, with 5.9GWh already being installed"
+      }
+     ],
+     "sectors": [
+      "power equipment",
+      "BESS",
+      "turbines"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "December 31, 2026 GIS substation completion; July 2027 Southaven nameplate reduction [FORECAST]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-7aa58b9c302bbe",
+        "C-da9ae065596cf5",
+        "C-79125074146736"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Southaven power plant must cut to 1.24GW nameplate by July 2027, creating a potential ~300MW gap SpaceX plans to bridge with BESS and gas. \u27e8cited figures: approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-0663c4d928e4aa",
+        "C-79125074146736"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Oversized BESS orchestrated with gas and SLA uptime tiering enables SpaceX to maximize datacenter capacity from constrained power. \u27e8cited figures: approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-7aa58b9c302bbe",
+        "C-da9ae065596cf5"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A power gap of up to 300MW remains unsolved and binding nameplate reductions could constrain capacity."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-30F6348B8B: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (policy_regulation vs capex_spending_cycle); a different segment (Grid-connected utilities vs Behind-the-meter / on-site generation) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8178B565CB: same value-chain node, not the same claim \u2014 a different segment (no named segment vs Behind-the-meter / on-site generation); a different geography (China vs US) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 19 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Southaven nameplate cut not mitigated"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "BESS orchestration fails to cover shortfall"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Grid service denied"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-7aa58b9c302bbe"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Regulatory scrutiny (TCEQ pauses, JETI permit compliance, MDEQ nameplate restrictions) could slow or constrain SpaceX datacenter builds and their power supply. (scope: Specific to SpaceX Texas and Mississippi sites; affects timeline and achievable capacity, not quantified for listed equities.)"
+      },
+      {
+       "claim_ids": [
+        "C-da9ae065596cf5"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A power gap of up to 300MW at Colossus 2 remains an unsolved engineering question that could limit deployed compute capacity. (scope: Specific to Colossus 2 site; the article presents proposed mitigations but acknowledges the gap is not yet resolved.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the ~300MW power gap is actually solved"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Supplier revenue magnitude from FTAI, Solaris, Tesla"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether grid connection requests are approved and on schedule"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Power gap resolved internally with no new supplier orders"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Behind-the-meter deals delayed"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Size turbine (FTAI, Solaris) and BESS (Tesla) contract revenue from SpaceX and check against company disclosures."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Supplier backlog mentions SpaceX datacenter deals"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Additional BESS or turbine orders confirmed"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-21b63fc0c413",
+      "authors": [
+       "Reyk Knuhtsen",
+       "Jeremie Eliahou Ontiveros",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-5a9884a9bd3572",
+       "C-7aa58b9c302bbe",
+       "C-262cd27ed2a6c4",
+       "C-0663c4d928e4aa",
+       "C-c0045b1d13161c",
+       "C-92d4cb7d2b8e12",
+       "C-da9ae065596cf5",
+       "C-b2ad5207a79d57",
+       "C-8200f32bd1a3a4",
+       "C-5c944e0f83ce53",
+       "C-a7726477c3e6f5",
+       "C-79125074146736"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-03T20:44:53Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Elon Is Doing It Again: SpaceX Will Be The World\u2019s Biggest AI Cloud",
+      "upstream_origins": [
+       "MDEQ",
+       "SemiAnalysis Energy Model",
+       "TVA",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/elon-is-doing-it-again-spacex-will",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "347f01294ad1be0609cbcaa26b6a741f6b210f3d8e9e4ad68e1e80ea7304b4ad",
+   "created_at": "2026-11-09T14:31:20.930259Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-262cd27ed2a6c4",
+       "C-0663c4d928e4aa",
+       "C-c0045b1d13161c",
+       "C-92d4cb7d2b8e12",
+       "C-b2ad5207a79d57",
+       "C-8200f32bd1a3a4",
+       "C-5c944e0f83ce53",
+       "C-a7726477c3e6f5",
+       "C-79125074146736",
+       "C-5a9884a9bd3572",
+       "C-7aa58b9c302bbe"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "11"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-5a7a5a9d882e, ES-7365cbaa3e5d, ES-7661d1cfece8, ES-78e9a9132853",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-5a9884a9bd3572",
+       "C-92d4cb7d2b8e12"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-5a9884a9bd3572: forecast window 2026-12-31..2026-12-31 (december 31, 2026); C-92d4cb7d2b8e12: measured 2026-11-03 (6 days before the as-of)); 0 long-range claim(s); 1 long-dated statement(s) of the source beside the cited evidence, not on the card: C-460f538f705f49; model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Tesla (TSLA), Solaris (SEI), sector: BESS",
+      "value": "2 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-5a9884a9bd3572"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-7aa58b9c302bbe",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 11 supporting; 0 independent contradicting source(s) vs 4 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-8D294751AD",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-1490c7ee19909d"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s07.4": "The cited span only supports the binding nameplate reduction to 1.24GW by July 2027 (MDEQ-type restriction). It does not mention TCEQ pauses or JETI permit compliance; those specific regulatory items are not in the cited span, so the sentence's enumeration of regulatory scrutiny is only partly supported."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {}
+}

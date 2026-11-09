@@ -1,0 +1,1734 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "electronic_components"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:10:56.717919Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-09",
+   "latest_article_date": "2026-11-09",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Passive and electronic components (MLCC, VCSEL, connectors)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-92F9F0F899",
+   "title": "PE ownership of Cree LED may sharpen focus and expand lighting LED share"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-560d34c2472a33",
+     "C-c7078d29efc204",
+     "C-468e878c4392f0",
+     "C-54681a6109ebbd",
+     "C-3cfbb49f893b09"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Penguin Solutions agreed to sell Cree LED to Transom Capital Group in an all-cash deal expected to close in 1Q27; Cree LED generated nearly US$200m in 2025 lighting LED revenue (~5% share, fifth worldwide) and is positioned to gain share as Samsung LED exits. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-5afdae9fe47a03",
+     "C-7873dcc724733a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce frames the PE takeovers of Cree LED and Lumileds as developments likely to have lasting influence on the competitive dynamics of the global lighting LED supply chain, drawing industry attention."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The ownership change and Samsung LED's exit could let Cree LED gain lighting LED share, but the article quantifies no earnings or margin impact and the new owner's pricing/R&D path is unknown."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-8a91593e2851",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-468e878c4392f0"
+     ],
+     "original_date": "2026-11-09",
+     "period": "2025",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Cree LED generated nearly US$200 million in lighting LED revenue in 2025. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-54681a6109ebbd"
+     ],
+     "original_date": "2026-11-09",
+     "period": "2025",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Cree LED captured approximately 5% of the global lighting LED market, fifth worldwide, in 2025. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-560d34c2472a33"
+     ],
+     "original_date": "2026-11-09",
+     "period": "November 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Penguin Solutions announced on November 4 a definitive agreement to sell its Cree LED business to Transom Capital Group."
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c7078d29efc204"
+     ],
+     "original_date": "2026-11-09",
+     "period": "1Q27",
+     "provenance": "FORECAST",
+     "text": "The all-cash transaction is expected to close in 1Q27, with purchase price undisclosed."
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-e9e2b691c2d50e"
+     ],
+     "original_date": "2026-11-09",
+     "period": "first three quarters of 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Lighting applications accounted for 81% of Cree LED revenue in the first three quarters of 2026."
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-3cfbb49f893b09"
+     ],
+     "original_date": "2026-11-09",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "With Samsung LED exiting the market, Cree LED is well positioned to expand its share."
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 9 pieces of evidence from A-8a91593e2851 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:10 UTC, analysed as of 2026-11-09, from a source published 2026-11-09; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-560d34c2472a33",
+     "C-3cfbb49f893b09"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Cree LED moves to independent PE ownership (Transom) while Samsung LED exits the lighting LED market, reshaping competitive structure."
+   },
+   {
+    "claim_ids": [
+     "C-54681a6109ebbd",
+     "C-3cfbb49f893b09"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Sharper focus and Samsung LED's exit could let Cree LED expand its ~5% market share (unit/volume gains); article asserts positioning but does not quantify. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-bce339659cc14e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "margins",
+    "text": "Product-mix optimization and cost efficiency have strengthened operating margins and achieved positive cash flow ahead of the sale."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-8a91593e2851",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-468e878c4392f0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "lighting LED revenue",
+    "measured_as_of": null,
+    "origin": "TrendForce 2026 Global LED Lighting Market Trends report",
+    "period": "2025",
+    "qualifiers": [
+     "nearly"
+    ],
+    "quote": "The company generated nearly US$200 million in lighting LED revenue in 2025",
+    "role": "supports",
+    "unit": "USD million",
+    "value": 200.0,
+    "value_text": "nearly US$200 million"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-8a91593e2851",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-54681a6109ebbd",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "lighting LED market share",
+    "measured_as_of": null,
+    "origin": "TrendForce 2026 Global LED Lighting Market Trends report",
+    "period": "2025",
+    "qualifiers": [
+     "approximately",
+     "fifth place worldwide"
+    ],
+    "quote": "capturing approximately 5% of the market and climbing to fifth place worldwide",
+    "role": "supports",
+    "unit": "%",
+    "value": 5.0,
+    "value_text": "approximately 5%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8a91593e2851",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e9e2b691c2d50e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "lighting share of revenue",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "first three quarters of 2026",
+    "qualifiers": [],
+    "quote": "Lighting applications accounted for 81% of its revenue in the first three quarters of 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": 81.0,
+    "value_text": "81%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8a91593e2851",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0c7ed7454e2c43",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "TrendForce highlights Cree LED as one of the few general-lighting LED manufacturers with a comprehensive patent portfolio.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "one of the few"
+    ],
+    "quote": "one of the few manufacturers in the general lighting LED sector with a comprehensive patent portfolio",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8a91593e2851",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3cfbb49f893b09",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "With Samsung LED exiting the market, Cree LED is well positioned to expand its share.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "Samsung LED exiting the market"
+    ],
+    "quote": "With Samsung LED exiting the market, Cree LED is well positioned to expand its market share further.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8a91593e2851",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-560d34c2472a33",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Penguin Solutions announced on November 4 a definitive agreement to sell its Cree LED business to Transom Capital Group.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "November 2026",
+    "qualifiers": [
+     "definitive agreement"
+    ],
+    "quote": "Penguin Solutions announced on November 4 that it had entered into a definitive agreement to sell its Cree LED business to private equity firm Transom Capital Group (Transom).",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8a91593e2851",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-bce339659cc14e",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Cree LED achieved positive cash flow and strengthened operating margins ahead of the sale.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "have helped Cree LED achieve positive cash flow and steadily strengthen its operating margins, establishing a firmer financial foundation ahead of the sale",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8a91593e2851",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cf8155d705d5a2",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "TrendForce believes the change in ownership could let Cree LED sharpen focus on its core LED business, emphasizing efficacy, cost competitiveness, and comprehensive solutions, and pursue higher-value niches like horticultural lighting.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "could",
+     "likely"
+    ],
+    "quote": "the change in ownership could allow the company to sharpen its focus on its core LED business, with future product strategies likely to emphasize luminous efficacy, cost competitiveness, and comprehensive lighting solutions",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8a91593e2851",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c7078d29efc204",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "The all-cash transaction is expected to close in 1Q27, with purchase price undisclosed.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "1Q27",
+    "qualifiers": [
+     "all cash",
+     "purchase price not disclosed",
+     "subject to customary closing conditions"
+    ],
+    "quote": "The transaction will be conducted entirely in cash, although the purchase price has not been disclosed. Subject to customary closing conditions, the deal is expected to be completed in 1Q27.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-8a91593e2851",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-546818b98c4207",
+     "name_as_written": "Cree, Inc. (now Wolfspeed)",
+     "other_securities": [],
+     "quote": "Cree, Inc. (now Wolfspeed)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Original seller of Cree LED business"
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a83ff6fefb324d",
+     "name_as_written": "SMART Global Holdings (now Penguin Solutions)",
+     "other_securities": [],
+     "quote": "SMART Global Holdings (now Penguin Solutions)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Prior owner of Cree LED, renamed Penguin Solutions"
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c37e51c5e839f3",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher and research source"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-8a91593e2851",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-c1d833f6129447",
+     "name_as_written": "Cree LED",
+     "other_securities": [],
+     "quote": "Cree LED",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "LED component business being carved out, positioned to gain share"
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "disruptor",
+     "listings": [],
+     "mention_id": "M-a7780fef4b9db5",
+     "name_as_written": "Samsung LED",
+     "other_securities": [],
+     "quote": "Samsung LED",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "disruptor",
+     "role_detail": "Competitor exiting the lighting LED market, opening share"
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-ab334f7595a545",
+     "name_as_written": "Lumileds",
+     "other_securities": [],
+     "quote": "Lumileds",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "Major LED component maker recently backed by PE"
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "cik": "0001616533",
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-10-20 (accession 0001616533-26-000050) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.03 par value per share",
+       "ticker": "PENG"
+      }
+     ],
+     "mention_id": "M-03d2a3b6464bc3",
+     "name_as_written": "Penguin Solutions",
+     "other_securities": [],
+     "quote": "Penguin Solutions",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Seller of the Cree LED business (formerly SMART Global Holdings)"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-8a91593e2851",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "investor",
+     "listings": [],
+     "mention_id": "M-78b51f0dc65195",
+     "name_as_written": "Transom Capital Group (Transom)",
+     "other_securities": [],
+     "quote": "Transom Capital Group (Transom)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "investor",
+     "role_detail": "Private equity buyer of Cree LED"
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "investor",
+     "listings": [],
+     "mention_id": "M-515e2bff21400d",
+     "name_as_written": "Gallant Capital",
+     "other_securities": [],
+     "quote": "Gallant Capital",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "investor",
+     "role_detail": "Private equity firm backing Lumileds"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-8a91593e2851",
+     "claim_ids": [
+      "C-5afdae9fe47a03"
+     ],
+     "direction": "positive",
+     "name": "global lighting LED supply chain",
+     "provenance": "SOURCE OPINION",
+     "quote": "the competitive dynamics of the global lighting LED supply chain"
+    },
+    {
+     "article_id": "A-8a91593e2851",
+     "claim_ids": [
+      "C-0c7ed7454e2c43"
+     ],
+     "direction": "positive",
+     "name": "general lighting LED sector",
+     "provenance": "SOURCE OPINION",
+     "quote": "manufacturers in the general lighting LED sector"
+    }
+   ],
+   "sectors": [
+    "lighting LED",
+    "general lighting LED supply chain"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "1Q27 [FORECAST]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-c7078d29efc204",
+      "C-3cfbb49f893b09"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Deal expected to close in 1Q27; Cree LED positioned to expand share following Samsung LED's exit."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-7873dcc724733a",
+      "C-5afdae9fe47a03"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "PE firms entering both Cree LED and Lumileds are expected to have lasting influence on global lighting LED competitive dynamics."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-a1ffb1acbcb29e"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The new owner's integration approach, pricing strategy, and long-term R&D plans remain unknown, so the focus/share benefit may not materialize."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-722932E64F: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-C2EA7EB06F: same value-chain node, not the same claim \u2014 a different mechanism (pricing_cycle vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-a1ffb1acbcb29e"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Transom brings carve-out experience, but its integration approach, future pricing strategies, and long-term R&D plans for Cree LED remain uncertain."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Deal fails to close or terms change"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Cree LED loses share despite Samsung LED exit"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Pricing or R&D cuts under new owner weaken competitive position"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: that the change to private equity ownership lets Cree LED sharpen its core LED focus and that Samsung LED's exit opens share for it to capture"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Purchase price is undisclosed"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether Transom's integration, pricing and R&D plans will support focus and share gains"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No quantified earnings, revenue or valuation effect for any listed company"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Cree LED is a private/carve-out business with no stated listed-equity exposure"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Deal confined to private entities with no listed-equity read-through"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Integration or pricing moves under Transom erode competitive position"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check whether any listed entity (e.g. Penguin Solutions) has material exposure to the Cree LED divestiture and monitor 1Q27 close terms, plus Lumileds/Gallant Capital developments, for lighting LED competitive shifts."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Purchase price or terms disclosed indicating material value"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of Cree LED share gains post Samsung LED exit"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: premise is conditional in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-8a91593e2851",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-c7078d29efc204",
+     "C-560d34c2472a33",
+     "C-468e878c4392f0",
+     "C-54681a6109ebbd",
+     "C-3cfbb49f893b09",
+     "C-e9e2b691c2d50e",
+     "C-bce339659cc14e",
+     "C-cf8155d705d5a2",
+     "C-0c7ed7454e2c43",
+     "C-a1ffb1acbcb29e"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-09T15:32:19+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Penguin Solutions to Sell Cree LED to Private Equity Firm, Bringing Renewed Attention to the Lighting LED Supply Chain, Says TrendForce",
+    "upstream_origins": [
+     "TrendForce 2026 Global LED Lighting Market Trends report",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261109-13300.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "optical semiconductors, LED emitters, sensors for lighting and auto",
+    "direction": "negative",
+    "enrichment_id": "EC-fb77a6fe04fa08",
+    "evidence": "s03.1: Sharper focus and Samsung LED's exit could let Cree LED expand its ~5% market share (unit/volume gains); article asserts positioning but does not quantify.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "ams-OSRAM AG",
+    "rationale": "A sharper, PE-owned Cree LED gaining lighting LED share pressures OSRAM's general lighting LED unit volumes and pricing in overlapping segments.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "general lighting LED components",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-92F9F0F899",
+    "ticker_hint": "AMSSY"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "lighting products and LED systems maker",
+    "direction": "negative",
+    "enrichment_id": "EC-ffa7d1adba7a02",
+    "evidence": "s03.1: Sharper focus and Samsung LED's exit could let Cree LED expand its ~5% market share (unit/volume gains); article asserts positioning but does not quantify.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Nichia / Signify",
+    "rationale": "Competitive share gains by Cree LED in lighting LED supply chain could pressure other lighting LED packagers' volumes and pricing.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "lighting LED and luminaire products",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-92F9F0F899",
+    "ticker_hint": "LEDVY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-20 (0000895419-26-000054)",
+    "business": "silicon carbide power and RF semiconductor maker (former Cree)",
+    "direction": "positive",
+    "enrichment_id": "EC-912d5e8b91e7c9",
+    "evidence": "s03.0: Cree LED moves to independent PE ownership (Transom) while Samsung LED exits the lighting LED market, reshaping competitive structure.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-05 (accession 0000895419-26-000081) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.00125 par value",
+      "ticker": "WOLF"
+     }
+    ],
+    "name": "Wolfspeed",
+    "rationale": "Former Cree lineage brand; shifts in lighting LED structure are peripheral, but legacy LED-related arrangements could benefit modestly from a focused Cree LED.",
+    "registrant": "WOLFSPEED, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "silicon carbide materials and devices",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-92F9F0F899",
+    "ticker_hint": "WOLF"
+   }
+  ],
+  "created_at": "2026-11-09T14:57:09.160496Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-5cd99cf495fb3f",
+  "thesis_id": "TH-92F9F0F899",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 15:21 UTC from the registry (ti-engine-5; run R-20261109T145909Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-8a91593e2851",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "electronic_components"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:10:56.717919Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-09",
+     "latest_article_date": "2026-11-09",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Passive and electronic components (MLCC, VCSEL, connectors)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-92F9F0F899",
+     "title": "PE ownership of Cree LED may sharpen focus and expand lighting LED share"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-560d34c2472a33",
+       "C-c7078d29efc204",
+       "C-468e878c4392f0",
+       "C-54681a6109ebbd",
+       "C-3cfbb49f893b09"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Penguin Solutions agreed to sell Cree LED to Transom Capital Group in an all-cash deal expected to close in 1Q27; Cree LED generated nearly US$200m in 2025 lighting LED revenue (~5% share, fifth worldwide) and is positioned to gain share as Samsung LED exits. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-5afdae9fe47a03",
+       "C-7873dcc724733a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce frames the PE takeovers of Cree LED and Lumileds as developments likely to have lasting influence on the competitive dynamics of the global lighting LED supply chain, drawing industry attention."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The ownership change and Samsung LED's exit could let Cree LED gain lighting LED share, but the article quantifies no earnings or margin impact and the new owner's pricing/R&D path is unknown."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-8a91593e2851",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-468e878c4392f0"
+       ],
+       "original_date": "2026-11-09",
+       "period": "2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Cree LED generated nearly US$200 million in lighting LED revenue in 2025. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-54681a6109ebbd"
+       ],
+       "original_date": "2026-11-09",
+       "period": "2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Cree LED captured approximately 5% of the global lighting LED market, fifth worldwide, in 2025. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-560d34c2472a33"
+       ],
+       "original_date": "2026-11-09",
+       "period": "November 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Penguin Solutions announced on November 4 a definitive agreement to sell its Cree LED business to Transom Capital Group."
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c7078d29efc204"
+       ],
+       "original_date": "2026-11-09",
+       "period": "1Q27",
+       "provenance": "FORECAST",
+       "text": "The all-cash transaction is expected to close in 1Q27, with purchase price undisclosed."
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-e9e2b691c2d50e"
+       ],
+       "original_date": "2026-11-09",
+       "period": "first three quarters of 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Lighting applications accounted for 81% of Cree LED revenue in the first three quarters of 2026."
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3cfbb49f893b09"
+       ],
+       "original_date": "2026-11-09",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "With Samsung LED exiting the market, Cree LED is well positioned to expand its share."
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 9 pieces of evidence from A-8a91593e2851 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:10 UTC, analysed as of 2026-11-09, from a source published 2026-11-09; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-560d34c2472a33",
+       "C-3cfbb49f893b09"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Cree LED moves to independent PE ownership (Transom) while Samsung LED exits the lighting LED market, reshaping competitive structure."
+     },
+     {
+      "claim_ids": [
+       "C-54681a6109ebbd",
+       "C-3cfbb49f893b09"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Sharper focus and Samsung LED's exit could let Cree LED expand its ~5% market share (unit/volume gains); article asserts positioning but does not quantify. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-bce339659cc14e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "margins",
+      "text": "Product-mix optimization and cost efficiency have strengthened operating margins and achieved positive cash flow ahead of the sale."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-8a91593e2851",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-468e878c4392f0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "lighting LED revenue",
+      "measured_as_of": null,
+      "origin": "TrendForce 2026 Global LED Lighting Market Trends report",
+      "period": "2025",
+      "qualifiers": [
+       "nearly"
+      ],
+      "quote": "The company generated nearly US$200 million in lighting LED revenue in 2025",
+      "role": "supports",
+      "unit": "USD million",
+      "value": 200.0,
+      "value_text": "nearly US$200 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-8a91593e2851",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-54681a6109ebbd",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "lighting LED market share",
+      "measured_as_of": null,
+      "origin": "TrendForce 2026 Global LED Lighting Market Trends report",
+      "period": "2025",
+      "qualifiers": [
+       "approximately",
+       "fifth place worldwide"
+      ],
+      "quote": "capturing approximately 5% of the market and climbing to fifth place worldwide",
+      "role": "supports",
+      "unit": "%",
+      "value": 5.0,
+      "value_text": "approximately 5%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8a91593e2851",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e9e2b691c2d50e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "lighting share of revenue",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "first three quarters of 2026",
+      "qualifiers": [],
+      "quote": "Lighting applications accounted for 81% of its revenue in the first three quarters of 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 81.0,
+      "value_text": "81%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8a91593e2851",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0c7ed7454e2c43",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "TrendForce highlights Cree LED as one of the few general-lighting LED manufacturers with a comprehensive patent portfolio.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "one of the few"
+      ],
+      "quote": "one of the few manufacturers in the general lighting LED sector with a comprehensive patent portfolio",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8a91593e2851",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3cfbb49f893b09",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "With Samsung LED exiting the market, Cree LED is well positioned to expand its share.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "Samsung LED exiting the market"
+      ],
+      "quote": "With Samsung LED exiting the market, Cree LED is well positioned to expand its market share further.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8a91593e2851",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-560d34c2472a33",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Penguin Solutions announced on November 4 a definitive agreement to sell its Cree LED business to Transom Capital Group.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "November 2026",
+      "qualifiers": [
+       "definitive agreement"
+      ],
+      "quote": "Penguin Solutions announced on November 4 that it had entered into a definitive agreement to sell its Cree LED business to private equity firm Transom Capital Group (Transom).",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8a91593e2851",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-bce339659cc14e",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Cree LED achieved positive cash flow and strengthened operating margins ahead of the sale.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "have helped Cree LED achieve positive cash flow and steadily strengthen its operating margins, establishing a firmer financial foundation ahead of the sale",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8a91593e2851",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cf8155d705d5a2",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "TrendForce believes the change in ownership could let Cree LED sharpen focus on its core LED business, emphasizing efficacy, cost competitiveness, and comprehensive solutions, and pursue higher-value niches like horticultural lighting.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "could",
+       "likely"
+      ],
+      "quote": "the change in ownership could allow the company to sharpen its focus on its core LED business, with future product strategies likely to emphasize luminous efficacy, cost competitiveness, and comprehensive lighting solutions",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8a91593e2851",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c7078d29efc204",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "The all-cash transaction is expected to close in 1Q27, with purchase price undisclosed.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "1Q27",
+      "qualifiers": [
+       "all cash",
+       "purchase price not disclosed",
+       "subject to customary closing conditions"
+      ],
+      "quote": "The transaction will be conducted entirely in cash, although the purchase price has not been disclosed. Subject to customary closing conditions, the deal is expected to be completed in 1Q27.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-8a91593e2851",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-546818b98c4207",
+       "name_as_written": "Cree, Inc. (now Wolfspeed)",
+       "other_securities": [],
+       "quote": "Cree, Inc. (now Wolfspeed)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Original seller of Cree LED business"
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a83ff6fefb324d",
+       "name_as_written": "SMART Global Holdings (now Penguin Solutions)",
+       "other_securities": [],
+       "quote": "SMART Global Holdings (now Penguin Solutions)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Prior owner of Cree LED, renamed Penguin Solutions"
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c37e51c5e839f3",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher and research source"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-8a91593e2851",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-c1d833f6129447",
+       "name_as_written": "Cree LED",
+       "other_securities": [],
+       "quote": "Cree LED",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "LED component business being carved out, positioned to gain share"
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "disruptor",
+       "listings": [],
+       "mention_id": "M-a7780fef4b9db5",
+       "name_as_written": "Samsung LED",
+       "other_securities": [],
+       "quote": "Samsung LED",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "disruptor",
+       "role_detail": "Competitor exiting the lighting LED market, opening share"
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-ab334f7595a545",
+       "name_as_written": "Lumileds",
+       "other_securities": [],
+       "quote": "Lumileds",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "Major LED component maker recently backed by PE"
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "cik": "0001616533",
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-10-20 (accession 0001616533-26-000050) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.03 par value per share",
+         "ticker": "PENG"
+        }
+       ],
+       "mention_id": "M-03d2a3b6464bc3",
+       "name_as_written": "Penguin Solutions",
+       "other_securities": [],
+       "quote": "Penguin Solutions",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Seller of the Cree LED business (formerly SMART Global Holdings)"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-8a91593e2851",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "investor",
+       "listings": [],
+       "mention_id": "M-78b51f0dc65195",
+       "name_as_written": "Transom Capital Group (Transom)",
+       "other_securities": [],
+       "quote": "Transom Capital Group (Transom)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "investor",
+       "role_detail": "Private equity buyer of Cree LED"
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "investor",
+       "listings": [],
+       "mention_id": "M-515e2bff21400d",
+       "name_as_written": "Gallant Capital",
+       "other_securities": [],
+       "quote": "Gallant Capital",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "investor",
+       "role_detail": "Private equity firm backing Lumileds"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-8a91593e2851",
+       "claim_ids": [
+        "C-5afdae9fe47a03"
+       ],
+       "direction": "positive",
+       "name": "global lighting LED supply chain",
+       "provenance": "SOURCE OPINION",
+       "quote": "the competitive dynamics of the global lighting LED supply chain"
+      },
+      {
+       "article_id": "A-8a91593e2851",
+       "claim_ids": [
+        "C-0c7ed7454e2c43"
+       ],
+       "direction": "positive",
+       "name": "general lighting LED sector",
+       "provenance": "SOURCE OPINION",
+       "quote": "manufacturers in the general lighting LED sector"
+      }
+     ],
+     "sectors": [
+      "lighting LED",
+      "general lighting LED supply chain"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "1Q27 [FORECAST]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-c7078d29efc204",
+        "C-3cfbb49f893b09"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Deal expected to close in 1Q27; Cree LED positioned to expand share following Samsung LED's exit."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-7873dcc724733a",
+        "C-5afdae9fe47a03"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "PE firms entering both Cree LED and Lumileds are expected to have lasting influence on global lighting LED competitive dynamics."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-a1ffb1acbcb29e"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The new owner's integration approach, pricing strategy, and long-term R&D plans remain unknown, so the focus/share benefit may not materialize."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-722932E64F: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-C2EA7EB06F: same value-chain node, not the same claim \u2014 a different mechanism (pricing_cycle vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-a1ffb1acbcb29e"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Transom brings carve-out experience, but its integration approach, future pricing strategies, and long-term R&D plans for Cree LED remain uncertain."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Deal fails to close or terms change"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Cree LED loses share despite Samsung LED exit"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Pricing or R&D cuts under new owner weaken competitive position"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: that the change to private equity ownership lets Cree LED sharpen its core LED focus and that Samsung LED's exit opens share for it to capture"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Purchase price is undisclosed"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether Transom's integration, pricing and R&D plans will support focus and share gains"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No quantified earnings, revenue or valuation effect for any listed company"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Cree LED is a private/carve-out business with no stated listed-equity exposure"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Deal confined to private entities with no listed-equity read-through"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Integration or pricing moves under Transom erode competitive position"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check whether any listed entity (e.g. Penguin Solutions) has material exposure to the Cree LED divestiture and monitor 1Q27 close terms, plus Lumileds/Gallant Capital developments, for lighting LED competitive shifts."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Purchase price or terms disclosed indicating material value"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of Cree LED share gains post Samsung LED exit"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: premise is conditional in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-8a91593e2851",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-c7078d29efc204",
+       "C-560d34c2472a33",
+       "C-468e878c4392f0",
+       "C-54681a6109ebbd",
+       "C-3cfbb49f893b09",
+       "C-e9e2b691c2d50e",
+       "C-bce339659cc14e",
+       "C-cf8155d705d5a2",
+       "C-0c7ed7454e2c43",
+       "C-a1ffb1acbcb29e"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-09T15:32:19+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Penguin Solutions to Sell Cree LED to Private Equity Firm, Bringing Renewed Attention to the Lighting LED Supply Chain, Says TrendForce",
+      "upstream_origins": [
+       "TrendForce 2026 Global LED Lighting Market Trends report",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261109-13300.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "4be2156fb398dffcb3b6372741837157966cb6fd9f49bb4bcbe8bc282a6dd894",
+   "created_at": "2026-11-09T14:11:06.147953Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-560d34c2472a33",
+       "C-468e878c4392f0",
+       "C-54681a6109ebbd",
+       "C-e9e2b691c2d50e",
+       "C-c7078d29efc204"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "5"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420, ES-d357320a33fb",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-c7078d29efc204",
+       "C-560d34c2472a33",
+       "C-e9e2b691c2d50e"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-c7078d29efc204: forecast window 2027-01-01..2027-03-31 (1q27); C-560d34c2472a33: measured 2026-11-09 (0 days before the as-of); C-e9e2b691c2d50e: measured 2026-11-09 (0 days before the as-of)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: global lighting LED supply chain, sector: general lighting LED sector",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-c7078d29efc204"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-a1ffb1acbcb29e"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 5 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: premise is conditional in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "premise_conditional",
+      "kind": "held",
+      "text": "premise is conditional in the source"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-92F9F0F899",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-8a91593e2851",
+   "block_ids": [
+    "b010",
+    "b013"
+   ],
+   "claim_ids": [
+    "C-0c7ed7454e2c43"
+   ],
+   "excerpt": "TrendForce highlights Cree LED as one of the few manufacturers in the general lighting LED sector\u2026",
+   "name": "manufacturers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-5afdae9fe47a03",
+  "C-7873dcc724733a",
+  "C-a1ffb1acbcb29e"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s07.0": "The cited span supports uncertainty on integration/pricing/R&D, but does not state that Transom 'brings carve-out experience'; that claim is unsupported by the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Premise \u2014 conditional in the source."
+ ],
+ "withheld_sentences": {}
+}

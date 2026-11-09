@@ -1,0 +1,1387 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.power_grid"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:17:59.521841Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-06",
+   "latest_article_date": "2026-11-06",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Power generation, grid and interconnection for AI datacenters",
+   "status": "ACTIVE",
+   "thesis_id": "TH-30F6348B8B",
+   "title": "Utilities exposed to AI power face repriced regulatory and affordability risk"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-d949f4c97f4235",
+     "C-b3454ef28d833c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Democratic midterm gains increase the likelihood of tougher scrutiny on electricity affordability and grid-cost allocation, creating near-term uncertainty for utilities that trade in line with AI developments, especially those exposed to Texas and Georgia."
+   },
+   {
+    "claim_ids": [
+     "C-b3454ef28d833c",
+     "C-8d47a1955681b5"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The publisher notes policy changes could target who bears grid-connection costs, tax exemptions and financial commitments, affecting utilities tied to the build-out."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article flags regulatory repricing risk for AI-linked utilities but does not quantify any earnings or revenue impact."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d949f4c97f4235"
+     ],
+     "original_date": "2026-11-06",
+     "period": "2026 U.S. midterm elections",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "In the 2026 US midterm elections the Democratic party won control of both the House and the Senate, setting up gridlock with a Republican president."
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b3454ef28d833c"
+     ],
+     "original_date": "2026-11-06",
+     "period": "near-term",
+     "provenance": "SOURCE OPINION",
+     "text": "Democratic gains create near-term uncertainty for sectors that trade in line with AI developments, like utilities, especially those exposed to fast-growing markets like Texas and Georgia."
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8d47a1955681b5"
+     ],
+     "original_date": "2026-11-06",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Potential policy changes center on cost allocation for grid connections, tax exemption changes, stricter financial commitments and emergency curtailment requirements."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:17 UTC, analysed as of 2026-11-09, from a source published 2026-11-06; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-d949f4c97f4235",
+     "C-b3454ef28d833c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Democratic gains raise scrutiny of data center power demand, affordability and grid-cost allocation."
+   },
+   {
+    "claim_ids": [
+     "C-b3454ef28d833c"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Changes to who bears grid-connection costs or tax exemptions could affect utility revenue and returns, but the article does not quantify this."
+   },
+   {
+    "claim_ids": [
+     "C-b3454ef28d833c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "market_reaction",
+    "text": "Utilities that trade in line with AI developments face near-term repricing of regulatory risk."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8d47a1955681b5",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Potential policy changes center on cost allocation for grid connections, tax exemption changes, stricter financial commitments and emergency curtailment requirements.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "could be"
+    ],
+    "quote": "More notable policy changes could be around who bears the costs of additional grid connections, changes to tax exemptions, stricter financial commitments and emergency curtailment requirements",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d949f4c97f4235",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "In the 2026 US midterm elections the Democratic party won control of both the House and the Senate, setting up gridlock with a Republican president.",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "2026 U.S. midterm elections",
+    "qualifiers": [],
+    "quote": "the Democratic party gained control of both the House of Representatives and the Senate",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b3454ef28d833c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Democratic gains create near-term uncertainty for sectors that trade in line with AI developments, like utilities, especially those exposed to fast-growing markets like Texas and Georgia.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "near-term",
+    "qualifiers": [
+     "Texas and Georgia exposure"
+    ],
+    "quote": "This can create near-term uncertainty for sectors that trade in line with AI developments like utilities",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3be71e37f43ff0",
+     "name_as_written": "MVIS US Listed Semiconductor Index",
+     "other_securities": [],
+     "quote": "the MVIS US Listed Semiconductor Index",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "cited_basket",
+     "role_detail": "Index whose 24-month forward P/E is cited to show semiconductor valuation compression"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-cafa7e1bc9a65e",
+     "name_as_written": "Bloomberg Finance L.P.",
+     "other_securities": [],
+     "quote": "Source: Bloomberg Finance L.P.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Data source for chart figures"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2e75e927f13674",
+     "name_as_written": "Goldman Sachs",
+     "other_securities": [],
+     "quote": "Bloomberg Finance L.P., Goldman Sachs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of the hyperscaler vs data center equities basket and chart data"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": "0000019617",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock",
+       "ticker": "JPM"
+      }
+     ],
+     "mention_id": "M-4394acbd464bbe",
+     "name_as_written": "JPMorgan Chase & Co.",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 5.75% Non-Cumulative Preferred Stock, Series DD",
+       "ticker": "JPM PR D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 6.00% Non-Cumulative Preferred Stock, Series EE",
+       "ticker": "JPM PR C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.75% Non-Cumulative Preferred Stock, Series GG",
+       "ticker": "JPM PR J"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.55% Non-Cumulative Preferred Stock, Series JJ",
+       "ticker": "JPM PR K"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.625% Non-Cumulative Preferred Stock, Series LL",
+       "ticker": "JPM PR L"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.20% Non-Cumulative Preferred Stock, Series MM",
+       "ticker": "JPM PR M"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Callable Fixed Rate Notes due June 10, 2032 of JPMorgan Chase Financial Company LLC",
+       "ticker": "JPM/32"
+      },
+      {
+       "exchange": "NYSE Arca",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Alerian MLP Index ETNs due January 28, 2044 of JPMorgan Chase Financial Company LLC",
+       "ticker": "AMJB"
+      },
+      {
+       "exchange": "NYSE Arca",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Inverse VIX Short-Term Futures ETNs due March 22, 2045 of JPMorgan Chase Financial Company LLC",
+       "ticker": "VYLD"
+      }
+     ],
+     "quote": "JPMorgan Chase & Co. (\u201cJPM\u201d)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher of the commentary via its private banking business"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "claim_ids": [
+      "C-b3454ef28d833c"
+     ],
+     "direction": "negative",
+     "name": "utilities",
+     "provenance": "SOURCE OPINION",
+     "quote": "sectors that trade in line with AI developments like utilities"
+    }
+   ],
+   "sectors": [
+    "utilities"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "Formal post-midterm policy proposals on grid-cost allocation, tax exemptions and curtailment [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-b3454ef28d833c"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI-linked utilities, especially those exposed to Texas and Georgia, face near-term regulatory and affordability uncertainty."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-81ed4982c3222a"
+     ],
+     "provenance": "FORECAST",
+     "text": "Electrification and grid build-out remain pressing structural needs to support higher power demand even as regulatory risk is repriced."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-81ed4982c3222a",
+      "C-b8ad332c72bb41"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The structural backdrop remains in place and the scale of economic growth from the sector may limit willingness to curb development."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-8178B565CB: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (capex_spending_cycle vs policy_regulation); a different segment (no named segment vs Grid-connected utilities); a different geography (China vs US) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 15 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-81ed4982c3222a"
+     ],
+     "provenance": "FORECAST",
+     "text": "Hyperscaler investment is expected to continue, and electrification and grid build-out remain pressing needs to support higher power demand and capital spending."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Regulatory proposals shifting grid-connection costs onto utilities"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Emergency curtailment or stricter financial commitment requirements"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Removal of utility/data center tax exemptions"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-d949f4c97f4235",
+      "C-a43e37718b6868"
+     ],
+     "provenance": "FORECAST",
+     "text": "A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affordability and zoning concerns, with the magnitude of Democratic midterm gains not fully priced in, creating volatility across the AI/tech trade. (scope: US AI-linked technology, semiconductor, utility and data center equities; article says much uncertainty was priced in before the election but the magnitude of Democratic gains was not.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: Democratic midterm gains increase scrutiny of data center development, electricity affordability and who pays for new grid infrastructure"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether proposed policies pass and how grid costs are reallocated"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Magnitude of any earnings impact on named utilities"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether utility valuations already reflect the risk"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Policy efforts stall"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Affordability concerns ease"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Track post-midterm legislative and state proposals on grid-cost allocation and identify utilities with the largest Texas/Georgia AI data center exposure."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Concrete proposals shifting grid costs to utilities"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Curtailment or tax-exemption changes advance"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; counter-evidence outweighs support)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-0b5177202cb2",
+    "authors": [
+     "Kriti Gupta (Executive Director, Global Investment Strategist)",
+     "Nick Roberts (Portfolio Manager, Specialized Strategies)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-b3454ef28d833c",
+     "C-d949f4c97f4235",
+     "C-8d47a1955681b5",
+     "C-81ed4982c3222a",
+     "C-a43e37718b6868"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-06T11:30:00+05:30",
+    "published_status": "KNOWN",
+    "publisher": "J.P. Morgan Private Bank",
+    "retrieval_state": "FULL",
+    "title": "The blue wave is changing the AI trade",
+    "upstream_origins": [
+     "Bloomberg Finance L.P.",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/the-blue-wave-is-changing-the-ai-trade",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-27 (0001692819-26-000006)",
+    "business": "Texas power generation and retail electricity supplier",
+    "direction": "negative",
+    "enrichment_id": "EC-e2bf40330e1622",
+    "evidence": "s03.1: Changes to who bears grid-connection costs or tax exemptions could affect utility revenue and returns, but the article does not quantify this.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-09 (accession 0001692819-26-000025) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $0.01 per share",
+      "ticker": "VST"
+     }
+    ],
+    "name": "Vistra Corp.",
+    "rationale": "Heavy ERCOT/Texas generation exposure and AI datacenter supply deals; scrutiny of grid-cost allocation and affordability could reprice contract economics and returns.",
+    "registrant": "Vistra Corp.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 4911); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Texas wholesale and retail power sales",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-30F6348B8B",
+    "ticker_hint": "VST"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-24 (0001013871-26-000004)",
+    "business": "Competitive power generation and retail electricity in Texas",
+    "direction": "negative",
+    "enrichment_id": "EC-45d25c5e4295f0",
+    "evidence": "s03.1: Changes to who bears grid-connection costs or tax exemptions could affect utility revenue and returns, but the article does not quantify this.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": "one of 2 common-equity classes registered as of 2026-11-09",
+      "pit_source": "10-Q filed 2026-08-04 (accession 0001013871-26-000020) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.01",
+      "ticker": "NRG"
+     },
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": "one of 2 common-equity classes registered as of 2026-11-09",
+      "pit_source": "10-Q filed 2026-08-04 (accession 0001013871-26-000020) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.01",
+      "ticker": "NRG"
+     }
+    ],
+    "name": "NRG Energy",
+    "rationale": "Large Texas/ERCOT footprint with datacenter supply ambitions; affordability scrutiny and grid-cost reallocation could pressure retail margins and returns.",
+    "registrant": "NRG ENERGY, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 4911); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Texas retail and wholesale electricity",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-30F6348B8B",
+    "ticker_hint": "NRG"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-19 (0000092122-26-000006)",
+    "business": "Regulated electric utility serving Georgia and Southeast",
+    "direction": "negative",
+    "enrichment_id": "EC-9cb4f47c571701",
+    "evidence": "s03.1: Changes to who bears grid-connection costs or tax exemptions could affect utility revenue and returns, but the article does not quantify this.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-05 (accession 0000092122-26-000069) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.01 per share",
+      "ticker": "SO"
+     }
+    ],
+    "name": "The Southern Company",
+    "rationale": "Georgia Power faces regulatory scrutiny over who bears datacenter grid-connection costs; reallocation away from large loads could cut allowed returns.",
+    "registrant": "SOUTHERN CO",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 4911); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Georgia regulated electricity delivery",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-30F6348B8B",
+    "ticker_hint": "SO"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-24 (0001868275-26-000032)",
+    "business": "Largest US nuclear fleet, competitive power supplier",
+    "direction": "negative",
+    "enrichment_id": "EC-7beed076421039",
+    "evidence": "s03.1: Changes to who bears grid-connection costs or tax exemptions could affect utility revenue and returns, but the article does not quantify this.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-06 (accession 0001868275-26-000104) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, without par value",
+      "ticker": "CEG"
+     }
+    ],
+    "name": "Constellation Energy",
+    "rationale": "Signed AI datacenter supply deals; scrutiny of tax exemptions and financial commitments to datacenters could reprice contract and interconnection economics.",
+    "registrant": "Constellation Energy Corp",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 4911); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Power sales to datacenters",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-30F6348B8B",
+    "ticker_hint": "CEG"
+   }
+  ],
+  "created_at": "2026-11-09T14:55:19.206067Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Talen Energy: more than 4 on one side \u2014 set aside",
+   "Entergy Corp.: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-b8b028cc8d17fb",
+  "thesis_id": "TH-30F6348B8B",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 15:21 UTC from the registry (ti-engine-5; run R-20261109T145909Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-0b5177202cb2",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.power_grid"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:17:59.521841Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-06",
+     "latest_article_date": "2026-11-06",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Power generation, grid and interconnection for AI datacenters",
+     "status": "ACTIVE",
+     "thesis_id": "TH-30F6348B8B",
+     "title": "Utilities exposed to AI power face repriced regulatory and affordability risk"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-d949f4c97f4235",
+       "C-b3454ef28d833c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Democratic midterm gains increase the likelihood of tougher scrutiny on electricity affordability and grid-cost allocation, creating near-term uncertainty for utilities that trade in line with AI developments, especially those exposed to Texas and Georgia."
+     },
+     {
+      "claim_ids": [
+       "C-b3454ef28d833c",
+       "C-8d47a1955681b5"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The publisher notes policy changes could target who bears grid-connection costs, tax exemptions and financial commitments, affecting utilities tied to the build-out."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article flags regulatory repricing risk for AI-linked utilities but does not quantify any earnings or revenue impact."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d949f4c97f4235"
+       ],
+       "original_date": "2026-11-06",
+       "period": "2026 U.S. midterm elections",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "In the 2026 US midterm elections the Democratic party won control of both the House and the Senate, setting up gridlock with a Republican president."
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b3454ef28d833c"
+       ],
+       "original_date": "2026-11-06",
+       "period": "near-term",
+       "provenance": "SOURCE OPINION",
+       "text": "Democratic gains create near-term uncertainty for sectors that trade in line with AI developments, like utilities, especially those exposed to fast-growing markets like Texas and Georgia."
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8d47a1955681b5"
+       ],
+       "original_date": "2026-11-06",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Potential policy changes center on cost allocation for grid connections, tax exemption changes, stricter financial commitments and emergency curtailment requirements."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:17 UTC, analysed as of 2026-11-09, from a source published 2026-11-06; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-d949f4c97f4235",
+       "C-b3454ef28d833c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Democratic gains raise scrutiny of data center power demand, affordability and grid-cost allocation."
+     },
+     {
+      "claim_ids": [
+       "C-b3454ef28d833c"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Changes to who bears grid-connection costs or tax exemptions could affect utility revenue and returns, but the article does not quantify this."
+     },
+     {
+      "claim_ids": [
+       "C-b3454ef28d833c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "market_reaction",
+      "text": "Utilities that trade in line with AI developments face near-term repricing of regulatory risk."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8d47a1955681b5",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Potential policy changes center on cost allocation for grid connections, tax exemption changes, stricter financial commitments and emergency curtailment requirements.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "could be"
+      ],
+      "quote": "More notable policy changes could be around who bears the costs of additional grid connections, changes to tax exemptions, stricter financial commitments and emergency curtailment requirements",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d949f4c97f4235",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "In the 2026 US midterm elections the Democratic party won control of both the House and the Senate, setting up gridlock with a Republican president.",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "2026 U.S. midterm elections",
+      "qualifiers": [],
+      "quote": "the Democratic party gained control of both the House of Representatives and the Senate",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b3454ef28d833c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Democratic gains create near-term uncertainty for sectors that trade in line with AI developments, like utilities, especially those exposed to fast-growing markets like Texas and Georgia.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "near-term",
+      "qualifiers": [
+       "Texas and Georgia exposure"
+      ],
+      "quote": "This can create near-term uncertainty for sectors that trade in line with AI developments like utilities",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3be71e37f43ff0",
+       "name_as_written": "MVIS US Listed Semiconductor Index",
+       "other_securities": [],
+       "quote": "the MVIS US Listed Semiconductor Index",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "cited_basket",
+       "role_detail": "Index whose 24-month forward P/E is cited to show semiconductor valuation compression"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-cafa7e1bc9a65e",
+       "name_as_written": "Bloomberg Finance L.P.",
+       "other_securities": [],
+       "quote": "Source: Bloomberg Finance L.P.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Data source for chart figures"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2e75e927f13674",
+       "name_as_written": "Goldman Sachs",
+       "other_securities": [],
+       "quote": "Bloomberg Finance L.P., Goldman Sachs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of the hyperscaler vs data center equities basket and chart data"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": "0000019617",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock",
+         "ticker": "JPM"
+        }
+       ],
+       "mention_id": "M-4394acbd464bbe",
+       "name_as_written": "JPMorgan Chase & Co.",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 5.75% Non-Cumulative Preferred Stock, Series DD",
+         "ticker": "JPM PR D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 6.00% Non-Cumulative Preferred Stock, Series EE",
+         "ticker": "JPM PR C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.75% Non-Cumulative Preferred Stock, Series GG",
+         "ticker": "JPM PR J"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.55% Non-Cumulative Preferred Stock, Series JJ",
+         "ticker": "JPM PR K"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.625% Non-Cumulative Preferred Stock, Series LL",
+         "ticker": "JPM PR L"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.20% Non-Cumulative Preferred Stock, Series MM",
+         "ticker": "JPM PR M"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Callable Fixed Rate Notes due June 10, 2032 of JPMorgan Chase Financial Company LLC",
+         "ticker": "JPM/32"
+        },
+        {
+         "exchange": "NYSE Arca",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Alerian MLP Index ETNs due January 28, 2044 of JPMorgan Chase Financial Company LLC",
+         "ticker": "AMJB"
+        },
+        {
+         "exchange": "NYSE Arca",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Inverse VIX Short-Term Futures ETNs due March 22, 2045 of JPMorgan Chase Financial Company LLC",
+         "ticker": "VYLD"
+        }
+       ],
+       "quote": "JPMorgan Chase & Co. (\u201cJPM\u201d)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher of the commentary via its private banking business"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "claim_ids": [
+        "C-b3454ef28d833c"
+       ],
+       "direction": "negative",
+       "name": "utilities",
+       "provenance": "SOURCE OPINION",
+       "quote": "sectors that trade in line with AI developments like utilities"
+      }
+     ],
+     "sectors": [
+      "utilities"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Formal post-midterm policy proposals on grid-cost allocation, tax exemptions and curtailment [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-b3454ef28d833c"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI-linked utilities, especially those exposed to Texas and Georgia, face near-term regulatory and affordability uncertainty."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-81ed4982c3222a"
+       ],
+       "provenance": "FORECAST",
+       "text": "Electrification and grid build-out remain pressing structural needs to support higher power demand even as regulatory risk is repriced."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-81ed4982c3222a",
+        "C-b8ad332c72bb41"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The structural backdrop remains in place and the scale of economic growth from the sector may limit willingness to curb development."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-8178B565CB: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (capex_spending_cycle vs policy_regulation); a different segment (no named segment vs Grid-connected utilities); a different geography (China vs US) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 15 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-81ed4982c3222a"
+       ],
+       "provenance": "FORECAST",
+       "text": "Hyperscaler investment is expected to continue, and electrification and grid build-out remain pressing needs to support higher power demand and capital spending."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Regulatory proposals shifting grid-connection costs onto utilities"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Emergency curtailment or stricter financial commitment requirements"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Removal of utility/data center tax exemptions"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-d949f4c97f4235",
+        "C-a43e37718b6868"
+       ],
+       "provenance": "FORECAST",
+       "text": "A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affordability and zoning concerns, with the magnitude of Democratic midterm gains not fully priced in, creating volatility across the AI/tech trade. (scope: US AI-linked technology, semiconductor, utility and data center equities; article says much uncertainty was priced in before the election but the magnitude of Democratic gains was not.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: Democratic midterm gains increase scrutiny of data center development, electricity affordability and who pays for new grid infrastructure"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether proposed policies pass and how grid costs are reallocated"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Magnitude of any earnings impact on named utilities"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether utility valuations already reflect the risk"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Policy efforts stall"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Affordability concerns ease"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Track post-midterm legislative and state proposals on grid-cost allocation and identify utilities with the largest Texas/Georgia AI data center exposure."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Concrete proposals shifting grid costs to utilities"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Curtailment or tax-exemption changes advance"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; counter-evidence outweighs support)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-0b5177202cb2",
+      "authors": [
+       "Kriti Gupta (Executive Director, Global Investment Strategist)",
+       "Nick Roberts (Portfolio Manager, Specialized Strategies)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-b3454ef28d833c",
+       "C-d949f4c97f4235",
+       "C-8d47a1955681b5",
+       "C-81ed4982c3222a",
+       "C-a43e37718b6868"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-06T11:30:00+05:30",
+      "published_status": "KNOWN",
+      "publisher": "J.P. Morgan Private Bank",
+      "retrieval_state": "FULL",
+      "title": "The blue wave is changing the AI trade",
+      "upstream_origins": [
+       "Bloomberg Finance L.P.",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/the-blue-wave-is-changing-the-ai-trade",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "655b17edb6478a311ea921cd4444ecc39d7f69880b498b6956355d32a2889012",
+   "created_at": "2026-11-09T14:18:28.673496Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; counter-evidence outweighs support)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-d949f4c97f4235"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-fc428945cc0a",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-d949f4c97f4235"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-d949f4c97f4235: measured 2026-11-06 (3 days before the as-of)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: utilities",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-b3454ef28d833c",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-81ed4982c3222a"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "1 material counter-claims (1 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 1 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "outweighs support"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; counter-evidence outweighs support)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "outweighed",
+      "kind": "held",
+      "text": "counter-evidence outweighs support"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-30F6348B8B",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-81ed4982c3222a",
+  "C-b8ad332c72bb41",
+  "C-a43e37718b6868"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "Cited spans support Democratic control and near-term uncertainty for AI-linked utilities, but 'especially those exposed to Texas and Georgia' is not in the cited spans or anywhere in the pool.",
+  "s02.0": "Cited span supports Democratic control of House and Senate, but '2026', 'won', 'gridlock with a Republican president' are not in the cited span; the gridlock claim is unsupported.",
+  "s02.1": "'especially those exposed to fast-growing markets like Texas and Georgia' is not in the cited span or pool.",
+  "s03.0": "Cited spans cover Democratic control and near-term uncertainty for utilities, but 'scrutiny of data center power demand, affordability and grid-cost allocation' is not stated in the cited spans.",
+  "s06.0": "'especially those exposed to Texas and Georgia' and 'affordability' not in cited span or pool."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Counter-evidence \u2014 its own sources' counter-observations outweigh its support."
+ ],
+ "withheld_sentences": {
+  "s07.4": "REVIEW_UNSUPPORTED \u2014 s07.4: UNSUPPORTED \u2014 Cited spans cover Democratic control and a forward P/E multiple 'just below 12' in late 2026; neither supports a 'federal moratorium', 'state-led initiatives', 'affordability and zoning concerns', or that 'magnitude of Democratic gains not fully priced in'. The cited multiple figure is unrelated to the claim. Pool contains no moratorium/pricing spans either. | 'A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affo'"
+ }
+}

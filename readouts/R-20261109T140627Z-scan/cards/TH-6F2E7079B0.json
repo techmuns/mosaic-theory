@@ -1,0 +1,2170 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.datacenter_physical"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:14:30.141761Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-07",
+   "latest_article_date": "2026-11-07",
+   "region": "China",
+   "research_action": "WATCH",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-6F2E7079B0",
+   "title": "Ultra-low China datacenter build cost and power accelerate capacity buildout"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-4f2a963069336b",
+     "C-ac96b8c2402839",
+     "C-c9c6b39dbfa5bd",
+     "C-4434f298455ee3",
+     "C-eac424df79fbae"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "text": "China builds hyperscale datacenters very fast and cheap: Galaxy's first 120MW phase was delivered within a year at a fifth of US costs; capex has fallen ~25% to under $3mm/MW, rents roughly halved to ~$40/kW/month, and Inner Mongolia power is ~$0.055/kWh; the region has 25GW of announced projects. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-4f2a963069336b",
+     "C-ac96b8c2402839"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "text": "The article shows China can build hyperscale campuses at a fraction of US cost and on fast timelines, offering a reference point for the US roadmap and documenting a large accelerating buildout."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Falling build costs, cheap power and abundant labor support a large accelerating datacenter buildout in Inner Mongolia, but the article does not quantify the earnings impact for any listed supplier and notes thin project returns."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-4f2a963069336b"
+     ],
+     "original_date": "2026-11-07",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Galaxy's first 120MW phase was delivered within a year at a fifth of US costs"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ac96b8c2402839"
+     ],
+     "original_date": "2026-11-07",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Inner Mongolia has lined up 25GW of announced datacenter projects"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-4434f298455ee3"
+     ],
+     "original_date": "2026-11-07",
+     "period": "past five years",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "China datacenter capex fell about 25% over five years to less than $3mm per MW \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c9c6b39dbfa5bd"
+     ],
+     "original_date": "2026-11-07",
+     "period": "past five years",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "China datacenter rents roughly halved over five years to about $40/kW/month excluding power \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-eac424df79fbae"
+     ],
+     "original_date": "2026-11-07",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Power in Inner Mongolia costs about $0.055/kWh all-in, among the lowest in the world \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-999d0de18cc789"
+     ],
+     "original_date": "2026-11-07",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The Chahar High-tech Zone had nearly 30,000 construction workers across 22 datacenter projects \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 8 pieces of evidence from A-545af5c99a2f \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:14 UTC, analysed as of 2026-11-09, from a source published 2026-11-07; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-ac96b8c2402839",
+     "C-999d0de18cc789"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "industry_shift",
+    "text": "Inner Mongolia is China's fastest-growing datacenter region with 25GW announced projects and abundant construction labor. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-4f2a963069336b",
+     "C-4434f298455ee3",
+     "C-eac424df79fbae"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "costs",
+    "text": "Construction costs keep falling: capex ~25% lower to under $3mm/MW, build at a fifth of US cost, all-in power ~$0.055/kWh. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-c9c6b39dbfa5bd",
+     "C-a21bba7c8b18f0"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Would drive volumes for datacenter construction and equipment suppliers, but the article does not quantify earnings and notes rents have halved and IRRs are thin. \u27e8cited figures: approximate\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b056",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-4434f298455ee3",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "datacenter capex",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "past five years",
+    "qualifiers": [
+     "fallen about 25%",
+     "less than"
+    ],
+    "quote": "Capex has fallen about 25% over the same period, to less than $3mm per MW.",
+    "role": "supports",
+    "unit": "$mm/MW",
+    "value": 3.0,
+    "value_text": "less than $3mm per MW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b004",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-4f2a963069336b",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "first phase capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "within a year",
+     "a fifth of US costs"
+    ],
+    "quote": "Its first 120MW phase was delivered within a year at a fifth of US costs.",
+    "role": "supports",
+    "unit": "MW",
+    "value": 120.0,
+    "value_text": "120MW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-999d0de18cc789",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "construction workers",
+    "measured_as_of": null,
+    "origin": "a local report",
+    "period": null,
+    "qualifiers": [
+     "nearly",
+     "across 22 datacenter projects"
+    ],
+    "quote": "nearly 30,000 construction workers on site across 22 datacenter projects according to a local report",
+    "role": "supports",
+    "unit": "workers",
+    "value": 30000.0,
+    "value_text": "nearly 30,000"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ac96b8c2402839",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "announced datacenter projects",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "announced"
+    ],
+    "quote": "The region has lined up 25GW of announced datacenter projects",
+    "role": "supports",
+    "unit": "GW",
+    "value": 25.0,
+    "value_text": "25GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b056",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c9c6b39dbfa5bd",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "datacenter rent",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "past five years",
+    "qualifiers": [
+     "roughly halved",
+     "excluding power"
+    ],
+    "quote": "Rents have roughly halved over the past five years, to about $40/kW/month excluding power.",
+    "role": "supports",
+    "unit": "$/kW/month",
+    "value": 40.0,
+    "value_text": "about $40/kW/month"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ce891226c5e8fd",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "planned IT capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "planned"
+    ],
+    "quote": "on par with the 800MW planned at Galaxy",
+    "role": "supports",
+    "unit": "MW",
+    "value": 800.0,
+    "value_text": "800MW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b056",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-eac424df79fbae",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "power cost",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "all-in",
+     "among the lowest in the world"
+    ],
+    "quote": "Power in Inner Mongolia costs about $0.055/kWh all-in, among the lowest in the world.",
+    "role": "supports",
+    "unit": "$/kWh",
+    "value": 0.055,
+    "value_text": "about $0.055/kWh"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b063",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ebf1a89b8deaa6",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "phase delivery time",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "120MW",
+     "under"
+    ],
+    "quote": "The China speed: 120MW in under 12 months",
+    "role": "supports",
+    "unit": "months",
+    "value": 12.0,
+    "value_text": "under 12 months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0f8cb7e5ea35df",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "facilities tracked",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "through 2032",
+    "qualifiers": [
+     "over",
+     "70+ operators"
+    ],
+    "quote": "It tracks over 1,000 facilities across 70+ operators, with quarterly delivery curves through 2032",
+    "role": "catalyst",
+    "unit": "facilities",
+    "value": 1000.0,
+    "value_text": "over 1,000"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-545af5c99a2f",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d877ace3489d0a",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Galaxy's initial phase was delivered in August 2026 and full campus expected complete by end of 2027",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "August 2026 to end of 2027",
+    "qualifiers": [
+     "full campus expected"
+    ],
+    "quote": "Its initial phase was delivered in August 2026, and the full campus is expected to be completed by the end of 2027.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8cd0613fe1916b",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "built for OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "Stargate Abilene campus built for OpenAI"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7abfa1e9d23ed2",
+     "name_as_written": "Envision AESC",
+     "other_securities": [],
+     "quote": "Its affiliate, Envision AESC",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Envision affiliate developing batteries, energy storage and power electronics"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ef824bcfade288",
+     "name_as_written": "China Telecom",
+     "other_securities": [],
+     "quote": "China Telecom\u2019s 240V DC pilots in 2007",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Early adopter of DC power pilots in Chinese datacenters"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": "0001577552",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2b0fe736c824c1",
+     "name_as_written": "Alibaba",
+     "other_securities": [],
+     "quote": "Alibaba\u2019s Panama power system in 2018",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "DC power system pioneer; also customer of Zhongheng Electric"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": "0001045810",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-02fb13e0a6db5a",
+     "name_as_written": "Nvidia",
+     "other_securities": [],
+     "quote": "Nvidia says Vera Rubin can run on 45\u00b0C water without chillers",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Chip/rack vendor pushing 800V DC and liquid cooling specs"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9f8a6e462df682",
+     "name_as_written": "Tencent",
+     "other_securities": [],
+     "quote": " synchronous generator. A small pilot datacenter built with Tencent\u2019s modular T-Block units runs on the same system. Galaxy is ",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Modular T-Block datacenter units used in Envision pilot"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0509bd14325242",
+     "name_as_written": "Crusoe",
+     "other_securities": [],
+     "quote": "Crusoe began building Abilene in mid-2024",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "comparator",
+     "role_detail": "Developer of Abilene Stargate campus"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": "0001341439",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.01 per share",
+       "ticker": "ORCL"
+      }
+     ],
+     "mention_id": "M-4b39486102d977",
+     "name_as_written": "Oracle",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+       "ticker": "ORCL PRD"
+      }
+     ],
+     "quote": "leased it to Oracle",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Leases Abilene campus and runs it for OpenAI"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": "0001508475",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0dd3e20a8cde64",
+     "name_as_written": "VNET",
+     "other_securities": [],
+     "quote": "the tie-up between VNET, CATL and Zhongheng Electric",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Leading colocation operator in CATL/Zhongheng tie-up building gigawatt-scale campuses"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2179cfc5512771",
+     "name_as_written": "CATL",
+     "other_securities": [],
+     "quote": "CATL is the world\u2019s largest EV battery maker",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Largest EV battery maker leading green power/storage in datacenter tie-up; VNET largest shareholder; DeepSeek investor"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-cede017b14685b",
+     "name_as_written": "Zhongheng Electric",
+     "other_securities": [],
+     "quote": "Zhongheng Electric is China\u2019s largest supplier of HVDC power systems for datacenters",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Largest China HVDC datacenter power systems supplier working with Alibaba and ByteDance"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2d3be724292278",
+     "name_as_written": "ByteDance",
+     "other_securities": [],
+     "quote": "working with both Alibaba and ByteDance",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "Datacenter customer of Zhongheng Electric"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-070b58403d1a84",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "CATL is also one of DeepSeek\u2019s largest outside investors",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "AI model developer in which CATL is a large outside investor"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": "0001445162",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1c59a06aeeb7a6",
+     "name_as_written": "BYD",
+     "other_securities": [
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-09 in the SEC submissions index); never use in a historical basket",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "BYDDF"
+      }
+     ],
+     "quote": "players like BYD make much of what goes into their cars",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "Vertical integration analogy from China EV market"
+    },
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ca4a0a09dccdd8",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "The SemiAnalysis China Datacenter Model",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher and author of report and proprietary datacenter model"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-ac96b8c2402839",
+      "C-0f8cb7e5ea35df"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The 25GW of announced Inner Mongolia datacenter projects and the 1,000+ facilities tracked in the SemiAnalysis China Datacenter Model, without naming members. (constituents not named by the source)"
+    }
+   ],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-545af5c99a2f",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-c9716f88332d2c",
+     "name_as_written": "Envision Group",
+     "other_securities": [],
+     "quote": "The datacenter is owned by Envision Group",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "Vertically integrated renewable systems integrator owning and building Galaxy datacenter"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-545af5c99a2f",
+     "claim_ids": [
+      "C-ac96b8c2402839"
+     ],
+     "direction": "positive",
+     "name": "datacenter",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "China\u2019s fastest-growing AI datacenter region"
+    }
+   ],
+   "sectors": [
+    "datacenters",
+    "datacenter construction"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "quarterly delivery curves through 2032; full Galaxy campus by end of 2027 [SOURCE OPINION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-999d0de18cc789",
+      "C-d877ace3489d0a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "First phase delivered August 2026; construction accelerating across 22 projects with ~30,000 workers on site. \u27e8cited figures: approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-ac96b8c2402839",
+      "C-0f8cb7e5ea35df"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Through 2032 the China Datacenter Model tracks over 1,000 facilities and Inner Mongolia has 25GW of announced projects, a multi-year buildout."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-c9c6b39dbfa5bd",
+      "C-a21bba7c8b18f0"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Rents have roughly halved and project IRRs are squeezed hard, so volume growth may not translate into profitable returns for developers."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-3557AAE138: the same claim at an overlapping but different geography (China vs Global) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-B1F096684F: same value-chain node, not the same claim \u2014 a different mechanism (supply_constraint vs capex_spending_cycle) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 11 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-a21bba7c8b18f0"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China datacenter project returns are thin with IRRs squeezed hard"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Announced Inner Mongolia projects stalling on power/land/water"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued rent and margin compression eroding developer economics"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Falling utilization of built halls"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-4434f298455ee3",
+      "C-a21bba7c8b18f0",
+      "C-abe0eaa86a17f9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Many listed Chinese companies are pivoting into AI datacenter infrastructure where project returns are thin and IRRs squeezed hard, with the stock market being the draw for many of them, raising the risk that equity enthusiasm outruns project economics. (scope: China listed companies entering datacenter/AI infrastructure; the article does not quantify valuations or name which listed names are affected.)"
+    },
+    {
+     "claim_ids": [
+      "C-c9c6b39dbfa5bd"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "China's datacenter market is highly competitive with rents roughly halved over five years, pressuring developer and operator margins. (scope: China datacenter rents excluding power; applies to operators and developers broadly, not a specific named company.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether listed developers/suppliers earn adequate returns given halved rents and thin IRRs"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed companies capture the buildout volumes"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether announced 25GW of projects actually get built given power, land and water constraints"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Power, land or water constraints throttle project delivery"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Rents keep falling faster than cost declines"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Map listed Chinese datacenter construction, cooling and electrical-equipment suppliers to the Inner Mongolia buildout and test whether volume growth offsets halved rents and thin IRRs."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Delivery curves accelerate in the China Datacenter Model"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Capex and power costs fall further improving project economics"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Utilization of built capacity proves high"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-545af5c99a2f",
+    "authors": [
+     "Everlyn Tan",
+     "Jeremie Eliahou Ontiveros",
+     "Xiaopeng Laoban",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-d877ace3489d0a",
+     "C-0f8cb7e5ea35df",
+     "C-4f2a963069336b",
+     "C-ac96b8c2402839",
+     "C-c9c6b39dbfa5bd",
+     "C-4434f298455ee3",
+     "C-eac424df79fbae",
+     "C-999d0de18cc789",
+     "C-ce891226c5e8fd",
+     "C-ebf1a89b8deaa6",
+     "C-a21bba7c8b18f0",
+     "C-abe0eaa86a17f9"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-07T19:01:39Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "We Visited China\u2019s Stargate in Inner Mongolia",
+    "upstream_origins": [
+     "a local report",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/we-visited-chinas-stargate-in-inner",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0001674101-26-000008)",
+    "business": "datacenter power and thermal management equipment",
+    "direction": "positive",
+    "enrichment_id": "EC-cfbdff6b2006a2",
+    "evidence": "s03.2: Would drive volumes for datacenter construction and equipment suppliers, but the article does not quantify earnings and notes rents have halved and IRRs are thin.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001628280-26-067893) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A common stock, $0.0001 par value per share",
+      "ticker": "VRT"
+     }
+    ],
+    "name": "Vertiv Holdings",
+    "rationale": "Accelerating China hyperscale buildout drives demand for cooling and power infrastructure, part of its global datacenter equipment sales, though China pricing pressure may limit margins.",
+    "registrant": "Vertiv Holdings Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3679); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter cooling and power infrastructure",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-6F2E7079B0",
+    "ticker_hint": "VRT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-31 (0001375365-26-000022)",
+    "business": "AI servers and rack-scale datacenter systems",
+    "direction": "positive",
+    "enrichment_id": "EC-cccc231d1e9f9e",
+    "evidence": "s03.2: Would drive volumes for datacenter construction and equipment suppliers, but the article does not quantify earnings and notes rents have halved and IRRs are thin.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-06 (accession 0001375365-26-000027) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "SMCI"
+     }
+    ],
+    "name": "Super Micro Computer",
+    "rationale": "Large accelerating buildout lifts demand for server racks and liquid-cooled rack systems, core to its revenue, though China exposure is limited.",
+    "registrant": "Super Micro Computer, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3571); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "server and rack-scale systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-6F2E7079B0",
+    "ticker_hint": "SMCI"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-17 (0001628280-26-008608)",
+    "business": "electrical enclosures, racks and liquid cooling solutions",
+    "direction": "positive",
+    "enrichment_id": "EC-2f15ae0e6befd2",
+    "evidence": "s03.2: Would drive volumes for datacenter construction and equipment suppliers, but the article does not quantify earnings and notes rents have halved and IRRs are thin.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-30 (accession 0001628280-26-068596) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary Shares, nominal value $0.01 per share",
+      "ticker": "NVT"
+     }
+    ],
+    "name": "nVent Electric",
+    "rationale": "Datacenter buildout drives demand for enclosures, busbars and liquid cooling, a growing share of its revenue.",
+    "registrant": "nVent Electric plc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3550); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter enclosures and cooling",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-6F2E7079B0",
+    "ticker_hint": "NVT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0001551182-26-000007)",
+    "business": "electrical power management and distribution equipment",
+    "direction": "positive",
+    "enrichment_id": "EC-8e6389d79b7caa",
+    "evidence": "s03.1: Construction costs keep falling: capex ~25% lower to under $3mm/MW, build at a fifth of US cost, all-in power ~$0.055/kWh.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-03 (accession 0001551182-26-000040) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary shares ($0.01 par value)",
+      "ticker": "ETN"
+     }
+    ],
+    "name": "Eaton",
+    "rationale": "Fast cheap buildout and cheap power scaling drive demand for switchgear and power distribution within its large electrical segment.",
+    "registrant": "Eaton Corp plc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3590); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter power distribution equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MEASURED OBSERVATION",
+    "thesis_id": "TH-6F2E7079B0",
+    "ticker_hint": "ETN"
+   }
+  ],
+  "created_at": "2026-11-09T14:55:40.154805Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-b2365f1b7ace84",
+  "thesis_id": "TH-6F2E7079B0",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 14:59 UTC from the registry (ti-engine-5; run R-20261109T140627Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-545af5c99a2f",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.datacenter_physical"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:14:30.141761Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-07",
+     "latest_article_date": "2026-11-07",
+     "region": "China",
+     "research_action": "WATCH",
+     "sector": "Datacenter construction, cooling, racks and physical inputs",
+     "status": "ACTIVE",
+     "thesis_id": "TH-6F2E7079B0",
+     "title": "Ultra-low China datacenter build cost and power accelerate capacity buildout"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-4f2a963069336b",
+       "C-ac96b8c2402839",
+       "C-c9c6b39dbfa5bd",
+       "C-4434f298455ee3",
+       "C-eac424df79fbae"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "text": "China builds hyperscale datacenters very fast and cheap: Galaxy's first 120MW phase was delivered within a year at a fifth of US costs; capex has fallen ~25% to under $3mm/MW, rents roughly halved to ~$40/kW/month, and Inner Mongolia power is ~$0.055/kWh; the region has 25GW of announced projects. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-4f2a963069336b",
+       "C-ac96b8c2402839"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "text": "The article shows China can build hyperscale campuses at a fraction of US cost and on fast timelines, offering a reference point for the US roadmap and documenting a large accelerating buildout."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Falling build costs, cheap power and abundant labor support a large accelerating datacenter buildout in Inner Mongolia, but the article does not quantify the earnings impact for any listed supplier and notes thin project returns."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-4f2a963069336b"
+       ],
+       "original_date": "2026-11-07",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Galaxy's first 120MW phase was delivered within a year at a fifth of US costs"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ac96b8c2402839"
+       ],
+       "original_date": "2026-11-07",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Inner Mongolia has lined up 25GW of announced datacenter projects"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-4434f298455ee3"
+       ],
+       "original_date": "2026-11-07",
+       "period": "past five years",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "China datacenter capex fell about 25% over five years to less than $3mm per MW \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c9c6b39dbfa5bd"
+       ],
+       "original_date": "2026-11-07",
+       "period": "past five years",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "China datacenter rents roughly halved over five years to about $40/kW/month excluding power \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-eac424df79fbae"
+       ],
+       "original_date": "2026-11-07",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Power in Inner Mongolia costs about $0.055/kWh all-in, among the lowest in the world \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-999d0de18cc789"
+       ],
+       "original_date": "2026-11-07",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The Chahar High-tech Zone had nearly 30,000 construction workers across 22 datacenter projects \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 8 pieces of evidence from A-545af5c99a2f \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:14 UTC, analysed as of 2026-11-09, from a source published 2026-11-07; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-ac96b8c2402839",
+       "C-999d0de18cc789"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "industry_shift",
+      "text": "Inner Mongolia is China's fastest-growing datacenter region with 25GW announced projects and abundant construction labor. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-4f2a963069336b",
+       "C-4434f298455ee3",
+       "C-eac424df79fbae"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "costs",
+      "text": "Construction costs keep falling: capex ~25% lower to under $3mm/MW, build at a fifth of US cost, all-in power ~$0.055/kWh. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-c9c6b39dbfa5bd",
+       "C-a21bba7c8b18f0"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Would drive volumes for datacenter construction and equipment suppliers, but the article does not quantify earnings and notes rents have halved and IRRs are thin. \u27e8cited figures: approximate\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b056",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4434f298455ee3",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "datacenter capex",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "past five years",
+      "qualifiers": [
+       "fallen about 25%",
+       "less than"
+      ],
+      "quote": "Capex has fallen about 25% over the same period, to less than $3mm per MW.",
+      "role": "supports",
+      "unit": "$mm/MW",
+      "value": 3.0,
+      "value_text": "less than $3mm per MW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4f2a963069336b",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "first phase capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "within a year",
+       "a fifth of US costs"
+      ],
+      "quote": "Its first 120MW phase was delivered within a year at a fifth of US costs.",
+      "role": "supports",
+      "unit": "MW",
+      "value": 120.0,
+      "value_text": "120MW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-999d0de18cc789",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "construction workers",
+      "measured_as_of": null,
+      "origin": "a local report",
+      "period": null,
+      "qualifiers": [
+       "nearly",
+       "across 22 datacenter projects"
+      ],
+      "quote": "nearly 30,000 construction workers on site across 22 datacenter projects according to a local report",
+      "role": "supports",
+      "unit": "workers",
+      "value": 30000.0,
+      "value_text": "nearly 30,000"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ac96b8c2402839",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "announced datacenter projects",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "announced"
+      ],
+      "quote": "The region has lined up 25GW of announced datacenter projects",
+      "role": "supports",
+      "unit": "GW",
+      "value": 25.0,
+      "value_text": "25GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b056",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c9c6b39dbfa5bd",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "datacenter rent",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "past five years",
+      "qualifiers": [
+       "roughly halved",
+       "excluding power"
+      ],
+      "quote": "Rents have roughly halved over the past five years, to about $40/kW/month excluding power.",
+      "role": "supports",
+      "unit": "$/kW/month",
+      "value": 40.0,
+      "value_text": "about $40/kW/month"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ce891226c5e8fd",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "planned IT capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "planned"
+      ],
+      "quote": "on par with the 800MW planned at Galaxy",
+      "role": "supports",
+      "unit": "MW",
+      "value": 800.0,
+      "value_text": "800MW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b056",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-eac424df79fbae",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "power cost",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "all-in",
+       "among the lowest in the world"
+      ],
+      "quote": "Power in Inner Mongolia costs about $0.055/kWh all-in, among the lowest in the world.",
+      "role": "supports",
+      "unit": "$/kWh",
+      "value": 0.055,
+      "value_text": "about $0.055/kWh"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b063",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ebf1a89b8deaa6",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "phase delivery time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "120MW",
+       "under"
+      ],
+      "quote": "The China speed: 120MW in under 12 months",
+      "role": "supports",
+      "unit": "months",
+      "value": 12.0,
+      "value_text": "under 12 months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0f8cb7e5ea35df",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "facilities tracked",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "through 2032",
+      "qualifiers": [
+       "over",
+       "70+ operators"
+      ],
+      "quote": "It tracks over 1,000 facilities across 70+ operators, with quarterly delivery curves through 2032",
+      "role": "catalyst",
+      "unit": "facilities",
+      "value": 1000.0,
+      "value_text": "over 1,000"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-545af5c99a2f",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d877ace3489d0a",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Galaxy's initial phase was delivered in August 2026 and full campus expected complete by end of 2027",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "August 2026 to end of 2027",
+      "qualifiers": [
+       "full campus expected"
+      ],
+      "quote": "Its initial phase was delivered in August 2026, and the full campus is expected to be completed by the end of 2027.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8cd0613fe1916b",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "built for OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "Stargate Abilene campus built for OpenAI"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7abfa1e9d23ed2",
+       "name_as_written": "Envision AESC",
+       "other_securities": [],
+       "quote": "Its affiliate, Envision AESC",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Envision affiliate developing batteries, energy storage and power electronics"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ef824bcfade288",
+       "name_as_written": "China Telecom",
+       "other_securities": [],
+       "quote": "China Telecom\u2019s 240V DC pilots in 2007",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Early adopter of DC power pilots in Chinese datacenters"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": "0001577552",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2b0fe736c824c1",
+       "name_as_written": "Alibaba",
+       "other_securities": [],
+       "quote": "Alibaba\u2019s Panama power system in 2018",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "DC power system pioneer; also customer of Zhongheng Electric"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": "0001045810",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-02fb13e0a6db5a",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "Nvidia says Vera Rubin can run on 45\u00b0C water without chillers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Chip/rack vendor pushing 800V DC and liquid cooling specs"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9f8a6e462df682",
+       "name_as_written": "Tencent",
+       "other_securities": [],
+       "quote": " synchronous generator. A small pilot datacenter built with Tencent\u2019s modular T-Block units runs on the same system. Galaxy is ",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Modular T-Block datacenter units used in Envision pilot"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0509bd14325242",
+       "name_as_written": "Crusoe",
+       "other_securities": [],
+       "quote": "Crusoe began building Abilene in mid-2024",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "comparator",
+       "role_detail": "Developer of Abilene Stargate campus"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": "0001341439",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.01 per share",
+         "ticker": "ORCL"
+        }
+       ],
+       "mention_id": "M-4b39486102d977",
+       "name_as_written": "Oracle",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+         "ticker": "ORCL PRD"
+        }
+       ],
+       "quote": "leased it to Oracle",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Leases Abilene campus and runs it for OpenAI"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": "0001508475",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0dd3e20a8cde64",
+       "name_as_written": "VNET",
+       "other_securities": [],
+       "quote": "the tie-up between VNET, CATL and Zhongheng Electric",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Leading colocation operator in CATL/Zhongheng tie-up building gigawatt-scale campuses"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2179cfc5512771",
+       "name_as_written": "CATL",
+       "other_securities": [],
+       "quote": "CATL is the world\u2019s largest EV battery maker",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Largest EV battery maker leading green power/storage in datacenter tie-up; VNET largest shareholder; DeepSeek investor"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-cede017b14685b",
+       "name_as_written": "Zhongheng Electric",
+       "other_securities": [],
+       "quote": "Zhongheng Electric is China\u2019s largest supplier of HVDC power systems for datacenters",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Largest China HVDC datacenter power systems supplier working with Alibaba and ByteDance"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2d3be724292278",
+       "name_as_written": "ByteDance",
+       "other_securities": [],
+       "quote": "working with both Alibaba and ByteDance",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "Datacenter customer of Zhongheng Electric"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-070b58403d1a84",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "CATL is also one of DeepSeek\u2019s largest outside investors",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "AI model developer in which CATL is a large outside investor"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": "0001445162",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1c59a06aeeb7a6",
+       "name_as_written": "BYD",
+       "other_securities": [
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-09 in the SEC submissions index); never use in a historical basket",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "BYDDF"
+        }
+       ],
+       "quote": "players like BYD make much of what goes into their cars",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "Vertical integration analogy from China EV market"
+      },
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ca4a0a09dccdd8",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "The SemiAnalysis China Datacenter Model",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher and author of report and proprietary datacenter model"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-ac96b8c2402839",
+        "C-0f8cb7e5ea35df"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The 25GW of announced Inner Mongolia datacenter projects and the 1,000+ facilities tracked in the SemiAnalysis China Datacenter Model, without naming members. (constituents not named by the source)"
+      }
+     ],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-545af5c99a2f",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-c9716f88332d2c",
+       "name_as_written": "Envision Group",
+       "other_securities": [],
+       "quote": "The datacenter is owned by Envision Group",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "Vertically integrated renewable systems integrator owning and building Galaxy datacenter"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-545af5c99a2f",
+       "claim_ids": [
+        "C-ac96b8c2402839"
+       ],
+       "direction": "positive",
+       "name": "datacenter",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "China\u2019s fastest-growing AI datacenter region"
+      }
+     ],
+     "sectors": [
+      "datacenters",
+      "datacenter construction"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "quarterly delivery curves through 2032; full Galaxy campus by end of 2027 [SOURCE OPINION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-999d0de18cc789",
+        "C-d877ace3489d0a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "First phase delivered August 2026; construction accelerating across 22 projects with ~30,000 workers on site. \u27e8cited figures: approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-ac96b8c2402839",
+        "C-0f8cb7e5ea35df"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Through 2032 the China Datacenter Model tracks over 1,000 facilities and Inner Mongolia has 25GW of announced projects, a multi-year buildout."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-c9c6b39dbfa5bd",
+        "C-a21bba7c8b18f0"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Rents have roughly halved and project IRRs are squeezed hard, so volume growth may not translate into profitable returns for developers."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-3557AAE138: the same claim at an overlapping but different geography (China vs Global) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-B1F096684F: same value-chain node, not the same claim \u2014 a different mechanism (supply_constraint vs capex_spending_cycle) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 11 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-a21bba7c8b18f0"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China datacenter project returns are thin with IRRs squeezed hard"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Announced Inner Mongolia projects stalling on power/land/water"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued rent and margin compression eroding developer economics"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Falling utilization of built halls"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-4434f298455ee3",
+        "C-a21bba7c8b18f0",
+        "C-abe0eaa86a17f9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Many listed Chinese companies are pivoting into AI datacenter infrastructure where project returns are thin and IRRs squeezed hard, with the stock market being the draw for many of them, raising the risk that equity enthusiasm outruns project economics. (scope: China listed companies entering datacenter/AI infrastructure; the article does not quantify valuations or name which listed names are affected.)"
+      },
+      {
+       "claim_ids": [
+        "C-c9c6b39dbfa5bd"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "China's datacenter market is highly competitive with rents roughly halved over five years, pressuring developer and operator margins. (scope: China datacenter rents excluding power; applies to operators and developers broadly, not a specific named company.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether listed developers/suppliers earn adequate returns given halved rents and thin IRRs"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies capture the buildout volumes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether announced 25GW of projects actually get built given power, land and water constraints"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Power, land or water constraints throttle project delivery"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Rents keep falling faster than cost declines"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Map listed Chinese datacenter construction, cooling and electrical-equipment suppliers to the Inner Mongolia buildout and test whether volume growth offsets halved rents and thin IRRs."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Delivery curves accelerate in the China Datacenter Model"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Capex and power costs fall further improving project economics"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Utilization of built capacity proves high"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-545af5c99a2f",
+      "authors": [
+       "Everlyn Tan",
+       "Jeremie Eliahou Ontiveros",
+       "Xiaopeng Laoban",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-d877ace3489d0a",
+       "C-0f8cb7e5ea35df",
+       "C-4f2a963069336b",
+       "C-ac96b8c2402839",
+       "C-c9c6b39dbfa5bd",
+       "C-4434f298455ee3",
+       "C-eac424df79fbae",
+       "C-999d0de18cc789",
+       "C-ce891226c5e8fd",
+       "C-ebf1a89b8deaa6",
+       "C-a21bba7c8b18f0",
+       "C-abe0eaa86a17f9"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-07T19:01:39Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "We Visited China\u2019s Stargate in Inner Mongolia",
+      "upstream_origins": [
+       "a local report",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/we-visited-chinas-stargate-in-inner",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "03f92e0c46ad70ba7000b1418b744a4ee8a0d14d71a60b3ad2385f9980aa2501",
+   "created_at": "2026-11-09T14:14:44.718072Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-4f2a963069336b",
+       "C-ac96b8c2402839",
+       "C-c9c6b39dbfa5bd",
+       "C-4434f298455ee3",
+       "C-eac424df79fbae",
+       "C-999d0de18cc789",
+       "C-ce891226c5e8fd",
+       "C-ebf1a89b8deaa6",
+       "C-d877ace3489d0a",
+       "C-0f8cb7e5ea35df"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "10"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-434f2bc4de39, ES-7661d1cfece8",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-0f8cb7e5ea35df",
+       "C-4f2a963069336b",
+       "C-ac96b8c2402839",
+       "C-c9c6b39dbfa5bd",
+       "C-4434f298455ee3",
+       "C-eac424df79fbae",
+       "C-999d0de18cc789",
+       "C-ebf1a89b8deaa6"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "8 claim(s) inside the next 2-4 quarters (C-0f8cb7e5ea35df: measured 2026-11-07 (2 days before the as-of); C-4f2a963069336b: measured 2026-11-07 (2 days before the as-of); C-ac96b8c2402839: measured 2026-11-07 (2 days before the as-of); C-c9c6b39dbfa5bd: measured 2026-11-07 (2 days before the as-of); showing 4 of 8); 1 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: datacenter",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-0f8cb7e5ea35df"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-d877ace3489d0a",
+      "value": "present"
+     },
+     {
+      "claim_ids": [
+       "C-4434f298455ee3"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report",
+      "value": "not credible"
+     },
+     {
+      "claim_ids": [
+       "C-a21bba7c8b18f0"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 10 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-6F2E7079B0",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-a21bba7c8b18f0",
+  "C-abe0eaa86a17f9"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s02.5": "Cited span mentions 22 projects and nearly 30,000 workers but does not name the Chahar High-tech Zone.",
+  "s03.0": "'fastest-growing datacenter region' is not in the cited spans; 25GW and labor are supported but the superlative is unsupported.",
+  "s06.0": "Cited span says 'initial phase delivered in August 2026'; card says 'first phase delivered August 2026' which matches, but 'construction accelerating' is not stated in cited spans.",
+  "s06.1": "Model tracks over 1,000 facilities through 2032, but the cited span does not say the model is a 'China Datacenter Model' nor that these facilities relate specifically to China \u2014 otherwise figures supported.",
+  "s07.6": "Cited span supports rents roughly halved; 'highly competitive' and 'pressuring margins' are interpretations beyond the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {}
+}

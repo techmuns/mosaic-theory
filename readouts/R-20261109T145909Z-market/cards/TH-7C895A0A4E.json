@@ -1,0 +1,1348 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.memory"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:19:24.902241Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-06",
+   "latest_article_date": "2026-11-06",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+   "status": "ACTIVE",
+   "thesis_id": "TH-7C895A0A4E",
+   "title": "High DRAM prices push budget smartphone brands to adopt cheaper reballed memory"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-73815b2568902e",
+     "C-1b0862b34a6ab5",
+     "C-b13d8f7a7d1dae",
+     "C-483c5652b33b0c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce estimates reballed memory penetration in smartphones at ~3-4% in 2026, potentially 7-9% in 2027, as brands use it to offset rising mobile DRAM contract prices, especially in sub-CNY1,299 4G phones. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-e8679311fe22f0",
+     "C-52c18f104fcc8b"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article frames reballed memory as a cost-management workaround that nonetheless leaves the upward DRAM contract price trend intact, with potential spread into higher price segments if prices keep climbing in 1Q27."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A rising DRAM price cycle is strong enough that budget smartphone makers increasingly substitute reballed (reused) memory, but the article says this will not derail the upward DRAM price trend, so the main read-through is continued memory pricing strength."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-d62b9f56c2a5",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-73815b2568902e"
+     ],
+     "original_date": "2026-11-06",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Reballed memory penetration in the smartphone market is estimated at about 3-4% in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-d62b9f56c2a5",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1b0862b34a6ab5"
+     ],
+     "original_date": "2026-11-06",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Reballed memory smartphone penetration could climb to 7-9% in 2027. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-d62b9f56c2a5",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-6a1262e91452f1"
+     ],
+     "original_date": "2026-11-06",
+     "period": "1Q27",
+     "provenance": "FORECAST",
+     "text": "DRAM price increases are expected to gain further momentum in 1Q27, pressuring smartphone manufacturers' cost structures."
+    },
+    {
+     "article_id": "A-d62b9f56c2a5",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b13d8f7a7d1dae"
+     ],
+     "original_date": "2026-11-06",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Sustained rises in mobile DRAM contract prices are driving smartphone brands to adopt lower-cost reballed memory."
+    },
+    {
+     "article_id": "A-d62b9f56c2a5",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-483c5652b33b0c"
+     ],
+     "original_date": "2026-11-06",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "LPDDR4X 4GB accounts for the bulk of available reballed memory, used mostly in 4G smartphones priced below CNY 1,299."
+    },
+    {
+     "article_id": "A-d62b9f56c2a5",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-52c18f104fcc8b"
+     ],
+     "original_date": "2026-11-06",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Increasing reballed memory use is unlikely to significantly disrupt the upward trend in DRAM contract prices."
+    },
+    {
+     "article_id": "A-d62b9f56c2a5",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 7 pieces of evidence from A-d62b9f56c2a5 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:19 UTC, analysed as of 2026-11-09, from a source published 2026-11-06; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-b13d8f7a7d1dae",
+     "C-6a1262e91452f1"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Sustained rises in mobile DRAM contract prices drive smartphone brands toward lower-cost reballed memory."
+   },
+   {
+    "claim_ids": [
+     "C-6a1262e91452f1",
+     "C-52c18f104fcc8b"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend."
+   },
+   {
+    "claim_ids": [
+     "C-483c5652b33b0c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "costs",
+    "text": "Rising DRAM prices increase smartphone BOM costs; reballed memory eases this burden in budget models."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Implication for listed memory suppliers' revenue/margins is not quantified by the article."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1b0862b34a6ab5",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "reballed memory smartphone penetration rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "potentially"
+    ],
+    "quote": "potentially climbing to 7\u20139% in 2027",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "7\u20139%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-483c5652b33b0c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "LPDDR4X 4GB accounts for the bulk of available reballed memory, used mostly in 4G smartphones priced below CNY 1,299.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "below"
+    ],
+    "quote": "LPDDR4X 4GB currently accounts for the bulk of reballed memory available in the market, with these components primarily finding their way into 4G smartphones priced below CNY 1,299",
+    "role": "supports",
+    "unit": "CNY",
+    "value": 1299.0,
+    "value_text": "1,299"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-73815b2568902e",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "reballed memory smartphone penetration rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "the penetration rate of reballed memory in the smartphone market will reach approximately 3\u20134% in 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "3\u20134%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-52c18f104fcc8b",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Increasing reballed memory use is unlikely to significantly disrupt the upward trend in DRAM contract prices.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the increasing use of reballed components is unlikely to significantly disrupt the prevailing upward trend in DRAM contract prices",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b13d8f7a7d1dae",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Sustained rises in mobile DRAM contract prices are driving smartphone brands to adopt lower-cost reballed memory.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the sustained rise in mobile DRAM contract prices is driving smartphone brands to increasingly embrace lower-cost reballed memory components",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b5d05ebd627c6d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Reballed memory lets smartphone brands curb production costs near-term and sustain shipment volumes amid rising component prices",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "near term",
+    "qualifiers": [
+     "near term"
+    ],
+    "quote": "reballed memory provides smartphone brands with an effective means of curbing production costs in the near term, offering much-needed flexibility to sustain shipment volumes amid rising component prices",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6a1262e91452f1",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "DRAM contract price direction",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "1Q27",
+    "qualifiers": [],
+    "quote": "with DRAM price increases expected to gain further momentum in 1Q27, smartphone manufacturers are likely to face mounting pressure on their cost structures",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-d62b9f56c2a5",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-76ad408b29de5a",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research firm publishing the memory industry analysis and estimates."
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [],
+   "sectors": [
+    "memory",
+    "smartphones"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "1Q27 expected DRAM price momentum [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-1b0862b34a6ab5",
+      "C-6a1262e91452f1"
+     ],
+     "provenance": "FORECAST",
+     "text": "Reballed penetration rising to 7-9% in 2027 while DRAM prices keep climbing into 1Q27. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-dd23ced2073631",
+      "C-52c18f104fcc8b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Reballed memory remains concentrated in budget devices and a modest share of total LPDRAM bit consumption, so it does not undermine the structural DRAM price uptrend."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-52c18f104fcc8b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Spreading adoption of reballed and lower-spec memory could theoretically dampen DRAM demand, but the article judges it too modest to disrupt prices."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 17 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-3d8803bc462058"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Reballed memory carries quality-consistency uncertainty that can compromise reliability and shorten device lifespans, risking warranty and repair costs."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "DRAM contract prices falling instead of rising in 1Q27"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Reballed penetration materially exceeding budget segment and denting new DRAM demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Quality failures of reballed memory reversing adoption"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-3d8803bc462058"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Reliance on reballed memory carries quality-consistency uncertainty that can compromise product reliability, shorten device lifespans, erode consumer confidence, damage brand reputation, and raise warranty and repair costs for smartphone makers. (scope: Applies to smartphone brands adopting reballed memory, per TrendForce's stated trade-offs; no listed company named.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: Mobile DRAM contract prices continue rising, keeping budget smartphone BOM pressure high."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether and how much reballed adoption affects listed DRAM makers' bit shipments, revenue or margins"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which specific listed smartphone brands or memory suppliers are exposed"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the penetration estimates reflect demonstrated causation vs. association with price rises"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Mobile DRAM prices roll over"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Reballed adoption stalls on quality/reliability concerns"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Quantify how reballed memory penetration at 7-9% of smartphone units but a modest share of LPDRAM bits affects listed DRAM suppliers' bit demand and ASP trajectory."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "DRAM contract prices accelerate further in 1Q27"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Reballed adoption spreads to mid/high price tiers"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-d62b9f56c2a5",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-6a1262e91452f1",
+     "C-73815b2568902e",
+     "C-1b0862b34a6ab5",
+     "C-b13d8f7a7d1dae",
+     "C-483c5652b33b0c",
+     "C-52c18f104fcc8b",
+     "C-b5d05ebd627c6d",
+     "C-3d8803bc462058"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-06T13:45:07+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Persistently High DRAM Prices Drive Adoption of Reballed Memory, with Smartphone Penetration Expected to Reach 7\u20139% in 2027, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261106-13297.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-10-09 (0000723125-26-000023)",
+    "business": "memory chip maker (DRAM, NAND, HBM)",
+    "direction": "positive",
+    "enrichment_id": "EC-bc1d0b16a5ee85",
+    "evidence": "s03.1: DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-10-09 (accession 0000723125-26-000023) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.10 per share",
+      "ticker": "MU"
+     }
+    ],
+    "name": "Micron Technology",
+    "rationale": "Rising DRAM contract prices through 1Q27 lift Micron's mobile DRAM revenue and margins; reballed adoption stays too small to derail the uptrend.",
+    "registrant": "MICRON TECHNOLOGY INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "mobile and PC DRAM chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "MU"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "Korean DRAM, HBM and NAND memory maker",
+    "direction": "positive",
+    "enrichment_id": "EC-d42e9c6f361800",
+    "evidence": "s03.1: DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "SK Hynix",
+    "rationale": "Sustained upward mobile DRAM contract pricing boosts SK Hynix DRAM revenue and margins, with reballed memory penetration too small to reverse the trend.",
+    "registrant": "SK hynix Inc.",
+    "resolution_note": "listing NOT point-in-time verified as of 2026-11-09: no periodic filing on or before 2026-11-09 in the SEC submissions index; foreign-issuer check unavailable",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "DRAM and HBM memory chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "HXSCL"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "Korean memory, foundry and smartphone conglomerate",
+    "direction": "positive",
+    "enrichment_id": "EC-5985ddace6d819",
+    "evidence": "s03.1: DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Samsung Electronics",
+    "rationale": "Rising mobile DRAM contract prices lift its memory division margins; largest DRAM maker, though gain diluted across diversified operations.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "DRAM memory chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "SSNLF"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names licences and maintenance \u2014 and also advertising (showing 2 of 3)",
+    "basis_quote": [
+     "We derive the majority of our revenue from the licensing of our technologies to customers.",
+     "The Company derives the majority of its revenue from licensing its technologies and solutions to customers within the Pay-TV, Consumer Electronics, Connected Car and Media Platform product categories."
+    ],
+    "basis_source": "10-K filed 2026-02-26 (0001193125-26-076849)",
+    "business": "media and semiconductor technology IP licensor",
+    "direction": "positive",
+    "enrichment_id": "EC-f6cacef8705c50",
+    "evidence": "s03.2: Rising DRAM prices increase smartphone BOM costs; reballed memory eases this burden in budget models.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-05 (accession 0001788999-26-000024) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock (par value $0.001 per share)",
+      "ticker": "XPER"
+     }
+    ],
+    "name": "Xperi",
+    "rationale": "Weak link: holds memory packaging IP, but reballed-driven cost dynamics are immaterial to its licensing revenue; speculative exposure only.",
+    "registrant": "Xperi Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "semiconductor packaging IP licensing",
+    "revenue_model": "licences",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "XPER"
+   }
+  ],
+  "created_at": "2026-11-09T14:55:52.800570Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-2ff15bbde4fbc3",
+  "thesis_id": "TH-7C895A0A4E",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 15:21 UTC from the registry (ti-engine-5; run R-20261109T145909Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-d62b9f56c2a5",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.memory"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:19:24.902241Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-06",
+     "latest_article_date": "2026-11-06",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+     "status": "ACTIVE",
+     "thesis_id": "TH-7C895A0A4E",
+     "title": "High DRAM prices push budget smartphone brands to adopt cheaper reballed memory"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-73815b2568902e",
+       "C-1b0862b34a6ab5",
+       "C-b13d8f7a7d1dae",
+       "C-483c5652b33b0c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce estimates reballed memory penetration in smartphones at ~3-4% in 2026, potentially 7-9% in 2027, as brands use it to offset rising mobile DRAM contract prices, especially in sub-CNY1,299 4G phones. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-e8679311fe22f0",
+       "C-52c18f104fcc8b"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames reballed memory as a cost-management workaround that nonetheless leaves the upward DRAM contract price trend intact, with potential spread into higher price segments if prices keep climbing in 1Q27."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A rising DRAM price cycle is strong enough that budget smartphone makers increasingly substitute reballed (reused) memory, but the article says this will not derail the upward DRAM price trend, so the main read-through is continued memory pricing strength."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-73815b2568902e"
+       ],
+       "original_date": "2026-11-06",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Reballed memory penetration in the smartphone market is estimated at about 3-4% in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1b0862b34a6ab5"
+       ],
+       "original_date": "2026-11-06",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Reballed memory smartphone penetration could climb to 7-9% in 2027. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-6a1262e91452f1"
+       ],
+       "original_date": "2026-11-06",
+       "period": "1Q27",
+       "provenance": "FORECAST",
+       "text": "DRAM price increases are expected to gain further momentum in 1Q27, pressuring smartphone manufacturers' cost structures."
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b13d8f7a7d1dae"
+       ],
+       "original_date": "2026-11-06",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Sustained rises in mobile DRAM contract prices are driving smartphone brands to adopt lower-cost reballed memory."
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-483c5652b33b0c"
+       ],
+       "original_date": "2026-11-06",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "LPDDR4X 4GB accounts for the bulk of available reballed memory, used mostly in 4G smartphones priced below CNY 1,299."
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-52c18f104fcc8b"
+       ],
+       "original_date": "2026-11-06",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Increasing reballed memory use is unlikely to significantly disrupt the upward trend in DRAM contract prices."
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 7 pieces of evidence from A-d62b9f56c2a5 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:19 UTC, analysed as of 2026-11-09, from a source published 2026-11-06; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-b13d8f7a7d1dae",
+       "C-6a1262e91452f1"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Sustained rises in mobile DRAM contract prices drive smartphone brands toward lower-cost reballed memory."
+     },
+     {
+      "claim_ids": [
+       "C-6a1262e91452f1",
+       "C-52c18f104fcc8b"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend."
+     },
+     {
+      "claim_ids": [
+       "C-483c5652b33b0c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "costs",
+      "text": "Rising DRAM prices increase smartphone BOM costs; reballed memory eases this burden in budget models."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Implication for listed memory suppliers' revenue/margins is not quantified by the article."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1b0862b34a6ab5",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "reballed memory smartphone penetration rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "potentially"
+      ],
+      "quote": "potentially climbing to 7\u20139% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "7\u20139%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-483c5652b33b0c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "LPDDR4X 4GB accounts for the bulk of available reballed memory, used mostly in 4G smartphones priced below CNY 1,299.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "below"
+      ],
+      "quote": "LPDDR4X 4GB currently accounts for the bulk of reballed memory available in the market, with these components primarily finding their way into 4G smartphones priced below CNY 1,299",
+      "role": "supports",
+      "unit": "CNY",
+      "value": 1299.0,
+      "value_text": "1,299"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-73815b2568902e",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "reballed memory smartphone penetration rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "the penetration rate of reballed memory in the smartphone market will reach approximately 3\u20134% in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "3\u20134%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-52c18f104fcc8b",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Increasing reballed memory use is unlikely to significantly disrupt the upward trend in DRAM contract prices.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the increasing use of reballed components is unlikely to significantly disrupt the prevailing upward trend in DRAM contract prices",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b13d8f7a7d1dae",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Sustained rises in mobile DRAM contract prices are driving smartphone brands to adopt lower-cost reballed memory.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the sustained rise in mobile DRAM contract prices is driving smartphone brands to increasingly embrace lower-cost reballed memory components",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b5d05ebd627c6d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Reballed memory lets smartphone brands curb production costs near-term and sustain shipment volumes amid rising component prices",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "near term",
+      "qualifiers": [
+       "near term"
+      ],
+      "quote": "reballed memory provides smartphone brands with an effective means of curbing production costs in the near term, offering much-needed flexibility to sustain shipment volumes amid rising component prices",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6a1262e91452f1",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "DRAM contract price direction",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "1Q27",
+      "qualifiers": [],
+      "quote": "with DRAM price increases expected to gain further momentum in 1Q27, smartphone manufacturers are likely to face mounting pressure on their cost structures",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-76ad408b29de5a",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the memory industry analysis and estimates."
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [],
+     "sectors": [
+      "memory",
+      "smartphones"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "1Q27 expected DRAM price momentum [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-1b0862b34a6ab5",
+        "C-6a1262e91452f1"
+       ],
+       "provenance": "FORECAST",
+       "text": "Reballed penetration rising to 7-9% in 2027 while DRAM prices keep climbing into 1Q27. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-dd23ced2073631",
+        "C-52c18f104fcc8b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reballed memory remains concentrated in budget devices and a modest share of total LPDRAM bit consumption, so it does not undermine the structural DRAM price uptrend."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-52c18f104fcc8b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Spreading adoption of reballed and lower-spec memory could theoretically dampen DRAM demand, but the article judges it too modest to disrupt prices."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 17 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-3d8803bc462058"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reballed memory carries quality-consistency uncertainty that can compromise reliability and shorten device lifespans, risking warranty and repair costs."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DRAM contract prices falling instead of rising in 1Q27"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reballed penetration materially exceeding budget segment and denting new DRAM demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Quality failures of reballed memory reversing adoption"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-3d8803bc462058"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reliance on reballed memory carries quality-consistency uncertainty that can compromise product reliability, shorten device lifespans, erode consumer confidence, damage brand reputation, and raise warranty and repair costs for smartphone makers. (scope: Applies to smartphone brands adopting reballed memory, per TrendForce's stated trade-offs; no listed company named.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: Mobile DRAM contract prices continue rising, keeping budget smartphone BOM pressure high."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether and how much reballed adoption affects listed DRAM makers' bit shipments, revenue or margins"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which specific listed smartphone brands or memory suppliers are exposed"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the penetration estimates reflect demonstrated causation vs. association with price rises"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Mobile DRAM prices roll over"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reballed adoption stalls on quality/reliability concerns"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Quantify how reballed memory penetration at 7-9% of smartphone units but a modest share of LPDRAM bits affects listed DRAM suppliers' bit demand and ASP trajectory."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DRAM contract prices accelerate further in 1Q27"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reballed adoption spreads to mid/high price tiers"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-d62b9f56c2a5",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-6a1262e91452f1",
+       "C-73815b2568902e",
+       "C-1b0862b34a6ab5",
+       "C-b13d8f7a7d1dae",
+       "C-483c5652b33b0c",
+       "C-52c18f104fcc8b",
+       "C-b5d05ebd627c6d",
+       "C-3d8803bc462058"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-06T13:45:07+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Persistently High DRAM Prices Drive Adoption of Reballed Memory, with Smartphone Penetration Expected to Reach 7\u20139% in 2027, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261106-13297.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "340c735f89d52fdc43e939eb8004688759bedf7de60c0d9c04b55ce9d0990e17",
+   "created_at": "2026-11-09T14:19:35.890974Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-73815b2568902e",
+       "C-1b0862b34a6ab5",
+       "C-483c5652b33b0c",
+       "C-6a1262e91452f1"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-73815b2568902e",
+       "C-6a1262e91452f1"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-73815b2568902e: forecast window 2026-01-01..2026-12-31 (2026); C-6a1262e91452f1: forecast window 2027-01-01..2027-03-31 (1q27)); 1 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-6a1262e91452f1",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-3d8803bc462058"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 4 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 1 decision-bearing sentence(s): s01.0",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_exposure",
+      "kind": "held",
+      "text": "no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names)"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "verification_hold",
+      "kind": "missing_data",
+      "text": "verification hold"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-7C895A0A4E",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-d62b9f56c2a5",
+   "block_ids": [
+    "b010",
+    "b006",
+    "b007"
+   ],
+   "claim_ids": [
+    "C-6a1262e91452f1"
+   ],
+   "excerpt": "\u2026lead to higher warranty and repair expenses. Manufacturers must therefore strike a careful balance\u2026",
+   "name": "Manufacturers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-e8679311fe22f0",
+  "C-dd23ced2073631",
+  "C-3d8803bc462058"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s03.2": "Cited span only states LPDDR4X 4GB goes into sub-CNY1,299 4G phones; it does not state that rising DRAM prices raise BOM costs or that reballed memory eases the burden. That rationale is not in the cited span.",
+  "s07.1": "Cited span supports that reballed use won't disrupt prices, but the claim that spreading adoption 'could theoretically dampen DRAM demand' is not in the cited span.",
+  "s07.3": "Cited span supports quality uncertainty, compromised reliability, and shortened lifespans, but not the added claims of eroding consumer confidence, damaging brand reputation, or raising warranty/repair costs."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Exposure \u2014 no listed company or verified sector exposure; the source names business groups only (Manufacturers), not companies.",
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Verification \u2014 on hold until a failed check is resolved."
+ ],
+ "withheld_sentences": {
+  "s01.0": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s01.0 prints '299', which none of its cited claims carry: 'TrendForce estimates reballed memory penetration in smartphones at ~3-4% in 2026, potentially 7-9% i'"
+ }
+}

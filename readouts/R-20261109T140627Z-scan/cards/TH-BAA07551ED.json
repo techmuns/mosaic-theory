@@ -1,0 +1,1737 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.hyperscaler_capex"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:17:01.868301Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-06",
+   "latest_article_date": "2026-11-06",
+   "region": "US",
+   "research_action": "RESEARCH NOW",
+   "sector": "Hyperscaler / cloud AI capital expenditure and the companies spending it",
+   "status": "ACTIVE",
+   "thesis_id": "TH-BAA07551ED",
+   "title": "Hyperscalers with existing data centers gain edge as regulation targets new builds"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-d949f4c97f4235",
+     "C-ecb182c21d4ed5",
+     "C-c8e9f509175f3a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "After Democratic midterm gains raised the likelihood of tougher data center scrutiny, the hyperscaler vs data center equities spread hit a record ~9 percentage points on November 4th, as investors favored companies with operational capacity. \u27e8cited figures: approximate, read from a chart; data as of 2026-11-04\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-c8e9f509175f3a",
+     "C-81ed4982c3222a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The publisher says companies with operational data centers, secured power and established customers are better positioned relative to parts of the tech trade reliant on incremental build-out."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article argues owning productive capacity today is being rewarded over depending on future construction, but it does not quantify any earnings impact for hyperscalers."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ecb182c21d4ed5"
+     ],
+     "original_date": "2026-11-06",
+     "period": "November 4th 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The 1-day percent-change spread between hyperscaler and data center equities spiked to over 9 percentage points on November 4th, a record divergence after the election. \u27e8cited figures: approximate, read from a chart; data as of 2026-11-04\u27e9"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d949f4c97f4235"
+     ],
+     "original_date": "2026-11-06",
+     "period": "2026 U.S. midterm elections",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "In the 2026 US midterm elections the Democratic party won control of both the House and the Senate, setting up gridlock with a Republican president."
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-81ed4982c3222a"
+     ],
+     "original_date": "2026-11-06",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "Hyperscaler investment is expected to continue, and electrification and grid build-out remain pressing needs to support higher power demand and capital spending."
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c8e9f509175f3a"
+     ],
+     "original_date": "2026-11-06",
+     "period": "post-election",
+     "provenance": "SOURCE OPINION",
+     "text": "Companies with existing compute and data center projects, like the hyperscalers, have the edge because regulatory proposals target new developments, not existing ones."
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8d47a1955681b5"
+     ],
+     "original_date": "2026-11-06",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Potential policy changes center on cost allocation for grid connections, tax exemption changes, stricter financial commitments and emergency curtailment requirements."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:17 UTC, analysed as of 2026-11-09, from a source published 2026-11-06; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-d949f4c97f4235",
+     "C-b3454ef28d833c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Democratic control of House and Senate raises likelihood of tougher scrutiny on new data center development, affordability and grid costs."
+   },
+   {
+    "claim_ids": [
+     "C-c8e9f509175f3a"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Regulation targeting new builds, not existing ones, would preserve hyperscalers' earnings advantage from operational capacity, but the article does not quantify this."
+   },
+   {
+    "claim_ids": [
+     "C-ecb182c21d4ed5"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "market_reaction",
+    "text": "Hyperscaler equities outperformed data center equities by a record ~9 percentage points on election day. \u27e8cited figures: approximate, read from a chart; data as of 2026-11-04\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b020",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-ecb182c21d4ed5",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "hyperscaler vs data center equities 1-day % change spread",
+    "measured_as_of": "2026-11-04",
+    "origin": "Bloomberg Finance L.P., Goldman Sachs",
+    "period": "November 4th 2026",
+    "qualifiers": [
+     "largest positive spike",
+     "record divergence"
+    ],
+    "quote": "The largest positive spike appears on November 4th, where the spread passes 9 percentage points, indicating a record divergence after the election.",
+    "role": "dislocation",
+    "unit": "percentage points",
+    "value": 9.0,
+    "value_text": "passes 9 percentage points"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-81ed4982c3222a",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Hyperscaler investment is expected to continue, and electrification and grid build-out remain pressing needs to support higher power demand and capital spending.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Hyperscaler investment is expected to continue. Electrification and the grid build-out are still pressing needs",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8d47a1955681b5",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Potential policy changes center on cost allocation for grid connections, tax exemption changes, stricter financial commitments and emergency curtailment requirements.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "could be"
+    ],
+    "quote": "More notable policy changes could be around who bears the costs of additional grid connections, changes to tax exemptions, stricter financial commitments and emergency curtailment requirements",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d949f4c97f4235",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "In the 2026 US midterm elections the Democratic party won control of both the House and the Senate, setting up gridlock with a Republican president.",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "2026 U.S. midterm elections",
+    "qualifiers": [],
+    "quote": "the Democratic party gained control of both the House of Representatives and the Senate",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b5177202cb2",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c8e9f509175f3a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Companies with existing compute and data center projects, like the hyperscalers, have the edge because regulatory proposals target new developments, not existing ones.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "post-election",
+    "qualifiers": [
+     "operational data centers, secured power, established customers"
+    ],
+    "quote": "companies with existing compute and data center projects\u2014like the hyperscalers\u2014have the edge",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3be71e37f43ff0",
+     "name_as_written": "MVIS US Listed Semiconductor Index",
+     "other_securities": [],
+     "quote": "the MVIS US Listed Semiconductor Index",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "cited_basket",
+     "role_detail": "Index whose 24-month forward P/E is cited to show semiconductor valuation compression"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": "0000019617",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock",
+       "ticker": "JPM"
+      }
+     ],
+     "mention_id": "M-4394acbd464bbe",
+     "name_as_written": "JPMorgan Chase & Co.",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 5.75% Non-Cumulative Preferred Stock, Series DD",
+       "ticker": "JPM PR D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 6.00% Non-Cumulative Preferred Stock, Series EE",
+       "ticker": "JPM PR C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.75% Non-Cumulative Preferred Stock, Series GG",
+       "ticker": "JPM PR J"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.55% Non-Cumulative Preferred Stock, Series JJ",
+       "ticker": "JPM PR K"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.625% Non-Cumulative Preferred Stock, Series LL",
+       "ticker": "JPM PR L"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.20% Non-Cumulative Preferred Stock, Series MM",
+       "ticker": "JPM PR M"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Callable Fixed Rate Notes due June 10, 2032 of JPMorgan Chase Financial Company LLC",
+       "ticker": "JPM/32"
+      },
+      {
+       "exchange": "NYSE Arca",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Alerian MLP Index ETNs due January 28, 2044 of JPMorgan Chase Financial Company LLC",
+       "ticker": "AMJB"
+      },
+      {
+       "exchange": "NYSE Arca",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Inverse VIX Short-Term Futures ETNs due March 22, 2045 of JPMorgan Chase Financial Company LLC",
+       "ticker": "VYLD"
+      }
+     ],
+     "quote": "JPMorgan Chase & Co. (\u201cJPM\u201d)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher of the commentary via its private banking business"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-ecb182c21d4ed5",
+      "C-71f65304a5aa15"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A Goldman Sachs basket of hyperscaler equities and a basket of data center equities, whose 1-day percent-change spread is tracked. (constituents not named by the source)"
+    }
+   ],
+   "companies": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "data source",
+     "listings": [],
+     "mention_id": "M-2e75e927f13674",
+     "name_as_written": "Goldman Sachs",
+     "other_securities": [],
+     "quote": "Bloomberg Finance L.P., Goldman Sachs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of the hyperscaler vs data center equities basket and chart data"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "data source",
+     "listings": [],
+     "mention_id": "M-cafa7e1bc9a65e",
+     "name_as_written": "Bloomberg Finance L.P.",
+     "other_securities": [],
+     "quote": "Source: Bloomberg Finance L.P.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Data source for chart figures"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-0b5177202cb2",
+     "claim_ids": [
+      "C-c8e9f509175f3a",
+      "C-ecb182c21d4ed5"
+     ],
+     "direction": "positive",
+     "name": "hyperscalers",
+     "provenance": "SOURCE OPINION",
+     "quote": "like the hyperscalers\u2014have the edge"
+    },
+    {
+     "article_id": "A-0b5177202cb2",
+     "claim_ids": [
+      "C-ecb182c21d4ed5"
+     ],
+     "direction": "negative",
+     "name": "data center equities",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "Hyperscaler vs. data center equities"
+    }
+   ],
+   "sectors": [
+    "technology",
+    "hyperscalers"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "Formal policy proposals following the 2026 midterms [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-c8e9f509175f3a",
+      "C-ecb182c21d4ed5"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Hyperscalers with existing compute, secured power and customers are better positioned than build-out-dependent names as investors reprice regulatory risk. \u27e8cited figures: approximate, read from a chart; data as of 2026-11-04\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-ecb182c21d4ed5"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: The 1-day percent-change spread between hyperscaler and data center equities spiked to over 9 percentage points on November 4th, a record divergence after the election. \u27e8cited figures: approximate, read from a chart; data as of 2026-11-04\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-81ed4982c3222a"
+     ],
+     "provenance": "FORECAST",
+     "text": "The structural AI build-out backdrop remains in place; hyperscaler investment, electrification and grid build-out are expected to continue."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-d949f4c97f4235",
+      "C-b3454ef28d833c"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A federal moratorium mirroring state-led efforts to curb the build-out could broaden to restrict even existing players and slow AI growth overall."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-0D381F307A: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 13 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-b3454ef28d833c"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Democratic gains create near-term uncertainty for sectors that trade in line with AI developments, like utilities, especially those exposed to fast-growing markets like Texas and Georgia."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Policy proposals that restrict existing data center operations or power contracts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscaler capex guidance cuts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Reversal of the hyperscaler vs data center equity spread"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-d949f4c97f4235",
+      "C-a43e37718b6868"
+     ],
+     "provenance": "FORECAST",
+     "text": "A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affordability and zoning concerns, with the magnitude of Democratic midterm gains not fully priced in, creating volatility across the AI/tech trade. (scope: US AI-linked technology, semiconductor, utility and data center equities; article says much uncertainty was priced in before the election but the magnitude of Democratic gains was not.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: Regulatory proposals after Democratic midterm gains target new data center developments rather than existing ones"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether proposed policies will in fact exempt existing data centers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether hyperscalers' earnings or valuations reflect this advantage"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the one-day equity spread persists beyond election reaction"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Proposals extend restrictions to existing data centers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "End demand for AI compute shows signs of faltering"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check whether proposed post-midterm data center policies exempt existing facilities and how hyperscaler capex guidance and valuations have responded."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Policy drafts explicitly grandfather existing data centers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscalers reaffirm or raise capex"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-ecb182c21d4ed5: measured 2026-11-04 (5 days before the as-of); C-d949f4c97f4235: measured 2026-11-06 (3 days before the as-of); source-named exposure(s): sector: hyperscalers, sector: data center equities; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-0b5177202cb2",
+    "authors": [
+     "Kriti Gupta (Executive Director, Global Investment Strategist)",
+     "Nick Roberts (Portfolio Manager, Specialized Strategies)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-ecb182c21d4ed5",
+     "C-c8e9f509175f3a",
+     "C-d949f4c97f4235",
+     "C-81ed4982c3222a",
+     "C-8d47a1955681b5",
+     "C-b3454ef28d833c",
+     "C-a43e37718b6868"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-06T11:30:00+05:30",
+    "published_status": "KNOWN",
+    "publisher": "J.P. Morgan Private Bank",
+    "retrieval_state": "FULL",
+    "title": "The blue wave is changing the AI trade",
+    "upstream_origins": [
+     "Bloomberg Finance L.P.",
+     "Bloomberg Finance L.P., Goldman Sachs",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/the-blue-wave-is-changing-the-ai-trade",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-07-29 (0001193125-26-323660)",
+    "business": "Azure cloud platform and enterprise software",
+    "direction": "positive",
+    "enrichment_id": "EC-dba3b5ff817dfd",
+    "evidence": "s03.1: Regulation targeting new builds, not existing ones, would preserve hyperscalers' earnings advantage from operational capacity, but the article does not quantify this.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, $0.00000625 par value per share",
+      "ticker": "MSFT"
+     }
+    ],
+    "name": "Microsoft",
+    "rationale": "Large installed base of operational Azure data centers with secured power preserves capacity advantage if regulation targets only new builds.",
+    "registrant": "MICROSOFT CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Azure cloud computing services",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-BAA07551ED",
+    "ticker_hint": "MSFT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-06 (0001018724-26-000004)",
+    "business": "AWS cloud, e-commerce and advertising",
+    "direction": "positive",
+    "enrichment_id": "EC-9397e1785da310",
+    "evidence": "s03.1: Regulation targeting new builds, not existing ones, would preserve hyperscalers' earnings advantage from operational capacity, but the article does not quantify this.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-30 (accession 0001018724-26-000040) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $.01 per share",
+      "ticker": "AMZN"
+     }
+    ],
+    "name": "Amazon.com",
+    "rationale": "AWS's extensive existing data center footprint and secured power let it serve AI demand while rivals face build-out curbs.",
+    "registrant": "AMAZON COM INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 5961); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AWS cloud computing services",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-BAA07551ED",
+    "ticker_hint": "AMZN"
+   },
+   {
+    "basis_check": "FILING_NAMES_OTHER",
+    "basis_note": "its revenue-source sentences name advertising \u2014 not usage-based",
+    "basis_quote": [
+     "We generate a significant portion of our revenues from advertising.",
+     "We generate revenues by delivering relevant, cost-effective online advertising;"
+    ],
+    "basis_source": "10-K filed 2026-02-05 (0001652044-26-000018)",
+    "business": "Google Search, ads and Google Cloud",
+    "direction": "positive",
+    "enrichment_id": "EC-a6c9e01e4a7e3c",
+    "evidence": "s03.1: Regulation targeting new builds, not existing ones, would preserve hyperscalers' earnings advantage from operational capacity, but the article does not quantify this.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": "one of 2 common-equity classes registered as of 2026-11-09",
+      "pit_source": "10-Q filed 2026-10-29 (accession 0001652044-26-000084) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, $0.001 par value",
+      "ticker": "GOOGL"
+     },
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": "one of 2 common-equity classes registered as of 2026-11-09",
+      "pit_source": "10-Q filed 2026-10-29 (accession 0001652044-26-000084) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class C Capital Stock, $0.001 par value",
+      "ticker": "GOOG"
+     }
+    ],
+    "name": "Alphabet",
+    "rationale": "Google Cloud's operational data centers and secured power position it to meet AI compute demand amid tighter new-build scrutiny.",
+    "registrant": "Alphabet Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7370); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Google Cloud computing services",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-BAA07551ED",
+    "ticker_hint": "GOOGL"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names advertising (showing 2 of 3)",
+    "basis_quote": [
+     "we generate substantially all of our revenue from selling advertising placements on our family of apps to marketers, which is reflected in FoA.",
+     "We generate substantially all of our revenue from advertising."
+    ],
+    "basis_source": "10-K filed 2026-01-29 (0001628280-26-003942)",
+    "business": "social media advertising and AI infrastructure",
+    "direction": "positive",
+    "enrichment_id": "EC-f18acbd0f20bd4",
+    "evidence": "s03.1: Regulation targeting new builds, not existing ones, would preserve hyperscalers' earnings advantage from operational capacity, but the article does not quantify this.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, $0.000006 par value",
+      "ticker": "META"
+     }
+    ],
+    "name": "Meta Platforms",
+    "rationale": "Owns large operational data center capacity for AI workloads; regulation on new builds protects its established position relatively.",
+    "registrant": "Meta Platforms, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7370); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "social advertising powered by AI infrastructure",
+    "revenue_model": "advertising",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-BAA07551ED",
+    "ticker_hint": "META"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-06-22 (0001193125-26-277521)",
+    "business": "enterprise software and OCI cloud infrastructure",
+    "direction": "negative",
+    "enrichment_id": "EC-b671b575fd663c",
+    "evidence": "s03.1: Regulation targeting new builds, not existing ones, would preserve hyperscalers' earnings advantage from operational capacity, but the article does not quantify this.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.01 per share",
+      "ticker": "ORCL"
+     }
+    ],
+    "name": "Oracle",
+    "rationale": "OCI growth depends heavily on aggressive new data center build-out; tougher scrutiny on new builds could constrain its expansion plans.",
+    "registrant": "ORACLE CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Oracle Cloud Infrastructure (OCI)",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-BAA07551ED",
+    "ticker_hint": "ORCL"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-11 (0001101239-26-000032)",
+    "business": "data center colocation and interconnection REIT",
+    "direction": "negative",
+    "enrichment_id": "EC-8fb49ebdd64ee1",
+    "evidence": "s03.0: Democratic control of House and Senate raises likelihood of tougher scrutiny on new data center development, affordability and grid costs.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001101239-26-000180) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001",
+      "ticker": "EQIX"
+     }
+    ],
+    "name": "Equinix",
+    "rationale": "Business model relies on continual new data center construction; tougher scrutiny on new builds, power and grid costs raises development risk.",
+    "registrant": "EQUINIX INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 6798); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "data center colocation leasing",
+    "revenue_model": "services",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-BAA07551ED",
+    "ticker_hint": "EQIX"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0001104659-26-015365)",
+    "business": "data center REIT leasing to hyperscalers",
+    "direction": "negative",
+    "enrichment_id": "EC-92e10733e0b71b",
+    "evidence": "s03.0: Democratic control of House and Senate raises likelihood of tougher scrutiny on new data center development, affordability and grid costs.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-30 (accession 0001104659-26-120710) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock",
+      "ticker": "DLR"
+     }
+    ],
+    "name": "Digital Realty Trust",
+    "rationale": "Depends on incremental new data center build-out; regulation targeting new development and grid costs could slow leasing pipeline growth.",
+    "registrant": "DIGITAL REALTY TRUST, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 6798); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "data center leasing to tenants",
+    "revenue_model": "services",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-BAA07551ED",
+    "ticker_hint": "DLR"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0001674101-26-000008)",
+    "business": "data center power and cooling equipment",
+    "direction": "negative",
+    "enrichment_id": "EC-bab3bfd2b35a38",
+    "evidence": "s03.0: Democratic control of House and Senate raises likelihood of tougher scrutiny on new data center development, affordability and grid costs.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001628280-26-067893) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A common stock, $0.0001 par value per share",
+      "ticker": "VRT"
+     }
+    ],
+    "name": "Vertiv Holdings",
+    "rationale": "Sales tied to new data center construction; tougher scrutiny on new builds could reduce demand for its infrastructure equipment.",
+    "registrant": "Vertiv Holdings Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3679); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "data center power and thermal equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-BAA07551ED",
+    "ticker_hint": "VRT"
+   }
+  ],
+  "created_at": "2026-11-09T14:58:06.612052Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-53887413726029",
+  "thesis_id": "TH-BAA07551ED",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 14:59 UTC from the registry (ti-engine-5; run R-20261109T140627Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-0b5177202cb2",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.hyperscaler_capex"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:17:01.868301Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-06",
+     "latest_article_date": "2026-11-06",
+     "region": "US",
+     "research_action": "RESEARCH NOW",
+     "sector": "Hyperscaler / cloud AI capital expenditure and the companies spending it",
+     "status": "ACTIVE",
+     "thesis_id": "TH-BAA07551ED",
+     "title": "Hyperscalers with existing data centers gain edge as regulation targets new builds"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-d949f4c97f4235",
+       "C-ecb182c21d4ed5",
+       "C-c8e9f509175f3a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "After Democratic midterm gains raised the likelihood of tougher data center scrutiny, the hyperscaler vs data center equities spread hit a record ~9 percentage points on November 4th, as investors favored companies with operational capacity. \u27e8cited figures: approximate, read from a chart; data as of 2026-11-04\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-c8e9f509175f3a",
+       "C-81ed4982c3222a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The publisher says companies with operational data centers, secured power and established customers are better positioned relative to parts of the tech trade reliant on incremental build-out."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article argues owning productive capacity today is being rewarded over depending on future construction, but it does not quantify any earnings impact for hyperscalers."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ecb182c21d4ed5"
+       ],
+       "original_date": "2026-11-06",
+       "period": "November 4th 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The 1-day percent-change spread between hyperscaler and data center equities spiked to over 9 percentage points on November 4th, a record divergence after the election. \u27e8cited figures: approximate, read from a chart; data as of 2026-11-04\u27e9"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d949f4c97f4235"
+       ],
+       "original_date": "2026-11-06",
+       "period": "2026 U.S. midterm elections",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "In the 2026 US midterm elections the Democratic party won control of both the House and the Senate, setting up gridlock with a Republican president."
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-81ed4982c3222a"
+       ],
+       "original_date": "2026-11-06",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "Hyperscaler investment is expected to continue, and electrification and grid build-out remain pressing needs to support higher power demand and capital spending."
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c8e9f509175f3a"
+       ],
+       "original_date": "2026-11-06",
+       "period": "post-election",
+       "provenance": "SOURCE OPINION",
+       "text": "Companies with existing compute and data center projects, like the hyperscalers, have the edge because regulatory proposals target new developments, not existing ones."
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8d47a1955681b5"
+       ],
+       "original_date": "2026-11-06",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Potential policy changes center on cost allocation for grid connections, tax exemption changes, stricter financial commitments and emergency curtailment requirements."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:17 UTC, analysed as of 2026-11-09, from a source published 2026-11-06; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-d949f4c97f4235",
+       "C-b3454ef28d833c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Democratic control of House and Senate raises likelihood of tougher scrutiny on new data center development, affordability and grid costs."
+     },
+     {
+      "claim_ids": [
+       "C-c8e9f509175f3a"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Regulation targeting new builds, not existing ones, would preserve hyperscalers' earnings advantage from operational capacity, but the article does not quantify this."
+     },
+     {
+      "claim_ids": [
+       "C-ecb182c21d4ed5"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "market_reaction",
+      "text": "Hyperscaler equities outperformed data center equities by a record ~9 percentage points on election day. \u27e8cited figures: approximate, read from a chart; data as of 2026-11-04\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-ecb182c21d4ed5",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "hyperscaler vs data center equities 1-day % change spread",
+      "measured_as_of": "2026-11-04",
+      "origin": "Bloomberg Finance L.P., Goldman Sachs",
+      "period": "November 4th 2026",
+      "qualifiers": [
+       "largest positive spike",
+       "record divergence"
+      ],
+      "quote": "The largest positive spike appears on November 4th, where the spread passes 9 percentage points, indicating a record divergence after the election.",
+      "role": "dislocation",
+      "unit": "percentage points",
+      "value": 9.0,
+      "value_text": "passes 9 percentage points"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-81ed4982c3222a",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Hyperscaler investment is expected to continue, and electrification and grid build-out remain pressing needs to support higher power demand and capital spending.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Hyperscaler investment is expected to continue. Electrification and the grid build-out are still pressing needs",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8d47a1955681b5",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Potential policy changes center on cost allocation for grid connections, tax exemption changes, stricter financial commitments and emergency curtailment requirements.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "could be"
+      ],
+      "quote": "More notable policy changes could be around who bears the costs of additional grid connections, changes to tax exemptions, stricter financial commitments and emergency curtailment requirements",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d949f4c97f4235",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "In the 2026 US midterm elections the Democratic party won control of both the House and the Senate, setting up gridlock with a Republican president.",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "2026 U.S. midterm elections",
+      "qualifiers": [],
+      "quote": "the Democratic party gained control of both the House of Representatives and the Senate",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b5177202cb2",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c8e9f509175f3a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Companies with existing compute and data center projects, like the hyperscalers, have the edge because regulatory proposals target new developments, not existing ones.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "post-election",
+      "qualifiers": [
+       "operational data centers, secured power, established customers"
+      ],
+      "quote": "companies with existing compute and data center projects\u2014like the hyperscalers\u2014have the edge",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3be71e37f43ff0",
+       "name_as_written": "MVIS US Listed Semiconductor Index",
+       "other_securities": [],
+       "quote": "the MVIS US Listed Semiconductor Index",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "cited_basket",
+       "role_detail": "Index whose 24-month forward P/E is cited to show semiconductor valuation compression"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": "0000019617",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock",
+         "ticker": "JPM"
+        }
+       ],
+       "mention_id": "M-4394acbd464bbe",
+       "name_as_written": "JPMorgan Chase & Co.",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 5.75% Non-Cumulative Preferred Stock, Series DD",
+         "ticker": "JPM PR D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 6.00% Non-Cumulative Preferred Stock, Series EE",
+         "ticker": "JPM PR C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.75% Non-Cumulative Preferred Stock, Series GG",
+         "ticker": "JPM PR J"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.55% Non-Cumulative Preferred Stock, Series JJ",
+         "ticker": "JPM PR K"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.625% Non-Cumulative Preferred Stock, Series LL",
+         "ticker": "JPM PR L"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.20% Non-Cumulative Preferred Stock, Series MM",
+         "ticker": "JPM PR M"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Callable Fixed Rate Notes due June 10, 2032 of JPMorgan Chase Financial Company LLC",
+         "ticker": "JPM/32"
+        },
+        {
+         "exchange": "NYSE Arca",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Alerian MLP Index ETNs due January 28, 2044 of JPMorgan Chase Financial Company LLC",
+         "ticker": "AMJB"
+        },
+        {
+         "exchange": "NYSE Arca",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-03 (accession 0001628280-26-069523) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Inverse VIX Short-Term Futures ETNs due March 22, 2045 of JPMorgan Chase Financial Company LLC",
+         "ticker": "VYLD"
+        }
+       ],
+       "quote": "JPMorgan Chase & Co. (\u201cJPM\u201d)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher of the commentary via its private banking business"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-ecb182c21d4ed5",
+        "C-71f65304a5aa15"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A Goldman Sachs basket of hyperscaler equities and a basket of data center equities, whose 1-day percent-change spread is tracked. (constituents not named by the source)"
+      }
+     ],
+     "companies": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-2e75e927f13674",
+       "name_as_written": "Goldman Sachs",
+       "other_securities": [],
+       "quote": "Bloomberg Finance L.P., Goldman Sachs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of the hyperscaler vs data center equities basket and chart data"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-cafa7e1bc9a65e",
+       "name_as_written": "Bloomberg Finance L.P.",
+       "other_securities": [],
+       "quote": "Source: Bloomberg Finance L.P.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Data source for chart figures"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-0b5177202cb2",
+       "claim_ids": [
+        "C-c8e9f509175f3a",
+        "C-ecb182c21d4ed5"
+       ],
+       "direction": "positive",
+       "name": "hyperscalers",
+       "provenance": "SOURCE OPINION",
+       "quote": "like the hyperscalers\u2014have the edge"
+      },
+      {
+       "article_id": "A-0b5177202cb2",
+       "claim_ids": [
+        "C-ecb182c21d4ed5"
+       ],
+       "direction": "negative",
+       "name": "data center equities",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "Hyperscaler vs. data center equities"
+      }
+     ],
+     "sectors": [
+      "technology",
+      "hyperscalers"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Formal policy proposals following the 2026 midterms [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-c8e9f509175f3a",
+        "C-ecb182c21d4ed5"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Hyperscalers with existing compute, secured power and customers are better positioned than build-out-dependent names as investors reprice regulatory risk. \u27e8cited figures: approximate, read from a chart; data as of 2026-11-04\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-ecb182c21d4ed5"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: The 1-day percent-change spread between hyperscaler and data center equities spiked to over 9 percentage points on November 4th, a record divergence after the election. \u27e8cited figures: approximate, read from a chart; data as of 2026-11-04\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-81ed4982c3222a"
+       ],
+       "provenance": "FORECAST",
+       "text": "The structural AI build-out backdrop remains in place; hyperscaler investment, electrification and grid build-out are expected to continue."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-d949f4c97f4235",
+        "C-b3454ef28d833c"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A federal moratorium mirroring state-led efforts to curb the build-out could broaden to restrict even existing players and slow AI growth overall."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-0D381F307A: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 13 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-b3454ef28d833c"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Democratic gains create near-term uncertainty for sectors that trade in line with AI developments, like utilities, especially those exposed to fast-growing markets like Texas and Georgia."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Policy proposals that restrict existing data center operations or power contracts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscaler capex guidance cuts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reversal of the hyperscaler vs data center equity spread"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-d949f4c97f4235",
+        "C-a43e37718b6868"
+       ],
+       "provenance": "FORECAST",
+       "text": "A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affordability and zoning concerns, with the magnitude of Democratic midterm gains not fully priced in, creating volatility across the AI/tech trade. (scope: US AI-linked technology, semiconductor, utility and data center equities; article says much uncertainty was priced in before the election but the magnitude of Democratic gains was not.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: Regulatory proposals after Democratic midterm gains target new data center developments rather than existing ones"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether proposed policies will in fact exempt existing data centers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether hyperscalers' earnings or valuations reflect this advantage"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the one-day equity spread persists beyond election reaction"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Proposals extend restrictions to existing data centers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "End demand for AI compute shows signs of faltering"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check whether proposed post-midterm data center policies exempt existing facilities and how hyperscaler capex guidance and valuations have responded."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Policy drafts explicitly grandfather existing data centers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers reaffirm or raise capex"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-ecb182c21d4ed5: measured 2026-11-04 (5 days before the as-of); C-d949f4c97f4235: measured 2026-11-06 (3 days before the as-of); source-named exposure(s): sector: hyperscalers, sector: data center equities; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-0b5177202cb2",
+      "authors": [
+       "Kriti Gupta (Executive Director, Global Investment Strategist)",
+       "Nick Roberts (Portfolio Manager, Specialized Strategies)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-ecb182c21d4ed5",
+       "C-c8e9f509175f3a",
+       "C-d949f4c97f4235",
+       "C-81ed4982c3222a",
+       "C-8d47a1955681b5",
+       "C-b3454ef28d833c",
+       "C-a43e37718b6868"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-06T11:30:00+05:30",
+      "published_status": "KNOWN",
+      "publisher": "J.P. Morgan Private Bank",
+      "retrieval_state": "FULL",
+      "title": "The blue wave is changing the AI trade",
+      "upstream_origins": [
+       "Bloomberg Finance L.P.",
+       "Bloomberg Finance L.P., Goldman Sachs",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/the-blue-wave-is-changing-the-ai-trade",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "f546e3ef19a33fcc5961f31edf74096c87ed3336ad5464bc8223cda66ee92870",
+   "created_at": "2026-11-09T14:17:18.435637Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-ecb182c21d4ed5: measured 2026-11-04 (5 days before the as-of); C-d949f4c97f4235: measured 2026-11-06 (3 days before the as-of); source-named exposure(s): sector: hyperscalers, sector: data center equities; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-d949f4c97f4235",
+       "C-81ed4982c3222a",
+       "C-ecb182c21d4ed5"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-6008af99b76c, ES-fc428945cc0a",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-ecb182c21d4ed5",
+       "C-d949f4c97f4235"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-ecb182c21d4ed5: measured 2026-11-04 (5 days before the as-of); C-d949f4c97f4235: measured 2026-11-06 (3 days before the as-of)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: hyperscalers, sector: data center equities",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-ecb182c21d4ed5"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-c8e9f509175f3a",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-b3454ef28d833c"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 3 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-ecb182c21d4ed5: measured 2026-11-04 (5 days before the as-of); C-d949f4c97f4235: measured 2026-11-06 (3 days before the as-of); source-named exposure(s): sector: hyperscalers, sector: data center equities; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability medium; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-BAA07551ED",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-0b5177202cb2",
+   "block_ids": [
+    "b014"
+   ],
+   "claim_ids": [
+    "C-c8e9f509175f3a"
+   ],
+   "excerpt": "\u2026existing compute and data center projects\u2014like the hyperscalers\u2014have the edge. Plus, additional regulatory\u2026",
+   "name": "hyperscalers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-b3454ef28d833c",
+  "C-71f65304a5aa15",
+  "C-a43e37718b6868"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The cited spans support the ~9pp spread on Nov 4 and that hyperscalers have the edge, but 'After Democratic midterm gains raised the likelihood of tougher data center scrutiny' is not supported by the cited C-d949f4c97f4235 (which only states Democrats gained control) \u2014 the 'raised likelihood of tougher scrutiny' causal framing is not in the cited spans.",
+  "s01.1": "The cited spans say hyperscalers with existing projects have the edge and investment is expected to continue, but 'secured power and established customers' and 'parts of the tech trade reliant on incremental build-out' go beyond the cited spans' content.",
+  "s02.1": "The cited span supports Democrats winning both House and Senate, but 'setting up gridlock with a Republican president' is not in the cited span.",
+  "s02.2": "Cited span supports hyperscaler investment continuing and electrification/grid build-out being pressing needs, but 'to support higher power demand and capital spending' is an added rationale not in the cited span.",
+  "s02.3": "Cited span supports hyperscalers having the edge, but 'because regulatory proposals target new developments, not existing ones' is an added rationale not in the cited span.",
+  "s03.0": "Cited spans support Democrats winning House and Senate and near-term uncertainty for AI-linked sectors, but 'raises likelihood of tougher scrutiny on new data center development, affordability and grid costs' specifics are not in the cited spans.",
+  "s06.0": "Cited spans support hyperscalers having the edge and the ~9pp record spread, but 'secured power and customers' and 'as investors reprice regulatory risk' go beyond the cited spans.",
+  "s07.0": "Cited span supports near-term uncertainty for sectors like utilities, but 'especially those exposed to fast-growing markets like Texas and Georgia' is not in the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Research Now \u2014 a mispricing measured in the last quarter or a dated catalyst, timing inside the next 2-4 quarters, an exposure the source names, a premise the source states, and the full text read. An investigation, not a trade."
+ ],
+ "withheld_sentences": {
+  "s07.1": "REVIEW_UNSUPPORTED \u2014 s07.1: UNSUPPORTED \u2014 Neither cited span mentions a federal moratorium, mirroring state-led efforts, restricting existing players, or slowing AI growth. This claim is not supported by the cited spans. | 'A federal moratorium mirroring state-led efforts to curb the build-out could broaden to restrict eve'",
+  "s07.4": "REVIEW_UNSUPPORTED \u2014 s07.4: UNSUPPORTED \u2014 Cited spans support Democrats gaining control and the late-2026 multiple falling just below 12, but the federal moratorium, affordability/zoning concerns, 'magnitude of Democratic gains not fully priced in', and 'much uncertainty priced in before the election' are not in the cited spans. | 'A federal moratorium mirroring state-led initiatives to curb the AI build-out could emerge amid affo'"
+ }
+}

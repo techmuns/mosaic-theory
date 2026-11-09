@@ -1,0 +1,2680 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-09",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.datacenter_physical"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:53:52.133415Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-01",
+   "latest_article_date": "2026-11-01",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-EF9EABA05A",
+   "title": "State-level permitting freezes and midterm outcomes threaten the 2028 US datacenter buildout"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-a9009128e8c807",
+     "C-8ef36a316d3cf9",
+     "C-c6fa4388f1a2de",
+     "C-ca210fccb3a987"
+    ],
+    "provenance": "FORECAST",
+    "text": "SemiAnalysis projects 62.2 GW of US net datacenter additions in 2028, most unstarted, with Texas near 30% of the total; permitting freezes and midterm outcomes could expose roughly 30 GW (if all pause candidates win) or as little as 5.7 GW (if conditions-only candidates win). \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-9093c399b4721e",
+     "C-68f99ccb165755"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article tells subscribers which companies are most at risk from the current pause and directs research to identify which real campuses still need the approval a candidate wants to stop."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article frames US datacenter physical buildout as facing a policy-driven downside to 2028 timing, but quantifies only exposed GW, not the earnings or revenue impact on any listed developer, equipment or power supplier."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a9009128e8c807"
+     ],
+     "original_date": "2026-11-01",
+     "period": "2028",
+     "provenance": "FORECAST",
+     "text": "SemiAnalysis's model projects 62.2 GW of US net datacenter additions in 2028, most not yet started \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8ef36a316d3cf9"
+     ],
+     "original_date": "2026-11-01",
+     "period": "2028",
+     "provenance": "FORECAST",
+     "text": "Texas accounts for close to 30% of US datacenter GW additions in 2028 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c6fa4388f1a2de"
+     ],
+     "original_date": "2026-11-01",
+     "period": "2028",
+     "provenance": "FORECAST",
+     "text": "If every pause-proposing candidate won, those states would contain roughly 30 GW of planned 2028 capacity \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ca210fccb3a987"
+     ],
+     "original_date": "2026-11-01",
+     "period": "2028",
+     "provenance": "FORECAST",
+     "text": "If the less restrictive candidates win, exposed capacity falls to 5.7 GW \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f5d7bd00247aaa"
+     ],
+     "original_date": "2026-11-01",
+     "period": "late summer 2027",
+     "provenance": "FORECAST",
+     "text": "If reopening waits for new rules in late summer, the Texas freeze would last close to a year \u2014 five to nine additional months versus a December restart. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-4584b5fe91b6b6"
+     ],
+     "original_date": "2026-11-01",
+     "period": "2028",
+     "provenance": "SOURCE OPINION",
+     "text": "Tier 2 states have 1.5-2 GW of meaningful unstarted 2028 capacity where additional restrictions depend on a change in political control (Pennsylvania Senate, Oklahoma governor)."
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 15 pieces of evidence from A-0fa66c4ca86c \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:53 UTC, analysed as of 2026-11-09, from a source published 2026-11-01; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-4702351bf0593f",
+     "C-ace3eacb3ad020",
+     "C-91c7cbb5d1b841"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "industry_shift",
+    "text": "Growing bipartisan anti-datacenter backlash drives permitting freezes (TCEQ, Oregon) and campaign platforms for moratoriums or stricter conditions."
+   },
+   {
+    "claim_ids": [
+     "C-c6fa4388f1a2de",
+     "C-ca210fccb3a987"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Freezes and moratoriums could delay or block unstarted 2028 capacity, reducing GW delivered on schedule (exposure of ~30 GW to 5.7 GW depending on election outcomes). \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-4f19ad3651d39e",
+     "C-319f6566ae0797"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "costs",
+    "text": "Conditions-only outcomes raise development costs (grid upgrades, cooling redesign, lost tax breaks, upfront commitments) but keep a route to approval. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Delays or higher costs would affect datacenter developers', hyperscalers' and suppliers' timelines, but the article does not quantify the earnings impact."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b039",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-4584b5fe91b6b6",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "unstarted 2028 capacity exposure (Tier 2)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2028",
+    "qualifiers": [
+     "Tier 2",
+     "depends on change in political control"
+    ],
+    "quote": "Tier 2 includes states with meaningful unstarted capacity (1.5-2 GW) where additional restrictions depend on a change in political control",
+    "role": "supports",
+    "unit": "GW",
+    "value": null,
+    "value_text": "1.5-2 GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7745affdbd1c65",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "unstarted 2028 capacity exposure (Tier 3)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2028",
+    "qualifiers": [
+     "Tier 3",
+     "restrictive policies highly likely"
+    ],
+    "quote": "Tier 3 covers smaller unstarted capacity exposures (<1.5 GW), where more restrictive datacenter policies are highly likely: Illinois, Oregon and Iowa",
+    "role": "supports",
+    "unit": "GW",
+    "value": 1.5,
+    "value_text": "<1.5 GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b038",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8eaf2ca00c1173",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "unstarted capacity threshold",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2028",
+    "qualifiers": [
+     "Tier 1"
+    ],
+    "quote": "Tier 1 includes states with large unstarted capacity exposure (>2 GW), where further restrictions are likely whoever wins. Texas, Ohio, and Arizona have restrictive candidates on both sides",
+    "role": "supports",
+    "unit": "GW",
+    "value": 2.0,
+    "value_text": ">2 GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8ef36a316d3cf9",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Texas share of US 2028 additions",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2028",
+    "qualifiers": [
+     "close to"
+    ],
+    "quote": "Texas alone adds close to 30% of US GW in 2028.",
+    "role": "supports",
+    "unit": "%",
+    "value": 30.0,
+    "value_text": "close to 30%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a9009128e8c807",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "US net datacenter additions",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2028",
+    "qualifiers": [
+     "US",
+     "most of which hasn't started construction"
+    ],
+    "quote": "Our model has 62.2 GW of US net additions that year, most of which hasn\u2019t started construction.",
+    "role": "supports",
+    "unit": "GW",
+    "value": 62.2,
+    "value_text": "62.2 GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c6fa4388f1a2de",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "capacity exposed to pause",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2028",
+    "qualifiers": [
+     "roughly",
+     "conditional on all pause candidates winning"
+    ],
+    "quote": "those states would together contain roughly 30 GW of planned capacity scheduled for 2028",
+    "role": "supports",
+    "unit": "GW",
+    "value": 30.0,
+    "value_text": "roughly 30 GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ca210fccb3a987",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "capacity exposed",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2028",
+    "qualifiers": [
+     "conditional",
+     "mainly Ohio and Oregon have pause proponents on both sides"
+    ],
+    "quote": "If the less restrictive candidates win, that exposure falls to 5.7 GW",
+    "role": "supports",
+    "unit": "GW",
+    "value": 5.7,
+    "value_text": "5.7 GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f5d7bd00247aaa",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "permitting freeze duration (incremental)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "late summer 2027",
+    "qualifiers": [
+     "compared with restarting in December",
+     "scenario"
+    ],
+    "quote": "five to nine additional months compared with restarting in December",
+    "role": "catalyst",
+    "unit": "months",
+    "value": null,
+    "value_text": "five to nine additional months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2b83af9fee8c2f",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Developers paying infrastructure costs they create is expected to come anyway, with datacenter developers now offering credits toward household electricity bills.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "we expect this to come anyway, with datacenter developers now offering credits toward household electricity bills",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-319f6566ae0797",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Conditions-only candidates' demands mainly change the price and terms of development, giving projects a route to approval, albeit expensive and time-consuming.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "That can be expensive and time-consuming, but it gives projects a route to approval.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b041",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-34541898dd082a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Indiana, Missouri, Wyoming and West Virginia are excluded from the risk tiers because supportive governors/legislatures stay in office, implying lower policy risk there.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "Indiana, Missouri, Wyoming, West Virginia"
+    ],
+    "quote": "Indiana and Missouri have large Republican majorities and supportive governors staying in office.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-49e5f4b96acc6f",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "In Michigan, both Senate candidates called for datacenter moratoriums but neither could enact one from the Senate \u2014 federal officials generally lack direct authority.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "Michigan"
+    ],
+    "quote": "both Senate candidates, Mike Rogers (R) and Abdul El-Sayed (D), have called for datacenter moratoriums, but neither would have the power to enact one from the Senate",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-595bf40504b3ec",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Governors can halt un-issued permits quickly, as shown by Abbott's TCEQ freeze and Oregon Gov. Tina Kotek's environmental-permit hold.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Abbott\u2019s TCEQ freeze and the environmental-permit hold imposed by Oregon Gov. Tina Kotek (D) show how quickly that can affect a schedule.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9093c399b4721e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The biggest risk to the buildout forecast is a prolonged TCEQ permitting freeze",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "biggest risk"
+    ],
+    "quote": "The biggest risk to our buildout forecast right now is a prolonged permitting freeze at the TCEQ.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cfc61adbbf2f86",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "On environmental transparency and dropping NDAs, AWS and Google have already started down this path.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Amazon Web Services (AWS) and Google have already started down this path",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-67cac7d5bf2e82",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "The Texas regular legislative session runs Jan. 12 to May 31, 2027",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "Jan. 12 to May 31, 2027",
+    "qualifiers": [],
+    "quote": "The regular legislative session in Texas takes place from Jan. 12 to May 31, 2027.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d7a206fa323836",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "As of Oct. 30, conditions-only candidates are favored in Texas, Oklahoma, Pennsylvania and Iowa; Georgia is a toss-up",
+    "measured_as_of": null,
+    "origin": "Cook Political Report, Multistate, and The New York Times",
+    "period": "as of Oct. 30",
+    "qualifiers": [
+     "race ratings and available polling"
+    ],
+    "quote": "the conditions-only candidate is favored in Texas, Oklahoma, Pennsylvania and Iowa, and Georgia is a toss-up",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0fa66c4ca86c",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fd504d1c50112c",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "ERCOT targets Dec. 10 to file its audit report, which does not itself reopen permitting",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "December 10",
+    "qualifiers": [
+     "does not by itself reopen permitting"
+    ],
+    "quote": "ERCOT is targeting Dec. 10 to file its report, which does not by itself reopen permitting.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-732d5db2b356bf",
+     "name_as_written": "Texas Commission on Environmental Quality (TCEQ)",
+     "other_securities": [],
+     "quote": "Texas Commission on Environmental Quality (TCEQ)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Texas environmental permitting agency that froze datacenter permits"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ea85f765f04804",
+     "name_as_written": "Electric Reliability Council of Texas (ERCOT)",
+     "other_securities": [],
+     "quote": "Electric Reliability Council of Texas (ERCOT)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Texas grid operator conducting interconnection audit"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-fb759a9b7b51ba",
+     "name_as_written": "Texas Water Development Board",
+     "other_securities": [],
+     "quote": "Texas Water Development Board",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Reviewing datacenter water use"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0bad54ac3adb90",
+     "name_as_written": "Cook Political Report",
+     "other_securities": [],
+     "quote": "Cook Political Report",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of race ratings and polling"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a63da90b0e2709",
+     "name_as_written": "Multistate",
+     "other_securities": [],
+     "quote": "Multistate",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of race ratings/polling"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": "0000071691",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-04 (accession 0000071691-26-000041) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock",
+       "ticker": "NYT"
+      }
+     ],
+     "mention_id": "M-34385671709c0f",
+     "name_as_written": "The New York Times",
+     "other_securities": [],
+     "quote": "The New York Times",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "data_source",
+     "role_detail": "Source of race ratings/polling"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": "0001018724",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-30 (accession 0001018724-26-000040) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $.01 per share",
+       "ticker": "AMZN"
+      }
+     ],
+     "mention_id": "M-e5036f26d2096f",
+     "name_as_written": "Amazon",
+     "other_securities": [],
+     "quote": "Amazon",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose employees were interviewed on datacenter development"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2eb41d58be7685",
+     "name_as_written": "PJM Interconnection",
+     "other_securities": [],
+     "quote": "PJM Interconnection",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Largest US power transmission organization, limits governors' power over transmission"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5248f324875123",
+     "name_as_written": "Georgia Public Service Commission",
+     "other_securities": [],
+     "quote": "Georgia Public Service Commission",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Georgia utility regulator whose majority is on the ballot"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b8b0602ebb7dc5",
+     "name_as_written": "SemiAnalysis Datacenter Industry Model",
+     "other_securities": [],
+     "quote": "SemiAnalysis Datacenter Industry Model",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Publisher's own model source for GW forecasts"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0fc6fa2e410b8d",
+     "name_as_written": "Mike Rogers (R)",
+     "other_securities": [],
+     "quote": "both Senate candidates, Mike Rogers (R) and Abdul El-Sayed (D), have called for datacenter moratoriums",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Michigan Senate candidate who called for a datacenter moratorium"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f15c3404846dd1",
+     "name_as_written": "Abdul El-Sayed (D)",
+     "other_securities": [],
+     "quote": "Mike Rogers (R) and Abdul El-Sayed (D), have called for datacenter moratoriums",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Michigan Senate candidate who called for a datacenter moratorium"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [],
+     "mention_id": "M-e86a6f74519cfb",
+     "name_as_written": "Amazon Web Services (AWS)",
+     "other_securities": [],
+     "quote": "Amazon Web Services (AWS)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler datacenter developer already increasing environmental transparency"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [],
+     "mention_id": "M-0826ab014d302f",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Google",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler datacenter developer already increasing environmental transparency"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": "0000789019",
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-9908b5f70571b6",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler whose employees were interviewed on datacenter development"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [],
+     "mention_id": "M-9f6238f456bce6",
+     "name_as_written": "QTS",
+     "other_securities": [],
+     "quote": "Google and QTS",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Datacenter developer in Linn County, Iowa"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "claim_ids": [
+      "C-b6bbf3006a1799"
+     ],
+     "direction": "unclear",
+     "name": "hyperscalers",
+     "provenance": "SOURCE OPINION",
+     "quote": "Several said that hyperscalers can afford to pay the higher costs of new rules"
+    },
+    {
+     "article_id": "A-0fa66c4ca86c",
+     "claim_ids": [
+      "C-abeca5b215fd04"
+     ],
+     "direction": "negative",
+     "name": "datacenters",
+     "provenance": "SOURCE OPINION",
+     "quote": "The datacenter backlash has moved faster than the industry expected."
+    }
+   ],
+   "sectors": [
+    "datacenters",
+    "hyperscalers",
+    "datacenter developers"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "Nov. 3 midterm elections; ERCOT Dec. 10 audit report; Texas legislative session Jan. 12-May 31, 2027 [FORECAST]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-fd504d1c50112c",
+      "C-d7a206fa323836"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The Nov. 3 governor, legislature and utility-commission races and the TCEQ/ERCOT timeline are near-term catalysts that could change 2028 exposure; conditions-only candidates are favored in several key states as of Oct. 30."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-a9009128e8c807",
+      "C-6963108742bcf0"
+     ],
+     "provenance": "FORECAST",
+     "text": "2028, not 2027, is the contested year: much of 2028's 62.2 GW is unstarted and concentrated in states electing governors, making multi-year buildout subject to the evolving regulatory regime. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-5165317207c470",
+      "C-b6bbf3006a1799"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Much of the 2027 pipeline already has a head start (three-quarters under construction), moratoriums were earlier found to delay only ~1.5 GW of ~20 GW, and hyperscalers can afford higher costs and bring their own power, so delays may be limited."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-3557AAE138: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (capex_spending_cycle vs policy_regulation) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-6F2E7079B0: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (capex_spending_cycle vs policy_regulation); a different geography (China vs US) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-95AEE030DA: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (capex_spending_cycle vs policy_regulation) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-B1F096684F: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (supply_constraint vs policy_regulation) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 19 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-5165317207c470"
+     ],
+     "provenance": "FORECAST",
+     "text": "Of roughly 20 GW inside local restrictions, SemiAnalysis estimated only 1.5 GW faced delay \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-b6bbf3006a1799"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Interviewed hyperscaler employees said hyperscalers can afford higher rule costs and more easily bring their own power"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "TCEQ reopens permitting shortly after ERCOT's Dec. 10 report"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Conditions-only candidates win the key races, limiting exposure to 5.7 GW"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Projects absorb the interruption within existing schedules"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-8ef36a316d3cf9",
+      "C-9093c399b4721e",
+      "C-599835a9705dee"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A prolonged TCEQ permitting freeze in Texas (close to 30% of US 2028 GW) could move the national datacenter buildout number and is flagged as the biggest near-term risk to the forecast. (scope: Specific to Texas 2028 unstarted datacenter capacity and the duration of the TCEQ permit hold; magnitude of slippage depends on project stage.)"
+    },
+    {
+     "claim_ids": [
+      "C-c6fa4388f1a2de",
+      "C-ca210fccb3a987"
+     ],
+     "provenance": "FORECAST",
+     "text": "If every pause-proposing candidate won their race, roughly 30 GW of planned 2028 capacity would sit in moratorium states, versus 5.7 GW if less restrictive candidates win. (scope: Conditional on election outcomes; actual slippage depends on each project's remaining permits and how long any pause lasts.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: pro-moratorium or restrictive candidates win key governor/commission races and permitting freezes (especially TCEQ) persist long enough to hit projects at the wrong stage"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "How much of the exposed GW actually slips, which depends on each project's remaining permits and pause duration"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The earnings/revenue/valuation impact on any specific listed developer, hyperscaler or supplier"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether campaign platforms translate into enacted policy"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "TCEQ reopens permitting around the Dec. 10 ERCOT report"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Conditions-only candidates win, holding exposure near 5.7 GW"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify which listed datacenter developers, hyperscalers and power/equipment suppliers have the largest 2028 unstarted exposure in Tier 1 states (Texas, Ohio, Arizona, Georgia) and map which projects still need the specific approvals a winning candidate would block."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "TCEQ freeze extends through the 2027 legislative session"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Pause-proposing candidates win in multiple Tier 1 states"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Texas moratorium candidate (Hinojosa) wins"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: premise is conditional in the source; retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-0fa66c4ca86c",
+    "authors": [
+     "Maya Barkin",
+     "Wayne Ma",
+     "Reyk Knuhtsen",
+     "Jeremie Eliahou Ontiveros",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-fd504d1c50112c",
+     "C-67cac7d5bf2e82",
+     "C-d7a206fa323836",
+     "C-f5d7bd00247aaa",
+     "C-a9009128e8c807",
+     "C-8ef36a316d3cf9",
+     "C-9093c399b4721e",
+     "C-c6fa4388f1a2de",
+     "C-ca210fccb3a987",
+     "C-8eaf2ca00c1173",
+     "C-4584b5fe91b6b6",
+     "C-7745affdbd1c65",
+     "C-319f6566ae0797",
+     "C-2b83af9fee8c2f",
+     "C-cfc61adbbf2f86",
+     "C-49e5f4b96acc6f",
+     "C-595bf40504b3ec",
+     "C-34541898dd082a",
+     "C-5165317207c470",
+     "C-b6bbf3006a1799",
+     "C-599835a9705dee"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-01T18:40:45Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "The Datacenter Backlash Goes Bipartisan: Next Week's Midterms and the 2028 Buildout",
+    "upstream_origins": [
+     "Cook Political Report, Multistate, and The New York Times",
+     "not attributed by the source",
+     "publisher's own analysis",
+     "six current and former hyperscaler employees"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/the-datacenter-backlash-goes-bipartisan",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-09",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0001104659-26-015365)",
+    "business": "global datacenter REIT leasing colocation and wholesale space",
+    "direction": "negative",
+    "enrichment_id": "EC-28d1ae8db162a2",
+    "evidence": "s03.1: Freezes and moratoriums could delay or block unstarted 2028 capacity, reducing GW delivered on schedule (exposure of ~30 GW to 5.7 GW depending on election outcomes).",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-30 (accession 0001104659-26-120710) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock",
+      "ticker": "DLR"
+     }
+    ],
+    "name": "Digital Realty Trust",
+    "rationale": "Permitting freezes and moratoriums delay unstarted US datacenter capacity, pushing out new leasable GW and the rental revenue tied to 2028 deliveries.",
+    "registrant": "DIGITAL REALTY TRUST, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 6798); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "US datacenter leasing (colocation and wholesale)",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-EF9EABA05A",
+    "ticker_hint": "DLR"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-11 (0001101239-26-000032)",
+    "business": "global datacenter REIT, interconnection and colocation",
+    "direction": "negative",
+    "enrichment_id": "EC-0ba839b7e71a03",
+    "evidence": "s03.1: Freezes and moratoriums could delay or block unstarted 2028 capacity, reducing GW delivered on schedule (exposure of ~30 GW to 5.7 GW depending on election outcomes).",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001101239-26-000180) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001",
+      "ticker": "EQIX"
+     }
+    ],
+    "name": "Equinix",
+    "rationale": "US permitting freezes slow new campus builds, delaying leasable capacity and recurring colocation revenue slated for 2028 delivery.",
+    "registrant": "EQUINIX INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 6798); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "US colocation and interconnection",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-EF9EABA05A",
+    "ticker_hint": "EQIX"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0001674101-26-000008)",
+    "business": "datacenter power and cooling infrastructure equipment maker",
+    "direction": "negative",
+    "enrichment_id": "EC-725af87f2d1a32",
+    "evidence": "s03.1: Freezes and moratoriums could delay or block unstarted 2028 capacity, reducing GW delivered on schedule (exposure of ~30 GW to 5.7 GW depending on election outcomes).",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001628280-26-067893) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A common stock, $0.0001 par value per share",
+      "ticker": "VRT"
+     }
+    ],
+    "name": "Vertiv Holdings",
+    "rationale": "Delayed or blocked US datacenter buildout reduces or defers orders for its power and thermal management equipment tied to 2028 capacity.",
+    "registrant": "Vertiv Holdings Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3679); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter power and thermal equipment sales",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-EF9EABA05A",
+    "ticker_hint": "VRT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0001551182-26-000007)",
+    "business": "electrical equipment for datacenters and grid",
+    "direction": "negative",
+    "enrichment_id": "EC-bddb05928e19b1",
+    "evidence": "s03.1: Freezes and moratoriums could delay or block unstarted 2028 capacity, reducing GW delivered on schedule (exposure of ~30 GW to 5.7 GW depending on election outcomes).",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-03 (accession 0001551182-26-000040) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary shares ($0.01 par value)",
+      "ticker": "ETN"
+     }
+    ],
+    "name": "Eaton",
+    "rationale": "Permitting-driven delays to US datacenter additions defer demand for its electrical distribution and power management gear.",
+    "registrant": "Eaton Corp plc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3590); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter electrical equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-EF9EABA05A",
+    "ticker_hint": "ETN"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-19 (0001050915-26-000006)",
+    "business": "electric power infrastructure construction and grid upgrade services",
+    "direction": "positive",
+    "enrichment_id": "EC-9e067d2fd6c12e",
+    "evidence": "s03.2: Conditions-only outcomes raise development costs (grid upgrades, cooling redesign, lost tax breaks, upfront commitments) but keep a route to approval.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0001050915-26-000041) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.00001 par value",
+      "ticker": "PWR"
+     }
+    ],
+    "name": "Quanta Services",
+    "rationale": "Conditions-only approvals require grid upgrades and interconnection work, increasing demand for its transmission and substation construction services.",
+    "registrant": "QUANTA SERVICES, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 1731); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "grid upgrade and interconnection construction",
+    "revenue_model": "services",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-EF9EABA05A",
+    "ticker_hint": "PWR"
+   }
+  ],
+  "created_at": "2026-11-09T14:58:50.010129Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Comfort Systems USA: more than 4 on one side \u2014 set aside",
+   "Super Micro Computer: more than 4 on one side \u2014 set aside",
+   "Constellation Energy: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261109T140627Z-scan",
+  "set_id": "ES-34164cdb155524",
+  "thesis_id": "TH-EF9EABA05A",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-09 14:59 UTC from the registry (ti-engine-5; run R-20261109T140627Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-0fa66c4ca86c",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.datacenter_physical"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:53:52.133415Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-01",
+     "latest_article_date": "2026-11-01",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Datacenter construction, cooling, racks and physical inputs",
+     "status": "ACTIVE",
+     "thesis_id": "TH-EF9EABA05A",
+     "title": "State-level permitting freezes and midterm outcomes threaten the 2028 US datacenter buildout"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-a9009128e8c807",
+       "C-8ef36a316d3cf9",
+       "C-c6fa4388f1a2de",
+       "C-ca210fccb3a987"
+      ],
+      "provenance": "FORECAST",
+      "text": "SemiAnalysis projects 62.2 GW of US net datacenter additions in 2028, most unstarted, with Texas near 30% of the total; permitting freezes and midterm outcomes could expose roughly 30 GW (if all pause candidates win) or as little as 5.7 GW (if conditions-only candidates win). \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-9093c399b4721e",
+       "C-68f99ccb165755"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article tells subscribers which companies are most at risk from the current pause and directs research to identify which real campuses still need the approval a candidate wants to stop."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article frames US datacenter physical buildout as facing a policy-driven downside to 2028 timing, but quantifies only exposed GW, not the earnings or revenue impact on any listed developer, equipment or power supplier."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a9009128e8c807"
+       ],
+       "original_date": "2026-11-01",
+       "period": "2028",
+       "provenance": "FORECAST",
+       "text": "SemiAnalysis's model projects 62.2 GW of US net datacenter additions in 2028, most not yet started \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8ef36a316d3cf9"
+       ],
+       "original_date": "2026-11-01",
+       "period": "2028",
+       "provenance": "FORECAST",
+       "text": "Texas accounts for close to 30% of US datacenter GW additions in 2028 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c6fa4388f1a2de"
+       ],
+       "original_date": "2026-11-01",
+       "period": "2028",
+       "provenance": "FORECAST",
+       "text": "If every pause-proposing candidate won, those states would contain roughly 30 GW of planned 2028 capacity \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ca210fccb3a987"
+       ],
+       "original_date": "2026-11-01",
+       "period": "2028",
+       "provenance": "FORECAST",
+       "text": "If the less restrictive candidates win, exposed capacity falls to 5.7 GW \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f5d7bd00247aaa"
+       ],
+       "original_date": "2026-11-01",
+       "period": "late summer 2027",
+       "provenance": "FORECAST",
+       "text": "If reopening waits for new rules in late summer, the Texas freeze would last close to a year \u2014 five to nine additional months versus a December restart. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-4584b5fe91b6b6"
+       ],
+       "original_date": "2026-11-01",
+       "period": "2028",
+       "provenance": "SOURCE OPINION",
+       "text": "Tier 2 states have 1.5-2 GW of meaningful unstarted 2028 capacity where additional restrictions depend on a change in political control (Pennsylvania Senate, Oklahoma governor)."
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 15 pieces of evidence from A-0fa66c4ca86c \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:53 UTC, analysed as of 2026-11-09, from a source published 2026-11-01; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-4702351bf0593f",
+       "C-ace3eacb3ad020",
+       "C-91c7cbb5d1b841"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "industry_shift",
+      "text": "Growing bipartisan anti-datacenter backlash drives permitting freezes (TCEQ, Oregon) and campaign platforms for moratoriums or stricter conditions."
+     },
+     {
+      "claim_ids": [
+       "C-c6fa4388f1a2de",
+       "C-ca210fccb3a987"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Freezes and moratoriums could delay or block unstarted 2028 capacity, reducing GW delivered on schedule (exposure of ~30 GW to 5.7 GW depending on election outcomes). \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-4f19ad3651d39e",
+       "C-319f6566ae0797"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "costs",
+      "text": "Conditions-only outcomes raise development costs (grid upgrades, cooling redesign, lost tax breaks, upfront commitments) but keep a route to approval. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Delays or higher costs would affect datacenter developers', hyperscalers' and suppliers' timelines, but the article does not quantify the earnings impact."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b039",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4584b5fe91b6b6",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "unstarted 2028 capacity exposure (Tier 2)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2028",
+      "qualifiers": [
+       "Tier 2",
+       "depends on change in political control"
+      ],
+      "quote": "Tier 2 includes states with meaningful unstarted capacity (1.5-2 GW) where additional restrictions depend on a change in political control",
+      "role": "supports",
+      "unit": "GW",
+      "value": null,
+      "value_text": "1.5-2 GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7745affdbd1c65",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "unstarted 2028 capacity exposure (Tier 3)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2028",
+      "qualifiers": [
+       "Tier 3",
+       "restrictive policies highly likely"
+      ],
+      "quote": "Tier 3 covers smaller unstarted capacity exposures (<1.5 GW), where more restrictive datacenter policies are highly likely: Illinois, Oregon and Iowa",
+      "role": "supports",
+      "unit": "GW",
+      "value": 1.5,
+      "value_text": "<1.5 GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b038",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8eaf2ca00c1173",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "unstarted capacity threshold",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2028",
+      "qualifiers": [
+       "Tier 1"
+      ],
+      "quote": "Tier 1 includes states with large unstarted capacity exposure (>2 GW), where further restrictions are likely whoever wins. Texas, Ohio, and Arizona have restrictive candidates on both sides",
+      "role": "supports",
+      "unit": "GW",
+      "value": 2.0,
+      "value_text": ">2 GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8ef36a316d3cf9",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Texas share of US 2028 additions",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2028",
+      "qualifiers": [
+       "close to"
+      ],
+      "quote": "Texas alone adds close to 30% of US GW in 2028.",
+      "role": "supports",
+      "unit": "%",
+      "value": 30.0,
+      "value_text": "close to 30%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a9009128e8c807",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "US net datacenter additions",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2028",
+      "qualifiers": [
+       "US",
+       "most of which hasn't started construction"
+      ],
+      "quote": "Our model has 62.2 GW of US net additions that year, most of which hasn\u2019t started construction.",
+      "role": "supports",
+      "unit": "GW",
+      "value": 62.2,
+      "value_text": "62.2 GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c6fa4388f1a2de",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "capacity exposed to pause",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2028",
+      "qualifiers": [
+       "roughly",
+       "conditional on all pause candidates winning"
+      ],
+      "quote": "those states would together contain roughly 30 GW of planned capacity scheduled for 2028",
+      "role": "supports",
+      "unit": "GW",
+      "value": 30.0,
+      "value_text": "roughly 30 GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ca210fccb3a987",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "capacity exposed",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2028",
+      "qualifiers": [
+       "conditional",
+       "mainly Ohio and Oregon have pause proponents on both sides"
+      ],
+      "quote": "If the less restrictive candidates win, that exposure falls to 5.7 GW",
+      "role": "supports",
+      "unit": "GW",
+      "value": 5.7,
+      "value_text": "5.7 GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f5d7bd00247aaa",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "permitting freeze duration (incremental)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "late summer 2027",
+      "qualifiers": [
+       "compared with restarting in December",
+       "scenario"
+      ],
+      "quote": "five to nine additional months compared with restarting in December",
+      "role": "catalyst",
+      "unit": "months",
+      "value": null,
+      "value_text": "five to nine additional months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2b83af9fee8c2f",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Developers paying infrastructure costs they create is expected to come anyway, with datacenter developers now offering credits toward household electricity bills.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "we expect this to come anyway, with datacenter developers now offering credits toward household electricity bills",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-319f6566ae0797",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Conditions-only candidates' demands mainly change the price and terms of development, giving projects a route to approval, albeit expensive and time-consuming.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "That can be expensive and time-consuming, but it gives projects a route to approval.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b041",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-34541898dd082a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Indiana, Missouri, Wyoming and West Virginia are excluded from the risk tiers because supportive governors/legislatures stay in office, implying lower policy risk there.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "Indiana, Missouri, Wyoming, West Virginia"
+      ],
+      "quote": "Indiana and Missouri have large Republican majorities and supportive governors staying in office.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-49e5f4b96acc6f",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "In Michigan, both Senate candidates called for datacenter moratoriums but neither could enact one from the Senate \u2014 federal officials generally lack direct authority.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "Michigan"
+      ],
+      "quote": "both Senate candidates, Mike Rogers (R) and Abdul El-Sayed (D), have called for datacenter moratoriums, but neither would have the power to enact one from the Senate",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-595bf40504b3ec",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Governors can halt un-issued permits quickly, as shown by Abbott's TCEQ freeze and Oregon Gov. Tina Kotek's environmental-permit hold.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Abbott\u2019s TCEQ freeze and the environmental-permit hold imposed by Oregon Gov. Tina Kotek (D) show how quickly that can affect a schedule.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9093c399b4721e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The biggest risk to the buildout forecast is a prolonged TCEQ permitting freeze",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "biggest risk"
+      ],
+      "quote": "The biggest risk to our buildout forecast right now is a prolonged permitting freeze at the TCEQ.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cfc61adbbf2f86",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "On environmental transparency and dropping NDAs, AWS and Google have already started down this path.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Amazon Web Services (AWS) and Google have already started down this path",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-67cac7d5bf2e82",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The Texas regular legislative session runs Jan. 12 to May 31, 2027",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "Jan. 12 to May 31, 2027",
+      "qualifiers": [],
+      "quote": "The regular legislative session in Texas takes place from Jan. 12 to May 31, 2027.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d7a206fa323836",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "As of Oct. 30, conditions-only candidates are favored in Texas, Oklahoma, Pennsylvania and Iowa; Georgia is a toss-up",
+      "measured_as_of": null,
+      "origin": "Cook Political Report, Multistate, and The New York Times",
+      "period": "as of Oct. 30",
+      "qualifiers": [
+       "race ratings and available polling"
+      ],
+      "quote": "the conditions-only candidate is favored in Texas, Oklahoma, Pennsylvania and Iowa, and Georgia is a toss-up",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0fa66c4ca86c",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fd504d1c50112c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "ERCOT targets Dec. 10 to file its audit report, which does not itself reopen permitting",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "December 10",
+      "qualifiers": [
+       "does not by itself reopen permitting"
+      ],
+      "quote": "ERCOT is targeting Dec. 10 to file its report, which does not by itself reopen permitting.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-732d5db2b356bf",
+       "name_as_written": "Texas Commission on Environmental Quality (TCEQ)",
+       "other_securities": [],
+       "quote": "Texas Commission on Environmental Quality (TCEQ)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Texas environmental permitting agency that froze datacenter permits"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ea85f765f04804",
+       "name_as_written": "Electric Reliability Council of Texas (ERCOT)",
+       "other_securities": [],
+       "quote": "Electric Reliability Council of Texas (ERCOT)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Texas grid operator conducting interconnection audit"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-fb759a9b7b51ba",
+       "name_as_written": "Texas Water Development Board",
+       "other_securities": [],
+       "quote": "Texas Water Development Board",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Reviewing datacenter water use"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0bad54ac3adb90",
+       "name_as_written": "Cook Political Report",
+       "other_securities": [],
+       "quote": "Cook Political Report",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of race ratings and polling"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a63da90b0e2709",
+       "name_as_written": "Multistate",
+       "other_securities": [],
+       "quote": "Multistate",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of race ratings/polling"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": "0000071691",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-04 (accession 0000071691-26-000041) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock",
+         "ticker": "NYT"
+        }
+       ],
+       "mention_id": "M-34385671709c0f",
+       "name_as_written": "The New York Times",
+       "other_securities": [],
+       "quote": "The New York Times",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "data_source",
+       "role_detail": "Source of race ratings/polling"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": "0001018724",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-30 (accession 0001018724-26-000040) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $.01 per share",
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-e5036f26d2096f",
+       "name_as_written": "Amazon",
+       "other_securities": [],
+       "quote": "Amazon",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose employees were interviewed on datacenter development"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2eb41d58be7685",
+       "name_as_written": "PJM Interconnection",
+       "other_securities": [],
+       "quote": "PJM Interconnection",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Largest US power transmission organization, limits governors' power over transmission"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5248f324875123",
+       "name_as_written": "Georgia Public Service Commission",
+       "other_securities": [],
+       "quote": "Georgia Public Service Commission",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Georgia utility regulator whose majority is on the ballot"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b8b0602ebb7dc5",
+       "name_as_written": "SemiAnalysis Datacenter Industry Model",
+       "other_securities": [],
+       "quote": "SemiAnalysis Datacenter Industry Model",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Publisher's own model source for GW forecasts"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0fc6fa2e410b8d",
+       "name_as_written": "Mike Rogers (R)",
+       "other_securities": [],
+       "quote": "both Senate candidates, Mike Rogers (R) and Abdul El-Sayed (D), have called for datacenter moratoriums",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Michigan Senate candidate who called for a datacenter moratorium"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f15c3404846dd1",
+       "name_as_written": "Abdul El-Sayed (D)",
+       "other_securities": [],
+       "quote": "Mike Rogers (R) and Abdul El-Sayed (D), have called for datacenter moratoriums",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Michigan Senate candidate who called for a datacenter moratorium"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-e86a6f74519cfb",
+       "name_as_written": "Amazon Web Services (AWS)",
+       "other_securities": [],
+       "quote": "Amazon Web Services (AWS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler datacenter developer already increasing environmental transparency"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-0826ab014d302f",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Google",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler datacenter developer already increasing environmental transparency"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": "0000789019",
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-9908b5f70571b6",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler whose employees were interviewed on datacenter development"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-9f6238f456bce6",
+       "name_as_written": "QTS",
+       "other_securities": [],
+       "quote": "Google and QTS",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Datacenter developer in Linn County, Iowa"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "claim_ids": [
+        "C-b6bbf3006a1799"
+       ],
+       "direction": "unclear",
+       "name": "hyperscalers",
+       "provenance": "SOURCE OPINION",
+       "quote": "Several said that hyperscalers can afford to pay the higher costs of new rules"
+      },
+      {
+       "article_id": "A-0fa66c4ca86c",
+       "claim_ids": [
+        "C-abeca5b215fd04"
+       ],
+       "direction": "negative",
+       "name": "datacenters",
+       "provenance": "SOURCE OPINION",
+       "quote": "The datacenter backlash has moved faster than the industry expected."
+      }
+     ],
+     "sectors": [
+      "datacenters",
+      "hyperscalers",
+      "datacenter developers"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Nov. 3 midterm elections; ERCOT Dec. 10 audit report; Texas legislative session Jan. 12-May 31, 2027 [FORECAST]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-fd504d1c50112c",
+        "C-d7a206fa323836"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The Nov. 3 governor, legislature and utility-commission races and the TCEQ/ERCOT timeline are near-term catalysts that could change 2028 exposure; conditions-only candidates are favored in several key states as of Oct. 30."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-a9009128e8c807",
+        "C-6963108742bcf0"
+       ],
+       "provenance": "FORECAST",
+       "text": "2028, not 2027, is the contested year: much of 2028's 62.2 GW is unstarted and concentrated in states electing governors, making multi-year buildout subject to the evolving regulatory regime. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-5165317207c470",
+        "C-b6bbf3006a1799"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Much of the 2027 pipeline already has a head start (three-quarters under construction), moratoriums were earlier found to delay only ~1.5 GW of ~20 GW, and hyperscalers can afford higher costs and bring their own power, so delays may be limited."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-3557AAE138: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (capex_spending_cycle vs policy_regulation) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-6F2E7079B0: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (capex_spending_cycle vs policy_regulation); a different geography (China vs US) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-95AEE030DA: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (capex_spending_cycle vs policy_regulation) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-B1F096684F: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (supply_constraint vs policy_regulation) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 19 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-5165317207c470"
+       ],
+       "provenance": "FORECAST",
+       "text": "Of roughly 20 GW inside local restrictions, SemiAnalysis estimated only 1.5 GW faced delay \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-b6bbf3006a1799"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Interviewed hyperscaler employees said hyperscalers can afford higher rule costs and more easily bring their own power"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "TCEQ reopens permitting shortly after ERCOT's Dec. 10 report"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Conditions-only candidates win the key races, limiting exposure to 5.7 GW"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Projects absorb the interruption within existing schedules"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-8ef36a316d3cf9",
+        "C-9093c399b4721e",
+        "C-599835a9705dee"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A prolonged TCEQ permitting freeze in Texas (close to 30% of US 2028 GW) could move the national datacenter buildout number and is flagged as the biggest near-term risk to the forecast. (scope: Specific to Texas 2028 unstarted datacenter capacity and the duration of the TCEQ permit hold; magnitude of slippage depends on project stage.)"
+      },
+      {
+       "claim_ids": [
+        "C-c6fa4388f1a2de",
+        "C-ca210fccb3a987"
+       ],
+       "provenance": "FORECAST",
+       "text": "If every pause-proposing candidate won their race, roughly 30 GW of planned 2028 capacity would sit in moratorium states, versus 5.7 GW if less restrictive candidates win. (scope: Conditional on election outcomes; actual slippage depends on each project's remaining permits and how long any pause lasts.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: pro-moratorium or restrictive candidates win key governor/commission races and permitting freezes (especially TCEQ) persist long enough to hit projects at the wrong stage"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "How much of the exposed GW actually slips, which depends on each project's remaining permits and pause duration"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The earnings/revenue/valuation impact on any specific listed developer, hyperscaler or supplier"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether campaign platforms translate into enacted policy"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "TCEQ reopens permitting around the Dec. 10 ERCOT report"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Conditions-only candidates win, holding exposure near 5.7 GW"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify which listed datacenter developers, hyperscalers and power/equipment suppliers have the largest 2028 unstarted exposure in Tier 1 states (Texas, Ohio, Arizona, Georgia) and map which projects still need the specific approvals a winning candidate would block."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "TCEQ freeze extends through the 2027 legislative session"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Pause-proposing candidates win in multiple Tier 1 states"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Texas moratorium candidate (Hinojosa) wins"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: premise is conditional in the source; retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-0fa66c4ca86c",
+      "authors": [
+       "Maya Barkin",
+       "Wayne Ma",
+       "Reyk Knuhtsen",
+       "Jeremie Eliahou Ontiveros",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-fd504d1c50112c",
+       "C-67cac7d5bf2e82",
+       "C-d7a206fa323836",
+       "C-f5d7bd00247aaa",
+       "C-a9009128e8c807",
+       "C-8ef36a316d3cf9",
+       "C-9093c399b4721e",
+       "C-c6fa4388f1a2de",
+       "C-ca210fccb3a987",
+       "C-8eaf2ca00c1173",
+       "C-4584b5fe91b6b6",
+       "C-7745affdbd1c65",
+       "C-319f6566ae0797",
+       "C-2b83af9fee8c2f",
+       "C-cfc61adbbf2f86",
+       "C-49e5f4b96acc6f",
+       "C-595bf40504b3ec",
+       "C-34541898dd082a",
+       "C-5165317207c470",
+       "C-b6bbf3006a1799",
+       "C-599835a9705dee"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-01T18:40:45Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "The Datacenter Backlash Goes Bipartisan: Next Week's Midterms and the 2028 Buildout",
+      "upstream_origins": [
+       "Cook Political Report, Multistate, and The New York Times",
+       "not attributed by the source",
+       "publisher's own analysis",
+       "six current and former hyperscaler employees"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/the-datacenter-backlash-goes-bipartisan",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "61a37be8a2cca520444861ff9bed1efd1d8d927e140fe5f35cd9cce0776f5402",
+   "created_at": "2026-11-09T14:54:30.128069Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: premise is conditional in the source; retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-a9009128e8c807",
+       "C-8ef36a316d3cf9",
+       "C-c6fa4388f1a2de",
+       "C-ca210fccb3a987",
+       "C-4584b5fe91b6b6",
+       "C-7745affdbd1c65",
+       "C-cfc61adbbf2f86",
+       "C-49e5f4b96acc6f",
+       "C-fd504d1c50112c",
+       "C-67cac7d5bf2e82",
+       "C-f5d7bd00247aaa"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "11"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-b8ebd8bd63ba",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-67cac7d5bf2e82"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-67cac7d5bf2e82: scheduled event window 2027-05-31..2027-05-31 (may 31, 2027)); 1 claim(s) whose window runs past them; 7 long-range claim(s); 2 long-dated statement(s) of the source beside the cited evidence, not on the card: C-6963108742bcf0, C-b370093eb125e8; model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Microsoft (MSFT), sector: hyperscalers, sector: datacenters",
+      "value": "1 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-67cac7d5bf2e82"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 3 offered but NOT counted (opinion, forecast figure or stale reading): C-fd504d1c50112c, C-d7a206fa323836, C-f5d7bd00247aaa",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-5165317207c470",
+       "C-b6bbf3006a1799"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (2 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 11 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: premise is conditional in the source; retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "premise_conditional",
+      "kind": "held",
+      "text": "premise is conditional in the source"
+     },
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-EF9EABA05A",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-0fa66c4ca86c",
+   "block_ids": [
+    "b020"
+   ],
+   "claim_ids": [
+    "C-b6bbf3006a1799"
+   ],
+   "excerpt": "\u2026interviewed six current and former employees of hyperscalers, including people who worked at Amazon,\u2026",
+   "name": "hyperscalers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-68f99ccb165755",
+  "C-4702351bf0593f",
+  "C-ace3eacb3ad020",
+  "C-91c7cbb5d1b841",
+  "C-4f19ad3651d39e",
+  "C-b6bbf3006a1799",
+  "C-abeca5b215fd04",
+  "C-6963108742bcf0",
+  "C-5165317207c470",
+  "C-599835a9705dee"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.1": "Cited spans say the biggest risk is a prolonged TCEQ freeze and that moratoriums can block projects needing approval; they do not support 'tells subscribers which companies are most at risk' or 'directs research to identify which real campuses still need approval.' Overstated.",
+  "s02.4": "Cited span supports only 'five to nine additional months compared with restarting in December.' The claims about reopening in late summer and freeze lasting 'close to a year' are not in the cited span.",
+  "s03.0": "Label is MEASURED OBSERVATION but the sentence asserts an interpretation ('Growing bipartisan anti-datacenter backlash drives permitting freezes... and campaign platforms'), stronger than the observational cited facts. Cited spans do support the TCEQ/Oregon freezes and the nine/11 nominee split.",
+  "s03.2": "Cited spans support a costly-but-available route to approval and the tax-exemption lever; they do not mention grid upgrades, cooling redesign, or upfront commitments specifically.",
+  "s06.0": "Cited spans support ERCOT Dec. 10 report and conditions-only candidate favored in several states (as of the article), but do not support 'Nov. 3 governor, legislature and utility-commission races' as catalysts or the specific 'as of Oct. 30' date.",
+  "s07.2": "The 'three-quarters under construction' claim is not in the cited spans (s07.2 cites only the 1.5/20 GW and hyperscaler spans). That fact is in pool C-9d64d04600d729."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Premise \u2014 conditional in the source.",
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {
+  "s06.0": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s06.0 prints '3', which none of its cited claims carry: 'The Nov. 3 governor, legislature and utility-commission races and the TCEQ/ERCOT timeline are near-t'",
+  "s06.1": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s06.1 prints '2027', which none of its cited claims carry: \"2028, not 2027, is the contested year: much of 2028's 62.2 GW is unstarted and concentrated in state\"",
+  "s07.2": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s07.2 prints '2027', which none of its cited claims carry: 'Much of the 2027 pipeline already has a head start (three-quarters under construction), moratoriums '"
+ }
+}
