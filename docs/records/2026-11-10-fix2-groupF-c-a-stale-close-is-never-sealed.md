@@ -93,6 +93,51 @@ code here moves the row.
   (2026-12-14). Option 2 is the closest reading of the decision without rewriting the row. Build it
   after the 12-14 scoring, on the ruling.
 
+**THE OPERATOR'S RULING (2026-11-09, relayed by the coordinator) SUPERSEDES THE FOUR OPTIONS
+ABOVE.**
+- **The rule.** Correct every affected entry by ONE rule; never hand-fix GOOGL alone. An entry's
+  corrected price is the last US close completed at the decision moment, and a decision made after
+  a day's close uses that close. Corrections are APPENDED as entries that supersede by reference;
+  scoring reads the corrected entry and the originals are kept. Do it as a dry run first, and
+  STOP for approval before any append.
+- **How a decision time is read.** `decided_at` is the logging machine's local time:
+  `log-verdict` stamps `datetime.now()`, and the operator works in India, so it is read as IST and
+  converted to US Eastern. A `decided_at` of exactly 00:00:00 carries a date only (the hand-authored
+  early rows), and is read as made during that IST day, at its end: the latest close it could have
+  seen.
+- **The dry run on every committed decision.** These are Polygon closes, from a `.backup` copy of
+  the primary's store and this build's cached aggregates; nothing was written.
+
+  | Entry | Sealed | decided_at (IST → ET) | The rule's close | Sessions stale |
+  |---|---|---|---|---:|
+  | V-GOOGL | 345.90, 2026-08-14 | 08-28 11:24 → 08-28 01:54 | **340.65, 2026-08-27** | 9 |
+  | V-VRRM-screen2-20260617 | 4.71, 2026-06-17 | 06-21 19:27 → 06-21 09:57 | **4.44, 2026-06-18** | 1 (06-19 a holiday) |
+  | V-IT-screen2-20260706 | 141.06, 2026-07-20 | 07-21, date only | 141.06, 2026-07-20 | 0 |
+  | V-SMPL-screen2-20260706 | 10.92, 2026-07-20 | 07-21, date only | 10.92, 2026-07-20 | 0 |
+  | V-SMPL-screen2-20260729 | 11.33, 2026-08-04 | 08-05 14:59 → 08-05 05:29 | 11.33, 2026-08-04 | 0 |
+
+  The coordinator's first read had SMPL 3 and IT 1 sessions stale. Those came from the two CLOSE
+  rows' `decided_at` (C-SMPL 07-24, C-IT 07-22), which are exits, not decisions.
+- **The effect, to date.** `vinci monitor --out` on the 2026-11-06 session, total return, run on
+  the committed ledger and on a scratch copy holding the two corrected entries:
+  - **GOOGL:** −17.62% → −16.35%, and its excess vs SPY −12.56 → −11.94 points.
+  - **VRRM:** −53.50% → −50.68%, and its excess vs IWM −48.16 → −43.50 points.
+  - **The spread:** the screen-origin BUY−AVOID diagnostic is +71.55 → +66.89 points, all of it
+    VRRM's. GOOGL is followed-origin and outside it; it moves the quality sleeve's curve only.
+  - **The scoring report:** no row has resolved, so its spread is undefined both ways.
+- **What a correction moves besides the price.** The horizon runs from the entry date. A corrected
+  VRRM matures on **2026-12-15** (06-18 + 180), not 12-14, so it is scored after the 12-15 close.
+  A corrected GOOGL matures on 2027-03-14, not 2027-03-01.
+- **Going forward.** This PR refuses a close more than 5 calendar days old. That refuses GOOGL's
+  case, but it would still have sealed VRRM's: 4 days, 1 session stale, with the 06-18 close
+  existing. To refuse every close the correction rule would correct, the seal needs the market's
+  sessions at the decision moment. One Polygon request at `log-verdict` would show whether a later
+  session had closed. That is proposed, not built.
+- **STOPPED.** No correction is appended. The append mechanism, a correction entry that
+  supersedes its decision by `entry_id` and that scoring and the monitor read, is a decision-path
+  build of its own. It waits on the operator's approval of this dry run, including the call on
+  VRRM's one-session correction, which moves the spread 4.66 points and its maturity by a day.
+
 **BOUNDARY.**
 - **Ledger:** `data/snapshots/decision_ledger.jsonl` at `6fbbb4a2`: 7 rows, of which 5 are
   decisions and 2 are closes.
