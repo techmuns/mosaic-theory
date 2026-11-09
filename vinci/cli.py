@@ -967,6 +967,78 @@ def _cmd_peerset_backfill(args: argparse.Namespace) -> int:
     return rc
 
 
+def _cmd_ciq_reread(args: argparse.Namespace) -> int:
+    """Re-read ONE CIQ field on committed pages from the export on disk ($0: no assembly, no LLM,
+    no network), refusing any page whose export cannot be shown to be its own
+    (`vinci.dossier.ciq_reread`). Exit 1 when any page refused."""
+    from vinci.dossier.ciq_reread import reread
+
+    cfg = get_config()
+    ciq_root = Path(args.ciq_root) if args.ciq_root else cfg.data_dir / "manual" / "ciq"
+    tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    outcomes = []
+    for t in tickers:
+        jp = cfg.data_dir / "dossiers" / t / "dossier.json"
+        if not jp.exists():
+            print(f"{t}: no committed dossier — skipped")
+            continue
+        o = reread(jp, args.field, ciq_root, dry_run=args.dry_run)
+        outcomes.append(o)
+        print(f"{o.ticker}: {o.status.upper()} — {o.detail}")
+    written = [o for o in outcomes if o.status == "written"]
+    if written:
+        from vinci.dossier.refresh import mirror_to_frontend
+
+        mirror_to_frontend()
+    by: dict[str, int] = {}
+    for o in outcomes:
+        by[o.status] = by.get(o.status, 0) + 1
+    print(f"\n=== ciq-reread {args.field}: {len(outcomes)} page(s) · "
+          + " · ".join(f"{k} {v}" for k, v in sorted(by.items()))
+          + (" · DRY-RUN (nothing written)" if args.dry_run else "") + " ===")
+    return 1 if by.get("refused") else 0
+
+
+def _cmd_caveat_reword(args: argparse.Namespace) -> int:
+    """Rewrite each committed caveat that opens with a headline the code has RETIRED to the headline
+    that replaced it (`filed_tiebreak.RETIRED_HEADLINES`) — the rest of the caveat untouched, so
+    the page then carries the caveat the current code writes. $0; re-renders the page."""
+    from vinci.dossier import layer_refresh
+    from vinci.dossier.filed_tiebreak import reworded
+    from vinci.dossier.refresh import _rerender_only, mirror_to_frontend
+    from vinci.dossier.schemas import Dossier
+
+    cfg = get_config()
+    tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    wrote = 0
+    for t in tickers:
+        jp = cfg.data_dir / "dossiers" / t / "dossier.json"
+        if not jp.exists():
+            print(f"{t}: no committed dossier — skipped")
+            continue
+        raw = jp.read_text()
+        doc = json.loads(raw)
+        caveats = list(doc.get("caveats") or [])
+        moved = [(i, new) for i, c in enumerate(caveats) if (new := reworded(c)) is not None]
+        if not moved:
+            print(f"{t}: no caveat opens with a retired headline — unchanged")
+            continue
+        if args.dry_run:
+            print(f"{t}: would reword caveat(s) {[i for i, _n in moved]} (dry-run)")
+            continue
+        for i, new in moved:
+            caveats[i] = new
+        doc["caveats"] = caveats
+        layer_refresh.write_recorded(jp, raw, Dossier.model_validate(doc), "caveat-reword")
+        rendered = _rerender_only(jp)
+        wrote += 1
+        print(f"{t}: reworded caveat(s) {[i for i, _n in moved]}"
+              + ("; dossier.md re-rendered" if rendered else "; dossier.md unchanged"))
+    if wrote:
+        mirror_to_frontend()
+    return 0
+
+
 def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
                     edgar: Any) -> Any:
     """THE MACHINE'S OWN READ of one committed page's anchor — the computation `anchor-backfill`
@@ -3328,6 +3400,26 @@ def build_parser() -> argparse.ArgumentParser:
     p_peer.add_argument("--dry-run", action="store_true", dest="dry_run",
                         help="DIAGNOSTIC: report old-vs-new without writing")
     p_peer.set_defaults(func=_cmd_peerset_backfill)
+
+    p_rr = sub.add_parser(
+        "ciq-reread",
+        help="re-read ONE CIQ field on committed pages from the export on disk ($0 — no "
+        "re-assembly, no LLM, no network); refuses a page whose export cannot be shown its own")
+    p_rr.add_argument("--field", required=True, choices=("customers_listed", "surprise_history"))
+    p_rr.add_argument("--tickers", required=True, help="comma-separated tickers")
+    p_rr.add_argument("--ciq-root", dest="ciq_root",
+                      help="the folder holding one CIQ folder per ticker, read in place "
+                           "(default: data/manual/ciq)")
+    p_rr.add_argument("--dry-run", action="store_true", dest="dry_run")
+    p_rr.set_defaults(func=_cmd_ciq_reread)
+
+    p_cr = sub.add_parser(
+        "caveat-reword",
+        help="rewrite each committed caveat that opens with a headline the code has retired to "
+        "its replacement (filed_tiebreak.RETIRED_HEADLINES); $0, re-renders the page")
+    p_cr.add_argument("--tickers", required=True, help="comma-separated tickers")
+    p_cr.add_argument("--dry-run", action="store_true", dest="dry_run")
+    p_cr.set_defaults(func=_cmd_caveat_reword)
 
     p_ohr = sub.add_parser(
         "own-history-refresh",

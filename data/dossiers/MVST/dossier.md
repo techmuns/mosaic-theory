@@ -1,6 +1,6 @@
 # Dossier — Microvast Holdings, Inc. (Nasdaq: MVST)
 
-_September 17, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
+_September 17, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-09.order2-pages_
 
 # Brief — first cut
 
@@ -741,6 +741,7 @@ _Source §: latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm_
   - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary, mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
 - **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
 - **Panel age:** oldest panel 36d old — 2026-08-12 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
 - **Consensus age:** consensus is 125d old (2026-05-15, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.

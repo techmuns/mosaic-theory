@@ -6,7 +6,7 @@ supersedes:
 superseded-by:
 ---
 
-# Fix request 2, order 2, the output group (RBC-D9, RG-D16): the coverage map credits each family with its own units, and the graph judge keeps its reason and calls its own failure by name. The CIQ quality snapshot is regenerated at $0; the exposure map's regeneration needs paid judge calls and is proposed, not run
+# Fix request 2, order 2, the output group (RBC-D9, RG-D16): the coverage map credits each family with its own units, and the graph judge keeps its reason and calls its own failure by name. The CIQ quality snapshot is regenerated at $0, and the exposure map is re-judged once with its extraction held fixed (operator-approved, $2.61 of a $3 cap)
 
 **WHAT.**
 - **RBC-D9, the coverage map** (`vinci/quality/core.py`).
@@ -58,8 +58,44 @@ map cannot say whether its "unsupported" edges were judged at all.
     (two).
   - The check's whole is unchanged. The failure-class summary is unchanged (wrong_unit 9 / 6 / 1
     / 9), and so is every class.
-- **The committed exposure map** stays as it is: 339 edges, 27 "unsupported", 0 reasons. Its pin is
-  a strict xfail naming this record, so the regeneration that fixes it must remove the mark.
+- **The committed exposure map, re-judged** (operator, relayed verbatim by the coordinator on
+  2026-11-09: "approve the graph re-judge with $3 cap"; the cap is the run's TOTAL).
+  - The path, built for it behind tests that failed first (`922e5e56`):
+    - `coverage.rejudge` puts each committed edge to the judge against its own committed evidence,
+      through the same prompt, with the filer's name from the map's `per_name`. The extraction is
+      held fixed.
+    - Every derived figure comes from `_verdict_figures`, the one copy of the arithmetic that
+      `graph_coverage` uses too. On the whole committed map, the committed verdicts reproduce the
+      committed figures exactly.
+    - `BudgetedLlmClient` refuses any call whose worst case (prompt plus the whole `max_tokens` of
+      output) could pass the cap. Its refusal is a BaseException, so the judge cannot swallow it.
+    - `vinci graph-rejudge` runs at `JUDGE_MAX_TOKENS` (1024) and writes the map only if every edge
+      got a verdict.
+  - The run, once, as artifact commit `2bd1f760`:
+    - judge `claude-opus-4-8`; the map's extraction and its first judge were `claude-sonnet-4-6`;
+    - 339 calls sent, 339 billed, **$2.61** at list price (`judged_by.cost_usd` 2.6083);
+    - 0 judge errors; every extraction field of every edge unchanged.
+  - **The 27 "unsupported" edges:**
+    - 12 still read "unsupported", now with a reason;
+    - 15 changed verdict: 11 to real_supply_chain, 2 to ma_or_legal, 2 to bio_or_governance;
+    - 0 are judge errors.
+    - Whether any of the original 27 was a judge FAILURE cannot be told: the first run stored no
+      reason, and this run's judge is another model.
+  - **Over all 339 edges, 26 verdicts moved:**
+    - unsupported → real 11, → ma_or_legal 2, → bio_or_governance 2;
+    - ma_or_legal → real 4;
+    - real → unsupported 3, → ma_or_legal 2;
+    - competitor → real 1;
+    - bio_or_governance → ma_or_legal 1.
+  - **Derived figures:**
+    - real_edges 283 → 294 (US-listed 122 → 130, global 161 → 164);
+    - evidence_precision 0.835 → 0.867;
+    - shared nodes 10 → 11; super-connectors FEIM out, KOPN in.
+  - **Reasons:** 0 of 339 carry exception text, and none is blank (25–143 characters).
+  - **The estimate was low.** It was ≈ $1.5 against $2.61 measured, 43% short. The forced-tool
+    request overhead on every call was not in it.
+  - The committed-map pin (`tests/test_verbatim.py::test_the_committed_exposure_map_carries_every_judges_reason`)
+    now asserts a reason on every edge.
 
 - **Code review (round 0, `/code-review high --fix`):** 10 findings.
   - Fixed (7):
@@ -95,13 +131,7 @@ map cannot say whether its "unsupported" edges were judged at all.
   - release's `figure_in_own_quote` is listed by 6 families, each figure being one of them;
   - prices' `stale_bar`, `series_gap` and `history_across_ids` by 3 each, and `ohlc_ordering` by 2.
   - Their rows now say "the whole check's", but neither is attributed per family yet.
-- The map's regeneration is proposed, not run (paid). Two options:
-  - re-judge only the committed edges, about 339 calls, est. ≈ $1.5 at `claude-opus-4-8`'s list
-    price ($5 / $25 per Mtok, `config.LLM_PRICE_PER_MTOK`). The basis is about 600 input and 60
-    output tokens a call. It needs a small judge-only path, not built, because only a paid run can
-    prove it.
-  - re-run `graph-coverage`, which re-extracts the edges too, est. ≈ $8 at the same price. The
-    basis is 109 names × up to 24,000 characters of 10-K excerpts (about 6k tokens) and about 1k
-    output, plus the judge. It changes the map itself.
-  - Both are estimates, not measurements. The committed map's own model, `claude-sonnet-4-6`, has
-    no price in the table.
+- The map was re-judged by another model than its first judge (`claude-opus-4-8` against `claude-sonnet-4-6`).
+  - The 26 moved verdicts are that judge's reading, not a correction of record.
+  - Falsifier: a re-judge by `claude-sonnet-4-6` that moves few of the 26 back says the move was the model.
+- Re-extraction (`graph-coverage`, est. ≈ $8) was not run. The edges themselves are the first run's.

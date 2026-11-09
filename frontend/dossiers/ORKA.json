@@ -351,7 +351,8 @@
         "source_ref": null,
         "status": "unknown",
         "note": "Segments sheet has a 'Geographic Segment' section but no 'Revenues' block under it — the geographic segment breakdown is absent from this export"
-      }
+      },
+      "customers_listed": 1
     },
     "ev_gap": {
       "vintages": {
@@ -9290,6 +9291,14 @@
       "writer": "refresh",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "extraction_version": "2026-11-09.order2-pages",
+      "writer": "ciq-reread",
+      "layers": [
+        "mechanical.concentration"
       ]
     }
   ],
