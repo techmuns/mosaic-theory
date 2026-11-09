@@ -51,7 +51,7 @@ no row of its own.
 - **E2-D15**: `disagree` on its NFLX half (record §3).
 - **RE2-D18**: `disagree` on its unbounded-read half, which was already bounded at `622786a2` (record §6, item 6).
 
-Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). RD-D1 waits for #930, which rewrites the same `capital_allocation.py` sites; RG-D19 waits for an operator ruling (STATE rows 59 and 61).
+Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). RD-D1 waits for #930, which rewrites the same `capital_allocation.py` sites. RG-D19 was ruled on 2026-11-09: publish the fact, not the quote. It is one stream with RG-D8, in three PRs, of which #941 is the first (STATE row 60).
 
 ## The log
 
@@ -70,7 +70,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). R
 | RBC-D8 | 2 | in progress (#936) | #936 | `tests/test_filed_tiebreak.py::test_nflxs_committed_page_carries_the_caveat_the_code_writes` | NFLX |
 | RBC-D9 | 2 | open | — | — | — |
 | RG-D16 | 2 | open | — | — | — |
-| RG-D19 | 2 | open | — | — | — |
+| RG-D19 | 2 | in progress (#941) | #941 | — | — |
 | RF-D1 | 3 | open | — | — | — |
 | RF-D2 | 3 | open | — | — | — |
 | RF-D8 | 3 | open | — | — | — |
@@ -133,7 +133,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). R
 | RG-D5 | 4 | open | — | — | — |
 | RG-D6 | 4 | open | — | — | — |
 | RG-D7 | 4 | open | — | — | — |
-| RG-D8 | 4 | open | — | — | — |
+| RG-D8 | 4 | in progress (#941) | #941 | — | — |
 | RG-D21 | 4 | open | — | — | — |
 | RD-D2 | 4 | open | — | — | — |
 | RD-D3 | 4 | open | — | — | — |
