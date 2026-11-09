@@ -75,7 +75,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8) and #937 (RBC-D9, RG-D16). R
 | RF-D2 | 3 | open | — | — | — |
 | RF-D8 | 3 | open | — | — | — |
 | V2-N1 | 3 | open | — | — | — |
-| RE1-D6 | 3 | open | — | — | — |
+| RE1-D6 | 3 | in progress (#940) | #940 | `tests/test_restatement_precision.py::test_a_restated_round_figure_is_named` | none (0 of 28 frozen pages cite a moved figure; 35 of 1,769 corpus changes still unnamed, need XBRL decimals) |
 | RE1-D1 | 3 | open | — | — | — |
 | RE1-D2 | 3 | open | — | — | — |
 | RE1-D8 | 3 | open | — | — | — |

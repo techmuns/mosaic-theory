@@ -65,7 +65,7 @@ superseded-by:
   - The 3 precision-only guards passed.
   - The rest failed on the new `unit` keyword.
 
-  After the fix, all 18 pass, and so do the existing `test_edgar_fallback_provenance_and_sign.py`
+  After the fix, all 19 pass (one added in review round 0), and so do the existing `test_edgar_fallback_provenance_and_sign.py`
   (with #875's rounding pin) and `test_filed_tiebreak.py`.
 - **The corpus, whole.** All 31 fixtures in `tests/fixtures/companyfacts`, every later filing
   against its period's first, the old rule copied beside the new:
