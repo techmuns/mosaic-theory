@@ -436,7 +436,7 @@ def test_every_edge_in_the_coverage_report_keeps_its_judges_reason(
 @pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
     "audit RG-D16: the committed map was written before the reason was kept, so its 27 "
     "'unsupported' edges carry none — it regenerates only through paid judge calls, proposed to "
-    "the operator and not run (STATE.md §5.0); remove this mark when it does"))
+    "the operator and not run (STATE.md §5.0 row 61); remove this mark when it does"))
 def test_the_committed_exposure_map_carries_every_judges_reason() -> None:
     """END TO END on the committed artifact: every edge of `data/graph_coverage.json` names the
     reason for its verdict, so a judge failure can be told from evidence that does not hold."""
