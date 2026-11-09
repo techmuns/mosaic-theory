@@ -823,6 +823,7 @@ def basis_triangulation_transform(ticker: str) -> Transform:
         from vinci.dossier import mechanical as dm
         from vinci.dossier.assemble import _read_scenario_card, load_finalists
         from vinci.dossier.ciq import CiqBundle
+        from vinci.dossier.gaps import price_date
         from vinci.dossier.schemas import MechanicalLayer
         from vinci.edgar.client import EdgarClient
         from vinci.sec import build_sec_http
@@ -840,9 +841,12 @@ def basis_triangulation_transform(ticker: str) -> Transform:
         fin = load_finalists(cfg, ticker=ticker)[0]
         bundle = CiqBundle.from_files(
             ticker, sorted(_pl.Path(f"data/manual/ciq/{ticker}").glob("*")))
+        layer = MechanicalLayer.model_validate(out)
+        # cut at the PAGE's price date (STATE row 57): the client is uncut and the export is
+        # read now, so neither a release filed since nor a guide CIQ dated since enters the line
         primary, _lat, _drv = dm._primary_source(
             fin.data_record, EdgarClient.from_config(cfg), build_sec_http(cfg),
-            bundle, fin.reference_date, MechanicalLayer.model_validate(out), card)
+            bundle, fin.reference_date, layer, card, cut=price_date(layer))
         rebuilt = primary.basis_triangulation.value or ""
         if not rebuilt:
             return out
@@ -964,8 +968,9 @@ def _rebuild_release_lines(ticker: str, out: dict[str, Any], before: list[Any], 
     from vinci.dossier import mechanical as dm
     from vinci.dossier.assemble import _read_scenario_card
     from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.gaps import price_date
     from vinci.dossier.manual_store import LocalFolderStore
-    from vinci.dossier.schemas import Sourced
+    from vinci.dossier.schemas import MechanicalLayer, Sourced
 
     ps = out["primary_source"]
     bundle = CiqBundle.from_files(ticker, LocalFolderStore.from_config(get_config()).files(ticker))
@@ -973,9 +978,12 @@ def _rebuild_release_lines(ticker: str, out: dict[str, Any], before: list[Any], 
     nde = Sourced[float].model_validate(nde_raw) if nde_raw else None
     card = _read_scenario_card(ticker)
 
+    # CIQ's guide as it stood on the PAGE's price date (STATE row 57): the export is read now
+    cut = price_date(MechanicalLayer.model_validate(out))
+
     def lines(rels: list[Any]) -> tuple[dict[str, str], str]:
         tri, guide = dm._release_lines(rels, bundle=bundle, nde=nde, card=card,
-                                       reference_date=reference_date)
+                                       reference_date=reference_date, cut=cut)
         return {"basis_triangulation": tri, "guide_verification": guide.line}, guide.check
 
     (old, old_check), (new, new_check) = lines(before), lines(after)

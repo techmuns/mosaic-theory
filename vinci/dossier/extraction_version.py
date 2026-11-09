@@ -556,6 +556,18 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         " only a change or deviation lower confidence, and the prompt asks no trailing "
         "multiple for a blind-flag. No extracted value changes; a new field and the prompt do",
     ),
+    (
+        "2026-11-09.asof-cut",
+        "the fact layer cuts its releases and CIQ's guidance at the page's price date and "
+        "states what it leaves out (STATE row 57): each results 8-K filed after it is named "
+        "in `primary_source.releases_after_price_date` and never fetched; an actual CIQ dates "
+        "after it leaves the guidance delivery record, and a guide CIQ dates after it "
+        "withholds the guidance read (the bridge, its rows and the revenue guide UNKNOWN), "
+        "CIQ keeping one guide per period; each cell left out is kept in "
+        "`catalyst_path.guidance_after_price_date`, never sent to the synthesis, and a caveat "
+        "names each input. A page with nothing dated after its price date changes in no "
+        "value; two new fields do"
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
