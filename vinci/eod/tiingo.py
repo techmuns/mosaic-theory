@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json
 import re
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from typing import Any, cast
 
 from vinci.config import Config, get_config, require_env, sec_user_agent
@@ -23,6 +23,14 @@ from vinci.netcache import CachedHttp, HttpError
 from vinci.schemas.market import PriceBar
 
 _PRICES = "https://api.tiingo.com/tiingo/daily/{symbol}/prices"
+
+#: A week of slack before the earliest window, so its entry session's row is always inside the span
+#: Tiingo is asked for. `eod.splits.default_splits` asks for the SAME span as
+#: `eod.dividends.default_dividends` (RF-D1), so its rows are the response that read cached: one
+#: request, and one symbol against the plan's monthly cap. It lives HERE, not in `eod.dividends`:
+#: `eod.splits` reads it, `vinci.universe` reads `eod.splits`, and `eod.dividends` reaches
+#: `vinci.monitor` — the outcome layer no screen may reach (`tests/test_outcome_import_fences.py`).
+TIINGO_LEAD = timedelta(days=7)
 _ONE_DAY = 86_400.0
 
 

@@ -71,9 +71,9 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RBC-D9 | 2 | in progress (#937) | #937 | `tests/test_quality_family_credit.py::test_segments_is_credited_with_its_own_panel_not_the_whole_check` | `data/snapshots/data_quality/ciq/2026-11-09.json` (the CIQ quality snapshot; the release and prices sources' shared checks still credit whole, and say so) |
 | RG-D16 | 2 | in progress (#937) | #937 | `tests/test_graph.py::test_a_judge_failure_is_its_own_verdict_never_an_unsupported_edge` | `data/graph_coverage.json` re-judged at 2bd1f760 (339 calls, $2.61 of the operator's $3 cap; every edge carries its reason) |
 | RG-D19 | 2 | open | — | — | — |
-| RF-D1 | 3 | open | — | — | — |
-| RF-D2 | 3 | open | — | — | — |
-| RF-D8 | 3 | in progress (#946) | #946 | `tests/test_ads_ratio.py::test_a_mixed_number_is_its_whole_and_its_fraction` | none (no committed page carries an ADS ratio) |
+| RF-D1 | 3 | in progress (#943) | #943 | `tests/test_split_confirmed_by_tiingo.py::test_a_split_late_on_both_polygon_feeds_stops_a_resolved_row` | none (no page reads the split basis) |
+| RF-D2 | 3 | in progress (#943) | #943 | `tests/test_split_confirmed_by_tiingo.py::test_close_position_refuses_a_split_the_reference_does_not_record` | none |
+| RF-D8 | 3 | fixed | 7d0e3c91 (#946) | `tests/test_ads_ratio.py::test_a_mixed_number_is_its_whole_and_its_fraction` | none (no committed page carries an ADS ratio) |
 | V2-N1 | 3 | open | — | — | — |
 | RE1-D6 | 3 | in progress (#940) | #940 | `tests/test_restatement_precision.py::test_a_restated_round_figure_is_named` | none (0 of 28 frozen pages cite a moved figure; 35 of 1,769 corpus changes still unnamed, need XBRL decimals) |
 | RE1-D1 | 3 | fixed | 02ed3d29 (#939) | `tests/test_sec_budget_across_machines.py::test_two_machines_sending_at_once_stay_under_secs_ceiling_per_user` | none (pacing changes no value; 28 frozen pages compared) |
@@ -112,11 +112,11 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RE2-D17 | 4 | open | — | — | — |
 | RE2-D18 | 4 | disagree: the unbounded-read half (order 4) was bounded at 622786a2 by #884's `AsOfEdgar`, which cuts `recent_filings` at the price date — LLY at a 2026-10-16 price date fetches neither its 2026-10-29 8-K nor its 10-Q, and both are fetched with the cut removed; #932 added the 10-Q to the pin; the acceptance-time half is §4 (record §6) | ae016a68 (#884); cb8139ee (#932) | `tests/test_asof_cut.py::test_the_page_reads_no_release_filed_after_its_price_date`, `tests/test_asof_cut.py::test_a_results_8k_filed_after_the_price_date_is_named_and_never_read` | — |
 | RE2-D20 | 4 | open | — | — | — |
-| RF-D3 | 4 | open | — | — | — |
-| RF-D4 | 4 | in progress (#946) | #946 | `tests/test_universe_one_basis.py::test_a_split_since_the_filed_count_is_sized_on_the_current_count` | none; the universe snapshot is re-sized at the next weekly build (6 lines leave the band) |
+| RF-D3 | 4 | in progress (#943) | #943 | `tests/test_realized_total_return.py::test_a_flat_stock_with_a_20pct_special_dividend_realizes_zero` | none; monitor days from now carry `realized_price_return` |
+| RF-D4 | 4 | fixed | 7d0e3c91 (#946) | `tests/test_universe_one_basis.py::test_a_split_since_the_filed_count_is_sized_on_the_current_count` | none; the universe snapshot is re-sized at the next weekly build (6 lines leave the band) |
 | RF-D7 | 4 | open | — | — | — |
-| RF-D9 | 4 | in progress (#946) | #946 | `tests/test_universe_one_basis.py::test_adv_is_over_the_markets_sessions_not_the_days_a_name_traded` | none |
-| RF-D13 | 4 | open | — | — | — |
+| RF-D9 | 4 | fixed | 7d0e3c91 (#946) | `tests/test_universe_one_basis.py::test_adv_is_over_the_markets_sessions_not_the_days_a_name_traded` | none |
+| RF-D13 | 4 | in progress (#943) | #943 | `tests/test_scoring_pending_reasons.py::test_an_interim_row_whose_dividends_cannot_be_read_is_named` | none |
 | RE1-D7 | 4 | open | — | — | — |
 | RE1-D10 | 4 | open | — | — | — |
 | RE1-D11 | 4 | open | — | — | — |

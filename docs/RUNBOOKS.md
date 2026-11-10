@@ -544,7 +544,12 @@ and it is the first outcome the spread will ever carry.
    The run writes prices into the primary's store, which is the point: it is the working store.
 
 2. **Keys** in the repo-root `.env`: `POLYGON_API_KEY`, `TIINGO_API_KEY`, `SEC_USER_AGENT`. A resolved
-   row whose dividends cannot be read stops the run with `TotalReturnUnknownError`, by design.
+   row whose dividends cannot be read stops the run with `TotalReturnUnknownError`, by design. So
+   does one whose split record cannot be confirmed (`SplitsUnreadError`, since #943): Polygon's
+   splits reference and Tiingo's `splitFactor` must record the same splits over the ledger's span,
+   the benchmarks' included, and Tiingo must have served every session the run reads. Polygon
+   posts a session hours before Tiingo does: a refusal saying Tiingo's newest session "is not
+   served yet" means re-run once it has, never a reason to read around it.
 3. **Score:**
 
    ```

@@ -322,7 +322,8 @@ def test_a_partial_basket_is_refused_and_names_the_missing_member() -> None:
     basket = Basket("quality", _records("AAA", "BBB", "CCC"),
                     {"AAA": "SEC-AAA", "BBB": "SEC-BBB", "CCC": "SEC-CCC"})
     bars = {"AAA": _bars("SEC-AAA", 100.0, 130.0), "BBB": _bars("SEC-BBB", 100.0, 110.0)}
-    got, note, _members = basket_return(basket, bars, ENTRY_D, EXIT_D, dividends=no_dividends)
+    got, note, _members = basket_return(basket, bars, ENTRY_D, EXIT_D, dividends=no_dividends,
+                                        splits=no_splits)
     assert got is None, f"a 2-of-3 basket was averaged and returned {got}"
     assert note is not None and "CCC" in note, f"the refusal does not name the member: {note!r}"
 
@@ -336,7 +337,7 @@ def test_an_unresolved_ticker_still_counts_as_a_member(tmp_path: pathlib.Path) -
     assert "GHOST" not in baskets["quality"].internal_ids
     got, note, _members = basket_return(
         baskets["quality"], {"AAA": _bars("SEC-AAA", 100.0, 130.0)}, ENTRY_D, EXIT_D,
-        dividends=no_dividends)
+        dividends=no_dividends, splits=no_splits)
     assert got is None and note is not None and "GHOST" in note, (
         f"an unresolvable followed name vanished from its own basket instead of refusing it: "
         f"{got!r} / {note!r}")
@@ -349,7 +350,8 @@ def test_the_basket_is_equal_weight_not_return_weighted() -> None:
                     {"AAA": "SEC-AAA", "BBB": "SEC-BBB"})
     bars = {"AAA": _bars("SEC-AAA", 10.0, 20.0),      # +100%, cheap share price
             "BBB": _bars("SEC-BBB", 1000.0, 1000.0)}  # flat, expensive share price
-    got, note, _members = basket_return(basket, bars, ENTRY_D, EXIT_D, dividends=no_dividends)
+    got, note, _members = basket_return(basket, bars, ENTRY_D, EXIT_D, dividends=no_dividends,
+                                        splits=no_splits)
     assert note is None
     assert got == pytest.approx(0.50), (
         f"read {got} — a price-weighted basket would land near 0.0099 here, an equal-weight one "
