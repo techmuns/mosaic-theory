@@ -1417,12 +1417,16 @@ _GUIDE_METRICS = (
 #: actuals' own token (`_SCALE`), so the two readers share one scale vocabulary.
 #: A range's two numbers, each side's own unit, and each side's `$` — CAPTURED, because a gross
 #: margin stated in dollars is gross profit, not the rate the metric holds (audit E2-D8).
+#: The words a filer sets before a guide's figure (RE2-D7). `_CONTINUED` takes the same four.
+_QUALIFIER = r"(?:approximately|about|around|roughly)"
 _RANGE_BODY = (
     # the plural too ("$500 to $550 millions", review round 2): main read it at $M by default, and
     # an unread scale word is now a refusal, so a plural must be read, not refused
     r"(?P<cur>\$)?\s*(?P<low>[\d,.]*\d)\s*(?P<pct>%)?\s*"
     rf"(?:(?P<lowunit>(?:{_SCALE})s?)(?![A-Za-z])\s*)?"
-    r"(?:to|and|[-–—])\s*"
+    # the separator is CAPTURED (TeamNostra fix request 2, RE2-D1): "and" joins a range only after
+    # "between" — `_guidance` reads it nowhere else
+    r"(?P<sep>to|and|[-–—])\s*"
     r"(?P<cur2>\$)?\s*(?P<high>[\d,.]*\d)\s*"
     rf"(?:(?P<unitword>(?:{_SCALE})s?|%)(?![A-Za-z]))?"
 )
@@ -1461,8 +1465,13 @@ _GUIDE_RANGE = re.compile(
     r"(?:outlook\s+)?(?:to\s+be\s+)?"
     # "…expected to range FROM $52 million to $56 million" (Simply Good) is the same range, stated
     # with the other preposition.
-    r"(?:outlook\s+of|expected\s+to\s+range\s+(?:between|from)|to\s+range\s+(?:between|from)|"
-    r"in\s+the\s+range\s+of|between|of)\s+"
+    # A QUALIFIER BEFORE THE LOW SIDE (TeamNostra fix request 2, RE2-D7): "revenue to be
+    # approximately $500 million to $550 million" and "revenue of about $500 million to …" were
+    # dropped with no note — the number had to follow the introducer. The introducer is CAPTURED
+    # for RE2-D1's rule ("and" joins a range only after "between").
+    r"(?:(?P<intro>outlook\s+of|expected\s+to\s+range\s+(?:between|from)|"
+    r"to\s+range\s+(?:between|from)|in\s+the\s+range\s+of|between|of)\s+"
+    rf"(?:{_QUALIFIER}\s+)?|{_QUALIFIER}\s+)"
     # range separator: "to" / "and" / a bare hyphen or en/em dash ("$2.325-$2.365 billion" —
     # BellRing). The dash form carries no spaces, so \s* around it, not \s+.
     # `pct` is CAPTURED now: it used to be discarded inside a non-capturing group, so a percentage
@@ -1500,6 +1509,60 @@ _CONTINUED = re.compile(
     rf"{_RANGE_BODY}",
     re.I,
 )
+#: A RANGE STATED AS THE GUIDE'S NEW LEVEL (TeamNostra fix request 2, RE2-D7, RE2-D19): "raises its
+#: fiscal 2026 revenue guidance TO $1.10 billion to $1.15 billion". "to" introduces a range only
+#: after the guide's own noun — "increased revenue to $500 million" is a result.
+_GUIDE_TO = re.compile(
+    rf"(?P<metric>{_GUIDE_METRICS})\s*[*†‡]{{0,2}}\s*(?:outlook|guidance)\s+to\s+"
+    rf"(?:{_QUALIFIER}\s+)?{_RANGE_BODY}",
+    re.I,
+)
+#: A SINGLE-POINT guide statement (RE2-D7): the metric, the same slots as `_GUIDE_RANGE`, ONE amount
+#: and no range after it. `_NUM` is atomic and the look-ahead skips the scale, so "$1.10 billion to
+#: $1.15 billion" can never backtrack into a point at "$1.10". "loss" is a slot: Vital Farms writes
+#: "Adjusted EBITDA loss of around $(15) million".
+_GUIDE_POINT = re.compile(
+    rf"(?P<metric>{_GUIDE_METRICS})\s*[*†‡]{{0,2}}(?:\s+loss)?\s*"
+    r"(?:(?:(?:is|are)\s+(?:now\s+)?)?(?:expected|anticipated|projected|forecast(?:ed)?)\s+|"
+    r"will\s+be\s+)?"
+    r"(?:(?:(?:outlook|guidance)\s+)?(?:to\s+be|of|at)|(?:outlook|guidance)\s+to)\s+"
+    rf"(?:{_QUALIFIER}\s+)?"
+    rf"(?P<point>\$\s*\(?\s*{_NUM}\s*\)?(?:\s*(?:{_SCALE})s?(?![A-Za-z]))?)"
+    rf"(?!\s*\)?\s*(?:(?:{_SCALE})s?(?![A-Za-z]))?\s*(?:to|and|or|through|[-–—])\s*\$?\s*\(?\s*\d)",
+    re.I,
+)
+#: AN OUTLOOK WITHDRAWN (TeamNostra fix request 2, RE2-D3): "The Company has withdrawn its fiscal
+#: 2026 outlook. Previously, the Company expected revenue of $1.00 billion to $1.05 billion" kept
+#: the withdrawn range as the current guide. The object must be the OUTLOOK, never crossing another
+#: act: Vital Farms' headline "Withdraws Previously Issued Fiscal 2030 Financial Targets Reaffirms
+#: Fiscal Year Capital Expenditures Outlook" withdraws targets and reaffirms an outlook.
+_WITHDRAWN = re.compile(
+    r"\b(?:withdr(?:aw|aws|awn|awing|ew)|suspend(?:s|ed|ing)?|rescind(?:s|ed|ing)?)\b"
+    r"(?:(?!\b(?:reaffirm|reiterat|affirm|maintain|rais|lower|updat|target)\w*)[^.;•]){0,80}?"
+    r"\b(?:outlook|guidance)\b",
+    re.I)
+
+
+def _two_figures(m: re.Match[str]) -> bool:
+    """TWO FIGURES ARE NOT A RANGE (TeamNostra fix request 2, RE2-D1). "Total revenues of $412.0
+    million and $1,180.5 million for the three and nine months ended September 30, 2026" matched
+    "of … and …" and was stored as a 412.0–1,180.5 next-fy revenue guide. "and" joins a range only
+    after "between"; anywhere else it joins two figures, which state no guide, so no note."""
+    intro = (m.groupdict().get("intro") or "").lower()
+    return m["sep"].lower() == "and" and "between" not in intro
+
+
+def _calendar_of(text: str, start: int, end: int) -> str | None:
+    """A CALENDAR period stated for the guide at [start, end) (RE2-D5's guide half), as written, or
+    None: in its own sentence before it, or in the rest of its clause before a comparison — and,
+    as `_own_calendar` reads the actuals', never in a comparison sub-clause the guide is not in."""
+    lo0 = max(0, start - 170)
+    b = max(text.rfind("•", lo0, start), text.rfind(". ", lo0, start))
+    lo = (b + 1) if b != -1 else start
+    _, hi = _clause(text, start, end)
+    cut = _CMP.search(text, end, hi)
+    c = _own_calendar(text, lo, cut.start() if cut is not None else hi, start)
+    return " ".join(c.group(0).split()) if c is not None else None
 
 
 #: Scale a stated magnitude word/suffix onto the ``$M`` the composer prints. Anything unrecognised
@@ -1549,10 +1612,13 @@ _METRIC_ALT = (r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjus
                rf"{_GAAP_DILUTED_EPS}|free\s+cash\s+flow|gross\s+margins?")
 _DIRECTION = r"(?P<dir>decline|decrease|contract|improve|increase|expand|grow|rise)"
 _DECLINE = {"decline", "decrease", "contract"}
+#: "expected to", "to" — and "IS expected to" (TeamNostra fix request 2, RE2-D7): "revenue is
+#: expected to increase 5% to 7%" was dropped with no note, the verb had to follow the metric.
+_CHANGE_AUX = r"(?:(?:(?:is|are)\s+)?expected\s+to\s+|to\s+)?"
 # a CHANGE range: "…decline between 300 and 350 basis points" / "…increase 4% to 5%"
 _GUIDE_CHANGE_RANGE = re.compile(
     rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]{{0,2}}\s*"
-    rf"(?:expected\s+to\s+|to\s+)?{_DIRECTION}\s+"
+    rf"{_CHANGE_AUX}{_DIRECTION}\s+"
     r"(?:by\s+)?(?:in\s+a\s+range\s+of\s+|in\s+the\s+range\s+of\s+|between\s+)?"
     r"(?P<low>[\d,.]+)\s*(?P<lowunit>%|basis\s+points|bps)?\s*(?:to|and|[-–—])\s*"
     r"(?P<high>[\d,.]+)\s*(?P<unitword>%|basis\s+points|bps)",
@@ -1561,7 +1627,7 @@ _GUIDE_CHANGE_RANGE = re.compile(
 # a SINGLE-POINT change: "…decline approximately 375 basis points" / "…decline by ~200 bps"
 _GUIDE_CHANGE_POINT = re.compile(
     rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]{{0,2}}\s*"
-    rf"(?:expected\s+to\s+|to\s+)?{_DIRECTION}\s+"
+    rf"{_CHANGE_AUX}{_DIRECTION}\s+"
     r"(?:by\s+)?(?:approximately|about|roughly|~)?\s*"
     r"(?P<low>[\d,.]+)\s*(?P<unitword>%|basis\s+points|bps)",
     re.I,
@@ -1570,7 +1636,8 @@ _GUIDE_CHANGE_POINT = re.compile(
 # word — the signs carry it — so this cannot share the pattern above.
 _GUIDE_CHANGE_SIGNED = re.compile(
     rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]{{0,2}}\s*"
-    r"(?:expected\s+to\s+range\s+between|to\s+range\s+between|expected\s+to\s+be\s+between)\s+"
+    r"(?:(?:is\s+|are\s+)?expected\s+to\s+range\s+between|to\s+range\s+between|"
+    r"(?:is\s+|are\s+)?expected\s+to\s+be\s+between)\s+"
     r"(?P<low>[+-][\d,.]+)\s*(?P<lowunit>%)\s*(?:to|and|[-–—])\s*"
     r"(?P<high>[+-][\d,.]+)\s*(?P<unitword>%)",
     re.I,
@@ -1627,6 +1694,10 @@ _METRIC_WORDS = re.compile(_GUIDE_METRICS, re.I)
 # The prefix a guidance REFUSAL carries. Shared so the rollup in `vinci.dossier.mechanical`
 # selects on the same literal that is emitted here, rather than on a copy that can drift.
 GUIDANCE_REFUSAL_PREFIX = "Guidance stated but not attributable"
+#: The prefix of the flag a guide filed under the `next-fy` DEFAULT carries (TeamNostra fix request
+#: 2, RE2-D20). NOT a refusal — the guide is kept — so `mechanical.guidance_refusal_flags` does not
+#: lift it: it stays in the release's machine-tier flags.
+GUIDANCE_PERIOD_DEFAULT_PREFIX = "Guidance period not read"
 _QUARTER = re.compile(r"\b(first|second|third|fourth)\s+quarter\b", re.I)
 _Q_NUM = {"first": 1, "second": 2, "third": 3, "fourth": 4}
 # A forward statement ABOUT THE BUSINESS. "updated its financial outlook" is a statement about the
@@ -1783,6 +1854,41 @@ _TWO_QUARTERS = re.compile(r"\b(?:first|second|third|fourth|Q[1-4])\s+(?:and|&|t
                            r"(?:the\s+)?(?:first|second|third|fourth|Q[1-4])\b", re.I)
 
 
+#: The forward VERBS that make a single point a guide (RE2-D7). Verbs only, never the nouns: a
+#: results bullet sits beside "guidance" and "outlook" ("Q2 revenue of $12.6B was in-line with
+#: forecast", Netflix; "Raises Full Year Revenue and EPS Outlook • Third quarter revenues of $1.394
+#: billion", EPAM) and "Target" is a company's name. Measured on the 122 cited exhibits.
+_POINT_FORWARD = re.compile(
+    r"\b(?:expects?|expected|expecting|anticipates?|anticipated|anticipating|projects|projected|"
+    r"projecting|forecasts|forecasted|forecasting|guides|guided|(?:now|we)\s+sees?)\b", re.I)
+#: A point a result verb follows is a result: "net sales of $30.5 billion WERE in line with …".
+_RESULT_AFTER = re.compile(r"\s*(?:\)|,)?\s*(?:was|were)\b", re.I)
+#: A point a prior period owns is that period's actual: "… flat to up slightly from LAST YEAR'S
+#: Adjusted EPS of $1.30" (Target) — the anchor of a guide, not a guide.
+_PRIOR_PERIOD_LEAD = re.compile(
+    r"\b(?:last|prior|previous)[\s-]+(?:fiscal\s+)?(?:year|quarter|period)(?:'s|’s)\s+"
+    r"(?:[\w-]+\s+){0,2}$", re.I)
+
+
+def _forward_governed(text: str, start: int, end: int) -> bool:
+    """A forward word governs the single point at [start, end) (RE2-D7): a guide slot in the
+    statement itself ("Net Revenue OUTLOOK to around $730 Million"), a forward VERB in its own
+    clause before it, or one in the header of the bullet list it opens — Vital Farms' "For fiscal
+    year 2026, we expect: • Net revenue of around $730 million". Never a point inside a comparison
+    sub-clause ("from last year's Adjusted EPS of $1.30", Target) or one a result verb follows."""
+    lo, hi = _clause(text, start, end)
+    if (_RESULT_AFTER.match(text, end) or _PRIOR_PERIOD_LEAD.search(text, max(0, start - 60), start)
+            or any(a <= start < b for a, b in _comparison_spans(text, lo, hi))):
+        return False
+    if re.search(r"\b(?:outlook|guidance|expected|anticipated|projected|forecast(?:ed)?)\b",
+                 text[start:end], re.I):
+        return True
+    if _POINT_FORWARD.search(text, lo, start):
+        return True
+    head = _list_header(text, start)
+    return head is not None and _POINT_FORWARD.search(head) is not None
+
+
 def _list_header(text: str, start: int) -> str | None:
     """The header of the bullet list whose item opens at the guide at ``start``, or None when the
     guide does not open a bullet item, or no header is found within `_OPENER_REACH`."""
@@ -1867,6 +1973,20 @@ def _guide_unit(metric: str, pct_marker: str | None) -> str:
     return "$M"
 
 
+#: The nouns a period phrase can name instead of the guide's period (RE2-D4): "the 2025 ACQUISITION
+#: of Beta Corp", "the fourth quarter ACQUISITION". "sale" singular only — "second quarter sales" is
+#: a period's figure, and the actuals read it so.
+_DEAL_AFTER = re.compile(
+    r"\s+(?:acquisitions?|mergers?|divestitures?|dispositions?|transactions?|sale|spin-?offs?|"
+    r"separations?)\b", re.I)
+
+
+def _dealless(pat: re.Pattern[str], text: str, lo: int, hi: int) -> re.Match[str] | None:
+    """The first ``pat`` match in [lo, hi) that names no deal (`_DEAL_AFTER`)."""
+    return next((x for x in pat.finditer(text, lo, hi) if not _DEAL_AFTER.match(text, x.end())),
+                None)
+
+
 def _period_for(text: str, start: int, end: int, verbatim: str, *,
                 stop: int | None = None) -> str:
     """The period a guide governs, read from the guide's OWN sentence first.
@@ -1881,9 +2001,13 @@ def _period_for(text: str, start: int, end: int, verbatim: str, *,
     quarterly range mislabelled annual is a ~4x error in a decision figure.
 
     ``stop`` ends the trailing scan: a range joined by "and" to a partner never reads the period
-    stated after that partner (review round 2, audit E2-D13)."""
-    q = _QUARTER.search(verbatim)
-    y = _PERIOD.search(verbatim)
+    stated after that partner (review round 2, audit E2-D13).
+
+    A PERIOD THAT NAMES A DEAL IS NOT THE GUIDE'S (TeamNostra fix request 2, RE2-D4 = E2-D3): "the
+    2025 acquisition of Beta Corp" filed a full-year guide under 2025, and "the fourth quarter
+    acquisition" a fiscal 2027 one as Q4 2027 — `_dealless` skips every such phrase."""
+    q = _dealless(_QUARTER, verbatim, 0, len(verbatim))
+    y = _dealless(_PERIOD, verbatim, 0, len(verbatim))
     if q is not None:
         yr = re.search(r"20\d\d", y.group(1)) if y else None
         return f"Q{_Q_NUM[q.group(1).lower()]}" + (f" {yr.group(0)}" if yr else "")
@@ -1911,8 +2035,10 @@ def _period_for(text: str, start: int, end: int, verbatim: str, *,
     tail_hi = cut.start() if cut is not None else hi
     if stop is not None:
         tail_hi = min(tail_hi, stop)
-    tq = next((x for x in _QUARTER.finditer(text, end, tail_hi) if _introduced(text, x)), None)
-    ty = next((x for x in _PERIOD.finditer(text, end, tail_hi) if _introduced(text, x)), None)
+    tq = next((x for x in _QUARTER.finditer(text, end, tail_hi)
+               if _introduced(text, x) and not _DEAL_AFTER.match(text, x.end())), None)
+    ty = next((x for x in _PERIOD.finditer(text, end, tail_hi)
+               if _introduced(text, x) and not _DEAL_AFTER.match(text, x.end())), None)
     if tq is None and ty is None:
         # THE LIST'S HEADER (2026-10-27) — before the lead-in, which reaches only a list's first
         # bullet and reads a date's year as a label (nCino: "second quarter ending July 31, 2026")
@@ -1937,7 +2063,7 @@ def _period_for(text: str, start: int, end: int, verbatim: str, *,
             back = sent + 2
         lead_cut = _CMP.search(text, back, start)
         lead_hi = lead_cut.start() if lead_cut is not None else start
-        tq, ty = _QUARTER.search(text, back, lead_hi), _PERIOD.search(text, back, lead_hi)
+        tq, ty = _dealless(_QUARTER, text, back, lead_hi), _dealless(_PERIOD, text, back, lead_hi)
     if tq is not None:
         yr = re.search(r"20\d\d", ty.group(1)) if ty else None
         return f"Q{_Q_NUM[tq.group(1).lower()]}" + (f" {yr.group(0)}" if yr else "")
@@ -2191,9 +2317,41 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
     statements = [(m.start(), _guide_metric(m["metric"] if "metric" in pat.groupindex
                                             else m.group(1)),
                    _stated_as_prior(text, m.start(), m.end()))
-                  for pat in (_GUIDE_RANGE, _GUIDE_PCT, _GUIDE_CHANGE_SIGNED,
+                  for pat in (_GUIDE_RANGE, _GUIDE_TO, _GUIDE_PCT, _GUIDE_CHANGE_SIGNED,
                               _GUIDE_CHANGE_RANGE, _GUIDE_CHANGE_POINT)
                   for m in pat.finditer(text)]
+    withdrawn = _WITHDRAWN.search(text) is not None
+
+    def _withdrawn_or_calendar_refused(metric: str, at: int, end: int, vb: str) -> bool:
+        """A range that is no current FISCAL guide is refused aloud, never read (TeamNostra fix
+        request 2): one the release WITHDRAWS (RE2-D3) — a withdrawal in its own clause, or one
+        anywhere in a release that states this range as the prior outlook — and one stated for a
+        CALENDAR period (RE2-D5's guide half; #962 refused the actuals' the same way)."""
+        lo, hi = _clause(text, at, end)
+        # a withdrawal in the range's own clause, unless a CURRENT word sits between the two: "…
+        # withdrew its prior outlook and now expects revenue of …" states the new outlook
+        own = any(w.start() > at or not _NEW_OUTLOOK.search(text, w.end(), at)
+                  for w in _WITHDRAWN.finditer(text, lo, hi))
+        if own or (withdrawn and _stated_as_prior(text, at, end)):
+            _refuse(f"the release withdraws its outlook and this {metric} range is the outlook "
+                    "withdrawn, so it is not read as guidance", vb, at)
+            return True
+        if (cal := _calendar_of(text, at, end)) is not None:
+            _refuse(f"the {metric} range is stated for '{cal}', a calendar period, and every guide "
+                    "period here is the filer's fiscal one", vb, at)
+            return True
+        return False
+
+    def _flag_default(metric: str, period: str, vb: str) -> None:
+        """RE2-D20: a guide filed under the `next-fy` DEFAULT says so. The period may be stated
+        where this reader does not look (a list header it cannot parse), so the flag says what was
+        NOT READ, never that the release states none. Kept, so this is no refusal and is not lifted
+        to the reader as one (`mechanical.guidance_refusal_flags`)."""
+        if period == "next-fy":
+            notes.append(f"{GUIDANCE_PERIOD_DEFAULT_PREFIX} — no period was read for this {metric} "
+                         "guide in its own sentence, its list header or its outlook opener, so it "
+                         "is filed under the next-fy default, which reads as annual; verify the "
+                         f"period against the filing: \"{vb[:150]}\" ({src})")
 
     def _superseded_refused(metric: str, at: int, end: int, vb: str) -> bool:
         """A range stated as the prior outlook WITH A NEW ONE for its metric later in the release
@@ -2272,10 +2430,13 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             low=low, high=high, unit=unit, qualitative=False,
             verbatim=vb, source_ref=src,
         ))
+        _flag_default(metric, period, vb)
 
     for m in _GUIDE_RANGE.finditer(text):
         metric = _guide_metric(m["metric"])
         if _money(m["low"]) is None or _money(m["high"]) is None:
+            continue
+        if _two_figures(m):
             continue
         vb = _verbatim(text, m.start(), m.end())
         pair = _paired_range(text, m)
@@ -2296,6 +2457,8 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         # A SUPERSEDED RANGE NEVER TAKES THE SLOT (audit E2-D7) — tested before `seen` is touched,
         # so the range that replaces it, later in the release, is the one read.
         if _superseded_refused(metric, m.start(), m.end(), vb):
+            continue
+        if _withdrawn_or_calendar_refused(metric, m.start(), m.end(), vb):
             continue
         if _sub_line_refused(metric, m.start(), vb):
             continue
@@ -2340,6 +2503,22 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
                     f"already gives for {metric}; one range per metric per scope is read", vb2)
         else:
             _admit_range(pair.second, metric, second, vb2)
+    # "GUIDANCE TO $X TO $Y" (TeamNostra fix request 2, RE2-D7 and RE2-D19): "raises its fiscal 2026
+    # revenue guidance to $1.10 billion to $1.15 billion" and "raised … outlook to … from its prior
+    # outlook of …" stored nothing — the prior range names no metric, so no guide at all. AFTER the
+    # loop above and gated on `seen`, so a release that also states the range in its outlook list
+    # keeps the list's bullet: Burlington's headline "Increasing full year Adjusted EPS guidance to
+    # $11.77 to $11.97" sits above the list main reads, and read first it would take the slot.
+    for m in _GUIDE_TO.finditer(text):
+        metric = _guide_metric(m["metric"])
+        if (metric in seen or _money(m["low"]) is None or _money(m["high"]) is None
+                or _two_figures(m)):
+            continue
+        vb = _verbatim(text, m.start(), m.end())
+        if (_withdrawn_or_calendar_refused(metric, m.start(), m.end(), vb)
+                or _sub_line_refused(metric, m.start(), vb)):
+            continue
+        _admit_range(m, metric, _period_for(text, m.start(), m.end(), vb), vb)
     for m in _GUIDE_PCT.finditer(text):
         metric = _guide_metric(m.group(1))
         lo, hi = _money(m.group(2)), _money(m.group(3))
@@ -2347,6 +2526,8 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             continue
         vb = _verbatim(text, m.start(), m.end())
         if _superseded_refused(metric, m.start(), m.end(), vb):
+            continue
+        if _withdrawn_or_calendar_refused(metric, m.start(), m.end(), vb):
             continue
         if _sub_line_refused(metric, m.start(1), vb):
             continue
@@ -2381,11 +2562,13 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         #     "guide verification (revenue): CIQ 1400.0–1415.0 vs release 4.0–6.5 → MISMATCH flag"
         # The synthesis then wrote a bear point on that MISMATCH — a fabricated signal reaching the
         # decision surface. PR 2 fixed the COMPARE; the label is what let a change through it.
+        period = _period_for(text, m.start(), m.end(), vb)
         out.append(GuidanceItem(
-            metric=metric, period=_period_for(text, m.start(), m.end(), vb),
+            metric=metric, period=period,
             low=lo, high=hi, unit="%", basis="change", qualitative=False,
             verbatim=vb, source_ref=src,
         ))
+        _flag_default(metric, period, vb)
     # CHANGE-BASIS GUIDES, AFTER the level patterns and gated on `seen`, so a metric that stated a
     # LEVEL keeps it: a level is the stronger statement and a release that gives both (SMPL gives
     # net sales as a level AND gross margin as a change) must not have the level overwritten. The
@@ -2409,14 +2592,42 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             vb = _verbatim(text, m.start(), m.end())
             if _superseded_refused(metric, m.start(), m.end(), vb):
                 continue
+            if _withdrawn_or_calendar_refused(metric, m.start(), m.end(), vb):
+                continue
             if _sub_line_refused(metric, m.start(), vb):
                 continue
             seen.add(metric)
+            period = _period_for(text, m.start(), m.end(), vb)
             out.append(GuidanceItem(
-                metric=metric, period=_period_for(text, m.start(), m.end(), vb),
+                metric=metric, period=period,
                 low=lo, high=hi, unit=unit, basis="change", qualitative=False,
                 verbatim=vb, source_ref=src,
             ))
+            _flag_default(metric, period, vb)
+
+    # A SINGLE-POINT GUIDE IS SAID, NOT DROPPED (TeamNostra fix request 2, RE2-D7). "the Company
+    # expects revenue of approximately $520 million" matched nothing and left no note, and Vital
+    # Farms' latest release (8-K 0001193125-26-444348) cut its outlook to "Net revenue of around
+    # $730 million": its page had no current guide and no sign one had been stated. A LEVEL guide is
+    # printed as a range — a point stored as low = high prints "$730.0–$730.0M"
+    # (`mechanical._fmt_guide_range`; only a bps point prints as one figure), a range the company
+    # never stated — so a point is REFUSED aloud, with its sentence, until the printer reads one.
+    # (The CIQ cross-check already takes a point as [low, low], #945.)
+    # Only where a forward word governs it: "Revenue of approximately $520 million increased 8%" is
+    # a result, and a note on every result would drown the real ones.
+    pointed: set[tuple[str, str]] = set()
+    for m in _GUIDE_POINT.finditer(text):
+        metric = _guide_metric(m["metric"])
+        point = " ".join(m["point"].split())
+        # a brand's or a segment's point is no company guide (Simply Good's "◦ OWYN Net Sales of
+        # $145 million" under its fiscal 2025 outlook) — the range reader refuses those aloud as
+        # sub-lines; a point is two steps from a company guide, so it is left as main left it
+        if ((metric, point.lower()) in pointed or _sub_line(text, metric, m.start()) is not None
+                or not _forward_governed(text, m.start(), m.end())):
+            continue
+        pointed.add((metric, point.lower()))
+        _refuse(f"a single-point {metric} guide ({point}) is stated; a guide is read only as a "
+                "range, so it is not read", _verbatim(text, m.start(), m.end()), m.start())
 
     # QUALITATIVE-only: an outlook section that names revenue but carries NO number in its window.
     om = _OUTLOOK.search(text)
@@ -2434,11 +2645,13 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         forward = _FORWARD_VERB.search(window)
         if re.search(r"revenue", window, re.I) and not has_rev_number and forward:
             ym = re.search(r"20\d\d", om.group(1))
+            period = ym.group(0) if ym else "next-fy"
             out.append(GuidanceItem(
-                metric="revenue", period=ym.group(0) if ym else "next-fy",
+                metric="revenue", period=period,
                 low=None, high=None, qualitative=True,
                 verbatim=vb, source_ref=src,
             ))
+            _flag_default("revenue", period, vb)
     return out
 
 

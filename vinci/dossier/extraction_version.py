@@ -730,6 +730,17 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "`rank.structural` marks a filing whose body fetch failed, so a scan that finds no flag "
         "on it does not count the name covered and its prior flag stands; and (RE2-D15) "
         "`segments` reads a figure with a footnote mark after it ('$ 1,229 [1]') as its figure"
+    ),    (
+        "2026-11-11.guides-as-stated",
+        "a guide is read only where the release states one, for the period it states, and a "
+        "guide the reader cannot read is said aloud (TeamNostra fix request 2, RE2-D1, D3, D4, "
+        "D5, D7, D19, D20): two figures joined by 'and' outside 'between' are no range; a range "
+        "the release withdraws, or one stated for a calendar period, is refused with a note; a "
+        "period phrase naming a deal ('the 2025 acquisition') is not the guide's period; a "
+        "qualifier before the low side, 'is expected to increase', and 'guidance to $X to $Y' "
+        "are read; a single-point guide a forward verb governs is refused with a note; and a "
+        "guide filed under the next-fy default carries a machine-tier flag saying no period was "
+        "read"
     ),
 )
 
