@@ -459,9 +459,15 @@ def _offline(monkeypatch: pytest.MonkeyPatch, texts: dict[str, list[str]]) -> No
     monkeypatch.setattr("vinci.graph.filings.html_to_text", lambda s: s)
 
 
+#: VRRM's page as committed on 2026-08-18, frozen (tests/fixtures/frozen_pages/README.md). Its
+#: 2026-11-09 re-assembly onto the September-quarter 10-Q reads two releases, and its Q1 release
+#: (0001193125-26-209031), the one these pins put the wrong row back on, is no longer among them.
+_FROZEN_VRRM = Path("tests/fixtures/frozen_pages/2026-08-18/VRRM/dossier.json")
+
+
 def _vrrm_with_the_old_row() -> tuple[dict[str, Any], str]:
-    """VRRM's committed mechanical layer with main's wrong row put back on its Q1 release."""
-    mech = json.loads(Path("data/dossiers/VRRM/dossier.json").read_text())["mechanical"]
+    """VRRM's frozen 2026-08-18 mechanical layer, main's wrong row put back on its Q1 release."""
+    mech = json.loads(_FROZEN_VRRM.read_text())["mechanical"]
     rel = next(r for r in mech["primary_source"]["releases"]
                if "0001193125-26-209031" in r["source_ref"])
     rel["reconciliation"].append(_row("adjusted eps", "Q1 2026", 1.3))

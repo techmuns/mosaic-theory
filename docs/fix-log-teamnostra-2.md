@@ -58,12 +58,12 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | ID | Order | Status | Commit or PR | Test | Pages rebuilt |
 |---|---|---|---|---|---|
 | E2-D5 | 1 | open | — | — | — |
-| E2-D10 | 1, 3 | open | — | — | — |
-| E2-D16 | 1 | open | — | — | — |
-| E2-D12 | 1 | open | — | — | — |
-| E2-D11 | 1, 3 | open | — | — | — |
-| E2-D15 | 1, 3 | disagree: NFLX's half is fixed on its page — `maturity_wall` reads located, 3194.0, principal and interest (rebuilt 2026-11-05 in #918), read through the pin's own `_filing()`; WERN's half, the millions-only readers and V2-N1 stay open (record §3) | 4634df3d (#918) | `tests/test_pages_await_parser_rebuild.py::test_the_stated_twelve_month_walls_are_located` | NFLX |
-| D-D1 | 1 | open | — | — | — |
+| E2-D10 | 1, 3 | in progress (#949) | #949 | `tests/test_pages_await_parser_rebuild.py::test_vitl_q2_2026_adjusted_ebitda_loss_is_on_the_page` | VITL (re-assembled 2026-11-09) |
+| E2-D16 | 1 | in progress (#949) | #949 (the pin re-pointed to VITL's Q3 10-Q 0001193125-26-444385) | `tests/test_pages_await_parser_rebuild.py::test_vitl_concentration_carries_no_receivables_row` | VITL (re-assembled 2026-11-09) |
+| E2-D12 | 1 | in progress (#949) | #949 | `tests/test_pages_await_parser_rebuild.py::test_vrrm_one_offs_are_the_impairments_not_the_cash_flow_change` | VRRM (re-assembled 2026-11-09) |
+| E2-D11 | 1, 3 | in progress (#949) | #949, EPAM's half; WERN's and MVST's halves wait for their re-exports | `tests/test_pages_await_parser_rebuild.py::test_epam_revenues_of_releases_carry_their_headline_revenue`; WERN and MVST strict-xfail: `tests/test_pages_await_parser_rebuild.py::test_wern_revenues_of_releases_carry_their_headline_revenue`, `tests/test_pages_await_parser_rebuild.py::test_mvst_revenues_of_releases_carry_their_headline_revenue` | EPAM (re-assembled 2026-11-09) |
+| E2-D15 | 1, 3 | in progress (#949) | #949 splits the pin one page per test. NFLX's half was already fixed on its page: `maturity_wall` reads located, 3194.0, principal and interest, landed with its 2026-10-29 assembly 1c5df21b (#867) and kept by 4634df3d (#918), not first in #918 as this row said. WERN's half, the millions-only readers and V2-N1 stay open (record §3) | `tests/test_pages_await_parser_rebuild.py::test_nflx_stated_twelve_month_wall_is_located`; WERN strict-xfail: `tests/test_pages_await_parser_rebuild.py::test_wern_stated_twelve_month_wall_is_located` | NFLX |
+| D-D1 | 1 | in progress (#949) | #949 | `tests/test_lease_basis.py::test_d1_neg_an_unchecked_quarter_with_an_unavailable_lease_cell_is_not_priced` | WLK (re-assembled 2026-11-09: 7 unpriced quarters named, ex-lease median 7.9102 over 34 → 8.3283 over 28, R1 116.1475 → 124.0268, extraction off 2026-10-09.3) |
 | RBC-D1 | 2 | fixed | 6fbbb4a2 (#936) | `tests/test_customer_count.py::test_every_committed_page_prints_its_structured_count_or_none` | count written at $0: AMZN, BRBR, CNXC, FUBO, GOOGL, IT, LLY, MCK, MVST, NFLX, NKE, ORKA, PARR, ROST, SMPL, TGT, TJX, VITL, VRRM, WERN; no count until re-assembled (paid; prechecks STOP): EPAM, NCNO, TECX, UBER, V, WLK; AORT not fixing: name retired (operator 2026-11-09), its page off the corpus; all 27 roster pages re-rendered |
 | RD-D1 | 2 | in progress (#953) | #953 | `tests/test_impairment_headroom.py::test_mcks_headroom_is_both_legs_at_one_date` | the dated headroom on all 27 committed pages (MCK $12,950.0M → $15,214.0M; AMZN dated 2025-12-31; TGT, BURL, ROST UNKNOWN; V's balances to 2026-06-30); the peer block on MCK, AMZN, TGT, BURL; AORT not fixing: name retired (operator 2026-11-09), its page off the corpus |
 | RA-D1 | 2 | fixed | 6fbbb4a2 (#936) | `tests/test_surprise_listing_block.py::test_parrs_committed_page_states_its_own_listings_surprise_history` | PARR |
@@ -137,7 +137,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RG-D21 | 4 | open | — | — | — |
 | RD-D2 | 4 | open | — | — | — |
 | RD-D3 | 4 | open | — | — | — |
-| RD-D4 | 4 | open | — | — | — |
+| RD-D4 | 4 | open | evidence, not a fix: VITL's $0 precheck of 2026-11-09 listed 6 regressions and not its R1 anchor base, 30.0469 → None on the paid page, because the `anchor` block it compares by presence stays present; and UBER's of 2026-11-09 read "0 regressions" while the paid page's `valuation_basis.priceable` went True → False (its bridge $5,356.0M against CIQ's comps TEV less market cap $8,973.0M), the block present either way (`docs/records/2026-11-09-fix-request-2-order-1-rebuilds.md`) | — | — |
 | RA-D5 | 5 | open | — | — | — |
 | RA-D7 | 5 | open | — | — | — |
 | RA-D10 | 5 | open | — | — | — |

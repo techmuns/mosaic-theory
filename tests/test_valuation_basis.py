@@ -38,6 +38,18 @@ def _page(t: str) -> dict[str, Any]:
     return doc
 
 
+#: UBER's page as committed on 2026-10-26, frozen (tests/fixtures/frozen_pages/README.md). Its
+#: 2026-11-09 re-assembly is not priceable on R4 — the bridge reads the 2026-09-30 balance sheet,
+#: CIQ's comps TEV does not yet — so the two R4 value pins below read the page that was.
+_FROZEN_R4 = {"UBER": ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "UBER"}
+
+
+def _r4_page(t: str) -> dict[str, Any]:
+    folder = _FROZEN_R4.get(t, DOSS / t)
+    doc: dict[str, Any] = json.loads((folder / "dossier.json").read_text())
+    return doc
+
+
 # --- the blocks on every committed page are the page's own --------------------------------------
 
 def test_every_committed_page_carries_blocks_derived_from_itself() -> None:
@@ -107,7 +119,7 @@ def test_the_tag_is_computed_so_a_hand_re_tag_cannot_leave_it_wrong() -> None:
 
 @pytest.mark.parametrize("t", ["AMZN", "UBER"])
 def test_an_r4_page_states_r4s_basis_from_its_own_layers(t: str) -> None:
-    doc = _page(t)
+    doc = _r4_page(t)
     b = doc["valuation_basis"]
     assert (b["recipe"], b["earnings_basis"], b["multiple_basis"], b["ev_bridge_basis"]) == (
         sc.RECIPE_R4, "NTM EBIT", sc.BASIS_EV_NTM_EBIT, "CIQ TEV-compatible")
@@ -478,7 +490,7 @@ def test_the_r4_components_carry_an_unread_lines_reason(t: str) -> None:
     """(PR #877 round 2) The page as its owed rebuild writes the bridge — a 0.0 preferred/minority
     line becomes no figure plus its reason — re-derived through the serializer: the R4 block's
     components sum over the lines CIQ states and carry each unread line's reason."""
-    doc = _page(t)
+    doc = _r4_page(t)
     for ln in doc["ev_bridge"]["lines"]:
         if ln["label"] in ("Total Pref. Equity", "Total Minority Interest") and ln["value"] == 0.0:
             ln.update(value=None, unread=f"the balance sheet carries no '{ln['label']}' row")

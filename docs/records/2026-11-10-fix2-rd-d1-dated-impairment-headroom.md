@@ -117,6 +117,9 @@ the same `build_capital_allocation` sites (merged as `f491d155`).
     - a long line is wrapped;
     - duplicate scans are removed.
   - Not changed (1): treating a single-family filer as one leg is a choice (below).
+- **The overlap with the order-1 rebuild (#949).** It merged first and re-assembled VITL, VRRM, EPAM, WLK, V, UBER and TECX. The merge of main took #949's pages as they are and re-ran this PR's $0 headroom refresh on them with the merged code; no `.md` was hand-merged.
+  - Each of the seven then differs from main only by the headroom field and its refresh entry.
+  - V's re-assembly already carries its 2026-06-30 balances.
 - **Gate.** `bin/commit` green, with CIQ unlinked.
 
 **BOUNDARY.**

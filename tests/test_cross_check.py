@@ -170,7 +170,11 @@ def test_an_abandoned_alias_is_never_served_for_a_later_period() -> None:
     under `Revenues`."""
     from vinci.edgar.concepts import CONCEPT_ALIASES, extract_points, facts_as_of, points_for_tag
 
-    uber, gone = _facts("UBER"), "RevenueFromContractWithCustomerExcludingAssessedTax"
+    # UBER's tracking fixture as committed at main `6fbbb4a2` (32 revenue filing dates), frozen
+    # 2026-11-09 when its page moved to the September-quarter 10-Q
+    # (`tests/fixtures/companyfacts_frozen/README.md`)
+    uber = json.loads((ROOT / "tests/fixtures/companyfacts_frozen/UBER.json").read_text())
+    gone = "RevenueFromContractWithCustomerExcludingAssessedTax"
     tags = CONCEPT_ALIASES["revenue"]
     dates = sorted({p.filed for t in tags for p in points_for_tag(uber, t)})
     assert len(dates) == 32
@@ -243,7 +247,10 @@ def test_a_latest_period_that_cannot_be_differenced_is_unknown_never_an_older_qu
 def test_the_self_funding_cite_names_the_quarter_it_read() -> None:
     """The stale quarter went unseen behind a cite that said only 'latest-Q'. The cite assembly
     writes names it — and falls back to the old words only where there is no quarter to name."""
-    assert dm._self_funding_ref(_facts("WLK")) == (
+    # WLK's tracking fixture as committed at main `cb8139ee`, frozen 2026-11-09 when its page moved
+    # to the September-quarter 10-Q (`tests/fixtures/companyfacts_frozen/README.md`)
+    frozen = json.loads((ROOT / "tests/fixtures/companyfacts_frozen/WLK.json").read_text())
+    assert dm._self_funding_ref(frozen) == (
         "EDGAR OCF sign, quarter to 2026-06-30 + CIQ LTM FCF sign")
     assert dm._self_funding_ref(None) == "EDGAR latest-Q OCF sign + CIQ LTM FCF sign"
 
