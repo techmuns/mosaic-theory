@@ -37,7 +37,14 @@ from pydantic import BaseModel, Field, model_validator
 from vinci.eod.dividends import DividendSource, growth
 from vinci.eod.splits import SplitSource, close_on_basis
 from vinci.labels import resolve_label
-from vinci.schemas.ledger import EVENT_CLOSE, ORIGIN_SCREEN
+from vinci.schemas.ledger import (
+    EVENT_CLOSE,
+    EVENT_CORRECTION,
+    ORIGIN_SCREEN,
+    LedgerEntry,
+    correction_note,
+    corrections_by_decision,
+)
 from vinci.sleeves import DEFAULT_SLEEVE
 
 # --- design constants (tunable; named so a change is a decision, not a drift) ------------------
@@ -391,9 +398,38 @@ def decision_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
     number the fund exists to measure, silently, with nothing red.
 
     Legacy rows have no ``event`` key at all and are decision rows by definition, so this is a
-    no-op on everything committed before 2026-07-22.
+    no-op on everything committed before 2026-07-22. A CORRECTION row (RF-D7) is no position
+    either: only a row with no ``event`` is a decision.
     """
-    return [r for r in raw if entry_of(r).get("event") != EVENT_CLOSE]
+    return [r for r in raw if entry_of(r).get("event") is None]
+
+
+def apply_corrections(raw: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[str]]:
+    """The raw ledger as the monitor reads it (RF-D7): every decision a CORRECTION row names
+    carries the corrected entry price and date — at the row's top level and in its payload, the
+    two places a reader looks — the correction rows themselves dropped, and one note per
+    corrected decision naming the sealed and the corrected entry. The committed rows are read,
+    never rewritten; a decision corrected twice, or a correction naming no decision, raises
+    (`corrections_by_decision`)."""
+    entries = [entry_of(r) for r in raw]
+    fixes = corrections_by_decision(LedgerEntry.model_validate(e) for e in entries)
+    out: list[dict[str, Any]] = []
+    notes: list[str] = []
+    for r, e in zip(raw, entries, strict=True):
+        if e.get("event") == EVENT_CORRECTION:
+            continue
+        fix = fixes.get(str(e.get("entry_id"))) if e.get("event") is None else None
+        if fix is None:
+            out.append(r)
+            continue
+        notes.append(correction_note(LedgerEntry.model_validate(e), fix))
+        upd = {"entry_price": fix.entry_price,
+               "entry_price_as_of": fix.entry_price_as_of.isoformat()}
+        row = {**r, **upd}
+        if isinstance(r.get("payload"), str):
+            row["payload"] = json.dumps({**e, **upd})
+        out.append(row)
+    return out, notes
 
 
 def close_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:

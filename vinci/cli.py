@@ -28,7 +28,7 @@ from vinci.eod import (
     ingest_prices_per_symbol,
     last_completed_session,
 )
-from vinci.eod.client import store_calendar
+from vinci.eod.client import RESTATE_TOL, store_calendar
 from vinci.eod.dividends import DividendsUnknownError, default_dividends, growth
 from vinci.eod.splits import (
     SplitsUnconfirmedError,
@@ -62,11 +62,13 @@ from vinci.resolver.aliases import load_first_sessions
 from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
+    EVENT_CORRECTION,
     ORIGIN_FOLLOWED,
     ORIGIN_SCREEN,
     Confidence,
     LedgerEntry,
     Verdict,
+    corrections_by_decision,
     origin_of,
     sleeve_of,
 )
@@ -1804,6 +1806,89 @@ def _cmd_close_position(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_correct_entry(args: argparse.Namespace) -> int:
+    """Append the CORRECTION row for one decision, by the RF-D7 rule (operator ruling 2026-11-09).
+
+    THE RULE IS COMPUTED, NEVER TYPED (`vinci.ledger.correction`): the corrected entry is the last
+    US close completed at the decision's own ``decided_at`` (read as IST; a date-only stamp at the
+    end of that IST day), read from Polygon's daily bars for the name. The sealed close must read
+    the same on those bars, so a basis moved by a split or a revision since refuses rather than
+    correcting across it. ``--dry-run`` prints the correction and writes nothing.
+
+    WHAT IS WRITTEN, beyond the one row: the working store's ledger table is first re-seeded from
+    the committed snapshot (`Store.rebuild_from_snapshots`, additive; an identical row is a no-op),
+    because the export after the append writes the store's whole ledger over the committed file —
+    a store missing committed rows would be refused there by the no-row-drop guard."""
+    from vinci.ledger.correction import correct_entry, decision_moment, rule_session
+
+    cfg = get_config()
+    reason = (args.reason or "").strip()
+    if not reason:
+        print("REFUSED: --reason is required — a correction to an append-only record states its "
+              "grounds.")
+        return 1
+    path = cfg.snapshots_dir / "decision_ledger.jsonl"
+    committed = [LedgerEntry.model_validate(json.loads(json.loads(ln)["payload"]))
+                 for ln in path.read_text().splitlines() if ln.strip()]
+    decision = next((e for e in committed if e.entry_id == args.entry_id and e.event is None),
+                    None)
+    if decision is None:
+        print(f"REFUSED: no decision row {args.entry_id!r} in {path}.")
+        return 1
+    # ALREADY CORRECTED → said before any fetch, so a dry run never prints a correction as pending
+    if (done := corrections_by_decision(committed).get(decision.entry_id)) is not None:
+        print(f"REFUSED: {decision.entry_id} is already corrected by {done.entry_id} "
+              f"({done.entry_price:g} on {done.entry_price_as_of}) — one correction per decision.")
+        return 1
+    sec_path = cfg.snapshots_dir / "securities.jsonl"
+    syms = ({str(r["internal_id"]): str(r["eod_symbol"]) for ln in
+             sec_path.read_text().splitlines()
+             if ln.strip() and (r := json.loads(ln)).get("eod_symbol")}
+            if sec_path.exists() else {})
+    sym = syms.get(decision.internal_id, decision.ticker)
+    bars = dict(PolygonEodClient.from_config(cfg).daily_bars(
+        sym, decision.entry_price_as_of - timedelta(days=10),
+        decision.decided_at.date() + timedelta(days=1)))
+    sealed_bar = bars.get(decision.entry_price_as_of)
+    if sealed_bar is None or abs(sealed_bar.close / decision.entry_price - 1.0) > RESTATE_TOL:
+        print(f"REFUSED: Polygon's {sym} close for the sealed session {decision.entry_price_as_of} "
+              f"is {getattr(sealed_bar, 'close', None)!r}, not the sealed "
+              f"{decision.entry_price:g} — the basis has moved since, and no correction is read "
+              f"across it.")
+        return 1
+    session = rule_session(decision.decided_at, list(bars))
+    if session is None:
+        print(f"REFUSED: no {sym} session closed before {decision.entry_id}'s decision moment.")
+        return 1
+    moment = decision_moment(decision.decided_at)
+    print(f"{decision.entry_id} ({decision.ticker}): decided {decision.decided_at} (IST) = "
+          f"{moment:%Y-%m-%d %H:%M} ET")
+    print(f"  sealed     {decision.entry_price:g} on {decision.entry_price_as_of}")
+    if session == decision.entry_price_as_of:
+        print("  the rule's close IS the sealed one — nothing to correct.")
+        return 0
+    stale = sum(1 for d in bars if decision.entry_price_as_of < d <= session)
+    print(f"  the rule   {bars[session].close:g} on {session} — the last close completed at the "
+          f"decision, {stale} session(s) after the sealed one")
+    if args.dry_run:
+        print("  DRY RUN: nothing written.")
+        return 0
+    try:
+        with Store(cfg.db_path) as store:
+            store.rebuild_from_snapshots(cfg.snapshots_dir, tables=["decision_ledger"])
+            # stamped as a close is (naive UTC, as `close-position`): an event's time
+            row = correct_entry(store, entry_id=decision.entry_id,
+                                entry_price=bars[session].close, entry_price_as_of=session,
+                                reason=reason, corrected_at=datetime.now(UTC).replace(tzinfo=None))
+    except LedgerError as exc:
+        print(f"could not correct: {exc}")
+        return 1
+    print(f"  appended {row.entry_id}, correcting {row.corrects_entry_id}; the decision row keeps "
+          f"its sealed price, and every reader of returns reads this one.")
+    _export_ledger(cfg, "correct-entry")
+    return 0
+
+
 def _dossier_doc(ticker: str) -> dict[str, object]:
     path = get_config().data_dir / "dossiers" / ticker.upper() / "dossier.json"
     if not path.exists():
@@ -2536,6 +2621,9 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         print(f"no committed ledger at {ledger_path}")
         return 1
     ledger_all = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
+    # A DECISION SEALED ON A STALE CLOSE IS MARKED FROM ITS CORRECTION (RF-D7): every reader below
+    # sees the corrected entry; the day's notes name the sealed one beside it
+    ledger_all, correction_notes = mon.apply_corrections(ledger_all)
     if not ledger_all:
         print("decision ledger is empty — nothing to monitor")
         return 0
@@ -2614,7 +2702,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         raise RuntimeError(f"dividends UNKNOWN ({exc}) — refusing to derive a realized return on "
                            f"price return in a total-return book") from exc
     closed_entry_ids = mon.closed_decision_ids(ledger_all, as_of=now_date)
-    notes: list[str] = []
+    notes: list[str] = list(correction_notes)
     # AND THE DECISIONS THEMSELVES ARE POINT-IN-TIME. The review flagged the CLOSE half; the same
     # defect sat on the entry half and was louder — re-running `--ref 2026-07-20` marked SMPL's
     # 2026-08-04 re-entry into that day's book with `days_elapsed: -15`, a position that did not
@@ -3034,6 +3122,8 @@ def _cmd_ledger(args: argparse.Namespace) -> int:
         close_mark = (
             f"  ← CLOSE @ {e.exit_price:.2f} on {e.exit_price_as_of}"
             if e.event == EVENT_CLOSE and e.exit_price is not None
+            else f"  ← CORRECTS {e.corrects_entry_id}: the entry is read here (RF-D7)"
+            if e.event == EVENT_CORRECTION
             else ""
         )
         print(
@@ -3042,9 +3132,11 @@ def _cmd_ledger(args: argparse.Namespace) -> int:
             f"{close_mark}"
         )
     n_close = sum(1 for e in entries if e.event == EVENT_CLOSE)
-    if n_close:
-        print(f"\n{len(entries) - n_close} decision(s) · {n_close} close(s) — a close is not a "
-              f"second verdict; the spread counts decisions only.")
+    n_fix = sum(1 for e in entries if e.event == EVENT_CORRECTION)
+    if n_close or n_fix:
+        print(f"\n{len(entries) - n_close - n_fix} decision(s) · {n_close} close(s) · {n_fix} "
+              f"correction(s) — neither a close nor a correction is a second verdict; the spread "
+              f"counts decisions only, each read at its correction where it has one.")
     return 0
 
 
@@ -3521,6 +3613,15 @@ def build_parser() -> argparse.ArgumentParser:
                          help="why the position was closed — the schema refuses a close without "
                               "one, because an unexplained exit cannot be reviewed later")
     p_close.set_defaults(func=_cmd_close_position)
+
+    p_fix = sub.add_parser(
+        "correct-entry",
+        help="append the CORRECTION row for a decision sealed on a stale close (RF-D7)")
+    p_fix.add_argument("entry_id", help="the decision's entry id, e.g. V-GOOGL")
+    p_fix.add_argument("--reason", required=True, help="the grounds, sealed into the row")
+    p_fix.add_argument("--dry-run", dest="dry_run", action="store_true",
+                       help="print the correction the rule reads, and write nothing")
+    p_fix.set_defaults(func=_cmd_correct_entry)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `vinci screen`")

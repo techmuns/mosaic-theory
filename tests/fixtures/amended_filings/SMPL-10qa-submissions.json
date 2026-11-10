@@ -1,0 +1,33 @@
+{
+ "cik": "0001702744",
+ "name": "Simply Good Foods Co",
+ "filings": {
+  "recent": {
+   "accessionNumber": [
+    "0001702744-21-000068",
+    "0001702744-21-000035"
+   ],
+   "filingDate": [
+    "2021-06-30",
+    "2021-04-08"
+   ],
+   "reportDate": [
+    "2021-02-27",
+    "2021-02-27"
+   ],
+   "form": [
+    "10-Q/A",
+    "10-Q"
+   ],
+   "items": [
+    "",
+    ""
+   ],
+   "primaryDocument": [
+    "atk-20210227.htm",
+    "atk-20210227.htm"
+   ]
+  },
+  "files": []
+ }
+}

@@ -32,8 +32,11 @@ _FIX = _ROOT / "tests" / "fixtures" / "cover_count"
 
 
 def _facts(name: str) -> dict[str, Any]:
+    # VRRM's tracking fixture as committed at main `cb8139ee` (its August vintage: the five tags
+    # dated after their own filing), frozen 2026-11-09 when its page moved to the September-quarter
+    # 10-Q (`tests/fixtures/companyfacts_frozen/README.md`)
     path = _FIX / f"{name}.json" if name != "VRRM" else (
-        _ROOT / "tests" / "fixtures" / "companyfacts" / "VRRM.json")
+        _ROOT / "tests" / "fixtures" / "companyfacts_frozen" / "VRRM.json")
     return cast(dict[str, Any], json.loads(path.read_text()))
 
 

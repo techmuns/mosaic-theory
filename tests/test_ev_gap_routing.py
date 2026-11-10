@@ -29,8 +29,15 @@ from vinci.dossier.ev_gap import (
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
+#: VITL's page as committed on 2026-08-18, frozen (tests/fixtures/frozen_pages/README.md). The VITL
+#: counterexample below is ITS FY2026 EBITDA consensus (dispersion 263.7%); the 2026-11-09
+#: re-assembly (fix request 2, order 1) reads a later consensus that routes three-ratio.
+FROZEN_VITL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "VITL"
+
+
 def _cell(ticker: str, metric: str, fy: str | None = None) -> dict[str, object]:
-    d = json.loads((ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())
+    folder = FROZEN_VITL if ticker == "VITL" else ROOT / "data" / "dossiers" / ticker
+    d = json.loads((folder / "dossier.json").read_text())
     cells = d["mechanical"]["consensus_context"]["consensus_levels"][metric]
     return cells[0] if fy is None else next(c for c in cells if str(c["fy"]) == fy)
 
@@ -147,7 +154,7 @@ def test_every_name_routes_and_the_split_is_the_measured_one() -> None:
             unrouted.add(f.parent.name)
             continue
         got[f.parent.name] = route_for(lv["EBITDA"][0])[0]
-    assert got["VITL"] == Route.TWO_RATIO
+    assert "VITL" in got, "VITL's living page carries an EBITDA consensus block"
     assert got["MVST"] == Route.PRICE_IMPLIED_ONLY
     assert got["SMPL"] == Route.FULL
     assert unrouted <= UNROUTED_BY_DESIGN, (

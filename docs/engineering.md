@@ -355,7 +355,10 @@ PR (CLAUDE.md: coin-time translation).
   `frontend/views/shared/uw-card.js`.
 - **ledger / spread** — the append-only paper-verdict ledger; the **BUY−AVOID forward-return
   spread** is THE fund metric. **close row** = the ledger's position-closed row (with a stated
-  reason); **watch** = a `VerdictStatus` on the underwrite record — not underwritable at today's
+  reason); **correction row** (`EVENT_CORRECTION`, id `R-<candidate>`, 2026-11-10, RF-D7) = an
+  appended row that changes the entry a decision is READ at — the last close completed at the
+  decision — while the decision row stays as sealed (`vinci correct-entry`,
+  `vinci/ledger/correction.py`); **watch** = a `VerdictStatus` on the underwrite record — not underwritable at today's
   price, franchise intact, no position (`scenarios.py`).
 - **sleeve** — a tagged STRATEGY BOOK with its own playbook, verdict labels and attribution curve
   (plain words: which strategy is this name being judged under). Five recorded — `overshoot`

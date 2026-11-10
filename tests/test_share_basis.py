@@ -129,8 +129,11 @@ def test_fubos_pre_restructuring_count_is_refused_at_the_new_bound() -> None:
 
 def test_a_current_count_is_still_accepted() -> None:
     """The bound must refuse an ERA, not a few quarters. Without this the fix could pass by
-    refusing everything, and the fleet pin below would then be the only thing noticing."""
-    facts = _facts("UBER")
+    refusing everything, and the fleet pin below would then be the only thing noticing. Read on
+    UBER's tracking fixture as committed at main `6fbbb4a2` (its latest count at 2026-08-10),
+    frozen 2026-11-09 when its page moved to the September-quarter 10-Q
+    (`tests/fixtures/companyfacts_frozen/README.md`)."""
+    facts = json.loads((FIXTURES.parent / "companyfacts_frozen" / "UBER.json").read_text())
     pt = latest_instant(extract_points(facts, "shares"))
     assert pt is not None
     got = _edgar_shares_outstanding(_stub_edgar(facts), "0001543151", as_of=date(2026, 8, 10))

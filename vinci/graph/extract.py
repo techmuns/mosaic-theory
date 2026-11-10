@@ -250,8 +250,12 @@ def extract_graph_edges(
     if got is None:
         info["status"] = "no_10k"
         return [], info
-    accession, text = got
+    accession, text, amendments, cut = got
     info["accession"] = accession
+    if amendments is not None:  # every later annual /A, and why it is or is not read (RE1-D13)
+        info["amendments"] = amendments
+    if cut is not None:  # what the excerpt cap left unread (RE1-D14)
+        info["excerpts_cut"] = cut
     if not text.strip():
         info["status"] = "empty_excerpts"
         return [], info

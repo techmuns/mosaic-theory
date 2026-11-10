@@ -11,6 +11,9 @@ committed page — the real JSON, end to end — and is a strict xfail naming it
   (``raises=AssertionError``) does not absorb — a rebuild that moves to a newer filing fails loudly
   and re-points the pin, instead of leaving one that can never pass.
 
+A pin covering several pages is split one page to a test, so each flips on its own rebuild. A pin
+whose page has landed the fix carries no marker and stays as an ordinary end-to-end pin.
+
 Facts only: every pin is a value a filing states, read by deterministic code — no LLM text.
 """
 from __future__ import annotations
@@ -60,41 +63,62 @@ def test_fubo_q1_2026_adjusted_ebitda_is_the_quarters_own() -> None:
     assert not any(v == 77.9 for _m, _p, v in rows)
 
 
-@_awaits("audit E2-D10: VITL's Q2 2026 adjusted EBITDA loss of $26.6M is dropped")
 def test_vitl_q2_2026_adjusted_ebitda_loss_is_on_the_page() -> None:
+    """Audit E2-D10 — landed on VITL's 2026-11-09 page (fix request 2, order 1)."""
     assert ("adjusted ebitda", "Q2 2026", -26.6) in _rows(_release("VITL", "0001193125-26-336692"))
 
 
-@_awaits("audit E2-D12: VRRM carries a $94.3M cash-flow change as an impairment one-off")
 def test_vrrm_one_offs_are_the_impairments_not_the_cash_flow_change() -> None:
+    """Audit E2-D12 — landed on VRRM's 2026-11-09 page (fix request 2, order 1)."""
     amounts = [o["amount"] for o in _release("VRRM", "0001193125-26-335111")["one_offs"]]
     assert 94.3 not in amounts and {64.0, 40.4} <= set(amounts)
 
 
-@_awaits("audit E2-D11: 'Revenues of' was not read — EPAM, WERN and MVST carry no headline revenue")
-def test_revenues_of_releases_carry_their_headline_revenue() -> None:
-    expected = {
-        ("EPAM", "0001352010-26-000043"): ("Q2 2026", 1415.0),
-        ("EPAM", "0001352010-26-000026"): ("Q1 2026", 1400.0),
-        ("WERN", "0000793074-26-000129"): ("Q2 2026", 933.9),
-        ("WERN", "0000793074-26-000092"): ("Q1 2026", 808.6),
-        ("WERN", "0000793074-26-000009"): ("Q4 2025", 737.6),
-        ("MVST", "0001628280-26-055471"): ("Q2 2026", 87.3),
-    }
-    missing = [k for k, (p, v) in expected.items() if ("revenue", p, v) not in _rows(_release(*k))]
-    assert not missing, f"no headline revenue row: {missing}"
+def _no_headline_revenue(ticker: str, expected: dict[str, tuple[str, float]]) -> list[str]:
+    """The cited releases (by accession) whose reconciliation lacks the stated headline revenue."""
+    return [acc for acc, (p, v) in expected.items()
+            if ("revenue", p, v) not in _rows(_release(ticker, acc))]
 
 
-@_awaits("audit E2-D15: WERN's and NFLX's 10-Qs state a ≤12m figure; the pages say none is stated")
-def test_the_stated_twelve_month_walls_are_located() -> None:
-    wern = _filing("WERN", "0000793074-26-000140")["maturity_wall"]
+def test_epam_revenues_of_releases_carry_their_headline_revenue() -> None:
+    """Audit E2-D11, EPAM's half — landed on EPAM's 2026-11-09 page (fix request 2, order 1)."""
+    missing = _no_headline_revenue("EPAM", {"0001352010-26-000043": ("Q2 2026", 1415.0),
+                                            "0001352010-26-000026": ("Q1 2026", 1400.0)})
+    assert not missing, f"EPAM: no headline revenue row: {missing}"
+
+
+@_awaits("audit E2-D11: 'Revenues of' was not read — WERN carries no headline revenue")
+def test_wern_revenues_of_releases_carry_their_headline_revenue() -> None:
+    missing = _no_headline_revenue("WERN", {"0000793074-26-000129": ("Q2 2026", 933.9),
+                                            "0000793074-26-000092": ("Q1 2026", 808.6),
+                                            "0000793074-26-000009": ("Q4 2025", 737.6)})
+    assert not missing, f"WERN: no headline revenue row: {missing}"
+
+
+@_awaits("audit E2-D11: 'Revenues of' was not read — MVST carries no headline revenue")
+def test_mvst_revenues_of_releases_carry_their_headline_revenue() -> None:
+    missing = _no_headline_revenue("MVST", {"0001628280-26-055471": ("Q2 2026", 87.3)})
+    assert not missing, f"MVST: no headline revenue row: {missing}"
+
+
+def test_nflx_stated_twelve_month_wall_is_located() -> None:
+    """Audit E2-D15, NFLX's half — landed with its 2026-10-29 assembly (#867), kept 2026-11-05."""
     nflx = _filing("NFLX", "0001065280-26-000291")["maturity_wall"]
-    assert (wern["state"], wern["within_12m_total"]) == ("located", 0.0)
     assert (nflx["state"], nflx["within_12m_total"]) == ("located", 3194.0)
     assert nflx.get("basis") == "principal and interest"
 
 
-@_awaits("audit E2-D16: VITL shows a receivables row (Customer C) as revenue concentration")
+@_awaits("audit E2-D15: WERN's 10-Q states a ≤12m figure; the page says none is stated")
+def test_wern_stated_twelve_month_wall_is_located() -> None:
+    wern = _filing("WERN", "0000793074-26-000140")["maturity_wall"]
+    assert (wern["state"], wern["within_12m_total"]) == ("located", 0.0)
+
+
 def test_vitl_concentration_carries_no_receivables_row() -> None:
-    conc = _filing("VITL", "0001193125-26-336753")["concentration"]
-    assert "Customer C" not in [c["name"] for c in conc["customers"]]
+    """Audit E2-D16 — landed on VITL's 2026-11-09 page (fix request 2, order 1), which reads its
+    Q3 10-Q. Re-pointed from the Q2 10-Q 0001193125-26-336753: the Q3 filing's revenue table
+    names Customers A (20%) and B (11%), its receivables table A, B, C (13%) and D (10%)."""
+    conc = _filing("VITL", "0001193125-26-444385")["concentration"]
+    names = [c["name"] for c in conc["customers"]]
+    assert "Customer C" not in names and "Customer D" not in names, names
+    assert {"Customer A", "Customer B"} <= set(names), names  # the revenue rows are still read
