@@ -233,3 +233,128 @@ def test_re2_d7c_a_range_never_reads_as_a_point() -> None:
     for text in ("For fiscal 2026, the Company expects revenue of $1.10 billion to $1.15 billion.",
                  "For fiscal 2026, the Company expects revenue of $1.10 to $1.15 billion."):
         assert _refusals(text) == [], text
+
+
+# --- review (code-review high): edges of the new readers -----------------------------------------
+def test_re2_d1_two_actuals_are_no_current_guide_that_supersedes_a_prior_one() -> None:
+    """Two figures joined by "and" state no guide (RE2-D1), so they are no CURRENT statement either:
+    counted as one, they made `_superseded_refused` drop the only range the release states."""
+    assert _guides("Previously, the Company expected revenue of $1.00 billion to $1.05 billion for "
+                   "fiscal 2026. Total revenues of $412.0 million and $1,180.5 million for the "
+                   "three and nine months ended September 30, 2026.") == [
+        ("revenue", "fiscal 2026", 1000.0, 1050.0, "$M")]
+
+
+def test_re2_d7d_guidance_to_shared_by_two_metrics_is_refused_aloud() -> None:
+    """BellRing's shape through the "guidance to" reader: ONE range, TWO metrics — the range loop
+    refuses it, and so must this one, or adjusted EBITDA takes net sales' $2.41–$2.49 billion."""
+    text = ("The Company raises its fiscal 2026 net sales and adjusted EBITDA guidance to $2.41 "
+            "billion to $2.49 billion.")
+    assert _guides(text) == []
+    assert any("shared by 2 metrics" in f for f in _refusals(text)), _refusals(text)
+
+
+def test_re2_d19_a_prior_guidance_to_gives_way_to_a_current_one() -> None:
+    """`_superseded_refused` governs the "guidance to" reader as it does every other: a range stated
+    as the prior outlook, with a current one later, never takes the slot."""
+    assert _guides("In May, the Company previously provided revenue guidance to $1.00 billion to "
+                   "$1.05 billion. The Company now raises its fiscal 2026 revenue guidance to "
+                   "$1.10 billion to $1.15 billion.") == [
+        ("revenue", "fiscal 2026", 1100.0, 1150.0, "$M")]
+
+
+def test_re2_d3_a_current_guide_beside_a_later_withdrawal_of_another_outlook_is_read() -> None:
+    """A withdrawal AFTER the range in its clause withdraws the range only when no current word
+    states it: "now expects revenue of … and is withdrawing its long-term outlook" keeps it."""
+    assert _guides("For fiscal 2026, the Company now expects revenue of $1.10 billion to $1.15 "
+                   "billion and is withdrawing its long-term outlook.") == [
+        ("revenue", "fiscal 2026", 1100.0, 1150.0, "$M")]
+
+
+def test_re2_d3_a_range_withdrawn_after_it_is_still_refused() -> None:
+    """NEGATIVE PIN — a withdrawal after the range, no current word before it, still refuses."""
+    text = ("Revenue of $1.00 billion to $1.05 billion for fiscal 2026 is no longer achievable, "
+            "and the Company withdraws that outlook.")
+    assert _guides(text) == []
+    assert any("withdraw" in f for f in _refusals(text)), _refusals(text)
+
+
+def test_re2_d5_a_calendar_period_opening_a_long_sentence_is_refused() -> None:
+    """The calendar look-back fell back to the guide's own start when no sentence end sat within
+    170 characters, so a long sentence's (or the text's) opening "For calendar 2027" went unread."""
+    long_ = ("For calendar 2027, based on our current expectations for the macroeconomic "
+             "environment, tariff policy, consumer demand and the timing of new store openings "
+             "across the portfolio, the Company expects revenue of $1.20 billion to $1.30 billion.")
+    assert _guides(long_) == []
+    assert any("calendar" in f for f in _refusals(long_)), _refusals(long_)
+    first = "For calendar 2027, the Company expects revenue of $1.20 billion to $1.30 billion."
+    assert parse_release(first, source_ref="8-K X EX-99.1").guidance == []
+
+
+def test_re2_d7c_as_expected_before_an_actual_is_no_forward_verb() -> None:
+    """"As expected, revenue of $412 million grew 8%" is a result: "as expected" says the result met
+    a forecast, it states none — no single-point refusal."""
+    assert _refusals("As expected, revenue of $412 million grew 8% year-over-year.") == []
+    assert _refusals("Better than anticipated, revenue of $412 million grew 8%.") == []
+
+
+# --- review findings 7–10, fixed in the PR's own round 0 ----------------------------------------
+def test_re2_d3_a_withdrawal_of_another_horizon_leaves_a_prior_range_read() -> None:
+    """Review finding 7: ANY withdrawn outlook refused every prior-stated range. A long-term 2030
+    outlook withdrawn is not the fiscal 2026 one, and "suspended production … outlook" withdraws
+    nothing."""
+    for lead in ("The Company withdrew its long-term 2030 outlook. ",
+                 "The Company withdrew its fiscal 2030 outlook. ",
+                 "The Company suspended production at its Ohio plant, which weighs on its "
+                 "outlook. "):
+        assert _guides(lead + "The Company previously expected fiscal 2026 revenue of $1.10 "
+                       "billion to $1.15 billion.") == [
+            ("revenue", "fiscal 2026", 1100.0, 1150.0, "$M")], lead
+
+
+def test_re2_d3_a_withdrawal_of_this_horizon_still_refuses() -> None:
+    """NEGATIVE PIN — the same year, or no year named, withdraws this range."""
+    for lead in ("The Company withdrew its fiscal 2026 outlook. ",
+                 "The Company has withdrawn its outlook. "):
+        text = lead + "The Company previously expected fiscal 2026 revenue of $1.10 billion to " \
+                      "$1.15 billion."
+        assert _guides(text) == [], lead
+
+
+def test_re2_d3_a_passive_withdrawal_refuses() -> None:
+    """Review finding 8: "… outlook … has been withdrawn" is RE2-D3's case in the passive voice."""
+    text = ("The revenue outlook of $1.00 billion to $1.05 billion for fiscal 2026 has been "
+            "withdrawn.")
+    assert _guides(text) == []
+    assert any("withdraw" in f for f in _refusals(text)), _refusals(text)
+
+
+def test_re2_d4_a_deal_stated_before_its_period_is_not_the_guides_period() -> None:
+    """Review finding 9: RE2-D4 in mirror — the deal noun BEFORE its period."""
+    want = [("revenue", "fiscal 2027", 1100.0, 1200.0, "$M")]
+    assert _guides("Following the acquisition of Beta Corp in the fourth quarter, the Company "
+                   "expects fiscal 2027 revenue of $1.10 billion to $1.20 billion.") == want
+    assert _guides("Including Beta Corp, acquired in the fourth quarter, the Company expects "
+                   "fiscal 2027 revenue of $1.10 billion to $1.20 billion.") == want
+
+
+def test_re2_d4_a_period_after_a_comma_from_a_deal_is_read() -> None:
+    """NEGATIVE PIN — a deal in its own clause leaves the guide's period alone."""
+    assert _guides("Following the acquisition of Beta Corp, for the fourth quarter the Company "
+                   "expects revenue of $300 million to $310 million.") == [
+        ("revenue", "Q4", 300.0, 310.0, "$M")]
+
+
+def test_re2_d7d_a_percent_range_under_dollar_guidance_to_is_refused_aloud() -> None:
+    """Review finding 10: "revenue guidance to 5% to 7% growth" is a growth rate; read through the
+    new reader it was stored as a revenue LEVEL of 5–7 %."""
+    text = "The Company raises its fiscal 2026 revenue guidance to 5% to 7% growth."
+    assert _guides(text) == []
+    assert any("percent" in f for f in _refusals(text)), _refusals(text)
+
+
+def test_re2_d7_to_be_a_range_is_read() -> None:
+    """Review note: "revenue is expected to be $X to $Y" was dropped with no note while its
+    "approximately" form is read — the same RE2-D7 class."""
+    assert _guides("For fiscal 2026, revenue is expected to be $500 million to $550 million.") == [
+        ("revenue", "fiscal 2026", 500.0, 550.0, "$M")]

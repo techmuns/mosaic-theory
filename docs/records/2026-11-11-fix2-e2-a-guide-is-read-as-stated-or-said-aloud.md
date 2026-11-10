@@ -58,7 +58,7 @@ order 4 holds the rest.
 
 **HOW VERIFIED.**
 - **Fail first.** `tests/test_guidance_fix2_e2.py` was run against an export of `origin/main`
-  `670a784c`: 14 of 23 fail. The 9 that pass are the negative pins:
+  `670a784c`: 14 of the 23 written first fail. The 9 that pass are the negative pins:
   - a "between … and" range;
   - a prior range with no withdrawal;
   - a period naming no deal;
@@ -69,7 +69,8 @@ order 4 holds the rest.
   - a new outlook after a withdrawal;
   - a range never read as a point.
 
-  On this branch all 23 pass, and the 30 release and guidance test files pass.
+  On this branch all 37 pass (the 23, plus 14 from code review), and so do the 30 release and
+  guidance test files.
 - **Real text in the pins.** Each is a frozen literal cut from a committed page's cited exhibit:
   - Vital Farms `0001193125-26-444348` (D7's single points);
   - Burlington `0001193125-26-369502` (the "guidance to" headline does not displace the list);
@@ -101,6 +102,35 @@ order 4 holds the rest.
     - D4's deal nouns: 23 hits, none in a guide's clause;
     - D5's calendar periods: none;
     - D1's "of … and": none.
+- **Code review, round 0 (`/code-review high --fix`).** Ten findings, all fixed, each pinned on a
+  test that fails on `dd9d8f44`. The review fixed six:
+  - two figures joined by "and" are no current statement either, so they no longer make
+    `_superseded_refused` drop the only range a release states;
+  - the "guidance to" reader refuses one range shared by two metrics (BellRing's shape) and a
+    prior "guidance to" beside a current one, as the range loop does;
+  - a withdrawal AFTER a range in its clause withdraws it only when no current word states it
+    ("now expects … and is withdrawing its long-term outlook" is read);
+  - the calendar check reads the guide's whole clause. Its 170-character look-back missed a long
+    sentence's opening "For calendar 2027";
+  - "as expected" and "than anticipated" are no forward verb before a single point.
+
+  I fixed the four it left:
+  - a withdrawal covers a range only at its own horizon. A long-term or multi-year outlook, or one
+    naming another year, leaves a prior range read;
+  - the withdrawn outlook must be the verb's direct object (at most four words between) or the
+    subject of a passive one ("… outlook … has been withdrawn");
+  - a deal stated BEFORE its period in one clause ("the acquisition of Beta Corp in the fourth
+    quarter") dates the deal, not the guide;
+  - a percent range under a dollar metric's "guidance to" is refused, never stored as a level in %.
+
+  Also, from the review's note: "revenue is expected to be $X to $Y", with no introducer, is read,
+  as its "approximately" form now is.
+- **One existing pin changed.** `tests/test_guidance_ranges_as_stated.py` stored "The Company
+  expects calendar 2026 revenue of …" as a guide, but only because the calendar look-back missed
+  the text's first sentence. The same sentence after a header was already refused. That row is now
+  its own test: no sub-line refusal, a calendar refusal, no guide.
+- **The corpus after round 0** is byte-identical in guides and flags to the run before it: 141
+  guides, 0 move, the same 14 exhibits' flags.
 - **The version.** Row `2026-11-11.guides-as-stated`, in both tables, re-pinned.
 
 **WHAT REACHES THE SYNTHESIS.** Guidance is not re-read by the $0 release refresh
