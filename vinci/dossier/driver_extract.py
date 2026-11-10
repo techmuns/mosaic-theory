@@ -32,11 +32,20 @@ schema has no verdict/score/direction field.
 
 from __future__ import annotations
 
+import hashlib
 import re
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import Any
+from pathlib import Path
+from typing import Any, Literal
 
-from vinci.dossier.schemas import DriverKind, OperatingDriver
+from vinci.dossier.schemas import (
+    DriverFigure,
+    DriverKind,
+    DriverValueStatus,
+    OperatingDriver,
+    TranscriptLocator,
+)
 from vinci.dossier.synthesis import _CAL_AFTER, _CAL_BEFORE, _DATE_OR_ID, _NUM
 from vinci.graph.llm import LlmClient, LlmError
 
@@ -240,12 +249,16 @@ _UNIT_AFTER = re.compile(r"\s?(" + _alternation(_UNIT_WORDS) + ")", re.IGNORECAS
 
 @dataclass(frozen=True)
 class _Figure:
-    """One stated number and the units printed beside it (None = none stated)."""
+    """One stated number and the units printed beside it (None = none stated). ``start``/``end``
+    bound it in the text it was read from — the number's first character to the end of its unit
+    — so the fact check can read the words beside it."""
 
     value: float
     currency: str | None
     scale: str | None
     unit: str | None
+    start: int = -1
+    end: int = -1
 
 
 def _figures(text: str) -> list[_Figure]:
@@ -271,26 +284,366 @@ def _figures(text: str) -> list[_Figure]:
             value = float(m.group().replace(",", ""))
         except ValueError:
             continue
-        before = text[:m.start()].rstrip()
+        start = m.start()
+        if m.group().startswith("-") and start and (text[start - 1].isdigit()
+                                                    or text[start - 1] == "%"):
+            # "20-40%" is a RANGE: a hyphen glued to the figure before it joins two figures and
+            # is no sign. Read as one, the fact check published "-40%, change down" for a range
+            # its quote never said was a fall.
+            value, start = abs(value), start + 1
+        before = text[:start].rstrip()
         currency = _CURRENCY.get(before[-1:]) if before else None
-        rest, scale, unit = text[m.end():], None, None
+        rest, scale, unit, end = text[m.end():], None, None, m.end()
         if sm := _SCALE_AFTER.match(rest):
-            scale, rest = _SCALE_WORDS[sm.group(1).lower()], rest[sm.end():]
+            scale, rest, end = _SCALE_WORDS[sm.group(1).lower()], rest[sm.end():], end + sm.end()
         if um := _UNIT_AFTER.match(rest):
-            unit = _UNIT_WORDS[um.group(1).lower()]
-        out.append(_Figure(value, currency, scale, unit))
+            unit, end = _UNIT_WORDS[um.group(1).lower()], end + um.end()
+        out.append(_Figure(value, currency, scale, unit, start, end))
     return out
 
 
+def _same_figure(fig: _Figure, q: _Figure) -> bool:
+    """``q`` is this number EXACTLY, carrying every unit ``fig`` states. A unit the value leaves
+    off is not a disagreement ("266" off "266 MWh"); a unit it states differently is ("266 GWh"
+    off "266 MWh")."""
+    return q.value == fig.value and all(
+        want is None or want == got for want, got in
+        ((fig.currency, q.currency), (fig.scale, q.scale), (fig.unit, q.unit)))
+
+
 def _figure_in_quote(fig: _Figure, quote_figs: list[_Figure]) -> bool:
-    """True iff the quote states this number EXACTLY, carrying every unit the value states. A unit
-    the value leaves off is not a disagreement ("266" off "266 MWh"); a unit it states differently
-    is ("266 GWh" off "266 MWh")."""
-    return any(
-        q.value == fig.value
-        and all(want is None or want == got for want, got in
-                ((fig.currency, q.currency), (fig.scale, q.scale), (fig.unit, q.unit)))
-        for q in quote_figs)
+    """True iff the quote states this number EXACTLY, carrying every unit the value states."""
+    return any(_same_figure(fig, q) for q in quote_figs)
+
+
+# --- (RG-D8, 2026-11-09) THE FACT CHECK — the value's figures, read from the QUOTE ---------------
+#
+# THE DIGIT TRACE ABOVE ASKED ONE QUESTION: is each number of the value a number of its quote, in
+# the units the value states? TeamNostra's re-audit (RG-D8) showed what that leaves open, each
+# reproduced against this module on a constructed transcript: "up 7%" read off "...were down
+# 7%..." was KEPT (only "-7%" was dropped, by the sign in the number); "price increase taken" with
+# no figure was kept, since a value with no number traces vacuously; and a quote that is only
+# "500" was kept as a figure of any metric. Every kept row then reached the synthesis headed
+# "validated, cited facts".
+#
+# SO A ROW NOW CARRIES WHAT CODE READ, AND A STATUS. The figures are read from the QUOTE — its
+# units, the direction word printed beside each, the bound word before it — and the model's value
+# is a claim checked against them. A row whose claim fails reads UNKNOWN with the check that failed
+# and carries NO figure; it is never repaired into the reading code would have preferred. An
+# untraceable figure still DROPS the row, as before: that is the "536" class, a number the quote
+# does not contain, and this check changes nothing about it.
+#
+# MEASURED ON THE COMMITTED CORPUS FIRST (28 pages, 881 Tier-B rows, main 6fbbb4a2): 791 verified,
+# 80 qualitative, 10 unknown — 6 whose quote does not name the metric ("It's in the 20 to 40
+# basis point range."), 3 figure-less values not in their quote (a "..." stitch, a paraphrase), 1
+# figure its quote states twice, read differently (AORT's 23%). NO committed row states a
+# direction its quote contradicts, which settles TeamNostra's "latent: not determined". The
+# direction check is shown to bite by flipping every committed row's direction word
+# (`tests/test_driver_facts.py`).
+#
+# WHAT IS NOT CHECKED, AND WHY. TeamNostra's third case — metric "shipments", value "500 units",
+# quote "Orders reached 500 units, while shipments were 320 units" — names the metric, so it
+# passes. A clause-binding rule (the figure's own clause must name the metric when another clause
+# does) caught it and misfired on 6 of 6 committed rows it fired on ("over 20,000 EPAMers have
+# completed training via Anthropic Academy" — the metric is named in a later clause). A rule that
+# is wrong every time it fires on real text is not shipped; the case is recorded as open.
+
+#: The direction words read beside a figure — each an explicit inflection list, because a stem
+#: reads the wrong word class: `accelerat*` read "an AI ACCELERATOR about every 14 seconds" as a
+#: rise (measured on AMZN's committed row), `surg*` would read "surgical", and `contract*` reads
+#: "contracted capacity" (signed) as a fall. NUMERIC direction only: "improved" / "worsened" are
+#: judgments — churn that "improved" fell — so they are not here, and neither is "loss" (a net loss
+#: of $7 million is a level) or "plus" ("80% plus" is a bound, read below).
+_UP = re.compile(
+    r"up|increase[sd]?|increasing|grew|grow[sn]?|growing|growth|rose|rise[sn]?|rising|higher|"
+    r"gain(?:s|ed|ing)?|expand(?:s|ed|ing)?|expansion|jump(?:s|ed|ing)?|climb(?:s|ed|ing)?|"
+    r"accelerat(?:e[sd]?|ing|ion)|boost(?:s|ed|ing)?|surg(?:e[sd]?|ing)|rais(?:e[sd]?|ing)|"
+    r"doubl(?:e[sd]?|ing)|tripl(?:e[sd]?|ing)", re.IGNORECASE)
+_DOWN = re.compile(
+    r"down|decrease[sd]?|decreasing|declin(?:e[sd]?|ing)|fell|fall(?:s|ing|en)?|lower|"
+    r"drop(?:s|ped|ping)?|reduc(?:e[sd]?|ing|tion)|contraction|shr[iau]nk(?:s|ing)?|"
+    r"decelerat(?:e[sd]?|ing|ion)|minus|negative|cut(?:s|ting)?|slow(?:s|ed|ing|er|down)?|"
+    r"soft(?:er|en(?:s|ed|ing)?)|los(?:e|es|t|ing)|halv(?:e[sd]?|ing)", re.IGNORECASE)
+#: A word that ends the reach of a direction word: past it, the figure is a level reached or left
+#: ("up from 106%", "improved to 112%", "versus a 2% decline") — or another comparison's.
+_DIR_STOP = re.compile(r"(?:from|to|versus|vs|compared|than|against)", re.IGNORECASE)
+#: How far a direction word reaches: four words before the figure, two after its unit.
+_DIR_BEFORE, _DIR_AFTER = 4, 2
+_WORD = re.compile(r"[A-Za-z]+(?:[-'][A-Za-z]+)*|[,;:.()]")
+#: The bound words printed immediately before a figure (longest first), and after it.
+_QUALIFIERS: tuple[tuple[str, str], ...] = (
+    ("no more than", "at_most"), ("in excess of", "at_least"), ("more than", "at_least"),
+    ("at least", "at_least"), ("upwards of", "at_least"), ("north of", "at_least"),
+    ("less than", "at_most"), ("fewer than", "at_most"), ("up to", "at_most"),
+    ("at most", "at_most"), ("close to", "approximately"), ("approximately", "approximately"),
+    ("about", "approximately"), ("around", "approximately"), ("roughly", "approximately"),
+    ("nearly", "approximately"), ("almost", "approximately"), ("some", "approximately"),
+    ("over", "at_least"), ("above", "at_least"), ("exceeding", "at_least"),
+    ("under", "at_most"), ("below", "at_most"), ("~", "approximately"))
+_QUALIFIER_BEFORE = re.compile(
+    r"(?:^|[^A-Za-z])(" + "|".join(re.escape(w) for w, _ in _QUALIFIERS) + r")\s*[$€£¥]?\s*$",
+    re.IGNORECASE)
+_QUALIFIER_AFTER = re.compile(r"\s*(?:\+|plus\b)", re.IGNORECASE)
+#: A figure joined to the one before it by nothing but "and" / "or" / a comma shares its
+#: direction ("decreased by 3.3% and 1%") — the coordinated figures take one verb.
+_COORDINATED = re.compile(r"^\s*(?:,\s*)?(?:and|or)?\s*$", re.IGNORECASE)
+#: A "by" ending the text before a figure ("reduced … by 75%").
+_BY_END = re.compile(r"(?:^|[^A-Za-z])by\s*$", re.IGNORECASE)
+#: A direction word that is a verb (or the adverbs "up"/"down"): what a "by" figure measures.
+_VERB_FORM = re.compile(r"\w+(?:ed|ing)|grew|grown|rose|risen|fell|fallen|cut|shr[au]nk|lost|"
+                        r"up|down", re.IGNORECASE)
+_ELLIPSIS = re.compile(r"\s*(?:\.\.\.|…)\s*")
+
+
+_Dir = Literal["up", "down"]
+_Bound = Literal["approximately", "at_least", "at_most"]
+_BOUNDS: dict[str, _Bound] = {"approximately": "approximately", "at_least": "at_least",
+                              "at_most": "at_most"}
+
+
+def _word_direction(w: str) -> _Dir | None:
+    if _UP.fullmatch(w):
+        return "up"
+    if _DOWN.fullmatch(w):
+        return "down"
+    return None
+
+
+def _direction(text: str, k: int, figs: list[_Figure]) -> _Dir | None:
+    """The direction printed beside ``figs[k]`` in ``text``: its sign, else the nearest direction
+    word within reach before it (four words; a "by" figure, its whole clause), else after it —
+    never across punctuation, a stop word or another figure. A figure with none, coordinated to
+    the figure before it, takes that figure's."""
+    fig = figs[k]
+    if fig.value < 0:
+        return "down"
+    lo = figs[k - 1].end if k else 0
+    before = _WORD.findall(text[lo:fig.start])
+    # A "by" figure is the MEASURE OF ITS VERB, however far back the verb sits in the clause —
+    # "we reduced our average insight creation time by 75%" — and only a verb counts: in "reduced
+    # year-over-year revenue growth by approximately 4%" the nearest direction word is the NOUN
+    # "growth", and reading it said up (MCK's committed row, until a corpus mutation caught it).
+    by = _BY_END.search(_unbound(text[lo:fig.start])) is not None
+    for w in reversed(before if by else before[-_DIR_BEFORE:]):
+        if not w[0].isalpha() or _DIR_STOP.fullmatch(w):
+            break
+        if (d := _word_direction(w)) and (not by or _VERB_FORM.fullmatch(w)):
+            return d
+    hi = figs[k + 1].start if k + 1 < len(figs) else len(text)
+    after = _WORD.findall(text[fig.end:hi])
+    if k + 1 < len(figs):
+        # a change word printed DIRECTLY before the next figure ("by" and a bound between
+        # allowed) is that figure's: in "Revenue of $5 billion up 7%" the "up" is the 7%'s, and
+        # in "EBITDA of $36 million decreased by $9 million" the fall is the $9 million's (found
+        # in review). A word with anything else after it stays this figure's: "24% revenue growth
+        # and 80 basis points" — the growth is the 24%'s.
+        bare = _WORD.findall(_BY_END.sub("", _unbound(text[fig.end:hi])))
+        if bare and _word_direction(bare[-1]):
+            after = bare[:-1]
+    for w in after[:_DIR_AFTER]:
+        if not w[0].isalpha() or _DIR_STOP.fullmatch(w):
+            break
+        if d := _word_direction(w):
+            return d
+    if k and _COORDINATED.match(text[figs[k - 1].end:fig.start]):
+        return _direction(text, k - 1, figs)
+    return None
+
+
+def _unbound(before: str) -> str:
+    """The text before a figure without the bound or currency sign printed right before it ("by
+    approximately $" → "by"), so the words that govern the figure are read past them."""
+    m = _QUALIFIER_BEFORE.search(before)
+    return before[:m.start(1)] if m else before.rstrip().rstrip("".join(_CURRENCY)).rstrip()
+
+
+def _qualifier(text: str, fig: _Figure) -> _Bound | None:
+    """The bound printed immediately before ``fig`` ("more than", "approximately", "up to"), or
+    after it ("80% plus", "80%+")."""
+    if m := _QUALIFIER_BEFORE.search(text[:fig.start]):
+        return _BOUNDS[dict(_QUALIFIERS)[m.group(1).lower()]]
+    if _QUALIFIER_AFTER.match(text[fig.end:fig.end + 6]):
+        return "at_least"
+    return None
+
+
+#: Words that name no metric, dropped before the metric is looked for in its quote.
+_METRIC_STOPWORDS = frozenset((
+    "the", "a", "an", "of", "and", "or", "in", "on", "at", "to", "for", "by", "with", "from",
+    "vs", "versus", "per", "its", "our", "their", "total", "net", "overall", "rate", "level",
+    "share", "growth", "change", "number", "new"))
+_METRIC_WORD = re.compile(r"[a-z][a-z&]+")
+#: A metric word matches a quote word on its first four letters ("shipments" / "shipped").
+_STEM = 4
+
+
+def _stems(text: str) -> set[str]:
+    return {w[:_STEM] for w in _METRIC_WORD.findall(text.lower())
+            if w not in _METRIC_STOPWORDS and len(w) >= 3}
+
+
+_ACRONYM = re.compile(r"\b[A-Z][A-Z&]{1,5}\b")
+_ANY_WORD = re.compile(r"[A-Za-z][A-Za-z'&-]*")
+
+
+def _spells(acronym: str, text: str) -> bool:
+    """``text`` spells ``acronym`` out as the initials of consecutive words ("ASP" / "Average
+    selling price")."""
+    initials = "".join(w[0] for w in _ANY_WORD.findall(text)).lower()
+    return acronym.replace("&", "").lower() in initials
+
+
+def names_metric(metric: str, quote: str) -> bool:
+    """The quote names the metric: a word of the metric (its first four letters, stopwords
+    dropped) is a word of the quote, or an acronym of one is spelled out by the other ("ASP" /
+    "Average selling price rose 7%"). Loose by design — it refuses only a quote that names
+    nothing of it, such as "It's in the 20 to 40 basis point range." or a bare "500"."""
+    if _stems(metric) & _stems(quote):
+        return True
+    return (any(_spells(a, quote) for a in _ACRONYM.findall(metric))
+            or any(_spells(a, metric) for a in _ACRONYM.findall(quote)))
+
+
+def _pinned(value: str, quote: str, vfigs: list[_Figure], qfigs: list[_Figure]) -> list[int] | None:
+    """When the value IS the quote's words — one occurrence of it, whitespace-collapsed — the quote
+    figures inside that span, in order: each value figure is the quote figure at its own place, so
+    a number the quote states twice is not ambiguous ("gained 5 points … more than any other top 5
+    brand"). None when the value is not one span of its quote, or the span's figures are not the
+    value's figures one for one."""
+    flat, raw_at = _flat_with_index_map(quote)
+    needle, hay = _norm(value), flat.lower()
+    j = hay.find(needle)
+    if not needle or j < 0 or hay.find(needle, j + 1) >= 0:
+        return None
+    lo, hi = raw_at[j], raw_at[j + len(needle) - 1] + 1
+    inside = [i for i, q in enumerate(qfigs) if lo <= q.start < hi]
+    if len(inside) != len(vfigs) or not all(
+            _same_figure(vf, qfigs[i]) for vf, i in zip(vfigs, inside, strict=True)):
+        return None
+    return inside
+
+
+@dataclass(frozen=True)
+class Fact:
+    """What the fact check concluded about one row (`check_fact`)."""
+
+    status: DriverValueStatus
+    reason: str | None
+    figures: tuple[DriverFigure, ...]
+
+
+def _unknown(reason: str) -> Fact:
+    return Fact("unknown", reason, ())
+
+
+def check_fact(metric: str, value: str, quote: str) -> Fact:
+    """(RG-D8) The structured fact a row states, read from its QUOTE and checked against its
+    VALUE by code. The caller has already dropped a row whose value states a figure its quote does
+    not (the digit trace); this reads what remains.
+
+    - The quote must name the metric (`names_metric`).
+    - A value with no figure is ``qualitative`` only when it is the quote's own words.
+    - Each figure the value states is found in the quote — in the units the value states — and
+      the direction the VALUE prints beside it must be one the QUOTE prints beside it; a value
+      that states none takes the quote's. A figure the quote states twice with different
+      directions or units, and a value that names neither, is ambiguous.
+
+    A failure is ``unknown`` with the check that failed and no figure — never the reading code
+    would have preferred."""
+    if not names_metric(metric, quote):
+        return _unknown(f"its quote does not name the metric {metric!r}")
+    # the value's own direction is read ACROSS an elision — "increasing ... by 500 stores" still
+    # says the 500 is up — so a stitched value cannot hide its claim from the check
+    read = _ELLIPSIS.sub(" ", value)
+    vfigs, qfigs = _figures(read), _figures(quote)
+    if not vfigs:
+        if _norm(value) in _norm(quote):
+            return Fact("qualitative", None, ())
+        return _unknown("its value states no figure and is not the words of its quote")
+    pinned = _pinned(read, quote, vfigs, qfigs)
+    out: list[DriverFigure] = []
+    for k, vf in enumerate(vfigs):
+        hits = ([pinned[k]] if pinned is not None
+                else [j for j, q in enumerate(qfigs) if _same_figure(vf, q)])
+        if not hits:  # the caller drops this row; never read a figure that is not there
+            return _unknown(f"its value figure {vf.value:g} is not in its quote")
+        reads = {j: (_direction(quote, j, qfigs), qfigs[j]) for j in hits}
+        want = _direction(read, k, vfigs)
+        if want is not None:
+            agree = [j for j, (d, _) in reads.items() if d == want]
+            if not agree:
+                got = {d for d, _ in reads.values()} - {None}
+                return _unknown(
+                    f"its value says {vf.value:g} is {want}; its quote says {got.pop()}" if got
+                    else f"its value says {vf.value:g} is {want}; its quote prints no direction "
+                         f"beside it")
+            hits = agree
+        # the bound is part of the reading: "more than 5% last year and approximately 5% this
+        # year" names two readings of one 5%, and a value of "5%" picks neither (#941 review)
+        shapes = {(reads[j][0], qfigs[j].currency, qfigs[j].scale, qfigs[j].unit,
+                   _qualifier(quote, qfigs[j])) for j in hits}
+        if len(shapes) > 1:
+            return _unknown(f"its quote states {vf.value:g} {len(hits)} times, read differently")
+        q = qfigs[hits[0]]
+        out.append(DriverFigure(
+            value=q.value, currency=q.currency, scale=q.scale, unit=q.unit,
+            change=reads[hits[0]][0], qualifier=_qualifier(quote, q)))
+    return Fact("verified", None, tuple(out))
+
+
+# --- (RG-D19, 2026-11-09) THE LOCATOR — where a quote sits, without the quote ---------------------
+
+_PARAGRAPH_BREAK = re.compile(r"\n[ \t]*\n")
+_SENTENCE_END = (".", "?", "!")
+
+
+def quote_key(quote: str) -> str:
+    """sha256 of the quote whitespace-collapsed and lower-cased — the same normalisation the
+    containment check matches on, so a re-wrapped quote keys the same passage."""
+    return hashlib.sha256(_norm(quote).encode("utf-8")).hexdigest()
+
+
+def transcript_sha256s(paths: Iterable[Path]) -> dict[str, str]:
+    """``{file name: sha256 of its bytes}`` — the call labels `transcript_for_synthesis` writes,
+    each with the identity of the file it read."""
+    return {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
+
+
+def _speaker(paragraph: str) -> str | None:
+    """The name on a CIQ speaker block — a paragraph of exactly two short lines, name then title,
+    neither ending a sentence ("Paul A. Rode / CFO, Treasurer & …"), or the bare "Operator"."""
+    lines = [ln.strip() for ln in paragraph.strip().splitlines() if ln.strip()]
+    if lines == ["Operator"]:
+        return "Operator"
+    if (len(lines) == 2 and all(len(ln) <= 80 for ln in lines)
+            and not any(ln.endswith(_SENTENCE_END) for ln in lines)):
+        return " ".join(lines[0].split())
+    return None
+
+
+def _paragraph_and_speaker(body: str, quote: str) -> tuple[int, str | None] | None:
+    """The 0-based paragraph of ``body`` the quote starts in, and the speaker before it — matched
+    whitespace-collapsed (the containment rule), cut in raw coordinates so paragraph breaks are
+    still there to count. None when the quote is not in ``body``."""
+    flat, raw_at = _flat_with_index_map(body)
+    j = flat.lower().find(_norm(quote))
+    if j < 0:
+        return None
+    paragraphs = _PARAGRAPH_BREAK.split(body[:raw_at[j]])
+    # the NEAREST speaker block before the quote's paragraph: the last one named before it
+    names = [n for p in paragraphs[:-1] if (n := _speaker(p)) is not None]
+    return len(paragraphs) - 1, names[-1] if names else None
+
+
+def locate_quote(quote: str, label: str | None, body: str | None,
+                 shas: Mapping[str, str] | None) -> TranscriptLocator | None:
+    """The locator of a quote cited to call ``label``, whose section text is ``body`` (the one
+    `_locate` resolved the quote to); None when there is no call to cite or the quote is not in
+    that call's body."""
+    if label is None or body is None or (where := _paragraph_and_speaker(body, quote)) is None:
+        return None
+    return TranscriptLocator(call=label, transcript_sha256=(shas or {}).get(label),
+                             paragraph=where[0], speaker=where[1], quote_sha256=quote_key(quote))
 
 
 #: One ``--- <call> ---`` header on its own line, exactly as ``transcript_for_synthesis`` writes
@@ -328,6 +681,7 @@ class _Located:
     label: str | None
     context: str | None
     calls: tuple[str, ...]  # every labelled call the quote sits in
+    body: str | None = None  # the cited call's section text, for its locator; None = no call
 
 
 def _locate(quote_norm: str, quote: str, stated_period: str, slice_text: str) -> _Located:
@@ -352,7 +706,7 @@ def _locate(quote_norm: str, quote: str, stated_period: str, slice_text: str) ->
         if len(hits) != 1:
             return _Located(None, None, calls)
     label, body = hits[0]
-    return _Located(label, _following_paragraph(quote, body), calls)
+    return _Located(label, _following_paragraph(quote, body), calls, body)
 
 
 def _row_period(stated: str, quote: str, call_period: str | None) -> tuple[str | None, str | None]:
@@ -371,7 +725,8 @@ def _row_period(stated: str, quote: str, call_period: str | None) -> tuple[str |
 
 
 def extract_transcript_drivers(
-    slice_text: str | None, *, llm: LlmClient, ticker: str, name: str
+    slice_text: str | None, *, llm: LlmClient, ticker: str, name: str,
+    transcript_sha256: Mapping[str, str] | None = None,
 ) -> tuple[list[OperatingDriver], list[str], str]:
     """Fenced Tier-B extraction over the transcript slice → (rows, qa_flags, raw-log).
 
@@ -379,7 +734,12 @@ def extract_transcript_drivers(
     ``value`` whose every number is a number of that quote, in the unit the quote states it in. A
     dropped row is a ``qa_flag`` naming the reason, and so is a period or a call the row could not
     be given from its own quote. An absent slice or an LLM error yields no rows + a flag — never a
-    fabricated driver."""
+    fabricated driver.
+
+    (RG-D8/RG-D19) Each kept row also carries the fact code read from its quote (`check_fact`)
+    and its `locator`; ``transcript_sha256`` (``{file name: sha256}``, `transcript_sha256s`) puts
+    each call's file identity in it. A row whose value check fails is KEPT as ``unknown`` with no
+    figure and a flag naming the check — its quote is still a real, located statement."""
     if not slice_text or not slice_text.strip():
         return [], ["operating-drivers: no transcript slice (Tier B skipped)"], ""
     user = (
@@ -433,10 +793,18 @@ def extract_transcript_drivers(
         if period_flag:
             flags.append(f"{period_flag} ({metric})")
         src = f"CIQ transcript: {loc.label}" if loc.label else "CIQ transcript"
+        fact = check_fact(metric, value, quote)
+        if fact.status == "unknown":
+            flags.append(f"operating-drivers: Tier-B value UNKNOWN — {fact.reason} ({metric})")
         rows.append(OperatingDriver(
             kind=DriverKind(kind), metric=metric, period=period,
-            value=value, value_num=None, unit=None,  # LLM-fenced rows are verbatim-only
+            # the structured value is `figures`, read from the quote; `value_num` stays the
+            # anchored extractors' single parsed number, so a reader of it is never handed a
+            # transcript figure without its direction and bound
+            value=value, value_num=None, unit=None,
             verbatim=quote, following_context=loc.context,
             source_ref=src, tier="llm-fenced",
+            figures=list(fact.figures), value_status=fact.status, unknown_reason=fact.reason,
+            locator=locate_quote(quote, loc.label, loc.body, transcript_sha256),
         ))
     return rows, flags, str(raw)

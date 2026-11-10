@@ -47,7 +47,11 @@ from vinci.dossier.anchor import (
     r1_multiple_band,
 )
 from vinci.dossier.schemas import PrimarySource
-from vinci.dossier.synthesis import guidance_vintage_mark, newest_guidance_date
+from vinci.dossier.synthesis import (
+    driver_value_as_read,
+    guidance_vintage_mark,
+    newest_guidance_date,
+)
 from vinci.scenarios import BASIS_EV_NTM_EBIT, RECIPE_R4, RefPoint
 
 #: A supplied leg value further than this from its anchor is a DEVIATION and must state why.
@@ -523,8 +527,11 @@ def _operating_driver_lines(doc: dict[str, Any]) -> list[str]:
             # figure in the tail that the kept head did not (CNXC `30,`, VITL `2026`). Small
             # figures, but this is the row cap's argument one scale down — a bound that buys
             # nothing still drops things.
-            lines.append(
-                f"  [{r.get('kind')}] {r.get('metric')}: {r.get('value')} → {r.get('source_ref')}")
+            # an unverified transcript value is the synthesis's UNKNOWN here too, never the
+            # model's claim (#941 review, Codex): the analyst sets six numbers against these
+            val = driver_value_as_read(str(r.get("value")), r.get("value_status"),
+                                       r.get("unknown_reason"))
+            lines.append(f"  [{r.get('kind')}] {r.get('metric')}: {val} → {r.get('source_ref')}")
         return lines
     return []
 

@@ -41,7 +41,7 @@ from vinci.dossier.covenant_extract import (
     extract_maturity_event,
     governing_terms,
 )
-from vinci.dossier.driver_extract import extract_transcript_drivers
+from vinci.dossier.driver_extract import extract_transcript_drivers, transcript_sha256s
 from vinci.dossier.extraction_version import EXTRACTION_VERSION
 from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import (
@@ -1257,7 +1257,10 @@ def assemble_one(
         # the anchored A1/A2/A3 rows the mechanical layer already built.
         if transcript and mech.operating_drivers is not None:
             tb_rows, tb_flags, tb_log = extract_transcript_drivers(
-                transcript, llm=llm, ticker=ticker, name=rec.identity.name)
+                transcript, llm=llm, ticker=ticker, name=rec.identity.name,
+                # (RG-D19) each call's file identity, for the rows' locators
+                transcript_sha256=transcript_sha256s(
+                    w.path for w in bundle.all_workbooks("transcript")))
             flags += tb_flags
             if tb_log:
                 logs.append(f"=== TIER-B DRIVER EXTRACT: {ticker} ===\n{tb_log}")
