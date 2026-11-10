@@ -6,12 +6,18 @@ supersedes:
 superseded-by:
 ---
 
-# The machine proposal's vote rule, as a pre-registered design (design only, $0): today a build proposes only when every COMPLETED draw of five agrees, and that rule's chance of proposing sits between 10% and 90% for any name whose lean commits on 63% to 98% of draws, so a re-draw flips it. Proposed: one rule that keeps its meaning at any draw count (a one-sided binomial test that the lean is the majority read, which at five draws IS today's rule), failed and unparsed draws counted as dissent, the split printed and sealed beside every proposal, and ten draws (9 of 10 to propose) at about +$1.00 to +$1.50 a build. No code changes until the operator rules
+# The machine proposal's vote rule, as a pre-registered design (design only, $0): today a build proposes only when every COMPLETED draw of five agrees, and that rule's chance of proposing sits between 10% and 90% for any name whose lean commits on 63% to 98% of draws, so a re-draw flips it. Three options for the operator, side by side: A keeps five draws under one rule that holds its meaning at any draw count (a one-sided binomial test that the lean is the majority read, which at five draws IS today's rule), with failed draws as dissent and the split sealed beside every proposal ($0 a build); B adds ten draws, 9 of 10 to propose (+$1.00 to +$1.50 a build, recommended); C, the operator's, adds sequential draws, hysteresis, a borderline outcome and a confirmation at log time, and its first two parts publish a wobbly name more often than today. The measurement is re-scoped to the independence of draws, which all three assume. No code changes until the operator rules
 
 **THE ASK.** Operator, 2026-11-09, verbatim: **"start ... the other two fixes in the correct manner"**.
 For this one the agreed manner (the coordinator's brief) is to fix the fragile BUY vote rule
 separately from #930, as a pre-registered design. #930 merged as `f491d155`. This record is that
 design. It changes no code: not the proposal, not the lean, not the draw count.
+
+**THE SECOND ASK.** Operator, 2026-11-10, "yes" (relayed by the coordinator): add an **Option C**
+beside A and B before choosing, at $0 and under the same discipline: sequential sampling,
+hysteresis for names already proposed, three outcomes, and a confirmation at decision time (§5b);
+C's cost from the measured tallies; and the measurement re-scoped to C's needs, centred on the
+independence of draws (§7).
 
 **THIS IS A DECISION-PATH CHANGE, FLAGGED.**
 - CLAUDE.md: the proposal mapping is face-validity-frozen and never outcome-tuned.
@@ -21,6 +27,10 @@ design. It changes no code: not the proposal, not the lean, not the draw count.
   is an operator ruling of 2026-09-26 (`synthesis.SYNTHESIS_DRAWS`).
 - Both are on the decision path. The implementing PR edits decision-line files, so the edit hook
   asks the operator, and it needs a real shown run before merge (CLAUDE.md).
+- **Option C crosses two lines further, each the operator's to overrule in words (§5b):**
+  - its sequential draws cross the 2026-09-26 ruling that N is fixed for every name;
+  - its hysteresis makes the proposal depend on the previous page, not on the build alone, which
+    is CLAUDE.md's "derived DETERMINISTICALLY from its committed evidence lean".
 
 **HOW THE RULE IS CHOSEN: FACE VALIDITY ONLY, IN WRITING.**
 - The rule is chosen by what it tests and by its error rates as functions of a name's lean rate
@@ -131,6 +141,8 @@ design. It changes no code: not the proposal, not the lean, not the draw count.
 - **C3. The rule's unstable band narrows.** That band is the range of p where 0.1 ≤ q ≤ 0.9.
 - **C4. N is fixed in advance and the same for every name** (`synthesis.py:1664–1666`). So a
   sequential rule (draw five, and add more only on a split) is out, however it is pre-registered.
+  - Option C(i) is such a rule, and is set out at the operator's request (§5b). Choosing it
+    overrules this criterion with the ruling it restates.
 - **C5. A draw that fails, does not parse or carries no recognized lean counts against the
   lean.** The denominator is the draws ATTEMPTED.
 - **C6. The split is shown beside every proposal and sealed with it,** so a reader can tell a 10/10
@@ -255,16 +267,194 @@ with P(X ≥ x | N, ½) ≤ 0.05:
     does today (C7). A page moves only when it is rebuilt.
 - **R6. Unchanged:** the three-row mapping; mixed proposes nothing; the LLM writes no verdict
   (`Synthesis` has no verdict field); no code path approaches execution.
-- **The operator's choice is two-part:**
+- **The operator's choice is between three options (A and B here, C in §5b, side by side at the
+  end of §5b):**
   - **Option A** is R1, R3, R4, R5 and R6 at N = 5, at $0 a build. It keeps every decision today's
     rule makes on a build whose draws all complete with one spelling per lean. It closes both holes
     and prints the split.
   - **Option B** adds R2, at the cost below.
-  - **Recommended: B.** Ten narrows the band most of every N that passes both ends, under either
-    convention (§4). Nine draws (8 of 9) is the cheaper alternative that also passes, at one draw
-    fewer a build.
+  - **Recommended: B, with C(iii)'s three outcomes** (§5b). Ten narrows the band most of every N
+    that passes both ends, under either convention (§4). Nine draws (8 of 9) is the cheaper
+    alternative that also passes, at one draw fewer a build.
 
-## 6. What ten draws cost on every paid build
+## 5b. Option C, the operator's (2026-11-10)
+
+**THE ASK.** The operator asked for a third option beside A and B before choosing (2026-11-10,
+"yes", relayed by the coordinator), under the same discipline: never chosen by returns, never by
+which names it proposes. Every figure below is a function of p, except the cost line, which counts
+the SHAPES of the 33 measured tallies, descriptively. Its four parts are C(i) to C(iv), so they do
+not collide with the criteria C1–C8.
+
+**C(i) — sequential sampling, by a stopping rule fixed in advance.**
+- **The rule.** Draw five attempted draws; let m be the modal label's count, R3's dissent included.
+  - The modal label is committed and m = 5: propose (R1 at five draws).
+  - The modal label is committed and m is 3 or 4 (3/2 or 4/1): draw five more, and propose only if
+    the same lean holds at least 9 of the 10 (R1 at ten).
+  - Otherwise (a mixed modal label, or m ≤ 2): stop, with no proposal.
+- **Its exact error rates**, for the lean at rate p: q_C(p) = p⁵ + 5p⁴(1 − p) · p⁵. The 3/2 branch
+  adds nothing, because three of the first five plus five of five is eight, under nine.
+
+  | | p 0.5 | 0.6 | 0.7 | 0.8 | 0.85 | 0.9 | 0.95 |
+  |---|--:|--:|--:|--:|--:|--:|--:|
+  | A (5/5), q | 0.031 | 0.078 | 0.168 | 0.328 | 0.444 | 0.590 | 0.774 |
+  | B (9/10), q | 0.011 | 0.046 | 0.149 | 0.376 | 0.544 | 0.736 | 0.914 |
+  | **C(i), q** | **0.036** | **0.098** | **0.229** | **0.462** | **0.617** | **0.784** | **0.931** |
+  | C(i), two builds disagree, 2q(1 − q) | 0.070 | 0.177 | 0.353 | 0.497 | 0.472 | 0.338 | 0.128 |
+  | C(i), expected draws, continuing on 4/1 or 3/2 | 7.34 | 8.02 | 8.34 | 8.07 | 7.65 | 7.00 | 6.13 |
+  | C(i), expected draws, continuing on 4/1 only | 5.78 | 6.30 | 6.80 | 7.05 | 6.96 | 6.64 | 6.02 |
+
+- **The expected-draws rows assume** that the dissenting draws carry no committed lean (mixed,
+  failed or unparsed). If they carry the opposite lean, a 2/3 split continues too, on that lean's
+  side, and expected draws rise.
+- **At the reference rows:**
+  - p = 0.60 publishes 9.8% (A 7.8%, B 4.6%); either-label 10.9% (A 8.8%);
+  - p = 0.95 is withheld 6.9% of the time (A 22.6%, B 8.6%).
+- **It fails C2 by construction.** C(i) publishes on every first five A publishes on (5/5), and
+  adds a second chance at 4/1. So q_C ≥ q_A at every p: there is no p at which C(i) is the
+  stricter. As a test of "p ≤ ½" its size is 3.6% (q_C at 0.5), still under 5%.
+- **Continuing on 3/2 cannot propose.** Its publish rates are identical to continuing on 4/1 only.
+  It buys a printed ten-draw split and nothing else, at 1.0 to 1.7 extra expected draws between
+  p = 0.6 and 0.8. The record keeps the operator's continuation set as stated, and names the
+  cheaper set with the same error rates.
+- **It crosses the 2026-09-26 line.** `synthesis.py:1664–1666`: "N IS FIXED FOR EVERY NAME,
+  DECIDED IN ADVANCE. Drawing again because the first answer is unwelcome is outcome-dependent
+  sampling".
+  - C(i) draws again on the TALLY, by a rule fixed in advance and applied identically to every
+    name and either direction, never on whether an answer is welcome.
+  - But it does make N depend on the first five draws, which that ruling's first sentence forbids.
+  - Adopting C(i) is the operator overruling that sentence, in words, on the record.
+
+**C(ii) — hysteresis for names already proposed.**
+- **The rule.** A name WITHOUT an existing proposal needs the new bar, C(i). A name WITH one draws
+  ten, and keeps the proposal only if the same lean holds at least 6 of the 10. Below that it is
+  withdrawn, and the new bar applies to any other lean.
+- **What "existing" means, and where it is read from.** There are two candidates:
+  - **the committed page:** the proposal R1/R5 derive from the `dossier.json` on main that the
+    rebuild replaces (its `draw_agreement` and `evidence_balance`). For an artifact from before R5
+    that is today's rule's proposal, so C7 holds. Every page has one, it is committed and diffable,
+    and it is an as-of artifact the build already knows;
+  - **the ledger:** the latest sealed `machine_proposal` for the ticker (`schemas/ledger.py:205`).
+    Only names whose verdict was logged carry one. So the machine's next proposal would depend on
+    whether the human logged, a loop from the human's action back into the machine baseline the
+    spread is decomposed against.
+  - **If C(ii) is ruled, it reads the page.**
+- **It changes a constitutional sentence, flagged.** CLAUDE.md says the proposal is "derived
+  DETERMINISTICALLY from its committed evidence lean".
+  - Under C(ii) it is deterministic given the build AND the previous page, no longer a function of
+    the build alone.
+  - Adopting C(ii) changes that sentence. That is the operator's ruling, and a CLAUDE.md edit this
+    design does not make.
+- **Interaction with R5.**
+  - The keep test reads the new tally against the KEEP bar, so R5's record gains `kept_by` (new |
+    hysteresis).
+  - It is printed beside the split, for example "BUY, kept: 7 of 10 strongly-bullish (keep bar 6 of
+    10; a new proposal needs 9)".
+  - An artifact from before R5 carries no `passes`, and its existing proposal is today's rule's.
+- **The flip rate it buys,** on repeated rebuilds of one unchanged input:
+  - **The model:** a two-state chain in steady state. q is the new bar's publish rate and
+    r = P(≥ 6 of 10) the keep rate; a rebuild flips with probability 2q(1 − r)/(q + 1 − r).
+
+  | p | A | B | C(i) | C(i) + hysteresis | B + hysteresis |
+  |---|--:|--:|--:|--:|--:|
+  | 0.60 | 0.143 | 0.088 | 0.177 | 0.155 | 0.082 |
+  | 0.70 | 0.280 | 0.254 | 0.353 | 0.181 | 0.150 |
+  | 0.80 | 0.441 | 0.469 | 0.497 | 0.061 | 0.060 |
+  | 0.95 | 0.350 | 0.157 | 0.128 | 0.000 | 0.000 |
+
+- **What it costs in proposals.** This is the long-run share of rebuilds carrying a proposal,
+  π = q/(q + 1 − r):
+  - p = 0.60: C(i)+H 21.1%, B+H 11.2%, against A 7.8% and B 4.6%;
+  - p = 0.70: 60.3% and 49.8%, against 16.8% and 14.9%.
+  - Hysteresis keeps a wobbly name's lucky proposal: at p = 0.60 it survives a rebuild 63.3% of
+    the time. **It fails C2 in the long run,** at 1.4 to 2.7 times today's rate at p = 0.60.
+- **Expected draws:** a name with an existing proposal always draws ten. Under C(i)+H at p = 0.60,
+  0.80 and 0.95: 8.44, 9.87 and 10.00.
+- **What the steady state assumes:** an input unchanged between rebuilds. A rebuild usually follows
+  a new filing or price, so a real name's p moves. The table bounds what hysteresis can buy; it
+  does not predict any name.
+
+**C(iii) — three outcomes.**
+- **propose:** the bar (new, or keep under C(ii)) is met.
+- **borderline:** the modal lean is committed and holds a majority of the attempted draws, but the
+  bar is not met. At five draws that is 3 or 4 of 5; at ten, 6, 7 or 8 of 10. The split is printed,
+  and there is no proposal.
+  - Under C(i) a borderline first five continues, and ends borderline unless the second five reach
+    nine. P(borderline under C(i)) at p = 0.6, 0.8 and 0.95: 0.452, 0.466 and 0.067.
+- **none:** a mixed modal label, a committed lean at or under half, no read, or a failed synthesis.
+- **Unchanged:** mixed still proposes nothing, and the LLM still writes no verdict (`Synthesis`
+  has no verdict field).
+- **In the ledger:**
+  - `machine_proposal` stays None for both borderline and none, and the Disposition stays
+    NO_PROPOSAL, as today;
+  - the sealed tally (R4) gains `proposal_state` (proposed | borderline | none), so the two are
+    told apart without a new Disposition.
+- **The page already prints a split build** ("the draws DISAGREED — 3x …, 2x …"). Borderline names
+  that state; it adds no display the human was not already shown.
+- **It is separable.** C(iii) fails no criterion and costs $0, so it can sit on A or B as well as
+  on C.
+
+**C(iv) — a confirmation at decision time.**
+- **Where it hooks in:** `vinci log-verdict` runs `_cmd_log_verdict` (`cli.py:1587`), which seals the
+  proposal with `_sealed_proposal(cfg, ticker)` (`cli.py:1472`, called at 1627) before
+  `log_verdict` writes the row (1628). Today the seal reads the committed `dossier.json` only,
+  "never recomputed from live data (as-of discipline)".
+- **What it would do:**
+  - before sealing, rebuild the committed page's exact synthesis request (the replay harness already
+    does this: `vinci.evals.replay.capture`, from the committed page and its transcripts);
+  - draw ten, apply R1 at ten, and seal THAT proposal, with both tallies (the page's and the
+    confirmation's) beside it.
+  - The input is the committed page, never live data, so the as-of discipline holds.
+- **The rules it needs:**
+  - exactly one confirmation per log, recorded whether or not the verdict is then logged, so it
+    cannot be re-run until it agrees;
+  - its result stays sealed until the verdict is logged, as the proposal is today;
+  - it needs the page's transcripts on the logging machine (CIQ, read only), and refuses without
+    them.
+- **Cost:** one uncached draw and nine cached ones.
+  - $1.19 + 9 × $0.20 ≈ $2.99 at production's medians, and $1.36 + 9 × $0.30 ≈ $4.06 at the panel's;
+  - so about **$3 to $4 a logged verdict**, and about 15 minutes (10 × ~93 s) before the log
+    completes;
+  - it is paid per logged verdict, not per build.
+- **It is separable.** C(iv) fails no criterion; it can sit on A or B as well as on C.
+
+**C(i)–C(iv): the expected added cost a build, from the 33 measured tallies.**
+- **The population:** the 37 builds at `fd123ada`. 33 carry a five-draw tally; the 3 refused and 1
+  failed record none.
+- **The shapes**, as modal label × count of 5:
+  - committed 5/5: 5; committed 4/1: 2; committed 3/2: 4;
+  - mixed 5/0: 12; mixed 4/1: 6; mixed 3/2: 4.
+- **Added cost, descriptive only, not a tuning input:**
+  - **C(i), continuing on 4/1 or 3/2:** 6 of 33 builds continue, +0.91 draws a build, so **+$0.18
+    to +$0.27 a build** at $0.196 (production's median cached draw) to $0.30 (the panel's);
+  - **C(i), continuing on 4/1 only:** 2 of 33 continue, +0.30 draws, so +$0.06 to +$0.09;
+  - **C(ii) adds ten draws for each proposed name.** The 5 committed 5/5 tallies would draw five
+    more on their next build: +0.76 draws, so +$0.15 to +$0.23 a build;
+  - **C(iv):** about $3 to $4 per logged verdict, on top;
+  - for comparison, B is +$1.00 to +$1.50 a build.
+
+**A, B and C side by side** (modal-only q; C(i) continuing on 4/1 or 3/2, as the operator
+specified):
+
+| | A | B | C(i) + C(iii) | C(i) + C(ii) + C(iii) |
+|---|---|---|---|---|
+| draws a build | 5 | 10 | 5, or 10 on a borderline first five (expected 6.1 to 8.3) | 10 for a proposed name |
+| publishes at p = 0.60 (C2: at most 7.8%) | 7.8% | 4.6% | 9.8%, fails | 9.8% new, 21.1% long run, fails |
+| withheld at p = 0.95 (C8: at most 22.6%) | 22.6% | 8.6% | 6.9% | ~0 once proposed |
+| builds disagree, p = 0.80 / 0.95 | 0.441 / 0.350 | 0.469 / 0.157 | 0.497 / 0.128 | 0.061 / 0.000 |
+| added cost a build | $0 | +$1.00 to +$1.50 | +$0.18 to +$0.27 | +$0.33 to +$0.50 |
+| line it crosses | none | none | 2026-09-26's "N IS FIXED" | that, and CLAUDE.md's "deterministic from the committed lean" |
+
+- C(iii) and C(iv) are left out of the table's differences: they fail no criterion, and either can
+  be added to A or B.
+- **Recommended: B, with C(iii)'s three outcomes; C(iv) if the operator wants a ten-draw read at
+  decision time.**
+  - C(i) fails C2 at every p, by construction.
+  - C(ii) buys the largest drop in flips (0.061 at p = 0.8). It pays for it by holding wobbly
+    names' proposals (21.1% at p = 0.6), which is the anchoring the 2026-09-26 asymmetry exists to
+    avoid. It also crosses the determinism sentence.
+  - That is this design's face-validity read. The choice is the operator's.
+
+## 6. What each option costs on every paid build
 
 - **Five more draws a build, each reading the prompt the first one cached:**
   - production's median cached draw is $0.20 (all 37 builds in `data/snapshots/assembly_runs/`;
@@ -276,62 +466,71 @@ with P(X ≥ x | N, ½) ≤ 0.05:
   draws stay inside the 5-minute cache lifetime the code measures start to start
   (`synthesis._CACHE_TTL_S`). A miss is flagged by `_cache_misses`, as today.
 - **Nine draws instead:** +4 draws, +$0.80 to +$1.20 a build.
-- **The panel's measurement cost, once** (§7): about $48.7, cap $55.
+- **Option C**, from the 33 measured tallies (§5b): C(i) +$0.18 to +$0.27 a build (+$0.06 to
+  +$0.09 continuing on 4/1 only); C(ii) +$0.15 to +$0.23 more; C(iv) about $3 to $4 per logged
+  verdict.
+- **The panel's measurement cost, once** (§7): about $97.4, cap $110 (three builds a page: about
+  $73.1, cap $80).
 
-## 7. The measurement, pre-registered on the six-page panel (RUNBOOKS §n, adapted)
+## 7. The measurement, pre-registered on the six-page panel, re-scoped to INDEPENDENCE (RUNBOOKS §n, adapted)
 
-- **Why §n is adapted, not followed as written.** The change moves no request: the draws, not the
-  prompt, are what change.
-  - So `compare` would refuse (no page's request differs).
-  - The class metrics cannot move, and are not read.
-  - What can be measured is whether production-shaped ten-draw builds behave as §4's arithmetic
-    assumes.
-- **What it can and cannot decide.**
-  - **It cannot choose or tune the rule.** k, N, α and the threshold are fixed by this record, and
-    a different value needs a new record.
-  - Six pages cannot measure a flip-rate difference as small as §4 predicts between 0.7 and 0.85
-    (at most 0.03).
-  - So the run checks two assumptions: that draws are independent, and that they rarely fail. It
-    also reports what each rule does on each page.
-- **It is Option B's.** Option A changes no decision on a build whose draws all complete, so its
-  pins are its proof. If the operator rules nine draws instead of ten, the same design is
-  registered at two builds of nine a page, at about $45.1.
+- **Why independence.** Every table here assumes the draws on one input are independent, with one
+  rate p per input: today's rule's in `synthesis.py`, and A's, B's and C's.
+  - If draws on one input correlate, or p drifts between builds, the count over N draws is
+    overdispersed. Then every rule flips more than its table says: **the binomial error rates are
+    optimistic.**
+  - That assumption is what a paid run can test. Which rule to choose, it cannot decide.
+- **Why §n is adapted, not followed as written.** No option moves the request, so `compare` would
+  refuse (no page's request differs). The class metrics cannot move, and are not read.
+- **What it cannot do:**
+  - it cannot choose or tune. k, N, α, C(i)'s continuation set and C(ii)'s keep bar are fixed by
+    this record, and a different value needs a new record;
+  - no option is chosen from which panel page proposes. The run may come before the choice, since
+    it tests a property of the draws that A, B and C share.
 - **Pages:** the frozen panel v2 (BURL, CNXC, LLY, MCK, ROST, SMPL; freeze `bcda7ce3`).
 - **Request:** main's at registration, with every transform main's code then holds that re-reads a
   field from the ref's own code.
   - At `fd123ada` that is eight, in this order: `asof_cut` first, as its own docstring requires;
     then `FIX_3A`'s five, `gap_types` and `current_buybacks`.
   - Each page's request sha256 is captured at $0 and written into the registration before any draw.
-- **Draws: two separate ten-draw builds per page, each shaped like production's.** That is 120
-  calls, `claude-opus-4-8`.
-  - Each build is its own run of ten draws, started more than five minutes after the previous
-    build's last draw. So each opens on an uncached draw, as a production build does.
-  - **Today's rule is read on each build's draws 1–5.** That is exactly a production five-draw
-    build: one uncached draw, then four cached ones. So there are six production-shaped pairs per
-    rule.
-  - Draws 6–10 of each build are reported as their own blocks, marked "opens on a cached draw". They
-    are never counted as a production build.
-- **Registered outputs (counts, each with its boundary):**
-  - per page: each build's tally, its first-five tally, and failed, unparsed and unrecognized draws;
-  - each rule's proposal on each of its builds;
-  - between-build disagreement under each rule: 6 ten-draw pairs and 6 five-draw pairs;
-  - the independence check: the lean of the 12 uncached first draws against the 108 cached ones, by
-    an exact test. It has little power and can catch only a gross difference, and it is reported as
-    that.
-- **Decision: no target, no-worsening only.**
-  - **STOP** if more than 2 of the 120 draws fail, do not parse or carry no recognized lean (#935
-    drew 60 of 60 complete).
-    - Under R3 each such draw is dissent, so a rate f lowers every name's effective rate to
-      p(1 − f), and §4's tables would overstate the rule.
-    - Report it, and the operator rules.
-  - **STOP** if the independence check rejects at 0.05. §4's arithmetic assumes independent draws,
-    and so does today's ruling.
-  - Otherwise the design stands as written. Every between-build disagreement under either rule is
-    explained in writing, as §n's step 5 requires of a lean move.
+- **Draws: four separate ten-draw builds per page, each shaped like production's.** That is 24
+  builds and 240 calls, `claude-opus-4-8`.
+  - Each build is its own run, started more than five minutes after the previous build's last draw,
+    so each opens on an uncached draw, as a production build does.
+  - Each build's first five is a production five-draw build: A's, and C(i)'s first stage. Its ten
+    are B's, and C(i)'s whenever the first five continue.
+- **The primary test, and the one falsifier: overdispersion of the per-build counts.**
+  - **Per page:** p̂ is the share of its 40 draws that carry the page's pooled modal label, and x_k
+    is that label's count in build k.
+  - **The statistic:** Pearson's dispersion statistic, X² = Σ_k (x_k − 10p̂)² / (10p̂(1 − p̂)),
+    summed over the pages with 0 < p̂ < 1. It is referred to χ² with 3 degrees of freedom per such
+    page.
+  - **Independence is falsified if X² exceeds the χ² upper 5% point.**
+    - The binomial tables are then optimistic by about VIF = X²/df, the measured variance inflation.
+      It is reported with the result.
+    - A ten-draw count's variance is VIF times the binomial's, and an intra-build correlation ρ
+      gives VIF = 1 + 9ρ.
+  - **Its power,** by simulation:
+    - **Assumption:** p = 0.7 on all six pages. This is an assumption, not any page's value.
+    - **Setup:** 6,000 runs, seed 20261110, beta-binomial builds.
+    - **Four builds a page:** a false alarm 5.1% of the time at no correlation; power 37% at
+      ρ = 0.05 (VIF 1.45), 71% at ρ = 0.1 (VIF 1.9) and 96% at ρ = 0.2 (VIF 2.8).
+    - **Three builds a page:** 5.4%, 30%, 58% and 89%.
+- **Reported, not decided on:**
+  - within-build serial dependence: a runs test on each build's sequence;
+  - the 24 uncached first draws against the 216 cached ones, by an exact test;
+  - failed, unparsed and unrecognized draws;
+  - each build's outcome under A, B and C(i) (with C(iii)'s three outcomes), and the disagreement
+    between builds under each: 6 pairs a page per rule.
+- **STOP:**
+  - **X² over the 5% point:** report VIF; the operator rules on whether any option's tables stand;
+  - **more than 4 of 240 draws fail, do not parse or carry no recognized lean:** under R3 each is
+    dissent, so a rate f lowers every name's effective rate to p(1 − f).
 - **Cost:**
-  - per page, two uncached draws (≈ $1.36 each) and 18 cached ones (≈ $0.30 each) ≈ $8.12;
-  - six pages ≈ **$48.7**, using #935's ledger means;
-  - **proposed cap $55.**
+  - per build, one uncached draw (≈ $1.36) and nine cached ones (≈ $0.30 each) ≈ $4.06;
+  - 24 builds ≈ **$97.4**, using #935's ledger means; **proposed cap $110**;
+  - **the cheaper version:** three builds a page, 18 builds ≈ $73.1, cap $80, at the lower power
+    above.
 - **One harness PR first ($0).** `python -m vinci.evals run`, the one-condition paid command, has
   three gaps at `fd123ada`:
   - **it defines no `--transform`.** `vinci/evals/__main__.py:204` reads
@@ -340,14 +539,18 @@ with P(X ≥ x | N, ½) ≤ 0.05:
   - **it takes no `--ciq-root`.** `__main__.py:203` calls `panel_inputs(a.ticker)` at the default
     root, the same gap row 53 item (8) records for `score`, and on this machine it refuses;
   - **it takes no registration,** so the request pins above would go unchecked.
-  - All three are needed before any draw.
+  - **One more need:** the run must record each build's start and the gap since the previous
+    build's last draw, so the uncached-start condition is shown, not assumed.
 
 ## 8. Order, and what waits on whom
 
-1. **The operator rules** on Option A or B, and on R1–R6 as written. Nothing is built before that.
-2. **The harness PR** (§7's three gaps), $0.
+1. **The operator rules** on an option (A, B, C, or a combination such as B with C(iii) and C(iv)),
+   on R1–R6 as written, and, for C(i) or C(ii), on the line each crosses. Nothing is built before
+   that. The measurement may come first: it tests what all three options assume.
+2. **The harness PR** (§7's three gaps and the build-gap record), $0.
 3. **The operator approves** the measurement and its cap, in words written into a budget ledger.
-4. **The run**, scored at $0 by applying both rules to the drawn labels, into a record.
+4. **The run**, scored at $0 by the dispersion test and by applying each option's rule to the
+   drawn labels, into a record.
 5. **The implementing PR** (decision path; the edit hook asks the operator):
    - **R1–R5** in:
      - `synthesis.py`: the count, the tally's key and the record;
@@ -360,8 +563,14 @@ with P(X ≥ x | N, ½) ≤ 0.05:
      - the panel rule's `_boundaries`, which hard-codes five draws, so at ten it would read every
        rebuilt page as off the boundary;
      - `run_metrics` copies the tally whole and needs no change;
+   - **for C, as ruled:**
+     - C(i): the stopping rule in `synthesis.py`, where the draw count stops being one constant;
+     - C(ii): the keep test reading the replaced page;
+     - C(iii): `proposal_state` in the sealed tally;
+     - C(iv): the confirmation in `_sealed_proposal`, a paid call on the `log-verdict` path;
    - **pins, positive and negative:** §2's 1-of-5 build, a build split only by spelling, and the
-     8-of-10 tally (withheld at α = 0.05);
+     8-of-10 tally (withheld at α = 0.05); for C, a 3/2 first five that continues and cannot
+     propose, and a kept proposal at 6 of 10;
    - **its real run** is step 4's draws replayed through the new gate at $0.
 6. **Pages carry it** on each rebuild (row 41). No committed page moves before.
 
@@ -389,6 +598,14 @@ with P(X ≥ x | N, ½) ≤ 0.05:
     count;
   - **the medians:** synthesis $2.00 a build, first draw $1.19, later draw $0.20, build total $3.33;
   - **the 33 written alone:** $1.99, $1.18, $0.19 and $3.30.
+- **Option C's arithmetic:** exact, from the same tails.
+  - **The flip model:** the steady state of a two-state chain under an unchanged input.
+  - **The tally shapes:** the `synthesis.draws` labels of the 37 assembly-run records at
+    `fd123ada`. 33 carry one; the 3 refused and 1 failed carry none.
+  - **The cached-draw price** for C's cost: the median of their 148 cached draws, $0.196.
+- **The power simulation:** pure Python, seed 20261110, 6,000 runs per cell, beta-binomial builds
+  at p = 0.7 on all six pages (an assumption, not any page's value). The χ² upper 5% point is
+  taken by the Wilson–Hilferty approximation.
 - **Panel cost:** #935's budget ledger, 60 calls (12 first draws, mean $1.359; 48 cached, mean
   $0.300; 92.8 s mean a call).
 
@@ -402,5 +619,10 @@ with P(X ≥ x | N, ½) ≤ 0.05:
   - **More proposals on names that commit.** A p = 0.95 name publishes 91% of the time against 77%,
     and that is more exposure to the anchoring risk STATE.md records. That risk's own falsifier
     stands: the override rate collapsing toward ~0, or the human spread tracking the machine spread.
+- **Accepted if Option C(i) or C(ii) is ruled:**
+  - **A wobbly name publishes more often than today:** at p = 0.60, 9.8% under C(i) and 21.1% in the
+    long run with C(ii), against 7.8%. That is the anchoring exposure C2 exists to bound.
+  - Its falsifier is the anchoring risk's own, as STATE.md records it: the override rate collapsing
+    toward ~0, or the human spread tracking the machine spread.
 - **Not fixable by any rule here:** a name at the threshold flips on re-draw (§4). The printed and
   sealed split (R4) is what tells its reader so.
