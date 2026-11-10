@@ -6456,6 +6456,9 @@ def assemble_mechanical(
     # column, which a page would print under the same 'LTM' as a filed one
     # (`ciq_sheets.require_filed_income_statement`)
     ciq_sheets.require_filed_income_statement(bundle, record.identity.ticker)
+    # (2026-11-10, audit RA-D9) and the UNIT each Financials money sheet states: one in thousands
+    # is refused here too, so no page prints it as $M (`ciq_sheets.require_millions`)
+    ciq_sheets.require_millions(bundle, record.identity.ticker)
     # every "at the current price" reading below — P/E, its percentile, the adjusted and forward
     # multiples, the conflict caveat — reads the latest stored close, the one the price box shows
     record = _at_latest_close(record, store, edgar)
