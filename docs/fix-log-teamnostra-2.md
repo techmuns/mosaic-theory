@@ -103,8 +103,8 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RE2-D6 | 4 | open | — | — | — |
 | RE2-D7 | 4 | open | — | — | — |
 | RE2-D8 | 4 | open | — | — | — |
-| RE2-D9 | 4 | open | — | — | — |
-| RE2-D10 | 4 | open | — | — | — |
+| RE2-D9 | 4 | in progress (#966) | #966: a denial ('does not exist'), a present-tense 'alleviate', 'there will be substantial doubt' and a filing whose plans alleviate the doubt raised before it are not doubt (Solo Brands 10-Q 0001870600-26-000044, Aeluma 10-K 0001213900-25-086227: doubt → none) | `tests/test_going_concern_denials_and_conclusions.py::test_re2_d9_a_filing_whose_plans_alleviate_the_doubt_states_none` | none: no committed page's going-concern field moves |
+| RE2-D10 | 4 | in progress (#966) | #966: a frame's own conclusion with the verb after the doubt, or the company having it, is doubt; a 'no' stops at a conjunction | `tests/test_going_concern_denials_and_conclusions.py::test_re2_d10_a_real_conclusion_is_doubt` | none: no committed page's going-concern field moves |
 | RE2-D11 | 4 | open | — | — | — |
 | RE2-D12 | 4 | open | — | — | — |
 | RE2-D13 | 4 | open | — | — | — |
