@@ -241,14 +241,31 @@ def _classes_in(text: str) -> list[tuple[str, str]]:
 #: Revolving Credit Facility, which was entered into alongside the Term Loan, matures on June 1,
 #: 2029" gave the revolver's date to the Term Loan, the nearest noun. A noun inside a comma-set
 #: relative or accompanying clause is not the subject.
-_ASIDE = re.compile(r",\s*(?:which|that|who|whose|along\s+with|alongside|together\s+with|"
-                    r"including|as\s+well\s+as|in\s+addition\s+to)\b[^,;.]*,", re.I)
+#: An amount ("$500.0 million", "$1,000 million") or a date ("June 1, 2025") inside the aside is
+#: one token, never its end: the aside's own comma or point would otherwise close it early and
+#: leave the noun after it read as the subject.
+_ASIDE = re.compile(rf",\s*(?:which|that|who|whose|along\s+with|alongside|together\s+with|"
+                    rf"including|as\s+well\s+as|in\s+addition\s+to)\b"
+                    rf"(?:{_DAY_DATE}|\d[.,]\d|[^,;.])*?,", re.I)
 #: AN OPTION TO EXTEND, not an extension (RE2-D12): "the Company may extend the maturity date of
-#: the Term Loan to June 1, 2031" read June 1, 2031 as the term loan's current maturity. A modal or
-#: a stated option or right before "extend" makes the date one the borrower MAY reach.
-_OPTION = re.compile(r"\bmay\b(?!\s+\d)|\b(?:might|could|can|would)\b|"  # never the month May
-                     r"\b(?:has|have|had)\s+(?:the|an)\s+(?:option|right)\b|\bat\s+(?:its|their|the\s+\w+['’]s)\s+(?:option|"
-                     r"election)\b|\bis\s+(?:permitted|entitled)\b", re.I)
+#: the Term Loan to June 1, 2031" read June 1, 2031 as the term loan's current maturity. A modal, or
+#: a stated option or right, IMMEDIATELY governing "extend" makes the date one the borrower MAY
+#: reach — anchored at the end of the text before the verb, so a modal elsewhere in the sentence
+#: ("… may be prepaid at any time, and the Amendment extended …", "…, which would have expired on
+#: …, was amended to extend …") does not refuse an extension made. A month "May" never reaches
+#: "extend" directly, so it is never the modal.
+_OPTION = re.compile(
+    r"(?:\b(?:may|might|could|can|would)(?:\s*,[^,;]{0,60},)?"
+    r"(?:\s+(?:elect|choose|request|seek|be\s+(?:able|permitted|entitled))(?:\s+to)?)?"
+    r"|\b(?:options?|rights?|election|ability)\s+to(?:\s+(?:further|request|seek))?"
+    r"|\b(?:is|are)\s+(?:permitted|entitled|able)\s+to"
+    r"|\bat\s+(?:its|their|our|the\s+\w+['’]s)\s+(?:sole\s+)?(?:option|election|discretion)\s*,?)"
+    r"\s*(?:an?\s+)?$", re.I)
+#: ...unless the option was taken: "exercised its option to extend" is an extension made. A negated
+#: one ("has not exercised its option to extend") is still only an option.
+_EXERCISED = re.compile(
+    r"(?<!\bnot\s)(?<!\bnever\s)\bexercised\s+(?:its|their|our|the|an?)\s+(?:[\w-]+\s+){0,3}?"
+    r"(?:options?|rights?)\s+to(?:\s+further)?\s*$", re.I)
 
 
 def _nearest_class(text: str, pos: int, floor: int) -> tuple[str, str] | None:
@@ -373,12 +390,18 @@ def _loans(sentence: str) -> list[Stated]:
         if _inside(m.start(), springs) or _positional(m):
             continue
         lead = sentence[max(0, m.start() - 80):m.start()]
-        if _OPTION.search(lead) and not re.search(r"\bexercised\b", lead, re.I):
-            taken.append((m.start(), m.end()))   # an option the borrower may use: no date of it
-            continue
+        option = bool(_OPTION.search(lead) and not _EXERCISED.search(lead))
         subj = m.group("subj")
         classes = (_classes_in(subj) if subj else []) or (
             [c] if (c := _nearest_class(sentence, m.start(), max(0, m.start() - 250))) else [])
+        if option:
+            # an option the borrower MAY use: its date is not read, but a "from <date>" it states is
+            # the maturity in force (review round 0: both dates were dropped)
+            taken.append((m.start(), m.end()))
+            if (od := _date(m.group("old")) if m.group("old") else None) is not None:
+                q = _quote(sentence, m.start(), m.end())
+                out += [Stated(cls, key, od[0], od[1], True, q) for cls, key in classes]
+            continue
         if not classes:
             continue
         taken.append((m.start(), m.end()))

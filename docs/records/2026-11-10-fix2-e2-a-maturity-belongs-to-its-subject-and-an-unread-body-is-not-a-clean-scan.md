@@ -59,6 +59,25 @@ superseded-by:
     from their committed rows; this change does not cause that.
   - **The run read every name.** It ran first with an empty skip list (operator ruling 2026-11-05:
     no name is held back), then without the argument once it was removed (below).
+- **Code review, round 0 (`/code-review high --fix`).** Four fixes, each pinned on a test that
+  fails on `62083bf9`:
+  - an amount or a date inside an aside ("alongside the $500.0 million Term Loan") no longer ends
+    the aside early;
+  - the option guard counts only a modal or option word that governs "extend". "may be prepaid
+    …, and the Amendment extended …" is an extension made;
+  - "exercised" lifts the guard only for an option exercised to extend, never a negated one ("has
+    not exercised its option");
+  - an option sentence that states the maturity in force ("may extend … from June 1, 2029 to June
+    1, 2031") keeps that date current. Before, both dates were dropped.
+
+  Deferred:
+  - an aside inside a captured subject ("maturity date of X, which …, is");
+  - the notes reader's "matured" (outside this diff);
+  - a permanent 404 on an 8-K body keeping a name unscanned for its window;
+  - an unread body beside a lower-ranked flag relabelling the prior one. That needs
+    `vinci/orchestrator.py` and an operator call.
+
+  The corpus measure is unchanged: 27 covered, 0 rows move.
 - **The version.** Row `2026-11-10.maturity-subject-and-unread-body`, in both tables, re-pinned.
   `rank/structural.py` is not a watched module; `debt_maturities` and `segments` are.
 

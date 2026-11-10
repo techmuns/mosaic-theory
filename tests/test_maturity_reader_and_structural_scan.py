@@ -41,6 +41,17 @@ def test_re2_d11_a_plain_statement_reads_as_before() -> None:
     assert _read("The Term Loan matures on June 1, 2029.") == [("term_loan", "2029-06-01", True)]
 
 
+def test_re2_d11_an_amount_or_a_date_inside_the_aside_does_not_close_it() -> None:
+    """Review: the aside stopped at the first comma or point, so "$500.0 million", "$1,000 million"
+    or "June 1, 2025" inside it left the Term Loan after it read as the subject."""
+    for inner in ("alongside the $500.0 million Term Loan",
+                  "alongside the $1,000 million Term Loan",
+                  "on June 1, 2025 alongside the Term Loan"):
+        text = (f"The Revolving Credit Facility, which was entered into {inner}, matures on "
+                "June 1, 2029.")
+        assert _read(text) == [("revolver", "2029-06-01", True)], inner
+
+
 # --- RE2-D12: an option, and a past maturity ---------------------------------------------------
 def test_re2_d12_an_option_to_extend_is_not_a_maturity() -> None:
     assert _read("Subject to certain conditions, the Company may extend the maturity date of the "
@@ -57,6 +68,24 @@ def test_re2_d12_an_extension_made_or_exercised_is_read() -> None:
                  "June 1, 2028 to June 1, 2031.") == done
     assert _read("The Company exercised its option to extend the maturity date of the Term Loan "
                  "from June 1, 2028 to June 1, 2031.") == done
+
+
+def test_re2_d12_an_option_must_govern_the_verb() -> None:
+    """Review: any modal in the 80 characters before "extend" refused an extension made, and any
+    "exercised" re-admitted an option."""
+    assert _read("Borrowings under the Credit Agreement may be prepaid at any time, and the "
+                 "Amendment extended the maturity date of the Term Loan from June 1, 2028 to "
+                 "June 1, 2031.") == [("term_loan", "2028-06-01", False),
+                                      ("term_loan", "2031-06-01", True)]
+    assert ("revolver", "2031-06-01", True) in _read(
+        "The Revolving Credit Facility, which would have expired on June 1, 2028, was amended to "
+        "extend the maturity date to June 1, 2031.")
+    assert _read("The Company has not exercised its option to extend the maturity date of the Term "
+                 "Loan to June 1, 2031.") == []
+    assert _read("The Company exercised its first extension option in 2025 and may extend the "
+                 "maturity date of the Term Loan to June 1, 2031.") == []
+    assert _read("The Borrower may, at its option, extend the maturity date of the Term Loan to "
+                 "June 1, 2031.") == []
 
 
 def test_re2_d12_matured_is_past() -> None:
@@ -144,3 +173,11 @@ def test_re2_d15_a_footnoted_cell_keeps_its_year_end_to_end() -> None:
            if r.segment == "Google Cloud" and r.metric == "Revenue from contract with customers"}
     assert got.get("12 Months Ended Dec. 31, 2025") == 58705.0, got
     assert got.get("12 Months Ended Dec. 31, 2024") == 43229.0, got
+
+
+def test_review_an_option_from_a_stated_date_keeps_that_date_current() -> None:
+    """Review round 0: an option sentence that states the maturity in force ("may extend … from
+    June 1, 2029 to June 1, 2031") lost BOTH dates; the one in force is current, the option's not
+    read (main had the 2029 superseded and 2031 current — the RE2-D12 misread)."""
+    assert _read("The Company may extend the maturity date of the Term Loan from June 1, 2029 to "
+                 "June 1, 2031.") == [("term_loan", "2029-06-01", True)]

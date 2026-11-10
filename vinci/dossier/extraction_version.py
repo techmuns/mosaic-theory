@@ -673,10 +673,11 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "maturity, a past 'matured' is not current, and an unread 8-K body is not a clean scan "
         "(TeamNostra fix request 2, RE2-D11, D12, D14): `debt_maturities` skips a noun inside a "
         "comma-set aside ('which was entered into alongside the Term Loan') when it pairs a date "
-        "with the nearest instrument; a modal or a stated option or right before 'extend' reads "
+        "with the nearest instrument; a modal or a stated option or right governing 'extend' reads "
         "no date, unless the option was exercised; 'matured' is the past tense; and "
         "`rank.structural` marks a filing whose body fetch failed, so a scan that finds no flag "
-        "on it does not count the name covered and its prior flag stands"
+        "on it does not count the name covered and its prior flag stands; and (RE2-D15) "
+        "`segments` reads a figure with a footnote mark after it ('$ 1,229 [1]') as its figure"
     ),
 )
 
