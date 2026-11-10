@@ -21,8 +21,14 @@ registration written before the first draw.
                                               PAID: the judge on one gold half, calibrated
     gold                                      each metric's P/R, DEV and TEST, at the freeze
     panel                                     re-run the panel rule on the frozen rows
-    run --ticker T [--code-ref REF] --budget-ledger FILE --draws-out FILE --label L [--cap USD]
-        --paid                                PAID: one page, one condition
+    register-run [--code-ref REF] [--transform NAME ...] [--ticker T ...] [--draws N] [--builds K]
+                 [--min-gap-s S] [--ciq-root DIR] [--note TEXT] --out FILE
+                                              BEFORE any draw, $0: one condition drawn as separate
+                                              builds; every page's request bytes pinned (`builds`)
+    run --registration FILE --ticker T --build K --budget-ledger FILE --draws-out FILE
+        [--ciq-root DIR] [--transform NAME ...] [--cap USD] --paid
+                                              PAID: one build of one page, under its registration;
+                                              without --paid, every check at $0 and no draw
 
 Requests, saved logs, ledgers, registrations and raw draws hold licensed transcript text or
 spend records: they stay OUTSIDE the repository, and every command here refuses a path inside it.
@@ -43,6 +49,51 @@ def _paid(a: argparse.Namespace) -> bool:
     from vinci.config import load_local_env
     load_local_env()
     return True
+
+
+def _run(a: argparse.Namespace) -> int:
+    """`run`: one build of one page, under its `register-run` registration. Every flag that would
+    change what is drawn is the registration's; given here, it is only checked against it."""
+    from vinci.evals import builds as bd
+    from vinci.evals import replay as rp
+    if a.registration is None:
+        raise rp.ReplayError("`run` needs --registration: paid draws only on a registration "
+                             "written before them (`register-run`; RUNBOOKS §n step 4)")
+    reg = bd.RunRegistration.from_json(a.registration.read_text(encoding="utf-8"))
+    if a.build is None:
+        raise rp.ReplayError("`run` needs --build: which of the page's registered builds")
+    if a.transform and tuple(a.transform) != reg.transforms:
+        raise rp.ReplayError(f"--transform {a.transform}: the registration's transforms are "
+                             f"{list(reg.transforms)}")
+    if a.code_ref and bd._resolve(a.code_ref) != reg.code_ref:
+        raise rp.ReplayError(f"--code-ref {a.code_ref}: the registration's commit is "
+                             f"{reg.code_ref[:12]}")
+    if a.draws is not None and a.draws != reg.draws:
+        raise rp.ReplayError(f"--draws {a.draws}: the registration draws {reg.draws} a build")
+    if a.label is not None:
+        raise rp.ReplayError("--label: a registered build's label is derived from it")
+    rp.refuse_inside_repo(a.draws_out, "raw draws")
+    budget = rp.Budget.load(a.budget_ledger, cap_usd=a.cap)
+    # read where the registration was captured unless told otherwise (the pin checks either way);
+    # a registration always records its root, so there is no default to fall back to
+    ciq_root = a.ciq_root or Path(reg.inputs["ciq_root"])
+    if not a.paid:   # $0: every refusal and the pinned capture, then the usual refusal to spend
+        pb = bd.prepare_build(reg, a.ticker, a.build, budget=budget, ciq_root=ciq_root)
+        gap = "first build" if pb.gap_s is None else f"{pb.gap_s:.0f}s after the last"
+        print(f"{a.ticker} build {a.build}: every check passed ({gap}); nothing drawn",
+              file=sys.stderr)
+        _paid(a)     # prints the refusal to spend
+        return 2
+    _paid(a)         # loads the key from the local env
+    raws = bd.run_build(reg, a.ticker, a.build, budget=budget, draws_out=a.draws_out,
+                        ciq_root=ciq_root)
+    start, end = (bd.build_row(budget, reg, k, a.ticker, a.build)
+                  for k in ("build_start", "build_end"))
+    gap = "first build" if start["gap_s"] is None else f"{start['gap_s']:.0f}s after the last"
+    print(f"{a.ticker} build {a.build}: {sum(r is not None for r in raws)}/{reg.draws} usable "
+          f"draws ({gap}; first draw read {end['first_draw_cache_read']} tokens from cache); the "
+          f"approval's spend is now ${budget.spent():.4f} of ${budget.cap_usd:.2f}")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -114,14 +165,36 @@ def main(argv: list[str] | None = None) -> int:
     jd.add_argument("--paid", action="store_true")
     sub.add_parser("gold")
     sub.add_parser("panel")
+    rr = sub.add_parser("register-run")
+    rr.add_argument("--code-ref", default="HEAD")
+    rr.add_argument("--transform", action="append", default=[])
+    rr.add_argument("--ticker", action="append",
+                    help="target pages OUTSIDE the panel; none given: the panel whole")
+    rr.add_argument("--draws", type=int, default=10, help="draws a build")
+    rr.add_argument("--builds", type=int, default=4, help="builds a page")
+    rr.add_argument("--min-gap-s", type=float, default=300.0,
+                    help="least seconds between two builds of one page (the cache lifetime)")
+    rr.add_argument("--ciq-root", type=Path,
+                    help="the CIQ folders transcripts and comps exports are read from "
+                         "(default: the assembler's copy)")
+    rr.add_argument("--note")
+    rr.add_argument("--out", required=True, type=Path)
     r = sub.add_parser("run")
+    r.add_argument("--registration", type=Path,
+                   help="a `register-run` registration; required (no paid draw is unregistered)")
+    r.add_argument("--build", type=int, help="which of the page's registered builds, from 1")
     r.add_argument("--ticker", required=True)
-    r.add_argument("--code-ref")
+    r.add_argument("--code-ref", help="a cross-check: must be the registration's commit")
+    r.add_argument("--transform", action="append", default=[],
+                   help="a cross-check: given, they must be the registration's, in order")
+    r.add_argument("--ciq-root", type=Path,
+                   help="the CIQ folders transcripts and comps exports are read from "
+                        "(default: the registration's)")
     r.add_argument("--budget-ledger", required=True, type=Path)
     r.add_argument("--cap", type=float, help="may only LOWER the approved cap")
     r.add_argument("--draws-out", required=True, type=Path)
-    r.add_argument("--label", required=True)
-    r.add_argument("--draws", type=int, default=5)
+    r.add_argument("--label", help="refused: a registered build's label is derived")
+    r.add_argument("--draws", type=int, help="a cross-check: must be the registration's")
     r.add_argument("--paid", action="store_true")
     a = ap.parse_args(argv)
 
@@ -185,37 +258,42 @@ def main(argv: list[str] | None = None) -> int:
               f"${budget.cap_usd:.2f}; score with `python -m vinci.evals score --out-dir "
               f"{a.out_dir} --registration {a.registration} --budget-ledger {a.budget_ledger}`")
         return 0
+    if a.cmd == "register-run":
+        from vinci.evals import builds as bd
+        from vinci.evals import compare as cm
+        rp.refuse_inside_repo(a.out, "the registration")
+        if a.out.exists():
+            raise rp.ReplayError(f"{a.out} exists: a registration is written once")
+        breg = bd.register_run(code_ref=a.code_ref, pages=cm.registered_pages(a.ticker),
+                               transforms=a.transform, draws=a.draws, builds=a.builds,
+                               min_gap_s=a.min_gap_s, ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT,
+                               note=a.note)
+        bd.write_registration(breg, a.out)
+        print(f"registered {breg.sha[:16]}: pages {list(breg.pages)}, {breg.builds} builds of "
+              f"{breg.draws} draws a page, at least {breg.min_gap_s:.0f}s between a page's "
+              f"builds, code {breg.code_ref[:12]}, transforms {list(breg.transforms)} -> {a.out}")
+        return 0
+    if a.cmd == "run":
+        return _run(a)
     if a.cmd == "score":
         from vinci.evals import compare as cm
         reg = cm.Registration.from_json(a.registration.read_text(encoding="utf-8"))
         print(cm.score_text(cm.score_run(a.out_dir, reg, ledger=a.budget_ledger)))
         return 0
-    if a.cmd in ("capture", "prove", "run"):
+    if a.cmd in ("capture", "prove"):
         if a.cmd == "capture":
             rp.refuse_inside_repo(a.out, "a captured request (it carries the transcripts)")
-        if a.cmd == "run":
-            rp.refuse_inside_repo(a.draws_out, "raw draws")
-            budget = rp.Budget.load(a.budget_ledger, cap_usd=a.cap)
         if a.cmd == "prove" and a.page_ref:
             page = rp.page_at(a.ticker, a.page_ref)
             tx = rp.transcript_for(a.ticker, page=page)
         else:
             page, tx = rp.panel_inputs(a.ticker)
         names: list[str] = list(getattr(a, "transform", []))
-        draws = getattr(a, "draws", 5)
-        req = (rp.capture_at(a.code_ref, page, tx, draws=draws, transforms=names)
-               if a.code_ref else rp.capture(page, tx, draws=draws, transforms=names))
+        req = (rp.capture_at(a.code_ref, page, tx, transforms=names)
+               if a.code_ref else rp.capture(page, tx, transforms=names))
         if a.cmd == "capture":
             a.out.write_text(json.dumps(req.kwargs), encoding="utf-8")
             print(f"{a.ticker}: SYSTEM {len(req.system):,} USER {len(req.user):,} chars -> {a.out}")
-            return 0
-        if a.cmd == "run":
-            if not _paid(a):
-                return 2
-            raws = rp.run_request(req, draws=draws, budget=budget, label=a.label,
-                                  draws_out=a.draws_out)
-            print(f"{a.ticker}: {sum(r is not None for r in raws)}/{draws} usable draws; the "
-                  f"approval's spend is now ${budget.spent():.4f} of ${budget.cap_usd:.2f}")
             return 0
         proof = rp.prove(req, rp.parse_log(a.log.read_text(encoding="utf-8")))
         for f in proof.fields:
