@@ -346,7 +346,10 @@ def test_the_panel_age_note_renders_on_a_passing_build_too() -> None:
     """Rendered ALWAYS, not only on failure (operator): panel age is context a reader needs to
     read a multiple. A guard that speaks only when it fails leaves the other seven names looking
     clean when their fundamentals are weeks behind their price."""
-    age = fr.panel_age(_fleet()["AORT"], _assembled("AORT"), kind="export")
+    # AORT was retired 2026-11-09: its page as committed on 2026-10-26, frozen
+    aort = json.loads((ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "AORT"
+                       / "dossier.json").read_text())
+    age = fr.panel_age(aort.get("mechanical") or {}, str(aort["assembled_at"]), kind="export")
     assert age is not None
     note = age.note()
     assert "oldest panel" in note and str(age.days) in note
