@@ -53,10 +53,10 @@ module joining either package unclassified is a MOVE under the rule above, so th
 stop covering a new extractor (`--repin` then pins it as watched). Three modules outside them build
 page fields and are watched too: vinci/verbatim.py (which quoted values a page keeps),
 vinci/finra.py (short interest) and vinci/eod/features.py (the price box's 52-week range, whose
-window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction, and
-vinci/ciq builds no page field: its relationship parser is read only by tests/test_ciq.py (graph
-Test 0, its last caller, left in #905), and vinci/graph/extract.py takes just its
-SUPPLY_CHAIN_TYPES taxonomy.
+window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction.
+vinci/ciq, which built no page field, was removed on 2026-11-10 (fix request 2: A-D13, A-D16,
+RBC-D7): its last caller, graph Test 0, left in #905, and vinci/graph/extract.py now holds the
+SUPPLY_CHAIN_TYPES taxonomy it took from it.
 
     python -m tests.test_extraction_version_drift            # print every watched module's hash
     python -m tests.test_extraction_version_drift --repin    # re-pin this file in place
