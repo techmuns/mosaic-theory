@@ -2257,8 +2257,9 @@ _KD_4COL = (
 def _kd_bundle(monkeypatch: pytest.MonkeyPatch, text: str,
                filename: str = "Acme Co NasdaqGM ACME Key Developments.rtf") -> ciq.CiqBundle:
     """A bundle carrying one key_developments workbook; read_text is stubbed to `text` (the RTF
-    decode itself is covered by test_ciq — here we pin the parse/filter/header logic). The
-    filename is REAL-shaped because issuer attribution derives its name-head from it (#458)."""
+    decode itself is covered by test_ciq_reader_contract — here we pin the parse/filter/header
+    logic). The filename is REAL-shaped because issuer attribution derives its name-head
+    from it (#458)."""
     from pathlib import Path
     monkeypatch.setattr(cs, "read_text", lambda path, fmt=None: text)
     wb = ciq.CiqWorkbook(
