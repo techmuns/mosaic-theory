@@ -578,7 +578,10 @@ def check_fact(metric: str, value: str, quote: str) -> Fact:
                     else f"its value says {vf.value:g} is {want}; its quote prints no direction "
                          f"beside it")
             hits = agree
-        shapes = {(reads[j][0], qfigs[j].currency, qfigs[j].scale, qfigs[j].unit) for j in hits}
+        # the bound is part of the reading: "more than 5% last year and approximately 5% this
+        # year" names two readings of one 5%, and a value of "5%" picks neither (#941 review)
+        shapes = {(reads[j][0], qfigs[j].currency, qfigs[j].scale, qfigs[j].unit,
+                   _qualifier(quote, qfigs[j])) for j in hits}
         if len(shapes) > 1:
             return _unknown(f"its quote states {vf.value:g} {len(hits)} times, read differently")
         q = qfigs[hits[0]]

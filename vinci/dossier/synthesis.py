@@ -1734,14 +1734,19 @@ NOT_SENT: dict[str, Any] = {"primary_source": True,
                                 "locator": True}}}}
 
 
+def driver_value_as_read(value: str, status: str | None, reason: str | None) -> str:
+    """A driver row's value as every READER is handed it — the synthesis and the scenario
+    template alike. A transcript row whose value code could not verify against its quote
+    (`driver_extract.check_fact`) is not handed over as a value — "up 7%" read off "down 7%" was,
+    under the header "validated, cited facts" (RG-D8). Every other row's value is unchanged."""
+    if status == "unknown":
+        return f"UNKNOWN — not verified against its quote: {reason}"
+    return value
+
+
 def prompt_driver_value(r: OperatingDriver) -> str:
-    """A driver row's value as the synthesis reads it. A transcript row whose value code could
-    not verify against its quote (`driver_extract.check_fact`) is not handed over as a value —
-    "up 7%" read off "down 7%" was, under the header "validated, cited facts" (RG-D8). Every other
-    row's value is unchanged."""
-    if r.value_status == "unknown":
-        return f"UNKNOWN — not verified against its quote: {r.unknown_reason}"
-    return r.value
+    """`driver_value_as_read` for a row of the layer."""
+    return driver_value_as_read(r.value, r.value_status, r.unknown_reason)
 
 
 def _mark_unverified_drivers(dumped: dict[str, Any], od: OperatingDriversExtract | None) -> None:

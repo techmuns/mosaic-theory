@@ -220,6 +220,16 @@ def test_a_change_word_directly_before_the_next_figure_is_that_figures() -> None
                                             ebitda).figures] == [None, "down"]
 
 
+def test_a_number_said_twice_with_different_bounds_is_refused() -> None:
+    """FAILED on 9a09a1f5 (#941's review, Codex): the ambiguity check compared change, currency,
+    scale and unit but not the bound, so a "5%" said once as "more than" and once as
+    "approximately" was verified with the first one's bound — a reading the value never chose."""
+    quote = "Retention was more than 5% last year and approximately 5% this year."
+    assert dx.check_fact("retention", "5%", quote).status == "unknown"
+    (g,) = dx.check_fact("retention", "approximately 5% this year", quote).figures
+    assert g.qualifier == "approximately"
+
+
 # --- RG-D19: the locator --------------------------------------------------------------------------
 
 def test_the_locator_names_the_call_paragraph_speaker_and_both_hashes() -> None:
@@ -442,3 +452,22 @@ def test_every_committed_rows_figures_are_its_quotes() -> None:
         quote_figs = {(f.value, f.currency, f.scale, f.unit) for f in dx._figures(r["verbatim"])}
         for g in dx.check_fact(r["metric"], r["value"], r["verbatim"]).figures:
             assert (g.value, g.currency, g.scale, g.unit) in quote_figs, r["metric"]
+
+
+# --- every reader of a driver value is handed the UNKNOWN, not the claim --------------------------
+
+def test_the_scenario_template_prints_an_unknown_rows_unknown_never_its_claim() -> None:
+    """FAILED on 9a09a1f5 (#941's review, Codex): `scenario-propose` printed an unknown row's raw
+    "up 7%" into the template the analyst sets six numbers against, while the synthesis read
+    UNKNOWN. Both readers now take one formatter (`synthesis.driver_value_as_read`)."""
+    from vinci.dossier import propose
+    bad, _ = _one(_DOWN_7, "up 7%")
+    good, _ = _one(_DOWN_7, "down 7%")
+    doc = {"mechanical": {"operating_drivers": {"rows": [json.loads(bad.model_dump_json()),
+                                                         json.loads(good.model_dump_json())]}}}
+    lines = propose._operating_driver_lines(doc)
+    assert not any("widget shipments: up 7%" in ln for ln in lines), lines
+    assert any("widget shipments: UNKNOWN — not verified against its quote" in ln for ln in lines)
+    assert any("widget shipments: down 7%" in ln for ln in lines)
+    assert syn.prompt_driver_value(bad) == syn.driver_value_as_read(
+        bad.value, bad.value_status, bad.unknown_reason)

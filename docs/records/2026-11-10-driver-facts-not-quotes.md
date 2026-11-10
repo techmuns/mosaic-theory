@@ -331,7 +331,9 @@ These read a committed row's `verbatim`. Each is moved in PR 3, not here:
   without text.
 - `vinci/evals/metrics.py` `segment_profit`, which reads `verbatim` and `following_context` for
   its regex. It will need the store, or it will measure less.
-- `vinci/dossier/propose.py`, which prints `value`; it needs a formatter of `figures`.
+- `vinci/dossier/propose.py`, which prints `value`. Since #941's review it prints an unknown
+  row as UNKNOWN through the synthesis's own formatter (`synthesis.driver_value_as_read`). A null
+  `value` will still need a formatter of `figures`.
 - `mechanical._dated_operating_events` reads `verbatim` too, but at build time, before transcript
   rows are merged. It never reads a transcript row and is unaffected.
 - **The synthesis's figure trace** (`synthesis._values_by_ref`) reads a cited row's numbers off
@@ -344,6 +346,16 @@ These read a committed row's `verbatim`. Each is moved in PR 3, not here:
 - **The replay.** A frozen panel page is a historical blob and keeps its text. A page frozen after
   the pass would need the store to replay byte for byte. That gap is stated now, so it is not
   discovered at the next re-freeze.
+
+**DEFERRED from #941's review (Codex P1, round 1): feed the synthesis the checked figures.** A
+verified row whose value omits what its quote prints beside the figure (value "7%" for "down 7%")
+reaches the synthesis as the model's value, while the checked `figures` stay out of the prompt.
+- It is not a wrong value. The same row's quote, "down 7%", sits beside the value in the request,
+  and the request is unchanged from main.
+- Rendering `figures` into the digest would change every request with transcript rows, not the
+  six rows this PR measures. So it is its own prompt change, measured on the panel per RUNBOOKS
+  §n, in its own PR.
+- Owner: this stream, after PR 3.
 
 ## 10. The operator's rulings (2026-11-10, relayed by the coordinator: "yes to all")
 
