@@ -400,8 +400,12 @@ def _scored(block: dict[str, typing.Any] | None) -> core.ItemResult:
 def test_the_scorecard_counts_one_unit_per_panel_and_absent_is_not_run() -> None:
     """(+/−) agree confirms, differ is unexplained, not_run is unchecked — one unit per panel; a
     page without the block did not run (never a pass); an outcome it was not taught raises."""
-    panels = [{"panel": f"p{i}", "stated": [], "where": "", "check": c}
-              for i, c in enumerate([CHECK_AGREE, CHECK_AGREE, CHECK_DIFFER, CHECK_NOT_RUN])]
+    # real panel labels: the scorecard credits each panel to the families citing its sheet and
+    # refuses a label it does not know (audit RBC-D9, tests/test_quality_family_credit.py)
+    labels = [label for label, _how, _read in cs._MONEY_PANELS][:4]
+    panels = [{"panel": label, "stated": [], "where": "", "check": c}
+              for label, c in zip(labels, [CHECK_AGREE, CHECK_AGREE, CHECK_DIFFER, CHECK_NOT_RUN],
+                                  strict=True)]
     r = _scored({"panels": panels, "check": CHECK_DIFFER})
     assert r.counts == {core.CONFIRMED: 2, core.DIFFERS_UNEXPLAINED: 1, core.UNCHECKED: 1}
     assert _scored(None).not_run is not None and not _scored(None).counts

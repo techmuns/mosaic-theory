@@ -3091,9 +3091,11 @@ def _cmd_graph_coverage(args: argparse.Namespace) -> int:
         f"{rep['edges_per_name']}/name · real {rep['real_edges_per_name']}/name · "
         f"{rep['evidence_refused']} refused (evidence not in the 10-K excerpts)"
     )
+    prec = rep["evidence_precision"]
     print(
-        f"evidence-precision {rep['evidence_precision']:.0%} ({rep['real_edges']} real = "
-        f"{rep['real_us_listed']} US-listed + {rep['real_global']} global) · {rep['by_class']}"
+        f"evidence-precision {'n/a (no edge judged)' if prec is None else f'{prec:.0%}'} "
+        f"({rep['real_edges']} real = {rep['real_us_listed']} US-listed + {rep['real_global']} "
+        f"global; {rep['judge_errors']} judge error(s), in no denominator) · {rep['by_class']}"
     )
     sc = rep["super_connectors"]
     if sc:
@@ -3108,6 +3110,64 @@ def _cmd_graph_coverage(args: argparse.Namespace) -> int:
         out = cfg.data_dir / "graph_coverage.json"
         out.write_text(json.dumps(rep, indent=2))
         print(f"wrote {out} (git-ignored)")
+    return 0
+
+
+def _cmd_graph_rejudge(args: argparse.Namespace) -> int:
+    """Re-judge the committed exposure map's edges with their extraction held fixed
+    (`coverage.rejudge`), under a list-price cap on the WHOLE run (`BudgetedLlmClient`). Writes
+    `data/graph_coverage.json` only once every edge is judged: a refused call, or an edge that got
+    no verdict (`JUDGE_ERROR`), stops the run and writes nothing (exit 1)."""
+    from datetime import UTC, datetime
+
+    from vinci.graph import AnthropicLlmClient
+    from vinci.graph.coverage import rejudge
+    from vinci.graph.judge import JUDGE_ERROR, JUDGE_MAX_TOKENS
+    from vinci.graph.llm import BudgetedLlmClient, BudgetExceededError
+
+    cfg = get_config()
+    path = cfg.data_dir / "graph_coverage.json"
+    old = json.loads(path.read_text())
+    # A SMALL OUTPUT CEILING: a verdict and a short reason are tens of tokens, and the cap's bound
+    # counts each call's whole `max_tokens` of output — the default 16,384 would hold back ~$0.41
+    # a call and could stop a run that fits. A truncated answer still raises (a judge error).
+    llm = BudgetedLlmClient(AnthropicLlmClient(model=args.model or cfg.graph_llm_model,
+                                               max_tokens=JUDGE_MAX_TOKENS),
+                            cap_usd=args.budget_usd)
+    print(f"re-judging {len(old['edges'])} committed edges with {llm.model}, cap "
+          f"${args.budget_usd:g} (list price)")
+    try:
+        new = rejudge(old, llm, on=datetime.now(UTC).date().isoformat(),
+                      super_connector_degree=cfg.graph_super_connector_degree)
+    except BudgetExceededError as exc:
+        print(f"STOPPED, nothing written — {exc} ({llm.attempts} call(s) sent, "
+              f"${llm.spent_usd:.2f} spent)")
+        return 1
+    if new["judge_errors"]:
+        # a judge error is NO verdict: writing it would replace a committed verdict with nothing
+        # (an expired key turns every call into one, at no cost and exit 0)
+        failed = [e["reason"] for e in new["edges"] if e["verdict"] == JUDGE_ERROR]
+        print(f"STOPPED, nothing written — {new['judge_errors']} of {len(new['edges'])} edge(s) "
+              f"got no verdict ({llm.attempts} call(s) sent, ${llm.spent_usd:.2f} spent); "
+              f"showing {min(3, len(failed))} of {len(failed)}:")
+        for r in failed[:3]:
+            print(f"  {r}")
+        if args.failed_out:   # the paid answers are kept for inspection, never as the map
+            Path(args.failed_out).write_text(json.dumps(new, indent=2))
+            print(f"  the incomplete re-judge is at {args.failed_out} (not the committed map)")
+        return 1
+    new["judged_by"].update({"calls": llm.attempts, "billed_calls": llm.calls,
+                             "cost_usd": round(llm.spent_usd, 4)})
+    path.write_text(json.dumps(new, indent=2))
+    moved = sum(1 for a, b in zip(old["edges"], new["edges"], strict=True)
+                if a["verdict"] != b["verdict"])
+    prec = new["evidence_precision"]
+    print(f"{llm.attempts} call(s) sent, {llm.calls} billed, ${llm.spent_usd:.2f} at list price")
+    print(f"real edges {old['real_edges']} → {new['real_edges']} · evidence precision "
+          f"{old['evidence_precision']} → {prec} · judge errors {new['judge_errors']} · "
+          f"{moved} of {len(new['edges'])} verdicts moved")
+    print(f"by class: {old['by_class']} → {new['by_class']}")
+    print(f"wrote {path}")
     return 0
 
 
@@ -3557,6 +3617,20 @@ def build_parser() -> argparse.ArgumentParser:
                        help="override: a focal naming this many hubs is excluded (default 6)")
     p_cov.add_argument("--json", action="store_true", help="write graph_coverage.json (ignored)")
     p_cov.set_defaults(func=_cmd_graph_coverage)
+
+    p_rj = sub.add_parser(
+        "graph-rejudge",
+        help="re-judge the committed exposure map's edges, extraction held fixed (PAID: LLM "
+        "calls), under a list-price cap on the whole run; writes data/graph_coverage.json only on "
+        "completion")
+    p_rj.add_argument("--budget-usd", type=float, required=True, dest="budget_usd",
+                      help="the run's TOTAL list-price cap; a call that could pass it stops the "
+                           "run")
+    p_rj.add_argument("--model", help="judge model id (default: config graph_llm_model)")
+    p_rj.add_argument("--failed-out", dest="failed_out",
+                      help="where to keep a run's answers when an edge got no verdict and the map "
+                           "is therefore not written (outside data/)")
+    p_rj.set_defaults(func=_cmd_graph_rejudge)
 
     p_exp = sub.add_parser("graph-exposure", help="given an entity/event, list N-hop exposed names")
     p_exp.add_argument("--entity", required=True, help="ticker or company name of the shocked node")
