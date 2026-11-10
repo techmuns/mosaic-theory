@@ -70,7 +70,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RBC-D8 | 2 | fixed | 6fbbb4a2 (#936) | `tests/test_filed_tiebreak.py::test_nflxs_committed_page_carries_the_caveat_the_code_writes` | NFLX |
 | RBC-D9 | 2 | fixed | d1a91f0a (#937) | `tests/test_quality_family_credit.py::test_segments_is_credited_with_its_own_panel_not_the_whole_check` | `data/snapshots/data_quality/ciq/2026-11-09.json` (the CIQ quality snapshot; the release and prices sources' shared checks still credit whole, and say so) |
 | RG-D16 | 2 | fixed | d1a91f0a (#937) | `tests/test_graph.py::test_a_judge_failure_is_its_own_verdict_never_an_unsupported_edge` | `data/graph_coverage.json` re-judged at 2bd1f760 (339 calls, $2.61 of the operator's $3 cap; every edge carries its reason) |
-| RG-D19 | 2 | in progress (#941) | #941, #951 (the private store, stacked) | — | — |
+| RG-D19 | 2 | in progress (#951) | d0563738 (#941, PR 1: the fact and its locator); #951 (PR 2: the private store); the $0 page pass that takes the quote off the pages is PR 3, to come | `tests/test_driver_facts.py::test_the_locator_names_the_call_paragraph_speaker_and_both_hashes` | none yet: no committed page drops its quote until PR 3 |
 | RF-D1 | 3 | fixed | 93a50599 (#943) | `tests/test_split_confirmed_by_tiingo.py::test_a_split_late_on_both_polygon_feeds_stops_a_resolved_row` | none (no page reads the split basis) |
 | RF-D2 | 3 | fixed | 93a50599 (#943) | `tests/test_split_confirmed_by_tiingo.py::test_close_position_refuses_a_split_the_reference_does_not_record` | none |
 | RF-D8 | 3 | fixed | 7d0e3c91 (#946) | `tests/test_ads_ratio.py::test_a_mixed_number_is_its_whole_and_its_fraction` | none (no committed page carries an ADS ratio) |
@@ -133,7 +133,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RG-D5 | 4 | open | — | — | — |
 | RG-D6 | 4 | open | — | — | — |
 | RG-D7 | 4 | open | — | — | — |
-| RG-D8 | 4 | in progress (#941) | #941 | — | — |
+| RG-D8 | 4 | in progress (#941) | d0563738 (#941): the direction, presence and metric-naming checks are on main; a committed page carries them only from PR 3's $0 pass; the clause-binding half is not built (misfired on 6 of 6 committed rows; strict xfail) | `tests/test_driver_facts.py::test_a_value_whose_direction_its_quote_contradicts_reads_unknown` | none yet: PR 3 |
 | RG-D21 | 4 | open | — | — | — |
 | RD-D2 | 4 | open | — | — | — |
 | RD-D3 | 4 | open | — | — | — |
