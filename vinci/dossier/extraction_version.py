@@ -755,6 +755,16 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "sit where the positional reads assumed (2026-11-10)",
     ),
     (
+        "2026-11-10.loud-with-the-right-cause",
+        "fix request 2, order 6, two loud failures that named the wrong cause (RA-D16, RA-D15): "
+        "the LTM-against-its-quarters flag quotes a quarter's own cell ('NA', 'NM', blank, "
+        "absent) instead of '-' for every marker; an empty `.xlsx` cell states no currency, so "
+        "an all-USD `.xlsx` export is no longer refused as foreign (H-D3's strict xfail lifted). "
+        "No figure moves: the flag is QA text, and five committed pages (EPAM, MCK, VITL, VRRM, "
+        "WLK) print a '-' quarter as '-' (quoted) once re-assembled; every export on disk is "
+        "BIFF",
+    ),
+    (
         "2026-11-10.relationship-view-edges",
         "the Customers view's edges are said (TeamNostra fix request 2, RBC-D3, V1-O3, RBC-D5):"
         " an RTF view that does not end with CIQ's closing line ('*denotes proprietary "

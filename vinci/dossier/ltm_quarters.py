@@ -38,7 +38,7 @@ from datetime import date
 from typing import Any, Literal
 
 from vinci.dossier import ciq_sheets as cs
-from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, clean_num
+from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, clean_num, read_cell
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
 from vinci.dossier.schemas import FinTable
 
@@ -68,6 +68,16 @@ class QuarterCell:
     end: date
     quarter: int | None
     value: float | None  # None: the cell is '-', or the row is absent from the quarterly sheet
+    #: The cell as exported when it carries no figure ('NA', 'NM', '-', '' …), so the flag quotes
+    #: the export's own words (audit RA-D16, 2026-11-10: every marker printed as '-'). None when the
+    #: cell carries a figure, or the row has no such column.
+    text: str | None = None
+
+
+def _cell_words(q: QuarterCell) -> str:
+    """A quarter with no figure, in the export's words: its cell quoted, a blank named, and
+    'absent' where the row has no cell (audit RA-D16)."""
+    return "absent" if q.text is None else cs._cell_words(q.text)
 
 
 @dataclass(frozen=True)
@@ -93,7 +103,7 @@ class LtmCheck:
         if self.outcome == "not_run":
             return f"{head}; NOT CHECKED against its quarters: {self.reason}"
         cells = " + ".join(
-            f"{'-' if q.value is None else f'{q.value:,.1f}'} "
+            f"{_cell_words(q) if q.value is None else f'{q.value:,.1f}'} "
             f"(Q{q.quarter or '?'} {q.end:%Y-%m-%d})" for q in self.quarters)
         n = sum(1 for q in self.quarters if q.value is not None)
         carried = self.carried if self.carried is not None else 0.0
@@ -106,7 +116,8 @@ class LtmCheck:
                     f"{TOLERANCE:.0%}, or {PRINT_SLACK_MUSD} $M)")
         dash = ", ".join(f"Q{q.quarter or '?'} {q.end:%Y-%m-%d}"
                          for q in self.quarters if q.value is None)
-        return f"{body}, which reconciles; UNVERIFIED, because {dash} read(s) '-'"
+        words = sorted({_cell_words(q) for q in self.quarters if q.value is None})
+        return f"{body}, which reconciles; UNVERIFIED, because {dash} read(s) {' / '.join(words)}"
 
 
 @dataclass(frozen=True)
@@ -245,12 +256,22 @@ def check(bundle: CiqBundle, table: FinTable | None) -> LtmQuarterRead:
                                 f"the quarterly Income Statement carries no '{sheet_label}' row"
                                 + ("" if label in _CORE else " inside its unusual-items block")))
             continue
-        cells = tuple(
-            QuarterCell(p.end, p.quarter,
-                        clean_num(q[qi][j]) if j < len(q[qi]) else None)
-            for j, p in located if p.end is not None)
+        cells = tuple(_quarter_cell(p, q[qi], j) for j, p in located if p.end is not None)
         out.append(_judge(label, value, period.end, cells))
     return LtmQuarterRead(tuple(out))
+
+
+def _quarter_cell(p: cs.HeaderPeriod, row: list[Any], j: int) -> QuarterCell:
+    """One quarter's cell, read ONCE (:func:`read_cell`): its figure, or the cell as exported when
+    it carries none — and no text at all where the row stops short of the column, which the flag
+    calls absent rather than blank (openpyxl's read-only rows can end early)."""
+    assert p.end is not None
+    if j >= len(row):
+        return QuarterCell(p.end, p.quarter, None, None)
+    raw = row[j]
+    value = read_cell(raw).value
+    return QuarterCell(p.end, p.quarter, value,
+                       None if value is not None else ("" if raw is None else str(raw).strip()))
 
 
 def agrees(a: float, b: float) -> bool:
