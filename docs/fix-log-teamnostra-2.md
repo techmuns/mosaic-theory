@@ -82,11 +82,11 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RE1-D9 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_a_read_the_view_cannot_cut_is_refused` | none (0 of 28 frozen pages move) |
 | RE1-D12 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_pages_ten_q_read_names_the_amendment_it_read` | none (no frozen page's 10-Q has a later 10-Q/A) |
 | RE1-D13 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
-| RA-D3 | 3 | open | — | — | — |
-| RA-D8 | 3 | open | — | — | — |
-| RA-D11 | 3 | open | — | — | — |
-| RA-D13 | 3 | open | — | — | — |
-| RBC-D6 | 3 | open | — | — | — |
+| RA-D3 | 3 | in progress (#957) | #957 | — | — |
+| RA-D8 | 3 | in progress (#957) | #957 | — | — |
+| RA-D11 | 3 | in progress (#957) | #957 | — | — |
+| RA-D13 | 3 | in progress (#957) | #957 | — | — |
+| RBC-D6 | 3 | in progress (#957) | #957 | — | — |
 | RE2-D16 | 3 | open | — | — | — |
 | A-D2 | 3 | open | — | — | — |
 | BC-D7 | 3 | open | — | — | — |
