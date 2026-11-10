@@ -75,9 +75,9 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RF-D2 | 3 | open | — | — | — |
 | RF-D8 | 3 | in progress (#946) | #946 | `tests/test_ads_ratio.py::test_a_mixed_number_is_its_whole_and_its_fraction` | none (no committed page carries an ADS ratio) |
 | V2-N1 | 3 | open | — | — | — |
-| RE1-D6 | 3 | open | — | — | — |
-| RE1-D1 | 3 | in progress (#939) | #939 | `tests/test_sec_budget_across_machines.py::test_two_machines_sending_at_once_stay_under_secs_ceiling_per_user` | none (pacing changes no value; 28 frozen pages compared) |
-| RE1-D2 | 3 | in progress (#939) | #939 | `tests/test_sec_budget_across_machines.py::test_a_redirect_hop_to_sec_takes_its_own_slot` | none (pacing changes no value) |
+| RE1-D6 | 3 | in progress (#940) | #940 | `tests/test_restatement_precision.py::test_a_restated_round_figure_is_named` | none (0 of 28 frozen pages cite a moved figure; 35 of 1,769 corpus changes still unnamed, need XBRL decimals) |
+| RE1-D1 | 3 | fixed | 02ed3d29 (#939) | `tests/test_sec_budget_across_machines.py::test_two_machines_sending_at_once_stay_under_secs_ceiling_per_user` | none (pacing changes no value; 28 frozen pages compared) |
+| RE1-D2 | 3 | fixed | 02ed3d29 (#939) | `tests/test_sec_budget_across_machines.py::test_a_redirect_hop_to_sec_takes_its_own_slot` | none (pacing changes no value) |
 | RE1-D8 | 3 | open | — | — | — |
 | RE1-D9 | 3 | open | — | — | — |
 | RE1-D12 | 3 | open | — | — | — |
@@ -121,7 +121,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RE1-D10 | 4 | open | — | — | — |
 | RE1-D11 | 4 | open | — | — | — |
 | RE1-D14 | 4 | open | — | — | — |
-| RE1-D16 | 4 | in progress (#945) | #945 | `tests/test_point_guide_verification.py::test_a_point_guide_against_a_range_ending_at_zero_is_a_mismatch` | none (28 frozen pages compared; every compared line has both bounds) |
+| RE1-D16 | 4 | fixed | 1d0c374c (#945) | `tests/test_point_guide_verification.py::test_a_point_guide_against_a_range_ending_at_zero_is_a_mismatch` | none (28 frozen pages compared; every compared line has both bounds) |
 | RA-D2 | 4 | open | — | — | — |
 | RA-D4 | 4 | open | — | — | — |
 | RA-D9 | 4 | open | — | — | — |

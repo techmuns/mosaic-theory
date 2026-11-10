@@ -950,16 +950,47 @@ def superseded(facts: dict[str, Any], p: ConceptPoint) -> ConceptPoint | None:
     # the period's FIRST filing, whatever came between: a figure restated and restated back is
     # the figure first filed, not a restatement
     first = min(earlier, key=lambda q: q.filed) if earlier else None
-    return first if first is not None and not _same_figure(first.value, p.value) else None
+    return (first if first is not None and not _same_figure(first.value, p.value, unit=p.unit)
+            else None)
 
 
-def _same_figure(a: float, b: float) -> bool:
+#: A per-share figure is stated to the cent, whatever its trailing zeros (`_amount` prints it so).
+_CENT = Decimal("0.01")
+
+
+def _precision(x: float, per_share: bool) -> Decimal:
+    """The step ``x`` is taken to be stated at: its trailing zeros, but NEVER COARSER THAN ITS
+    SECOND SIGNIFICANT FIGURE — and a per-share figure's at the cent, or finer where its own
+    digits are (0.05 is stated to the cent, not to a tenth of one, so 0.054 re-reports it). A zero
+    has no precision of its own (0), so the other figure's decides."""
+    d = Decimal(repr(x)).normalize()
+    if not d:
+        return Decimal(0)
+    trailing = Decimal(1).scaleb(int(d.as_tuple().exponent))
+    return min(trailing, _CENT if per_share else Decimal(1).scaleb(d.adjusted() - 1))
+
+
+def _same_figure(a: float, b: float, *, unit: str = "") -> bool:
     """Two filings of one figure state the same number when they agree at the COARSER of their
     two precisions (review of #875): −69,100,000 re-reports −69,075,000 rounded to $100,000, it
     does not restate it — 3 of 13 current legs in the cache differed only so. A restatement that
-    small, stated at that precision, is not told apart; one past it is."""
-    exp = max(Decimal(repr(x)).normalize().as_tuple().exponent for x in (a, b))
-    step = Decimal(1).scaleb(int(exp))
+    small, stated at that precision, is not told apart; one past it is.
+
+    A ROUND FIGURE IS NOT A COARSE ONE (TeamNostra fix request 2, RE1-D6). companyfacts carries no
+    `decimals`, so precision is read from trailing zeros, and a figure that happened to be round
+    read as stated to its leading digit: NFLX's $900,000 thousand of debt absorbed its ASU 2015-03
+    restatement to $885,849 thousand, and HLF's 3.30 diluted EPS (a float, 3.3) its re-audit's
+    3.32. So a figure is never taken as stated coarser than its second significant figure ("$4.9
+    billion" still re-reports 4,949 million) and a per-share one (``unit`` "USD/shares") never
+    coarser than a cent. On the 30 non-test companyfacts fixtures, of 1,769 later filings more
+    than 0.5% from the period's first, 70 were read as the same figure and 35 now are — each a
+    two-significant-figure value the other rounds to, which companyfacts cannot tell from a
+    restatement; of the 802 non-zero changes of 0.5% or less, 4 are newly told apart, each a
+    per-share figure that moved by a cent."""
+    if a == b:
+        return True
+    per_share = "/" in unit
+    step = max(_precision(a, per_share), _precision(b, per_share))
     return (Decimal(repr(a)).quantize(step, ROUND_HALF_EVEN)
             == Decimal(repr(b)).quantize(step, ROUND_HALF_EVEN))
 
