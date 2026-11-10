@@ -119,7 +119,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RF-D13 | 4 | open | — | — | — |
 | RE1-D7 | 4 | open | — | — | — |
 | RE1-D10 | 4 | open | — | — | — |
-| RE1-D11 | 4 | open | — | — | — |
+| RE1-D11 | 4 | in progress (#948) | #948 | `tests/test_fts_amendment_form.py::test_the_covenant_pointer_names_an_amendment_as_filed` | WERN (1 of 92 pointer rows; 20 labels at its next re-assembly, on order 1's rebuild list) |
 | RE1-D14 | 4 | open | — | — | — |
 | RE1-D16 | 4 | open | — | — | — |
 | RA-D2 | 4 | open | — | — | — |
