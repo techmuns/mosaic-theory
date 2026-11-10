@@ -237,6 +237,20 @@ def _classes_in(text: str) -> list[tuple[str, str]]:
     return out
 
 
+#: AN ASIDE between a statement's subject and its verb (TeamNostra fix request 2, RE2-D11): "The
+#: Revolving Credit Facility, which was entered into alongside the Term Loan, matures on June 1,
+#: 2029" gave the revolver's date to the Term Loan, the nearest noun. A noun inside a comma-set
+#: relative or accompanying clause is not the subject.
+_ASIDE = re.compile(r",\s*(?:which|that|who|whose|along\s+with|alongside|together\s+with|"
+                    r"including|as\s+well\s+as|in\s+addition\s+to)\b[^,;.]*,", re.I)
+#: AN OPTION TO EXTEND, not an extension (RE2-D12): "the Company may extend the maturity date of
+#: the Term Loan to June 1, 2031" read June 1, 2031 as the term loan's current maturity. A modal or
+#: a stated option or right before "extend" makes the date one the borrower MAY reach.
+_OPTION = re.compile(r"\bmay\b(?!\s+\d)|\b(?:might|could|can|would)\b|"  # never the month May
+                     r"\b(?:has|have|had)\s+(?:the|an)\s+(?:option|right)\b|\bat\s+(?:its|their|the\s+\w+['’]s)\s+(?:option|"
+                     r"election)\b|\bis\s+(?:permitted|entitled)\b", re.I)
+
+
 def _nearest_class(text: str, pos: int, floor: int) -> tuple[str, str] | None:
     """The class of the nearest instrument noun before ``pos``, not before ``floor`` — None when
     a NOTES noun is nearer: the statement is the notes' (`_notes` reads it). BURL's debt table
@@ -244,8 +258,10 @@ def _nearest_class(text: str, pos: int, floor: int) -> tuple[str, str] | None:
     1.25 %, matures on December 15, 2027", and the nearest LOAN noun gave the notes' date to the
     term loan."""
     best: re.Match[str] | None = None
+    asides = [(a.start(), a.end()) for a in _ASIDE.finditer(text, floor, pos)]
     for m in _NOUN.finditer(text, floor, pos):
-        best = m
+        if not any(a <= m.start() < b for a, b in asides):
+            best = m
     if best is None:
         return None
     if _NOTE_WORD_RE.search(text, best.end(), pos):
@@ -356,6 +372,10 @@ def _loans(sentence: str) -> list[Stated]:
     for m in _TRANSITION.finditer(sentence):
         if _inside(m.start(), springs) or _positional(m):
             continue
+        lead = sentence[max(0, m.start() - 80):m.start()]
+        if _OPTION.search(lead) and not re.search(r"\bexercised\b", lead, re.I):
+            taken.append((m.start(), m.end()))   # an option the borrower may use: no date of it
+            continue
         subj = m.group("subj")
         classes = (_classes_in(subj) if subj else []) or (
             [c] if (c := _nearest_class(sentence, m.start(), max(0, m.start() - 250))) else [])
@@ -416,7 +436,10 @@ def _loans(sentence: str) -> list[Stated]:
             [c] if (c := _nearest_class(sentence, m.start(), max(0, m.start() - 250))) else [])
         if not classes:
             continue
-        current = not (m.group("past") or m.group("was") or _prior(m.start()))
+        # "matured" is the past tense (RE2-D12): "The 2021 Term Loan matured on March 24, 2025 and
+        # was repaid in full" is a date that has gone, never the current maturity
+        current = not (m.group("past") or m.group("was") or _prior(m.start())
+                       or m.group("verb").lower().startswith("matured"))
         quote = _quote(sentence, max(0, m.start() - 120), m.end())
         spring = _attach(m.end()) if current else ()
         for cls, key in classes:

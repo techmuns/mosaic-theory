@@ -667,6 +667,17 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "total keeps its latest Assets and says 'no current balance' when its one family is "
         "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5",
     ),
+    (
+        "2026-11-10.maturity-subject-and-unread-body",
+        "a maturity date belongs to its sentence's subject, an option to extend is not a "
+        "maturity, a past 'matured' is not current, and an unread 8-K body is not a clean scan "
+        "(TeamNostra fix request 2, RE2-D11, D12, D14): `debt_maturities` skips a noun inside a "
+        "comma-set aside ('which was entered into alongside the Term Loan') when it pairs a date "
+        "with the nearest instrument; a modal or a stated option or right before 'extend' reads "
+        "no date, unless the option was exercised; 'matured' is the past tense; and "
+        "`rank.structural` marks a filing whose body fetch failed, so a scan that finds no flag "
+        "on it does not count the name covered and its prior flag stands"
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

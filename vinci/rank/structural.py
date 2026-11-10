@@ -92,6 +92,9 @@ class FilingText:
     filing_date: date
     items: tuple[str, ...]
     body: str  # "" when not fetched (pure item-code signals don't need it)
+    # the body was due (a body-signal item) and its fetch FAILED (TeamNostra fix request 2,
+    # RE2-D14): the body signals were never checked, so a clean result is not a clean bill
+    body_unread: bool = False
 
 
 def _src(f: FilingText) -> str:
@@ -176,8 +179,10 @@ def _filings_for(
     no 8-Ks in the window (a real, clean result), `None` means we never found out. Returning `[]` on
     a failed fetch made an EDGAR outage look like a clean bill of health — see `StructuralScan`.
 
-    A failure to fetch one filing's BODY is NOT a coverage failure: the index still carries the item
-    codes, and the item-code-only signals (3.01 delisting, 4.02 restatement) still classify.
+    A failure to fetch one filing's BODY is not a failure of the whole read: the index still carries
+    the item codes, and the item-code-only signals (3.01 delisting, 4.02 restatement) still
+    classify. The filing is marked `body_unread`, and a scan that finds NO flag on such a read does
+    not count the name covered (RE2-D14): its going-concern and auditor-exit text went unchecked.
     """
     try:
         raw = events(edgar, cik, since=since)  # 8-Ks, and an 8-K/A for the codes it adds (E1-D7)
@@ -185,7 +190,7 @@ def _filings_for(
         return None
     out: list[FilingText] = []
     for f in raw:
-        body = ""
+        body, unread = "", False
         if f.primary_doc and (_BODY_ITEMS & set(f.items)):
             url = _ARCHIVE.format(
                 cik=int(pad_cik(f.cik)), acc=f.accession.replace("-", ""), doc=f.primary_doc
@@ -193,10 +198,11 @@ def _filings_for(
             try:
                 body = html_to_text(http.get_text(url, ttl_seconds=None))
             except HttpError:
-                body = ""
+                body, unread = "", True
         out.append(
             FilingText(
-                accession=f.accession, filing_date=f.filing_date, items=tuple(f.items), body=body
+                accession=f.accession, filing_date=f.filing_date, items=tuple(f.items), body=body,
+                body_unread=unread,
             )
         )
     return out
@@ -282,6 +288,13 @@ def scan_structural(
             if filings is None or shares is None:
                 continue  # an input was never retrieved — classifying now would invent a verdict
             flag = classify_structural_disqualifier(filings, shares, rec.prices)
+            if flag is None and (unread := [f.accession for f in filings if f.body_unread]):
+                # A FAILED BODY FETCH IS NOT A CLEAN READ (RE2-D14): marked covered, the weekly
+                # replace would erase this name's prior flag on a transient archive error
+                not_scanned[rec.identity.internal_id] = (
+                    f"8-K {', '.join(unread)} body could not be read — its going-concern and "
+                    "auditor-exit text was not checked")
+                continue
         except Exception:  # noqa: BLE001 — fail soft per name, never crash the cohort scan
             continue
         covered.add(rec.identity.internal_id)
