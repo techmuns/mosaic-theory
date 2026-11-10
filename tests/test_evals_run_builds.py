@@ -365,3 +365,21 @@ def test_two_runs_cannot_draw_one_build_at_once(
     (exc,) = inner
     assert isinstance(exc, rp.ReplayError) and "another run" in str(exc)
     assert sdk.calls == 3
+
+
+# --------------------------------------------------- 6. Codex round 1
+
+
+def test_a_registration_must_record_its_ciq_root(tmp_path: Path) -> None:
+    """(-) Codex round 1 (#958): a registration with no recorded CIQ root let `run` fall back to the
+    assembler's default, an input location the registration never named. It is refused at
+    construction, so neither `register-run` nor a hand-written file can leave it out."""
+    from vinci.evals import builds as bd
+    kw: dict[str, Any] = {"code_ref": "a" * 40, "transforms": (), "pages": ("NFLX",), "draws": 3,
+                          "builds": 2, "min_gap_s": 300.0, "requests": {"NFLX": "x"}}
+    with pytest.raises(ValueError, match="CIQ root"):
+        bd.RunRegistration(**kw)
+    with pytest.raises(ValueError, match="CIQ root"):
+        bd.RunRegistration(**kw, inputs={"ciq_root": ""})
+    # (+) with it, the registration stands
+    bd.RunRegistration(**kw, inputs={"ciq_root": str(tmp_path)})

@@ -74,8 +74,9 @@ def _run(a: argparse.Namespace) -> int:
         raise rp.ReplayError("--label: a registered build's label is derived from it")
     rp.refuse_inside_repo(a.draws_out, "raw draws")
     budget = rp.Budget.load(a.budget_ledger, cap_usd=a.cap)
-    # read where the registration was captured unless told otherwise (the pin checks either way)
-    ciq_root = a.ciq_root or Path(reg.inputs.get("ciq_root") or rp.DEFAULT_CIQ_ROOT)
+    # read where the registration was captured unless told otherwise (the pin checks either way);
+    # a registration always records its root, so there is no default to fall back to
+    ciq_root = a.ciq_root or Path(reg.inputs["ciq_root"])
     if not a.paid:   # $0: every refusal and the pinned capture, then the usual refusal to spend
         pb = bd.prepare_build(reg, a.ticker, a.build, budget=budget, ciq_root=ciq_root)
         gap = "first build" if pb.gap_s is None else f"{pb.gap_s:.0f}s after the last"

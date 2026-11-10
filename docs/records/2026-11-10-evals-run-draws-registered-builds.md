@@ -1,7 +1,7 @@
 ---
-status: open
+status: shipped
 date: 2026-11-10
-prs: []
+prs: [958]
 supersedes:
 superseded-by:
 ---
@@ -61,7 +61,8 @@ is step 3.
     `compare.registered_pages`: the panel whole, or target pages outside it.
   - **`run` requires `--registration` and `--build`.**
     - `--ciq-root` sets where inputs are read. Without it, `run` reads at the root the
-      registration recorded, never the assembler's default.
+      registration recorded, never the assembler's default. A registration that records no root is
+      refused at construction (Codex round 1).
     - `--transform`, `--code-ref` and `--draws` are cross-checks against the registration, refused
       when they differ.
     - `--label` is refused, because a build's label is derived from the registration.
@@ -69,7 +70,7 @@ is step 3.
   - The `capture` and `prove` branches are unchanged.
 
 **HOW VERIFIED.**
-- **Fail first.** The 15 tests in `tests/test_evals_run_builds.py`:
+- **Fail first.** The 16 tests in `tests/test_evals_run_builds.py`:
   - **Twelve, written before the code, fail on main `9da0d096`.** Eleven import a module that does
     not exist there. The twelfth, a paid `run` with no registration, fails by drawing: "DID NOT
     RAISE ReplayError".
@@ -78,6 +79,8 @@ is step 3.
     - a reworded second registration of the same request drew it again ("DID NOT RAISE");
     - a second `run` of one build, started while the first captured, drew too ("the second run
       drew").
+  - **One came from Codex's round 1,** failing on the PR head `b755a1d0`: a registration with no
+    recorded CIQ root was accepted ("DID NOT RAISE"), so `run` fell back to the default root.
 - **The pages are real committed ones** (NFLX). Only the two licensed reads are stubbed (the
   transcripts and the comps export); the capture child runs in-process for speed. One test keeps
   the real child (`capture_at` at `HEAD`) and matches the pin to the in-process capture.
@@ -128,7 +131,7 @@ is step 3.
 
 **BOUNDARY.**
 - **Code:** main `9da0d096`, plus this PR.
-- **Tests:** the 15 in `tests/test_evals_run_builds.py`. Every evals test passes with them.
+- **Tests:** the 16 in `tests/test_evals_run_builds.py`. Every evals test passes with them.
 - **The dry run:** the six panel pages (freeze `bcda7ce3`) and their inputs as the panel file pins
   them (page blobs and transcript sha256s), read from the primary checkout's `data/manual/ciq`, on
   2026-11-10. No call was sent. The registration and ledger stay outside the repository. The root

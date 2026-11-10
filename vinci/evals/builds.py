@@ -77,6 +77,10 @@ class RunRegistration:
                              "would open on a cached draw, which a production build never does")
         if set(self.requests) != set(self.pages):
             raise ValueError("every registered page needs exactly one pinned request")
+        if not self.inputs.get("ciq_root"):
+            # Codex round 1 (#958): without it `run` would read at a root never registered
+            raise ValueError("a build registration records the CIQ root its requests were "
+                             "captured from (inputs.ciq_root); `register-run` writes it")
 
     def to_json(self) -> str:
         return json.dumps({"kind": "builds", **self.__dict__}, sort_keys=True, default=list)
