@@ -99,6 +99,36 @@ superseded-by:
   The corpus result is unchanged: 62 refused, 24 newly, on the same 13 pages.
 - **The version.** Row `2026-11-10.covenant-value-figures`, in both tables, re-pinned.
 
+**THE PANEL CHECK, PREPARED AT $0 (coordinator 2026-11-10: "ready the panel registration … Draw
+nothing").**
+- **The transform.** `vinci/evals/variants.py` gains `covenant_value_figures` (`RE2_D16`). The
+  capture hands the synthesis the layer before the term rows are attached
+  (`capture_child.pre_synthesis_mech`), so what this change moves in the REQUEST is the
+  `covenant_terms` digest the assembly builds from the rows. The transform:
+  - re-runs the ref's own fence on the page's stored rows (`fenced_covenant_rows`);
+  - rebuilds the digest by the assembly's own composition where a row moved;
+  - never attaches the rows.
+- **It is not the identity at main, by design.** Main's own fence (#873) withholds 7 BURL and 5
+  CNXC terms committed before it, so the base request is main's builder, the candidate's is the
+  branch's, and their difference is this change alone.
+- **The $0 equality is pinned** (`tests/test_evals_covenant_transform.py`). For every PRESENT quoted
+  term on BURL, CNXC, MCK and SMPL, the transform's row is the row `_extract_from_exhibit` writes for
+  the same stored answer.
+- **`python -m vinci.evals compare --base origin/main --cand claude/fixreq2-covenant-guard
+  --transform covenant_value_figures`**, on the frozen panel:
+  - CNXC differs by 5 lines (−117 characters of `user.facts`): its governing "Interest / coupon
+    rate" line leaves the digest;
+  - SMPL differs by 5 lines (−147): its interest line and an "amended by" annotation leave the
+    digest;
+  - BURL, LLY, MCK and ROST are IDENTICAL. The terms the fence newly withholds on BURL (2) and
+    MCK (1) are not the governing ones.
+- **Cost estimate.** The panel whole is 6 pages × 5 draws × 2 refs = 60 draws. #941's run of that
+  design cost $27.50 of a $35 cap, with requests of the same size (about 513k characters of user
+  facts on SMPL). So about $28, cap $35. A no-worsening registration has no target this change
+  aims at; it would show whether withholding grid percents worsens any class metric on CNXC and
+  SMPL. Nothing drawn, nothing registered: registration pins `origin/main` and the branch head, so
+  it is written when the operator sets the cap.
+
 **BOUNDARY.**
 - **Terms:** every `covenant_term_rows` entry whose value is PRESENT with a stored `verbatim: “…”`
   quote, on `data/dossiers/*/dossier.json` at `5e3def4a`. That is 343 terms on 21 pages; 6 pages
