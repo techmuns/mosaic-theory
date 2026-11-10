@@ -1426,16 +1426,19 @@ def ciq_bridge(bundle: Any, ticker: str) -> tuple[CiqFacts | None, str | None]:
     from vinci.dossier.ciq_balance import extract
     from vinci.dossier.ciq_sheets import (
         CiqCurrencyError,
+        CiqUnitError,
         require_filed_income_statement,
+        require_millions,
         require_usd,
         stated_currency,
     )
 
     try:
         require_usd(stated_currency(bundle), ticker)
+        require_millions(bundle, ticker)   # RA-D9: one refusal on both paths, as for currency
         require_filed_income_statement(bundle, ticker)
         ciq = extract(bundle, ticker)
-    except (CiqAmbiguousError, CiqCurrencyError):
+    except (CiqAmbiguousError, CiqCurrencyError, CiqUnitError):
         raise
     except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
         return None, f"no CIQ bridge ({type(exc).__name__})"

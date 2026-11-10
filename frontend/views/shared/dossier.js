@@ -483,6 +483,69 @@ const EXTRACTION_VERSIONS = [
     "the widened ones, and the tranche and commitment readers read billions. On the 27 " +
     "committed pages no filing field moves; outside them, Helmerich & Payne's term-loan $6.9M " +
     "and Archer's lease $19.1M, both read as walls, now read not_stated"],
+  ["2026-11-10.release-actuals-never-silent",
+    "a release actual the reader cannot place is noted, never dropped silently, and four " +
+    "shapes it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, " +
+    "RE2-D2, D5, D6, D8): an unplaced non-revenue actual writes the note an unplaced revenue " +
+    "figure already did, one note per statement; the first amount of a 'respectively' list " +
+    "is refused; a figure stated for a calendar year is refused; '$(5.5)', '($5.5)' and " +
+    "'-$5.5' are read, signed; and a 'year ended' date takes the release's fiscal offset, so " +
+    "a retailer's fiscal year ending in January is its fiscal year. On the 122 releases the " +
+    "27 committed pages cite no row moves; 16 exhibits on 10 pages gain 28 notes"],
+  ["2026-11-10.going-concern-denials-and-conclusions",
+    "a going-concern denial or hypothetical is not doubt, and a real conclusion is " +
+    "(TeamNostra fix request 2, RE2-D9 and RE2-D10): a doubt that 'does not exist', plans " +
+    "that 'alleviate' it (present tense), and 'there will be substantial doubt' deny or " +
+    "condition it; an alleviation is unsettled only by what precedes it or shares its " +
+    "clause; a filing whose own plans alleviate the doubt its conditions raised states none " +
+    "(ASC 205-40's alleviated outcome: Solo Brands' 10-Q and Aeluma's 10-K, read as doubt " +
+    "before); a frame whose sentence concludes with the verb after the doubt, or with the " +
+    "company having it, is a conclusion; and a 'no' governs only the words up to a " +
+    "conjunction. On the 27 committed pages no going-concern field moves; over three SEC " +
+    "caches (178 reads of filings that mention a going concern, overlapping), two filings " +
+    "move, both from doubt to none, both alleviated"],
+  ["2026-11-10.marker-residuals",
+    "a CIQ marker is a stated gap, never an older value or a dropped row (fix request 2, " +
+    "order 3: RA-D3, RA-D8, RA-D13, RBC-D6, RA-D11): a dated Guidance cell that does not " +
+    "read is the latest guide, read as unread with its cell named, and no older guide is " +
+    "served or checked in its place; a Segments block whose rows no longer sum to their " +
+    "total within 0.5% because a row is marked states no mix and no segment count, naming " +
+    "the row; an empty `consensus_levels` says why (`consensus_levels_note`, not sent to " +
+    "the synthesis); the spreadsheet Customers export is read by the RTF route's reader, " +
+    "so its prior section, a repeated header, a Supplier Name column and CIQ's own " +
+    "'there are no' are read as they are there; a non-zero LibreOffice exit is a call " +
+    "that did not read, left out and named. No figure moves: no export on disk on " +
+    "2026-11-10 holds any of these shapes; ORKA's and TECX's pages, which carry no " +
+    "consensus levels, gain the note"],
+  ["2026-11-10.maturity-subject-and-unread-body",
+    "a maturity date belongs to its sentence's subject, an option to extend is not a " +
+    "maturity, a past 'matured' is not current, and an unread 8-K body is not a clean scan " +
+    "(TeamNostra fix request 2, RE2-D11, D12, D14): `debt_maturities` skips a noun inside a " +
+    "comma-set aside ('which was entered into alongside the Term Loan') when it pairs a date " +
+    "with the nearest instrument; a modal or a stated option or right governing 'extend' reads " +
+    "no date, unless the option was exercised; 'matured' is the past tense; and " +
+    "`rank.structural` marks a filing whose body fetch failed, so a scan that finds no flag " +
+    "on it does not count the name covered and its prior flag stands; and (RE2-D15) " +
+    "`segments` reads a figure with a footnote mark after it ('$ 1,229 [1]') as its figure"],
+  ["2026-11-10.bridge-total-and-band",
+    "three of document 11's partly fixed items finished (fix request 2, order 3): the EV " +
+    "bridge's note says what its claims total leaves out (A-D2) — each unread preferred or " +
+    "minority leg named with its reason, and whether CIQ's current TEV less market cap, " +
+    "which counts every claim, checks the total (no comps export: nothing does); the " +
+    "mid-cycle multiple band is the own-history band's population (D-D3), every dated close " +
+    "before the latest, so an export-day close the quarter has not completed is no longer " +
+    "history, and an undated sheet builds no band; an anchor-bridge figure one unit step " +
+    "(1,000x or 1,000,000x) from its own parts' re-read is refused, not scored agree " +
+    "(BC-D10). 13 of the 26 committed bridges carry an unread leg and gain the note when " +
+    "refreshed; no committed page carries a mid-cycle band"],
+  ["2026-11-10.unit-and-headers",
+    "fix request 2, order 4, two CIQ-reader defects (RA-D9, RA-D14): a Financials money sheet " +
+    "stating a unit other than Millions is refused before assembly and on the anchor's path " +
+    "(`ciq_sheets.require_millions`, `require_usd`'s twin), so no page prints thousands as " +
+    "$M; Consensus's target-price and LT-growth stats and every Recent Changes column are " +
+    "read by their headers, and a missing header leaves the read unread, never positional. " +
+    "No page moves: all 720 money sheets on disk state Millions, and every export's headers " +
+    "sit where the positional reads assumed (2026-11-10)"],
   ["2026-11-10.loud-with-the-right-cause",
     "fix request 2, order 6, two loud failures that named the wrong cause (RA-D16, RA-D15): " +
     "the LTM-against-its-quarters flag quotes a quarter's own cell ('NA', 'NM', blank, " +
