@@ -34,6 +34,8 @@ from vinci.dossier.schemas import Dossier
 ROOT = Path(__file__).resolve().parents[1]
 DOSS = ROOT / "data" / "dossiers"
 FROZEN = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL" / "dossier.json"
+#: AORT's page as committed on 2026-10-26, frozen when the name was retired (operator, 2026-11-09).
+FROZEN_AORT = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "AORT" / "dossier.json"
 _NOTE = "_no principal stated — the CIQ panel"         # the md note line's opening
 
 
@@ -84,11 +86,11 @@ def test_a_facility_note_is_only_for_a_facility() -> None:
     """(-) The undrawn-facility sentence follows CIQ's TYPE, never the name: AORT's left-out
     instruments are a term loan, a convertible note and a delayed-draw term loan — named, with no
     claim that '-' could mean undrawn."""
-    gap = [i for i in _instruments(json.loads((DOSS / "AORT" / "dossier.json").read_text()))
+    gap = [i for i in _instruments(json.loads(FROZEN_AORT.read_text()))
            if i["principal_musd"] is None]
     if not gap or any(i["type"] in dr._FACILITY_TYPES for i in gap):
-        pytest.skip("AORT's committed page no longer carries only non-facility gaps")
-    doc = Dossier.model_validate_json((DOSS / "AORT" / "dossier.json").read_text())
+        pytest.skip("AORT's frozen page no longer carries only non-facility gaps")
+    doc = Dossier.model_validate_json(FROZEN_AORT.read_text())
     note = next(ln for ln in _wall(render_markdown(doc)) if _NOTE in ln)
     assert "undrawn" not in note and all(f"({i['type']})" in note for i in gap)
 

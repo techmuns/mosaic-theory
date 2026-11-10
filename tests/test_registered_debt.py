@@ -226,6 +226,8 @@ def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, cover: str, ident
             # one bar, so ADV = close x volume = the measured 90-day ADV
             return {t: RawBar(ticker=t, open=p, high=p, low=p, close=p, volume=adv[t] / p)
                     for t, p in closes.items()}
+        def splits_executed(self, *_a: object) -> list[dict[str, object]]:
+            return []   # no split in any window (RF-D4)
         def security_types(self) -> dict[str, str]: return types
         def share_class_counts(self, tickers: object) -> dict[str, float]:
             return {t: class_counts[t] for t in tickers if t in class_counts}  # type: ignore[attr-defined]

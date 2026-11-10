@@ -35,6 +35,8 @@ def test_each_unmoved_page_still_yields_its_frozen_row() -> None:
     for row in FROZEN["rows"]:
         t = row["ticker"]
         path = ROOT / f"data/dossiers/{t}/dossier.json"
+        if t == "AORT":  # retired 2026-11-09: its page as committed on 2026-10-26, frozen
+            path = ROOT / "tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json"
         blob = subprocess.run(["git", "hash-object", str(path)], capture_output=True, text=True,
                               check=True).stdout.strip()
         if blob != FROZEN["pages"][t]["dossier_blob"]:
