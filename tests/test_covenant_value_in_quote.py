@@ -480,3 +480,21 @@ def test_a_withheld_components_clause_vouches_for_nothing() -> None:
         _FakeLlm(payload), f"x Term SOFR plus the Applicable Margin. {clause}. y",
         name="Example Co", ticker="EXM", source_ref=_SRC, title="CREDIT AGREEMENT")
     _refused(row, flags, "2.00%")
+
+
+@pytest.mark.parametrize(("value", "quote", "named"), [
+    ("Commitments of 1.5bn", "the Aggregate Commitments are $750,000,000.", "1.5bn"),
+    ("Facility of 500MM", "the Aggregate Commitments are $750,000,000.", "500MM"),
+], ids=["bn", "MM"])
+def test_codex_round_1_an_abbreviated_scale_is_read(value: str, quote: str, named: str) -> None:
+    """(−) Codex P2 (round 1): "1.5bn" and "500MM" with no currency mark were read as the short
+    numbers 1.5 and 500, which the unmarked-amount check does not read, so they stood PRESENT."""
+    _refused(*_one(value, quote, name="Principal / commitment amount"), named)
+
+
+def test_codex_round_1_a_typed_figure_in_the_quote_is_not_an_unmarked_amount() -> None:
+    """(−) Codex P2 (round 1): the quote's "1.750%" was also read as an unmarked 1.750, so a value
+    of "1.750 shares" passed. A percent or ratio in the quote states only itself."""
+    _refused(*_one("Conversion rate: 1.750 shares per unit",
+                   "the Applicable Margin shall be 1.750% per annum",
+                   name="Conversion rate"), "1.750")

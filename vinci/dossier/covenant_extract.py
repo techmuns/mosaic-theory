@@ -377,8 +377,10 @@ _PCT = re.compile(r"(?<![\d.,])(?<!\d/)(\d+(?:\.\d+)?)(?:\s+(\d)/(\d{1,2}))?\s*"
 #: comma-grouped ("1,000,000,000"), scaled ("500 million") or with three or more decimals
 #: ("45.4545 shares"). "Section 6.02", "3 years" and "48.0" are not read. A comma AFTER the
 #: amount ends it ("1,000,000,000, as reduced"), as it ends a conformed replacement.
+#: The abbreviated scales `_SCALES` reads are read here too (Codex P2, round 1): "1.5bn" and
+#: "500MM" were read as 1.5 and 500, too short to check, and stood PRESENT.
 _BARE = re.compile(r"(?<![\d.,$€£¥\[])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)"
-                   r"(?:\s*(billion|million|thousand)\b)?(?!\d|,\d|\.\d)", re.I)
+                   r"(?:\s*(billion|bn|million|mm|thousand)\b)?(?!\d|,\d|\.\d)", re.I)
 _SECTION_LEAD = re.compile(r"(?:Sections?|§|Article|Art\.|Schedule|Annex|Exhibit|clause|"
                            r"paragraph|Part|Item)\s*$", re.I)
 
@@ -485,8 +487,11 @@ def unstated_in_quote(value: str, quote: str) -> list[str]:
     quoted_pcts = {p for p, _, _ in _pcts(quote)}
     zero = re.search(r"\bzero\b", quote, re.I) is not None
     missing += [s for p, s, _ in pcts if p not in quoted_pcts and not (p == 0 and zero)]
-    quoted_amounts = {a for a, _ in _bare(quote, [])} | {f.amount.normalize()
-                                                          for f in quoted_money}
+    # a percent or a ratio in the quote states only itself (Codex P2, round 1): its "1.750%" is no
+    # unmarked 1.750, so a value's "1.750 shares" is not stated by it
+    typed = [sp for *_, sp in _ratios(quote, conformed=True)] + [sp for *_, sp in _pcts(quote)]
+    quoted_amounts = {a for a, _ in _bare(quote, typed)} | {f.amount.normalize()
+                                                             for f in quoted_money}
     missing += [s for a, s in _bare(value, taken) if a not in quoted_amounts]
     return list(dict.fromkeys(missing))
 

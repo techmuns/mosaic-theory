@@ -91,6 +91,12 @@ superseded-by:
   None of the six moves a corpus refusal: still 62 refused, 24 newly, on the same 13 pages.
   Deferred as rarer forms the readers do not yet take: a struck percent ("1.50 1.75%"), a
   same-year struck date, "2 times per year" read as a ratio, and an ISO date.
+- **Codex, round 1 (two P2).** Two fixes, each pinned on a test that fails on `a94c18d7`:
+  - an unmarked amount with an abbreviated scale ("1.5bn", "500MM") is read at its scale;
+  - a percent or ratio in the quote ("1.750%") is no unmarked amount, so it no longer states a
+    value's "1.750 shares".
+
+  The corpus result is unchanged: 62 refused, 24 newly, on the same 13 pages.
 - **The version.** Row `2026-11-10.covenant-value-figures`, in both tables, re-pinned.
 
 **BOUNDARY.**
