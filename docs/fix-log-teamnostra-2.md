@@ -73,11 +73,11 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RG-D19 | 2 | in progress (#941) | #941 | — | — |
 | RF-D1 | 3 | open | — | — | — |
 | RF-D2 | 3 | open | — | — | — |
-| RF-D8 | 3 | open | — | — | — |
+| RF-D8 | 3 | in progress (#946) | #946 | `tests/test_ads_ratio.py::test_a_mixed_number_is_its_whole_and_its_fraction` | none (no committed page carries an ADS ratio) |
 | V2-N1 | 3 | open | — | — | — |
 | RE1-D6 | 3 | open | — | — | — |
-| RE1-D1 | 3 | open | — | — | — |
-| RE1-D2 | 3 | open | — | — | — |
+| RE1-D1 | 3 | in progress (#939) | #939 | `tests/test_sec_budget_across_machines.py::test_two_machines_sending_at_once_stay_under_secs_ceiling_per_user` | none (pacing changes no value; 28 frozen pages compared) |
+| RE1-D2 | 3 | in progress (#939) | #939 | `tests/test_sec_budget_across_machines.py::test_a_redirect_hop_to_sec_takes_its_own_slot` | none (pacing changes no value) |
 | RE1-D8 | 3 | open | — | — | — |
 | RE1-D9 | 3 | open | — | — | — |
 | RE1-D12 | 3 | open | — | — | — |
@@ -113,15 +113,15 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RE2-D18 | 4 | disagree: the unbounded-read half (order 4) was bounded at 622786a2 by #884's `AsOfEdgar`, which cuts `recent_filings` at the price date — LLY at a 2026-10-16 price date fetches neither its 2026-10-29 8-K nor its 10-Q, and both are fetched with the cut removed; #932 added the 10-Q to the pin; the acceptance-time half is §4 (record §6) | ae016a68 (#884); cb8139ee (#932) | `tests/test_asof_cut.py::test_the_page_reads_no_release_filed_after_its_price_date`, `tests/test_asof_cut.py::test_a_results_8k_filed_after_the_price_date_is_named_and_never_read` | — |
 | RE2-D20 | 4 | open | — | — | — |
 | RF-D3 | 4 | open | — | — | — |
-| RF-D4 | 4 | open | — | — | — |
+| RF-D4 | 4 | in progress (#946) | #946 | `tests/test_universe_one_basis.py::test_a_split_since_the_filed_count_is_sized_on_the_current_count` | none; the universe snapshot is re-sized at the next weekly build (6 lines leave the band) |
 | RF-D7 | 4 | open | — | — | — |
-| RF-D9 | 4 | open | — | — | — |
+| RF-D9 | 4 | in progress (#946) | #946 | `tests/test_universe_one_basis.py::test_adv_is_over_the_markets_sessions_not_the_days_a_name_traded` | none |
 | RF-D13 | 4 | open | — | — | — |
 | RE1-D7 | 4 | open | — | — | — |
 | RE1-D10 | 4 | open | — | — | — |
 | RE1-D11 | 4 | open | — | — | — |
 | RE1-D14 | 4 | open | — | — | — |
-| RE1-D16 | 4 | open | — | — | — |
+| RE1-D16 | 4 | in progress (#945) | #945 | `tests/test_point_guide_verification.py::test_a_point_guide_against_a_range_ending_at_zero_is_a_mismatch` | none (28 frozen pages compared; every compared line has both bounds) |
 | RA-D2 | 4 | open | — | — | — |
 | RA-D4 | 4 | open | — | — | — |
 | RA-D9 | 4 | open | — | — | — |

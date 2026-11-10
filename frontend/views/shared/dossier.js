@@ -403,6 +403,12 @@ const EXTRACTION_VERSIONS = [
     "tie-break's caveat says the filing reconciles the wider line and the row's own " +
     "figure is CIQ's, never that the filing confirmed it (audit RBC-D8). Among the " +
     "exports on file only PARR's surprise history moves; the rest is a new field and words"],
+  ["2026-11-10.point-guide",
+    "a point guide is the range [low, low] (TeamNostra fix request 2, RE1-D16): the guide " +
+    "check compares each side's top, its high or else its low, where `high or 0.0` read a " +
+    "missing high as zero, so a CIQ point of -0.05 against a release -0.05 to 0.00 read " +
+    "VERIFIED and a range of one against its own point read MISMATCH. On the 28 pages " +
+    "frozen at bcda7ce3 no line moves"],
   ["2026-11-09.driver-facts",
     "each transcript operating-driver row carries the fact code read from its quote, and " +
     "where the quote sits (audit RG-D8, RG-D19): `figures` (each number with the currency, " +

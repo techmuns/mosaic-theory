@@ -345,6 +345,25 @@ These read a committed row's `verbatim`. Each is moved in PR 3, not here:
   the pass would need the store to replay byte for byte. That gap is stated now, so it is not
   discovered at the next re-freeze.
 
+## 10. The operator's rulings (2026-11-10, relayed by the coordinator: "yes to all")
+
+1. **The preview (§8):** approved.
+2. **The paid panel run (§7):** approved as proposed.
+   - The design: no-worsening, the panel whole, 5 draws an arm, 60 draws.
+   - The approval text: "yes to all (driver facts #941 panel run, $35 cap)".
+   - It is registered before any draw and drawn once. It stops on any refusal or "replication
+     required".
+   - Its result goes in its own record PR, and #941 merges only after it passes.
+3. **The writer (§6):** option 1.
+   - The assembling Mac writes each evidence record to a folder on the shared Drive beside
+     `manual/ciq`, and the ingest Mac uploads them to R2.
+   - Nothing is ever written to, moved or deleted under `manual/ciq` itself. The folder's name
+     is the coordinator's to give before it is created. This is PR 2.
+4. **The number (§5):** no public field quotes more than 12 consecutive transcript words, and a
+   driver row quotes none. This is PR 3.
+5. **Not ruled:** CIQ Key Developments' long text (§4's 853). It stays the operator's separate
+   question.
+
 **HOW VERIFIED.**
 - **Fail first.** TeamNostra's three shapes, through the real `extract_transcript_drivers` with a
   fake model:

@@ -288,6 +288,8 @@ def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, sibling: bool = F
             return ({i.eod_symbol: RawBar(ticker=i.eod_symbol, open=close, high=close, low=close,
                                           close=close, volume=vol[i.eod_symbol])
                      for i in lines} if day == _REF else {})
+        def splits_executed(self, *_a: object) -> list[dict[str, object]]:
+            return []   # no split in any window (RF-D4)
         def security_types(self) -> dict[str, str]: return {i.eod_symbol: "CS" for i in lines}
         def share_class_counts(self, tickers: object) -> dict[str, float]:
             return dict.fromkeys(tickers, 60_000_000.0)  # type: ignore[call-overload]
