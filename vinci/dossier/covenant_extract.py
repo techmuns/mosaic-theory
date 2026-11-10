@@ -316,8 +316,9 @@ def _amount(num: str, scale: str | None) -> Decimal:
 def _money(text: str, *, replacements: bool = False) -> list[_Money]:
     """Every figure ``text`` states with a currency marker, at its own scale (`_FIGURE`, a range's
     high side `_RANGE_HIGH`). A figure with no marker — "500 million euros", "zero", a percent —
-    is not read: never checked, and never named as dollars. ``replacements`` also reads a conformed
-    amendment's replacement after each figure (`_REPLACEMENT`); a QUOTE is read with it."""
+    is not read here, and never named as dollars (`_bare` reads an unmarked amount).
+    ``replacements`` also reads a conformed amendment's replacement after each figure
+    (`_REPLACEMENT`); a QUOTE is read with it."""
     out: list[_Money] = []
     read_to = 0
     for m in _FIGURE.finditer(text):
@@ -346,12 +347,15 @@ def _money(text: str, *, replacements: bool = False) -> list[_Money]:
 
 #: A WHOLE DATE (TeamNostra fix request 2, RE2-D16): a year alone let "July 25, 2030" stand beside
 #: a quote reading "December 22, 2030". Month-day-year, day-month-year and numeric forms compare as
-#: one date; "March 29 , 2024" is how `html_to_text` reads a conformed copy's spacing.
+#: one date; "March 29 , 2024" is how `html_to_text` reads a conformed copy's spacing, and
+#: "December 22,2030" a comma with no space after it.
 _MON = (r"(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|"
         r"Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?")
-_DATE_MDY = re.compile(rf"\b{_MON}\s+(\d{{1,2}})(?:st|nd|rd|th)?\s*,?\s+((?:19|20)\d\d)\b", re.I)
+_DATE_SEP = r"(?:\s*,\s*|\s+)"
+_DATE_MDY = re.compile(
+    rf"\b{_MON}\s+(\d{{1,2}})(?:st|nd|rd|th)?{_DATE_SEP}((?:19|20)\d\d)\b", re.I)
 _DATE_DMY = re.compile(
-    rf"\b(\d{{1,2}})(?:st|nd|rd|th)?\s+(?:day\s+of\s+)?{_MON},?\s+((?:19|20)\d\d)\b", re.I)
+    rf"\b(\d{{1,2}})(?:st|nd|rd|th)?\s+(?:day\s+of\s+)?{_MON}{_DATE_SEP}((?:19|20)\d\d)\b", re.I)
 _DATE_NUM = re.compile(r"(?<![\d./])(\d{1,2})/(\d{1,2})/((?:19|20)\d\d)(?!\d)")
 #: A conformed amendment's struck date beside its replacement, read in a QUOTE: BURL's
 #: "December 22 July 25 , 2026 2030" is December 22, 2026 struck for July 25, 2030.
@@ -365,14 +369,16 @@ _RATIO = re.compile(r"(?<![\d.,])(\d+(?:\.\d+)?)\s*(?:x(?![a-z])|times\b|(?:to|:
                     r"(?![\d]|\.\d))", re.I)
 #: A conformed copy's struck ratio, read in a QUOTE: NFLX's "(b) 2.50 2.75 times".
 _STRUCK = re.compile(r"(?<![\d.,])(\d+\.\d+)\s+$")
-#: A PERCENT, in one unit with BASIS POINTS: "1.75%" is "175 bps".
-_PCT = re.compile(
-    r"(?<![\d.,])(\d+(?:\.\d+)?)\s*(%|percent\b|per\s+cent\b|bps\b|basis\s+points?\b)", re.I)
+#: A PERCENT, in one unit with BASIS POINTS: "1.75%" is "175 bps", and a coupon's fraction
+#: "5 1/4%" is 5.25% — never a "4%" read off the "/4%" ("50%/0%" is still two percents).
+_PCT = re.compile(r"(?<![\d.,])(?<!\d/)(\d+(?:\.\d+)?)(?:\s+(\d)/(\d{1,2}))?\s*"
+                  r"(%|percent\b|per\s+cent\b|bps\b|basis\s+points?\b)", re.I)
 #: An AMOUNT WITH NO CURRENCY MARKER, read only where it cannot be a section, a count or a year:
 #: comma-grouped ("1,000,000,000"), scaled ("500 million") or with three or more decimals
-#: ("45.4545 shares"). "Section 6.02", "3 years" and "48.0" are not read.
+#: ("45.4545 shares"). "Section 6.02", "3 years" and "48.0" are not read. A comma AFTER the
+#: amount ends it ("1,000,000,000, as reduced"), as it ends a conformed replacement.
 _BARE = re.compile(r"(?<![\d.,$€£¥\[])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)"
-                   r"(?:\s*(billion|million|thousand)\b)?(?![\d,]|\.\d)", re.I)
+                   r"(?:\s*(billion|million|thousand)\b)?(?!\d|,\d|\.\d)", re.I)
 _SECTION_LEAD = re.compile(r"(?:Sections?|§|Article|Art\.|Schedule|Annex|Exhibit|clause|"
                            r"paragraph|Part|Item)\s*$", re.I)
 
@@ -406,8 +412,8 @@ def _pcts(text: str) -> list[tuple[Decimal, str, tuple[int, int]]]:
     """Each percent as a percent: a basis-point figure is divided by 100."""
     out = []
     for m in _PCT.finditer(text):
-        v = Decimal(m[1])
-        out.append(((v / 100 if m[2].lower().startswith(("bp", "basis")) else v).normalize(),
+        v = Decimal(m[1]) + (Decimal(m[2]) / Decimal(m[3]) if m[2] and int(m[3]) else 0)
+        out.append(((v / 100 if m[4].lower().startswith(("bp", "basis")) else v).normalize(),
                     m[0], m.span()))
     return out
 
@@ -467,7 +473,8 @@ def unstated_in_quote(value: str, quote: str) -> list[str]:
     lone = [(y.start(), y[0]) for y in years if not re.search(rf"(?<!\d){y[0]}(?!\d)", quote)]
     whole = [(sp[0], s) for d, s, sp in dates if d not in quoted_dates]
     missing = [s for _, s in sorted(lone + whole)]
-    stated = {(f.currency, f.amount) for f in _money(quote, replacements=True)}
+    quoted_money = _money(quote, replacements=True)
+    stated = {(f.currency, f.amount) for f in quoted_money}
     missing += [f.stated for f in in_value if (f.currency, f.amount) not in stated]
     ratios = [r for r in _ratios(value) if not any(a <= r[2][0] < b for a, b in taken)]
     taken += [r[2] for r in ratios]
@@ -478,19 +485,22 @@ def unstated_in_quote(value: str, quote: str) -> list[str]:
     quoted_pcts = {p for p, _, _ in _pcts(quote)}
     zero = re.search(r"\bzero\b", quote, re.I) is not None
     missing += [s for p, s, _ in pcts if p not in quoted_pcts and not (p == 0 and zero)]
-    quoted_amounts = {a for a, _ in _bare(quote, [])} | {f.amount.normalize() for f in
-                                                          _money(quote, replacements=True)}
+    quoted_amounts = {a for a, _ in _bare(quote, [])} | {f.amount.normalize()
+                                                          for f in quoted_money}
     missing += [s for a, s in _bare(value, taken) if a not in quoted_amounts]
     return list(dict.fromkeys(missing))
 
 
-def _quoted_clauses(t: dict[str, Any], quote: str, source: SourceText) -> str:
-    """The term's quote, and each rate component's own clause that is a span of the exhibit — the
-    exhibit text a value may state its figures from. A component kept by its own clause
-    (`rate_components`) states its percent there, so the value line beside it may too (RE2-D16)."""
-    own = [o for key in RATE_COMPONENTS if (o := _opt_str(t.get(_OWN_QUOTE[key])))
-           and source.match(o).found]
-    return " ".join([quote, *dict.fromkeys(own)])
+def _quoted_clauses(quote: str, kept: dict[str, str]) -> str:
+    """The term's quote, and the own clause of each rate component KEPT by one (`rate_components`,
+    each a span of the exhibit) — the exhibit text a value may state its figures from, and the text
+    the page stores beside it (`component_quotes`). A withheld component's clause vouches for
+    nothing: the page would cite a clause it does not keep (review round 0).
+
+    The clauses are joined by " | ", which no conformed-copy reader (`_REPLACEMENT`, `_STRUCK`,
+    `_DATE_CONFORMED`) or range reader crosses: one clause's last figure is never read as struck
+    for, or replaced by, the next clause's first."""
+    return " | ".join([quote, *dict.fromkeys(kept.values())])
 
 
 def rate_components(t: dict[str, Any], quote: str, source: SourceText) -> RateComponents:
@@ -770,7 +780,11 @@ def _extract_from_exhibit(
         components: dict[str, Any] = {}
         stated = bool(t.get("present") and str(t.get("value", "")).strip())
         quote = str(t.get("quote", "")).strip()
-        if stated and not source.match(quote).found:
+        quoted = stated and source.match(quote).found
+        # the components a quoted term keeps, read once: their own clauses state figures for the
+        # value too (RE2-D16), and the stated branch stores them
+        rc = rate_components(t, quote, source) if quoted else None
+        if stated and not quoted:
             # REFUSED, NOT SHOWN. The value is withheld whole — the term stays in the row set as a
             # visible UNKNOWN whose note names the exhibit (so `governing_terms` still groups it by
             # accession), and the flag names the term. A quote that is not a span is no evidence the
@@ -786,11 +800,12 @@ def _extract_from_exhibit(
             val = Sourced.unknown(note=f"{REFUSED_NOTE_PREFIX} {why} {source_ref}")
             flags.append(f"(E5) covenant term refused — {why} the exhibit, so it is UNKNOWN: "
                          f"{term_name} · {source_ref}")
-        elif stated and (unstated := unstated_in_quote(str(t["value"]),
-                                                       _quoted_clauses(t, quote, source))):
+        elif rc is not None and (unstated := unstated_in_quote(str(t["value"]),
+                                                               _quoted_clauses(quote, rc.quotes))):
             # REFUSED FOR WHAT THE VALUE SAYS (audit E2-D19). The quote is the exhibit's own words;
-            # a year or a dollar figure the value adds is the model's, bound to nothing. The value
-            # is withheld whole, as a quote refusal withholds it, and the flag names the figures.
+            # a figure the value adds (any class, RE2-D16) is the model's, bound to nothing. The
+            # value is withheld whole, as a quote refusal withholds it, and the flag names the
+            # figures.
             # Measured at 8e6b12b1: 29 of 176 PRESENT terms on the 13 in-scope pages (9 pages);
             # none shown wrong — a sublimit read from another clause, a date added as context.
             shown = ", ".join(unstated)
@@ -798,10 +813,9 @@ def _extract_from_exhibit(
                                        f"quote does not — {source_ref}")
             flags.append(f"(E5) covenant term refused — its value states {shown}, which its quote "
                          f"does not, so it is UNKNOWN: {term_name} · {source_ref}")
-        elif stated:
+        elif rc is not None:
             note = f"verbatim: “{quote}”"
             val = Sourced.present(str(t["value"]).strip(), source_ref=source_ref, note=note)
-            rc = rate_components(t, quote, source)
             components = {
                 "base_rate_label": _opt_str(t.get("base_rate_label")),
                 **rc.values,

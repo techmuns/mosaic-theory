@@ -76,6 +76,21 @@ superseded-by:
     - BURL's conformed maturity date and NFLX's struck 2.50 → 2.75 times are kept;
     - NCNO's and CNXC's ratios before a full stop are kept;
     - NFLX's "Sections 6.01, 6.02 and 6.04" are not read as figures.
+- **Code review, round 0 (`/code-review high --fix`).** Six fixes, each pinned:
+  - an unmarked amount followed by a comma ("500 million, which …") is read;
+  - a fraction percent ("5 1/4%") is 5.25%, never a "4%". MCK's real "50%/0%" stays two
+    percents;
+  - a date with no space after its comma ("December 22,2030") is read;
+  - the quote and the component clauses are joined by " | ", so no strike, replacement or range
+    reader crosses from one clause into the next;
+  - the quote's money is read once;
+  - **a withheld component's clause vouches for nothing.** The value may take figures only from
+    the clauses of components the term KEEPS, which are the clauses the page stores
+    (`component_quotes`). Before, the page could cite a clause it never keeps.
+
+  None of the six moves a corpus refusal: still 62 refused, 24 newly, on the same 13 pages.
+  Deferred as rarer forms the readers do not yet take: a struck percent ("1.50 1.75%"), a
+  same-year struck date, "2 times per year" read as a ratio, and an ISO date.
 - **The version.** Row `2026-11-10.covenant-value-figures`, in both tables, re-pinned.
 
 **BOUNDARY.**

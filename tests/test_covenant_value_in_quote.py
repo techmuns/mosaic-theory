@@ -279,6 +279,52 @@ def test_re2_d16_the_same_figure_in_another_form_is_stated(value: str, quote: st
 
 
 @pytest.mark.parametrize(("value", "quote"), [
+    ("Facility of 500 million", "a facility of 500 million, which may be increased"),
+    ("Commitments of 1,000,000,000", "the Aggregate Commitments are 1,000,000,000, as reduced"),
+    ("Maturity: December 22, 2030", "“Maturity Date” means December 22,2030."),
+    ("Interest at 5.25% per annum", "the Notes bear interest at 5 1/4% per annum"),
+], ids=["scaled-before-comma", "grouped-before-comma", "date-comma-no-space", "fraction-percent"])
+def test_review_round_0_a_figure_the_quote_states_before_a_comma_or_as_a_fraction_is_stated(
+        value: str, quote: str) -> None:
+    """(+) Review round 0: an unmarked amount followed by a comma was never read in the quote, a
+    date written "22,2030" was not a date, and "5 1/4%" was read as "4%" — each refused a value its
+    quote states."""
+    _kept(*_one(value, quote, name="Financial-maintenance covenants"), value)
+
+
+@pytest.mark.parametrize(("value", "quote", "named"), [
+    ("Commitments of 1,000,000,000, as reduced", "the Aggregate Commitments are $750,000,000.",
+     "1,000,000,000"),
+    ("Facility of 500 million, increasing", "a facility of $750,000,000", "500 million"),
+    ("5 1/4% Senior Notes", "the 5 1/2% Senior Notes due 2030", "5 1/4%"),
+    # MCK, committed: a slash between two percents is no fraction — "0%" is still read
+    ("Net Proceeds Percentage 100%, stepping down to 50%/0%",
+     "Term Loans equal to 100% (such percentage as it may be reduced as described below) or 50%",
+     "0%"),
+], ids=["grouped-before-comma", "scaled-before-comma", "fraction-percent", "MCK-slashed-percents"])
+def test_review_round_0_a_figure_before_a_comma_or_as_a_fraction_is_read(
+        value: str, quote: str, named: str) -> None:
+    """(−) Review round 0: the same shapes in the VALUE were not read at all, so a figure the quote
+    contradicts stood PRESENT."""
+    _refused(*_one(value, quote, name="Financial-maintenance covenants"), named)
+
+
+def test_review_round_0_a_clause_boundary_is_not_a_conformed_strike() -> None:
+    """(−) Review round 0: the quote and a rate component's own clause were joined by a space, so
+    the quote's last decimal read as a ratio STRUCK for the clause's first — "5.00x" stood PRESENT
+    beside a quote stating 5.00 only as a price."""
+    quote = "the purchase price shall be 5.00"
+    own = "4.50 to 1.00 is the Leverage Ratio for the purposes of the Applicable Margin"
+    payload = {"terms": [{"name": "Financial-maintenance covenants", "present": True,
+                          "value": "Maximum Leverage Ratio of 5.00x", "quote": quote,
+                          "margin_pct": 1.0, "margin_quote": own}]}
+    (row,), flags, _ = ce._extract_from_exhibit(
+        _FakeLlm(payload), f"Preamble. {quote}. {own}. Signatures.", name="Example Co",
+        ticker="EXM", source_ref=_SRC, title="CREDIT AGREEMENT")
+    _refused(row, flags, "5.00x")
+
+
+@pytest.mark.parametrize(("value", "quote"), [
     ("Facility: €500 million", "an aggregate principal amount of €500,000,000"),
     ("Commitments of $5,000,000,000", "Commitments of USD 5,000,000,000"),
     ("Total Commitment $3,000,000,000", "The initial Total Commitment is U.S.$3,000,000,000."),
@@ -418,3 +464,19 @@ def test_the_page_leads_a_value_refusal_with_its_own_reason_e2e(tmp_path: pathli
     page = _node_render(tmp_path, "NKE", host)
     assert lead.replace("UNKNOWN", "", 1) in page, page[:2000]
     assert "quote could not be matched" not in page
+
+
+def test_a_withheld_components_clause_vouches_for_nothing() -> None:
+    """(−) Review round 0: a value may state a figure from a component's own clause only when that
+    component is KEPT, because the page stores only kept clauses (`component_quotes`). Here the
+    clause states 2.00% but not the model's 1.75% margin, so the margin is withheld; the value's
+    2.00% is refused, not vouched for by a clause the page would never cite."""
+    clause = "the Applicable Margin shall be 2.00% per annum"
+    payload = {"terms": [{"name": "Interest / coupon rate", "present": True,
+                          "value": "Term SOFR + 2.00%",
+                          "quote": "Term SOFR plus the Applicable Margin",
+                          "margin_pct": 1.75, "margin_quote": clause}]}
+    (row,), flags, _ = ce._extract_from_exhibit(
+        _FakeLlm(payload), f"x Term SOFR plus the Applicable Margin. {clause}. y",
+        name="Example Co", ticker="EXM", source_ref=_SRC, title="CREDIT AGREEMENT")
+    _refused(row, flags, "2.00%")
