@@ -88,10 +88,10 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RA-D13 | 3 | open | — | — | — |
 | RBC-D6 | 3 | open | — | — | — |
 | RE2-D16 | 3 | open | — | — | — |
-| A-D2 | 3 | open | — | — | — |
+| A-D2 | 3 | in progress (#960) | #960 | — | — |
 | BC-D7 | 3 | open | — | — | — |
-| BC-D10 | 3 | open | — | — | — |
-| D-D3 | 3 | open | — | — | — |
+| BC-D10 | 3 | in progress (#960) | #960 | — | — |
+| D-D3 | 3 | in progress (#960) | #960 | — | — |
 | E1-D7 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
 | E2-D19 | 3 | open | — | — | — |
 | RE2-D1 | 4 | open | — | — | — |
