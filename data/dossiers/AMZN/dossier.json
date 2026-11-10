@@ -6204,6 +6204,19 @@
         "source_ref": null,
         "status": "unknown",
         "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
+      },
+      "impairment_headroom": {
+        "value": {
+          "value": 32470.0,
+          "as_at": "2025-12-31",
+          "legs": [
+            "goodwill",
+            "intangibles"
+          ]
+        },
+        "source_ref": "EDGAR companyfacts Goodwill + IntangibleAssetsNetExcludingGoodwill (as at 2025-12-31)",
+        "status": "present",
+        "note": "the latest balance date both legs carry; goodwill is also reported as at 2026-09-30"
       }
     },
     "dilution_pipeline": {
@@ -6366,15 +6379,17 @@
       }
     },
     "peer_capital_intensity": {
+      "source_ref": "Assembler: acquired-asset intensity — EDGAR companyfacts goodwill + intangibles over Assets and over the CIQ comps market cap, for each name of the CIQ comps grid; medians and counts over the peers",
       "rows": [
         {
+          "source_ref": "EDGAR companyfacts AMZN: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (AMZN market cap)",
           "ticker": "AMZN",
           "is_subject": true,
           "market_cap": 2598937.8,
-          "acquired": 32940.0,
-          "total_assets": 1243390.0,
-          "pct_assets": 0.026492090172833944,
-          "pct_market_cap": 0.0126744087526835,
+          "acquired": 32470.0,
+          "total_assets": 818042.0,
+          "pct_assets": 0.03969233853518524,
+          "pct_market_cap": 0.012493565640547459,
           "note": null,
           "impairment": {
             "state": "untagged",
@@ -6394,13 +6409,14 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts MSFT: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (MSFT market cap)",
           "ticker": "MSFT",
           "is_subject": false,
           "market_cap": 3875805.2,
-          "acquired": 120928.0,
+          "acquired": 137397.0,
           "total_assets": 779403.0,
-          "pct_assets": 0.155154650418333,
-          "pct_market_cap": 0.031200742493456585,
+          "pct_assets": 0.17628492577010865,
+          "pct_market_cap": 0.03544992405707077,
           "note": null,
           "impairment": {
             "state": "explicit-zero",
@@ -6420,6 +6436,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts GOOGL: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (GOOGL market cap)",
           "ticker": "GOOGL",
           "is_subject": false,
           "market_cap": 3431315.0,
@@ -6446,13 +6463,14 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts META: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (META market cap)",
           "ticker": "META",
           "is_subject": false,
           "market_cap": 1572062.8,
-          "acquired": 27113.0,
-          "total_assets": 478836.0,
-          "pct_assets": 0.056622726779106,
-          "pct_market_cap": 0.017246766477776843,
+          "acquired": 28226.0,
+          "total_assets": 366021.0,
+          "pct_assets": 0.07711579390253565,
+          "pct_market_cap": 0.017954753461502937,
           "note": null,
           "impairment": {
             "state": "none-in-window",
@@ -6472,6 +6490,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts NFLX: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (NFLX market cap)",
           "ticker": "NFLX",
           "is_subject": false,
           "market_cap": 254920.7,
@@ -6479,7 +6498,7 @@
           "total_assets": 58681.954,
           "pct_assets": 0.5897124182333806,
           "pct_market_cap": 0.13574996851962198,
-          "note": null,
+          "note": "intangibles only — the filer tags no goodwill balance",
           "impairment": {
             "state": "untagged",
             "state_label": "does not tag",
@@ -6498,13 +6517,14 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts EBAY: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (EBAY market cap)",
           "ticker": "EBAY",
           "is_subject": false,
           "market_cap": 53400.0,
-          "acquired": 5852.224,
+          "acquired": 5957.0,
           "total_assets": 18006.0,
-          "pct_assets": 0.32501521714983894,
-          "pct_market_cap": 0.10959220973782771,
+          "pct_assets": 0.33083416638898144,
+          "pct_market_cap": 0.11155430711610487,
           "note": null,
           "impairment": {
             "state": "explicit-zero",
@@ -6524,6 +6544,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts EXPE: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (EXPE market cap)",
           "ticker": "EXPE",
           "is_subject": false,
           "market_cap": 34317.1,
@@ -6550,13 +6571,14 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts ETSY: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (ETSY market cap)",
           "ticker": "ETSY",
           "is_subject": false,
           "market_cap": 7668.9,
-          "acquired": 73.64,
+          "acquired": 48.171,
           "total_assets": 3167.676,
-          "pct_assets": 0.023247327062489977,
-          "pct_market_cap": 0.00960242016456076,
+          "pct_assets": 0.015207047690483496,
+          "pct_market_cap": 0.006281344130188163,
           "note": null,
           "impairment": {
             "state": "charged",
@@ -6566,7 +6588,7 @@
             "observations": 5,
             "charged_years": 2,
             "total": 1146.725,
-            "pct_acquired": 15.572039652362845,
+            "pct_acquired": 23.80529779327811,
             "last_charge_end": "2025-12-31",
             "last_charge_amount": 101.703,
             "pending": null,
@@ -6576,6 +6598,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts OLLI: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (OLLI market cap)",
           "ticker": "OLLI",
           "is_subject": false,
           "market_cap": 5361.7,
@@ -6602,14 +6625,15 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts KSS: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (KSS market cap)",
           "ticker": "KSS",
           "is_subject": false,
           "market_cap": 2756.2,
-          "acquired": 9.0,
-          "total_assets": 13410.0,
-          "pct_assets": 0.0006711409395973154,
-          "pct_market_cap": 0.0032653653581017346,
-          "note": null,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no shared balance — goodwill is last tagged as at 2009-10-31, 6118 days before the filer's latest balance date 2026-08-01 — more than 366, so it measures no current headroom",
           "impairment": {
             "state": "untagged",
             "state_label": "does not tag",
@@ -6628,6 +6652,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts SVV: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (SVV market cap)",
           "ticker": "SVV",
           "is_subject": false,
           "market_cap": 1436.1,
@@ -6655,18 +6680,18 @@
         }
       ],
       "size_floor": 1000.0,
-      "subject_pct_assets": 0.026492090172833944,
-      "subject_pct_market_cap": 0.0126744087526835,
-      "median_all_assets": 0.18911945302278496,
-      "median_all_market_cap": 0.07039647611564215,
-      "median_large_assets": 0.18911945302278496,
-      "median_large_market_cap": 0.07039647611564215,
-      "n_all": 10,
-      "n_large": 10,
+      "subject_pct_assets": 0.03969233853518524,
+      "subject_pct_market_cap": 0.012493565640547459,
+      "median_all_assets": 0.2230842556272369,
+      "median_all_market_cap": 0.11155430711610487,
+      "median_large_assets": 0.2230842556272369,
+      "median_large_market_cap": 0.11155430711610487,
+      "n_all": 9,
+      "n_large": 9,
       "imp_window_years": 5,
       "imp_n_large_assessed": 7,
       "imp_n_large_charged": 2,
-      "imp_median_large_pct": 7.828287606490205,
+      "imp_median_large_pct": 11.944916676947837,
       "imp_subject_pct": null,
       "imp_subject_state": "untagged"
     },
@@ -18861,6 +18886,15 @@
       "writer": "ciq-reread",
       "layers": [
         "mechanical.concentration"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.dated-headroom",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_allocation",
+        "mechanical.peer_capital_intensity"
       ]
     }
   ],

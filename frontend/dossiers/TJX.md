@@ -1,6 +1,6 @@
 # Dossier — TJX COMPANIES INC /DE/ (NYSE: TJX)
 
-_October 29, 2026 · extraction 2026-10-29.G-D3 · layers refreshed to 2026-11-09.order2-pages_
+_October 29, 2026 · extraction 2026-10-29.G-D3 · layers refreshed to 2026-11-10.dated-headroom_
 
 # Brief — first cut
 
@@ -75,7 +75,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
 **Capital allocation — created or destroyed**
 
-- **Impairment headroom — goodwill remaining:** $97.0M [15]
+- **Impairment headroom — goodwill remaining, as at 2026-08-01:** $97.0M [15]
 - **Goodwill:** $97.0M [15]
 - **Intangibles (net):** _UNKNOWN_ — no intangible-asset balance under any of IntangibleAssetsNetExcludingGoodwill, FiniteLivedIntangibleAssetsNet, IndefiniteLivedIntangibleAssetsExcludingGoodwill — EDGAR XBRL companyfacts
 - **Impairment:** _NONE IN THE CURRENT PERIOD_ — the last such charge covers 2017-01-29→2018-02-03, 370d, 8.5 years before the balance beside it (as at 2026-08-01), so it measures no current period. Nothing has been written down since
@@ -646,6 +646,7 @@ _Source §: 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm_
 - **Extraction:** 2026-10-29.G-D3 — each earnings call reaches the driver extraction and the synthesis WHOLE — prepared remarks and the full Q&A — where it was cut at 12,000 characters unmarked; a call past the 100,000-character ceiling ends in a marker and a QA flag, and a call on file that does not read is named in a QA flag (audit G-D3, G-D4)
 - **Refreshed since assembly** (oldest first):
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
+  - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-10-28
 - **Panel age:** oldest panel 13d old — 2026-10-16 (valuation.implied_expectations.tev_as_of), against a 2026-10-29 build
 - **Consensus age:** consensus 20d old (2026-10-09, valuation.implied_expectations.multiples_as_of) — within the ceiling

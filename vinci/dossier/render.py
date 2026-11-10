@@ -41,6 +41,7 @@ from vinci.dossier.schemas import (
     DrawdownWindow,
     FinancialSummary,
     ForwardMultiple,
+    ImpairmentHeadroom,
     LeaseBasis,
     MechanicalLayer,
     OwnHistoryBand,
@@ -3100,6 +3101,20 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
     return out
 
 
+def _headroom_line(h: Sourced[ImpairmentHeadroom] | None) -> str:
+    """THE STORED HEADROOM, never a sum made here (2026-11-10, audit RD-D1): this added each leg's
+    own latest balance and cited goodwill's date, so MCK printed a 2012 intangibles balance inside a
+    2026 total. A page built before the field says so rather than adding anything up."""
+    if h is None:
+        return ("- **Impairment headroom:** _UNKNOWN_ — not recorded on this page (built "
+                "before the dated headroom); each balance below states its own date")
+    if h.status is SourceStatus.PRESENT and h.value is not None:
+        v = h.value
+        return (f"- **Impairment headroom — {' + '.join(v.legs)} remaining, as at {v.as_at}:** "
+                f"${v.value:,.1f}M{_cite(h.source_ref)}" + (f" — {h.note}" if h.note else ""))
+    return _fact("Impairment headroom", h)
+
+
 def _capital_allocation(m: MechanicalLayer) -> list[str]:
     """Capital created or destroyed, rendered BESIDE the writedown rather than in its own section.
 
@@ -3134,13 +3149,7 @@ def _capital_allocation(m: MechanicalLayer) -> list[str]:
 
     gw, intang = ca.goodwill, ca.intangibles
     if gw.status is SourceStatus.PRESENT or intang.status is SourceStatus.PRESENT:
-        left = sum(x.value or 0.0 for x in (gw, intang) if x.status is SourceStatus.PRESENT)
-        both = ("goodwill + intangibles"
-                if gw.status is SourceStatus.PRESENT and intang.status is SourceStatus.PRESENT
-                else ("goodwill" if gw.status is SourceStatus.PRESENT else "intangibles"))
-        src = gw if gw.status is SourceStatus.PRESENT else intang
-        out.append(f"- **Impairment headroom — {both} remaining:** ${left:,.1f}M"
-                   f"{_cite(src.source_ref)}")
+        out.append(_headroom_line(ca.impairment_headroom))
     out.append(_fact("Goodwill", gw, lambda v: f"${v:,.1f}M"))
     out.append(_fact("Intangibles (net)", intang, lambda v: f"${v:,.1f}M"))
 

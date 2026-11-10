@@ -1,6 +1,6 @@
 # Dossier — NETFLIX INC (Nasdaq: NFLX)
 
-_November 5, 2026 · extraction 2026-11-05.input-record · layers refreshed to 2026-11-09.order2-pages_
+_November 5, 2026 · extraction 2026-11-05.input-record · layers refreshed to 2026-11-10.dated-headroom_
 
 # Brief — first cut
 
@@ -80,7 +80,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 **Capital allocation — created or destroyed**
 
-- **Impairment headroom — intangibles remaining:** $34,605.5M [21]
+- **Impairment headroom — intangibles remaining, as at 2026-09-30:** $34,605.5M [21]
 - **Goodwill:** _UNKNOWN_ — no goodwill balance under any of Goodwill — EDGAR XBRL companyfacts
 - **Intangibles (net):** $34,605.5M [21]
 - **Impairment:** _NONE IN THE CURRENT PERIOD_ — the filer records no impairment under any tag tried
@@ -647,6 +647,7 @@ _Source §: 8-K 0001193125-25-327462 · d82688dex101.htm_
 - **Refreshed since assembly** (oldest first):
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-09 · caveats — caveat-reword at 2026-11-09.order2-pages
+  - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-11-04
 - **Panel age:** oldest panel 9d old — 2026-10-27 (valuation.implied_expectations.tev_as_of), against a 2026-11-05 build
 - **Consensus age:** consensus 9d old (2026-10-27, valuation.implied_expectations.multiples_as_of) — within the ceiling

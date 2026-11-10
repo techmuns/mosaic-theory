@@ -1,6 +1,6 @@
 # Dossier — ROSS STORES, INC. (Nasdaq: ROST)
 
-_October 29, 2026 · extraction 2026-10-29.G-D3 · layers refreshed to 2026-11-09.order2-pages_
+_October 29, 2026 · extraction 2026-10-29.G-D3 · layers refreshed to 2026-11-10.dated-headroom_
 
 # Brief — first cut
 
@@ -77,7 +77,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
 **Capital allocation — created or destroyed**
 
-- **Impairment headroom — goodwill remaining:** $2.9M [15]
+- **Impairment headroom:** _UNKNOWN_ — goodwill is last tagged as at 2015-01-31, 4288 days before the price date 2026-10-28 — more than 366, so it measures no current headroom
 - **Goodwill:** $2.9M [15]
 - **Intangibles (net):** _UNKNOWN_ — no intangible-asset balance under any of IntangibleAssetsNetExcludingGoodwill, FiniteLivedIntangibleAssetsNet, IndefiniteLivedIntangibleAssetsExcludingGoodwill — EDGAR XBRL companyfacts
 - **Impairment:** _NONE IN THE CURRENT PERIOD_ — the filer records no impairment under any tag tried
@@ -553,6 +553,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Extraction:** 2026-10-29.G-D3 — each earnings call reaches the driver extraction and the synthesis WHOLE — prepared remarks and the full Q&A — where it was cut at 12,000 characters unmarked; a call past the 100,000-character ceiling ends in a marker and a QA flag, and a call on file that does not read is named in a QA flag (audit G-D3, G-D4)
 - **Refreshed since assembly** (oldest first):
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
+  - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-10-28
 - **Panel age:** oldest panel 34d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-29 build
 - **Consensus age:** consensus 32d old (2026-09-27, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -1714,10 +1714,12 @@ def _cache_misses(sends: list[tuple[int, dict[str, Any], float]]) -> list[str]:
 #: twin of the roster the model already reads: the renderers print it, and sending it — a count,
 #: or a null on a page without one — would change every synthesis request, which row 53 says is
 #: measured on the panel before it ships. This build changes what the PAGE prints, not what the
-#: model reads.
+#: model reads. ``capital_allocation.impairment_headroom`` (audit RD-D1) is the same kind: the two
+#: balances the model reads, at one date, for the page to print.
 NOT_SENT: dict[str, Any] = {"primary_source": True,
                             "catalyst_path": {"guidance_after_price_date": True},
-                            "concentration": {"customers_listed": True}}
+                            "concentration": {"customers_listed": True},
+                            "capital_allocation": {"impairment_headroom": True}}
 
 
 def synthesize(

@@ -5715,6 +5715,12 @@
         "source_ref": null,
         "status": "unknown",
         "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
+      },
+      "impairment_headroom": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "goodwill is as at 2026-01-31 and intangibles as at 2021-01-30; the latest balance date the legs share, 2021-01-30, is 2092 days before the price date 2026-10-23 — more than 366, so it measures no current headroom"
       }
     },
     "dilution_pipeline": {
@@ -5862,16 +5868,18 @@
       }
     },
     "peer_capital_intensity": {
+      "source_ref": "Assembler: acquired-asset intensity — EDGAR companyfacts goodwill + intangibles over Assets and over the CIQ comps market cap, for each name of the CIQ comps grid; medians and counts over the peers",
       "rows": [
         {
+          "source_ref": "EDGAR companyfacts TGT: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (TGT market cap)",
           "ticker": "TGT",
           "is_subject": true,
           "market_cap": 71529.0,
-          "acquired": 668.0,
-          "total_assets": 61235.0,
-          "pct_assets": 0.010908793990364988,
-          "pct_market_cap": 0.009338869549413525,
-          "note": null,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no shared balance — goodwill is as at 2026-01-31 and intangibles as at 2021-01-30; the latest balance date the legs share, 2021-01-30, is 2009 days before the filer's latest balance date 2026-08-01 — more than 366, so it measures no current headroom",
           "impairment": {
             "state": "explicit-zero",
             "state_label": "reports nil",
@@ -5890,13 +5898,14 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts WMT: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (WMT market cap)",
           "ticker": "WMT",
           "is_subject": false,
           "market_cap": 856685.9,
-          "acquired": 32560.0,
-          "total_assets": 293914.0,
-          "pct_assets": 0.11078070455983723,
-          "pct_market_cap": 0.038006928793855484,
+          "acquired": 33035.0,
+          "total_assets": 284668.0,
+          "pct_assets": 0.11604746581983223,
+          "pct_market_cap": 0.03856139105359385,
           "note": null,
           "impairment": {
             "state": "none-in-window",
@@ -5916,6 +5925,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts COST: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (COST market cap)",
           "ticker": "COST",
           "is_subject": false,
           "market_cap": 409030.4,
@@ -5923,7 +5933,7 @@
           "total_assets": 89045.0,
           "pct_assets": 0.011162895165365826,
           "pct_market_cap": 0.002430137222074447,
-          "note": null,
+          "note": "goodwill only — the filer tags no intangible balance",
           "impairment": {
             "state": "charged",
             "state_label": "wrote down",
@@ -5942,6 +5952,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts TJX: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (TJX market cap)",
           "ticker": "TJX",
           "is_subject": false,
           "market_cap": 143062.6,
@@ -5949,7 +5960,7 @@
           "total_assets": 37115.0,
           "pct_assets": 0.0026134985854775698,
           "pct_market_cap": 0.0006780248646396752,
-          "note": null,
+          "note": "goodwill only — the filer tags no intangible balance",
           "impairment": {
             "state": "none-in-window",
             "state_label": "no annual obs.",
@@ -5968,6 +5979,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts KR: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (KR market cap)",
           "ticker": "KR",
           "is_subject": false,
           "market_cap": 34691.2,
@@ -5994,6 +6006,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts DG: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (DG market cap)",
           "ticker": "DG",
           "is_subject": false,
           "market_cap": 27541.8,
@@ -6020,14 +6033,15 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts DLTR: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (DLTR market cap)",
           "ticker": "DLTR",
           "is_subject": false,
           "market_cap": 21403.0,
-          "acquired": 422.1,
-          "total_assets": 14029.6,
-          "pct_assets": 0.030086388778012202,
-          "pct_market_cap": 0.01972153436434145,
-          "note": null,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no shared balance — goodwill is as at 2026-08-01 and intangibles as at 2024-11-02; the latest balance date the legs share, 2024-11-02, is 637 days before the filer's latest balance date 2026-08-01 — more than 366, so it measures no current headroom",
           "impairment": {
             "state": "charged",
             "state_label": "wrote down",
@@ -6036,7 +6050,7 @@
             "observations": 5,
             "charged_years": 5,
             "total": 1146.9,
-            "pct_acquired": 2.717128642501777,
+            "pct_acquired": null,
             "last_charge_end": "2026-01-31",
             "last_charge_amount": 9.0,
             "pending": null,
@@ -6046,14 +6060,15 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts BBY: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (BBY market cap)",
           "ticker": "BBY",
           "is_subject": false,
           "market_cap": 18982.5,
-          "acquired": 808.0,
-          "total_assets": 16107.0,
-          "pct_assets": 0.05016452474079593,
-          "pct_market_cap": 0.042565520874489664,
-          "note": null,
+          "acquired": null,
+          "total_assets": null,
+          "pct_assets": null,
+          "pct_market_cap": null,
+          "note": "no shared balance — goodwill is as at 2026-08-01 and intangibles as at 2020-02-01; the latest balance date the legs share, 2020-02-01, is 2373 days before the filer's latest balance date 2026-08-01 — more than 366, so it measures no current headroom",
           "impairment": {
             "state": "charged",
             "state_label": "wrote down",
@@ -6062,7 +6077,7 @@
             "observations": 1,
             "charged_years": 1,
             "total": 475.0,
-            "pct_acquired": 0.5878712871287128,
+            "pct_acquired": null,
             "last_charge_end": "2025-02-01",
             "last_charge_amount": 475.0,
             "pending": 171.0,
@@ -6072,6 +6087,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts TSCO: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (TSCO market cap)",
           "ticker": "TSCO",
           "is_subject": false,
           "market_cap": 16814.0,
@@ -6098,6 +6114,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts DKS: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (DKS market cap)",
           "ticker": "DKS",
           "is_subject": false,
           "market_cap": 12132.3,
@@ -6124,6 +6141,7 @@
           }
         },
         {
+          "source_ref": "EDGAR companyfacts BJ: goodwill + intangibles and Assets at its latest balance date, impairment over its own window · CIQ Comparable Analysis (BJ market cap)",
           "ticker": "BJ",
           "is_subject": false,
           "market_cap": 11847.1,
@@ -6151,18 +6169,18 @@
         }
       ],
       "size_floor": 1000.0,
-      "subject_pct_assets": 0.010908793990364988,
-      "subject_pct_market_cap": 0.009338869549413525,
-      "median_all_assets": 0.06015934709287276,
-      "median_all_market_cap": 0.040286224834172574,
-      "median_large_assets": 0.06015934709287276,
-      "median_large_market_cap": 0.040286224834172574,
-      "n_all": 10,
-      "n_large": 10,
+      "subject_pct_assets": null,
+      "subject_pct_market_cap": null,
+      "median_all_assets": 0.07893112657472684,
+      "median_all_market_cap": 0.06578283529095862,
+      "median_large_assets": 0.07893112657472684,
+      "median_large_market_cap": 0.06578283529095862,
+      "n_all": 8,
+      "n_large": 8,
       "imp_window_years": 5,
-      "imp_n_large_assessed": 8,
-      "imp_n_large_charged": 5,
-      "imp_median_large_pct": 0.11871227364185111,
+      "imp_n_large_assessed": 6,
+      "imp_n_large_charged": 3,
+      "imp_median_large_pct": 0.11578341013824885,
       "imp_subject_pct": null,
       "imp_subject_state": "explicit-zero"
     },
@@ -15980,6 +15998,15 @@
       "writer": "ciq-reread",
       "layers": [
         "mechanical.concentration"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.dated-headroom",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_allocation",
+        "mechanical.peer_capital_intensity"
       ]
     }
   ],

@@ -1,6 +1,6 @@
 # Dossier — Oruka Therapeutics, Inc. (Nasdaq: ORKA)
 
-_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-09.order2-pages_
+_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.dated-headroom_
 
 # Brief — first cut
 
@@ -465,6 +465,7 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-10-18; (R) = Reclas
   - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
+  - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 3d old — 2026-10-23 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 8d old (2026-10-18, valuation.implied_expectations.multiples_as_of) — within the ceiling

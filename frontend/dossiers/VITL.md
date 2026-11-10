@@ -1,6 +1,6 @@
 # Dossier — Vital Farms, Inc. (Nasdaq: VITL)
 
-_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-09.order2-pages_
+_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-10.dated-headroom_
 
 # Brief — first cut
 
@@ -81,7 +81,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 **Capital allocation — created or destroyed**
 
-- **Impairment headroom — goodwill remaining:** $3.9M [17]
+- **Impairment headroom — goodwill remaining, as at 2026-06-28:** $3.9M [17]
 - **Goodwill:** $3.9M [17]
 - **Intangibles (net):** _UNKNOWN_ — no intangible-asset balance under any of IntangibleAssetsNetExcludingGoodwill, FiniteLivedIntangibleAssetsNet, IndefiniteLivedIntangibleAssetsExcludingGoodwill — EDGAR XBRL companyfacts
 - **Impairment:** _NONE IN THE CURRENT PERIOD_ — the filer records no impairment under any tag tried
@@ -573,6 +573,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
   - 2026-10-28 · anchor, valuation_basis — anchor-retag at 2026-10-09.3
   - 2026-10-28 · mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
+  - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 20d old — 2026-07-29 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 28d old (2026-07-21, valuation.implied_expectations.multiples_as_of) — within the ceiling

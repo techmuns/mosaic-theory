@@ -3349,6 +3349,12 @@
         "source_ref": null,
         "status": "unknown",
         "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
+      },
+      "impairment_headroom": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no goodwill or intangible balance under any of Goodwill, IntangibleAssetsNetExcludingGoodwill, FiniteLivedIntangibleAssetsNet, IndefiniteLivedIntangibleAssetsExcludingGoodwill"
       }
     },
     "dilution_pipeline": {
@@ -8348,6 +8354,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_structure"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.dated-headroom",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_allocation"
       ]
     }
   ],

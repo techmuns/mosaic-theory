@@ -417,6 +417,15 @@ const EXTRACTION_VERSIONS = [
     "FCF-sign leg deleted, so the two-input self-funding read is the only one, and the " +
     "gap test's FCF-sign item names `quality.fcf_sign` itself. Figures leave the page; " +
     "none changes"],
+  ["2026-11-10.dated-headroom",
+    "impairment headroom is two balances at one date (audit RD-D1): an instant is the newest " +
+    "balance across its tag family, the preference order breaking a tie, so a first tag the " +
+    "filer stopped using no longer wins; `capital_allocation.impairment_headroom` reads goodwill " +
+    "and intangibles at the latest date they share, within 366 days of the price date, and " +
+    "states that date, or is UNKNOWN naming the dates found, and both renderers print it, " +
+    "never a sum of their own; a peer row totals its legs at one date with Assets at that date, " +
+    "and one tagging a single family states no total. MCK's headroom moves from $12,950.0M to " +
+    "$15,214.0M; AMZN's is dated 2025-12-31; TGT's and BURL's are UNKNOWN"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
@@ -2341,10 +2350,18 @@ function capitalAllocation(m) {
   const pres = (f) => f && f.status === "present" && f.value != null;
   const out = [];
   if (pres(ca.goodwill) || pres(ca.intangibles)) {
-    const left = (pres(ca.goodwill) ? ca.goodwill.value : 0) + (pres(ca.intangibles) ? ca.intangibles.value : 0);
-    const both = pres(ca.goodwill) && pres(ca.intangibles) ? "goodwill + intangibles" : (pres(ca.goodwill) ? "goodwill" : "intangibles");
-    const src = pres(ca.goodwill) ? ca.goodwill : ca.intangibles;
-    out.push(`<div class="fact"><div class="fact-label">Impairment headroom — ${escapeHtml(both)} remaining</div><div class="fact-val hi">${usd(left)}${citeMark(src.source_ref)}</div></div>`);
+    // THE STORED HEADROOM, never a sum made here (audit RD-D1) — twin of render.py _headroom_line.
+    // This added each leg's own latest balance, so MCK showed a 2012 intangibles balance inside a
+    // 2026 total; a page built before the field says so rather than adding anything up.
+    const h = ca.impairment_headroom;
+    if (!h) {
+      out.push(fact("Impairment headroom", { status: "unknown", note: "not recorded on this page (built before the dated headroom); each balance below states its own date" }));
+    } else if (pres(h)) {
+      const v = h.value;
+      out.push(`<div class="fact"><div class="fact-label">Impairment headroom — ${escapeHtml(v.legs.join(" + "))} remaining, as at ${escapeHtml(v.as_at)}</div><div class="fact-val hi">${usd(v.value)}${citeMark(h.source_ref)}${h.note ? ` <span class="muted">— ${escapeHtml(h.note)}</span>` : ""}</div></div>`);
+    } else {
+      out.push(fact("Impairment headroom", h));
+    }
   }
   out.push(fact("Goodwill", ca.goodwill, usd));
   out.push(fact("Intangibles (net)", ca.intangibles, usd));
