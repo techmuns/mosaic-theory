@@ -33,12 +33,12 @@ from __future__ import annotations
 import json
 import os
 from collections.abc import Callable, Sequence
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 from typing import Any
 
 from vinci.eod.client import EodError, SessionCalendar
-from vinci.eod.tiingo import TiingoEodClient, tiingo_symbol
+from vinci.eod.tiingo import TIINGO_LEAD, TiingoEodClient, tiingo_symbol
 from vinci.netcache import HttpError
 
 #: The longest a US market regularly stays shut between two sessions: a Friday close to the Tuesday
@@ -195,12 +195,6 @@ def reserved_symbols(data_dir: Path) -> dict[str, tuple[str, ...]]:
     for r in follow_records(data_dir / "followed.json"):
         add(r.ticker, FOLLOWED)
     return {s: tuple(sorted(r)) for s, r in sorted(why.items())}
-
-
-#: A week of slack before the earliest window, so its entry session's row is always inside the span
-#: Tiingo is asked for. `eod.splits.default_splits` asks for the SAME span (RF-D1), so its rows are
-#: the response this read cached: one request, and one symbol against the plan's monthly cap.
-TIINGO_LEAD = timedelta(days=7)
 
 
 def default_dividends(*, start: date, end: date, sessions: SessionCalendar) -> DividendSource:

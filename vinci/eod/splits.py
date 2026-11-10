@@ -62,8 +62,7 @@ from pydantic import BaseModel
 
 from vinci.config import Config
 from vinci.eod.client import RESTATE_TOL, EodError, PolygonEodClient, SessionCalendar
-from vinci.eod.dividends import TIINGO_LEAD
-from vinci.eod.tiingo import TiingoEodClient
+from vinci.eod.tiingo import TIINGO_LEAD, TiingoEodClient
 from vinci.netcache import HttpError
 
 

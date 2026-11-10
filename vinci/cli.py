@@ -29,7 +29,7 @@ from vinci.eod import (
     last_completed_session,
 )
 from vinci.eod.client import store_calendar
-from vinci.eod.dividends import TIINGO_LEAD, DividendsUnknownError, default_dividends, growth
+from vinci.eod.dividends import DividendsUnknownError, default_dividends, growth
 from vinci.eod.splits import (
     SplitsUnconfirmedError,
     SplitsUnknownError,
@@ -38,6 +38,7 @@ from vinci.eod.splits import (
     entry_on_basis,
     leg_on_basis,
 )
+from vinci.eod.tiingo import TIINGO_LEAD
 from vinci.ledger import LedgerError, log_verdict
 from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
 from vinci.monitor import read_assignments_file as mon_assignments
