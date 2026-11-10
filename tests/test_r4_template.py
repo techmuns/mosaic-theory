@@ -41,8 +41,11 @@ R4_CELL_INPUTS = {"ebit", "ebit_derivation", "multiple", "multiple_derivation", 
 
 #: Pages read from a frozen vintage, not the living one (tests/fixtures/frozen_pages/README.md).
 #: SMPL's living page is refused by the template on STATE row 36's share gap since its 2026-11-04
-#: re-assembly, so the R1 case reads the page it had before.
-_FROZEN = {"SMPL": ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL"}
+#: re-assembly, so the R1 case reads the page it had before. UBER's likewise since its 2026-11-09
+#: re-assembly: its bridge reads the 2026-09-30 balance sheet while CIQ's comps TEV does not yet, so
+#: `scenario-propose` refuses it (STATE §5.0 row 41) — the R4 case reads its 2026-10-26 page.
+_FROZEN = {"SMPL": ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL",
+           "UBER": ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "UBER"}
 
 
 def _page(ticker: str, *, tag: str | None = sc.RECIPE_R4) -> dict[str, Any]:

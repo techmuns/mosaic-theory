@@ -700,13 +700,31 @@ def test_a_footnoted_point_renders_a_mark_per_figure_and_a_collapsed_sources_blo
     assert "details:not([open]) { display: block !important; }" in print_css
 
 
-def test_no_committed_page_renders_a_footnote_mark_before_its_next_assembly(
+def _figures(page: dict[str, Any]) -> list[dict[str, Any]]:
+    return [f for v in (page.get("synthesis") or {}).values() if isinstance(v, list)
+            for x in v if isinstance(x, dict) for f in (x.get("figures") or [])]
+
+
+def test_a_committed_page_renders_footnote_marks_only_once_its_points_carry_figures(
         tmp_path: Path) -> None:
-    """Every committed page today carries no `figures`, so none renders a ‡ or a sources block —
-    the points render as they did (claim + one cite)."""
+    """A page assembled before this change carries no `figures`, so it renders no ‡ and no sources
+    block — its points render as they did (claim + one cite). A page re-assembled since footnotes
+    its figures: a sources block, and a ‡ exactly when a figure is computed. Among these nine,
+    EPAM's 2026-11-09 page (fix request 2, order 1) is the first — 38 sourced figures, none
+    computed — and the premise "no committed page carries `figures`" that this pin first held
+    expired with it. None of the nine computes a figure, so the first committed page that does
+    (V or WLK at 2026-11-09) is added: without it the ‡ half would only ever check its absence."""
     pages = {p.parent.name: json.loads(p.read_text()) for p in _COMMITTED[:9]}
+    computed = next((p for p in _COMMITTED
+                     if any(f.get("derived") for f in _figures(json.loads(p.read_text())))), None)
+    assert computed is not None, "no committed page computes a figure — the ‡ half checks nothing"
+    pages[computed.parent.name] = json.loads(computed.read_text())
+    footnoted = {t for t, d in pages.items() if _figures(d)}
+    assert footnoted, "no footnoted page among the nine — the positive half would check nothing"
     for t, html in _node_render(pages, tmp_path).items():
-        assert 'class="cite-d"' not in html and "fig-cites" not in html, t
+        derived = any(f.get("derived") for f in _figures(pages[t]))
+        assert ("fig-cites" in html) == (t in footnoted), t
+        assert ('class="cite-d"' in html) == derived, t
 
 
 def test_the_markdown_render_footnotes_each_figure() -> None:

@@ -45,7 +45,10 @@ def _facts(path: Path) -> dict[str, Any]:
     return cast(dict[str, Any], json.loads(path.read_text()))
 
 
-VRRM = _facts(_ROOT / "tests" / "fixtures" / "companyfacts" / "VRRM.json")
+#: VRRM's tracking fixture as committed at main `cb8139ee` (reference 2026-08-14), frozen
+#: 2026-11-09 when its page moved to the September-quarter 10-Q
+#: (`tests/fixtures/companyfacts_frozen/README.md`)
+VRRM = _facts(_ROOT / "tests" / "fixtures" / "companyfacts_frozen" / "VRRM.json")
 
 
 # ─── the anchored parse ───────────────────────────────────────────────────────────────────────
