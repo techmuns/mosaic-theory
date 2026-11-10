@@ -488,13 +488,13 @@ def _ciq_scale_vs_revenue(page: dict[str, Any]) -> ItemResult:
     if not isinstance(a, dict):
         return ItemResult(not_run="no anchor block on the page")
     if a.get("ciq_scale_check") is None:
-        # The back-fill this names was retired in #905 (restore from 481e82f7). The text stays: it
-        # is in every committed scorecard since 2026-10-28, and the latest must reproduce byte for
-        # byte (test_the_committed_snapshot_reproduces_from_the_pages_it_names).
-        return ItemResult(not_run="no anchor.ciq_scale_check — it predates the field, or the "
-                                  "back-fill could not prove the folder's Financials export the "
-                                  "page's own (ciq_scale_backfill.scale_check_backfill); assembly "
-                                  "writes it")
+        # THE REASON NAMES ONLY WHAT IS TRUE NOW (audit RBC-D10, 2026-11-10). It named
+        # `ciq_scale_backfill.scale_check_backfill`, which #905 retired, so for a page built since
+        # the stated cause could not be the cause. Earlier snapshots keep the old words as series
+        # points; the latest reproduces with these.
+        return ItemResult(not_run="no anchor.ciq_scale_check — the page predates the field; no "
+                                  "back-fill writes it since #905 retired the one that did, so "
+                                  "only an assembly writes it")
     return _cross_check(page, a, "ciq_scale_check")
 
 
