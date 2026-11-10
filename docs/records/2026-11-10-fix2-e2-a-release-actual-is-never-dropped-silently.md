@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# A release actual the reader cannot place is noted, never dropped silently, and four shapes it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, RE2-D2, RE2-D5's actuals half, RE2-D6, RE2-D8). No row moves on the 122 releases the 27 pages cite; 13 exhibits on 8 pages gain 27 notes
+# A release actual the reader cannot place is noted, never dropped silently, and four shapes it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, RE2-D2, RE2-D5's actuals half, RE2-D6, RE2-D8). No row moves on the 122 releases the 27 pages cite; 12 exhibits on 8 pages gain 19 notes
 
 **WHAT.** `vinci/edgar/release_parse._reconciliation` and the period readers:
 - **E2-D11's residual (order 3).** An actual the release states but does not place in one period
@@ -53,8 +53,12 @@ superseded-by:
   - **Method.** Every cited EX-99.1 (122 exhibits) was parsed by main's code and by this branch's,
     offline from the SEC caches.
   - **Rows: 0 move** across reconciliation, guidance, one-offs and event impacts.
-  - **Notes: 13 exhibits on 8 pages gain 27 notes,** each an actual skipped with no note on main:
-    BRBR 2, BURL 1, FUBO 1, MVST 10, SMPL 6, TGT 3, TJX 1, WERN 3. No note is removed.
+  - **Notes: 12 exhibits on 8 pages gain 19 notes,** each an actual skipped with no note on main:
+    BRBR 2, BURL 1, FUBO 1, MVST 5, SMPL 6, TGT 1, TJX 1, WERN 2. No note is removed. (Review
+    round 0 took 8 off a first count of 27: each was a COMPARED amount — MVST's "$113.1 million in
+    YTD 2024", TGT's prior-year EPS, WERN's "$0.53 in the prior year" — noted as a skipped actual.
+    A comparison the reader cannot place is the prior, not an actual, as the revenue note already
+    held.)
   - **What changes the replay shows: none from RE2-D2, D5, D6 or D8.** No cited release has those
     shapes in a form the reader now reads differently. Par Pacific's $(5.5) is the prior-year
     comparison in a clause `_sub_unit` sets aside (below).

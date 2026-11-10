@@ -172,3 +172,51 @@ def test_re2_d8_a_calendar_filer_and_a_quarter_release_are_unchanged() -> None:
             "31, 2025.")
     assert ("adjusted ebitda", "Q1 2026", 120.0) in _rows(text)
     assert rp._release_frame(text).fy_offset == 0
+
+
+# --- review round 0 (/code-review high --fix) ----------------------------------------------------
+def test_review_a_quarter_offset_never_shifts_a_year_end() -> None:
+    """CONSTRUCTED: a first quarter that ends in the prior calendar year (+1) does not move the
+    fiscal year its "year ended" names — fiscal 2025 ended May 31, 2025 and is 2025, not 2026."""
+    head = ("Acme Reports Fiscal 2026 First Quarter Results. For the three months ended August 31, "
+            "2025, Adjusted EBITDA of $1,200 million. ")
+    assert rp._release_frame(head).fy_offset == 1
+    assert ("adjusted ebitda", "2025", 4800.0) in _rows(
+        head + "Adjusted EBITDA of $4,800 million for the fiscal year ended May 31, 2025.")
+    assert ("adjusted ebitda", "2025", 4800.0) in _rows(
+        head + "Adjusted EBITDA was $4,800 million, compared to $4,500 million for the fiscal "
+               "year ended May 31, 2024.")
+
+
+def test_review_a_signed_or_longer_respectively_list_is_refused() -> None:
+    """CONSTRUCTED: the bracketed second amount, and a three-amount list, are both lists."""
+    for text in (
+        _Q3 + "Adjusted EBITDA of $(55.0) million and $(20.0) million for the nine and three "
+              "months ended September 30, 2026, respectively.",
+        _Q3 + "Revenue of $850.0 million, $550.0 million and $300.0 million for the nine, six "
+              "and three months ended September 30, 2026, respectively.",
+    ):
+        assert _rows(text) == [], text
+        assert any("'respectively' list" in n for n in _refusals(text)), text
+
+
+def test_review_a_signed_range_is_a_range() -> None:
+    """CONSTRUCTED: a negative range's high side is signed too; its low end is not an actual."""
+    for text in (_Q3_LEAD + "adjusted net loss per share of $(0.15) to $(0.10).",
+                 _Q3_LEAD + "Adjusted EBITDA of -$5.0 million to -$3.0 million."):
+        assert _rows(text) == [], text
+        assert any("a range where an actual was read" in n for n in _refusals(text)), text
+
+
+def test_review_a_calendar_year_in_the_comparison_is_not_the_figures() -> None:
+    """NEGATIVE PIN: a calendar year inside the comparison does not refuse the fiscal figure."""
+    text = _FY26 + ("Adjusted EBITDA of $480 million for fiscal 2026, compared to $400 million "
+                    "for calendar year 2025.")
+    assert ("adjusted ebitda", "2026", 480.0) in _rows(text)
+
+
+def test_review_an_unplaced_comparison_is_not_noted_as_a_skipped_actual() -> None:
+    """A compared amount the reader cannot place is the prior, not a skipped actual — as revenue."""
+    text = ("Acme Reports Fourth Quarter and Full Year 2025 Results. Adjusted EBITDA was $20.0 "
+            "million, compared to Adjusted EBITDA of $15.0 million in the prior year.")
+    assert not [n for n in _refusals(text) if "$15.0" in n]

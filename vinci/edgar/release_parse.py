@@ -154,7 +154,9 @@ _SCALE = r"billion|bn|million|mm|thousand|[BMK](?![A-Za-z])"
 #: became a revenue actual again.
 _RANGE_TAIL = (r"\s*(?:to|through|[-–—])\s*"
                r"(?:(?:approximately|about|around|roughly|nearly|an\s+estimated)\s+)?"
-               rf"\$?\s*{_NUM}")
+               # a SIGNED high side (RE2-D6's shapes): "$(0.15) to $(0.10)", "-$5.0 to -$3.0"
+               r"(?:[-–−(]\s*)?\$?\s*(?:[-–−(]\s*)?"
+               rf"{_NUM}")
 #: Every fail-loud note `_reconciliation` writes starts with this.
 RECON_REFUSAL_PREFIX = "Reconciliation figure refused"
 #: A "RESPECTIVELY" LIST after an actual's own amount (TeamNostra fix request 2, RE2-D2): "Revenue
@@ -166,8 +168,11 @@ RECON_REFUSAL_PREFIX = "Reconciliation figure refused"
 #: of $480 million for calendar year 2025" in a "Fiscal 2026 Results" release was labelled 2026 —
 #: every period label downstream is the filer's FISCAL period, and a calendar year is not one.
 _CALENDAR = re.compile(r"\bcalendar\s+(?:year\s+)?(20\d\d)\b|\bCY\s?(20\d\d)\b", re.I)
+#: The next amount may be signed or bracketed as the first is ("$(55.0) million and $(20.0)
+#: million"), and the list may run to three ("$850.0 million, $550.0 million and $300.0 million").
 _RESPECTIVELY_AFTER = re.compile(
-    rf"\s*(?:,\s*)?(?:and|or)\s+(?:\$\s*)?{_NUM}\s*(?:{_SCALE})?[^.;]{{0,160}}?\brespectively\b",
+    r"\s*(?:,\s*(?:(?:and|or)\s+)?|(?:and|or)\s+)(?:[-–−(]\s*)?(?:\$\s*)?(?:[-–−(]\s*)?"
+    rf"{_NUM}\)?\s*(?:{_SCALE})?(?:[^.;]|\.(?=\d)){{0,160}}?\brespectively\b",
     re.I)
 
 
@@ -591,6 +596,16 @@ def _year_minus(year: str | None, n: int = 1) -> str | None:
     return str(int(year) - n) if year else None
 
 
+def _fiscal_year_ended(yey: str, frame: _ReleaseFrame) -> int:
+    """The FISCAL year a "year ended <date>" phrase closes (RE2-D8). The frame's offset is measured
+    from its own quarter end (or, for a full-year header with none, its year end), and only a
+    fourth quarter ends where the fiscal year does: Nike's first quarter ends August 31, 2025 in
+    fiscal 2026 (+1), but its "fiscal year ended May 31, 2025" is fiscal 2025 — shifted by the
+    quarter's offset it became 2026, postdated the release and was dropped."""
+    shift = frame.fy_offset if frame.kind != "quarter" or frame.quarter == 4 else 0
+    return int(yey) + shift
+
+
 def _as_current(m: re.Match[str], frame: _ReleaseFrame) -> object:
     """What a period phrase in a CURRENT figure's own clause says that figure is. Returns a label,
     ``None`` (a period this extractor must not label — a year-to-date or trailing-twelve-month
@@ -617,7 +632,7 @@ def _as_current(m: re.Match[str], frame: _ReleaseFrame) -> object:
         # THE FISCAL YEAR, not the end date's calendar year (TeamNostra fix request 2, RE2-D8): a
         # retailer's "Fiscal 2025" ends January 31, 2026, and its "for the fiscal year ended
         # January 31, 2026" was labelled 2026, refused as postdating the release, and dropped.
-        return str(int(g["yey"]) + frame.fy_offset)
+        return str(_fiscal_year_ended(g["yey"], frame))
     if g["bare"]:
         # In a single-quarter release a bare year beside a figure is far likelier an outlook or a
         # date than a claim that the figure is annual — the header's quarter stands.
@@ -648,7 +663,7 @@ def _as_comparison_granularity(m: re.Match[str], frame: _ReleaseFrame) -> object
         year = g["fyy"] or g["fyy2"]
         return str(int(year) + 1) if year else _NO
     if g["yended"]:
-        return str(int(g["yey"]) + 1 + frame.fy_offset)
+        return str(_fiscal_year_ended(g["yey"], frame) + 1)
     if g["bare"]:
         return _NO if frame.kind == "quarter" else str(int(g["bareyear"]) + 1)
     return _NO  # "the prior year" / "the comparable year ago period" carry no granularity
@@ -671,7 +686,7 @@ def _as_prior(m: re.Match[str], frame: _ReleaseFrame) -> object:
     if g["fy"]:
         return g["fyy"] or g["fyy2"] or None
     if g["yended"]:
-        return str(int(g["yey"]) + frame.fy_offset)
+        return str(_fiscal_year_ended(g["yey"], frame))
     if g["relp"]:
         if frame.kind == "quarter" and frame.quarter and frame.year:
             return f"Q{frame.quarter} {g['relpy'] or _year_minus(frame.year)}"
@@ -701,17 +716,32 @@ def _clause(text: str, start: int, end: int, cap: int = 240) -> tuple[int, int]:
     return lo, (head.start(1) if head else hi)
 
 
-def _outside_comparisons(text: str, lo: int, hi: int) -> list[re.Match[str]]:
-    """Period phrases in [lo, hi) that do NOT sit inside a comparison sub-clause. MVST writes
-    "Full Year net loss of $29.2 million, compared to net loss of $195.5 million in 2024; Non-GAAP
-    adjusted net profit of $13.0 million" — the nearest year before the $13.0M is the COMPARISON's
-    2024, and reading it would label a current full-year figure as the prior year."""
+def _comparison_spans(text: str, lo: int, hi: int) -> list[tuple[int, int]]:
+    """The comparison sub-clauses in [lo, hi): each marker to the next ';' or sentence end."""
     cut: list[tuple[int, int]] = []
     for c in _CMP.finditer(text, lo, hi):
         stop = min((j for j in (text.find(";", c.end(), hi), text.find(". ", c.end(), hi))
                     if j != -1), default=hi)
         cut.append((c.start(), stop))
+    return cut
+
+
+def _outside_comparisons(text: str, lo: int, hi: int) -> list[re.Match[str]]:
+    """Period phrases in [lo, hi) that do NOT sit inside a comparison sub-clause. MVST writes
+    "Full Year net loss of $29.2 million, compared to net loss of $195.5 million in 2024; Non-GAAP
+    adjusted net profit of $13.0 million" — the nearest year before the $13.0M is the COMPARISON's
+    2024, and reading it would label a current full-year figure as the prior year."""
+    cut = _comparison_spans(text, lo, hi)
     return [p for p in _phrases(text, lo, hi) if not any(a <= p.start() < b for a, b in cut)]
+
+
+def _own_calendar(text: str, lo: int, hi: int, start: int) -> re.Match[str] | None:
+    """A calendar period (RE2-D5) in the figure's OWN part of its clause — never one inside a
+    comparison sub-clause the figure is not in: "$480 million for fiscal 2026, compared to $400
+    million for calendar year 2025" states the fiscal figure as stated."""
+    cut = [(a, b) for a, b in _comparison_spans(text, lo, hi) if not a <= start < b]
+    return next((c for c in _CALENDAR.finditer(text, lo, hi)
+                 if not any(a <= c.start() < b for a, b in cut)), None)
 
 
 def _heading_period(text: str, before: int, frame: _ReleaseFrame) -> object:
@@ -1200,7 +1230,7 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
                     m.start(), m.end())
             continue
         lo, hi = _clause(text, m.start(), m.end())
-        if cal := _CALENDAR.search(text, lo, hi):
+        if cal := _own_calendar(text, lo, hi, m.start()):
             _refuse(f"stated for calendar {cal[1] or cal[2]} — a calendar period is not the "
                     "filer's fiscal one", m.start(), m.end())
             continue
@@ -1216,7 +1246,7 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
             _refuse("a quarter compared with a bare year — the release does not say which period "
                     "the comparison is", m.start(), m.end())
             continue
-        if p is None and not _FORWARD.search(text, lo, m.start()):
+        if p is None and marker is None and not _FORWARD.search(text, lo, m.start()):
             # NO SKIPPED ACTUAL IS SILENT (audit E2-D11's residual, TeamNostra fix request 2): a
             # figure the release states but does not place in one period was dropped with no note,
             # so one placed figure hid every dropped one — EPAM's headline "Non-GAAP Diluted EPS of
@@ -1269,7 +1299,7 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
                     "by order", m.start(), m.end())
             continue
         lo, hi = _clause(text, m.start(), m.end())
-        if cal := _CALENDAR.search(text, lo, hi):
+        if cal := _own_calendar(text, lo, hi, m.start()):
             _refuse(f"a revenue figure stated for calendar {cal[1] or cal[2]} — a calendar "
                     "period is not the filer's fiscal one", m.start(), m.end())
             continue

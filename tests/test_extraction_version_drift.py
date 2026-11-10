@@ -134,7 +134,7 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/going_concern.py": "feb938485fd0",
     "vinci/edgar/net_debt.py": "d60756329d18",
     "vinci/edgar/primary_source.py": "d9054b7a75a0",
-    "vinci/edgar/release_parse.py": "9cf6347337fc",
+    "vinci/edgar/release_parse.py": "5aa40b738cb7",
     "vinci/edgar/segment_facts.py": "9d3c07301296",
     "vinci/edgar/segments.py": "8aa10f003612",
     "vinci/edgar/submissions.py": "6644355e5c3f",

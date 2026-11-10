@@ -676,8 +676,8 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "first amount of a 'respectively' list is refused; a figure stated for a calendar year "
         "is refused; '$(5.5)', '($5.5)' and '-$5.5' are read, signed; and a 'year ended' date "
         "takes the release's fiscal offset, so a retailer's fiscal year ending in January is its "
-        "fiscal year. On the 122 releases the 27 committed pages cite no row moves; 13 exhibits "
-        "on 8 pages gain 27 notes"
+        "fiscal year. On the 122 releases the 27 committed pages cite no row moves; 12 exhibits "
+        "on 8 pages gain 19 notes"
     ),
 )
 
