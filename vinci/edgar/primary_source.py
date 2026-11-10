@@ -425,8 +425,13 @@ def guide_verification_read(
             f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
             "NO NUMERIC OUTLOOK → not cross-checked", CHECK_NOT_RUN)
     # release_low is now narrowed to a float by the early return above (no redundant None re-check).
-    if abs(ciq_low - release_low) < GUIDE_MATCH and abs(
-            (ciq_high or 0.0) - (release_high or 0.0)) < GUIDE_MATCH:
+    # A POINT GUIDE IS THE RANGE [low, low] (TeamNostra fix request 2, RE1-D16). `high or 0.0` read
+    # a missing high as a high of zero, so a CIQ point of -0.05 against a release range of
+    # -0.05–0.00 read VERIFIED; a point now meets only a point, or a range that is one.
+    ciq_top = ciq_low if ciq_high is None else ciq_high
+    release_top = release_low if release_high is None else release_high
+    if (abs(ciq_low - release_low) < GUIDE_MATCH
+            and abs(ciq_top - release_top) < GUIDE_MATCH):
         return GuideVerification(
             f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
             f"{release_low}–{release_high} → cross-source VERIFIED", CHECK_AGREE)

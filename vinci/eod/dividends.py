@@ -33,12 +33,12 @@ from __future__ import annotations
 import json
 import os
 from collections.abc import Callable, Sequence
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 from typing import Any
 
 from vinci.eod.client import EodError, SessionCalendar
-from vinci.eod.tiingo import TiingoEodClient, tiingo_symbol
+from vinci.eod.tiingo import TIINGO_LEAD, TiingoEodClient, tiingo_symbol
 from vinci.netcache import HttpError
 
 #: The longest a US market regularly stays shut between two sessions: a Friday close to the Tuesday
@@ -206,6 +206,5 @@ def default_dividends(*, start: date, end: date, sessions: SessionCalendar) -> D
             raise DividendsUnknownError(f"{symbol}: no TIINGO_API_KEY in the environment — total "
                                    f"return needs Tiingo's dividends")
         return unavailable
-    # a week of slack before the earliest window, so its entry session's row is always inside
-    return tiingo_dividends(TiingoEodClient.from_config(), start=start - timedelta(days=7),
+    return tiingo_dividends(TiingoEodClient.from_config(), start=start - TIINGO_LEAD,
                             end=end, sessions=sessions)

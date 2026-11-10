@@ -36,6 +36,7 @@ SHARES = "TreasuryStockSharesAcquired"
 DIRECT = "TreasuryStockAcquiredAverageCostPerShare"
 
 START, END = date(2025, 10, 1), date(2026, 6, 30)      # BRBR's real 272-day window
+AS_OF = date(2026, 8, 1)       # the price date the block is built at: every leg below is current
 
 
 def _flow(val: float, *, start: date = START, end: date = END) -> dict[str, Any]:
@@ -52,7 +53,8 @@ def test_a_cash_flow_line_over_a_share_count_is_refused_however_well_the_periods
     """BRBR'S EXACT SHAPE — $137.2M and 4.86M shares on one identical 272-day window. The period
     guard has nothing to complain about, and the answer is still a refusal, because the objection
     is to the BASES and not to the windows."""
-    ca = build_capital_allocation(_facts(**{CASH: [_flow(137.2e6)], SHARES: [_flow(4_860_000.0)]}))
+    ca = build_capital_allocation(_facts(**{CASH: [_flow(137.2e6)], SHARES: [_flow(4_860_000.0)]}),
+                                  as_of=AS_OF)
     assert ca.buyback_avg_price.status is SourceStatus.UNKNOWN, (
         f"derived a price of {ca.buyback_avg_price.value} from a cash-flow line ÷ a share count")
     assert ca.buyback_avg_price.value is None
@@ -66,7 +68,8 @@ def test_the_two_legs_themselves_survive_because_each_is_sound_on_its_own_basis(
     repurchase cash and the share count are each a real, correctly-sourced fact — it is only their
     ratio that is not a price. Deleting them would answer the capital-allocation question with
     less than the filer actually reports."""
-    ca = build_capital_allocation(_facts(**{CASH: [_flow(137.2e6)], SHARES: [_flow(4_860_000.0)]}))
+    ca = build_capital_allocation(_facts(**{CASH: [_flow(137.2e6)], SHARES: [_flow(4_860_000.0)]}),
+                                  as_of=AS_OF)
     assert ca.buyback_cash.value == pytest.approx(137.2)
     assert ca.buyback_shares.value == pytest.approx(4_860_000.0)
     assert ca.buyback_cash.status is SourceStatus.PRESENT
@@ -78,7 +81,8 @@ def test_the_filers_own_purchase_cost_tag_is_still_printed_where_it_exists() -> 
     one — and the ruling was to print it where it exists and state absence where it does not, never
     to drop the field wholesale."""
     ca = build_capital_allocation(_facts(**{
-        DIRECT: [_flow(18.29)], CASH: [_flow(213.2e6)], SHARES: [_flow(11_651_767.0)]}))
+        DIRECT: [_flow(18.29)], CASH: [_flow(213.2e6)], SHARES: [_flow(11_651_767.0)]}),
+        as_of=AS_OF)
     assert ca.buyback_avg_price.status is SourceStatus.PRESENT
     assert ca.buyback_avg_price.value == pytest.approx(18.29)
     assert DIRECT in str(ca.buyback_avg_price.source_ref)
@@ -96,14 +100,16 @@ def test_no_average_anywhere_is_a_derived_quotient_of_the_two_legs() -> None:
         {CASH: [_flow(137.2e6)]},                                        # cash only
         {SHARES: [_flow(4_860_000.0)]},                                  # shares only
     ):
-        ref = str(build_capital_allocation(_facts(**tags)).buyback_avg_price.source_ref or "")
+        ref = str(build_capital_allocation(_facts(**tags), as_of=AS_OF).buyback_avg_price
+                  .source_ref or "")
         assert not ref.startswith("DERIVED"), ref
 
 
 def test_an_absence_still_names_what_was_tried() -> None:
     """The house rule for every absence in this module: "not found" invites nothing, naming the tag
     invites a correction from a reader who knows the filer uses a fifth one."""
-    ca = build_capital_allocation(_facts(**{CASH: [_flow(137.2e6)], SHARES: [_flow(4_860_000.0)]}))
+    ca = build_capital_allocation(_facts(**{CASH: [_flow(137.2e6)], SHARES: [_flow(4_860_000.0)]}),
+                                  as_of=AS_OF)
     assert DIRECT in (ca.buyback_avg_price.note or "")
 
 
@@ -115,12 +121,17 @@ def test_a_stale_direct_tag_is_kept_and_dated_never_suppressed_into_a_false_abse
     refused, suppressing here threw away the only figure the filer states and fell through to a
     note reading "no TreasuryStockAcquiredAverageCostPerShare": an affirmative claim that the filer
     reports none, about a filer that reports one. Not-detected is not agreement in `ebitda_basis`;
-    SUPPRESSED IS NOT ABSENT here."""
-    old, cur = date(2022, 12, 31), date(2025, 12, 31)
+    SUPPRESSED IS NOT ABSENT here.
+
+    SINCE FIX 3B (2026-11-09) "older" has two cases. An average older than the cash but inside the
+    year before the price date is kept and dated by its PERIOD MISMATCH note, as before. One whose
+    period ends more than a year before it is not stated — and its note names the tag and the
+    period, so it is still never the false "reports none"."""
+    old, cur, as_of = date(2025, 6, 30), date(2025, 12, 31), date(2026, 2, 1)
     ca = build_capital_allocation(_facts(**{
-        DIRECT: [_flow(283.69, start=date(2022, 1, 1), end=old)],
+        DIRECT: [_flow(283.69, start=date(2025, 1, 1), end=old)],
         CASH: [_flow(100e6, start=date(2025, 1, 1), end=cur)],
-        SHARES: [_flow(1e6, start=date(2025, 1, 1), end=cur)]}))
+        SHARES: [_flow(1e6, start=date(2025, 1, 1), end=cur)]}), as_of=as_of)
     avg = ca.buyback_avg_price
     assert avg.status is SourceStatus.PRESENT, (
         f"the filer's own average was suppressed into an absence — note said: {avg.note}")
@@ -129,3 +140,26 @@ def test_a_stale_direct_tag_is_kept_and_dated_never_suppressed_into_a_false_abse
         "the note claims the filer reports no average price while printing the one it reports")
     assert "PERIOD MISMATCH" in (avg.note or ""), (
         "a stale figure must carry its staleness — the mismatch note is what dates it")
+    gone = build_capital_allocation(_facts(**{
+        DIRECT: [_flow(283.69, start=date(2022, 1, 1), end=date(2022, 12, 31))],
+        CASH: [_flow(100e6, start=date(2025, 1, 1), end=cur)],
+        SHARES: [_flow(1e6, start=date(2025, 1, 1), end=cur)]}), as_of=as_of).buyback_avg_price
+    assert gone.status is SourceStatus.UNKNOWN and gone.value is None
+    assert f"no {DIRECT}" not in (gone.note or "")
+    assert f"the latest {DIRECT} covers 2022-01-01→2022-12-31" in (gone.note or ""), gone.note
+
+
+@pytest.mark.parametrize(("days", "stated"), [(366, True), (367, False)])
+def test_the_year_line_is_366_days_exactly(days: int, stated: bool) -> None:
+    """FIX 3B's LINE, AT ITS EDGE (review round 1 of #930): the frozen pages put legs at 361 days
+    (kept) and 671 (dropped), so they pin nothing between — `CURRENT_DAYS` = 600, or `<` for `<=`,
+    passed every other test. A leg ending exactly 366 days before the price date is stated; one
+    ending 367 days before is not, on all three fields."""
+    as_of = END + timedelta(days=days)
+    ca = build_capital_allocation(_facts(**{
+        DIRECT: [_flow(27.41)], CASH: [_flow(137.2e6)], SHARES: [_flow(4_860_000.0)]}),
+        as_of=as_of)
+    for f in (ca.buyback_cash, ca.buyback_shares, ca.buyback_avg_price):
+        assert (f.status is SourceStatus.PRESENT) is stated, (days, f)
+        if not stated:
+            assert f"ends {days} days before the price date {as_of}" in str(f.note), f.note

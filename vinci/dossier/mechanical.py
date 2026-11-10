@@ -2541,48 +2541,48 @@ def _net_debt_to_ocf(
 
 
 def _survival_capacity(
-    net_lev: Sourced[float], adj_lev: Sourced[str], fcf_sign: Sourced[float],
+    net_lev: Sourced[float], adj_lev: Sourced[str],
     *, net_debt: Sourced[float] | None = None,
 ) -> Sourced[str]:
-    """Solvency as ONE block — net leverage + self-funding (FCF sign). Each leg is present or
-    fail-loud UNKNOWN — never tagged as a risk, which is the human's call. ``net_debt`` (CIQ, $M)
-    lets a non-formable ratio still report the known balance-sheet position. No new data source.
-    (H3) The nearest-maturity year is retired here — the month-precision E2 maturity wall (rendered
-    in the survival super-section) supersedes the coarse 'nearest maturity wall: YYYY' line."""
+    """Solvency as ONE block — net leverage, present or fail-loud UNKNOWN, never tagged as a risk,
+    which is the human's call. ``net_debt`` (CIQ, $M) lets a non-formable ratio still report the
+    known balance-sheet position. No new data source. (H3) The nearest-maturity year is retired
+    here — the month-precision E2 maturity wall (rendered in the survival super-section)
+    supersedes the coarse 'nearest maturity wall: YYYY' line.
+
+    NO SELF-FUNDING LEG (fix 3b, 2026-11-09). The line used to close on a ONE-input read of the
+    EDGAR fiscal-year FCF sign — "FCF-positive → self-funding", "burning cash", "runway not
+    assessable" — beside `primary_source.self_funding`, the TWO-input read that replaced it (latest
+    quarter's OCF AND CIQ's LTM FCF). Every one of the 28 pages frozen at bcda7ce3 carried both,
+    and on eight they gave opposite answers with nothing saying which was right: "self-funding"
+    against MIXED on AORT, EPAM, GOOGL and MVST, "burning cash" against YES on WERN and WLK,
+    "runway not assessable" against YES on IT and LLY.
+    The leg is DELETED rather than reconciled: the sign itself stays in ``quality.fcf_sign``, and
+    the self-funding question has one answer, the two-input read (the web already printed only it,
+    `frontend/views/shared/dossier.js`, when it is present)."""
     present = SourceStatus.PRESENT
-    parts: list[str] = []
     if net_lev.status is present and net_lev.value is not None:
         basis = "CIQ" if "CIQ" in (net_lev.source_ref or "") else "GAAP"
-        lev = f"net-debt/EBITDA {net_lev.value:.1f}x ({basis})"
+        line = f"net-debt/EBITDA {net_lev.value:.1f}x ({basis})"
         if net_lev.value < 0:
-            lev += " → net cash"
+            line += " → net cash"
         if adj_lev.status is present and adj_lev.value:
-            lev += f"; {adj_lev.value}"
-        parts.append(lev)
+            line += f"; {adj_lev.value}"
     elif net_debt is not None and net_debt.status is present and net_debt.value is not None:
         # ratio not formable, but the CIQ balance-sheet position IS known — show it rather than a
         # bare 'solvency risk', which a net-cash name is not.
         nd = net_debt.value
         pos = f"net cash ${-nd:,.0f}M" if nd < 0 else f"net debt ${nd:,.0f}M"
-        parts.append(f"{pos} (CIQ); net-debt/EBITDA N/A ({net_lev.note or 'not derivable'})")
+        line = f"{pos} (CIQ); net-debt/EBITDA N/A ({net_lev.note or 'not derivable'})"
     # NO VERDICT IN THE FACT (fix 3a, 2026-11-06): each leg used to close on "— solvency risk" or
     # "(a risk)", the machine's judgment written into the fact the synthesis reads (9 committed
-    # pages carried "(a risk)"). The tags are DELETED, not reworded; what the machine did not
-    # compute stays said ("cash not derived", "runway not assessable"), and whether either is a
-    # risk is the human's call.
+    # pages carried "(a risk)"). The tags are DELETED, not reworded, and whether a leverage figure
+    # is a risk is the human's call.
     else:
-        parts.append(f"net-debt/EBITDA UNKNOWN ({net_lev.note or 'not derivable'})")
-    if fcf_sign.status is present and fcf_sign.value is not None:
-        parts.append(
-            "FCF-positive → self-funding" if fcf_sign.value > 0
-            else "FCF-negative → burning cash (cash not derived)"
-        )
-    else:
-        parts.append("FCF sign UNKNOWN — runway not assessable")
+        line = f"net-debt/EBITDA UNKNOWN ({net_lev.note or 'not derivable'})"
     return Sourced.present(
-        " | ".join(parts),
-        source_ref="CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign "
-        "(survival capacity)",
+        line,
+        source_ref="CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback; survival capacity)",
     )
 
 
@@ -2618,7 +2618,7 @@ def _quality(
         net_debt_to_ocf=net_ocf,
         net_debt_to_ebitda_adjusted=adj_leverage,
         survival_capacity=_survival_capacity(
-            net_lev, adj_leverage, fcf_sign, net_debt=ciq_nd
+            net_lev, adj_leverage, net_debt=ciq_nd
         ),
         interest_coverage=ciq_sheets.interest_coverage(bundle),
         share_count_trend=(
@@ -4932,7 +4932,9 @@ def _covenant_pointers(
                 continue
             seen.add(h.accession)
             rows.append(CovenantPointer(
-                family=fam, filing="8-K",
+                # the hit's own form, an amendment named as one (RE1-D11); the search asked efts
+                # for 8-Ks, so a hit that states none is one
+                family=fam, filing=h.form or "8-K",
                 filing_date=h.file_date.isoformat() if h.file_date else "",
                 accession=h.accession, exhibits=exs))
             added += 1
@@ -5074,8 +5076,9 @@ def _maturity_sources(
     periodic = sorted((f for f in filings if f.form in periodic_forms
                        and f.filing_date <= reference_date),
                       key=lambda f: f.filing_date, reverse=True)[:1]
+    # every pointer's accession, whatever its label: only an 8-K in `filings` can match one below
     linked = {r.accession for r in (pointer_rows.value or [] if pointer_rows is not None else [])
-              if r.filing == "8-K" and r.accession}
+              if r.accession}
     picks: list[tuple[Filing, str]] = [(f, dmx.READ_PERIODIC) for f in periodic]
     for f in filings:
         if f.form not in _EIGHT_K or f.filing_date > reference_date:
@@ -6562,7 +6565,7 @@ def assemble_mechanical(
         # facts dict (every field degrades to UNKNOWN-with-reason), so an absent companyfacts
         # yields a fully-stated block rather than a missing one.
         capital_allocation=build_capital_allocation(
-            _companyfacts_or_none(edgar, record.identity.cik) or {}),
+            _companyfacts_or_none(edgar, record.identity.cik) or {}, as_of=cut),
         # FORWARD dilution capacity — the buyback block's mirror. Filing-index only (bounded,
         # cached); "none on file" is a PRESENT finding, UNKNOWN is reserved for a failed read.
         dilution_pipeline=_dilution_pipeline(edgar, record.identity.cik, reference_date),

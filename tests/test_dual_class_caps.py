@@ -80,6 +80,8 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *,
             return {t: RawBar(ticker=t, open=p, high=p, low=p, close=p,
                               volume=(volumes or {}).get(t, 10_000_000))
                     for t, p in closes.items()}
+        def splits_executed(self, *_a: object) -> list[dict[str, object]]:
+            return []   # no split in any window (RF-D4)
         def security_types(self) -> dict[str, str]: return types
         def share_class_counts(self, tickers: object) -> dict[str, float]:
             asked = tuple(tickers)

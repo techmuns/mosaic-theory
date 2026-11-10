@@ -254,6 +254,41 @@ def test_current_state_carries_the_decision_numbers_and_both_dates() -> None:
 
 
 # --- SUPERSESSION: archive-and-reissue (2026-07-27) --------------------------------------------
+#: ARCHIVED BECAUSE THE NAME LEFT COVERAGE, not because a record replaced it (2026-11-09). A
+#: retired name's record has no successor to point at, and writing one would invent it, so each is
+#: named here beside the record of the operator's ruling. An archive that points nowhere for any
+#: other reason still fails, and so does a "retired" one that names a successor or a live record.
+RETIRED_ARCHIVES: dict[str, str] = {
+    "AORT-2026-07-22": "docs/records/2026-11-09-aort-retired.md",  # "retire AORT fully"
+}
+
+
+def _paged_tickers() -> set[str]:
+    """Tickers with a committed page. By its `dossier.json`, never the folder: a git-ignored
+    `llm_call.log` outlives the page in a checkout that held it, so the folder can stay behind."""
+    return {p.parent.name.upper() for p in (ROOT / "data" / "dossiers").glob("*/dossier.json")}
+
+
+def _archive_pointer_problems(
+    live: dict[str, sc.ScenarioRecord], archived: dict[str, sc.ScenarioRecord],
+    retired: dict[str, str], paged: set[str],
+) -> list[str]:
+    out: list[str] = []
+    for key, rec in archived.items():
+        if key not in retired:
+            if not rec.superseded_by:
+                out.append(f"{key} is archived but points nowhere")
+            continue
+        if rec.superseded_by:
+            out.append(f"{key} names a successor ({rec.superseded_by}) — superseded, not retired")
+        if rec.ticker.upper() in live:
+            out.append(f"{key}: {rec.ticker} still has a LIVE record — a retired name has none")
+        if rec.ticker.upper() in paged:
+            out.append(f"{key}: {rec.ticker} still has a committed page — a retired name has none")
+    out += [f"{key} is named retired but is not archived" for key in retired if key not in archived]
+    return out
+
+
 def test_archived_records_leave_the_live_set_but_stay_in_the_seal_sweep() -> None:
     """THE TWO-SIDED SCOPE RULE, both halves pinned.
 
@@ -265,14 +300,46 @@ def test_archived_records_leave_the_live_set_but_stay_in_the_seal_sweep() -> Non
     archived = sc.all_archived(root=ROOT)
     assert archived, "the committed book carries at least one archived record"
     assert set(live) & set(archived) == set(), "an archive key must never collide with a ticker"
-    for key, rec in archived.items():
-        assert rec.superseded_by, f"{key} is archived but points nowhere"
+    assert _archive_pointer_problems(live, archived, RETIRED_ARCHIVES, _paged_tickers()) == []
+    for key in archived:
         assert key not in live, f"{key} is in the LIVE set — audit/spread would double-count"
+    # a retired name's ruling is on the record
+    for key, record in RETIRED_ARCHIVES.items():
+        assert (ROOT / record).is_file(), f"{key}: the ruling's record {record} is missing"
     # the seal sweep DOES cover them, keyed as the manifest keys them
     sealable = seal.load_all_sealable(ROOT)
     for key in archived:
         assert key in sealable, f"{key} escaped the seal sweep"
     assert seal.check_all(sealable, seal.load_manifest(ROOT)) == []
+
+
+@pytest.mark.parametrize(
+    "case", ["unnamed", "names_a_successor", "still_live", "still_paged", "not_archived"])
+def test_an_archive_with_no_successor_passes_only_as_a_named_retirement(case: str) -> None:
+    """THE NEGATIVE PINS, on the committed records themselves (AORT's archive and SMPL's live
+    record), each changed in the one way the case names. The positive pin is the test above."""
+    live = sc.all_records(root=ROOT)
+    archived = sc.all_archived(root=ROOT)
+    retired = dict(RETIRED_ARCHIVES)
+    paged = _paged_tickers()
+    key = "AORT-2026-07-22"
+    if case == "unnamed":
+        retired.pop(key)
+        want = "points nowhere"
+    elif case == "names_a_successor":
+        archived[key] = archived[key].model_copy(update={"superseded_by": "AORT-2026-11-09"})
+        want = "superseded, not retired"
+    elif case == "still_live":
+        live["AORT"] = live["SMPL"].model_copy(update={"ticker": "AORT"})
+        want = "still has a LIVE record"
+    elif case == "still_paged":
+        paged.add("AORT")
+        want = "still has a committed page"
+    else:
+        archived.pop(key)
+        want = "is not archived"
+    problems = _archive_pointer_problems(live, archived, retired, paged)
+    assert any(want in p for p in problems), problems
 
 
 def test_supersession_links_both_ways_and_never_edits_the_archived_rationale() -> None:

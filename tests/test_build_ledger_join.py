@@ -22,7 +22,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from tests.dividend_support import no_splits
+from tests.dividend_support import no_dividends, no_splits
 from vinci import monitor as mon
 
 _ROOT = Path(__file__).resolve().parents[1]
@@ -61,7 +61,7 @@ def test_twin_agrees_with_pair_closes_on_the_committed_ledger() -> None:
             if e.get("_closed"):
                 twin[t] = e["_closed"]["exitPrice"]
     backend = {p["ticker"]: round(float(p["exit_price"]), 2)
-               for p in mon.pair_closes(rows, splits=no_splits)}
+               for p in mon.pair_closes(rows, splits=no_splits, dividends=no_dividends)}
     assert twin == backend, f"twin diverged from pair_closes: {twin} != {backend}"
 
 
