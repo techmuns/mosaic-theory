@@ -358,3 +358,13 @@ def test_re2_d7_to_be_a_range_is_read() -> None:
     "approximately" form is read — the same RE2-D7 class."""
     assert _guides("For fiscal 2026, revenue is expected to be $500 million to $550 million.") == [
         ("revenue", "fiscal 2026", 500.0, 550.0, "$M")]
+
+
+# --- Codex review, round 1 ---------------------------------------------------------------------
+def test_re2_d4_a_deal_noun_before_the_guides_own_period_does_not_date_it() -> None:
+    """Codex P1: a deal noun before a period dates it only when the period is the deal's
+    ("acquisition of Beta Corp IN THE fourth quarter", "acquired IN THE fourth quarter"). Before,
+    any deal noun within 40 characters took the guide's own stated year and filed it next-fy."""
+    assert _guides("The Company expects contributions from the acquisition to support fiscal 2026 "
+                   "revenue of $1.10 billion to $1.20 billion.") == [
+        ("revenue", "fiscal 2026", 1100.0, 1200.0, "$M")]

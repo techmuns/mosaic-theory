@@ -2007,10 +2007,13 @@ _DEAL_AFTER = re.compile(
 #: …and the same defect in mirror (review): the deal stated BEFORE its period, in one clause —
 #: "Following the acquisition of Beta Corp in the fourth quarter, the Company expects fiscal 2027
 #: revenue …" and "Including Beta Corp, acquired in the fourth quarter, …" were filed as Q4 2027.
+#: The period must be the DEAL'S: introduced by "in" / "during" after it (Codex, round 1) — "the
+#: acquisition to support fiscal 2026 revenue" states the guide's own year, and a bare nearby deal
+#: noun took it and filed the guide next-fy.
 _DEAL_BEFORE = re.compile(
     r"\b(?:acquisitions?|acquired|acquiring|mergers?|merged|divestitures?|divested|"
     r"dispositions?|disposed|transactions?|sale|sold|spin-?offs?|spun\s+off|separations?)\b"
-    r"[^,.;:•]{0,40}$", re.I)
+    r"[^,.;:•]{0,40}?\b(?:in|during)\s+(?:the\s+)?$", re.I)
 
 
 def _names_deal(text: str, x: re.Match[str]) -> bool:

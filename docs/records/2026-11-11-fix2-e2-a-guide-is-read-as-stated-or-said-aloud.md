@@ -131,6 +131,10 @@ order 4 holds the rest.
   its own test: no sub-line refusal, a calendar refusal, no guide.
 - **The corpus after round 0** is byte-identical in guides and flags to the run before it: 141
   guides, 0 move, the same 14 exhibits' flags.
+- **Codex, round 1 (P1).** The deal-before-period rule took any deal noun within 40 characters, so
+  "contributions from the acquisition to support fiscal 2026 revenue …" lost its stated year and
+  was filed next-fy. A deal now dates a period only through "in" or "during" ("the acquisition of
+  Beta Corp in the fourth quarter"). The pin fails on `3914a199`; the corpus replay is unchanged.
 - **The version.** Row `2026-11-11.guides-as-stated`, in both tables, re-pinned.
 
 **WHAT REACHES THE SYNTHESIS.** Guidance is not re-read by the $0 release refresh
