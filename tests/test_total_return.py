@@ -238,9 +238,10 @@ def test_the_basket_is_a_total_return_and_refuses_an_unknown_member() -> None:
                     internal_ids={"PAY": "SEC-PAY", "NIL": "SEC-NIL"})
     bars = {"PAY": _bars("SEC-PAY", 100.0, 110.0), "NIL": _bars("SEC-NIL", 100.0, 90.0)}
     got, note, _m = basket_return(basket, bars, ENTRY, HORIZON,
-                                  dividends=_yields({"PAY": 0.02, "NIL": 0.0}))
+                                  dividends=_yields({"PAY": 0.02, "NIL": 0.0}), splits=no_splits)
     assert note is None and got == pytest.approx(((1.10 * 1.02 - 1) + (-0.10)) / 2)
-    got, note, _m = basket_return(basket, bars, ENTRY, HORIZON, dividends=_yields({"PAY": 0.0}))
+    got, note, _m = basket_return(basket, bars, ENTRY, HORIZON, dividends=_yields({"PAY": 0.0}),
+                                  splits=no_splits)
     assert got is None and note is not None and "dividends unknown" in note and "NIL" in note
 
 
@@ -343,9 +344,12 @@ def test_the_monitor_command_writes_a_total_return_day(tmp_path: Path,
     assert rows["IT"]["position_return"] == pytest.approx(rows["IT"]["position_price_return"])
     assert day["spread"]["spread_price"] is not None
 
-    monkeypatch.setattr(cli, "default_dividends", lambda **_kw: _yields({"GOOGL": 0.0}))
+    # every symbol read but VRRM's: the closed names' realized view reads its dividends first
+    # (RF-D3), so leaving those readable keeps this pin on the MARK's refusal
+    monkeypatch.setattr(cli, "default_dividends", lambda **_kw: _yields(
+        {"GOOGL": 0.0, "IT": 0.0, "SMPL": 0.0, "SPY": 0.0, "MDY": 0.0, "IWM": 0.0}))
     scratch2 = tmp_path / "scratch2"
-    with pytest.raises(RuntimeError, match="dividends UNKNOWN.*refusing to mark"):
+    with pytest.raises(RuntimeError, match="VRRM.*dividends UNKNOWN.*refusing to mark"):
         cli._cmd_monitor(argparse.Namespace(ref="2026-10-23", out=str(scratch2)))
     assert not (scratch2 / "data" / "monitor").exists() or not any(
         p.name.startswith("2026") for p in (scratch2 / "data" / "monitor").iterdir())

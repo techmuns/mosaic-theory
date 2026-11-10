@@ -369,7 +369,9 @@ def test_parse_fts_hit() -> None:
     )
     assert hit.accession == "0001193125-24-000123"
     assert hit.cik == "0000320193"
-    assert hit.form == "8-K"  # canonical root form, not the "8-K/A" file_type
+    # no `form` stated, so the family names it — never the document type. A hit that states its
+    # form is read by it, an 8-K/A as one (RE1-D11, `tests/test_fts_amendment_form.py`)
+    assert hit.form == "8-K"
     assert hit.file_date == date(2024, 8, 1)
 
 
@@ -403,7 +405,7 @@ def test_fulltext_search_finds_guidance_8ks() -> None:
     hits = got.hits
     assert len(hits) > 0 and got.total > len(hits) and got.capped  # thousands match, one page
     assert all(h.accession for h in hits)
-    assert all(h.form == "8-K" for h in hits if h.form)
+    assert all(h.form in ("8-K", "8-K/A") for h in hits if h.form)  # an 8-K/A is one (RE1-D11)
 
 
 @pytest.mark.network

@@ -272,6 +272,13 @@ here.**
 - $0. No model call, no page rebuilt, no product code changed.
 ## Amendments
 
+**2026-11-09 — AORT is retired (operator, verbatim: "retire AORT fully").** Order 2's done-when in §1
+names AORT among the twelve pages to rebuild; it is eleven now. AORT's page left the corpus, so its
+part of RBC-D1 (no count until re-assembled) and of RD-D1 (its goodwill and intangibles at
+different dates) reads `not fixing: name retired (operator 2026-11-09)` in each row's page column.
+Each row's status is unchanged for its other pages. The §2 counts were measured on 28 pages at
+`622786a2` and stand on that boundary. `docs/records/2026-11-09-aort-retired.md`.
+
 ### 2026-11-10: R2 bucket privacy settled
 
 R2 bucket privacy settled: private (operator, 2026-11-09).
@@ -279,4 +286,4 @@ R2 bucket privacy settled: private (operator, 2026-11-09).
   operator's statement, not by a probe; none was made.
 - It is recorded by the RG-D19 / RG-D8 stream (`docs/records/2026-11-10-driver-facts-not-quotes.md`),
   whose private evidence store relies on it.
-- How SEC treats two machines stays open.
+- How SEC treats two machines was settled separately, from SEC's own pages (#939).
