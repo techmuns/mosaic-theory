@@ -1,7 +1,7 @@
 ---
 status: open
 date: 2026-11-10
-prs: []
+prs: [967]
 supersedes:
 superseded-by:
 ---
@@ -37,17 +37,19 @@ per guidance date, chosen by column position". Done when: "each A case is a pass
 keeps every period guided on the date, each labelled".
 
 **HOW VERIFIED.**
-- **Fail first.** `tests/test_dividend_level_and_same_day_guides.py` fails 7 of 7 on #957's
-  `vinci/` (this branch's base) and passes here. The real-export pins read V's, GOOGL's, NKE's,
+- **Fail first.** `tests/test_dividend_level_and_same_day_guides.py` fails 12 of its 13 cases
+  (every one of its 8 tests in at least one case) on #957's `vinci/` (this branch's base) and
+  passes here. The one case that passes there is the unread twin in the column order whose
+  leftmost period is already the first in time; its reversed twin is the one that fails. The real-export pins read V's, GOOGL's, NKE's,
   AMZN's and SMPL's exports as they stand; the twins run on CI.
 - **$0 compare.** `return_ratios`, `key_ratios`, `guidance_bridge`, `guidance_bridge_rows` and
   `revenue_guide_lohi` were dumped at #957's code and this branch on the 36 folders on disk.
 
   | Reader | Folders moved | Pages among them |
   |---|--:|---|
-  | `return_ratios` (the dividend row) | 14 | 11: CNXC, GOOGL, LLY, MCK, NKE, ROST, TGT, TJX, V, WERN, WLK |
+  | `return_ratios` (the dividend row) | 14 in value, 36 in citation | 11 in value: CNXC, GOOGL, LLY, MCK, NKE, ROST, TGT, TJX, V, WERN, WLK |
   | `guidance_bridge` and its rows | 21 each | 16: AMZN, BURL, CNXC, EPAM, FUBO, IT, NCNO, NFLX, NKE, PARR, ROST, SMPL, TJX, UBER, V, WLK |
-  | `key_ratios` | 0 | — |
+  | `key_ratios` | 0 in value, 22 in citation ("dividend: none" names the Income Statement) | — |
   | `revenue_guide_lohi` (the guide check's input) | 0 | — |
   | "most recent outcome" | 0 | — |
 
@@ -89,6 +91,10 @@ keeps every period guided on the date, each labelled".
   - `tests/test_dossier.py`'s return-ratios fixture carries the Income Statement the row now
     reads.
 
+  A second pass fixed one more, behind a test that failed first: the bridge string printed
+  '(stale — Nd old)' after the same-day list, where it read as the last period's age alone. It
+  now follows the date, as before this PR, and the list follows it.
+
   Two were left open. The table's row order under the renderer's past-year move is a render-layer
   change outside this diff. The same-day unread guide is as above.
 - **An operator question the review raised.** When two periods guided on one date both resolve,
@@ -98,3 +104,13 @@ keeps every period guided on the date, each labelled".
   disk would change. This PR keeps today's reads; flipping the order is one line in `_newer`.
 - **Extraction version** `2026-11-10.dividend-level-and-same-day-guides`; the drift pins are
   re-pinned.
+
+**Review round 0b (after the squash).**
+- The dividend row and "dividend: none" cite the Income Statement they are read from (`source_ref`,
+  CLAUDE.md "source-bind everything"): `return_ratios`' citation moves on all 36 folders and
+  `key_ratios`' on the 22 non-payers, values unchanged.
+- The stale age reads before the same-day list.
+- **For the operator before the panel:** MCK's LTM dividend prints 1.64 beside FY26's 3.17. CIQ's
+  own LTM 'Dividends per Share' sums two quarters, because the quarterly export's Sep-30-2026 cell
+  reads 'NA'. The row reads CIQ's figure as stated; checking a per-share LTM against its quarters
+  would be a new rule.

@@ -2053,7 +2053,9 @@ def return_ratios(bundle: CiqBundle) -> Sourced[FinTable]:
         return Sourced.unknown(note="Ratios: no return-ratio (RoE/RoCE/RoA) row with values")
     return Sourced.present(
         FinTable(columns=columns, rows=rows, is_estimate=[False] * len(columns)),
-        source_ref="CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)",
+        source_ref="CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)"
+        + (" + Income Statement 'Dividends per Share' (the Dividend/sh row)" if dps is not None
+           else ""),   # RA-D2: the dividend row cites the sheet it is read from
     )
 
 
@@ -4515,10 +4517,12 @@ def guidance_bridge(
         seg = f"{r.metric}: latest guide {r.guide} for {r.period} (dated {r.dated.isoformat()})"
         if r.unread is not None:  # RA-D3: named, and no older guide stands in
             seg += f" — {r.unread}; an older guide is never read in its place"
-        if r.same_day:  # RA-D4: every period guided that day, each labelled
-            seg += "; same day: " + ", ".join(f"{g} for {p}" for p, g in r.same_day)
         if r.stale_days is not None:
             seg += f" (stale — {r.stale_days}d old)"  # R3: age once, no date repeat
+        # RA-D4: every period guided that day, each labelled — AFTER the age, which is the date's
+        # and so every one of theirs: after the list it read as the last period's alone
+        if r.same_day:
+            seg += "; same day: " + ", ".join(f"{g} for {p}" for p, g in r.same_day)
         if r.resolved or r.at_guide_n:
             sem = "spend ≤ guided ceiling" if r.cost_like else "actual ≥ guided floor"
             seg += (f"; {sem} {r.met_n}/{r.resolved} resolved" if r.resolved
@@ -5709,7 +5713,9 @@ def key_ratios(bundle: CiqBundle) -> Sourced[str]:
         period = d.isoformat() if d else _cs_col_label(rs[hdr][col])
     return Sourced.present(
         "; ".join(parts) + (f" [{period}]" if period else ""),
-        source_ref=("CIQ Financials→Ratios" + (f" [{period}]" if period else "")))
+        source_ref=("CIQ Financials→Ratios" + (f" [{period}]" if period else "")
+                    + (" + Income Statement 'Dividends per Share'" if dps is not None
+                       and dps[0] == (True, None) else "")))   # RA-D2: "dividend: none" cites it
 
 
 def book_value_per_share(bundle: CiqBundle) -> Sourced[float]:

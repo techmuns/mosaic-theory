@@ -188,3 +188,34 @@ def test_ra_d2_twin_a_period_the_income_statement_does_not_state_is_no_read_neve
     assert table is not None
     assert next(r for r in table.rows if r.label == "Dividend/sh").cells == ["1.00", "1.10", "none"]
     assert "dividend: none" in (cs.key_ratios(b).value or "")
+
+
+def test_ra_d4_twin_a_stale_days_age_reads_before_the_same_day_list() -> None:
+    """(review) The age is the date's, so every same-day period's: '(stale — Nd old)' printed after
+    the list read as the last period's alone. It follows the date, as R3 placed it, and the list
+    follows it."""
+    from pathlib import Path
+
+    from vinci.dossier.ciq import CiqFormat, CiqWorkbook
+
+    rows: list[list[Any]] = [
+        ["G"], ["", "FQ4 2026", "FY 2026"], ["Revenue"], ["As Of Guidance"],
+        ["Guidance Date", 46097.0, 46097.0], ["Guidance", "322.00 - 332.00", "1,345.00 - 1,355.00"],
+        ["Actual/Latest"], ["Actual", "-", "-"]]
+    p = Path("/fake/Estimates.xls")
+    wb = CiqWorkbook(kind="estimates", path=p, fmt=CiqFormat.BIFF_XLS, freq="quarterly")
+    b = CiqBundle(ticker="X", workbooks=(wb,), _cache={p: {"Guidance": rows}})
+    v = cs.guidance_bridge(b, reference_date=date(2026, 12, 1), stale_after_days=45).value or ""
+    stale, same = v.find("(stale — "), v.find("; same day: ")
+    assert stale != -1 and same != -1 and stale < same, v
+    assert "'1,345.00 - 1,355.00' for FY 2026" in v[same:], v
+
+
+def test_ra_d2_the_dividend_cites_the_income_statement_it_is_read_from() -> None:
+    """Review round 0b: the row and the "dividend: none" status come from the Income Statement, so
+    each source_ref names it (CLAUDE.md: source-bind everything)."""
+    v = cs.return_ratios(_real("V"))
+    assert "Income Statement 'Dividends per Share'" in (v.source_ref or ""), v.source_ref
+    amzn = cs.key_ratios(_real("AMZN"))
+    assert "dividend: none" in (amzn.value or "")
+    assert "Income Statement 'Dividends per Share'" in (amzn.source_ref or ""), amzn.source_ref
