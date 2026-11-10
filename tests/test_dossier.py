@@ -3940,7 +3940,14 @@ def test_return_ratios_fintable_structured_and_fail_honest() -> None:
         ["Current Ratio", 1.05, 1.30, 0.96],
         ["Dividend per Share", "NA", "NA", "NA"],
     ]
-    s = cs.return_ratios(_fin_bundle({"Ratios": rat}, "annual"))
+    # the dividend LEVEL is the Income Statement's (RA-D2): a non-payer's reads 'NA' there, as
+    # AMZN's export does in every column
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2023", "12 months Dec-31-2024",
+         "LTM 12 months Mar-31-2025"],
+        ["Dividends per Share", "NA", "NA", "NA"],
+    ]
+    s = cs.return_ratios(_fin_bundle({"Ratios": rat, "Income Statement": inc}, "annual"))
     assert s.status is ds.SourceStatus.PRESENT and s.value is not None
     t = s.value
     assert t.columns == ["FY23", "FY24", "LTM"]

@@ -682,6 +682,17 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "2026-11-10 holds any of these shapes; ORKA's and TECX's pages, which carry no "
         "consensus levels, gain the note",
     ),
+    (
+        "2026-11-10.dividend-level-and-same-day-guides",
+        "fix request 2, order 4, two live CIQ-reader defects (RA-D2, RA-D4): the Ratios "
+        "table's 'Dividend/sh' row and `key_ratios`' dividend status read the Income "
+        "Statement's 'Dividends per Share' level, matched by period, where the Ratios sheet's "
+        "rows are growth rates (V's 0.19 → 1.87, GOOGL's 0.38 → 0.83); the guidance read keeps "
+        "every period guided on the latest date, in time order (the bridge's 'same day', a "
+        "table row per period), and breaks a same-date tie by time order, never by column. On "
+        "the exports on disk the dividend row moves on 11 pages and the guidance on 16; the "
+        "guide check's revenue guide moves on none",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
