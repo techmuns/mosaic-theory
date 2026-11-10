@@ -30,6 +30,13 @@ their own).
 FIX 4A writes one new field, `FIX_4A`'s ``gap_types``: `disclosure_gaps` (the gap test,
 `vinci.dossier.gaps`), from the layer and the segment count its committed segments line states.
 
+FIX 3B rewrites two fields; `FIX_3B` names their transforms:
+
+1. ``survival_read`` — the survival line, which loses its one-input self-funding leg (the
+   transform fix 3a's item 3 already applies: it reads THIS ref's `_survival_capacity`);
+2. ``current_buybacks`` — the three buyback fields, a leg more than a year before the page's
+   price date no longer stated (`capital_allocation.buyback_legs`).
+
 RG-D8 (fix request 2), `RG_D8`'s ``driver_facts``: the transcript driver rows' fact check,
 re-run on each committed row's own metric, value and quote (`driver_extract.check_fact`).
 
@@ -40,6 +47,8 @@ re-derives the two fields the assembly takes from that list (`current_guide`, a 
 """
 from __future__ import annotations
 
+import inspect
+import math
 import re
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
@@ -48,10 +57,11 @@ from datetime import date
 from types import SimpleNamespace
 from typing import Any
 
-from vinci.dossier import ciq_sheets, gaps, mechanical
+from vinci.dossier import capital_allocation, ciq_sheets, gaps, mechanical
 from vinci.dossier import schemas as _schemas
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import ForwardMultipleHistory, MechanicalLayer, Sourced, SourceStatus
+from vinci.edgar.concepts import ConceptPoint
 
 PRESENT = SourceStatus.PRESENT
 
@@ -153,8 +163,9 @@ def trailing_only_note(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
 # ----------------------------------------------------------------------- 3. the survival read
 
 def survival_read(mech: MechanicalLayer, ctx: Context | None = None) -> MechanicalLayer:
-    """The survival line as THIS code's `_survival_capacity` writes it from the page's own net
-    leverage, adjusted leverage and FCF sign, set in BOTH places the page carries it
+    """The survival line — its value and its source — as THIS code's `_survival_capacity` writes it
+    from the page's own net leverage and adjusted leverage (and its FCF sign, at a ref before fix
+    3b, whose line still carried that leg), set in BOTH places the page carries it
     (`quality.survival_capacity` and its copy `leverage_survival.survival`). A page whose net
     leverage is not present needs the CIQ net debt, which the layer does not carry: refused."""
     q = mech.quality
@@ -162,20 +173,23 @@ def survival_read(mech: MechanicalLayer, ctx: Context | None = None) -> Mechanic
         raise TransformError(f"{(ctx.page.get('ticker') if ctx else '?')}: the net leverage is "
                              "not present, so the survival line needs the CIQ net debt, which the "
                              "layer does not carry")
-    new = mechanical._survival_capacity(q.net_debt_to_ebitda, q.net_debt_to_ebitda_adjusted,
-                                        q.fcf_sign)  # type: ignore[arg-type]  # the builder's own
+    args: list[Any] = [q.net_debt_to_ebitda, q.net_debt_to_ebitda_adjusted]
+    if "fcf_sign" in inspect.signature(mechanical._survival_capacity).parameters:
+        args.append(q.fcf_sign)
+    new = mechanical._survival_capacity(*args)
     old = q.survival_capacity
-    if new.value == old.value:
+    if (new.value, new.source_ref) == (old.value, old.source_ref):
         return mech
     ls = mech.leverage_survival
     if ls is not None and ls.survival is not None and ls.survival.value != old.value:
         raise TransformError("leverage_survival.survival is not the copy of "
                              "quality.survival_capacity the builder writes")
-    line = old.model_copy(update={"value": new.value})
+    moved = {"value": new.value, "source_ref": new.source_ref}
+    line = old.model_copy(update=moved)
     out = mech.model_copy(update={"quality": q.model_copy(update={"survival_capacity": line})})
     if ls is not None and ls.survival is not None:
         out = out.model_copy(update={"leverage_survival": ls.model_copy(
-            update={"survival": ls.survival.model_copy(update={"value": new.value})})})
+            update={"survival": ls.survival.model_copy(update=moved)})})
     return out
 
 
@@ -313,6 +327,66 @@ def gap_types(mech: MechanicalLayer, ctx: Context | None = None) -> MechanicalLa
     if gaps == mech.disclosure_gaps:
         return mech
     return mech.model_copy(update={"disclosure_gaps": gaps})
+
+
+# ------------------------------------------------------------------ fix 3b. the buyback legs
+
+#: The leg a buyback field names, in the two forms `capital_allocation` writes: a stated field's
+#: source ("EDGAR companyfacts TAG (START→END, Nd)", `_span` of a flow) and a not-current field's
+#: note ("no current figure — the latest TAG covers START→END, Nd, which ends …").
+_LEG_REF = re.compile(r"EDGAR companyfacts (\w+) "
+                      r"\((\d{4}-\d{2}-\d{2})→(\d{4}-\d{2}-\d{2}), \d+d\)")
+_LEG_STALE = re.compile(r"no current figure — the latest (\w+) covers "
+                        r"(\d{4}-\d{2}-\d{2})→(\d{4}-\d{2}-\d{2}), \d+d, which ends ")
+
+
+def buyback_point(field: Sourced[float], *, scale: float = 1.0) -> tuple[ConceptPoint, str] | None:
+    """The point `capital_allocation._pick` chose for one buyback field, read back from the field —
+    the ONE reading of it, the inverse of the two forms in `_LEG_REF`/`_LEG_STALE`: the tag and the
+    span from its source (or, for a leg the code already found not current, from its note), the
+    value from the field (× ``scale``: the cash is stored in $M). The layer carries the span in no
+    structured field, so it is read here and nowhere else (HARNESS ONLY; the pins show the code
+    rebuilds every committed buyback field from it on the 28 frozen pages). A not-current leg
+    carries no value, and none is read: `capital_allocation._current` drops it first, so it is NaN.
+    A field neither stated nor not-current names no point (None); a stated field whose source is
+    not that form is refused."""
+    if field.status is PRESENT and field.value is not None:
+        m = _LEG_REF.fullmatch(field.source_ref or "")
+        if m is None:
+            raise TransformError(f"a buyback source is not the companyfacts span: "
+                                 f"{field.source_ref!r}")
+        value = field.value * scale
+    else:
+        m = _LEG_STALE.match(field.note or "")
+        if m is None:
+            return None
+        value = math.nan
+    start, end = date.fromisoformat(m.group(2)), date.fromisoformat(m.group(3))
+    return ConceptPoint(concept="", tag=m.group(1), unit="", value=value, period_start=start,
+                        period_end=end, filed=end, fy=None, fp=None, form=None,
+                        accession=None), m.group(1)
+
+
+def current_buybacks(mech: MechanicalLayer, ctx: Context | None = None) -> MechanicalLayer:
+    """The three buyback fields as THIS code's `capital_allocation.buyback_legs` writes them from
+    each field's own point (`buyback_point`) at the page's price date (`stock_info.as_of`, the cut
+    the builder reads EDGAR at). A ref without it is left unchanged — the identity at main. A page
+    with no price date is refused: the legs are dated against it and nothing else."""
+    rule = getattr(capital_allocation, "buyback_legs", None)
+    ca = mech.capital_allocation
+    if rule is None or ca is None:
+        return mech
+    as_of = mech.stock_info.as_of if mech.stock_info is not None else None
+    if as_of is None:
+        raise TransformError(f"{(ctx.page.get('ticker') if ctx else '?')}: no price date "
+                             "(stock_info.as_of) to date the buyback legs against")
+    cash, shares, avg = rule(buyback_point(ca.buyback_cash, scale=1_000_000.0),
+                             buyback_point(ca.buyback_shares), buyback_point(ca.buyback_avg_price),
+                             as_of=as_of)
+    if (cash, shares, avg) == (ca.buyback_cash, ca.buyback_shares, ca.buyback_avg_price):
+        return mech
+    return mech.model_copy(update={"capital_allocation": ca.model_copy(update={
+        "buyback_cash": cash, "buyback_shares": shares, "buyback_avg_price": avg})})
 
 
 # ------------------------------------------------------------------- 7. the as-of cut (row 57)
@@ -456,6 +530,7 @@ TRANSFORMS: dict[str, Transform] = {
     "peer_gap_question": peer_gap_question,
     "print_row_guide": print_row_guide,
     "gap_types": gap_types,
+    "current_buybacks": current_buybacks,
     "asof_cut": asof_cut,
     "driver_facts": driver_facts,
 }
@@ -467,6 +542,10 @@ FIX_3A: tuple[str, ...] = ("relabel_drawdown_shape", "trailing_only_note", "surv
 #: Fix 4a's one mechanical field (the gap test). Its other two changes — rule 8 and the
 #: trailing-only ask — live in the prompt itself and reach a replay without a transform.
 FIX_4A: tuple[str, ...] = ("gap_types",)
+
+#: Fix 3b's two fields, in the order applied: the survival line (`survival_read`, shared with
+#: `FIX_3A`) and the buyback legs.
+FIX_3B: tuple[str, ...] = ("survival_read", "current_buybacks")
 
 #: STATE row 57's one transform: the release list cut at the page's price date. Applied FIRST,
 #: before the transforms that read the releases (`print_row_guide`, `gap_types`).

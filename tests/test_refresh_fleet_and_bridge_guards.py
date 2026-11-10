@@ -24,6 +24,13 @@ from vinci.dossier.ev_gap import build_ev_gap
 from vinci.dossier.refresh import refresh_fleet
 
 ROOT = Path(__file__).resolve().parents[1]
+#: AORT's page as committed on 2026-10-26, frozen when the name was retired from coverage
+#: (operator, 2026-11-09; tests/fixtures/frozen_pages/README.md). It has no living page.
+FROZEN_AORT = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "AORT"
+
+
+def _folder(ticker: str) -> Path:
+    return FROZEN_AORT if ticker == "AORT" else ROOT / "data" / "dossiers" / ticker
 
 
 # --- 1. the mirror is actually wired -----------------------------------------------------------
@@ -74,7 +81,7 @@ def test_a_single_vintage_tev_is_never_labelled_blended(ticker: str) -> None:
     """NCNO IS THE CASE THE REVIEW NAMED: its cap and its net debt are BOTH 2026-07-20, so the
     TEV is single-vintage and must print plainly. The removed caveat read `stock_info.as_of`
     (2026-07-28 — the price date) and called it blended."""
-    md = (ROOT / "data" / "dossiers" / ticker / "dossier.md").read_text()
+    md = (_folder(ticker) / "dossier.md").read_text()
     stamp = next(ln for ln in md.splitlines() if "TEV as-of" in ln)
     assert "BLENDED" not in stamp, f"{ticker}: a single-vintage TEV is labelled blended — {stamp}"
 
@@ -86,7 +93,7 @@ def test_the_persisted_tev_vintage_is_the_stored_numbers_own(ticker: str) -> Non
     stamp on figures extracted 2026-06-25, 35 days of false provenance. `ev_gap.vintages.tev_as_of`
     must equal the stored `implied_expectations.tev_as_of`, which is the TEV's own vintage."""
     mech = json.loads(
-        (ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())["mechanical"]
+        (_folder(ticker) / "dossier.json").read_text())["mechanical"]
     ie = (mech.get("valuation") or {}).get("implied_expectations") or {}
     ie = ie.get("value") if isinstance(ie, dict) and "value" in ie else ie
     got = ((mech.get("ev_gap") or {}).get("vintages") or {}).get("tev_as_of")

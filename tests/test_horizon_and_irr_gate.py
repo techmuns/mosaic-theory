@@ -70,7 +70,7 @@ def test_the_irr_is_taken_on_the_nominal_value_never_the_discounted_one() -> Non
     invisible, because a smaller-but-plausible rate looks like a result rather than a bug. The
     pin is a COMPARISON, not a constant: the computed IRR must match the one taken on
     `value_terminal` and must NOT match the one taken on the PV."""
-    rec = sc.read_record("AORT", root=ROOT)
+    rec = sc.read_archived("AORT-2026-07-22", root=ROOT)  # archived intact, AORT retired 2026-11-09
     res = sc.run_recipe(rec).result
     base = res.per_scenario["base"]
     assert base.value_terminal is not None and base.years, "AORT is no longer an R2 fixture"
@@ -296,7 +296,8 @@ def test_every_committed_record_would_survive_the_new_supersede_check() -> None:
         again = sc.run_recipe(rec.model_copy(deep=True)).result
         assert _result_mismatch(rec.result, again) is None, f.name
         seen += 1
-    assert seen >= 9, f"corpus check walked {seen} records — it is not exercising anything"
+    # 9 until AORT was archived (2026-11-09)
+    assert seen >= 8, f"corpus check walked {seen} records — it is not exercising anything"
 
 
 def test_supersede_derives_an_unstated_result_instead_of_refusing_it() -> None:

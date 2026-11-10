@@ -48,6 +48,7 @@ from datetime import date
 from pathlib import Path
 
 from vinci.eod.dividends import DividendSource, DividendsUnknownError, growth
+from vinci.eod.splits import SplitBasisError, SplitSource, SplitsUnknownError, leg_on_basis
 from vinci.followed import FollowRecord, follow_records
 from vinci.schemas.data_record import Identity
 from vinci.schemas.market import PriceBar
@@ -134,6 +135,7 @@ def basket_return(
     end: date,
     *,
     dividends: DividendSource,
+    splits: SplitSource,
 ) -> tuple[float | None, str | None, tuple[str, ...]]:
     """Equal-weight TOTAL return of ``basket`` over ``[start, end]``, on the roster AS OF
     ``start`` — dividends reinvested on the ex-date, the basis every leg it is compared with
@@ -151,6 +153,12 @@ def basket_return(
     being priced — buy equal dollars of what you were following the day you decided, and hold. A
     roster re-read at ``end`` would let a name added mid-window into a basket nobody could have
     bought at the start of it.
+
+    ON ONE SPLIT BASIS (RF-D1, 2026-11-09). A member's return is a ratio of two stored closes, so a
+    split inside its window is read only when the record is confirmed and the store was restated
+    for it (`eod.splits.leg_on_basis`); a member whose split basis cannot be confirmed refuses the
+    basket, as one with unknown dividends does. On main a flat member that split 2-for-1 with
+    Polygon late on both feeds read −50% here. ``splits`` has no default, for ``dividends``' reason.
     """
     members = basket.members_as_of(start)
     if not members:
@@ -160,12 +168,21 @@ def basket_return(
     rets: list[float] = []
     missing: list[str] = []
     unknown: list[str] = []
+    unbased: list[str] = []
     for ticker in members:
         bars = bars_by_ticker.get(ticker) or []
         b_in = bar_on_or_before(bars, start)
         b_out = bar_on_or_before(bars, end)
         if b_in is None or b_out is None or b_in.close <= 0:
             missing.append(ticker)
+            continue
+        try:
+            leg_on_basis(who=f"basket member {ticker}", symbol=ticker, start=b_in.bar_date,
+                         start_close=b_in.close, end=b_out.bar_date,
+                         basis_through=bars[-1].bar_date, splits=splits,
+                         start_source=b_in.source)
+        except (SplitsUnknownError, SplitBasisError) as exc:
+            unbased.append(str(exc))
             continue
         try:
             g = growth(dividends(ticker, b_in.bar_date, b_out.bar_date))
@@ -178,6 +195,10 @@ def basket_return(
             f"no bars over {start}–{end} for {', '.join(missing)} — an equal-weight basket "
             f"missing a member is a different basket, so it is refused rather than reweighted"
         ), members
+    if unbased:
+        return None, (
+            f"split basis unconfirmed — {'; '.join(unbased)} — so no return for the basket; it "
+            f"is refused rather than read across two bases"), members
     if unknown:
         return None, (
             f"dividends unknown — {'; '.join(unknown)} — so no total return for the basket; it is "
