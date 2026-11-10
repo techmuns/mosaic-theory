@@ -21,6 +21,10 @@ from vinci.edgar import segment_facts as sf
 
 _FIX = Path(__file__).resolve().parent / "fixtures" / "segment_facts"
 _ROOT = Path(__file__).resolve().parents[1]
+#: EPAM's page as committed on 2026-09-17, frozen (tests/fixtures/frozen_pages/README.md): it
+#: carries no segment-profit block, the negative this file renders; its 2026-11-09 re-assembly
+#: carries one.
+_FROZEN_EPAM = "tests/fixtures/frozen_pages/2026-09-17/EPAM/dossier.json"
 
 
 def _read(name: str) -> sf.SegmentProfitRead | None:
@@ -356,7 +360,8 @@ def test_committed_pages_round_trip_without_the_new_key() -> None:
 def test_the_line_reaches_both_pages_and_a_single_segment_page_draws_nothing() -> None:
     """TEST-LAYER RULE — real committed JSON → render → assertion, in BOTH renderers. AMZN's page,
     given the block its own 10-K produces, prints the heading and the stored sentence; EPAM's page
-    as committed (no block) prints no segment-profit line — and above all no UNKNOWN badge."""
+    as committed on 2026-09-17 (no block; frozen — its 2026-11-09 re-assembly carries one) prints no
+    segment-profit line — and above all no UNKNOWN badge."""
     from vinci.dossier import render as dr
     from vinci.dossier.mechanical import _segment_profit_line
     from vinci.dossier.schemas import Dossier, SegmentEconomics, SegmentProfitRow, Sourced
@@ -375,7 +380,7 @@ def test_the_line_reaches_both_pages_and_a_single_segment_page_draws_nothing() -
     doc = Dossier.model_validate(page)
     md = dr.render_markdown(doc)
     assert "Segments (profit — the filer's own measure, 10-K)" in md and block.line in md
-    epam = Dossier.model_validate_json((_ROOT / "data/dossiers/EPAM/dossier.json").read_text())
+    epam = Dossier.model_validate_json((_ROOT / _FROZEN_EPAM).read_text())
     assert "Segments (profit" not in dr.render_markdown(epam)
 
     if not shutil.which("node"):
@@ -389,7 +394,8 @@ for (const g of ["window","document","location"]) { try { globalThis[g] = stub; 
 const dj = pathToFileURL(path.resolve("frontend/views/shared/dossier.js")).href;
 const { renderDossier } = await import(dj);
 const on = renderDossier(JSON.parse(readFileSync(process.argv[1], "utf8")), null);
-const epam = JSON.parse(readFileSync("data/dossiers/EPAM/dossier.json", "utf8"));
+const epam = JSON.parse(readFileSync(
+  "tests/fixtures/frozen_pages/2026-09-17/EPAM/dossier.json", "utf8"));
 const off = renderDossier(epam, null);
 console.log(JSON.stringify({ on: on.includes("Segment profit (the filer"),
   sentence: on.includes("Amazon Web Services $45,606M"),

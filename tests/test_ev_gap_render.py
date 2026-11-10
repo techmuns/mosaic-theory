@@ -20,6 +20,9 @@ HEAD = "### The EV gap — our base case vs the street"
 #: "multiple" and FY2028 "multiple-dominant" — the page says the shape moves between years. The
 #: shape VALUES below read this page; the living one is held to printing what its own JSON holds.
 FROZEN_SMPL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL"
+#: EPAM's page as committed on 2026-09-17, frozen the same way. Its 2026-11-09 re-assembly onto
+#: the September-quarter 10-Q (fix request 2, order 1) reads "earnings" at both years.
+FROZEN_EPAM = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-17" / "EPAM"
 #: AORT's page as committed on 2026-10-26, frozen when the name was retired from coverage
 #: (operator, 2026-11-09). It has no living page, so every AORT pin below reads this one.
 FROZEN_AORT = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "AORT"
@@ -219,12 +222,14 @@ def test_the_two_margins_print_as_figures_and_are_never_divided(ticker: str) -> 
 @pytest.mark.parametrize("ticker", ["SMPL", "EPAM", "IT"])
 def test_the_decomposed_names_are_unchanged_and_still_multiple_dominant(ticker: str) -> None:
     """THE CONTROL. The revision must not move the three names that were already right. SMPL's
-    shape is read off its frozen 2026-08-18 page (its living one moved with its FY2026 10-K); its
-    living page still carries the three-ratio form."""
+    shape is read off its frozen 2026-08-18 page (its living one moved with its FY2026 10-K), and
+    EPAM's off its frozen 2026-09-17 page (its living one moved with its September-quarter 10-Q);
+    each living page still carries the three-ratio form."""
     g = _gapj(ticker)
     assert g["form"] == "three-ratio"
     assert set(g["ratios"]) == {"revenue_ratio", "margin_ratio", "multiple_ratio", "ev_gap"}
-    folder = FROZEN_SMPL if ticker == "SMPL" else ROOT / "data" / "dossiers" / ticker
+    frozen = {"SMPL": FROZEN_SMPL, "EPAM": FROZEN_EPAM}
+    folder = frozen.get(ticker, ROOT / "data" / "dossiers" / ticker)
     shaped = json.loads((folder / "dossier.json").read_text())["mechanical"]["ev_gap"]
     assert shaped["shape"]["anchor"] == "multiple-dominant"
     assert "**multiple-dominant** at" in block(folder)
