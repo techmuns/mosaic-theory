@@ -581,6 +581,42 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "figure is CIQ's, never that the filing confirmed it (audit RBC-D8). Among the "
         "exports on file only PARR's surprise history moves; the rest is a new field and words",
     ),
+    (
+        "2026-11-10.point-guide",
+        "a point guide is the range [low, low] (TeamNostra fix request 2, RE1-D16): the guide "
+        "check compares each side's top, its high or else its low, where `high or 0.0` read a "
+        "missing high as zero, so a CIQ point of -0.05 against a release -0.05 to 0.00 read "
+        "VERIFIED and a range of one against its own point read MISMATCH. On the 28 pages "
+        "frozen at bcda7ce3 no line moves",
+    ),
+    (
+        "2026-11-09.stale-and-conflicting",
+        "a buyback leg whose period ends more than a year (366 days) before the page's price "
+        "date is no longer stated: its field reads UNKNOWN, naming the tag and the period it "
+        "covers (`capital_allocation.CURRENT_DAYS`), and a PERIOD MISMATCH note names only "
+        "legs still stated; the survival line carries net leverage only, its one-input "
+        "FCF-sign leg deleted, so the two-input self-funding read is the only one, and the "
+        "gap test's FCF-sign item names `quality.fcf_sign` itself. Figures leave the page; "
+        "none changes",
+    ),
+    (
+        "2026-11-09.restatement-precision",
+        "a restatement of a round figure is named (TeamNostra fix request 2, RE1-D6): "
+        "`concepts._same_figure` reads a figure's precision from its trailing zeros but never "
+        "coarser than its second significant figure, and a per-share figure's at the cent "
+        "or finer, so NFLX's $900,000 thousand of debt restated to $885,849 thousand and "
+        "HLF's 3.30 EPS restated to 3.32 are named where they were read as the same figure. "
+        "On the 28 pages frozen at bcda7ce3 no cited figure moves",
+    ),
+    (
+        "2026-11-10.fts-amendment-form",
+        "a full-text-search hit is reported by its filing's own form (TeamNostra fix request 2, "
+        "RE1-D11): efts's `form` before its family `root_forms`, so an 8-K/A is an 8-K/A, and "
+        "the covenant pointer writes the hit's form where it wrote `8-K`; the maturity check "
+        "still reads a pointer-linked 8-K/A. On the 28 pages frozen at bcda7ce3 one of 92 "
+        "pointer rows moves: WERN's 0000793074-26-000090 reads 8-K/A, with its covenant terms' "
+        "source labels",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

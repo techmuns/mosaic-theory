@@ -142,6 +142,33 @@ def test_a_count_that_runs_on_past_what_was_read_is_refused(text: str) -> None:
     assert _ratios(text) == [], _ratios(text)
 
 
+@pytest.mark.parametrize(("text", "ratio"), [
+    # TeamNostra fix request 2, RF-D8: on main each read as its whole part — 2, 1 and 3, `known`
+    ("Each ADS represents two and one-half ordinary shares.", 2.5),
+    ("Each American depositary share represents one and a half ordinary shares.", 1.5),
+    ("Each ADS represents three and one-third Class A ordinary shares.", 3.0 + 1.0 / 3.0),
+])
+def test_a_mixed_number_is_its_whole_and_its_fraction(text: str, ratio: float) -> None:
+    """THE RED (constructed — no filing in `ads_ratio_covers.json` states one; whether any 20-F
+    does is not determined). The fraction after "and" is part of the number."""
+    (got,) = statements(text).ratios
+    assert got[0] == pytest.approx(ratio)
+    title = "American depositary shares, each representing two and one-half ordinary shares"
+    assert [v for v, _q in title_statements(title).ratios] == [2.5]
+    assert ratio_from([("XYZ", title)], "", form="20-F", filed=date(2026, 4, 30),
+                      accession="0000000000-26-000001").ordinary_per_ads == 2.5
+
+
+def test_a_mixed_tail_moves_no_count_that_is_not_one() -> None:
+    """(+) THE FENCES: "two hundred and fifty" is still 250 (its "and" joins hundreds), "two" is
+    2, and a tail that is no proper fraction is no count at all — never its whole part."""
+    assert _ratios("American Depositary Shares, each representing two hundred and fifty ordinary "
+                   "shares") == [250.0, 250.0]
+    assert _ratios("American Depositary Shares, each representing two ordinary shares") == [
+        2.0, 2.0]
+    assert statements("Each ADS represents two and three-halves ordinary shares.").ratios == []
+
+
 def test_a_holding_of_adss_is_not_a_ratio() -> None:
     """(−, review round 2) JKS's 20-F cover (0001104659-26-050737), verbatim: once "61,421" and
     "245,685" parse whole, the N-for-M rule read this HOLDING as a ratio of 4.000016 — beside the

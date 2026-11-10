@@ -489,8 +489,11 @@ def _survival_gaps(mech: MechanicalLayer) -> list[DisclosureGap]:
     if _missing(q.fcf_sign):
         has = table is not None and (_ltm(table, "FCF ($M)") is not None or (
             _ltm(table, "CFO ($M)") is not None and _ltm(table, "Capex ($M)") is not None))
+        # NAMED BY ITS FIELD (fix 3b, #930): the survival line no longer carries an FCF-sign leg,
+        # so "the FCF sign behind the survival line's runway leg" described a line that is gone.
+        # The frozen M-GAP gold keeps the old words (`vinci/evals/synthesis_gap_types.json`).
         out.append(DisclosureGap(
-            item="the FCF sign behind the survival line's runway leg", fields=["quality.fcf_sign"],
+            item="the FCF sign (quality.fcf_sign)", fields=["quality.fcf_sign"],
             type=OUR if has else UNDETERMINED,
             basis=("the FCF-sign read is UNKNOWN while the page's annual table "
                    "(financial_summary.annual) states LTM cash flow" if has else

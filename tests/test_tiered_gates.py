@@ -608,7 +608,8 @@ def test_the_committed_corpus_is_unmoved_by_the_stamping_fix() -> None:
         assert again.result.gate_regime == rec.result.gate_regime, f.name
         assert (again.result.ratio or 0) == pytest.approx(rec.result.ratio or 0), f.name
         seen += 1
-    assert seen >= 9, f"corpus check walked {seen} records — it is not exercising anything"
+    # 9 until AORT was archived (2026-11-09)
+    assert seen >= 8, f"corpus check walked {seen} records — it is not exercising anything"
 
 
 @pytest.mark.parametrize("path", LADDER_RECORDS, ids=lambda p: p.stem)

@@ -131,7 +131,13 @@ def test_the_gap_reads_its_market_cap_from_the_comps_panel_structurally() -> Non
     it and this test is where that argument happens.
     """
     src = (ROOT / "vinci" / "dossier" / "refresh.py").read_text()
-    body = src[src.index("def ev_gap_transform"):src.index("def _base_leg")]
+    # ITS OWN BODY, to the next top-level def. It was cut at `def _base_leg`, the function that
+    # followed it when this pin was written (23d6a312); 24 functions have since been added between
+    # the two, and the slice grew to cover all of them, so fix 3b's `capital_allocation_transform`
+    # reading the PAGE'S PRICE DATE off `stock_info` (not a cap) failed a pin about this one.
+    start = src.index("def ev_gap_transform")
+    body = src[start:src.index("\ndef ", start + 1)]
+    assert body.rstrip().endswith("return _apply"), "the slice is not the transform's whole body"
     assert 'get("implied_valuation")' in body, (
         "ev_gap_transform no longer reads the COMPS market cap. Its net_debt and its tev_as_of "
         "both come off the comps workbook; a cap from another panel makes the persisted vintage a "

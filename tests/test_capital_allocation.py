@@ -12,14 +12,23 @@ the wrong probe.
 from __future__ import annotations
 
 import pathlib
+from datetime import date
 
 import pytest
 
 from vinci.dossier.capital_allocation import (
     ACQUISITION,
     BUYBACK_AVG_PRICE,
+    BUYBACK_CASH,
+    BUYBACK_SHARES,
     build_capital_allocation,
 )
+from vinci.dossier.schemas import CapitalAllocation, SourceStatus
+
+#: Fix 3b's not-current note (`capital_allocation._current`) opens with this, then the tag.
+NOT_CURRENT = "no current figure — the latest "
+BUYBACK_LEGS = {"buyback_cash": BUYBACK_CASH, "buyback_shares": BUYBACK_SHARES,
+                "buyback_avg_price": BUYBACK_AVG_PRICE}
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 pytestmark = pytest.mark.network        # reads EDGAR companyfacts (cached)
@@ -32,6 +41,11 @@ def _facts(ticker: str) -> dict:
         EntityResolver.from_config().resolve_ticker(ticker).cik)
 
 
+def _ca(ticker: str) -> CapitalAllocation:
+    """The block from LIVE companyfacts, dated at today — the date a live read stands at."""
+    return build_capital_allocation(_facts(ticker), as_of=date.today())
+
+
 def _names() -> list[str]:
     return sorted(p.parent.name for p in (ROOT / "data" / "dossiers").glob("*/dossier.json"))
 
@@ -41,7 +55,7 @@ def test_balances_are_read_as_instants_not_annual_flows() -> None:
     reports 83 and 79 of them and ZERO annual durations — so the first cut asked `latest_annual`
     and rendered UNKNOWN on a name carrying a $1.5bn balance. A synthetic fixture built from the
     shape the code expected would have passed."""
-    ca = build_capital_allocation(_facts("SMPL"))
+    ca = _ca("SMPL")
     assert ca.goodwill.value and ca.goodwill.value > 500, ca.goodwill.note
     assert ca.intangibles.value and ca.intangibles.value > 900, ca.intangibles.note
     for f in (ca.goodwill, ca.intangibles):
@@ -53,7 +67,7 @@ def test_smpl_reconciles_with_the_figures_already_on_its_page() -> None:
     """THE RECONCILIATION, against numbers a human already ruled on. `11.65M shares at $18.29` and
     the `$60.9M` intangible charge are on the committed page; if this block disagreed with them one
     of the two would be wrong and a reader could not tell which."""
-    ca = build_capital_allocation(_facts("SMPL"))
+    ca = _ca("SMPL")
     assert ca.buyback_shares.value == pytest.approx(11_651_767)
     assert ca.buyback_avg_price.value == pytest.approx(18.29)
     # …and the write-off the page calls "$391.9M LTM" is TWO periods, 60.9 + 331.0
@@ -65,10 +79,10 @@ def test_an_acquisition_is_the_largest_positive_never_the_latest_residual() -> N
     −280.4 (FY2025, restating the SAME period_end), plus a −1.7 residual. Taking the latest annual
     point returned **−1.713** — a negative acquisition price, which is not a thing. Magnitude alone
     would coin-flip between the acquisition and its own reversal."""
-    ca = build_capital_allocation(_facts("SMPL"))
+    ca = _ca("SMPL")
     assert ca.acquisition_consideration.value == pytest.approx(280.409, rel=1e-4)
     for t in _names():
-        v = build_capital_allocation(_facts(t)).acquisition_consideration.value
+        v = _ca(t).acquisition_consideration.value
         assert v is None or v > 0, f"{t}: negative acquisition consideration {v}"
 
 
@@ -82,14 +96,14 @@ def test_the_acquisition_is_the_largest_across_the_whole_family_not_the_first_ta
     **130x understatement** of acquisition spend. "What did they pay" is a question about the whole
     family; the tags are different definitions, which is why the winner is NAMED rather than
     blended."""
-    ca = build_capital_allocation(_facts("EPAM"))
+    ca = _ca("EPAM")
     assert ca.acquisition_consideration.value == pytest.approx(912.2, rel=1e-3), (
         f"EPAM's acquisition spend reads {ca.acquisition_consideration.value} — preference-first "
         "picks the 2017 $7.0M tag over the 2024 $912.2M one")
     # the property, over the corpus: no tag in the family holds a LARGER positive than the reported
     from vinci.edgar.concepts import points_for_tag
     for t in _names():
-        facts, got = _facts(t), build_capital_allocation(_facts(t)).acquisition_consideration
+        facts, got = _facts(t), _ca(t).acquisition_consideration
         biggest = max((p.value for tag in ACQUISITION for p in points_for_tag(facts, tag)
                        if p.value and p.value > 0), default=None)
         if biggest is None:
@@ -103,7 +117,7 @@ def test_the_average_price_is_labelled_a_period_average_not_a_purchase_price() -
     """SMPL's $18.29 spans a stock that fell from roughly $30 to $11. Buying at $30 in September
     and $12 in June are OPPOSITE judgements and one number hides both, so the caveat travels ON the
     value — a reader must not take it as evidence of WHEN they bought."""
-    ca = build_capital_allocation(_facts("SMPL"))
+    ca = _ca("SMPL")
     note = ca.buyback_avg_price.note or ""
     assert "NOT a purchase price" in note and "timing" in note, note
 
@@ -119,7 +133,7 @@ def test_a_stale_average_is_either_replaced_by_a_current_derivation_or_flagged()
     share the cash window or say that it does not."""
     seen = 0
     for t in _names():
-        ca = build_capital_allocation(_facts(t))
+        ca = _ca(t)
         avg, cash = ca.buyback_avg_price, ca.buyback_cash
         if avg.value is None or cash.value is None:
             continue
@@ -140,8 +154,15 @@ def test_every_absence_names_the_tags_that_were_tried() -> None:
     """"Not found" invites nothing; naming the family invites a correction. A reader who knows the
     filer uses a fifth tag can only say so if the four tried are on the page."""
     for t in _names():
-        for name, f in build_capital_allocation(_facts(t)):
+        for name, f in _ca(t):
             if name == "brand_split" or f.value is not None:
+                continue
+            if (f.note or "").startswith(NOT_CURRENT):
+                # fix 3b (#930): a buyback leg that EXISTS but ends more than a year before the
+                # price date is not "not found" — its note names the tag that answered and its
+                # period instead, and only a buyback field may say so
+                assert any(f"{NOT_CURRENT}{tag} covers " in str(f.note)
+                           for tag in BUYBACK_LEGS.get(name, ())), f"{t}.{name}: {f.note}"
                 continue
             assert f.note and "EDGAR XBRL companyfacts" in f.note, f"{t}.{name}: {f.note}"
             if name == "acquisition_consideration":
@@ -153,7 +174,7 @@ def test_the_brand_split_is_a_stated_gap_on_every_name() -> None:
     dimension (SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Left
     silent, the aggregate reads as though the split simply were not interesting."""
     for t in _names():
-        bs = build_capital_allocation(_facts(t)).brand_split
+        bs = _ca(t).brand_split
         assert bs.value is None and bs.note
         assert "no XBRL axis" in bs.note and "10-K" in bs.note, bs.note
 
@@ -169,7 +190,7 @@ def test_no_name_on_the_corpus_carries_a_derived_average_any_more() -> None:
 
     Asserted over the CORPUS: BRBR ($28.23) and IT ($155.86) were the two live instances."""
     for t in _names():
-        avg = build_capital_allocation(_facts(t)).buyback_avg_price
+        avg = _ca(t).buyback_avg_price
         assert not str(avg.source_ref or "").startswith("DERIVED"), (
             f"{t}: {avg.value} is cash-paid over shares-acquired — a figure the filer's own "
             f"disclosure does not reproduce")
@@ -181,7 +202,7 @@ def test_the_derivation_is_refused_rather_than_imputed_from_one_leg() -> None:
     cash_only = {"facts": {"us-gaap": {"PaymentsForRepurchaseOfCommonStock": {"units": {"USD": [
         {"start": "2025-01-01", "end": "2025-12-31", "val": 1e8, "filed": "2026-01-15",
          "fy": 2025, "fp": "FY", "form": "10-K", "accn": "x"}]}}}}}
-    ca = build_capital_allocation(cash_only)
+    ca = build_capital_allocation(cash_only, as_of=date(2026, 2, 1))
     assert ca.buyback_cash.value == pytest.approx(100.0)
     assert ca.buyback_avg_price.value is None
     assert "refused rather than derived" in (ca.buyback_avg_price.note or "")
@@ -190,7 +211,7 @@ def test_the_derivation_is_refused_rather_than_imputed_from_one_leg() -> None:
 def test_an_empty_facts_dict_yields_a_fully_stated_block_not_a_crash() -> None:
     """TOTAL ON ITS INPUT. The assembler passes `{}` when companyfacts is unavailable, so every
     field must degrade to UNKNOWN-with-reason rather than raising into the build."""
-    ca = build_capital_allocation({})
+    ca = build_capital_allocation({}, as_of=date.today())
     for name, f in ca:
         assert f.value is None and f.note, name
     assert BUYBACK_AVG_PRICE[0] in (ca.buyback_avg_price.note or "")
@@ -220,13 +241,14 @@ def test_a_failed_fetch_leaves_the_block_absent_not_a_block_of_stated_absences()
     real = ec.EdgarClient
     ec.EdgarClient = _Boom  # type: ignore[misc,assignment]
     try:
-        out = rf.capital_allocation_transform("0001702744")({"stock_info": {"x": 1}})
+        out = rf.capital_allocation_transform("0001702744")({"stock_info": {"as_of": "2026-11-02"}})
     finally:
         ec.EdgarClient = real  # type: ignore[misc]
     assert "capital_allocation" not in out, (
         "a failed fetch wrote a block of stated absences — indistinguishable from a filer that "
         "genuinely reports none")
-    assert out == {"stock_info": {"x": 1}}, "the transform mutated something else on failure"
+    assert out == {"stock_info": {"as_of": "2026-11-02"}}, (
+        "the transform mutated something else on failure")
 
     # …and a name with NO cik is the same case, not a filing full of nothing
     assert "capital_allocation" not in rf.capital_allocation_transform(None)({})
@@ -251,7 +273,7 @@ def test_the_block_reads_differently_on_a_name_that_impaired_and_one_that_never_
         import json
         doc = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
         m = MechanicalLayer.model_validate(doc["mechanical"]).model_copy(
-            update={"capital_allocation": build_capital_allocation(_facts(t))})
+            update={"capital_allocation": _ca(t)})
         return "\n".join(_capital_allocation(m))
 
     smpl, epam, it = block("SMPL"), block("EPAM"), block("IT")
@@ -277,11 +299,20 @@ def test_every_caveat_reaches_the_surface_not_just_the_json() -> None:
     from vinci.dossier.schemas import MechanicalLayer
     doc = json.loads((ROOT / "data" / "dossiers" / "EPAM" / "dossier.json").read_text())
     m = MechanicalLayer.model_validate(doc["mechanical"]).model_copy(
-        update={"capital_allocation": build_capital_allocation(_facts("EPAM"))})
+        update={"capital_allocation": _ca("EPAM")})
     page = "\n".join(_capital_allocation(m))
-    assert page.count("PERIOD MISMATCH") == 2, (
-        "both mismatches must surface: the average vs cash, AND cash vs the share count")
-    assert "NOT a purchase price" in page and "not evidence of when they bought" in page
+    # SINCE FIX 3B (2026-11-09) EPAM's own average — a 2023 period — is not current, so it is not
+    # stated and its mismatch went with it; the cash-vs-share-count mismatch still surfaces, and
+    # the average's absence names its tag and period
+    # (live EDGAR, dated today: the average may be current again once EPAM tags a newer one)
+    if m.capital_allocation.buyback_avg_price.status is SourceStatus.PRESENT:  # type: ignore[union-attr]
+        assert page.count("PERIOD MISMATCH") == 2, (
+            "both mismatches must surface: the average vs cash, AND cash vs the share count")
+        assert "NOT a purchase price" in page and "not evidence of when they bought" in page
+    else:
+        assert page.count("PERIOD MISMATCH") == 1, (
+            "the mismatch between cash and the share count must surface")
+        assert "no current figure" in page and "TreasuryStockAcquiredAverageCostPerShare" in page
     assert "NOT AVAILABLE FROM XBRL" in page and "10-K impairment note" in page
     assert page.count("NOT AVAILABLE FROM XBRL") == 1, "the stated gap is doubled"
 
