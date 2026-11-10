@@ -8245,229 +8245,538 @@
           "kind": "leading_indicator",
           "metric": "RTD shake category volumes sold on price promotion",
           "period": "Q2 2026",
-          "value": "27% of RTD shake category volumes were sold on price promotion, up 8 percentage points versus last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a result, 27% of RTD shake category volumes were sold on price promotion, up 8 percentage points versus last year and a meaningful step-up from Q1.",
-          "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 27.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "pp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 8,
+            "speaker": "Darcy Horn Davenport",
+            "quote_sha256": "78fdc89c59a90af958902ead69728d596d874dc28c30d89e472da0777fa04627",
+            "value_sha256": "f8016b6d5f848d0a1a17907936ec482c69e1741c2bb45e2f2e8ef21d2e34bea0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "RTD shake category growth",
           "period": "Q2 2026",
-          "value": "RTD shakes up 8%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In short, the category remains strong with RTD shakes up 8%, which is well ahead of the broader food and beverage industry.",
-          "following_context": "However, the impacts of increased competition are more pronounced than we anticipated at the start of the year and the added factor of an increasingly price-sensitive consumer has put near-term pressure on our business, especially the bottom line. That said, our category remains highly relevant to both consumers and retailers with meaningful runway for growth.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 10,
+            "speaker": "Darcy Horn Davenport",
+            "quote_sha256": "ca15d74634dccbc798e6cf04d1e993f4b6f9dbc39ceb5733109e9aa58909216a",
+            "value_sha256": "1cc1fec4bfc06dee0261abb005bf50f24f256aceb7488515b3567acd6c99fd2f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Total BellRing net sales",
           "period": "Q2 2026",
-          "value": "$599 million, up 2% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total BellRing net sales for the second quarter were $599 million, up 2% year-over-year with adjusted EBITDA of $54 million.",
-          "following_context": "As Darcy noted, sales were modestly below our expectations, while adjusted EBITDA margin of 9% was 400 basis points below our guide of 13%.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 599.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 28,
+            "speaker": "Paul A. Rode",
+            "quote_sha256": "a2c49c3e29ef229faaa764b804ed4c7c4f14f6580626c621664a7c38aaa22af3",
+            "value_sha256": "474b56cfd9a7cd7a0af50a1abf8ab2739585c668673ac0f5dd76336f14782a40"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Premier RTD shake net sales growth",
           "period": "Q2 2026",
-          "value": "increased 2.3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Premier RTD shake net sales increased 2.3% with double-digit volume growth mostly offset by price/mix declines.",
-          "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 12,
+            "speaker": "Darcy Horn Davenport",
+            "quote_sha256": "df27bb06545cd50c8b274f8aa438661ceaf890197511e218d73f1501f5b388ac",
+            "value_sha256": "e2fc0d26dc91386b48a7bf0bacd122000dc4594d3f845fbdb85875fc98ed7fa6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Premier shake dollar consumption",
           "period": "Q2 2026",
-          "value": "up 3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Premier shake dollar consumption was up 3%.",
-          "following_context": "Consumption outside of club continues to be strong, up 15%, with the mass channel up high teens, driven by distribution and incremental promotion. We are pleased with the performance of our key promotions this quarter with a club retailer and a large mass retailer, driving a record quarter for both sales and consumption.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 13,
+            "speaker": "Darcy Horn Davenport",
+            "quote_sha256": "2069be0a3e64930cfcff06130a70c6f137a51abae32838a4174cd18ce7da0c39",
+            "value_sha256": "637e3b0127b7fdd32c78be273ff29de9201c5583ab911071ffb10060e35fc701"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Premier consumption outside of club",
           "period": "Q2 2026",
-          "value": "up 15%, with the mass channel up high teens",
           "value_num": null,
           "unit": null,
-          "verbatim": "Consumption outside of club continues to be strong, up 15%, with the mass channel up high teens, driven by distribution and incremental promotion.",
-          "following_context": "We are pleased with the performance of our key promotions this quarter with a club retailer and a large mass retailer, driving a record quarter for both sales and consumption.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 13,
+            "speaker": "Darcy Horn Davenport",
+            "quote_sha256": "8ae88e21582ed342c9883eaa785c9c2c959b5d261554c51e9b011566b8f1c8f7",
+            "value_sha256": "eae8da378d577c1d584ef9f47043606311ad5b40054319578fef8e6ef160f970"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Premier shake volume growth",
           "period": "Q2 2026",
-          "value": "increased 12% with unfavorable price mix of 9%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Premier Shake volumes increased 12% with unfavorable price mix of 9% with the latter above expectations given higher promoted volumes, coupled with lower baseline volume.",
-          "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 29,
+            "speaker": "Paul A. Rode",
+            "quote_sha256": "49fd72989f35525b5f0477277f59b22b049b85c70cef5ffe9ec57b5bc843f664",
+            "value_sha256": "e375e643f22f287db80d67f37f12867b688be671d32e5155eae609779b6fa366"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Premier Protein net sales growth",
           "period": "Q2 2026",
-          "value": "grew 1.7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Premier Protein net sales grew 1.7% with RTD shake net sales up 2.3%.",
-          "following_context": "Premier Shake volumes increased 12% with unfavorable price mix of 9% with the latter above expectations given higher promoted volumes, coupled with lower baseline volume.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.7,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 29,
+            "speaker": "Paul A. Rode",
+            "quote_sha256": "7716e2c73f7247d636e04f64903cd9a875f9b6c6190f35d37f88c0b4eb21d266",
+            "value_sha256": "4d8495d3d5b9ace44d5523e296119d218e8c3c613e04485f2d3bcf348f19c0c9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Dymatize sales",
           "period": "Q2 2026",
-          "value": "declined 2%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Dymatize sales declined 2%, impacted by elasticities due to inflation-driven price increases.",
-          "following_context": "Adjusted gross profit was $136 million with adjusted gross margin of 22.7% compared to 34.5% a year ago. The year-over-year decline was driven by significant input cost inflation, including tariffs, the unfavorable price mix I just described, higher freight and the inventory-related charge.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 30,
+            "speaker": "Paul A. Rode",
+            "quote_sha256": "ebc75623ddc4cd80bf0248df2ea7178822cbd5cc8fc7ab37347c7c6e966825bb",
+            "value_sha256": "dac513e20c8ed8233f03248f890de8dc7aeb118148c15592f41dd9e727984f44"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "adjusted gross margin",
           "period": "Q2 2026",
-          "value": "22.7% compared to 34.5% a year ago",
           "value_num": null,
           "unit": null,
-          "verbatim": "Adjusted gross profit was $136 million with adjusted gross margin of 22.7% compared to 34.5% a year ago.",
-          "following_context": "The year-over-year decline was driven by significant input cost inflation, including tariffs, the unfavorable price mix I just described, higher freight and the inventory-related charge.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 22.7,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 34.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 30,
+            "speaker": "Paul A. Rode",
+            "quote_sha256": "0b36e03493872b37e4cc4cf56ec5e50dcbf4b1ee79379344db059b11471bca28",
+            "value_sha256": "6b3454a3f98d8ceeff8f5a42e0c28a905aefdf16b7ffd0f5193dff4e9e4253d8"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "club channel share of BellRing sales",
           "period": "fiscal 2026",
-          "value": "just over 40% of BellRing sales",
           "value_num": null,
           "unit": null,
-          "verbatim": "Retailers also expanded space, particularly in the club channel, which represents just over 40% of BellRing sales.",
-          "following_context": "As a result, we expected some higher levels of promotional investment. As the year progressed, the most meaningful change has been the rising cost required to maintain our leadership position.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 6,
+            "speaker": "Darcy Horn Davenport",
+            "quote_sha256": "04a71362c6e97efcf15f697fd6826616c40174da541869cdf40959ee96beeadc",
+            "value_sha256": "d834841cde46b88f684e82900df2ccae53795863ce98a3737edebea8924e10e2"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "RTD shake spend per household (buy rate)",
           "period": "recent months",
-          "value": "first decline in buy rate in 5 years",
           "value_num": null,
           "unit": null,
-          "verbatim": "However, in recent months, we have seen a contraction in RTD shake spend per household, marking the first decline in buy rate in 5 years.",
-          "following_context": "This reflects an increasingly value-focused consumer with greater reliance on promotions, low-priced brands and value-priced pack sizes.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 9,
+            "speaker": "Darcy Horn Davenport",
+            "quote_sha256": "e0c736b264eee2ab9c1d62aa2f2e1737d63887525492902534bf4b2105133fc5",
+            "value_sha256": "b56337e64cbbf048f03bb574b345d83c1c801a299d1a41a8327b8e0ca8cd3f04"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "advertising investment as percent of sales",
           "period": "fiscal 2026",
-          "value": "approximately 4% of sales",
           "value_num": null,
           "unit": null,
-          "verbatim": "and we expect to maintain our investment this year at approximately 4% of sales with more tempered near-term returns given the more competitive promotional environment.",
-          "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "91395197b44d34e3f45100daeccc7b60e487cea989293d204679efc901aee764",
+            "paragraph": 18,
+            "speaker": "Darcy Horn Davenport",
+            "quote_sha256": "a0a2da9611cc3cd742e55d9119110fe9b16032d7cab4d790e2108128dba1beaa",
+            "value_sha256": "01c5c91e05c4bc453629ccf1fca39213ac787048a3564eaed7b3bba5238eebd3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "RTD shake category volumes sold on price promotion",
           "period": "Q3 2026",
-          "value": "70% of RTD shake category volumes were sold on price promotion",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the third quarter, 70% of RTD shake category volumes were sold on price promotion.",
-          "following_context": "This is relatively in line with historical norms for this period after adjusting for the shift of a major e-commerce promotion, while down sequentially from the heavier promoted second quarter. While category fundamentals remain strong, our outlook assumes fourth quarter promotional levels will be more similar to the second quarter trends, reflecting continued value-seeking behavior and elevated promotional activity during the key Q2 and Q4 seasons. Over time, we continue to expect category-based price increases as a result of meaningful input cost inflation.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "c35831a5d14632750d481805c9162c52e225ea3f2a939c33522dbc1db3f555c8",
+            "paragraph": 31,
+            "speaker": "Paul A. Rode",
+            "quote_sha256": "03e05f7ae4ad12a4a5a1c7dc0c0277b5ce252527197fda092a01e33dd6bbdf4c",
+            "value_sha256": "cdaf490e65affad7ebf757f0a33ce2ae458701178116f4dbab3e7c2faf01e620"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Premier household penetration",
           "period": "fiscal 2026",
-          "value": "almost 23%, with shake repeat rate consistently the highest in the category",
           "value_num": null,
           "unit": null,
-          "verbatim": "Premier household penetration has reached almost 23%, with shake repeat rate consistently the highest in the category.",
-          "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 23.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "c35831a5d14632750d481805c9162c52e225ea3f2a939c33522dbc1db3f555c8",
+            "paragraph": 30,
+            "speaker": "Paul A. Rode",
+            "quote_sha256": "4e4218a3aed9b6ed52a6d79096f82071e8c5e4dc02b3519c27975115a88a9f13",
+            "value_sha256": "48e603f474afd228b17c5115950515107480436380274b62f881de9521d68d73"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "Premier shake price increase",
           "period": "effective Q1 fiscal 2027",
-          "value": "double-digit price increase on Premier shakes and additional pricing on powders, both effective in our first quarter of fiscal 2027",
           "value_num": null,
           "unit": null,
-          "verbatim": "First, we have announced a double-digit price increase on Premier shakes and additional pricing on powders, both effective in our first quarter of fiscal 2027.",
-          "following_context": "We believe these actions are necessary to offset sustained inflationary pressure in key input costs and support a healthier margin profile over time. With this price increase, we expect volume-related elasticity to be slightly greater than 1.",
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "c35831a5d14632750d481805c9162c52e225ea3f2a939c33522dbc1db3f555c8",
+            "paragraph": 22,
+            "speaker": "Paul A. Rode",
+            "quote_sha256": "758008eabc630f8c51c27b334199525f39977ab241bdea3c91da949ff5a08a42",
+            "value_sha256": "9c692ed22f252e9d22a4c8aaa4273c61bdc78dd3f32012105357a0f936382c08"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Total net sales growth",
           "period": "Q3 2026",
-          "value": "increased 4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Net sales increased 4% in the third quarter, with both brands ahead o",
-          "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "08e3df80ffd1d34a3c6014ee365622f0c00cdb43e20cbc1cf941dca941cf7fb1",
+            "value_sha256": "f9aeb1f781a87411897eaa53f42edc425060d97a1de8caf5d95ff2b4260a4108"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "category-based price increases from input cost inflation",
           "period": "over time",
-          "value": "category-based price increases as a result of meaningful input cost inflation",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over time, we continue to expect category-based price increases as a result of meaningful input cost inflation.",
-          "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "c35831a5d14632750d481805c9162c52e225ea3f2a939c33522dbc1db3f555c8",
+            "paragraph": 31,
+            "speaker": "Paul A. Rode",
+            "quote_sha256": "df8b99bc97deb2e2bb36c70506051a7b317970134d078a23f512cc0cfe9ebd7f",
+            "value_sha256": "9b08bf50f4cdc53d191ee93a58279232a099f60559d630d61353d1dcf212ec7a"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "advertising investment as percent of sales",
           "period": "fiscal 2026",
-          "value": "approximately 4% of sales",
           "value_num": null,
           "unit": null,
-          "verbatim": "Campaign ROI is stronger than last year, and our full year outlook continues to reflect advertising investment at approximately 4% of sales.",
-          "following_context": null,
           "source_ref": "CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "c35831a5d14632750d481805c9162c52e225ea3f2a939c33522dbc1db3f555c8",
+            "paragraph": 34,
+            "speaker": "Paul A. Rode",
+            "quote_sha256": "f23cfbdea7056a00f422918a4dfe0ad3fcbd46d7e611f22641c57c2ee6368bb0",
+            "value_sha256": "01c5c91e05c4bc453629ccf1fca39213ac787048a3564eaed7b3bba5238eebd3"
+          }
         }
       ],
       "qa_flags": []
@@ -12703,6 +13012,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

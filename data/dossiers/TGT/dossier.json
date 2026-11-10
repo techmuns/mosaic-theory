@@ -10523,241 +10523,542 @@
           "kind": "leading_indicator",
           "metric": "net sales growth",
           "period": "Q1 2027",
-          "value": "6.7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "First quarter net sales grew by 6.7%, reflecting a 5.6% increase in comparable sales.",
-          "following_context": "We're encouraged that this top line growth was broad-based with growth across both stores and digital channels led by traffic, net sales increases in all 6 of our core merchandise categories, broad-based strength across guest demographics and cohorts, and momentum around both key seasonal events and everyday moments. Despite this early progress, we know our work is just beginning as we were lapping softer results in Q1 of 2025.",
           "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.7,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e",
+            "paragraph": 7,
+            "speaker": "Michael J. Fiddelke",
+            "quote_sha256": "58d91d2ac7f7697091204b971b9459eb433195ef3728a72c43a85a7d298c7241",
+            "value_sha256": "b881417d9d4440ff0db13d2ee0d847941e123a3399264e9887882f94fcbfeaa4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "comparable sales growth",
           "period": "Q1 2027",
-          "value": "5.6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "First quarter net sales grew by 6.7%, reflecting a 5.6% increase in comparable sales.",
-          "following_context": "We're encouraged that this top line growth was broad-based with growth across both stores and digital channels led by traffic, net sales increases in all 6 of our core merchandise categories, broad-based strength across guest demographics and cohorts, and momentum around both key seasonal events and everyday moments. Despite this early progress, we know our work is just beginning as we were lapping softer results in Q1 of 2025.",
           "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.6,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e",
+            "paragraph": 7,
+            "speaker": "Michael J. Fiddelke",
+            "quote_sha256": "58d91d2ac7f7697091204b971b9459eb433195ef3728a72c43a85a7d298c7241",
+            "value_sha256": "f479b183afc3b2d3885b12d82c36dc1ca90551c4101286c6a119b68f9d35022f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "net sales vs. two years prior",
           "period": "Q1 2027 vs Q1 2024",
-          "value": "3.7% higher",
           "value_num": null,
           "unit": null,
-          "verbatim": "And while we're pleased that this year's Q1 net sales were also 3.7% higher than in Q1 of 2024, that's well below the level of 2-year growth we aspire to deliver over time.",
-          "following_context": "In categories like Fun101, Beauty and Food & Beverage, we're seeing mid-single-digit compound growth on a 2-year basis, while sales in Home and Apparel were still below 2024. This is further evidence that while we're building momentum, we're also not yet where we aspire to be over time. We're focused on executing our plans and are encouraged by early guest response.",
           "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.7,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e",
+            "paragraph": 8,
+            "speaker": "Michael J. Fiddelke",
+            "quote_sha256": "7ce94d34f6b9d9d2b9035042bfdbe4138c5c73bfa5a83fcece1306b8fcde0898",
+            "value_sha256": "b0c41cb2e341802a859236936b79eecc81ce327a63269d9aa7492c34a9e683f7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "baby comp trend acceleration",
           "period": "back half of Q1 2027",
-          "value": "more than 5 percentage point acceleration",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're encouraged by what we're seeing, including a more than 5 percentage point acceleration in baby comp trends in the back half of the quarter following the launch of these new offerings, showing that when we reduce friction and build trust early in a family's journey, we foster an ongoing relationship that spans across categories.",
-          "following_context": "Busy families are also increasingly focused on health and wellness, an area shopped by more than 70% of our guests already. To deliver newness and drive greater distinction in the market, we recently added around 1,500 new items and have plans to refresh around 40% of our assortment this year. These changes drove double-digit sales growth in the first quarter, doubling comp growth rates in wellness-related categories compared with Q4 of last year.",
           "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "pp",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e",
+            "paragraph": 19,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "7bfe1a6e1596c0255e04b1f30937ac2033c9bafd1d9c27c388b04025a0323bff",
+            "value_sha256": "9354091b6233560fa930c8025ca1912b58598155c0fead55d9acec2626aa01eb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new items added in health and wellness",
           "period": "recently",
-          "value": "around 1,500 new items",
           "value_num": null,
           "unit": null,
-          "verbatim": "To deliver newness and drive greater distinction in the market, we recently added around 1,500 new items and have plans to refresh around 40% of our assortment this year.",
-          "following_context": "These changes drove double-digit sales growth in the first quarter, doubling comp growth rates in wellness-related categories compared with Q4 of last year.",
           "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1500.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e",
+            "paragraph": 19,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "4806c09bf611ea92d5f97a9ba3ae33e727a133bfa99e4e6c5875822cdb1c8082",
+            "value_sha256": "4588b106f2d6727da00c9e6a6d666a149dc4faca0a33328e861eee38591ebb9f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "wellness-related categories sales growth",
           "period": "Q1 2027",
-          "value": "double-digit sales growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "These changes drove double-digit sales growth in the first quarter, doubling comp growth rates in wellness-related categories compared with Q4 of last year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e",
+            "paragraph": 19,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "2ddbde720187a109d72b1d9e6fc3c2f28a4581349dc7710f0cd719bd5ad9e990",
+            "value_sha256": "3779c13e85ca33ba5e5b74af9d78e606f8ab089ae1b1c2599eec514cc2610853"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new food items introduced",
           "period": "Q1 2027",
-          "value": "3,000 new food items",
           "value_num": null,
           "unit": null,
-          "verbatim": "We introduced 3,000 new food items in Q1 alone, with sales from those items growing more than 50% over the prior assortment.",
-          "following_context": "We'll continue leaning further into high-growth areas like protein, functional beverages, and better-for-you snacking, where guests are actively seeking newness.",
           "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e",
+            "paragraph": 20,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "3654d670f41aa70fb3435354ea2bc2d35e5ffa39abf877ee2ff62de29d1c44fb",
+            "value_sha256": "3d070b0778862bcb719220bb05286a5e5912f23497ac91890de2a43e7cd11122"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new food item sales growth vs. prior assortment",
           "period": "Q1 2027",
-          "value": "growing more than 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We introduced 3,000 new food items in Q1 alone, with sales from those items growing more than 50% over the prior assortment.",
-          "following_context": "We'll continue leaning further into high-growth areas like protein, functional beverages, and better-for-you snacking, where guests are actively seeking newness.",
           "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e",
+            "paragraph": 20,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "3654d670f41aa70fb3435354ea2bc2d35e5ffa39abf877ee2ff62de29d1c44fb",
+            "value_sha256": "dfee09b20e49f056633254ec7c1311906900a8f567177e2d3a06a720e5d29f33"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "toys comp growth",
           "period": "Q1 2027",
-          "value": "double-digit comp growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "The combination of on-trend toy assortments at prices busy families can afford helped to support double-digit comp growth for toys again this quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e",
+            "paragraph": 22,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "7703a34bb23b2eed3fbfbe22db04a44dd0fb140e93e3e1adec7c2927ba2b3d3b",
+            "value_sha256": "f107ae742656ae4a2eb4ed2a5569d29ddb733e5c87db0eccc3814f3a02e0ecae"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "priority areas share of sales and growth",
           "period": "Q1 2027",
-          "value": "about half of our sales today ... roughly 3/4 of our growth going forward",
           "value_num": null,
           "unit": null,
-          "verbatim": "These focus areas represent about half of our sales today and are expected to drive roughly 3/4 of our growth going forward.",
-          "following_context": "They include building a leading beauty destination, expanding our role in health and wellness, being food forward, celebrating baby and kids, leading in women's style, inspiring the love of home and building culture-driven categories including toys and entertainment.",
           "source_ref": "CIQ transcript: Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "5da3fded8a79935a1c9842c20d258858a2cab55e2c26546e893deeadb2a8e23e",
+            "paragraph": 17,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "02850fd8a15e27a5ac3be2735cfd743e9859fb78acb01621fcf33b4ad3e76c4f",
+            "value_sha256": "8c47f98caa73763e88288c99cf8c8f79c5060429899d0005a60d4f36107f8d07"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "traffic growth",
           "period": "Q2 2027",
-          "value": "up 3.6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As we continue to elevate what we sell and how we sell it, they're choosing us more often, reflected in another strong quarter of traffic growth, up 3.6% to last year, which is a slight acceleration on a 2-year basis compared to Q1.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.6,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899",
+            "paragraph": 4,
+            "speaker": "Michael J. Fiddelke",
+            "quote_sha256": "610a0ea4f82cb0a31b49ecef310720f64d4644ae3337b3bee7b72e9b9f442455",
+            "value_sha256": "59c25110e519b75f851e1b70fb0e7f39fb6d85420df9f584290259bc267cfc6d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "center store grocery assortment layout changes",
           "period": "Q2 2027",
-          "value": "nearly half",
           "value_num": null,
           "unit": null,
-          "verbatim": "Those changes included layout changes encompassing nearly half of our center store grocery assortment, a complete reimagination of our Fun 101 floor pad, replacing nearly 3/4 of our decorative accessories assortment in home and continuing to deliver limited-time partnerships that reinforce Target as the destination for what's new, on trend and culturally relevant.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899",
+            "paragraph": 5,
+            "speaker": "Michael J. Fiddelke",
+            "quote_sha256": "3d234627a66ff3ed168b50fa90cbfaedbe4442796c9b5a6cf52c9cb13cfa3022",
+            "value_sha256": "11600488808192602f5cd45261b411a09da0d95b6cca1cdaf8c517a9e57ebb4f"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "items with lowered prices",
           "period": "Over the past year",
-          "value": "more than 10,000 items",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over the past year alone, we've lowered prices on more than 10,000 items, reinforcing our commitment to ensuring families can find a unique combination of style, quality and affordability every time they shop with us.",
-          "following_context": "Cara and Lisa will expand on these efforts in a few minutes. To support this year's ambitious agenda, we're accelerating our tech capabilities to make every part of the business stronger from how we serve guests to how we equip our teams. We're continuing to modernize our tech foundation while investing in new industry-leading capabilities that allow us to personalize experiences across stores and digital channels, strengthen one of the nation's premier retail media businesses, help our merchants identify and respond to emerging trends faster than ever before and connect with both new and existing guests in increasingly relevant ways.",
           "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899",
+            "paragraph": 7,
+            "speaker": "Michael J. Fiddelke",
+            "quote_sha256": "5a01eed760780b1979d44430bbb9034e55c1008854503d267dbe705cd1c2bacb",
+            "value_sha256": "dfabf589f16f3763c7a96e6be8e0f6d48de7e047dbdc7379dc5f8ad9155a5a98"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "digital traffic sourced from external AI platforms growth vs. industry",
           "period": "as compared to a year ago",
-          "value": "growing more than 3.5x the industry",
           "value_num": null,
           "unit": null,
-          "verbatim": "And while still small in total today, as more consumers begin to explore the benefits of agentic shopping, Target's digital traffic sourced from external AI platforms is growing more than 3.5x the industry as compared to a year ago.",
-          "following_context": "I'm also excited to share that to help us build on that momentum, we recently announced our new Chief AI Officer, Chandhu Nair, who will accelerate how we harness the power of AI to create better guest experiences and unlock new capabilities across our business.",
           "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.5,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899",
+            "paragraph": 8,
+            "speaker": "Michael J. Fiddelke",
+            "quote_sha256": "1c8a983196de4cc28990b3708d00227fbb51053c12c9f1ab0141309424a240dc",
+            "value_sha256": "4e825dfd40346d1022e9e70f495c2ffca24248b11eed6c8c528db0ff10e31169"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new full-size stores opened",
           "period": "Already this year (2026)",
-          "value": "24 new full-size stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "Already this year, we've opened 24 new full-size stores, serving new neighborhoods and creating thousands of jobs in communities we hadn't previously served.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899",
+            "paragraph": 9,
+            "speaker": "Michael J. Fiddelke",
+            "quote_sha256": "7d9f30ada497eab631abb45d2e2f8a9c2b5ed4c3756b9267cb202b9d9bb134e8",
+            "value_sha256": "8b513ea607c764de570fc0d27bc5d7d1783d20ed1df8f54758ddf3a4bb5e778a"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "priority areas share of sales",
           "period": "Q2 2027",
-          "value": "about 50% of our sales",
           "value_num": null,
           "unit": null,
-          "verbatim": "Today, these areas represent about 50% of our sales, and we believe they will contribute even more to our growth going forward.",
-          "following_context": "We're still early in this journey, but what we're seeing gives us confidence.",
           "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899",
+            "paragraph": 14,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "77b5a99bfc7a27f4f38b0e61a84e37bc6584a6606775cbdec2e0915c590ce8f5",
+            "value_sha256": "a4ef215fcc0113f1bd3943599ca9de6c46b58f0e8b18946dcea592689befd283"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "snack sales vs. last year post transition",
           "period": "post transition (Q2 2027)",
-          "value": "more than 15% ahead of last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "For example, post transition, snack sales are running more than 15% ahead of last year, with outstanding momentum in protein bars, meat sticks and better-for-you snacking options.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899",
+            "paragraph": 18,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "b9d0513106abf698bb25135c230c0bfdf5283c0443529c6f704551089ff62961",
+            "value_sha256": "3caeaa3d041276f4c37a1a89b4d8d69a9ea20396a9804aa37abfeb54180fb9be"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Heyday $10 headphones sales vs. last year",
           "period": "Q2 2027",
-          "value": "more than 35% ahead of last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sales of our style-forward $10 headphones are running more than 35% ahead of last year.",
-          "following_context": "And in toys, we added a plush wall, expanded our LEGO assortment and made the experience far more exciting and immersive. While these enhancements have only been live for a few weeks, our focus on culture-right toys at incredible value has been fueling this business for several quarters now and did so again in Q2. LEGO sales are up more than 30% to last year. Plush sales are up more than 20% and guests are gravitating towards on-trend newness at compelling $5, $10, $15 and $20 price points.",
           "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 35.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899",
+            "paragraph": 21,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "946ce767a4b8a3d1a4d2ff83342497fa7a360919efdd30d495e93fa5a05b5c03",
+            "value_sha256": "3fb502e418da9cee387937d9638b864b2ac59f60ba538711c4bcfcf675d64e0d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "LEGO sales vs. last year",
           "period": "Q2 2027",
-          "value": "up more than 30%",
           "value_num": null,
           "unit": null,
-          "verbatim": "LEGO sales are up more than 30% to last year.",
-          "following_context": "Plush sales are up more than 20% and guests are gravitating towards on-trend newness at compelling $5, $10, $15 and $20 price points.",
           "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899",
+            "paragraph": 21,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "970b5e321cd694d6c2c57d4aa496fbf184b31e621349ac4252c0c11eaec426a1",
+            "value_sha256": "26286029e818638d9885ff612bf772ed32d7c3e6efd1cdd9523eda2780dd0558"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "plush sales vs. last year",
           "period": "Q2 2027",
-          "value": "up more than 20%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Plush sales are up more than 20% and guests are gravitating towards on-trend newness at compelling $5, $10, $15 and $20 price points.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Target Corporation, Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "d538bb891c3e6c0638eb06b8dc69810c8a05fc56d540af61496f1493d4f91899",
+            "paragraph": 21,
+            "speaker": "Cara A. Sylvester",
+            "quote_sha256": "c46a340caca980d9b3ab3d76d588010150617006349fd1b0ff1bf155ba27df3e",
+            "value_sha256": "7f9e8dd55d1806fb54f7a5bab2c14e783268c6d63ce759e3e415dafdac9bdc0b"
+          }
         }
       ],
       "qa_flags": [
@@ -16015,6 +16316,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.peer_capital_intensity"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

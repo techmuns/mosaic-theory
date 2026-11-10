@@ -7127,97 +7127,262 @@
           "kind": "leading_indicator",
           "metric": "advertising CPMs and fill rates (Disney Ad Server migration)",
           "period": "since February 2026 (less than 90 days)",
-          "value": "both fill rates and CPMs experiencing healthy increases",
           "value_num": null,
           "unit": null,
-          "verbatim": "The migration of our advertising business to the Disney Ad Server began in February, and we are pleased with the early benefits to date with both fill rates and CPMs experiencing healthy increases.",
-          "following_context": "The business combination fundamentally expands our strategic position. Fubo is now built to scale as a preeminent video player driven by flexible content packaging. We can aggregate and deliver a range of content packages at different price points, allowing us to serve distinct consumer segments rather than forcing a single package across the entire bundle. That flexibility is a durable advantage and a key driver of both growth and margin over time.",
           "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "0bcf986636200f2002e17fbe98f95d89569af6d899b99b4c6dd295ec1d4851ea",
+            "paragraph": 12,
+            "speaker": "David Gandler",
+            "quote_sha256": "61d31460e3aa3ac6764981847c0349c1ae9a0969441bf3650c7744c9f131035f",
+            "value_sha256": "19ebe735f7b8d0d7e2943e05f7a7e1e9647345ef8cf4c17da2767e6b1acd5af7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total subscribers in North America",
           "period": "Q2 fiscal 2026",
-          "value": "5.7 million total subscribers in North America compared to 5.9 million in the prior year period",
           "value_num": null,
           "unit": null,
-          "verbatim": "In terms of our user base, we ended the quarter with 5.7 million total subscribers in North America compared to 5.9 million in the prior year period.",
-          "following_context": null,
           "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.7,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 5.9,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "0bcf986636200f2002e17fbe98f95d89569af6d899b99b4c6dd295ec1d4851ea",
+            "paragraph": 25,
+            "speaker": "John Janedis",
+            "quote_sha256": "0e88e8761aff75488103b22e7eb0e94a8bb2c498d3fc9edcc439a2b216e0829c",
+            "value_sha256": "3cb159f041a3d670f16fbe29209792a08cafadea7570a3fa22d5d749a8fb887e"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "wholesale fee relative to Hulu + Live TV's carriage costs",
           "period": "calendar 2026 to 2028",
-          "value": "currently at 95% in calendar 2026 and scaling to 99% by 2028",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a reminder, for our commercial agreement, Fubo received a wholesale fee relative to Hulu + Live TV's carriage costs, currently at 95% in calendar 2026 and scaling to 99% by 2028.",
-          "following_context": "This contractual step-up provides strong visibility into our expected earnings profile and adjusted EBITDA expansion. Furthermore, the company captures advertising revenue from both the Fubo and Hulu + Live TV businesses. Together, these elements reinforce our expectations regarding the long-term earnings power of our combined entity.",
           "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 95.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2026.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 99.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2028.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "0bcf986636200f2002e17fbe98f95d89569af6d899b99b4c6dd295ec1d4851ea",
+            "paragraph": 28,
+            "speaker": "John Janedis",
+            "quote_sha256": "cb4bbcfaea6570ca7bffa3829c2c4aaec1777e6d18db2149c2bcfabb600cebae",
+            "value_sha256": "ebccd6fe9b1b601ba7ec94a5f06d096d4add53f426cfdc67bd5124e0c9786428"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "ESPN ecosystem reach",
           "period": null,
-          "value": "over 100 million users every month",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a reminder, the ESPN ecosystem reaches over 100 million users every month.",
-          "following_context": null,
           "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "0bcf986636200f2002e17fbe98f95d89569af6d899b99b4c6dd295ec1d4851ea",
+            "paragraph": 17,
+            "speaker": "David Gandler",
+            "quote_sha256": "70153dc45745521f5891f7e26fa283efbbb578f3accf125cb01884abe6d41319",
+            "value_sha256": "4a99592b2a3d2cd54719090a254c7b19fb936902dc36cfe27b9586bad402f4ad"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "advertising CPMs and fill rates (Disney Ad Server migration)",
           "period": "Q3 fiscal 2026, year-over-year",
-          "value": "double-digit increases in CPM and fill rates compared to last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "And finally, since migrating our advertising inventory to the Disney ad server, we've already achieved monetization improvements on the Fubo platform with double-digit increases in CPM and fill rates compared to last year.",
-          "following_context": "This initiative is still only in its early stages, but with Disney's world-class advertising technology and data targeting capabilities, we believe our opportunity to improve the monetization of our direct-to-consumer engagement is sizable. And this year, FuboTV was included in Disney's advertising upfront for the first time, marking another important milestone in our relationship with Disney.",
           "source_ref": "CIQ transcript: FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "a44adeb449710d793eff99edcf762c549da31d7d96b50a660045a05a70201dff",
+            "paragraph": 18,
+            "speaker": "Alisa Bowen",
+            "quote_sha256": "0b3638b159612faf07625bf27b55b3020131276b754fe2646e6b6f1cfe98f154",
+            "value_sha256": "11c77d1112c1ba752a6b9da5baedfdcdf2451b1ad0f46ca58706b9de40b68075"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total subscribers in North America",
           "period": "Q3 fiscal 2026",
-          "value": "5.75 million total subscribers in North America, up 2% compared to 5.63 million in the prior year period",
           "value_num": null,
           "unit": null,
-          "verbatim": "In terms of our customer base, we ended the quarter with 5.75 million total subscribers in North America, up 2% compared to 5.63 million in the prior year period.",
-          "following_context": null,
           "source_ref": "CIQ transcript: FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.75,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 5.63,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "a44adeb449710d793eff99edcf762c549da31d7d96b50a660045a05a70201dff",
+            "paragraph": 25,
+            "speaker": "John Janedis",
+            "quote_sha256": "5ceeaeeb5b9e402c827c3ef93cb1e1482087a0c008c6628f102868f86ed28f79",
+            "value_sha256": "aa5413dc6b8d1cd62c3a46149c97729f8210b0d158ca86d8d28580d7b6565ed6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Rest of World subscribers",
           "period": "Q3 fiscal 2026",
-          "value": "356,000 subscribers compared to 349,000 in the comparable prior year period, a 2% increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Rest of World, we ended the quarter with 356,000 subscribers compared to 349,000 in the comparable prior year period, a 2% increase.",
-          "following_context": "Revenue in Rest of World was $7.8 million in the quarter compared to pro forma revenue of $8.6 million in the comparable prior year period.",
           "source_ref": "CIQ transcript: FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 356000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 349000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "a44adeb449710d793eff99edcf762c549da31d7d96b50a660045a05a70201dff",
+            "paragraph": 26,
+            "speaker": "John Janedis",
+            "quote_sha256": "339e86c5006176614edd032c5e4a872cbc9877c7d1e2149da60ff90f751642ad",
+            "value_sha256": "ef2b939909497e30325428e5cb01ebaea7b831c0860da3c2d37ceee0c9184f59"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "ESPN Where to Watch referral conversion and retention",
           "period": "Q3 fiscal 2026 (since launch)",
-          "value": "converting from free trials to paid subscriptions at a higher rate than customers acquired from other channels and are showing favorable early retention indicators",
           "value_num": null,
           "unit": null,
-          "verbatim": "Since its launch, customers referred to Fubo from ESPN have been converting from free trials to paid subscriptions at a higher rate than customers acquired from other channels and are showing favorable early retention indicators.",
-          "following_context": "So we're continuing to work on new ways to bring ESPN's highly engaged sports fans to Fubo's offerings. In a similar vein, we believe that Disney's progress towards integrating Hulu into Disney+ including the planned Live TV integrations will be another positive step in this direction.",
           "source_ref": "CIQ transcript: FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "FuboTV Inc., Q3 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "a44adeb449710d793eff99edcf762c549da31d7d96b50a660045a05a70201dff",
+            "paragraph": 17,
+            "speaker": "Alisa Bowen",
+            "quote_sha256": "36fe1a7f6687ee6c7e1599951d816f272adc3c7e6dbaf715b6b0d28cfd29abdd",
+            "value_sha256": "c24e2bf30734f06a69ef91e24d7f0eec1686a966fd217eb149cf468f5e64faae"
+          }
         }
       ],
       "qa_flags": [
@@ -9831,6 +9996,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

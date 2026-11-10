@@ -9530,829 +9530,2025 @@
           "kind": "leading_indicator",
           "metric": "AI native revenues",
           "period": null,
-          "value": "more than $160 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our pure AI native revenues accelerated, reaching more than $160 million in the quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 160.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 6,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "577eb60a1b516ca24aa6884c49da44b181eb16c9b9be5257c0d0b9121756a9c6",
+            "value_sha256": "339743f7a0440253b37e37bdf6347ca14c19e4fb86d262eb061c7be0c626a092"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI native revenue share of business",
           "period": null,
-          "value": "over 11%",
           "value_num": null,
           "unit": null,
-          "verbatim": "while AI native revenue growth is compounding nicely, extending its run of consecutive quarters of double-digit sequential growth, now representing over 11% of our business, getting it to a more sizable share of the business is going to take some time.",
-          "following_context": "The constraint we see isn't our ability to deliver.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 24,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "ab9384e2a1541af9b1fa059613ba503b1334cf2b53e3963fdc1fdfbad3278733",
+            "value_sha256": "c7208096de0526816ffa9ebd6b5b85d09c428bf5eee40797251de3bb60cd2e1d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI native revenues sequential growth streak",
           "period": null,
-          "value": "sixth consecutive quarter of sequential double-digit growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "With more than $160 million in AI native revenues in the quarter, this is the sixth consecutive quarter of sequential double-digit growth.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 35,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "cac25855e5f3fcd3946a8ffb3999d2f9975841beff8fe7bedf077c6050ff055e",
+            "value_sha256": "08fc6314aebc21aae3e4fa15d3a5bc57712622b8f8818bd5dbff384e7ae66b6c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "OpenAI consultant certification commitment",
           "period": "first year",
-          "value": "more than 5,000 OpenAI consultants",
           "value_num": null,
           "unit": null,
-          "verbatim": "Together, we are building forward deployed engineering, cyber resilience and customer experience capabilities on OpenAI's frontier models with a first year commitment to certify more than 5,000 OpenAI consultants and train over 10,000 EPAM specialists.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 11,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "3358cc27c1f4d17034100c93fc93ca0591efe9d4ad5be8bf3b668d1eb977f488",
+            "value_sha256": "88db59bf1e14c530540a3e2fd46e4fee1a5099b82129fe416065a639b6af093c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Gemini certified specialists",
           "period": null,
-          "value": "more than 2,000 of our 5,000 by Q3 target",
           "value_num": null,
           "unit": null,
-          "verbatim": "With Google, we have certified more than 2,000 of our 5,000 by Q3 target under the Gemini Certified Partner Specialist program, building our capabilities on Google's Gemini Enterprise ecosystem for building, running and governing multistep AI agents.",
-          "following_context": "This is on top of our multiyear GCP relationship with over 2,000 certified Google Cloud practitioners, agentic GCP, marketplace solutions and award-winning offerings.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 5000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 12,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "2b1cbcffceb1d13cff8314f46897256d56235af5647790ea528d2109b9707423",
+            "value_sha256": "a13ca1b197947e78380875b37a2882275e0e9c33fcbd7bfea298e67ae73126bc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "certified Google Cloud practitioners",
           "period": null,
-          "value": "over 2,000 certified Google Cloud practitioners",
           "value_num": null,
           "unit": null,
-          "verbatim": "This is on top of our multiyear GCP relationship with over 2,000 certified Google Cloud practitioners, agentic GCP, marketplace solutions and award-winning offerings.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 12,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "d68967f65a41da412555753d8115a83c1e467739f9fbd28e24701deba6dc7a4e",
+            "value_sha256": "3affe1b8eedf61a12d3256b8530c0b2ba4261057ab71bb65d7ca665bedb72ccc"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Anthropic-certified engineers ranking",
           "period": null,
-          "value": "among the top 5 globally certified partners with more than 5,700 certified engineers",
           "value_num": null,
           "unit": null,
-          "verbatim": "With Anthropic, we are now among the top 5 globally certified partners with more than 5,700 certified engineers already ahead of the 5,000 by Q3 milestone we set out.",
-          "following_context": "We are building toward more than 10,000 Claude-certified architects by the year-end with over half of our delivery organization already through the Anthropic Academic coursework, backed by a dedicated group of 250 forward deployed engineering black belts. Notably, the practice now extends beyond the team enablement into security and into specific verticals and key accounts.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 5700.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 13,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "25bf147431ec8716b9ce375494b744f5efb80b195ef9ef26ef254d65c04a009e",
+            "value_sha256": "c5aea2389073fe0559ce104bf985cf642be53bf21b30141611ccdd15bff751fc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Claude-certified architects target",
           "period": "by the year-end",
-          "value": "more than 10,000 Claude-certified architects",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are building toward more than 10,000 Claude-certified architects by the year-end with over half of our delivery organization already through the Anthropic Academic coursework, backed by a dedicated group of 250 forward deployed engineering black belts.",
-          "following_context": "Notably, the practice now extends beyond the team enablement into security and into specific verticals and key accounts.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 13,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "c35a3a11524efe9f0680d0f2c1e572dd6144ad72ff798aa316b99782b6a2e266",
+            "value_sha256": "4a1b878d559dfaf697179e1ad075c7517663c0a3cb85f0b3786034202501d65b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "revenue growth (reported)",
           "period": null,
-          "value": "grew 4.5% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenue grew 4.5% year-over-year on a reported basis with organic constant currency growth of 3.4%.",
-          "following_context": "Four of our 6 verticals grew year-over-year, led by Financial Services and Life Sciences and Healthcare. Our emerging verticals and consumer goods and retail and travel businesses both contributed to growth. Software & Hi-Tech and Business Information & Media both declined in the quarter.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 15,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "e1647235f13d489e70b394c4908499ad0dbe0e9301396efd75107347b18a59a6",
+            "value_sha256": "dfcfb9a073d1e44f6a0714a578691baa518bf8a161eb97b75c54bd577864a6d0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "organic constant currency revenue growth",
           "period": null,
-          "value": "3.4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenue grew 4.5% year-over-year on a reported basis with organic constant currency growth of 3.4%.",
-          "following_context": "Four of our 6 verticals grew year-over-year, led by Financial Services and Life Sciences and Healthcare. Our emerging verticals and consumer goods and retail and travel businesses both contributed to growth. Software & Hi-Tech and Business Information & Media both declined in the quarter.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.4,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 15,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "e1647235f13d489e70b394c4908499ad0dbe0e9301396efd75107347b18a59a6",
+            "value_sha256": "29ff98b39b5232787c1d47ba5dec474fdaff567d60750685d699ee546490b668"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "mainframe reverse engineering time savings (client example)",
           "period": null,
-          "value": "60% time savings in reverse engineering effort",
           "value_num": null,
           "unit": null,
-          "verbatim": "we are modernizing with AI and accelerating mainframe transformation with reverse engineering over 10 million lines of code, delivering 60% time savings in reverse engineering effort while inserting new forward deployed engineering capabilities into fundamentally new engagement modalities.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 26,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "0b8b537e23ab2fc3f308a8f9de564b06151e2e29a038dbab948d9b4ab76a1561",
+            "value_sha256": "826d7c1430812b95a21e460954d7b0117227a23051b8746f721cb7d137294d6e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "client business operational impact (beverage manufacturer example)",
           "period": "past 12 months",
-          "value": "over EUR 30 million in business operational impact over the past 12 months",
           "value_num": null,
           "unit": null,
-          "verbatim": "Now live, the company has seen over EUR 30 million in business operational impact over the past 12 months.",
-          "following_context": "For a global energy commodity company, EPAM helped migrate more than 1,000 workloads to AWS with zero downtime for users, resulting in a 40% reduction in infrastructure and operational costs and a 30% improvement in operational efficiency. The project came at a sensitive time after an acquisition when the company did extract a critical application from its legacy environment and consolidate hundreds of aging on-premises servers.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 27,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "6e8545d6b57d991303a21926ceff1a5d72b788271ecf7acc27b3b4354c7dac1a",
+            "value_sha256": "251318d20c42a059fe92bd76c214ab676ce22c725020104c299f9e4322d67316"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "infrastructure and operational cost reduction (energy client example)",
           "period": null,
-          "value": "40% reduction in infrastructure and operational costs and a 30% improvement in operational efficiency",
           "value_num": null,
           "unit": null,
-          "verbatim": "EPAM helped migrate more than 1,000 workloads to AWS with zero downtime for users, resulting in a 40% reduction in infrastructure and operational costs and a 30% improvement in operational efficiency.",
-          "following_context": "The project came at a sensitive time after an acquisition when the company did extract a critical application from its legacy environment and consolidate hundreds of aging on-premises servers.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 27,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "0b7587f4b46312e475fee2d823d306aeee2682d6d46bb78ce62f50be2d36834c",
+            "value_sha256": "f57c739c7f29e082642c9066f964fff480525308eae842f58e8efbe5d3f66c86"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Financial Services vertical growth",
           "period": null,
-          "value": "up 11.5% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Financial services delivered strong growth and was our fastest-growing vertical in the quarter, up 11.5% year-over-year, driven significantly by insurance and asset management clients across both EMEA and the Americas.",
-          "following_context": "We continue to generate double-digit revenue growth in the vertical with significant contribution from AI modernization programs.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 36,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "388b5403577fea63a7427551384b2b441dad48e2191193a2f03960ff51cc4487",
+            "value_sha256": "8d76dada90745e412608c51ab026fb89457485c6ad6f53a728e59405e16e3680"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Consumer goods, retail and travel vertical growth",
           "period": null,
-          "value": "2.3% year-over-year growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "Consumer goods, retail and travel delivered 2.3% year-over-year growth, notably driven by retail and consumer goods.",
-          "following_context": "Life Sciences & Healthcare delivered solid growth and was our second fastest-growing vertical in the quarter with growth of 8% on a year-over-year basis. Revenue growth in the vertical continues to be driven primarily by clients in life sciences and medtech. Notably, year-over-year revenue growth in this vertical continues to accelerate. Software and Hi-Tech declined 1.3% year-over-year, driven significantly by the expected ramp down of a large client program as well as the shift in priorities that FB mentioned earlier. Business Information & Media decreased 2.1% year-over-year, driven primarily by the completion of several client projects.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 37,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "57f8fcd4c5fdaac3804f58193f36251e3b618cd980f314cb7869efb1af27e800",
+            "value_sha256": "b532380e3ff5eff0215502843f011efca6144c3d382e434c36a15f74d4ffbd3d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Life Sciences & Healthcare vertical growth",
           "period": null,
-          "value": "growth of 8% on a year-over-year basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "Life Sciences & Healthcare delivered solid growth and was our second fastest-growing vertical in the quarter with growth of 8% on a year-over-year basis.",
-          "following_context": "Revenue growth in the vertical continues to be driven primarily by clients in life sciences and medtech. Notably, year-over-year revenue growth in this vertical continues to accelerate. Software and Hi-Tech declined 1.3% year-over-year, driven significantly by the expected ramp down of a large client program as well as the shift in priorities that FB mentioned earlier. Business Information & Media decreased 2.1% year-over-year, driven primarily by the completion of several client projects.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 37,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "fd0b2571357dba9f7d246b856b8e95823b821bb85213b579d805593b1820a3f8",
+            "value_sha256": "d65d72189c1cb17b5d859d646832b3b3b98dd73150dfa3f91f32ffa8095f05f2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Software and Hi-Tech vertical growth",
           "period": null,
-          "value": "declined 1.3% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Software and Hi-Tech declined 1.3% year-over-year, driven significantly by the expected ramp down of a large client program as well as the shift in priorities that FB mentioned earlier.",
-          "following_context": "Business Information & Media decreased 2.1% year-over-year, driven primarily by the completion of several client projects.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 37,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "bb968dc767dd8fa6f734d0a8fb790c298f059000d4f17331cab98d09c01e0c5f",
+            "value_sha256": "e3474d92ac353281b845a7eb57680a8e3f9d9cc85b2ebf645837811633314e81"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Business Information & Media vertical growth",
           "period": null,
-          "value": "decreased 2.1% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Business Information & Media decreased 2.1% year-over-year, driven primarily by the completion of several client projects.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.1,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 37,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "0cf0d94ba6d8a6b98db97a95d889b22f5e9b857c5de523729bf55106cd3617ba",
+            "value_sha256": "db83da61cc9e7040a861a888a7fbe0855ce1c2965a12007644f12e82218ea33d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Emerging verticals growth",
           "period": null,
-          "value": "year-over-year growth of 4.9%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our emerging verticals delivered year-over-year growth of 4.9%, primarily driven by ongoing strength in energy and manufacturing.",
-          "following_context": "From a geographic perspective, Americas, our largest region, representing 57% of our Q2 revenues, grew 0.5% year-over-year with strong growth in financial services revenue offset substantially by declines in the Software & Hi-Tech and Business Information & Media verticals. EMEA comprising 41% of our Q2 revenues increased 10.9% year-over-year and 9.4% in constant currency, with strong growth in financial services as well as contributions from travel and consumer goods and energy. And finally, APAC, making up 2% of our revenues, decreased 0.3% year-over-year.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.9,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 38,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "01785b92fe8f77bf97d2ff7c62daa6a1729a88052971630e77c93b6893720641",
+            "value_sha256": "7c27dda4039ec42eab25c696dd478682b8bb37618f3e2258ad09c5bb2a36bb4d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Americas revenue growth",
           "period": null,
-          "value": "grew 0.5% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Americas, our largest region, representing 57% of our Q2 revenues, grew 0.5% year-over-year with strong growth in financial services revenue offset substantially by declines in the Software & Hi-Tech and Business Information & Media verticals.",
-          "following_context": "EMEA comprising 41% of our Q2 revenues increased 10.9% year-over-year and 9.4% in constant currency, with strong growth in financial services as well as contributions from travel and consumer goods and energy. And finally, APAC, making up 2% of our revenues, decreased 0.3% year-over-year.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 38,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "5730f9f85703896d03fa7f40e69835f3220f26d99770bd5ed7da209e64230a3c",
+            "value_sha256": "affd6b52725d0a9717c74ea70a34fcf8b3fdeca47cc65f22f5933bd46cefe9e2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EMEA revenue growth",
           "period": null,
-          "value": "increased 10.9% year-over-year and 9.4% in constant currency",
           "value_num": null,
           "unit": null,
-          "verbatim": "EMEA comprising 41% of our Q2 revenues increased 10.9% year-over-year and 9.4% in constant currency, with strong growth in financial services as well as contributions from travel and consumer goods and energy.",
-          "following_context": "And finally, APAC, making up 2% of our revenues, decreased 0.3% year-over-year.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.9,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 9.4,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 38,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "cbc0b43935acf91ea5cb8c488ea6bc195c27899260af55194e453c352f55b2e9",
+            "value_sha256": "3d2892d3d70d65bc4488bf29050bef6eb4b3fc994ec388d56d248c5d08ad780c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "APAC revenue growth",
           "period": null,
-          "value": "decreased 0.3% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "And finally, APAC, making up 2% of our revenues, decreased 0.3% year-over-year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 38,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "ebc17f060b865ed72e28bb4266394d52426d966371b295bc742c0de577dd45ad",
+            "value_sha256": "148ab1ac4c1712ae0d9626c4f6b5ea04e956a56d124489066fd7c285b5c53d85"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "top 20 clients revenue growth",
           "period": null,
-          "value": "grew 3.1% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Lastly, in Q2, revenues from our top 20 clients grew 3.1% year-over-year, while revenues from clients outside our top 20 increased 5.2%.",
-          "following_context": "Now as we move down the income statement, our GAAP gross margin for the quarter was 30.4% compared to 28.8% in Q2 of last year. Non-GAAP gross margin for the quarter was 32% compared to 30.1% for the same period a year ago, demonstrating our ability to improve profitability while continuing to invest in our AI capabilities and grow our AI native revenues.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.1,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 39,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "c38ad93e87e956465f45c9ca518c4adadaa1bfb6eb2f345e6dc6aa037e9cc74e",
+            "value_sha256": "b3dc0ccdde225e74e407f846b62e00657b2b9a3fe1bf5c973cfef81bcbf0076c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "non-top-20 clients revenue growth",
           "period": null,
-          "value": "increased 5.2%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Lastly, in Q2, revenues from our top 20 clients grew 3.1% year-over-year, while revenues from clients outside our top 20 increased 5.2%.",
-          "following_context": "Now as we move down the income statement, our GAAP gross margin for the quarter was 30.4% compared to 28.8% in Q2 of last year. Non-GAAP gross margin for the quarter was 32% compared to 30.1% for the same period a year ago, demonstrating our ability to improve profitability while continuing to invest in our AI capabilities and grow our AI native revenues.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.2,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 39,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "c38ad93e87e956465f45c9ca518c4adadaa1bfb6eb2f345e6dc6aa037e9cc74e",
+            "value_sha256": "f0586618c15d4c6d40f190adf373d2791e11c8addcd9f90c92e6eaeacb9359b6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "delivery professionals headcount",
           "period": null,
-          "value": "more than 56,650 delivery professionals, reflecting total growth of 1.5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We ended Q2 with more than 56,650 delivery professionals, reflecting total growth of 1.5% compared to Q2 2025.",
-          "following_context": "Our total headcount at quarter end was more than 62,850 employees. Utilization was 78.3% compared to 78.1% in Q2 of last year and 77% in Q1 2026.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 56650.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 1.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 44,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "098b84c6125baedfac443630abc85f2f818fec363a2a88a8a1607fbab23b793b",
+            "value_sha256": "b603e87b343338a4fc967733c90876181fb6d5ba911f4503baf491ba21b6b5a9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total headcount",
           "period": null,
-          "value": "more than 62,850 employees",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our total headcount at quarter end was more than 62,850 employees.",
-          "following_context": "Utilization was 78.3% compared to 78.1% in Q2 of last year and 77% in Q1 2026.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 62850.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 44,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "d3626c42e284edda5be6dba4b6d3963505cb7554b61e6f60fef28f41afb75dbd",
+            "value_sha256": "97ee5add48d865dbb98426b41c85193e6843211e4a3e8121a7b8fd1b55362eab"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "utilization",
           "period": null,
-          "value": "78.3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Utilization was 78.3% compared to 78.1% in Q2 of last year and 77% in Q1 2026.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 78.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 44,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "d3267f6963236e70308c17e94727f6486a4c5adb14f2bf1629052d433f5acbcb",
+            "value_sha256": "3adc3529aaeda6ac4f63358990aec34dc228ffe5d56b8ef9bc86775dd05ad71e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "DSO",
           "period": null,
-          "value": "82 days",
           "value_num": null,
           "unit": null,
-          "verbatim": "At the end of Q2, DSO was 82 days and compares to 76 days for Q1 2026 and 78 days for the same quarter last year.",
-          "following_context": "During the quarter, we repurchased approximately 1.3 million shares, which included open market purchases of approximately 800,000 shares for $80 million and approximately 0.5 million shares from the final settlement of our accelerated share repurchase that was paid in the first quarter. To date, since the initiation of our share repurchase program, we've returned approximately $1.6 billion in cash to shareholders.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 43,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "1f3ac2a6d39ecb49637ca7f1fb61cfa2b8d53c79ac72a1c01b3475e98c6f3b2b",
+            "value_sha256": "6199135322f1aa329e1fe63c5198f6be4a19354a5b777eab4148b22690f4d35a"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "price increases",
           "period": null,
-          "value": "price increases that we got at the beginning of the year",
           "value_num": null,
           "unit": null,
-          "verbatim": "What we did get is the price -- some of the price increases that we got at the beginning of the year, which has been helpful.",
-          "following_context": "We also have been working to improve our fixed fee profitability or our non-T&M profitability. So that's improved nicely on a year-over-year basis. And then we continue to do all the work that we've been doing to continue to improve the cost efficiency in places like India. So I feel good about the gross margin performance in the first half. I also expect that we'll continue to see gross margin in excess of 32% for each of the quarters, Q3 and Q4. Again, we're trying to do the right things to sort of preserve profitability and EPS for the remainder of the year.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 87,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "2a0b3d1a9a2091141deb35110d08f2241ab517f2745a838e9e41c446037f7bee",
+            "value_sha256": "6abed0760cc2e8f0f3887738eca0da68d3b3cd9b6a850c1ba9f6b27ee474e3eb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI native revenue share threshold to lift total growth",
           "period": null,
-          "value": "a 5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "I think once it's crossing a certain threshold, we think a 5%, that's when you're going to start seeing that it's going to lift the growth of EPAM itself.",
-          "following_context": "Remember, this is a very narrow definition, how we call this out. It's very narrow what we are calling AI native. We're not including in this what others would call AI-assisted revenue.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "d8865f2b3aef800605dfc28ef0b243fad089854413c00154a8fe7f5a98fc4fe5",
+            "paragraph": 127,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "6e7b19fbf3ec5d884f0678dd23c4ef8b22564336c4a265db0ffc229aa6c69a33",
+            "value_sha256": "9d33e815e28534c7a26d1e99e331f3d700d6f91fb0d1b2554fc382a5da2fdd31"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI native revenues (Q3)",
           "period": null,
-          "value": "over $185 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the quarter, the company generated over $185 million in AI-native revenues, once again delivering a sequential double-digit growth rate.",
-          "following_context": "EPAM now expects to generate at least $650 million in AI-native revenues in 2026, an increase from our original target of $600 million.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 185.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 5,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "b032aebe92221c5d140efb004167d827de554aa4cf0ed839969befd007a95190",
+            "value_sha256": "3f8496c9ff8628c67b3aed48090326127c2575822cac27e7aeae7303bf8adb9e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI native revenues share of total (Q3)",
           "period": null,
-          "value": "approximately 13% of total revenues, up from approximately 11% last quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "AI-native revenues were more than $185 million in the quarter, approximately 13% of total revenues, up from approximately 11% last quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 28,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "15ea56b48a83a3312e6fb58877691738203f26c3cc343d65755145babd38d2a5",
+            "value_sha256": "cd5b779a4bd6632c9317fd4bb71bb5d519613670baea96f0376cfa2491f1a47c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "full-year AI native revenue target",
           "period": "2026",
-          "value": "at least $650 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "EPAM now expects to generate at least $650 million in AI-native revenues in 2026, an increase from our original target of $600 million.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 650.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 5,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "0518a329dc81f080f316f7f8465c374b66601def30234e3cc6b956096fded1f0",
+            "value_sha256": "7c0abdf593bcf6f4b5457bad7a8e3af5f6a371c08bbe5fb398938b90bccaf280"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "large strategic deals signed",
           "period": null,
-          "value": "signed 3 in the quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "On the new big strategic deals, we signed 3 in the quarter and continue to progress with deals in our pipeline, which continue to grow.",
-          "following_context": "With our strategic partnerships, we are ahead of our plan, both from a capability and enablement standpoint as well as in terms of building deal generation motion that put emphasis on hundreds of production deployments that deliver a unique value proposition with each partner.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 6,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "81fa9bdb1a360f0c06db09786271e7c174408af16840b2ebe16872b12fb6ed11",
+            "value_sha256": "4da14a18d72fc18978c4d87bfdb60351639e161d9076624cd27aed5d80b7977b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "revenue growth (reported) Q3",
           "period": null,
-          "value": "grew 2.3% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenue grew 2.3% year-over-year on a reported basis with organic constant currency growth of 2.5% above the high end of our outlook range.",
-          "following_context": "Profitability led by the gross margin improved again, and adjusted earnings per share remained strong. Growth was led by financial services, our largest vertical, as well as life sciences and healthcare, which both delivered solid year-over-year growth. We're also seeing strength in our energy subvertical within our emerging vertical. Across geographies, EMEA remained our growth leader, up middle single digits. Americas was roughly flat year-over-year and grew sequentially for the second quarter in a row.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 8,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "32d0fe37f21382c5a37d1c3f8fcbaa7dcade58f60272dae5526204585637017b",
+            "value_sha256": "ef008b3cc6d9c91f09f7ef3c8d3918685143bf81b7897b019fb24cb784515d4a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "organic constant currency revenue growth Q3",
           "period": null,
-          "value": "2.5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenue grew 2.3% year-over-year on a reported basis with organic constant currency growth of 2.5% above the high end of our outlook range.",
-          "following_context": "Profitability led by the gross margin improved again, and adjusted earnings per share remained strong. Growth was led by financial services, our largest vertical, as well as life sciences and healthcare, which both delivered solid year-over-year growth. We're also seeing strength in our energy subvertical within our emerging vertical. Across geographies, EMEA remained our growth leader, up middle single digits. Americas was roughly flat year-over-year and grew sequentially for the second quarter in a row.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 8,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "32d0fe37f21382c5a37d1c3f8fcbaa7dcade58f60272dae5526204585637017b",
+            "value_sha256": "2e13dede283506e5ef730264ab340a25e17742f7859ec78e3d4ff6524e21f6e0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "delivery professionals headcount (Q3)",
           "period": null,
-          "value": "more than 57,000, up 2.2% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Delivery professionals grew by nearly 700 in the quarter to more than 57,000, up 2.2% year-over-year after a roughly flat first half.",
-          "following_context": "We will continue to hire for demand we see, and we expect net delivery headcount to grow faster in the fourth quarter. On the demand environment, overall client sentiment and spending are stable to modestly better compared to last quarter, while the broad macroeconomic environment continues to experience volatility. Despite the volatility, we believe that demand for our services will remain resilient over the long term, particularly related to our client propensity to spend on AI and technology transformation services. We are seeing stable budgets for the remainder of 2026 with some potential for further unlocking of scaled AI programs going into next year.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 57000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 2.2,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 9,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "0dd825fe09418b1359fac26a8b5cb4472cf89ed2d8bbd6ddc3393e00fbc99ab4",
+            "value_sha256": "4c6ecb87ec8d2337613eecf2c93a6d0335efe743f09dddcef34ad5159bbc6270"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "client COBOL analysis/discovery cost savings (route management firm example)",
           "period": null,
-          "value": "cutting analysis effort by 60% and discovery costs by 80%",
           "value_num": null,
           "unit": null,
-          "verbatim": "EPAM used its [ MFLens ] platform, part of our EPAM AI/Run tools to reverse engineer expert business rules, dependencies, and lineage, cutting analysis effort by 60% and discovery costs by 80%.",
-          "following_context": "The client was able to move into modernization with greater confidence and less uncertainty compared to when it started.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 12,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "d5052677d7329a2a61872207aa2e057540fd654868d9bb86cec8c2c3b42f911d",
+            "value_sha256": "a920628f4a0c4002103311ea75a163b28d529959e66b96c0121a6f93d4c2ae83"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "projected cost savings (medical center example)",
           "period": null,
-          "value": "$1 million in projected cost savings",
           "value_num": null,
           "unit": null,
-          "verbatim": "The solution is driving $1 million in projected cost savings from digital forms and assessments while providing a scalable foundation for continued AI expansion.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 13,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "b23a75182884541b3a09a31b4d21a8246d1198f33317fed0470bf99b3e6a1387",
+            "value_sha256": "4b1448c3c420d0983e25cfdc5b7afb33f8575849ba53f36b0aa5f975662589bd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cost savings (Storio Group example)",
           "period": null,
-          "value": "10x, a fraction of the cost of a conventional rebuild",
           "value_num": null,
           "unit": null,
-          "verbatim": "The cost savings were 10x, a fraction of the cost of a conventional rebuild with a clear path to innovation.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 14,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "d92deb914acf0eb270316c031f138399abe7df266bf2bfbc8aabc3de8875070b",
+            "value_sha256": "3345dc8b04e473f216263b291708c1c1ab405c11319e9fa9307d7f5805aa8a7f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total cost of ownership reduction (medical technology company example)",
           "period": null,
-          "value": "reduced the total cost of ownership by 20% with 0 downtime on AWS",
           "value_num": null,
           "unit": null,
-          "verbatim": "And last, for a medical technology and healthcare services company, we reduced the total cost of ownership by 20% with 0 downtime on AWS.",
-          "following_context": "As an AWS Premier Tier Services Partner, EPAM was selected for its deep engineering and cloud innovation capabilities. Through our structured methodology, we helped the client migrate from Oracle to AWS, replace licensed infrastructure with AWS native services, modernize the operational layer, and build a scalable foundation without reintroducing unnecessary costs or complexity.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 0.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 15,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "c0018a605b64a7b16ce84f7f1b719465463dbc08f60dec64cc20caa5fab7dea1",
+            "value_sha256": "3272cc078757d621c2d45987a0a53f6794c79c6809bfd358011507aeca1873cf"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "certifications earned across AI partners",
           "period": null,
-          "value": "more than 25,000 certifications in just 6 months",
           "value_num": null,
           "unit": null,
-          "verbatim": "I'm pleased to report that we are on our way to meeting our stated year-end goals, so far earning more than 25,000 certifications in just 6 months across Anthropic, OpenAI, Google Gemini Enterprise, and Microsoft.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 18,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "4326d3b8bf21f62ee5c8cfce1d5b3b5a0b1bb1c32bf9fa6403dc8f0dba42b065",
+            "value_sha256": "e4af9aeb9bda6b6374ab92ba8191220090b2595f8e4df48f5dc1078222ef1f9f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Claude architect certifications",
           "period": null,
-          "value": "more than 8,300 Claude architects against our year-end target of 10,000",
           "value_num": null,
           "unit": null,
-          "verbatim": "With Anthropic, we have certified more than 8,300 Claude architects against our year-end target of 10,000.",
-          "following_context": "With OpenAI, we have certified more than 5,800 forward-deployed engineers within months of announcing the partnerships, and we are on pace for our first-year commitment of 10,000. With Google Gemini Enterprise, we have certified more than 8,700 under the Gemini Certified Partner Specialist program against our target of 10,000 by the end of the year. With Microsoft, more than 2,800 of our engineers have earned their frontier certification, one of the most demanding in the program. And with AWS, we are working on evolving our FDE propositions with our current team of more than 1,100 certified AI practitioners and professionals.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8300.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 10000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 19,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "46528aca408aa828a766c923c6fd58810a773dccdbd0938b3131ea92ad38698e",
+            "value_sha256": "0e0e5c50de331fc7a2d76cdd1837cc65649a428074163c08284031e6127ce6b9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "OpenAI forward-deployed engineer certifications",
           "period": null,
-          "value": "more than 5,800 forward-deployed engineers",
           "value_num": null,
           "unit": null,
-          "verbatim": "With OpenAI, we have certified more than 5,800 forward-deployed engineers within months of announcing the partnerships, and we are on pace for our first-year commitment of 10,000.",
-          "following_context": "With Google Gemini Enterprise, we have certified more than 8,700 under the Gemini Certified Partner Specialist program against our target of 10,000 by the end of the year. With Microsoft, more than 2,800 of our engineers have earned their frontier certification, one of the most demanding in the program. And with AWS, we are working on evolving our FDE propositions with our current team of more than 1,100 certified AI practitioners and professionals.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5800.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 19,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "9fc38634df4bc3f736779c90293417dbc8b9633ed8ea36eb9ff8202b9875f51f",
+            "value_sha256": "19d893c3969ff7e884873a0d785444316b453b20750daa9a64b7b163522382ef"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Gemini Enterprise certifications",
           "period": null,
-          "value": "more than 8,700 under the Gemini Certified Partner Specialist program against our target of 10,000",
           "value_num": null,
           "unit": null,
-          "verbatim": "With Google Gemini Enterprise, we have certified more than 8,700 under the Gemini Certified Partner Specialist program against our target of 10,000 by the end of the year.",
-          "following_context": "With Microsoft, more than 2,800 of our engineers have earned their frontier certification, one of the most demanding in the program. And with AWS, we are working on evolving our FDE propositions with our current team of more than 1,100 certified AI practitioners and professionals.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8700.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 10000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 19,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "4dac497bc24b275fea6b2316ec01a53acd1e04a088882bfa81b502c23b16ba96",
+            "value_sha256": "9f7b76cca721de7724d7dc949d43452bda2ff3ee293a1927c083a77e670c32df"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Microsoft frontier certifications",
           "period": null,
-          "value": "more than 2,800 of our engineers have earned their frontier certification",
           "value_num": null,
           "unit": null,
-          "verbatim": "With Microsoft, more than 2,800 of our engineers have earned their frontier certification, one of the most demanding in the program.",
-          "following_context": "And with AWS, we are working on evolving our FDE propositions with our current team of more than 1,100 certified AI practitioners and professionals.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2800.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 19,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "6a2db19c160fe2d6fa96a74005326b6263848df0c78b4e295dd2e1b1f772567a",
+            "value_sha256": "9455fe56d4952b3db657a7dde5817a56aaefbdb0fdeffb0625dd5f9262e593c0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS certified AI practitioners and professionals",
           "period": null,
-          "value": "more than 1,100 certified AI practitioners and professionals",
           "value_num": null,
           "unit": null,
-          "verbatim": "And with AWS, we are working on evolving our FDE propositions with our current team of more than 1,100 certified AI practitioners and professionals.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1100.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 19,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "260f124bf436dbf09a41fe93d1e724bc8f229ff2e5507d2dde59a52f8ac81bcc",
+            "value_sha256": "4300eafa4ba8fc2c51ef852932b820261c6e9d972712b91819ad766c8e3edc7e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "partner-driven opportunities in pipeline",
           "period": null,
-          "value": "more than 200 of these opportunities across the cohort of AI-native partners",
           "value_num": null,
           "unit": null,
-          "verbatim": "To date, there are more than 200 of these opportunities across the cohort of AI-native partners, and we will be sharing more public case studies as we scale production deployments.",
-          "following_context": "With all of these new partners and new capabilities, EPAM is committed to being client zero, bringing more innovation, commercial and delivery models, and benchmarks together with the power of rising capabilities across the full enterprise landscape.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 20,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "b8226ba089e921fad541929ca4ff36822547317225b58fffd3afe2f7b98ad68c",
+            "value_sha256": "126c8c1bdfcea1f775bba405dcc1a294347395c4f65be2e17776731174cf9ce1"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Gartner Magic Quadrant for Custom Software Development Services",
           "period": null,
-          "value": "a Leader ... for the fourth consecutive year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Gartner named EPAM a Leader in the Magic Quadrant for Custom Software Development Services for the fourth consecutive year.",
-          "following_context": "IDC MarketScape named EPAM a Leader in multiple assessments, including Life Sciences R&D Lab of the Future Technology Solutions and Consulting Services for the second consecutive assessment, Worldwide AI-Driven Professional Services for Oil and Gas Companies in its inaugural assessment, and Adobe AI-Enabled Professional Services. IDC MarketScape also named EPAM a Major Player in its 2026 Worldwide Cloud Professional Services in the AI Era Vendor Assessment. Whitelane Research 2026 IT Sourcing Study ranked EPAM #1 for satisfaction and delivery in Switzerland, and EPAM NEORIS #1 in Spain for using AI technology and tools to improve client services. Forbes named EPAM a Most Trusted and the World's Best Employer for Tech, and Fast Company named EPAM a Best Workplace for Innovators. These recognitions reflect the work of our global teams and their commitment to delivering results for our clients.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its value states no figure and is not the words of its quote",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 25,
+            "speaker": "Balazs Fejes",
+            "quote_sha256": "0b6bc3c35ef7ad13adb481c2468fbe16bdb050d6573885f5b8c03c09aed19c7a",
+            "value_sha256": "c73c2b9af29c09390dc0af02597a22b5ed4ad2c675a3a3c3c0eb2f66485b8e3f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Financial Services vertical growth (Q3)",
           "period": null,
-          "value": "grew 13.7% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Financial services grew 13.7% year-over-year, driven by insurance and asset management clients.",
-          "following_context": "Life sciences and healthcare increased 9.9% on a year-over-year basis, driven primarily by clients in life sciences and MedTech. Consumer goods, retail, and travel declined 2.5% year-over-year as several consumer goods companies became more cautious about spending due to the more challenging macroeconomic environment. Software and hi-tech declined 6.1% year-over-year due to lower spend from certain technology clients as discussed last quarter. Business information and media decreased 5.5% year-over-year, primarily driven by information services. Emerging verticals delivered a year-over-year decline of 0.5% with lower revenues from clients in materials, telecommunications, and real estate, partially offset by ongoing strength in the energy sector.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.7,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 31,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "10f8be15fc83fd44f0c6920a2908e0e5ba5350bcd2c550741febaecd9fe9e1c6",
+            "value_sha256": "5eeadd20b75be75a5733eb2e7b73aebaa77b64f114617d472bf1f418730540a4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Life Sciences & Healthcare vertical growth (Q3)",
           "period": null,
-          "value": "increased 9.9% on a year-over-year basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "Life sciences and healthcare increased 9.9% on a year-over-year basis, driven primarily by clients in life sciences and MedTech.",
-          "following_context": "Consumer goods, retail, and travel declined 2.5% year-over-year as several consumer goods companies became more cautious about spending due to the more challenging macroeconomic environment. Software and hi-tech declined 6.1% year-over-year due to lower spend from certain technology clients as discussed last quarter. Business information and media decreased 5.5% year-over-year, primarily driven by information services. Emerging verticals delivered a year-over-year decline of 0.5% with lower revenues from clients in materials, telecommunications, and real estate, partially offset by ongoing strength in the energy sector.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.9,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 31,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "7caa1ae2824c669256db74a7c7df47bba631b256abe3e78fb9c4b61ab39fbff0",
+            "value_sha256": "d36deb2928f555114fba93868ba1bf055fff4e6dae991dcb7b338da36a3e7e64"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Consumer goods, retail and travel vertical growth (Q3)",
           "period": null,
-          "value": "declined 2.5% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Consumer goods, retail, and travel declined 2.5% year-over-year as several consumer goods companies became more cautious about spending due to the more challenging macroeconomic environment.",
-          "following_context": "Software and hi-tech declined 6.1% year-over-year due to lower spend from certain technology clients as discussed last quarter. Business information and media decreased 5.5% year-over-year, primarily driven by information services. Emerging verticals delivered a year-over-year decline of 0.5% with lower revenues from clients in materials, telecommunications, and real estate, partially offset by ongoing strength in the energy sector.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 31,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "33c69d25ab5cfdd10bf5ca7ce36d3f14cf245e8a7a1345f5e64f1fce4e46b66c",
+            "value_sha256": "2334f0494bb9c6a3bd296bcdb7ed5fe32de1031f4a2e717e938d0a81d1918035"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Software and Hi-Tech vertical growth (Q3)",
           "period": null,
-          "value": "declined 6.1% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Software and hi-tech declined 6.1% year-over-year due to lower spend from certain technology clients as discussed last quarter.",
-          "following_context": "Business information and media decreased 5.5% year-over-year, primarily driven by information services. Emerging verticals delivered a year-over-year decline of 0.5% with lower revenues from clients in materials, telecommunications, and real estate, partially offset by ongoing strength in the energy sector.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.1,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 31,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "69b5e14cd6599a0bfc5929674f48bee746f5508db9d5b3fc534332dfd5da9068",
+            "value_sha256": "5f779c3970a83bc3e7c7c9e31a7b6cf72a5fc32de5a1fac6ecb4020656d78ac2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Business Information & Media vertical growth (Q3)",
           "period": null,
-          "value": "decreased 5.5% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Business information and media decreased 5.5% year-over-year, primarily driven by information services.",
-          "following_context": "Emerging verticals delivered a year-over-year decline of 0.5% with lower revenues from clients in materials, telecommunications, and real estate, partially offset by ongoing strength in the energy sector.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 31,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "d7ca3d78b9522547493a0900bb10a03d6164f732d7f2e0f893637741a8892b18",
+            "value_sha256": "27827a30f6e8f6a8eeaed4b401bfa0e771fc21bdf0482647c65089c5b1d02083"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Emerging verticals growth (Q3)",
           "period": null,
-          "value": "year-over-year decline of 0.5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Emerging verticals delivered a year-over-year decline of 0.5% with lower revenues from clients in materials, telecommunications, and real estate, partially offset by ongoing strength in the energy sector.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 31,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "e446080e78b42654a5637caadb4878aecaac29956653f6e65c13aa50ad04eef2",
+            "value_sha256": "1a8d2558de5fd6edd2445715a3cdf1036eb99ffed7d4ee5a5ceda1f5d76abedc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Americas revenue growth (Q3)",
           "period": null,
-          "value": "increased 0.2% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Americas, our largest region, representing 57% of our Q3 revenues, increased 0.2% year-over-year with strong growth in financial services, life sciences and healthcare, and energy, offset by a slowdown in consumer goods, retail, and travel and declines in the software and hi-tech and business information and media verticals.",
-          "following_context": "EMEA, comprising 41% of our Q3 revenues, increased 5.8% year-over-year despite FX headwinds with strong growth in financial services as well as contributions from life sciences and healthcare and energy. Finally, APAC, making up 2% of our revenues, declined 4% year-over-year. In Q3, revenues from our top 20 clients grew 0.8% year-over-year, while revenues from clients outside our top 20 increased by 3.0%.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.2,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 32,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "e35f7bcf530209f6298c27d8dd20e1b14d57039f7642014bab3631a3db6fb94b",
+            "value_sha256": "42d95bb73c51f1fdeea6f8c3181d6cd3ae51d29a30229ab84f0b2b7d495be01f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EMEA revenue growth (Q3)",
           "period": null,
-          "value": "increased 5.8% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "EMEA, comprising 41% of our Q3 revenues, increased 5.8% year-over-year despite FX headwinds with strong growth in financial services as well as contributions from life sciences and healthcare and energy.",
-          "following_context": "Finally, APAC, making up 2% of our revenues, declined 4% year-over-year. In Q3, revenues from our top 20 clients grew 0.8% year-over-year, while revenues from clients outside our top 20 increased by 3.0%.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.8,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 32,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "204b458aaf0b7baf116e889dd4e4d044ec6ac383d577a79a5d6466d55a205817",
+            "value_sha256": "2cd9ef44d19370e84b9698456ad5ddc3234c3509f60ed0f69669bfec17c20d9c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "APAC revenue growth (Q3)",
           "period": null,
-          "value": "declined 4% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Finally, APAC, making up 2% of our revenues, declined 4% year-over-year.",
-          "following_context": "In Q3, revenues from our top 20 clients grew 0.8% year-over-year, while revenues from clients outside our top 20 increased by 3.0%.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 32,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "25c27236af48199a6d89ede55d63ba48f5dd47d81dc52c07bb404cb83e6ce2df",
+            "value_sha256": "2689f219b528de38dd51458b9932ff5d8b37ac64a0f7704e11262f04dcba470a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "top 20 clients revenue growth (Q3)",
           "period": null,
-          "value": "grew 0.8% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q3, revenues from our top 20 clients grew 0.8% year-over-year, while revenues from clients outside our top 20 increased by 3.0%.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.8,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 32,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "a4b7e1e2c826357de3c04e63c3c68c2fe6e96d367daf0b6e739d96345d0ee650",
+            "value_sha256": "1a6bd7fa6682d33ce2b179ce303867e76e4bc6e5c30421499636c801de058bcd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "non-top-20 clients revenue growth (Q3)",
           "period": null,
-          "value": "increased by 3.0%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q3, revenues from our top 20 clients grew 0.8% year-over-year, while revenues from clients outside our top 20 increased by 3.0%.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 32,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "a4b7e1e2c826357de3c04e63c3c68c2fe6e96d367daf0b6e739d96345d0ee650",
+            "value_sha256": "5ded789404f81f593970df165d92ace4005aca1581fb16f59f747e02ac81546b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "delivery professionals headcount (Q3 detail)",
           "period": null,
-          "value": "more than 57,350 delivery professionals, reflecting total growth of 2.2% ... net increase of 700 people sequentially",
           "value_num": null,
           "unit": null,
-          "verbatim": "We ended Q3 with more than 57,350 delivery professionals, reflecting total growth of 2.2% compared to Q3 2025 and a net increase of 700 people sequentially.",
-          "following_context": "Our total headcount at quarter end was approximately 63,650 employees. Utilization was 76.5%, unchanged from Q3 of last year compared to 78.3% in Q2 of 2026.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 57350.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 2.2,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 700.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 35,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "4e9a5467a6f40fc88cc30a69fba2d6866be3079705033b97f963b4451b544001",
+            "value_sha256": "a8753bd768a3cea6f56df412993e25629431c05cc8cc8a27f0e4cd287fe29a81"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total headcount (Q3)",
           "period": null,
-          "value": "approximately 63,650 employees",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our total headcount at quarter end was approximately 63,650 employees.",
-          "following_context": "Utilization was 76.5%, unchanged from Q3 of last year compared to 78.3% in Q2 of 2026.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 63650.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 35,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "86b69f5c21664ff5c2154eb1a20fd8cacc9a2719714f2e5e586dee0911f34118",
+            "value_sha256": "03cecdb8b7eb1f4a11c0bb42a6a33b2fc638caf7cfed40cd3ce5b48b6e1b6d3c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "utilization (Q3)",
           "period": null,
-          "value": "76.5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Utilization was 76.5%, unchanged from Q3 of last year compared to 78.3% in Q2 of 2026.",
-          "following_context": null,
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 76.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 35,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "9ef4c5a12e196b0a041f4eee670b2aa78db5904f3e3a48488f5febaa62616eb2",
+            "value_sha256": "a748376a8d69a05a208ce1f32d0efe0b08855cd7d59eb6d790319e77d33f1da3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "DSO (Q3)",
           "period": null,
-          "value": "78 days",
           "value_num": null,
           "unit": null,
-          "verbatim": "At the end of Q3, DSO was 78 days and compares to 82 days for Q2 2026 and 75 days for the same quarter last year.",
-          "following_context": "Share repurchases in the third quarter were approximately 700,000 shares for $80 million at an average price of $113.06 per share.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 34,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "a5b1fccbb82395c682118ee9ef96f0a40620d6d4a1b26316ed2b1d0f890de80e",
+            "value_sha256": "e0785519fc2f4edd9acc2e66358ba7897273c9536d28791df685b9b3f0702cf3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI-native revenues year-over-year growth (Q3)",
           "period": null,
-          "value": "over 130% year-on-year growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "it was encouraging to see AI native revenue guidance ticked up in the quarter, $185 million in 3Q, implying over 130% year-on-year growth.",
-          "following_context": "But just to play devil's advocate for a second, on the flip side of that is that the non-AI business declined 6% year-on-year. So maybe if you can just take a minute to help us understand the demand dynamics between these 2 opportunities? And to what extent you're seeing these AI opportunities beginning to pressure the non-AI part of the business, if at all?",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 130.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 113,
+            "speaker": "Tyler DuPont",
+            "quote_sha256": "a8d35682f8aae7dc2573cdf2e7efd4bbc8c7a647f24a9c5d9253ea0739049c4c",
+            "value_sha256": "d2f05b8154c27f59bd53ab261595db49d97f4f0152d6b2220f7fbdd1d5550b38"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "large deal TCV range",
           "period": null,
-          "value": "high tens of millions of dollars to over $100 million of TCV",
           "value_num": null,
           "unit": null,
-          "verbatim": "all of the deals are generally in the, let's call it, high tens of millions of dollars to over $100 million of TCV but all multiyear deals.",
-          "following_context": "So 3 years, in some cases, 3 plus 2 in others.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 75,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "35b4eb21b4faefb53a54dc2164cea1cf853688cc91e43478347c280cf1bb3c8d",
+            "value_sha256": "c4d4c1d3c026bb619c114393fcf2506b884adee91412790cfa55f765ae18532b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Poland R&D tax benefit (P&L)",
           "period": null,
-          "value": "about $40 million in 2026 to about $20 million in 2027",
           "value_num": null,
           "unit": null,
-          "verbatim": "So we have been getting benefit for the last couple of years. And actually, in 2026, the benefit is actually somewhat lower than it was in 2025. And then as we look ahead, the benefit is going to go from about $40 million in 2026 to about $20 million in 2027.",
-          "following_context": "So it definitely will have some tens of basis points of impact. At the same time, all the things that we talked about in 2026, we intend to continue to focus on in 2027.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2026.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 20.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2027.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 109,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "2d7fb7b1cc2247f4dfdac85142bc43eb2ecec086c4d78267006ef2e6d58c05ad",
+            "value_sha256": "81dee821a7b478f5c1e20a21adef3896d963ed6f2f0877b64e3d007c7c72501a"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "non-T&M revenue mix",
           "period": null,
-          "value": "77%, 78% of revenue ... still stems from T&M",
           "value_num": null,
           "unit": null,
-          "verbatim": "Why is this traction not accompanied with a corresponding increase in non-T&M revenue? Like 77%, 78% of revenue, it seems like still stems from T&M.",
-          "following_context": "So how fast should we expect this non-T&M revenue to evolve over the next 2 or 3 years?",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 77.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 78.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 131,
+            "speaker": "Puneet Jain",
+            "quote_sha256": "98a4d0a2a54a78f008713f2a5f951d47509c5e7572254c93b407a23733308b52",
+            "value_sha256": "5a1eb2ee3b8b710cc2b4d9c14917d08aab62a0e871ef03b704b007ec2f05f557"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "expected price increases",
           "period": "2027",
-          "value": "some price in 2027, the early indications that we will be able to get some price increases",
           "value_num": null,
           "unit": null,
-          "verbatim": "We clearly got price improvement in 2026, and that has kind of helped throughout the 2026 fiscal year. We also expect to see some price in 2027, the early indications that we will be able to get some price increases.",
-          "following_context": "We've been focused on improving non-T&M or what is referred to as fixed fee revenue profitability. It's still below company average, but it's definitely improving on a year-over-year basis, David. So that has contributed. We've been focused on sort of basic sort of blocking and tackling, including better efficiency in India. So that's been a positive.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2027.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "EPAM Systems, Inc., Q3 2026 Earnings Call, Nov 05, 2026.rtf",
+            "transcript_sha256": "cd14575c885a2d0b81696872631cf1c4ae88488009bf91b96106c030da2080d0",
+            "paragraph": 107,
+            "speaker": "Jason Peterson",
+            "quote_sha256": "f7b1caa159ba00e5859b99e4a2a5a9a094f87118a7616e393b70ef157c2f8c39",
+            "value_sha256": "71e4bb36a80a572ed59e2a9051badc668f06ba9e5a7816146d264b86eaa80d22"
+          }
         }
       ],
       "qa_flags": [
@@ -15575,6 +16771,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

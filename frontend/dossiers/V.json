@@ -9959,1213 +9959,3212 @@
           "kind": "leading_indicator",
           "metric": "payments volume",
           "period": null,
-          "value": "grew 10% year-over-year in constant dollars to cross $4 trillion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quarterly payments volume grew 10% year-over-year in constant dollars to cross $4 trillion, the first time in Visa's history, and processed transactions grew 10% year-over-year to $72 billion, reflecting strong and resilient consumer spending.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 4.0,
+              "currency": "$",
+              "scale": "e12",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "eaa07e7a7b514aa3fa21a837d8883fa1bba7c54094294bf7cdd911100b1fc287",
+            "value_sha256": "3c37d6edd4479f048e2d26d511db391185bbcc7b50be3ca5e4923ada2ef3aee4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "processed transactions",
           "period": null,
-          "value": "grew 10% year-over-year to $72 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quarterly payments volume grew 10% year-over-year in constant dollars to cross $4 trillion, the first time in Visa's history, and processed transactions grew 10% year-over-year to $72 billion, reflecting strong and resilient consumer spending.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 72.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "eaa07e7a7b514aa3fa21a837d8883fa1bba7c54094294bf7cdd911100b1fc287",
+            "value_sha256": "adb7b45084225582197d7508a677345aa90f8f88bb1c9292496b9270fdfae0f1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Net Promoter Score",
           "period": "third consecutive year",
-          "value": "76",
           "value_num": null,
           "unit": null,
-          "verbatim": "For the third consecutive year, we received a score of 76 in our annual global client engagement survey, an enviable number in any industry.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 76.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 4,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "43ac0326b2ceb66fa471f069b2da720383f51f86d259a7b3462fcbab9074a697",
+            "value_sha256": "f74efabef12ea619e30b79bddef89cffa9dda494761681ca862cff2871a85980"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "credentials",
           "period": null,
-          "value": "growing 8% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We see the strength of these relationships in our consumer and commercial and money movement solutions business with our credentials growing 8% year-over-year in the third quarter and our tokenized penetration nearing 60% of our e-commerce transactions globally.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 5,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "b8b6517706d716c062a5a261cc1a1cefe9fb2a461ffd7580bf9d7eedb463790a",
+            "value_sha256": "f7d2f49af5cb5c70ce0434dbcacc09bd3207cdf966e78d443821b13522ff6e31"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "tokenized penetration of e-commerce transactions",
           "period": null,
-          "value": "nearing 60%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We see the strength of these relationships in our consumer and commercial and money movement solutions business with our credentials growing 8% year-over-year in the third quarter and our tokenized penetration nearing 60% of our e-commerce transactions globally.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 5,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "b8b6517706d716c062a5a261cc1a1cefe9fb2a461ffd7580bf9d7eedb463790a",
+            "value_sha256": "bb0694555347a3c33ea61bd37825867c8456d6e64d721a3764624a0657a471be"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Europe credentials growth",
           "period": "last 12 months",
-          "value": "grown credentials by more than 40 million in the last 12 months, which is over 70% faster than the annualized credentials growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "First, in Europe, through portfolio migrations and organic expansion, we have grown credentials by more than 40 million in the last 12 months, which is over 70% faster than the annualized credentials growth we saw in the region from fiscal year 2019 to 2024.",
-          "following_context": "And in the next several years, we expect over 30 million more credentials from wins alone in Europe. An example from this quarter is NatWest, where we have won the entire consumer credit portfolio of their retail bank, demonstrating the strength of our strategic partnership that has been restored over the past 5 years.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 6,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "28008849ad277dc6c45b1cc3f2399773d76975ae041712d8607feb20e3767e9b",
+            "value_sha256": "c867af2ee399b95d44b80cceb6ff6cacaaffd810154051078155c08e8fff0544"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Colombia processing penetration",
           "period": null,
-          "value": "now above 90%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our processing penetration in the country, which was in the single digits 5 years ago, is now above 90%.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 90.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 7,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "e1c2562ea29145f748197551bade448fbadc50e946683ff4a07102124f2a664f",
+            "value_sha256": "2d092e27bc8e86dd90da2ffc68212eb9751ba7aa2f53ac9c9cf6c83799710de1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "commercial and money movement solutions revenue",
           "period": null,
-          "value": "grew 17% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our commercial and money movement solutions revenue grew 17% year-over-year with 13% year-over-year commercial payments volume growth, both in constant dollars, as our product development continued to help us win business.",
-          "following_context": "For example, in Europe, we signed an agreement with Corpay to bring our Fleet 2.0 solution to their fleet card platform, supporting new opportunities across the region with capabilities such as EMV chips, digital wallet provisioning, contactless payments, rich transaction data and global acceptance.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 9,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "6fcf956a421ddfd104b180b93f36dfe95e30e821fbfee372ee3221faad62ab38",
+            "value_sha256": "c7a89fec58e168a766d27da55358b46b10ad3fa71755f7260a3f60a8a7569e44"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "commercial payments volume",
           "period": null,
-          "value": "13% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our commercial and money movement solutions revenue grew 17% year-over-year with 13% year-over-year commercial payments volume growth, both in constant dollars, as our product development continued to help us win business.",
-          "following_context": "For example, in Europe, we signed an agreement with Corpay to bring our Fleet 2.0 solution to their fleet card platform, supporting new opportunities across the region with capabilities such as EMV chips, digital wallet provisioning, contactless payments, rich transaction data and global acceptance.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 9,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "6fcf956a421ddfd104b180b93f36dfe95e30e821fbfee372ee3221faad62ab38",
+            "value_sha256": "8f866dee5266dd61593d8829fd76f4d5ea430003ca97dcce63d5efc267b85585"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Visa Direct transactions",
           "period": null,
-          "value": "grew 21% year-over-year this quarter to $4 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "In money movement, Visa Direct transactions grew 21% year-over-year this quarter to $4 billion.",
-          "following_context": "Expanding relationships to activate new use cases is one key way we enable growth for Visa Direct. For years, DoorDash, the largest food and grocery delivery platform in North America, has been utilizing Visa Direct for Dasher payouts in the U.S., Australia and Canada as well as Visa virtual commercial cards to enable Dashers to pay for customer orders at physical locations. This past quarter, we enabled Visa Direct-to-card for DoorDash's Crimson platform, a dedicated personal banking and rewards program built specifically for Dashers who receive a Visa debit card when they sign up. With all of these examples, it's clear that our people, products and technology are resonating and building trust with our clients globally, positioning us for the future.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 21.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 4.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 11,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "69ebef5a1ef2dbb6b0e166409bc3f8d895148b0965b376d13ae925863c16989a",
+            "value_sha256": "f6f9f3cff6487e5156dd4fe52791bfebb1ca8d318368d323bdedc7f83a7e2e94"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "value-added services revenue growth",
           "period": null,
-          "value": "grew revenue by 34% in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Another important area of product development has been in our value-added services, which grew revenue by 34% in constant dollars in Q3 with the vast majority of the revenue linked to transactions, cards and accounts.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 34.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 20,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "184e3dc10ddf726b7b46d0c3558e5aa4e6fff3d20907fa9df37ab37b0d860225",
+            "value_sha256": "9b154b71a42eb17a33585b2da911ff9548c5aeef444699772d1fd32da4e84a81"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "credentials enrolled in Subscription Manager and Stop Payment Services",
           "period": null,
-          "value": "2 billion credentials enrolled",
           "value_num": null,
           "unit": null,
-          "verbatim": "For example, 2 of our most popular network products, Subscription Manager and Stop Payment Services, which help cardholders view and decide where their card is on file for a subscription or recurring payment, now have 2 billion credentials enrolled.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 21,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "32d38b616577e958b1d5baddb0e3bf68b3f4972b6f03fe6ce334a0286556eb78",
+            "value_sha256": "7f3d2b3ead524adb6744ae9087fd2e4a9b8b37315d96c487257cd832f91aec02"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "sellers and acquirers enabled with Unified Checkout",
           "period": null,
-          "value": "Over 4,500 sellers and acquirers globally",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over 4,500 sellers and acquirers globally have enabled this with more to come, including one of our largest acquirers in the U.K.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4500.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 23,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "703f1c5b803bb75c029b2ace055cc84218515e139b46cbe5c26920975af4e9c1",
+            "value_sha256": "3ccc88361fbf092500ac96034d2dd79d9d2c69097cbdd70d0d04c5f4cfbfa8cb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "global payments volume",
           "period": null,
-          "value": "up 10% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In constant dollars, global payments volume was up 10% year-over-year.",
-          "following_context": "Cross-border volume, excluding intra-Europe, was up 12% and total processed transactions grew 10%. Fiscal third quarter net revenue was up 14% year-over-year, better than our expectations, primarily due to stronger-than-expected key business drivers, higher-than-expected value-added services revenue and better-than-expected FX.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 31,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "174d4943eb427954db714e7fcd6f374e02b4667b93069a9c8a3276dc2c77d3e1",
+            "value_sha256": "6e878bcd5e942d473377d21bdac7d2300d9301c7802aa14cd360bab4a1f91efa"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cross-border volume excluding intra-Europe",
           "period": null,
-          "value": "up 12%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Cross-border volume, excluding intra-Europe, was up 12% and total processed transactions grew 10%.",
-          "following_context": "Fiscal third quarter net revenue was up 14% year-over-year, better than our expectations, primarily due to stronger-than-expected key business drivers, higher-than-expected value-added services revenue and better-than-expected FX.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 31,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "0c956d2cd9176c66771097e47eefe5e7dfb44d8b0f165f8e5c97f133923c0b95",
+            "value_sha256": "8095fedc1e60b4d32adf3ed2b24df5ab8bfaab52ee7aab931dfb332f723abbe0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "net revenue",
           "period": null,
-          "value": "up 14% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Fiscal third quarter net revenue was up 14% year-over-year, better than our expectations, primarily due to stronger-than-expected key business drivers, higher-than-expected value-added services revenue and better-than-expected FX.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 31,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "800d996c4c38369c77b3de8f472d27688f39292b300886431be7f5ee00b680a0",
+            "value_sha256": "5a80861b0c238dc68c8e7bb8418d94527ffbe0a40413e831ff4355fd15f7a59e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. payment volume",
           "period": null,
-          "value": "grew 10% year-over-year, up about 2 points from Q2",
           "value_num": null,
           "unit": null,
-          "verbatim": "U.S. payment volume grew 10% year-over-year, up about 2 points from Q2, a growth rate not seen since fiscal 2019, excluding the post-COVID recovery, with both card-present and card-not-present growth accelerating strongly.",
-          "following_context": "U.S. payments volume growth was the result of several factors, including higher tax refunds, the cost of fuel, retail, including the timing of promotional shopping events, strong Visa Direct growth and FIFA-related spend.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 32,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "a859217c9c423560ae45c5cbf0c0ba0f53d79d097e9a09f43c5c862a1bba34b2",
+            "value_sha256": "ed68f66ce527d43c70548903ad3a04da3a641e2ab5041f5288d942fd77fd1637"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. credit volume",
           "period": null,
-          "value": "rose 11% year-over-year, up more than 1 point from Q2",
           "value_num": null,
           "unit": null,
-          "verbatim": "U.S. credit rose 11% year-over-year, up more than 1 point from Q2.",
-          "following_context": "Debit accelerated by more than 2 points from Q2 to grow 9% year-over-year. Growth across consumer spend bands saw incremental improvement from Q2 with the highest spend band continuing to grow the fastest. Across our volume, both discretionary and nondiscretionary spend remains strong. We do not see signs of the lower spend consumer weakening in our volumes. Third quarter total international payments volume was up 10% year-over-year in constant dollars, generally consistent with the growth we've seen over the past several quarters.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 33,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "33d30493ebb5f797fdf2074dc6cecd4af2e8ab2bdf3c8c756de3f31dd186c415",
+            "value_sha256": "65ad116865005ebb2dfb349ef7a5d0d57f94a486990a30203c6c4023c8335a2d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. debit volume",
           "period": null,
-          "value": "accelerated by more than 2 points from Q2 to grow 9% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Debit accelerated by more than 2 points from Q2 to grow 9% year-over-year.",
-          "following_context": "Growth across consumer spend bands saw incremental improvement from Q2 with the highest spend band continuing to grow the fastest. Across our volume, both discretionary and nondiscretionary spend remains strong. We do not see signs of the lower spend consumer weakening in our volumes. Third quarter total international payments volume was up 10% year-over-year in constant dollars, generally consistent with the growth we've seen over the past several quarters.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 33,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "1d759ea1d0cb95ccafe74d7a936c19bf78c3d3098a5499393fcf999c1d7c367e",
+            "value_sha256": "36cbf18f4fd122e7997669e9c139f84f7404d7495b55718f07b3ed8e5917b3ff"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total international payments volume",
           "period": null,
-          "value": "up 10% year-over-year in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Third quarter total international payments volume was up 10% year-over-year in constant dollars, generally consistent with the growth we've seen over the past several quarters.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 33,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "22c0ab11eb54eda3ef6aad959bf1f030e3f7fa1901f5abf729f295ea80fb06ac",
+            "value_sha256": "eb74a97221c55ff087e9ed5d457c2c9ba5f2ed6605f40e3592c02012f7e76691"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total cross-border volume (ex intra-Europe)",
           "period": null,
-          "value": "grew 12% year-over-year, up more than 1 point from Q2",
           "value_num": null,
           "unit": null,
-          "verbatim": "Q3 total cross-border volume grew 12% year-over-year, up more than 1 point from Q2.",
-          "following_context": "Cross-border e-commerce volume was up 16%, 3 points above Q2, primarily driven by retail, including the timing of promotional shopping events. Travel-related cross-border volume was up 10%, consistent with Q2. While the conflict continued to be an offsetting factor, commercial and U.S. inbound continued to improve. And in June, the FIFA World Cup boosted inbound North America and Latin America volume.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 34,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "dd7d636e13290bb25399f3dca854b3d12fea81c23ed0916ba058ace30dc01104",
+            "value_sha256": "55a1ec60a2e56609cb03e599a78dd34243a0f6fc3f39fe7fa286024e1f996f92"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cross-border e-commerce volume",
           "period": null,
-          "value": "up 16%, 3 points above Q2",
           "value_num": null,
           "unit": null,
-          "verbatim": "Cross-border e-commerce volume was up 16%, 3 points above Q2, primarily driven by retail, including the timing of promotional shopping events.",
-          "following_context": "Travel-related cross-border volume was up 10%, consistent with Q2. While the conflict continued to be an offsetting factor, commercial and U.S. inbound continued to improve. And in June, the FIFA World Cup boosted inbound North America and Latin America volume.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 34,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "03ac6b5400dd0980bbc71c8b4f86c10c57d58935f12009f0d0428103514e4783",
+            "value_sha256": "21ff34dd4abf4936eb3a3ee96f2841697810db14631f6b97408845cb637cda4d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "travel-related cross-border volume",
           "period": null,
-          "value": "up 10%, consistent with Q2",
           "value_num": null,
           "unit": null,
-          "verbatim": "Travel-related cross-border volume was up 10%, consistent with Q2.",
-          "following_context": "While the conflict continued to be an offsetting factor, commercial and U.S. inbound continued to improve. And in June, the FIFA World Cup boosted inbound North America and Latin America volume.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 34,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "78371f3153b25bac67871bda389edf5efbf8b3303deafd4e2839e9040e849d29",
+            "value_sha256": "af85d6a90e989e170127b62cf63eec20e18da92b6b316102a60a9ef7e6711541"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. host city card-present transactions on match days",
           "period": null,
-          "value": "up as much as 20%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total card-present spend in the U.S. accelerated with card-present transactions up as much as 20% in select host cities on match days.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 35,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "592dd8c43732377b36816772bc19d84a58afcf5487651172e8386a0b0f83ecd2",
+            "value_sha256": "829c4a3e19a8bd33b2f10aea17414da98a6b3fa593c1361d12dd2b3d69aac3c8"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "inbound cross-border card-present spend in U.S. host cities",
           "period": "June 11 to June 30",
-          "value": "increased by nearly 25% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Focusing on inbound cross-border card-present spend, U.S. host cities increased by nearly 25% year-over-year from June 11 to June 30, with the most significant increases driven by fans from Norway, Uruguay, and Ecuador.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 36,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "f7eaed253412ad11e356ee7c27cc09e7f6be211cce41e6309d968e17bd259d7d",
+            "value_sha256": "d00d9792c1e28f92f60f1744e8a96f5006f618c73295d75d680919117cab6c6d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "service revenue",
           "period": null,
-          "value": "grew 14% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Service revenue grew 14% year-over-year versus the 9% growth in Q2 constant dollar payments volume growth, primarily due to pricing and card benefits.",
-          "following_context": "Data processing revenue grew 17%, above the 10% growth in processed transactions, primarily due to pricing, strong value-added services performance and higher cross-border transaction mix. International transaction revenue was up 6%, below the 12% increase in constant dollar cross-border volume growth, excluding intra-Europe, primarily due to lapping the currency volatility peak last year and mix.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 38,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "a46a8beef95e9a14c3497466d6492270551ea2f9d49ffbfb70bee0e90e862120",
+            "value_sha256": "f960ab6f709aad6a2cea831240dfb2a7b966727aa451b404f34722c3f6536155"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "data processing revenue",
           "period": null,
-          "value": "grew 17%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Data processing revenue grew 17%, above the 10% growth in processed transactions, primarily due to pricing, strong value-added services performance and higher cross-border transaction mix.",
-          "following_context": "International transaction revenue was up 6%, below the 12% increase in constant dollar cross-border volume growth, excluding intra-Europe, primarily due to lapping the currency volatility peak last year and mix.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 38,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "576189bf375ef0304ae3f181dd164f48e13f4ef487623c7a20675c79d3bbe89a",
+            "value_sha256": "8af96c433ce80ad51c671205dc8478ce944855cc35b71bd4294c1316aa70ba61"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "international transaction revenue",
           "period": null,
-          "value": "up 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "International transaction revenue was up 6%, below the 12% increase in constant dollar cross-border volume growth, excluding intra-Europe, primarily due to lapping the currency volatility peak last year and mix.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 38,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "ab1fb7787318c4173d0a4b5b6bc38640136807718c718db1b1763657830582a4",
+            "value_sha256": "8b2a4defda3ee191ddb6e294dc56056885a4e8e8617b6c69827ae50eab04bfde"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "other revenue",
           "period": null,
-          "value": "grew 45%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Other revenue grew 45%, primarily driven by growth in advisory and other value-added services, especially Marketing Services revenue as well as pricing.",
-          "following_context": "Client incentives grew 18%, a step-up of 4 points from Q2, primarily due to lapping low incentive growth last year and strong client performance.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 45.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 39,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "11bc687b57c36451b2fe28e9846fdb050e691b3abe007b00ad611189c66afec3",
+            "value_sha256": "3cdf92882354e2e9b4c92876c01bf3aa429d15749fcc1d2cdb7eaccbbdbe86b0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "client incentives",
           "period": null,
-          "value": "grew 18%, a step-up of 4 points from Q2",
           "value_num": null,
           "unit": null,
-          "verbatim": "Client incentives grew 18%, a step-up of 4 points from Q2, primarily due to lapping low incentive growth last year and strong client performance.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 18.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 39,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "c31a8e2feaafb34a4734c77a3dad9586d17aad88a13b76c207b934ddc861f99a",
+            "value_sha256": "b69e097ba4c6cf579ac9f5ac3dd1d8c2ab6ffd6d2dadb20b1a322a2cf74baa3f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "commercial payments volume",
           "period": null,
-          "value": "up 13% in constant dollars and accelerating 2 points from Q2",
           "value_num": null,
           "unit": null,
-          "verbatim": "Commercial payments volume grew faster than Visa's overall payments volume, up 13% in constant dollars and accelerating 2 points from Q2, driven by a point of acceleration from both U.S. and international volume growth.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 40,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "d77906afc7e4affc0d69c109e5c854e4c811feb7328718284dcf4dfe6959bbac",
+            "value_sha256": "2fb298a899ff872810d2ecdd99bac00188a2f4000d0c1edb50f6d3b9ab8e2d72"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "value-added services revenue",
           "period": null,
-          "value": "grew 34% year-over-year in constant dollars to $3.8 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Value-added services revenue grew 34% year-over-year in constant dollars to $3.8 billion, primarily due to 3 factors: one, underlying business drivers, which included strength in Marketing Services engagements related to FIFA; two, pricing; and three, the acquisition of Prisma.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 34.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 3.8,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 41,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "6f318ca2092bd8388416f2ecfc3b3c1ae0bab571796d6a6e77d4bde8d89f4608",
+            "value_sha256": "ee586d11e50443c0ea4d8e810114dcaada626834708ffaee72bd561a388badd8"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "VAS portfolio growth vs historical rates",
           "period": "past 12 months",
-          "value": "all 4 of our VAS portfolios have individually grown faster than their respective historical growth rates",
           "value_num": null,
           "unit": null,
-          "verbatim": "In fact, when we look at VAS results over the past 12 months, all 4 of our VAS portfolios have individually grown faster than their respective historical growth rates disclosed at Investor Day.",
-          "following_context": "Looking collectively at Issuing Solutions, Acceptance Solutions, and Risk and Security solutions, the revenue has grown more than 20% year-over-year every quarter over the last 12 months in constant dollars. This is faster than the fiscal 2021 to 2024 CAGR for total VAS revenue that we disclosed at Investor Day in February of 2025.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 42,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "237e4724763334405ca96278db0ef79b782af2004470e324e2d11d8e7d33db50",
+            "value_sha256": "8d9f3e4c4a1590086bd2118c9c308a703e98eacbd6e3eb82b673a3f47899968a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Issuing, Acceptance, Risk and Security combined revenue",
           "period": "last 12 months",
-          "value": "grown more than 20% year-over-year every quarter over the last 12 months in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Looking collectively at Issuing Solutions, Acceptance Solutions, and Risk and Security solutions, the revenue has grown more than 20% year-over-year every quarter over the last 12 months in constant dollars.",
-          "following_context": "This is faster than the fiscal 2021 to 2024 CAGR for total VAS revenue that we disclosed at Investor Day in February of 2025.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 42,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "de48d9744aea5ee655ca2a712baf07d6dc42f6d1689fad872d0e291f1d76f030",
+            "value_sha256": "026d0502426ec6fee3e63b2a8132a6dfce4ef501a1d3a177ceece21137f7c839"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "consulting projects delivered",
           "period": null,
-          "value": "1,200 consulting projects",
           "value_num": null,
           "unit": null,
-          "verbatim": "Just this past quarter alone, for over 700 clients across 100-plus countries and territories, we delivered 1,200 consulting projects, which is more than we delivered for all of 2019.",
-          "following_context": "Advisory and other continues to grow the fastest of the VAS portfolios, and we expect it to continue to well into the future, driven by a focus to better serve our clients.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 43,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "23cd30e28419094bfc4bbfcf2f5756fd1b42537771cff16a96e08a86c8be56ab",
+            "value_sha256": "809fcd5ee74b7beceaec9d29dd25a5b16b51d52050160bcbb7e59a92bbbe8962"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "operating expenses",
           "period": null,
-          "value": "grew 17%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Operating expenses grew 17%, primarily driven by marketing and personnel expenses.",
-          "following_context": "This was above our expectations, primarily due to larger-than-expected FX impact from balance sheet remeasurement and higher-than-expected personnel expense as a result of deferred compensation mark-to-market, which, as a reminder, is EPS neutral. This was partially offset by the timing of some marketing expenses that shifted into Q4. In our GAAP results, we had $563 million in severance costs related to changes to our workforce, including those that Ryan discussed, as we continue to focus on driving efficiency across the company and reinvest those savings in our highest potential growth opportunities.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 44,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "28157d0e46a584ff6fa6e08e4263269576abdf0ce9d4e8a3bb66e961fc9c4ed3",
+            "value_sha256": "8af96c433ce80ad51c671205dc8478ce944855cc35b71bd4294c1316aa70ba61"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EPS",
           "period": null,
-          "value": "$3.32, up 11% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "EPS was $3.32, up 11% year-over-year, better than expected with an approximately 0.5 point of benefit from exchange rates.",
-          "following_context": "For our non-GAAP results, Prisma and NewPay added a little under 1.5 points to net revenue growth, approximately 2 points to operating expense growth, and approximately 0.5 point to EPS growth.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.32,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 45,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "ef7ea06aa280c86605186e9c1b01279d728639a85d6dc677dbb60edff75133f9",
+            "value_sha256": "0e58f739fd04941da4f7a2ef7fcafec2cb463ba098010fb7f3b80c910a7147ee"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. payments volume (quarter-to-date)",
           "period": null,
-          "value": "up 9%, with both credit and debit up 9% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "U.S. payments volume was up 9%, with both credit and debit up 9% year-over-year, a step down from June primarily due to retail, including the timing of promotional shopping events, the lack of a days mix benefit that helped June and the change in the cost of fuel.",
-          "following_context": "For cross-border volume, excluding transactions within Europe, total volume grew 14% year-over-year, with e-commerce up 18% and travel up 12%. Processed transactions grew 9% year-over-year. As we move to our guidance, let me remind you that it is on an adjusted growth basis, defined as non-GAAP results in constant dollars and excluding acquisition impacts. You can review these disclosures in our earnings presentation for more detail.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 47,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "6fecbf4ea0a0fc82af858ecbed7213454c18333d51809aff485456427a2dc2ef",
+            "value_sha256": "863e2eeab484024f0e0eeb39eb35d51cdb58732d9b420918c58f681a64c19ae0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cross-border volume ex-Europe (quarter-to-date)",
           "period": null,
-          "value": "grew 14% year-over-year, with e-commerce up 18% and travel up 12%",
           "value_num": null,
           "unit": null,
-          "verbatim": "For cross-border volume, excluding transactions within Europe, total volume grew 14% year-over-year, with e-commerce up 18% and travel up 12%.",
-          "following_context": "Processed transactions grew 9% year-over-year. As we move to our guidance, let me remind you that it is on an adjusted growth basis, defined as non-GAAP results in constant dollars and excluding acquisition impacts. You can review these disclosures in our earnings presentation for more detail.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 18.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 47,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "55bec623e88234d5c46a1eed09f50715bb78cfb7476db8d2ca3143c3a3fa576f",
+            "value_sha256": "da99717b50b4c94a58bfe61931624c0a099176bb8b85b75014423aba0df25514"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "processed transactions (quarter-to-date)",
           "period": null,
-          "value": "grew 9% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Processed transactions grew 9% year-over-year.",
-          "following_context": "As we move to our guidance, let me remind you that it is on an adjusted growth basis, defined as non-GAAP results in constant dollars and excluding acquisition impacts. You can review these disclosures in our earnings presentation for more detail.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 47,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "77845fcfed67e748822dcb90a61f1df796f6d841ab4ae232e7d564b607054671",
+            "value_sha256": "eb70eb6417c26654d9d769bc605fbbdee806dc4d38537af0dab001bae96666ba"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Mexico inbound cross-border card-present volume growth",
           "period": null,
-          "value": "more than 70% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "And the U.S. wasn't the only beneficiary as Mexico and Canada saw inbound cross-border card-present volume growth of more than 70% and 35% year-over-year, respectively, from fans from countries with matches there.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 37,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "78ee5c40b0fe2c7b5bef84afbfb824cc32fb760cd7d48cc58ab840e7215c2999",
+            "value_sha256": "e51ce47e08efb4f002225b5c60801385340bad8b969e939eedbf0c13a842b3f8"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "fourth quarter net revenue",
           "period": null,
-          "value": "$12.1 billion, up 13% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We finished the year with fourth quarter net revenue of $12.1 billion, up 13% year-over-year.",
-          "following_context": "This resulted in full year record net revenue of $46 billion, up 15%, the strongest net revenue growth in over 15 years, excluding the post-pandemic recovery and acquisitions. CMS revenue grew 19%, and VAS revenue grew 30%, both in constant dollars and their revenue collectively represents more than 40% of our total net revenue. Our drivers for the year were strong. Payments volume was up 9% year-over-year in constant dollars. Commercial payments volume grew 12% for the year in constant dollars, faster than consumer and the fastest annual growth rate in 8 years, excluding the post-pandemic recovery. Total cross-border volumes, excluding intra-Europe, rose 12% year-over-year with travel up 11% and e-commerce up 15%, all in constant dollars.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.1,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "c5d63daf305851db1d08e2e83c86cd240b3ce8a044c4a12cf3f95f513f905c12",
+            "value_sha256": "445cce17a7e2dc2d4a81d6a51b481b0b3cc14d93021fb1db440dbbc3c79dffcb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "full year net revenue",
           "period": null,
-          "value": "record net revenue of $46 billion, up 15%",
           "value_num": null,
           "unit": null,
-          "verbatim": "This resulted in full year record net revenue of $46 billion, up 15%, the strongest net revenue growth in over 15 years, excluding the post-pandemic recovery and acquisitions.",
-          "following_context": "CMS revenue grew 19%, and VAS revenue grew 30%, both in constant dollars and their revenue collectively represents more than 40% of our total net revenue. Our drivers for the year were strong. Payments volume was up 9% year-over-year in constant dollars. Commercial payments volume grew 12% for the year in constant dollars, faster than consumer and the fastest annual growth rate in 8 years, excluding the post-pandemic recovery. Total cross-border volumes, excluding intra-Europe, rose 12% year-over-year with travel up 11% and e-commerce up 15%, all in constant dollars.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 46.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "559a0a6f7b053197dfcad91f49c898541f2f140dbb5b9ac51aceb40f819c010c",
+            "value_sha256": "5924453b956d8c806a719f4220315b58229910bfe5a94dd24fb2d1e5601c5bbd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "CMS revenue growth",
           "period": null,
-          "value": "grew 19%",
           "value_num": null,
           "unit": null,
-          "verbatim": "CMS revenue grew 19%, and VAS revenue grew 30%, both in constant dollars and their revenue collectively represents more than 40% of our total net revenue.",
-          "following_context": "Our drivers for the year were strong. Payments volume was up 9% year-over-year in constant dollars. Commercial payments volume grew 12% for the year in constant dollars, faster than consumer and the fastest annual growth rate in 8 years, excluding the post-pandemic recovery. Total cross-border volumes, excluding intra-Europe, rose 12% year-over-year with travel up 11% and e-commerce up 15%, all in constant dollars.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 19.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "0ac38497c156973beb83b75f91a3049bb238f406b9c263e11f157221f1937f29",
+            "value_sha256": "f5ae7b57ac67f34a8a06966e1b77c1236fbd5861e06c2c20e81e520b70f28508"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "VAS revenue growth",
           "period": null,
-          "value": "grew 30%",
           "value_num": null,
           "unit": null,
-          "verbatim": "CMS revenue grew 19%, and VAS revenue grew 30%, both in constant dollars and their revenue collectively represents more than 40% of our total net revenue.",
-          "following_context": "Our drivers for the year were strong. Payments volume was up 9% year-over-year in constant dollars. Commercial payments volume grew 12% for the year in constant dollars, faster than consumer and the fastest annual growth rate in 8 years, excluding the post-pandemic recovery. Total cross-border volumes, excluding intra-Europe, rose 12% year-over-year with travel up 11% and e-commerce up 15%, all in constant dollars.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "0ac38497c156973beb83b75f91a3049bb238f406b9c263e11f157221f1937f29",
+            "value_sha256": "395f9327c3dc26e5da5965fdf5864f04cc9d0412e24af45a990a70267268b4f7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "payments volume (full year)",
           "period": null,
-          "value": "up 9% year-over-year in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Payments volume was up 9% year-over-year in constant dollars.",
-          "following_context": "Commercial payments volume grew 12% for the year in constant dollars, faster than consumer and the fastest annual growth rate in 8 years, excluding the post-pandemic recovery. Total cross-border volumes, excluding intra-Europe, rose 12% year-over-year with travel up 11% and e-commerce up 15%, all in constant dollars.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "c2b38d537b7067ba4d1f5efdb3d073041acdb4197239b6f6236633e042993900",
+            "value_sha256": "ebbe5aa2378a1b0cc240520b4c4bb08216ffd3d1d06b5f3f541bd5792b36b395"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "commercial payments volume (full year)",
           "period": null,
-          "value": "grew 12% for the year in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Commercial payments volume grew 12% for the year in constant dollars, faster than consumer and the fastest annual growth rate in 8 years, excluding the post-pandemic recovery.",
-          "following_context": "Total cross-border volumes, excluding intra-Europe, rose 12% year-over-year with travel up 11% and e-commerce up 15%, all in constant dollars.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "f7555efdece1256df3610671649da5ab67236cfda42b105c928318453b8a738d",
+            "value_sha256": "7715612eea52ce065030409c95ebbd12ea64e6b811b3618bb20dd9867e7fcae8"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total cross-border volumes ex intra-Europe (full year)",
           "period": null,
-          "value": "rose 12% year-over-year with travel up 11% and e-commerce up 15%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total cross-border volumes, excluding intra-Europe, rose 12% year-over-year with travel up 11% and e-commerce up 15%, all in constant dollars.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "a831ebf466f4d3a10b7f8c408d6f20fb514d4393a5da6d2e1a53480fd0c669be",
+            "value_sha256": "6e9e883b9f7e27b25d415b084630302d243cb14349ed81761f1c5525027fe1ea"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "processed transactions (full year)",
           "period": null,
-          "value": "281 billion transactions, up 9% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We processed 281 billion transactions, up 9% year-over-year and with approximately 80% processing penetration globally.",
-          "following_context": "And Visa Direct topped 15 billion transactions, representing about $1.5 trillion in payments volume. While these numbers speak to our strength, in 2026, we also demonstrated that whenever technology changes commerce, we move with it. We anticipate what's next, and we enable its growth as the leading hyperscaler of payments globally. The foundation of all of this is trust. Visa brings trust with our scale, our network and infrastructure, and our products, all delivered through our Visa-as-a-Service stack.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 281.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 3,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "42a5d5430bb037211958db538326442b3b1f94edc0b2a2cee2352e3e8a5be89d",
+            "value_sha256": "bd0f2fcc6f3e3e848bf7090c0e97ff6efe889eb85c442696f3ecb63266a48d93"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Visa Direct transactions (full year)",
           "period": null,
-          "value": "topped 15 billion transactions, representing about $1.5 trillion in payments volume",
           "value_num": null,
           "unit": null,
-          "verbatim": "And Visa Direct topped 15 billion transactions, representing about $1.5 trillion in payments volume.",
-          "following_context": "While these numbers speak to our strength, in 2026, we also demonstrated that whenever technology changes commerce, we move with it. We anticipate what's next, and we enable its growth as the leading hyperscaler of payments globally. The foundation of all of this is trust. Visa brings trust with our scale, our network and infrastructure, and our products, all delivered through our Visa-as-a-Service stack.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 1.5,
+              "currency": "$",
+              "scale": "e12",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 3,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "fb15e16742105c90490c070a9ff430e28f76a23c0de8d7076746bffd3786d8d2",
+            "value_sha256": "e468bffab98faeeb68b5cba8c25781f7a797a125890972c9f84df6aa977faf83"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "credentials",
           "period": null,
-          "value": "5.2 billion credentials, up 6% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In 2026, we had 5.2 billion credentials, up 6% year-over-year with Latin America crossing the billionth credential milestone, and we continued to grow our credentials globally in a number of ways.",
-          "following_context": "We signed new co-brand agreements and expanded existing relationships with marquee brands around the world. In the hotel industry, this included Marriott in CEMEA, Asia Pacific, Latin America and North America. And in the airline industry, this included Air India in Asia Pacific, Copa Airlines in Latin America, Qatar Airways and Ethiopian Airlines in CEMEA. We also had the launch of debit portfolios for Alaska Airlines and Southwest Airlines in the U.S. in addition to our existing credit portfolios with these brands.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.2,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 4,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "d568bc6d868caa0f9dc2b6f75140501fde2807b817d0239a4fee65aff743495d",
+            "value_sha256": "012ad60cedae38baaa4b843629f4306f6f597c244692b7d63e310127bf4e2f7d"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "U.S. co-brand leadership",
           "period": null,
-          "value": "7 of the top 10 U.S. co-brands",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the U.S., we added the new Samsung Galaxy Card and maintained our leadership position with 7 of the top 10 U.S. co-brands.",
-          "following_context": "In the affluent space, we recently launched our new Visa Infinite card series, signing with more than 70 issuers in over 40 countries in Q4 alone with more than 15 issuers in Latin America, including Santander in Mexico as part of an expanded relationship with Visa.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 5,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "328da7bf7915bef5c572fe8152b903ad0d07c994b0bee4f02589681090432b0f",
+            "value_sha256": "6062656c86f5929dba877f62a44aff47f0c7091248d66ccc457e6047456885fd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Flex Credentials growth",
           "period": null,
-          "value": "tripled since last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our Flex Credentials have tripled since last year with continued strength from existing players as well as growth from new partners such as Cash App and Chime.",
-          "following_context": "We will also soon be launching the world's first stablecoin-linked Visa Flex Credential with Norwegian Block Exchange, or NBX, in Europe. Visa Pay, which connects wallets to any Visa-accepting seller worldwide, has nearly tripled its presence since last year to 11 countries.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 6,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "d428a58426823a3b7753e0d34bd0f8ba7793b25cdd8022d25110342083a52dd0",
+            "value_sha256": "00a151dd22e7aa738a5fcfc5014a429bc10fa4383aa84db540c736d6eb59877c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Visa Pay country presence",
           "period": null,
-          "value": "nearly tripled its presence since last year to 11 countries",
           "value_num": null,
           "unit": null,
-          "verbatim": "Visa Pay, which connects wallets to any Visa-accepting seller worldwide, has nearly tripled its presence since last year to 11 countries.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 6,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "4b9d83c3f8704131011fb3b832f10dc136b7eb089ce08a1b0be30375b0908ed0",
+            "value_sha256": "da7c3a7e5fa49d9e9e56c43cd07f9e50cdccfd6ff40fc30c71a685b0e28c1f22"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "tokenized credentials penetration",
           "period": null,
-          "value": "over 50% of all available credentials are tokenized, more than doubling from 5 years ago",
           "value_num": null,
           "unit": null,
-          "verbatim": "Today, over 50% of all available credentials are tokenized, more than doubling from 5 years ago.",
-          "following_context": "In 2026, we processed a tokenized transaction in 200 countries and territories for the first time, and now more than 60% of all e-commerce transactions are tokenized.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 7,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "b88a5804612c3f4a24ccfa3db348bd0e3a96cab9c443e776cf0c8cbebfeee07b",
+            "value_sha256": "b2f85130e5cb12bdea374b5659a4d338bc1a1988165286b49350ade1452d1c4d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "tokenized e-commerce transactions",
           "period": null,
-          "value": "more than 60% of all e-commerce transactions are tokenized",
           "value_num": null,
           "unit": null,
-          "verbatim": "In 2026, we processed a tokenized transaction in 200 countries and territories for the first time, and now more than 60% of all e-commerce transactions are tokenized.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 7,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "256e15d636da7c1e5f32c96baff6cbbd1311cc98c7705dd797626bbeae1b6510",
+            "value_sha256": "843909754894c0ec0699341bb5cc021279219feed9e8f9ac088a4d82b7843969"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "seller locations",
           "period": null,
-          "value": "well over 200 million seller locations",
           "value_num": null,
           "unit": null,
-          "verbatim": "On acceptance, we have well over 200 million seller locations driven by a more than 40% increase in Brazil, a more than 60% increase in Mexico and a more than 15% increase in India seller locations year-over-year.",
-          "following_context": "When we incorporate digital wallets, Visa credentials can be used at more than 200 million additional seller locations. So in total, Visa credentials can be used at more than 400 million seller locations. With this increased acceptance, Visa empowers buyers and sellers with secure ways to pay, such as with Tap to Pay, reaching nearly 85% penetration of face-to-face transactions globally.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 8,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "4dc9b2780ddb96f3065e03627a2c672c5f59dde30fcea4827395b054f1c2bb58",
+            "value_sha256": "7f2534b5afb06b477e8198387dbeb12124d4381afa7b2ba4dd7c30fead97d924"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Tap to Pay penetration of face-to-face transactions",
           "period": null,
-          "value": "nearly 85% penetration",
           "value_num": null,
           "unit": null,
-          "verbatim": "With this increased acceptance, Visa empowers buyers and sellers with secure ways to pay, such as with Tap to Pay, reaching nearly 85% penetration of face-to-face transactions globally.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 85.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 8,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "ba86b3b77e654c85d90e054aaad84bb0261e6e2a1a2e9f0aa88e28a37e6501e4",
+            "value_sha256": "b9b8f150134225cf2731d11140cc789976d2d95431e7f27f42da3360b357b1cd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. Tap to Pay penetration",
           "period": null,
-          "value": "75% penetration in the U.S.",
           "value_num": null,
           "unit": null,
-          "verbatim": "And with the final top 100 seller enabling Tap to Pay in 2026, we reached 75% penetration in the U.S., well on our way to the global total.",
-          "following_context": "Tap to Phone has driven new small business acceptance with more than 25 million active Visa-accepting mobile devices across more than 100 markets, surpassing more than 1 billion transactions in 2026, with 30% of Tap to Phone sellers new to our ecosystem this year. And for micro sellers in more emerging markets, we have Visa Accept, which has grown to 15 markets in just 1 year.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 75.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 9,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "5ff9f751b9eb774eec5d54ce07f9d1ca186891297565b0461462590f85436f9c",
+            "value_sha256": "20286f43af0a12e611d569cb43865da20b17fcf5fa34572e6093ec3b4d02d6c3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Tap to Phone active devices",
           "period": null,
-          "value": "more than 25 million active Visa-accepting mobile devices across more than 100 markets, surpassing more than 1 billion transactions",
           "value_num": null,
           "unit": null,
-          "verbatim": "Tap to Phone has driven new small business acceptance with more than 25 million active Visa-accepting mobile devices across more than 100 markets, surpassing more than 1 billion transactions in 2026, with 30% of Tap to Phone sellers new to our ecosystem this year.",
-          "following_context": "And for micro sellers in more emerging markets, we have Visa Accept, which has grown to 15 markets in just 1 year.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 9,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "24b87a048674a7a95f991b402b4b0c5ed3e4890b70f982847f2af31eda310ac1",
+            "value_sha256": "3bd0ebb8f3dae7a07411e0104386a6a00ec370e653410eb2402792e2156a3237"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Visa Direct endpoints",
           "period": null,
-          "value": "more than 18 billion endpoints across cards, accounts and wallets, up from 12 billion in 2025",
           "value_num": null,
           "unit": null,
-          "verbatim": "In fact, we have the largest money movement platform on the planet with Visa Direct as measured by transactions, volumes and accounts with more than 18 billion endpoints across cards, accounts and wallets, up from 12 billion in 2025.",
-          "following_context": "Clients value the trust that this brings, and we have over 40 clients who each used more than 5 different Visa Direct use cases this year.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 18.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2025.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 10,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "8aff1f90a0c9158054a20d7d42fe94f9d81d8009cf3d87e0d64e9aaa85dcac69",
+            "value_sha256": "65c445ae068a9a66d35a3ea6d13bc5ce681f0d150a6d563877aadebde608a3e3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "stablecoin settlement run rate",
           "period": null,
-          "value": "surpassed $25 billion in annualized volume, up 10x year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In stablecoin settlement, our run rate has surpassed $25 billion in annualized volume, up 10x year-over-year.",
-          "following_context": "We can now support 10 blockchains, more than doubling from last year and are operating in all 5 regions.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 18,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "fea7febe3e56ecdd7cd2139adfd45687027fbc28a58392878effeb9266203bdb",
+            "value_sha256": "3bdc9f68423b1cfa0cfcc664ac365d51468f6bbf050c92b707382ba3c0a42d34"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "stablecoin-linked card programs",
           "period": null,
-          "value": "over 225 stablecoin-linked card programs, up more than 70% year-over-year with 150% plus growth in volume across 5 million cards",
           "value_num": null,
           "unit": null,
-          "verbatim": "We now have over 225 stablecoin-linked card programs, up more than 70% year-over-year with 150% plus growth in volume across 5 million cards in more than 50 countries with issuers across crypto exchanges, neobanks, wallets and remitters.",
-          "following_context": "That is trust at scale. And the trust that the Visa network and infrastructure represent is only amplified by the products we provide on top of it.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 225.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 150.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            },
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 20,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "31fcccb292adb617286662c481d8538bfe6dda15ab12539d825f856d515b996b",
+            "value_sha256": "89c32345931c946492f2abe1940341b19a685b5b0fcd4029812536507641d1d3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "product development teams adopting agentic toolchain",
           "period": null,
-          "value": "more than 60% of our global product development and engineering teams have adopted this new way of working",
           "value_num": null,
           "unit": null,
-          "verbatim": "Today, more than 60% of our global product development and engineering teams have adopted this new way of working with the intent of reaching 100% this year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 21,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "28771559d9fe5ed733cd9e44a69362538f43eb3dd4b7565dd0cbb1ccc3ba7d93",
+            "value_sha256": "b8f23b680aef834db3147b71de94c95dda8e3a944f2f839e42b6ee40d0ea21ff"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI partners live",
           "period": null,
-          "value": "nearly 50 AI partners live and in production",
           "value_num": null,
           "unit": null,
-          "verbatim": "We have nearly 50 AI partners live and in production including more recently Shopify's Shop Pay, with that number expected to double in the coming months.",
-          "following_context": "We are also collaborating with Anthropic to bring their commerce blueprints to our merchant network, combining the intelligence of Claude with the trust, security and global reach of the Visa network.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 22,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "d4c592b77ba09841be12828fc8e48b5c30632600e8e197d11f16a3c30b0c61ab",
+            "value_sha256": "1bedac23df4ac867cd20e03a66fddc975beb7433dec72617d274f8682b27f337"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "VAS revenue (full year)",
           "period": "fiscal 2026",
-          "value": "grew revenue 30% in constant dollars to $14 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "In fiscal 2026, our VAS business grew revenue 30% in constant dollars to $14 billion, essentially double our 2023 VAS revenue.",
-          "following_context": "Our issuing, acceptance, and risk and security portfolios collectively grew more than 20% in constant dollars this year, a growth rate we believe is sustainable in 2027 for 2 primary reasons: the underlying drivers of revenue and demand from clients. I'll go deeper into each one.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 14.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 25,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "1a88bb05b60c40004b227d79cf89a12082e82054d38a6e12c3afaa7db96f9d90",
+            "value_sha256": "457f9ac1bfbe9135a2b0264161543f87f7ec531e8c94e02ca7776d5234840a8a"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "VAS revenue linked to transactions, cards and accounts",
           "period": "last 5 years",
-          "value": "more than 80% over the last 5 years",
           "value_num": null,
           "unit": null,
-          "verbatim": "First, transactions, cards and accounts had driven the vast majority of our VAS revenue, more than 80% over the last 5 years, and that will continue as our clients grow, we expand to new clients and develop new products, and we were able to price those products to value.",
-          "following_context": "For example, Pismo signed clients in Sweden, Belgium and Guatemala this quarter, bringing the total for the year to 28 countries, almost doubling from last year. Our success has enabled us to sell more products fueled by these underlying drivers.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 26,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "c0151a246bd17d21f2b6ddd2fd41fd69341e5947bcbefce4b82f2baf288c0bcb",
+            "value_sha256": "d2661344e1b05f2b20782feb4fd79828dddda0376730085bb861a21d601865d4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "product releases",
           "period": null,
-          "value": "over 350 product releases, up 25% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We demonstrated our ability to significantly accelerate product development, with the true birth of tokenized agentic commerce transactions powered by Visa, with blockchain infrastructure and platforms designed for payments, with the increased utilization of AI across our business to deliver over 350 product releases, up 25% year-over-year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 350.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 34,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "4f62cc0eacafc08123a7c656e376749e76431844ba5aaed6e8d51e6cdc7d7fad",
+            "value_sha256": "cee6e33e9cbe34df319f4ad56b731476f9c1947318ca436d4cb4ac0f1f39bde3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "transactions per second",
           "period": null,
-          "value": "nearly 9,000 transactions per second in over 200 countries and territories every day, up 9% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We delivered secure, reliable payments, nearly 9,000 transactions per second in over 200 countries and territories every day, up 9% year-over-year.",
-          "following_context": "We brought the best of Visa technology to the world for free with the Visa Vulnerability Agentic Harness.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 35,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "e0e1c607441a8f536fb88dbcfc4c07ac86548d8edeee62914ba7f4bb4d4bd4e4",
+            "value_sha256": "475b2af0b5f2f416db3238aac46a2fa86884c69adc4bd6afb3f5f7e0c436fd61"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "fourth quarter net revenue growth (CFO)",
           "period": null,
-          "value": "up 13% year-over-year in nominal and constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Fiscal fourth quarter net revenue was up 13% year-over-year in nominal and constant dollars, in line with our expectations, reflecting broad-based strength across all our key drivers.",
-          "following_context": "In constant dollars, global payments volume was up 9% year-over-year. Cross-border volume, excluding intra-Europe, was up 14%. And total processed transactions grew 10%. EPS was up 17% year-over-year in nominal and constant dollars, better than expected, primarily due to a lower-than-expected tax rate.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 39,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "1ff2ef4887dadd360d07086c4b4a89cdddf779f046b545474eb5f3d9723b0928",
+            "value_sha256": "bfcefd7c7edeea0f4bffb0bad5ee860eb2655e197bd60f7bf0b180356edf0431"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "global payments volume (Q4)",
           "period": null,
-          "value": "up 9% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In constant dollars, global payments volume was up 9% year-over-year. Cross-border volume, excluding intra-Europe, was up 14%. And total processed transactions grew 10%.",
-          "following_context": "EPS was up 17% year-over-year in nominal and constant dollars, better than expected, primarily due to a lower-than-expected tax rate.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 39,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "4ea2fe3cdef3ead0d8d9285f7d9a8c2c7d660e3d82d963a060038147f2bc3933",
+            "value_sha256": "aa228fde360a795579bcada9dd0454bf99d3d3cc5225b2eb8389eb84c7aa0b8a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cross-border volume ex intra-Europe (Q4)",
           "period": null,
-          "value": "up 14%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In constant dollars, global payments volume was up 9% year-over-year. Cross-border volume, excluding intra-Europe, was up 14%. And total processed transactions grew 10%.",
-          "following_context": "EPS was up 17% year-over-year in nominal and constant dollars, better than expected, primarily due to a lower-than-expected tax rate.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 39,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "4ea2fe3cdef3ead0d8d9285f7d9a8c2c7d660e3d82d963a060038147f2bc3933",
+            "value_sha256": "8d7e9d587cce9e840b0e3f543d3541ca54575b2f89f0e00a84af86c299906501"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "processed transactions (Q4)",
           "period": null,
-          "value": "grew 10%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In constant dollars, global payments volume was up 9% year-over-year. Cross-border volume, excluding intra-Europe, was up 14%. And total processed transactions grew 10%.",
-          "following_context": "EPS was up 17% year-over-year in nominal and constant dollars, better than expected, primarily due to a lower-than-expected tax rate.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 39,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "4ea2fe3cdef3ead0d8d9285f7d9a8c2c7d660e3d82d963a060038147f2bc3933",
+            "value_sha256": "4cf21ec7a6c619b263f188a787ccf3276aad8de758c1a4a3496ff92b6be3c1b9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EPS (Q4)",
           "period": null,
-          "value": "up 17% year-over-year in nominal and constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "EPS was up 17% year-over-year in nominal and constant dollars, better than expected, primarily due to a lower-than-expected tax rate.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 39,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "b7fd33fd2cf42d1e8a62b20e64af8b89cd8539396c69666aa28c8109c5003c60",
+            "value_sha256": "5b456e62659d969385172fa72777243d708ecce94921aeff7a41184a48f80ae9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. payments volume (Q4)",
           "period": null,
-          "value": "grew 10% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "U.S. payments volume grew 10% year-over-year, generally consistent with Q3 as we saw several factors from Q3 continuing to play a role, including the cost of fuel, retail, strong Visa Direct growth and FIFA-related spend.",
-          "following_context": "From the FIFA World Cup round of 32 matches on July 1 through the final on July 19, we continued to see both U.S. host cities as well as destination cities benefit from the influx of FIFA fans with total U.S. card-present spend payments volume growth elevated above pre and post tournament levels. For the quarter, both the U.S. discretionary and nondiscretionary spend growth remained strong.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 40,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "fa3dfbe9890234b94971121f7045c270070978629157a43592bf32de0855103e",
+            "value_sha256": "4d5f2c76fa7fbfbca212b246f0ed14e7998d15496f2fd9890fa1e7fab5133e6c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. credit volume (Q4)",
           "period": null,
-          "value": "grew 11% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Fourth quarter U.S. credit grew 11% year-over-year and debit grew 9%.",
-          "following_context": "Growth across consumer spend bands remained relatively consistent with prior quarters with the highest spend band continuing to grow the fastest. We did not see signs of the lower-spend consumer weakening in our volumes. Fourth quarter total international payments volume was up 9% year-over-year in constant dollars, generally consistent with the growth we've seen all year.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 41,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "616df1a66a424f82d61f1b9b923feaff88fa3e92db61a601ad52d4988d37a6ac",
+            "value_sha256": "087c3e2d0405d1a0d3c9f7471c4da5340e3203ceccfc89401829e2063ed78cec"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. debit volume (Q4)",
           "period": null,
-          "value": "grew 9%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Fourth quarter U.S. credit grew 11% year-over-year and debit grew 9%.",
-          "following_context": "Growth across consumer spend bands remained relatively consistent with prior quarters with the highest spend band continuing to grow the fastest. We did not see signs of the lower-spend consumer weakening in our volumes. Fourth quarter total international payments volume was up 9% year-over-year in constant dollars, generally consistent with the growth we've seen all year.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 41,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "616df1a66a424f82d61f1b9b923feaff88fa3e92db61a601ad52d4988d37a6ac",
+            "value_sha256": "63ec8c0a400bdcf426d84d43eff99ceb108a4a065c1c77ac3a4a273ace0b7aa2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total international payments volume (Q4)",
           "period": null,
-          "value": "up 9% year-over-year in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Fourth quarter total international payments volume was up 9% year-over-year in constant dollars, generally consistent with the growth we've seen all year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 41,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "7953439b0bcbf5b6179f70d74b72ca0d4c989e9634b5e206fddccbae4f048bb3",
+            "value_sha256": "ebbe5aa2378a1b0cc240520b4c4bb08216ffd3d1d06b5f3f541bd5792b36b395"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total cross-border volume ex intra-Europe (Q4)",
           "period": null,
-          "value": "up 14% year-over-year, more than 2 points above Q3",
           "value_num": null,
           "unit": null,
-          "verbatim": "Q4 total cross-border volume was up 14% year-over-year, more than 2 points above Q3, primarily due to travel.",
-          "following_context": "Travel-related cross-border volume was up 13%, 3 points of acceleration from Q3, primarily driven by improvements in both CEMEA inbound and outbound. Overall, U.S. inbound cross-border growth for July remained elevated following strong growth in June, reflecting in part the demand around the FIFA World Cup.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 42,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "a98de78911e24857e5cfcac303faf0d4db2fa9f4db68dc7c06c3732cd0564eb4",
+            "value_sha256": "d23dedb38d85e955a1c47ef33f8cf8c0e86d17aeb4c3cc8eb432e3c0a711de67"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "travel-related cross-border volume (Q4)",
           "period": null,
-          "value": "up 13%, 3 points of acceleration from Q3",
           "value_num": null,
           "unit": null,
-          "verbatim": "Travel-related cross-border volume was up 13%, 3 points of acceleration from Q3, primarily driven by improvements in both CEMEA inbound and outbound.",
-          "following_context": "Overall, U.S. inbound cross-border growth for July remained elevated following strong growth in June, reflecting in part the demand around the FIFA World Cup.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 42,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "6775070d86932d6ebf6b259a90e3ab33fce8e8c293e60d17d2bb5e6effd3fb44",
+            "value_sha256": "116f561761e023108f7aefa7e6436ed87e125dcb8dbc13d32eb6b966b943bd99"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "inbound cross-border card-present spend in U.S. host cities (FIFA)",
           "period": "July 1 to July 19",
-          "value": "increased by over 20% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Focusing on inbound cross-border card-present spend, U.S. host cities increased by over 20% year-over-year from July 1 to July 19, with the most significant increases driven by fans from Argentina and Colombia.",
-          "following_context": "Cross-border e-commerce volume was up 17%, more than 1 point above Q3, primarily driven by retail, including spending on AI platforms.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 43,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "a0aff220efd8e354bb149344e77510b92d80f2426677b51434c1c59c4e1323e8",
+            "value_sha256": "f4bf46b17be0b067e05d0445a41539eb43c6ded3f2d600ec791b3cb7e298d48f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cross-border e-commerce volume (Q4)",
           "period": null,
-          "value": "up 17%, more than 1 point above Q3",
           "value_num": null,
           "unit": null,
-          "verbatim": "Cross-border e-commerce volume was up 17%, more than 1 point above Q3, primarily driven by retail, including spending on AI platforms.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 43,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "63fde5816f2c3063fb92864347ec74f92eca0372f60a0930d2bcf834a11791af",
+            "value_sha256": "fb40d8f79ed7d60a996ebb95b4a6cc7cbd2e95270750bf2d529f8d9737834b81"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "service revenue (Q4)",
           "period": null,
-          "value": "grew 14% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Service revenue grew 14% year-over-year, above the 10% growth in Q3 constant dollar payments volume primarily due to pricing.",
-          "following_context": "Data processing revenue grew 16%, above the 10% growth in processed transactions, primarily due to pricing, higher cross-border transaction mix and value-added services. International transaction revenue was up 8%, below that 14% increase in constant dollar cross-border volume growth, excluding intra-Europe, primarily due to lower volatility levels than last year and mix.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 44,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "f336005921908c10a51a95d1e6e7598fc0f83ff4302a156307c454fde296ce09",
+            "value_sha256": "f960ab6f709aad6a2cea831240dfb2a7b966727aa451b404f34722c3f6536155"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "data processing revenue (Q4)",
           "period": null,
-          "value": "grew 16%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Data processing revenue grew 16%, above the 10% growth in processed transactions, primarily due to pricing, higher cross-border transaction mix and value-added services.",
-          "following_context": "International transaction revenue was up 8%, below that 14% increase in constant dollar cross-border volume growth, excluding intra-Europe, primarily due to lower volatility levels than last year and mix.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 44,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "f031bdbe5752f361f9249ad4b9b50c28b28b37d1ef6ae40285074babb566ad48",
+            "value_sha256": "cd922e747508e7820289932c6820507ef6e2809f34722438b47dfa8871403d90"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "international transaction revenue (Q4)",
           "period": null,
-          "value": "up 8%",
           "value_num": null,
           "unit": null,
-          "verbatim": "International transaction revenue was up 8%, below that 14% increase in constant dollar cross-border volume growth, excluding intra-Europe, primarily due to lower volatility levels than last year and mix.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 44,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "7439adb73a3c2ada86c7822c469e873583dd1f91e9ef448fd3781a6fc06f3f82",
+            "value_sha256": "ff804ca5e84bbb72571903edd52c343bd9d31c1a29fb86bc3ebdd21a474ca4be"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "other revenue (Q4)",
           "period": null,
-          "value": "grew 40%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Other revenue grew 40%, primarily driven by growth in advisory and other value-added services, especially marketing services revenue as well as pricing.",
-          "following_context": "Client incentives grew 21%, a step-up of nearly 3 points from Q3, primarily due to new deals that were signed in Q3 and early in Q4.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 45,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "b30a9573d012edc657b59b62d307ba02f6972a538617b56a2b8634c66b347dbc",
+            "value_sha256": "f01e60d904ee5955f78278ab60fbf00244098905b7784f0abd0d8d7cfeb12517"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "client incentives (Q4)",
           "period": null,
-          "value": "grew 21%, a step-up of nearly 3 points from Q3",
           "value_num": null,
           "unit": null,
-          "verbatim": "Client incentives grew 21%, a step-up of nearly 3 points from Q3, primarily due to new deals that were signed in Q3 and early in Q4.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 21.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 45,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "ab4367973cf5836ec28e3e1ab5b88582bacc1ca053f36e0d7ed9bb1072f31f78",
+            "value_sha256": "439fd13243f2866939a9859f2d3fd4c2a3cd0d980957babaf711c58cb4fea2ad"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "commercial and money movement solutions revenue (Q4)",
           "period": null,
-          "value": "grew 16% year-over-year in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Commercial and money movement solutions revenue grew 16% year-over-year in constant dollars with strong growth in the underlying drivers.",
-          "following_context": "Commercial payments volume grew 13% in constant dollars, consistent with Q3 and faster than Visa's overall payments volume growth.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 46,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "6595a323adeed219ebaedd08b46cfea1633186c4286967039edb9d574910939d",
+            "value_sha256": "3a84cfa4bec02ce41bfc14997af3e03a838e156f12dbf5ca110814597207a881"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "commercial payments volume (Q4)",
           "period": null,
-          "value": "grew 13% in constant dollars, consistent with Q3",
           "value_num": null,
           "unit": null,
-          "verbatim": "Commercial payments volume grew 13% in constant dollars, consistent with Q3 and faster than Visa's overall payments volume growth.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 46,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "07df44543d2e08eb330eba04d3ae3ab74f8427c2e76c4f668f83345ade601acc",
+            "value_sha256": "0e2d6553a03103904958719d68af8408f7f1c3c98321e8ed72caa07dd8c8daec"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Visa Direct transactions (Q4)",
           "period": null,
-          "value": "grew 23% year-over-year, up nearly 2 points from Q3",
           "value_num": null,
           "unit": null,
-          "verbatim": "Visa Direct transactions grew 23% year-over-year, up nearly 2 points from Q3, primarily due to strength in the U.S. and LAC.",
-          "following_context": "Value-added services revenue grew 31% year-over-year in constant dollars to $4 billion, driven by 3 factors: one, underlying business drivers, which included strength in marketing services engagements related to FIFA; two, pricing; and three, the acquisition of Prisma.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 23.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 47,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "612a5ff7af5dac3d32b33f8a4bb8fa5f1dd7c87042d1d8fc838580f85ed87440",
+            "value_sha256": "9d173b95fda5bc22a0a5ed1439e14f06f9ba63c80d85580b129dc27444a0ddf5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "value-added services revenue (Q4)",
           "period": null,
-          "value": "grew 31% year-over-year in constant dollars to $4 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Value-added services revenue grew 31% year-over-year in constant dollars to $4 billion, driven by 3 factors: one, underlying business drivers, which included strength in marketing services engagements related to FIFA; two, pricing; and three, the acquisition of Prisma.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 31.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 4.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 47,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "15c31c077be01e445f331d74f77c145d50059fab16a87942170121bf7ba9be6a",
+            "value_sha256": "0c17c2eaf44da64ddacff554fe208747b1506b5fe87b762de7f462d9ef27c7c9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "operating expenses (Q4)",
           "period": null,
-          "value": "grew 12%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Operating expenses grew 12%, consistent with our expectations, driven primarily by marketing and personnel expenses.",
-          "following_context": "Nonoperating expense was $57 million, better than expected, primarily due to higher average cash balances. Our tax rate for the quarter was 18.4%, lower than our expectations due to claim of right tax benefits related to recent legal settlements. EPS was $3.48, up 17% year-over-year, better than expected with minimal impact from exchange rates. For our non-GAAP results, Prisma and Newpay added approximately 1 point to net revenue growth, approximately 2 points to operating expense growth and approximately 0.5 point to EPS growth.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 48,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "842ba889fedcb873c1f750a74201fb570a7a50c130f057fec6a310fa5e901842",
+            "value_sha256": "fab31a4f97f51026cc7a05263e3777fd00830b07d3a13886fc2bb0d374edf626"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EPS (Q4)",
           "period": null,
-          "value": "$3.48, up 17% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "EPS was $3.48, up 17% year-over-year, better than expected with minimal impact from exchange rates.",
-          "following_context": "For our non-GAAP results, Prisma and Newpay added approximately 1 point to net revenue growth, approximately 2 points to operating expense growth and approximately 0.5 point to EPS growth.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.48,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 48,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "0378a16a2daf7d801937a0e1a2ebf969498ba8507adf55583845c61affe7b728",
+            "value_sha256": "82d4711944f1201a1abb462a311d60aa12cb5e43792504b94bf4a1a201d1087f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "full year net revenue",
           "period": null,
-          "value": "grew 15% to $46 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Net revenue grew 15% to $46 billion, and EPS grew 16% to $13.27.",
-          "following_context": "Full year 2026 CMS revenue growth was 19%, and value-added services revenue growth was 30% on a constant dollar basis. This foundation of strong growth will continue in 2027.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 46.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 50,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "a2384a4adbc9080cf3c9fa3cfe387f155e5f3e62d9d34e26c168a15132109d70",
+            "value_sha256": "709636e4ec097aa359a2d6cea5454212c0d511d1434e680760b16e292322d739"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "full year EPS",
           "period": null,
-          "value": "grew 16% to $13.27",
           "value_num": null,
           "unit": null,
-          "verbatim": "Net revenue grew 15% to $46 billion, and EPS grew 16% to $13.27.",
-          "following_context": "Full year 2026 CMS revenue growth was 19%, and value-added services revenue growth was 30% on a constant dollar basis. This foundation of strong growth will continue in 2027.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 13.27,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 50,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "a2384a4adbc9080cf3c9fa3cfe387f155e5f3e62d9d34e26c168a15132109d70",
+            "value_sha256": "45391e7fdb7fba6f7fbc74b203d12dde35b71186a2d65ceb5e529055e9c0f07f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "full year CMS revenue growth",
           "period": "full year 2026",
-          "value": "19%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Full year 2026 CMS revenue growth was 19%, and value-added services revenue growth was 30% on a constant dollar basis.",
-          "following_context": "This foundation of strong growth will continue in 2027.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 19.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 50,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "4724aeac9ba28291cf05a5e741342ae4ecd4e761a8e3c0b4583d4574c07682d8",
+            "value_sha256": "b32c7c02d5358d803e37a6ab5c611503133f6cdd0b3027ffa77f756078f09bb6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "full year VAS revenue growth",
           "period": "full year 2026",
-          "value": "30% on a constant dollar basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "Full year 2026 CMS revenue growth was 19%, and value-added services revenue growth was 30% on a constant dollar basis.",
-          "following_context": "This foundation of strong growth will continue in 2027.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 50,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "4724aeac9ba28291cf05a5e741342ae4ecd4e761a8e3c0b4583d4574c07682d8",
+            "value_sha256": "2e8f914e57560df6083b884dac69c59f7cee6a59bfb3d14b08f8cb154dda0de3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. payments volume (quarter-to-date)",
           "period": null,
-          "value": "up 10%, with credit up 11% and debit up 9% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "U.S. payments volume was up 10%, with credit up 11% and debit up 9% year-over-year.",
-          "following_context": "For constant dollar cross-border volume, excluding transactions within Europe, total volume grew 15% year-over-year with e-commerce up 17% and travel up 13%. Processed transactions grew 10% year-over-year.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 62,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "56ed2bb3186eaf88b4ee4bf2905b7f6a9666e0043de80dd5f6217b880b475292",
+            "value_sha256": "1bf0239b3874f1810909403ceeb1eb4ffa118f1e65b15d0237e4c9e3b71ec4de"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cross-border volume ex-Europe (quarter-to-date)",
           "period": null,
-          "value": "grew 15% year-over-year with e-commerce up 17% and travel up 13%",
           "value_num": null,
           "unit": null,
-          "verbatim": "For constant dollar cross-border volume, excluding transactions within Europe, total volume grew 15% year-over-year with e-commerce up 17% and travel up 13%.",
-          "following_context": "Processed transactions grew 10% year-over-year.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 62,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "4b307c4bcf57a6bc946d45d336305ca88d785a0c10183719f08070383b87db0e",
+            "value_sha256": "822e5cd73d9669d36c219a0fb56c08386569a097974aed44ad78a527b09a35ef"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "processed transactions (quarter-to-date)",
           "period": null,
-          "value": "grew 10% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Processed transactions grew 10% year-over-year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 62,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "6050872e8cfc442f66f2d076b8def9d77fc1cb47018fb1fa0dc848c2c488d751",
+            "value_sha256": "4d5f2c76fa7fbfbca212b246f0ed14e7998d15496f2fd9890fa1e7fab5133e6c"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "quarterly dividend increase",
           "period": null,
-          "value": "increase in our quarterly dividend of 16%",
           "value_num": null,
           "unit": null,
-          "verbatim": "On capital return, the Board has declared an increase in our quarterly dividend of 16%, and we intend to return excess free cash flow to shareholders through buybacks.",
-          "following_context": "All of this results in our adjusted EPS growth to be in the low double digits to low teens.",
           "source_ref": "CIQ transcript: Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q4 2026 Earnings Call, Oct 27, 2026.rtf",
+            "transcript_sha256": "e9722f3376c13b9cab8eb18974e09d4825ae1bfb7c67293d2cd695974b0437a0",
+            "paragraph": 60,
+            "speaker": "Christopher Suh",
+            "quote_sha256": "acc652e0e5c88b4f0b72f0513340a52d9098b69bf5d914b0f4252864bd84aff9",
+            "value_sha256": "9ee07e350c0c3a3ef819988307729a6cf3f5f3a77218e53524303a2dce66d49a"
+          }
         }
       ],
       "qa_flags": [
@@ -16716,6 +18715,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

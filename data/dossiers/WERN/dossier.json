@@ -8942,409 +8942,1030 @@
           "kind": "leading_indicator",
           "metric": "FirstFleet customer renewal rate",
           "period": "Q1 2026",
-          "value": "98% renewal rate across 2/3 of the portfolio addressed to date",
           "value_num": null,
           "unit": null,
-          "verbatim": "FirstFleet customers have been receptive with a 98% renewal rate across 2/3 of the portfolio addressed to date.",
-          "following_context": "We have strong visibility into the remaining 1/3 and expect a similarly strong retention. Our integration of FirstFleet is progressing ahead of schedule.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 98.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 4,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "6aedb7ab016bb2fc69784446a139abf0d7ceff5a53f31b765dd8ce6ccf5af829",
+            "value_sha256": "715faac7fdce76d3df57e4da090a64aae307dd45f003ec2b8acd4e3e7151e97f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "FirstFleet synergy savings realized",
           "period": "three months in",
-          "value": "over $1 million in savings",
           "value_num": null,
           "unit": null,
-          "verbatim": "At three months in, we have already realized over $1 million in savings and have implemented actions representing over $5 million of our $6 million synergy target for the current year.",
-          "following_context": "We remain confident in capturing the full $18 million in cost synergies mid-next year, which we expect will improve FirstFleet's operating margin by approximately 300 basis points. We are already seeing revenue synergies, including accelerated fleet startups, project opportunities, and increased backhaul. While still early, these efforts are enhancing customer value and improving returns. Top-line metrics show positive inflection, with strong improvement in dedicated revenue per truck per week and One-Way trucking revenues per total mile. Contract renewals are progressing well. Customers are accepting higher rates and supporting adjustments where needed to dedicated driver pay. Our dedicated customer retention, including FirstFleet, has climbed to 95%, closer to our historical trends.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 5,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "40d6f0578aa3521d462b7f4cf37f4e017351ff2ca484162c47821883ae3e25e5",
+            "value_sha256": "9f437c874b761121c7796f9614cc336874338cf03bd1df09baefef86fca4ddb6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "dedicated customer retention (including FirstFleet)",
           "period": "Q1 2026",
-          "value": "95%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our dedicated customer retention, including FirstFleet, has climbed to 95%, closer to our historical trends.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 95.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 5,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "a1c6f71e4ee86c646390b1f96fb339b5429509ac34aa26ec24f937aa5bb2bbdb",
+            "value_sha256": "e747bb4115cdd3296303e1512a718efcf382f81db9f88b19aea65cb3233095f0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "One-Way miles per truck",
           "period": "first quarter",
-          "value": "up 6% over prior year",
           "value_num": null,
           "unit": null,
-          "verbatim": "The result of our One-Way restructuring is showing early gains, with first quarter miles per truck up 6% over prior year, despite significant disruptions from winter storms and revenues per total mile increasing 3.6%, our strongest pricing inflection in over three years.",
-          "following_context": "Strong execution of these initiatives led to One-Way revenue per truck per week increasing 9.6%, reflecting the combined effect of our restructuring and pricing actions. Pricing in the quarter departed from seasonal trends as Q1 rates typically decline sequentially after peak season. However, rates were flat sequentially, a pattern we have not seen in the last 10 years. One-Way Truckload revenue per total mile benefited from a smaller, more targeted fleet, intentionality to replace less profitable freight, stronger spot rates, and contractual rate increases secured through bid season.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 6,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "ff1a673787adc92ade8e1c0690e0332d887eeea87a957dda2fea1f40c90ccff0",
+            "value_sha256": "4d31ca6b490a7c4e91e7837250a0bbd48fef60f3903a959d7e3cb188bf8576f3"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "One-Way revenues per total mile",
           "period": "first quarter",
-          "value": "increasing 3.6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "The result of our One-Way restructuring is showing early gains, with first quarter miles per truck up 6% over prior year, despite significant disruptions from winter storms and revenues per total mile increasing 3.6%, our strongest pricing inflection in over three years.",
-          "following_context": "Strong execution of these initiatives led to One-Way revenue per truck per week increasing 9.6%, reflecting the combined effect of our restructuring and pricing actions. Pricing in the quarter departed from seasonal trends as Q1 rates typically decline sequentially after peak season. However, rates were flat sequentially, a pattern we have not seen in the last 10 years. One-Way Truckload revenue per total mile benefited from a smaller, more targeted fleet, intentionality to replace less profitable freight, stronger spot rates, and contractual rate increases secured through bid season.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.6,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 6,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "ff1a673787adc92ade8e1c0690e0332d887eeea87a957dda2fea1f40c90ccff0",
+            "value_sha256": "bd49ae9311b96d7194534884723a87af67ec1e60b808137e49d54c817e052c73"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "One-Way revenue per truck per week",
           "period": "Q1 2026",
-          "value": "increasing 9.6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Strong execution of these initiatives led to One-Way revenue per truck per week increasing 9.6%, reflecting the combined effect of our restructuring and pricing actions.",
-          "following_context": "Pricing in the quarter departed from seasonal trends as Q1 rates typically decline sequentially after peak season. However, rates were flat sequentially, a pattern we have not seen in the last 10 years. One-Way Truckload revenue per total mile benefited from a smaller, more targeted fleet, intentionality to replace less profitable freight, stronger spot rates, and contractual rate increases secured through bid season.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.6,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 6,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "00140d7a2ff2bddd281cb373e482ce002e437e80c2b8e26e3e6592ba9c89b322",
+            "value_sha256": "979b13405feda48f8b6a91f302f573712beae3748f090ebdb186c998c04f6c8c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "DOT preventable accident rate per million miles",
           "period": "Q1 2026",
-          "value": "down an impressive 45% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q1, our DOT preventable accident rate per million miles was down an impressive 45% year-over-year.",
-          "following_context": "Excluding FirstFleet, insurance and claims expense was at its lowest quarterly level in over a year. We also continued to lower our cost to serve through technology and disciplined execution. Total operating expenses, excluding gains, insurance, fuel, and purchased transportation, were down by 5% year-over-year, and our logistics division serves as another proof point of tech-enabled savings.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 45.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 7,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "c4e91b56657d526ec50dee69133dafdeb5b78c2e6cf345a31a024952e810224a",
+            "value_sha256": "0230e8fe91be65597a4b7afb07e3afa942cae77a0a3e1913d48a50402122947f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total operating expenses excluding gains, insurance, fuel, and purchased transportation",
           "period": "Q1 2026",
-          "value": "down by 5% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total operating expenses, excluding gains, insurance, fuel, and purchased transportation, were down by 5% year-over-year, and our logistics division serves as another proof point of tech-enabled savings.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 7,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "259fc651a135b6e451e4a992931abe26f212f2c8ba7db1c3daa77313e4b87bd8",
+            "value_sha256": "17525b75372747555062f21c85064699e9a3628a2083a28f6589b522b8a6c6ad"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "truckload brokerage operating expenses",
           "period": "two years",
-          "value": "declined over 25% for the two years following the move to EDGE platform",
           "value_num": null,
           "unit": null,
-          "verbatim": "Truckload brokerage operating expenses declined over 25% for the two years following the move to EDGE platform and with relatively stable volumes.",
-          "following_context": "Our asset business is now in focus. Building load assignment, equipment management, and planning capabilities takes time but is ramping. We expect all aspects of asset execution to be functional later this year. Moving to slide 6, our plan to position the business for long-term growth and generate earnings power remains focused on three overarching priorities. First, driving growth in core business, which includes growing our dedicated fleet, increasing One-Way production and rates, and expanding TTS and logistics adjusted operating income margin. Despite Q1 typically being the most challenging in the year, progress continues on these fronts. Our dedicated fleet is growing, with end-of-period tractors up 46% year-over-year with the addition of FirstFleet.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 8,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "a2141ba2a6daabdf3fd988a50834b20e450ebcdb80bb36c2b42a3f6024259875",
+            "value_sha256": "cab3603002c7e6cbb799b9c0f2352bd02446a2f9f5fb8661aaf24a071a3214fd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "dedicated end-of-period tractors",
           "period": "Q1 2026",
-          "value": "up 46% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our dedicated fleet is growing, with end-of-period tractors up 46% year-over-year with the addition of FirstFleet.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 46.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 8,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "56de05b8dafc8eaac44672d40c11c377cd48d68ec10ae9b34e6b7bcf3ea11262",
+            "value_sha256": "863e35ce60d672f011670dbd948c58df2a368863ec1fdf4c44acf0abc65c5114"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "One-Way bid contractual increases",
           "period": "Q1 2026",
-          "value": "mid-single-digit increases",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are securing mid-single-digit increases in one-way bids.",
-          "following_context": "Spot rates are higher, we can be more selective with freight choices given a better supply-demand backdrop. Truckload logistics margins improved every month in the quarter as contract rates reset and exposure grew to higher spot market pricing.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 9,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "20a8c8ae12f4f60484555a1286178f35a08c0e02ea1fecfea336e66b5807f84b",
+            "value_sha256": "bceae5104dc27ec9e11f3c044d2ef3498c9162930301cbdebc3e68d4924aaa47"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cost taken out over 3 years",
           "period": "over 3 years",
-          "value": "approximately $150 million of cost over 3 years",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've taken out approximately $150 million of cost over 3 years and continue advancing our technology transformation.",
-          "following_context": "For some perspective on how our technology investments are beginning to translate into tangible results, we've centralized all loads into a single unified platform, achieving full network visibility, which is enhancing our ability to optimize, balance, improve yield, and reduce cost to serve. This integrated foundation has been a key enabler of our One-Way restructuring efforts over the past 2 quarters and positions us for continued margin expansion. Building on that foundation, we are increasingly leveraging AI and automation to drive operational excellence across the network.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 150.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": "063306bb32abc3c2c834a39f18b6c2ed1c1fd7beed292bdd327ce29be0cf8f98",
+            "paragraph": 10,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "68bcd990ef2f9493c9c6f1a74b9bc150b23d10b9cc408962ecf125d9cb0d024f",
+            "value_sha256": "51875abbe3925f1353a65fbf1f0feead9af9aaaee44fd9ffb201cfafa2e7bda9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Q1 total revenues",
           "period": "Q1 2026",
-          "value": "$809 million, up 14%",
           "value_num": null,
           "unit": null,
-          "verbatim": "First quarter revenues totaled $809 million, up 14%.",
-          "following_context": "Adjusted operating income was $11.9 million, and adjusted operating margin was 1.5%. Adjusted EPS was $0.02. Adverse weather early in the quarter and rapidly incr",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 809.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q1 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "013c0d4f54a11792d7f7ecab117920e4a965eb6f9262315cb6f538b5f9178cad",
+            "value_sha256": "8905a923e192399c0b0de30c746fcbed9aa9632aa6491a8b9326a040da15b578"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Q2 revenue growth",
           "period": "Q2 2026",
-          "value": "24% revenue growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the second quarter, we delivered 24% revenue growth and 80 basis points of adjusted operating margin expansion.",
-          "following_context": "Throughout this prolonged downturn, we stayed focused on safety, streamlined our operations, invested in technology, and expanded our portfolio and end markets. These strong second quarter results show that our strategy is working, especially as the broader market starts moving in our direction.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 2,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "03bb306fa4fd561acf515fd7f4df49b85f97c3147a707528b1bf620455ff595f",
+            "value_sha256": "f66d6955d130257adf2755d66d5c86ef65e170972407ca6b179abea717684983"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ELD providers exiting",
           "period": "Q2 2026",
-          "value": "approximately 1-third exiting or having their certifications revoked",
           "value_num": null,
           "unit": null,
-          "verbatim": "On top of that, there has also been a sharp reduction in ELD providers, with approximately 1-third exiting or having their certifications revoked.",
-          "following_context": "This reduction in ELD options is dismantling shadow capacity and compounding structural supply contractions.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 3,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "05e09c1f05fdc92a1b2ddb26470d7835f8f8a99eb28a5a4f099ede4445aa5cee",
+            "value_sha256": "8b3d4430d0273ae44a775ea06bf1926eeda2fb5cf7d8ebddee175d8e46cb0ba0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "legacy freight ingested into Werner EDGE TMS platform",
           "period": "Q2 2026",
-          "value": "100%",
           "value_num": null,
           "unit": null,
-          "verbatim": "100% of Werner's legacy freight is now being ingested into our single Werner EDGE TMS platform, creating better visibility for our associates, expanding solutions for our customers, and establishing the foundation for increased automation.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 5,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "2aa12c785d23adb749fab979dc8d8cf90dd5069257e575ac5bffa021cbf9cdd7",
+            "value_sha256": "32e48995f98ce3b76f2d3f5e2d2acddfeff6650b7b18628cfa739bfef4a03312"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "One-Way bid contractual increases",
           "period": "Q2 2026",
-          "value": "upper-single- to double-digit contractual increases",
           "value_num": null,
           "unit": null,
-          "verbatim": "Recently, we have been securing upper-single- to double-digit contractual increases in One-Way bids, in addition to ongoing yield management within the portfolio where appropriate.",
-          "following_context": "As a result, adjusted One-Way Truckload OI margins improved over 700 basis points year-over-year. More benefit will be realized in the second half from recent repriced business and increasing spot exposure.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 9,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "1276d32338b87c8c948ab951ffabf480d0ac18acf25f98e6fed688c629d528e1",
+            "value_sha256": "b4f58e6025125d70bafdd855d0cf8bcfd6e2c82210771f0d94ed7ea7d1967b69"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "adjusted One-Way Truckload OI margins",
           "period": "Q2 2026",
-          "value": "improved over 700 basis points year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a result, adjusted One-Way Truckload OI margins improved over 700 basis points year-over-year.",
-          "following_context": "More benefit will be realized in the second half from recent repriced business and increasing spot exposure.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 700.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 9,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "1ecca2673edb77e05106909d82e0fafa74e1c9b1b95ae7da671a70dc9d373c95",
+            "value_sha256": "f59279a54dea71e9fc0c093246a474ddc2743c1d5c621f4973216ee7cccef812"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "dedicated customer retention",
           "period": "Q2 2026",
-          "value": "over 95%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've delivered customer retention of over 95% and been successful in securing rate increases on renewals.",
-          "following_context": "Dedicated bid activity has been increasing as the One-Way market tightens and more shippers search for long-term reliable capacity. Dedicated bid volume in the second quarter was the highest of any quarter since 2020. Revenue per truck per week reached the strongest year-over-year improvement since the third quarter of 2022.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 95.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 10,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "26048ca2df0f016a44383bad1823abe79705302880b65f6bf9c54bebd2c756c5",
+            "value_sha256": "423cf7ed55d4c2ed9fa576e6fb40b79cf04c1019e7ac1cf3338322445ff39262"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "dedicated bid volume",
           "period": "Q2 2026",
-          "value": "the highest of any quarter since 2020",
           "value_num": null,
           "unit": null,
-          "verbatim": "Dedicated bid volume in the second quarter was the highest of any quarter since 2020.",
-          "following_context": "Revenue per truck per week reached the strongest year-over-year improvement since the third quarter of 2022.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2020.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 10,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "329567fc259f427677393fd9f40f25994acec1d7e6044237aa9a5b949c33d02f",
+            "value_sha256": "5c263e4bd88a07357972d94f4f6ab5e8357885289877e84a261ee643b6ec32e9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "FirstFleet renewal rate",
           "period": "Q2 2026",
-          "value": "98% renewal rate on over 80% of the portfolio that is renewed so far",
           "value_num": null,
           "unit": null,
-          "verbatim": "Given FirstFleet's strong service and customer relationships, we've achieved a 98% renewal rate on over 80% of the portfolio that is renewed so far.",
-          "following_context": "We expect similar results on the remaining fleets scheduled to renew in Q3 and Q4.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 98.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 12,
+            "speaker": "Derek J. Leathers",
+            "quote_sha256": "b1d53d4d5fe9d4a7544e67e0cea5a3abad5a8a13ab583ea426e2e2556ccff846",
+            "value_sha256": "b334f89e3ee9dee737c326ad14029bb6a5d21b77c29abdd8abd8d2b8ab75eb8d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Q2 total revenues",
           "period": "Q2 2026",
-          "value": "$934 million, up 24%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Second quarter revenues totaled $934 million, up 24%.",
-          "following_context": "Adjusted operating income was $27.6 million, up 67%, and adjusted operating margin was 3.0%, an increase of 80 basis points. Adjusted EPS of $0.22 was up $0.14. Consolidated gains on sale of property and equipment totaled $1.5 million, down from $5.9 million in the prior-year period and $3.8 million in the first quarter. Lower gains negatively impacted adjusted EPS by $0.05.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 934.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 22,
+            "speaker": "Christopher D. Wikoff",
+            "quote_sha256": "d74b7c844bf671e40a2d116aab1a225eab5e9d3f5eb52db4b8e03c0845cd4b3b",
+            "value_sha256": "c40991f554b39b0a1c741cbf3b60a9fc0786d01de2a9d3524d9b6a09abe03f02"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "DOT preventable accidents per million miles",
           "period": "Q2 2026",
-          "value": "a similar year-over-year decline in the second quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "After an impressive 45% year-over-year decline in the first quarter in DOT preventable accidents per million miles, we realized a similar year-over-year decline in the second quarter.",
-          "following_context": "As a result, insurance and claims expense was at its lowest level since the third quarter of 2024, excluding FirstFleet and excluding the one-time benefit last year related to the reversal of a 2018 nuclear verdict.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 26,
+            "speaker": "Christopher D. Wikoff",
+            "quote_sha256": "7568acde43a7613bb0e4624e1e4ce0ac4fdb505e6a86652e13888812b532ef51",
+            "value_sha256": "40a59f081a5709c963c5af62499dd9ce9019cc536c498220af71ee4d94f5ca48"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TTS average trucks",
           "period": "Q2 2026",
-          "value": "8,712 for the quarter, a 16% increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "TTS average trucks totaled 8,712 for the quarter, a 16% increase.",
-          "following_context": "The TTS fleet ended the quarter at 8,695 trucks, down 4% sequentially. Truck additions from FirstFleet were offset by slightly lower legacy Dedicated trucks and fewer One-Way trucks.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8712.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 28,
+            "speaker": "Christopher D. Wikoff",
+            "quote_sha256": "3d0a267b59f0cbf548f849a83375183d6fb54c0d4e786b5ab2c284cffc90c973",
+            "value_sha256": "d5d74d0e54a7346c8e1d72dfb956c01b225b276174cec1799f16a28d35b686c2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TTS ending fleet trucks",
           "period": "Q2 2026",
-          "value": "8,695 trucks, down 4% sequentially",
           "value_num": null,
           "unit": null,
-          "verbatim": "The TTS fleet ended the quarter at 8,695 trucks, down 4% sequentially.",
-          "following_context": "Truck additions from FirstFleet were offset by slightly lower legacy Dedicated trucks and fewer One-Way trucks.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8695.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 28,
+            "speaker": "Christopher D. Wikoff",
+            "quote_sha256": "a1573ce8f6d90cbe25da1474c00cde1419b34f93ef152eacc34f7e5c378fcb57",
+            "value_sha256": "8e082804c143d5754193a902984d0004c3273eaaba470d441ec6232af0b97acf"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Dedicated trucking revenue net of fuel",
           "period": "Q2 2026",
-          "value": "$434 million, up 51%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Within TTS, in our Dedicated business for the second quarter, trucking revenue net of fuel was $434 million, up 51%.",
-          "following_context": "Dedicated represented 76% of TTS trucking revenue, up from 64% a year ago. At quarter end, the Dedicated fleet was up 2,110 trucks from where we started the year, a 44% increase from year-end with the addition of FirstFleet.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 434.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 51.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 29,
+            "speaker": "Christopher D. Wikoff",
+            "quote_sha256": "4640aa1025e040b36adc725f4cd8006af21c573a81bff282bad3503451f67d91",
+            "value_sha256": "8916429b5f21f872e1cb0c9ec7350af0a97f3f022a33cdc5c84f7d04b4b92f51"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Dedicated share of TTS trucking revenue",
           "period": "Q2 2026",
-          "value": "76% of TTS trucking revenue, up from 64% a year ago",
           "value_num": null,
           "unit": null,
-          "verbatim": "Dedicated represented 76% of TTS trucking revenue, up from 64% a year ago.",
-          "following_context": "At quarter end, the Dedicated fleet was up 2,110 trucks from where we started the year, a 44% increase from year-end with the addition of FirstFleet.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 76.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 64.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 29,
+            "speaker": "Christopher D. Wikoff",
+            "quote_sha256": "ee105bdd747dc1742e117288b6f2dd55add67326128e839932b3d23367cf9023",
+            "value_sha256": "7262757448368a0db002c7b0587090383bd83ac9bc728bfcdb754b943a028247"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Dedicated fleet trucks vs. start of year",
           "period": "Q2 2026",
-          "value": "up 2,110 trucks from where we started the year, a 44% increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "At quarter end, the Dedicated fleet was up 2,110 trucks from where we started the year, a 44% increase from year-end with the addition of FirstFleet.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2110.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 44.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 29,
+            "speaker": "Christopher D. Wikoff",
+            "quote_sha256": "e8666ac5b694995ff30a6ec2a68d2b4636975a884c4bc301c648de687ede3252",
+            "value_sha256": "0e7cd21072738147e5ef9b9868ecbea439574235e041396f43818f1adb0f53d4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Dedicated average trucks",
           "period": "Q2 2026",
-          "value": "increased 44% year-over-year and 10% sequentially",
           "value_num": null,
           "unit": null,
-          "verbatim": "Dedicated average trucks increased 44% year-over-year and 10% sequentially.",
-          "following_context": "Dedicated represented 80% of the TTS trucks at quarter end. Dedicated customers are expanding existing fleets, and we continue to have success with customers in new verticals. Dedicated revenue per truck per week rose 5.4% this quarter, though impacted by the addition of FirstFleet in the mix. On a stand-alone basis, Werner's legacy Dedicated fleet delivered an 8% increase year-over-year due to better productivity and highe",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 44.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "6bd2f1528c555305edd0be9acd8c8078344d0c3f316563f187eb437547df0908",
+            "value_sha256": "01f8a03d8464e968cf4fde64b6557a4ac9635b36ca8e70cc36a1e13c6df4d7bf"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Dedicated share of TTS trucks",
           "period": "Q2 2026",
-          "value": "80% of the TTS trucks at quarter end",
           "value_num": null,
           "unit": null,
-          "verbatim": "Dedicated represented 80% of the TTS trucks at quarter end.",
-          "following_context": "Dedicated customers are expanding existing fleets, and we continue to have success with customers in new verticals. Dedicated revenue per truck per week rose 5.4% this quarter, though impacted by the addition of FirstFleet in the mix. On a stand-alone basis, Werner's legacy Dedicated fleet delivered an 8% increase year-over-year due to better productivity and highe",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "fb0c526473162febd688cc3141a7fcf9509e45c26998a33ae7c250e110bc6512",
+            "value_sha256": "94bcc0143bbf0fcbca32ec1eaf66b4691c5f5a2a36db11af1336b5dfaf3a455e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Dedicated revenue per truck per week",
           "period": "Q2 2026",
-          "value": "rose 5.4% this quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Dedicated revenue per truck per week rose 5.4% this quarter, though impacted by the addition of FirstFleet in the mix.",
-          "following_context": "On a stand-alone basis, Werner's legacy Dedicated fleet delivered an 8% increase year-over-year due to better productivity and highe",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.4,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "2b3008a0a836957ac73df39c45ef4987d2cdedca11c606feee0500634a0a4557",
+            "value_sha256": "fb30d6ed4f871ea040858e7ba116c0b48a9b3d5755cacd6bebb3ccc87a783e2b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Werner legacy Dedicated revenue per truck per week",
           "period": "Q2 2026",
-          "value": "an 8% increase year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "On a stand-alone basis, Werner's legacy Dedicated fleet delivered an 8% increase year-over-year due to better productivity and highe",
-          "following_context": null,
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "0031235f5f0eb866d81b06c93572de6f87fc8464d36ee1feaec81d899c11863b",
+            "value_sha256": "ad1d0f73925b7fa01de7eefb73a2f539ba6e6205167fe4bf50c44b8e3d943576"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TTS total revenue",
           "period": "Q2 2026",
-          "value": "$703 million, up 36%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Truckload Transportation Services total revenue for the quarter was $703 million, up 36%.",
-          "following_context": "Revenues net of fuel surcharges increased 26% year-over-year at $582 million. TTS adjusted operating income was $32.3 million. Adjusted operating margin net of fuel was 5.5%, an increase of 270 basis points in spite of significantly lower gains. Excluding gains in both periods, operating income margins improved 370 basis points.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 703.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 36.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 24,
+            "speaker": "Christopher D. Wikoff",
+            "quote_sha256": "ced55d5e89da07c3d727ce1ebf2dd6813eff9e60db104c0102aa85fcfb16a773",
+            "value_sha256": "39e898d8e40f5a41b1e0b72048904df2db7dc5e082a417231eba491eb5d93704"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TTS revenues net of fuel surcharges",
           "period": "Q2 2026",
-          "value": "increased 26% year-over-year at $582 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenues net of fuel surcharges increased 26% year-over-year at $582 million.",
-          "following_context": "TTS adjusted operating income was $32.3 million. Adjusted operating margin net of fuel was 5.5%, an increase of 270 basis points in spite of significantly lower gains. Excluding gains in both periods, operating income margins improved 370 basis points.",
           "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 26.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 582.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "4de4824a0619bdd2ef4d877faf318f0289e73082b983c45130716fdd432d96b8",
+            "paragraph": 24,
+            "speaker": "Christopher D. Wikoff",
+            "quote_sha256": "4e8acc9fe256b515d52e976258f1201fa4ad0b2d5625dce2b43dea61f6b14858",
+            "value_sha256": "fbd29c1253e925009fb76d0eaaa37403b26150eaa3cd2e2452fb1ff08153ad87"
+          }
         }
       ],
       "qa_flags": [
@@ -14199,6 +14820,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

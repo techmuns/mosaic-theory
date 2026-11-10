@@ -8216,409 +8216,975 @@
           "kind": "leading_indicator",
           "metric": "wins with Technology",
           "period": null,
-          "value": "up more than 61% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our overall wins with Technology are up more than 61% year-over-year in the first quarter, highlighting the shift in our go-to-market offerings and client acceptance.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 61.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 10,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "8501a1e54e90aa9400421d76c1793a1417f3ebd3504a8bb6ad4c352f52cbb359",
+            "value_sha256": "39fb96179eec909dee1544db51bce10d04454a54ac8e072d0e006243e93c44db"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "signed annual contract value for solutions including AI",
           "period": null,
-          "value": "more than doubled",
           "value_num": null,
           "unit": null,
-          "verbatim": "When we look at our bookings quarter-on-quarter, our signed annual contract value for solutions including AI more than doubled, and we're seeing sequential increases in expanding AI license consumption across our client base.",
-          "following_context": "Our pipeline of opportunities to continue to be solid and represent a continued progression and shift to a higher solution mix.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 11,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "e7a150efdc70d2c339cfaf01814ee4acd86f5ad843ec9e537c2f394f718ff572",
+            "value_sha256": "87fa2161c98eca952cc6be6b1d1942621f74d0e956bd9a46c262179b361880f7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "enterprise iX Suite deals closed",
           "period": null,
-          "value": "close to 60 enterprise iX Suite deals",
           "value_num": null,
           "unit": null,
-          "verbatim": "As an example, we closed close to 60 enterprise iX Suite deals in the quarter including our largest iX Hero contracts to date with 2 Fortune 50 companies.",
-          "following_context": "Both clients will use our proprietary AI technologies to modernize their ability to create more efficient, personalized and effective interactions with their customers while allowing us to sell additional solutions into these accounts.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 13,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "cb525e1d25b024eedc4135b7db4e254f9add5fa589314828708b87b6dc6145fd",
+            "value_sha256": "bc8a0b57883f505c79478de928bce1f2b2f8338d8831d724efcdbcb8649dca22"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "banking and financial services revenue growth (constant currency)",
           "period": null,
-          "value": "grew 13% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenue from banking and financial services clients grew 13% year-over-year.",
-          "following_context": "Revenue from retail, travel and e-commerce clients grew 6%, largely driven by growth with travel and e-commerce clients. Media and Communications revenues grew 3%, largely with clients outside the U.S. and global entertainment and media companies. Our technology and consumer electronics vertical and our health care vertical both decreased about 6% driven by lighter volumes than clients expected and shore mix.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 19,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "fd9f01303f246bafd7e2bdca780494c64183d450975310b9889f5055d0602eb0",
+            "value_sha256": "e1323d156a9c1bf435273fcc03e0eed822dfb0fd4cbd58f039d3430a7c86dc5d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "retail, travel and e-commerce revenue growth (constant currency)",
           "period": null,
-          "value": "grew 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenue from retail, travel and e-commerce clients grew 6%, largely driven by growth with travel and e-commerce clients.",
-          "following_context": "Media and Communications revenues grew 3%, largely with clients outside the U.S. and global entertainment and media companies. Our technology and consumer electronics vertical and our health care vertical both decreased about 6% driven by lighter volumes than clients expected and shore mix.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 19,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "cbf31f374f544bf8774efce6add45864ee582890e0026e486d28e5aee21987cc",
+            "value_sha256": "f73ca1d043fcbf42ba76a27483dcd0821b76c4eac22a6858171412b57142dc55"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Media and Communications revenue growth (constant currency)",
           "period": null,
-          "value": "grew 3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Media and Communications revenues grew 3%, largely with clients outside the U.S. and global entertainment and media companies.",
-          "following_context": "Our technology and consumer electronics vertical and our health care vertical both decreased about 6% driven by lighter volumes than clients expected and shore mix.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 19,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "5321e3627f11a192d2c028b081ac17cdbba56b7aeaf00bbe828d92e7b1f6b868",
+            "value_sha256": "7b952f0cbddd9d5c55eaf00e7a5cef61e665b33133286146edfe1ee37ec1f1b6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "technology and consumer electronics vertical and health care vertical revenue change (constant currency)",
           "period": null,
-          "value": "both decreased about 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our technology and consumer electronics vertical and our health care vertical both decreased about 6% driven by lighter volumes than clients expected and shore mix.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 19,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "f91891dddacd96d9c120080be4178fed4c36a9f57ffa591fb72d36c0b64d254c",
+            "value_sha256": "7d4de514239ea847d63a0e65410a0a92e71a538d67141aca3fb68e7a565344f4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "iX Hero ARR",
           "period": null,
-          "value": "$60 million of ARR",
           "value_num": null,
           "unit": null,
-          "verbatim": "And as we talked about, at the end of last year, we ended Q4 at $60 million of ARR.",
-          "following_context": "We continue to add to that. We're not releasing numbers on a quarterly basis, but our expectation is to be at or above $100 million by the end of this fiscal year. If we reach that sooner, we will update you on that. But so far, we're actually a little ahead of plan from where we expected based on what we've sold within the first quarter. And we have a very, very strong pipeline going into the second quarter that we've already started to see some good uptake with on our proprietary AI products.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 42,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "4519f02d922291eb5430cc4df123fa80448ca2b8317ea884f767412ee3e7adb8",
+            "value_sha256": "9294177503462b44e955b8d6f477a5ca832d5ec48b90b332c7d02e4e3300f4ea"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "iX Hero ARR target",
           "period": null,
-          "value": "at or above $100 million by the end of this fiscal year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We continue to add to that. We're not releasing numbers on a quarterly basis, but our expectation is to be at or above $100 million by the end of this fiscal year.",
-          "following_context": "If we reach that sooner, we will update you on that. But so far, we're actually a little ahead of plan from where we expected based on what we've sold within the first quarter. And we have a very, very strong pipeline going into the second quarter that we've already started to see some good uptake with on our proprietary AI products.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its quote does not name the metric 'iX Hero ARR target'",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 42,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "db62dcfd43b8a0135f5f3dae6d89802a65889c66e6bfb3ee82fe0bef17f4e4e8",
+            "value_sha256": "a2eede2875db132be82e3b6e9acba01b0156d7b7f68f914a8bf01c9a1b42bd06"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "iX Hello pricing model",
           "period": null,
-          "value": "priced by consumption",
           "value_num": null,
           "unit": null,
-          "verbatim": "So just in terms of how we're pricing these solutions, our iX Hello solution, which is the fully autonomous solution that we have, basically is priced by consumption.",
-          "following_context": "So we put it in for very small or de minimis fees, and then based on how many contacts that are fully automated, we get paid for. And so as you can imagine, when we put it in, we see a negative margin for the first little while. And then as it scales and grows, we see a positive margin similar to what you'd expect from a SaaS or software type of business.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 41,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "e2ba693bc634f8e43b520ee5ec4803a11aa408dfb35319473a5187ec2ef93e4a",
+            "value_sha256": "efbad88b66058878b8fb5276cf4c98465380f3d39824c8acce4c358bc7ebd47e"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "iX Hero pricing model",
           "period": null,
-          "value": "subscription basis, per seat",
           "value_num": null,
           "unit": null,
-          "verbatim": "On our Hero product, it is a subscription basis, where we sell on a per seat subscription of how many humans are actually using the product to drive the business.",
-          "following_context": "And as we talked about, at the end of last year, we ended Q4 at $60 million of ARR. We continue to add to that. We're not releasing numbers on a quarterly basis, but our expectation is to be at or above $100 million by the end of this fiscal year. If we reach that sooner, we will update you on that. But so far, we're actually a little ahead of plan from where we expected based on what we've sold within the first quarter. And we have a very, very strong pipeline going into the second quarter that we've already started to see some good uptake with on our proprietary AI products.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its value states no figure and is not the words of its quote",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 42,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "6e573a632755b0fa379e79ccc8fcb0af74aac21364bc03d3c533e1bce287e9d4",
+            "value_sha256": "9e2346836918c551900066afdef9813e41a5e3f191f4bcd1a00d1085632a8aa8"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "revenue delivered out of North America and Western Europe potentially movable offshore",
           "period": null,
-          "value": "roughly 15% of our revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "we have, as we see it, roughly 15% of our revenue is delivered out of North America and Western Europe that we think, over time, as the capacity to perhaps move offshore, we provided in our revenue guide entering the year for roughly a 2-point headwind from shore movement.",
-          "following_context": "We think we're still in line with that.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 56,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "5fc0698917d0263a84ca67021fc5b77d2fe80869a16160559fe82ca8f763eca4",
+            "value_sha256": "059d67ddb2947eb40d9cd12853d4a62ab4158f2da0ed0fba44bf73039c052904"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "revenue exposure to Middle Eastern operations / geopolitical situation",
           "period": null,
-          "value": "about 1% of revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our exposure to this is about 1% of revenue, give or take, which is sort of our Middle Eastern operations.",
-          "following_context": "And so far, we haven't seen sort of an impact at this point in time. I think people are just being very, very cautious right now. But so far, it's fairly steady.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 93,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "3166386ff92acde6f09c1835987ec773b2f3e97e67427b10e1cee05d292bc24c",
+            "value_sha256": "98e495654e6d1044edb6990af6e49e876fc4072c6f5c76e64de2102849d69415"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "excess capacity margin impact",
           "period": null,
-          "value": "20 to 40 basis point range",
           "value_num": null,
           "unit": null,
-          "verbatim": "Yes. It's in the 20 to 40 basis point range.",
-          "following_context": "And so as we think about opportunities to improve profitability as we get into the second half of the year, and here, I'm just really talking about the physical capacity mostly. As we grow into the physical capacity, we think we see a 20 to 40 basis point improvement in second half.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its quote does not name the metric 'excess capacity margin impact'",
+          "locator": {
+            "call": "Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf",
+            "transcript_sha256": "44c3b9d51da0b82538bab1cfa630b2c44079bdd1b9419b661cf30ea3f478d8c3",
+            "paragraph": 97,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "c01b71d31366dcc44290b278498cdd0a8e80da2f2b43a6f19f706bab89bf1678",
+            "value_sha256": "768eaec842a61bcc2ceedad30427e77dc4e6cce1c5cb69af6b29c92f7c67c55b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "revenue from businesses generated in the last 3 years",
           "period": null,
-          "value": "50% of our revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "This quarter, we crossed the mark that 50% of our revenue now comes from businesses that we generated in the last 3 years that is very different than our traditional business.",
-          "following_context": "These new revenue sources are comprised of: $3 billion of revenue that is coming from new and existing clients that have either gone through heavy transformation or has AI influencing the revenue; $1.3 billion of net revenue resulting from the compression of our traditional services using our iX Suite AI platform; and finally, $700 million of revenue from new high-value services we brought to the market across growing segments like risk and compliance.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 3,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "e81966dc5f115aa02122574a427bf995448cdbd3a6f1e2f83b002f10c1c17ee0",
+            "value_sha256": "eeff0b44bde90161574faf9ae536d362f2904297cf39853cf048c9043161211d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "revenue from new/existing clients with heavy transformation or AI influence",
           "period": null,
-          "value": "$3 billion of revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "These new revenue sources are comprised of: $3 billion of revenue that is coming from new and existing clients that have either gone through heavy transformation or has AI influencing the revenue; $1.3 billion of net revenue resulting from the compression of our traditional services using our iX Suite AI platform; and finally, $700 million of revenue from new high-value services we brought to the market across growing segments like risk and compliance.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 3,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "5915376d4f844b54d7428fd04cc721a173f27710fa3577893eb2ad93d99c92b3",
+            "value_sha256": "673a170555fe91fd7fcfbc3461b5bb9186c0e1d699547c63130996f82ed54edd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "net revenue from compression of traditional services using iX Suite",
           "period": null,
-          "value": "$1.3 billion of net revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "These new revenue sources are comprised of: $3 billion of revenue that is coming from new and existing clients that have either gone through heavy transformation or has AI influencing the revenue; $1.3 billion of net revenue resulting from the compression of our traditional services using our iX Suite AI platform; and finally, $700 million of revenue from new high-value services we brought to the market across growing segments like risk and compliance.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.3,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 3,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "5915376d4f844b54d7428fd04cc721a173f27710fa3577893eb2ad93d99c92b3",
+            "value_sha256": "f54d55d9c722e02dc5867e38f70c04be760af74fae3f3803284e0973a4063439"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "revenue from new high-value services",
           "period": null,
-          "value": "$700 million of revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "These new revenue sources are comprised of: $3 billion of revenue that is coming from new and existing clients that have either gone through heavy transformation or has AI influencing the revenue; $1.3 billion of net revenue resulting from the compression of our traditional services using our iX Suite AI platform; and finally, $700 million of revenue from new high-value services we brought to the market across growing segments like risk and compliance.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 700.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 3,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "5915376d4f844b54d7428fd04cc721a173f27710fa3577893eb2ad93d99c92b3",
+            "value_sha256": "8a64a939e39b0f6231abe645ebecdff3ecfdcf7b27fbf15e51dc86e852184d87"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new business revenue growth rate",
           "period": "fiscal 2026",
-          "value": "expected 30% year-over-year growth rate",
           "value_num": null,
           "unit": null,
-          "verbatim": "Compared to our traditional business, this revenue is growing faster at an expected 30% year-over-year growth rate in fiscal 2026, is more profitable and is stickier with a revenue retention rate 4x higher.",
-          "following_context": "We laid this out in more detail in the Q3 investor summary presentation you can find on our website under Investor Relations Events and Presentations.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 4,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "aaa4281ccd0030ef33b33a21d033044210e3efec563c0080eb55b1c7202b0bf5",
+            "value_sha256": "84d2e1fd8df42ec5c85951280abb5b567973f6478d768704fcf78a68f30d9a16"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "revenue retention rate of new business vs traditional",
           "period": "fiscal 2026",
-          "value": "4x higher",
           "value_num": null,
           "unit": null,
-          "verbatim": "Compared to our traditional business, this revenue is growing faster at an expected 30% year-over-year growth rate in fiscal 2026, is more profitable and is stickier with a revenue retention rate 4x higher.",
-          "following_context": "We laid this out in more detail in the Q3 investor summary presentation you can find on our website under Investor Relations Events and Presentations.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 4,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "aaa4281ccd0030ef33b33a21d033044210e3efec563c0080eb55b1c7202b0bf5",
+            "value_sha256": "0dec4d4a3dec23dd103aae851744bf435888e826f68bc8b857c97786fc388fad"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new business revenues expectation",
           "period": "2027",
-          "value": "exceed $6 billion in 2027",
           "value_num": null,
           "unit": null,
-          "verbatim": "We expect our new business revenues to exceed $6 billion in 2027.",
-          "following_context": "As we have talked about, we are seeing the margin progression we've expected in our overall business with a 30 basis point improvement year-on-year in Q3.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2027.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 5,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "09606ac2873bac561b8065b061f2a1f5739e2c6024aecae71b63ee7b087cd0a9",
+            "value_sha256": "24065ebd6104c9c679335e0ae1b704820ed80e468afcbc19bf4c67695762b20e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "margin improvement year-on-year",
           "period": null,
-          "value": "30 basis point improvement year-on-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "As we have talked about, we are seeing the margin progression we've expected in our overall business with a 30 basis point improvement year-on-year in Q3.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 5,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "0200017b94e8dd7740b69355a701f2c259bfb34d8115aab54d18e0f08ff00046",
+            "value_sha256": "0f26934e0867a2339ba1f37b123999371065a6f2d694ca8c8daa8fc7781145cb"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "top clients expanded into new services since fiscal 2023",
           "period": "since the start of fiscal 2023",
-          "value": "all of our top 5 clients and more than 90% of our top 100 clients",
           "value_num": null,
           "unit": null,
-          "verbatim": "As an example, all of our top 5 clients and more than 90% of our top 100 clients have expanded into new services and offerings with us since the start of fiscal 2023.",
-          "following_context": "Our average tenure with our clients remains strong at more than 16 years with our top 25 clients and 15 years for our top 50 clients, with a 98% retention rate across our entire client base. Together, these stats show we are building on a solid foundation, and we are pushing the evolution of our business as quickly as possible.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 90.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 6,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "58d326902c2919ef95285988047b1a633922dc9f0f3c78768b3ee59a07b1fcbb",
+            "value_sha256": "cdd120153288a31c34d29edbe97109abdc44bc8acf5dc36314691fc930b90784"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "average client tenure",
           "period": null,
-          "value": "more than 16 years with top 25 clients and 15 years for top 50 clients",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our average tenure with our clients remains strong at more than 16 years with our top 25 clients and 15 years for our top 50 clients, with a 98% retention rate across our entire client base.",
-          "following_context": "Together, these stats show we are building on a solid foundation, and we are pushing the evolution of our business as quickly as possible.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 6,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "4398dc60fbf26e84e968a920232089ca631a701a5b4e66780948586e5a315f4d",
+            "value_sha256": "711aba19cea99ec847df0ab1d513b4f877a93d998623f99eba0f983c5d3e19d0"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "client retention rate",
           "period": null,
-          "value": "98% retention rate across our entire client base",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our average tenure with our clients remains strong at more than 16 years with our top 25 clients and 15 years for our top 50 clients, with a 98% retention rate across our entire client base.",
-          "following_context": "Together, these stats show we are building on a solid foundation, and we are pushing the evolution of our business as quickly as possible.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 98.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 6,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "4398dc60fbf26e84e968a920232089ca631a701a5b4e66780948586e5a315f4d",
+            "value_sha256": "d5aefa6f2a05219be8cc8b8a05e0d90f95c5eedda2e7c8ac99ffa7ccb90ac1c4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "net new logo sales involving AI growth",
           "period": null,
-          "value": "growing 63% quarter-over-quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our sales pipeline continues to be stable, with net new logo sales involving AI growing 63% quarter-over-quarter.",
-          "following_context": "Three of our four largest iX Suite wins this quarter came from clients who are already using the product and are now expanding their use cases because of the results we've helped them achieve. We also brought 61 opportunities, including more than 30,000 advisers live on our iX Suite this quarter, contributing to our margin expansion we delivered in Q3 and the impact to our revenue growth in our traditional business.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 63.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 8,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "3f3e729ae255c1011225c8e8b8b40381e9cff221fb387801c81589805500083b",
+            "value_sha256": "0d718d408a253e6c48606d78ed1e8d4262d835d9b146be34ce9533281d2f4922"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "opportunities and advisers brought live on iX Suite",
           "period": null,
-          "value": "61 opportunities, including more than 30,000 advisers live",
           "value_num": null,
           "unit": null,
-          "verbatim": "We also brought 61 opportunities, including more than 30,000 advisers live on our iX Suite this quarter, contributing to our margin expansion we delivered in Q3 and the impact to our revenue growth in our traditional business.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 61.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 30000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 8,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "8b522b2c8f5a5e58e650269d7d4d41e8435d167f0ab3d613716d7775bbd85bb4",
+            "value_sha256": "28b0fb35cdbf09dfd43b88511938948f46e84ddf095df6afa26d65ed931c9945"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "shore mix headwind",
           "period": null,
-          "value": "about a 3% headwind",
           "value_num": null,
           "unit": null,
-          "verbatim": "In addition, shore mix created about a 3% headwind this quarter, as we talked about in our second quarter earnings call.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 12,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "825daf47a74daa0a589a7609c869fc806bbcc47402b5dd1b87014748c78477cf",
+            "value_sha256": "cb5d2af1d7f7c300e9164d5eaa042af9510eb1986b2d2efe2f701feacd127ceb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "revenue change (constant currency)",
           "period": null,
-          "value": "decrease of 0.5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "On a constant currency basis, this represented a decrease of 0.5%, which is slightly below the lower end of the guidance we provided in June.",
-          "following_context": "Our revenue for the quarter reflects an acceleration of our deployment of AI for clients, as well as client decisions to reduce support for certain customer sets that we have supported.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 20,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "a9dc75ecbd1cdca94ef401d9af777d52ff7be1d57f3c665210862daa947532d2",
+            "value_sha256": "0d594a901edca6c8c3c4a0c3fa78a07194ee39f3d15f50ad0e55f5072b6226e3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "non-GAAP operating income margin",
           "period": null,
-          "value": "12.6%, up 30 basis points from the third quarter last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our non-GAAP operating income margin was 12.6%, and our adjusted EBITDA margin was 14.8%, with both measures up 30 basis points from the third quarter last year.",
-          "following_context": "This increase in margins demonstrates our focus on winning the right business, as well as our discipline and execution in aligning our business investments to areas that we have identified for profit-enhancing growth while reducing costs in other areas. This is consistent with our commentary throughout 2026 that we would see year-over-year margin expansion in the second half of the year.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.6,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 21,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "dcfa6393b41e7a3764db65c7621638c7c2cc3ba9344f5d5fc811ec9ffc8e49a9",
+            "value_sha256": "6a31b253b0783ca4321ad69b0c302b2ff15a05012eb8c24491defef608f2a226"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "adjusted EBITDA margin",
           "period": null,
-          "value": "14.8%, up 30 basis points from the third quarter last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our non-GAAP operating income margin was 12.6%, and our adjusted EBITDA margin was 14.8%, with both measures up 30 basis points from the third quarter last year.",
-          "following_context": "This increase in margins demonstrates our focus on winning the right business, as well as our discipline and execution in aligning our business investments to areas that we have identified for profit-enhancing growth while reducing costs in other areas. This is consistent with our commentary throughout 2026 that we would see year-over-year margin expansion in the second half of the year.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.8,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 21,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "dcfa6393b41e7a3764db65c7621638c7c2cc3ba9344f5d5fc811ec9ffc8e49a9",
+            "value_sha256": "ac36e10820c158de51c07f15dc888be2cd707b6501c5a1fed3dac9938883af31"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "iX Suite software licensing ARR target",
           "period": "exiting 2026",
-          "value": "around $120 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've talked about exiting 2026 with an ARR of just kind of software licensing around $120 million. We're on pace to do that.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 120.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 48,
+            "speaker": "Christopher A. Caldwell",
+            "quote_sha256": "ab8bbe00c7f589aa6b4bd3212b1ccf69721d042e06cee1d4e76d73935664f747",
+            "value_sha256": "ab6418e78badfd94685698d6cb7c29ee096300f557ebf517a3663a92d546e098"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "revenue in pool likely movable offshore",
           "period": null,
-          "value": "10%, 11% of revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "we're really getting to the point where we only, as we exit this year, have 10%, 11% of revenue that we see is as kind of in the pool of stuff that is likely over time to be movable offshore.",
-          "following_context": "So we do see it abating over time more because there's just not that much of it left to move as opposed to anything else. Chris, any impact from the AI playing any role there or not?",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 66,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "e9ddd32540605669b5bff2dc6ed12932cdddb4fb3b3e8f334690980c7d2f9a46",
+            "value_sha256": "2bb289d0030c9191bafeafd5a70c7a81317195824509ca983312e280621efc77"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "offshoring headwind on growth",
           "period": null,
-          "value": "about a 3-point headwind on growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "So we have talked about this year, seeing that accelerate to being about a 3-point headwind on growth for us.",
-          "following_context": "We see it in that same sort of range. We don't see it being higher, but possibly a touch lower. But so included in what we're seeing right now is our revenue expectations for next year, I probably think it's right in that same range.",
           "source_ref": "CIQ transcript: Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Concentrix Corporation, Q3 2026 Earnings Call, Sep 29, 2026.rtf",
+            "transcript_sha256": "9b476b2b4ee62f8a39df9d7c288b280d9b8fada5e03717c195ce7b42e47ccdd5",
+            "paragraph": 60,
+            "speaker": "Andre S. Valentine",
+            "quote_sha256": "95f7fbc7f85d3f129bf668f5061b53df1a8e80b47750f357c570f97d2072a86e",
+            "value_sha256": "6616025a63899b808a5e66fe3136ae3d60648448a09c03da58c862abf5c46dad"
+          }
         }
       ],
       "qa_flags": [
@@ -11562,6 +12128,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

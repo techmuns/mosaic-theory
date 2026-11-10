@@ -9819,325 +9819,769 @@
           "kind": "leading_indicator",
           "metric": "consolidated comp sales",
           "period": "first quarter",
-          "value": "increased 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As Ernie mentioned, our first quarter consolidated comp sales increased 6%, which was well above our plan.",
-          "following_context": "Our first quarter comp was driven equally by a higher average basket and an increase in customer transactions. Further, we saw very strong comp sales increases in both our apparel and home categories.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 3,
+            "speaker": "John Klinger",
+            "quote_sha256": "f15390377dbeeb315587e5f671d65d04e5fa35522c4cbf15b385a74dbd1ca3a5",
+            "value_sha256": "a53f14ea2003859cfda90b1b488c194c5ac7d828d1b0ff7ea6399d43af217fd2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Marmaxx comp sales",
           "period": null,
-          "value": "grew an outstanding 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "At Marmaxx, comp sales grew an outstanding 6% and segment profit margin increased 100 basis points to 14.7%.",
-          "following_context": "Comp sales in both Marmaxx's apparel and home categories were strong. Also, we were very pleased with the broad strength of comp sales across each of Marmaxx's region and income demographics. At our Sierra stores and U.S. e-commerce sites, which we report as part of this division, we saw very strong comp -- we saw a very strong comp increase. We continue to see excellent opportunities to keep growing Marmaxx, our largest division across the U.S.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 6,
+            "speaker": "John Klinger",
+            "quote_sha256": "7ce871a75802cc123d3d9f6fdd044eb51e0d5db0d4a1d603028bb95b03cdabca",
+            "value_sha256": "e77928c6e09c8cdc41b7167eee2fec4ab6783cff17098a63777a96fb20ac9351"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HomeGoods comp sales",
           "period": null,
-          "value": "increased a remarkable 9%",
           "value_num": null,
           "unit": null,
-          "verbatim": "At HomeGoods, comp sales increased a remarkable 9%.",
-          "following_context": "Similar to Marmaxx, HomeGoods saw strong comp sales increases across each of their region and income demographics. Segment profit margin increased 270 basis points to 12.9%. HomeGoods offers consumers an exciting eclectic assortment of merchandise sourced from around the world, all at great value.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 7,
+            "speaker": "John Klinger",
+            "quote_sha256": "9e24a9cd6a6e32b4b8f35383bb794f108a22ca9c8c77068d0ef667baf0696eee",
+            "value_sha256": "45b6fe9864421fc149a06c9c6e7646660a8c2ed53723f14b81a20979e67a7d6b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TJX Canada comp sales",
           "period": null,
-          "value": "up an outstanding 7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "At TJX Canada, comp sales were up an outstanding 7%.",
-          "following_context": "Segment profit margin on a constant currency basis grew 100 basis points to [Audio Gap] across all three of our Canadian banners. We are Canada's only major off-price retailer, and we believe we are well positioned to keep growing our customer base across the country. At TJX International, comp sales increased a strong 4%. We were pleased with our sales growth in Europe and the strong sales increase in Australia.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 9,
+            "speaker": "John Klinger",
+            "quote_sha256": "c0ec50177023a41a1d8dcac20c157af98b20846edf0f6d32a3cc2cbb6f9f90a8",
+            "value_sha256": "f01483dc042a87781ea497e6039900b719bb218240b9f097541f418f6e0657c4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TJX International comp sales",
           "period": null,
-          "value": "increased a strong 4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "At TJX International, comp sales increased a strong 4%.",
-          "following_context": "We were pleased with our sales growth in Europe and the strong sales increase in Australia.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 9,
+            "speaker": "John Klinger",
+            "quote_sha256": "93ad70987ef8d5d9977f589e4446cbe282cfd35cde8184cdede3b9689ddcc314",
+            "value_sha256": "d489f9930863a47632b4f68ca94800fd2e59936442b34ce7d897b9c466bb0369"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "balance sheet inventory",
           "period": "first quarter",
-          "value": "up 8%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving to inventory. First quarter balance sheet inventory was up 8% and inventory on a per store basis was up 7%.",
-          "following_context": "We feel great about our inventory levels and the excellent availability we're seeing in the marketplace. As to our capital allocation, we continue to reinvest in the growth of our business while returning $1.1 billion to shareholders through our buyback and dividend programs in the first quarter. As we mentioned in our press release this morning, we have increased our fiscal 2027 share buyback guidance to a range of $2.75 billion to $3 billion, which will allow us to buy more opportunistically at favorable stock price levels.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 11,
+            "speaker": "John Klinger",
+            "quote_sha256": "418b2ba90faccb28e1818d70ad0666f482e74fc17636e3ebd5efd47d7187fb6b",
+            "value_sha256": "ff804ca5e84bbb72571903edd52c343bd9d31c1a29fb86bc3ebdd21a474ca4be"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "inventory per store",
           "period": "first quarter",
-          "value": "up 7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving to inventory. First quarter balance sheet inventory was up 8% and inventory on a per store basis was up 7%.",
-          "following_context": "We feel great about our inventory levels and the excellent availability we're seeing in the marketplace. As to our capital allocation, we continue to reinvest in the growth of our business while returning $1.1 billion to shareholders through our buyback and dividend programs in the first quarter. As we mentioned in our press release this morning, we have increased our fiscal 2027 share buyback guidance to a range of $2.75 billion to $3 billion, which will allow us to buy more opportunistically at favorable stock price levels.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 11,
+            "speaker": "John Klinger",
+            "quote_sha256": "418b2ba90faccb28e1818d70ad0666f482e74fc17636e3ebd5efd47d7187fb6b",
+            "value_sha256": "4a6a9382f78ba246ded1222d4027c9355c157a288b4f57ccd9b2d4859a744b04"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "off-price retailer position in Canada",
           "period": null,
-          "value": "Canada's only major off-price retailer",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are Canada's only major off-price retailer, and we believe we are well positioned to keep growing our customer base across the country.",
-          "following_context": "At TJX International, comp sales increased a strong 4%. We were pleased with our sales growth in Europe and the strong sales increase in Australia.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 9,
+            "speaker": "John Klinger",
+            "quote_sha256": "2972401a5cdca68cda7217c6ccb9b303fb9f8cb98f113df41d607984b7718d35",
+            "value_sha256": "0123d7dfc7fed0bcb7b02596026ae80323092f05a731688f04a046e7c97e3788"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "number of buyers",
           "period": null,
-          "value": "more than 1,400 buyers",
           "value_num": null,
           "unit": null,
-          "verbatim": "This all starts with our team of more than 1,400 buyers, who are in the marketplace throughout the year.",
-          "following_context": "They work with our vast vendor network to find the best assortments at the best values across good, better and best brands. Our planning and allocation team does the terrific work of allocating the goods based on the demographic characteristics of each individual store.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1400.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 16,
+            "speaker": "Ernie L. Herrman",
+            "quote_sha256": "23cc7060e3cc63d15a2e56ffeb2c810bc896f7523f86e102f92aa91627818601",
+            "value_sha256": "97b725ac60773bc9130bcdce5ab87ba5d9dd3d672b02eb5659c5fd3c848d428e"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "countries operated in and store growth potential",
           "period": null,
-          "value": "10 countries ... potential to add another 1,700 plus stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "We now operate stores in 10 countries, and we see the potential to add another 1,700 plus stores in these countries alone with our existing banners.",
-          "following_context": "Again, we recently opened our first store in Spain and customer reaction has been outstanding. We are on track to open additional stores in Spain this year and are excited about our growth potential in that country.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 1700.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 21,
+            "speaker": "Ernie L. Herrman",
+            "quote_sha256": "94026c0a8a74659d3400502fdf5a527a7cedca7264440b95fc4271d6761c5ec5",
+            "value_sha256": "8c5695b44f74b0f7034db33fe59638c90605ae0471fbf91b0fb359ca23313c1c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "U.S. market share for apparel and home",
           "period": null,
-          "value": "single-digit market share",
           "value_num": null,
           "unit": null,
-          "verbatim": "And I'll just add to Ernie's comments that we only have a single-digit market share for apparel and home in the U.S., and we still see opportunity to grow...",
-          "following_context": null,
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+            "transcript_sha256": "9adecaf66abf8ae510ddd5254f2e4e9a0b8cc750429716d43a866a17e67a2736",
+            "paragraph": 99,
+            "speaker": "John Klinger",
+            "quote_sha256": "ccf39ba2235acffb50bcb89414d9e8e0baa6efb1fe8784e3d8b76863b5b584b4",
+            "value_sha256": "f0d2a01e5798a0dac92d0ce08c0c6a4dd5174fdcff02aef837899eb9a496011a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "consolidated comp sales",
           "period": "second quarter",
-          "value": "increased 4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As Ernie mentioned, our second quarter consolidated comp sales increased 4%, which was above our plan.",
-          "following_context": "Our second quarter comp was driven by a higher average basket and an increase in customer transactions. Further, our home categories outperformed our apparel categories. Adjusted pretax profit margin was 11.9%, up 50 basis points versus last year and well above our plan. Adjusted gross margin was 31.4%, up 70 basis points versus last year and driven by an increase in merchandise margin, mostly due to tariff favorability.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 3,
+            "speaker": "John Klinger",
+            "quote_sha256": "459e24020467a9cc2aca9797c9c9e837f26214f8ab13e62b2ccebe8ae15057bf",
+            "value_sha256": "f9aeb1f781a87411897eaa53f42edc425060d97a1de8caf5d95ff2b4260a4108"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Marmaxx comp sales",
           "period": null,
-          "value": "increased 1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "At Marmaxx, comp sales increased 1% and were entirely driven by a higher average basket, partially offset by a small decrease in customer transactions.",
-          "following_context": "While sales were lower than we would have liked, comp sales increased across all regions and income demographic bands. Adjusted segment profit was 14.2%, flat versus last year. We delivered another good quarter of sales performance at our Sierra stores as we continue to grow this chain across the U.S. At our U.S. e-commerce sites, we continued to add new brands to deliver even more freshness for our online shoppers. We are excited about the initiatives we have planned for our TJ Maxx, Marshalls and Sierra banners this fall and holiday season. Long term, we are confident in the market share opportunities we see for our largest division.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 5,
+            "speaker": "John Klinger",
+            "quote_sha256": "fb09d8cd1182013c19e13ce29bef6b98b17fe9f95a09a84dc5e289b2679d2f80",
+            "value_sha256": "017e711abc73f3915ea8ea5485e5326a4eb176d8ee539f01c3d5a4e463b09905"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HomeGoods comp sales",
           "period": null,
-          "value": "outstanding 7% comp sales increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "HomeGoods delivered an outstanding 7% comp sales increase, primarily driven by higher average basket, and customer transactions were also up.",
-          "following_context": "We are very pleased to see strength at both our HomeGoods and Homesense banners and across all regions and income demographic bands. Adjusted segment profit margin was 12.4%, up 240 basis points. Our HomeGoods and Homesense banners offer customers a highly differentiated mix of home fashions from around the world at compelling values. We are the largest off-price home fashion retailer in the U.S. and believe that we are set up very well to continue to capture an even larger share of the market going forward.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 6,
+            "speaker": "John Klinger",
+            "quote_sha256": "016ff537c05f82f1f5b361ecb8e092aa03673afbcfde2057eba217825692fb3d",
+            "value_sha256": "02a44cacd6ce6780a32536b04127d6e40f854fa454a5f17252b837ba05262450"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TJX Canada comp sales",
           "period": null,
-          "value": "increasing by 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "At TJX Canada, comp sales were excellent, increasing by 6%.",
-          "following_context": "The comp was primarily driven by an increase in customer transactions. Adjusted segment profit margin on a constant currency basis was 16.3%, up 30 basis points. We are the leading off-price retailer in Canada and are very pleased with our strong brand awareness and loyal shopper base. We continue to see an opportunity to further grow across Canada with our 3 retail banners.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 7,
+            "speaker": "John Klinger",
+            "quote_sha256": "94e8fd2c7df4018d4d7035cd8b0bcfcaa3715b8b65d35b4e6798ce27938e286d",
+            "value_sha256": "e7241b281ea16f66b4181c8636d410a4091deda525594579c4331052d024914b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TJX International comp sales",
           "period": null,
-          "value": "increased an outstanding 7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "At TJX International, comp sales increased an outstanding 7%.",
-          "following_context": "This comp was also primarily driven by an increase in customer transactions. We were extremely pleased with the strong, consistent sales performance in Europe and excellent sales in Australia. Adjusted segment profit margin on a constant currency basis was 7.3%, up 210 basis points. During the quarter, we opened our second TK Maxx store in Spain, and again, customer response was extremely positive. We are excited about our growth plans for our international division and have great confidence that we can attract even more shoppers in Europe and Australia over the long term.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 8,
+            "speaker": "John Klinger",
+            "quote_sha256": "1883dbab23ce96a564627c8eca5561aa8521dfa8289125d9fe46bbc7c0fb391e",
+            "value_sha256": "469cb42ef9f9a48621578c77e0806affdaabc825b57d931f5aa241049ed88bc7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "balance sheet inventory",
           "period": "second quarter",
-          "value": "up 7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving to inventory. Second quarter balance sheet inventory was up 7%, and inventory on a per store basis was up 2%.",
-          "following_context": "We feel great about our inventory levels and are convinced that we are well positioned to take advantage of the plentiful buying opportunities in the marketplace. As to our capital allocation, we continue to reinvest in the growth of our business while returning $1.3 billion to shareholders through our buyback and dividend programs in the second quarter. Now I'll turn it back to Ernie.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 9,
+            "speaker": "John Klinger",
+            "quote_sha256": "96f69c0cecff6828fddd7292152a0fa694bc45a496a0c257f4109a7a514d7043",
+            "value_sha256": "4a6a9382f78ba246ded1222d4027c9355c157a288b4f57ccd9b2d4859a744b04"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "inventory per store",
           "period": "second quarter",
-          "value": "up 2%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving to inventory. Second quarter balance sheet inventory was up 7%, and inventory on a per store basis was up 2%.",
-          "following_context": "We feel great about our inventory levels and are convinced that we are well positioned to take advantage of the plentiful buying opportunities in the marketplace. As to our capital allocation, we continue to reinvest in the growth of our business while returning $1.3 billion to shareholders through our buyback and dividend programs in the second quarter. Now I'll turn it back to Ernie.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 9,
+            "speaker": "John Klinger",
+            "quote_sha256": "96f69c0cecff6828fddd7292152a0fa694bc45a496a0c257f4109a7a514d7043",
+            "value_sha256": "57a0ddf2805db39d0c076f67f78c468efbcfcd98d258e41b538395c379113938"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "off-price home fashion retailer position in U.S.",
           "period": null,
-          "value": "largest off-price home fashion retailer in the U.S.",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are the largest off-price home fashion retailer in the U.S. and believe that we are set up very well to continue to capture an even larger share of the market going forward.",
-          "following_context": null,
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 6,
+            "speaker": "John Klinger",
+            "quote_sha256": "7a233d2547583b043f8edbd5194b962ab01d280061ea2849d25b18aa7a9c90d9",
+            "value_sha256": "a074a86e99ecbc993e32a0fab19f3bbca45b186a28ef71b18883c7a982de4f48"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "off-price retailer position in Canada",
           "period": null,
-          "value": "leading off-price retailer in Canada",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are the leading off-price retailer in Canada and are very pleased with our strong brand awareness and loyal shopper base.",
-          "following_context": "We continue to see an opportunity to further grow across Canada with our 3 retail banners.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 7,
+            "speaker": "John Klinger",
+            "quote_sha256": "197b6564ed7501226bec6f77f63c5d5ecb18037d15d8f6d8fc2cb1e5de6bb75a",
+            "value_sha256": "de9a2695c5e7c00bfbafdfb6b72ae26dfb4aa806c6a3d8afdfdc2f170455ca92"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "number of vendors",
           "period": null,
-          "value": "approximately 21,000 vendors every year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Second, we are a global sourcing machine. We work with the universe of approximately 21,000 vendors every year to curate an unmatched mix of good, better, best merchandise for our customers.",
-          "following_context": null,
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 21000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 14,
+            "speaker": "Ernie L. Herrman",
+            "quote_sha256": "d55b265a4306f88e228ff67984cf2331c828fbcff1a2b9bced067e836f8c9188",
+            "value_sha256": "cbb310054078d95931c46349efedef0eb94e36c96e49d66c9c1de5a16c99eef3"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "long-term store growth potential",
           "period": null,
-          "value": "increasing ... by 500 stores to a total of 7,500 stores, or over 2,200 more stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "Today, we are increasing our long-term store growth potential by 500 stores to a total of 7,500 stores, or over 2,200 more stores with just our existing retail banners within our current 10 countries.",
-          "following_context": "This now reflects the long-term potential for our TJ Maxx and Marshalls banners to expand an additional 300 stores to a combined 3,300 stores and for the HomeGoods division to expand an additional 200 stores to 2,000 stores.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 500.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 7500.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 16,
+            "speaker": "Ernie L. Herrman",
+            "quote_sha256": "84538d6a6fd9aea6238edcbc2727e2bcc10fea049dbad06164cb2b979b733545",
+            "value_sha256": "9a1d984b0b037fcc049136f49af2b2739774f15abb458c27738a85ac38dc2539"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "TJ Maxx and Marshalls store expansion potential",
           "period": null,
-          "value": "additional 300 stores to a combined 3,300 stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "This now reflects the long-term potential for our TJ Maxx and Marshalls banners to expand an additional 300 stores to a combined 3,300 stores and for the HomeGoods division to expand an additional 200 stores to 2,000 stores.",
-          "following_context": null,
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 300.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 3300.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 16,
+            "speaker": "Ernie L. Herrman",
+            "quote_sha256": "805143bcf731ba9f5e1f1cda91da6218037489fc927cadf7cc9364a6835556c2",
+            "value_sha256": "e0aef9f8a36febbf41c1e43f95d05e40c2d77ae2582915bf514b5cc7896d1d43"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "HomeGoods division store expansion potential",
           "period": null,
-          "value": "additional 200 stores to 2,000 stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "This now reflects the long-term potential for our TJ Maxx and Marshalls banners to expand an additional 300 stores to a combined 3,300 stores and for the HomeGoods division to expand an additional 200 stores to 2,000 stores.",
-          "following_context": null,
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 2000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 16,
+            "speaker": "Ernie L. Herrman",
+            "quote_sha256": "805143bcf731ba9f5e1f1cda91da6218037489fc927cadf7cc9364a6835556c2",
+            "value_sha256": "3c2a7c806edb13a72d8d6814b9ec3db015c5e3807fac327dff9719c0e7a83774"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "planned store opening growth rate",
           "period": null,
-          "value": "accelerate our store openings to 4% starting next year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Further, we are planning to accelerate our store openings to 4% starting next year to take advantage of the growth opportunities we see out there.",
-          "following_context": "I want to assure you that we are extremely confident that there will be plenty of quality merchandise available to us to support our growth plans. Last, and most importantly, is our exceptional talent around the world. I truly believe that the depth of our off-price knowledge and expertise and the longevity of our talent within TJX is unmatched. Talent development has always been a priority, and we remain laser-focused on teaching and training the next generation of TJX leaders.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 17,
+            "speaker": "Ernie L. Herrman",
+            "quote_sha256": "e821bfd5a8c768da2a011f8806345546f5ff7e144e9e9d9f3d81e4ba4235475a",
+            "value_sha256": "987aafce1f0d19b787c68fb8e75e4e1bc844ffb58bb69c938fc2cf806a4bba25"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "video views across social media (first half)",
           "period": "first half of the year",
-          "value": "1.1 billion video views",
           "value_num": null,
           "unit": null,
-          "verbatim": "in the first half of the year, we had 1.1 billion video views across Facebook, Instagram, TikTok, Pinterest, YouTube, which shows you -- that wouldn't have looked that way in the last couple of years, shows you how aggressive.",
-          "following_context": "By the way, we had over 300 million in HomeGoods, so 1.4 billion video views across those venues of Facebook, Instagram, Pinterest and YouTube. And that's just in the first half, which is where our customers are.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.1,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 170,
+            "speaker": "Ernie L. Herrman",
+            "quote_sha256": "68414b8d21f151f53280f29c58e47c4bc4ec0ea997c78953934b99d7d79613ff",
+            "value_sha256": "a54149d334d0f59f9f3813a9f524116502c58f68009288a31e5bd26500f00c90"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total video views including HomeGoods (first half)",
           "period": null,
-          "value": "over 300 million in HomeGoods, so 1.4 billion video views",
           "value_num": null,
           "unit": null,
-          "verbatim": "By the way, we had over 300 million in HomeGoods, so 1.4 billion video views across those venues of Facebook, Instagram, Pinterest and YouTube.",
-          "following_context": "And that's just in the first half, which is where our customers are.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 300.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 1.4,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+            "transcript_sha256": "e75a8c8273db7b823f2d44ddc15d3fa1ec7cc04b79006f497e84330cf585bc2f",
+            "paragraph": 170,
+            "speaker": "Ernie L. Herrman",
+            "quote_sha256": "6baf337719676142d713562a9351cc725a44f1720038143ff62dbfa9b662fc70",
+            "value_sha256": "53b28d6f7afba4fd120999147d7db00fb110a5cf20a4a179a8c289587346c769"
+          }
         }
       ],
       "qa_flags": [
@@ -15386,6 +15830,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],
