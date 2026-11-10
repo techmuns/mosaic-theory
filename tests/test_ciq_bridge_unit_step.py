@@ -154,3 +154,25 @@ def test_bc_d10_a_small_debt_a_unit_step_down_is_refused_on_a_page_with_no_reven
     assert after.value("revenue") is None
     assert not after.ok and after.scale_check == CHECK_DIFFER, (after.scale_check, after.failures)
     assert any(f.startswith("SCALE: 'Total Debt' reads") for f in after.failures), after.failures
+
+
+def test_bc_d10_a_partial_quarterly_re_read_is_no_re_read() -> None:
+    """Codex round 1 (#960): a re-read summed only the quarters carrying a figure. One tiny quarter
+    beside three markers then re-adds to a thousandth of the annual cell, and an honest figure was
+    refused as a unit step. A flow is re-read from all four quarters or not at all."""
+    from vinci.dossier.ltm_quarters import _four_quarters
+
+    b = CiqBundle.from_files(gen.TICKER, sorted((gen.HERE / gen.TICKER).iterdir()))
+    cf = b.sheet("financials", "Cash Flow", freq="annual")
+    q = b.sheet("financials", "Cash Flow", freq="quarterly")
+    ri, col = _latest_col(cf, "Cash from Ops.", cs._period_header(cf))
+    end = cs.latest_cell(cf, ri, cs._period_header(cf)).period
+    qhdr, qi = cs._period_header(q), cs._find_row(q, "Cash from Ops.")
+    assert end is not None and end.end is not None and qhdr is not None and qi is not None
+    four, why = _four_quarters(q, qhdr, end.end)
+    assert four is not None, why
+    for k, (j, _p) in enumerate(four):
+        q[qi][j] = 0.04 if k == 0 else "NA"
+    cf[ri][col] = 40.0
+    facts = cb.extract(b, gen.TICKER)
+    assert not any("re-add to there" in f for f in facts.failures), facts.failures

@@ -473,8 +473,8 @@ def _bs_reread(bundle: CiqBundle, label: str, parts: tuple[str, ...]) -> Reread 
 def _flow_reread(bundle: CiqBundle, label: str) -> Reread | None:
     """(the annual sheet's latest cell, unrounded; the four quarterly Cash Flow cells ending on that
     column, summed; that column) — the flow `_cf_cell` reads, re-read from its quarters. None when
-    the annual Cash Flow sheet does not carry the row, a quarter has no column, or no quarter is
-    valued."""
+    the annual Cash Flow sheet does not carry the row, a quarter has no column, or any quarter
+    carries no figure."""
     from vinci.dossier.ltm_quarters import _four_quarters
 
     try:
@@ -490,8 +490,12 @@ def _flow_reread(bundle: CiqBundle, label: str) -> Reread | None:
     if got.value is None or got.period is None or got.period.end is None:
         return None
     four, _why = _four_quarters(quarters, qhdr, got.period.end)
-    vals = [v for j, _p in four or [] if (v := cs._cell_at(quarters, qi, j)) is not None]
-    return (got.value, sum(vals), got.label) if vals else None
+    vals = [cs._cell_at(quarters, qi, j) for j, _p in four or []]
+    # ALL FOUR OR NONE (Codex on #960): a sum over the quarters that carry a figure is no re-read —
+    # one tiny quarter beside three markers re-adds to a thousandth of an honest annual cell
+    if len(vals) != 4 or any(v is None for v in vals):
+        return None
+    return got.value, sum(v for v in vals if v is not None), got.label
 
 
 def _unit_steps(bundle: CiqBundle, facts: dict[str, CiqFact]) -> list[str]:
