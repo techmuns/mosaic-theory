@@ -81,8 +81,15 @@ conclusion. A denial must name the doubt it denies; "alleviate" denies it only w
 negates it ("cannot alleviate" is doubt). A hypothetical needs its modal ON the doubt ("could raise
 substantial doubt"): "could raise additional capital" beside a real conclusion is not one.
 
-EVERY marker below was demanded by a REAL filing quoted above. The lists stay CLOSED: grow them
-from an observed miss, never speculatively.
+EVERY marker below was demanded by a REAL filing quoted above — with ONE recorded exception, the
+markers TeamNostra fix request 2 asked for (RE2-D9, RE2-D10, 2026-11-10): "does not exist", the
+present-tense "alleviate", "there will be substantial doubt", the conclusion with its verb after the
+doubt or the company "having" it, and the "no" that stops at a conjunction were asked for on
+TeamNostra's CONSTRUCTED sentences (document 14, E2-D9/D10). Two of them are live: Solo Brands' 10-Q
+0001870600-26-000044 ("These plans alleviate the substantial doubt …") and Aeluma's 10-K
+0001213900-25-086227, both read as doubt before; the rest have no corpus case. A filing's own
+ALLEVIATION settles the doubt its conditions raised before it — never one stated after it. The lists
+stay CLOSED otherwise: grow them from an observed miss, never speculatively.
 """
 
 from __future__ import annotations
@@ -137,10 +144,12 @@ _CONCLUSION = re.compile(
     # TeamNostra fix request 2, RE2-D10: a frame's own sentence may state its result with the verb
     # AFTER the doubt ("determined that substantial doubt about the Company's ability to continue
     # as a going concern exists") or as the company HAVING it ("determined that the Company has
-    # substantial doubt"); both were skipped as frames, with no flag
-    r"\b(?:concluded|determined)\s+that\b[^.;]{0,200}?\b(?:(?:raised?|raises|is|exists?|was|"
-    r"remains|has|have|had)\s+(?:a\s+)?substantial\s+doubt|"
-    r"substantial\s+doubt\b[^.;]{0,160}?\b(?:exists?|remains)\b|"
+    # substantial doubt"); both were skipped as frames, with no flag. A negated verb is no result:
+    # "determined that the Company does not have / no longer has substantial doubt" and "…
+    # substantial doubt … no longer exists" stay frames (review: they read as DOUBT once widened)
+    r"\b(?:concluded|determined)\s+that\b[^.;]{0,200}?(?<!\bnot\s)(?<!\blonger\s)"
+    r"\b(?:(?:raised?|raises|is|exists?|was|remains|has|have|had)\s+(?:a\s+)?substantial\s+doubt|"
+    r"substantial\s+doubt\b[^.;]{0,160}?(?<!\bnot\s)(?<!\blonger\s)\b(?:exists?|remains)\b|"
     r"(?:a\s+)?material\s+uncertaint\w*\s+(?:exists?|remains))|"
     r"\b(?:these|such)\s+(?:conditions|factors|events|circumstances|matters)\b[^.;]{0,80}?"
     r"\b(?:raise|raises|raised)\s+substantial\s+doubt|"
@@ -160,8 +169,9 @@ _VALUATION_SENSE = re.compile(r"going\s+concern\s+value", re.I)
 #: of substantial doubt". A doubt ALLEVIATED is `_ALLEVIATED`.
 _NEGATED = re.compile(
     # the words between may not join another clause (RE2-D10): "The Company has no revenue and
-    # recurring losses raise substantial doubt" denies nothing — "no" governs "revenue"
-    r"\b(?:no|not|does\s+not|do\s+not|did\s+not|never)\s+(?:(?!(?:and|or|but)\b)\w+\s+){0,4}"
+    # recurring losses raise substantial doubt" denies nothing — "no" governs "revenue". "or" is no
+    # clause break: "do not individually or collectively raise substantial doubt" still denies it
+    r"\b(?:no|not|does\s+not|do\s+not|did\s+not|never)\s+(?:(?!(?:and|but)\b)\w+\s+){0,4}"
     r"(?:raise|indicate|create)\s+substantial\s+doubt|"  # "casino" is no "no"
     r"\bno\s+(?:longer\s+)?(?:substantial\s+doubt|material\s+uncertaint)|"
     r"\bnot\s+believe\s+(?:that\s+)?(?:there\s+(?:is|exists)\s+)?substantial\s+doubt|"
@@ -179,15 +189,21 @@ _NEGATED = re.compile(
 #: XIAO's "cannot alleviate" all leave the doubt standing (review round 2).
 _ALLEVIATED = re.compile(
     r"\balleviated\s+(?:the\s+)?substantial\s+doubt|"
-    # RE2-D9: "Management's plans alleviate the substantial doubt" states it alleviated too
-    r"(?<!\bto\s)(?<!\bwill\s)(?<!\bmay\s)(?<!\bcan\s)(?<!\bnot\s)(?<!\bcould\s)"
-    r"(?<!\bwould\s)(?<!\bmight\s)(?<!\bshould\s)\balleviates?\s+(?:the\s+)?substantial\s+doubt|"
+    # RE2-D9: "Management's plans alleviate the substantial doubt" states it alleviated too; a
+    # purpose ("to") or "can" is no statement (a modal or "not" is `_UNSETTLED`)
+    r"(?<!\bto\s)(?<!\bcan\s)\balleviates?\s+(?:the\s+)?substantial\s+doubt|"
     r"substantial\s+doubt\b[^.;]{0,160}?\b(?:is|are|has|have|had|was|were)\s+(?:been\s+)?"
     r"alleviated",
     re.I,
 )
+#: Unsettles an alleviation before it or inside its own clause. A modal anywhere there is what may
+#: be, not what is: "would have alleviated", "will help alleviate", "won't alleviate" (review).
 _UNSETTLED = re.compile(
-    r"\b(?:not|no|cannot|can['’]t|unable|until|unless|whether|if|assurance)\b", re.I)
+    r"\b(?:not|no|cannot|can['’]t|won['’]t|unable|until|unless|whether|if|assurance|"
+    r"will|would|may|might|could|should|shall)\b", re.I)
+#: Unsettles an alleviation from a LATER clause too: a condition or a disclaimer attached to it
+#: ("…have alleviated the substantial doubt, although there is no assurance …", "…, unless …").
+_UNSETTLED_LATER = re.compile(r"\b(?:until|unless|assurance)\b", re.I)
 
 #: A HYPOTHETICAL: a modal ON the doubt — a risk factor saying what COULD happen: ZURA's "could
 #: raise substantial doubt", LODE's "could have an immediate material adverse effect on liquidity
@@ -259,12 +275,14 @@ def _alleviated(sentence: str) -> bool:
     """The sentence says the doubt HAS BEEN alleviated, and nothing unsettles that — before it, or
     inside its own clause. A later clause is another statement (RE2-D9): "…have alleviated the
     substantial doubt …, and the Company does not expect to need additional financing" was read
-    as doubt because of that "not"."""
+    as doubt because of that "not". A condition or a disclaimer in a later clause still unsettles it
+    (`_UNSETTLED_LATER`)."""
     m = _ALLEVIATED.search(sentence)
     if m is None:
         return False
-    ends = [j for j in (sentence.find(c, m.end()) for c in ",;") if j != -1]
-    return not _UNSETTLED.search(sentence, 0, min(ends, default=len(sentence)))
+    end = min((j for j in (sentence.find(c, m.end()) for c in ",;") if j != -1),
+              default=len(sentence))
+    return not (_UNSETTLED.search(sentence, 0, end) or _UNSETTLED_LATER.search(sentence, end))
 
 
 def find_going_concern_statement(text: str) -> GoingConcernStatement | None:
@@ -272,11 +290,12 @@ def find_going_concern_statement(text: str) -> GoingConcernStatement | None:
 
     Scans EVERY mention rather than stopping at the first: the ASU evaluation frame legitimately
     precedes a real conclusion in the same note (MVST), so stopping early conflates a filer that
-    assessed and cleared itself (TECX) with one that assessed and did not.
+    assessed and cleared itself (TECX) with one that assessed and did not. An alleviation settles
+    the doubt stated BEFORE it (ASC 205-40's alleviated outcome, RE2-D9); a doubt stated after the
+    last alleviation still stands.
     """
     fallback: GoingConcernStatement | None = None
-    hits: list[GoingConcernStatement] = []
-    alleviated = False
+    first: GoingConcernStatement | None = None
     for m in _MENTION.finditer(text):
         sentence, _ = _sentence_around(text, m.start())
         if _VALUATION_SENSE.search(sentence):
@@ -284,7 +303,7 @@ def find_going_concern_statement(text: str) -> GoingConcernStatement | None:
         if _EVALUATION_FRAME.search(sentence) and not _CONCLUSION.search(sentence):
             continue                      # "has evaluated whether …" — an assessment, not a result
         if _alleviated(sentence):
-            alleviated = True             # the filer's own plans alleviate the doubt (below)
+            first = fallback = None       # the filer's own plans alleviate the doubt (below)
             continue
         if _NEGATED.search(sentence):
             continue                      # the filer says the doubt does NOT exist
@@ -297,14 +316,14 @@ def find_going_concern_statement(text: str) -> GoingConcernStatement | None:
             # real, but boilerplate ABOUT the disclosure rather than the disclosure
             fallback = fallback or hit
             continue
-        hits.append(hit)
-    # ALLEVIATED IS ASC 205-40'S OTHER OUTCOME, and it governs the filing (RE2-D9). Solo Brands'
-    # 10-Q (0001870600-26-000044) says its conditions "raise substantial doubt" and then "These
-    # plans alleviate the substantial doubt …": the doubt the conditions raised is the one the
-    # plans alleviated, so the filing states no doubt — main quoted the alleviation AS the doubt.
-    if alleviated:
-        return None
-    return hits[0] if hits else fallback
+        first = first or hit
+    # ALLEVIATED IS ASC 205-40'S OTHER OUTCOME, and it settles the doubt stated before it (RE2-D9).
+    # Solo Brands' 10-Q (0001870600-26-000044) says its conditions "raise substantial doubt" and
+    # then "These plans alleviate the substantial doubt …": the doubt the conditions raised is the
+    # one the plans alleviated, so the filing states no doubt — main quoted the alleviation AS the
+    # doubt. A doubt stated AFTER the last alleviation ("In fiscal 2024 … plans alleviated …. As of
+    # December 31, 2025 … these conditions raise substantial doubt") is a later doubt, and stands.
+    return first or fallback
 
 
 def states_going_concern_doubt(text: str) -> bool:

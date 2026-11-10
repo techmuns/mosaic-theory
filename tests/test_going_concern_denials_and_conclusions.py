@@ -112,3 +112,48 @@ def test_re2_d10_a_real_conclusion_is_doubt(text: str) -> None:
 def test_re2_d10_a_denial_and_a_frame_are_still_not_doubt(text: str) -> None:
     """NEGATIVE PINS — the widened conclusion and the narrowed "no" leave these as they were."""
     assert not _doubt(text)
+
+
+# --- review round 0: the widened rules, held to what they were widened for -----------------------
+@pytest.mark.parametrize("text", [
+    "In accordance with ASC 205-40, management determined that the Company does not have "
+    "substantial doubt about its ability to continue as a going concern.",
+    "In accordance with ASC 205-40, management determined that the Company no longer has "
+    "substantial doubt about its ability to continue as a going concern.",
+    "In accordance with ASC 205-40, management concluded that substantial doubt about the "
+    "Company's ability to continue as a going concern no longer exists.",
+    "These conditions do not individually or collectively raise substantial doubt about the "
+    "Company's ability to continue as a going concern.",
+], ids=["frame-does-not-have", "frame-no-longer-has", "frame-no-longer-exists",
+        "not-individually-or-collectively"])
+def test_a_negated_conclusion_is_not_doubt(text: str) -> None:
+    """CONSTRUCTED (review): the widened conclusion read each negated verb as a result, and the
+    clause-break "or" split a denial — each was None on main and read as DOUBT before the fix."""
+    assert not _doubt(text)
+
+
+_RAISED = ("These conditions raise substantial doubt about the Company's ability to continue as a "
+           "going concern. ")
+
+
+@pytest.mark.parametrize("text", [
+    "In fiscal 2024, management's plans alleviated substantial doubt about the Company's ability "
+    "to continue as a going concern. As of December 31, 2025, the Company has recurring losses "
+    "and " + _RAISED[0].lower() + _RAISED[1:],
+    "Absent the covenant breach, management's plans would have alleviated substantial doubt about "
+    "the Company's ability to continue as a going concern. " + _RAISED,
+    _RAISED + "Management believes its plans will help alleviate the substantial doubt about the "
+    "Company's ability to continue as a going concern.",
+    _RAISED + "Management's plans won't alleviate the substantial doubt about the Company's "
+    "ability to continue as a going concern.",
+    _RAISED + "Management believes its plans have alleviated the substantial doubt about the "
+    "Company's ability to continue as a going concern, although there is no assurance that the "
+    "financing will close.",
+    _RAISED + "Management's plans alleviate the substantial doubt about the Company's ability to "
+    "continue as a going concern, unless the lender declines to fund.",
+], ids=["doubt-after-an-earlier-alleviation", "would-have-alleviated", "will-help-alleviate",
+        "wont-alleviate", "later-no-assurance", "later-unless"])
+def test_an_alleviation_that_is_not_one_leaves_the_doubt_standing(text: str) -> None:
+    """CONSTRUCTED (review): the filing-wide alleviation erased each of these doubts — a later
+    doubt, a modal alleviation, and one a later clause conditions. All DOUBT on main."""
+    assert _doubt(text)

@@ -65,6 +65,23 @@ superseded-by:
   - "plans alleviate the substantial doubt" has 57 hits, Solo Brands among them.
 - **The $0 replay of the 27 committed pages:** the cited 10-Q's going-concern field moves on none.
   MVST still states doubt.
+- **Code review, round 0 (`/code-review high --fix`).** Five defects fixed, each with a constructed
+  pin that fails on the first commit:
+  - an alleviation settles only the doubt stated BEFORE it. One cleared the whole filing, so a
+    later, separate doubt was dropped;
+  - a modal or "won't" anywhere before an alleviation unsettles it (`_UNSETTLED`). Before, only a
+    modal directly in front of the verb did;
+  - a widened conclusion refuses a verb preceded by "not" or "longer" ("does not have substantial
+    doubt" had become doubt);
+  - "until", "unless" or "assurance" in a later clause still unsettles an alleviation;
+  - "or" no longer blocks a denial ("do not individually or collectively raise").
+
+  After the fixes the corpus measure is identical, and 0 reads move against the first commit.
+  Deferred: a "does not exist" up to 200 characters on may deny a real doubt (under-flagging, the
+  module's stated bias, with no corpus case), and an alleviation that cites ASC 205-40 is still
+  skipped as a frame before the filing-level rule sees it.
+- **The module docstring** records the exception to "every marker was demanded by a real filing":
+  these markers came from TeamNostra's constructed sentences, two of them live.
 - **The version.** Row `2026-11-10.going-concern-denials-and-conclusions`, in both tables,
   re-pinned.
 
@@ -74,9 +91,10 @@ superseded-by:
   text says "going concern". That is 178 reads across the three caches, not deduplicated.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- **An alleviation governs the whole filing.** A filing that alleviated last year's doubt and
-  states a new one this year would read as none. *Falsifier:* a filing with an unsettled
-  "alleviated" sentence and a separate current doubt conclusion. None appears in the corpus above.
+- **An alleviation settles the doubt stated before it, never one stated after.** So a filing that
+  states a current doubt and THEN recounts last year's alleviation would read as none.
+  *Falsifier:* a filing whose doubt conclusion precedes an unrelated, unsettled "alleviated"
+  sentence. None appears in the corpus above.
 - **An absent going-concern statement still writes no flag** (document 14's note on
   `filing_sections.py:496-505`). The digest's "none stated (checked, absent)" state is unreachable:
   `_going_concern` returns a statement or None. Recorded, not changed: that line is the synthesis
