@@ -172,7 +172,10 @@ def test_committed_assignments_supersede_the_ledger_and_reproduce_their_own_caps
         assert a.cap_at_entry_usd == pytest.approx(a.entry_price * a.shares)
         assert (a.benchmark, a.band) == mon.benchmark_for_cap(a.cap_at_entry_usd)
         assert a.shares_source.strip(), f"{t}: share count with no source"
-        row = next(r for r in ledger if r["ticker"] == t)
+        # THE DECISION ROW: a close or a CORRECTION row shares its ticker, and the assignment is
+        # stamped at the entry the decision SEALED — a correction moves the entry it is read at,
+        # never the benchmark chosen at entry (RF-D7)
+        row = next(r for r in mon.decision_rows(ledger) if r["ticker"] == t)
         assert a.entry_price == row["entry_price"] and \
             a.entry_date.isoformat() == row["entry_price_as_of"]   # assigned AT ENTRY, not now
 
