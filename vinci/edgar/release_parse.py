@@ -157,6 +157,18 @@ _RANGE_TAIL = (r"\s*(?:to|through|[-–—])\s*"
                rf"\$?\s*{_NUM}")
 #: Every fail-loud note `_reconciliation` writes starts with this.
 RECON_REFUSAL_PREFIX = "Reconciliation figure refused"
+#: A "RESPECTIVELY" LIST after an actual's own amount (TeamNostra fix request 2, RE2-D2): "Revenue
+#: of $850.0 million and $300.0 million for the nine and three months ended September 30, 2026,
+#: respectively" pairs its amounts with its periods BY ORDER, and the reader took the first amount
+#: under the release's quarter — a nine-month figure stored as Q3. Refused, as the guidance and the
+#: debt readers refuse one.
+#: A CALENDAR PERIOD in a figure's own clause (TeamNostra fix request 2, RE2-D5): "Adjusted EBITDA
+#: of $480 million for calendar year 2025" in a "Fiscal 2026 Results" release was labelled 2026 —
+#: every period label downstream is the filer's FISCAL period, and a calendar year is not one.
+_CALENDAR = re.compile(r"\bcalendar\s+(?:year\s+)?(20\d\d)\b|\bCY\s?(20\d\d)\b", re.I)
+_RESPECTIVELY_AFTER = re.compile(
+    rf"\s*(?:,\s*)?(?:and|or)\s+(?:\$\s*)?{_NUM}\s*(?:{_SCALE})?[^.;]{{0,160}}?\brespectively\b",
+    re.I)
 
 
 def _scaled(num: str, scale: str | None) -> float | None:
@@ -415,12 +427,13 @@ def _release_frame(text: str) -> _ReleaseFrame:
     head = text[:600]
     if c := _own_header(_HDR_COMBINED, head):
         cy = c["y"] or c["y2"]
-        return _ReleaseFrame("combined", 4, cy, _fy_offset(text, cy))
+        return _ReleaseFrame("combined", 4, cy, _fy_offset(text, cy, annual=True))
     if q := _own_header(_HDR_QUARTER, head):
         qy, qn = q["y"] or q["y2"], (q["qn"] or q["qn2"]).lower()
         return _ReleaseFrame("quarter", _QN[qn], qy, _fy_offset(text, qy))
     if a := _own_header(_HDR_ANNUAL, head):
-        return _ReleaseFrame("annual", None, a.group(1) or a.group(2))
+        ay = a.group(1) or a.group(2)
+        return _ReleaseFrame("annual", None, ay, _fy_offset(text, ay, annual=True) if ay else 0)
     if not _FISCAL_OR_FULL_YEAR.search(head) and (e := _own_header(_HDR_QENDED, head)):
         # The year IS the quarter-end date's, so there is no fiscal shift to measure — and
         # `_fy_offset` would read one from a table's column header: Amazon's "Three Months Ended
@@ -433,11 +446,17 @@ def _release_frame(text: str) -> _ReleaseFrame:
     return _ReleaseFrame("unknown", None, y.group(1) if y else None)
 
 
-def _fy_offset(text: str, year: str) -> int:
+def _fy_offset(text: str, year: str, *, annual: bool = False) -> int:
     """The header's fiscal year minus the LATEST calendar year a "three months / quarter ended
     <date>" phrase names — the release's own quarter end. 0 when the text names no such date, or
-    when the gap is not a plausible fiscal-year shift (−1..1)."""
+    when the gap is not a plausible fiscal-year shift (−1..1).
+
+    ``annual``: the header names a full year (a combined or annual release), so a "year ended
+    <date>" phrase closes that same fiscal year and measures the shift when no quarter end does
+    (RE2-D8). A quarter's release never reads one: there it names a prior year."""
     ends = [int(m.group("qey")) for m in _PHRASE.finditer(text) if m.group("qended")]
+    if not ends and annual:
+        ends = [int(m.group("yey")) for m in _PHRASE.finditer(text) if m.group("yended")]
     if not ends:
         return 0
     off = int(year) - max(ends)
@@ -595,7 +614,10 @@ def _as_current(m: re.Match[str], frame: _ReleaseFrame) -> object:
             year = frame.year
         return year if year else None
     if g["yended"]:
-        return g["yey"]
+        # THE FISCAL YEAR, not the end date's calendar year (TeamNostra fix request 2, RE2-D8): a
+        # retailer's "Fiscal 2025" ends January 31, 2026, and its "for the fiscal year ended
+        # January 31, 2026" was labelled 2026, refused as postdating the release, and dropped.
+        return str(int(g["yey"]) + frame.fy_offset)
     if g["bare"]:
         # In a single-quarter release a bare year beside a figure is far likelier an outlook or a
         # date than a claim that the figure is annual — the header's quarter stands.
@@ -626,7 +648,7 @@ def _as_comparison_granularity(m: re.Match[str], frame: _ReleaseFrame) -> object
         year = g["fyy"] or g["fyy2"]
         return str(int(year) + 1) if year else _NO
     if g["yended"]:
-        return str(int(g["yey"]) + 1)
+        return str(int(g["yey"]) + 1 + frame.fy_offset)
     if g["bare"]:
         return _NO if frame.kind == "quarter" else str(int(g["bareyear"]) + 1)
     return _NO  # "the prior year" / "the comparable year ago period" carry no granularity
@@ -649,7 +671,7 @@ def _as_prior(m: re.Match[str], frame: _ReleaseFrame) -> object:
     if g["fy"]:
         return g["fyy"] or g["fyy2"] or None
     if g["yended"]:
-        return g["yey"]
+        return str(int(g["yey"]) + frame.fy_offset)
     if g["relp"]:
         if frame.kind == "quarter" and frame.quarter and frame.year:
             return f"Q{frame.quarter} {g['relpy'] or _year_minus(frame.year)}"
@@ -922,7 +944,13 @@ _RECON = re.compile(
     r"(?P<sign>positive\s+|negative\s+)?"
     # THE SHARED AMOUNT TOKEN (see `_NUM`): "$" + digits, or digits a scale word follows; the scale
     # and any range tail are CAPTURED, so the caller scales the one and refuses the other.
-    rf"(?:\$\s*(?P<num>{_NUM})|(?P<num2>{_NUM})(?=\s*(?:{_SCALE})))"
+    # A NEGATIVE WRITTEN AS A SIGN (TeamNostra fix request 2, RE2-D6): "$(5.5) million", "($5.5)
+    # million", "-$5.5 million" — Par Pacific writes "Adjusted Net Loss of $(5.5) million". Neither
+    # matched, and the figure was dropped with no note. The bracket or minus is CAPTURED and signs
+    # the figure, as a loss word does.
+    rf"(?:(?P<neg>[-–−]\s*|\(\s*)?\$\s*(?P<negp>\(\s*|[-–−]\s*)?(?P<num>{_NUM})"
+    r"(?(neg)\)?|(?(negp)\)?))"
+    rf"|(?P<num2>{_NUM})(?=\s*(?:{_SCALE})))"
     rf"(?:\s*(?P<scale>{_SCALE}))?+"
     rf"(?P<range>{_RANGE_TAIL})?"
     r"(?!\s*%)",
@@ -1137,6 +1165,7 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         lead = _lead(lo, marker_start, metric)
         return lead is not None and (lead[1] or "").startswith("Q")
 
+    skipped: list[tuple[str, float, str, int, int]] = []  # (metric, value, why, start, end)
     for m in _RECON.finditer(text):  # both captured, period-labeled, NEVER conflated
         # the amount comes from EITHER currency branch: "$53.8 million" (num) or
         # "53.8 million" (num2). A bare number with neither marker no longer matches at all.
@@ -1163,9 +1192,18 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         if (metric == "adjusted ebitda" and not bare_ebitda_is_the_measure
                 and _RECON_PREFIXED.match(m.group(0)) is None):
             continue  # this filer states an adjusted EBITDA too — the bare one is not it
-        if "negative" in sign or m["lossword"] or "loss" in metric_raw.lower():
+        if ("negative" in sign or m["lossword"] or "loss" in metric_raw.lower()
+                or m["neg"] or m["negp"]):
             val = -abs(val)
-        lo, _ = _clause(text, m.start(), m.end())
+        if _RESPECTIVELY_AFTER.match(text, m.end()):
+            _refuse("the first amount of a 'respectively' list — its period is paired by order",
+                    m.start(), m.end())
+            continue
+        lo, hi = _clause(text, m.start(), m.end())
+        if cal := _CALENDAR.search(text, lo, hi):
+            _refuse(f"stated for calendar {cal[1] or cal[2]} — a calendar period is not the "
+                    "filer's fiscal one", m.start(), m.end())
+            continue
         marker = _comparison_at(text, lo, m.start())
         if marker is None and _coordinated_with_comparison(text, lo, m.start()):
             _refuse("joined by 'and' to a compared amount — its period is not stated",
@@ -1178,6 +1216,17 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
             _refuse("a quarter compared with a bare year — the release does not say which period "
                     "the comparison is", m.start(), m.end())
             continue
+        if p is None and not _FORWARD.search(text, lo, m.start()):
+            # NO SKIPPED ACTUAL IS SILENT (audit E2-D11's residual, TeamNostra fix request 2): a
+            # figure the release states but does not place in one period was dropped with no note,
+            # so one placed figure hid every dropped one — EPAM's headline "Non-GAAP Diluted EPS of
+            # $3.26" under "Fourth Quarter 2025" (8-K 0001352010-26-000010) beside two refused
+            # "Revenues of". Said once the loop ends, and only when no other sentence placed the
+            # same figure (Burlington's headline "Adjusted EPS of $10.17" is, as its FY 2025 row).
+            skipped.append((metric, val, "under a bullet list whose lead-in reads as an outlook"
+                            if _forward_looking(text, lo, m.start())
+                            else "the release does not place it in one period", m.start(), m.end()))
+            continue
         # a comparison can never share the release's own period (never conflate prior with current)
         if p is None or (marker is not None and p == current) or (metric, p) in seen:
             continue
@@ -1187,6 +1236,12 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
             metric=metric, period=p, value=val, change=_change_after(text, m.end()),
             verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
         ))
+    placed = {(r.metric, r.value) for r in out}
+    for metric, val, why, start, end in skipped:
+        if (metric, val) not in placed:
+            placed.add((metric, val))  # one note per figure, however many sentences repeat it
+            _refuse(f"{'an' if metric[0] in 'aeiou' else 'a'} {metric} figure skipped — {why}",
+                    start, end)
     for m in _REVENUE.finditer(text):  # headline revenue actual (same current/prior discipline)
         if _segment(m.start()):
             continue
@@ -1209,7 +1264,15 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         val = _scaled(m.group(2), m["scale"])
         if val is None:
             continue
-        lo, _ = _clause(text, m.start(), m.end())
+        if _RESPECTIVELY_AFTER.match(text, m.end()):
+            _refuse("a revenue figure that opens a 'respectively' list — its period is paired "
+                    "by order", m.start(), m.end())
+            continue
+        lo, hi = _clause(text, m.start(), m.end())
+        if cal := _CALENDAR.search(text, lo, hi):
+            _refuse(f"a revenue figure stated for calendar {cal[1] or cal[2]} — a calendar "
+                    "period is not the filer's fiscal one", m.start(), m.end())
+            continue
         marker = _comparison_at(text, lo, m.start())
         if marker is None and _coordinated_with_comparison(text, lo, m.start()):
             _refuse("revenue joined by 'and' to a compared amount — its period is not stated",
