@@ -31,6 +31,8 @@ from vinci.schemas.ledger import (
     LedgerFact,
     Verdict,
     close_entry_id,
+    corrected,
+    corrections_by_decision,
 )
 from vinci.store import Store
 
@@ -326,7 +328,10 @@ def close_position(
             f"{candidate_id!r} has {len(decisions)} decision rows "
             f"({sorted(d.entry_id for d in decisions)}) — close by entry_id is not supported, so "
             f"this must be resolved before a close can name its position unambiguously.")
-    decision = decisions[0]
+    # READ AT ITS CORRECTION (RF-D7): the exit is guarded against, and the close repeats, the entry
+    # every reader of returns measures from — a close typed between the sealed and the corrected
+    # entry date would otherwise pass here and pair an exit before its entry in the realized view
+    decision = corrected(decisions[0], corrections_by_decision(rows).get(decisions[0].entry_id))
     # ALREADY CLOSED → REFUSE. `pair_closes` raises on a duplicated close, so a second one would
     # not corrupt the realized book quietly — it would break every later monitor run instead, at a
     # point far from the command that caused it.

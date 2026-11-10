@@ -29,6 +29,9 @@ from vinci.schemas.ledger import (
     ORIGIN_SCREEN,
     LedgerEntry,
     Verdict,
+    corrected,
+    correction_note,
+    corrections_by_decision,
     origin_of,
     sleeve_of,
 )
@@ -232,6 +235,10 @@ def score_ledger(
         for key, b in (baskets or {}).items()
     }
 
+    # A DECISION SEALED ON A STALE CLOSE IS READ AT ITS CORRECTION (RF-D7, operator ruling
+    # 2026-11-09): the decision row keeps its sealed price, and the return, the dividend window
+    # and the horizon run from the corrected entry; every corrected row says so under the report.
+    corrections = corrections_by_decision(ledger)
     scores: list[VerdictScore] = []
     pending = 0
     book_rets: list[float] = []
@@ -249,8 +256,11 @@ def score_ledger(
         # has resolved yet. Filtered here rather than inside `aggregate`, so a close never reaches
         # `scores` either — the per-verdict listing the report renders would otherwise show a
         # phantom row that the counts alone would not reveal.
-        if entry.event == EVENT_CLOSE:
+        if entry.event is not None:     # a close or a correction is not a decision
             continue
+        sealed = entry
+        if (fix := corrections.get(entry.entry_id)) is not None:
+            entry = corrected(entry, fix)
         entry_date = entry.entry_price_as_of
         horizon_date = entry_date + timedelta(days=entry.horizon_days)
         # RESOLVED ON THE HORIZON SESSION'S CLOSE, never before it lands (see `bench_last`). A
@@ -259,6 +269,8 @@ def score_ledger(
         resolved = (past_horizon and bench_last is not None
                     and bench_last.bar_date >= horizon_date)
         first_note = len(notes)  # this row's notes are notes[first_note:]
+        if fix is not None:     # the sealed and the corrected entry, side by side, on the row too
+            notes.append(correction_note(sealed, fix))
         # THE PENDING COUNT IS SCREEN-ORIGIN ONLY, so a followed row named under it says so —
         # otherwise the reader audits the count against one named row too many.
         who = (f"{entry.entry_id} ({entry.ticker})" if origin_of(entry) == ORIGIN_SCREEN
@@ -277,7 +289,8 @@ def score_ledger(
         # GOOGL, sealed SPY, would have stopped scoring at 2027-03-01, and IT, assigned MDY, would
         # have been scored against IWM while the monitor marked it against MDY. GATED ON
         # `resolved`, not on presence: an unresolved row contributes no bench_return to anything.
-        bench_sym, conflict = row_benchmark(entry, (assignments or {}).get(entry.ticker),
+        # the ruling is keyed to the decision AS SEALED, the date its assignment names
+        bench_sym, conflict = row_benchmark(sealed, (assignments or {}).get(entry.ticker),
                                             default_benchmark)
         if conflict is not None:
             if resolved:
