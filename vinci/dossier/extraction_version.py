@@ -719,6 +719,17 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "2026-11-10 holds any of these shapes; ORKA's and TECX's pages, which carry no "
         "consensus levels, gain the note",
     ),
+    (
+        "2026-11-10.relationship-view-edges",
+        "the Customers view's edges are said (TeamNostra fix request 2, RBC-D3, V1-O3, RBC-D5):"
+        " an RTF view that does not end with CIQ's closing line ('*denotes proprietary "
+        "relationship', the last line of all 72 exports on disk) says the list may be cut short"
+        " and gives no count; a row naming a party with its relationship type blank is kept as "
+        "'type not stated' when it states another column; a header with no rows, a 'No Data "
+        "Available' body and an 'Entitlement Needed' body are named as such, never 'could not "
+        "parse'; and a thin RTF is no longer called an OLE Word doc. On the 36 export folders "
+        "on disk no read moves",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
