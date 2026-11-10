@@ -1054,7 +1054,7 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
     from vinci.dossier.anchor import ciq_bridge, compute_anchor
     from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
     from vinci.dossier.ciq_balance import scale_outcome
-    from vinci.dossier.ciq_sheets import CiqCurrencyError
+    from vinci.dossier.ciq_sheets import CiqCurrencyError, CiqUnitError
 
     try:
         facts = edgar.companyfacts(resolver.resolve_ticker(t).cik)
@@ -1075,6 +1075,8 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
         raise   # two exports of one kind is not "no workbook" — the operator clears it first
     except CiqCurrencyError:
         raise   # a money panel stating another currency is refused, as assembly refuses it
+    except CiqUnitError:
+        raise   # so is a Financials money sheet stating another unit (RA-D9)
     except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
         print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
     # cut at the page's price date, its reference date when there is no stored close (E2-D21)

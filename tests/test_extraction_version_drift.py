@@ -80,20 +80,20 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "4bad31d3bb5d"
-PINNED_AT = "2026-11-10.one-family-peers"
+PINNED_TABLE = "a7d76d9e355c"
+PINNED_AT = "2026-11-10.loud-with-the-right-cause"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
-    "vinci/dossier/anchor.py": "58f1162f05f9",
+    "vinci/dossier/anchor.py": "e54fef8abb1e",
     "vinci/dossier/assemble.py": "7aa870cc9eaf",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "059ec4f12b76",
-    "vinci/dossier/ciq.py": "6a636c11c2f3",
-    "vinci/dossier/ciq_balance.py": "7bf163fd7abe",
+    "vinci/dossier/ciq.py": "b2a8dbc119f5",
+    "vinci/dossier/ciq_balance.py": "dfecb79caca4",
     "vinci/dossier/ciq_reread.py": "4ebcadca0987",
-    "vinci/dossier/ciq_sheets.py": "9a25fe536aed",
+    "vinci/dossier/ciq_sheets.py": "d15ec1330476",
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "7873fe4db242",
@@ -111,17 +111,17 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/inputs_schema.py": "6f7d41f25223",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
     "vinci/dossier/lease_basis.py": "a93d880597ba",
-    "vinci/dossier/ltm_quarters.py": "976073b15fc6",
+    "vinci/dossier/ltm_quarters.py": "500dc0b38917",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "c91b8d44c5fe",
-    "vinci/dossier/mechanical.py": "b9c1db251032",
-    "vinci/dossier/midcycle.py": "a67120583735",
+    "vinci/dossier/mechanical.py": "75843c5ac4ea",
+    "vinci/dossier/midcycle.py": "e14e64ec5ff7",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
-    "vinci/dossier/refresh.py": "4541c0b842bd",
+    "vinci/dossier/refresh.py": "f116dfce4dfd",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "2fb1b8d12bc5",
+    "vinci/dossier/schemas.py": "54b78847cf8a",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "f8b55204fd73",
+    "vinci/dossier/synthesis.py": "a7d5ed4385e2",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
     "vinci/dossier/verdict.py": "0b43167d2044",
@@ -129,14 +129,14 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/client.py": "e1f2a793bf74",
     "vinci/edgar/concepts.py": "65e2452fe3d4",
     "vinci/edgar/cover_count.py": "24d1e9a7d94a",
-    "vinci/edgar/debt_maturities.py": "a0b1d84be715",
-    "vinci/edgar/filing_sections.py": "568c36df04a2",
-    "vinci/edgar/going_concern.py": "feb938485fd0",
+    "vinci/edgar/debt_maturities.py": "e60bf9b66897",
+    "vinci/edgar/filing_sections.py": "72667458db26",
+    "vinci/edgar/going_concern.py": "2ffc2e9aebc0",
     "vinci/edgar/net_debt.py": "d60756329d18",
     "vinci/edgar/primary_source.py": "d9054b7a75a0",
-    "vinci/edgar/release_parse.py": "fdb5e7398ef3",
+    "vinci/edgar/release_parse.py": "3da5e8c3f066",
     "vinci/edgar/segment_facts.py": "9d3c07301296",
-    "vinci/edgar/segments.py": "8aa10f003612",
+    "vinci/edgar/segments.py": "3016c43f216f",
     "vinci/edgar/submissions.py": "6644355e5c3f",
     "vinci/eod/features.py": "8d23c6080234",
     "vinci/finra.py": "5787c9793b1b",
