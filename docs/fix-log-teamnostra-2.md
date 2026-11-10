@@ -95,14 +95,14 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | E1-D7 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
 | E2-D19 | 3 | open | — | — | — |
 | RE2-D1 | 4 | open | — | — | — |
-| RE2-D2 | 4 | open | — | — | — |
+| RE2-D2 | 4 | in progress (#962) | #962: the first amount of a 'respectively' list is refused; E2-D11's residual (an unplaced actual is noted, once, unless another sentence places it) rides in the same PR | `tests/test_release_actuals_never_silent.py::test_re2_d2_a_respectively_list_is_refused`, `tests/test_release_actuals_never_silent.py::test_e2_d11_an_unplaced_non_revenue_actual_is_noted` | none yet: 0 rows move on the 122 cited releases; 19 notes on 8 pages land with a $0 `release_figures_transform` pass |
 | RE2-D3 | 4 | open | — | — | — |
 | RE2-D4 | 4 | open | — | — | — |
 | E2-D3 | 4 | open | — | — | — |
-| RE2-D5 | 4 | open | — | — | — |
-| RE2-D6 | 4 | open | — | — | — |
+| RE2-D5 | 4 | in progress (#962) | #962: the actuals half: a figure stated for a calendar year is refused; the guide half is open | `tests/test_release_actuals_never_silent.py::test_re2_d5_a_calendar_year_actual_is_refused` | none yet: 0 rows move on the 122 cited releases; 19 notes on 8 pages land with a $0 `release_figures_transform` pass |
+| RE2-D6 | 4 | in progress (#962) | #962: '$(5.5)', '($5.5)' and '-$5.5' are read, signed | `tests/test_release_actuals_never_silent.py::test_re2_d6_a_bracketed_or_minus_negative_is_read_signed` | none yet: 0 rows move on the 122 cited releases; 19 notes on 8 pages land with a $0 `release_figures_transform` pass |
 | RE2-D7 | 4 | open | — | — | — |
-| RE2-D8 | 4 | open | — | — | — |
+| RE2-D8 | 4 | in progress (#962) | #962: a 'year ended' date takes the release's fiscal offset, so a fiscal year ending in January is its fiscal year | `tests/test_release_actuals_never_silent.py::test_re2_d8_a_retail_fiscal_year_is_its_fiscal_year` | none yet: 0 rows move on the 122 cited releases; 19 notes on 8 pages land with a $0 `release_figures_transform` pass |
 | RE2-D9 | 4 | open | — | — | — |
 | RE2-D10 | 4 | open | — | — | — |
 | RE2-D11 | 4 | open | — | — | — |
