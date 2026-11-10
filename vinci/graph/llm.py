@@ -10,6 +10,8 @@ the model is still a swap-the-config knob, not a runtime router.
 
 from __future__ import annotations
 
+import json
+import math
 import threading
 from abc import ABC, abstractmethod
 from typing import Any
@@ -179,6 +181,89 @@ def cost_usd(model: str, usage: dict[str, int] | None) -> float | None:
             + usage.get("cache_creation_input_tokens", 0) * pin * 1.25
             + usage.get("cache_read_input_tokens", 0) * pin * 0.1
             + usage.get("output_tokens", 0) * pout) / 1_000_000
+
+
+class BudgetExceededError(BaseException):
+    """A call refused because it could take a budgeted run past its cap.
+
+    A BaseException, NOT an Exception, ON PURPOSE: the graph judge turns any Exception from a call
+    into a `judge_error` and carries on (`judge.judge_edges`), so an Exception here would have the
+    rest of a capped run write judge errors for edges never asked about. This stops the run, and
+    the caller writes nothing."""
+
+
+class BudgetedLlmClient(LlmClient):
+    """Wraps a client and refuses any call that could take the run's list-price spend past
+    ``cap_usd`` (operator, 2026-11-09: "approve the graph re-judge with $3 cap" — the cap is the
+    run's TOTAL).
+
+    THE BOUND IS CHECKED BEFORE EACH CALL: the spend so far plus the call's WORST case — its prompt
+    at a conservative two characters a token, and the inner client's whole ``max_tokens`` of
+    output. A model without a list price (`vinci.config.LLM_PRICE_PER_MTOK`) or a client that
+    states no ``max_tokens`` has an UNKNOWN worst case, so no cap can be held over it and it is
+    refused at construction. A call that raised before any response billed nothing and adds
+    nothing; a call that RETURNED with no usage record has an unknown cost, so the run stops."""
+
+    def __init__(self, inner: LlmClient, *, cap_usd: float) -> None:
+        if not math.isfinite(cap_usd) or cap_usd <= 0:
+            raise ValueError(f"a cap must be a positive amount of dollars, not {cap_usd!r}")
+        if inner.model not in LLM_PRICE_PER_MTOK:
+            raise ValueError(f"{inner.model!r} has no list price in LLM_PRICE_PER_MTOK, so a "
+                             f"${cap_usd:g} cap cannot be held over it")
+        max_tokens = getattr(inner, "max_tokens", None)
+        if not isinstance(max_tokens, int) or max_tokens <= 0:
+            raise ValueError(f"the client states no max_tokens, so a call's output cost is "
+                             f"unbounded and a ${cap_usd:g} cap cannot be held over it")
+        self._inner = inner
+        self._max_tokens = max_tokens
+        self.cap_usd = cap_usd
+        self.spent_usd = 0.0
+        self.attempts = 0         # calls sent
+        self.calls = 0            # calls that came back with a usage record, and so billed
+
+    @property
+    def model(self) -> str:
+        return self._inner.model
+
+    @property
+    def last_usage(self) -> dict[str, int] | None:
+        usage: dict[str, int] | None = getattr(self._inner, "last_usage", None)
+        return usage
+
+    def _charge(self) -> bool:
+        """Add the last call's list-price cost; False when it left no usage record."""
+        cost = cost_usd(self.model, self.last_usage)
+        if cost is None:
+            return False
+        self.calls += 1
+        self.spent_usd += cost
+        return True
+
+    def extract(
+        self, *, system: str, user: str, tool: dict[str, Any], cache: bool = False,
+    ) -> dict[str, Any]:
+        pin, pout = LLM_PRICE_PER_MTOK[self.model]
+        chars = len(system) + len(user) + len(json.dumps(tool))
+        bound = (chars / 2 * pin * (1.25 if cache else 1.0)
+                 + self._max_tokens * pout) / 1_000_000
+        if self.spent_usd + bound > self.cap_usd:
+            raise BudgetExceededError(
+                f"refused call {self.attempts + 1}: ${self.spent_usd:.4f} spent and this call "
+                f"could cost ${bound:.4f}, past the ${self.cap_usd:g} cap")
+        self.attempts += 1
+        try:
+            if cache:     # passed only when set, so an uncached request stays byte-identical
+                out = self._inner.extract(system=system, user=user, tool=tool, cache=True)
+            else:
+                out = self._inner.extract(system=system, user=user, tool=tool)
+        except BaseException:
+            self._charge()
+            raise
+        if not self._charge():
+            raise BudgetExceededError(
+                f"call {self.attempts} returned with no usage record, so its cost is unknown and "
+                f"the ${self.cap_usd:g} cap can no longer be held")
+        return out
 
 
 class MeteredLlmClient(LlmClient):
