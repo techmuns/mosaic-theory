@@ -157,8 +157,8 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RF-D11 | 5 | open | — | — | — |
 | RF-D12 | 5 | open | — | — | — |
 | RFL-D1 | 5 | open | — | — | — |
-| RA-D15 | 6 | open | — | — | — |
-| RA-D16 | 6 | open | — | — | — |
+| RA-D15 | 6 | in progress (#965) | #965 | — | — |
+| RA-D16 | 6 | in progress (#965) | #965 | — | — |
 | RBC-D2 | 6 | open | — | — | — |
 | RBC-D5 | 6 | open | — | — | — |
 | RBC-D10 | 6 | open | — | — | — |
