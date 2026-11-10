@@ -17,13 +17,39 @@ The live F27 reader, `vinci.dossier.ciq_sheets.customer_roster`, is untouched.
 """
 from __future__ import annotations
 
+import ast
 import importlib.util
+import pkgutil
+from pathlib import Path
 
 from vinci.graph import extract
 
+ROOT = Path(__file__).resolve().parent.parent
+
 
 def test_the_package_is_gone_and_nothing_imports_it() -> None:
-    assert importlib.util.find_spec("vinci.ciq") is None
+    """A checkout that ran the package before pulling keeps an untracked, git-ignored
+    `vinci/ciq/__pycache__/`, and Python reads that leftover directory as an empty NAMESPACE
+    package — so `find_spec` is not None there although no source exists. The package is back only
+    if a module with source is: an `__init__.py` (an origin) or any importable module under it."""
+    spec = importlib.util.find_spec("vinci.ciq")
+    if spec is not None:
+        assert spec.origin is None, f"vinci/ciq/ has an __init__.py again: {spec.origin}"
+        found = [m.name for m in pkgutil.iter_modules(list(spec.submodule_search_locations or []))]
+        assert not found, f"vinci/ciq/ has modules again: {found}"
+
+    importers = []
+    for path in sorted([*(ROOT / "vinci").rglob("*.py"), *(ROOT / "tests").rglob("*.py")]):
+        for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+            names = (
+                [a.name for a in node.names] if isinstance(node, ast.Import)
+                else [node.module or ""] if isinstance(node, ast.ImportFrom) else []
+            )
+            importers += [
+                f"{path.relative_to(ROOT)}:{node.lineno}"
+                for n in names if n == "vinci.ciq" or n.startswith("vinci.ciq.")
+            ]
+    assert not importers, f"still importing vinci.ciq: {importers}"
 
 
 def test_the_graph_extractor_keeps_the_taxonomy_it_took_from_it() -> None:

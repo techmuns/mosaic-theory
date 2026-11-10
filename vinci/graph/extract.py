@@ -39,8 +39,8 @@ from vinci.verbatim import SourceText
 SUPPLY_CHAIN_TYPES = frozenset({"supplier", "customer", "distributor", "vendor", "manufacturer"})
 
 # Relationship vocabulary + the goods-flow direction each implies *from the focal's perspective*
-# (the filer wrote the 10-K). The allow-list is exactly CIQ's SUPPLY_CHAIN_TYPES — the same
-# definition on both sides of Test 0, so we never extract a category the ground truth excludes.
+# (the filer wrote the 10-K). The allow-list is exactly SUPPLY_CHAIN_TYPES above — CIQ's
+# vocabulary, so we never extract a category CIQ's relationship taxonomy excludes.
 # "partner" is deliberately absent: in practice it sweeps in COMPETITORS named in the competitive-
 # landscape / risk sections ("competition from ... such as X"), which are not supply-chain links.
 _DOWNSTREAM = {"customer", "distributor"}  # focal sells to counterparty
