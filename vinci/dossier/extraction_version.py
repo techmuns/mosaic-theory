@@ -608,6 +608,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "HLF's 3.30 EPS restated to 3.32 are named where they were read as the same figure. "
         "On the 28 pages frozen at bcda7ce3 no cited figure moves",
     ),
+    (
+        "2026-11-10.fts-amendment-form",
+        "a full-text-search hit is reported by its filing's own form (TeamNostra fix request 2, "
+        "RE1-D11): efts's `form` before its family `root_forms`, so an 8-K/A is an 8-K/A, and "
+        "the covenant pointer writes the hit's form where it wrote `8-K`; the maturity check "
+        "still reads a pointer-linked 8-K/A. On the 28 pages frozen at bcda7ce3 one of 92 "
+        "pointer rows moves: WERN's 0000793074-26-000090 reads 8-K/A, with its covenant terms' "
+        "source labels",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
