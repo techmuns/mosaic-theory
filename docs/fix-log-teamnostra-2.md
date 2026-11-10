@@ -70,7 +70,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RBC-D8 | 2 | fixed | 6fbbb4a2 (#936) | `tests/test_filed_tiebreak.py::test_nflxs_committed_page_carries_the_caveat_the_code_writes` | NFLX |
 | RBC-D9 | 2 | in progress (#937) | #937 | `tests/test_quality_family_credit.py::test_segments_is_credited_with_its_own_panel_not_the_whole_check` | `data/snapshots/data_quality/ciq/2026-11-09.json` (the CIQ quality snapshot; the release and prices sources' shared checks still credit whole, and say so) |
 | RG-D16 | 2 | in progress (#937) | #937 | `tests/test_graph.py::test_a_judge_failure_is_its_own_verdict_never_an_unsupported_edge` | `data/graph_coverage.json` re-judged at 2bd1f760 (339 calls, $2.61 of the operator's $3 cap; every edge carries its reason) |
-| RG-D19 | 2 | in progress (#941) | #941 | — | — |
+| RG-D19 | 2 | in progress (#941) | #941, #951 (the private store, stacked) | — | — |
 | RF-D1 | 3 | open | — | — | — |
 | RF-D2 | 3 | open | — | — | — |
 | RF-D8 | 3 | in progress (#946) | #946 | `tests/test_ads_ratio.py::test_a_mixed_number_is_its_whole_and_its_fraction` | none (no committed page carries an ADS ratio) |
