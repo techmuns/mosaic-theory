@@ -3,18 +3,18 @@
   "n_names": 109,
   "names_with_edges": 75,
   "total_edges": 339,
-  "real_edges": 283,
-  "real_us_listed": 122,
-  "real_global": 161,
+  "real_edges": 294,
+  "real_us_listed": 130,
+  "real_global": 164,
   "edges_per_name": 3.11,
-  "real_edges_per_name": 2.6,
-  "evidence_precision": 0.835,
+  "real_edges_per_name": 2.7,
+  "evidence_precision": 0.867,
   "by_class": {
-    "real_supply_chain": 283,
-    "competitor": 4,
-    "ma_or_legal": 20,
-    "unsupported": 27,
-    "bio_or_governance": 5
+    "real_supply_chain": 294,
+    "competitor": 3,
+    "ma_or_legal": 21,
+    "unsupported": 15,
+    "bio_or_governance": 6
   },
   "shared_nodes": [
     {
@@ -121,6 +121,17 @@
       "degree": 2
     },
     {
+      "node_id": "US:0000050863",
+      "node_kind": "us_listed",
+      "name": "Intel",
+      "ticker": "INTC",
+      "focals": [
+        "CRSR",
+        "MXL"
+      ],
+      "degree": 2
+    },
+    {
       "node_id": "US:0001004980",
       "node_kind": "us_listed",
       "name": "PG&E",
@@ -141,8 +152,8 @@
     "CTS",
     "DGII",
     "EXTR",
-    "FEIM",
     "HLIT",
+    "KOPN",
     "LASR",
     "MRAM",
     "MRCY",
@@ -930,6 +941,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"transitioned the manufacturing production of certain LMR products...to EW\"",
       "evidence": "during 2023, we entered into the Master Supply Agreement with East West Manufacturing, LLC, pursuant to which we transitioned the manufacturing production of certain LMR products and accessories to EW, which was completed in the third quarter of 2024."
     },
     {
@@ -944,6 +956,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"customers that comprised 10% or greater of our consolidated net sales\"",
       "evidence": "customers that comprised 10% or greater of our consolidated net sales were as follows: 2025 2024 2023 STMicroelectronics * * 12.0%"
     },
     {
@@ -958,6 +971,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"dedicated semiconductor ATE manufacturing operations at a facility of Jabil\"",
       "evidence": "Cohu's supply chain is further strengthened by long-standing relationships with strategic partners, including dedicated semiconductor ATE manufacturing operations at a facility of Jabil, Inc."
     },
     {
@@ -972,6 +986,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"depend upon Jabil to manufacture most of our semiconductor test systems\"",
       "evidence": "we depend upon Jabil to manufacture most of our semiconductor test systems from its facility located in Malaysia"
     },
     {
@@ -986,6 +1001,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"We sell parts to these two transportation customers\"",
       "evidence": "Toyota Motor Corporation 11.2% 12.2% 12.5% ... We sell parts to these two transportation customers for certain vehicle platforms under purchase agreements"
     },
     {
@@ -1000,6 +1016,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"We sell parts to these two transportation customers ... under purchase agreements\"",
       "evidence": "Cummins, Inc. 8.4% 11.7% 15.0% ... We sell parts to these two transportation customers for certain vehicle platforms under purchase agreements"
     },
     {
@@ -1014,6 +1031,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"key distribution partners include ... Avnet, Inc.\"",
       "evidence": "Our key distribution partners include large global and regional distributors such as Avnet, Inc., Digi-Key Electronics, Master Electronics, Future Electronics, and TTI, Inc."
     },
     {
@@ -1028,6 +1046,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"key distribution partners include ... Digi-Key Electronics\"",
       "evidence": "Our key distribution partners include large global and regional distributors such as Avnet, Inc., Digi-Key Electronics, Master Electronics, Future Electronics, and TTI, Inc."
     },
     {
@@ -1042,6 +1061,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"key distribution partners include ... Master Electronics\"",
       "evidence": "Our key distribution partners include large global and regional distributors such as Avnet, Inc., Digi-Key Electronics, Master Electronics, Future Electronics, and TTI, Inc."
     },
     {
@@ -1056,6 +1076,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"key distribution partners include ... Future Electronics\"",
       "evidence": "Our key distribution partners include large global and regional distributors such as Avnet, Inc., Digi-Key Electronics, Master Electronics, Future Electronics, and TTI, Inc."
     },
     {
@@ -1070,6 +1091,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"key distribution partners include ... TTI, Inc.\"",
       "evidence": "Our key distribution partners include large global and regional distributors such as Avnet, Inc., Digi-Key Electronics, Master Electronics, Future Electronics, and TTI, Inc."
     },
     {
@@ -1084,6 +1106,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "competitor",
+      "reason": "listed among manufacturing and service providers as market participants, not as a supplier to the filer",
       "evidence": "and Triton Systems Inc., as well as a number of local manufacturing and service providers."
     },
     {
@@ -1098,6 +1121,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"subcontract a portion of our manufacturing process ... to, Keylink\"",
       "evidence": "our subsidiaries in China lease their manufacturing facilities in Shanghai from, and subcontract a portion of our manufacturing process (metal plating and environmental services) to, Keylink"
     },
     {
@@ -1112,6 +1136,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"from which we purchase material\"",
       "evidence": "JCP is an FCP manufacturing company from which we purchase material and in which we have made an equity investment"
     },
     {
@@ -1126,6 +1151,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"accounted for more than 10% of the Company's consolidated revenues\"",
       "evidence": "During fiscal year 2025, Northrop Grumman Company (\"Northrop Grumman\") accounted for more than 10% of the Company's consolidated revenues."
     },
     {
@@ -1140,6 +1166,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"accounted for more than 10% of the Company's consolidated revenues\"",
       "evidence": "During fiscal year 2024, Lockheed Martin Corporation (\"Lockheed Martin\"), Northrop Grumman, Office of Naval Research and BAE Systems each accounted for more than 10% of the Company's consolidated revenues."
     },
     {
@@ -1154,6 +1181,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"accounted for more than 10% of the Company's consolidated revenues\"",
       "evidence": "During fiscal year 2024, Lockheed Martin Corporation (\"Lockheed Martin\"), Northrop Grumman, Office of Naval Research and BAE Systems each accounted for more than 10% of the Company's consolidated revenues."
     },
     {
@@ -1168,6 +1196,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"accounted for more than 10% of the Company's consolidated revenues\"",
       "evidence": "During fiscal year 2024, Lockheed Martin Corporation (\"Lockheed Martin\"), Northrop Grumman, Office of Naval Research and BAE Systems each accounted for more than 10% of the Company's consolidated revenues."
     },
     {
@@ -1181,7 +1210,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "real_supply_chain",
+      "verdict": "ma_or_legal",
+      "reason": "\"has an investment in Morion\"",
       "evidence": "The Company has an investment in Morion, a privately-held Russian company, which manufactures high precision quartz resonators and crystal oscillators."
     },
     {
@@ -1196,6 +1226,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"leases its manufacturing and office space from RA 55 CLB LLC\"",
       "evidence": "The Company leases its manufacturing and office space from RA 55 CLB LLC (as successor-in-interest to Reckson)."
     },
     {
@@ -1210,6 +1241,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"acquired 100% of the interest in SNC\"",
       "evidence": "On January 11, 2024, the Company acquired 100% of the interest in SNC Manufacturing Co., Inc. (\"SNC\"), a privately-owned premier designer and global manufacturer of electrical transformers serving blue-chip customers in defense, industrial automation, alternative power generation and energy, including electric utilities and renewable energy."
     },
     {
@@ -1224,6 +1256,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "unsupported",
+      "reason": "\"consortium led by Resonac\" shows no buy/sell relationship",
       "evidence": "the 'US-Joint' semiconductor consortium led by Resonac Holdings Corporation"
     },
     {
@@ -1238,6 +1271,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "unsupported",
+      "reason": "\"engagements with institutions and consortiums\" indicates research collaboration, not a customer buying relationship",
       "evidence": "engagements with institutions and consortiums, including the UCLA Center for Heterogeneous Integration and Performance Scaling ('CHIPS') and the 'US-Joint' semiconductor consortium led by Resonac Holdings Corporation"
     },
     {
@@ -1252,6 +1286,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Asian suppliers and are typically shipped directly to the D.R.\"",
       "evidence": "and Asian suppliers and are typically shipped directly to the D.R."
     },
     {
@@ -1266,6 +1301,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Ennoconn will design, manufacture... supply and ship... hardware\"",
       "evidence": "Ennoconn will design, manufacture, warrant, supply and ship self-checkout and point-of sale hardware directly to our customers, and we will sell hardware to our customers as a sales agent for Ennoconn"
     },
     {
@@ -1280,6 +1316,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"largest workshare partner of the United States Postal Service\"",
       "evidence": "We are the largest workshare partner of the United States Postal Service (\"USPS\") and national outsource provider of mail sortation services that allow clients to qualify volumes of First-Class Mail, First Class Flats, Marketing Mail and Marketing Mail Flats/Bound Printed Matter for postal workshare discounts."
     },
     {
@@ -1293,7 +1330,8 @@
       "relationship_type": "customer",
       "direction": "downstream",
       "resolution": "unresolved",
-      "verdict": "bio_or_governance",
+      "verdict": "ma_or_legal",
+      "reason": "\"Shares are held directly by Hestia Capital Partners, LP\" indicates a shareholder/ownership context, not a customer relationship",
       "evidence": "Shares are held directly by Hestia Capital Partners, LP (\"Hestia Capital\") and ECA Fund, LP \u2013 Hestia."
     },
     {
@@ -1308,6 +1346,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "competitor",
+      "reason": "\"have become prominent competitors\"",
       "evidence": "Online distributors, including Amazon, which typically sell lower price-point products, have become prominent competitors for sales of handheld test and measurement equipment"
     },
     {
@@ -1321,7 +1360,8 @@
       "relationship_type": "customer",
       "direction": "downstream",
       "resolution": "unresolved",
-      "verdict": "real_supply_chain",
+      "verdict": "ma_or_legal",
+      "reason": "\"Commerce Department's Unverified List and Entity List\" - named in export restriction/regulatory context, not an actual sales relationship",
       "evidence": "Commerce Department's Unverified List and Entity List (including Swaysure Technology Co., Ltd., Semiconductor Manufacturing International Corporation, and certain similar and related entities), and the expansion of the foreign direct product rule to restrict the sale of certain products if certain named China customers or their affiliates are parties to a transaction involving the products."
     },
     {
@@ -1336,6 +1376,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"Commerce Department's Unverified List and Entity List\" \u2014 named only in export-control/regulatory restriction context",
       "evidence": "Commerce Department's Unverified List and Entity List (including Swaysure Technology Co., Ltd., Semiconductor Manufacturing International Corporation, and certain similar and related entities), and the expansion of the foreign direct product rule to restrict the sale of certain products if certain named China customers or their affiliates are parties to a transaction involving the products."
     },
     {
@@ -1350,6 +1391,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"concentration of sales to a limited group of retail customers...Amazon\"",
       "evidence": "a significant concentration of sales to a limited group of retail customers each exceeding 10% of segment sales, consisting of Amazon and Walmart, representing approximately 34% of segment sales for the year ended September 30, 2025"
     },
     {
@@ -1364,6 +1406,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"concentration of sales to...retail customers...consisting of Amazon and Walmart\"",
       "evidence": "a significant concentration of sales to a limited group of retail customers each exceeding 10% of segment sales, consisting of Amazon and Walmart, representing approximately 34% of segment sales for the year ended September 30, 2025"
     },
     {
@@ -1378,6 +1421,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"concentration of sales to a limited group of retailer customers... Lowe's\"",
       "evidence": "a significant concentration of sales to a limited group of retailer customers each exceeding 10% of segment sales, consisting of The Home Depot, Lowe's and Walmart, representing approximately 64% segment sales for the year ended September 30, 2025"
     },
     {
@@ -1392,6 +1436,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"concentration of sales to...retailer customers...Walmart\"",
       "evidence": "a significant concentration of sales to a limited group of retailer customers each exceeding 10% of segment sales, consisting of The Home Depot, Lowe's and Walmart, representing approximately 64% segment sales for the year ended September 30, 2025"
     },
     {
@@ -1406,6 +1451,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"significant concentration of sales to ... retail customers ... Amazon and Walmart\"",
       "evidence": "a significant concentration of sales to a limited group of retail customers each exceeding 10% of segment sales, consisting of Amazon and Walmart, representing approximately 42% of segment sales for the year ended September 30, 2025"
     },
     {
@@ -1420,6 +1466,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"accounted for 21% of our total revenue\"",
       "evidence": "McDonald's Corporation accounted for 21% of our total revenue in 2025."
     },
     {
@@ -1434,6 +1481,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Distributors of our products include America II Electronics\"",
       "evidence": "Distributors of our products include America II Electronics, Inc., Angst+Pfister Sensors and Power, and Digi-Key Corporation."
     },
     {
@@ -1448,6 +1496,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Distributors of our products include... Angst+Pfister Sensors and Power\"",
       "evidence": "Distributors of our products include America II Electronics, Inc., Angst+Pfister Sensors and Power, and Digi-Key Corporation."
     },
     {
@@ -1462,6 +1511,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Distributors of our products include ... Digi-Key Corporation\"",
       "evidence": "Distributors of our products include America II Electronics, Inc., Angst+Pfister Sensors and Power, and Digi-Key Corporation."
     },
     {
@@ -1476,6 +1526,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"rely on several large customers ... including Abbott Laboratories\"",
       "evidence": "We rely on several large customers for a significant percentage of our revenue, including Abbott Laboratories, certain distributors, and certain other customers."
     },
     {
@@ -1490,6 +1541,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Supplier Partnering Agreement...with Abbott Laboratories\" as a customer",
       "evidence": "We have agreements with certain customers, including a Supplier Partnering Agreement, as amended, with Abbott Laboratories, which expires December 31, 2027."
     },
     {
@@ -1504,6 +1556,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"significant customers including Collins Aerospace\"",
       "evidence": "Our primary market is defense, with significant customers including Collins Aerospace and DRS Network & Imaging Systems LLC."
     },
     {
@@ -1518,6 +1571,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"significant customers including... DRS Network & Imaging Systems LLC comprising 63% of revenues\"",
       "evidence": "significant customers including Collins Aerospace and DRS Network & Imaging Systems LLC... DRS Network & Imaging Systems LLC comprising 63% of revenues in 2025"
     },
     {
@@ -1532,6 +1586,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"customers like HMDmD, expanding our customer base\"",
       "evidence": "Industrial and medical markets are growing, with customers like HMDmD, expanding our customer base."
     },
     {
@@ -1545,7 +1600,8 @@
       "relationship_type": "customer",
       "direction": "downstream",
       "resolution": "resolved_ticker",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"new partnerships with major defense contractors ... such as Ondas\"",
       "evidence": "Further financing developments included several new partnerships with major defense contractors in the US such as Ondas and Unusual Machines"
     },
     {
@@ -1559,7 +1615,8 @@
       "relationship_type": "customer",
       "direction": "downstream",
       "resolution": "resolved_ticker",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"new partnerships with major defense contractors in the US such as...Unusual Machines\"",
       "evidence": "Further financing developments included several new partnerships with major defense contractors in the US such as Ondas and Unusual Machines"
     },
     {
@@ -1573,7 +1630,8 @@
       "relationship_type": "customer",
       "direction": "downstream",
       "resolution": "unresolved",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"new partnerships with major defense contractors ... including Theon International\"",
       "evidence": "Further financing developments included several new partnerships with major defense contractors in the US such as Ondas and Unusual Machines, and in Europe including Theon International."
     },
     {
@@ -1587,7 +1645,8 @@
       "relationship_type": "customer",
       "direction": "downstream",
       "resolution": "unresolved",
-      "verdict": "ma_or_legal",
+      "verdict": "real_supply_chain",
+      "reason": "\"issued a license to LST\" and transferred contracts/receivables to LST",
       "evidence": "Pursuant to the LST Agreements, the Company issued a license to LST for certain technology associated with our Organic Light Emitting Technology, transferred in-process development contracts with two customers and accounts receivables"
     },
     {
@@ -1602,6 +1661,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"end customer, Apple Inc., who purchased ... represented approximately 91 percent ... of total net sales\"",
       "evidence": "we had one end customer, Apple Inc., who purchased through multiple contract manufacturers and represented approximately 91 percent, 89 percent and 87 percent of the Company's total net sales, respectively."
     },
     {
@@ -1616,6 +1676,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"wafers, primarily supplied by GLOBALFOUNDRIES\"",
       "evidence": "We use a variety of foundries in the production of wafers, primarily supplied by GLOBALFOUNDRIES Inc., (\"GlobalFoundries\") and Taiwan Semiconductor Manufacturing Company, Limited (\"TSMC\")."
     },
     {
@@ -1630,6 +1691,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"wafers, primarily supplied by ... TSMC\"",
       "evidence": "We use a variety of foundries in the production of wafers, primarily supplied by GLOBALFOUNDRIES Inc., (\"GlobalFoundries\") and Taiwan Semiconductor Manufacturing Company, Limited (\"TSMC\")."
     },
     {
@@ -1644,6 +1706,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"with the acquisition of Schlumberger Electricity Metering in 2004\"",
       "evidence": "we entered the electricity meter manufacturing business with the acquisition of Schlumberger Electricity Metering in 2004"
     },
     {
@@ -1658,6 +1721,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"with the acquisition of Actaris Metering Systems SA\"",
       "evidence": "we expanded our presence in global meter manufacturing and systems with the acquisition of Actaris Metering Systems SA"
     },
     {
@@ -1672,6 +1736,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"we completed our acquisition of Comverge\"",
       "evidence": "we completed our acquisition of Comverge, which enabled us to offer integrated cloud-based demand response, energy efficiency, and customer engagement solutions"
     },
     {
@@ -1686,6 +1751,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"Company's prior history of litigation with USAA\"",
       "evidence": "given (among other factors) the Company's prior history of litigation with USAA and the continued use of the Company's products by its customers, on November 1, 2019, the Company filed a complaint in the U.S."
     },
     {
@@ -1700,6 +1766,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We contract with three foundries for the manufacture of... our silicon wafers: Lapis\"",
       "evidence": "We contract with three foundries for the manufacture of the vast majority of our silicon wafers: (1) Lapis Semiconductor Co., Ltd., or Lapis, (formerly OKI Electric Industry)"
     },
     {
@@ -1714,6 +1781,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We contract with three foundries for the manufacture of ... our silicon wafers\"",
       "evidence": "We contract with three foundries for the manufacture of the vast majority of our silicon wafers: ... (2) Seiko Epson Corporation, or Epson"
     },
     {
@@ -1728,6 +1796,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We contract with three foundries for the manufacture of ... our silicon wafers\"",
       "evidence": "We contract with three foundries for the manufacture of the vast majority of our silicon wafers: ... (3) X-FAB Semiconductor Foundries AG, or X-FAB"
     },
     {
@@ -1742,6 +1811,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"significant end user... customers... Comcast\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... Comcast"
     },
     {
@@ -1756,6 +1826,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"representative list of our significant... customers\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... Millicom International"
     },
     {
@@ -1770,6 +1841,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"significant end user and integrator/reseller customers... Normann Engineering\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... Normann Engineering"
     },
     {
@@ -1784,6 +1856,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"list of our significant... customers... GCI Communication\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... GCI Communication"
     },
     {
@@ -1798,6 +1871,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"significant end user and integrator/reseller customers\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... Tele2 Sverige AB"
     },
     {
@@ -1812,6 +1886,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"significant end user and integrator/reseller customers... MediaCom\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... MediaCom"
     },
     {
@@ -1826,6 +1901,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"significant end user and integrator/reseller customers... Telecentro SA\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... Telecentro SA"
     },
     {
@@ -1840,6 +1916,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"list of our significant... reseller customers... Mega Hertz\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... Mega Hertz"
     },
     {
@@ -1854,6 +1931,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"significant end user and integrator/reseller customers... Telia Norge\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... Telia Norge"
     },
     {
@@ -1868,6 +1946,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"significant end user and integrator/reseller customers... MidContinent Communications\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... MidContinent Communications"
     },
     {
@@ -1882,6 +1961,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"significant end user and integrator/reseller customers... Vodafone\"",
       "evidence": "Set forth below is a representative list of our significant end user and integrator/reseller customers... Vodafone"
     },
     {
@@ -1896,6 +1976,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"primary contract manufacturer\" for products the filer purchases",
       "evidence": "(\"Plexus\") to act as our primary contract manufacturer. Plexus accounts for the majority of the products we purchase from our contract manufacturers."
     },
     {
@@ -1910,6 +1991,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We outsource a portion of our research and development...to our third-party partner, GlobalLogic\"",
       "evidence": "We outsource a portion of our research and development and product support activities to our third-party partner, GlobalLogic, a Hitachi group company."
     },
     {
@@ -1924,6 +2006,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our larger distributors... include Arrow Electronics\"",
       "evidence": "Our larger distributors, by sales volume, include Arrow Electronics, Avnet, Bressner, Digi-Key, Express Systems, Ingram Micro, MiTac, Mouser Electronics, Synnex and World Wide Technology."
     },
     {
@@ -1938,6 +2021,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"larger distributors, by sales volume, include ... Avnet\"",
       "evidence": "Our larger distributors, by sales volume, include Arrow Electronics, Avnet, Bressner, Digi-Key, Express Systems, Ingram Micro, MiTac, Mouser Electronics, Synnex and World Wide Technology."
     },
     {
@@ -1952,6 +2036,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our larger distributors ... include ... Bressner\"",
       "evidence": "Our larger distributors, by sales volume, include Arrow Electronics, Avnet, Bressner, Digi-Key, Express Systems, Ingram Micro, MiTac, Mouser Electronics, Synnex and World Wide Technology."
     },
     {
@@ -1966,6 +2051,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our larger distributors ... include ... Digi-Key\"",
       "evidence": "Our larger distributors, by sales volume, include Arrow Electronics, Avnet, Bressner, Digi-Key, Express Systems, Ingram Micro, MiTac, Mouser Electronics, Synnex and World Wide Technology."
     },
     {
@@ -1980,6 +2066,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our larger distributors ... include ... Express Systems\"",
       "evidence": "Our larger distributors, by sales volume, include Arrow Electronics, Avnet, Bressner, Digi-Key, Express Systems, Ingram Micro, MiTac, Mouser Electronics, Synnex and World Wide Technology."
     },
     {
@@ -1994,6 +2081,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our larger distributors ... include ... Ingram Micro\"",
       "evidence": "Our larger distributors, by sales volume, include Arrow Electronics, Avnet, Bressner, Digi-Key, Express Systems, Ingram Micro, MiTac, Mouser Electronics, Synnex and World Wide Technology."
     },
     {
@@ -2008,6 +2096,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our larger distributors... include... MiTac\"",
       "evidence": "Our larger distributors, by sales volume, include Arrow Electronics, Avnet, Bressner, Digi-Key, Express Systems, Ingram Micro, MiTac, Mouser Electronics, Synnex and World Wide Technology."
     },
     {
@@ -2022,6 +2111,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our larger distributors ... include ... Mouser Electronics\"",
       "evidence": "Our larger distributors, by sales volume, include Arrow Electronics, Avnet, Bressner, Digi-Key, Express Systems, Ingram Micro, MiTac, Mouser Electronics, Synnex and World Wide Technology."
     },
     {
@@ -2036,6 +2126,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our larger distributors ... include ... Synnex\"",
       "evidence": "Our larger distributors, by sales volume, include Arrow Electronics, Avnet, Bressner, Digi-Key, Express Systems, Ingram Micro, MiTac, Mouser Electronics, Synnex and World Wide Technology."
     },
     {
@@ -2050,6 +2141,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our larger distributors ... include ... World Wide Technology\"",
       "evidence": "Our larger distributors, by sales volume, include Arrow Electronics, Avnet, Bressner, Digi-Key, Express Systems, Ingram Micro, MiTac, Mouser Electronics, Synnex and World Wide Technology."
     },
     {
@@ -2064,6 +2156,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Sales to our largest customer, Applied Materials\"",
       "evidence": "Sales to our largest customer, Applied Materials, Inc."
     },
     {
@@ -2078,6 +2171,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "unsupported",
+      "reason": "bare name with no relationship context",
       "evidence": "(Westland) Mayday Manufacturing Co."
     },
     {
@@ -2092,6 +2186,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"we acquired MPE Limited\"",
       "evidence": "In November 2023, we acquired MPE Limited (MPE), a United Kingdom-based global manufacturer of high-performance products for military, utility, telecommunication and other critical infrastructure applications."
     },
     {
@@ -2106,6 +2201,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "ma_or_legal",
+      "reason": "\"entered into a definitive agreement to sell VACCO Industries to RBC\"",
       "evidence": "the Company announced it had entered into a definitive agreement to sell VACCO Industries (VACCO) to RBC Bearings Incorporated (RBC), an international manufacturer and marketer of highly engineered precision bearings and products"
     },
     {
@@ -2120,6 +2216,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"completed the acquisition of the Signature Management & Power business of Ultra Maritime\"",
       "evidence": "on April 25, 2025, the Company completed the acquisition of the Signature Management & Power business of Ultra Maritime (now 'ESCO Maritime Solutions' or 'Maritime')"
     },
     {
@@ -2134,6 +2231,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"available from a large number of suppliers, including CDGM Glass Company Ltd.\"",
       "evidence": "These glasses or equivalents are available from a large number of suppliers, including CDGM Glass Company Ltd., Ohara Corporation, and Sumita Optical Glass, Inc."
     },
     {
@@ -2148,6 +2246,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"available from a large number of suppliers, including ... Ohara Corporation\"",
       "evidence": "These glasses or equivalents are available from a large number of suppliers, including CDGM Glass Company Ltd., Ohara Corporation, and Sumita Optical Glass, Inc."
     },
     {
@@ -2162,6 +2261,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"available from a large number of suppliers, including ... Sumita Optical Glass\"",
       "evidence": "These glasses or equivalents are available from a large number of suppliers, including CDGM Glass Company Ltd., Ohara Corporation, and Sumita Optical Glass, Inc."
     },
     {
@@ -2176,6 +2276,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Customer Refundable Deposit Agreement\" indicates Renesas is a customer with prepaid deposits",
       "evidence": "Renesas Electronics America Inc (\"Renesas,\" and together with the Consenting Noteholders, the \"Consenting Creditors\"), the holder of loans under that certain Unsecured Customer Refundable Deposit Agreement, dated as of July 5, 2023"
     },
     {
@@ -2190,6 +2291,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"continued use of IntegrityNext, a platform\" ADTRAN uses",
       "evidence": "continued use of IntegrityNext, a platform to engage suppliers to obtain an ESG assessment aligned with international standards, allowing us to monitor sustainability risks in our supply chain"
     },
     {
@@ -2204,6 +2306,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "bio_or_governance",
+      "reason": "\"Cooperation Agreement with Politan...appoint...to our Board of Directors\"",
       "evidence": "on November 1, 2024, we entered into a Cooperation Agreement with Politan pursuant to which we agreed, among other things: (a) to increase the size of the Board of Directors by three (3) directors and appoint Quentin Koffey, the Managing Partner and Chief Investment Officer of Politan, to our Board of Directors"
     },
     {
@@ -2218,6 +2321,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"our relationships with supplier companies, such as PPG\"",
       "evidence": "our relationships with supplier companies, such as PPG Industries, Inc. (PPG)"
     },
     {
@@ -2232,6 +2336,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"manufacturing partner... continues to manufacture our materials for us\"",
       "evidence": "Our manufacturing partner of over 25 years, PPG, continues to manufacture our materials for us, using proprietary manufacturing processes and know-how"
     },
     {
@@ -2246,6 +2351,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"operation and maintenance services that will be provided by PPG SCM to UDC Ireland\"",
       "evidence": "specifying operation and maintenance services that will be provided by PPG affiliate, PPG SCM Ireland Limited (PPG SCM), to UDC Ireland at our manufacturing site in Shannon, Ireland"
     },
     {
@@ -2260,6 +2366,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"largest customers for our PHOLED materials included Samsung Display\"",
       "evidence": "In 2025, our largest customers for our PHOLED materials included Samsung Display Co., Ltd."
     },
     {
@@ -2274,6 +2381,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"received a majority of our revenue from three customers...BOE\"",
       "evidence": "In 2025, we received a majority of our revenue from three customers domiciled in the Asia-Pacific region, BOE, LG Display and SDC, from each of which we had revenue in excess of 10% of our consolidated revenue."
     },
     {
@@ -2288,6 +2396,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"received a majority of our revenue from three customers...LG Display\"",
       "evidence": "In 2025, we received a majority of our revenue from three customers domiciled in the Asia-Pacific region, BOE, LG Display and SDC, from each of which we had revenue in excess of 10% of our consolidated revenue."
     },
     {
@@ -2302,6 +2411,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"received a majority of our revenue from three customers...SDC\"",
       "evidence": "In 2025, we received a majority of our revenue from three customers domiciled in the Asia-Pacific region, BOE, LG Display and SDC, from each of which we had revenue in excess of 10% of our consolidated revenue."
     },
     {
@@ -2316,6 +2426,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"commercial supply relationships...to use our PHOLED materials to manufacture OLED displays\"",
       "evidence": "In 2025, we continued our commercial supply relationships with companies such as BOE, CSOT, LG Display, SDC, Tianma, and Visionox to use our PHOLED materials to manufacture OLED displays."
     },
     {
@@ -2330,6 +2441,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"continued our commercial supply relationships with companies such as...Tianma to use our PHOLED materials\"",
       "evidence": "In 2025, we continued our commercial supply relationships with companies such as BOE, CSOT, LG Display, SDC, Tianma, and Visionox to use our PHOLED materials to manufacture OLED displays."
     },
     {
@@ -2344,6 +2456,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"continued our commercial supply relationships\" to use our PHOLED materials",
       "evidence": "In 2025, we continued our commercial supply relationships with companies such as BOE, CSOT, LG Display, SDC, Tianma, and Visionox to use our PHOLED materials to manufacture OLED displays."
     },
     {
@@ -2358,6 +2471,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Other licensed customers of our technology\"",
       "evidence": "Other licensed customers of our technology in 2025 included AU Optronics Corporation (AU Optronics), Kaneka Corporation, Pioneer Corporation, and OLEDWorks L.L.C."
     },
     {
@@ -2372,6 +2486,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Other licensed customers of our technology\"",
       "evidence": "Other licensed customers of our technology in 2025 included AU Optronics Corporation (AU Optronics), Kaneka Corporation, Pioneer Corporation, and OLEDWorks L.L.C."
     },
     {
@@ -2386,6 +2501,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Other licensed customers of our technology\"",
       "evidence": "Other licensed customers of our technology in 2025 included AU Optronics Corporation (AU Optronics), Kaneka Corporation, Pioneer Corporation, and OLEDWorks L.L.C."
     },
     {
@@ -2400,6 +2516,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Other licensed customers of our technology\"",
       "evidence": "Other licensed customers of our technology in 2025 included AU Optronics Corporation (AU Optronics), Kaneka Corporation, Pioneer Corporation, and OLEDWorks L.L.C."
     },
     {
@@ -2414,6 +2531,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"license our OLED patents and technologies to these customers\"",
       "evidence": "We also have strategic relationships with Kaneka, Konica Minolta and Sumitomo, and continue to license our OLED patents and technologies to these customers."
     },
     {
@@ -2428,6 +2546,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"license our OLED patents and technologies to these customers\"",
       "evidence": "We also have strategic relationships with Kaneka, Konica Minolta and Sumitomo, and continue to license our OLED patents and technologies to these customers."
     },
     {
@@ -2442,6 +2561,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"distributors who sell to our customers... represented 28%... of our revenues\"",
       "evidence": "Two of our distributors who sell to our customers, Arrow Electronics and Edom Technology, represented 28% and 21% of our revenues during fiscal 2025, respectively."
     },
     {
@@ -2456,6 +2576,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"distributors who sell to our customers... represented 21% of our revenues\"",
       "evidence": "Two of our distributors who sell to our customers, Arrow Electronics and Edom Technology, represented 28% and 21% of our revenues during fiscal 2025, respectively."
     },
     {
@@ -2470,6 +2591,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"partner primarily with... TSMC... to manufacture the majority of our semiconductor wafers\"",
       "evidence": "We currently partner primarily with Taiwan Semiconductor Manufacturing Co. (\"TSMC\") and Semiconductor Manufacturing International Corporation (\"SMIC\") to manufacture the majority of our semiconductor wafers."
     },
     {
@@ -2484,6 +2606,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"partner...to manufacture the majority of our semiconductor wafers\"",
       "evidence": "We currently partner primarily with Taiwan Semiconductor Manufacturing Co. (\"TSMC\") and Semiconductor Manufacturing International Corporation (\"SMIC\") to manufacture the majority of our semiconductor wafers."
     },
     {
@@ -2498,6 +2621,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We sell products ... through ... the NHS Supplies Organization\"",
       "evidence": "We sell products directly to end customers, as well as through integrated delivery networks and group purchasing organizations in the U.S., the NHS Supplies Organization in the United Kingdom"
     },
     {
@@ -2512,6 +2636,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "listed among purchasing organizations (NHS Supplies, UGAP) as customers",
       "evidence": "the NHS Supplies Organization in the United Kingdom, UGAP in France"
     },
     {
@@ -2525,7 +2650,8 @@
       "relationship_type": "customer",
       "direction": "downstream",
       "resolution": "unresolved",
-      "verdict": "real_supply_chain",
+      "verdict": "unsupported",
+      "reason": "bare geographic listing with no stated buy/sell relationship",
       "evidence": "UGAP in France, NUPCO in Saudi Arabia"
     },
     {
@@ -2540,6 +2666,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"products powered by Altera's most advanced Agilex 9 Direct RF FPGA chips\"",
       "evidence": "we introduced several products powered by Altera's most advanced Agilex 9 Direct RF FPGA chips that allow radio frequency signals to be directly digitized at the antenna"
     },
     {
@@ -2554,6 +2681,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include Airbus\"",
       "evidence": "Our top customers include Airbus, BAE Systems, Boeing, General Atomics, General Dynamics, L3Harris Technologies, Leonardo, Lockheed Martin Corporation, Northrop Grumman Corporation, RTX Corporation and the U.S."
     },
     {
@@ -2568,6 +2696,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include ... BAE Systems\"",
       "evidence": "Our top customers include Airbus, BAE Systems, Boeing, General Atomics, General Dynamics, L3Harris Technologies, Leonardo, Lockheed Martin Corporation, Northrop Grumman Corporation, RTX Corporation and the U.S."
     },
     {
@@ -2582,6 +2711,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include ... Boeing\"",
       "evidence": "Our top customers include Airbus, BAE Systems, Boeing, General Atomics, General Dynamics, L3Harris Technologies, Leonardo, Lockheed Martin Corporation, Northrop Grumman Corporation, RTX Corporation and the U.S."
     },
     {
@@ -2596,6 +2726,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include...General Atomics\"",
       "evidence": "Our top customers include Airbus, BAE Systems, Boeing, General Atomics, General Dynamics, L3Harris Technologies, Leonardo, Lockheed Martin Corporation, Northrop Grumman Corporation, RTX Corporation and the U.S."
     },
     {
@@ -2610,6 +2741,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include... General Dynamics\"",
       "evidence": "Our top customers include Airbus, BAE Systems, Boeing, General Atomics, General Dynamics, L3Harris Technologies, Leonardo, Lockheed Martin Corporation, Northrop Grumman Corporation, RTX Corporation and the U.S."
     },
     {
@@ -2624,6 +2756,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include...L3Harris\" and accounted for % of revenues",
       "evidence": "Our top customers include Airbus, BAE Systems, Boeing, General Atomics, General Dynamics, L3Harris Technologies, Leonardo, Lockheed Martin Corporation, Northrop Grumman Corporation, RTX Corporation and the U.S. / L3Harris accounted for less than 10% of our revenues in fiscal 2025, 12% of our revenues in fiscal 2024"
     },
     {
@@ -2638,6 +2771,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include...Leonardo\"",
       "evidence": "Our top customers include Airbus, BAE Systems, Boeing, General Atomics, General Dynamics, L3Harris Technologies, Leonardo, Lockheed Martin Corporation, Northrop Grumman Corporation, RTX Corporation and the U.S."
     },
     {
@@ -2652,6 +2786,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Lockheed Martin comprised 10%, 11%, and 13% of our revenues\"",
       "evidence": "Our top customers include Airbus, BAE Systems, Boeing, General Atomics, General Dynamics, L3Harris Technologies, Leonardo, Lockheed Martin Corporation, Northrop Grumman Corporation, RTX Corporation and the U.S. / Lockheed Martin comprised 10%, 11%, and 13% of our revenues in each of the fiscal years 2025, 2024 and 2023, respectively."
     },
     {
@@ -2666,6 +2801,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include... Northrop Grumman Corporation\"",
       "evidence": "Our top customers include Airbus, BAE Systems, Boeing, General Atomics, General Dynamics, L3Harris Technologies, Leonardo, Lockheed Martin Corporation, Northrop Grumman Corporation, RTX Corporation and the U.S. / Northrop Grumman accounted for less than 10% of our revenues in fiscal 2025 and fiscal 2024, and comprised 11% in fiscal year 2023."
     },
     {
@@ -2680,6 +2816,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"top customers include ... RTX Corporation\" comprising 13% of revenues",
       "evidence": "Our top customers include Airbus, BAE Systems, Boeing, General Atomics, General Dynamics, L3Harris Technologies, Leonardo, Lockheed Martin Corporation, Northrop Grumman Corporation, RTX Corporation and the U.S. / RTX Corporation comprised 13%, 10%, and 14% of our revenues in each of the fiscal years 2025, 2024 and 2023, respectively."
     },
     {
@@ -2694,6 +2831,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"comprised 10% of our revenues\"",
       "evidence": "The United States Navy comprised 10% of our revenues in fiscal 2025, and accounted for less than 10% of our revenues in fiscal years 2024 and 2023."
     },
     {
@@ -2708,6 +2846,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"proposed listing of shares\" of its own subsidiary",
       "evidence": "completing steps in connection with the proposed listing of shares of our wafer manufacturing company, Beijing Tongmei Xtal Technology Co., Ltd."
     },
     {
@@ -2722,6 +2861,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "unsupported",
+      "reason": "\"Tongmei's consolidated revenue\" indicates a consolidated subsidiary, not a supplier relationship",
       "evidence": "increased the number of customers and employees attributable to Tongmei as well as increased Tongmei's consolidated revenue."
     },
     {
@@ -2736,6 +2876,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"maintains distribution agreements with our largest distributors, Westcon Group Inc.\"",
       "evidence": "Extreme maintains distribution agreements with our largest distributors, Westcon Group Inc., TD Synnex Corporation and Jenne Inc."
     },
     {
@@ -2750,6 +2891,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"distribution agreements with our largest distributors\"",
       "evidence": "Extreme maintains distribution agreements with our largest distributors, Westcon Group Inc., TD Synnex Corporation and Jenne Inc."
     },
     {
@@ -2764,6 +2906,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"maintains distribution agreements with our largest distributors ... Jenne Inc.\"",
       "evidence": "Extreme maintains distribution agreements with our largest distributors, Westcon Group Inc., TD Synnex Corporation and Jenne Inc."
     },
     {
@@ -2778,6 +2921,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"rely upon original design manufacturers... to manufacture... our products\"",
       "evidence": "We rely upon original design manufacturers (\"ODM\"), such as Alpha Networks, Inc., Lite-On Technology Corporation, Quanta Computer Inc., Senao Networks, Inc., Sercomm Corporation and Wistron Neweb Corporation to manufacture, support and ship our products"
     },
     {
@@ -2792,6 +2936,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"rely upon original design manufacturers...to manufacture, support and ship our products\"",
       "evidence": "We rely upon original design manufacturers (\"ODM\"), such as Alpha Networks, Inc., Lite-On Technology Corporation, Quanta Computer Inc., Senao Networks, Inc., Sercomm Corporation and Wistron Neweb Corporation to manufacture, support and ship our products"
     },
     {
@@ -2806,6 +2951,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"rely upon original design manufacturers...to manufacture...our products\"",
       "evidence": "We rely upon original design manufacturers (\"ODM\"), such as Alpha Networks, Inc., Lite-On Technology Corporation, Quanta Computer Inc., Senao Networks, Inc., Sercomm Corporation and Wistron Neweb Corporation to manufacture, support and ship our products"
     },
     {
@@ -2820,6 +2966,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"rely upon original design manufacturers...to manufacture, support and ship our products\"",
       "evidence": "We rely upon original design manufacturers (\"ODM\"), such as Alpha Networks, Inc., Lite-On Technology Corporation, Quanta Computer Inc., Senao Networks, Inc., Sercomm Corporation and Wistron Neweb Corporation to manufacture, support and ship our products"
     },
     {
@@ -2834,6 +2981,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"rely upon original design manufacturers... to manufacture, support and ship our products\"",
       "evidence": "We rely upon original design manufacturers (\"ODM\"), such as Alpha Networks, Inc., Lite-On Technology Corporation, Quanta Computer Inc., Senao Networks, Inc., Sercomm Corporation and Wistron Neweb Corporation to manufacture, support and ship our products"
     },
     {
@@ -2848,6 +2996,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"rely upon original design manufacturers...to manufacture, support and ship our products\"",
       "evidence": "We rely upon original design manufacturers (\"ODM\"), such as Alpha Networks, Inc., Lite-On Technology Corporation, Quanta Computer Inc., Senao Networks, Inc., Sercomm Corporation and Wistron Neweb Corporation to manufacture, support and ship our products"
     },
     {
@@ -2862,6 +3011,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"our key suppliers, including our merchant silicon vendors such as Broadcom\"",
       "evidence": "Our product development efforts also depend upon continued collaboration with our key suppliers, including our merchant silicon vendors such as Broadcom."
     },
     {
@@ -2876,6 +3026,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"in partnership with Check Point\" for firewall-as-a-service capabilities",
       "evidence": "EdgeSentry (in partnership with Check Point) for cloud-based firewall as a service and other advanced security capabilities"
     },
     {
@@ -2890,6 +3041,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"integration with Secure Web Gateway partners such as Palo Alto Networks\"",
       "evidence": "integration with Secure Web Gateway partners such as Palo Alto Networks, Zscaler, and Symantec"
     },
     {
@@ -2903,7 +3055,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "resolved_ticker",
-      "verdict": "competitor",
+      "verdict": "real_supply_chain",
+      "reason": "\"integration with Secure Web Gateway partners such as ... Zscaler\"",
       "evidence": "integration with Secure Web Gateway partners such as Palo Alto Networks, Zscaler, and Symantec"
     },
     {
@@ -2917,7 +3070,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"integration with Secure Web Gateway partners such as ... Symantec\"",
       "evidence": "integration with Secure Web Gateway partners such as Palo Alto Networks, Zscaler, and Symantec"
     },
     {
@@ -2932,6 +3086,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"cloud networking solution is available on all major cloud providers (Amazon Web Services\"",
       "evidence": "Our cloud networking solution is available on all major cloud providers (Amazon Web Services (\"AWS\"), Google Cloud Platform (\"GCP\") and Microsoft Azure"
     },
     {
@@ -2946,6 +3101,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"solution is available on all major cloud providers ... Google Cloud Platform\" \u2014 uses GCP as infrastructure",
       "evidence": "Our cloud networking solution is available on all major cloud providers (Amazon Web Services (\"AWS\"), Google Cloud Platform (\"GCP\") and Microsoft Azure"
     },
     {
@@ -2960,6 +3116,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"solution is available on all major cloud providers ... Microsoft Azure\"",
       "evidence": "Our cloud networking solution is available on all major cloud providers (Amazon Web Services (\"AWS\"), Google Cloud Platform (\"GCP\") and Microsoft Azure"
     },
     {
@@ -2974,6 +3131,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"strategic partnership...to further promote laser solutions\"",
       "evidence": "In 2023, we entered into a strategic partnership with Miller Electric Mfg. LLC, a leading worldwide manufacturer of arc welding products, to further promote laser solutions for handheld welding applications."
     },
     {
@@ -2988,6 +3146,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"manufactures our endpoint IC wafers...has been our supplier since 2003\"",
       "evidence": "Taiwan Semiconductor Manufacturing Company Limited, or TSMC, manufactures our endpoint IC wafers primarily in Taiwan and has been our supplier since 2003. TSMC manufactures our reader IC wafers in Asia and has been our supplier since 2021."
     },
     {
@@ -3002,6 +3161,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"manufactures our readers... has been our supplier since 2005\"",
       "evidence": "Plexus Corp., or Plexus, manufactures our readers and gateways in Asia and has been our supplier since 2005."
     },
     {
@@ -3016,6 +3176,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"Voyantic Oy, which we acquired in April 2023\"",
       "evidence": "We manufacture our tag production systems in Finland, at Voyantic Oy, which we acquired in April 2023."
     },
     {
@@ -3030,6 +3191,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"We sell directly to our distributors, the largest of which are TD SYNNEX\"",
       "evidence": "We sell directly to our distributors, the largest of which are TD SYNNEX, Ingram Micro, Inc., and D&H Distributing Company."
     },
     {
@@ -3044,6 +3206,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We sell directly to our distributors ... Ingram Micro\"",
       "evidence": "We sell directly to our distributors, the largest of which are TD SYNNEX, Ingram Micro, Inc., and D&H Distributing Company."
     },
     {
@@ -3058,6 +3221,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We sell directly to our distributors ... D&H Distributing Company\"",
       "evidence": "We sell directly to our distributors, the largest of which are TD SYNNEX, Ingram Micro, Inc., and D&H Distributing Company."
     },
     {
@@ -3072,6 +3236,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our DMRs include companies such as CDW Corporation\" \u2014 a direct market reseller distributing filer's products",
       "evidence": "Our DMRs include companies such as CDW Corporation and Insight Corporation"
     },
     {
@@ -3086,6 +3251,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our DMRs include ... Insight Corporation\" (direct market resellers)",
       "evidence": "Our DMRs include companies such as CDW Corporation and Insight Corporation"
     },
     {
@@ -3100,6 +3266,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our primary manufacturers are Cloud Network Technology\"",
       "evidence": "Our primary manufacturers are Cloud Network Technology (more commonly known as Hon Hai Precision or Foxconn Corporation), Delta Electronics Incorporated, Senao Networks, Inc., and Pegatron Corporation"
     },
     {
@@ -3114,6 +3281,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our primary manufacturers are ... Delta Electronics Incorporated\"",
       "evidence": "Our primary manufacturers are Cloud Network Technology (more commonly known as Hon Hai Precision or Foxconn Corporation), Delta Electronics Incorporated, Senao Networks, Inc., and Pegatron Corporation"
     },
     {
@@ -3128,6 +3296,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our primary manufacturers are ... Senao Networks, Inc.\"",
       "evidence": "Our primary manufacturers are Cloud Network Technology (more commonly known as Hon Hai Precision or Foxconn Corporation), Delta Electronics Incorporated, Senao Networks, Inc., and Pegatron Corporation"
     },
     {
@@ -3142,6 +3311,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our primary manufacturers are ... Pegatron Corporation\"",
       "evidence": "Our primary manufacturers are Cloud Network Technology (more commonly known as Hon Hai Precision or Foxconn Corporation), Delta Electronics Incorporated, Senao Networks, Inc., and Pegatron Corporation"
     },
     {
@@ -3156,6 +3326,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"manufacture... at a facility owned by\" counterparty",
       "evidence": "We also manufacture in Haiphong, Vietnam at a facility owned by Shenzhen Gongjin Electronics Co., Ltd."
     },
     {
@@ -3170,6 +3341,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include BAE Systems\"",
       "evidence": "Our top customers include BAE Systems, KORD Technologies, Mazak, Northrop Grumman, QinetiQ Limited, Raytheon Technologies, and the U.S. government"
     },
     {
@@ -3184,6 +3356,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include ... KORD Technologies\"",
       "evidence": "Our top customers include BAE Systems, KORD Technologies, Mazak, Northrop Grumman, QinetiQ Limited, Raytheon Technologies, and the U.S. government"
     },
     {
@@ -3198,6 +3371,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include ... Mazak\"",
       "evidence": "Our top customers include BAE Systems, KORD Technologies, Mazak, Northrop Grumman, QinetiQ Limited, Raytheon Technologies, and the U.S. government"
     },
     {
@@ -3212,6 +3386,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include ... Northrop Grumman\"",
       "evidence": "Our top customers include BAE Systems, KORD Technologies, Mazak, Northrop Grumman, QinetiQ Limited, Raytheon Technologies, and the U.S. government"
     },
     {
@@ -3226,6 +3401,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include ... QinetiQ Limited\"",
       "evidence": "Our top customers include BAE Systems, KORD Technologies, Mazak, Northrop Grumman, QinetiQ Limited, Raytheon Technologies, and the U.S. government"
     },
     {
@@ -3240,6 +3416,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top customers include ... Raytheon Technologies\"",
       "evidence": "Our top customers include BAE Systems, KORD Technologies, Mazak, Northrop Grumman, QinetiQ Limited, Raytheon Technologies, and the U.S. government"
     },
     {
@@ -3254,6 +3431,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"two largest revenue customers...were Applied Materials\"",
       "evidence": "Our two largest revenue customers in fiscal years 2025, 2024 and 2023 were Applied Materials, Inc. and Lam Research Corporation, each of which accounted for more than 10% of our total revenues in those three years."
     },
     {
@@ -3268,6 +3446,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"largest revenue customers ... accounted for more than 10% of our total revenues\"",
       "evidence": "Our two largest revenue customers in fiscal years 2025, 2024 and 2023 were Applied Materials, Inc. and Lam Research Corporation, each of which accounted for more than 10% of our total revenues in those three years."
     },
     {
@@ -3282,6 +3461,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our non-exclusive sales representative and fulfillment partner\" accounting for ~70% of revenue",
       "evidence": "In fiscal year 2026, the customer representing 10% or more of revenue was WT Microelectronics Co., Ltd., formerly Wintech Microelectronics Co., Ltd., or WT, our non-exclusive sales representative and fulfillment partner in Asia other than Japan, which accounted for approximately 70% of total revenue."
     },
     {
@@ -3296,6 +3476,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"supply constraints for certain chips from Samsung\"",
       "evidence": "we have experienced supply constraints for certain chips from Samsung Electronics Corporation (Samsung) and we may experience similar issues in the future, which could increase our manufacturing costs and reduce the gross margin of our products."
     },
     {
@@ -3310,6 +3491,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"key foundry partners include Taiwan Semiconductor Manufacturing Corporation\"",
       "evidence": "Our key foundry partners include Taiwan Semiconductor Manufacturing Corporation, or TSMC, in Taiwan"
     },
     {
@@ -3324,6 +3506,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "UMC named as foundry in Taiwan and Singapore",
       "evidence": "United Microelectronics Corporation, or UMC, in Taiwan and Singapore"
     },
     {
@@ -3338,6 +3521,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"four of our largest manufacturing partners, ASE\"",
       "evidence": "four of our largest manufacturing partners, ASE, Intel, TSMC, and UMC, each maintain well-developed environmental management and sustainability programs"
     },
     {
@@ -3352,6 +3536,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"our largest manufacturing partners ... Intel\"",
       "evidence": "four of our largest manufacturing partners, ASE, Intel, TSMC, and UMC, each maintain well-developed environmental management and sustainability programs"
     },
     {
@@ -3366,6 +3551,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our partner Verkor SAS\" for lithium-ion battery cell production",
       "evidence": "Our plan to grow the volume and profitability of our energy storage products depends on significant lithium-ion battery cell production, including by our partner Verkor SAS at a proposed gigafactory in South Carolina."
     },
     {
@@ -3379,7 +3565,8 @@
       "relationship_type": "manufacturer",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "unsupported",
+      "verdict": "ma_or_legal",
+      "reason": "description of Bren-Tronics as a business, consistent with an acquisition target rather than buy/sell relationship",
       "evidence": "Bren-Tronics Defense LLC, headquartered in Commack, New York, is a leading manufacturer of highly reliable portable power solutions, including small and large format lithium batteries and charging solutions, for military and defense applications."
     },
     {
@@ -3394,6 +3581,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"an important supplier of wafers and assembly and test services to us\"",
       "evidence": "the JV Company is an important supplier of wafers and assembly and test services to us"
     },
     {
@@ -3408,6 +3596,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"established direct relationships with key OEMs, including Dell Inc.\"",
       "evidence": "We have established direct relationships with key OEMs, including Dell Inc., Hewlett-Packard Company, Samsung Group, and Stanley Black & Decker, Inc."
     },
     {
@@ -3422,6 +3611,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"established direct relationships with key OEMs, including ... Hewlett-Packard Company\"",
       "evidence": "We have established direct relationships with key OEMs, including Dell Inc., Hewlett-Packard Company, Samsung Group, and Stanley Black & Decker, Inc."
     },
     {
@@ -3436,6 +3626,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"established direct relationships with key OEMs, including ... Samsung Group\"",
       "evidence": "We have established direct relationships with key OEMs, including Dell Inc., Hewlett-Packard Company, Samsung Group, and Stanley Black & Decker, Inc."
     },
     {
@@ -3450,6 +3641,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"established direct relationships with key OEMs, including ... Stanley Black & Decker\"",
       "evidence": "We have established direct relationships with key OEMs, including Dell Inc., Hewlett-Packard Company, Samsung Group, and Stanley Black & Decker, Inc."
     },
     {
@@ -3464,6 +3656,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our ODM customers include Compal Electronics\"",
       "evidence": "Our ODM customers include Compal Electronics, Inc., Foxconn, Quanta Computer Incorporated, Wistron Corporation and Delta Electronics."
     },
     {
@@ -3478,6 +3671,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our ODM customers include ... Foxconn\"",
       "evidence": "Our ODM customers include Compal Electronics, Inc., Foxconn, Quanta Computer Incorporated, Wistron Corporation and Delta Electronics."
     },
     {
@@ -3492,6 +3686,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our ODM customers include ... Quanta Computer Incorporated\"",
       "evidence": "Our ODM customers include Compal Electronics, Inc., Foxconn, Quanta Computer Incorporated, Wistron Corporation and Delta Electronics."
     },
     {
@@ -3506,6 +3701,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our ODM customers include ... Wistron Corporation\"",
       "evidence": "Our ODM customers include Compal Electronics, Inc., Foxconn, Quanta Computer Incorporated, Wistron Corporation and Delta Electronics."
     },
     {
@@ -3520,6 +3716,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our ODM customers include ... Delta Electronics\"",
       "evidence": "Our ODM customers include Compal Electronics, Inc., Foxconn, Quanta Computer Incorporated, Wistron Corporation and Delta Electronics."
     },
     {
@@ -3534,6 +3731,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our two largest distributors were WPG... Sales to WPG... accounted for 51.3% of our revenue\"",
       "evidence": "our two largest distributors were WPG Holdings Limited, or WPG, and Promate Electronic Co. Sales to WPG and Promate accounted for 51.3% and 22.1% of our revenue, respectively, for the fiscal year ended June 30, 2025"
     },
     {
@@ -3548,6 +3746,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our two largest distributors were ... Promate ... Sales to ... Promate accounted for 22.1% of our revenue\"",
       "evidence": "our two largest distributors were WPG Holdings Limited, or WPG, and Promate Electronic Co. Sales to WPG and Promate accounted for 51.3% and 22.1% of our revenue, respectively, for the fiscal year ended June 30, 2025"
     },
     {
@@ -3562,6 +3761,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"strong relationships with strategic component manufacturers, including NVIDIA (for GPUs...)\"",
       "evidence": "strong relationships with strategic component manufacturers, including NVIDIA (for GPUs, ARM processors and networking)"
     },
     {
@@ -3576,6 +3776,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"strong relationships with strategic component manufacturers, including NetList\"",
       "evidence": "strong relationships with strategic component manufacturers, including... NetList and Micron (for flash memory)"
     },
     {
@@ -3590,6 +3791,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"strategic component manufacturers, including... Micron (for flash memory)\"",
       "evidence": "strong relationships with strategic component manufacturers, including... NetList and Micron (for flash memory)"
     },
     {
@@ -3604,6 +3806,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"strong relationships with strategic component manufacturers, including Broadcom\"",
       "evidence": "strong relationships with strategic component manufacturers, including... Broadcom (for PCIe switch components)"
     },
     {
@@ -3618,6 +3821,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"strong relationships with strategic component manufacturers, including... Microchip\"",
       "evidence": "strong relationships with strategic component manufacturers, including... Microchip (for vehicle rated switch and functional safety processors)"
     },
     {
@@ -3632,6 +3836,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"strong relationships with strategic component manufacturers, including... Intel... (for CPUs)\"",
       "evidence": "strong relationships with strategic component manufacturers, including... Intel and AMD (for CPUs)"
     },
     {
@@ -3646,6 +3851,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"strong relationships with strategic component manufacturers, including... AMD (for CPUs)\"",
       "evidence": "strong relationships with strategic component manufacturers, including... Intel and AMD (for CPUs)"
     },
     {
@@ -3660,6 +3866,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"one of our customers... represented 18.6% of our revenues\"",
       "evidence": "In 2025, one of our customers, Consolidated Electrical Distributors, Inc, represented 18.6% of our revenues."
     },
     {
@@ -3674,6 +3881,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"contract to have our solar products manufactured by ... Jabil Inc.\"",
       "evidence": "We currently contract to have our solar products manufactured by two of the world's leading global electronics manufacturing service providers, Jabil Inc."
     },
     {
@@ -3688,6 +3896,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"using Synopsys, Inc.'s ... TCAD, software\" shows filer relies on counterparty's technology",
       "evidence": "We also license our MSTcad\u00ae software to customers, enabling them to simulate the effects of MST on their products using Synopsys, Inc.'s technology computer-aided design, or TCAD, software."
     },
     {
@@ -3702,6 +3911,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our customers and partners include ... electronic design automation software companies, such as Synopsys\"",
       "evidence": "electronic design automation software companies, such as Synopsys. Our customers and partners include foundries, integrated device manufacturers, or IDMs, fabless semiconductor manufacturers, OEMs that manufacture epitaxial deposition tools (also known as epi machines), wafer manufacturers, and electronic design automation software companies, such as Synopsys."
     },
     {
@@ -3716,6 +3926,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"entered into integration license agreements with ... Asahi Kasei Microdevices\"",
       "evidence": "We have also entered into integration license agreements with (i) a leading fabless RF semiconductor provider, (ii) a semiconductor foundry and (iii) Asahi Kasei Microdevices, or AKM, which is an IDM and fabless vendor."
     },
     {
@@ -3730,6 +3941,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"accepted our film under a commercial license agreement\"",
       "evidence": "ST has successfully installed our MST film recipe and accepted our film under a commercial license agreement executed in April 2023, resulting in the grant of an R&D license to them enabling them to manufacture MST wafers for internal use."
     },
     {
@@ -3744,6 +3956,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"manufacture...as part of our strategic relationship with GLOBALFOUNDRIES\"",
       "evidence": "We also manufacture full-flow 300mm CMOS wafers with our STT-MRAM magnetic-bit technology integrated in BEOL as part of our strategic relationship with GLOBALFOUNDRIES Inc."
     },
     {
@@ -3758,6 +3971,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"GLOBALFOUNDRIES is obligated to supply, wafers\"",
       "evidence": "Our manufacturing agreement with GLOBALFOUNDRIES includes a customary forecast and ordering mechanism for the supply of certain of our wafers, and we are obligated to order and pay for, and GLOBALFOUNDRIES is obligated to supply, wafers consistent with the binding portion of our forecast."
     },
     {
@@ -3772,6 +3986,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"manufacturing agreement...for the production and supply of wafers\"",
       "evidence": "On October 23, 2014, we entered into a manufacturing agreement with GLOBALFOUNDRIES Singapore Pte. that sets forth the specific terms and conditions for the production and supply of wafers manufactured using our STT-MRAM technology developed under the joint development agreement with GLOBALFOUNDRIES."
     },
     {
@@ -3786,6 +4001,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"established relationships...to facilitate the integration of our MRAM solutions into our customers' end products\"",
       "evidence": "We have established relationships with several storage controller and FPGA companies, including Phison Electronics, Sage Micro, and Xilinx as well as IP core companies, including Cadence and Northwest Logic, to facilitate the integration of our MRAM solutions into our customers' end products."
     },
     {
@@ -3800,6 +4016,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"established relationships with...Sage Micro...to facilitate the integration of our MRAM solutions\"",
       "evidence": "We have established relationships with several storage controller and FPGA companies, including Phison Electronics, Sage Micro, and Xilinx as well as IP core companies, including Cadence and Northwest Logic, to facilitate the integration of our MRAM solutions into our customers' end products."
     },
     {
@@ -3814,6 +4031,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"established relationships with...Xilinx...to facilitate the integration of our MRAM solutions\"",
       "evidence": "We have established relationships with several storage controller and FPGA companies, including Phison Electronics, Sage Micro, and Xilinx as well as IP core companies, including Cadence and Northwest Logic, to facilitate the integration of our MRAM solutions into our customers' end products."
     },
     {
@@ -3828,6 +4046,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"established relationships with...IP core companies, including Cadence...to facilitate the integration of our MRAM solutions\"",
       "evidence": "We have established relationships with several storage controller and FPGA companies, including Phison Electronics, Sage Micro, and Xilinx as well as IP core companies, including Cadence and Northwest Logic, to facilitate the integration of our MRAM solutions into our customers' end products."
     },
     {
@@ -3842,6 +4061,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"established relationships with...IP core companies, including...Northwest Logic, to facilitate the integration of our MRAM solutions\"",
       "evidence": "We have established relationships with several storage controller and FPGA companies, including Phison Electronics, Sage Micro, and Xilinx as well as IP core companies, including Cadence and Northwest Logic, to facilitate the integration of our MRAM solutions into our customers' end products."
     },
     {
@@ -3856,6 +4076,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "unsupported",
+      "reason": "\"talent attraction partnerships\" not a buy/sell relationship",
       "evidence": "we fostered deeper talent attraction partnerships with local organizations such as Illinois Shines and military partnerships focused on hiring retiring military service members"
     },
     {
@@ -3870,6 +4091,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"partnered with a leading semiconductor foundry...for our SoC products\"",
       "evidence": "we have partnered with a leading semiconductor foundry, Taiwan Semiconductor Manufacturing Company Limited (TSMC), for our SoC products in 180-nanometer, 90-nanometer, 40-nanometer, 22-nanometer, and 12-nanometer process nodes."
     },
     {
@@ -3884,6 +4106,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Major customers and distributors include ... Comcast\"",
       "evidence": "Major customers and distributors include companies such as Comcast Corporation (Comcast)"
     },
     {
@@ -3898,6 +4121,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our manufacturers are Lanner Electronics Inc.\"",
       "evidence": "Our manufacturers are Lanner Electronics Inc. These companies manufacture and assemble our hardware products using design specifications, quality assurance programs and standards established and owned or licensed by us."
     },
     {
@@ -3912,6 +4136,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"they manufacture, assemble, and test our products\"",
       "evidence": "We have agreements with Lanner with an initial term of one year and AEWIN with an initial term of six years pursuant to which they manufacture, assemble, and test our products."
     },
     {
@@ -3926,6 +4151,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"increased use of renewable energy in partnership with PG&E\"",
       "evidence": "We have also planned for increased use of renewable energy in partnership with PG&E."
     },
     {
@@ -3940,6 +4166,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"largest end customer, Apple Inc.\" accounting for ~50% of revenue",
       "evidence": "We provide products to our largest end customer, Apple Inc. (\"Apple\"), through sales to multiple contract manufacturers, which in the aggregate accounted for 50% and 47% of total revenue in fiscal years 2026 and 2025, respectively."
     },
     {
@@ -3954,6 +4181,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"accounted for 10% of total revenue\"",
       "evidence": "(\"Samsung\") accounted for 10% of total revenue in both fiscal years 2026 and 2025."
     },
     {
@@ -3968,6 +4196,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Included in our sales were a significant amount to Nexteer Automotive\"",
       "evidence": "Included in our sales were a significant amount to Nexteer Automotive, Philips, and ZF, which accounted for the following portions of net sales... Nexteer Automotive 19% 16% 15%"
     },
     {
@@ -3982,6 +4211,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Included in our sales were a significant amount to ... Philips ... 14%\"",
       "evidence": "Included in our sales were a significant amount to Nexteer Automotive, Philips, and ZF, which accounted for the following portions of net sales... Philips * * 14%"
     },
     {
@@ -3996,6 +4226,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Included in our sales were a significant amount to... ZF\"",
       "evidence": "Included in our sales were a significant amount to Nexteer Automotive, Philips, and ZF, which accounted for the following portions of net sales... ZF 11% 13% 12%"
     },
     {
@@ -4010,6 +4241,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our semiconductor suppliers include ... Samsung Semiconductor, Inc.\"",
       "evidence": "Our semiconductor suppliers include many 10 of the world's largest memory manufacturers, including Samsung Semiconductor, Inc., Micron Technology, Inc., SK hynix, Inc., International Business Machines Corporation, and Kioxia Holdings Corporation."
     },
     {
@@ -4024,6 +4256,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our semiconductor suppliers include ... Micron Technology, Inc.\"",
       "evidence": "Our semiconductor suppliers include many 10 of the world's largest memory manufacturers, including Samsung Semiconductor, Inc., Micron Technology, Inc., SK hynix, Inc., International Business Machines Corporation, and Kioxia Holdings Corporation."
     },
     {
@@ -4038,6 +4271,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our semiconductor suppliers include ... SK hynix, Inc.\"",
       "evidence": "Our semiconductor suppliers include many 10 of the world's largest memory manufacturers, including Samsung Semiconductor, Inc., Micron Technology, Inc., SK hynix, Inc., International Business Machines Corporation, and Kioxia Holdings Corporation."
     },
     {
@@ -4052,6 +4286,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our semiconductor suppliers include ... International Business Machines Corporation\"",
       "evidence": "Our semiconductor suppliers include many 10 of the world's largest memory manufacturers, including Samsung Semiconductor, Inc., Micron Technology, Inc., SK hynix, Inc., International Business Machines Corporation, and Kioxia Holdings Corporation."
     },
     {
@@ -4066,6 +4301,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our semiconductor suppliers include ... Kioxia Holdings Corporation\"",
       "evidence": "Our semiconductor suppliers include many 10 of the world's largest memory manufacturers, including Samsung Semiconductor, Inc., Micron Technology, Inc., SK hynix, Inc., International Business Machines Corporation, and Kioxia Holdings Corporation."
     },
     {
@@ -4080,6 +4316,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our contract manufacturers include NEC Corporation\"",
       "evidence": "Our contract manufacturers include NEC Corporation, Advantech Co., Ltd."
     },
     {
@@ -4094,6 +4331,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our contract manufacturers include ... Advantech\"",
       "evidence": "Our contract manufacturers include NEC Corporation, Advantech Co., Ltd."
     },
     {
@@ -4107,7 +4345,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"premier manufacturer of composites for aerial platforms in the drone industry\"",
       "evidence": "Light and Strong, a premier manufacturer of composites for aerial platforms in the drone industry."
     },
     {
@@ -4122,6 +4361,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"largest customers by sales in 2025\"",
       "evidence": "We have long standing relationships with top tier OEM customers, including Lam Research, Applied Materials, and ASML which were our largest customers by sales in 2025."
     },
     {
@@ -4136,6 +4376,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"largest customers by sales in 2025\"",
       "evidence": "We have long standing relationships with top tier OEM customers, including Lam Research, Applied Materials, and ASML which were our largest customers by sales in 2025."
     },
     {
@@ -4150,6 +4391,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"largest customers by sales\"",
       "evidence": "We have long standing relationships with top tier OEM customers, including Lam Research, Applied Materials, and ASML which were our largest customers by sales in 2025."
     },
     {
@@ -4164,6 +4406,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"two customers with individual sales over 10%, Lam Research\"",
       "evidence": "For 2025, two customers with individual sales over 10%, Lam Research and Applied Materials, accounted for a combined 76% of total sales."
     },
     {
@@ -4178,6 +4421,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"two customers...Applied Materials...of total sales\"",
       "evidence": "For 2025, two customers with individual sales over 10%, Lam Research and Applied Materials, accounted for a combined 76% of total sales."
     },
     {
@@ -4192,6 +4436,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"one customer, Sonepar USA, accounted for more than 10% of sales\"",
       "evidence": "For fiscal 2025, 2024 and 2023, one customer, Sonepar USA, accounted for more than 10% of sales."
     },
     {
@@ -4206,6 +4451,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our customers include global electrical distributors (such as Consolidated Electrical Distributors)\"",
       "evidence": "Our customers include global electrical distributors (such as Consolidated Electrical Distributors, Inc. and Wesco International, Inc.)"
     },
     {
@@ -4220,6 +4466,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our customers include global electrical distributors (such as ... Wesco International)\"",
       "evidence": "Our customers include global electrical distributors (such as Consolidated Electrical Distributors, Inc. and Wesco International, Inc.)"
     },
     {
@@ -4234,6 +4481,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"independent electrical distributors\" through which filer sells",
       "evidence": "independent electrical distributors including super-regional electrical distributors (such as U.S. and United Electric Supply Company, Inc.)"
     },
     {
@@ -4248,6 +4496,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"members of buying groups\" indicating a distribution/purchasing customer channel",
       "evidence": "members of buying groups (such as AD Independent Electrical Supply Division (\"IESD\") and STAFDA)"
     },
     {
@@ -4261,7 +4510,8 @@
       "relationship_type": "customer",
       "direction": "downstream",
       "resolution": "unresolved",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"members of buying groups\" indicates distribution/customer channel",
       "evidence": "members of buying groups (such as AD Independent Electrical Supply Division (\"IESD\") and STAFDA)"
     },
     {
@@ -4276,6 +4526,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our primary suppliers of steel are Cleveland-Cliffs\"",
       "evidence": "Our primary suppliers of steel are Cleveland-Cliffs, Steel Dynamics and Nucor"
     },
     {
@@ -4290,6 +4541,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our primary suppliers of steel are ... Steel Dynamics\"",
       "evidence": "Our primary suppliers of steel are Cleveland-Cliffs, Steel Dynamics and Nucor"
     },
     {
@@ -4304,6 +4556,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Our primary suppliers of steel are ... Nucor\"",
       "evidence": "Our primary suppliers of steel are Cleveland-Cliffs, Steel Dynamics and Nucor"
     },
     {
@@ -4318,6 +4571,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our primary suppliers of copper are AmRod\"",
       "evidence": "our primary suppliers of copper are AmRod, SDI LaFarga and Nexans"
     },
     {
@@ -4332,6 +4586,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our primary suppliers of copper are ... SDI LaFarga\"",
       "evidence": "our primary suppliers of copper are AmRod, SDI LaFarga and Nexans"
     },
     {
@@ -4346,6 +4601,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our primary suppliers of copper are ... Nexans\"",
       "evidence": "our primary suppliers of copper are AmRod, SDI LaFarga and Nexans"
     },
     {
@@ -4360,6 +4616,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"our primary suppliers of PVC resin are Westlake\"",
       "evidence": "our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls"
     },
     {
@@ -4374,6 +4631,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our primary suppliers of PVC resin are ... Formosa\"",
       "evidence": "our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls"
     },
     {
@@ -4388,6 +4646,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our primary suppliers of PVC resin are ... Oxy Vinyls\"",
       "evidence": "our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls"
     },
     {
@@ -4402,6 +4661,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"our primary suppliers of HDPE resin are LyondellBasell\"",
       "evidence": "our primary suppliers of HDPE resin are LyondellBasell and Baystar"
     },
     {
@@ -4416,6 +4676,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our primary suppliers of HDPE resin are ... Baystar\"",
       "evidence": "our primary suppliers of HDPE resin are LyondellBasell and Baystar"
     },
     {
@@ -4430,6 +4691,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"established customer relationships with market leaders such as Mobileye\"",
       "evidence": "we have established customer relationships with market leaders such as Mobileye, Renesas, Socionext, NXP, BMW, Bosch, and many others."
     },
     {
@@ -4444,6 +4706,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"established customer relationships with ... Renesas\"",
       "evidence": "we have established customer relationships with market leaders such as Mobileye, Renesas, Socionext, NXP, BMW, Bosch, and many others."
     },
     {
@@ -4458,6 +4721,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"established customer relationships with ... Socionext\"",
       "evidence": "we have established customer relationships with market leaders such as Mobileye, Renesas, Socionext, NXP, BMW, Bosch, and many others."
     },
     {
@@ -4472,6 +4736,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"we have established customer relationships with...NXP\"",
       "evidence": "we have established customer relationships with market leaders such as Mobileye, Renesas, Socionext, NXP, BMW, Bosch, and many others."
     },
     {
@@ -4486,6 +4751,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"established customer relationships with ... BMW\"",
       "evidence": "we have established customer relationships with market leaders such as Mobileye, Renesas, Socionext, NXP, BMW, Bosch, and many others."
     },
     {
@@ -4500,6 +4766,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"established customer relationships with market leaders such as ... Bosch\"",
       "evidence": "we have established customer relationships with market leaders such as Mobileye, Renesas, Socionext, NXP, BMW, Bosch, and many others."
     },
     {
@@ -4514,6 +4781,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"We work with suppliers who provide these blocks, including IP companies such as Arm\"",
       "evidence": "We work with suppliers who provide these blocks, including IP companies such as Arm, SiFive, MIPS, Synopsys, Cadence Design Systems, Semidynamics, Andes, Codasip and other RISC-V IP vendors to support their products and protocols working with our SoC Integration Automation software and interconnect IP products."
     },
     {
@@ -4528,6 +4796,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We work with suppliers who provide these blocks, including IP companies such as ... SiFive\"",
       "evidence": "We work with suppliers who provide these blocks, including IP companies such as Arm, SiFive, MIPS, Synopsys, Cadence Design Systems, Semidynamics, Andes, Codasip and other RISC-V IP vendors to support their products and protocols working with our SoC Integration Automation software and interconnect IP products."
     },
     {
@@ -4542,6 +4811,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We work with suppliers who provide these blocks, including IP companies such as ... MIPS\"",
       "evidence": "We work with suppliers who provide these blocks, including IP companies such as Arm, SiFive, MIPS, Synopsys, Cadence Design Systems, Semidynamics, Andes, Codasip and other RISC-V IP vendors to support their products and protocols working with our SoC Integration Automation software and interconnect IP products."
     },
     {
@@ -4556,6 +4826,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"We work with suppliers who provide these blocks, including IP companies such as...Synopsys\"",
       "evidence": "We work with suppliers who provide these blocks, including IP companies such as Arm, SiFive, MIPS, Synopsys, Cadence Design Systems, Semidynamics, Andes, Codasip and other RISC-V IP vendors to support their products and protocols working with our SoC Integration Automation software and interconnect IP products."
     },
     {
@@ -4570,6 +4841,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"We work with suppliers who provide these blocks, including IP companies such as...Cadence Design Systems\"",
       "evidence": "We work with suppliers who provide these blocks, including IP companies such as Arm, SiFive, MIPS, Synopsys, Cadence Design Systems, Semidynamics, Andes, Codasip and other RISC-V IP vendors to support their products and protocols working with our SoC Integration Automation software and interconnect IP products."
     },
     {
@@ -4584,6 +4856,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We work with suppliers who provide these blocks, including IP companies such as...Semidynamics\"",
       "evidence": "We work with suppliers who provide these blocks, including IP companies such as Arm, SiFive, MIPS, Synopsys, Cadence Design Systems, Semidynamics, Andes, Codasip and other RISC-V IP vendors to support their products and protocols working with our SoC Integration Automation software and interconnect IP products."
     },
     {
@@ -4598,6 +4871,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We work with suppliers who provide these blocks, including IP companies such as...Andes\"",
       "evidence": "We work with suppliers who provide these blocks, including IP companies such as Arm, SiFive, MIPS, Synopsys, Cadence Design Systems, Semidynamics, Andes, Codasip and other RISC-V IP vendors to support their products and protocols working with our SoC Integration Automation software and interconnect IP products."
     },
     {
@@ -4612,6 +4886,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"We work with suppliers who provide these blocks, including IP companies such as ... Codasip\"",
       "evidence": "We work with suppliers who provide these blocks, including IP companies such as Arm, SiFive, MIPS, Synopsys, Cadence Design Systems, Semidynamics, Andes, Codasip and other RISC-V IP vendors to support their products and protocols working with our SoC Integration Automation software and interconnect IP products."
     },
     {
@@ -4626,6 +4901,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"we work with EDA companies such as...Siemens to provide prepackaged interfaces to their EDA tools\"",
       "evidence": "we work with EDA companies such as Synopsys, Cadence and Siemens to provide prepackaged interfaces to their EDA tools such as simulators, modeling systems, and logic and physical synthesis tools."
     },
     {
@@ -4640,6 +4916,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "unsupported",
+      "reason": "\"support a broad ecosystem of... foundries including TSMC\" describes ecosystem support, not filer buying from TSMC",
       "evidence": "Support a broad ecosystem of processors suppliers including Arm, RISC-V, x86, other IP vendors including Synopsys and Cadence, SoC design tool software providers, semiconductor foundries including TSMC and Intel Foundry, and others."
     },
     {
@@ -4653,7 +4930,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "resolved_ticker",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"semiconductor foundries including TSMC and Intel Foundry\" in supported ecosystem",
       "evidence": "Support a broad ecosystem of processors suppliers including Arm, RISC-V, x86, other IP vendors including Synopsys and Cadence, SoC design tool software providers, semiconductor foundries including TSMC and Intel Foundry, and others."
     },
     {
@@ -4668,6 +4946,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "ma_or_legal",
+      "reason": "\"we sold to Qualcomm certain assets and intellectual property\" \u2014 one-time asset sale",
       "evidence": "Qualcomm France SARL (collectively, Qualcomm) and us and certain of our subsidiaries dated October 9, 2013, pursuant to which we sold to Qualcomm certain assets and intellectual property related to our FlexNoC product"
     },
     {
@@ -4682,6 +4961,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Arm as the processor IP provider\" under an agreement",
       "evidence": "In 2022 we also entered into an Arm automotive agreement, with Arm as the processor IP provider and Arteris as interconnect IP provider for automotive microcontrollers (MCU) and SoCs to service growing customer needs."
     },
     {
@@ -4696,6 +4976,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"top five customers, measured by revenue\" includes Canon",
       "evidence": "Our top five customers, measured by revenue, are Canon Medical Systems Corporation (\"Canon\"), United Imaging Healthcare, General Electric Company, Siemens Healthineers AG (\"Siemens\"), and Rapiscan Systems, Inc., which collectively accounted for approximately 40% of total revenue in fiscal year 2025."
     },
     {
@@ -4710,6 +4991,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top five customers, measured by revenue... United Imaging Healthcare\"",
       "evidence": "Our top five customers, measured by revenue, are Canon Medical Systems Corporation (\"Canon\"), United Imaging Healthcare, General Electric Company, Siemens Healthineers AG (\"Siemens\"), and Rapiscan Systems, Inc., which collectively accounted for approximately 40% of total revenue in fiscal year 2025."
     },
     {
@@ -4724,6 +5006,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"top five customers, measured by revenue\" includes General Electric Company",
       "evidence": "Our top five customers, measured by revenue, are Canon Medical Systems Corporation (\"Canon\"), United Imaging Healthcare, General Electric Company, Siemens Healthineers AG (\"Siemens\"), and Rapiscan Systems, Inc., which collectively accounted for approximately 40% of total revenue in fiscal year 2025."
     },
     {
@@ -4738,6 +5021,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"top five customers, measured by revenue\" includes Siemens",
       "evidence": "Our top five customers, measured by revenue, are Canon Medical Systems Corporation (\"Canon\"), United Imaging Healthcare, General Electric Company, Siemens Healthineers AG (\"Siemens\"), and Rapiscan Systems, Inc., which collectively accounted for approximately 40% of total revenue in fiscal year 2025."
     },
     {
@@ -4752,6 +5036,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Our top five customers, measured by revenue, are ... Rapiscan Systems, Inc.\"",
       "evidence": "Our top five customers, measured by revenue, are Canon Medical Systems Corporation (\"Canon\"), United Imaging Healthcare, General Electric Company, Siemens Healthineers AG (\"Siemens\"), and Rapiscan Systems, Inc., which collectively accounted for approximately 40% of total revenue in fiscal year 2025."
     },
     {
@@ -4766,6 +5051,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Amazon accounted for more than 10% of our net revenue\"",
       "evidence": "In 2025, 2024 and 2023, e-retailer Amazon accounted for more than 10% of our net revenue, at 27.4%, 30.9%, and 30.7%, respectively."
     },
     {
@@ -4780,6 +5066,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"distribute our products...directly to the retailer, such as...Best Buy\"",
       "evidence": "In our retail channel, we distribute our products either directly to the retailer, such as Amazon and Best Buy, or through distributors."
     },
     {
@@ -4793,7 +5080,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "resolved_ticker",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"key industry suppliers such as NVIDIA\"",
       "evidence": "our marketing personnel regularly meets with other key industry suppliers such as NVIDIA, Intel, AMD and game publishers in order to ensure that our product development efforts appropriately address the needs of their new products"
     },
     {
@@ -4807,7 +5095,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "resolved_ticker",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"key industry suppliers such as NVIDIA, Intel, AMD\"",
       "evidence": "our marketing personnel regularly meets with other key industry suppliers such as NVIDIA, Intel, AMD and game publishers in order to ensure that our product development efforts appropriately address the needs of their new products"
     },
     {
@@ -4821,7 +5110,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "resolved_ticker",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"other key industry suppliers such as ... AMD\"",
       "evidence": "our marketing personnel regularly meets with other key industry suppliers such as NVIDIA, Intel, AMD and game publishers in order to ensure that our product development efforts appropriately address the needs of their new products"
     },
     {
@@ -4836,6 +5126,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"key vendor supporting the NRO's EOCL program, delivering ... imagery\"",
       "evidence": "BlackSky is a key vendor supporting the NRO's Electro-Optical Commercial Layer (\"EOCL\") program, delivering operational, high-resolution satellite imagery to a half-million intelligence, defense, and federal civil agency users"
     },
     {
@@ -4850,6 +5141,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "NGA's Luno A and Luno B programs indicate the agency procures BlackSky's services",
       "evidence": "the NGA's Luno A and Luno B programs for the monitoring and analysis of global economic and environmental activity, as well as military capability"
     },
     {
@@ -4864,6 +5156,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "unsupported",
+      "reason": "\"announced a partnership to develop\" shows R&D partnership, not an ongoing buy/sell relationship",
       "evidence": "In November 5, 2025 we announced a partnership with \u0160koda Group to develop \"Made in Europe\" battery systems."
     },
     {
@@ -4877,7 +5170,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "real_supply_chain",
+      "verdict": "unsupported",
+      "reason": "\"Licensed from Argonne National Laboratory\" is a technology license, not a buy/sell supply relationship",
       "evidence": "Full Concentration Gradient (\"FCG\") Cathode: Licensed from Argonne National Laboratory in 2017, our FCG cathode technology is now produced with flexible and cost-effective manufacturing techniques"
     },
     {
@@ -4892,6 +5186,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "unsupported",
+      "reason": "\"as validated by\" \u2014 testing/validation, not buying or selling",
       "evidence": "Our LTO-based batteries have the potential to retain 90% of their initial capacity after up to 10,300 full charge/discharge cycles, as validated by the Warwick Manufacturing Group at the University of Warwick."
     },
     {
@@ -4905,7 +5200,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "unsupported",
+      "verdict": "ma_or_legal",
+      "reason": "\"growth of the IT Solutions business was driven primarily by ITsavvy\" indicates an acquired/owned business segment, not a buy/sell relationship",
       "evidence": "In 2025, growth of the IT Solutions business was driven primarily by ITsavvy as well as client demand for integrated infrastructure, cloud, security, and automation solutions."
     },
     {
@@ -4920,6 +5216,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"Closed the Lexmark Acquisition\"",
       "evidence": "Closed the Lexmark Acquisition, providing greater exposure to growing Print markets"
     },
     {
@@ -4933,7 +5230,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "ma_or_legal",
+      "verdict": "real_supply_chain",
+      "reason": "\"entered into a funding arrangement\" with LCM affiliate",
       "evidence": "the Company entered into a funding arrangement in the United Kingdom and France with an affiliate of LCM Capital LLP"
     },
     {
@@ -4948,6 +5246,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"outsourced a material portion of our manufacturing operations to\"",
       "evidence": "We have outsourced a material portion of our manufacturing operations to third parties, such as FUJIFILM Business Innovation Corp."
     },
     {
@@ -4962,6 +5261,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"our global customers that benefit from our combined solutions ... include Holcim\"",
       "evidence": "Some of our global customers that benefit from our combined solutions to power their specific AIoT and machine-to-machine mobility needs include Holcim, Ford, Avis, Walmart, Toyota, and XPO Logistics."
     },
     {
@@ -4976,6 +5276,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"customers... include... Ford\"",
       "evidence": "Some of our global customers that benefit from our combined solutions to power their specific AIoT and machine-to-machine mobility needs include Holcim, Ford, Avis, Walmart, Toyota, and XPO Logistics."
     },
     {
@@ -4990,6 +5291,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"our global customers ... include ... Avis\"",
       "evidence": "Some of our global customers that benefit from our combined solutions to power their specific AIoT and machine-to-machine mobility needs include Holcim, Ford, Avis, Walmart, Toyota, and XPO Logistics."
     },
     {
@@ -5004,6 +5306,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"our global customers ... include ... Walmart\"",
       "evidence": "Some of our global customers that benefit from our combined solutions to power their specific AIoT and machine-to-machine mobility needs include Holcim, Ford, Avis, Walmart, Toyota, and XPO Logistics."
     },
     {
@@ -5018,6 +5321,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"global customers that benefit from our combined solutions... include... Toyota\"",
       "evidence": "Some of our global customers that benefit from our combined solutions to power their specific AIoT and machine-to-machine mobility needs include Holcim, Ford, Avis, Walmart, Toyota, and XPO Logistics."
     },
     {
@@ -5032,6 +5336,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"global customers that benefit from our combined solutions\"",
       "evidence": "Some of our global customers that benefit from our combined solutions to power their specific AIoT and machine-to-machine mobility needs include Holcim, Ford, Avis, Walmart, Toyota, and XPO Logistics."
     },
     {
@@ -5045,7 +5350,8 @@
       "relationship_type": "manufacturer",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "ma_or_legal",
+      "verdict": "real_supply_chain",
+      "reason": "\"contracted directly with certain of our resellers to fulfill sales demand\"",
       "evidence": "we previously offered our 'distributor licensing' model based on the Distribution and License Agreement we entered into with Columbia Electrical Contractors, Inc. Under that arrangement, we granted a license of our intellectual property to Columbia Tech, which contracted directly with certain of our resellers to fulfill sales demand"
     },
     {
@@ -5060,6 +5366,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"products have historically been manufactured by a third-party contract manufacturer, Columbia Tech\"",
       "evidence": "Our physical products have historically been manufactured by a third-party contract manufacturer, Columbia Tech, based in the United States with international quality certifications, such as ISO 9001:2015."
     },
     {
@@ -5074,6 +5381,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"contract manufacturing agreement with Plexus Corp.\"",
       "evidence": "On November 5, 2025, we entered into a non-exclusive contract manufacturing agreement with Plexus Corp."
     },
     {
@@ -5088,6 +5396,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "competitor",
+      "reason": "\"We also compete with manufacturers... including UNIRAC, Inc.\"",
       "evidence": "We also compete with manufacturers of fixed-tilt mounting systems and engineered foundations, including UNIRAC, Inc."
     },
     {
@@ -5102,6 +5411,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"partnering with Dyndrite, a GPU-accelerated software platform, to enable larger format print file producibility\"",
       "evidence": "partnering with Dyndrite, a GPU-accelerated software platform, to enable larger format print file producibility"
     },
     {
@@ -5116,6 +5426,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"multiple distribution partners, including Taiyo Nippon Sanso\"",
       "evidence": "We rely on our own sales team, as well as multiple distribution partners, including Taiyo Nippon Sanso (Japan)"
     },
     {
@@ -5130,6 +5441,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"multiple distribution partners, including ... SBO (Austria)\"",
       "evidence": "multiple distribution partners, including Taiyo Nippon Sanso (Japan), and SBO (Austria)"
     },
     {
@@ -5144,6 +5456,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"long-term energy services arrangement with PG&E as the utility partner\"",
       "evidence": "CRC achieved commercial operation in September 2025 and is operated by the Company under a long-term energy services arrangement with PG&E as the utility partner and distribution system operator."
     },
     {
@@ -5157,7 +5470,8 @@
       "relationship_type": "supplier",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "real_supply_chain",
+      "verdict": "unsupported",
+      "reason": "\"our Australian development partner\" jointly awarded a project, not a supplier the filer buys from",
       "evidence": "we and our Australian development partner, Bridge Energy Pty Ltd, were awarded a 14-year Long-Term Energy Service Agreement by AusEnergy Services for the Ebor Battery Energy Storage System project in New South Wales, Australia."
     },
     {
@@ -5172,6 +5486,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"awarded a 14-year Long-Term Energy Service Agreement by AusEnergy Services\"",
       "evidence": "we and our Australian development partner, Bridge Energy Pty Ltd, were awarded a 14-year Long-Term Energy Service Agreement by AusEnergy Services for the Ebor Battery Energy Storage System project in New South Wales, Australia."
     },
     {
@@ -5186,6 +5501,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"intended to support Crusoe Cloud customer demand\"",
       "evidence": "The initial program is scalable up to 25 MW of total load and is intended to support Crusoe Cloud customer demand, including managed inference services."
     },
     {
@@ -5199,7 +5515,8 @@
       "relationship_type": "customer",
       "direction": "downstream",
       "resolution": "unresolved",
-      "verdict": "unsupported",
+      "verdict": "real_supply_chain",
+      "reason": "\"We collaborate with ... BMW\"",
       "evidence": "We collaborate with a number of industry leaders, including BMW of North America LLC (\"BMW\"), Samsung SDI Co., Ltd."
     },
     {
@@ -5214,6 +5531,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "unsupported",
+      "reason": "\"We collaborate with a number of industry leaders\" \u2014 collaboration, not shown as buying/selling",
       "evidence": "We collaborate with a number of industry leaders, including BMW of North America LLC (\"BMW\"), Samsung SDI Co., Ltd."
     },
     {
@@ -5228,6 +5546,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"cell manufacturing line at SK On's facility ... using our electrolyte\"",
       "evidence": "The SK On Agreements are designed to allow SK On to develop solid-state cells based on our technology and operate a pilot cell manufacturing line at SK On's facility (the \"SK On Line\") using our electrolyte."
     },
     {
@@ -5242,6 +5561,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"participation in our $135.6 million Series B investment round\" is an equity investment, not purchases/sales",
       "evidence": "In 2021, BMW and Solid Power expanded the partnership with BMW Holding B.V.'s (\"BMW Holding\") participation in our $135.6 million Series B investment round"
     },
     {
@@ -5256,6 +5576,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"expanded our partnership with BMW\" through battery development collaboration",
       "evidence": "In October 2025, we expanded our partnership with BMW through a collaboration with BMW AG and Samsung SDI to progress development of all-solid-state batteries."
     },
     {
@@ -5269,7 +5590,8 @@
       "relationship_type": "customer",
       "direction": "downstream",
       "resolution": "resolved_ticker",
-      "verdict": "ma_or_legal",
+      "verdict": "real_supply_chain",
+      "reason": "\"The terms of the JDA permit Ford to share...\" indicates an ongoing joint development business relationship",
       "evidence": "The terms of the JDA permit Ford to share in certain intellectual property developed under the JDA and limit our ability to share developments gained through the course of performance of the JDA with other partners in certain circumstances."
     },
     {
@@ -5284,6 +5606,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"Pinnacle solution, launched in partnership with AT&T Services\"",
       "evidence": "Our Pinnacle solution, launched in partnership with AT&T Services, Inc."
     },
     {
@@ -5298,6 +5621,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"rely...on AT&T for distribution of our services\"",
       "evidence": "We rely, in part, on AT&T for distribution of our services to FirstNet\u00ae customers."
     },
     {
@@ -5312,6 +5636,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"services agreement with AT&T for distribution of our services\"",
       "evidence": "Our services agreement with AT&T for distribution of our services to FirstNet\u00ae customers expires in October 2028."
     },
     {
@@ -5326,6 +5651,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Pinnacle service was launched by MetCom\" via a technology and services agreement",
       "evidence": "In November 2022, Pinnacle service was launched by MetCom in Japan, and our partnership with MetCom has expanded through a technology and services agreement signed in 2025."
     },
     {
@@ -5340,6 +5666,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"growing our E911 service, including with Verizon\"",
       "evidence": "we are continuing to grow our E911 service, including with Verizon"
     },
     {
@@ -5354,6 +5681,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"made available by APIs provided by Google\" - filer depends on Google's APIs",
       "evidence": "we and our customers must have access to barometric pressure measurements and 2D location information, both of which are made available by APIs provided by Google, Apple and other device/OS vendors."
     },
     {
@@ -5368,6 +5696,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"made available by APIs provided by ... Apple\"",
       "evidence": "we and our customers must have access to barometric pressure measurements and 2D location information, both of which are made available by APIs provided by Google, Apple and other device/OS vendors."
     },
     {
@@ -5382,6 +5711,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"changes in service levels from AWS may adversely affect our ability to meet our customers' requirements\"",
       "evidence": "any changes in service levels from AWS may adversely affect our ability to meet our customers' requirements."
     },
     {
@@ -5396,6 +5726,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"formed...from the aggregation of three advanced manufacturing companies\"",
       "evidence": "Syntec Optics was formed more than two decades ago from the aggregation of three advanced manufacturing companies (Wordingham Machine Co., Inc., Rochester Tool and Mold, Inc."
     },
     {
@@ -5410,6 +5741,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "ma_or_legal",
+      "reason": "\"formed...from the aggregation of three advanced manufacturing companies\"",
       "evidence": "Syntec Optics was formed more than two decades ago from the aggregation of three advanced manufacturing companies (Wordingham Machine Co., Inc., Rochester Tool and Mold, Inc."
     },
     {
@@ -5424,6 +5756,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"various customers, including AALTO Airbus\"",
       "evidence": "Our batteries and their performance specifications have been tested and validated for application by various customers, including AALTO Airbus, AeroVironment, BAE Systems, Kraus Hamdani Aerospace, Nokia Drone Networks, Nordic Wing, Teledyne FLIR and the U.S."
     },
     {
@@ -5438,6 +5771,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"designed to accomodate UAS programs at AeroVironment\" with customer additions",
       "evidence": "our balanced energy/power battery cells have been designed to accomodate UAS programs at AeroVironment and Teledyne FLIR, with recent customer additions including Nokia Drone Networks, Nordic Wing and ESAero"
     },
     {
@@ -5452,6 +5786,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"including ... BAE Systems\" listed among \"various customers\"",
       "evidence": "Our batteries and their performance specifications have been tested and validated for application by various customers, including AALTO Airbus, AeroVironment, BAE Systems, Kraus Hamdani Aerospace, Nokia Drone Networks, Nordic Wing, Teledyne FLIR and the U.S."
     },
     {
@@ -5466,6 +5801,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"including ... Kraus Hamdani Aerospace\" listed among customers",
       "evidence": "Our batteries and their performance specifications have been tested and validated for application by various customers, including AALTO Airbus, AeroVironment, BAE Systems, Kraus Hamdani Aerospace, Nokia Drone Networks, Nordic Wing, Teledyne FLIR and the U.S."
     },
     {
@@ -5480,6 +5816,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"recent customer additions including Nokia Drone Networks\"",
       "evidence": "our balanced energy/power battery cells have been designed to accomodate UAS programs at AeroVironment and Teledyne FLIR, with recent customer additions including Nokia Drone Networks, Nordic Wing and ESAero"
     },
     {
@@ -5494,6 +5831,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"recent customer additions including ... Nordic Wing\"",
       "evidence": "our balanced energy/power battery cells have been designed to accomodate UAS programs at AeroVironment and Teledyne FLIR, with recent customer additions including Nokia Drone Networks, Nordic Wing and ESAero"
     },
     {
@@ -5508,6 +5846,7 @@
       "direction": "downstream",
       "resolution": "resolved_ticker",
       "verdict": "real_supply_chain",
+      "reason": "\"with recent customer additions\" / battery cells designed for their UAS programs",
       "evidence": "our balanced energy/power battery cells have been designed to accomodate UAS programs at AeroVironment and Teledyne FLIR, with recent customer additions including Nokia Drone Networks, Nordic Wing and ESAero"
     },
     {
@@ -5522,6 +5861,7 @@
       "direction": "downstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"recent customer additions including ... ESAero\"",
       "evidence": "our balanced energy/power battery cells have been designed to accomodate UAS programs at AeroVironment and Teledyne FLIR, with recent customer additions including Nokia Drone Networks, Nordic Wing and ESAero"
     },
     {
@@ -5536,6 +5876,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"Exclusive Supply Agreement...to purchase Berzelius' proprietary silicon anode materials\"",
       "evidence": "We believe that our existing Exclusive Supply Agreement with Berzelius, which gives us exclusive rights to purchase Berzelius' proprietary silicon anode materials in the United States, Canada and Mexico"
     },
     {
@@ -5550,6 +5891,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "real_supply_chain",
+      "reason": "\"partnership with a United States contract manufacturer, Nanotech Energy\"",
       "evidence": "In January 2026, we announced our first partnership with a United States contract manufacturer, Nanotech Energy, located in California."
     },
     {
@@ -5564,6 +5906,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "unsupported",
+      "reason": "\"components produced by foreign manufacturers including Sony\" is a regulatory/general reference, not a purchase relationship",
       "evidence": "the FCC partially reversed the restriction to exempt drones and drones components on the Pentagon's Blue List of cleared UAS aircraft, such as components produced by foreign manufacturers including Sony, Nvidia and Panasonic."
     },
     {
@@ -5578,6 +5921,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "unsupported",
+      "reason": "Nvidia named only as a foreign manufacturer in regulatory context, not as filer's supplier",
       "evidence": "the FCC partially reversed the restriction to exempt drones and drones components on the Pentagon's Blue List of cleared UAS aircraft, such as components produced by foreign manufacturers including Sony, Nvidia and Panasonic."
     },
     {
@@ -5592,6 +5936,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "unsupported",
+      "reason": "\"components produced by foreign manufacturers including...Panasonic\" is a regulatory example, not a buying relationship",
       "evidence": "the FCC partially reversed the restriction to exempt drones and drones components on the Pentagon's Blue List of cleared UAS aircraft, such as components produced by foreign manufacturers including Sony, Nvidia and Panasonic."
     },
     {
@@ -5605,7 +5950,8 @@
       "relationship_type": "vendor",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "unsupported",
+      "verdict": "bio_or_governance",
+      "reason": "Fat Shark referenced as the filer's own brand/business (\"when we manufacture and market\")",
       "evidence": "Fat Shark and Rotor Riot rely on third party suppliers for the resources needed to navigate these processes and expect to continue to rely on such parties when we manufacture and market our component parts."
     },
     {
@@ -5619,7 +5965,8 @@
       "relationship_type": "vendor",
       "direction": "upstream",
       "resolution": "unresolved",
-      "verdict": "unsupported",
+      "verdict": "bio_or_governance",
+      "reason": "Rotor Riot is a subsidiary/brand of the filer, not an upstream vendor; evidence references it relying on third party suppliers",
       "evidence": "Fat Shark and Rotor Riot rely on third party suppliers for the resources needed to navigate these processes and expect to continue to rely on such parties when we manufacture and market our component parts."
     },
     {
@@ -5634,6 +5981,7 @@
       "direction": "upstream",
       "resolution": "resolved_ticker",
       "verdict": "bio_or_governance",
+      "reason": "\"Wamser served as Senior Vice President and Chief Financial Officer of BlueLinx\"",
       "evidence": "Wamser served as Senior Vice President and Chief Financial Officer of BlueLinx Holdings Inc., a wholesale distributor of building and industrial products, from July 2023 to January 2025."
     },
     {
@@ -5648,6 +5996,7 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "bio_or_governance",
+      "reason": "\"Wamser held investment banking roles at Barclays Capital\" in a person's bio",
       "evidence": "Wamser held investment banking roles at Barclays Capital and at UBS, where he was a Managing Director that supported clients in the Global Industrials Group."
     },
     {
@@ -5662,7 +6011,18 @@
       "direction": "upstream",
       "resolution": "unresolved",
       "verdict": "bio_or_governance",
+      "reason": "\"She began her career at PricewaterhouseCoopers\"",
       "evidence": "She began her career at PricewaterhouseCoopers where she worked with leading multinational and U.S.-based accounting clients."
     }
-  ]
+  ],
+  "judge_errors": 0,
+  "judged_by": {
+    "model": "claude-opus-4-8",
+    "on": "2026-11-09",
+    "edges": 339,
+    "note": "the judge alone, re-run on the committed edges and their committed evidence; the extraction (`model`) is held fixed",
+    "calls": 339,
+    "billed_calls": 339,
+    "cost_usd": 2.6083
+  }
 }

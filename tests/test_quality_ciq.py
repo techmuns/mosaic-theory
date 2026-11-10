@@ -589,12 +589,20 @@ def test_failure_guards_follow_the_checks_declared_classes() -> None:
     assert claims["wrong_cell"] == core.INTERNAL and claims["different_definition"] == "none"
     consensus = core.failure_guard(ciq.SOURCE, fam["estimates.consensus"])
     assert consensus.pop("wrong_unit") == core.INTERNAL and set(consensus.values()) == {"none"}
-    card = _card()
+    # the card's guards are the RUN's (audit RBC-D9): a check guards a family only where it judged
+    # one of its units, so one fixture page states the Consensus panel's currency
+    pages = _fixture()
+    first = next(iter(pages.values()))
+    first["mechanical"]["ciq_currency"] = {"panels": [
+        {"panel": "Estimates→Consensus", "stated": ["USD"], "where": "x", "check": CHECK_AGREE}],
+        "check": CHECK_AGREE}
+    card = _card(pages)
+    guards = {e["family"]: e["failure_guard"] for e in card["coverage"]}
     for fc, row in card["failure_class_summary"].items():
         assert sum(row.values()) == len(ciq.FAMILIES), fc
         # split by the DECLARED fallback (does a second source exist?), never the derived class
         single = sum(1 for f in ciq.FAMILIES if f.fallback == core.SINGLE_SOURCE
-                     and core.failure_guard(ciq.SOURCE, f)[fc] == "none")
+                     and guards[f.id][fc] == "none")
         assert row["none_single_source"] == single, fc
     # consensus has no second source: its unguarded classes count single-source, its currency not
     summary = card["failure_class_summary"]

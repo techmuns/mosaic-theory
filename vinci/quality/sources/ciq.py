@@ -386,6 +386,46 @@ def _market_reconciliation(page: dict[str, Any]) -> ItemResult:
     return _band_check(page, "market_reconciliation")
 
 
+#: EACH CURRENCY PANEL IS THE PANEL OF ONE CITATION (2026-11-09, audit RBC-D9): the panel label
+#: `ciq_sheets._MONEY_PANELS` writes, exactly, to the sheet as a family's `cited_as` names it. A
+#: panel's unit is credited to the families that cite its sheet and list `currency_stated_usd`,
+#: and to no other — the coverage map had credited every unit to all fourteen. CLOSED both ways
+#: (`tests/test_quality_ciq.py`): a panel missing here raises when scored, never drops a unit.
+PANEL_CITES: dict[str, str] = {
+    "Financials (annual)→Income Statement": "Financials→Income Statement",
+    "Financials (annual)→Balance Sheet": "Financials→Balance Sheet",
+    "Financials (annual)→Cash Flow": "Financials→Cash Flow",
+    "Financials (annual)→Segments": "Financials→Segments",
+    "Financials (annual)→Capital Structure Summary": "Financials→Capital Structure Summary",
+    "Financials (annual)→Capital Structure Details": "Financials→Capital Structure Details",
+    "Financials (quarterly)→Income Statement": "Financials→Income Statement",
+    "Financials (quarterly)→Balance Sheet": "Financials→Balance Sheet",
+    "Financials (quarterly)→Cash Flow": "Financials→Cash Flow",
+    "Financials (quarterly)→Historical Capitalization": "Financials→Historical Capitalization",
+    "Financials (quarterly)→Capital Structure Summary": "Financials→Capital Structure Summary",
+    "Financials (quarterly)→Capital Structure Details": "Financials→Capital Structure Details",
+    "Estimates→Consensus": "Estimates→Consensus",
+    "Estimates→Trends": "Estimates→Trends",
+    "Estimates→Guidance": "Estimates→Guidance",
+    "Estimates→Surprise": "Estimates→Surprise",
+    "Comps→Financial Data": "Comparable Analysis→Financial Data",
+    "Comps→Implied Valuation": "Comparable Analysis→Implied Valuation",
+}
+
+
+def _panel_families(panel: str) -> tuple[str, ...]:
+    """The families a currency panel's unit is credited to — RAISES on a panel this table does
+    not know, or one no family listing the check cites."""
+    if panel not in PANEL_CITES:
+        raise ValueError(f"a ciq_currency panel {panel!r} is not in PANEL_CITES — name the sheet "
+                         "it is the panel of")
+    cite = PANEL_CITES[panel]
+    fams = tuple(f.id for f in FAMILIES if "currency_stated_usd" in f.checks and cite in f.cited_as)
+    if not fams:
+        raise ValueError(f"no family listing currency_stated_usd cites {cite!r} ({panel!r})")
+    return fams
+
+
 def _currency_stated_usd(page: dict[str, Any]) -> ItemResult:
     cur = _get(page, "mechanical", "ciq_currency")
     if not isinstance(cur, dict):
@@ -393,21 +433,25 @@ def _currency_stated_usd(page: dict[str, Any]) -> ItemResult:
                                   "back-fill could not prove the folder's exports the page's own "
                                   "(refresh.ciq_currency_transform); assembly writes it")
     c: Counter[str] = Counter()
+    fam: dict[str, Counter[str]] = {}
     for panel in cur.get("panels") or []:
         v = panel.get("check") if isinstance(panel, dict) else None
         if v == CHECK_AGREE:
-            c[CONFIRMED] += 1
+            status = CONFIRMED
         elif v == CHECK_DIFFER:
-            c[DIFFERS_UNEXPLAINED] += 1
+            status = DIFFERS_UNEXPLAINED
         elif v == CHECK_NOT_RUN:
-            c[UNCHECKED] += 1
+            status = UNCHECKED
         else:
             raise ValueError(f"{page.get('ticker')}: a ciq_currency panel's check is {v!r}, not "
                              "an outcome this scorecard knows "
                              f"({[CHECK_AGREE, CHECK_DIFFER, CHECK_NOT_RUN]})")
+        c[status] += 1
+        for f in _panel_families(str(panel.get("panel"))):
+            fam.setdefault(f, Counter())[status] += 1
     if not c:
         return ItemResult(not_run="ciq_currency lists no panel")
-    return ItemResult(counts=dict(c))
+    return ItemResult(counts=dict(c), by_family={f: dict(v) for f, v in fam.items()})
 
 
 def _maturity_vs_filing(page: dict[str, Any]) -> ItemResult:
@@ -580,7 +624,9 @@ CHECKS: tuple[Check, ...] = (
           "reconciles_to_ciq_tev, which is None by design wherever the recipe's bridge is not "
           "CIQ's",
           "pages carrying ev_bridge", None, None, ("wrong_cell", "wrong_unit", "wrong_period"),
-          _ev_bridge_vs_ciq_tev),
+          _ev_bridge_vs_ciq_tev,
+          # one comparison of the balance-sheet claims AGAINST the comps' TEV: it tests both
+          joint=True),
     Check("net_debt_vs_implied_bridge", "CIQ comps net debt vs the comps cash/debt bridge",
           "CIQ Comparable Analysis Financial Data net debt (the TEV build)",
           "CIQ Comparable Analysis Implied Valuation: total debt − cash", INTERNAL, "page",
@@ -661,7 +707,9 @@ CHECKS: tuple[Check, ...] = (
           "currency is refused before assembly (ciq_sheets.require_usd), so a built page differs "
           "only where a back-fill found one",
           "pages carrying mechanical.ciq_currency — one unit per money panel the folder holds",
-          None, None, ("wrong_unit",), _currency_stated_usd),
+          None, None, ("wrong_unit",), _currency_stated_usd,
+          # a panel's unit is the families' that cite its sheet (PANEL_CITES), never all fourteen
+          per_family=True),
     Check("maturity_vs_filing",
           "Each CIQ panel maturity vs the newest filing that states it",
           "CIQ Financials→Capital Structure Details: each instrument's 'Maturity'",
