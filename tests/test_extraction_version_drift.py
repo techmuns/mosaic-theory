@@ -80,8 +80,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "3f48b5f26fb8"
-PINNED_AT = "2026-11-10.unit-and-headers"
+PINNED_TABLE = "a7d76d9e355c"
+PINNED_AT = "2026-11-10.loud-with-the-right-cause"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -93,7 +93,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq.py": "b2a8dbc119f5",
     "vinci/dossier/ciq_balance.py": "dfecb79caca4",
     "vinci/dossier/ciq_reread.py": "4ebcadca0987",
-    "vinci/dossier/ciq_sheets.py": "98eba2df4d54",
+    "vinci/dossier/ciq_sheets.py": "d15ec1330476",
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "7873fe4db242",
@@ -111,7 +111,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/inputs_schema.py": "6f7d41f25223",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
     "vinci/dossier/lease_basis.py": "a93d880597ba",
-    "vinci/dossier/ltm_quarters.py": "976073b15fc6",
+    "vinci/dossier/ltm_quarters.py": "500dc0b38917",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "c91b8d44c5fe",
     "vinci/dossier/mechanical.py": "75843c5ac4ea",

@@ -7109,8 +7109,10 @@ def _first_seen(cells: list[str]) -> list[str]:
 
 def _currency_rows(rows: Rows) -> list[str]:
     """Every code in every Financials 'Currency' row — one cell per period column."""
+    # AN EMPTY CELL STATES NOTHING (audit RA-D15, H-D3's case): openpyxl hands one back as None, and
+    # `str(None)` made an all-USD `.xlsx` export state the currency "None", refused as foreign
     return _first_seen([str(c).strip() for r in rows if r and str(r[0]).strip() == "Currency"
-                        for c in r[1:]])
+                        for c in r[1:] if c is not None])
 
 
 def _principal_due(rows: Rows) -> list[str]:
@@ -7142,7 +7144,8 @@ def _comps_label(rows: Rows) -> list[str]:
     """The comps book's 'Currency:' label — the cell beside it, verbatim."""
     for r in rows[:20]:
         if r and str(r[0]).strip() == "Currency:":
-            return _first_seen([str(r[1]).strip()] if len(r) > 1 else [])
+            # an empty .xlsx cell is None (audit RA-D15): it states nothing, as BIFF's '' does
+            return _first_seen([str(r[1]).strip()] if len(r) > 1 and r[1] is not None else [])
     return []
 
 
