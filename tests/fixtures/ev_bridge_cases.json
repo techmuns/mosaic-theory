@@ -103,7 +103,7 @@
      }
     ],
     "net_debt": 128647.0,
-    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held",
+    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held; the claims total sums the legs CIQ states and leaves out what it does not — the balance sheet carries no 'Total Pref. Equity' row; the balance sheet carries no 'Total Minority Interest' row — each unread, never 0; CIQ's current TEV less market cap, which counts every claim, agrees with the total",
     "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
     "source_file": "Amazon com Inc NasdaqGS AMZN Financials_Quarterly.xls",
     "source_sha256": "e5abf9d69d"
@@ -183,7 +183,7 @@
      }
     ],
     "net_debt": 172.457,
-    "note": "no consensus net-debt line with a reported year — today's claims held",
+    "note": "no consensus net-debt line with a reported year — today's claims held; the claims total sums the legs CIQ states and leaves out what it does not — the balance sheet carries no 'Total Pref. Equity' row — each unread, never 0; CIQ's current TEV less market cap, which counts every claim, agrees with the total",
     "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
     "source_file": "FuboTV Inc NYSE FUBO Financials_Quarterly.xls",
     "source_sha256": "10d6ec8cfa"
@@ -301,7 +301,7 @@
      }
     ],
     "net_debt": -121683.0,
-    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held",
+    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held; the claims total sums the legs CIQ states and leaves out what it does not — the balance sheet carries no 'Total Minority Interest' row — each unread, never 0; CIQ's current TEV less market cap, which counts every claim, agrees with the total",
     "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
     "source_file": "Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls",
     "source_sha256": "36160a403e"
@@ -424,7 +424,7 @@
      }
     ],
     "net_debt": 45162.0,
-    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held",
+    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held; the claims total sums the legs CIQ states and leaves out what it does not — the balance sheet carries no 'Total Pref. Equity' row; 'Total Minority Interest' reads 'NA' at [Jun-30-2026] — each unread, never 0; CIQ's current TEV less market cap, which counts every claim, agrees with the total",
     "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
     "source_file": "Eli Lilly and Company NYSE LLY Financials_Quarterly.xls",
     "source_sha256": "7f23de02b0"
@@ -520,7 +520,7 @@
      }
     ],
     "net_debt": 65.214,
-    "note": "the consensus net-debt line can be checked on only 1 of its last 3 reported years — today's claims held",
+    "note": "the consensus net-debt line can be checked on only 1 of its last 3 reported years — today's claims held; the claims total sums the legs CIQ states and leaves out what it does not — 'Total Pref. Equity' reads '-' at [Q2 Jun-30-2026]; 'Total Minority Interest' reads 'NA' at [Q2 Jun-30-2026] — each unread, never 0; CIQ's current TEV less market cap, which counts every claim, agrees with the total",
     "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
     "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
     "source_sha256": "e1f788d63f"
@@ -638,7 +638,7 @@
      }
     ],
     "net_debt": 2016.0,
-    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held",
+    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held; the claims total sums the legs CIQ states and leaves out what it does not — the balance sheet carries no 'Total Pref. Equity' row; the balance sheet carries no 'Total Minority Interest' row — each unread, never 0; CIQ's current TEV less market cap, which counts every claim, agrees with the total",
     "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
     "source_file": "NIKE Inc NYSE NKE Financials_Quarterly.xls",
     "source_sha256": "d0ffd11313"
@@ -756,7 +756,7 @@
      }
     ],
     "net_debt": 324.58,
-    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held",
+    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held; the claims total sums the legs CIQ states and leaves out what it does not — the balance sheet carries no 'Total Pref. Equity' row; the balance sheet carries no 'Total Minority Interest' row — each unread, never 0; CIQ's current TEV less market cap, which counts every claim, agrees with the total",
     "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
     "source_file": "The Simply Good Foods Company NasdaqCM SMPL Financials_Quarterly.xls",
     "source_sha256": "e41ebc16a4"
@@ -872,7 +872,7 @@
      }
     ],
     "net_debt": 9340.0,
-    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held",
+    "note": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years — today's claims held; the claims total sums the legs CIQ states and leaves out what it does not — 'Total Pref. Equity' reads '-' at [Press Release Q2 Jun-30-2026] — each unread, never 0; CIQ's current TEV less market cap, which counts every claim, agrees with the total",
     "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held — never current − FCF",
     "source_file": "Uber Technologies Inc NYSE UBER Financials_Quarterly.xls",
     "source_sha256": "fb3c714dff"

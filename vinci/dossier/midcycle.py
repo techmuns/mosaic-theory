@@ -559,7 +559,20 @@ def multiple_anchor(bundle: Any) -> MultipleAnchor:
             note=f"multiple anchors: UNAVAILABLE — TEV/LTM EBITDA is NM at the latest Close "
                  f"[{latest[0].isoformat()}]; a band on the earlier closes is not built in its "
                  f"place; margin anchors A/B are unaffected")
-    series = [v for _, v in pairs if v is not None]
+    # THE CURRENT CLOSE IS NOT HISTORY (audit D-D3's remainder, 2026-11-10). The band took every
+    # close, the latest included, while `_own_history_band` (the page's own-history read) takes
+    # every OTHER DATED close: on an export pulled mid-quarter the latest is that day's close, a
+    # column the quarter has not completed, which contract §4.2 leaves out. The band is now that
+    # same population, so the two reads of one sheet cannot count differently.
+    if latest is None:
+        # a sheet with no TEV/LTM EBITDA Close row has no close at all, which is not an undated one
+        return MultipleAnchor(
+            available=False,
+            note=("multiple anchors: UNAVAILABLE — no TEV/LTM EBITDA close is dated, so none can "
+                  "be placed as the latest; margin anchors A/B are unaffected") if pairs else
+                 ("multiple anchors: UNAVAILABLE — only 0 quarterly TEV/LTM EBITDA closes (<4) — "
+                  "too short for a band"))
+    series = [v for d, v in pairs if isinstance(d, date) and v is not None and d != latest[0]]
     if len(series) < 4:
         return MultipleAnchor(
             available=False, n_quarters=len(series),
@@ -569,7 +582,8 @@ def multiple_anchor(bundle: Any) -> MultipleAnchor:
     return MultipleAnchor(
         available=True, trough=min(v), median=st.median(v), upper_quartile=_pctile(v, 0.75),
         n_quarters=len(series),
-        note=f"own-history EV/EBITDA band over {len(series)} quarterly closes",
+        note=f"own-history EV/EBITDA band over {len(series)} quarterly closes before the "
+             f"latest [{latest[0].isoformat()}]",
         source_ref="CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (own-history band)")
 
 
