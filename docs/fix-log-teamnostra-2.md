@@ -58,12 +58,12 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | ID | Order | Status | Commit or PR | Test | Pages rebuilt |
 |---|---|---|---|---|---|
 | E2-D5 | 1 | open | — | — | — |
-| E2-D10 | 1, 3 | in progress (#949) | #949 | `tests/test_pages_await_parser_rebuild.py::test_vitl_q2_2026_adjusted_ebitda_loss_is_on_the_page` | VITL (re-assembled 2026-11-09) |
-| E2-D16 | 1 | in progress (#949) | #949 (the pin re-pointed to VITL's Q3 10-Q 0001193125-26-444385) | `tests/test_pages_await_parser_rebuild.py::test_vitl_concentration_carries_no_receivables_row` | VITL (re-assembled 2026-11-09) |
-| E2-D12 | 1 | in progress (#949) | #949 | `tests/test_pages_await_parser_rebuild.py::test_vrrm_one_offs_are_the_impairments_not_the_cash_flow_change` | VRRM (re-assembled 2026-11-09) |
+| E2-D10 | 1, 3 | fixed | 7120a4cd (#949) | `tests/test_pages_await_parser_rebuild.py::test_vitl_q2_2026_adjusted_ebitda_loss_is_on_the_page` | VITL (re-assembled 2026-11-09) |
+| E2-D16 | 1 | fixed | 7120a4cd (#949; the pin re-pointed to VITL's Q3 10-Q) | `tests/test_pages_await_parser_rebuild.py::test_vitl_concentration_carries_no_receivables_row` | VITL (re-assembled 2026-11-09) |
+| E2-D12 | 1 | fixed | 7120a4cd (#949) | `tests/test_pages_await_parser_rebuild.py::test_vrrm_one_offs_are_the_impairments_not_the_cash_flow_change` | VRRM (re-assembled 2026-11-09) |
 | E2-D11 | 1, 3 | in progress (#949) | #949, EPAM's half; WERN's and MVST's halves wait for their re-exports | `tests/test_pages_await_parser_rebuild.py::test_epam_revenues_of_releases_carry_their_headline_revenue`; WERN and MVST strict-xfail: `tests/test_pages_await_parser_rebuild.py::test_wern_revenues_of_releases_carry_their_headline_revenue`, `tests/test_pages_await_parser_rebuild.py::test_mvst_revenues_of_releases_carry_their_headline_revenue` | EPAM (re-assembled 2026-11-09) |
 | E2-D15 | 1, 3 | in progress (#949) | #949 splits the pin one page per test. NFLX's half was already fixed on its page: `maturity_wall` reads located, 3194.0, principal and interest, landed with its 2026-10-29 assembly 1c5df21b (#867) and kept by 4634df3d (#918), not first in #918 as this row said. WERN's half, the millions-only readers and V2-N1 stay open (record §3) | `tests/test_pages_await_parser_rebuild.py::test_nflx_stated_twelve_month_wall_is_located`; WERN strict-xfail: `tests/test_pages_await_parser_rebuild.py::test_wern_stated_twelve_month_wall_is_located` | NFLX |
-| D-D1 | 1 | in progress (#949) | #949 | `tests/test_lease_basis.py::test_d1_neg_an_unchecked_quarter_with_an_unavailable_lease_cell_is_not_priced` | WLK (re-assembled 2026-11-09: 7 unpriced quarters named, ex-lease median 7.9102 over 34 → 8.3283 over 28, R1 116.1475 → 124.0268, extraction off 2026-10-09.3) |
+| D-D1 | 1 | fixed | 7120a4cd (#949) | `tests/test_lease_basis.py::test_d1_neg_an_unchecked_quarter_with_an_unavailable_lease_cell_is_not_priced` | WLK (re-assembled 2026-11-09: 7 unpriced quarters named, ex-lease median 7.9102 over 34 → 8.3283 over 28, R1 116.1475 → 124.0268, extraction off 2026-10-09.3) |
 | RBC-D1 | 2 | fixed | 6fbbb4a2 (#936) | `tests/test_customer_count.py::test_every_committed_page_prints_its_structured_count_or_none` | count written at $0: AMZN, BRBR, CNXC, FUBO, GOOGL, IT, LLY, MCK, MVST, NFLX, NKE, ORKA, PARR, ROST, SMPL, TGT, TJX, VITL, VRRM, WERN; no count until re-assembled (paid; prechecks STOP): EPAM, NCNO, TECX, UBER, V, WLK; AORT not fixing: name retired (operator 2026-11-09), its page off the corpus; all 27 roster pages re-rendered |
 | RD-D1 | 2 | in progress (#953) | #953 | `tests/test_impairment_headroom.py::test_mcks_headroom_is_both_legs_at_one_date`; one-family peers (operator's ruling 2026-11-10): `tests/test_peer_median_one_family.py::test_a_one_family_peer_is_shown_but_left_out_of_the_medians` | the dated headroom on all 27 committed pages (MCK $12,950.0M → $15,214.0M; AMZN dated 2025-12-31; TGT, BURL, ROST UNKNOWN; V's balances to 2026-06-30); the peer block on MCK, AMZN, TGT, BURL, then again under the ruling (each median prints its count; TGT's base rate 3 of 6 → 5 of 8); AORT not fixing: name retired (operator 2026-11-09), its page off the corpus |
 | RA-D1 | 2 | fixed | 6fbbb4a2 (#936) | `tests/test_surprise_listing_block.py::test_parrs_committed_page_states_its_own_listings_surprise_history` | PARR |
@@ -78,10 +78,10 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RE1-D6 | 3 | fixed | ecd95189 (#940) | `tests/test_restatement_precision.py::test_a_restated_round_figure_is_named` | none (0 of 28 frozen pages cite a moved figure; 35 of 1,769 corpus changes still unnamed, need XBRL decimals) |
 | RE1-D1 | 3 | fixed | 02ed3d29 (#939) | `tests/test_sec_budget_across_machines.py::test_two_machines_sending_at_once_stay_under_secs_ceiling_per_user` | none (pacing changes no value; 28 frozen pages compared) |
 | RE1-D2 | 3 | fixed | 02ed3d29 (#939) | `tests/test_sec_budget_across_machines.py::test_a_redirect_hop_to_sec_takes_its_own_slot` | none (pacing changes no value) |
-| RE1-D8 | 3 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_a_cut_before_the_recent_page_reads_the_older_page` | none (0 of 28 move; the catalyst counts on EPAM, IT, PARR are reproduced where the old view now undercounts) |
-| RE1-D9 | 3 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_a_read_the_view_cannot_cut_is_refused` | none (0 of 28 frozen pages move) |
-| RE1-D12 | 3 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_the_pages_ten_q_read_names_the_amendment_it_read` | none (no frozen page's 10-Q has a later 10-Q/A) |
-| RE1-D13 | 3 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
+| RE1-D8 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_a_cut_before_the_recent_page_reads_the_older_page` | none (0 of 28 move; the catalyst counts on EPAM, IT, PARR are reproduced where the old view now undercounts) |
+| RE1-D9 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_a_read_the_view_cannot_cut_is_refused` | none (0 of 28 frozen pages move) |
+| RE1-D12 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_pages_ten_q_read_names_the_amendment_it_read` | none (no frozen page's 10-Q has a later 10-Q/A) |
+| RE1-D13 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
 | RA-D3 | 3 | open | — | — | — |
 | RA-D8 | 3 | open | — | — | — |
 | RA-D11 | 3 | open | — | — | — |
@@ -92,7 +92,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | BC-D7 | 3 | open | — | — | — |
 | BC-D10 | 3 | open | — | — | — |
 | D-D3 | 3 | open | — | — | — |
-| E1-D7 | 3 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
+| E1-D7 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
 | E2-D19 | 3 | open | — | — | — |
 | RE2-D1 | 4 | open | — | — | — |
 | RE2-D2 | 4 | open | — | — | — |
@@ -114,13 +114,13 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RE2-D20 | 4 | open | — | — | — |
 | RF-D3 | 4 | fixed | 93a50599 (#943) | `tests/test_realized_total_return.py::test_a_flat_stock_with_a_20pct_special_dividend_realizes_zero` | none; monitor days from now carry `realized_price_return` |
 | RF-D4 | 4 | fixed | 7d0e3c91 (#946) | `tests/test_universe_one_basis.py::test_a_split_since_the_filed_count_is_sized_on_the_current_count` | none; the universe snapshot is re-sized at the next weekly build (6 lines leave the band) |
-| RF-D7 | 4 | in progress (#947) | #947 | `tests/test_seal_is_current.py::test_every_committed_seal_read_against_the_rule[V-GOOGL]` | none; GOOGL's sealed row untouched (operator ruling, STATE row 60 item (4)) |
+| RF-D7 | 4 | fixed | 81644a28 (#947) | `tests/test_seal_is_current.py::test_every_committed_seal_read_against_the_rule[V-GOOGL]` | none; the sealed rows stay as written, and GOOGL's and VRRM's are read at appended corrections, R-GOOGL and R-VRRM-screen2-20260617 (operator ruling 2026-11-09, approved 2026-11-10; `docs/records/2026-11-10-fix2-groupF-d-two-stale-seals-corrected-by-appended-rows.md`) |
 | RF-D9 | 4 | fixed | 7d0e3c91 (#946) | `tests/test_universe_one_basis.py::test_adv_is_over_the_markets_sessions_not_the_days_a_name_traded` | none |
 | RF-D13 | 4 | fixed | 93a50599 (#943) | `tests/test_scoring_pending_reasons.py::test_an_interim_row_whose_dividends_cannot_be_read_is_named` | none |
 | RE1-D7 | 4 | open | — | — | — |
 | RE1-D10 | 4 | open | — | — | — |
 | RE1-D11 | 4 | fixed | 9f6175db (#948) | `tests/test_fts_amendment_form.py::test_the_covenant_pointer_names_an_amendment_as_filed` | WERN (1 of 92 pointer rows; 20 labels at its next re-assembly, on order 1's rebuild list) |
-| RE1-D14 | 4 | in progress (#944) | #944 | `tests/test_asof_reads_and_amendments.py::test_the_excerpt_cap_says_how_much_it_left_unread` | none (graph only) |
+| RE1-D14 | 4 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_excerpt_cap_says_how_much_it_left_unread` | none (graph only) |
 | RE1-D16 | 4 | fixed | 1d0c374c (#945) | `tests/test_point_guide_verification.py::test_a_point_guide_against_a_range_ending_at_zero_is_a_mismatch` | none (28 frozen pages compared; every compared line has both bounds) |
 | RA-D2 | 4 | open | — | — | — |
 | RA-D4 | 4 | open | — | — | — |

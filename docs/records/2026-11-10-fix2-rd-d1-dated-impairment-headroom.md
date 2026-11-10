@@ -163,9 +163,10 @@ the same `build_capital_allocation` sites (merged as `f491d155`).
         those counts against each page's stored median on every committed page, so no schema field
         is added.
       - A duplicate `_pick` scan is a cleanup.
-    - **Put to the operator (1):** whether a one-leg peer's ratio (COST's charge over its goodwill)
-      belongs in the CHARGE median. The ruling keeps the peer in the base rate, and the code does;
-      the median's count is printed.
+    - **Put to the operator (1), and it REMAINS OPEN:** whether a one-leg peer's ratio (COST's
+      charge over its goodwill) belongs in the CHARGE median. The operator did not take it up
+      (coordinator, 2026-11-10), so it stays as built: the peer is in the base rate and its ratio
+      is in the charge median, whose count is printed (TGT: 3 of 5).
     - **Found, not fixed (3):**
       - The subject's STALE impairment check dates itself against the first family's balance, even
         a stale one. No committed subject is affected: ROST has no charge, and TGT and BURL have
