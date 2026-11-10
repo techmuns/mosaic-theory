@@ -409,6 +409,14 @@ const EXTRACTION_VERSIONS = [
     "missing high as zero, so a CIQ point of -0.05 against a release -0.05 to 0.00 read " +
     "VERIFIED and a range of one against its own point read MISMATCH. On the 28 pages " +
     "frozen at bcda7ce3 no line moves"],
+  ["2026-11-09.stale-and-conflicting",
+    "a buyback leg whose period ends more than a year (366 days) before the page's price " +
+    "date is no longer stated: its field reads UNKNOWN, naming the tag and the period it " +
+    "covers (`capital_allocation.CURRENT_DAYS`), and a PERIOD MISMATCH note names only " +
+    "legs still stated; the survival line carries net leverage only, its one-input " +
+    "FCF-sign leg deleted, so the two-input self-funding read is the only one, and the " +
+    "gap test's FCF-sign item names `quality.fcf_sign` itself. Figures leave the page; " +
+    "none changes"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
