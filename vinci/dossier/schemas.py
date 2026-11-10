@@ -2696,6 +2696,20 @@ class OwnershipEvents(BaseModel):
     model_config = {"frozen": True}
 
 
+class ImpairmentHeadroom(BaseModel):
+    """Goodwill + intangibles still carried, at ONE balance date (2026-11-10, audit RD-D1): what an
+    impairment could yet write off. Built where both dates are structured
+    (`capital_allocation.impairment_headroom`); the renderers print it and never add the two legs
+    themselves — they had, each at its own latest date, and MCK's page added a 2012 balance to a
+    2026 one."""
+
+    value: float          # $M — the sum of `legs` at `as_at`
+    as_at: str            # ISO — the balance date every leg is read at
+    legs: list[str]       # "goodwill" / "intangibles" — a family the filer never tags is no leg
+
+    model_config = {"frozen": True}
+
+
 class CapitalAllocation(BaseModel):
     """Capital created or destroyed — EDGAR XBRL only, each value naming the tag that answered."""
 
@@ -2710,6 +2724,9 @@ class CapitalAllocation(BaseModel):
     #: ALWAYS a stated gap. The brand dimension is footnote prose with no XBRL axis, and an
     #: aggregate impairment with no note reads as though the split were simply not interesting.
     brand_split: Sourced[str]
+    #: (2026-11-10, audit RD-D1) the headroom at ONE date, or UNKNOWN naming the dates found —
+    #: ABSENT (`DROP_WHEN_NONE`) on a page built before it, which then prints no sum at all.
+    impairment_headroom: Sourced[ImpairmentHeadroom] | None = None
 
     model_config = {"frozen": True}
 
@@ -3388,6 +3405,7 @@ class Dossier(BaseModel):
 DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("concentration", "segment_profit"),
     ("concentration", "customers_listed"),
+    ("capital_allocation", "impairment_headroom"),
     ("consensus_context", "consensus_levels"),
     ("financial_summary", "ebitda_basis"),
     ("financial_summary", "ebitda_reconciliation"),

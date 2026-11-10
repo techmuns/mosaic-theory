@@ -74,7 +74,6 @@ ALLOWED: tuple[tuple[str, str, str, str], ...] = (
     ("vinci/dossier/render.py", "_customer_concentration", "x.pct or 0.0", NARROWED),
     ("vinci/dossier/render.py", "_customer_concentration", "x.pct or 0.0", NARROWED),
     ("vinci/dossier/render.py", "_customer_concentration", "top[0].pct or 0.0", NARROWED),
-    ("vinci/dossier/render.py", "_capital_allocation", "x.value or 0.0", NARROWED),
     ("vinci/dossier/synthesis.py", "_cache_misses", "usage.get(k, 0) or 0", COST),
     ("vinci/edgar/net_debt.py", "_unread_debt", "b.current_total or 0.0",
      "inside max(long-term, current): an absent current total leaves the long-term total to "

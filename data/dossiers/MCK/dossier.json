@@ -6310,8 +6310,8 @@
         "note": null
       },
       "intangibles": {
-        "value": 1678.0,
-        "source_ref": "EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2012-06-30)",
+        "value": 3942.0,
+        "source_ref": "EDGAR companyfacts FiniteLivedIntangibleAssetsNet (as at 2026-09-30)",
         "status": "present",
         "note": null
       },
@@ -6356,6 +6356,19 @@
         "source_ref": null,
         "status": "unknown",
         "note": "NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level"
+      },
+      "impairment_headroom": {
+        "value": {
+          "value": 15214.0,
+          "as_at": "2026-09-30",
+          "legs": [
+            "goodwill",
+            "intangibles"
+          ]
+        },
+        "source_ref": "EDGAR companyfacts Goodwill + FiniteLivedIntangibleAssetsNet (as at 2026-09-30)",
+        "status": "present",
+        "note": null
       }
     },
     "dilution_pipeline": {
@@ -6460,10 +6473,10 @@
           "ticker": "MCK",
           "is_subject": true,
           "market_cap": 124686.4,
-          "acquired": 12950.0,
+          "acquired": 15214.0,
           "total_assets": 92323.0,
-          "pct_assets": 0.14026840548942301,
-          "pct_market_cap": 0.1038605653864415,
+          "pct_assets": 0.16479100549158932,
+          "pct_market_cap": 0.12201811905709044,
           "note": null,
           "impairment": {
             "state": "explicit-zero",
@@ -6619,11 +6632,11 @@
           "ticker": "BHIC",
           "is_subject": false,
           "market_cap": 64.5,
-          "acquired": 0.109845,
+          "acquired": 0.11,
           "total_assets": 2.13615,
-          "pct_assets": 0.05142195070570886,
-          "pct_market_cap": 0.0017030232558139535,
-          "note": null,
+          "pct_assets": 0.05149451115324298,
+          "pct_market_cap": 0.0017054263565891472,
+          "note": "intangibles only — the filer tags no goodwill balance",
           "impairment": {
             "state": "untagged",
             "state_label": "does not tag",
@@ -6673,10 +6686,10 @@
           "ticker": "MEDS",
           "is_subject": false,
           "market_cap": 4.6,
-          "acquired": 17.140696,
+          "acquired": 17.141,
           "total_assets": 32.759432,
-          "pct_assets": 0.5232293404842917,
-          "pct_market_cap": 3.726238260869565,
+          "pct_assets": 0.523238620254466,
+          "pct_market_cap": 3.726304347826087,
           "note": null,
           "impairment": {
             "state": "charged",
@@ -6686,7 +6699,7 @@
             "observations": 2,
             "charged_years": 1,
             "total": 12.572,
-            "pct_acquired": 0.733455455951147,
+            "pct_acquired": 0.7334424479318594,
             "last_charge_end": "2025-12-31",
             "last_charge_amount": 12.572,
             "pending": null,
@@ -6697,13 +6710,13 @@
         }
       ],
       "size_floor": 1000.0,
-      "subject_pct_assets": 0.14026840548942301,
-      "subject_pct_market_cap": 0.1038605653864415,
-      "median_all_assets": 0.45099913119026935,
-      "median_all_market_cap": 0.5321973774592728,
+      "subject_pct_assets": 0.16479100549158932,
+      "subject_pct_market_cap": 0.12201811905709044,
+      "median_all_assets": 0.48595738354919915,
+      "median_all_market_cap": 1.3865364767480697,
       "median_large_assets": 0.2678364284524201,
       "median_large_market_cap": 0.3322760862614133,
-      "n_all": 7,
+      "n_all": 6,
       "n_large": 3,
       "imp_window_years": 5,
       "imp_n_large_assessed": 3,
@@ -16017,6 +16030,23 @@
       "writer": "ciq-reread",
       "layers": [
         "mechanical.concentration"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.dated-headroom",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_allocation",
+        "mechanical.peer_capital_intensity"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.one-family-peers",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.peer_capital_intensity"
       ]
     }
   ],
