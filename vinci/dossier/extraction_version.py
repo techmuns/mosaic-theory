@@ -732,6 +732,19 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "`segments` reads a figure with a footnote mark after it ('$ 1,229 [1]') as its figure"
     ),
     (
+        "2026-11-10.bridge-total-and-band",
+        "three of document 11's partly fixed items finished (fix request 2, order 3): the EV "
+        "bridge's note says what its claims total leaves out (A-D2) — each unread preferred or "
+        "minority leg named with its reason, and whether CIQ's current TEV less market cap, "
+        "which counts every claim, checks the total (no comps export: nothing does); the "
+        "mid-cycle multiple band is the own-history band's population (D-D3), every dated close "
+        "before the latest, so an export-day close the quarter has not completed is no longer "
+        "history, and an undated sheet builds no band; an anchor-bridge figure one unit step "
+        "(1,000x or 1,000,000x) from its own parts' re-read is refused, not scored agree "
+        "(BC-D10). 13 of the 26 committed bridges carry an unread leg and gain the note when "
+        "refreshed; no committed page carries a mid-cycle band",
+    ),
+    (
         "2026-11-10.relationship-view-edges",
         "the Customers view's edges are said (TeamNostra fix request 2, RBC-D3, V1-O3, RBC-D5):"
         " an RTF view that does not end with CIQ's closing line ('*denotes proprietary "
