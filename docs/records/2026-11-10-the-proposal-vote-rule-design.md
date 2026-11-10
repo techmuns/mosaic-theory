@@ -1,12 +1,12 @@
 ---
 status: open
 date: 2026-11-10
-prs: []
+prs: [950]
 supersedes:
 superseded-by:
 ---
 
-# The machine proposal's vote rule, as a pre-registered design (design only, $0): today a build proposes only when every COMPLETED draw of five agrees, and that rule's chance of proposing sits between 10% and 90% for any name whose lean commits on 63% to 98% of draws, so a re-draw flips it. Three options for the operator, side by side: A keeps five draws under one rule that holds its meaning at any draw count (a one-sided binomial test that the lean is the majority read, which at five draws IS today's rule), with failed draws as dissent and the split sealed beside every proposal ($0 a build); B adds ten draws, 9 of 10 to propose (+$1.00 to +$1.50 a build, recommended); C, the operator's, adds sequential draws, hysteresis, a borderline outcome and a confirmation at log time, and its first two parts publish a wobbly name more often than today. The measurement is re-scoped to the independence of draws, which all three assume. No code changes until the operator rules
+# The machine proposal's vote rule, as a pre-registered design (design only, $0): today a build proposes only when every COMPLETED draw of five agrees, and that rule's chance of proposing sits between 10% and 90% for any name whose lean commits on 63% to 98% of draws, so a re-draw flips it. Three options for the operator, side by side: A keeps five draws under one rule that holds its meaning at any draw count (a one-sided binomial test that the lean is the majority read, which at five draws IS today's rule), with failed draws as dissent and the split sealed beside every proposal ($0 a build); B adds ten draws, 9 of 10 to propose (+$1.00 to +$1.50 a build, recommended); C, the operator's, adds sequential draws, hysteresis, a borderline outcome and a confirmation at log time, and its first two parts publish a wobbly name more often than today. The measurement is re-scoped to the independence of draws, which all three assume. DECIDED 2026-11-10 (operator: "decide as per the expert team"): Option A with C(iii)'s borderline outcome and C(iv)'s ten-draw confirmation at log-verdict, and the four-builds-a-page independence measurement at a $110 cap (§9). No code changes in this record
 
 **THE ASK.** Operator, 2026-11-09, verbatim: **"start ... the other two fixes in the correct manner"**.
 For this one the agreed manner (the coordinator's brief) is to fix the fragile BUY vote rule
@@ -18,6 +18,12 @@ beside A and B before choosing, at $0 and under the same discipline: sequential 
 hysteresis for names already proposed, three outcomes, and a confirmation at decision time (§5b);
 C's cost from the measured tallies; and the measurement re-scoped to C's needs, centred on the
 independence of draws (§7).
+
+**THE DECISION.** Operator, 2026-11-10, verbatim: **"decide as per the expert team"** (relayed by the
+coordinator, who made the choice under that delegation): **Option A + C(iii) + C(iv)**, with the
+independence measurement at four builds a page, **cap $110**. The reasons, the sequence and what it
+accepts are §9. The design's own recommendation (B with C(iii)) stays below as written; the
+decision departs from it on cost per build, and §9 says how.
 
 **THIS IS A DECISION-PATH CHANGE, FLAGGED.**
 - CLAUDE.md: the proposal mapping is face-validity-frozen and never outcome-tuned.
@@ -542,37 +548,85 @@ specified):
   - **One more need:** the run must record each build's start and the gap since the previous
     build's last draw, so the uncached-start condition is shown, not assumed.
 
-## 8. Order, and what waits on whom
+## 8. Order, and what waits on whom (as decided, §9)
 
-1. **The operator rules** on an option (A, B, C, or a combination such as B with C(iii) and C(iv)),
-   on R1–R6 as written, and, for C(i) or C(ii), on the line each crosses. Nothing is built before
-   that. The measurement may come first: it tests what all three options assume.
-2. **The harness PR** (§7's three gaps and the build-gap record), $0.
-3. **The operator approves** the measurement and its cap, in words written into a budget ledger.
-4. **The run**, scored at $0 by the dispersion test and by applying each option's rule to the
-   drawn labels, into a record.
-5. **The implementing PR** (decision path; the edit hook asks the operator):
-   - **R1–R5** in:
-     - `synthesis.py`: the count, the tally's key and the record;
-     - `verdict.py`: the gate;
-     - `schemas.py` (`DrawAgreement`) and `schemas/ledger.py` (`LedgerEntry`);
-     - `ledger/workflow.py`, `cli.py` and `render.py`;
-     - the JS reproducibility line;
-   - **the harness mirrors:**
-     - `compare._proposal`;
-     - the panel rule's `_boundaries`, which hard-codes five draws, so at ten it would read every
-       rebuilt page as off the boundary;
-     - `run_metrics` copies the tally whole and needs no change;
-   - **for C, as ruled:**
-     - C(i): the stopping rule in `synthesis.py`, where the draw count stops being one constant;
-     - C(ii): the keep test reading the replaced page;
-     - C(iii): `proposal_state` in the sealed tally;
-     - C(iv): the confirmation in `_sealed_proposal`, a paid call on the `log-verdict` path;
-   - **pins, positive and negative:** §2's 1-of-5 build, a build split only by spelling, and the
-     8-of-10 tally (withheld at α = 0.05); for C, a 3/2 first five that continues and cannot
-     propose, and a kept proposal at 6 of 10;
-   - **its real run** is step 4's draws replayed through the new gate at $0.
-6. **Pages carry it** on each rebuild (row 41). No committed page moves before.
+Each step is its own PR or run, and each STOPS for the operator's merge before the next.
+
+1. **This record, updated with the decision.** No `vinci/` change.
+2. **The harness PR ($0):** `vinci.evals run` gains `--transform`, `--ciq-root` and a registration,
+   and records each build's start and the gap since the previous build's last draw (§7). Its pins
+   fail first on main.
+3. **The measurement (§7)**, registered before any draw, under ONE budget ledger opened as
+   `budget-open --cap 110 --approval "decide as per the expert team (vote-rule independence
+   measurement, $110 cap, coordinator 2026-11-10)"`.
+   - It is drawn once and scored at $0.
+   - Its record PR states whether independence is falsified.
+   - **If it is falsified, everything STOPS before step 4,** and the operator rules with the
+     measured VIF in hand.
+4. **The implementing PR**, after the measurement (decision path; the edit hook asks the operator;
+   a real shown run before merge):
+   - **R1**, the binomial test, which at five draws decides as today's rule;
+   - **R3**, failed, unparsed or unrecognized draws as dissent. This closes §2's first hole, a build
+     with 1 of 5 completed reading as unanimous;
+   - **R1's single spelling key** for the tally and the mapping, which closes §2's second hole;
+   - **R4**, the split sealed in the ledger as an optional `LedgerEntry` field;
+   - **R5**, the tally's rule record;
+   - **C(iii)**, the borderline outcome, as `proposal_state`;
+   - **C(iv)**, the ten-draw confirmation in `_sealed_proposal` on the `log-verdict` path;
+   - **the harness mirrors** (`compare._proposal`; `panel._boundaries` needs no change at five draws);
+   - **pins, positive and negative:**
+     - the 1-of-5 build;
+     - a build split only by spelling;
+     - a borderline 4/1 and 3/2;
+     - the confirmation sealed beside the page's tally;
+     - one confirmation per log.
+5. **Pages carry R1, R3–R5 and C(iii)** on each rebuild (row 41). The confirmation runs at each
+   logged verdict from the day step 4 merges.
+
+## 9. The decision (2026-11-10)
+
+**THE DELEGATION.** Operator, 2026-11-10, verbatim: **"decide as per the expert team"**. The
+coordinator made the choice under that delegation and relayed it. The reasons below are the
+coordinator's, recorded as given. Like the options, the choice reads the operating
+characteristics and the cost, never returns and never which names propose.
+
+**THE CHOICE: Option A + C(iii) + C(iv), the full independence measurement, cap $110.**
+- **A** (R1, R3–R6 at five draws) adds $0 to every build. At five draws R1 decides as today's rule
+  does, and R3 and the single spelling key close §2's two holes.
+- **C(iii), the borderline outcome,** with the split printed, costs $0. It tells the human more than
+  a withheld proposal that says only that it was withheld.
+- **C(iv), the ten-draw confirmation inside `log-verdict`,** runs before the ledger row is written.
+  - It puts B's accuracy (R1 at ten, 9 of 10) at the one moment a verdict is sealed. It costs about
+    $3 to $4 per logged verdict, against B's +$1.00 to +$1.50 on every build, most of which no one
+    acts on.
+  - It also means the ledger's machine-baseline curve, which the BUY − AVOID spread is decomposed
+    against, is sealed from ten-draw proposals.
+- **Rejected:**
+  - **B,** on cost per build. It is the design's own recommendation (§5), and the decision
+    departs from it here;
+  - **C(i),** more permissive than today at every p, so it fails C2 (§5b);
+  - **C(ii),** which keeps lucky proposals (21.1% long run at p = 0.60) and breaks CLAUDE.md's
+    "derived DETERMINISTICALLY from its committed evidence lean". With C(ii) out, no CLAUDE.md edit
+    is needed.
+- **The measurement at four builds a page** (240 draws, ≈ $97.4, cap $110), not three: a test too
+  weak to catch correlation would only give false comfort.
+  - At ρ = 0.1, four builds reach 71% simulated power, against 58% for three (§7).
+  - The error rates of A, C(iii) and C(iv) all assume independent draws.
+
+**What the decision leaves as it is, said plainly.**
+- **The page's own proposal stays a five-draw one.** Under A its unstable band is today's, p from
+  0.631 to 0.979 (§4). A rebuilt page's proposal flips on re-draw as often as it does today.
+  - **What changes is what is sealed.** At log time C(iv)'s ten draws decide the proposal the
+    ledger records, at B's error rates (§4: at p = 0.95, withheld 8.6% of the time against 22.6%).
+- **The page and the seal can disagree.**
+  - A page can read 5/5 and propose BUY, while its confirmation reads 8 of 10 and seals no proposal,
+    or the reverse.
+  - Both tallies are sealed (R4). The page's proposal is never the one recorded once a confirmation
+    has run.
+  - Either way the proposal stays sealed until the verdict is logged, as today, so the human decides
+    without seeing the confirmation's answer.
+- **What it costs: about $3 to $4 and ~15 minutes per logged verdict** (§5b C(iv)). It refuses to
+  seal without the page's transcripts on the logging machine.
 
 **BOUNDARY.**
 - **Code sites:** main `fd123ada`, line numbers as of that commit. `synthesis.py`, `verdict.py`,
@@ -610,6 +664,13 @@ specified):
   $0.300; 92.8 s mean a call).
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
+- **Accepted with the decision (§9):**
+  - **The page's proposal keeps today's five-draw instability.** Only the sealed proposal is a
+    ten-draw one. Falsifier: the first ten logged verdicts after step 4 show a page proposal and a
+    sealed proposal disagreeing more often than §4's tables predict at the confirmations' own
+    tallies. That would mean the two reads are not of one input.
+  - **About $3 to $4 per logged verdict.** Falsifier: the cost series records a confirmation above
+    $4.06, the panel-priced ten-draw build.
 - **This record: $0.** Nothing paid was run, and nothing in `vinci/` changed. The one capture (§2)
   sent nothing.
 - **Accepted if Option B is ruled:**
