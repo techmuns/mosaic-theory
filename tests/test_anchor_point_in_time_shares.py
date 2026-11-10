@@ -26,6 +26,18 @@ from vinci.edgar.concepts import points_for_tag
 
 _PAGES = sorted(Path("data/dossiers").glob("*/dossier.json"))
 
+#: THE STORED PRECISION, not a tolerance chosen to pass. `anchor.py` rounds both per-share values to
+#: 4 dp, so each carries up to half a unit in the 4th place, and the two equities they rebuild can
+#: differ by rounding alone by at most 0.5e-4·so + 0.5e-4·(so + inc). Relative to the equity that
+#: is ≈ 0.5e-4·(1/base + 1/diluted): ≈ 4.3e-6 on VRRM's ~23.2 bases (2026-11-09), which the old
+#: fixed rel=1e-6 refused (2.7e-6 observed), and ≈ 1.3e-7 on LLY's ~752 — a per-page bound, never
+#: one number.
+_PER_SHARE_HALF_UNIT = 0.5e-4
+
+
+def _equity_gap_bound(so: float, inc: float) -> float:
+    return _PER_SHARE_HALF_UNIT * (so + (so + inc))
+
 
 def test_one_equity_two_counts_on_every_committed_anchor_e2e() -> None:
     """Every committed anchor with a base and a USED count: it divides the page's own point-in-time
@@ -46,8 +58,18 @@ def test_one_equity_two_counts_on_every_committed_anchor_e2e() -> None:
             a.get("dilutive_increment") or {}).get("value")
         if dil is not None:
             assert inc is not None and inc >= 0
-            assert base * so == pytest.approx(dil * (so + inc), rel=1e-6), p.parent.name
+            assert abs(base * so - dil * (so + inc)) <= _equity_gap_bound(so, inc), p.parent.name
     assert seen >= 10, f"only {seen} anchors carry a base"
+
+
+def test_the_rounding_bound_still_refuses_a_real_equity_mismatch() -> None:
+    """NEGATIVE: the bound is the stored precision, not slack. VRRM's 2026-11-09 anchor (base
+    23.2328 on 152,009,343 shares; diluted 23.2138 on a 124,000 increment) sits inside it, and the
+    same diluted base off by 1e-5 relative — a second equity, not rounding — falls outside."""
+    base, so, dil, inc = 23.2328, 152_009_343.0, 23.2138, 124_000.0
+    bound = _equity_gap_bound(so, inc)
+    assert abs(base * so - dil * (so + inc)) <= bound
+    assert abs(base * so - dil * (1 + 1e-5) * (so + inc)) > bound
 
 
 def test_the_denominator_helper_reads_the_anchor_it_is_given() -> None:

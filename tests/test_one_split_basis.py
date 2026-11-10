@@ -259,7 +259,9 @@ def test_an_unreadable_reference_stops_a_resolved_row_and_holds_an_interim_one(
     r = _scored(tmp_path / "b", before=_Feed(100.0, 1000.0), after=_Feed(100.0, 1000.0),
                 splits=_unreadable, as_of=date(2026, 5, 1))
     assert r["scores"] == [] and r["report"].n_pending == 1
-    assert any("splits reference cannot be read" in n for n in r["report"].row_notes)
+    # the record is the split RECORD (two vendors, RF-D1); the exception names which one failed
+    assert any("split record cannot be read" in n and "splits reference request failed" in n
+               for n in r["report"].row_notes)
 
 
 def test_the_rule_itself_on_its_edges() -> None:
@@ -313,20 +315,21 @@ class _Http:
 
 def test_the_polygon_source_follows_pages_reads_once_and_fails_loud(
         monkeypatch: pytest.MonkeyPatch) -> None:
+    from tests.dividend_support import weekday_calendar
     from vinci.eod.client import PolygonEodClient
-    from vinci.eod.splits import default_splits
+    from vinci.eod.splits import default_splits, polygon_splits
     from vinci.netcache import HttpError
     served = json.loads(_SPLITS.read_text())["IT"]
     http = _Http([{"status": "OK", "results": served["results"][:2], "next_url": "https://n/2"},
                   {"status": "OK", "results": served["results"][2:]}])
     client = PolygonEodClient(http, min_results=1)  # type: ignore[arg-type]
-    src = default_splits(client=client)
+    src = polygon_splits(client)
     assert len(src("IT")) == 3 and len(src("IT")) == 3
     assert [u for u, _p in http.asked] == ["https://api.polygon.io/v3/reference/splits",
                                            "https://n/2"]          # two pages, read once
     assert http.asked[0][1] == {"ticker": "IT", "limit": 1000} and http.asked[1][1] is None
-    refused = default_splits(client=PolygonEodClient(_Http([{"status": "ERROR"}]),  # type: ignore[arg-type]
-                                                     min_results=1))
+    refused = polygon_splits(PolygonEodClient(_Http([{"status": "ERROR"}]),  # type: ignore[arg-type]
+                                              min_results=1))
     with pytest.raises(SplitsUnknownError, match="request failed"):
         refused("IT")
 
@@ -334,10 +337,13 @@ def test_the_polygon_source_follows_pages_reads_once_and_fails_loud(
         def get_json(self, *_a: object, **_k: object) -> dict[str, Any]:
             raise HttpError("Exhausted retries")
     with pytest.raises(SplitsUnknownError, match="request failed"):
-        default_splits(client=PolygonEodClient(_Down(), min_results=1))("IT")  # type: ignore[arg-type]
+        polygon_splits(PolygonEodClient(_Down(), min_results=1))("IT")  # type: ignore[arg-type]
+    # the production source reads the reference FIRST, so with no Polygon key that is what it
+    # names, Tiingo's rows to hand or not (RF-D1)
     monkeypatch.delenv("POLYGON_API_KEY", raising=False)
     with pytest.raises(SplitsUnknownError, match="no POLYGON_API_KEY"):
-        default_splits()("IT")
+        default_splits(start=_A, end=_B, sessions=weekday_calendar,
+                       tiingo=object())("IT")  # type: ignore[arg-type]
 
 
 # --- the monitor: the real `vinci monitor` over VRRM's committed row --------------------------
@@ -466,6 +472,11 @@ def _close(tree: Config, monkeypatch: pytest.MonkeyPatch, splits: Callable[[str]
     from vinci import cli
     monkeypatch.setattr(cli, "get_config", lambda: tree)
     monkeypatch.setattr(cli, "default_splits", lambda *_a, **_k: splits)
+    # the realized return is a total return (RF-D3): these closes span no ex-date
+    monkeypatch.setattr(cli, "default_dividends", lambda **_k: no_dividends)
+    # the vendors are stubbed, so no key: the exit-session check reads Polygon only with one,
+    # and a key another test leaked into the process must not send it to a real client
+    monkeypatch.delenv("POLYGON_API_KEY", raising=False)
     return cli._cmd_close_position(argparse.Namespace(
         candidate_id=_OPEN, exit_price=exit_price, as_of="2026-10-01",
         reason="constructed: closed after a 2-for-1 at the post-split quote"))
@@ -485,7 +496,7 @@ def test_close_position_across_a_split_reports_the_economics(
     out = capsys.readouterr().out
     assert "= +0.00% realized" in out and "ON ONE SPLIT BASIS" in out
     assert _SMPL_2_FOR_1.label() in out
-    (smpl,) = [r for r in pair_closes(_rows(tree), splits=splits)
+    (smpl,) = [r for r in pair_closes(_rows(tree), splits=splits, dividends=no_dividends)
                if r["entry_id"] == "V-SMPL-screen2-20260729"]
     assert smpl["realized_return"] == pytest.approx(0.0, abs=1e-12)
     assert smpl["entry_price"] == pytest.approx(11.33 * 0.5)
@@ -502,7 +513,8 @@ def test_close_position_with_no_split_is_unchanged(
     two-price ratios they always were."""
     assert _close(tree, monkeypatch, no_splits, 10.86) == 0
     assert f"= {10.86 / 11.33 - 1:+.2%} realized" in capsys.readouterr().out
-    by_id = {r["entry_id"]: r for r in pair_closes(_rows(tree), splits=no_splits)}
+    by_id = {r["entry_id"]: r
+             for r in pair_closes(_rows(tree), splits=no_splits, dividends=no_dividends)}
     assert by_id["V-SMPL-screen2-20260729"]["realized_return"] == 10.86 / 11.33 - 1.0
     assert by_id["V-IT-screen2-20260706"]["realized_return"] == 0.0
     assert by_id["V-SMPL-screen2-20260706"]["realized_return"] == 10.53 / 10.92 - 1.0
@@ -734,5 +746,6 @@ def test_pair_closes_asks_the_reference_by_the_symbol_the_caller_resolves(tree: 
     def source(s: str) -> list[Split]:
         seen.append(s)
         return []
-    pair_closes(rows, splits=source, symbols={"SEC-0001702744-SMPL": "SMPLX"})
+    pair_closes(rows, splits=source, dividends=no_dividends,
+                symbols={"SEC-0001702744-SMPL": "SMPLX"})
     assert sorted(set(seen)) == ["IT", "SMPLX"]

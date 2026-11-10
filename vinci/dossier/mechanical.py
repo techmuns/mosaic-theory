@@ -100,7 +100,7 @@ from vinci.dossier.schemas import (
 from vinci.edgar import cover_count, filing_sections, primary_source, release_parse, segment_facts
 from vinci.edgar import debt_maturities as dmx
 from vinci.edgar.asof import AsOfEdgar, page_price_date, within_cut
-from vinci.edgar.client import EdgarClient, Filing, annual_report
+from vinci.edgar.client import EdgarClient, Filing, annual_report, quarterly_report
 from vinci.edgar.client import events as eight_k_events
 from vinci.edgar.concepts import (
     ANNUAL_REPORT_FORMS,
@@ -4932,7 +4932,9 @@ def _covenant_pointers(
                 continue
             seen.add(h.accession)
             rows.append(CovenantPointer(
-                family=fam, filing="8-K",
+                # the hit's own form, an amendment named as one (RE1-D11); the search asked efts
+                # for 8-Ks, so a hit that states none is one
+                family=fam, filing=h.form or "8-K",
                 filing_date=h.file_date.isoformat() if h.file_date else "",
                 accession=h.accession, exhibits=exs))
             added += 1
@@ -5074,8 +5076,9 @@ def _maturity_sources(
     periodic = sorted((f for f in filings if f.form in periodic_forms
                        and f.filing_date <= reference_date),
                       key=lambda f: f.filing_date, reverse=True)[:1]
+    # every pointer's accession, whatever its label: only an 8-K in `filings` can match one below
     linked = {r.accession for r in (pointer_rows.value or [] if pointer_rows is not None else [])
-              if r.filing == "8-K" and r.accession}
+              if r.accession}
     picks: list[tuple[Filing, str]] = [(f, dmx.READ_PERIODIC) for f in periodic]
     for f in filings:
         if f.form not in _EIGHT_K or f.filing_date > reference_date:
@@ -6027,8 +6030,11 @@ def _primary_source(
     periodic_form = "10-Q"
     if cik:
         try:
-            qs = edgar.recent_filings(cik, forms=("10-Q",))
-            amended = ""
+            # the original 10-Q, or a 10-Q/A carrying the quarter's statements, and any later
+            # 10-Q/A named beside it (RE1-D12): `forms=("10-Q",)` neither read nor named one
+            tenq = quarterly_report(edgar, cik)
+            qs = [tenq.filing] if tenq is not None else []
+            amended = f" · {tenq.pointer}" if tenq is not None and tenq.pointer else ""
             if not qs:
                 # the original 20-F, or a 20-F/A carrying the period's facts (E1-D7)
                 fpi = annual_report(edgar, cik, forms=("20-F", "40-F"))

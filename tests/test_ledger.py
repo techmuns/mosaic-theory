@@ -108,6 +108,20 @@ _KW = dict(  # noqa: C408 — common verdict kwargs
 )
 
 
+def _seed_pivot(store: Store, ident: Identity) -> str:
+    """`_seed` for a verdict logged on the 2026-07-13 pivot day: a close on the Friday before it,
+    so the seal is current against the decision (RF-D7 — `log_verdict` refuses a close more than
+    ``staleness_days`` before ``decided_at``)."""
+    cid = _seed(store, ident)
+    store.write_prices([PriceBar(internal_id=ident.internal_id, bar_date=date(2026, 7, 10),
+                                 open=44.0, high=45.0, low=43.0, close=44.93, volume=1e7,
+                                 source="polygon-grouped")])
+    return cid
+
+
+_KW_PIVOT = {**_KW, "reference_date": date(2026, 7, 13)}
+
+
 def test_log_buy_freezes_entry_price(tmp_path: Path) -> None:
     with Store(tmp_path / "t.db") as store:
         ident = _ident("NKE", "SEC-0000320187-NKE", "0000320187")
@@ -170,12 +184,12 @@ def test_log_verdict_seals_proposal_and_disposition(tmp_path: Path) -> None:
     dispositions pinned; the HUMAN's verdict stays the verdict of record in every one."""
     with Store(tmp_path / "t.db") as store:
         # OVERRIDDEN — human BUY against a machine AVOID: the disagreement leg
-        c1 = _seed(store, _ident("OVR", "SEC-0000000021-OVR", "0000000021"))
+        c1 = _seed_pivot(store, _ident("OVR", "SEC-0000000021-OVR", "0000000021"))
         e1 = log_verdict(store, candidate_id=c1, verdict=Verdict.BUY,
                          decided_at=datetime(2026, 7, 13, 10, 0),
                          machine_proposal=Verdict.AVOID_TERMINAL,
                          machine_lean="strongly-bearish",
-                         proposal_assembled_at=datetime(2026, 7, 10, 6, 54), **_KW)
+                         proposal_assembled_at=datetime(2026, 7, 10, 6, 54), **_KW_PIVOT)
         assert e1.verdict is Verdict.BUY  # the human's verdict IS the verdict of record
         assert e1.disposition is Disposition.OVERRIDDEN
         stored = store.get_ledger_entry(e1.entry_id)
@@ -185,17 +199,17 @@ def test_log_verdict_seals_proposal_and_disposition(tmp_path: Path) -> None:
         assert stored.proposal_assembled_at == datetime(2026, 7, 10, 6, 54)
         assert stored.disposition is Disposition.OVERRIDDEN
         # CONFIRMED — human and machine agree
-        c2 = _seed(store, _ident("CNF", "SEC-0000000022-CNF", "0000000022"))
+        c2 = _seed_pivot(store, _ident("CNF", "SEC-0000000022-CNF", "0000000022"))
         e2 = log_verdict(store, candidate_id=c2, verdict=Verdict.AVOID_TERMINAL,
                          decided_at=datetime(2026, 7, 13, 10, 0),
                          machine_proposal=Verdict.AVOID_TERMINAL,
-                         machine_lean="strongly-bearish", **_KW)
+                         machine_lean="strongly-bearish", **_KW_PIVOT)
         assert e2.disposition is Disposition.CONFIRMED
         # NO_PROPOSAL — the machine abstained (mixed / no read); the human decided cold
-        c3 = _seed(store, _ident("NOP", "SEC-0000000023-NOP", "0000000023"))
+        c3 = _seed_pivot(store, _ident("NOP", "SEC-0000000023-NOP", "0000000023"))
         e3 = log_verdict(store, candidate_id=c3, verdict=Verdict.BUY,
                          decided_at=datetime(2026, 7, 13, 10, 0),
-                         machine_lean="mixed", **_KW)
+                         machine_lean="mixed", **_KW_PIVOT)
         assert e3.machine_proposal is None and e3.disposition is Disposition.NO_PROPOSAL
 
 
@@ -205,17 +219,17 @@ def test_log_verdict_stamps_revealed_pre_verdict_anti_anchoring(tmp_path: Path) 
     logging. Default False == an uncontaminated human-vs-machine comparison; True flags an anchored
     disposition to down-weight. Frozen with the verdict, survives the store round-trip."""
     with Store(tmp_path / "t.db") as store:
-        c1 = _seed(store, _ident("BLD", "SEC-0000000031-BLD", "0000000031"))
+        c1 = _seed_pivot(store, _ident("BLD", "SEC-0000000031-BLD", "0000000031"))
         e1 = log_verdict(store, candidate_id=c1, verdict=Verdict.AVOID_TERMINAL,
                          decided_at=datetime(2026, 7, 13, 10, 0),
                          machine_proposal=Verdict.AVOID_TERMINAL, machine_lean="strongly-bearish",
-                         **_KW)
+                         **_KW_PIVOT)
         assert e1.revealed_pre_verdict is False  # normal flow — decided blind
-        c2 = _seed(store, _ident("PEK", "SEC-0000000032-PEK", "0000000032"))
+        c2 = _seed_pivot(store, _ident("PEK", "SEC-0000000032-PEK", "0000000032"))
         e2 = log_verdict(store, candidate_id=c2, verdict=Verdict.BUY,
                          decided_at=datetime(2026, 7, 13, 10, 0),
                          machine_proposal=Verdict.AVOID_TERMINAL, machine_lean="strongly-bearish",
-                         revealed_pre_verdict=True, **_KW)
+                         revealed_pre_verdict=True, **_KW_PIVOT)
         assert e2.revealed_pre_verdict is True  # peeked — anchored, down-weight
         stored = store.get_ledger_entry(e2.entry_id)
         assert stored is not None and stored.revealed_pre_verdict is True  # frozen + round-trips

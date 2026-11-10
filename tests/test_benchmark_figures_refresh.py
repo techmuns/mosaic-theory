@@ -125,9 +125,12 @@ def test_the_write_path_refuses_a_page_whose_prose_quotes_the_moved_return(
 # --- the transform, on TECX against the committed price fixtures --------------------------------
 
 def _tecx(tmp_path: Path, *, drop: tuple[date, date] | None = None) -> tuple[Path, Path, Identity]:
-    """A copy of TECX's committed page (its synthesis removed: the transform is pinned apart from
-    the citation guard above) and a store of the committed price fixtures."""
-    shutil.copytree(ROOT / "data" / "dossiers" / "TECX", tmp_path / "dossiers" / "TECX")
+    """A copy of TECX's page as committed on 2026-09-28, dated 2026-09-22 and frozen
+    (tests/fixtures/frozen_pages/README.md) — its synthesis removed: the transform is pinned apart
+    from the citation guard above — and a store of the committed price fixtures. The 2026-11-09
+    re-assembly is priced at 2026-11-06, which the price fixtures do not reproduce."""
+    shutil.copytree(ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-28" / "TECX",
+                    tmp_path / "dossiers" / "TECX")
     page = tmp_path / "dossiers" / "TECX" / "dossier.json"
     doc = json.loads(page.read_text())
     doc["synthesis"] = None

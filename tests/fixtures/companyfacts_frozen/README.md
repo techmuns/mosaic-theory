@@ -26,3 +26,16 @@ a test reads the file here first, and the tracking fixture only when none is her
   round 2). A subfolder, not `<T>.json` here, because GOOGL.json above is a different vintage
   frozen for the CIQ side. Each pin cuts its copy at a stated date (`concepts.facts_as_of`), so
   these are refrozen only when a pin's own date moves.
+- `EPAM.json`, `WLK.json` and `VRRM.json` — the tracking fixtures as committed at main `cb8139ee`
+  (cash instant 2026-06-30 on each; the date CIQ's frozen EPAM and WLK figures carry). Frozen 2026-11-09,
+  when the three pages moved to their September-quarter 10-Qs (fix request 2, order 1). EPAM and WLK are
+  refrozen together with the CIQ side, never alone. VRRM's is a SHAPE fixture, read by
+  `tests/test_share_readers_cover_dated.py` and `tests/test_cover_dated_share_counts.py` at reference
+  2026-08-14: its August vintage carries the five share tags dated after their own filing, which those
+  pins measure; refreeze it only with them. `tests/test_cross_check.py` reads WLK's for the quarter its
+  self-funding cite names (2026-06-30).
+- `UBER.json` — the tracking fixture as committed at main `6fbbb4a2` (cash instant 2026-06-30, the
+  date CIQ's frozen UBER figures carry). Frozen 2026-11-09, when UBER's page moved to its
+  September-quarter 10-Q (fix request 2, order 1). Refreeze it together with the CIQ side, never alone.
+  `tests/test_cross_check.py` reads it for UBER's 32 revenue filing dates and `tests/test_share_basis.py`
+  for its latest count at 2026-08-10. Not `nonop_window/UBER.json`, a different vintage.

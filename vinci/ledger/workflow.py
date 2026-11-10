@@ -10,7 +10,7 @@ The ledger is append-only: re-logging a candidate fails loud (a verdict is never
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Protocol
 
@@ -189,6 +189,37 @@ def log_verdict(
             f"no price to freeze an entry for {ident.ticker} "
             f"({ident.internal_id}) — refresh EOD bars first"
         )
+    # A STALE CLOSE IS NO ENTRY (TeamNostra fix request 2, RF-D7, 2026-11-09). `close_as_of` marks
+    # a bar older than ``staleness_days`` STALE, and this checked `is_known` — true for a stale
+    # value — so the parameter had no effect: a 31-day-old close was sealed, and the row's forward
+    # clock (scored from `entry_price_as_of`) started 31 days before the decision. Live on the
+    # committed ledger: GOOGL's BUY, decided 2026-08-28, sealed the 2026-08-14 close. A seal is
+    # now the price the decision was made at, or nothing: refresh the bars and log again. The
+    # sealed rows are never rewritten — how GOOGL's is read is the operator's ruling.
+    if not close.is_evaluable:
+        age = (reference_date - close.as_of).days
+        raise LedgerError(
+            f"REFUSED: the latest close for {ident.ticker} on or before {reference_date} is "
+            f"{close.value:,.2f} from {close.as_of}, {age} days old (more than the "
+            f"{staleness_days} a seal allows). Sealing it would start this decision's forward "
+            f"clock {age} days before it was made — refresh EOD bars "
+            f"(`vinci refresh {ident.ticker} --start {close.as_of} --end {reference_date}`) and "
+            f"log again."
+        )
+    # ...AND STALE AGAINST THE DECISION ITSELF (review round 0). The bound above is measured from
+    # ``reference_date``, which the CLI takes from `--ref`; a `--ref` set back before the day the
+    # verdict is logged would seal that old close as fresh while ``decided_at`` is today — RF-D7's
+    # failure through another input, and a door to deciding with hindsight. The one decision
+    # moment this code knows is ``decided_at``, so the close is held to it as well.
+    lag = (decided_at.date() - close.as_of).days
+    if lag > staleness_days:
+        raise LedgerError(
+            f"REFUSED: {ident.ticker}'s seal would be the {close.value:,.2f} close of "
+            f"{close.as_of}, {lag} days before this verdict is logged ({decided_at.date()}; "
+            f"the reference date given is {reference_date}). A decision is sealed at the price it "
+            f"is made at: more than {staleness_days} days back is a back-dated decision, never "
+            f"logged unmarked — log it at a current reference date."
+        )
 
     # THE STATED-LIMIT GATE, and its seat is mechanical rather than stylistic. The entry price is
     # frozen HERE, inside this function; the CLI's pre-write gates (the edge-basis check) run
@@ -262,8 +293,14 @@ def close_position(
     exit_price_as_of: date,
     reason: str,
     closed_at: datetime,
+    check: Callable[[LedgerEntry], None] | None = None,
 ) -> LedgerEntry:
     """Append the CLOSE row for ``candidate_id``'s decision; returns it.
+
+    ``check`` runs on the VALIDATED close row after every guard here and before the append, and a
+    check that raises writes nothing. It is how `close-position` reads the vendors its realized
+    return needs (the split record, confirmed; the dividends) only for a close this function would
+    write, and refuses before the row exists (RF-D2, 2026-11-09) — the guards stay in one place.
 
     THE WRITER THAT WAS NEVER BUILT. `4f34c11` shipped the close-row SCHEMA, the readers
     (``monitor.close_rows`` / ``pair_closes``), the display and the id helper — everything except a
@@ -303,12 +340,12 @@ def close_position(
         raise LedgerError(
             f"exit date {exit_price_as_of} precedes the frozen entry date "
             f"{decision.entry_price_as_of} — a position cannot close before it opened.")
-    return _append_close(store, decision, exit_price, exit_price_as_of, reason, closed_at)
+    return _append_close(store, decision, exit_price, exit_price_as_of, reason, closed_at, check)
 
 
 def _append_close(
     store: Store, decision: LedgerEntry, exit_price: float, exit_price_as_of: date,
-    reason: str, closed_at: datetime,
+    reason: str, closed_at: datetime, check: Callable[[LedgerEntry], None] | None = None,
 ) -> LedgerEntry:
     """Build, VALIDATE and append the close row. Split out so the guards above read as one list.
 
@@ -351,5 +388,7 @@ def _append_close(
         raise LedgerError(
             f"the close row for {decision.candidate_id!r} is invalid and was NOT written: {exc}"
         ) from exc
+    if check is not None:
+        check(close)
     store.append_ledger(close)
     return close

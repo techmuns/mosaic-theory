@@ -156,7 +156,8 @@ class Filing(BaseModel, frozen=True):
 
 class AnnualRead(BaseModel, frozen=True):
     """The annual report a DOCUMENT reader reads, and every amendment of it (audit E1-D7,
-    operator ruling 2026-11-01).
+    operator ruling 2026-11-01) — or, under the same rule, a 10-Q and its 10-Q/As
+    (:func:`quarterly_report`, RE1-D12).
 
     The original is read. An annual /A takes its place only when it carries the period's
     FINANCIAL STATEMENTS — judged by what its accession carries in companyfacts, never by its form
@@ -413,14 +414,24 @@ def parse_fts_response(data: dict[str, Any]) -> list[FtsHit]:
 def parse_fts_hit(h: dict[str, Any]) -> FtsHit:
     """Pure parser for one efts hit (unit-testable).
 
-    efts uses plural list fields: ``ciks``, ``root_forms`` (canonical form, e.g. "8-K" even for an
-    "8-K/A" amendment), and ``adsh`` (the accession). We read those, with sensible fallbacks.
+    efts uses plural list fields: ``ciks``, ``root_forms`` (the form family, e.g. "8-K" even for an
+    "8-K/A" amendment), and ``adsh`` (the accession), with sensible fallbacks.
+
+    THE FORM IS THE FILING'S OWN (TeamNostra fix request 2, RE1-D11). ``form`` states it ("8-K/A"),
+    ``root_forms`` its family ("8-K") and ``file_type`` the document the phrase matched ("EX-99.3").
+    Read family first, an amendment was reported as "8-K": WERN's credit-agreement 8-K/A of
+    2026-04-14 (``0000793074-26-000090``) was its covenant pointer's "8-K". The family is the
+    fallback when efts states no form; the document type, the last — and only when it is the main
+    document's (an exhibit type such as "EX-99.3" is no form, so the form is then None).
     """
     src = h.get("_source", {})
     ciks = src.get("ciks") or []
     cik = ciks[0] if ciks else None
     root_forms = src.get("root_forms") or []
-    form = (root_forms[0] if root_forms else None) or src.get("file_type") or src.get("form")
+    doc_type = src.get("file_type")
+    if doc_type and str(doc_type).upper().startswith("EX-"):
+        doc_type = None
+    form = src.get("form") or (root_forms[0] if root_forms else None) or doc_type
     fd = src.get("file_date")
     accession = src.get("adsh") or str(h.get("_id", "")).split(":", 1)[0]
     return FtsHit(
@@ -799,6 +810,21 @@ class EdgarClient:
         return code, str(sub.get("stateOfIncorporationDescription") or "").strip()
 
     # --- recent filings (8-K detection via submissions) ---------------------------------------
+    def recent_page_span(self, cik: int | str) -> tuple[date, date] | None:
+        """The first and last filing dates on the submissions document's RECENT page, or None
+        when it holds no dated row. SEC: the recent page "contains at least one year's of filing
+        or to 1,000 (whichever is more) of the most recent filings" (sec.gov's EDGAR API page) —
+        so its span is how far a no-window read reaches back from the newest filing, the reach a
+        view cut in the past applies from its cut (:class:`vinci.edgar.asof.AsOfEdgar`, RE1-D8).
+        Same cached document as :meth:`recent_filings`."""
+        recent = self._submissions(cik).get("filings", {}).get("recent", {})
+        try:
+            dates = [date.fromisoformat(d) for d in recent.get("filingDate") or [] if d]
+        except ValueError as exc:
+            raise HttpError(f"the submissions document for CIK{pad_cik(cik)} carries a filing "
+                            f"date that is not a date: {exc}") from exc
+        return (min(dates), max(dates)) if dates else None
+
     def recent_filings(
         self, cik: int | str, *, forms: tuple[str, ...] = ("8-K",), since: date | None = None
     ) -> list[Filing]:
@@ -938,6 +964,18 @@ def annual_report(edgar: EdgarClient, cik: int | str, *, forms: tuple[str, ...],
                key=lambda f: f.filing_date, default=orig)
     return AnnualRead(filing=read, original=orig, later=later, restating=restating,
                       unjudged=unjudged)
+
+
+def quarterly_report(edgar: EdgarClient, cik: int | str, *,
+                     through: date | None = None) -> AnnualRead | None:
+    """The newest 10-Q filed by ``through`` (any day when None), as a DOCUMENT reader reads it,
+    under the SAME rule as :func:`annual_report` (TeamNostra fix request 2, RE1-D12): the original
+    is read; a 10-Q/A takes its place only when it carries the quarter's financial statements,
+    judged from companyfacts (a balance-sheet total at the quarter's end, an income line, and half
+    the original's tags — :func:`_statement_accessions`); a later 10-Q/A is always named
+    (:attr:`AnnualRead.pointer`). The readers listed ``forms=("10-Q",)``, so a 10-Q/A was neither
+    read nor named. None when the filer has filed no 10-Q."""
+    return annual_report(edgar, cik, forms=("10-Q",), through=through)
 
 
 #: The balance-sheet totals and income-statement lines whose presence, for the period, marks an

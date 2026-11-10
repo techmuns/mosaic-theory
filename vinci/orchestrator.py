@@ -464,6 +464,10 @@ def run_monthly(
             for b in benches:
                 store.upsert_security(b)
             ingest_prices(client, store, benches, start=start, end=as_of)
+        # ONE SPAN AND ONE CALENDAR for the dividends and the split confirmation: Tiingo's
+        # rows are shared only while the two ask for the same span
+        span_start = min((e.entry_price_as_of for e in store.iter_ledger()), default=as_of)
+        calendar = store_calendar(store)
         _scores, report = score_ledger(
             store, as_of=as_of, cost_bps=cost_bps, benchmark_internal_id=f"IDX-{benchmark}",
             # Wired here as well as in `vinci score` — see that call site's note.
@@ -476,12 +480,13 @@ def run_monthly(
             # item — docs/records/2026-10-26-split-restatement-and-total-return.md).
             # Coverage is checked session by session against each name's own sessions in the
             # store (audit item F-D3).
-            dividends=default_dividends(
-                start=min((e.entry_price_as_of for e in store.iter_ledger()), default=as_of),
-                end=as_of, sessions=store_calendar(store)),
+            dividends=default_dividends(start=span_start, end=as_of, sessions=calendar),
             # ONE SPLIT BASIS (audit item F-D1): Polygon's splits reference reconciles each row's
-            # sealed entry with the store's restated bars, or the run stops on a resolved row.
-            splits=default_splits(cfg, client=client),
+            # sealed entry with the store's restated bars, or the run stops on a resolved row —
+            # CONFIRMED by Tiingo's splitFactor over the dividends' own span (RF-D1, 2026-11-09),
+            # the same cached rows, so the run asks Tiingo for no symbol it did not already.
+            splits=default_splits(cfg, client=client, start=span_start, end=as_of,
+                                  sessions=calendar),
             assignments=assignments,
         )
         store.export_snapshots(cfg.snapshots_dir)

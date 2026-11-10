@@ -90,8 +90,10 @@ def test_the_reader_is_told_beneath_the_table_too() -> None:
 def test_the_visa_arithmetic_that_proves_the_claim_still_holds() -> None:
     """THE EVIDENCE ITSELF, pinned so the claim in the note cannot outlive its proof. If Visa's
     FY25 revenue or its FY26 guide ever moves such that the ×1.13 identity fails, the note's stated
-    example is no longer supported and the wording needs re-deriving rather than re-asserting."""
-    d = json.loads(Path("data/dossiers/V/dossier.json").read_text())
+    example is no longer supported and the wording needs re-deriving rather than re-asserting.
+    Read on V's page as committed on 2026-10-26, frozen (tests/fixtures/frozen_pages/README.md): the
+    note's example is that export's FY26 guide; the 2026-11-09 re-assembly guides FY 2027."""
+    d = json.loads(Path("tests/fixtures/frozen_pages/2026-10-26/V/dossier.json").read_text())
     ann = d["mechanical"]["financial_summary"]["annual"]["value"]
     cells = dict(zip(ann["columns"], next(
         r for r in ann["rows"] if r["label"] == "Revenue ($M)")["cells"], strict=False))

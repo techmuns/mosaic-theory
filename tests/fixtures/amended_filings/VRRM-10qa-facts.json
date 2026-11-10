@@ -1,0 +1,2641 @@
+{
+ "cik": 1682745,
+ "entityName": "VERRA MOBILITY CORPORATION",
+ "facts": {
+  "us-gaap": {
+   "AccountsPayableCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 89760000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "AccountsReceivableNetCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 191753000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "AccruedIncomeTaxesCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 963000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "AccruedLiabilitiesCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 59459000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "AccruedSalariesCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 21690000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "AccumulatedOtherComprehensiveIncomeLossNetOfTax": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": -16426000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "AdditionalPaidInCapital": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 549374000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "AdjustmentsRelatedToTaxWithholdingForShareBasedCompensation": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 49000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "AdjustmentsToAdditionalPaidInCapitalSharebasedCompensationRequisiteServicePeriodRecognitionValue": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 4443000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "AllocatedShareBasedCompensationExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 12346000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 4443000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "AllowanceForDoubtfulAccountsReceivableCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 17578000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "AllowanceForDoubtfulAccountsReceivableWriteOffs": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 5882000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "AmortizationOfFinancingCostsAndDiscounts": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 3600000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "AmortizationOfIntangibleAssets": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 60900000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 18900000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "AntidilutiveSecuritiesExcludedFromComputationOfEarningsPerShareAmount": {
+    "units": {
+     "shares": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 2201000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 1243000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "AssetRetirementObligationsNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 14075000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "Assets": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 1756075000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "AssetsCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 411292000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "CapitalExpendituresIncurredButNotYetPaid": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 6927000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "CashAndCashEquivalentsAtCarryingValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 114379000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 118330000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 9215000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "CommonStockParOrStatedValuePerShare": {
+    "units": {
+     "USD/shares": [
+      {
+       "end": "2023-09-30",
+       "val": 0.0001,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "CommonStockSharesAuthorized": {
+    "units": {
+     "shares": [
+      {
+       "end": "2023-09-30",
+       "val": 260000000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "CommonStockSharesIssued": {
+    "units": {
+     "shares": [
+      {
+       "end": "2023-09-30",
+       "val": 166310000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "CommonStockSharesOutstanding": {
+    "units": {
+     "shares": [
+      {
+       "end": "2023-09-30",
+       "val": 166310000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "CommonStockValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 17000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "ComprehensiveIncomeNetOfTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 50432000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 26119000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "ContingentConsiderationClassifiedAsEquityFairValueDisclosure": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 0,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "CostsAndExpenses": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 440812000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 150760000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "DebtInstrumentUnamortizedDiscount": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 3869000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "DebtWeightedAverageInterestRate": {
+    "units": {
+     "pure": [
+      {
+       "end": "2023-09-30",
+       "val": 0.076,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "DeferredFinanceCostsNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 13603000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "DeferredIncomeTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -7236000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "DeferredIncomeTaxLiabilitiesNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 19015000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "DeferredTaxLiabilities": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 7519000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "DepositAssets": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 1778000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "DepreciationDepletionAndAmortization": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 86835000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 27530000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "EarningsPerShareBasic": {
+    "units": {
+     "USD/shares": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 0.35,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 0.18,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "EarningsPerShareDiluted": {
+    "units": {
+     "USD/shares": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 0.34,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 0.18,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "EffectiveIncomeTaxRateContinuingOperations": {
+    "units": {
+     "pure": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 0.371,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 0.275,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -1013000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "EmployeeRelatedLiabilitiesCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 3025000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "FairValueAdjustmentOfWarrants": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -49032000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": -4877000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "FairValueMeasurementWithUnobservableInputsReconciliationRecurringBasisLiabilityGainLossIncludedInEarnings": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 24966000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": -553000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "FairValueMeasurementWithUnobservableInputsReconciliationsRecurringBasisLiabilityValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 0,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAccumulatedAmortization": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": -540676000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAmortizationExpenseNextTwelveMonths": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 66881000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAmortizationExpenseRemainderOfFiscalYear": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 16721000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAmortizationExpenseYearFour": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 28125000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAmortizationExpenseYearThree": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 57229000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAmortizationExpenseYearTwo": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 64183000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsGross": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 856430000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 315754000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "GainLossOnDispositionOfAssets1": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -183000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": -67000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "GainsLossesOnExtinguishmentOfDebt": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -3533000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": -1975000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "GainsLossesOnExtinguishmentOfDebtBeforeWriteOffOfDeferredDebtIssuanceCost": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -3533000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "Goodwill": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 832817000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "GoodwillForeignCurrencyTranslationGainLoss": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 663000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 85857000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 41805000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "IncomeTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 31864000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 11497000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "IncomeTaxesPaidNet": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 37627000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInAccountsReceivable": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 35854000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInContractWithCustomerAsset": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 9529000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInOtherOperatingLiabilities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 798000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInPrepaidDeferredExpenseAndOtherAssets": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -2948000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "IntangibleAssetsNetExcludingGoodwill": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 315754000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "InterestExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 65842000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 20384000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "InterestExpenseDebt": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 65800000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 20400000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "InterestPaidNet": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 60370000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "InterestPayableCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 9235000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "Liabilities": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 1352019000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "LiabilitiesAndStockholdersEquity": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 1756075000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "LiabilitiesCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 197567000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "LineOfCreditFacilityMaximumBorrowingCapacity": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 706800000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "LongTermDebt": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 1039370000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "LongTermDebtCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 9019000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "LongTermDebtNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 1030351000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "NetCashProvidedByUsedInFinancingActivities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -118450000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "NetCashProvidedByUsedInInvestingActivities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -41693000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "NetCashProvidedByUsedInOperatingActivities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 170371000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "NetIncomeLoss": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 53993000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 30308000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "NonoperatingIncomeExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -79628000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": -17368000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "NumberOfOperatingSegments": {
+    "units": {
+     "Segment": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 3,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "NumberOfReportableSegments": {
+    "units": {
+     "Segment": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 3,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "OperatingCostsAndExpenses": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 196373000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 68873000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "OperatingIncomeLoss": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 165485000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 59173000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "OperatingLeaseLiabilityCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 7088000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "OperatingLeaseLiabilityNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 30552000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "OperatingLeaseRightOfUseAsset": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 35299000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "OtherAccruedLiabilitiesCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 2759000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "OtherAssetsCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 1650000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "OtherAssetsNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 16959000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "OtherComprehensiveIncomeForeignCurrencyTransactionAndTranslationAdjustmentNetOfTaxPortionAttributableToParent": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -3561000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": -4189000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "OtherComprehensiveIncomeLossNetOfTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": -4189000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "OtherLiabilitiesNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 9559000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "OtherNoncashIncomeExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": -306000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "OtherNonoperatingIncomeExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 12766000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 4498000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "PaymentsForRepurchaseOfCommonStock": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 100000000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 100000000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "PaymentsOfDebtIssuanceCosts": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 362000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "PaymentsRelatedToTaxWithholdingForShareBasedCompensation": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 3077000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "PaymentsToAcquirePropertyPlantAndEquipment": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 40501000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "PreferredStockParOrStatedValuePerShare": {
+    "units": {
+     "USD/shares": [
+      {
+       "end": "2023-09-30",
+       "val": 0.0001,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "PreferredStockSharesAuthorized": {
+    "units": {
+     "shares": [
+      {
+       "end": "2023-09-30",
+       "val": 1000000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "PreferredStockSharesIssued": {
+    "units": {
+     "shares": [
+      {
+       "end": "2023-09-30",
+       "val": 0,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "PreferredStockSharesOutstanding": {
+    "units": {
+     "shares": [
+      {
+       "end": "2023-09-30",
+       "val": 0,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "PrepaidExpenseAndOtherAssetsCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 41197000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "PrepaidTaxes": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 5814000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "ProceedsFromSaleOfProductiveAssets": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 222000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "ProceedsFromStockOptionsExercised": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 2845000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "ProfitLoss": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 53993000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "PropertyPlantAndEquipmentNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 117827000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "ProvisionForDoubtfulAccounts": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 7553000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "PurchaseCommitmentRemainingMinimumAmountCommitted": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 20000000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "RepaymentsOfLinesOfCredit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 0,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "RepaymentsOfLongTermDebt": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 179264000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "RestrictedCashCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 3951000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "RetainedEarningsAccumulatedDeficit": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": -128909000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "RevenueFromContractWithCustomerExcludingAssessedTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 606297000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 209933000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "SellingGeneralAndAdministrativeExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 125494000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 42276000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "ShareBasedCompensation": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 12346000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 4443000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "StockholdersEquity": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 404056000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "StockIssuedDuringPeriodValueStockOptionsExercised": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 457000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "StockRepurchasedAndRetiredDuringPeriodValue": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 100000000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "UnbilledReceivablesCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 40069000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "WarrantsAndRightsOutstanding": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 0,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "WeightedAverageNumberOfDilutedSharesOutstanding": {
+    "units": {
+     "shares": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 157133000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 169497000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "WeightedAverageNumberOfSharesOutstandingBasic": {
+    "units": {
+     "shares": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 156196000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 168089000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "CapitalizedContractCostGross": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 5452000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "DeferredRevenueCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 34322000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInDeferredRevenue": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 3475000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInInventories": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 1061000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "InventoryNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 19943000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "InvestmentOwnedAtCost": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 1900000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "PaymentForContingentConsiderationLiabilityInvestingActivities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 0,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "PreferredStockValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 0,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "AdjustmentsToAdditionalPaidInCapitalOther": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 15200000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "RetainedEarningsAppropriated": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-09-30",
+       "val": 84800000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "Revenues": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 75782000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 25927000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "DebtInstrumentInterestRateEffectivePercentage": {
+    "units": {
+     "pure": [
+      {
+       "end": "2023-09-30",
+       "val": 0.087,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09",
+       "frame": "CY2023Q3I"
+      }
+     ]
+    }
+   },
+   "OtherLaborRelatedExpenses": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 484000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 152000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "GainLossOnInterestRateDerivativeInstrumentsNotDesignatedAsHedgingInstruments": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 3361000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "DerivativeGainLossOnDerivativeNet": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 1947000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      },
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 60000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "ProceedsFromWarrantExercises": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-09-30",
+       "val": 161408000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   },
+   "StockIssuedDuringPeriodValueConversionOfConvertibleSecurities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-07-01",
+       "end": "2023-09-30",
+       "val": 7786000,
+       "accn": "0000950170-23-062105",
+       "fy": 2023,
+       "fp": "Q3",
+       "form": "10-Q",
+       "filed": "2023-11-09"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

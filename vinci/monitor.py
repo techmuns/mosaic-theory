@@ -34,6 +34,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
+from vinci.eod.dividends import DividendSource, growth
 from vinci.eod.splits import SplitSource, close_on_basis
 from vinci.labels import resolve_label
 from vinci.schemas.ledger import EVENT_CLOSE, ORIGIN_SCREEN
@@ -210,7 +211,14 @@ class RealizedRow(BaseModel):
     two frozen prices, never stored — so there is one definition and the note text below is
     rendered FROM this row rather than beside it. ``entry_price`` is the entry ON THE EXIT'S SPLIT
     BASIS: the sealed price, unless a recorded split fell between the two dates (the day's notes
-    then name the sealed price and the split — `pair_closes`)."""
+    then name the sealed price and the split — `pair_closes`).
+
+    A TOTAL RETURN, the snapshot's own basis (RF-D3, 2026-11-09): the dividends the position went
+    ex in (entry, exit] are reinvested, as every mark beside it carries them. Until then this was
+    the two-price ratio inside a snapshot declaring "TOTAL return both sides", so a flat stock that
+    paid a 20% special dividend read −20% realized beside a mark of 0%. ``realized_price_return``
+    rides beside it for continuity; None on a day written before it existed, whose
+    ``realized_return`` WAS that price return."""
 
     ticker: str
     entry_id: str
@@ -221,6 +229,7 @@ class RealizedRow(BaseModel):
     exit_price: float
     exit_price_as_of: date
     realized_return: float
+    realized_price_return: float | None = None
 
     def note(self) -> str:
         """The human line — derived from the typed row, so display can never drift from data."""
@@ -393,8 +402,8 @@ def close_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def pair_closes(
-    raw: list[dict[str, Any]], *, splits: SplitSource, as_of: date | None = None,
-    symbols: Mapping[str, str] | None = None,
+    raw: list[dict[str, Any]], *, splits: SplitSource, dividends: DividendSource,
+    as_of: date | None = None, symbols: Mapping[str, str] | None = None,
 ) -> list[dict[str, Any]]:
     """Pair each close to the decision row it closes, and DERIVE the realized return.
 
@@ -410,6 +419,12 @@ def pair_closes(
     were none). A symbol whose splits cannot be read raises `SplitsUnknownError`. The reference is
     asked by ``symbols[internal_id]`` — the store's symbol, the one scoring asks by, so a line
     renamed since its decision is asked under its current ticker — else by the ledger ticker.
+
+    A TOTAL RETURN (RF-D3, 2026-11-09): ``realized_return`` is ``exit / entry × growth − 1``, the
+    dividends ``dividends`` reads for (entry, exit] reinvested on the ex-date — the basis the
+    snapshot declares and every mark carries — and ``realized_price_return`` is the ratio alone.
+    Asked by the same symbol as the splits. A window whose dividends cannot be read raises
+    `DividendsUnknownError`; it is never derived on price return instead.
 
     ``as_of`` MAKES THE VIEW POINT-IN-TIME (operator review P1 on #418). Without it every close in
     the ledger counted regardless of when it happened, so `vinci monitor --ref <past date>` marked
@@ -427,15 +442,17 @@ def pair_closes(
         sealed, exit_ = float(d["entry_price"]), float(c["exit_price"])
         entry_as_of = date.fromisoformat(str(d.get("entry_price_as_of")))
         exit_as_of = date.fromisoformat(str(c.get("exit_price_as_of")))
+        sym = (symbols or {}).get(str(d.get("internal_id")), str(d["ticker"]))
         entry, split_note = close_on_basis(
             who=f"{d['ticker']} close {c.get('entry_id')}", sealed=sealed,
-            entry_as_of=entry_as_of, exit_as_of=exit_as_of,
-            splits=splits((symbols or {}).get(str(d.get("internal_id")), str(d["ticker"]))))
+            entry_as_of=entry_as_of, exit_as_of=exit_as_of, splits=splits(sym))
+        g = growth(dividends(sym, entry_as_of, exit_as_of))
         out.append({"ticker": d["ticker"], "entry_id": d["entry_id"],
                     "close_id": c.get("entry_id"), "verdict": d["verdict"],
                     "entry_price": entry, "entry_price_as_of": d.get("entry_price_as_of"),
                     "exit_price": exit_, "exit_price_as_of": c.get("exit_price_as_of"),
-                    "realized_return": exit_ / entry - 1.0,    # DERIVED, never stored
+                    "realized_return": exit_ / entry * g - 1.0,    # DERIVED, never stored
+                    "realized_price_return": exit_ / entry - 1.0,
                     "split_note": split_note})
     return out
 

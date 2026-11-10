@@ -28,14 +28,17 @@ import pytest
 
 from vinci.ledger.workflow import LedgerError, log_verdict
 from vinci.scenarios import StatedLimit
+from vinci.schemas.envelope import DataField, SourceTier
 from vinci.schemas.ledger import Confidence, Verdict
 
 ORIGIN_FOLLOWED = "followed"
 
 
-class _Close:
-    def __init__(self, value: float) -> None:
-        self.value, self.as_of, self.is_known = value, date(2026, 8, 7), True
+def _close(value: float) -> DataField[float]:
+    """The store's close, as `Store.close_as_of` returns it: the REAL type, so a gate reading a
+    field the stub lacked (RF-D7 reads `is_evaluable`) cannot pass on a hand-rolled shape."""
+    return DataField.present(value, as_of=date(2026, 8, 7), source="polygon-grouped",
+                             tier=SourceTier.EOD)
 
 
 class _Ident:
@@ -50,8 +53,9 @@ class _Store:
     def get_candidate(self, cid: str) -> None:
         return None
 
-    def close_as_of(self, internal_id: str, *, reference_date: Any, staleness_days: int) -> _Close:
-        return _Close(self._price)
+    def close_as_of(self, internal_id: str, *, reference_date: Any,
+                    staleness_days: int) -> DataField[float]:
+        return _close(self._price)
 
     def append_ledger(self, entry: Any) -> Any:
         self.appended.append(entry)
