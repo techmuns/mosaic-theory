@@ -413,14 +413,24 @@ def parse_fts_response(data: dict[str, Any]) -> list[FtsHit]:
 def parse_fts_hit(h: dict[str, Any]) -> FtsHit:
     """Pure parser for one efts hit (unit-testable).
 
-    efts uses plural list fields: ``ciks``, ``root_forms`` (canonical form, e.g. "8-K" even for an
-    "8-K/A" amendment), and ``adsh`` (the accession). We read those, with sensible fallbacks.
+    efts uses plural list fields: ``ciks``, ``root_forms`` (the form family, e.g. "8-K" even for an
+    "8-K/A" amendment), and ``adsh`` (the accession), with sensible fallbacks.
+
+    THE FORM IS THE FILING'S OWN (TeamNostra fix request 2, RE1-D11). ``form`` states it ("8-K/A"),
+    ``root_forms`` its family ("8-K") and ``file_type`` the document the phrase matched ("EX-99.3").
+    Read family first, an amendment was reported as "8-K": WERN's credit-agreement 8-K/A of
+    2026-04-14 (``0000793074-26-000090``) was its covenant pointer's "8-K". The family is the
+    fallback when efts states no form; the document type, the last — and only when it is the main
+    document's (an exhibit type such as "EX-99.3" is no form, so the form is then None).
     """
     src = h.get("_source", {})
     ciks = src.get("ciks") or []
     cik = ciks[0] if ciks else None
     root_forms = src.get("root_forms") or []
-    form = (root_forms[0] if root_forms else None) or src.get("file_type") or src.get("form")
+    doc_type = src.get("file_type")
+    if doc_type and str(doc_type).upper().startswith("EX-"):
+        doc_type = None
+    form = src.get("form") or (root_forms[0] if root_forms else None) or doc_type
     fd = src.get("file_date")
     accession = src.get("adsh") or str(h.get("_id", "")).split(":", 1)[0]
     return FtsHit(

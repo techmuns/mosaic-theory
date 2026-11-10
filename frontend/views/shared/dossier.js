@@ -417,15 +417,31 @@ const EXTRACTION_VERSIONS = [
     "FCF-sign leg deleted, so the two-input self-funding read is the only one, and the " +
     "gap test's FCF-sign item names `quality.fcf_sign` itself. Figures leave the page; " +
     "none changes"],
+  ["2026-11-09.restatement-precision",
+    "a restatement of a round figure is named (TeamNostra fix request 2, RE1-D6): " +
+    "`concepts._same_figure` reads a figure's precision from its trailing zeros but never " +
+    "coarser than its second significant figure, and a per-share figure's at the cent " +
+    "or finer, so NFLX's $900,000 thousand of debt restated to $885,849 thousand and " +
+    "HLF's 3.30 EPS restated to 3.32 are named where they were read as the same figure. " +
+    "On the 28 pages frozen at bcda7ce3 no cited figure moves"],
+  ["2026-11-10.fts-amendment-form",
+    "a full-text-search hit is reported by its filing's own form (TeamNostra fix request 2, " +
+    "RE1-D11): efts's `form` before its family `root_forms`, so an 8-K/A is an 8-K/A, and " +
+    "the covenant pointer writes the hit's form where it wrote `8-K`; the maturity check " +
+    "still reads a pointer-linked 8-K/A. On the 28 pages frozen at bcda7ce3 one of 92 " +
+    "pointer rows moves: WERN's 0000793074-26-000090 reads 8-K/A, with its covenant terms' " +
+    "source labels"],
   ["2026-11-10.dated-headroom",
-    "impairment headroom is two balances at one date (audit RD-D1): an instant is the newest " +
-    "balance across its tag family, the preference order breaking a tie, so a first tag the " +
-    "filer stopped using no longer wins; `capital_allocation.impairment_headroom` reads goodwill " +
-    "and intangibles at the latest date they share, within 366 days of the price date, and " +
-    "states that date, or is UNKNOWN naming the dates found, and both renderers print it, " +
-    "never a sum of their own; a peer row totals its legs at one date with Assets at that date, " +
-    "and one tagging a single family states no total. MCK's headroom moves from $12,950.0M to " +
-    "$15,214.0M; AMZN's is dated 2025-12-31; TGT's and BURL's are UNKNOWN"],
+    "impairment headroom is two balances at one date (audit RD-D1): an instant is the " +
+    "first tag in the preference order whose latest balance is within 366 days of the " +
+    "family's newest, so a first tag the filer stopped using no longer wins and a current " +
+    "total still beats a newer partial leg; `capital_allocation.impairment_headroom` " +
+    "reads goodwill and intangibles under those tags at the latest date they share, " +
+    "within 366 days of the price date, and states that date, or is UNKNOWN naming the " +
+    "dates found, and both renderers print it, never a sum of their own; a peer row " +
+    "totals its legs at one date with Assets at that date, states no total when they " +
+    "share no current date, and labels a single leg. MCK's headroom moves from $12,950.0M " +
+    "to $15,214.0M; AMZN's is dated 2025-12-31; TGT's and BURL's are UNKNOWN"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

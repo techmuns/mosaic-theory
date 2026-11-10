@@ -15,7 +15,14 @@ from collections.abc import Mapping
 from datetime import date, timedelta
 
 from vinci.eod.dividends import DividendSource, DividendsUnknownError, growth
-from vinci.eod.splits import SplitBasisError, SplitSource, SplitsUnknownError, entry_on_basis
+from vinci.eod.splits import (
+    SplitBasisError,
+    SplitSource,
+    SplitsUnconfirmedError,
+    SplitsUnknownError,
+    entry_on_basis,
+    leg_on_basis,
+)
 from vinci.monitor import BenchmarkAssignment
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
@@ -322,6 +329,15 @@ def score_ledger(
             # can never see it. A followed name whose bars are not loaded yet would land in the
             # screen-only pending count through this branch alone — the one path that skips
             # every later filter by construction (review #382).
+            # NAMED (RF-D13): which price is missing, so the pending count can be audited.
+            held = (f"{name_bars[0].bar_date} → {name_bars[-1].bar_date}" if name_bars
+                    else "no bars")
+            if exit_bar is None or exit_bar.bar_date < entry_date:
+                missing = f"no bar on or after its entry {entry_date} (the store holds {held})"
+            else:
+                missing = (f"its benchmark {bench_sym} has no bar on the entry or scoring "
+                           f"session")
+            notes.append(f"{who} is PENDING: no forward price yet — {missing}.")
             if origin_of(entry) == ORIGIN_SCREEN:
                 pending += 1
             continue
@@ -352,7 +368,10 @@ def score_ledger(
 
         # THE ENTRY ON THE EXIT'S SPLIT BASIS. The store holds one basis — the newest its bars for
         # this name were read on — and the sealed price holds the entry date's; `entry_on_basis`
-        # reconciles the two through the splits reference, or refuses.
+        # reconciles the two through the splits reference, or refuses. THE BENCHMARK LEG TOO
+        # (RF-D1, 2026-11-09): a ratio of two stored closes, held across a split to Tiingo's close
+        # (`leg_on_basis`). Production's source is confirmed by Tiingo (`ConfirmedSplits`), so a
+        # split one vendor alone records is an unknown record here.
         try:
             entry_px, split_note = entry_on_basis(
                 who=who, sealed=entry.entry_price,
@@ -360,14 +379,21 @@ def score_ledger(
                 session_close=name_in.close if name_in is not None else None,
                 session_source=name_in.source if name_in is not None else None,
                 basis_through=name_bars[-1].bar_date, splits=splits(name_sym))
+            bench_note = leg_on_basis(
+                who=f"{who}: its benchmark {bench_sym}", symbol=bench_sym,
+                start=bench_in.bar_date, start_close=bench_in.close, end=bench_out.bar_date,
+                basis_through=row_bars[-1].bar_date, splits=splits,
+                start_source=bench_in.source)
         except SplitsUnknownError as exc:
+            # the exception names the vendor that failed — Polygon's reference or Tiingo's rows
+            what = ("its split record cannot be confirmed"
+                    if isinstance(exc, SplitsUnconfirmedError)
+                    else "its split record cannot be read")
             if resolved:
                 raise SplitsUnreadError(
-                    f"{entry.entry_id} has RESOLVED and its splits reference cannot be read — "
-                    f"{exc}. Its entry's split basis is unchecked, and it is never scored on the "
-                    f"sealed price unchecked.") from exc
-            notes.append(f"{who} is PENDING: its splits reference cannot be read ({exc}), so "
-                         f"its entry's split basis is unchecked.")
+                    f"{entry.entry_id} has RESOLVED and {what} — {exc}. Its split basis is "
+                    f"unchecked, and it is never scored on the sealed price unchecked.") from exc
+            notes.append(f"{who} is PENDING: {what} ({exc}), so its split basis is unchecked.")
             if origin_of(entry) == ORIGIN_SCREEN:
                 pending += 1
             continue
@@ -379,8 +405,7 @@ def score_ledger(
             if origin_of(entry) == ORIGIN_SCREEN:
                 pending += 1
             continue
-        if split_note is not None:
-            notes.append(split_note)
+        notes.extend(n for n in (split_note, bench_note) if n is not None)
 
         # THE DIVIDENDS, each leg over its OWN window — the sealed entry session to the exit bar's
         # session for the name, the benchmark's own bars for the benchmark.
@@ -394,6 +419,11 @@ def score_ledger(
                     f"{entry.entry_id} has RESOLVED and its dividends are unknown — {exc}. Its "
                     f"total return cannot be measured, and it is never scored on price return "
                     f"instead.") from exc
+            # NAMED, like every other branch that holds a row back (RF-D13, 2026-11-09): a pending
+            # count with no reason under it is a count the reader cannot audit.
+            notes.append(f"{who} is PENDING: its dividends are unknown ({exc}), so its total "
+                         f"return cannot be marked; at its horizon {horizon_date} scoring stops "
+                         f"on it unless they are read.")
             if origin_of(entry) == ORIGIN_SCREEN:
                 pending += 1
             continue
@@ -415,7 +445,7 @@ def score_ledger(
         if basket is not None:
             b_ret, b_note, b_members = basket_return(
                 basket, basket_bars.get(sleeve_key, {}), entry_date, scoring_date,
-                dividends=dividends)
+                dividends=dividends, splits=splits)
 
         score = VerdictScore(
             entry_id=entry.entry_id,
