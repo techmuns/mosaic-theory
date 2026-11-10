@@ -504,6 +504,16 @@ const EXTRACTION_VERSIONS = [
     "conjunction. On the 27 committed pages no going-concern field moves; over three SEC " +
     "caches (178 reads of filings that mention a going concern, overlapping), two filings " +
     "move, both from doubt to none, both alleviated"],
+  ["2026-11-10.period-order-and-duration",
+    "period columns are read in time order, and a column's stated duration is read " +
+    "(TeamNostra fix request 2, RA-D5, V1-O2): a Financials header's period columns come in" +
+    " time order within each fiscal calendar, the calendars by their latest end " +
+    "(`ciq_sheets.period_columns`), so growth, the estimate base and a trajectory no longer" +
+    " follow the sheet's column order; the Estimates current and forward years and the next" +
+    " quarters are read by the year and quarter each label states, and the listing's " +
+    "'Current' column by its header; a '6 months' or '9 months' column is a year-to-date " +
+    "period ('6M-26'), never a quarter, and no QoQ, YoY or growth spans it. On the 36 " +
+    "export folders on disk no read moves"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
