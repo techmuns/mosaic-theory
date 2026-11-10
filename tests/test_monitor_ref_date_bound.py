@@ -207,15 +207,18 @@ def _wire(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, records: list[dict[st
     for name, day in (prior or {}).items():
         (tmp_path / "data/monitor" / f"{name}.json").write_text(json.dumps(day))
 
-    # EACH NAME AT THE PRICE ITS DECISION SEALED (audit item F-D1): the monitor sets the sealed
-    # entry beside the entry session's close and refuses a gap no recorded split explains, so the
-    # flat synthetic price is each name's sealed one, stepping at SMPL's re-entry; benchmarks 100.
-    sealed = sorted((date.fromisoformat(str(r["entry_price_as_of"])), str(r["ticker"]),
-                     float(r["entry_price"])) for r in mon.decision_rows(_ledger()))
+    # EACH NAME AT THE PRICE ITS DECISION IS READ AT (audit item F-D1; RF-D7): the monitor sets
+    # the entry beside the entry session's close and refuses a gap no recorded split explains, so
+    # the flat synthetic price is each name's entry — the sealed one, or its committed CORRECTION's
+    # (`monitor.apply_corrections`, as the monitor reads it) — stepping at SMPL's re-entry;
+    # benchmarks 100.
+    read_at = sorted((date.fromisoformat(str(r["entry_price_as_of"])), str(r["ticker"]),
+                      float(r["entry_price"]))
+                     for r in mon.decision_rows(mon.apply_corrections(_ledger())[0]))
 
     def _close(t: str, d: date) -> float:
-        mine = [px for on, tk, px in sealed if tk == t]
-        held = [px for on, tk, px in sealed if tk == t and on <= d]
+        mine = [px for on, tk, px in read_at if tk == t]
+        held = [px for on, tk, px in read_at if tk == t and on <= d]
         return held[-1] if held else mine[0] if mine else 100.0
     sec = [json.loads(ln) for ln in (ROOT / "data/snapshots/securities.jsonl").read_text()
            .splitlines() if ln.strip()]

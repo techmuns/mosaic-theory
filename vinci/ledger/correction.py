@@ -34,6 +34,8 @@ from vinci.schemas.ledger import (
     LedgerEntry,
     correction_entry_id,
     corrections_by_decision,
+    origin_of,
+    sleeve_of,
 )
 from vinci.store import Store
 
@@ -65,8 +67,10 @@ def correct_entry(store: Store, *, entry_id: str, entry_price: float, entry_pric
 
     Refused, with nothing written: an unknown or non-decision ``entry_id``; a decision already
     corrected; a correction equal to the sealed entry (nothing to correct); a corrected date after
-    the day the decision was logged (a price the decider could not have seen); a blank reason. The
-    row copies the decision's provenance, as a close does, and is re-validated before the append."""
+    the day the decision was logged (a price the decider could not have seen); a decision closed
+    before the corrected entry date; a blank reason. The row copies the decision's provenance, as
+    a close does, tagged with the origin and sleeve its decision is read at, and is re-validated
+    before the append."""
     rows = list(store.iter_ledger())
     decision = next((r for r in rows if r.entry_id == entry_id and r.event is None), None)
     if decision is None:
@@ -97,6 +101,12 @@ def correct_entry(store: Store, *, entry_id: str, entry_price: float, entry_pric
         "entry_price_as_of": entry_price_as_of,
         "reason": reason,
         "decided_at": corrected_at,
+        # TAGGED AS ITS DECISION IS READ, never copied untagged: a decision logged before `origin`
+        # and `sleeve` existed carries neither, and every row logged since must carry both
+        # (`tests/test_sleeves.py`) — a correction is such a row, so it states the reading the
+        # helpers give its decision (a legacy row reads screen/overshoot)
+        "origin": origin_of(decision),
+        "sleeve": sleeve_of(decision),
         # cleared, as on a close: none of these describe a correction
         "facts": {},
         "machine_proposal": None,
