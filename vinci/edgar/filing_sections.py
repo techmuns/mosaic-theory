@@ -10,6 +10,7 @@ pre-normalized (vinci.graph.filings.normalize_text). Coverage is partial beyond 
 from __future__ import annotations
 
 import re
+from typing import NamedTuple
 
 from vinci.dossier.schemas import (
     Commitment,
@@ -71,12 +72,10 @@ def _going_concern(text: str, src: str) -> GoingConcern | None:
 
 
 # --- (2) filing-basis maturity wall --------------------------------------------------------------
-_WITHIN_12M = re.compile(
-    r"\$\s*([\d,.]+)\s*million\s+due\s+within\s+the\s+next\s+12\s+months", re.I)
 _TRANCHE = re.compile(
     r"\b(bond\s+payable|convertible\s+loan|convertible\s+note|term\s+loan|note\s+payable|"
     r"senior\s+notes?|revolving\s+(?:credit\s+)?facility|credit\s+facility)\b[^.]*?"
-    r"\$\s*([\d,.]+)\s*million[^.]*?matures\s+in\s+([A-Za-z]+\s+20\d\d)",
+    r"\$\s*([\d,.]+)\s*(million|billion)[^.]*?matures\s+in\s+([A-Za-z]+\s+20\d\d)",
     re.I,
 )
 # a debt section is LOCATED when any of these instrument anchors appear — so a filing that has debt
@@ -88,12 +87,13 @@ _DEBT_SECTION = re.compile(
 )
 _NOT_STATED_NOTE = "no near-term wall stated in filing — composition table present; see CIQ panel"
 
-# THE OTHER WAYS A 10-Q STATES ITS ≤12m FIGURE (audit E2-D15) — tried only when `_WITHIN_12M` finds
-# nothing, so every wall it already reads is read as before. Werner's 10-Q says its Credit
-# Facilities carry "no principal amount expected to be paid within 12 months" and Netflix's that
-# "the amount of principal and interest on our outstanding notes due in the next twelve months is
-# $3,194 million"; both pages printed "no near-term wall stated in filing". The scale is CAPTURED:
-# "$1.2 billion due within the next 12 months" is 1,200, never 1.2.
+# THE WAYS A 10-Q STATES ITS ≤12m FIGURE (audit E2-D15). Werner's 10-Q says its Credit Facilities
+# carry "no principal amount expected to be paid within 12 months" and Netflix's that "the amount of
+# principal and interest on our outstanding notes due in the next twelve months is $3,194 million";
+# both pages printed "no near-term wall stated in filing". The scale is CAPTURED: "$1.2 billion due
+# within the next 12 months" is 1,200, never 1.2. `_DUE_12M` also covers the original "$X million
+# due within the next 12 months", which used to be tried first with no debt or lease filter at all —
+# so a lease's payments were read as the wall (RE2-D13). Every form now passes `_whole_debt`.
 _DUE_12M = re.compile(
     r"\$\s*([\d,.]+)\s*(million|billion)\s+(?:(?:is|are|will\s+be)\s+)?due\s+"
     r"(?:(?:within|in)\s+(?:the\s+next\s+)?(?:12|twelve)\s+months|within\s+one\s+year)\b", re.I)
@@ -112,10 +112,43 @@ _P_AND_I_12M = re.compile(
 #: wall — Werner states its finance-lease and interest payments "payable within 12 months" too.
 _NOT_DEBT = re.compile(r"\bleases?\b|\blease\s+liabilit|purchase\s+obligations?|"
                        r"(?:purchase|capital|inventory)\s+commitments?", re.I)
-#: The debt words a widened ≤12m sentence must carry — `_DEBT_SECTION` plus the plain ones it
-#: lacks ("Of our total debt, $1.2 billion due within …", "our notes", "the Credit Facilities").
+#: The debt words a ≤12m sentence must carry — `_DEBT_SECTION` plus the plain ones it lacks
+#: ("Of our total debt, $1.2 billion due within …", "our notes", "the Credit Facilities").
 _DEBT_WORD = re.compile(rf"{_DEBT_SECTION.pattern}|\bdebt\b|\bnotes?\b|\bprincipal\b|"
                         r"credit\s+facilities", re.I)
+
+# PART OF THE DEBT IS NOT THE WALL (TeamNostra fix request 2, V2-N1). #860's widened forms read "Of
+# the term loan, $45.0 million is due within one year" as the company's whole ≤12m figure beside
+# $500M of notes, and the coherence check AGREED with a CIQ panel that lacked the notes too.
+# Helmerich & Payne's 10-Q (0000046765-26-000042) has the shape: "Our indebtedness under our secured
+# term loan credit agreements totaled $77.7 million …, of which $6.9 million is due within one
+# year", after $1.8bn of senior notes it does not cover. So the clause BEFORE the figure decides:
+#: a debt instrument named there makes the figure that instrument's ("under the Credit Facilities",
+#: "Of the term loan", "our 2027 Notes") …
+_INSTRUMENT = re.compile(
+    r"\bterm\s+loans?\b|\brevolv\w*|\bcredit\s+(?:facilit(?:y|ies)|agreements?|lines?)\b|"
+    r"\b(?:senior|convertible|exchangeable|secured|unsecured)\s+(?:\w+\s+)?notes\b|"
+    r"\d(?:\.\d+)?\s?%\s+(?:\w+\s+){0,2}notes\b|\bnotes\s+due\s+20\d\d\b|\b20\d\d\s+notes\b|"
+    r"\b(?:bonds?|notes?)\s+payable\b|\bdebentures\b|\bcommercial\s+paper\b|\bsecuritization\b|"
+    r"\b(?:receivables|loan\s+security)\s+(?:\w+\s+)?(?:facilit\w+|agreements?)\b|"
+    r"\b(?:the|this|that)\s+(?:loan|notes)\b|\bfacilit(?:y|ies)\b|\bmortgages?\b|"
+    # "Term A loan", "Term B-1 Loans"; and debt QUALIFIED by what it is under ("borrowings under
+    # the ABL facility", "notes issued pursuant to the indenture") is that instrument's
+    r"\bterm\s+[a-z](?:-\d)?\s+loans?\b|\b(?:under|pursuant\s+to)\s+(?:the|our|its|this|that|such)\b",
+    re.I)
+#: … and with none named, the clause must name the debt in aggregate ("Of our total debt", "the
+#: Company had outstanding borrowings of $118.6 million, with", "on our outstanding notes").
+_AGGREGATE = re.compile(r"\b(?:debt|indebtedness|borrowings|notes|obligations)\b", re.I)
+#: The company's TOTAL debt, stated unqualified — "increasing our outstanding debt to $793.0
+#: million" (Werner). One instrument covers the wall when its own principal is this figure; a total
+#: followed by "under its Revolving Credit Facility" (Bellring) is that facility's, not a total.
+_TOTAL_DEBT = re.compile(
+    r"\b(?:outstanding|total)\s+(?:debt|indebtedness|borrowings)\s+(?:to|of|was|were|is|are|"
+    r"totaled|totaling|of\s+approximately)\s+\$\s*([\d,.]+)\s*(million|billion)\b"
+    # to the clause's end — a decimal point ("$250.0 million under") does not end it
+    r"(?!(?:[^.;]|\.(?=\d)){0,80}?\b(?:under|related\s+to|pursuant\s+to|in\s+connection\s+with)\b)",
+    re.I)
+_FIGURE_M = re.compile(r"\$\s*([\d,.]+)\s*(million|billion)\b", re.I)
 BASIS_PRINCIPAL = "principal"
 BASIS_PRINCIPAL_AND_INTEREST = "principal and interest"
 
@@ -125,33 +158,116 @@ def _in_millions(num: str, scale: str) -> float | None:
     return None if v is None else v * (1000.0 if scale.lower() == "billion" else 1.0)
 
 
-def _stated_12m(text: str) -> tuple[int, float | None, str] | None:
-    """(anchor, $M due within 12 months, basis) from the first widened form that states one."""
+#: A sentence end — never the period of an initial or a corporate abbreviation ("Bank of America,
+#: N.A. and other lenders", "our U.S. term loan", "Acme Corp. "), which would cut the clause after
+#: the instrument it names and leave only an aggregate word ("borrowings") behind it.
+_CLAUSE_END = re.compile(r"(?<!\b[A-Z])(?<!\bInc)(?<!\bCorp)(?<!\bCo)(?<!\bLtd)(?<!\bNo)\. ")
+
+
+def _clause_start(text: str, pos: int, *, cap: int = 400) -> int:
+    """Where the sentence holding ``pos`` starts — its words before ``pos`` are the subject a ≤12m
+    figure is stated for."""
+    lo = max(0, pos - cap)
+    ends = list(_CLAUSE_END.finditer(text, lo, pos))
+    return ends[-1].end() if ends else lo
+
+
+def _whole_debt(text: str, lo: int, hi: int) -> bool:
+    """Is a ≤12m figure whose sentence opens with ``text[lo:hi]`` the COMPANY's, not one
+    instrument's?
+
+    With no instrument named, the clause must name the debt in aggregate. With one named, its own
+    principal (the clause's last figure) must be the total debt the filing states unqualified
+    ELSEWHERE — a total inside the clause itself ("total debt was $500.0 million, and of the term
+    loan, …") is its last figure only because the instrument's own principal is unstated."""
+    clause = text[lo:hi]
+    if not _INSTRUMENT.search(clause):
+        return bool(_AGGREGATE.search(clause))
+    own = [_in_millions(m[1], m[2]) for m in _FIGURE_M.finditer(clause)]
+    if not own or own[-1] is None:
+        return False
+    # AT ONE DATE (Codex P1, round 1): a total stated for an earlier balance date — "total debt was
+    # $300.0 million at December 31, 2025" beside a June 2026 revolver of $300.0M — covers nothing.
+    # The two sentences must share a date, or both state none.
+    when = _dates_stated(_sentence(text, hi))
+
+    def same_date(at: int) -> bool:
+        dated = _dates_stated(_sentence(text, at))
+        return bool(dated & when) if (dated or when) else True
+
+    return any(_in_millions(t[1], t[2]) == own[-1] and same_date(t.start())
+               for t in _TOTAL_DEBT.finditer(text) if not lo <= t.start() < hi)
+
+
+#: A balance date as a 10-Q states one: "June 30, 2026", "September 30 , 2026".
+_DATE = re.compile(r"\b(January|February|March|April|May|June|July|August|September|October|"
+                   r"November|December)\s+(\d{1,2})\s*,\s*(20\d\d)\b")
+
+
+def _dates_stated(sentence: str) -> frozenset[tuple[str, str, str]]:
+    """Every date the sentence states — the balance dates a debt figure is given at."""
+    return frozenset((m[1], m[2], m[3]) for m in _DATE.finditer(sentence))
+
+
+class _Stated12m(NamedTuple):
+    anchor: int
+    total: float | None   # $M due within 12 months
+    basis: str
+    clause_lo: int        # the clause it is stated for: text[clause_lo:clause_hi]
+    clause_hi: int
+
+
+def _statements_12m(text: str) -> list[_Stated12m]:
+    """Every debt ≤12m statement, in the forms' order, each with the clause it is stated for."""
+    out: list[_Stated12m] = []
     for m in _DUE_12M.finditer(text):
         sent = _sentence(text, m.start())
         if _DEBT_WORD.search(sent) and not _NOT_DEBT.search(sent):
-            return m.start(), _in_millions(m.group(1), m.group(2)), BASIS_PRINCIPAL
+            out.append(_Stated12m(m.start(), _in_millions(m[1], m[2]), BASIS_PRINCIPAL,
+                                  _clause_start(text, m.start()), m.start()))
     for m in _NO_PRINCIPAL_12M.finditer(text):
         if not _NOT_DEBT.search(_sentence(text, m.start())):
-            return m.start(), 0.0, BASIS_PRINCIPAL
-    if pm := _P_AND_I_12M.search(text):
-        return pm.start(), _in_millions(pm.group(1), pm.group(2)), BASIS_PRINCIPAL_AND_INTEREST
+            out.append(_Stated12m(m.start(), 0.0, BASIS_PRINCIPAL,
+                                  _clause_start(text, m.start()), m.start()))
+    for m in _P_AND_I_12M.finditer(text):
+        out.append(_Stated12m(m.start(), _in_millions(m[1], m[2]), BASIS_PRINCIPAL_AND_INTEREST,
+                              _clause_start(text, m.start(1)), m.start(1)))
+    return out
+
+
+def _stated_12m(text: str, statements: list[_Stated12m] | None = None,
+                ) -> tuple[int, float | None, str] | None:
+    """(anchor, $M due within 12 months, basis) from the first statement for the WHOLE debt."""
+    for st in _statements_12m(text) if statements is None else statements:
+        if _whole_debt(text, st.clause_lo, st.clause_hi):
+            return st.anchor, st.total, st.basis
+    return None
+
+
+def _part_note(text: str, statements: list[_Stated12m]) -> str | None:
+    """The note for a filing whose only ≤12m figures are for part of the debt — LOUD, never a
+    silent 'not stated': it names the figure and the sentence it was not taken from."""
+    for st in statements:
+        total = "an amount" if st.total is None else f"${st.total:,.1f}M"
+        return (f"no near-term wall stated in filing for the whole debt — {total} due ≤12m is "
+                f"stated for part of it only (“{_sentence(text, st.anchor, cap=240)}”); see CIQ "
+                "panel")
     return None
 
 
 def _maturity_wall(text: str, src: str) -> MaturityWall | None:
-    wm = _WITHIN_12M.search(text)
-    stated = (wm.start(), _money(wm.group(1)), BASIS_PRINCIPAL) if wm else _stated_12m(text)
+    statements = _statements_12m(text)
+    stated = _stated_12m(text, statements)
     if stated is not None:  # state='located' — a ≤12m-wall statement was found
         anchor, total, basis = stated
         tranches: list[DebtTranche] = []
         for tm in _TRANCHE.finditer(text[max(0, anchor - 200):anchor + 500]):
-            amt = _money(tm.group(2))
+            amt = _in_millions(tm.group(2), tm.group(3))
             if amt is None:
                 continue
             tranches.append(DebtTranche(
                 name=" ".join(tm.group(1).split()).lower(), amount=amt,
-                maturity=tm.group(3).strip(),
+                maturity=tm.group(4).strip(),
                 verbatim=" ".join(tm.group(0).split())[:200], source_ref=src,
             ))
         return MaturityWall(
@@ -159,9 +275,10 @@ def _maturity_wall(text: str, src: str) -> MaturityWall | None:
             basis=None if basis == BASIS_PRINCIPAL else basis,  # absent is principal (the schema)
             verbatim=_sentence(text, anchor), source_ref=src,
         )
-    if _DEBT_SECTION.search(text):  # debt section present, but NO ≤12m wall stated — a KNOWN
+    part = _part_note(text, statements)
+    if part is not None or _DEBT_SECTION.search(text):  # debt present, but NO ≤12m wall stated
         return MaturityWall(
-            within_12m_total=None, tranches=[], state="not_stated", note=_NOT_STATED_NOTE,
+            within_12m_total=None, tranches=[], state="not_stated", note=part or _NOT_STATED_NOTE,
             verbatim="", source_ref=src,
         )
     return None  # no debt section located at all — true UNKNOWN
@@ -297,8 +414,8 @@ def _concentration(text: str, src: str,
 
 # --- (4) purchase / capital commitments ----------------------------------------------------------
 _COMMIT = re.compile(
-    r"\$\s*([\d,.]+)\s*million\s+(?:in|of)\s+(purchase|capital)\s+commitments"
-    r"(?:\s+with\s+\$\s*([\d,.]+)\s*million\s+due\s+within)?",
+    r"\$\s*([\d,.]+)\s*(million|billion)\s+(?:in|of)\s+(purchase|capital)\s+commitments"
+    r"(?:\s+with\s+\$\s*([\d,.]+)\s*(million|billion)\s+due\s+within)?",
     re.I,
 )
 
@@ -306,12 +423,13 @@ _COMMIT = re.compile(
 def _commitments(text: str, src: str) -> list[Commitment]:
     out: list[Commitment] = []
     for m in _COMMIT.finditer(text):
-        amt = _money(m.group(1))
+        # the scale is captured, as the wall's is (E2-D15): "$2.1 billion of purchase commitments"
+        amt = _in_millions(m.group(1), m.group(2))
         if amt is None:
             continue
         out.append(Commitment(
-            kind=m.group(2).lower(), amount=amt,
-            within_12m=_money(m.group(3)) if m.group(3) else None,
+            kind=m.group(3).lower(), amount=amt,
+            within_12m=_in_millions(m.group(4), m.group(5)) if m.group(4) else None,
             verbatim=_sentence(text, m.start(), cap=240), source_ref=src,
         ))
     return out

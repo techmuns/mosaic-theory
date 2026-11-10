@@ -30,13 +30,17 @@ from vinci.edgar import primary_source as ps
 
 _SRC = "10-Q 0000000000-00-000000"
 
-#: 10-Q 0000793074-26-000140 (Werner, Q2 2026), MD&A contractual obligations
+#: 10-Q 0000793074-26-000140 (Werner, Q2 2026), MD&A contractual obligations, then the liquidity
+#: sentence that states the same $793.0M as the company's whole outstanding debt — without it the
+#: Credit Facilities' $0 is one instrument's, not the wall (V2-N1, `test_wall_part_of_the_debt.py`)
 _WERN_WALL = (
     "• Debt Obligations and Interest Payments – As of June 30, 2026, we had outstanding debt under "
     "the Credit Facilities with an aggregate principal amount of $793.0 million, with no principal "
     "amount expected to be paid within 12 months. As of June 30, 2026, future interest payments "
     "associated with the Credit Facilities are estimated to be $57.5 million through 2027, with "
-    "$41.7 million payable within 12 months."
+    "$41.7 million payable within 12 months. We had net borrowings on our debt under our Credit "
+    "Facilities of $41.0 million during the six months ended June 30, 2026, increasing our "
+    "outstanding debt to $793.0 million at June 30, 2026."
 )
 #: 10-Q 0001065280-26-000291 (Netflix, Q3 2026), MD&A liquidity
 _NFLX_WALL = (
@@ -103,8 +107,9 @@ def test_principal_and_interest_is_located_with_its_basis() -> None:
 
 
 def test_a_stated_scale_is_read_not_assumed() -> None:
-    """The widened form captures its scale: billions are never stored as $M digits."""
-    w = fs._maturity_wall("Of the term loan, $1.2 billion is due within the next 12 months.", _SRC)
+    """The widened form captures its scale: billions are never stored as $M digits. (Its subject
+    was "Of the term loan" until V2-N1 showed that one instrument's figure is not the wall.)"""
+    w = fs._maturity_wall("Of our total debt, $1.2 billion is due within the next 12 months.", _SRC)
     assert w is not None and w.within_12m_total == 1200.0
 
 
@@ -178,9 +183,10 @@ def test_the_widened_wall_reads_plain_debt_words() -> None:
     w = fs._maturity_wall("Of our total debt, $1.2 billion due within the next 12 months is "
                           "classified as current.", _SRC)
     assert w is not None and (w.state, w.within_12m_total) == ("located", 1200.0)
+    # "the notes" beside "the revolver" is part of the debt, not all of it (V2-N1): refused, named
     w = fs._maturity_wall("Of the notes, $45.0 million is due within one year; the revolver "
                           "carries a commitment fee of 0.25%.", _SRC)
-    assert w is not None and w.within_12m_total == 45.0
+    assert w is not None and w.state == "not_stated" and "$45.0M" in w.note
 
 
 # --- END TO END: real 10-Q text → parser → the assembler's wall read, on the committed panel --

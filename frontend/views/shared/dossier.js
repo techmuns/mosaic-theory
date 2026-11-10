@@ -473,6 +473,16 @@ const EXTRACTION_VERSIONS = [
     "each peer median prints its count ('median of N of M peers'); a row stating no " +
     "total keeps its latest Assets and says 'no current balance' when its one family is " +
     "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5"],
+  ["2026-11-10.part-of-the-debt",
+    "a twelve-month debt figure for part of the debt is not the company's wall (TeamNostra fix " +
+    "request 2, V2-N1, RE2-D13, E2-D15's residual): a 10-Q's due-within-12-months statement is " +
+    "the wall only when the clause before it names the debt in aggregate, or names one " +
+    "instrument whose own principal is the total debt the filing states unqualified; otherwise " +
+    "the wall reads not_stated with a note naming the figure and its sentence. The original " +
+    "'$X million due within the next 12 months' form passes the same debt and lease filters as " +
+    "the widened ones, and the tranche and commitment readers read billions. On the 27 " +
+    "committed pages no filing field moves; outside them, Helmerich & Payne's term-loan $6.9M " +
+    "and Archer's lease $19.1M, both read as walls, now read not_stated"],
   ["2026-11-10.release-actuals-never-silent",
     "a release actual the reader cannot place is noted, never dropped silently, and four " +
     "shapes it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, " +
