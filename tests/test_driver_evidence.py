@@ -277,3 +277,12 @@ def test_two_listings_citing_one_call_share_its_record(tmp_path: Path) -> None:
     second = de.spool_dossier(twin, spool)
     assert first.written > 0 and second.written == 0 and second.already == first.written + \
         first.already
+
+
+def test_the_example_env_declares_the_spool_commented_and_with_no_path() -> None:
+    """The operator's folder is named only in the git-ignored `.env` (coordinator, 2026-11-10:
+    never a local path in a committed file). The example declares the variable, commented out,
+    so a copied `.env.example` sets no spool at all."""
+    lines = [ln for ln in (ROOT / ".env.example").read_text().splitlines()
+             if de.SPOOL_ENV in ln]
+    assert lines == [f"# {de.SPOOL_ENV}="]
