@@ -89,7 +89,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RBC-D6 | 3 | open | — | — | — |
 | RE2-D16 | 3 | open | — | — | — |
 | A-D2 | 3 | open | — | — | — |
-| BC-D7 | 3 | open | — | — | — |
+| BC-D7 | 3 | in progress (#964) | #964 | — | — |
 | BC-D10 | 3 | open | — | — | — |
 | D-D3 | 3 | open | — | — | — |
 | E1-D7 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
@@ -147,9 +147,9 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | V1-O2 | 5 | open | — | — | — |
 | V1-O3 | 5 | open | — | — | — |
 | RBC-D3 | 5 | open | — | — | — |
-| RBC-D7 | 5 | open | — | — | — |
-| BC-D1 | 5 | open | — | — | — |
-| BC-D2 | 5 | open | — | — | — |
+| RBC-D7 | 5 | in progress (#964) | #964 | — | — |
+| BC-D1 | 5 | in progress (#964) | #964 | — | — |
+| BC-D2 | 5 | in progress (#964) | #964 | — | — |
 | RE1-D15 | 5 | open | — | — | — |
 | RE2-D15 | 5 | open | — | — | — |
 | RF-D5 | 5 | open | — | — | — |
@@ -230,8 +230,8 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | F-S1 | §4 | open | — | — | — |
 | F-S2 | §4 | open | — | — | — |
 | F-S3 | §4 | open | — | — | — |
-| A-D13 | — | open | — | — | — |
-| A-D16 | — | open | — | — | — |
-| BC-D3 | — | open | — | — | — |
-| BC-D5 | — | open | — | — | — |
-| BC-D6 | — | open | — | — | — |
+| A-D13 | — | in progress (#964) | #964 | — | — |
+| A-D16 | — | in progress (#964) | #964 | — | — |
+| BC-D3 | — | in progress (#964) | #964 | — | — |
+| BC-D5 | — | in progress (#964) | #964 | — | — |
+| BC-D6 | — | in progress (#964) | #964 | — | — |
