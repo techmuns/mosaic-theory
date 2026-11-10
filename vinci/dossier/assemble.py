@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import math
+import sys
 import threading
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
@@ -23,7 +24,14 @@ from pydantic import ValidationError
 
 from vinci import provenance
 from vinci.config import Config, get_config
-from vinci.dossier import ciq_sheets, filed_tiebreak, ltm_quarters, requirements, run_metrics
+from vinci.dossier import (
+    ciq_sheets,
+    driver_evidence,
+    filed_tiebreak,
+    ltm_quarters,
+    requirements,
+    run_metrics,
+)
 from vinci.dossier import flags as dossier_flags
 from vinci.dossier import inputs as page_inputs
 from vinci.dossier.anchor import (
@@ -804,6 +812,20 @@ def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Dossier:
     _refuse_synthesis_overwrite(dossier, folder)
     _refuse_degraded_drawdown_overwrite(dossier, folder)
     dossier = _keep_committed_recipe(dossier, folder)
+    # (RG-D19 PR 2) THE TRANSCRIPT EVIDENCE GOES TO THE OPERATOR'S PRIVATE SPOOL FIRST, so a spool
+    # that cannot take it stops the build before the page is written. Until PR 3 strips the quote
+    # from the page this is additive, so an unset spool is a loud notice, not a stop; PR 3 makes
+    # it required, because the spool becomes the quote's only copy outside the licensed call.
+    spool = driver_evidence.EvidenceSpool.configured()
+    if spool is not None:
+        rep = driver_evidence.spool_dossier(dossier, spool)
+        if rep.no_evidence:
+            print(f"{dossier.ticker}: {rep.no_evidence} transcript driver row(s) had no locator "
+                  "or no quote, so NO evidence was spooled for them", file=sys.stderr)
+    elif (dossier.mechanical.operating_drivers is not None
+          and any(r.tier == "llm-fenced" for r in dossier.mechanical.operating_drivers.rows)):
+        print(f"{dossier.ticker}: transcript driver evidence NOT spooled — "
+              f"${driver_evidence.SPOOL_ENV} is unset", file=sys.stderr)
     folder.mkdir(parents=True, exist_ok=True)
     write_dossier(folder / "dossier.json", dossier)
     (folder / "dossier.md").write_text(
@@ -1110,6 +1132,10 @@ def assemble_one(
     RECORDS WHAT IT READS (`vinci.provenance`, opened by the decorator): every CIQ export, HTTP
     response and price series, together with what building the finalist and the resolver's index
     read before it, lands on the page as ``inputs`` (`vinci.dossier.inputs`)."""
+    # (RG-D19 PR 2) A SPOOL NAMED BUT UNUSABLE IS REFUSED HERE, BEFORE ANY PAID PHASE. Found only
+    # at `_write`, the refusal came after the covenant, driver and synthesis calls and threw their
+    # spend away (#915's lesson for the price store). `_write` checks again: the folder can go.
+    driver_evidence.EvidenceSpool.configured()
     reads = provenance.current()
     reads.add_reads(fin.reads)
     reads.add_reads(getattr(resolver, "index_reads", None))

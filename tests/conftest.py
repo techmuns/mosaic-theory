@@ -30,6 +30,15 @@ def _suite_sec_budget(request: pytest.FixtureRequest, monkeypatch: pytest.Monkey
 
 
 @pytest.fixture(autouse=True)
+def _no_evidence_spool(monkeypatch: pytest.MonkeyPatch) -> None:
+    """No test writes into the operator's evidence spool (RG-D19 PR 2). `assemble._write` spools
+    a page's transcript evidence when ``$VINCI_EVIDENCE_SPOOL`` is set, and that folder is on the
+    operator's shared Drive: a shell that has it set must never send a test's fixture rows there.
+    A test that spools names its own temporary folder."""
+    monkeypatch.delenv("VINCI_EVIDENCE_SPOOL", raising=False)
+
+
+@pytest.fixture(autouse=True)
 def _fresh_cover_cache() -> None:
     """The parsed-cover cache (`mechanical._COVER_TEXTS`) is module-global and keyed on the URL,
     so one test's served cover would answer the next test's refusing fetcher, in any file."""

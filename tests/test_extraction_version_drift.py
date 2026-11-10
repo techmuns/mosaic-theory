@@ -87,7 +87,7 @@ PINNED_AT = "2026-11-10.one-family-peers"
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
-    "vinci/dossier/assemble.py": "14b04139d68b",
+    "vinci/dossier/assemble.py": "7aa870cc9eaf",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "059ec4f12b76",
     "vinci/dossier/ciq.py": "6a636c11c2f3",
@@ -147,6 +147,8 @@ WATCHED: dict[str, str] = {
 #: Modules in the classified packages that cannot change what a dossier carries, each with why.
 NOT_EXTRACTION: dict[str, str] = {
     "vinci/dossier/__init__.py": "the package's docstring",
+    "vinci/dossier/driver_evidence.py": "writes a page's transcript evidence to the operator's "
+                                        "private spool, never a page field",
     "vinci/dossier/extraction_version.py": "the version table itself — editing it IS the bump",
     "vinci/dossier/prespend.py": "the $0 pre-spend check: builds into a deleted folder and "
                                  "compares, never writes a page",
