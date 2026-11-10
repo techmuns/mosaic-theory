@@ -19,9 +19,16 @@ import pytest
 from vinci.dossier.capital_allocation import (
     ACQUISITION,
     BUYBACK_AVG_PRICE,
+    BUYBACK_CASH,
+    BUYBACK_SHARES,
     build_capital_allocation,
 )
 from vinci.dossier.schemas import CapitalAllocation, SourceStatus
+
+#: Fix 3b's not-current note (`capital_allocation._current`) opens with this, then the tag.
+NOT_CURRENT = "no current figure — the latest "
+BUYBACK_LEGS = {"buyback_cash": BUYBACK_CASH, "buyback_shares": BUYBACK_SHARES,
+                "buyback_avg_price": BUYBACK_AVG_PRICE}
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 pytestmark = pytest.mark.network        # reads EDGAR companyfacts (cached)
@@ -149,6 +156,13 @@ def test_every_absence_names_the_tags_that_were_tried() -> None:
     for t in _names():
         for name, f in _ca(t):
             if name == "brand_split" or f.value is not None:
+                continue
+            if (f.note or "").startswith(NOT_CURRENT):
+                # fix 3b (#930): a buyback leg that EXISTS but ends more than a year before the
+                # price date is not "not found" — its note names the tag that answered and its
+                # period instead, and only a buyback field may say so
+                assert any(f"{NOT_CURRENT}{tag} covers " in str(f.note)
+                           for tag in BUYBACK_LEGS.get(name, ())), f"{t}.{name}: {f.note}"
                 continue
             assert f.note and "EDGAR XBRL companyfacts" in f.note, f"{t}.{name}: {f.note}"
             if name == "acquisition_consideration":
