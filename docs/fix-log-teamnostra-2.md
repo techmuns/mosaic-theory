@@ -137,7 +137,7 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RG-D21 | 4 | open | — | — | — |
 | RD-D2 | 4 | open | — | — | — |
 | RD-D3 | 4 | open | — | — | — |
-| RD-D4 | 4 | open | — | — | — |
+| RD-D4 | 4 | open | evidence, not a fix: VITL's $0 precheck of 2026-11-09 listed 6 regressions and not its R1 anchor base, 30.0469 → None on the paid page, because the `anchor` block it compares by presence stays present; and UBER's of 2026-11-09 read "0 regressions" while the paid page's `valuation_basis.priceable` went True → False (its bridge $5,356.0M against CIQ's comps TEV less market cap $8,973.0M), the block present either way (`docs/records/2026-11-09-fix-request-2-order-1-rebuilds.md`) | — | — |
 | RA-D5 | 5 | open | — | — | — |
 | RA-D7 | 5 | open | — | — | — |
 | RA-D10 | 5 | open | — | — | — |
