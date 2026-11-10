@@ -443,6 +443,16 @@ const EXTRACTION_VERSIONS = [
     "name a later /A (RE1-D13) and say what their character cap left out " +
     "(RE1-D14). On the 28 pages frozen at bcda7ce3 no field moves: the catalyst counts on " +
     "EPAM, IT and PARR, which the old view would now undercount, are reproduced"],
+  ["2026-11-09.driver-facts",
+    "each transcript operating-driver row carries the fact code read from its quote, and " +
+    "where the quote sits (audit RG-D8, RG-D19): `figures` (each number with the currency, " +
+    "scale, unit, change and bound its quote prints beside it), `value_status` (verified, " +
+    "qualitative or unknown) with `unknown_reason`, and `locator` (the call, its sha256, " +
+    "the paragraph, the speaker and the quote's sha256). A quote that does not name its " +
+    "metric, a figure-less value that is not the quote's words, and a direction or reading " +
+    "the quote does not support read UNKNOWN with no figure, and the synthesis reads that " +
+    "row's value as UNKNOWN. 10 of the 881 committed transcript rows would; no page carries " +
+    "the fields until it is re-assembled"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

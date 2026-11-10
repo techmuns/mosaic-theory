@@ -63,8 +63,9 @@ class _Drivers(LlmClient):
         return {"drivers": self._rows}
 
 
-def _row(quote: str, value: str, period: str = "") -> dict[str, str]:
-    return {"kind": "leading_indicator", "metric": "widget revenue", "period": period,
+def _row(quote: str, value: str, period: str = "", metric: str = "widget revenue"
+         ) -> dict[str, str]:
+    return {"kind": "leading_indicator", "metric": metric, "period": period,
             "value": value, "quote": quote}
 
 
@@ -216,7 +217,9 @@ def test_a_period_the_quote_states_is_kept_and_the_calls_own_period_is_not_flagg
     stated, _ = _extract(_row("Turning to margins, gross margin was 64% in the first quarter.",
                               "64%", "first quarter"))
     assert stated[0].period == "first quarter"
-    same, flags = _extract(_row(_SHIPPED, "266 MWh", "Q4 2025"))
+    # the metric is the one its quote names: labelled "widget revenue", as this fixture first was,
+    # the row now reads UNKNOWN for its label and flags it (RG-D8) — a flag this test is not about
+    same, flags = _extract(_row(_SHIPPED, "266 MWh", "Q4 2025", metric="shipments"))
     assert same[0].period is None
     assert flags == []
 
