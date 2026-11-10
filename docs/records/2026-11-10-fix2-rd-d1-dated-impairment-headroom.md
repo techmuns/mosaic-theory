@@ -54,6 +54,24 @@ superseded-by:
     (`AsOfEdgar`). All three now read `refresh._facts_at`: companyfacts as filed by the page's
     `stock_info.as_of`.
 - Extraction version `2026-11-10.dated-headroom`; the drift pins are re-pinned.
+- **THE OPERATOR'S RULING ON ONE-FAMILY PEERS (2026-11-10, "yes" to the middle path, relayed by
+  the coordinator).** Codex's round-1 P1 on #953 said a peer's lone leg should not enter the
+  medians, because an absent tag is not a zero balance. The operator ruled for the middle path:
+  1. **Display:** the peer is shown with the one leg it reports, labelled "goodwill only" or
+     "intangibles only", as the subject page states its own headroom.
+  2. **Median:** that peer is left OUT of the goodwill-plus-intangibles medians, and each median
+     prints its count, e.g. "median of 6 of 10 peers". The charge median in the base-rate line
+     prints its count too, since a charged peer stating no total has no ratio.
+  3. **Base rate:** that peer stays IN the impairment base rate. The base-rate population no
+     longer depends on the acquired total: it is every large peer whose write-down history was
+     measured (`charged` or `explicit-zero`), whether or not its balance sheet gives a total.
+  - **Found while building it, and fixed with it:** a peer's impairment window ended at its
+    goodwill balance, even one the filer stopped tagging years ago. ROST's window was 2010-2015
+    and URBN's 2018-2023. Once the base rate stopped depending on the acquired total, such a stale
+    window would have counted as a current measurement. The window now ends at the first family
+    whose balance is within `CURRENT_DAYS` of the filer's latest balance, so every row whose
+    goodwill is current keeps its window.
+  - Extraction version `2026-11-10.one-family-peers`; the drift pins are re-pinned.
 
 **WHY.** RD-D1 is the last of the five order-2 defects in code. It waited for #930, which rewrote
 the same `build_capital_allocation` sites (merged as `f491d155`).
@@ -101,6 +119,61 @@ the same `build_capital_allocation` sites (merged as `f491d155`).
     - BURL 1.0% → 1.7% (n 8 → 3).
   - TGT's and BURL's own %-of-assets are now none.
   - No synthesis on these four pages cites a peer-intensity figure (searched).
+- **Under the operator's ruling** (the same four pages, refreshed again at $0 with
+  `peer_capital_intensity_transform`; a dry run printed every move first, and the refresh matched
+  it):
+  - **Fail first:** the four pins in `tests/test_peer_median_one_family.py` all fail on `4f6b4563`
+    and pass here. They cover a one-leg peer shown but kept out of the median, the base rate
+    counting a measured peer that states no total, a window ending at the filer's latest balance,
+    and every committed page printing each median's count.
+  - **Medians %-of-assets** (all peers; the counts are peers in the median out of peers shown):
+    - MCK 45.1% → 48.6% (7 → 6 of 9; BHIC, intangibles only, left out). The large-peer median is
+      unchanged: 3 of 4 (one large peer is unresolved).
+    - AMZN 22.3% → 20.0% (9 → 8 of 10; NFLX left out). Leaving a lone leg out can move a median
+      either way.
+    - TGT 7.9% → 10.2% (8 → 6 of 10; COST and TJX left out).
+    - BURL 1.7% → 3.9% (3 → 2 of 9; TJX left out).
+  - **Base rate:**
+    - TGT 3 of 6 → **5 of 8**: DLTR and BBY are measured, but their legs share no current date.
+    - BURL 1 of 2 → **2 of 5**.
+    - The charge median covers 3 of 5 on TGT (DLTR and BBY have no ratio) and 1 of 2 on BURL
+      (ANF has none).
+  - **Windows corrected:**
+    - BURL: URBN moves from 2018-2023 (`charged`, reading a 2020 charge as current) to 2021-2026
+      (`none-in-window`). ANF moves from 2013-2018 (`none-in-window`) to 2021-2026 (`charged`, its
+      FY2026 charge). ROST's window moves too, and it stays `untagged`.
+    - AMZN: KSS moves from 2004-2009 to 2021-2026, and it stays `untagged`.
+  - Every `dossier.json` change is inside `mechanical.peer_capital_intensity` and
+    `layer_refreshes`, on those four pages only. All 27 `dossier.md` re-render because the median
+    lines now print their counts; on the other 23, only those lines and the counts change.
+  - No synthesis on the four cites the intensity median or the base rate. Every "peer median" in
+    them is the CIQ comps multiples (searched).
+  - **Code review of this delta (`/code-review high --fix`): 10 findings.**
+    - **Fixed (4):**
+      - A filer tagging ONE family that is not current read "no shared balance". It now reads "no
+        current balance": KSS, ROST, URBN and ANF.
+      - A row stating no total had dropped its current Assets, which it showed before RD-D1. It
+        keeps it now.
+      - These two are behind `::test_a_row_with_no_total_names_its_case_and_keeps_its_assets`,
+        which failed first.
+      - The `_pick` docstrings were corrected, and a long line in `scripts/build_balance_fixture.py`
+        was wrapped.
+    - **Dismissed (2):**
+      - The renderers count from the rows rather than from stored fields. The end-to-end pin checks
+        those counts against each page's stored median on every committed page, so no schema field
+        is added.
+      - A duplicate `_pick` scan is a cleanup.
+    - **Put to the operator (1):** whether a one-leg peer's ratio (COST's charge over its goodwill)
+      belongs in the CHARGE median. The ruling keeps the peer in the base rate, and the code does;
+      the median's count is printed.
+    - **Found, not fixed (3):**
+      - The subject's STALE impairment check dates itself against the first family's balance, even
+        a stale one. No committed subject is affected: ROST has no charge, and TGT and BURL have
+        current goodwill.
+      - A peer whose current total is exactly 0.0 gets no ratio and no note. TENX on TECX's page has
+        this, and it predates #953.
+      - The Goodwill and Intangibles lines print each leg's own latest balance with no date beside
+        it; ROST prints a 2015 goodwill. This predates #953.
 - **Code review (round 0, `/code-review high --fix`):** 10 findings.
   - Fixed (9):
     - the goodwill-only peers fell out of the medians and the impairment base rate: they are now
@@ -126,13 +199,29 @@ the same `build_capital_allocation` sites (merged as `f491d155`).
 - Pages: `data/dossiers/*/dossier.json` at `fd123ada`, 27 pages.
 - SEC companyfacts read 2026-11-10, cut as filed by each page's `stock_info.as_of`.
 - `CURRENT_DAYS` = 366.
-- Peer-block refresh: the four pages named above.
+- Peer-block refresh: the four pages named above, once for RD-D1 and once under the ruling
+  (SEC read 2026-11-10, cut at each page's `stock_info.as_of`; code at `4f6b4563` plus the ruling).
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **The other 23 pages' peer blocks** are as assembled, with the old reading (a missing leg as 0.0,
   legs at their own dates) until each is rebuilt or refreshed.
   - How many of their rows that moves is not measured: it would need about 230 more peer fetches.
-- **The single-leg rule is a choice.** A family the filer never tags is no leg: its other leg
-  stands alone, labelled, on the subject page and on a peer row alike.
+- **The single-leg rule is RULED by the operator (2026-11-10, above).** A family the filer never
+  tags is no leg. Its other leg stands alone, labelled, on the subject page and on a peer row
+  alike, and on a peer row it is kept out of the medians.
   - Falsifier: a filer whose 10-K states an intangibles balance it tags under its own extension
     tag. Its headroom would then read goodwill alone.
+- **OPEN, not built: a "confirmed nil" third state** (the operator's follow-up, 2026-11-10). A peer
+  whose balance-sheet presentation shows the other line is ABSENT has a confirmed nil leg, not an
+  untagged one, so its single leg is its whole total and could enter the medians. Today the code
+  cannot tell an absent line from an untagged one. Recorded here, not in STATE §5.0.
+- **Two network-marked tests fail, and they fail on main's code too** (not in the gate):
+  - `test_peer_capital_intensity.py::test_the_two_denominators_disagree_and_that_is_the_point`:
+    SMPL's ratio to market cap reads 1.39 against a pinned 1.66, and main's builder gives the same
+    1.389 on today's companyfacts.
+  - `::test_the_peer_table_renders_without_capital_allocation`: no committed page now has a peer
+    block without a capital-allocation block.
+  - Found, not fixed.
+- **Found, not fixed:** a charge's "% of acquired" divides a five-year charge total by the CURRENT
+  balance, so a name that wrote most of it off reads far above 100%. ETSY on AMZN's page reads
+  2,381% (1,146.7 over 48.2), and AMZN's charge median of 2 reads 1,194%. This predates #953.

@@ -6712,11 +6712,11 @@
       "size_floor": 1000.0,
       "subject_pct_assets": 0.16479100549158932,
       "subject_pct_market_cap": 0.12201811905709044,
-      "median_all_assets": 0.45099913119026935,
-      "median_all_market_cap": 0.5321973774592728,
+      "median_all_assets": 0.48595738354919915,
+      "median_all_market_cap": 1.3865364767480697,
       "median_large_assets": 0.2678364284524201,
       "median_large_market_cap": 0.3322760862614133,
-      "n_all": 7,
+      "n_all": 6,
       "n_large": 3,
       "imp_window_years": 5,
       "imp_n_large_assessed": 3,
@@ -16038,6 +16038,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation",
+        "mechanical.peer_capital_intensity"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.one-family-peers",
+      "writer": "refresh",
+      "layers": [
         "mechanical.peer_capital_intensity"
       ]
     }

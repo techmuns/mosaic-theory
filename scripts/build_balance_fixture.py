@@ -40,8 +40,8 @@ def main(argv: list[str]) -> int:
     tags = (*GOODWILL, *INTANGIBLES, *TOTAL_ASSETS)
     edgar = EdgarClient.from_config()
     out: dict[str, Any] = {"_about": {
-        "what": "SEC companyfacts, cut to the balance tags capital_allocation reads and as filed by "
-                "each page's price date (scripts/build_balance_fixture.py)",
+        "what": "SEC companyfacts, cut to the balance tags capital_allocation reads and as filed "
+                "by each page's price date (scripts/build_balance_fixture.py)",
         "tags": list(tags)}, "names": {}}
     for t in [a.upper() for a in argv] or list(NAMES):
         page = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())

@@ -1,6 +1,6 @@
 # Dossier — MCKESSON CORP (NYSE: MCK)
 
-_November 5, 2026 · extraction 2026-11-05.input-record · layers refreshed to 2026-11-10.dated-headroom_
+_November 5, 2026 · extraction 2026-11-05.input-record · layers refreshed to 2026-11-10.one-family-peers_
 
 # Brief — first cut
 
@@ -108,8 +108,8 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 | ACH | 21 | 1,306 | 2,107 | 62% | 6161% | — |
 | MEDS | 5 | 17 | 33 | 52% | 373% | — |
 
-- **Median — all peers (n=7):** 45% of assets · 53% of market cap
-- **Median — peers ≥ $1,000M market cap (n=3):** 27% of assets · 33% of market cap
+- **Median — all peers:** 49% of assets · 139% of market cap (median of 6 of 9 peers)
+- **Median — peers ≥ $1,000M market cap:** 27% of assets · 33% of market cap (median of 3 of 4 peers)
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
 - **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [30]  <!-- ds-table -->
 
@@ -124,7 +124,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 | ACH | wrote down | 1 of 5 | 307 | 24% | 2024-12-31 ($307M) | — |
 | MEDS | wrote down | 1 of 2 | 13 | 73% | 2025-12-31 ($13M) | — |
 
-- **Base rate — 3 of 3 large peers ASSESSED over the window took a charge**, median 5% of acquired assets among those that did. The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
+- **Base rate — 3 of 3 large peers ASSESSED over the window took a charge**, median 5% of acquired assets among those that did (median of 3 of 3 peers). The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
 - _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. `no annual obs.` and `does not tag` are not measurements and must not be read as clean years. The **live YTD** column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities._
 
 ## Valuation — first cut
@@ -642,6 +642,7 @@ _Source §: 8-K 0001193125-13-450016 · d629383dex101.htm · amended by 00009276
 - **Refreshed since assembly** (oldest first):
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation, mechanical.peer_capital_intensity — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.peer_capital_intensity — refresh at 2026-11-10.one-family-peers
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-11-04
 - **Panel age:** oldest panel 1d old — 2026-11-04 (valuation.implied_expectations.tev_as_of), against a 2026-11-05 build
 - **Consensus age:** consensus 1d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling

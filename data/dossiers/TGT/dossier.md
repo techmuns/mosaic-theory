@@ -1,6 +1,6 @@
 # Dossier — TARGET CORP (NYSE: TGT)
 
-_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.dated-headroom_
+_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.one-family-peers_
 
 # Brief — first cut
 
@@ -93,20 +93,20 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
 |  | mcap $M | acquired $M | assets $M | % assets | % mcap | why |
 |---|---:|---:|---:|---:|---:|---|
-| **TGT** | **71,529** | **—** | **—** | **—** | **—** | **no shared balance** |
+| **TGT** | **71,529** | **—** | **61,235** | **—** | **—** | **no shared balance** |
 | WMT | 856,686 | 33,035 | 284,668 | 12% | 4% | — |
 | COST | 409,030 | 994 | 89,045 | 1% | 0% | goodwill only |
 | TJX | 143,063 | 97 | 37,115 | 0% | 0% | goodwill only |
 | KR | 34,691 | 3,472 | 49,491 | 7% | 10% | — |
 | DG | 27,542 | 5,539 | 32,167 | 17% | 20% | — |
-| DLTR | 21,403 | — | — | — | — | no shared balance |
-| BBY | 18,982 | — | — | — | — | no shared balance |
+| DLTR | 21,403 | — | 14,030 | — | — | no shared balance |
+| BBY | 18,982 | — | 16,107 | — | — | no shared balance |
 | TSCO | 16,814 | 506 | 12,162 | 4% | 3% | — |
 | DKS | 12,132 | 1,600 | 18,245 | 9% | 13% | — |
 | BJ | 11,847 | 1,102 | 7,992 | 14% | 9% | — |
 
-- **Median — all peers (n=8):** 8% of assets · 7% of market cap
-- **Median — peers ≥ $1,000M market cap (n=8):** 8% of assets · 7% of market cap
+- **Median — all peers:** 10% of assets · 10% of market cap (median of 6 of 10 peers)
+- **Median — peers ≥ $1,000M market cap:** 10% of assets · 10% of market cap (median of 6 of 10 peers)
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
 - **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [23]  <!-- ds-table -->
 
@@ -124,7 +124,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 | DKS | wrote down | 1 of 5 | 5 | 0% | 2024-02-03 ($5M) | — |
 | BJ | reports nil | 0 of 5 | — | — | never | — |
 
-- **Base rate — 3 of 6 large peers ASSESSED over the window took a charge**, median 12% of acquired assets among those that did. The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
+- **Base rate — 5 of 8 large peers ASSESSED over the window took a charge**, median 12% of acquired assets among those that did (median of 3 of 5 peers). The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
 - _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. `no annual obs.` and `does not tag` are not measurements and must not be read as clean years. The **live YTD** column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities._
 
 ## Valuation — first cut
@@ -584,6 +584,7 @@ _Source §: 8-K 0000027419-26-000032 · five-yearcreditagreementex.htm_
   - 2026-10-27 · mechanical.quality — refresh at 2026-10-09.3
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation, mechanical.peer_capital_intensity — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.peer_capital_intensity — refresh at 2026-11-10.one-family-peers
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 31d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 39d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling

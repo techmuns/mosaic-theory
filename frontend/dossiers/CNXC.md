@@ -119,8 +119,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 | ADT | 5,041 | 9,798 | 15,739 | 62% | 194% | — |
 | TASK | 785 | 362 | 998 | 36% | 46% | — |
 
-- **Median — all peers (n=9):** 45% of assets · 30% of market cap
-- **Median — peers ≥ $1,000M market cap (n=8):** 47% of assets · 27% of market cap
+- **Median — all peers:** 45% of assets · 30% of market cap (median of 9 of 10 peers)
+- **Median — peers ≥ $1,000M market cap:** 47% of assets · 27% of market cap (median of 8 of 9 peers)
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
 - **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [24]  <!-- ds-table -->
 
@@ -137,7 +137,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 | ADT | wrote down | 3 of 3 | 731 | 7% | 2023-12-31 ($511M) | 2 |
 | TASK | reports nil | 0 of 5 | — | — | never | — |
 
-- **Base rate — 2 of 7 large peers ASSESSED over the window took a charge**, median 4% of acquired assets among those that did. The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
+- **Base rate — 2 of 7 large peers ASSESSED over the window took a charge**, median 4% of acquired assets among those that did (median of 2 of 2 peers). The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
 - _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. `no annual obs.` and `does not tag` are not measurements and must not be read as clean years. The **live YTD** column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities._
 
 ## Valuation — first cut

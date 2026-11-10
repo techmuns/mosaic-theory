@@ -5876,7 +5876,7 @@
           "is_subject": true,
           "market_cap": 71529.0,
           "acquired": null,
-          "total_assets": null,
+          "total_assets": 61235.0,
           "pct_assets": null,
           "pct_market_cap": null,
           "note": "no shared balance — goodwill is as at 2026-01-31 and intangibles as at 2021-01-30; the latest balance date the legs share, 2021-01-30, is 2009 days before the filer's latest balance date 2026-08-01 — more than 366, so it measures no current headroom",
@@ -6038,7 +6038,7 @@
           "is_subject": false,
           "market_cap": 21403.0,
           "acquired": null,
-          "total_assets": null,
+          "total_assets": 14029.6,
           "pct_assets": null,
           "pct_market_cap": null,
           "note": "no shared balance — goodwill is as at 2026-08-01 and intangibles as at 2024-11-02; the latest balance date the legs share, 2024-11-02, is 637 days before the filer's latest balance date 2026-08-01 — more than 366, so it measures no current headroom",
@@ -6065,7 +6065,7 @@
           "is_subject": false,
           "market_cap": 18982.5,
           "acquired": null,
-          "total_assets": null,
+          "total_assets": 16107.0,
           "pct_assets": null,
           "pct_market_cap": null,
           "note": "no shared balance — goodwill is as at 2026-08-01 and intangibles as at 2020-02-01; the latest balance date the legs share, 2020-02-01, is 2373 days before the filer's latest balance date 2026-08-01 — more than 366, so it measures no current headroom",
@@ -6171,15 +6171,15 @@
       "size_floor": 1000.0,
       "subject_pct_assets": null,
       "subject_pct_market_cap": null,
-      "median_all_assets": 0.07893112657472684,
-      "median_all_market_cap": 0.06578283529095862,
-      "median_large_assets": 0.07893112657472684,
-      "median_large_market_cap": 0.06578283529095862,
-      "n_all": 8,
-      "n_large": 8,
+      "median_all_assets": 0.10187777476216815,
+      "median_all_market_cap": 0.09654364885003938,
+      "median_large_assets": 0.10187777476216815,
+      "median_large_market_cap": 0.09654364885003938,
+      "n_all": 6,
+      "n_large": 6,
       "imp_window_years": 5,
-      "imp_n_large_assessed": 6,
-      "imp_n_large_charged": 3,
+      "imp_n_large_assessed": 8,
+      "imp_n_large_charged": 5,
       "imp_median_large_pct": 0.11578341013824885,
       "imp_subject_pct": null,
       "imp_subject_state": "explicit-zero"
@@ -16006,6 +16006,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation",
+        "mechanical.peer_capital_intensity"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.one-family-peers",
+      "writer": "refresh",
+      "layers": [
         "mechanical.peer_capital_intensity"
       ]
     }

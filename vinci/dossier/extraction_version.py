@@ -644,6 +644,17 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "share no current date, and labels a single leg. MCK's headroom moves from $12,950.0M "
         "to $15,214.0M; AMZN's is dated 2025-12-31; TGT's and BURL's are UNKNOWN",
     ),
+    (
+        "2026-11-10.one-family-peers",
+        "the operator's ruling on one-family peers (#953): a peer tagging goodwill or "
+        "intangibles alone is shown with that one leg, labelled, and left out of the "
+        "goodwill-plus-intangibles medians; the impairment base rate counts every large peer "
+        "measured over its window, whether or not its balance sheet gives a total, and that "
+        "window ends at the filer's latest balance, never at a family it stopped tagging; "
+        "each peer median prints its count ('median of N of M peers'); a row stating no "
+        "total keeps its latest Assets and says 'no current balance' when its one family is "
+        "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

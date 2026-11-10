@@ -3289,13 +3289,20 @@ def _peer_capital_intensity_lines(m: MechanicalLayer) -> list[str]:
                  "the CIQ comps grid",
                  cols, rows, num_cols=frozenset(range(5)),
                  name_rows=frozenset(i for i, x in enumerate(pc.rows) if x.is_subject))
+    # EACH MEDIAN STATES HOW MANY OF THE PEERS IT COVERS (2026-11-10, the operator's ruling on
+    # #953): the rows it leaves out (one leg, no shared balance, no figures) stay on the table
+    shown = [r for r in pc.rows if not r.is_subject]
+    shown_large = [r for r in shown
+                   if r.market_cap is not None and r.market_cap >= pc.size_floor]
     out.append(
-        f"- **Median — all peers (n={pc.n_all}):** {pct(pc.median_all_assets)} of assets · "
-        f"{pct(pc.median_all_market_cap)} of market cap")
+        f"- **Median — all peers:** {pct(pc.median_all_assets)} of assets · "
+        f"{pct(pc.median_all_market_cap)} of market cap "
+        f"(median of {pc.n_all} of {len(shown)} peers)")
     out.append(
-        f"- **Median — peers ≥ ${pc.size_floor:,.0f}M market cap (n={pc.n_large}):** "
+        f"- **Median — peers ≥ ${pc.size_floor:,.0f}M market cap:** "
         f"{pct(pc.median_large_assets)} of assets · "
-        f"{pct(pc.median_large_market_cap)} of market cap")
+        f"{pct(pc.median_large_market_cap)} of market cap "
+        f"(median of {pc.n_large} of {len(shown_large)} peers)")
     out.append(
         "- _Read the ASSETS column for the peer judgement — it measures how acquisitive the "
         "balance sheet is. The market-cap column sizes the exposure but moves with the price, so "
@@ -3349,10 +3356,17 @@ def _peer_impairment_lines(pc: Any) -> list[str]:
         rows, num_cols=frozenset({3, 4, 6}),
         name_rows=frozenset(i for i, x in enumerate(have) if x.is_subject))
     if pc.imp_n_large_assessed:
+        # the charge median's own count: a charged peer stating no acquired total has no ratio
+        # (2026-11-10, the operator's ruling on #953 keeps such peers in the base rate)
+        ratioed = sum(1 for r in pc.rows if not r.is_subject
+                      and r.market_cap is not None and r.market_cap >= pc.size_floor
+                      and r.impairment is not None and r.impairment.state == "charged"
+                      and r.impairment.pct_acquired is not None)
         out.append(
             f"- **Base rate — {pc.imp_n_large_charged} of {pc.imp_n_large_assessed} large peers "
             f"ASSESSED over the window took a charge**, median {pct(pc.imp_median_large_pct)} of "
-            f"acquired assets among those that did. The denominator counts only peers with an "
+            f"acquired assets among those that did (median of {ratioed} of "
+            f"{pc.imp_n_large_charged} peers). The denominator counts only peers with an "
             f"annual observation in the window — a name with none was not measured, and is not a "
             f"clean year.")
     out.append(

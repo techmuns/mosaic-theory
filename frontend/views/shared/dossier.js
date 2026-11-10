@@ -454,6 +454,15 @@ const EXTRACTION_VERSIONS = [
     "totals its legs at one date with Assets at that date, states no total when they " +
     "share no current date, and labels a single leg. MCK's headroom moves from $12,950.0M " +
     "to $15,214.0M; AMZN's is dated 2025-12-31; TGT's and BURL's are UNKNOWN"],
+  ["2026-11-10.one-family-peers",
+    "the operator's ruling on one-family peers (#953): a peer tagging goodwill or " +
+    "intangibles alone is shown with that one leg, labelled, and left out of the " +
+    "goodwill-plus-intangibles medians; the impairment base rate counts every large peer " +
+    "measured over its window, whether or not its balance sheet gives a total, and that " +
+    "window ends at the filer's latest balance, never at a family it stopped tagging; " +
+    "each peer median prints its count ('median of N of M peers'); a row stating no " +
+    "total keeps its latest Assets and says 'no current balance' when its one family is " +
+    "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
@@ -2296,10 +2305,13 @@ function peerCapitalIntensity(m) {
       + `<td class="num mono">${escapeHtml(pct(r.pct_market_cap))}</td>`
       + (noted ? `<td>${escapeHtml(String(r.note || "").split(" — ")[0])}</td>` : "") + "</tr>";
   }).join("");
+  // each median states how many of the peers it covers (the operator's ruling on #953, 2026-11-10)
+  const shown = pc.rows.filter((r) => !r.is_subject);
+  const shownLarge = shown.filter((r) => (r.market_cap || 0) >= pc.size_floor);
   return `<div class="fact"><div class="fact-label">Peer acquired-asset intensity — goodwill + intangibles</div>
     <div class="fact-val"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table>
-    <div class="fact-caveat">Median — all peers (n=${pc.n_all}): ${escapeHtml(pct(pc.median_all_assets))} of assets · ${escapeHtml(pct(pc.median_all_market_cap))} of market cap<br>
-    Median — peers ≥ $${escapeHtml(usd(pc.size_floor))}M market cap (n=${pc.n_large}): ${escapeHtml(pct(pc.median_large_assets))} of assets · ${escapeHtml(pct(pc.median_large_market_cap))} of market cap<br>
+    <div class="fact-caveat">Median — all peers: ${escapeHtml(pct(pc.median_all_assets))} of assets · ${escapeHtml(pct(pc.median_all_market_cap))} of market cap (median of ${pc.n_all} of ${shown.length} peers)<br>
+    Median — peers ≥ $${escapeHtml(usd(pc.size_floor))}M market cap: ${escapeHtml(pct(pc.median_large_assets))} of assets · ${escapeHtml(pct(pc.median_large_market_cap))} of market cap (median of ${pc.n_large} of ${shownLarge.length} peers)<br>
     <b>Read the ASSETS column for the peer judgement</b> — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting.</div></div></div>${peerImpairment(pc)}`;
 }
 
@@ -2325,8 +2337,13 @@ function peerImpairment(pc) {
       + `<td>${escapeHtml(last)}</td>`
       + `<td class="num mono">${escapeHtml(usd(i.pending))}</td></tr>`;
   }).join("");
+  // the charge median's own count: a charged peer stating no acquired total has no ratio
+  // (2026-11-10, the operator's ruling on #953 keeps such peers in the base rate)
+  const ratioed = pc.rows.filter((r) => !r.is_subject && (r.market_cap || 0) >= pc.size_floor
+    && r.impairment && r.impairment.state === "charged"
+    && r.impairment.pct_acquired !== null && r.impairment.pct_acquired !== undefined).length;
   const base = pc.imp_n_large_assessed
-    ? `<b>Base rate — ${pc.imp_n_large_charged} of ${pc.imp_n_large_assessed} large peers ASSESSED over the window took a charge</b>, median ${escapeHtml(pct(pc.imp_median_large_pct))} of acquired assets among those that did. The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.<br>`
+    ? `<b>Base rate — ${pc.imp_n_large_charged} of ${pc.imp_n_large_assessed} large peers ASSESSED over the window took a charge</b>, median ${escapeHtml(pct(pc.imp_median_large_pct))} of acquired assets among those that did (median of ${ratioed} of ${pc.imp_n_large_charged} peers). The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.<br>`
     : "";
   return `<div class="fact"><div class="fact-label">Peer write-down history — did they MARK DOWN what they carry? (trailing ${pc.imp_window_years} fiscal years)</div>
     <div class="fact-val"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table>

@@ -1,6 +1,6 @@
 # Dossier — Burlington Stores, Inc. (NYSE: BURL)
 
-_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.dated-headroom_
+_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.one-family-peers_
 
 # Brief — first cut
 
@@ -97,19 +97,19 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
 |  | mcap $M | acquired $M | assets $M | % assets | % mcap | why |
 |---|---:|---:|---:|---:|---:|---|
-| **BURL** | **15,998** | **—** | **—** | **—** | **—** | **no shared balance** |
+| **BURL** | **15,998** | **—** | **10,044** | **—** | **—** | **no shared balance** |
 | TJX | 143,063 | 97 | 37,115 | 0% | 0% | goodwill only |
-| ROST | 75,429 | — | — | — | — | no shared balance |
-| TGT | 71,529 | — | — | — | — | no shared balance |
+| ROST | 75,429 | — | 15,982 | — | — | no current balance |
+| TGT | 71,529 | — | 61,235 | — | — | no shared balance |
 | FIVE | 12,255 | — | 5,278 | — | — | no-tag |
 | GAP | 7,665 | 211 | 12,632 | 2% | 3% | — |
-| VSXY | 6,613 | — | — | — | — | no shared balance |
-| URBN | 6,454 | — | — | — | — | no shared balance |
-| ANF | 5,759 | — | — | — | — | no shared balance |
+| VSXY | 6,613 | — | 5,155 | — | — | no shared balance |
+| URBN | 6,454 | — | 5,123 | — | — | no current balance |
+| ANF | 5,759 | — | 3,595 | — | — | no current balance |
 | AEO | 2,780 | 261 | 4,279 | 6% | 9% | — |
 
-- **Median — all peers (n=3):** 2% of assets · 3% of market cap
-- **Median — peers ≥ $1,000M market cap (n=3):** 2% of assets · 3% of market cap
+- **Median — all peers:** 4% of assets · 6% of market cap (median of 2 of 9 peers)
+- **Median — peers ≥ $1,000M market cap:** 4% of assets · 6% of market cap (median of 2 of 9 peers)
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
 - **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [23]  <!-- ds-table -->
 
@@ -122,11 +122,11 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 | FIVE | does not tag | — | — | — | never | — |
 | GAP | reports nil | 0 of 5 | — | — | 2021-01-30 ($31M) | — |
 | VSXY | reports nil | 0 of 1 | — | — | 2020-02-01 ($720M) | — |
-| URBN | wrote down | 1 of 1 | 14 | — | 2020-01-31 ($14M) | 13 |
-| ANF | no annual obs. | — | — | — | 2026-01-31 ($1M) | — |
+| URBN | no annual obs. | — | — | — | 2020-01-31 ($14M) | 13 |
+| ANF | wrote down | 1 of 3 | 1 | — | 2026-01-31 ($1M) | — |
 | AEO | wrote down | 1 of 3 | 80 | 31% | 2024-02-03 ($40M) | — |
 
-- **Base rate — 1 of 2 large peers ASSESSED over the window took a charge**, median 31% of acquired assets among those that did. The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
+- **Base rate — 2 of 5 large peers ASSESSED over the window took a charge**, median 31% of acquired assets among those that did (median of 1 of 2 peers). The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
 - _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. `no annual obs.` and `does not tag` are not measurements and must not be read as clean years. The **live YTD** column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities._
 
 ## Valuation — first cut
@@ -599,6 +599,7 @@ _Source §: 8-K 0001564590-18-016500 · burl-ex101_6.htm · amended by 000119312
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
   - 2026-11-10 · mechanical.capital_allocation, mechanical.peer_capital_intensity — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.peer_capital_intensity — refresh at 2026-11-10.one-family-peers
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 31d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 34d old (2026-09-22, valuation.implied_expectations.multiples_as_of) — within the ceiling

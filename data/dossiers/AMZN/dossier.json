@@ -6630,15 +6630,15 @@
           "is_subject": false,
           "market_cap": 2756.2,
           "acquired": null,
-          "total_assets": null,
+          "total_assets": 13410.0,
           "pct_assets": null,
           "pct_market_cap": null,
-          "note": "no shared balance — goodwill is last tagged as at 2009-10-31, 6118 days before the filer's latest balance date 2026-08-01 — more than 366, so it measures no current headroom",
+          "note": "no current balance — goodwill is last tagged as at 2009-10-31, 6118 days before the filer's latest balance date 2026-08-01 — more than 366, so it measures no current headroom",
           "impairment": {
             "state": "untagged",
             "state_label": "does not tag",
-            "window_start": "2004-10-31",
-            "window_end": "2009-10-31",
+            "window_start": "2021-08-01",
+            "window_end": "2026-08-01",
             "observations": 0,
             "charged_years": 0,
             "total": null,
@@ -6682,12 +6682,12 @@
       "size_floor": 1000.0,
       "subject_pct_assets": 0.03969233853518524,
       "subject_pct_market_cap": 0.012493565640547459,
-      "median_all_assets": 0.2230842556272369,
-      "median_all_market_cap": 0.11155430711610487,
-      "median_large_assets": 0.2230842556272369,
-      "median_large_market_cap": 0.11155430711610487,
-      "n_all": 9,
-      "n_large": 9,
+      "median_all_assets": 0.19968459069867278,
+      "median_all_market_cap": 0.07350211558658781,
+      "median_large_assets": 0.19968459069867278,
+      "median_large_market_cap": 0.07350211558658781,
+      "n_all": 8,
+      "n_large": 8,
       "imp_window_years": 5,
       "imp_n_large_assessed": 7,
       "imp_n_large_charged": 2,
@@ -18894,6 +18894,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation",
+        "mechanical.peer_capital_intensity"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.one-family-peers",
+      "writer": "refresh",
+      "layers": [
         "mechanical.peer_capital_intensity"
       ]
     }

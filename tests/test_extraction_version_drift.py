@@ -80,8 +80,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "1625c8a81c23"
-PINNED_AT = "2026-11-10.dated-headroom"
+PINNED_TABLE = "3f1f2dca04c0"
+PINNED_AT = "2026-11-10.one-family-peers"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -89,7 +89,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
     "vinci/dossier/assemble.py": "7e9f283028c4",
     "vinci/dossier/band_guards.py": "dceaef85746c",
-    "vinci/dossier/capital_allocation.py": "8ebac753bcc3",
+    "vinci/dossier/capital_allocation.py": "059ec4f12b76",
     "vinci/dossier/ciq.py": "6a636c11c2f3",
     "vinci/dossier/ciq_balance.py": "7bf163fd7abe",
     "vinci/dossier/ciq_reread.py": "4ebcadca0987",
