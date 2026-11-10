@@ -491,10 +491,12 @@ def _ciq_scale_vs_revenue(page: dict[str, Any]) -> ItemResult:
         # THE REASON NAMES ONLY WHAT IS TRUE NOW (audit RBC-D10, 2026-11-10). It named
         # `ciq_scale_backfill.scale_check_backfill`, which #905 retired, so for a page built since
         # the stated cause could not be the cause. Earlier snapshots keep the old words as series
-        # points; the latest reproduces with these.
-        return ItemResult(not_run="no anchor.ciq_scale_check — the page predates the field; no "
-                                  "back-fill writes it since #905 retired the one that did, so "
-                                  "only an assembly writes it")
+        # points; the latest reproduces with these. Two writers set the field today: assembly
+        # (`assemble._assembly_anchor`) and `vinci anchor-backfill` (`cli._machine_anchor`, $0),
+        # which rewrites the anchor WITHOUT it when the CIQ folder raises on read.
+        return ItemResult(not_run="no anchor.ciq_scale_check — the page predates the field, or an "
+                                  "anchor-backfill could not read its CIQ folder; an assembly, or "
+                                  "an anchor-backfill that reads the folder, writes it")
     return _cross_check(page, a, "ciq_scale_check")
 
 

@@ -15,12 +15,18 @@ superseded-by:
   retired that back-fill and its module, so for any page built since, the second cause cannot be
   the cause. The words were kept on purpose so the latest committed scorecard reproduced byte for
   byte.
-- **The fix.** The reason now reads "no anchor.ciq_scale_check — the page predates the field; no
-  back-fill writes it since #905 retired the one that did, so only an assembly writes it".
+- **The fix.** The reason now reads "no anchor.ciq_scale_check — the page predates the field, or
+  an anchor-backfill could not read its CIQ folder; an assembly, or an anchor-backfill that reads
+  the folder, writes it". Two writers set the field: assembly (`assemble._assembly_anchor`) and the
+  $0 `vinci anchor-backfill` (`cli._machine_anchor`, pinned in
+  `tests/test_ciq_bridge_currency_and_scale.py`), which writes the anchor without it when the
+  folder raises on read. (Review round 0: a first draft said "no back-fill writes it … only an
+  assembly writes it", which `anchor-backfill` contradicts.)
 - **The guard** (`tests/test_quality_not_run_reasons.py`). Every parenthesised code name in a
   `not_run=` reason of a quality source must resolve under `vinci.dossier`. It reads the reasons by
-  the AST, so only those strings count. Today it resolves three names, the refresh transforms the
-  CIQ source cites. At `origin/main` it finds the fourth, the retired back-fill.
+  the AST, so only those strings count, and follows a reason held in a module-level constant
+  (`_ABSENT`, shared by the stored cross-checks). Today it resolves four names, the `refresh`
+  functions the CIQ source cites. At `origin/main` it finds a fifth, the retired back-fill.
 - **The artifact.** `data/snapshots/data_quality/ciq/2026-11-11.json`, regenerated at $0 from the
   committed pages (`vinci audit quality --source ciq --write`), in its own commit. It is the latest
   snapshot, so the reproduction pin now binds to it.
