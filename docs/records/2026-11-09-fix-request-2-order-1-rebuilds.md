@@ -1,8 +1,8 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-09
-prs: []
+prs: [949]
 supersedes:
 superseded-by:
 ---
@@ -340,8 +340,15 @@ the primary's `data/vinci.db` hash before and after, equal. It is not equal.
 - **Suites,** on the final tree (main `d1a91f0a` plus this branch), counted from the progress lines:
   - **CIQ folder linked, store copy present** (`pytest -m "not network"`): 10,083 passed, 104 skipped,
     6 xfailed, 6 failed. The six are main's, named above.
-  - **CI-style** (`bin/commit`: no CIQ link, no store, no cache): the gate of this branch's commit;
-    ruff, `mypy --strict vinci` and pytest, counts in the PR.
+  - **CI-style** (`bin/commit`: no CIQ link, no store, no cache): ruff "All checks passed!" and
+    `mypy --strict` "Success: no issues found in 204 source files" on both commits. pytest gave
+    9,625 passed, 568 skipped, 6 xfailed, 0 failed on `2f4b1ab4`, and 9,663 passed, 556 skipped,
+    6 xfailed, 0 failed on `365c879e`, its merge with main `fd123ada` (AORT retired, #930 fix 3b,
+    fix request 2 E1 and F).
+  - **The merge with `fd123ada`** conflicted in STATE rows 28, 41 and 54 (merged word by word, with no
+    overlap), the frozen-pages README, `test_dilution_denominator` (AORT retired, and EPAM, VRRM and
+    WLK landed) and `test_ev_gap_render`; all were resolved keeping both sides. The seven pages
+    re-render byte-identically at $0 on the merged code.
 
 **BOUNDARY.**
 - **Runs:**
