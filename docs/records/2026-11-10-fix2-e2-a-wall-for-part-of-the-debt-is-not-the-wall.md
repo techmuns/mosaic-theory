@@ -50,7 +50,7 @@ superseded-by:
 
 **HOW VERIFIED.**
 - **Fail first.** The new and changed tests were run in an export of `origin/main` `5e3def4a`:
-  - `tests/test_wall_part_of_the_debt.py`: 9 of 12 fail and the 3 negative pins pass (Microvast,
+  - `tests/test_wall_part_of_the_debt.py` as first written: 9 of 12 fail and the 3 negative pins pass (Microvast,
     Netflix and "Of our total debt" stay located; Microvast's millions commitments read as before;
     Werner end to end AGREES);
   - `tests/test_filing_wall_and_concentration_roles.py`: 1 fails. That is the "Of the notes, $45.0
@@ -78,6 +78,19 @@ superseded-by:
   - **Outside the corpus,** HP reads `not_stated` with the note, and Archer reads `not_stated` with
     the plain note. Monro's lease sentence ("$90.9 million is due within one year") and Peloton's
     10-Q read as on main.
+- **Code review, round 0 (`/code-review high --fix`).** It found four ways one instrument's figure
+  still passed as the wall, each now pinned on a constructed sentence (3 tests):
+  - a total stated inside the same clause ("our total debt was $500.0 million, and of the term
+    loan, $45.0 million …") matched itself as the instrument's principal. A total inside the clause
+    no longer counts;
+  - an abbreviation's period ("Bank of America, N.A. and other lenders") ended the clause before
+    the instrument it names. `_CLAUSE_END` skips an initial's and a corporate abbreviation's period;
+  - debt qualified by its instrument ("borrowings under the ABL facility", "mortgage notes", "Term A
+    loans") read as aggregate. `_INSTRUMENT` reads a bare facility, mortgages, a lettered term loan
+    and "under / pursuant to the …";
+  - every statement was scanned twice; it is now scanned once.
+
+  The 27-page replay was re-run on the reviewed code: still 0 of 108 fields move.
 - **The version.** Row `2026-11-10.part-of-the-debt`, in both tables, re-pinned.
 - **The synthesis request.** No committed page's filing section moves, so no request changes. The
   panel check (RUNBOOKS §n) is not owed.

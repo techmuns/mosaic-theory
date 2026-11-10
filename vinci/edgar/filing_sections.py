@@ -131,7 +131,11 @@ _INSTRUMENT = re.compile(
     r"\d(?:\.\d+)?\s?%\s+(?:\w+\s+){0,2}notes\b|\bnotes\s+due\s+20\d\d\b|\b20\d\d\s+notes\b|"
     r"\b(?:bonds?|notes?)\s+payable\b|\bdebentures\b|\bcommercial\s+paper\b|\bsecuritization\b|"
     r"\b(?:receivables|loan\s+security)\s+(?:\w+\s+)?(?:facilit\w+|agreements?)\b|"
-    r"\b(?:the|this|that)\s+(?:facility|loan|notes)\b", re.I)
+    r"\b(?:the|this|that)\s+(?:loan|notes)\b|\bfacilit(?:y|ies)\b|\bmortgages?\b|"
+    # "Term A loan", "Term B-1 Loans"; and debt QUALIFIED by what it is under ("borrowings under
+    # the ABL facility", "notes issued pursuant to the indenture") is that instrument's
+    r"\bterm\s+[a-z](?:-\d)?\s+loans?\b|\b(?:under|pursuant\s+to)\s+(?:the|our|its|this|that|such)\b",
+    re.I)
 #: … and with none named, the clause must name the debt in aggregate ("Of our total debt", "the
 #: Company had outstanding borrowings of $118.6 million, with", "on our outstanding notes").
 _AGGREGATE = re.compile(r"\b(?:debt|indebtedness|borrowings|notes|obligations)\b", re.I)
@@ -154,61 +158,77 @@ def _in_millions(num: str, scale: str) -> float | None:
     return None if v is None else v * (1000.0 if scale.lower() == "billion" else 1.0)
 
 
-def _clause_before(text: str, pos: int, *, cap: int = 400) -> str:
-    """The sentence's words before ``pos`` — the subject a ≤12m figure is stated for."""
-    lo = text.rfind(". ", max(0, pos - cap), pos)
-    return text[(lo + 2) if lo != -1 else max(0, pos - cap):pos]
+#: A sentence end — never the period of an initial or a corporate abbreviation ("Bank of America,
+#: N.A. and other lenders", "our U.S. term loan", "Acme Corp. "), which would cut the clause after
+#: the instrument it names and leave only an aggregate word ("borrowings") behind it.
+_CLAUSE_END = re.compile(r"(?<!\b[A-Z])(?<!\bInc)(?<!\bCorp)(?<!\bCo)(?<!\bLtd)(?<!\bNo)\. ")
 
 
-def _whole_debt(text: str, clause: str) -> bool:
-    """Is a ≤12m figure whose sentence opens with ``clause`` the COMPANY's, not one instrument's?
+def _clause_start(text: str, pos: int, *, cap: int = 400) -> int:
+    """Where the sentence holding ``pos`` starts — its words before ``pos`` are the subject a ≤12m
+    figure is stated for."""
+    lo = max(0, pos - cap)
+    ends = list(_CLAUSE_END.finditer(text, lo, pos))
+    return ends[-1].end() if ends else lo
+
+
+def _whole_debt(text: str, lo: int, hi: int) -> bool:
+    """Is a ≤12m figure whose sentence opens with ``text[lo:hi]`` the COMPANY's, not one
+    instrument's?
 
     With no instrument named, the clause must name the debt in aggregate. With one named, its own
-    principal (the clause's last figure) must be the total debt the filing states unqualified."""
+    principal (the clause's last figure) must be the total debt the filing states unqualified
+    ELSEWHERE — a total inside the clause itself ("total debt was $500.0 million, and of the term
+    loan, …") is its last figure only because the instrument's own principal is unstated."""
+    clause = text[lo:hi]
     if not _INSTRUMENT.search(clause):
         return bool(_AGGREGATE.search(clause))
     own = [_in_millions(m[1], m[2]) for m in _FIGURE_M.finditer(clause)]
     if not own or own[-1] is None:
         return False
-    return any(_in_millions(t[1], t[2]) == own[-1] for t in _TOTAL_DEBT.finditer(text))
+    return any(_in_millions(t[1], t[2]) == own[-1] for t in _TOTAL_DEBT.finditer(text)
+               if not lo <= t.start() < hi)
 
 
 class _Stated12m(NamedTuple):
     anchor: int
     total: float | None   # $M due within 12 months
     basis: str
+    clause_lo: int        # the clause it is stated for: text[clause_lo:clause_hi]
+    clause_hi: int
 
 
-def _statements_12m(text: str) -> list[tuple[_Stated12m, str]]:
+def _statements_12m(text: str) -> list[_Stated12m]:
     """Every debt ≤12m statement, in the forms' order, each with the clause it is stated for."""
-    out: list[tuple[_Stated12m, str]] = []
+    out: list[_Stated12m] = []
     for m in _DUE_12M.finditer(text):
         sent = _sentence(text, m.start())
         if _DEBT_WORD.search(sent) and not _NOT_DEBT.search(sent):
-            out.append((_Stated12m(m.start(), _in_millions(m[1], m[2]), BASIS_PRINCIPAL),
-                        _clause_before(text, m.start())))
+            out.append(_Stated12m(m.start(), _in_millions(m[1], m[2]), BASIS_PRINCIPAL,
+                                  _clause_start(text, m.start()), m.start()))
     for m in _NO_PRINCIPAL_12M.finditer(text):
         if not _NOT_DEBT.search(_sentence(text, m.start())):
-            out.append((_Stated12m(m.start(), 0.0, BASIS_PRINCIPAL),
-                        _clause_before(text, m.start())))
+            out.append(_Stated12m(m.start(), 0.0, BASIS_PRINCIPAL,
+                                  _clause_start(text, m.start()), m.start()))
     for m in _P_AND_I_12M.finditer(text):
-        out.append((_Stated12m(m.start(), _in_millions(m[1], m[2]), BASIS_PRINCIPAL_AND_INTEREST),
-                    _clause_before(text, m.start(1))))
+        out.append(_Stated12m(m.start(), _in_millions(m[1], m[2]), BASIS_PRINCIPAL_AND_INTEREST,
+                              _clause_start(text, m.start(1)), m.start(1)))
     return out
 
 
-def _stated_12m(text: str) -> tuple[int, float | None, str] | None:
+def _stated_12m(text: str, statements: list[_Stated12m] | None = None,
+                ) -> tuple[int, float | None, str] | None:
     """(anchor, $M due within 12 months, basis) from the first statement for the WHOLE debt."""
-    for st, clause in _statements_12m(text):
-        if _whole_debt(text, clause):
+    for st in _statements_12m(text) if statements is None else statements:
+        if _whole_debt(text, st.clause_lo, st.clause_hi):
             return st.anchor, st.total, st.basis
     return None
 
 
-def _part_note(text: str) -> str | None:
+def _part_note(text: str, statements: list[_Stated12m]) -> str | None:
     """The note for a filing whose only ≤12m figures are for part of the debt — LOUD, never a
     silent 'not stated': it names the figure and the sentence it was not taken from."""
-    for st, _clause in _statements_12m(text):
+    for st in statements:
         total = "an amount" if st.total is None else f"${st.total:,.1f}M"
         return (f"no near-term wall stated in filing for the whole debt — {total} due ≤12m is "
                 f"stated for part of it only (“{_sentence(text, st.anchor, cap=240)}”); see CIQ "
@@ -217,7 +237,8 @@ def _part_note(text: str) -> str | None:
 
 
 def _maturity_wall(text: str, src: str) -> MaturityWall | None:
-    stated = _stated_12m(text)
+    statements = _statements_12m(text)
+    stated = _stated_12m(text, statements)
     if stated is not None:  # state='located' — a ≤12m-wall statement was found
         anchor, total, basis = stated
         tranches: list[DebtTranche] = []
@@ -235,7 +256,7 @@ def _maturity_wall(text: str, src: str) -> MaturityWall | None:
             basis=None if basis == BASIS_PRINCIPAL else basis,  # absent is principal (the schema)
             verbatim=_sentence(text, anchor), source_ref=src,
         )
-    part = _part_note(text)
+    part = _part_note(text, statements)
     if part is not None or _DEBT_SECTION.search(text):  # debt present, but NO ≤12m wall stated
         return MaturityWall(
             within_12m_total=None, tranches=[], state="not_stated", note=part or _NOT_STATED_NOTE,

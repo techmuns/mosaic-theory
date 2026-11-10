@@ -68,6 +68,8 @@ _WERN_TOTAL = (
 #: TeamNostra's constructed note (V2-N1), balance date 2026-06-30
 _V2_N1 = ("Of the term loan, $45.0 million is due within one year. Our 4.0% Senior Notes, $500.0 "
           "million in principal, mature on March 1, 2027.")
+#: V2-N1's notes sentence alone — the debt beside each constructed part-of-the-debt clause below
+_NOTES_500 = "Our 4.0% Senior Notes, $500.0 million in principal, mature on March 1, 2027."
 
 
 # --- V2-N1: one instrument's figure is not the wall -------------------------------------------
@@ -133,6 +135,34 @@ def test_an_aggregate_subject_is_still_the_wall() -> None:
     assert w is not None and (w.state, w.within_12m_total) == ("located", 3194.0)
     w = fs._maturity_wall("Of our total debt, $1.2 billion is due within the next 12 months.", _SRC)
     assert w is not None and (w.state, w.within_12m_total) == ("located", 1200.0)
+
+
+def test_a_total_inside_the_clause_does_not_cover_the_instrument() -> None:
+    """CONSTRUCTED (code review): the clause's last figure is the company's total, stated before
+    the instrument, so it is not the term loan's own principal — the V2-N1 shape with the total in
+    the same sentence. Before the fix this read located $45.0M against $500M of debt."""
+    w = fs._maturity_wall("As of June 30, 2026, our total debt was $500.0 million, and of the term "
+                          "loan, $45.0 million is due within one year.", _SRC)
+    assert w is not None and w.state == "not_stated" and "$45.0M" in w.note
+
+
+def test_an_abbreviation_does_not_cut_the_instrument_out_of_the_clause() -> None:
+    """CONSTRUCTED (code review): "N.A. " is not a sentence end. Cut there, the clause kept only
+    "borrowings" and the term loan's figure read as the whole wall."""
+    w = fs._maturity_wall("Under the term loan with Bank of America, N.A. and other lenders, "
+                          "borrowings of $45.0 million are due within one year. " + _NOTES_500,
+                          _SRC)
+    assert w is not None and w.state == "not_stated" and "$45.0M" in w.note
+
+
+def test_debt_qualified_by_its_instrument_is_that_instruments() -> None:
+    """CONSTRUCTED (code review): an aggregate word QUALIFIED by its instrument ("borrowings under
+    the ABL facility"), mortgage notes and a lettered term loan are each part of the debt."""
+    for subject in ("Of the borrowings under the ABL facility", "Of our mortgage notes",
+                    "Of the Term A loans outstanding as borrowings"):
+        w = fs._maturity_wall(f"{subject}, $45.0 million is due within one year. {_NOTES_500}",
+                              _SRC)
+        assert w is not None and w.state == "not_stated" and "$45.0M" in w.note, subject
 
 
 # --- RE2-D13: a lease is not the wall ---------------------------------------------------------
