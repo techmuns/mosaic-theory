@@ -339,6 +339,19 @@ def _cf_unavailable(bundle: CiqBundle, label: str, annual: bool) -> str | None:
     return got[0].reason if got is not None and got[0].value is None else None
 
 
+def _cf_sheet_missing(bundle: CiqBundle) -> str | None:
+    """Why the annual Financials export's 'Cash Flow' sheet cannot be read, or None when it can.
+
+    A RENAMED TAB LEFT THREE FACTS MISSING WITH NO REASON (audit RA-D7, 2026-11-10). With 'Cash
+    Flow' renamed, operating cash flow, capex and D&A were simply absent from the bridge, with
+    nothing in `unavailable`. The address is a string literal, for the CIQ-manifest drift guard."""
+    try:
+        bundle.sheet("financials", "Cash Flow", freq="annual")
+    except CiqUnavailableError as exc:
+        return str(exc)
+    return None
+
+
 Cell = tuple[float, str | None, date | None, Provenance]
 
 
@@ -524,6 +537,9 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
                         if key not in facts and (why := _cf_unavailable(bundle, label, True))})
     if capex_sign is not None:
         unavailable["capex"] = capex_sign
+    if (cf_missing := _cf_sheet_missing(bundle)) is not None:   # RA-D7: a missing sheet is said
+        unavailable.update({key: cf_missing for key in ("d_and_a", "ocf", "capex")
+                            if key not in facts and key not in unavailable})
 
     checks: list[str] = []
     failures: list[str] = []
