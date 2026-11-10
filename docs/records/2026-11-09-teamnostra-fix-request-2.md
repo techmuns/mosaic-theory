@@ -270,3 +270,11 @@ here.**
 - **Two rows for one defect** (the "=" pairs, and RA-D10 with RBC-D2) can drift apart. The lint
   does not check that they agree; the log's header names the pairs.
 - $0. No model call, no page rebuilt, no product code changed.
+## Amendments
+
+**2026-11-09 — AORT is retired (operator, verbatim: "retire AORT fully").** Order 2's done-when in §1
+names AORT among the twelve pages to rebuild; it is eleven now. AORT's page left the corpus, so its
+part of RBC-D1 (no count until re-assembled) and of RD-D1 (its goodwill and intangibles at
+different dates) reads `not fixing: name retired (operator 2026-11-09)` in each row's page column.
+Each row's status is unchanged for its other pages. The §2 counts were measured on 28 pages at
+`622786a2` and stand on that boundary. `docs/records/2026-11-09-aort-retired.md`.

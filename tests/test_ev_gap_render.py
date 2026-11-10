@@ -23,6 +23,13 @@ FROZEN_SMPL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMP
 #: EPAM's page as committed on 2026-09-17, frozen the same way. Its 2026-11-09 re-assembly onto
 #: the September-quarter 10-Q (fix request 2, order 1) reads "earnings" at both years.
 FROZEN_EPAM = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-17" / "EPAM"
+#: AORT's page as committed on 2026-10-26, frozen when the name was retired from coverage
+#: (operator, 2026-11-09). It has no living page, so every AORT pin below reads this one.
+FROZEN_AORT = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "AORT"
+
+
+def _folder(ticker: str) -> Path:
+    return FROZEN_AORT if ticker == "AORT" else ROOT / "data" / "dossiers" / ticker
 
 
 def block(folder: Path) -> str:
@@ -118,7 +125,7 @@ def test_the_tev_stamp_is_a_single_date_because_the_tev_is_single_panel() -> Non
     one did.
     """
     for ticker in ("NCNO", "SMPL", "AORT", "IT", "VITL"):
-        md = (ROOT / "data" / "dossiers" / ticker / "dossier.md").read_text()
+        md = (_folder(ticker) / "dossier.md").read_text()
         # THE STAMP LINE, not any line mentioning TEV. AORT already carries a REAL vintage-
         # coherence caveat ("TEV as-of (2026-06-25) is vintage-incoherent with multiple pricing
         # (2026-06-30)") — which is the existing machinery doing this correctly, off the STORED
@@ -140,7 +147,7 @@ def test_the_render_never_restrikes_tev_itself() -> None:
 # --- THE TOTAL GAP NEEDS NO CONSENSUS (operator's revised R2 ruling, 2026-08-03) ---------------
 
 def _gapj(t: str) -> dict:
-    doc = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
+    doc = json.loads((_folder(t) / "dossier.json").read_text())
     return (doc.get("mechanical") or {}).get("ev_gap") or {}
 
 
@@ -184,7 +191,7 @@ def test_a_suppressed_name_states_its_total_and_carries_no_shape_label(ticker: s
     assert isinstance(g["ratios"]["ev_gap"], float)
     assert set(g["ratios"]) == {"ev_gap"}, "a suppressed name carries partial ratios"
     assert g["shape"] is None, f"{ticker} carries a shape label with nothing to rank"
-    body = block(ROOT / "data" / "dossiers" / ticker)
+    body = block(_folder(ticker))
     assert "Total gap:" in body and "No consensus enters this figure" in body
     assert "Shape:" not in body
 
@@ -205,7 +212,7 @@ def test_the_two_margins_print_as_figures_and_are_never_divided(ticker: str) -> 
     """`14.4% vs 19.4%` lets the reader see the distance and judge how much is horizon; `0.74x`
     presents that distance as though its cause were settled. The figures are strictly more
     information than the ratio they replace."""
-    body = block(ROOT / "data" / "dossiers" / ticker)
+    body = block(_folder(ticker))
     assert "shown as figures, NOT divided" in body
     m = (_gapj(ticker)["decomposition"])["margins"]
     assert isinstance(m["ours"], float) and isinstance(m["consensus"], float)

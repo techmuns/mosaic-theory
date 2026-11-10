@@ -80,8 +80,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "ed78a1205285"
-PINNED_AT = "2026-11-09.order2-pages"
+PINNED_TABLE = "8f750b855e40"
+PINNED_AT = "2026-11-09.stale-and-conflicting"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -89,7 +89,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
     "vinci/dossier/assemble.py": "7e9f283028c4",
     "vinci/dossier/band_guards.py": "dceaef85746c",
-    "vinci/dossier/capital_allocation.py": "ba165ad2af55",
+    "vinci/dossier/capital_allocation.py": "8640066d9ec4",
     "vinci/dossier/ciq.py": "6a636c11c2f3",
     "vinci/dossier/ciq_balance.py": "7bf163fd7abe",
     "vinci/dossier/ciq_reread.py": "4ebcadca0987",
@@ -105,7 +105,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/filed_tiebreak.py": "65d2da06e516",
     "vinci/dossier/flags.py": "27fde9822fe1",
     "vinci/dossier/freshness.py": "e5852b313d22",
-    "vinci/dossier/gaps.py": "68a045780c3b",
+    "vinci/dossier/gaps.py": "9f61184df018",
     "vinci/dossier/inputs.py": "fcda11ef218f",
     "vinci/dossier/inputs_backfill.py": "a3567b23a569",
     "vinci/dossier/inputs_schema.py": "6f7d41f25223",
@@ -114,10 +114,10 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ltm_quarters.py": "976073b15fc6",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "c91b8d44c5fe",
-    "vinci/dossier/mechanical.py": "99271f6556e5",
+    "vinci/dossier/mechanical.py": "2a40d749e856",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
-    "vinci/dossier/refresh.py": "dd925c119cb3",
+    "vinci/dossier/refresh.py": "3877f15bb48d",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
     "vinci/dossier/schemas.py": "970c06340367",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
@@ -133,7 +133,7 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/filing_sections.py": "568c36df04a2",
     "vinci/edgar/going_concern.py": "feb938485fd0",
     "vinci/edgar/net_debt.py": "d60756329d18",
-    "vinci/edgar/primary_source.py": "80351248cc8a",
+    "vinci/edgar/primary_source.py": "d9054b7a75a0",
     "vinci/edgar/release_parse.py": "fdb5e7398ef3",
     "vinci/edgar/segment_facts.py": "9d3c07301296",
     "vinci/edgar/segments.py": "8aa10f003612",

@@ -72,8 +72,13 @@ _WORDS = rf"(?:(?:{_BELOW_100}|a)\s+hundred(?:\s+(?:and\s+)?{_BELOW_100})?|hundr
 #: matched ATOMICALLY, so a refused "twenty five thousand" is not retried as "twenty" (review).
 #: Nor does one start mid-number.
 _RUNS_ON = r"(?![-,.]?\d|-\w|\s+\d+\s*/|[\s-]+(?:hundred|thousand|million|billion)\b)"
-_NUM = (r"(?<![\w,.-])((?>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?|" + _WORDS + r"))"
-        + _RUNS_ON)
+#: A MIXED NUMBER IS ITS WHOLE AND ITS FRACTION (TeamNostra fix request 2, RF-D8, 2026-11-09):
+#: "two and one-half" read as 2, "one and a half" as 1 — the whole part, `known`, because nothing
+#: after the number said it ran on. The tail is now part of the number, inside the same atomic
+#: match, so "two and one-half" is 2.5 and never 2. (Digits — "2 1/2" — are still refused.)
+_MIXED = r"(?:\s+and\s+(?:a|" + _BELOW_100 + r")[\s-]+(?:" + _FRAC_ALT + r"))"
+_NUM = (r"(?<![\w,.-])((?>(?:\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?|" + _WORDS + r")"
+        + _MIXED + r"?))" + _RUNS_ON)
 #: a number followed by a fraction word or "/n" is a NUMERATOR, never a count (KT, SMFG)
 _NOT_A_NUMERATOR = r"(?![\s-]*(?:/|" + _FRAC_ALT + r"))\b"
 _RIGHT_TO = r"(?:the\s+right\s+to\s+receive\s+)?"
@@ -133,8 +138,19 @@ _HOLDING_MIN = 1000
 _QUOTE_PAD = 80
 
 
+#: a matched number's mixed tail, split off to be read as its own fraction (`_count`)
+_MIXED_TAIL = re.compile(r"^(.+?)\s+and\s+(a|" + _BELOW_100 + r")[\s-]+(" + _FRAC_ALT + r")$",
+                         re.I)
+
+
 def _count(word: str) -> float | None:
     w = word.lower().replace(",", "")
+    if (mixed := _MIXED_TAIL.match(w)) is not None:
+        whole = _count(mixed.group(1))
+        num = 1.0 if mixed.group(2) == "a" else _count(mixed.group(2))
+        frac = mixed.group(3)
+        den = _FRACTION_WORDS.get(frac) or _FRACTION_WORDS.get(frac.removesuffix("s"))
+        return whole + num / den if whole and num and den and num < den else None
     if re.fullmatch(r"\d+(?:\.\d+)?", w):
         return float(w)
     value = 0.0

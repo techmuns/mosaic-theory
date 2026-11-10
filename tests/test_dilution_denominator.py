@@ -495,8 +495,11 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: **VRRM, EPAM and WLK LANDED** (2026-11-09, fix request 2 order 1, on their September-quarter
 #: 10-Qs): their bases are the recompute's (VRRM 21.7803→23.2328, EPAM 403.8351→391.7766, WLK
 #: 116.1475→124.0268), `docs/records/2026-11-09-fix-request-2-order-1-rebuilds.md`.
+#:
+#: **AORT LEFT THE CORPUS** (2026-11-09): the operator retired it with its anchor still awaiting
+#: the backfill, so it is in no loop here (`docs/records/2026-11-09-aort-retired.md`).
 ANCHORS_AWAITING_BACKFILL: set[str] = {
-    "AORT", "BRBR", "BURL", "IT", "PARR", "TGT"}
+    "BRBR", "BURL", "IT", "PARR", "TGT"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than

@@ -103,8 +103,11 @@ def _own(name: str, mech: MechanicalLayer) -> set[str]:
                 f"catalyst_calendar.rows[{i}].source_ref"}
     return {"relabel_drawdown_shape": {"drawdown_cause.shape.value"},
             "trailing_only_note": {"valuation.ev_ebitda.note"},
+            # since fix 3b the line's source moves too: it names no FCF sign any more
             "survival_read": {"quality.survival_capacity.value",
-                              "leverage_survival.survival.value"},
+                              "leverage_survival.survival.value",
+                              "quality.survival_capacity.source_ref",
+                              "leverage_survival.survival.source_ref"},
             "peer_gap_question": {"peer_comps.fundamental_deltas.value"}}[name]
 
 
@@ -142,7 +145,7 @@ def test_each_fix3a_transform_writes_the_checkouts_label() -> None:
     assert mech.valuation.ev_ebitda.note == mechanical.TRAILING_ONLY_NOTE
     assert vr.trailing_only_note(mech, ctx).valuation.ev_ebitda.note is None  # forward P/E there
     line = vr.survival_read(mech, ctx).quality.survival_capacity.value
-    assert line == "net-debt/EBITDA 0.9x (CIQ) | FCF sign UNKNOWN — runway not assessable"
+    assert line == "net-debt/EBITDA 0.9x (CIQ)"   # fix 3b deletes the FCF leg 3a untagged
     assert "(a risk)" not in str(line)
     def deltas(t: str) -> str:
         m, c = _ctx(t)
@@ -233,9 +236,12 @@ def test_survival_read_moves_only_the_line_in_both_places(
     monkeypatch.setattr(mechanical, "_survival_capacity", untagged)
     out = vr.survival_read(mech, ctx)
     assert _moved(mech, out) == {"quality.survival_capacity.value",
-                                 "leverage_survival.survival.value"}
-    assert out.quality.survival_capacity.value == (
-        "net-debt/EBITDA 0.9x (CIQ) | FCF sign UNKNOWN — runway not assessable")
+                                 "leverage_survival.survival.value",
+                                 "quality.survival_capacity.source_ref",
+                                 "leverage_survival.survival.source_ref"}
+    assert out.quality.survival_capacity.value == "net-debt/EBITDA 0.9x (CIQ)"
+    assert out.leverage_survival is not None and out.leverage_survival.survival == (
+        out.quality.survival_capacity)
 
 
 def test_survival_read_refuses_a_line_that_needs_the_ciq_net_debt() -> None:

@@ -1,7 +1,6 @@
 {
   "tickers": [
     "AMZN",
-    "AORT",
     "BRBR",
     "BURL",
     "CNXC",
@@ -32,11 +31,6 @@
   "labels": {
     "AMZN": {
       "industry": "Broadline Retail",
-      "source": "ciq-gics",
-      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
-    },
-    "AORT": {
-      "industry": "Health Care Equipment",
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
@@ -173,7 +167,6 @@
   },
   "reads": {
     "AMZN": "strongly-bullish \u2014 accelerating AWS growth, a $578B backlog and 35%+ segment margins outweigh a capex-driven, timing-dependent FCF deficit.",
-    "AORT": "mixed \u2014 rising absolute EBITDA and double-digit constant-currency growth offset by a GAAP earnings collapse, negative FCF and high post-acquisition leverage.",
     "BRBR": "mixed \u2014 genuine transitory/turnaround levers (pricing, category growth, self-funding) are offset by a real, mechanism-backed margin collapse, elevated leverage and leadership transition.",
     "BURL": "strongly-bullish \u2014 multiple at own-history floor while absolute EBITDA, margins and guidance all rise on a self-funding, growing base.",
     "CNXC": "mixed \u2014 operating EBITDA, margins and FCF hold and the AI mix-shift is real, but shrinking CC revenue plus 4.0x leverage keep the value-trap case alive.",
@@ -203,7 +196,6 @@
   },
   "sleeves": {
     "AMZN": "quality",
-    "AORT": "overshoot",
     "BRBR": "overshoot",
     "BURL": "overshoot",
     "CNXC": "overshoot",
