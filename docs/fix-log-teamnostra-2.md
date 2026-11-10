@@ -76,8 +76,8 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RF-D8 | 3 | open | — | — | — |
 | V2-N1 | 3 | open | — | — | — |
 | RE1-D6 | 3 | open | — | — | — |
-| RE1-D1 | 3 | open | — | — | — |
-| RE1-D2 | 3 | open | — | — | — |
+| RE1-D1 | 3 | in progress (#939) | #939 | `tests/test_sec_budget_across_machines.py::test_two_machines_sending_at_once_stay_under_secs_ceiling_per_user` | none (pacing changes no value; 28 frozen pages compared) |
+| RE1-D2 | 3 | in progress (#939) | #939 | `tests/test_sec_budget_across_machines.py::test_a_redirect_hop_to_sec_takes_its_own_slot` | none (pacing changes no value) |
 | RE1-D8 | 3 | open | — | — | — |
 | RE1-D9 | 3 | open | — | — | — |
 | RE1-D12 | 3 | open | — | — | — |
