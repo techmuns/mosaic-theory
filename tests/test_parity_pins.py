@@ -448,14 +448,9 @@ def test_every_assembled_field_reaches_both_dossier_renderers() -> None:
     Semantics stay with the per-section pins. Matching is a bare-token search, so a name that
     survives only in a comment would pass — accepted, because the alternative (parsing two
     languages' access idioms) is the brittleness that made the existing key-name pin give up on
-    alias reads. A DELIBERATE one-sidedness is expressible: add the key to ``twin_exempt`` with
+    alias reads. A DELIBERATE one-sidedness is expressible: add the key to ``TWIN_EXEMPT`` with
     the reason, which is a decision in the diff rather than a silent gap."""
     import json
-
-    # Keys one renderer legitimately need not carry — key → the reason, so an exemption is an
-    # argument made in a diff rather than a hole nobody noticed. EMPTY TODAY: every harvested
-    # field currently reaches both surfaces, and that is the state worth defending.
-    twin_exempt: dict[str, str] = {}
 
     blocks = ("mechanical", "synthesis", "anchor")
     keys: set[str] = set()
@@ -471,16 +466,89 @@ def test_every_assembled_field_reaches_both_dossier_renderers() -> None:
         f"harvested only {len(keys)} fields from {blocks} — the committed dossiers moved or the "
         "block names changed; a pin that harvests nothing passes for the wrong reason")
 
-    py, js = _src("vinci/dossier/render.py"), _src("frontend/views/shared/dossier.js")
-    named = lambda src, k: bool(re.search(rf"\b{re.escape(k)}\b", src))  # noqa: E731
-    one_sided = sorted(
-        f"{k} (md={'Y' if named(py, k) else '-'} web={'Y' if named(js, k) else '-'})"
-        for k in keys - set(twin_exempt) if named(py, k) != named(js, k))
+    one_sided = _one_sided(keys)
     assert not one_sided, (
         "assembled fields that reach ONE dossier renderer and not the other: "
         f"{one_sided}. The markdown twin (and the 'Full dossier MD' download) and the web page "
         "(and both PDF scopes) must both acknowledge every assembled field — that asymmetry is "
-        "#227. Render it on the missing side, or record the exemption in twin_exempt.")
+        "#227. Render it on the missing side, or record the exemption in TWIN_EXEMPT.")
+
+
+#: Assembled fields one dossier renderer legitimately need not carry — key → the reason, so an
+#: exemption is an argument made in a diff rather than a hole nobody noticed. Each reason is EARNED
+#: by a test of it below, which goes red the day the field is rendered.
+TWIN_EXEMPT: dict[str, str] = {
+    "disclosure_gaps": ("neither renderer draws it: a synthesis input (the gap test, #927); the "
+                        "web names it only inside its extraction-version changelog, which the "
+                        "bare-token match finds; the JSON tier carries it"),
+}
+
+
+def _named(src: str, key: str) -> bool:
+    return bool(re.search(rf"\b{re.escape(key)}\b", src))
+
+
+def _one_sided(keys: set[str], exempt: dict[str, str] = TWIN_EXEMPT) -> list[str]:
+    """Each key outside `exempt` that one dossier renderer names and the other does not."""
+    py, js = _src("vinci/dossier/render.py"), _src("frontend/views/shared/dossier.js")
+    return sorted(
+        f"{k} (md={'Y' if _named(py, k) else '-'} web={'Y' if _named(js, k) else '-'})"
+        for k in keys - set(exempt) if _named(py, k) != _named(js, k))
+
+
+def test_the_gap_tests_field_is_exempt_from_twin_parity() -> None:
+    """(F, 2026-11-09) EPAM's and WLK's 2026-11-09 rebuilds are the first committed pages to carry
+    #927's `mechanical.disclosure_gaps`. Neither renderer draws it, but the web's extraction-version
+    changelog names it, which the bare-token match reads as the web rendering it."""
+    assert _one_sided({"disclosure_gaps"}, exempt={}) == ["disclosure_gaps (md=- web=Y)"]
+    assert _one_sided({"disclosure_gaps"}) == []
+
+
+_GAP_TEST_ENTRY = '["2026-11-07.gap-test",'
+
+
+def _gap_exemption_unearned(py: str, js: str) -> list[str]:
+    """Why `disclosure_gaps`'s exemption no longer holds — [] while render.py never names it and
+    every dossier.js mention sits inside the `2026-11-07.gap-test` changelog entry."""
+    out = []
+    if n := len(re.findall(r"\bdisclosure_gaps\b", py)):
+        out.append(f"render.py names it {n} time(s)")
+    entry = re.search(rf'{re.escape(_GAP_TEST_ENTRY)}(?:\s*"[^"]*"\s*\+?)+\s*\]', js)
+    if entry is None:
+        return [*out, "dossier.js has no 2026-11-07.gap-test changelog entry"]
+    start, end = entry.span()
+    hits = [m.start() for m in re.finditer(r"\bdisclosure_gaps\b", js)]
+    if not hits:
+        out.append("dossier.js names it nowhere — no exemption is needed")
+    if outside := [h for h in hits if not start <= h < end]:
+        out.append(f"dossier.js names it outside the changelog entry at offset(s) {outside}")
+    return out
+
+
+def test_the_gap_tests_exemption_holds_only_while_neither_renderer_draws_it() -> None:
+    """EARNED: the exemption's reason, tested. The day someone renders the field on either side
+    this goes red; with the exemption dropped, the parity pin then asks for the other twin."""
+    py, js = _src("vinci/dossier/render.py"), _src("frontend/views/shared/dossier.js")
+    unearned = _gap_exemption_unearned(py, js)
+    assert unearned == [], (
+        f"TWIN_EXEMPT's reason for disclosure_gaps no longer holds: {unearned}. Drop the "
+        "exemption; the parity pin then asks for the twin the field is missing from.")
+    assert _gap_exemption_unearned(py, re.sub(r"\bdisclosure_gaps\b", "gap_list", js)) == [
+        "dossier.js names it nowhere — no exemption is needed"]
+    drawn = "\nconst gaps = m.disclosure_gaps || [];\n"
+    assert _gap_exemption_unearned(py + "\nfor g in m.disclosure_gaps or []:\n", js) == [
+        "render.py names it 1 time(s)"]
+    assert _gap_exemption_unearned(py, js + drawn)[0].startswith(
+        "dossier.js names it outside the changelog entry at offset(s) ")
+    assert _gap_exemption_unearned(py, js.replace(_GAP_TEST_ENTRY, '["2026-11-07.x",')) == [
+        "dossier.js has no 2026-11-07.gap-test changelog entry"]
+    # the entry ends where ITS bracket closes, however it is wrapped — never at a later entry's
+    reflowed = re.sub(r'(\["2026-11-07\.gap-test",(?:\s*"[^"]*"\s*\+?)+)\]', r"\1\n  ]", js)
+    assert reflowed != js
+    nxt = '["2026-11-09.asof-cut",'
+    later = reflowed.replace(nxt, f'{nxt} "disclosure_gaps",')
+    assert _gap_exemption_unearned(py, later)[0].startswith(
+        "dossier.js names it outside the changelog entry at offset(s) ")
 
 
 def test_methodology_references_cite_by_endnote_on_both_twins() -> None:
