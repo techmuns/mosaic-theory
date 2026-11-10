@@ -80,14 +80,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "3f1f2dca04c0"
+PINNED_TABLE = "4bad31d3bb5d"
 PINNED_AT = "2026-11-10.one-family-peers"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
-    "vinci/dossier/assemble.py": "7e9f283028c4",
+    "vinci/dossier/assemble.py": "14b04139d68b",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "059ec4f12b76",
     "vinci/dossier/ciq.py": "6a636c11c2f3",
@@ -96,7 +96,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq_sheets.py": "9a25fe536aed",
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
-    "vinci/dossier/driver_extract.py": "28d08956a8f2",
+    "vinci/dossier/driver_extract.py": "7873fe4db242",
     "vinci/dossier/ebitda_basis.py": "812d1852f461",
     "vinci/dossier/ebitda_recon.py": "9befc99c437a",
     "vinci/dossier/edgar_fundamentals.py": "6054321e6ca4",
@@ -119,9 +119,9 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "4541c0b842bd",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "28cc3be9043e",
+    "vinci/dossier/schemas.py": "2fb1b8d12bc5",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "8f4cce171484",
+    "vinci/dossier/synthesis.py": "f8b55204fd73",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
     "vinci/dossier/verdict.py": "0b43167d2044",

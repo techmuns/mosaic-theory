@@ -2375,12 +2375,71 @@ class DriverKind(enum.StrEnum):
     COMPETITIVE_POSITION = "competitive_position"  # a stated competitive-slack / position claim
 
 
+class DriverFigure(BaseModel):
+    """(RG-D8, 2026-11-09) One figure a transcript driver row states, READ FROM ITS QUOTE by code
+    (`driver_extract.check_fact`) — never from the model's ``value``, which is only checked against
+    it. Every axis is what the quote PRINTS beside the number; nothing is converted, scaled or
+    inferred, so a field the quote does not print is None.
+
+    ``change`` is the direction word (or printed sign) BESIDE the figure — "down 7%", "a 2%
+    increase", "-7%" — named ``change`` because a field called ``direction`` reads as an
+    investment conclusion and the schema refuses one (`test_dossier_schema_has_no_conclusion_
+    field`). None means NONE IS PRINTED BESIDE IT, never "a level": "increased 44% year-over-year
+    and 10% sequentially" gives the 10% no word of its own. A figure reached ("to 112%") or left
+    ("from 106%") carries none either: the word governs the change, not it.
+    ``qualifier`` is the bound word printed immediately before it ("more than 175 million"), so a
+    lower bound is never published as the value."""
+
+    value: float  # the number as its quote prints it; a printed sign is kept ("-7%" → -7.0)
+    currency: str | None = None  # "$" … printed before it
+    scale: str | None = None  # "e3" | "e6" | "e9" | "e12": the scale word printed after it
+    unit: str | None = None  # "%", "pp", "bp", "x", "MWh" …: the unit printed after it
+    change: Literal["up", "down"] | None = None
+    qualifier: Literal["approximately", "at_least", "at_most"] | None = None
+
+    model_config = {"frozen": True}
+
+
+class TranscriptLocator(BaseModel):
+    """(RG-D19, 2026-11-09) Where a transcript driver row's quote sits — so the PUBLIC page can
+    carry the fact without the quote, and anyone holding the licensed call finds the passage.
+
+    ``paragraph`` indexes the CALL as `ciq_sheets.transcript_for_synthesis` reads it: the text
+    after its ``--- <file> ---`` header line, up to the next one, split at a blank line, from 0.
+    ``quote_sha256`` is sha256 of the quote whitespace-collapsed and lower-cased
+    (`driver_extract.quote_key`): it confirms a found passage is the one read without publishing
+    a word of it, and with ``transcript_sha256`` and ``paragraph`` it keys the private evidence."""
+
+    call: str  # the transcript file's name — the label of its `--- <call> ---` section
+    transcript_sha256: str | None = None  # sha256 of that file's bytes; None = not recorded
+    #: None only when the call the row cites was not on hand to count in (a page located after
+    #: its build, once the export was replaced): never a guessed position
+    paragraph: int | None = None
+    speaker: str | None = None  # the name on the nearest speaker block before it; None = none
+    quote_sha256: str
+
+    model_config = {"frozen": True}
+
+
+#: (RG-D8) What code concluded about a transcript row's value. ``verified``: every figure the
+#: value states is a figure of its quote, in the units the value states, in the direction the
+#: value states, and the quote names the metric. ``qualitative``: the value states no figure and
+#: is the quote's own words. ``unknown``: neither — ``unknown_reason`` says which check failed,
+#: and the row carries no figure.
+DriverValueStatus = Literal["verified", "qualitative", "unknown"]
+
+
 class OperatingDriver(BaseModel):
     """(PR-B) One typed, cited, verbatim-bound operating-mechanism fact. ``value`` is the VERBATIM
     stated value; ``value_num``/``unit`` are the STRUCTURED numeric an ANCHORED extractor parsed
     (None on an LLM-fenced row — verbatim-only there, the covenant discipline). ``source_ref`` is
     MACHINE-SET by the extractor; the model/parse never invents a citation. ``tier`` records the
-    extraction path (anchored | llm-fenced) so the human weighs deterministic vs LLM-read rows."""
+    extraction path (anchored | llm-fenced) so the human weighs deterministic vs LLM-read rows.
+
+    (RG-D8/RG-D19, 2026-11-09) A transcript row also carries the STRUCTURED FACT code read from its
+    quote — ``figures``, ``value_status`` / ``unknown_reason`` — and a ``locator``. All four are
+    None on an anchored row, which this check does not read. The model's ``value`` is never the
+    fact: it is a claim, checked against the quote, and the figures come from the quote."""
 
     kind: DriverKind
     metric: str  # e.g. "revenue", "average selling price", a KD Type
@@ -2415,6 +2474,12 @@ class OperatingDriver(BaseModel):
     following_context: str | None = None
     source_ref: str  # accession + exhibit / "CIQ Key Developments: …" / "CIQ transcript: …"
     tier: str  # "anchored" | "llm-fenced"
+    # (RG-D8/RG-D19) the structured fact and where it was read — transcript rows only (above).
+    # AFTER `tier`, so a dump that leaves them out keeps every earlier field's order.
+    figures: list[DriverFigure] | None = None
+    value_status: DriverValueStatus | None = None
+    unknown_reason: str | None = None
+    locator: TranscriptLocator | None = None
 
     model_config = {"frozen": True}
 
@@ -3379,6 +3444,10 @@ TOP_DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("forward_multiple_history", "history_through"),
 )
 
+#: The same rule for the keys added later on EACH `OperatingDriver` row (RG-D8/RG-D19, 2026-11-09).
+DRIVER_ROW_DROP_WHEN_NONE: tuple[str, ...] = ("figures", "value_status", "unknown_reason",
+                                              "locator")
+
 
 def dossier_json(doc: Dossier) -> str:
     """THE ONE SERIALIZER for a committed `dossier.json` — the assembler and the refresh path both
@@ -3416,6 +3485,13 @@ def dossier_json(doc: Dossier) -> str:
         for name in path:
             node = node.setdefault(name, {})
         node[key] = True
+    # the same rule PER ROW for a driver row's fact and locator (RG-D8/RG-D19): an anchored row
+    # never carries them and a page built before the check has none, so neither writes `null`
+    if mech.operating_drivers is not None:
+        rows = {i: unset for i, r in enumerate(mech.operating_drivers.rows)
+                if (unset := {k for k in DRIVER_ROW_DROP_WHEN_NONE if getattr(r, k) is None})}
+        if rows:
+            root.setdefault("operating_drivers", {})["rows"] = rows
     excl: dict[str, Any] = {"mechanical": root} if root else {}
     # the anchor's mid-cycle gap is set only when it fires; an anchor that does not fire writes no
     # key, so every committed page it does not apply to stays byte-identical

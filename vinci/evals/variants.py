@@ -37,6 +37,9 @@ FIX 3B rewrites two fields; `FIX_3B` names their transforms:
 2. ``current_buybacks`` — the three buyback fields, a leg more than a year before the page's
    price date no longer stated (`capital_allocation.buyback_legs`).
 
+RG-D8 (fix request 2), `RG_D8`'s ``driver_facts``: the transcript driver rows' fact check,
+re-run on each committed row's own metric, value and quote (`driver_extract.check_fact`).
+
 THE AS-OF CUT (STATE row 57), `ASOF_CUT`'s ``asof_cut``: a page built before the cut keeps the
 releases filed after its price date; this moves them out of `primary_source.releases` and
 re-derives the two fields the assembly takes from that list (`current_guide`, a release-read
@@ -486,6 +489,38 @@ def _last_close(mech: MechanicalLayer) -> Any:
         is_known=price is not None, value=price, as_of=si.as_of if si is not None else None)))
 
 
+def driver_facts(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
+    """(RG-D8) The transcript driver rows' fact check (`driver_extract.check_fact`), run on each
+    committed row's own metric, value and quote — the three inputs the extractor hands it, so
+    the result is what the candidate's extractor writes for them. It writes only ``figures``,
+    ``value_status`` and ``unknown_reason``; the prompt reads one of them, through
+    `synthesis.prompt_driver_value`. The locator needs the call itself and reaches no field of
+    the prompt, so it is not written. The identity at main (no `check_fact`) and on a page with
+    no transcript row.
+
+    A row that already carries a status (a page built with the check) must reproduce it, or the
+    transform refuses (`TransformError`): its code is not the code under test."""
+    from vinci.dossier import driver_extract
+
+    check = getattr(driver_extract, "check_fact", None)
+    od = mech.operating_drivers
+    if check is None or od is None:
+        return mech
+    rows = []
+    for r in od.rows:
+        if r.tier != "llm-fenced":
+            rows.append(r)
+            continue
+        f = check(r.metric, r.value, r.verbatim)
+        fields = {"figures": list(f.figures), "value_status": f.status, "unknown_reason": f.reason}
+        if r.value_status is not None and (r.figures, r.value_status, r.unknown_reason) != tuple(
+                fields.values()):
+            raise TransformError(f"{ctx.page.get('ticker')}: the committed fact of driver row "
+                                 f"{r.metric!r} does not reproduce from this code's check")
+        rows.append(r.model_copy(update=fields))
+    return mech.model_copy(update={"operating_drivers": od.model_copy(update={"rows": rows})})
+
+
 Transform = Callable[[MechanicalLayer, Context], MechanicalLayer]
 
 TRANSFORMS: dict[str, Transform] = {
@@ -497,6 +532,7 @@ TRANSFORMS: dict[str, Transform] = {
     "gap_types": gap_types,
     "current_buybacks": current_buybacks,
     "asof_cut": asof_cut,
+    "driver_facts": driver_facts,
 }
 
 #: Fix 3a's five labels (#923), in the order applied.
@@ -514,3 +550,7 @@ FIX_3B: tuple[str, ...] = ("survival_read", "current_buybacks")
 #: STATE row 57's one transform: the release list cut at the page's price date. Applied FIRST,
 #: before the transforms that read the releases (`print_row_guide`, `gap_types`).
 ASOF_CUT: tuple[str, ...] = ("asof_cut",)
+
+#: RG-D8's one transform: the transcript driver rows' fact check, which the prompt reads as an
+#: unverified row's value.
+RG_D8: tuple[str, ...] = ("driver_facts",)

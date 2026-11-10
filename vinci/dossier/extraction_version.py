@@ -632,6 +632,18 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "EPAM, IT and PARR, which the old view would now undercount, are reproduced",
     ),
     (
+        "2026-11-09.driver-facts",
+        "each transcript operating-driver row carries the fact code read from its quote, and "
+        "where the quote sits (audit RG-D8, RG-D19): `figures` (each number with the currency, "
+        "scale, unit, change and bound its quote prints beside it), `value_status` (verified, "
+        "qualitative or unknown) with `unknown_reason`, and `locator` (the call, its sha256, "
+        "the paragraph, the speaker and the quote's sha256). A quote that does not name its "
+        "metric, a figure-less value that is not the quote's words, and a direction or reading "
+        "the quote does not support read UNKNOWN with no figure, and the synthesis reads that "
+        "row's value as UNKNOWN. 10 of the 881 committed transcript rows would; no page carries "
+        "the fields until it is re-assembled",
+    ),
+    (
         "2026-11-10.dated-headroom",
         "impairment headroom is two balances at one date (audit RD-D1): an instant is the "
         "first tag in the preference order whose latest balance is within 366 days of the "

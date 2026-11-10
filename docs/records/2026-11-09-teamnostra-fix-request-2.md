@@ -278,3 +278,12 @@ part of RBC-D1 (no count until re-assembled) and of RD-D1 (its goodwill and inta
 different dates) reads `not fixing: name retired (operator 2026-11-09)` in each row's page column.
 Each row's status is unchanged for its other pages. The §2 counts were measured on 28 pages at
 `622786a2` and stand on that boundary. `docs/records/2026-11-09-aort-retired.md`.
+
+### 2026-11-10: R2 bucket privacy settled
+
+R2 bucket privacy settled: private (operator, 2026-11-09).
+- This closes §5's "Still open: whether the R2 bucket is private". It is settled by the
+  operator's statement, not by a probe; none was made.
+- It is recorded by the RG-D19 / RG-D8 stream (`docs/records/2026-11-10-driver-facts-not-quotes.md`),
+  whose private evidence store relies on it.
+- How SEC treats two machines was settled separately, from SEC's own pages (#939).
