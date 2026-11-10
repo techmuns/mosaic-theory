@@ -97,7 +97,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "7873fe4db242",
-    "vinci/dossier/driver_pass.py": "ecfad414ae3c",
+    "vinci/dossier/driver_pass.py": "0c3f96ffac2f",
     "vinci/dossier/ebitda_basis.py": "812d1852f461",
     "vinci/dossier/ebitda_recon.py": "9befc99c437a",
     "vinci/dossier/edgar_fundamentals.py": "6054321e6ca4",

@@ -675,7 +675,9 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "`value_sha256`, which only the spool sets; an assembly with a transcript refuses to "
         "start without `$VINCI_EVIDENCE_SPOOL` and files every passage and claim before it "
         "writes the page; `vinci driver-facts-pass` does the same for the committed pages at "
-        "$0; and the pre-spend census counts only 10-hex export stamps, never a locator's "
+        "$0, giving a row its file's paragraph and hash only when its words, its context "
+        "included, are that file's; and the pre-spend census counts only 10-hex export stamps, "
+        "never a locator's "
         "hashes. A page whose rows were not filed is written byte for byte as before",
     ),
 )

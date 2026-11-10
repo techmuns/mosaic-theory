@@ -17,7 +17,7 @@ from typing import Any
 
 import pytest
 
-from tests.pre_strip import pre_strip_text
+from tests.stripped_pages import replayable_text
 from vinci.dossier import mechanical
 from vinci.evals import compare as cm
 from vinci.evals import metrics as mt
@@ -28,7 +28,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @pytest.fixture(scope="module")
 def nflx() -> dict[str, Any]:
-    page: dict[str, Any] = json.loads(pre_strip_text("NFLX"))
+    page: dict[str, Any] = json.loads(replayable_text("NFLX"))
     return page
 
 

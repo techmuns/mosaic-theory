@@ -167,24 +167,34 @@ def test_currency_and_scale_are_compared_separately(value: str, kept: bool) -> N
 def test_every_committed_transcript_row_passes_and_a_rescaled_one_does_not() -> None:
     """CORPUS BEFORE SYNTHETIC. The rule tightened, so first: no committed row is one it now drops
     (each was admitted by the tolerant check; none needed the tolerance). Then the guard is shown
-    to bite on REAL rows: each row's own figure, rescaled 100x, is refused."""
-    from tests.pre_strip import pre_strip_pages  # the rows' words left the live pages (RG-D19)
+    to bite on REAL rows: each row's own figure, rescaled 100x, is refused.
+
+    (RG-D19 PR 3) The quote is the row's own until the page pass, and its call's on disk after it
+    (`stripped_pages.rows_with_words`); with no export on disk the test skips, naming why. After the
+    pass a row's value is in the private store, so its figures are its committed fact."""
+    from tests.stripped_pages import rows_with_words
     from vinci.dossier.driver_extract import _figure_in_quote, _figures
 
-    rows = [r for _, page in pre_strip_pages()
-            for r in (page["mechanical"].get("operating_drivers") or {})
-            .get("rows", []) if r.get("tier") == "llm-fenced"]
-    assert len(rows) > 100, "the committed corpus no longer carries transcript rows"
-    refused = [r["value"] for r in rows if not all(
-        _figure_in_quote(f, _figures(r["verbatim"])) for f in _figures(r["value"]))]
+    rows, _skipped = rows_with_words()
+    assert len(rows) > 100, "the committed corpus no longer carries readable transcript rows"
+
+    def value_figs(r: dict[str, typing.Any]) -> list[typing.Any]:
+        if r.get("value") is not None:
+            return _figures(r["value"])
+        return [dataclasses.replace(_figures(f"{g['value']:g}")[0], currency=g.get("currency"),
+                                    scale=g.get("scale"), unit=g.get("unit"))
+                for g in r.get("figures") or []]
+
+    refused = [r["metric"] for _, r, q in rows if not all(
+        _figure_in_quote(f, _figures(q)) for f in value_figs(r))]
     assert refused == []
     bitten = 0
-    for r in rows:
-        quote_figs = _figures(r["verbatim"])
-        for f in _figures(r["value"])[:1]:
+    for _, r, q in rows:
+        quote_figs = _figures(q)
+        for f in value_figs(r)[:1]:
             moved = dataclasses.replace(f, value=f.value * 100)
-            if f.value and moved.value not in {q.value for q in quote_figs}:
-                assert not _figure_in_quote(moved, quote_figs), r["value"]
+            if f.value and moved.value not in {x.value for x in quote_figs}:
+                assert not _figure_in_quote(moved, quote_figs), r["metric"]
                 bitten += 1
     assert bitten > 100
 

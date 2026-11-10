@@ -11,6 +11,12 @@ committed page, the pass does the following, with no model call, no network and 
 2. **The locator.**
    - It is read from the call ON DISK (`ciq_sheets.transcript_for_synthesis`, read only) when that
      call is there and holds the quote.
+   - A full locator says the row's words ARE that file's at that place, so it is given only when
+     the row's context is also the one that file gives after the quote
+     (`driver_extract._following_paragraph`, as the extractor derived it). A row can hold a quote
+     the file has beside a context it does not: none, a shorter one, or one a comma apart (the
+     UBER fixture of 2026-10-26, under the key the live UBER page's passage takes). Its file hash
+     would be a false claim for half its passage, and the two passages would contend for one key.
    - Otherwise it is call-only: the call's name and the quote's hash, with no paragraph and no file
      hash. It is never a guessed position.
 3. **The spool.** The row's passage and its claim are written to the spool (`driver_evidence.
@@ -32,12 +38,13 @@ from pathlib import Path
 from vinci.dossier import driver_evidence, layer_refresh
 from vinci.dossier.driver_extract import (
     _call_sections,
+    _following_paragraph,
     check_fact,
     locate_quote,
     quote_key,
     transcript_sha256s,
 )
-from vinci.dossier.schemas import Dossier, OperatingDriver, TranscriptLocator
+from vinci.dossier.schemas import Dossier, OperatingDriver, TranscriptLocator, write_dossier
 
 WRITER = "driver-facts-pass"
 _CITED = "CIQ transcript: "
@@ -51,8 +58,10 @@ class PassOutcome:
     rows: int = 0
     located: int = 0
     call_only: int = 0
+    context_differs: int = 0  # of `call_only`: the quote is the file's, the context is not
     facts_added: int = 0
     spool: driver_evidence.SpoolReport = field(default_factory=driver_evidence.SpoolReport)
+    mirrored: bool = False  # a committed page whose mirror the caller must refresh
 
 
 def _calls_on_disk(ticker: str, ciq_root: Path) -> tuple[dict[str, str], dict[str, str]]:
@@ -99,6 +108,10 @@ def prepare(dossier: Dossier, ciq_root: Path) -> tuple[Dossier, PassOutcome]:
         if r.locator is None:
             call = r.source_ref[len(_CITED):]
             loc = locate_quote(r.verbatim, call, bodies.get(call), shas) if call in bodies else None
+            if loc is not None and _following_paragraph(r.verbatim, bodies[call]) != \
+                    r.following_context:
+                loc = None   # the quote is this file's; the context the row holds is not
+                out.context_differs += 1
             if loc is None:
                 loc = TranscriptLocator(call=call, quote_sha256=quote_key(r.verbatim))
                 out.call_only += 1
@@ -112,9 +125,13 @@ def prepare(dossier: Dossier, ciq_root: Path) -> tuple[Dossier, PassOutcome]:
 
 
 def run(jp: Path, ciq_root: Path, *, spool: driver_evidence.EvidenceSpool | None,
-        dry_run: bool) -> PassOutcome:
+        dry_run: bool, record: bool = True) -> PassOutcome:
     """One committed page through the pass. ``spool`` is required unless ``dry_run``: a page's
-    words are never dropped before they are filed."""
+    words are never dropped before they are filed.
+
+    ``record=False`` is for a FROZEN test fixture: a page frozen at a date, which carries no
+    refresh entry for this pass. It is written through the same one serializer, which round-trips
+    every committed fixture byte for byte, so the only bytes that move are its transcript rows'."""
     raw = jp.read_text(encoding="utf-8")
     dossier = Dossier.model_validate(json.loads(raw))
     prepared, out = prepare(dossier, ciq_root)
@@ -123,7 +140,8 @@ def run(jp: Path, ciq_root: Path, *, spool: driver_evidence.EvidenceSpool | None
     if dry_run:
         out.status = "would write"
         out.detail = (f"{out.rows} transcript row(s): {out.located} located, {out.call_only} "
-                      f"call-only, {out.facts_added} given their fact (dry run: nothing written)")
+                      f"call-only ({out.context_differs} whose context is not the file's), "
+                      f"{out.facts_added} given their fact (dry run: nothing written)")
         return out
     if spool is None:
         raise driver_evidence.SpoolNotConfiguredError(
@@ -133,9 +151,13 @@ def run(jp: Path, ciq_root: Path, *, spool: driver_evidence.EvidenceSpool | None
     if out.spool.no_evidence:   # `prepare` gave every row a locator; this would be a bug
         raise driver_evidence.EvidenceError(
             f"{dossier.ticker}: {out.spool.no_evidence} row(s) were not filed — page not written")
-    layer_refresh.write_recorded(jp, raw, prepared, WRITER)
+    if record:
+        layer_refresh.write_recorded(jp, raw, prepared, WRITER)
+    else:
+        write_dossier(jp, prepared)
     out.status = "written"
     out.detail = (f"{out.rows} transcript row(s): {out.located} located, {out.call_only} "
-                  f"call-only, {out.facts_added} given their fact; spool {out.spool.written} "
+                  f"call-only ({out.context_differs} whose context is not the file's), "
+                  f"{out.facts_added} given their fact; spool {out.spool.written} "
                   f"written, {out.spool.already} already held")
     return out

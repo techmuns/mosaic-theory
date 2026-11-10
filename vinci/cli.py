@@ -984,12 +984,23 @@ def _cmd_driver_facts_pass(args: argparse.Namespace) -> int:
     cfg = get_config()
     ciq_root = Path(args.ciq_root) if args.ciq_root else cfg.data_dir / "manual" / "ciq"
     spool = None if args.dry_run else driver_evidence.EvidenceSpool.from_env()
-    if args.tickers:
+    outcomes = []
+    # explicit page files (the committed test fixtures that carry transcript words): the same pass,
+    # but no `dossier.md` is rendered for them and nothing is mirrored
+    for raw_path in (args.pages or "").split(","):
+        if not raw_path.strip():
+            continue
+        jp = Path(raw_path.strip())
+        o = driver_pass.run(jp, ciq_root, spool=spool, dry_run=args.dry_run, record=False)
+        outcomes.append(o)
+        print(f"{jp}: {o.status.upper()} — {o.detail}")
+    if args.pages and not args.tickers:
+        tickers: list[str] = []
+    elif args.tickers:
         tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
     else:
         tickers = sorted(p.name for p in (cfg.data_dir / "dossiers").iterdir()
                          if (p / "dossier.json").is_file())
-    outcomes = []
     for t in tickers:
         jp = cfg.data_dir / "dossiers" / t / "dossier.json"
         if not jp.exists():
@@ -998,9 +1009,10 @@ def _cmd_driver_facts_pass(args: argparse.Namespace) -> int:
         o = driver_pass.run(jp, ciq_root, spool=spool, dry_run=args.dry_run)
         if o.status == "written":
             _rerender_only(jp)
+            o.mirrored = True
         outcomes.append(o)
         print(f"{o.ticker}: {o.status.upper()} — {o.detail}")
-    if any(o.status == "written" for o in outcomes):
+    if any(o.mirrored for o in outcomes):
         mirror_to_frontend()
     by: dict[str, int] = {}
     for o in outcomes:
@@ -3621,7 +3633,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="(RG-D19) take each committed page's transcript driver text off the page: the rows "
         "keep their fact and locator, and the words go to $VINCI_EVIDENCE_SPOOL first ($0 — no "
         "LLM, no network; reads the CIQ transcripts on disk, read only)")
-    p_dfp.add_argument("--tickers", help="comma-separated tickers (default: every committed page)")
+    p_dfp.add_argument("--tickers", help="comma-separated tickers (default: every committed page, "
+                       "unless --pages is given)")
+    p_dfp.add_argument("--pages", help="comma-separated dossier.json files outside data/dossiers "
+                       "(the committed test fixtures that carry transcript words)")
     p_dfp.add_argument("--ciq-root", dest="ciq_root",
                        help="the folder holding one CIQ folder per ticker, read in place "
                             "(default: data/manual/ciq)")

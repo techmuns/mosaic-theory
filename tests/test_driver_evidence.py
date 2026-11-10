@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.pre_strip import pre_strip_page, pre_strip_pages
+from tests.stripped_pages import rows_with_words, synthetic_page
 from tests.test_facts_remote import FakeBucket, _client
 from vinci.dossier import assemble
 from vinci.dossier import driver_evidence as de
@@ -200,41 +200,40 @@ def _with_call_only_locators(page: dict[str, object]) -> ds.Dossier:
         "operating_drivers": od.model_copy(update={"rows": rows})})})
 
 
-def test_every_committed_pages_transcript_rows_spool_and_read_back_whole(tmp_path: Path) -> None:
+def test_a_pages_transcript_rows_spool_and_read_back_whole(tmp_path: Path) -> None:
+    """On a real page whose transcript rows are invented ones holding their words: every passage
+    and every claim lands, and each stripped row reads back as the row it was. ONE RECORD PER
+    PASSAGE, ONE PER CLAIM — three rows share one quote (as 63 committed passages did), so they
+    share its passage and keep three claims."""
     spool = de.EvidenceSpool(tmp_path)
-    total = 0
-    keys: set[str] = set()
-    claims: set[str] = set()
-    for ticker, page in pre_strip_pages():
-        d = _with_call_only_locators(page)
-        tx = [r for r in (d.mechanical.operating_drivers.rows
-                          if d.mechanical.operating_drivers else []) if r.tier == "llm-fenced"]
-        written, rep = de.spool_dossier(d, spool)
-        assert rep.no_evidence == 0 and rep.written + rep.already == 2 * len(tx), ticker
-        for r in tx:
-            assert r.locator is not None and r.verbatim and r.value is not None
-            got = spool.get(de.evidence_key(r.locator))
-            assert isinstance(got, de.EvidenceRecord)
-            assert (got.verbatim, got.following_context) == \
-                (r.verbatim, r.following_context), ticker
-            keys.add(de.evidence_key(r.locator))
-            claims.add(de.claim_key(r.locator.quote_sha256, de.value_key(r.value)))
-        # and read back whole: every stripped row becomes the row it was, words and all
-        od = written.mechanical.operating_drivers
-        stripped = [r.model_copy(update={"verbatim": None, "following_context": None,
-                                         "value": None}) if r.tier == "llm-fenced" else r
-                    for r in (od.rows if od is not None else [])]
-        back = de.rehydrate(stripped, spool.get)
-        assert [(r.verbatim, r.following_context, r.value) for r in back] == \
-            [(r.verbatim, r.following_context, r.value)
-             for r in (od.rows if od is not None else [])], ticker
-        total += len(tx)
+    d = _with_call_only_locators(synthetic_page())
+    tx = [r for r in (d.mechanical.operating_drivers.rows
+                      if d.mechanical.operating_drivers else []) if r.tier == "llm-fenced"]
+    written, rep = de.spool_dossier(d, spool)
+    assert rep.no_evidence == 0 and rep.written + rep.already == 2 * len(tx)
+    keys = {de.evidence_key(r.locator) for r in tx if r.locator is not None}
+    claims = {de.claim_key(r.locator.quote_sha256, de.value_key(r.value))
+              for r in tx if r.locator is not None and r.value is not None}
+    od = written.mechanical.operating_drivers
+    assert od is not None
+    stripped = [r.model_copy(update={"verbatim": None, "following_context": None,
+                                     "value": None}) if r.tier == "llm-fenced" else r
+                for r in od.rows]
+    back = de.rehydrate(stripped, spool.get)
+    assert [(r.verbatim, r.following_context, r.value) for r in back] == \
+        [(r.verbatim, r.following_context, r.value) for r in od.rows]
     held, other = spool.keys()
-    assert total > 500 and other == []
-    assert all(p.is_file() for p in tmp_path.iterdir())   # flat: not one folder was made
-    # ONE RECORD PER PASSAGE, ONE PER CLAIM: rows sharing a quote on one call share its passage,
-    # and each row's stated value is its own claim (the spool refused none)
-    assert sorted(held) == sorted(keys | claims) and len(keys) < total
+    assert other == [] and all(p.is_file() for p in tmp_path.iterdir())   # flat: no folder made
+    assert sorted(held) == sorted(keys | claims) and (len(keys), len(claims)) == (2, 4)
+
+
+def test_every_committed_rows_locator_finds_its_passage_on_disk() -> None:
+    """Each committed transcript row's locator finds its quote in its call on disk: the file by its
+    sha256, the paragraph by its index, the quote by its hash (`stripped_pages.passage` asserts
+    each). A row whose call is no longer on disk is counted, not checked; with no CIQ export at
+    all (CI) the test skips and says so."""
+    rows, skipped = rows_with_words()
+    assert len(rows) > 500, (len(rows), skipped)
 
 
 def test_the_assembly_spools_before_it_writes_the_page_and_a_bad_spool_stops_it(
@@ -243,7 +242,7 @@ def test_the_assembly_spools_before_it_writes_the_page_and_a_bad_spool_stops_it(
     """(RG-D19 PR 3) The spool is REQUIRED: the page is written without its transcript words, so
     the spool is their only copy outside the licensed call. Unset, the build stops before the
     page; set and created, the words land first, and the page carries none of them."""
-    d = _with_call_only_locators(pre_strip_page("BRBR"))
+    d = _with_call_only_locators(synthetic_page())
     spool, out = tmp_path / "spool", tmp_path / "out"
     # unset: the build stops BEFORE the page
     with pytest.raises(de.SpoolNotConfiguredError, match="VINCI_EVIDENCE_SPOOL"):
@@ -288,7 +287,7 @@ def test_a_bad_spool_stops_the_build_before_any_paid_phase(
 def test_two_listings_citing_one_call_share_its_record(tmp_path: Path) -> None:
     """The record is the passage, not the page (#PR2 review): a second share class citing the same
     call file meets the first one's record and writes nothing, never a refused build."""
-    d = _with_call_only_locators(pre_strip_page("BRBR"))
+    d = _with_call_only_locators(synthetic_page())
     twin = d.model_copy(update={"ticker": "BRBR.B"})
     spool = de.EvidenceSpool(tmp_path)
     _, first = de.spool_dossier(d, spool)

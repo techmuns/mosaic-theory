@@ -4,8 +4,9 @@ All of it runs against LOCAL STAND-INS:
 - the spool is a pytest temporary folder (`conftest.evidence_spool` or `tmp_path`);
 - the CIQ folder is a temporary one.
 
-The pages are the committed ones AS THEY WERE before the pass, read from git (`tests/pre_strip.py`),
-so each pin runs on a real row. Licensed text never leaves memory and the temporary folders.
+The pages are real committed pages whose transcript rows are invented ones holding their words
+(`tests/stripped_pages.synthetic_page`), so the pass and every reader run on a real page's shape
+and no licensed text is in any fixture.
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ from typing import Any
 
 import pytest
 
-from tests.pre_strip import pre_strip_page, pre_strip_text
+from tests.stripped_pages import synthetic_page
 from vinci.dossier import driver_evidence as de
 from vinci.dossier import driver_pass as dp
 from vinci.dossier import schemas as ds
@@ -34,7 +35,7 @@ def _tx_rows(page: dict[str, Any]) -> list[dict[str, Any]]:
 def _page_file(tmp_path: Path, ticker: str) -> Path:
     jp = tmp_path / "dossiers" / ticker / "dossier.json"
     jp.parent.mkdir(parents=True)
-    jp.write_text(pre_strip_text(ticker))
+    jp.write_text(json.dumps(synthetic_page(ticker)))
     return jp
 
 
@@ -43,9 +44,10 @@ def _page_file(tmp_path: Path, ticker: str) -> Path:
 def test_a_page_round_trips_byte_for_byte_until_its_words_are_filed() -> None:
     """The live pages before the pass: the one serializer moves no byte of them. A row's words
     leave the page only once `spool_dossier` filed them (its locator carries the claim's hash)."""
-    text = pre_strip_text("BRBR")
-    d = ds.Dossier.model_validate_json(text)
-    assert ds.dossier_json(d) == text
+    d = ds.Dossier.model_validate(synthetic_page("BRBR"))
+    text = ds.dossier_json(d)
+    assert ds.dossier_json(ds.Dossier.model_validate_json(text)) == text   # stable, words kept
+    assert all(r.get("verbatim") for r in _tx_rows(json.loads(text)))
     od = d.mechanical.operating_drivers
     assert od is not None
     filed = [r.model_copy(update={"locator": ds.TranscriptLocator(
@@ -97,11 +99,13 @@ def test_the_pass_files_the_words_then_writes_the_page_without_them(tmp_path: Pa
 
 def test_a_call_on_disk_gives_the_paragraph_and_the_speaker(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """When the cited call is on disk and holds the quote, the locator is the full one."""
+    """When the cited call is on disk and holds the quote and its context (the rest of the
+    speaker's paragraph after it), the locator is the full one."""
     jp = _page_file(tmp_path, "BRBR")
     row = _tx_rows(json.loads(jp.read_text()))[0]
     call = row["source_ref"].split(": ", 1)[1]
-    body = f"\nJane  Roe \nChief Financial Officer \n\nOpening remarks.\n\n{row['verbatim']}\n"
+    body = (f"\nJane  Roe \nChief Financial Officer \n\nOpening remarks.\n\n{row['verbatim']} "
+            f"{row['following_context']}\n")
     monkeypatch.setattr(dp, "_calls_on_disk", lambda t, root: ({call: body}, {call: "c" * 64}))
     dossier, out = dp.prepare(ds.Dossier.model_validate_json(jp.read_text()), tmp_path)
     od = dossier.mechanical.operating_drivers
@@ -111,6 +115,37 @@ def test_a_call_on_disk_gives_the_paragraph_and_the_speaker(
     assert (first.locator.transcript_sha256, first.locator.paragraph, first.locator.speaker) == \
         ("c" * 64, 2, "Jane Roe")
     assert out.located >= 1
+
+
+def test_a_context_from_another_export_of_the_call_gets_no_file_hash(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A full locator says the row's words are that file's. When the row's quote is in the call on
+    disk but its context is not the one that file gives after it (the UBER fixture of 2026-10-26:
+    a comma apart), the locator is call-only, never that file's hash: its
+    passage would claim words the file does not hold, under the key another page's passage of the
+    same file and paragraph takes."""
+    jp = _page_file(tmp_path, "BRBR")
+    row = _tx_rows(json.loads(jp.read_text()))[0]
+    call = row["source_ref"].split(": ", 1)[1]
+    body = (f"\nJane  Roe \nChief Financial Officer \n\n{row['verbatim']} They recovered, in "
+            "October.\n")
+    monkeypatch.setattr(dp, "_calls_on_disk", lambda t, root: ({call: body}, {call: "c" * 64}))
+    dossier, out = dp.prepare(ds.Dossier.model_validate_json(jp.read_text()), tmp_path)
+    od = dossier.mechanical.operating_drivers
+    assert od is not None
+    first = next(r for r in od.rows if r.tier == "llm-fenced")
+    assert first.locator is not None
+    assert (first.locator.transcript_sha256, first.locator.paragraph) == (None, None)
+    assert out.context_differs >= 1 and out.located + out.call_only == out.rows
+    # the same file holding the row's own context gives the full locator
+    held = body.replace("They recovered, in October.", str(row["following_context"]))
+    monkeypatch.setattr(dp, "_calls_on_disk", lambda t, root: ({call: held}, {call: "c" * 64}))
+    dossier, out = dp.prepare(ds.Dossier.model_validate_json(jp.read_text()), tmp_path)
+    od = dossier.mechanical.operating_drivers
+    assert od is not None
+    first = next(r for r in od.rows if r.tier == "llm-fenced")
+    assert first.locator is not None and first.locator.transcript_sha256 == "c" * 64
+    assert out.context_differs == 0
 
 
 def test_the_pass_never_drops_a_word_unfiled(tmp_path: Path) -> None:
@@ -143,7 +178,7 @@ def _stripped(tmp_path: Path, ticker: str = "BRBR") -> dict[str, Any]:
 def test_the_replay_refuses_a_page_whose_words_are_off_it(tmp_path: Path) -> None:
     """A replay from a stripped page would send a request the build never sent, and call it the
     build's. Refused; the page as it was replays as before."""
-    pre_synthesis_mech(pre_strip_page("BRBR"))
+    pre_synthesis_mech(synthetic_page("BRBR"))
     with pytest.raises(ValueError, match="private store"):
         pre_synthesis_mech(_stripped(tmp_path))
 

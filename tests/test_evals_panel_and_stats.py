@@ -30,6 +30,13 @@ def test_the_rule_reproduces_the_frozen_panel() -> None:
     assert [list(t) for t in sel.tied] == FROZEN["search"]["tied_in_hash_order"]
 
 
+#: AORT's frozen fixture as the RG-D19 page pass wrote it (2026-11-10): its transcript rows' words
+#: off it, their fact and locator on it, nothing else moved. The pass moves no input of a panel
+#: row (measured on all 28 pages: `docs/records/2026-11-10-driver-facts-page-pass.md`), so this
+#: blob still yields the frozen row. Any other move takes the page out of the check.
+_AORT_PASSED_BLOB = "983a4b92eee87723dde2b254e6f83dd375dcbe73"
+
+
 def test_each_unmoved_page_still_yields_its_frozen_row() -> None:
     checked = 0
     for row in FROZEN["rows"]:
@@ -39,7 +46,9 @@ def test_each_unmoved_page_still_yields_its_frozen_row() -> None:
             path = ROOT / "tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json"
         blob = subprocess.run(["git", "hash-object", str(path)], capture_output=True, text=True,
                               check=True).stdout.strip()
-        if blob != FROZEN["pages"][t]["dossier_blob"]:
+        unmoved = {FROZEN["pages"][t]["dossier_blob"]} | ({_AORT_PASSED_BLOB} if t == "AORT"
+                                                           else set())
+        if blob not in unmoved:
             continue
         page = json.loads(path.read_text(encoding="utf-8"))
         got = pn.page_row(page, transcripts=row["transcripts"], motivated=row["motivated"])

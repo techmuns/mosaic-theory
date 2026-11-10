@@ -14,7 +14,7 @@ from typing import Any
 
 import pytest
 
-from tests.pre_strip import pre_strip_text
+from tests.stripped_pages import replayable_text
 from vinci.dossier import mechanical
 from vinci.evals import compare as cm
 from vinci.evals import replay as rp
@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @pytest.fixture(scope="module")
 def nflx() -> dict[str, Any]:
-    page: dict[str, Any] = json.loads(pre_strip_text("NFLX"))
+    page: dict[str, Any] = json.loads(replayable_text("NFLX"))
     return page
 
 
@@ -82,7 +82,7 @@ def test_the_relabel_transform_reads_the_code_under_tests_own_words(
 
 
 def test_the_transform_leaves_a_gap_down_window_alone() -> None:
-    cnxc = json.loads(pre_strip_text("CNXC"))
+    cnxc = json.loads(replayable_text("CNXC"))
     from vinci.evals.capture_child import pre_synthesis_mech
     mech = pre_synthesis_mech(cnxc)
     assert mech.drawdown_cause is not None
@@ -151,7 +151,7 @@ def test_a_target_that_is_not_a_metric_is_refused() -> None:
 # ------------------------------------------------- round 1 (in-session /code-review high, #924)
 
 def _page(t: str) -> dict[str, Any]:
-    page: dict[str, Any] = json.loads(pre_strip_text(t))
+    page: dict[str, Any] = json.loads(replayable_text(t))
     return page
 
 
