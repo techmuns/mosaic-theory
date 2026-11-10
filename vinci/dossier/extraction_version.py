@@ -745,6 +745,16 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "refreshed; no committed page carries a mid-cycle band",
     ),
     (
+        "2026-11-10.unit-and-headers",
+        "fix request 2, order 4, two CIQ-reader defects (RA-D9, RA-D14): a Financials money sheet "
+        "stating a unit other than Millions is refused before assembly and on the anchor's path "
+        "(`ciq_sheets.require_millions`, `require_usd`'s twin), so no page prints thousands as "
+        "$M; Consensus's target-price and LT-growth stats and every Recent Changes column are "
+        "read by their headers, and a missing header leaves the read unread, never positional. "
+        "No page moves: all 720 money sheets on disk state Millions, and every export's headers "
+        "sit where the positional reads assumed (2026-11-10)",
+    ),
+    (
         "2026-11-10.relationship-view-edges",
         "the Customers view's edges are said (TeamNostra fix request 2, RBC-D3, V1-O3, RBC-D5):"
         " an RTF view that does not end with CIQ's closing line ('*denotes proprietary "

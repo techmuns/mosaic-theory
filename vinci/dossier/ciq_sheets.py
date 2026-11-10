@@ -33,6 +33,7 @@ from vinci.dossier.ciq import (
     read_cell,
     read_sheets,
     read_text,
+    stated_unit,
 )
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
 from vinci.dossier.schemas import (
@@ -2269,14 +2270,21 @@ def consensus_view(bundle: CiqBundle) -> Sourced[str]:
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "estimates", exc)
     parts: list[str] = []
+    # MEAN AND MEDIAN BY THEIR HEADER, never by position (audit RA-D14): `_stat_columns`
     tp = _find_row_prefix(rows, "Target Price")
-    if tp is not None and len(rows[tp]) > 2:
-        mean, med = clean_num(rows[tp][1]), clean_num(rows[tp][2])
+    if tp is not None and (cols := _stat_columns(rows, tp)) is None:
+        parts.append("Target price: unread (no Mean/Median header above the row)")
+    elif tp is not None and cols is not None:
+        mean = clean_num(_stat_at(rows, tp, cols, "Mean"))
+        med = clean_num(_stat_at(rows, tp, cols, "Median"))
         if mean is not None or med is not None:
             parts.append(f"Target price: mean {_usd(mean)} / median {_usd(med)}")
     lg = _find_row_prefix(rows, "LT Growth")
-    if lg is not None and len(rows[lg]) > 2:
-        mean, med = clean_num(rows[lg][1]), clean_num(rows[lg][2])
+    if lg is not None and (lcols := _stat_columns(rows, lg)) is None:
+        parts.append("LT growth: unread (no Mean/Median header above the row)")
+    elif lg is not None and lcols is not None:
+        mean = clean_num(_stat_at(rows, lg, lcols, "Mean"))
+        med = clean_num(_stat_at(rows, lg, lcols, "Median"))
         if mean is not None or med is not None:
             parts.append(f"LT growth: mean {_pct1(mean)} / median {_pct1(med)}")
     # THE LISTING'S OWN RECOMMENDATION (audit A-D10, 2026-10-29). This read Consensus's "Industry
@@ -2477,6 +2485,41 @@ def _recent_changes_rows(rows: Rows) -> tuple[int, Rows] | None:
     return hi, [r for r in rows[hi + 1:] if r and str(r[0]).strip()]
 
 
+#: Recent Changes' columns, by CIQ's own header text (audit RA-D14, 2026-11-10). The log was read
+#: by index (`c[0]` … `c[9]`), so two columns swapped — header included — swapped the values with
+#: nothing said: SMPL's 'Broker Value Prior' and 'Current' traded places and its Interest Expense
+#: revision printed current -20.0, prior -19.8. All 36 exports on disk carry the same ten headers
+#: in this order — these nine and 'Analyst', which no field reads — so no read moves.
+_RC_COLUMNS = ("Change Type", "Date", "Broker", "Data Point", "Period", "Broker Value Current",
+               "Broker Value Prior", "Consensus After", "Consensus Before")
+
+
+def _rc_columns(rows: Rows, hi: int) -> tuple[dict[str, int], list[str]]:
+    """({header: column} for `_RC_COLUMNS`, the headers absent) on the 'Change Type' row ``hi``."""
+    cells = [str(c).strip() for c in rows[hi]]
+    found = {h: cells.index(h) for h in _RC_COLUMNS if h in cells}
+    return found, [h for h in _RC_COLUMNS if h not in found]
+
+
+def _stat_columns(rows: Rows, ri: int) -> dict[str, int] | None:
+    """{stat header: column} for a Consensus stats row (Target Price, LT Growth) — read off the
+    nearest header above it carrying 'Mean' and 'Median', its labels without CIQ's trailing dot
+    ('No. of Estimates.'). None when no such header is within five rows: a stat is then unread,
+    never taken by position (audit RA-D14 — a Mean/Median swap printed SMPL's target as mean $14.00
+    / median $14.88). On all 36 exports on disk the header is the row right above Target Price,
+    and two above LT Growth (across the Target Price row)."""
+    for k in range(ri - 1, max(ri - 6, -1), -1):
+        cells = [str(c).strip() for c in rows[k]]
+        if "Mean" in cells and "Median" in cells:
+            return {c.rstrip("."): j for j, c in enumerate(cells) if c}
+    return None
+
+
+def _stat_at(rows: Rows, ri: int, cols: dict[str, int], stat: str) -> Any:
+    j = cols.get(stat)
+    return rows[ri][j] if j is not None and j < len(rows[ri]) else ""
+
+
 def _metric_block_header(rows: Rows, bi: int) -> list[Any] | None:
     """The period-column header row for a Trends/Revisions metric block at ``bi`` — the nearby row
     carrying FQ…/FY… period labels (the 'NasdaqCM:…'/'Company Level' row)."""
@@ -2587,11 +2630,15 @@ def estimates_as_of(bundle: CiqBundle) -> Sourced[str]:
         return _miss_or_unknown(bundle, "estimates", exc)
     rc = _recent_changes_rows(rows)
     latest: date | None = None
-    if rc is not None:
+    dcol = _rc_columns(rows, rc[0])[0].get("Date") if rc is not None else None   # RA-D14
+    if rc is not None and dcol is not None:
         for r in rc[1]:
-            d = excel_date(r[1]) if len(r) > 1 else None
+            d = excel_date(r[dcol]) if dcol < len(r) else None
             if d is not None and (latest is None or d > latest):
                 latest = d
+    if latest is None and rc is not None and dcol is None:
+        return Sourced.unknown(note="no As-Of header, and Estimates→Recent Changes carries no "
+                                    "'Date' column header — the log is not read by position")
     if latest is None:
         return Sourced.unknown(note="no As-Of header and no dated events in Estimates")
     return Sourced.present(
@@ -4599,18 +4646,29 @@ def revision_events(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[l
     rc = _recent_changes_rows(rows)
     if rc is None:
         return Sourced.unknown(note="no 'Change Type' header in Estimates→Recent Changes")
+    # EVERY COLUMN BY ITS HEADER (audit RA-D14): one missing header leaves the log unread, never
+    # read by position
+    col, absent = _rc_columns(rows, rc[0])
+    if absent:
+        missing = ", ".join(map(repr, absent))
+        return Sourced.unknown(note=f"Estimates→Recent Changes carries no {missing} column "
+                                    "header — the log is not read by position")
     out: list[RevisionEvent] = []
     for r in rc[1]:
-        c = [str(x).strip() for x in r] + [""] * 10
-        d = excel_date(r[1]) if len(r) > 1 else None
+        def c(h: str, r: list[Any] = r) -> str:
+            j = col[h]
+            return str(r[j]).strip() if j < len(r) else ""
+        d = excel_date(r[col["Date"]]) if col["Date"] < len(r) else None
+        broker = c("Broker")
         out.append(
             RevisionEvent(
-                date=d.isoformat() if d is not None else c[1],
+                date=d.isoformat() if d is not None else c("Date"),
                 # R2: an 'Entitlement Needed' broker is a placeholder — group as undisclosed
-                change_type=c[0], broker=("broker undisclosed" if _is_entitlement(c[2]) else c[2]),
-                metric=c[4], period=c[5],
-                broker_prior=c[7], broker_current=c[6],
-                consensus_before=c[9], consensus_after=c[8],
+                change_type=c("Change Type"),
+                broker=("broker undisclosed" if _is_entitlement(broker) else broker),
+                metric=c("Data Point"), period=c("Period"),
+                broker_prior=c("Broker Value Prior"), broker_current=c("Broker Value Current"),
+                consensus_before=c("Consensus Before"), consensus_after=c("Consensus After"),
             )
         )
     if not out:
@@ -4699,12 +4757,14 @@ def consensus_stats(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[s
         return _miss_or_unknown(bundle, "estimates", exc)
     parts: list[str] = []
     tp = _find_row_prefix(rows, "Target Price")
-    if tp is not None:
-        r = rows[tp]
-        mean = clean_num(r[1]) if len(r) > 1 else None
-        med = clean_num(r[2]) if len(r) > 2 else None
-        hilo = str(r[3]).strip() if len(r) > 3 else ""
-        n = str(r[5]).strip() if len(r) > 5 else ""
+    tcols = _stat_columns(rows, tp) if tp is not None else None
+    if tp is not None and tcols is None:   # RA-D14: never by position
+        parts.append("Target price: unread (no Mean/Median header above the row)")
+    if tp is not None and tcols is not None:
+        mean = clean_num(_stat_at(rows, tp, tcols, "Mean"))
+        med = clean_num(_stat_at(rows, tp, tcols, "Median"))
+        hilo = str(_stat_at(rows, tp, tcols, "High/Low")).strip()
+        n = str(_stat_at(rows, tp, tcols, "No. of Estimates")).strip()
         seg: list[str] = []
         if mean is not None:
             seg.append(f"mean {_usd(mean)}")
@@ -7288,6 +7348,59 @@ def require_usd(currency: CiqCurrency | None, ticker: str) -> None:
         + "; ".join(f"{p.panel}: {', '.join(p.stated)}" for p in bad)
         + ". Every CIQ figure on a page is read as USD ($M); refusing rather than print these as "
         "dollars. Reading a foreign-currency workbook is STATE §5.0 row 4's FPI5.")
+
+
+class CiqUnitError(ValueError):
+    """A CIQ Financials money sheet STATES a unit other than Millions. Every CIQ money figure on a
+    page is read as $M, so a page built from it would print thousands as millions — refused before
+    assembly spends anything (audit RA-D9)."""
+
+
+#: Capital Structure Details states its unit as 'Principal Due in Millions of the reported
+#: currency.', which `ciq.stated_unit`'s 'In … of' line never matches (review of order 4).
+_PRINCIPAL_UNIT = re.compile(r"^Principal Due in (Units|Thousands|Millions|Billions) of ",
+                             re.IGNORECASE)
+
+
+def _principal_unit(rows: Rows) -> str | None:
+    for row in rows[:14]:
+        for cell in row:
+            if isinstance(cell, str) and (m := _PRINCIPAL_UNIT.match(cell.strip())):
+                return m.group(1).capitalize()
+    return None
+
+
+def require_millions(bundle: CiqBundle, ticker: str) -> None:
+    """Raise :class:`CiqUnitError` when a Financials money panel (`_MONEY_PANELS`) states a unit
+    other than Millions on its own unit line (`ciq.stated_unit`; Capital Structure Details'
+    'Principal Due in … of' line, `_principal_unit`).
+
+    ONLY THE BRIDGE READ THE UNIT (audit RA-D9, 2026-11-10). #863 taught the anchor bridge to read
+    each statement's 'In Millions of …' line and refuse another unit (BC-D10), but the readers that
+    print the page — the financial summary's "Revenue ($M)", `ltm_ebitda`, the balance-sheet
+    lines — assume $M, so an export in thousands printed 67,357,000 as "Revenue ($M)". This is
+    `require_usd`'s twin, at the same two places: assembly, before any fetch, and the anchor's
+    CIQ path. A panel stating NO unit is not refused (the bridge's magnitude and re-read checks
+    still screen it). Census of the 36 exports on disk, 2026-11-10: all 720 Income Statement,
+    Balance Sheet, Cash Flow, Segments, Capital Structure Summary and Historical Capitalization
+    sheets state Millions, and all 72 Capital Structure Details sheets 'Principal Due in Millions
+    of', so no page is refused."""
+    wrong: list[str] = []
+    for panel, how, read in _MONEY_PANELS:
+        if not panel.startswith("Financials") or how not in ("row", "principal"):
+            continue
+        try:
+            rows = read(bundle)
+        except CiqUnavailableError:
+            continue
+        unit = stated_unit(rows) if how == "row" else _principal_unit(rows)
+        if unit is not None and unit != "Millions":
+            wrong.append(f"{panel}: {unit}")
+    if wrong:
+        raise CiqUnitError(
+            f"{ticker}: {len(wrong)} CIQ Financials money sheet(s) state a unit other than "
+            f"Millions — {'; '.join(wrong)}. Every CIQ money figure on a page is read as $M; "
+            "refusing rather than print these as millions. Re-export in Millions.")
 
 
 def currency_flag(currency: CiqCurrency | None) -> str | None:
