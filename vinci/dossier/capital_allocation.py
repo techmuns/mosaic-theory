@@ -32,6 +32,7 @@ from typing import Any
 
 from vinci.dossier.schemas import (
     CapitalAllocation,
+    ImpairmentHeadroom,
     PeerCapitalIntensity,
     PeerCapitalRow,
     PeerImpairment,
@@ -42,9 +43,11 @@ from vinci.edgar.concepts import ConceptPoint, latest_instant, points_for_tag
 
 _USD_M = 1_000_000.0
 
-#: Alias FAMILIES, in preference order. First tag with a usable annual point answers, and the one
-#: that answered is named in the `source_ref` — an alias set whose winner is invisible is the
-#: `dep_amort` lesson (an abandoned tag kept its last value forever and nothing said so).
+#: Alias FAMILIES, in preference order. For a flow the first tag with a usable point answers; for a
+#: balance (instant) the first tag whose latest balance is within `CURRENT_DAYS` of the family's
+#: newest; the one that answered is named in the `source_ref` — an alias set whose winner is
+#: invisible is the `dep_amort` lesson (an abandoned tag kept its last value forever and nothing
+#: said so).
 GOODWILL = ("Goodwill",)
 INTANGIBLES = (
     "IntangibleAssetsNetExcludingGoodwill",       # the total, when the filer states one
@@ -78,7 +81,9 @@ AVG_PRICE_BASIS = (
 
 def _pick(facts: dict[str, Any], tags: tuple[str, ...], *,
           kind: str) -> tuple[ConceptPoint, str] | None:
-    """The first tag in the family with a usable point, and its name.
+    """The family's answering point and its tag: for a flow the first tag with a usable point;
+    for an instant the first tag in the preference order whose latest balance is within
+    `CURRENT_DAYS` of the family's newest.
 
     PREFERENCE ORDER, not longest coverage — the `_total_revenue_series` precedent. These families
     are not interchangeable views of one number (a finite-lived intangible balance is not a total),
@@ -89,7 +94,9 @@ def _pick(facts: dict[str, Any], tags: tuple[str, ...], *,
     first cut of this module asked `latest_annual` for them and rendered UNKNOWN on a name with a
     $1.5bn balance. Flows (impairment, buybacks, acquisitions) are durations.
 
-    * ``instant``  — latest balance.
+    * ``instant``  — the latest balance of the first tag in the preference order that is still
+      current (its latest balance within `CURRENT_DAYS` of the family's newest), so a first tag
+      the filer stopped using no longer wins and a current total still beats a newer partial leg.
     * ``flow``     — the most recent period_end, and at that end the LONGEST span. A year-to-date
       point is not an annual one and `latest_annual` would skip it: SMPL's live write-off is a
       272-day FY2026 YTD charge, and annual-only would have reported the prior year's $60.9M as
@@ -115,16 +122,30 @@ def _pick(facts: dict[str, Any], tags: tuple[str, ...], *,
                 if best is None or (x.value, x.period_end) > (best[0].value, best[0].period_end):
                     best = (x, tag)
         return best
+    if kind == "instant":
+        # THE PREFERRED TAG THAT IS STILL CURRENT (2026-11-10, audit RD-D1). The first tag with ANY
+        # point answered, so a filer that stopped using it kept its last value forever: MCK's
+        # `IntangibleAssetsNetExcludingGoodwill` ends 2012-06-30 while its
+        # `FiniteLivedIntangibleAssetsNet` runs to 2026-09-30, and the page added a 2012 balance to
+        # a 2026 goodwill. The newest balance alone is no rule either: a filer tagging the TOTAL in
+        # its 10-K and the finite-lived leg each quarter would lose its indefinite-lived leg
+        # mid-year (review round 0). So: the first tag in the preference order whose latest balance
+        # is within `CURRENT_DAYS` of the family's newest. The tag that answered is still named.
+        latest = [(q, tag) for tag in tags
+                  if (q := latest_instant([x for x in points_for_tag(facts, tag)
+                                           if x.value is not None])) is not None]
+        if not latest:
+            return None
+        newest = max(q.period_end for q, _t in latest)
+        return next((q, tag) for q, tag in latest
+                    if (newest - q.period_end).days <= CURRENT_DAYS)
     for tag in tags:
         pts = [x for x in points_for_tag(facts, tag) if x.value is not None]
-        if kind == "instant":
-            p = latest_instant([x for x in pts if x.is_instant])
-        else:
-            flows = [x for x in pts if not x.is_instant and x.period_start is not None]
-            end = max((x.period_end for x in flows), default=None)
-            at_end = [x for x in flows if x.period_end == end]
-            p = max(at_end, key=lambda x: ((x.period_end - x.period_start).days,  # type: ignore[operator]
-                                           x.filed)) if at_end else None
+        flows = [x for x in pts if not x.is_instant and x.period_start is not None]
+        end = max((x.period_end for x in flows), default=None)
+        at_end = [x for x in flows if x.period_end == end]
+        p = max(at_end, key=lambda x: ((x.period_end - x.period_start).days,  # type: ignore[operator]
+                                       x.filed)) if at_end else None
         if p is not None:
             return p, tag
     return None
@@ -305,6 +326,81 @@ def buyback_legs(cash_pt: tuple[ConceptPoint, str] | None,
     return cash, shares, avg
 
 
+def _balances(facts: dict[str, Any], tags: tuple[str, ...]) -> dict[date, tuple[ConceptPoint, str]]:
+    """The family's balances by date, all under the ONE tag `_pick(kind="instant")` chooses — at
+    each balance date its latest filing. One tag, so a headroom never mixes a total at one date with
+    a finite-lived leg at another."""
+    chosen = _pick(facts, tags, kind="instant")
+    if chosen is None:
+        return {}
+    tag = chosen[1]
+    by_end: dict[date, ConceptPoint] = {}
+    for x in points_for_tag(facts, tag):
+        if x.value is None or not x.is_instant:
+            continue
+        if x.period_end not in by_end or x.filed > by_end[x.period_end].filed:
+            by_end[x.period_end] = x
+    return {d: (x, tag) for d, x in by_end.items()}
+
+
+def _shared_balance(gw: dict[date, tuple[ConceptPoint, str]],
+                    it: dict[date, tuple[ConceptPoint, str]], *, within: date | None,
+                    within_is: str = "the price date"
+                    ) -> tuple[list[tuple[ConceptPoint, str]], str | None]:
+    """(the goodwill and intangibles balances at ONE date, or why there are none).
+
+    The legs are read at the latest date the families SHARE, never each at its own latest; a family
+    the filer never tags is no leg (one leg alone is its own balance). With ``within`` (a price
+    date, or a peer's own latest balance date — ``within_is`` names which, for the reason) that
+    date must be no more than `CURRENT_DAYS` before it — a shared balance six years old measures
+    nothing current. The reason names every date it found. ``gw`` / ``it`` are :func:`_balances`
+    of `GOODWILL` and `INTANGIBLES`."""
+    if not gw and not it:
+        return [], (f"no goodwill or intangible balance under any of "
+                    f"{', '.join((*GOODWILL, *INTANGIBLES))}")
+    if gw and it:
+        shared = sorted(set(gw) & set(it))
+        if not shared:
+            return [], (f"goodwill is as at {max(gw)} and intangibles as at {max(it)}, and the two "
+                        f"share no balance date: two balances at different dates are not one sum")
+        at = shared[-1]
+        legs = [gw[at], it[at]]
+    else:
+        fam = gw or it
+        at = max(fam)
+        legs = [fam[at]]
+    if within is not None and (within - at).days > CURRENT_DAYS:
+        days = f"{(within - at).days} days before {within_is} {within}"
+        if gw and it:
+            return [], (f"goodwill is as at {max(gw)} and intangibles as at {max(it)}; the latest "
+                        f"balance date the legs share, {at}, is {days} — more than "
+                        f"{CURRENT_DAYS}, so it measures no current headroom")
+        return [], (f"{'goodwill' if gw else 'intangibles'} is last tagged as at {at}, {days} — "
+                    f"more than {CURRENT_DAYS}, so it measures no current headroom")
+    return legs, None
+
+
+def impairment_headroom(facts: dict[str, Any], *, as_of: date) -> Sourced[ImpairmentHeadroom]:
+    """Goodwill + intangibles still carried — what an impairment could yet write off — at ONE
+    balance date (audit RD-D1), or UNKNOWN naming the dates found. The page printed each leg's own
+    latest balance summed, citing goodwill's date: MCK's $12,950.0M added 2012 to 2026."""
+    gw, it = _balances(facts, GOODWILL), _balances(facts, INTANGIBLES)
+    legs, why = _shared_balance(gw, it, within=as_of)
+    if why is not None:
+        return Sourced.unknown(note=why)
+    at = legs[0][0].period_end
+    names = ["goodwill" if tag in GOODWILL else "intangibles" for _p, tag in legs]
+    # a family's newest balance date is its newest `_balances` key (= `_pick(kind="instant")`)
+    later = [f"{name} is also reported as at {max(fam)}"
+             for name, fam in (("goodwill", gw), ("intangibles", it))
+             if fam and max(fam) > at]
+    return Sourced.present(
+        ImpairmentHeadroom(value=round(sum(p.value for p, _t in legs) / _USD_M, 3),
+                           as_at=at.isoformat(), legs=names),
+        source_ref="EDGAR companyfacts " + " + ".join(tag for _p, tag in legs) + f" (as at {at})",
+        note=("the latest balance date both legs carry; " + "; ".join(later)) if later else None)
+
+
 def build_capital_allocation(facts: dict[str, Any], *, as_of: date) -> CapitalAllocation:
     """Assemble the block from EDGAR companyfacts, as at the page's price date ``as_of`` (the cut
     `assemble_mechanical` reads EDGAR at). No CIQ, no LLM, no derivation.
@@ -354,6 +450,7 @@ def build_capital_allocation(facts: dict[str, Any], *, as_of: date) -> CapitalAl
         buyback_avg_price=avg,
         acquisition_consideration=_money(facts, ACQUISITION, "acquisition consideration",
                                          kind="largest"),
+        impairment_headroom=impairment_headroom(facts, as_of=as_of),
         brand_split=Sourced.unknown(
             note="NOT AVAILABLE FROM XBRL — goodwill and intangible impairment separate by TAG, "
                  "but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is "
@@ -371,19 +468,46 @@ PEER_SIZE_FLOOR_MUSD = 1_000.0
 TOTAL_ASSETS = ("Assets",)
 
 
-def _acquired_and_assets(facts: dict[str, Any]) -> tuple[float | None, float | None]:
-    """(goodwill + intangibles, total assets) in $M — both latest INSTANTS, reusing `_pick`.
+def _acquired_and_assets(facts: dict[str, Any]
+                         ) -> tuple[float | None, float | None, str | None]:
+    """(goodwill + intangibles, total assets, why there is no total) in $M, ALL AT ONE DATE.
 
-    Returns ``(None, assets)`` when the filer reports NEITHER goodwill nor intangibles. That is a
-    real economic fact on this set — Freshpet is an organic grower and tags neither — and it is a
-    different sentence from "we could not fetch".
+    Returns ``(None, assets, None)`` when the filer reports NEITHER goodwill nor intangibles. That
+    is a real economic fact on this set — Freshpet is an organic grower and tags neither — and it
+    is a different sentence from "we could not fetch".
+
+    ONE DATE, AND NO LEG READ AS ZERO (2026-11-10, audit RD-D1). Each leg was its own latest
+    balance and a missing one counted 0.0, divided by Assets at a third date. Now both legs are
+    read at the latest date they share, with Assets at that date; legs that share no date within
+    `CURRENT_DAYS` of the filer's own latest balance state no total ("no shared balance"; "no
+    current balance" for a lone family that is not current), with Assets at its latest. A filer
+    tagging only ONE of the families has that leg alone, said so in the third slot — the subject
+    page's own rule (`_shared_balance`).
     """
-    gw = _pick(facts, GOODWILL, kind="instant")
-    it = _pick(facts, INTANGIBLES, kind="instant")
-    assets = _pick(facts, TOTAL_ASSETS, kind="instant")
-    acquired = (((gw[0].value if gw else 0.0) + (it[0].value if it else 0.0)) / _USD_M
-                if (gw or it) else None)
-    return acquired, (assets[0].value / _USD_M if assets else None)
+    gw, it = _balances(facts, GOODWILL), _balances(facts, INTANGIBLES)
+    by_date = _balances(facts, TOTAL_ASSETS)
+    assets = by_date[max(by_date)] if by_date else None      # the latest balance, as `_pick` reads
+    if not gw and not it:
+        return None, (assets[0].value / _USD_M if assets else None), None
+    latest = max([*gw, *it, *([assets[0].period_end] if assets else [])])
+    legs, why = _shared_balance(gw, it, within=latest,
+                                within_is="the filer's latest balance date")
+    if why is not None:
+        # NO TOTAL, BUT THE ASSETS STILL STAND (review of the ruling's delta): the filer's latest
+        # Assets is a fact the row showed before RD-D1, and dropping it deleted a value. The reason
+        # names the case: two families sharing no current date, or one that is not current at all
+        case = "no shared balance" if (gw and it) else "no current balance"
+        return None, (assets[0].value / _USD_M if assets else None), f"{case} — {why}"
+    at = legs[0][0].period_end
+    at_assets = by_date.get(at)
+    # A FAMILY THE FILER NEVER TAGS IS NO LEG, as on the subject's own headroom — never a 0.0
+    # added to the other; the row says which leg it is (review round 0: refusing these rows dropped
+    # every goodwill-only peer out of the medians and the impairment base rate alike)
+    alone = (None if (gw and it) else
+             f"{'goodwill' if gw else 'intangibles'} only — the filer tags no "
+             f"{'intangible' if gw else 'goodwill'} balance")
+    return (round(sum(p.value for p, _t in legs) / _USD_M, 3),
+            (at_assets[0].value / _USD_M if at_assets else None), alone)
 
 
 #: Trailing window, in fiscal years, for the peer write-down history. FACE-VALIDITY, never tuned:
@@ -603,6 +727,7 @@ def build_peer_capital_intensity(
     """
     rows: list[PeerCapitalRow] = []
     subject: PeerCapitalRow | None = None
+    one_leg: set[int] = set()            # rows stating one family alone, labelled: not in a median
     for pr in grid:
         if getattr(pr, "is_median", False) or not getattr(pr, "ticker", ""):
             continue
@@ -622,22 +747,31 @@ def build_peer_capital_intensity(
                 note="fetch-failed — EDGAR companyfacts unreachable; this is NOT a statement that "
                      "the filer reports no goodwill", source_ref=_peer_grid_ref(tk)))
             continue
-        acquired, assets = _acquired_and_assets(facts)
+        acquired, assets, untotalled = _acquired_and_assets(facts)   # untotalled: why, or which leg
         # THE WINDOW ENDS AT THIS FILER'S OWN BALANCE DATE, not at a fleet-wide clock. Fiscal
         # calendars differ by months across this set (CAG ends in May, KHC in June, MZTI in
         # March), so one shared cut-off would give some peers four years of history and others
         # six. Each row therefore STATES its own window.
-        anchor = (_pick(facts, GOODWILL, kind="instant")
-                  or _pick(facts, INTANGIBLES, kind="instant")
-                  or _pick(facts, TOTAL_ASSETS, kind="instant"))
+        # AND NEVER AT A BALANCE THE FILER STOPPED TAGGING (2026-11-10, the operator's ruling on
+        # #953). The base rate now counts every large peer measured over its window, so a window
+        # ending at ROST's 2015 goodwill would be a 2010-2015 history read as current. A family
+        # whose balance is more than `CURRENT_DAYS` older than the filer's latest balance is
+        # passed over for the next one; a current one is kept, so every current row is unchanged.
+        picks = [q for q in (_pick(facts, GOODWILL, kind="instant"),
+                             _pick(facts, INTANGIBLES, kind="instant"),
+                             _pick(facts, TOTAL_ASSETS, kind="instant")) if q is not None]
+        newest = max((q[0].period_end for q in picks), default=None)
+        anchor = next((q for q in picks
+                       if newest is not None
+                       and (newest - q[0].period_end).days <= CURRENT_DAYS), None)
         row = PeerCapitalRow(
             ticker=tk, is_subject=bool(getattr(pr, "is_name", False)),
             market_cap=mcap, acquired=acquired, total_assets=assets,
             pct_assets=(acquired / assets) if (acquired and assets) else None,
             pct_market_cap=(acquired / mcap) if (acquired and mcap) else None,
-            note=(None if acquired is not None else
+            note=(untotalled or (None if acquired is not None else
                   "no-tag — the filer reports neither goodwill nor intangibles (a real balance "
-                  "sheet, not a data gap)"),
+                  "sheet, not a data gap)")),
             impairment=(_build_peer_impairment(facts, acquired, anchor[0].period_end)
                         if anchor is not None else None),
             source_ref=_peer_row_ref(tk))
@@ -645,19 +779,31 @@ def build_peer_capital_intensity(
             subject = row
         else:
             rows.append(row)
+            if acquired is not None and untotalled is not None:
+                one_leg.add(id(row))
 
     def _med(xs: list[float]) -> float | None:
         return median(xs) if xs else None
 
-    peers = [r for r in rows if r.pct_assets is not None and r.pct_market_cap is not None]
+    # A ONE-FAMILY PEER IS SHOWN, NEVER TOTALLED INTO THE MEDIAN (2026-11-10, the operator's
+    # ruling on #953, Codex's P1). Its row states its one leg, labelled; the goodwill-plus-
+    # intangibles medians are over peers with BOTH legs at one date, because a lone leg may
+    # understate that peer's total (an absent tag is not a zero balance). Leaving it out can move
+    # a median either way (AMZN's fell). Each median's count is printed beside it.
+    peers = [r for r in rows if r.pct_assets is not None and r.pct_market_cap is not None
+             and id(r) not in one_leg]
     large = [r for r in peers if (r.market_cap or 0.0) >= floor]
 
     # THE DENOMINATOR IS THE ASSESSED SET, NOT THE LARGE SET. A peer whose window holds no annual
     # observation (CPB — impaired FY2013-FY2018, nothing since) was NOT measured over these five
     # years, and counting it among the clean names would manufacture the reassuring answer out of
     # an absence. Only `charged` and `explicit-zero` are measurements of this window.
-    assessed = [r for r in large
-                if r.impairment is not None
+    # AND IT IS DRAWN FROM EVERY LARGE PEER, NOT FROM THE MEDIAN'S (2026-11-10, the same ruling).
+    # A write-down history is measured whether or not the balance sheet gives a total: a one-leg
+    # peer and one whose legs share no current date both stay in the base rate.
+    assessed = [r for r in rows
+                if r.market_cap is not None and r.market_cap >= floor
+                and r.impairment is not None
                 and r.impairment.state in ("charged", "explicit-zero")]
     charged_large = [r for r in assessed if r.impairment is not None
                      and r.impairment.state == "charged"]

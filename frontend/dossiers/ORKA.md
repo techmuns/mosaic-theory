@@ -1,6 +1,6 @@
 # Dossier — Oruka Therapeutics, Inc. (Nasdaq: ORKA)
 
-_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-09.order2-pages_
+_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.dated-headroom_
 
 # Brief — first cut
 
@@ -103,8 +103,8 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 | JBIO | 928 | — | 472 | — | — | no-tag |
 | AVTX | 372 | 11 | 491 | 2% | 3% | — |
 
-- **Median — all peers (n=2):** 9% of assets · 4% of market cap
-- **Median — peers ≥ $1,000M market cap (n=1):** 15% of assets · 5% of market cap
+- **Median — all peers:** 9% of assets · 4% of market cap (median of 2 of 9 peers)
+- **Median — peers ≥ $1,000M market cap:** 15% of assets · 5% of market cap (median of 1 of 7 peers)
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
 - **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [19]  <!-- ds-table -->
 
@@ -121,7 +121,7 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 | JBIO | does not tag | — | — | — | never | — |
 | AVTX | wrote down | 1 of 3 | 4 | 37% | 2023-12-31 ($4M) | — |
 
-- **Base rate — 1 of 1 large peers ASSESSED over the window took a charge**, median 11% of acquired assets among those that did. The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
+- **Base rate — 1 of 1 large peers ASSESSED over the window took a charge**, median 11% of acquired assets among those that did (median of 1 of 1 peers). The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
 - _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. `no annual obs.` and `does not tag` are not measurements and must not be read as clean years. The **live YTD** column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities._
 
 ## Valuation — first cut
@@ -465,6 +465,7 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-10-18; (R) = Reclas
   - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
+  - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 3d old — 2026-10-23 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 8d old (2026-10-18, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -41,6 +41,7 @@ from vinci.dossier.schemas import (
     DrawdownWindow,
     FinancialSummary,
     ForwardMultiple,
+    ImpairmentHeadroom,
     LeaseBasis,
     MechanicalLayer,
     OwnHistoryBand,
@@ -3100,6 +3101,20 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
     return out
 
 
+def _headroom_line(h: Sourced[ImpairmentHeadroom] | None) -> str:
+    """THE STORED HEADROOM, never a sum made here (2026-11-10, audit RD-D1): this added each leg's
+    own latest balance and cited goodwill's date, so MCK printed a 2012 intangibles balance inside a
+    2026 total. A page built before the field says so rather than adding anything up."""
+    if h is None:
+        return ("- **Impairment headroom:** _UNKNOWN_ — not recorded on this page (built "
+                "before the dated headroom); each balance below states its own date")
+    if h.status is SourceStatus.PRESENT and h.value is not None:
+        v = h.value
+        return (f"- **Impairment headroom — {' + '.join(v.legs)} remaining, as at {v.as_at}:** "
+                f"${v.value:,.1f}M{_cite(h.source_ref)}" + (f" — {h.note}" if h.note else ""))
+    return _fact("Impairment headroom", h)
+
+
 def _capital_allocation(m: MechanicalLayer) -> list[str]:
     """Capital created or destroyed, rendered BESIDE the writedown rather than in its own section.
 
@@ -3134,13 +3149,7 @@ def _capital_allocation(m: MechanicalLayer) -> list[str]:
 
     gw, intang = ca.goodwill, ca.intangibles
     if gw.status is SourceStatus.PRESENT or intang.status is SourceStatus.PRESENT:
-        left = sum(x.value or 0.0 for x in (gw, intang) if x.status is SourceStatus.PRESENT)
-        both = ("goodwill + intangibles"
-                if gw.status is SourceStatus.PRESENT and intang.status is SourceStatus.PRESENT
-                else ("goodwill" if gw.status is SourceStatus.PRESENT else "intangibles"))
-        src = gw if gw.status is SourceStatus.PRESENT else intang
-        out.append(f"- **Impairment headroom — {both} remaining:** ${left:,.1f}M"
-                   f"{_cite(src.source_ref)}")
+        out.append(_headroom_line(ca.impairment_headroom))
     out.append(_fact("Goodwill", gw, lambda v: f"${v:,.1f}M"))
     out.append(_fact("Intangibles (net)", intang, lambda v: f"${v:,.1f}M"))
 
@@ -3280,13 +3289,20 @@ def _peer_capital_intensity_lines(m: MechanicalLayer) -> list[str]:
                  "the CIQ comps grid",
                  cols, rows, num_cols=frozenset(range(5)),
                  name_rows=frozenset(i for i, x in enumerate(pc.rows) if x.is_subject))
+    # EACH MEDIAN STATES HOW MANY OF THE PEERS IT COVERS (2026-11-10, the operator's ruling on
+    # #953): the rows it leaves out (one leg, no shared balance, no figures) stay on the table
+    shown = [r for r in pc.rows if not r.is_subject]
+    shown_large = [r for r in shown
+                   if r.market_cap is not None and r.market_cap >= pc.size_floor]
     out.append(
-        f"- **Median — all peers (n={pc.n_all}):** {pct(pc.median_all_assets)} of assets · "
-        f"{pct(pc.median_all_market_cap)} of market cap")
+        f"- **Median — all peers:** {pct(pc.median_all_assets)} of assets · "
+        f"{pct(pc.median_all_market_cap)} of market cap "
+        f"(median of {pc.n_all} of {len(shown)} peers)")
     out.append(
-        f"- **Median — peers ≥ ${pc.size_floor:,.0f}M market cap (n={pc.n_large}):** "
+        f"- **Median — peers ≥ ${pc.size_floor:,.0f}M market cap:** "
         f"{pct(pc.median_large_assets)} of assets · "
-        f"{pct(pc.median_large_market_cap)} of market cap")
+        f"{pct(pc.median_large_market_cap)} of market cap "
+        f"(median of {pc.n_large} of {len(shown_large)} peers)")
     out.append(
         "- _Read the ASSETS column for the peer judgement — it measures how acquisitive the "
         "balance sheet is. The market-cap column sizes the exposure but moves with the price, so "
@@ -3340,10 +3356,17 @@ def _peer_impairment_lines(pc: Any) -> list[str]:
         rows, num_cols=frozenset({3, 4, 6}),
         name_rows=frozenset(i for i, x in enumerate(have) if x.is_subject))
     if pc.imp_n_large_assessed:
+        # the charge median's own count: a charged peer stating no acquired total has no ratio
+        # (2026-11-10, the operator's ruling on #953 keeps such peers in the base rate)
+        ratioed = sum(1 for r in pc.rows if not r.is_subject
+                      and r.market_cap is not None and r.market_cap >= pc.size_floor
+                      and r.impairment is not None and r.impairment.state == "charged"
+                      and r.impairment.pct_acquired is not None)
         out.append(
             f"- **Base rate — {pc.imp_n_large_charged} of {pc.imp_n_large_assessed} large peers "
             f"ASSESSED over the window took a charge**, median {pct(pc.imp_median_large_pct)} of "
-            f"acquired assets among those that did. The denominator counts only peers with an "
+            f"acquired assets among those that did (median of {ratioed} of "
+            f"{pc.imp_n_large_charged} peers). The denominator counts only peers with an "
             f"annual observation in the window — a name with none was not measured, and is not a "
             f"clean year.")
     out.append(
