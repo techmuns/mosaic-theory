@@ -473,6 +473,18 @@ const EXTRACTION_VERSIONS = [
     "each peer median prints its count ('median of N of M peers'); a row stating no " +
     "total keeps its latest Assets and says 'no current balance' when its one family is " +
     "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5"],
+  ["2026-11-10.going-concern-denials-and-conclusions",
+    "a going-concern denial or hypothetical is not doubt, and a real conclusion is " +
+    "(TeamNostra fix request 2, RE2-D9 and RE2-D10): a doubt that 'does not exist', plans " +
+    "that 'alleviate' it (present tense), and 'there will be substantial doubt' deny or " +
+    "condition it; an alleviation is unsettled only by what precedes it or shares its " +
+    "clause; a filing whose own plans alleviate the doubt its conditions raised states none " +
+    "(ASC 205-40's alleviated outcome: Solo Brands' 10-Q and Aeluma's 10-K, read as doubt " +
+    "before); a frame whose sentence concludes with the verb after the doubt, or with the " +
+    "company having it, is a conclusion; and a 'no' governs only the words up to a " +
+    "conjunction. On the 27 committed pages no going-concern field moves; over three SEC " +
+    "caches (178 reads of filings that mention a going concern, overlapping), two filings " +
+    "move, both from doubt to none, both alleviated"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
