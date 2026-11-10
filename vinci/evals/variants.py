@@ -511,6 +511,12 @@ def driver_facts(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
         if r.tier != "llm-fenced":
             rows.append(r)
             continue
+        if not r.verbatim:   # taken off the page (RG-D19 PR 3): its committed fact stands
+            if r.value_status is None:
+                raise TransformError(f"{ctx.page.get('ticker')}: driver row {r.metric!r} has "
+                                     "neither words nor a fact on the page")
+            rows.append(r)
+            continue
         f = check(r.metric, r.value, r.verbatim)
         fields = {"figures": list(f.figures), "value_status": f.status, "unknown_reason": f.reason}
         if r.value_status is not None and (r.figures, r.value_status, r.unknown_reason) != tuple(

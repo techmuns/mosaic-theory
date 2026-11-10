@@ -45,7 +45,7 @@ import json
 import os
 import re
 import sys
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -61,7 +61,7 @@ if TYPE_CHECKING:
 SPOOL_ENV = "VINCI_EVIDENCE_SPOOL"
 PREFIX = "driver-evidence/v1"
 _HEX = r"[0-9a-f]{64}"
-KEY = re.compile(rf"^{PREFIX}/(?:{_HEX}/\d+|unlocated/{_HEX})/{_HEX}\.json$")
+KEY = re.compile(rf"^{PREFIX}/(?:{_HEX}/\d+|unlocated/{_HEX}|claims/{_HEX})/{_HEX}\.json$")
 #: The spool is FLAT, so the code never makes a folder: a key's "/" is "__" in its file name.
 _SEP = "__"
 _REPO = Path(__file__).resolve().parents[2]
@@ -103,6 +103,39 @@ class EvidenceRecord(BaseModel):
     model_config = {"frozen": True}
 
 
+class ClaimRecord(BaseModel):
+    """(RG-D19 PR 3) One row's CLAIM: the model's stated value, read off a passage. Kept beside the
+    passage, not in it, because one passage backs several rows — on the 28 committed pages, 63
+    passages back more than one row, and in 62 of them the stated values differ. The public row
+    names it by ``locator.quote_sha256`` and ``locator.value_sha256``, never by its words."""
+
+    schema_version: int = 1
+    quote_sha256: str
+    value_sha256: str
+    stated_value: str
+
+    model_config = {"frozen": True}
+
+
+Record = EvidenceRecord | ClaimRecord
+
+
+def value_key(value: str) -> str:
+    """sha256 of a stated value's exact bytes: the claim's half of its key."""
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def claim_key(quote_sha256: str, value_sha256: str) -> str:
+    return f"{PREFIX}/claims/{quote_sha256}/{value_sha256}.json"
+
+
+def key_of(rec: Record) -> str:
+    """A record's key, from what it holds."""
+    if isinstance(rec, ClaimRecord):
+        return claim_key(rec.quote_sha256, rec.value_sha256)
+    return evidence_key(rec.locator)
+
+
 def evidence_key(loc: TranscriptLocator) -> str:
     """The record's key: by file, paragraph and quote when the call was counted in; by the call's
     name and the quote when it was not."""
@@ -112,15 +145,21 @@ def evidence_key(loc: TranscriptLocator) -> str:
     return f"{PREFIX}/unlocated/{call}/{loc.quote_sha256}.json"
 
 
-def record_bytes(rec: EvidenceRecord) -> bytes:
+def record_bytes(rec: Record) -> bytes:
     """The record's one serialisation: sorted keys, no spacing, a final newline."""
     body = json.dumps(rec.model_dump(mode="json"), sort_keys=True, ensure_ascii=False,
                       separators=(",", ":"))
     return (body + "\n").encode("utf-8")
 
 
-def verify(rec: EvidenceRecord) -> EvidenceRecord:
-    """``rec`` when its quote hashes to its locator, else raise."""
+def verify(rec: Record) -> Record:
+    """``rec`` when its words hash to its key, else raise: a passage's quote to its locator's
+    ``quote_sha256``, a claim's stated value to its ``value_sha256``."""
+    if isinstance(rec, ClaimRecord):
+        if value_key(rec.stated_value) != rec.value_sha256:
+            raise EvidenceIntegrityError(
+                f"the stated value in {key_of(rec)} does not hash to its value_sha256")
+        return rec
     if quote_key(rec.verbatim) != rec.locator.quote_sha256:
         raise EvidenceIntegrityError(
             f"the quote in {evidence_key(rec.locator)} does not hash to its "
@@ -128,13 +167,15 @@ def verify(rec: EvidenceRecord) -> EvidenceRecord:
     return rec
 
 
-def _parse(data: bytes, key: str) -> EvidenceRecord:
+def _parse(data: bytes, key: str) -> Record:
+    kind: type[EvidenceRecord] | type[ClaimRecord] = (
+        ClaimRecord if key.startswith(f"{PREFIX}/claims/") else EvidenceRecord)
     try:
-        rec = EvidenceRecord.model_validate_json(data)
+        rec: Record = kind.model_validate_json(data)
     except ValueError as exc:
         raise EvidenceIntegrityError(f"{key}: not an evidence record ({exc})") from exc
     verify(rec)
-    if evidence_key(rec.locator) != key:
+    if key_of(rec) != key:
         raise EvidenceIntegrityError(f"{key}: the record's locator keys it elsewhere")
     if record_bytes(rec) != data:
         raise EvidenceIntegrityError(f"{key}: not in the record's one serialisation")
@@ -146,8 +187,8 @@ def record_for(row: OperatingDriver) -> EvidenceRecord | None:
     is a filing's or CIQ's, not a transcript's), or a transcript row with no locator or no quote."""
     if row.tier != "llm-fenced" or row.locator is None or not row.verbatim:
         return None
-    return verify(EvidenceRecord(locator=row.locator, verbatim=row.verbatim,
-                                 following_context=row.following_context))
+    return EvidenceRecord(locator=row.locator, verbatim=row.verbatim,
+                          following_context=row.following_context)
 
 
 def records_for(dossier: Dossier) -> tuple[list[EvidenceRecord], int]:
@@ -160,6 +201,8 @@ def records_for(dossier: Dossier) -> tuple[list[EvidenceRecord], int]:
         if r.tier != "llm-fenced":
             continue
         rec = record_for(r)
+        if rec is not None:
+            verify(rec)
         if rec is None:
             missed += 1
         else:
@@ -242,11 +285,11 @@ class EvidenceSpool:
             raise EvidenceIntegrityError(f"{key!r} is not an evidence key")
         return self.root / key.replace("/", _SEP)
 
-    def put(self, rec: EvidenceRecord) -> bool:
+    def put(self, rec: Record) -> bool:
         """Write ``rec``. True when written; False when the same bytes were already there.
         Different bytes under its key raise: a record is never overwritten."""
         verify(rec)
-        key = evidence_key(rec.locator)
+        key = key_of(rec)
         path, data = self.path(key), record_bytes(rec)
         if path.exists():
             if path.read_bytes() == data:
@@ -273,7 +316,7 @@ class EvidenceSpool:
             part.unlink(missing_ok=True)
         return True
 
-    def get(self, key: str) -> EvidenceRecord:
+    def get(self, key: str) -> Record:
         return _parse(self.path(key).read_bytes(), key)
 
     def keys(self) -> tuple[list[str], list[str]]:
@@ -295,19 +338,74 @@ class EvidenceSpool:
 class SpoolReport:
     written: int = 0
     already: int = 0
-    no_evidence: int = 0  # transcript rows with no locator or no quote
+    no_evidence: int = 0  # transcript rows with text but no locator: their words are dropped
+    stripped: int = 0  # transcript rows already without text: spooled by an earlier write
 
 
-def spool_dossier(dossier: Dossier, spool: EvidenceSpool) -> SpoolReport:
-    """Write every transcript row's evidence on ``dossier`` into ``spool``."""
-    recs, missed = records_for(dossier)
-    rep = SpoolReport(no_evidence=missed)
-    for rec in recs:
-        if spool.put(rec):
-            rep.written += 1
-        else:
-            rep.already += 1
-    return rep
+def spool_dossier(dossier: Dossier, spool: EvidenceSpool) -> tuple[Dossier, SpoolReport]:
+    """Write every transcript row's passage and claim on ``dossier`` into ``spool``, and return the
+    page as it may now be written: each spooled row's locator carries its ``value_sha256``.
+
+    THE ONE SERIALIZER THEN DROPS THE TEXT (`schemas.PRIVATE_TRANSCRIPT_FIELDS`), so this runs
+    FIRST, every time a page with transcript text is written. A row with text but no locator (a
+    quote said on two calls whose period named neither) has nowhere to be filed: it is counted, and
+    its words survive only in the licensed call."""
+    od = dossier.mechanical.operating_drivers
+    rep = SpoolReport()
+    if od is None:
+        return dossier, rep
+    rows: list[OperatingDriver] = []
+    for r in od.rows:
+        if r.tier != "llm-fenced":
+            rows.append(r)
+            continue
+        if not r.verbatim:
+            rep.stripped += 1
+            rows.append(r)
+            continue
+        rec = record_for(r)
+        if rec is None or r.locator is None:
+            rep.no_evidence += 1
+            rows.append(r)
+            continue
+        recs: list[Record] = [rec]
+        loc = r.locator
+        if r.value is not None:
+            loc = loc.model_copy(update={"value_sha256": value_key(r.value)})
+            recs.append(ClaimRecord(quote_sha256=loc.quote_sha256,
+                                    value_sha256=value_key(r.value), stated_value=r.value))
+        for x in recs:
+            if spool.put(x):
+                rep.written += 1
+            else:
+                rep.already += 1
+        rows.append(r.model_copy(update={"locator": loc}))
+    mech = dossier.mechanical.model_copy(update={
+        "operating_drivers": od.model_copy(update={"rows": rows})})
+    return dossier.model_copy(update={"mechanical": mech}), rep
+
+
+def rehydrate(rows: Sequence[OperatingDriver], get: Callable[[str], Record]
+              ) -> list[OperatingDriver]:
+    """The rows with each stripped transcript row's quote, context and stated value read back
+    from the private store through ``get`` (a spool's or a bucket client's read) — for a reader
+    that needs the words, such as a replay of a committed page. A stripped row whose records
+    are missing raises, from ``get``: the words are never guessed."""
+    out = []
+    for r in rows:
+        if r.tier != "llm-fenced" or r.verbatim or r.locator is None:
+            out.append(r)
+            continue
+        passage = get(evidence_key(r.locator))
+        assert isinstance(passage, EvidenceRecord)
+        update: dict[str, object] = {"verbatim": passage.verbatim,
+                                     "following_context": passage.following_context}
+        if r.locator.value_sha256 is not None:
+            claim = get(claim_key(r.locator.quote_sha256, r.locator.value_sha256))
+            assert isinstance(claim, ClaimRecord)
+            update["value"] = claim.stated_value
+        out.append(r.model_copy(update=update))
+    return out
 
 
 @dataclass
@@ -338,7 +436,7 @@ def upload_spool(spool: EvidenceSpool, client: R2Client) -> UploadReport:
     return rep
 
 
-def fetch(client: R2Client, key: str) -> EvidenceRecord:
+def fetch(client: R2Client, key: str) -> Record:
     """One record from the bucket, checked like a spool read."""
     if not KEY.match(key):
         raise EvidenceIntegrityError(f"{key!r} is not an evidence key")

@@ -168,10 +168,11 @@ def test_every_committed_transcript_row_passes_and_a_rescaled_one_does_not() -> 
     """CORPUS BEFORE SYNTHETIC. The rule tightened, so first: no committed row is one it now drops
     (each was admitted by the tolerant check; none needed the tolerance). Then the guard is shown
     to bite on REAL rows: each row's own figure, rescaled 100x, is refused."""
+    from tests.pre_strip import pre_strip_pages  # the rows' words left the live pages (RG-D19)
     from vinci.dossier.driver_extract import _figure_in_quote, _figures
 
-    rows = [r for p in sorted((ROOT / "data/dossiers").glob("*/dossier.json"))
-            for r in (json.loads(p.read_text())["mechanical"].get("operating_drivers") or {})
+    rows = [r for _, page in pre_strip_pages()
+            for r in (page["mechanical"].get("operating_drivers") or {})
             .get("rows", []) if r.get("tier") == "llm-fenced"]
     assert len(rows) > 100, "the committed corpus no longer carries transcript rows"
     refused = [r["value"] for r in rows if not all(

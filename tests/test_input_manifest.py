@@ -835,3 +835,17 @@ def test_a_series_whose_label_cannot_be_read_keeps_its_identity(tmp_path: pathli
         m = inputs.from_reads(reads, store=store, extraction_version="t")
     (series,) = m.prices
     assert series.ticker is None and series.rows_sha256 and m.complete
+
+
+def test_a_driver_locators_hashes_are_no_export_stamps() -> None:
+    """FAILED on 586fdcfd (RG-D19 PR 3): a transcript row's locator carries three full sha256s, and
+    the precheck's census counted each as an export stamp, so a page assembled after PR 1 listed
+    its call, its quote and its stated value as exports missing from disk."""
+    from vinci.dossier.prespend import _stamps
+
+    loc = {"call": "Acme, Q3 2026 Earnings Call.rtf", "transcript_sha256": "a" * 64,
+           "paragraph": 4, "quote_sha256": "b" * 64, "value_sha256": "c" * 64}
+    doc = {"mechanical": {"operating_drivers": {"rows": [{"locator": loc}]},
+                          "valuation": {"source_sha256": "0123456789"}}}
+    assert dict(_stamps(doc)) == {"0123456789": 1}
+    assert set(_stamps(doc)) == set(inputs.stamps(doc))

@@ -20,6 +20,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.pre_strip import pre_strip_page, pre_strip_pages
 from tests.test_facts_remote import FakeBucket, _client
 from vinci.dossier import assemble
 from vinci.dossier import driver_evidence as de
@@ -203,38 +204,51 @@ def test_every_committed_pages_transcript_rows_spool_and_read_back_whole(tmp_pat
     spool = de.EvidenceSpool(tmp_path)
     total = 0
     keys: set[str] = set()
-    for p in sorted((ROOT / "data/dossiers").glob("*/dossier.json")):
-        d = _with_call_only_locators(json.loads(p.read_text()))
+    claims: set[str] = set()
+    for ticker, page in pre_strip_pages():
+        d = _with_call_only_locators(page)
         tx = [r for r in (d.mechanical.operating_drivers.rows
                           if d.mechanical.operating_drivers else []) if r.tier == "llm-fenced"]
-        rep = de.spool_dossier(d, spool)
-        assert rep.written + rep.already + rep.no_evidence == len(tx), p.parent.name
+        written, rep = de.spool_dossier(d, spool)
+        assert rep.no_evidence == 0 and rep.written + rep.already == 2 * len(tx), ticker
         for r in tx:
-            assert r.locator is not None
+            assert r.locator is not None and r.verbatim and r.value is not None
             got = spool.get(de.evidence_key(r.locator))
+            assert isinstance(got, de.EvidenceRecord)
             assert (got.verbatim, got.following_context) == \
-                (r.verbatim, r.following_context), p.parent.name
+                (r.verbatim, r.following_context), ticker
             keys.add(de.evidence_key(r.locator))
+            claims.add(de.claim_key(r.locator.quote_sha256, de.value_key(r.value)))
+        # and read back whole: every stripped row becomes the row it was, words and all
+        od = written.mechanical.operating_drivers
+        stripped = [r.model_copy(update={"verbatim": None, "following_context": None,
+                                         "value": None}) if r.tier == "llm-fenced" else r
+                    for r in (od.rows if od is not None else [])]
+        back = de.rehydrate(stripped, spool.get)
+        assert [(r.verbatim, r.following_context, r.value) for r in back] == \
+            [(r.verbatim, r.following_context, r.value)
+             for r in (od.rows if od is not None else [])], ticker
         total += len(tx)
     held, other = spool.keys()
     assert total > 500 and other == []
     assert all(p.is_file() for p in tmp_path.iterdir())   # flat: not one folder was made
-    # ONE RECORD PER PASSAGE: rows sharing a quote on one call share its record, and every
-    # shared key held one passage (the spool refused none) — the model's values differ, the
-    # evidence does not
-    assert sorted(held) == sorted(keys) and len(keys) < total
+    # ONE RECORD PER PASSAGE, ONE PER CLAIM: rows sharing a quote on one call share its passage,
+    # and each row's stated value is its own claim (the spool refused none)
+    assert sorted(held) == sorted(keys | claims) and len(keys) < total
 
 
 def test_the_assembly_spools_before_it_writes_the_page_and_a_bad_spool_stops_it(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
 ) -> None:
-    page = json.loads((ROOT / "data/dossiers/BRBR/dossier.json").read_text())
-    d = _with_call_only_locators(page)
+    """(RG-D19 PR 3) The spool is REQUIRED: the page is written without its transcript words, so
+    the spool is their only copy outside the licensed call. Unset, the build stops before the
+    page; set and created, the words land first, and the page carries none of them."""
+    d = _with_call_only_locators(pre_strip_page("BRBR"))
     spool, out = tmp_path / "spool", tmp_path / "out"
-    # unset: the page is written, with a loud notice
-    assemble._write(d, "", out / "a")
-    assert (out / "a" / "BRBR" / "dossier.json").exists()
-    assert "NOT spooled" in capsys.readouterr().err
+    # unset: the build stops BEFORE the page
+    with pytest.raises(de.SpoolNotConfiguredError, match="VINCI_EVIDENCE_SPOOL"):
+        assemble._write(d, "", out / "a")
+    assert not (out / "a" / "BRBR" / "dossier.json").exists()
     # set to a folder the operator has not created: the build stops BEFORE the page
     monkeypatch.setenv(de.SPOOL_ENV, str(spool))
     with pytest.raises(de.SpoolMissingError):
@@ -244,7 +258,12 @@ def test_the_assembly_spools_before_it_writes_the_page_and_a_bad_spool_stops_it(
     spool.mkdir()
     assemble._write(d, "", out / "c")
     held, _ = de.EvidenceSpool(spool).keys()
-    assert held and (out / "c" / "BRBR" / "dossier.json").exists()
+    written = json.loads((out / "c" / "BRBR" / "dossier.json").read_text())
+    rows = [r for r in written["mechanical"]["operating_drivers"]["rows"]
+            if r["tier"] == "llm-fenced"]
+    assert held and rows and not any(k in r for r in rows for k in
+                                     ("verbatim", "following_context", "value"))
+    assert all(r["locator"]["value_sha256"] for r in rows)
     # a transcript row with nothing to spool is said, never dropped silently
     od = d.mechanical.operating_drivers
     assert od is not None
@@ -252,7 +271,7 @@ def test_the_assembly_spools_before_it_writes_the_page_and_a_bad_spool_stops_it(
             for r in od.rows]
     assemble._write(d.model_copy(update={"mechanical": d.mechanical.model_copy(update={
         "operating_drivers": od.model_copy(update={"rows": bare})})}), "", out / "d")
-    assert "NO evidence was spooled" in capsys.readouterr().err
+    assert "kept only in the licensed call" in capsys.readouterr().err
 
 
 def test_a_bad_spool_stops_the_build_before_any_paid_phase(
@@ -269,12 +288,11 @@ def test_a_bad_spool_stops_the_build_before_any_paid_phase(
 def test_two_listings_citing_one_call_share_its_record(tmp_path: Path) -> None:
     """The record is the passage, not the page (#PR2 review): a second share class citing the same
     call file meets the first one's record and writes nothing, never a refused build."""
-    page = json.loads((ROOT / "data/dossiers/BRBR/dossier.json").read_text())
-    d = _with_call_only_locators(page)
+    d = _with_call_only_locators(pre_strip_page("BRBR"))
     twin = d.model_copy(update={"ticker": "BRBR.B"})
     spool = de.EvidenceSpool(tmp_path)
-    first = de.spool_dossier(d, spool)
-    second = de.spool_dossier(twin, spool)
+    _, first = de.spool_dossier(d, spool)
+    _, second = de.spool_dossier(twin, spool)
     assert first.written > 0 and second.written == 0 and second.already == first.written + \
         first.already
 

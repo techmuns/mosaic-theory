@@ -21,6 +21,7 @@ try:   # the SDK's own HTTP library: httpx2 from anthropic 1.x on (CI: 2.6.0), h
 except ImportError:
     import httpx
 
+from tests.pre_strip import pre_strip_text
 from vinci.evals import compare as cm
 from vinci.evals import gold as gd
 from vinci.evals import panel as pn
@@ -38,7 +39,7 @@ def _full_history() -> bool:
 
 @pytest.fixture(scope="module")
 def nflx() -> dict[str, Any]:
-    page: dict[str, Any] = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    page: dict[str, Any] = json.loads(pre_strip_text("NFLX"))
     return page
 
 
@@ -223,7 +224,7 @@ def test_gold_pages_are_read_at_the_freeze_not_the_living_tree(tmp_path: Path) -
     moved = tmp_path / "NFLX"
     moved.mkdir()
     (moved / "dossier.json").write_text(
-        (ROOT / "data/dossiers/NFLX/dossier.json").read_text() + " ", encoding="utf-8")
+        pre_strip_text("NFLX") + " ", encoding="utf-8")
     assert report.living_drift(["NFLX"], pages=tmp_path) == ["NFLX"]
 
 

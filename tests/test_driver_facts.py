@@ -334,8 +334,10 @@ def test_the_prompt_keeps_every_driver_rows_shape() -> None:
 
 
 def _committed() -> list[tuple[str, dict[str, typing.Any]]]:
-    return [(p.parent.name, json.loads(p.read_text()))
-            for p in sorted((ROOT / "data/dossiers").glob("*/dossier.json"))]
+    """The committed pages WITH their transcript words: read from git before the RG-D19 page pass
+    took them off the live pages (`tests/pre_strip.py`)."""
+    from tests.pre_strip import pre_strip_pages
+    return pre_strip_pages()
 
 
 def test_on_every_committed_page_the_check_moves_only_unverified_rows_values() -> None:

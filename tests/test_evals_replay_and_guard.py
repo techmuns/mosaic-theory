@@ -15,6 +15,7 @@ from typing import Any
 
 import pytest
 
+from tests.pre_strip import pre_strip_text
 from vinci.dossier.synthesis import synthesize, system_for
 from vinci.evals import capture_child as cc
 from vinci.evals import replay as rp
@@ -25,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @pytest.fixture(scope="module")
 def nflx() -> dict[str, Any]:
-    page: dict[str, Any] = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    page: dict[str, Any] = json.loads(pre_strip_text("NFLX"))
     return page
 
 
@@ -187,7 +188,7 @@ def test_the_cap_refuses_before_forwarding_and_the_draw_loop_cannot_swallow_it(
 
 def test_a_request_other_than_the_captured_one_is_refused(tmp_path: Path,
                                                           nflx: dict[str, Any]) -> None:
-    mck = json.loads((ROOT / "data/dossiers/MCK/dossier.json").read_text())
+    mck = json.loads(pre_strip_text("MCK"))
     sdk = _FakeSdk()
     guard = rp.GuardedSdk(sdk, rp.capture(mck, None), _budget(tmp_path / "l.jsonl", 20.0),
                           label="t", draws_out=tmp_path / "d.jsonl", client=_client())

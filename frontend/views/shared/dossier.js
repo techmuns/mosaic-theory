@@ -453,6 +453,15 @@ const EXTRACTION_VERSIONS = [
     "the quote does not support read UNKNOWN with no figure, and the synthesis reads that " +
     "row's value as UNKNOWN. 10 of the 881 committed transcript rows would; no page carries " +
     "the fields until it is re-assembled"],
+  ["2026-11-10.driver-text-filed",
+    "a transcript driver row's words leave the page once they are filed in the operator's " +
+    "private store (audit RG-D19): the one serializer writes no `verbatim`, " +
+    "`following_context` or `value` for a row whose locator carries its claim's " +
+    "`value_sha256`, which only the spool sets; an assembly with a transcript refuses to " +
+    "start without `$VINCI_EVIDENCE_SPOOL` and files every passage and claim before it " +
+    "writes the page; `vinci driver-facts-pass` does the same for the committed pages at " +
+    "$0; and the pre-spend census counts only 10-hex export stamps, never a locator's " +
+    "hashes. A page whose rows were not filed is written byte for byte as before"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

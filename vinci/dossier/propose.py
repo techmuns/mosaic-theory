@@ -529,8 +529,8 @@ def _operating_driver_lines(doc: dict[str, Any]) -> list[str]:
             # nothing still drops things.
             # an unverified transcript value is the synthesis's UNKNOWN here too, never the
             # model's claim (#941 review, Codex): the analyst sets six numbers against these
-            val = driver_value_as_read(str(r.get("value")), r.get("value_status"),
-                                       r.get("unknown_reason"))
+            val = driver_value_as_read(r.get("value"), r.get("value_status"),
+                                       r.get("unknown_reason"), r.get("figures"))
             lines.append(f"  [{r.get('kind')}] {r.get('metric')}: {val} → {r.get('source_ref')}")
         return lines
     return []

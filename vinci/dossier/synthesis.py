@@ -23,6 +23,7 @@ import re
 import time
 import warnings
 from collections import Counter
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import date
 from decimal import ROUND_FLOOR, Decimal
@@ -1734,19 +1735,46 @@ NOT_SENT: dict[str, Any] = {"primary_source": True,
                                 "locator": True}}}}
 
 
-def driver_value_as_read(value: str, status: str | None, reason: str | None) -> str:
+_SCALE_WORD = {"e3": " thousand", "e6": " million", "e9": " billion", "e12": " trillion"}
+_BOUND_WORD = {"approximately": "approximately ", "at_least": "at least ", "at_most": "at most "}
+
+
+def figures_text(figures: Sequence[Any] | None) -> str | None:
+    """A transcript row's checked figures as words — "down 7%", "at least $175 million" — from the
+    structured fields alone (`DriverFigure`, or its JSON), never from the model's words. None when
+    the row carries no figure. (RG-D19 PR 3: a committed transcript row has no `value`.)"""
+    out = []
+    for f in figures or []:
+        g = f if isinstance(f, dict) else f.model_dump()
+        change = f"{g['change']} " if g.get("change") else ""
+        bound = _BOUND_WORD.get(g.get("qualifier") or "", "")
+        scale = _SCALE_WORD.get(g.get("scale") or "", "")
+        unit = g.get("unit") or ""
+        unit = unit if unit in ("", "%", "x") else f" {unit}"
+        out.append(f"{change}{bound}{g.get('currency') or ''}{g['value']:g}{scale}{unit}")
+    return "; ".join(out) or None
+
+
+def driver_value_as_read(value: str | None, status: str | None, reason: str | None,
+                         figures: Sequence[Any] | None = None) -> str:
     """A driver row's value as every READER is handed it — the synthesis and the scenario
     template alike. A transcript row whose value code could not verify against its quote
     (`driver_extract.check_fact`) is not handed over as a value — "up 7%" read off "down 7%" was,
-    under the header "validated, cited facts" (RG-D8). Every other row's value is unchanged."""
+    under the header "validated, cited facts" (RG-D8). Every other row's value is unchanged.
+
+    (RG-D19 PR 3) A COMMITTED transcript row carries no `value`: its words are in the private
+    store. It reads as its checked figures (`figures_text`), and a qualitative one says that its
+    words are not on the page — never a reconstruction of them."""
     if status == "unknown":
         return f"UNKNOWN — not verified against its quote: {reason}"
-    return value
+    if value is not None:
+        return value
+    return figures_text(figures) or "stated, with no figure; its words are kept off this page"
 
 
 def prompt_driver_value(r: OperatingDriver) -> str:
     """`driver_value_as_read` for a row of the layer."""
-    return driver_value_as_read(r.value, r.value_status, r.unknown_reason)
+    return driver_value_as_read(r.value, r.value_status, r.unknown_reason, r.figures)
 
 
 def _mark_unverified_drivers(dumped: dict[str, Any], od: OperatingDriversExtract | None) -> None:
