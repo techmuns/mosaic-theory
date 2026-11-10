@@ -369,11 +369,50 @@ def test_a_paid_call_outside_the_import_stops_the_push(tmp_path: Path,
     assert err.value.step == "ledger" and _head(remote) == head
 
 
+class _UnroundModel(FakeModel):
+    """Each call billed at 1,003 in / 401 out tokens — $0.01504 at the fake model's price — so the
+    calls' sum carries a decimal the run's recorded cost, rounded to 4 places, does not."""
+
+    def extract(self, **kw: Any) -> dict[str, Any]:
+        out = super().extract(**kw)
+        self.last_usage = {"input_tokens": 1003, "output_tokens": 401}
+        return out
+
+
+def test_a_run_cost_recorded_to_four_places_still_reconciles_and_pushes(tmp_path: Path) -> None:
+    """2026-11-10, the first real paid upload: the pipeline records a run's cost rounded to 4
+    places and the ledger step summed its calls unrounded against a $0.000001 tolerance — 7 calls
+    summing $0.93881 against a recorded $0.9388 refused the push AFTER paying ("the new calls sum
+    to $0.9388, the run records $0.9388"). FakeModel's round token counts always summed to 4
+    places, so no test reached it."""
+    remote = _remote(tmp_path)
+    _actions(tmp_path, remote)
+    base = _head(remote)
+    res = _upload(tmp_path, remote, _UnroundModel())
+    st = _laptop(tmp_path)
+    spent = sum(c for rid, c in st.paid_ledger().values() if rid == res.run_id and c is not None)
+    # the premise: the run's recorded cost and its calls' sum really differ in a fifth decimal
+    assert res.cost_usd is not None and 1e-6 < abs(spent - res.cost_usd) <= 0.5e-4
+    assert res.outcome == "pushed" and _head(remote) != base
+
+
+def test_the_ledger_reconciles_a_run_cost_recorded_to_four_places() -> None:
+    """The real shape of R-20261110T140515Z-ingest: its 7 calls' prices as the ledger held them,
+    against the run's recorded $0.9388."""
+    calls = [0.06339, 0.06564, 0.08019, 0.080955, 0.083715, 0.163095, 0.401825]
+    after = {f"c{i}": ("RUN", c) for i, c in enumerate(calls)}
+    assert "7 new, all the import's, $0.9388" in up._reconcile({}, after, "RUN", 0.9388, 7.22)
+
+
 @pytest.mark.parametrize(("before", "after", "cost", "why"), [
     ({"a": ("R1", 0.1)}, {"a": ("R1", 0.2)}, 0.0, "1 earlier call(s) changed or missing"),
     ({"a": ("R1", 0.1)}, {}, 0.0, "1 earlier call(s) changed or missing"),
     ({}, {"b": ("RUN", None)}, None, "without a price — cost UNKNOWN"),
     ({}, {"b": ("RUN", 0.3)}, 0.2, "the new calls sum to $0.3000, the run records $0.2000"),
+    # a gap wider than the 4-place rounding is a real mismatch — still refused
+    ({}, {"b": ("RUN", 0.9389)}, 0.9388, "the new calls sum to $0.9389, the run records $0.9388"),
+    # ... and just past half the last place, where a looser allowance would let it through
+    ({}, {"b": ("RUN", 0.93886)}, 0.9388, "the new calls sum to $0.9389, the run records $0.9388"),
     ({}, {"b": ("RUN", 3.0)}, 3.0, "$3.0000 spent against a $2.00 budget"),
 ])
 def test_the_ledger_reconciliation_refuses(before: dict[str, tuple[str, float | None]],
