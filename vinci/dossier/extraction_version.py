@@ -668,6 +668,18 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5",
     ),
     (
+        "2026-11-10.part-of-the-debt",
+        "a twelve-month debt figure for part of the debt is not the company's wall (TeamNostra fix "
+        "request 2, V2-N1, RE2-D13, E2-D15's residual): a 10-Q's due-within-12-months statement is "
+        "the wall only when the clause before it names the debt in aggregate, or names one "
+        "instrument whose own principal is the total debt the filing states unqualified; otherwise "
+        "the wall reads not_stated with a note naming the figure and its sentence. The original "
+        "'$X million due within the next 12 months' form passes the same debt and lease filters as "
+        "the widened ones, and the tranche and commitment readers read billions. On the 27 "
+        "committed pages no filing field moves; outside them, Helmerich & Payne's term-loan $6.9M "
+        "and Archer's lease $19.1M, both read as walls, now read not_stated"
+    ),
+    (
         "2026-11-10.driver-text-filed",
         "a transcript driver row's words leave the page once they are filed in the operator's "
         "private store (audit RG-D19): the one serializer writes no `verbatim`, "

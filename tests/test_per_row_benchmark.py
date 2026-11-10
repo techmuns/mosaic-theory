@@ -27,7 +27,13 @@ from vinci.config import Config
 from vinci.eod.client import RawBar
 from vinci.monitor import BenchmarkAssignment, read_assignments_file
 from vinci.schemas.data_record import Identity
-from vinci.schemas.ledger import Confidence, LedgerEntry, Verdict
+from vinci.schemas.ledger import (
+    Confidence,
+    LedgerEntry,
+    Verdict,
+    corrected,
+    corrections_by_decision,
+)
 from vinci.schemas.market import PriceBar
 from vinci.scoring import score_ledger
 from vinci.scoring.harness import BenchmarkMismatchError, BenchmarkMissingError, row_benchmark
@@ -301,19 +307,22 @@ def test_an_empty_ledger_needs_no_assignments(tmp_path: Path) -> None:
 
 def _committed_ledger_store(path: Path) -> Store:
     """The committed ledger and securities, with flat synthetic bars — each name at the price its
-    decision sealed, stepping at SMPL's re-entry — for every name and IWM, MDY and SPY through
-    2027-03-05, so every row with a horizon by then resolves."""
+    decision is read at (the sealed entry, or its committed correction's, RF-D7), stepping at
+    SMPL's re-entry — for every name and IWM, MDY and SPY through 2027-03-19, so every row with a
+    horizon by then resolves (GOOGL's corrected one is 2027-03-14)."""
     store = Store(path)
     store.rebuild_from_snapshots(ROOT / "data" / "snapshots",
                                  tables=["issuers", "securities", "decision_ledger"])
-    days = _weekdays(date(2026, 6, 1), date(2027, 3, 5))
-    rows = [e for e in store.iter_ledger() if e.event is None]
+    days = _weekdays(date(2026, 6, 1), date(2027, 3, 19))
+    ledger = list(store.iter_ledger())
+    fixes = corrections_by_decision(ledger)
+    rows = [corrected(e, fixes.get(e.entry_id)) for e in ledger if e.event is None]
     for iid in {e.internal_id for e in rows}:
-        sealed = sorted((e.entry_price_as_of, e.entry_price) for e in rows if e.internal_id == iid)
+        read_at = sorted((e.entry_price_as_of, e.entry_price) for e in rows if e.internal_id == iid)
         store.write_prices([PriceBar(internal_id=iid, bar_date=d, open=c, high=c, low=c, close=c,
                                      volume=1e6, source="polygon-grouped")
-                            for d in days for c in [([p for on, p in sealed if on <= d]
-                                                     or [sealed[0][1]])[-1]]])
+                            for d in days for c in [([p for on, p in read_at if on <= d]
+                                                     or [read_at[0][1]])[-1]]])
     for b in ("IWM", "MDY", "SPY"):
         store.upsert_security(benchmark_identity(b))
         store.write_prices([PriceBar(internal_id=f"IDX-{b}", bar_date=d, open=50.0, high=50.0,
@@ -329,7 +338,7 @@ def test_the_report_names_each_resolved_rows_benchmark(tmp_path: Path) -> None:
     pairs under one unnamed label."""
     asg = read_assignments_file(ROOT / "data" / "monitor" / "benchmark_assignments.json")
     with _committed_ledger_store(tmp_path / "c.db") as store:
-        scores, report = score_ledger(store, as_of=date(2027, 3, 5), dividends=no_dividends,
+        scores, report = score_ledger(store, as_of=date(2027, 3, 19), dividends=no_dividends,
                                       splits=no_splits, assignments=asg)
     resolved = {s.entry_id: s.benchmark for s in scores if s.resolved}
     assert resolved == {"V-VRRM-screen2-20260617": "IWM", "V-IT-screen2-20260706": "MDY",

@@ -20,7 +20,7 @@ import pytest
 
 from tests.dividend_support import no_dividends, no_splits
 from vinci import monitor as mon
-from vinci.schemas.ledger import EVENT_CLOSE, LedgerEntry, close_entry_id
+from vinci.schemas.ledger import EVENT_CLOSE, EVENT_CORRECTION, LedgerEntry, close_entry_id
 
 ROOT = Path(__file__).resolve().parents[1]
 LEDGER = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
@@ -190,8 +190,11 @@ def test_every_committed_row_loads_and_the_committed_closes_pair_cleanly() -> No
     resolves to exactly one decision row."""
     rows = _committed()
     assert rows, "committed ledger is empty"
-    assert len(mon.decision_rows(rows)) + len(mon.close_rows(rows)) == len(rows)
-    # refuses loud on orphan/duplicate
+    corrections = [r for r in rows if mon.entry_of(r).get("event") == EVENT_CORRECTION]
+    assert (len(mon.decision_rows(rows)) + len(mon.close_rows(rows)) + len(corrections)
+            == len(rows))
+    mon.apply_corrections(rows)          # refuses loud on an orphan or a doubled correction
+    # pair_closes refuses loud on an orphan/duplicate close
     paired = mon.pair_closes(rows, splits=no_splits, dividends=no_dividends)
     assert len(paired) == len(mon.close_rows(rows))
     for c in mon.close_rows(rows):

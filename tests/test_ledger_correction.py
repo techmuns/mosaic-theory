@@ -33,6 +33,8 @@ from vinci.schemas.ledger import (
     LedgerFact,
     corrected,
     corrections_by_decision,
+    origin_of,
+    sleeve_of,
 )
 from vinci.schemas.market import PriceBar
 from vinci.scoring import score_ledger
@@ -42,9 +44,17 @@ ROOT = Path(__file__).resolve().parents[1]
 LEDGER = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
 
 
+def _committed_lines() -> list[str]:
+    """The committed ledger's lines AS SEALED: its CORRECTION rows left out. These tests write the
+    corrections themselves, so they hold before the two are appended to the committed ledger and
+    after; the rows they read are append-only and never change."""
+    return [ln for ln in LEDGER.read_text().splitlines() if ln.strip()
+            and json.loads(json.loads(ln)["payload"]).get("event") != EVENT_CORRECTION]
+
+
 def _committed() -> list[LedgerEntry]:
     return [LedgerEntry.model_validate(json.loads(json.loads(ln)["payload"]))
-            for ln in LEDGER.read_text().splitlines() if ln.strip()]
+            for ln in _committed_lines()]
 
 
 def _bars(ticker: str) -> list[dict[str, Any]]:
@@ -232,8 +242,7 @@ def test_the_monitor_marks_the_decision_at_its_correction(
     (book / "data/snapshots").mkdir(parents=True)
     (book / "data/monitor").mkdir(parents=True)
     (book / "scenarios").mkdir()
-    vrrm = [ln for ln in LEDGER.read_text().splitlines()
-            if ln.strip() and json.loads(ln)["entry_id"] == _VRRM]
+    vrrm = [ln for ln in _committed_lines() if json.loads(ln)["entry_id"] == _VRRM]
     line = {"entry_id": fix.entry_id, "ticker": fix.ticker, "verdict": fix.verdict.value,
             "entry_price": fix.entry_price, "entry_price_as_of": fix.entry_price_as_of.isoformat(),
             "horizon_days": fix.horizon_days, "payload": fix.model_dump_json()}
@@ -285,6 +294,7 @@ def tree(tmp_path: Path) -> Config:
     data = tmp_path / "data"
     data.mkdir()
     shutil.copytree(ROOT / "data" / "snapshots", data / "snapshots")
+    (data / "snapshots" / "decision_ledger.jsonl").write_text("\n".join(_committed_lines()) + "\n")
     cfg = Config(data_dir=data)
     cfg.ensure_dirs()
     return cfg
@@ -464,3 +474,44 @@ def test_only_a_correction_names_a_decision_it_corrects() -> None:
     for eid, expect in (("V-GOOGL", "on a DECISION row"), ("C-IT-screen2-20260706", "a close")):
         with pytest.raises(ValueError, match=expect):
             LedgerEntry.model_validate({**rows[eid].model_dump(), "corrects_entry_id": "V-GOOGL"})
+
+
+# --- the row's tags, and the committed corrections --------------------------------------------
+
+
+def test_a_correction_is_tagged_as_its_decision_is_read(tmp_path: Path) -> None:
+    """VRRM's decision predates `origin`/`sleeve` and carries neither; its correction is logged
+    since, so it carries both — the reading the helpers give the decision (screen/overshoot), never
+    the decision's absent fields (found on 2026-11-10: `tests/test_sleeves.py` refused an untagged
+    `R-VRRM-screen2-20260617` before it was appended). GOOGL's tagged decision passes its own
+    followed/quality through."""
+    with _store(tmp_path) as store:
+        vrrm = correct_entry(store, entry_id=_VRRM, entry_price=4.44,
+                             entry_price_as_of=date(2026, 6, 18), reason="RF-D7",
+                             corrected_at=datetime(2026, 11, 10, 12))
+        googl = correct_entry(store, entry_id="V-GOOGL", entry_price=340.65,
+                              entry_price_as_of=date(2026, 8, 27), reason="RF-D7",
+                              corrected_at=datetime(2026, 11, 10, 12))
+    decisions = {e.entry_id: e for e in _committed()}
+    assert (decisions[_VRRM].origin, decisions[_VRRM].sleeve) == (None, None)   # legacy, as sealed
+    assert (vrrm.origin, vrrm.sleeve) == (origin_of(decisions[_VRRM]),
+                                          sleeve_of(decisions[_VRRM])) == ("screen", "overshoot")
+    assert (googl.origin, googl.sleeve) == (decisions["V-GOOGL"].origin,
+                                            decisions["V-GOOGL"].sleeve) == ("followed", "quality")
+
+
+def test_every_committed_correction_is_the_rules_close() -> None:
+    """THE COMMITTED ARTIFACT: each CORRECTION row in the committed ledger names a committed
+    decision the rule moves, and carries exactly the rule's session and Polygon's close for it
+    (`tests/fixtures/prices/`). Phrasing-independent; it reads whatever corrections are committed,
+    so it holds before the two are appended (none) and after (R-GOOGL, R-VRRM-screen2-20260617)."""
+    rows = [LedgerEntry.model_validate(json.loads(json.loads(ln)["payload"]))
+            for ln in LEDGER.read_text().splitlines() if ln.strip()]
+    decisions = {e.entry_id: e for e in rows if e.event is None}
+    for c in (e for e in rows if e.event == EVENT_CORRECTION):
+        d = decisions[str(c.corrects_entry_id)]
+        closes = {date.fromisoformat(b["bar_date"]): float(b["close"]) for b in _bars(d.ticker)}
+        session = rule_session(d.decided_at, list(closes))
+        assert session is not None and session != d.entry_price_as_of, c.entry_id
+        assert (c.entry_price_as_of, c.entry_price) == (session, closes[session]), c.entry_id
+        assert (c.origin, c.sleeve) == (origin_of(d), sleeve_of(d)), c.entry_id
