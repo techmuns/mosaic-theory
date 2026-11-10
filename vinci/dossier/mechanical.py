@@ -4932,7 +4932,9 @@ def _covenant_pointers(
                 continue
             seen.add(h.accession)
             rows.append(CovenantPointer(
-                family=fam, filing="8-K",
+                # the hit's own form, an amendment named as one (RE1-D11); the search asked efts
+                # for 8-Ks, so a hit that states none is one
+                family=fam, filing=h.form or "8-K",
                 filing_date=h.file_date.isoformat() if h.file_date else "",
                 accession=h.accession, exhibits=exs))
             added += 1
@@ -5074,8 +5076,9 @@ def _maturity_sources(
     periodic = sorted((f for f in filings if f.form in periodic_forms
                        and f.filing_date <= reference_date),
                       key=lambda f: f.filing_date, reverse=True)[:1]
+    # every pointer's accession, whatever its label: only an 8-K in `filings` can match one below
     linked = {r.accession for r in (pointer_rows.value or [] if pointer_rows is not None else [])
-              if r.filing == "8-K" and r.accession}
+              if r.accession}
     picks: list[tuple[Filing, str]] = [(f, dmx.READ_PERIODIC) for f in periodic]
     for f in filings:
         if f.form not in _EIGHT_K or f.filing_date > reference_date:

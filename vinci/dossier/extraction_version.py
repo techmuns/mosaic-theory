@@ -581,6 +581,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "figure is CIQ's, never that the filing confirmed it (audit RBC-D8). Among the "
         "exports on file only PARR's surprise history moves; the rest is a new field and words",
     ),
+    (
+        "2026-11-10.fts-amendment-form",
+        "a full-text-search hit is reported by its filing's own form (TeamNostra fix request 2, "
+        "RE1-D11): efts's `form` before its family `root_forms`, so an 8-K/A is an 8-K/A, and "
+        "the covenant pointer writes the hit's form where it wrote `8-K`; the maturity check "
+        "still reads a pointer-linked 8-K/A. On the 28 pages frozen at bcda7ce3 one of 92 "
+        "pointer rows moves: WERN's 0000793074-26-000090 reads 8-K/A, with its covenant terms' "
+        "source labels",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
