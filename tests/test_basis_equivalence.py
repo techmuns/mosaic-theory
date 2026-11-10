@@ -53,7 +53,7 @@ def test_every_committed_record_round_trips_byte_identical(tmp_path: pathlib.Pat
             out = sc.write_record(rec, root=tmp_path)
         assert out.read_text() == f.read_text(), f"{f.stem} churned on a no-op write"
         seen += 1
-    assert seen >= 9, f"expected the committed corpus, saw {seen}"
+    assert seen >= 8, f"expected the committed corpus, saw {seen}"  # 9 until AORT was archived
 
 
 def test_a_stated_entry_basis_survives_the_write(tmp_path: pathlib.Path) -> None:

@@ -15,15 +15,18 @@ count is dropped at ``dual_class_unresolved`` rather than sized by the issuer-wi
 from __future__ import annotations
 
 import json
+import math
 from collections import Counter, defaultdict
 from datetime import date, timedelta
 from pathlib import Path
+from typing import NamedTuple
 
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.edgar.client import SHARES_TAG_WAVG
 from vinci.eod import EodClient, PolygonEodClient, identity
-from vinci.eod.client import CARRY_DAYS, carry_forward
+from vinci.eod.client import CARRY_DAYS, GAP_SESSIONS, carry_forward
+from vinci.eod.splits import parse_splits
 from vinci.netcache import HttpError
 from vinci.resolver import EntityResolver
 from vinci.resolver.aliases import (
@@ -40,6 +43,17 @@ from vinci.store import NO_ROW_DROP_TABLES, Store
 
 _QUARTER_ENDS = ((3, 31), (6, 30), (9, 30), (12, 31))
 _FILING_LAG_DAYS = 40  # don't ask for a quarter's shares frame until it's plausibly filed
+#: How far before its quarter end a frame's count can be dated: a full quarter. An instant frame
+#: holds the fact that best aligns with its calendar quarter (SEC's frames API), never one a
+#: quarter away — so a split executed on or before (earliest frame's end − this) predates every
+#: count the frames can serve, and only a split after it can leave a count on the old basis (RF-D4).
+_FRAME_REACH_DAYS = 92
+
+
+def _period_end(key: str) -> date:
+    """``CY2026Q2I`` → 2026-06-30, the quarter end a share frame is keyed to."""
+    m, d = _QUARTER_ENDS[int(key[7]) - 1]
+    return date(int(key[2:6]), m, d)
 
 
 def benchmark_identity(symbol: str) -> Identity:
@@ -62,23 +76,58 @@ def recent_share_periods(reference_date: date, *, n: int = 5) -> list[str]:
     return [k for _, k in keys[-n:]]
 
 
+#: A close this many market sessions old is no LATEST close (TeamNostra fix request 2, RF-D9): the
+#: 10 business days an SEC trading suspension may run, the band the price scorecard calls a hole —
+#: ONE definition, `eod.client.GAP_SESSIONS`, read here rather than restated.
+STALE_CLOSE_SESSIONS = GAP_SESSIONS
+
+
+class PriceInputs(NamedTuple):
+    """What the grouped-daily lookback gives the cap and ADV gates (`latest_close_and_adv`)."""
+
+    closes: dict[str, float]          # each name's latest close, only if it is not stale
+    adv: dict[str, float]             # average daily $-volume over the market's sessions
+    stale: dict[str, tuple[date, int]]   # name → (last traded, market sessions since)
+    sessions: int                     # the market sessions the lookback held
+
+
 def latest_close_and_adv(
-    eod: EodClient, reference_date: date, *, lookback_days: int = 90
-) -> tuple[dict[str, float], dict[str, float]]:
-    """({ticker: latest close}, {ticker: 90d avg daily $-volume}) from cached grouped-daily bars."""
-    closes: dict[str, float] = {}
+    eod: EodClient, reference_date: date, *, lookback_days: int = 90,
+    stale_sessions: int = STALE_CLOSE_SESSIONS,
+) -> PriceInputs:
+    """Each name's latest close and its average daily $-volume over the lookback, from cached
+    grouped-daily bars.
+
+    ONE DENOMINATOR, THE MARKET'S (RF-D9, 2026-11-09). ADV was dollar volume over the days the NAME
+    traded, so a name that traded 3 of 65 sessions read $4.0M against $0.18M over the sessions and
+    cleared the $3M floor. It is now over EVERY market session in the lookback — the days the
+    grouped-daily read returned bars; a session the name did not trade adds $0. Not from the
+    name's first trade (review round 1, Codex P2 on #946): absence before a bar is no proof the
+    line did not exist, and a long-listed line resuming after a halt would read as new. So a line
+    with less than a lookback of history reads low until it has one — measured on the committed
+    2026-10-16 population, SWRD and SVIA. And a close the name has not printed in the newest
+    ``stale_sessions`` sessions is no LATEST close: it was kept however old (84 days in the
+    audit's case) and sized the cap with no mark. It goes to
+    ``stale`` instead, so the caller can drop the name saying why."""
+    last: dict[str, tuple[float, int]] = {}
     dollar_vol: dict[str, float] = defaultdict(float)
-    n_days: dict[str, int] = defaultdict(int)
+    sessions = 0
     d = reference_date
     horizon = reference_date - timedelta(days=lookback_days)
+    session_day: list[date] = []
     while d >= horizon:
-        for t, b in eod.grouped_daily(d).items():
-            closes.setdefault(t, b.close)  # most-recent close wins
-            dollar_vol[t] += b.close * b.volume
-            n_days[t] += 1
+        bars = eod.grouped_daily(d)
+        if bars:
+            for t, b in bars.items():
+                last.setdefault(t, (b.close, sessions))  # most-recent close wins
+                dollar_vol[t] += b.close * b.volume
+            session_day.append(d)
+            sessions += 1
         d -= timedelta(days=1)
-    adv = {t: dollar_vol[t] / n_days[t] for t in dollar_vol if n_days[t] > 0}
-    return closes, adv
+    closes = {t: c for t, (c, ago) in last.items() if ago < stale_sessions}
+    stale = {t: (session_day[ago], ago) for t, (_c, ago) in last.items() if ago >= stale_sessions}
+    adv = {t: v / sessions for t, v in dollar_vol.items()} if sessions else {}
+    return PriceInputs(closes, adv, stale, sessions)
 
 
 def incumbent_lines(snapshots_dir: Path, table: str,
@@ -150,8 +199,9 @@ DEPOSITARY_TYPES: tuple[str, ...] = ("ADRC", "GDR")
 #: stage missing from the thin grain is a stage with no evidence trail — which just MOVES the blind
 #: spot instead of closing it. Each is emitted with the one input that decided it.
 DROP_STAGES: tuple[str, ...] = (
-    "no_price", "no_shares", "ads_count_unresolved", "out_of_band", "below_adv_floor",
-    "unknown_sic", "non_operating", "unknown_type", "non_common_equity", "duplicate_class",
+    "stale_price", "no_price", "no_shares", "ads_count_unresolved", "split_basis_unresolved",
+    "out_of_band", "below_adv_floor", "unknown_sic", "non_operating", "unknown_type",
+    "non_common_equity", "duplicate_class",
 )
 
 
@@ -191,7 +241,7 @@ def build_universe(
     # READ BEFORE THE EXPORT BELOW OVERWRITES IT — the population this build is about to replace
     incumbents, incumbent_as_of = incumbent_lines(cfg.snapshots_dir, band_table, reference_date)
 
-    closes, adv = latest_close_and_adv(eod, reference_date)
+    closes, adv, stale_closes, _sessions = latest_close_and_adv(eod, reference_date)
     sec_types = eod.security_types()  # instrument-type axis (one cached bulk reference pull)
     # ADS-DENOMINATED COUNTS for depositary receipts (2026-08-31). An ADR's price is per ADS while
     # its XBRL count is per ORDINARY share, and nothing converted between them: TSM computed
@@ -208,6 +258,25 @@ def build_universe(
     # stamps says which kind of number it is.
     shares, share_tag = edgar.shares_outstanding_with_provenance(
         periods, include_period_average=True)
+    # ONE SPLIT BASIS (TeamNostra fix request 2, RF-D4, 2026-11-09). The close is today's (Polygon
+    # restates to the day of the read) and a filed count is as of its frame — up to five quarters
+    # back — so a name that split since its count was filed was sized at the split factor: a
+    # 2-for-1 halved its cap, and a $800M name read $400M and could fall out of the band. A frame
+    # does not say which day its count is from, so a split anywhere since the earliest frame could
+    # reach leaves a filed count's basis UNKNOWN; those names are sized on Polygon's current
+    # issuer-wide count below, or dropped loudly. One breadth read of every split in the window.
+    split_window = _period_end(min(periods)) - timedelta(days=_FRAME_REACH_DAYS)
+    # Parsed per line where it is READ (below), not here: `parse_splits` raises on an unreadable
+    # row, and the breadth read spans every ticker Polygon lists — a bad row for a name this build
+    # never sizes must not abort the build; one for a name it does still fails loud there.
+    split_rows: dict[str, list[dict[str, object]]] = defaultdict(list)
+    # THROUGH THE DAY OF THE READ, not the reference date (review round 1, Codex P1 on #946):
+    # the close is restated to that day, so on a back-dated build a split after the reference date
+    # moves the close and not the filed count — the audit's own case ("any back-dated build for a
+    # name that split since"). Those splits put the count on the close's basis below.
+    read_day = max(reference_date, date.today())
+    for row in eod.splits_executed(split_window, read_day):
+        split_rows[str(row.get("ticker"))].append(row)
 
     # IMPORTED HERE, NOT AT MODULE SCOPE. `vinci.screens.__init__` imports `run`, which imports
     # `vinci.universe` — so a module-scope import of anything under `vinci.screens` makes importing
@@ -378,6 +447,13 @@ def build_universe(
             stats["considered"] += 1
             close = closes.get(ident.eod_symbol)
             sh = shares.get(ident.cik)
+            if close is None and (gone := stale_closes.get(ident.eod_symbol)) is not None:
+                _drop(ident.eod_symbol, "stale_price",
+                      f"last traded {gone[0]}, {gone[1]} market sessions before {reference_date} "
+                      f"— no close in the newest {STALE_CLOSE_SESSIONS}, so none is current to "
+                      f"size the cap with",
+                      StampedInput(value=None, as_of=gone[0], source="Polygon grouped-daily"))
+                continue
             if close is None:
                 _drop(ident.eod_symbol, "no_price", "no latest close in the grouped-daily pull",
                       StampedInput(value=None, source="Polygon grouped-daily"))
@@ -391,6 +467,12 @@ def build_universe(
             # NVO, SONY, ERIC, TAK, GRAB, JD, SE, BIDU — carry a perfectly good ADS count and were
             # being dropped anyway. Only AZN genuinely has neither.
             is_depositary = sec_types.get(ident.eod_symbol) in DEPOSITARY_TYPES
+            split_resized: str | None = None
+            later = [s for s in parse_splits(split_rows.get(ident.eod_symbol, []),
+                                             symbol=ident.eod_symbol)
+                     if s.execution_date > reference_date] if sh is not None else []
+            later_factor = math.prod(s.split_to / s.split_from for s in later)
+            later_named = ", ".join(s.label() for s in later)
             if is_depositary:
                 # an ADR whose ADS count will not resolve is DROPPED LOUDLY — assuming
                 # 1 ADS = 1 ordinary is exactly the silent error this whole change removes
@@ -446,6 +528,51 @@ def build_universe(
                     continue
                 shares_used = fallback
                 stats["polygon_count_fallback"] += 1
+            elif (moved := [s for s in parse_splits(split_rows.get(ident.eod_symbol, []),
+                                                    symbol=ident.eod_symbol)
+                            if s.execution_date <= reference_date]):
+                # A FILED COUNT ON AN UNKNOWN BASIS (RF-D4): a split since the earliest frame could
+                # leave it before or after the split, and the frame does not say which. Sized on
+                # Polygon's issuer-wide count (`issuer_share_counts`), as of the reference date —
+                # the same kind of
+                # count as the filed one, every class in this line's units, so an unlisted class
+                # is not dropped from the cap — or, when neither reading of the filed count could
+                # put the name in the band, dropped there without a request.
+                factor = math.prod(s.split_to / s.split_from for s in moved)
+                both = (close * sh * later_factor, close * sh * factor * later_factor)
+                named = ", ".join(s.label() for s in moved)
+                if not any(band.market_cap_min_usd <= c <= band.market_cap_max_usd for c in both):
+                    if share_tag.get(ident.cik) == SHARES_TAG_WAVG:
+                        stats["out_of_band_period_average"] += 1
+                    _drop(ident.eod_symbol, "out_of_band",
+                          f"market cap {both[0] / 1e6:,.1f}M on the filed count, or "
+                          f"{both[1] / 1e6:,.1f}M had it predated {named}: outside "
+                          f"[{band.market_cap_min_usd / 1e6:,.0f}M, "
+                          f"{band.market_cap_max_usd / 1e6:,.0f}M] on either basis",
+                          StampedInput(value=both[0], as_of=reference_date,
+                                       source=f"Polygon close x EDGAR {share_tag.get(ident.cik)}"))
+                    continue
+                # AS OF THE REFERENCE DATE (Codex P1 on #946): today's record would put today's
+                # issuance and buybacks into a past build; a later split then moves it as it moves
+                # the close
+                current = eod.issuer_share_counts(
+                    [ident.eod_symbol], as_of=reference_date).get(ident.eod_symbol)
+                if current is None:
+                    _drop(ident.eod_symbol, "split_basis_unresolved",
+                          f"{named} since the filed share count's earliest frame could be dated, "
+                          f"so that count may be on the old basis, and Polygon serves no current "
+                          f"count to size the line with — never sized on two bases",
+                          StampedInput(value=sh, as_of=reference_date,
+                                       source=f"EDGAR {share_tag.get(ident.cik)}"))
+                    continue
+                shares_used = current * later_factor
+                split_resized = named
+                stats["split_count_used"] += 1
+            elif later:
+                # ONLY A SPLIT AFTER THE REFERENCE DATE: the filed count predates it for certain
+                # (every frame is ≤ the reference date), so it is put on the close's basis exactly
+                shares_used = sh * later_factor
+                split_resized = f"{later_named} after the reference date"
             else:
                 shares_used = sh
             market_cap = close * shares_used
@@ -458,7 +585,7 @@ def build_universe(
             # filed tag must not label it — it would count the line as a period-average admission
             # and misattribute an out-of-band drop to an approximation that never ran
             approximate = (not is_depositary and _per_class_count(ident) is None
-                           and tag == SHARES_TAG_WAVG)
+                           and tag == SHARES_TAG_WAVG and not split_resized)
             if is_depositary:
                 shares_source = ("Polygon close x Polygon share_class_shares_outstanding "
                                  "(ADS-denominated)")
@@ -468,6 +595,15 @@ def build_universe(
             elif sh is None:
                 shares_source = ("Polygon close x Polygon share_class_shares_outstanding "
                                  "(FALLBACK - no filed count in any XBRL tier)")
+            elif split_resized and later and split_resized.endswith("after the reference date"):
+                shares_source = (f"Polygon close x EDGAR {tag} x {later_factor:g} "
+                                 f"({split_resized})")
+            elif split_resized:
+                shares_source = ("Polygon close x Polygon weighted_shares_outstanding as of "
+                                 f"{reference_date} (ISSUER-WIDE - {split_resized} since the filed "
+                                 f"count's frames"
+                                 + (f"; x {later_factor:g} for {later_named} after the reference "
+                                    f"date)" if later else ")"))
             else:
                 shares_source = (f"Polygon close x EDGAR {tag}"
                                  + (" (PERIOD AVERAGE - approximate share count)"

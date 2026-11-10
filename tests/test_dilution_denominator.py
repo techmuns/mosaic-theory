@@ -491,8 +491,11 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #:
 #: **SMPL LANDED** (2026-11-04, run `29e8038c`, on its FY2026 10-K): its committed base (46.4765)
 #: is the recompute's, `docs/records/2026-11-04-smpl-re-assembled-on-its-2026-11-04-exports.md`.
+#:
+#: **AORT LEFT THE CORPUS** (2026-11-09): the operator retired it with its anchor still awaiting
+#: the backfill, so it is in no loop here (`docs/records/2026-11-09-aort-retired.md`).
 ANCHORS_AWAITING_BACKFILL: set[str] = {
-    "AORT", "BRBR", "BURL", "EPAM", "IT", "PARR", "TGT", "VRRM", "WLK"}
+    "BRBR", "BURL", "EPAM", "IT", "PARR", "TGT", "VRRM", "WLK"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than

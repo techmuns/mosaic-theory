@@ -191,6 +191,8 @@ def test_build_universe_itself_seeds_before_it_exports(tmp_path: Path, monkeypat
     class _Eod:
         @classmethod
         def from_config(cls, _cfg): return cls()
+        def splits_executed(self, *_a: object) -> list[dict[str, object]]:
+            return []   # no split in any window (RF-D4)
         def security_types(self): return {}
         def grouped_daily(self, _d): return {}
         def share_class_counts(self, _tickers): return {}
