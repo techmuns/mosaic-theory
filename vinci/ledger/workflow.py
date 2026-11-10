@@ -10,7 +10,7 @@ The ledger is append-only: re-logging a candidate fails loud (a verdict is never
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Protocol
 
@@ -262,8 +262,14 @@ def close_position(
     exit_price_as_of: date,
     reason: str,
     closed_at: datetime,
+    check: Callable[[LedgerEntry], None] | None = None,
 ) -> LedgerEntry:
     """Append the CLOSE row for ``candidate_id``'s decision; returns it.
+
+    ``check`` runs on the VALIDATED close row after every guard here and before the append, and a
+    check that raises writes nothing. It is how `close-position` reads the vendors its realized
+    return needs (the split record, confirmed; the dividends) only for a close this function would
+    write, and refuses before the row exists (RF-D2, 2026-11-09) — the guards stay in one place.
 
     THE WRITER THAT WAS NEVER BUILT. `4f34c11` shipped the close-row SCHEMA, the readers
     (``monitor.close_rows`` / ``pair_closes``), the display and the id helper — everything except a
@@ -303,12 +309,12 @@ def close_position(
         raise LedgerError(
             f"exit date {exit_price_as_of} precedes the frozen entry date "
             f"{decision.entry_price_as_of} — a position cannot close before it opened.")
-    return _append_close(store, decision, exit_price, exit_price_as_of, reason, closed_at)
+    return _append_close(store, decision, exit_price, exit_price_as_of, reason, closed_at, check)
 
 
 def _append_close(
     store: Store, decision: LedgerEntry, exit_price: float, exit_price_as_of: date,
-    reason: str, closed_at: datetime,
+    reason: str, closed_at: datetime, check: Callable[[LedgerEntry], None] | None = None,
 ) -> LedgerEntry:
     """Build, VALIDATE and append the close row. Split out so the guards above read as one list.
 
@@ -351,5 +357,7 @@ def _append_close(
         raise LedgerError(
             f"the close row for {decision.candidate_id!r} is invalid and was NOT written: {exc}"
         ) from exc
+    if check is not None:
+        check(close)
     store.append_ledger(close)
     return close
