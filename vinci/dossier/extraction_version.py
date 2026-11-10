@@ -667,6 +667,19 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "total keeps its latest Assets and says 'no current balance' when its one family is "
         "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5",
     ),
+    (
+        "2026-11-10.bridge-total-and-band",
+        "three of document 11's partly fixed items finished (fix request 2, order 3): the EV "
+        "bridge's note says what its claims total leaves out (A-D2) — each unread preferred or "
+        "minority leg named with its reason, and whether CIQ's current TEV less market cap, "
+        "which counts every claim, checks the total (no comps export: nothing does); the "
+        "mid-cycle multiple band is the own-history band's population (D-D3), every dated close "
+        "before the latest, so an export-day close the quarter has not completed is no longer "
+        "history, and an undated sheet builds no band; an anchor-bridge figure one unit step "
+        "(1,000x or 1,000,000x) from its own parts' re-read is refused, not scored agree "
+        "(BC-D10). 13 of the 26 committed bridges carry an unread leg and gain the note when "
+        "refreshed; no committed page carries a mid-cycle band",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

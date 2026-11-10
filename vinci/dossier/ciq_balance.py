@@ -418,6 +418,115 @@ def _assert_scale(name: str, value: float | None, revenue: float | None) -> str 
     return None
 
 
+#: The cash total as its own balance-sheet rows build it (audit BC-D10's re-read). Measured
+#: 2026-11-10 on the 36 Financials exports on disk: 'Total Cash & ST Investments' and 'Total Debt'
+#: at the latest quarterly column equal these rows (and `_TOTAL_DEBT_PARTS`) there on every one.
+_CASH_PARTS = ("Cash And Equivalents", "Short Term Investments", "Trading Asset Securities")
+#: The steps between CIQ's units (thousands, millions, billions; a million either way).
+_UNIT_STEPS = (1e3, 1e6)
+
+
+def unit_step(value: float, reread: float) -> float | None:
+    """The unit step between a figure and its own re-read — 1,000 or 1,000,000, or its inverse —
+    or None when they are not one unit apart (within a factor of 2 of a step, same sign)."""
+    if not value or not reread or (value > 0) != (reread > 0):
+        return None
+    r = abs(value / reread)
+    for step in _UNIT_STEPS:
+        if step / 2 <= r <= step * 2:
+            return step
+        if 1 / (step * 2) <= r <= 2 / step:
+            return 1 / step
+    return None
+
+
+#: (the figure's cell AS EXPORTED, unrounded; what its own rows re-add to; the column)
+Reread = tuple[float, float, str]
+
+
+def _bs_reread(bundle: CiqBundle, label: str, parts: tuple[str, ...]) -> Reread | None:
+    """(`label`'s cell, what its own rows sum to, the column) at the column `_bs` read it from —
+    the sheet that answers (`ciq_sheets._bs_latest_from`'s order, quarterly first). The cell is the
+    unrounded one: `_bs` rounds to 0.1, so a small figure a unit step down (TECX's 3.9 Total Debt
+    ÷ 1,000) would reach the comparison as 0.0 and pass. None when no part is valued there. Both
+    addresses are LITERALS for the CIQ-manifest drift guard."""
+    reads: tuple[Callable[[], list[list[Any]]], ...] = (
+        lambda: bundle.sheet("financials", "Balance Sheet", freq="quarterly"),
+        lambda: bundle.sheet("financials", "Balance Sheet", freq="annual"),
+    )
+    for read in reads:
+        try:
+            rows = read()
+        except CiqUnavailableError:
+            continue
+        if (ri := cs._find_row(rows, label)) is None:
+            continue
+        got = cs.latest_cell(rows, ri, cs._bs_period_header(rows))
+        if got.col is None or got.value is None:
+            return None
+        vals = [v for p in parts if (pi := cs._find_row(rows, p)) is not None
+                and (v := cs._cell_at(rows, pi, got.col)) is not None]
+        return (got.value, sum(vals), got.label) if vals else None
+    return None
+
+
+def _flow_reread(bundle: CiqBundle, label: str) -> Reread | None:
+    """(the annual sheet's latest cell, unrounded; the four quarterly Cash Flow cells ending on that
+    column, summed; that column) — the flow `_cf_cell` reads, re-read from its quarters. None when
+    the annual Cash Flow sheet does not carry the row, a quarter has no column, or no quarter is
+    valued."""
+    from vinci.dossier.ltm_quarters import _four_quarters
+
+    try:
+        annual = bundle.sheet("financials", "Cash Flow", freq="annual")
+        quarters = bundle.sheet("financials", "Cash Flow", freq="quarterly")
+    except CiqUnavailableError:
+        return None
+    ai, qi, qhdr = cs._find_row(annual, label), cs._find_row(quarters, label), cs._period_header(
+        quarters)
+    if ai is None or qi is None or qhdr is None:
+        return None
+    got = cs.latest_cell(annual, ai, cs._period_header(annual))
+    if got.value is None or got.period is None or got.period.end is None:
+        return None
+    four, _why = _four_quarters(quarters, qhdr, got.period.end)
+    vals = [v for j, _p in four or [] if (v := cs._cell_at(quarters, qi, j)) is not None]
+    return (got.value, sum(vals), got.label) if vals else None
+
+
+def _unit_steps(bundle: CiqBundle, facts: dict[str, CiqFact]) -> list[str]:
+    """SCALE failures for the bridge's figures that sit one unit step from their own re-read
+    (audit BC-D10's remainder, 2026-11-10). The magnitude band against revenue is seven orders
+    wide, so ORCL's cash divided by 1,000, with every unit line stating Millions, scored `agree`.
+    A figure is re-read from its own parts — cash and total debt from their balance-sheet rows at
+    the same column, D&A, operating cash flow and capex from the four quarters ending on the
+    annual column — and one 1,000x (or 1,000,000x) from it is a cell in another unit. Measured
+    2026-11-10 on the 36 Financials exports on disk: every re-read lands within 0.93-1.36x of its
+    figure (cash and debt exactly), none near a unit step. A figure with no re-read is not
+    judged here: the magnitude band still screens it."""
+    reads: tuple[tuple[str, str, Callable[[], Reread | None]], ...] = (
+        ("cash", "Total Cash & ST Investments",
+         lambda: _bs_reread(bundle, "Total Cash & ST Investments", _CASH_PARTS)),
+        ("total_debt", "Total Debt", lambda: _bs_reread(bundle, "Total Debt", _TOTAL_DEBT_PARTS)),
+        ("d_and_a", "Depreciation & Amort., Total",
+         lambda: _flow_reread(bundle, "Depreciation & Amort., Total")),
+        ("ocf", "Cash from Ops.", lambda: _flow_reread(bundle, "Cash from Ops.")),
+        ("capex", "Capital Expenditure", lambda: _flow_reread(bundle, "Capital Expenditure")),
+    )
+    out: list[str] = []
+    for key, label, reread in reads:
+        if key not in facts or (again := reread()) is None:
+            continue
+        # the CELL, not the fact: a fact is rounded (cash and debt to 0.1, OCF to 0.1), and capex
+        # is stored as a magnitude — the cell carries CIQ's own sign, as its quarters do
+        value, summed, col = again
+        if (step := unit_step(value, summed)) is not None:
+            out.append(f"SCALE: '{label}' reads {value:,.4g} at [{col}], {step:,.4g}x "
+                       f"what its own rows re-add to there ({summed:,.4g}) — one cell in "
+                       "another unit, not the business")
+    return out
+
+
 def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     """Every balance-sheet fact the anchor bridge needs, cross-checked before it is handed on.
 
@@ -540,14 +649,19 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
         bad = _assert_scale(key, facts[key].value if key in facts else None, revenue)
         if bad:
             failures.append(f"SCALE: {bad}")
+    # BC-D10: one cell off by a unit step. Measured against the figure's own rows, not revenue,
+    # so it is a scale difference on a page with no revenue too (TECX, ORKA)
+    steps = _unit_steps(bundle, facts)
+    failures.extend(steps)
     # a stated-unit refusal never prints beside a "$M sheet" pass the magnitude screen cannot back
     if not unit_failures and not any(f.startswith("SCALE:") for f in failures) and revenue:
         checks.append(f"scale: every monetary figure within [{_SCALE_LO:g}, {_SCALE_HI:g}]x "
                       f"revenue {revenue:,.1f} ($M) — consistent with a $M sheet")
     measured = bool(revenue and revenue > 0
                     and any(key in facts and facts[key].value != 0 for key in scaled))
-    # a stated-unit refusal is a difference whether or not the magnitude screen could run
-    scale_check: CrossCheck = (CHECK_DIFFER if unit_failures
+    # a stated-unit refusal or a unit step is a difference whether or not the magnitude screen
+    # could run
+    scale_check: CrossCheck = (CHECK_DIFFER if unit_failures or steps
                                else CHECK_NOT_RUN if not measured
                                else CHECK_DIFFER if any(f.startswith("SCALE:") for f in failures)
                                else CHECK_AGREE)

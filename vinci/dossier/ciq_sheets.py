@@ -3557,6 +3557,26 @@ def _ciq_tev_claims(bundle: CiqBundle) -> tuple[float, str] | None:
                                  "Value' − 'Market Capitalization'")
 
 
+def claims_left_out_note(unread: list[str | None], ciq_tev_claims: float | None,
+                         claims: float) -> str | None:
+    """What an EV bridge's claims total leaves out, said at bridge level — None when every leg
+    is stated (audit A-D2's remainder, 2026-11-10). Each unread leg was named on its own line, but
+    `claims` summed the stated legs with nothing said beside the total: ORCL's quarterly total read
+    136,086 with 'Total Pref. Equity' at '-' (141,040 with the cell read), and a reader of the total
+    alone took it for every claim. Whether anything checks the total is said with it: CIQ's TEV less
+    market cap counts every claim; without a comps export nothing does. One function, so the frozen
+    bridge cases are re-derived by the code that writes the note."""
+    legs = [why for why in unread if why]
+    if not legs:
+        return None
+    checked = ("nothing checks the total (no comps export)" if ciq_tev_claims is None
+               else "CIQ's current TEV less market cap, which counts every claim, agrees with "
+               "the total" if abs(ciq_tev_claims - claims) <= EV_BRIDGE_CIQ_TOL
+               else "CIQ's current TEV less market cap disagrees with the total (above)")
+    return ("the claims total sums the legs CIQ states and leaves out what it does not — "
+            f"{'; '.join(legs)} — each unread, never 0; {checked}")
+
+
 def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float | None = None,
               edgar_source: str | None = None) -> EvBridge | EvBridgeUnbuilt:
     """(EV bridge) THE ONE BUILDER for `Dossier.ev_bridge` — assembly and `ev_bridge_transform` both
@@ -3636,6 +3656,9 @@ def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float
         notes.append(f"DISAGREES with CIQ's current TEV less market cap (${ciq[0]:,.1f}M) by "
                      f"${claims - ciq[0]:,.1f}M — the Financials and comps exports sit on "
                      "different balance sheets; re-pull before an R4 record reads this")
+    if (left_out := claims_left_out_note([pref_unread, minority_unread],
+                                          ciq[0] if ciq else None, claims)) is not None:
+        notes.append(left_out)
     est = bundle.workbook("estimates")
     return EvBridge(
         balance_sheet_date=as_of, lines=lines, claims=round(claims, 3), net_debt=round(nd, 3),
