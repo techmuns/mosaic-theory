@@ -1,0 +1,100 @@
+{
+ "EPAM": [
+  {
+   "item": "segment EBITDA",
+   "fields": [
+    "concentration.segment_ebitda"
+   ],
+   "type": "type not determined",
+   "basis": "the 10-K's segments carry the filer's filer-defined segment measure (concentration.segment_profit); one read cannot show it discloses no segment EBITDA"
+  },
+  {
+   "item": "the outlook a gap-down's 8-K furnished",
+   "fields": [
+    "drawdown_cause.anchor.since.revised_guidance"
+   ],
+   "type": "does not apply",
+   "basis": "no gap-down 8-K is in the window (drawdown_cause.anchor.since.filings empty, each window read), and this reads only the outlook such an 8-K furnishes"
+  },
+  {
+   "item": "the outlook a gap-down's 8-K furnished",
+   "fields": [
+    "drawdown_cause.revised_guidance"
+   ],
+   "type": "our gap",
+   "basis": "the release parser read a guide from the release filed 2026-08-06; this field did not take it",
+   "source_ref": "8-K 0001352010-26-000043 EX-99.1"
+  },
+  {
+   "item": "the outlook a gap-down's 8-K furnished",
+   "fields": [
+    "drawdown_cause.anchor.at_anchor.revised_guidance"
+   ],
+   "type": "our gap",
+   "basis": "the release parser read a guide from the release filed 2026-08-06; this field did not take it",
+   "source_ref": "8-K 0001352010-26-000043 EX-99.1"
+  },
+  {
+   "item": "a company adjusted-EBITDA guide",
+   "fields": [
+    "valuation.ev_ebitda_adjusted_fwd",
+    "quality.net_debt_to_ebitda_adjusted"
+   ],
+   "type": "company's normal practice",
+   "basis": "none of the 5 releases read (2025-11-06 to 2026-11-05) states an adjusted-EBITDA guide, and catalyst_path.guidance_bridge_rows, which reaches 2026-11-05, records none since 2025-11-06"
+  },
+  {
+   "item": "an annual adjusted-EPS guide in the newest release",
+   "fields": [
+    "valuation.adjusted_eps"
+   ],
+   "type": "type not determined",
+   "basis": "the release parser read an adjusted-EPS guide from none of the 5 releases, while catalyst_path.guidance_bridge_rows records one since 2025-11-06"
+  }
+ ],
+ "WLK": [
+  {
+   "item": "segment EBITDA",
+   "fields": [
+    "concentration.segment_ebitda"
+   ],
+   "type": "type not determined",
+   "basis": "the 10-K's segments carry the filer's operating income (concentration.segment_profit); one read cannot show it discloses no segment EBITDA"
+  },
+  {
+   "item": "the outlook a gap-down's 8-K furnished",
+   "fields": [
+    "drawdown_cause.revised_guidance",
+    "drawdown_cause.anchor.at_anchor.revised_guidance",
+    "drawdown_cause.anchor.since.revised_guidance"
+   ],
+   "type": "does not apply",
+   "basis": "no gap-down 8-K is in the windows (drawdown_cause.filings, drawdown_cause.anchor.at_anchor.filings, drawdown_cause.anchor.since.filings empty, each window read), and this reads only the outlook such an 8-K furnishes"
+  },
+  {
+   "item": "a company adjusted-EBITDA guide",
+   "fields": [
+    "valuation.ev_ebitda_adjusted_fwd",
+    "quality.net_debt_to_ebitda_adjusted"
+   ],
+   "type": "company's normal practice",
+   "basis": "none of the 3 releases read (2026-05-05 to 2026-11-04) states an adjusted-EBITDA guide, and catalyst_path.guidance_bridge_rows, which reaches 2026-11-04, records none since 2026-05-05; CIQ's last such guide is dated 2021-08-04, more than four quarters before the page's price date (2026-11-06)"
+  },
+  {
+   "item": "an annual adjusted-EPS guide in the newest release",
+   "fields": [
+    "valuation.adjusted_eps"
+   ],
+   "type": "company's normal practice",
+   "basis": "none of the 3 releases read (2026-05-05 to 2026-11-04) states an adjusted-EPS guide, and catalyst_path.guidance_bridge_rows, which reaches 2026-11-04, records none since 2026-05-05; CIQ's last such guide is dated 2019-07-01, more than four quarters before the page's price date (2026-11-06)"
+  },
+  {
+   "item": "a current guide",
+   "fields": [
+    "primary_source.current_guide"
+   ],
+   "type": "our gap",
+   "basis": "CIQ records Capital Expenditure guidance dated 2026-11-04 (catalyst_path.guidance_bridge_rows), at the release filed 2026-11-04, from which the release parser read no guide"
+  }
+ ]
+}
