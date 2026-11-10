@@ -288,7 +288,8 @@ def main(argv: list[str] | None = None) -> int:
         breg = bd.RunRegistration.from_json(a.registration.read_text(encoding="utf-8"))
         res = ind.score(breg, rp.Budget.load(a.budget_ledger), a.draws_out)
         print(ind.score_text(res))
-        return 1 if (res.falsified or res.stop_dissent) else 0
+        # every STOP exits 1, NOT TESTABLE included (Codex round 1, #978), so no gate reads past it
+        return 1 if (res.falsified or res.stop_dissent or not res.testable) else 0
     if a.cmd == "score":
         from vinci.evals import compare as cm
         reg = cm.Registration.from_json(a.registration.read_text(encoding="utf-8"))

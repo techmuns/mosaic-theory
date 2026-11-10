@@ -293,3 +293,16 @@ def test_a_run_with_no_degree_of_freedom_is_not_testable(tmp_path: Path, inputs:
     reg, budget, out = _drawn(tmp_path, [[M] * 10] * 4)
     s = ind.score(reg, budget, out)
     assert not s.testable and s.df == 0 and s.decision.startswith("STOP: NOT TESTABLE")
+
+
+def test_score_run_exits_1_on_a_run_that_is_not_testable(
+        tmp_path: Path, inputs: None, capsys: pytest.CaptureFixture[str]) -> None:
+    """(−) Codex round 1 (#978): a NOT TESTABLE run is a STOP, so `score-run` exits 1 on it as on
+    a falsification or a dissent STOP; a script gating on the exit code cannot read past it."""
+    from vinci.evals import __main__ as cli
+    from vinci.evals import builds as bd
+    reg, _, out = _drawn(tmp_path, [[M] * 10] * 4)
+    bd.write_registration(reg, tmp_path / "registration.json")
+    rc = cli.main(["score-run", "--registration", str(tmp_path / "registration.json"),
+                   "--budget-ledger", str(tmp_path / "ledger.jsonl"), "--draws-out", str(out)])
+    assert "STOP: NOT TESTABLE" in capsys.readouterr().out and rc == 1
