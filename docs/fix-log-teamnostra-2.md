@@ -124,8 +124,8 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RE1-D16 | 4 | fixed | 1d0c374c (#945) | `tests/test_point_guide_verification.py::test_a_point_guide_against_a_range_ending_at_zero_is_a_mismatch` | none (28 frozen pages compared; every compared line has both bounds) |
 | RA-D2 | 4 | open | — | — | — |
 | RA-D4 | 4 | open | — | — | — |
-| RA-D9 | 4 | open | — | — | — |
-| RA-D14 | 4 | open | — | — | — |
+| RA-D9 | 4 | in progress (#963) | #963 | — | — |
+| RA-D14 | 4 | in progress (#963) | #963 | — | — |
 | RG-D1 | 4 | open | — | — | — |
 | RG-D2 | 4 | open | — | — | — |
 | RG-D3 | 4 | open | — | — | — |
