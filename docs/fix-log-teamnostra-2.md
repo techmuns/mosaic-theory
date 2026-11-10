@@ -87,13 +87,13 @@ Order 2 is in two PRs: #936 (RBC-D1, RA-D1, RBC-D8; merged as 6fbbb4a2) and #937
 | RA-D11 | 3 | open | — | — | — |
 | RA-D13 | 3 | open | — | — | — |
 | RBC-D6 | 3 | open | — | — | — |
-| RE2-D16 | 3 | open | — | — | — |
+| RE2-D16 | 3 | in progress (#961) | #961: the covenant fence reads every class a value states — whole dates, ratios, percents and basis points, unmarked amounts — each in its own unit; 24 more committed terms on 13 pages are withheld at their next re-assembly (panel check proposed) | `tests/test_covenant_value_in_quote.py::test_re2_d16_each_constructed_case_is_refused` | none now: the fence runs beside the model step |
 | A-D2 | 3 | open | — | — | — |
 | BC-D7 | 3 | open | — | — | — |
 | BC-D10 | 3 | open | — | — | — |
 | D-D3 | 3 | open | — | — | — |
 | E1-D7 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
-| E2-D19 | 3 | open | — | — | — |
+| E2-D19 | 3 | in progress (#961) | #961: the covenant fence reads every class a value states — whole dates, ratios, percents and basis points, unmarked amounts — each in its own unit; 24 more committed terms on 13 pages are withheld at their next re-assembly (panel check proposed) | `tests/test_covenant_value_in_quote.py::test_re2_d16_each_constructed_case_is_refused` | none now: the fence runs beside the model step |
 | RE2-D1 | 4 | open | — | — | — |
 | RE2-D2 | 4 | open | — | — | — |
 | RE2-D3 | 4 | open | — | — | — |
