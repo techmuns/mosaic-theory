@@ -157,3 +157,17 @@ def test_an_alleviation_that_is_not_one_leaves_the_doubt_standing(text: str) -> 
     """CONSTRUCTED (review): the filing-wide alleviation erased each of these doubts — a later
     doubt, a modal alleviation, and one a later clause conditions. All DOUBT on main."""
     assert _doubt(text)
+
+
+@pytest.mark.parametrize("text", [
+    "In accordance with ASC 205-40, management determined that the Company does not currently "
+    "have substantial doubt about its ability to continue as a going concern.",
+    "In accordance with ASC 205-40, management determined that the Company does not appear to "
+    "have substantial doubt about its ability to continue as a going concern.",
+    "In accordance with ASC 205-40, management determined that the Company may have substantial "
+    "doubt about its ability to continue as a going concern if the financing does not close.",
+], ids=["does-not-currently-have", "does-not-appear-to-have", "may-have"])
+def test_codex_round_1_a_qualified_conclusion_is_no_conclusion(text: str) -> None:
+    """Codex P1 (round 1): the negation or modality sat more than one word before "have", which
+    the conclusion's lookbehinds never saw, so a framed denial or hypothetical read as DOUBT."""
+    assert not _doubt(text)

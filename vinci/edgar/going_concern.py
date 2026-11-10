@@ -157,6 +157,20 @@ _CONCLUSION = re.compile(
     re.I,
 )
 
+#: A NEGATION OR A MODAL in the words just before a conclusion's doubt (Codex P1, round 1): "does
+#: not currently have", "does not appear to have" and "may have substantial doubt" sat beyond the
+#: one word the lookbehinds above read, and a framed denial or hypothetical read as DOUBT.
+_QUALIFIED = re.compile(r"\b(?:not|never|no\s+longer|may|might|could|would|should|if|whether|"
+                        r"unless|appears?|seems?)\b|n['’]t\b", re.I)
+
+
+def _concludes(sentence: str) -> bool:
+    """A frame's sentence states its own result: a `_CONCLUSION` with no negation or modal in the
+    sixty characters that lead to its doubt."""
+    return any(not _QUALIFIED.search(sentence, max(m.start(), m.end() - 60), m.end())
+               for m in _CONCLUSION.finditer(sentence))
+
+
 #: "Going concern VALUE" is a valuation concept (EOSE), never a distress statement.
 _VALUATION_SENSE = re.compile(r"going\s+concern\s+value", re.I)
 
@@ -300,7 +314,7 @@ def find_going_concern_statement(text: str) -> GoingConcernStatement | None:
         sentence, _ = _sentence_around(text, m.start())
         if _VALUATION_SENSE.search(sentence):
             continue                      # "going concern value" — a valuation term
-        if _EVALUATION_FRAME.search(sentence) and not _CONCLUSION.search(sentence):
+        if _EVALUATION_FRAME.search(sentence) and not _concludes(sentence):
             continue                      # "has evaluated whether …" — an assessment, not a result
         if _alleviated(sentence):
             first = fallback = None       # the filer's own plans alleviate the doubt (below)

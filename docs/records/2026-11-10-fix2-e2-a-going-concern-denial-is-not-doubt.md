@@ -80,6 +80,11 @@ superseded-by:
   Deferred: a "does not exist" up to 200 characters on may deny a real doubt (under-flagging, the
   module's stated bias, with no corpus case), and an alleviation that cites ASC 205-40 is still
   skipped as a frame before the filing-level rule sees it.
+- **Codex, round 1 (P1).** A framed conclusion whose negation or modal sat more than one word
+  before "have" ("does not currently have", "does not appear to have", "may have substantial
+  doubt") read as DOUBT. A conclusion now counts only when the sixty characters leading to its
+  doubt carry no negation or modal (`_concludes`). The pins fail on `1cc8c0e8`. The corpus measure
+  is unchanged.
 - **The module docstring** records the exception to "every marker was demanded by a real filing":
   these markers came from TeamNostra's constructed sentences, two of them live.
 - **The version.** Row `2026-11-10.going-concern-denials-and-conclusions`, in both tables,
