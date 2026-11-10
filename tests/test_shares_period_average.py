@@ -135,6 +135,8 @@ def _build_with(monkeypatch, tmp_path, *, tag: str, shares: float, sic: str = "7
         def grouped_daily(self, day: date) -> dict[str, RawBar]:
             return ({"ACME": RawBar(ticker="ACME", open=100, high=101, low=99, close=100,
                                     volume=100_000)} if day == ref else {})
+        def splits_executed(self, *_a: object) -> list[dict[str, object]]:
+            return []   # no split in any window (RF-D4)
         def security_types(self) -> dict[str, str]: return {"ACME": "CS"}
         def share_class_counts(self, tickers: object) -> dict[str, float]:
             return {}  # domestic common stock — no depositary receipts to price
