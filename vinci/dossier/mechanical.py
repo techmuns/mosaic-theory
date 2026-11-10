@@ -6449,14 +6449,14 @@ def assemble_mechanical(
     # (`ciq_sheets.require_usd`); one stating none is stored not_run and flagged below
     currency = ciq_sheets.stated_currency(bundle)
     ciq_sheets.require_usd(currency, record.identity.ticker)
-    # (2026-11-10, audit RA-D9) and the UNIT each Financials money sheet states: one in thousands
-    # is refused here too, so no page prints it as $M (`ciq_sheets.require_millions`)
-    ciq_sheets.require_millions(bundle, record.identity.ticker)
     # (2026-10-30) AN INCOME STATEMENT BUILT FROM AN EARNINGS RELEASE, refused here too, before
     # anything is fetched: its latest LTM, fiscal-year or quarter column is a CIQ 'Press Release'
     # column, which a page would print under the same 'LTM' as a filed one
     # (`ciq_sheets.require_filed_income_statement`)
     ciq_sheets.require_filed_income_statement(bundle, record.identity.ticker)
+    # (2026-11-10, audit RA-D9) and the UNIT each Financials money sheet states: one in thousands
+    # is refused here too, so no page prints it as $M (`ciq_sheets.require_millions`)
+    ciq_sheets.require_millions(bundle, record.identity.ticker)
     # every "at the current price" reading below — P/E, its percentile, the adjusted and forward
     # multiples, the conflict caveat — reads the latest stored close, the one the price box shows
     record = _at_latest_close(record, store, edgar)

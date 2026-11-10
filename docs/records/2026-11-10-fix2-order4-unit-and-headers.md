@@ -45,9 +45,19 @@ Changes read by column position". Done when: each A case is a passing test.
   `require_millions` were dumped at both codes on the 36 folders on disk: 0 of 180 (folder,
   reader) cells differ. No synthesis request changes, so no panel is owed.
 - **The censuses behind "no page moves."**
-  - All 720 money sheets state Millions (Ratios and Multiples state none).
+  - All 720 money sheets with an 'In … of' line state Millions, and all 72 Capital Structure
+    Details sheets state 'Principal Due in Millions of' (Ratios and Multiples state none).
   - All 36 Recent Changes headers are the same ten labels in the same order.
   - All 36 Target Price rows sit directly under their Mean/Median header.
+
+- **Review round 0 (`/code-review high --fix`), each fix behind a test that failed first.**
+  - Capital Structure Details states its unit as 'Principal Due in Millions of …'. The
+    `ciq.stated_unit` 'In … of' line never matched it, so a Thousands export of that sheet passed.
+    It is now read (`_principal_unit`): 72 of 72 such sheets on the 36 folders state Millions.
+  - `cli._machine_anchor` (anchor-backfill, anchor-retag) re-raised `CiqCurrencyError` but caught
+    `CiqUnitError` as "no CIQ bridge" and anchored the name EDGAR-only. It re-raises it now.
+  - `estimates_as_of` names a missing Recent Changes 'Date' header. Before, it said the log held
+    no dated events.
 
 **BOUNDARY.** The exports under the primary checkout's `data/manual/ciq/` on 2026-11-10: 36
 ticker folders, the current exports only.

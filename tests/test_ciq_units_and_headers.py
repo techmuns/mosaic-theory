@@ -162,3 +162,65 @@ def test_ra_d14_twin_each_column_is_found_by_its_header_and_a_missing_one_is_sai
     renamed = [h if h != "Broker Value Prior" else "Prior" for h in _RC]
     gone = cs.revision_events(_with_estimates_sheet("Recent Changes", _recent_changes(renamed)))
     assert gone.status is SourceStatus.UNKNOWN and "'Broker Value Prior'" in (gone.note or "")
+
+
+# --- review of order 4 (2026-11-10): the gaps the first cut left -------------------------------
+
+
+@pytest.mark.parametrize("make", [lambda: _real("SMPL"), _zzfx], ids=["SMPL", "twin"])
+def test_ra_d9_capital_structure_details_in_thousands_is_refused(make: Any) -> None:
+    """(+) Capital Structure Details states its unit as 'Principal Due in Millions of …', which
+    `ciq.stated_unit`'s 'In … of' line never matches, so a Thousands export of it passed. Restated
+    as Thousands it is now refused, the sheet named. (−) As exported: nothing is refused."""
+    b = make()
+    cs.require_millions(b, b.ticker)
+    rows = b.sheet("financials", "Capital Structure Details", freq="annual")
+    for row in rows[:14]:
+        for j, cell in enumerate(row):
+            if isinstance(cell, str) and cell.strip().startswith("Principal Due in Millions of"):
+                row[j] = cell.replace("in Millions of", "in Thousands of", 1)
+                break
+        else:
+            continue
+        break
+    else:
+        raise AssertionError("the sheet states no 'Principal Due in Millions of' line")
+    with pytest.raises(cs.CiqUnitError,
+                       match=r"Financials \(annual\)→Capital Structure Details: Thousands"):
+        cs.require_millions(b, b.ticker)
+
+
+def test_ra_d9_the_backfill_path_does_not_swallow_the_unit_refusal(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Any) -> None:
+    """`_machine_anchor` (anchor-backfill / anchor-retag) re-raised the currency refusal but caught
+    `CiqUnitError` as 'no CIQ bridge' and anchored the name EDGAR-only. It fails loud now, as
+    assembly does."""
+    import json
+    import pathlib
+    from types import SimpleNamespace
+
+    from vinci import cli
+
+    def _refuse(_b: Any, t: str) -> None:
+        raise cs.CiqUnitError(f"{t}: Financials (annual)→Income Statement: Thousands")
+
+    monkeypatch.setattr(cs, "require_millions", _refuse)
+    root = pathlib.Path(__file__).resolve().parents[1]
+    cut = json.loads((root / "tests" / "fixtures" / "anchor_ciq_bridge.json").read_text())["names"]
+    page = cut["GOOGL"]["page"]
+    d = SimpleNamespace(mechanical=SimpleNamespace(model_dump=lambda mode, m=page["mechanical"]: m))
+    resolver = SimpleNamespace(resolve_ticker=lambda _t: SimpleNamespace(cik="0"))
+    edgar = SimpleNamespace(companyfacts=lambda _cik: cut["GOOGL"]["companyfacts"])
+    with pytest.raises(cs.CiqUnitError):
+        cli._machine_anchor("GOOGL", d, json.dumps(page), SimpleNamespace(data_dir=tmp_path),
+                            resolver, edgar)
+
+
+def test_ra_d14_estimates_as_of_names_a_missing_date_header() -> None:
+    """(+) Recent Changes with its 'Date' header renamed: UNKNOWN, and the note names the column
+    rather than saying the log holds no dated events. (−) As built: the floor reads."""
+    floor = cs.estimates_as_of(_with_estimates_sheet("Recent Changes", _recent_changes(_RC)))
+    assert floor.status is SourceStatus.PRESENT and "Recent Changes" in (floor.source_ref or "")
+    renamed = [h if h != "Date" else "When" for h in _RC]
+    got = cs.estimates_as_of(_with_estimates_sheet("Recent Changes", _recent_changes(renamed)))
+    assert got.status is SourceStatus.UNKNOWN and "'Date'" in (got.note or "")

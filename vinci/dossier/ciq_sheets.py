@@ -2449,8 +2449,8 @@ def _recent_changes_rows(rows: Rows) -> tuple[int, Rows] | None:
 #: Recent Changes' columns, by CIQ's own header text (audit RA-D14, 2026-11-10). The log was read
 #: by index (`c[0]` … `c[9]`), so two columns swapped — header included — swapped the values with
 #: nothing said: SMPL's 'Broker Value Prior' and 'Current' traded places and its Interest Expense
-#: revision printed current -20.0, prior -19.8. All 36 exports on disk carry exactly these ten
-#: headers, in this order, so no read moves.
+#: revision printed current -20.0, prior -19.8. All 36 exports on disk carry the same ten headers
+#: in this order — these nine and 'Analyst', which no field reads — so no read moves.
 _RC_COLUMNS = ("Change Type", "Date", "Broker", "Data Point", "Period", "Broker Value Current",
                "Broker Value Prior", "Consensus After", "Consensus Before")
 
@@ -2467,7 +2467,8 @@ def _stat_columns(rows: Rows, ri: int) -> dict[str, int] | None:
     nearest header above it carrying 'Mean' and 'Median', its labels without CIQ's trailing dot
     ('No. of Estimates.'). None when no such header is within five rows: a stat is then unread,
     never taken by position (audit RA-D14 — a Mean/Median swap printed SMPL's target as mean $14.00
-    / median $14.88). On all 36 exports on disk the header is the row right above."""
+    / median $14.88). On all 36 exports on disk the header is the row right above Target Price,
+    and two above LT Growth (across the Target Price row)."""
     for k in range(ri - 1, max(ri - 6, -1), -1):
         cells = [str(c).strip() for c in rows[k]]
         if "Mean" in cells and "Median" in cells:
@@ -2596,6 +2597,9 @@ def estimates_as_of(bundle: CiqBundle) -> Sourced[str]:
             d = excel_date(r[dcol]) if dcol < len(r) else None
             if d is not None and (latest is None or d > latest):
                 latest = d
+    if latest is None and rc is not None and dcol is None:
+        return Sourced.unknown(note="no As-Of header, and Estimates→Recent Changes carries no "
+                                    "'Date' column header — the log is not read by position")
     if latest is None:
         return Sourced.unknown(note="no As-Of header and no dated events in Estimates")
     return Sourced.present(
@@ -7108,9 +7112,24 @@ class CiqUnitError(ValueError):
     assembly spends anything (audit RA-D9)."""
 
 
+#: Capital Structure Details states its unit as 'Principal Due in Millions of the reported
+#: currency.', which `ciq.stated_unit`'s 'In … of' line never matches (review of order 4).
+_PRINCIPAL_UNIT = re.compile(r"^Principal Due in (Units|Thousands|Millions|Billions) of ",
+                             re.IGNORECASE)
+
+
+def _principal_unit(rows: Rows) -> str | None:
+    for row in rows[:14]:
+        for cell in row:
+            if isinstance(cell, str) and (m := _PRINCIPAL_UNIT.match(cell.strip())):
+                return m.group(1).capitalize()
+    return None
+
+
 def require_millions(bundle: CiqBundle, ticker: str) -> None:
     """Raise :class:`CiqUnitError` when a Financials money panel (`_MONEY_PANELS`) states a unit
-    other than Millions on its own unit line (`ciq.stated_unit`).
+    other than Millions on its own unit line (`ciq.stated_unit`; Capital Structure Details'
+    'Principal Due in … of' line, `_principal_unit`).
 
     ONLY THE BRIDGE READ THE UNIT (audit RA-D9, 2026-11-10). #863 taught the anchor bridge to read
     each statement's 'In Millions of …' line and refuse another unit (BC-D10), but the readers that
@@ -7119,8 +7138,9 @@ def require_millions(bundle: CiqBundle, ticker: str) -> None:
     `require_usd`'s twin, at the same two places: assembly, before any fetch, and the anchor's
     CIQ path. A panel stating NO unit is not refused (the bridge's magnitude and re-read checks
     still screen it). Census of the 36 exports on disk, 2026-11-10: all 720 Income Statement,
-    Balance Sheet, Cash Flow, Segments, Capital Structure and Historical Capitalization sheets
-    state Millions, so no page is refused."""
+    Balance Sheet, Cash Flow, Segments, Capital Structure Summary and Historical Capitalization
+    sheets state Millions, and all 72 Capital Structure Details sheets 'Principal Due in Millions
+    of', so no page is refused."""
     wrong: list[str] = []
     for panel, how, read in _MONEY_PANELS:
         if not panel.startswith("Financials") or how not in ("row", "principal"):
@@ -7129,7 +7149,8 @@ def require_millions(bundle: CiqBundle, ticker: str) -> None:
             rows = read(bundle)
         except CiqUnavailableError:
             continue
-        if (unit := stated_unit(rows)) is not None and unit != "Millions":
+        unit = stated_unit(rows) if how == "row" else _principal_unit(rows)
+        if unit is not None and unit != "Millions":
             wrong.append(f"{panel}: {unit}")
     if wrong:
         raise CiqUnitError(
