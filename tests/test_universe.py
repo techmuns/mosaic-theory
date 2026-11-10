@@ -33,9 +33,11 @@ def test_latest_close_and_adv() -> None:
                 return {"X": RawBar(ticker="X", open=10, high=11, low=9, close=10, volume=100)}
             return {}  # weekend / no data
 
-    closes, adv = latest_close_and_adv(_FakeEod(), date(2026, 6, 12), lookback_days=3)
+    closes, adv, stale, sessions = latest_close_and_adv(_FakeEod(), date(2026, 6, 12),
+                                                        lookback_days=3)
     assert closes["X"] == 12.0  # most-recent close wins
-    assert adv["X"] == (12 * 200 + 10 * 100) / 2  # mean daily $-volume over the 2 trading days
+    # mean daily $-volume over the 2 MARKET sessions (an empty day is no session), X trading both
+    assert sessions == 2 and adv["X"] == (12 * 200 + 10 * 100) / 2 and stale == {}
 
 
 def test_admit_security_type_allowlist_fail_closed() -> None:
@@ -126,6 +128,8 @@ def test_build_universe_persists_fetched_sic_onto_identity(
                 return {"ACME": bar}
             return {}
 
+        def splits_executed(self, *_a: object) -> list[dict[str, object]]:
+            return []   # no split in any window (RF-D4)
         def security_types(self) -> dict[str, str]:
             return {"ACME": "CS"}  # common stock → passes the Axis-2 allowlist
         def share_class_counts(self, tickers: object) -> dict[str, float]:
