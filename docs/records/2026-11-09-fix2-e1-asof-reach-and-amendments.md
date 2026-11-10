@@ -140,10 +140,29 @@ superseded-by:
     the latest balance-sheet date, the same instant for an /A of the same quarter.
 
   No frozen page has a 10-Q/A, and the second needs a page-shaped test that is not built.
-- **A statements-carrying /A replaces the original for a NARRATIVE reader too (review round 0, for
-  the operator).** The rule judges an /A by its XBRL. A 10-K/A that re-files only Item 8 would give
-  the graph its restated statements and no Item 1. The operator's rule of 2026-11-01 is applied as
-  written.
+- **The narrative reader (review round 0's question, RULED 2026-11-10 and built here).** The
+  question, through the coordinating session: should the narrative reader keep the original's text
+  unless the amendment re-files that section? The operator's answer: "YES".
+  - `graph/filings.refiles_narrative` judges an /A by its document's own item headings: Item 1 or
+    7 for a 10-K, Item 4 or 5 for a 20-F. It never relies on the explanatory note.
+  - A statements-only /A still replaces the original for the NUMBERS (`annual_report`).
+  - The excerpts keep the original's narrative, and `amendments` says so. When an EARLIER
+    statements-carrying /A re-filed Item 1/7, its narrative is read instead (review, newest
+    first). When the original names no document, the /A is read and `amendments` says the
+    narrative is absent. Both pins are synthetic `AnnualRead`s over the real documents.
+  - Not covered: an /A that re-files Item 1/7 WITHOUT the statements is never a narrative
+    source; it is named as carrying no financial statements.
+  - **Real documents** (cut to every "ITEM <n>" window, the explanatory note and, for the
+    original, its first Item 1 sentences): `fixtures/amended_filings/annual-amendment-documents.json`.
+    - Universal Corp's 10-K/A of 2025-04-21 (Items 8, 9A, 15) and Applied Industrial's of
+      2024-09-10 (Items 8, 9A, 15) re-file no narrative.
+    - Ducommun's and Air T's re-file it. Air T's note says "solely to amend Item 8", and its
+      document re-files Item 1 all the same.
+  - **Fail first, on the branch's head `c6468468`.** The graph read Universal Corp's 10-K/A
+    (`0000102037-25-000017`) for customers and suppliers, its Item 8 and not one Item 1 sentence.
+    It now reads the 10-K's narrative (`0000102037-24-000014`), and the numbers stay the /A's.
+  - **Boundary:** a cross-reference of the form "see Item 7, Management's Discussion…" would read
+    as a re-filing. Neither real statements-only /A carries one.
 - **`UncutReadError` is a RuntimeError,** so a broad `except Exception` in a reader can still
   record it as a QA line rather than stop the build. No reader calls the refused names today.
 - **Not done here:** RE1-D7, RE1-D10, RE1-D11 and RE1-D16 (order 4). RE1-D14 is done here

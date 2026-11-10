@@ -1,0 +1,33 @@
+{
+ "cik": "0000102037",
+ "name": "UNIVERSAL CORP /VA/",
+ "filings": {
+  "recent": {
+   "accessionNumber": [
+    "0000102037-25-000017",
+    "0000102037-24-000014"
+   ],
+   "filingDate": [
+    "2025-04-21",
+    "2024-05-29"
+   ],
+   "reportDate": [
+    "2024-03-31",
+    "2024-03-31"
+   ],
+   "form": [
+    "10-K/A",
+    "10-K"
+   ],
+   "items": [
+    "",
+    ""
+   ],
+   "primaryDocument": [
+    "uvv-20240331.htm",
+    "uvv-20240331.htm"
+   ]
+  },
+  "files": []
+ }
+}

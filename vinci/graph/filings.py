@@ -11,7 +11,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from vinci.edgar.client import EdgarClient, annual_report
+from vinci.edgar.client import EdgarClient, Filing, annual_report
 from vinci.edgar.concepts import ANNUAL_REPORT_FORMS
 from vinci.netcache import CachedHttp
 from vinci.resolver.index import pad_cik
@@ -180,6 +180,33 @@ def _cut_line(kept: int, matched: int, max_chars: int) -> str | None:
             f"sentences; the {matched - kept} after it were not read")
 
 
+#: The NARRATIVE an annual report's excerpts read, by its form: a 10-K's Item 1 (Business) and
+#: Item 7 (MD&A), a 20-F's Item 4 (Information on the Company) and Item 5 (Operating and Financial
+#: Review). A 40-F's narrative is an exhibit, so it has none to judge here.
+_NARRATIVE_ITEMS = {
+    "10-K": re.compile(r"\bITEM\s*1\s*[.:\u2014\u2013-]?\s*BUSINESS\b"
+                       r"|\bITEM\s*7\s*[.:\u2014\u2013-]?\s*MANAGEMENT", re.I),
+    "20-F": re.compile(r"\bITEM\s*4\s*[.:\u2014\u2013-]?\s*INFORMATION\s+ON\s+THE\s+COMPANY\b"
+                       r"|\bITEM\s*5\s*[.:\u2014\u2013-]?\s*OPERATING\s+AND\s+FINANCIAL\s+REVIEW\b",
+                       re.I),
+}
+
+
+def refiles_narrative(form: str, text: str) -> bool:
+    """Whether an annual report's document ``text`` carries its form's business narrative — judged
+    by the document's own item headings, never by its explanatory note (Air T's 10-K/A of 2025-08-12
+    amends Item 8 "solely" and re-files Item 1 all the same; Universal Corp's of 2025-04-21 files
+    Items 8, 9A and 15 and nothing else). A form with no narrative to judge (a 40-F) reads True."""
+    pattern = _NARRATIVE_ITEMS.get(form.removesuffix("/A"))
+    return pattern is None or bool(pattern.search(text))
+
+
+def _document_text(sec: CachedHttp, filing: Filing) -> str:
+    url = _ARCHIVE.format(cik=int(pad_cik(filing.cik)), acc=filing.accession.replace("-", ""),
+                          doc=filing.primary_doc)
+    return html_to_text(sec.get_text(url, ttl_seconds=None))  # filings are immutable: cached
+
+
 def latest_10k_excerpts(
     edgar: EdgarClient, cik: int | str, *, http: CachedHttp | None = None
 ) -> tuple[str, str, str | None, str | None] | None:
@@ -193,17 +220,45 @@ def latest_10k_excerpts(
     the original, unless an /A carries the period's financial statements — and ``amendments``
     names every later /A with its accession, and why it is or is not read (`AnnualRead.pointer`),
     or is None when there is none. This listed the exact annual forms and read the newest by
-    filing date, so a 10-K/A was neither read nor named."""
+    filing date, so a 10-K/A was neither read nor named.
+
+    THE NARRATIVE IS THE ORIGINAL'S UNLESS THE /A RE-FILES IT (operator, 2026-11-10: "YES" to
+    "should the narrative reader keep the original's text unless the amendment re-files that
+    section?"). An /A read in the original's place for its STATEMENTS replaces the original for
+    the numbers; these excerpts are narrative — customers, suppliers — so they keep the original's
+    text when the /A's document carries no Item 1 or Item 7 (:func:`refiles_narrative`), and
+    ``amendments`` says so — or an earlier statements-carrying /A's, when that one re-filed the
+    narrative. Universal Corp's 10-K/A gave the graph its Item 8 and no Item 1."""
     read = annual_report(edgar, cik, forms=ANNUAL_REPORT_FORMS)
     if read is None or not read.filing.primary_doc:
         return None
-    latest = read.filing
+    latest, amendments = read.filing, read.pointer
     sec = http or build_sec_http()
-    url = _ARCHIVE.format(
-        cik=int(pad_cik(latest.cik)), acc=latest.accession.replace("-", ""), doc=latest.primary_doc
-    )
-    html = sec.get_text(url, ttl_seconds=None)  # filings are immutable → cache forever
+    text = _document_text(sec, latest)
+    orig = read.original
+    if latest.accession != orig.accession and not refiles_narrative(latest.form, text):
+        # the narrative is the newest that was filed: an earlier statements-carrying /A that
+        # re-filed Item 1/7 (newest first), else the original
+        source: Filing | None = None
+        for a in reversed(read.later):
+            if a.accession in read.restating and a.accession != latest.accession \
+                    and a.primary_doc:
+                a_text = _document_text(sec, a)
+                if refiles_narrative(a.form, a_text):
+                    source, text = a, a_text
+                    break
+        if source is None and orig.primary_doc:
+            source, text = orig, _document_text(sec, orig)
+        if source is None:
+            amendments = (f"{amendments}; {latest.form} {latest.accession} re-files the "
+                          f"statements but no business narrative, and {orig.form} "
+                          f"{orig.accession} names no document: the excerpts read the /A")
+        else:
+            amendments = (f"{amendments}; the excerpts read the narrative of {source.form} "
+                          f"{source.accession}: {latest.form} {latest.accession} re-files the "
+                          "statements but no business narrative")
+            latest = source
     # one pass over the text for both: the excerpt and what its cap left out
-    kept, matched = _excerpt_sentences(html_to_text(html), _EXCERPT_CAP)
-    return (latest.accession, "\n".join(kept), read.pointer,
-            _cut_line(len(kept), matched, _EXCERPT_CAP))
+    kept, matched = _excerpt_sentences(text, _EXCERPT_CAP)
+    cut = _cut_line(len(kept), matched, _EXCERPT_CAP)
+    return latest.accession, "\n".join(kept), amendments, cut

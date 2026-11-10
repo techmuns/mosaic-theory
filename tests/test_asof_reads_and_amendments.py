@@ -48,6 +48,11 @@ def _load(path: Path) -> dict[str, Any]:
     return cast(dict[str, Any], json.loads(path.read_text()))
 
 
+#: Real annual-report documents, cut to every "ITEM <n>" window, the explanatory note, and (UVV's
+#: 10-K) the first Item 1 sentences the excerpt reads.
+_DOCS = _load(_AMEND / "annual-amendment-documents.json")
+
+
 class _Sec:
     """Serves a submissions document, its older page -001, and companyfacts; refuses the rest."""
 
@@ -68,7 +73,10 @@ class _Sec:
 
     def get_text(self, url: str, *, ttl_seconds: float | None = None) -> str:
         self.urls.append(url)
-        return "<html><body>Our largest customer accounted for 12% of revenue.</body></html>"
+        body = "<p>Our largest customer accounted for 12% of revenue.</p>"
+        if "000162828026032536" in url:  # Ducommun's 10-K/A as filed: it re-files Item 1
+            body += "".join(f"<p>{p}</p>" for p in _DOCS["0001628280-26-032536"]["parts"][:20])
+        return f"<html><body>{body}</body></html>"
 
 
 def _gartner() -> tuple[EdgarClient, _Sec]:
@@ -307,3 +315,113 @@ def test_the_graph_records_a_cut_beside_the_accession(monkeypatch: pytest.Monkey
     _edges, info = gx.extract_graph_edges(cast(EdgarClient, None), cast(Any, None),
                                           cast(Any, llm), cast(Any, focal))
     assert info["excerpts_cut"] == served[3] and "amendments" not in info
+
+
+# ─── the narrative is the original's unless the /A re-files it (operator, 2026-11-10) ─────────
+# The operator, asked through the coordinating session whether the narrative reader should keep
+# the original's text unless the amendment re-files that section: "YES". A statements-only 10-K/A
+# still replaces the original for the NUMBERS (`annual_report`); the exposure graph's excerpts are
+# narrative (customers, suppliers), and keep the original's Item 1/7 unless the /A re-files them.
+# Real documents, cut to every "ITEM <n>" window, the explanatory note, and (UVV's 10-K) the first
+# Item 1 sentences the excerpt reads: `fixtures/amended_filings/annual-amendment-documents.json`.
+
+
+def _doc_text(accession: str) -> str:
+    return " ".join(_DOCS[accession]["parts"])
+
+
+@pytest.mark.parametrize(("accession", "form", "refiles"), [
+    ("0000102037-25-000017", "10-K/A", False),  # Universal Corp: Items 8, 9A and 15 only
+    ("0000109563-24-000092", "10-K/A", False),  # Applied Industrial: Items 8, 9A and 15 only
+    ("0001628280-26-032536", "10-K/A", True),   # Ducommun: a full re-filing, Items 1 to 16
+    ("0000353184-25-000069", "10-K/A", True),   # Air T: "solely to amend Item 8", yet re-files all
+    ("0000102037-24-000014", "10-K", True),     # Universal Corp's original
+])
+def test_an_amendment_refiles_the_narrative_only_when_its_document_carries_it(
+        accession: str, form: str, refiles: bool) -> None:
+    """⊖/⊕ the judgement is the document's own headings, never its explanatory note: Air T's note
+    says it amends Item 8 "solely" and its document still re-files Item 1."""
+    from vinci.graph.filings import refiles_narrative
+
+    assert refiles_narrative(form, _doc_text(accession)) is refiles
+
+
+def _uvv() -> tuple[EdgarClient, _Sec]:
+    """Universal Corp's FY2024 10-K (2024-05-29) and its statements-only 10-K/A (2025-04-21)."""
+    class _Docs(_Sec):
+        def get_text(self, url: str, *, ttl_seconds: float | None = None) -> str:
+            self.urls.append(url)
+            acc = next(a for a in _DOCS if a.replace("-", "") in url)
+            return "<html><body>" + "".join(f"<p>{p}</p>" for p in _DOCS[acc]["parts"]) + \
+                "</body></html>"
+    sec = _Docs(_load(_AMEND / "UVV-10ka-submissions.json"),
+                facts=_load(_AMEND / "UVV-10ka-facts.json"))
+    return EdgarClient(http=cast(CachedHttp, sec)), sec
+
+
+def test_a_statements_only_amendment_is_read_for_its_numbers_and_not_for_its_narrative() -> None:
+    """⊖ Universal Corp's 10-K/A re-files Items 8, 9A and 15 and carries the year's statements
+    (236 tags, a balance-sheet total, an income line), so the numbers are its. The graph read its
+    Item 8 for customers and suppliers — not one Item 1 sentence — and now reads the 10-K's."""
+    from vinci.edgar.client import annual_report
+    from vinci.graph.filings import latest_10k_excerpts
+
+    edgar, sec = _uvv()
+    numbers = annual_report(edgar, "102037", forms=("10-K", "20-F", "40-F"))
+    assert numbers is not None and numbers.filing.accession == "0000102037-25-000017"
+    got = latest_10k_excerpts(edgar, "102037", http=cast(CachedHttp, sec))
+    assert got is not None
+    accession, text, amendments, _cut = got
+    assert accession == "0000102037-24-000014"
+    assert "We are the leading global leaf tobacco supplier." in text
+    assert amendments is not None and "0000102037-25-000017" in amendments
+    assert "no business narrative" in amendments
+
+
+def _amended_uvv(*later: tuple[str, str]) -> tuple[EdgarClient, _Sec, Any]:
+    """Universal Corp's 10-K and its /As, the read served as `annual_report` would return it:
+    ``later`` is (accession, primary document) per /A, oldest first, each carrying the statements.
+    The documents are the real ones in `_DOCS`, by accession."""
+    from vinci.edgar.client import AnnualRead, Filing
+
+    edgar, sec = _uvv()
+
+    def filing(form: str, acc: str, doc: str | None, filed: date) -> Filing:
+        return Filing(cik="0000102037", form=form, filing_date=filed, accession=acc, items=[],
+                      primary_doc=doc, report_date=date(2024, 3, 31))
+
+    orig = filing("10-K", "0000102037-24-000014", "uvv-20240331.htm", date(2024, 5, 29))
+    ams = tuple(filing("10-K/A", a, d, date(2025, 1, 2 + i)) for i, (a, d) in enumerate(later))
+    read = AnnualRead(filing=ams[-1], original=orig, later=ams,
+                      restating=frozenset(a.accession for a in ams))
+    return edgar, sec, read
+
+
+def test_an_earlier_amendment_that_refiled_the_narrative_is_read_before_the_original(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """⊖ two statements-carrying /As: the first re-files Items 1 to 16 (Ducommun's document, as a
+    stand-in), the newer re-files Items 8, 9A and 15 (Universal Corp's). The numbers are the newer
+    /A's; the narrative is the first /A's, the newest one filed — never the original's."""
+    from vinci.graph import filings as gf
+
+    edgar, sec, read = _amended_uvv(("0001628280-26-032536", "dco-20251231.htm"),
+                                    ("0000102037-25-000017", "uvv-20240331.htm"))
+    monkeypatch.setattr(gf, "annual_report", lambda *a, **k: read)
+    got = gf.latest_10k_excerpts(edgar, "102037", http=cast(CachedHttp, sec))
+    assert got is not None and got[0] == "0001628280-26-032536"
+    assert got[2] is not None and "read the narrative of 10-K/A 0001628280-26-032536" in got[2]
+
+
+def test_an_original_with_no_document_leaves_the_amendment_read_and_says_so(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """⊕ the original names no document: the statements-only /A is read, as before, and the
+    pointer says its narrative is absent rather than staying silent."""
+    from vinci.graph import filings as gf
+
+    edgar, sec, read = _amended_uvv(("0000102037-25-000017", "uvv-20240331.htm"))
+    read = read.model_copy(update={"original": read.original.model_copy(
+        update={"primary_doc": None})})
+    monkeypatch.setattr(gf, "annual_report", lambda *a, **k: read)
+    got = gf.latest_10k_excerpts(edgar, "102037", http=cast(CachedHttp, sec))
+    assert got is not None and got[0] == "0000102037-25-000017"
+    assert got[2] is not None and "names no document" in got[2]

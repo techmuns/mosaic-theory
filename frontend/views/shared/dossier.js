@@ -411,7 +411,8 @@ const EXTRACTION_VERSIONS = [
     "readers on it, the submissions document) raise (RE1-D9); a 10-Q/A is read in its " +
     "original's place when it carries the quarter's statements and is named otherwise, on " +
     "the page's 10-Q read (RE1-D12); the exposure graph's annual excerpts take the same /A " +
-    "rule and name a later /A (RE1-D13) and say what their character cap left out " +
+    "rule for the numbers, keep the original's narrative unless the /A re-files Item 1 or 7, " +
+    "name a later /A (RE1-D13) and say what their character cap left out " +
     "(RE1-D14). On the 28 pages frozen at bcda7ce3 no field moves: the catalyst counts on " +
     "EPAM, IT and PARR, which the old view would now undercount, are reproduced"],
 ];
