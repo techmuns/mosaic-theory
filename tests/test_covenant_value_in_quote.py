@@ -4,7 +4,9 @@
 with that quote, so a model answer of {"value": "June 15, 2031", "quote": "The Notes shall mature
 on June 15, 2030"} read PRESENT: a year the exhibit's own clause contradicts, shown as the term. Now
 every YEAR and every DOLLAR FIGURE the value states must be stated by the quote, or the term is a
-visible UNKNOWN with an (E5) flag naming what the quote does not state.
+visible UNKNOWN with an (E5) flag naming what the quote does not state. TeamNostra fix request 2
+(RE2-D16) widened it to every class: whole dates, ratios, percents and basis points, and unmarked
+amounts, each compared in its own unit.
 
 LLM-ADJACENT, SO NO LIVING PIN. Each case is a model answer stubbed through the real
 `_extract_from_exhibit`; the value/quote pairs below are frozen literals copied from committed
@@ -157,13 +159,14 @@ def test_a_bare_number_that_follows_no_dollar_figure_is_not_a_dollar_figure() ->
              "$1,000,000,000")
 
 
-def test_a_rate_figure_is_left_to_the_rate_component_check() -> None:
-    """(+) SCOPE: a percent or bps figure in the value is not checked here. Rate components have
-    their own check (`rate_components`, STATE row 34), and a value's grid percentages are a
-    measured, separate class (13 committed terms on the 13 in-scope pages at 8e6b12b1)."""
-    _kept(*_one("Term SOFR + 1.75%", "Term SOFR plus the Applicable Margin",
-                name="Interest / coupon rate"), "Term SOFR + 1.75%")
-    # review round 2: "zero" is a rate floor, never "$0" — and the rate components ride along
+def test_a_rate_figure_the_quote_does_not_state_is_refused() -> None:
+    """(−/+) TeamNostra fix request 2, RE2-D16: a percent or bps figure in the value WAS left to the
+    rate-component check, so "Term SOFR + 1.75%" stood PRESENT beside a quote stating only "the
+    Applicable Margin" (the scope call #873 deferred, STATE row 34). It is now refused; the
+    components keep their own check, and "zero" still states a 0% floor."""
+    _refused(*_one("Term SOFR + 1.75%", "Term SOFR plus the Applicable Margin",
+                   name="Interest / coupon rate"), "1.75%")
+    # review round 2 of #873: "zero" is a rate floor, never "$0"; the rate components ride along
     payload = {"terms": [{"name": "Interest / coupon rate", "present": True,
                           "value": "Term SOFR + 1.75%; floor of zero",
                           "quote": "Term SOFR plus 1.75%; if Term SOFR is less than zero, it "
@@ -175,10 +178,104 @@ def test_a_rate_figure_is_left_to_the_rate_component_check() -> None:
         title="CREDIT AGREEMENT")
     _kept(row, flags, "Term SOFR + 1.75%; floor of zero")
     assert (row.margin_pct, row.floor_pct) == (1.75, 0.0)
-    # ...and the "2000" inside "0.2000%" is not a year
+    # ...and the "2000" inside "0.2000%" is not a year, and 0.2000% is 0.20%
     _kept(*_one("Commitment fee: 0.2000% per annum",
                 "the Commitment Fee Rate shall be 0.20% per annum", name="Commitment Fee"),
           "Commitment fee: 0.2000% per annum")
+
+
+# --- RE2-D16: every class of figure, in its own unit ---------------------------------------------
+@pytest.mark.parametrize(("value", "quote", "named"), [
+    ("Maximum Consolidated Leverage Ratio of 5.00x",
+     "the Consolidated Leverage Ratio shall not exceed 4.50 to 1.00", "5.00x"),
+    ("Minimum Interest Coverage Ratio of 2.50x",
+     "the Interest Coverage Ratio shall not be less than 3.00 to 1.00", "2.50x"),
+    ("Term SOFR plus 2.00%", "a rate per annum equal to Term SOFR plus 1.75%", "2.00%"),
+    ("July 25, 2030", "“Maturity Date” means December 22, 2030.", "July 25, 2030"),
+    ("Commitments of 1,000,000,000", "the Aggregate Commitments are $750,000,000.",
+     "1,000,000,000"),
+    ("Conversion rate: 50.0000 shares per $1,000 principal amount",
+     "an initial conversion rate of 45.4545 shares of Common Stock per $1,000 principal amount",
+     "50.0000"),
+], ids=["ratio-x", "ratio-coverage", "percent", "whole-date", "unmarked-amount", "share-count"])
+def test_re2_d16_each_constructed_case_is_refused(value: str, quote: str, named: str) -> None:
+    """(−) TeamNostra's constructed cases (document 14 E2-D16; V2's residual): each figure differs
+    from its own quote and stood PRESENT, because only years and currency figures were read."""
+    _refused(*_one(value, quote, name="Financial-maintenance covenants"), named)
+
+
+@pytest.mark.parametrize(("value", "quote", "named"), [
+    # AMZN, committed (8-K 0001104659-23-113444): the grid's levels are in another clause
+    ("Eurocurrency Rate Loans: LIBO Rate plus the Applicable Rate; Base Rate Loans: Base Rate "
+     "plus the Applicable Rate. Applicable Rate: (a) Base Rate Loans 0.00% per annum, (b) "
+     "Eurocurrency Rate Loans 0.50% per annum",
+     "(i) each Eurocurrency Rate Loan shall bear interest on the outstanding principal amount "
+     "thereof for each Interest Period at a rate per annum equal to the LIBO Rate for such "
+     "Interest Period plus the Applicable Rate; and (ii) each Base Rate Loan shall bear interest "
+     "on the outstanding principal amount thereof from the applicable borrowing or conversion "
+     "date at a rate per annum equal to the Base Rate plus the Applicable Rate.", "0.50%"),
+    # PARR, committed: the quote states June 6, 2023; the value adds a June 5 its quote never does
+    ("Mandatory prepayment: if Billings Acquisition Date does not occur on or before June 5, 2023, "
+     "Revolving Commitments automatically and permanently reduced on June 6, 2023",
+     "(iii) If a reduction in Revolving Commitments pursuant to Section 2.4(c)(iii) occurs, "
+     "Borrowers shall prepay the Obligations by causing ... the proceeds of the Billings "
+     "Acquisition Borrowing to be released from the Billings Acquisition Escrow Account to Agent "
+     "on June 6, 2023 ...", "June 5, 2023"),
+], ids=["AMZN-grid-percent", "PARR-whole-date"])
+def test_re2_d16_a_committed_value_adding_a_figure_is_refused(
+        value: str, quote: str, named: str) -> None:
+    """(−) Real committed pairs (pages at 5e3def4a) the new classes refuse at re-assembly."""
+    row, flags = _one(value, quote, name="Interest / coupon rate")
+    _refused(row, flags, named)
+    assert "June 6, 2023" not in (row.value.note or "")  # only what the quote does NOT state
+
+
+@pytest.mark.parametrize(("value", "quote"), [
+    # BURL, committed: a conformed copy prints the struck date beside its replacement
+    ("July 25, 2030 (amended from December 22, 2026)",
+     "“ Maturity Date ” means December 22 July 25 , 2026 2030 ."),
+    # NFLX, committed: the struck ratio beside its replacement, and section numbers in the value
+    ("Aggregate Debt not to exceed the greater of (a) $3,750,000,000 (as amended from "
+     "$2,500,000,000) and (b) 2.75 times (as amended from 2.50 times) Consolidated EBITDA for the "
+     "Measurement Period immediately preceding — used as the incurrence threshold under Sections "
+     "6.01, 6.02 and 6.04",
+     "Notwithstanding Sections 6.01(a) and (b) , any Domestic Restricted Subsidiary may create, "
+     "incur, issue or assume Subsidiary Debt that would otherwise be subject to the restrictions "
+     "set forth in Section 6.01(a) , without Guaranteeing the payment of the Obligations, if after "
+     "giving effect thereto, Aggregate Debt does not exceed an amount equal to the greater of (a) "
+     "$ 2,500,000,000 , 3,750,000,000, and (b) 2.50 2.75 times Consolidated EBITDA of the Borrower "
+     "for the Measurement Period immediately preceding the date of the creation or incurrence of "
+     "the Subsidiary Debt."),
+    # NCNO, committed: a ratio at the end of its sentence ("4.00:1.00.")
+    ("Consolidated Total Leverage Ratio not greater than 4.00:1.00; Consolidated Interest Coverage "
+     "Ratio not less than 3.00:1.00 (each commencing fiscal quarter ending January 31, 2025)",
+     "(a) Consolidated Total Leverage Ratio . Permit the Consolidated Total Leverage Ratio as of "
+     "the end of any fiscal quarter of Holdings (commencing with the fiscal quarter ending January "
+     "31, 2025) to be greater than 4.00:1.00. (b) Consolidated Interest Coverage Ratio . Permit "
+     "the Consolidated Interest Coverage Ratio as of the end of any four fiscal quarter period of "
+     "Holdings (commencing with the fiscal quarter ending January 31, 2025) to be less than "
+     "3.00:1.00."),
+], ids=["BURL-conformed-date", "NFLX-conformed-ratio", "NCNO-ratio-at-sentence-end"])
+def test_re2_d16_a_committed_value_its_quote_states_is_kept(value: str, quote: str) -> None:
+    """(+) NEGATIVE PINS — committed values whose quote states every figure, in a form the new
+    classes must read: a conformed date, a struck ratio, a ratio before a full stop."""
+    _kept(*_one(value, quote, name="Financial-maintenance covenants"), value)
+
+
+@pytest.mark.parametrize(("value", "quote"), [
+    ("Maximum Leverage Ratio of 4.50x", "shall not exceed 4.50 to 1.00"),
+    ("Maximum Leverage Ratio of 4.50:1.00", "shall not exceed 4.50 to 1.00"),
+    ("Applicable Margin of 175 bps", "the Applicable Margin shall be 1.75% per annum"),
+    ("First Extension: Nov 1, 2039", "will commence on November 1, 2039"),
+    ("Maturity: the 30th day of June, 2029", "the Maturity Date shall be June 30, 2029"),
+    ("Section 6.02 restricts Liens for 3 to 5 years", "Liens are restricted by this Agreement"),
+    ("Facility of 500 million", "an aggregate principal amount of €500,000,000"),
+], ids=["x-is-to-one", "colon-is-to-one", "bps-is-percent", "abbreviated-month",
+        "ordinal-day", "section-and-span-not-read", "unmarked-scaled"])
+def test_re2_d16_the_same_figure_in_another_form_is_stated(value: str, quote: str) -> None:
+    """(+) The same figure in another form is stated; a section number, a small count and a span
+    are not figures this check reads."""
+    _kept(*_one(value, quote, name="Financial-maintenance covenants"), value)
 
 
 @pytest.mark.parametrize(("value", "quote"), [
