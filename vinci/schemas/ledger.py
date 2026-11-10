@@ -12,12 +12,15 @@ is only the *record* of its verdict. Two disciplines are load-bearing for the va
 from __future__ import annotations
 
 import enum
+from collections.abc import Iterable, Mapping
 from datetime import date, datetime
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-# The one non-decision event a ledger row may record. A close is an APPENDED row, never an edit.
+# The non-decision events a ledger row may record, each an APPENDED row, never an edit: a close,
+# and a correction of a decision's entry (RF-D7, operator ruling 2026-11-09).
 EVENT_CLOSE = "CLOSE"
+EVENT_CORRECTION = "CORRECTION"
 
 # NOTE (item 18a, review finding): there is deliberately NO `FACTS_AVAILABLE_FROM` constant here.
 # The first cut declared one, citing the BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern — but
@@ -37,6 +40,16 @@ CLOSE_ID_PREFIX = "C-"
 def close_entry_id(candidate_id: str) -> str:
     """The close row's id for ``candidate_id`` — one per candidate, by construction."""
     return f"{CLOSE_ID_PREFIX}{candidate_id}"
+
+
+# Correction-row id convention, widened once more (RF-D7): one correction per decision, by
+# construction — a second is refused at the writer and collides on the primary key besides.
+CORRECTION_ID_PREFIX = "R-"
+
+
+def correction_entry_id(candidate_id: str) -> str:
+    """The correction row's id for ``candidate_id``'s decision."""
+    return f"{CORRECTION_ID_PREFIX}{candidate_id}"
 
 
 # How a name reached the ledger. SCREEN = through the $300M–$10B hunting ground; FOLLOWED = an
@@ -233,7 +246,14 @@ class LedgerEntry(BaseModel, frozen=True):
     # on a decision row is the reasoning FOR the call: a close is a different act and states its
     # own grounds. Sealed by the same append-only discipline as everything else in this record —
     # the row is frozen at write.
-    reason: str | None = None                # CLOSE only
+    reason: str | None = None                # CLOSE and CORRECTION
+    # --- CORRECTION ROWS (RF-D7, operator ruling 2026-11-09) -----------------------------------
+    # A decision sealed on a stale close is CORRECTED by appending a row that names it here and
+    # carries the corrected ``entry_price`` / ``entry_price_as_of`` in the ordinary fields — the
+    # last close completed at the decision moment, one rule for every row. The decision row keeps
+    # its sealed price forever; every reader of returns reads the corrected one (`corrected`), and
+    # the horizon runs from the corrected date. Like a close, it is not a position.
+    corrects_entry_id: str | None = None     # CORRECTION only — the decision's entry_id
 
     @field_validator("origin")
     @classmethod
@@ -275,10 +295,18 @@ class LedgerEntry(BaseModel, frozen=True):
                 raise ValueError(
                     f"{stray} set on a DECISION row (event is None) — those fields belong to a "
                     f"close row; set event={EVENT_CLOSE!r} or remove them")
+            if self.corrects_entry_id is not None:
+                raise ValueError(f"corrects_entry_id set on a DECISION row {self.entry_id!r} — it "
+                                 f"belongs to a correction row (event={EVENT_CORRECTION!r})")
             return self
+        if self.event == EVENT_CORRECTION:
+            return self._correction_row_shape(close_only)
         if self.event != EVENT_CLOSE:
             raise ValueError(f"unknown ledger event {self.event!r} — expected {EVENT_CLOSE!r}, "
-                             "or None for a decision row")
+                             f"{EVENT_CORRECTION!r}, or None for a decision row")
+        if self.corrects_entry_id is not None:
+            raise ValueError(f"close row {self.entry_id!r} sets corrects_entry_id — a close "
+                             "corrects nothing")
         missing = sorted(k for k, v in close_only.items() if v is None)
         if missing:
             raise ValueError(f"close row {self.entry_id!r} is missing {missing} — a close is "
@@ -298,6 +326,26 @@ class LedgerEntry(BaseModel, frozen=True):
             raise ValueError(
                 f"close row {self.entry_id!r} carries facts {sorted(self.facts)} — facts belong to "
                 f"the decision row they justified ({self.closes_entry_id!r}), not to its close")
+        return self
+
+    def _correction_row_shape(self, close_only: Mapping[str, object]) -> LedgerEntry:
+        """A correction names its decision, states its reason, and carries no close and no facts:
+        it changes one thing — the entry the decision is measured from."""
+        stray = sorted(k for k, v in close_only.items() if v is not None)
+        if stray:
+            raise ValueError(f"correction row {self.entry_id!r} sets {stray} — a correction is not "
+                             "a close")
+        if not self.corrects_entry_id:
+            raise ValueError(f"correction row {self.entry_id!r} names no decision "
+                             "(corrects_entry_id)")
+        if self.corrects_entry_id == self.entry_id:
+            raise ValueError(f"correction row {self.entry_id!r} corrects itself")
+        if not (self.reason or "").strip():
+            raise ValueError(f"correction row {self.entry_id!r} has no reason — a correction to an "
+                             "append-only record states its grounds")
+        if self.facts:
+            raise ValueError(f"correction row {self.entry_id!r} carries facts — facts belong to "
+                             f"the decision row ({self.corrects_entry_id!r})")
         return self
 
     @model_validator(mode="after")
@@ -322,3 +370,46 @@ class LedgerEntry(BaseModel, frozen=True):
                     f"({self.machine_proposal} vs {self.verdict}) — expected {want.value!r}"
                 )
         return self
+
+
+def corrections_by_decision(entries: Iterable[LedgerEntry]) -> dict[str, LedgerEntry]:
+    """Each decision's CORRECTION row, by the decision's ``entry_id`` (RF-D7). Two corrections of
+    one decision raise: which one stands could not be told, and the writer refuses a second.
+
+    ``entries`` is the WHOLE ledger: a correction naming no decision row in it raises too, as an
+    unpairable close does (`monitor._paired`) — a correction must correct something, and one that
+    silently corrects nothing leaves the row it was written for read at its stale close."""
+    out: dict[str, LedgerEntry] = {}
+    decisions: set[str] = set()
+    for e in entries:
+        if e.event is None:
+            decisions.add(e.entry_id)
+        if e.event == EVENT_CORRECTION and e.corrects_entry_id is not None:
+            if e.corrects_entry_id in out:
+                raise ValueError(f"decision {e.corrects_entry_id!r} is corrected twice "
+                                 f"({out[e.corrects_entry_id].entry_id!r}, {e.entry_id!r})")
+            out[e.corrects_entry_id] = e
+    orphans = sorted(f"{c.entry_id} -> {k}" for k, c in out.items() if k not in decisions)
+    if orphans:
+        raise ValueError(f"correction row(s) {orphans} name no decision row in the ledger — a "
+                         f"correction must correct something")
+    return out
+
+
+def corrected(entry: LedgerEntry, correction: LedgerEntry | None) -> LedgerEntry:
+    """The decision as every reader of returns reads it: its entry price and date from its
+    correction when it has one, else as sealed. The ledger row itself is never rewritten."""
+    if correction is None:
+        return entry
+    return entry.model_copy(update={"entry_price": correction.entry_price,
+                                    "entry_price_as_of": correction.entry_price_as_of})
+
+
+def correction_note(entry: LedgerEntry, correction: LedgerEntry) -> str:
+    """The line every surface prints for a corrected decision — the sealed and the corrected entry
+    side by side, so the original stays in view (RF-D7)."""
+    return (f"{entry.entry_id} ({entry.ticker}): ENTRY CORRECTED by {correction.entry_id} — sealed "
+            f"{entry.entry_price:g} on {entry.entry_price_as_of}, read at "
+            f"{correction.entry_price:g} on {correction.entry_price_as_of} "
+            f"({(correction.reason or '').strip()}); the horizon "
+            f"runs from {correction.entry_price_as_of}.")
