@@ -2576,6 +2576,14 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             _refuse(f"a percent range under {metric} guidance is a growth rate, not the level "
                     "this guide holds", vb, m.start())
             continue
+        # A NEW READER ADDS NO DEFAULT (Codex, round 2): main's readers file an unread period under
+        # `next-fy` by design, and RE2-D20 now flags it; this reader — a headline's raise form,
+        # whose period usually sits elsewhere — refuses such a range aloud, so it never adds a guide
+        # whose period was assumed
+        if period == "next-fy":
+            _refuse(f"a {metric} 'guidance to' range states no period this reader could read, "
+                    "so it is not read", vb, m.start())
+            continue
         named = {_guide_metric(x.group(0)) for x in _METRIC_WORDS.finditer(vb)}
         if len(named) > 1:
             _refuse(f"one range is shared by {len(named)} metrics ({', '.join(sorted(named))}), "

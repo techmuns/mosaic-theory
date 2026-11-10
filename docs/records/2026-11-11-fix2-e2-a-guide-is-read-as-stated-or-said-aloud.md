@@ -135,6 +135,10 @@ order 4 holds the rest.
   "contributions from the acquisition to support fiscal 2026 revenue …" lost its stated year and
   was filed next-fy. A deal now dates a period only through "in" or "during" ("the acquisition of
   Beta Corp in the fourth quarter"). The pin fails on `3914a199`; the corpus replay is unchanged.
+- **Codex, round 2 (P1).** The new "guidance to" reader filed a range whose period it read nowhere
+  under the `next-fy` default. Main's readers keep that default by design, and RE2-D20 flags it.
+  This reader now refuses such a range aloud, so it adds no guide whose period was assumed. The pin
+  fails on `f911adc2`; the corpus replay is unchanged, since no cited release reaches it.
 - **The version.** Row `2026-11-11.guides-as-stated`, in both tables, re-pinned.
 
 **WHAT REACHES THE SYNTHESIS.** Guidance is not re-read by the $0 release refresh

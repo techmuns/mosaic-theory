@@ -368,3 +368,13 @@ def test_re2_d4_a_deal_noun_before_the_guides_own_period_does_not_date_it() -> N
     assert _guides("The Company expects contributions from the acquisition to support fiscal 2026 "
                    "revenue of $1.10 billion to $1.20 billion.") == [
         ("revenue", "fiscal 2026", 1100.0, 1200.0, "$M")]
+
+
+# --- Codex review, round 2 ---------------------------------------------------------------------
+def test_re2_d7d_a_guidance_to_range_with_no_period_read_is_refused_aloud() -> None:
+    """Codex P1: the new "guidance to" reader filed a range whose period it read nowhere under the
+    `next-fy` default. Main's readers keep that default by design (RE2-D20 flags it); a NEW reader
+    adds no guide whose period was assumed — it refuses aloud instead."""
+    text = "The Company raises its revenue guidance to $1.10 billion to $1.15 billion."
+    assert _guides(text) == []
+    assert any("guidance to" in f and "period" in f for f in _refusals(text)), _refusals(text)
