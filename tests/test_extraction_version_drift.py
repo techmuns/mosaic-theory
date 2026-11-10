@@ -53,10 +53,10 @@ module joining either package unclassified is a MOVE under the rule above, so th
 stop covering a new extractor (`--repin` then pins it as watched). Three modules outside them build
 page fields and are watched too: vinci/verbatim.py (which quoted values a page keeps),
 vinci/finra.py (short interest) and vinci/eod/features.py (the price box's 52-week range, whose
-window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction, and
-vinci/ciq builds no page field: its relationship parser is read only by tests/test_ciq.py (graph
-Test 0, its last caller, left in #905), and vinci/graph/extract.py takes just its
-SUPPLY_CHAIN_TYPES taxonomy.
+window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction.
+vinci/ciq, which built no page field, was removed on 2026-11-10 (fix request 2: A-D13, A-D16,
+RBC-D7): its last caller, graph Test 0, left in #905, and vinci/graph/extract.py now holds the
+SUPPLY_CHAIN_TYPES taxonomy it took from it.
 
     python -m tests.test_extraction_version_drift            # print every watched module's hash
     python -m tests.test_extraction_version_drift --repin    # re-pin this file in place
@@ -80,7 +80,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "d49c2d150f1c"
+PINNED_TABLE = "6c4b9276781c"
 PINNED_AT = "2026-11-10.unit-and-headers"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
@@ -130,7 +130,7 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/concepts.py": "65e2452fe3d4",
     "vinci/edgar/cover_count.py": "24d1e9a7d94a",
     "vinci/edgar/debt_maturities.py": "a0b1d84be715",
-    "vinci/edgar/filing_sections.py": "568c36df04a2",
+    "vinci/edgar/filing_sections.py": "72667458db26",
     "vinci/edgar/going_concern.py": "feb938485fd0",
     "vinci/edgar/net_debt.py": "d60756329d18",
     "vinci/edgar/primary_source.py": "d9054b7a75a0",

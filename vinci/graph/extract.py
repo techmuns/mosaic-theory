@@ -23,7 +23,6 @@ from typing import Any, NamedTuple
 
 from pydantic import BaseModel
 
-from vinci.ciq.relationships import SUPPLY_CHAIN_TYPES
 from vinci.edgar.client import EdgarClient
 from vinci.graph.filings import latest_10k_excerpts
 from vinci.graph.llm import LlmClient
@@ -33,9 +32,15 @@ from vinci.resolver.index import normalize_name
 from vinci.schemas.data_record import Identity
 from vinci.verbatim import SourceText
 
+#: The supply-chain relationship types (lower-cased exact match) — CIQ's Business-Relationships
+#: vocabulary, kept here since its parser, `vinci/ciq/relationships.py`, was removed with no
+#: production caller (fix request 2, A-D13 / A-D16 / RBC-D7, 2026-11-10; its last caller, graph
+#: Test 0, left in #905). This module was its only reader outside the tests.
+SUPPLY_CHAIN_TYPES = frozenset({"supplier", "customer", "distributor", "vendor", "manufacturer"})
+
 # Relationship vocabulary + the goods-flow direction each implies *from the focal's perspective*
-# (the filer wrote the 10-K). The allow-list is exactly CIQ's SUPPLY_CHAIN_TYPES — the same
-# definition on both sides of Test 0, so we never extract a category the ground truth excludes.
+# (the filer wrote the 10-K). The allow-list is exactly SUPPLY_CHAIN_TYPES above — CIQ's
+# vocabulary, so we never extract a category CIQ's relationship taxonomy excludes.
 # "partner" is deliberately absent: in practice it sweeps in COMPETITORS named in the competitive-
 # landscape / risk sections ("competition from ... such as X"), which are not supply-chain links.
 _DOWNSTREAM = {"customer", "distributor"}  # focal sells to counterparty

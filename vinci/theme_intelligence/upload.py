@@ -75,8 +75,12 @@ if TYPE_CHECKING:
 
 #: a document status after which the upload is complete (anything else is pushed, and said)
 DONE = ("INGESTED", "UPGRADED", "DUPLICATE")
-#: rounding tolerance when the new paid calls are summed against the run's cost
+#: float slack on every sum of call prices (the run-cost and budget checks below)
 _CENT = 1e-6
+#: the run RECORDS its cost rounded to 4 places (`Pipeline`, `round(cost, 4)`), so the unrounded
+#: sum of its calls may sit up to half that last place away from it. 2026-11-10: 7 calls summing
+#: $0.93881 against a recorded $0.9388 refused a clean upload at the ledger — after it had paid.
+_RUN_COST_ROUNDING = 0.5e-4
 
 
 class UploadError(RuntimeError):
@@ -346,7 +350,7 @@ def _reconcile(before: dict[str, tuple[str, float | None]],
         [f"{len(foreign)} new call(s) not the import's (first {foreign[0]})"] if foreign
         else []) + ([f"{len(unpriced)} new call(s) without a price — cost UNKNOWN"]
                     if unpriced else [])
-    if new and (cost is None or abs(spent - cost) > _CENT):
+    if new and (cost is None or abs(spent - cost) > _RUN_COST_ROUNDING + _CENT):
         bad.append(f"the new calls sum to ${spent:.4f}, the run records "
                    + (f"${cost:.4f}" if cost is not None else "no cost"))
     if spent > budget + _CENT:
