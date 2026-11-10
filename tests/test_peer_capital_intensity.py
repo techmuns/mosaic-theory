@@ -95,7 +95,10 @@ def test_the_median_excludes_rows_it_could_not_measure() -> None:
     """A peer with no figures must not silently count as zero — that would drag the median toward
     a number nobody reported."""
     pc = _built("SMPL")
-    usable = [r for r in pc.rows[1:] if r.pct_assets is not None and r.pct_market_cap is not None]
+    # a one-leg row ("goodwill only") has figures but is no total: shown, never in the median
+    # (the operator's ruling on #953, 2026-11-10); a row with both legs carries no note
+    usable = [r for r in pc.rows[1:] if r.pct_assets is not None and r.pct_market_cap is not None
+              and r.note is None]
     assert pc.n_all == len(usable), f"n_all {pc.n_all} != {len(usable)} measurable peers"
 
 

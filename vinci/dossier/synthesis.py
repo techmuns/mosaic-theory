@@ -1721,7 +1721,8 @@ def _cache_misses(sends: list[tuple[int, dict[str, Any], float]]) -> list[str]:
 #: twin of the roster the model already reads: the renderers print it, and sending it — a count,
 #: or a null on a page without one — would change every synthesis request, which row 53 says is
 #: measured on the panel before it ships. This build changes what the PAGE prints, not what the
-#: model reads.
+#: model reads. ``capital_allocation.impairment_headroom`` (audit RD-D1) is the same kind: the two
+#: balances the model reads, at one date, for the page to print.
 #: ``operating_drivers.rows[*]``'s structured fact and locator (RG-D8/RG-D19) are for the PAGE:
 #: the prompt keeps the row shape it always had, and what the check concluded reaches it through
 #: ONE field — an ``unknown`` row's value reads UNKNOWN with its reason (`prompt_driver_value`),
@@ -1729,6 +1730,7 @@ def _cache_misses(sends: list[tuple[int, dict[str, Any], float]]) -> list[str]:
 NOT_SENT: dict[str, Any] = {"primary_source": True,
                             "catalyst_path": {"guidance_after_price_date": True},
                             "concentration": {"customers_listed": True},
+                            "capital_allocation": {"impairment_headroom": True},
                             "operating_drivers": {"rows": {"__all__": {
                                 "figures": True, "value_status": True, "unknown_reason": True,
                                 "locator": True}}}}

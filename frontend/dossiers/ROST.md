@@ -1,6 +1,6 @@
 # Dossier — ROSS STORES, INC. (Nasdaq: ROST)
 
-_October 29, 2026 · extraction 2026-10-29.G-D3 · layers refreshed to 2026-11-09.order2-pages_
+_October 29, 2026 · extraction 2026-10-29.G-D3 · layers refreshed to 2026-11-10.dated-headroom_
 
 # Brief — first cut
 
@@ -77,7 +77,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
 **Capital allocation — created or destroyed**
 
-- **Impairment headroom — goodwill remaining:** $2.9M [15]
+- **Impairment headroom:** _UNKNOWN_ — goodwill is last tagged as at 2015-01-31, 4288 days before the price date 2026-10-28 — more than 366, so it measures no current headroom
 - **Goodwill:** $2.9M [15]
 - **Intangibles (net):** _UNKNOWN_ — no intangible-asset balance under any of IntangibleAssetsNetExcludingGoodwill, FiniteLivedIntangibleAssetsNet, IndefiniteLivedIntangibleAssetsExcludingGoodwill — EDGAR XBRL companyfacts
 - **Impairment:** _NONE IN THE CURRENT PERIOD_ — the filer records no impairment under any tag tried
@@ -105,8 +105,8 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 | AEO | 2,780 | 261 | 4,279 | 6% | 9% |
 | CURV | 234 | 8 | 371 | 2% | 4% |
 
-- **Median — all peers (n=9):** 2% of assets · 3% of market cap
-- **Median — peers ≥ $1,000M market cap (n=8):** 1% of assets · 2% of market cap
+- **Median — all peers:** 2% of assets · 3% of market cap (median of 9 of 9 peers)
+- **Median — peers ≥ $1,000M market cap:** 1% of assets · 2% of market cap (median of 8 of 8 peers)
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
 - **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [22]  <!-- ds-table -->
 
@@ -123,7 +123,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 | AEO | wrote down | 1 of 3 | 80 | 31% | 2024-02-03 ($40M) | — |
 | CURV | does not tag | — | — | — | never | — |
 
-- **Base rate — 3 of 6 large peers ASSESSED over the window took a charge**, median 28% of acquired assets among those that did. The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
+- **Base rate — 3 of 6 large peers ASSESSED over the window took a charge**, median 28% of acquired assets among those that did (median of 3 of 3 peers). The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
 - _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. `no annual obs.` and `does not tag` are not measurements and must not be read as clean years. The **live YTD** column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities._
 
 ## Valuation — first cut
@@ -553,6 +553,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Extraction:** 2026-10-29.G-D3 — each earnings call reaches the driver extraction and the synthesis WHOLE — prepared remarks and the full Q&A — where it was cut at 12,000 characters unmarked; a call past the 100,000-character ceiling ends in a marker and a QA flag, and a call on file that does not read is named in a QA flag (audit G-D3, G-D4)
 - **Refreshed since assembly** (oldest first):
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
+  - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-10-28
 - **Panel age:** oldest panel 34d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-29 build
 - **Consensus age:** consensus 32d old (2026-09-27, valuation.implied_expectations.multiples_as_of) — within the ceiling

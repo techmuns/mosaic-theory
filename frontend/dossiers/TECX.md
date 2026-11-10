@@ -1,6 +1,6 @@
 # Dossier — Tectonic Therapeutic, Inc. (Nasdaq: TECX)
 
-_November 10, 2026 · extraction 2026-11-09.order2-pages_
+_November 10, 2026 · extraction 2026-11-09.order2-pages · layers refreshed to 2026-11-10.dated-headroom_
 
 # Brief — first cut
 
@@ -107,8 +107,8 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
 | EQ | 118 | — | 59 | — | — | no-tag |
 | TENX | 91 | 0 | 117 | — | — | — |
 
-- **Median — all peers (n=2):** 2% of assets · 0% of market cap
-- **Median — peers ≥ $1,000M market cap (n=2):** 2% of assets · 0% of market cap
+- **Median — all peers:** 2% of assets · 0% of market cap (median of 2 of 10 peers)
+- **Median — peers ≥ $1,000M market cap:** 2% of assets · 0% of market cap (median of 2 of 7 peers)
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
 - **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [25]  <!-- ds-table -->
 
@@ -126,7 +126,7 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
 | EQ | does not tag | — | — | — | never | — |
 | TENX | does not tag | — | — | — | never | — |
 
-- **Base rate — 0 of 1 large peers ASSESSED over the window took a charge**, median — of acquired assets among those that did. The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
+- **Base rate — 0 of 1 large peers ASSESSED over the window took a charge**, median — of acquired assets among those that did (median of 0 of 0 peers). The denominator counts only peers with an annual observation in the window — a name with none was not measured, and is not a clean year.
 - _`reports nil` is a MEASUREMENT — the filer tags impairment and states zero. `no annual obs.` and `does not tag` are not measurements and must not be read as clean years. The **live YTD** column is excluded from the window total: a year-to-date charge is not an annual one, and the two are different quantities._
 
 ## Valuation — first cut
@@ -480,6 +480,8 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-11-06; (R) = Reclas
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-11-10 03:17 UTC
 - **Extraction:** 2026-11-09.order2-pages — the customer count is a structured field (audit RBC-D1): `concentration.customers_listed` holds every recently disclosed row the Customers export lists, and both renderers print it, never a count of the capped roster's pieces (a page without it prints no count); the Estimates→Surprise GAAP-EPS series is read from the block CIQ heads with the company's own listing in the fiscal-year table (audit RA-D1), naming that block when the sheet's first is another listing's and refusing the EPS read where no block is the company's; the containing-line tie-break's caveat says the filing reconciles the wider line and the row's own figure is CIQ's, never that the filing confirmed it (audit RBC-D8). Among the exports on file only PARR's surprise history moves; the rest is a new field and words
+- **Refreshed since assembly** (oldest first):
+  - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
 - **Price store:** `artifacts-order1-rebuilds-6a7a7b` · reaching 2026-11-06
 - **Panel age:** oldest panel 4d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-10 build
 - **Consensus age:** consensus 4d old (2026-11-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -643,6 +643,30 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "row's value as UNKNOWN. 10 of the 881 committed transcript rows would; no page carries "
         "the fields until it is re-assembled",
     ),
+    (
+        "2026-11-10.dated-headroom",
+        "impairment headroom is two balances at one date (audit RD-D1): an instant is the "
+        "first tag in the preference order whose latest balance is within 366 days of the "
+        "family's newest, so a first tag the filer stopped using no longer wins and a current "
+        "total still beats a newer partial leg; `capital_allocation.impairment_headroom` "
+        "reads goodwill and intangibles under those tags at the latest date they share, "
+        "within 366 days of the price date, and states that date, or is UNKNOWN naming the "
+        "dates found, and both renderers print it, never a sum of their own; a peer row "
+        "totals its legs at one date with Assets at that date, states no total when they "
+        "share no current date, and labels a single leg. MCK's headroom moves from $12,950.0M "
+        "to $15,214.0M; AMZN's is dated 2025-12-31; TGT's and BURL's are UNKNOWN",
+    ),
+    (
+        "2026-11-10.one-family-peers",
+        "the operator's ruling on one-family peers (#953): a peer tagging goodwill or "
+        "intangibles alone is shown with that one leg, labelled, and left out of the "
+        "goodwill-plus-intangibles medians; the impairment base rate counts every large peer "
+        "measured over its window, whether or not its balance sheet gives a total, and that "
+        "window ends at the filer's latest balance, never at a family it stopped tagging; "
+        "each peer median prints its count ('median of N of M peers'); a row stating no "
+        "total keeps its latest Assets and says 'no current balance' when its one family is "
+        "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

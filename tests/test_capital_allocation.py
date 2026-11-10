@@ -21,6 +21,8 @@ from vinci.dossier.capital_allocation import (
     BUYBACK_AVG_PRICE,
     BUYBACK_CASH,
     BUYBACK_SHARES,
+    GOODWILL,
+    INTANGIBLES,
     build_capital_allocation,
 )
 from vinci.dossier.schemas import CapitalAllocation, SourceStatus
@@ -163,6 +165,13 @@ def test_every_absence_names_the_tags_that_were_tried() -> None:
                 # period instead, and only a buyback field may say so
                 assert any(f"{NOT_CURRENT}{tag} covers " in str(f.note)
                            for tag in BUYBACK_LEGS.get(name, ())), f"{t}.{name}: {f.note}"
+                continue
+            if name == "impairment_headroom":
+                # RD-D1: the dated headroom's absence names the DATES it found (two balances at
+                # different dates, or one too old), or, with no balance at all, every tag tried
+                note = str(f.note)
+                assert "as at " in note or all(tag in note for tag in (*GOODWILL, *INTANGIBLES)), (
+                    f"{t}.{name}: {f.note}")
                 continue
             assert f.note and "EDGAR XBRL companyfacts" in f.note, f"{t}.{name}: {f.note}"
             if name == "acquisition_consideration":

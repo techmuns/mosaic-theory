@@ -720,7 +720,6 @@ def capital_allocation_transform(cik: str | None) -> Transform:
     additive, not a licence for the next transform.
     """
     from vinci.dossier.capital_allocation import build_capital_allocation
-    from vinci.edgar.client import EdgarClient
     from vinci.netcache import HttpError
 
     def _apply(mech: dict[str, Any]) -> dict[str, Any]:
@@ -739,15 +738,63 @@ def capital_allocation_transform(cik: str | None) -> Transform:
         as_of = (out.get("stock_info") or {}).get("as_of")
         if not cik or not as_of:
             return out
+        cut = date.fromisoformat(str(as_of)[:10])
         try:
-            facts = EdgarClient.from_config().companyfacts(cik)
+            facts = _facts_at(cik, cut)
         except (HttpError, KeyError, ValueError):   # `_companyfacts_or_none`'s own exception set
             return out
         out["capital_allocation"] = json.loads(build_capital_allocation(
-            facts, as_of=date.fromisoformat(str(as_of)[:10])).model_dump_json())
+            facts, as_of=cut).model_dump_json())
         return out
 
     return _apply
+
+
+def _facts_at(cik: str, cut: date, edgar: Any = None) -> dict[str, Any]:
+    """EDGAR companyfacts AS FILED BY ``cut`` — the page's price date, the cut assembly reads EDGAR
+    at (`AsOfEdgar`). The capital-allocation transforms read today's companyfacts uncut, so a
+    refresh could state a balance from a 10-Q filed after the page it writes into (audit RD-D1's
+    refresh, 2026-11-10). ``edgar`` is a client to reuse across calls (one per peer grid); else
+    one is built from config."""
+    from vinci.edgar.client import EdgarClient
+    from vinci.edgar.concepts import facts_as_of
+
+    return facts_as_of((edgar or EdgarClient.from_config()).companyfacts(cik), cut)
+
+
+def impairment_headroom_transform(cik: str | None) -> Transform:
+    """Rewrite the BALANCE fields of `mech.capital_allocation` — `goodwill`, `intangibles`, the
+    dated `impairment_headroom`, and the two impairment fields whose STALE notes quote the balance
+    date beside them — from EDGAR as filed by the page's price date (audit RD-D1). The buyback and
+    acquisition fields keep the assembly's reading: a whole-block refresh would also land fix 3b's
+    buyback rule (#930) on pages that rule's own build left for their rebuild. No price date, no
+    block, or a failed fetch: nothing is written."""
+    from vinci.dossier.capital_allocation import build_capital_allocation
+    from vinci.netcache import HttpError
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        block = out.get("capital_allocation")
+        as_of = (out.get("stock_info") or {}).get("as_of")
+        if not cik or not as_of or not isinstance(block, dict):
+            return out
+        cut = date.fromisoformat(str(as_of)[:10])
+        try:
+            facts = _facts_at(cik, cut)
+        except (HttpError, KeyError, ValueError):
+            return out
+        built = json.loads(build_capital_allocation(facts, as_of=cut).model_dump_json())
+        for k in HEADROOM_FIELDS:
+            block[k] = built[k]
+        return out
+
+    return _apply
+
+
+#: What `impairment_headroom_transform` rewrites: the balances, their dated sum, and the two
+#: impairment fields whose STALE test reads the balance date (review round 0).
+HEADROOM_FIELDS = ("goodwill", "intangibles", "goodwill_impairment", "intangible_impairment",
+                   "impairment_headroom")
 
 
 
@@ -780,9 +827,15 @@ def peer_capital_intensity_transform() -> Transform:
         if not raw:
             return out
         grid = [PeerRow.model_validate(r) for r in raw]
+        # each peer's facts as filed by THIS page's price date, as assembly reads them (RD-D1)
+        as_of = (out.get("stock_info") or {}).get("as_of")
+        if not as_of:
+            return out
+        cut = date.fromisoformat(str(as_of)[:10])
+        edgar = EdgarClient.from_config()           # one client for the grid, as before RD-D1
         built = build_peer_capital_intensity(
             grid, resolve=EntityResolver.from_config().resolve_ticker,
-            companyfacts=EdgarClient.from_config().companyfacts)
+            companyfacts=lambda cik: _facts_at(cik, cut, edgar))
         if built.rows and all(str(r.note or "").startswith("unresolved") for r in built.rows):
             return out          # see the docstring: a systemic failure, not eleven facts
         out["peer_capital_intensity"] = json.loads(built.model_dump_json())
