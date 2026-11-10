@@ -395,7 +395,7 @@ reaches the synthesis as the model's value, while the checked `figures` stay out
   `6fbbb4a2`. They cover rows with `tier == "llm-fenced"` (881) unless stated; the 2,092 / 944 /
   678 figures cover all tiers.
 - **Words** are a whitespace split of the stored field.
-- **Locator counts** are against `/Users/mac/Documents/GitHub/mosaic-theory/data/manual/ciq` as it
+- **Locator counts** are against the primary checkout's `data/manual/ciq` (the operator's CIQ exports) as it
   stood on 2026-11-09/10, read only, with the transcripts parsed by `transcript_for_synthesis`.
 - **Panel figures** are at main `6fbbb4a2` against this branch, over the frozen panel's page blobs
   and its transcript sha256s, which all matched.
