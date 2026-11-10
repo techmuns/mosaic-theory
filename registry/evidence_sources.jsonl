@@ -37,6 +37,7 @@
 {"origin_id": "ES-96049bd84655", "payload": "{\"origin_id\":\"ES-96049bd84655\",\"name\":\"Morgan Stanley Research\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-9967e36f8fe5", "payload": "{\"origin_id\":\"ES-9967e36f8fe5\",\"name\":\"Federal Reserve Board + Markit\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-9e73d57cbefc", "payload": "{\"origin_id\":\"ES-9e73d57cbefc\",\"name\":\"OpenAI\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-a135cd77f18c", "payload": "{\"origin_id\":\"ES-a135cd77f18c\",\"name\":\"Datastream + Goldman Sachs Research\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-a1797c7540c2", "payload": "{\"origin_id\":\"ES-a1797c7540c2\",\"name\":\"bankrate.com\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-aab273bf90d4", "payload": "{\"origin_id\":\"ES-aab273bf90d4\",\"name\":\"Bloomberg Finance L.P.\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-af9b7e755d4f", "payload": "{\"origin_id\":\"ES-af9b7e755d4f\",\"name\":\"pymnts.com\",\"kind\":\"data_vendor\"}"}
