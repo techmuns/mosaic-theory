@@ -91,6 +91,12 @@ superseded-by:
   - every statement was scanned twice; it is now scanned once.
 
   The 27-page replay was re-run on the reviewed code: still 0 of 108 fields move.
+- **Codex, round 1 (P1).** A total stated for an earlier balance date ("total debt was $300.0
+  million at December 31, 2025") covered a June 2026 instrument of the same principal. The total's
+  sentence and the statement's must now share a date, or both state none.
+  (`test_codex_round_1_a_prior_period_total_does_not_cover_a_current_instrument` fails on
+  `522b830a`.) The constructed Bellring pin's statement now states its date, as a 10-Q's does.
+  Re-run: 0 of 108 fields move, and Werner, Microvast and Netflix read as before.
 - **The version.** Row `2026-11-10.part-of-the-debt`, in both tables, re-pinned.
 - **The synthesis request.** No committed page's filing section moves, so no request changes. The
   panel check (RUNBOOKS §n) is not owed.
@@ -108,6 +114,8 @@ superseded-by:
   plus 125 fetched URLs.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
+- **A covering total must share the statement's balance date.** A total in a sentence with no
+  date covers only a statement with no date either.
 - **A whole-debt sentence with no aggregate words in its clause is refused.** One example is
   "$1.2 billion is due within the next 12 months under our credit facility" in a filing whose only
   debt is that facility, with no unqualified total. Refusing it is the loud direction: `not_stated`

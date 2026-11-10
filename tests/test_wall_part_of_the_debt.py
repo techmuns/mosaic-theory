@@ -112,8 +112,8 @@ def test_a_qualified_total_does_not_cover_an_instrument() -> None:
     total. Beside a CONSTRUCTED revolver ≤12m figure of the same principal it covers nothing."""
     text = ("Additionally, the Company had outstanding borrowings of $300.0 million and $250.0 "
             "million under its Revolving Credit Facility as of June 30, 2026 and September 30, "
-            "2025, respectively. Of the $300.0 million outstanding under the Revolving Credit "
-            "Facility, $25.0 million is due within one year.")
+            "2025, respectively. As of June 30, 2026, of the $300.0 million outstanding under the "
+            "Revolving Credit Facility, $25.0 million is due within one year.")
     w = fs._maturity_wall(text, _SRC)
     assert w is not None and w.state == "not_stated" and "$25.0M" in w.note
     # the same principal stated UNQUALIFIED as the company's debt does cover it
@@ -218,3 +218,18 @@ def test_e2e_werner_full_page_text_still_agrees() -> None:
     panel = dm._wall_panel(CapitalStructure.model_validate(mech["capital_structure"]))
     read = dm._wall_read(filing, panel, date(2026, 6, 30))
     assert read.check == CHECK_AGREE and "filing $0.0M" in read.line
+
+
+def test_codex_round_1_a_prior_period_total_does_not_cover_a_current_instrument() -> None:
+    """Codex P1 (round 1): a total stated for an EARLIER balance date covered the instrument —
+    "total debt was $300.0 million at December 31, 2025" beside a June 2026 revolver of $300.0M and
+    $500M of notes promoted the revolver's figure to the whole wall. The total must state the
+    statement's own date. CONSTRUCTED, with Werner's real pair as the negative pin above."""
+    text = ("Our total debt was $300.0 million at December 31, 2025. As of June 30, 2026, of the "
+            "$300.0 million outstanding under the Revolving Credit Facility, $25.0 million is due "
+            "within one year. " + _NOTES_500)
+    w = fs._maturity_wall(text, _SRC)
+    assert w is not None and w.state == "not_stated" and "$25.0M" in w.note
+    same = text.replace("at December 31, 2025", "at June 30, 2026")
+    w = fs._maturity_wall(same, _SRC)
+    assert w is not None and (w.state, w.within_12m_total) == ("located", 25.0)

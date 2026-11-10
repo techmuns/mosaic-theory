@@ -186,8 +186,27 @@ def _whole_debt(text: str, lo: int, hi: int) -> bool:
     own = [_in_millions(m[1], m[2]) for m in _FIGURE_M.finditer(clause)]
     if not own or own[-1] is None:
         return False
-    return any(_in_millions(t[1], t[2]) == own[-1] for t in _TOTAL_DEBT.finditer(text)
-               if not lo <= t.start() < hi)
+    # AT ONE DATE (Codex P1, round 1): a total stated for an earlier balance date — "total debt was
+    # $300.0 million at December 31, 2025" beside a June 2026 revolver of $300.0M — covers nothing.
+    # The two sentences must share a date, or both state none.
+    when = _dates_stated(_sentence(text, hi))
+
+    def same_date(at: int) -> bool:
+        dated = _dates_stated(_sentence(text, at))
+        return bool(dated & when) if (dated or when) else True
+
+    return any(_in_millions(t[1], t[2]) == own[-1] and same_date(t.start())
+               for t in _TOTAL_DEBT.finditer(text) if not lo <= t.start() < hi)
+
+
+#: A balance date as a 10-Q states one: "June 30, 2026", "September 30 , 2026".
+_DATE = re.compile(r"\b(January|February|March|April|May|June|July|August|September|October|"
+                   r"November|December)\s+(\d{1,2})\s*,\s*(20\d\d)\b")
+
+
+def _dates_stated(sentence: str) -> frozenset[tuple[str, str, str]]:
+    """Every date the sentence states — the balance dates a debt figure is given at."""
+    return frozenset((m[1], m[2], m[3]) for m in _DATE.finditer(sentence))
 
 
 class _Stated12m(NamedTuple):
