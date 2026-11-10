@@ -474,14 +474,14 @@ const EXTRACTION_VERSIONS = [
     "total keeps its latest Assets and says 'no current balance' when its one family is " +
     "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5"],
   ["2026-11-10.release-actuals-never-silent",
-    "a release actual the reader cannot place is noted, never dropped silently, and four shapes " +
-    "it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, RE2-D2, D5, D6, " +
-    "D8): an unplaced non-revenue actual writes the note an unplaced revenue figure already did, " +
-    "once per figure and only when no other sentence places it; the first amount of a " +
-    "'respectively' list is refused; a figure stated for a calendar year is refused; '$(5.5)', " +
-    "'($5.5)' and '-$5.5' are read, signed; and a 'year ended' date takes the release's fiscal " +
-    "offset, so a retailer's fiscal year ending in January is its fiscal year. On the 122 " +
-    "releases the 27 committed pages cite no row moves; 12 exhibits on 8 pages gain 19 notes"],
+    "a release actual the reader cannot place is noted, never dropped silently, and four " +
+    "shapes it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, " +
+    "RE2-D2, D5, D6, D8): an unplaced non-revenue actual writes the note an unplaced revenue " +
+    "figure already did, one note per statement; the first amount of a 'respectively' list " +
+    "is refused; a figure stated for a calendar year is refused; '$(5.5)', '($5.5)' and " +
+    "'-$5.5' are read, signed; and a 'year ended' date takes the release's fiscal offset, so " +
+    "a retailer's fiscal year ending in January is its fiscal year. On the 122 releases the " +
+    "27 committed pages cite no row moves; 16 exhibits on 10 pages gain 28 notes"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

@@ -7,14 +7,15 @@ supersedes:
 superseded-by:
 ---
 
-# A release actual the reader cannot place is noted, never dropped silently, and four shapes it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, RE2-D2, RE2-D5's actuals half, RE2-D6, RE2-D8). No row moves on the 122 releases the 27 pages cite; 12 exhibits on 8 pages gain 19 notes
+# A release actual the reader cannot place is noted, never dropped silently, and four shapes it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, RE2-D2, RE2-D5's actuals half, RE2-D6, RE2-D8). No row moves on the 122 releases the 27 pages cite; 16 exhibits on 10 pages gain 28 notes
 
 **WHAT.** `vinci/edgar/release_parse._reconciliation` and the period readers:
 - **E2-D11's residual (order 3).** An actual the release states but does not place in one period
   now writes a "Reconciliation figure refused — an <metric> figure skipped — …" note. That is the
-  note an unplaced revenue figure has written since #860. Two limits keep it from being noise:
-  - one note per figure;
-  - the note is written only when no other sentence of the release places the same figure.
+  note an unplaced revenue figure has written since #860: one note per unplaced statement, and
+  never for a comparison. (First written as one note per figure, and only where no other sentence
+  placed the same value. Codex showed in round 1 that an equal value may be another period's,
+  so nothing silences a note now.)
 - **RE2-D2.** The first amount of a "respectively" list ("$850.0 million and $300.0 million for
   the nine and three months ended …, respectively") is refused. The reader had stored the
   nine-month figure as the quarter.
@@ -53,15 +54,23 @@ superseded-by:
   - **Method.** Every cited EX-99.1 (122 exhibits) was parsed by main's code and by this branch's,
     offline from the SEC caches.
   - **Rows: 0 move** across reconciliation, guidance, one-offs and event impacts.
-  - **Notes: 12 exhibits on 8 pages gain 19 notes,** each an actual skipped with no note on main:
-    BRBR 2, BURL 1, FUBO 1, MVST 5, SMPL 6, TGT 1, TJX 1, WERN 2. No note is removed. (Review
-    round 0 took 8 off a first count of 27: each was a COMPARED amount — MVST's "$113.1 million in
-    YTD 2024", TGT's prior-year EPS, WERN's "$0.53 in the prior year" — noted as a skipped actual.
-    A comparison the reader cannot place is the prior, not an actual, as the revenue note already
-    held.)
+  - **Notes: 16 exhibits on 10 pages gain 28 notes,** each an actual skipped with no note on main:
+    BRBR 2, BURL 2, EPAM 3, FUBO 1, MVST 5, SMPL 8, TGT 2, TJX 1, VITL 2, WERN 2. No note is
+    removed. How the count moved:
+    - review round 0 took 8 off a first count of 27. Each was a COMPARED amount (MVST's "$113.1
+      million in YTD 2024", TGT's prior-year EPS, WERN's "$0.53 in the prior year") noted as a
+      skipped actual. A comparison the reader cannot place is the prior, not an actual, as the
+      revenue note already held;
+    - Codex's round 1 added 9 back: the statements an equal value elsewhere had silenced, EPAM's
+      two headline EPS among them.
   - **What changes the replay shows: none from RE2-D2, D5, D6 or D8.** No cited release has those
     shapes in a form the reader now reads differently. Par Pacific's $(5.5) is the prior-year
     comparison in a clause `_sub_unit` sets aside (below).
+- **Codex, round 1 (P2).** The one-note rule keyed on (metric, value), so another period's
+  equal value silenced a skipped figure (Q4 and FY adjusted EPS both $0.50). Each unplaced
+  statement is now its own note
+  (`test_codex_round_1_an_equal_value_for_another_period_does_not_silence_a_note` fails on
+  `9b553966`). Burlington's pin now holds the row AND the headline's note.
 - **The version.** Row `2026-11-10.release-actuals-never-silent`, in both tables, re-pinned.
 - **The synthesis request does not change.** Release `qa_flags` are not in the synthesis digest
   (`_primary_source_digest`), and only GUIDANCE refusals are lifted to a page's caveats

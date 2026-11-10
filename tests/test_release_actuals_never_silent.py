@@ -67,19 +67,20 @@ def test_e2_d11_an_unplaced_non_revenue_actual_is_noted() -> None:
     assert sum("revenue figure skipped" in n for n in notes) == 2  # as before
 
 
-def test_e2_d11_a_figure_placed_by_another_sentence_is_not_noted() -> None:
-    """NEGATIVE PIN — real text: Burlington's headline "FY25 Adjusted EPS of $10.17" is placed by
-    its full-year section's own sentence, so it is not dropped and no note is written."""
+def test_e2_d11_a_figure_another_sentence_places_is_still_noted_where_skipped() -> None:
+    """Real text: Burlington's headline "FY25 Adjusted EPS of $10.17" is skipped (the reader takes
+    no "FY25"), and its full-year section places the same figure. The row stands, and the skipped
+    headline is noted too: an equal value elsewhere may be another period's (Codex P2, round 1)."""
     assert ("adjusted eps", "2025", 10.17) in _rows(_BURL)
-    assert not [n for n in _refusals(_BURL) if "$10.17" in n]
+    assert [n for n in _refusals(_BURL) if "$10.17" in n and "skipped" in n]
 
 
-def test_e2_d11_one_note_per_figure() -> None:
-    """A figure the release repeats unplaced is noted once."""
+def test_e2_d11_each_unplaced_statement_is_noted() -> None:
+    """Two unplaced statements of one value — here Q4's and FY's — are two notes."""
     text = ("Acme Reports Fourth Quarter and Full Year 2025 Results Fourth Quarter 2025 • "
             "Adjusted EBITDA of $211.9 million Full Year 2025 • Adjusted EBITDA of $211.9 "
             "million")
-    assert sum("$211.9" in n for n in _refusals(text)) == 1
+    assert sum("$211.9" in n for n in _refusals(text)) == 2
 
 
 # --- RE2-D2: a "respectively" list is refused -----------------------------------------------------
@@ -220,3 +221,14 @@ def test_review_an_unplaced_comparison_is_not_noted_as_a_skipped_actual() -> Non
     text = ("Acme Reports Fourth Quarter and Full Year 2025 Results. Adjusted EBITDA was $20.0 "
             "million, compared to Adjusted EBITDA of $15.0 million in the prior year.")
     assert not [n for n in _refusals(text) if "$15.0" in n]
+
+
+def test_codex_round_1_an_equal_value_for_another_period_does_not_silence_a_note() -> None:
+    """Codex P2 (round 1): the one-note rule keyed on (metric, value), so a skipped figure was
+    silenced when ANOTHER period's placed row held the same value — Q4 and FY adjusted EPS both
+    $0.50, the FY one unplaced. Only the same statement repeated is one note now; a figure some
+    other sentence also places is noted too (the row stands beside the note)."""
+    text = ("Acme Reports Fourth Quarter and Full Year 2025 Results. For the fourth quarter of "
+            "2025, Adjusted EPS of $0.50. Full Year 2025 • Adjusted EPS of $0.50 ")
+    assert ("adjusted eps", "Q4 2025", 0.5) in _rows(text)
+    assert any("$0.50" in n and "skipped" in n for n in _refusals(text))

@@ -1195,7 +1195,6 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         lead = _lead(lo, marker_start, metric)
         return lead is not None and (lead[1] or "").startswith("Q")
 
-    skipped: list[tuple[str, float, str, int, int]] = []  # (metric, value, why, start, end)
     for m in _RECON.finditer(text):  # both captured, period-labeled, NEVER conflated
         # the amount comes from EITHER currency branch: "$53.8 million" (num) or
         # "53.8 million" (num2). A bare number with neither marker no longer matches at all.
@@ -1251,11 +1250,13 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
             # figure the release states but does not place in one period was dropped with no note,
             # so one placed figure hid every dropped one — EPAM's headline "Non-GAAP Diluted EPS of
             # $3.26" under "Fourth Quarter 2025" (8-K 0001352010-26-000010) beside two refused
-            # "Revenues of". Said once the loop ends, and only when no other sentence placed the
-            # same figure (Burlington's headline "Adjusted EPS of $10.17" is, as its FY 2025 row).
-            skipped.append((metric, val, "under a bullet list whose lead-in reads as an outlook"
-                            if _forward_looking(text, lo, m.start())
-                            else "the release does not place it in one period", m.start(), m.end()))
+            # "Revenues of". ONE NOTE PER STATEMENT, never per value (Codex P2, round 1): an equal
+            # value another sentence places may be another period's figure, so it silences nothing.
+            why = ("under a bullet list whose lead-in reads as an outlook"
+                   if _forward_looking(text, lo, m.start())
+                   else "the release does not place it in one period")
+            _refuse(f"{'an' if metric[0] in 'aeiou' else 'a'} {metric} figure skipped — {why}",
+                    m.start(), m.end())
             continue
         # a comparison can never share the release's own period (never conflate prior with current)
         if p is None or (marker is not None and p == current) or (metric, p) in seen:
@@ -1266,12 +1267,6 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
             metric=metric, period=p, value=val, change=_change_after(text, m.end()),
             verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
         ))
-    placed = {(r.metric, r.value) for r in out}
-    for metric, val, why, start, end in skipped:
-        if (metric, val) not in placed:
-            placed.add((metric, val))  # one note per figure, however many sentences repeat it
-            _refuse(f"{'an' if metric[0] in 'aeiou' else 'a'} {metric} figure skipped — {why}",
-                    start, end)
     for m in _REVENUE.finditer(text):  # headline revenue actual (same current/prior discipline)
         if _segment(m.start()):
             continue

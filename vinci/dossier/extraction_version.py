@@ -672,12 +672,11 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "a release actual the reader cannot place is noted, never dropped silently, and four "
         "shapes it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, "
         "RE2-D2, D5, D6, D8): an unplaced non-revenue actual writes the note an unplaced revenue "
-        "figure already did, once per figure and only when no other sentence places it; the "
-        "first amount of a 'respectively' list is refused; a figure stated for a calendar year "
-        "is refused; '$(5.5)', '($5.5)' and '-$5.5' are read, signed; and a 'year ended' date "
-        "takes the release's fiscal offset, so a retailer's fiscal year ending in January is its "
-        "fiscal year. On the 122 releases the 27 committed pages cite no row moves; 12 exhibits "
-        "on 8 pages gain 19 notes"
+        "figure already did, one note per statement; the first amount of a 'respectively' list "
+        "is refused; a figure stated for a calendar year is refused; '$(5.5)', '($5.5)' and "
+        "'-$5.5' are read, signed; and a 'year ended' date takes the release's fiscal offset, so "
+        "a retailer's fiscal year ending in January is its fiscal year. On the 122 releases the "
+        "27 committed pages cite no row moves; 16 exhibits on 10 pages gain 28 notes"
     ),
 )
 
