@@ -473,6 +473,19 @@ const EXTRACTION_VERSIONS = [
     "each peer median prints its count ('median of N of M peers'); a row stating no " +
     "total keeps its latest Assets and says 'no current balance' when its one family is " +
     "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5"],
+  ["2026-11-10.marker-residuals",
+    "a CIQ marker is a stated gap, never an older value or a dropped row (fix request 2, " +
+    "order 3: RA-D3, RA-D8, RA-D13, RBC-D6, RA-D11): a dated Guidance cell that does not " +
+    "read is the latest guide, read as unread with its cell named, and no older guide is " +
+    "served or checked in its place; a Segments block whose rows no longer sum to their " +
+    "total within 0.5% because a row is marked states no mix and no segment count, naming " +
+    "the row; an empty `consensus_levels` says why (`consensus_levels_note`, not sent to " +
+    "the synthesis); the spreadsheet Customers export is read by the RTF route's reader, " +
+    "so its prior section, a repeated header, a Supplier Name column and CIQ's own " +
+    "'there are no' are read as they are there; a non-zero LibreOffice exit is a call " +
+    "that did not read, left out and named. No figure moves: no export on disk on " +
+    "2026-11-10 holds any of these shapes; ORKA's and TECX's pages, which carry no " +
+    "consensus levels, gain the note"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

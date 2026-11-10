@@ -146,10 +146,21 @@ def read_text(path: Path, fmt: CiqFormat | None = None) -> str:
                 "(ciq_extraction_notes.md: striprtf returns ~12 words of garbage)"
             )
         with tempfile.TemporaryDirectory() as td:
-            subprocess.run(  # noqa: S603 — fixed args, path from the local manual store
+            # A NON-ZERO EXIT IS A PARSE FAILURE, NOT A CRASH (audit RA-D11, 2026-11-10).
+            # `check=True` raised `CalledProcessError`, which no caller catches, so the
+            # skip-and-flag path (`transcript_for_synthesis` → `unparsed_transcript_flag`) never
+            # ran and the build died instead: LibreOffice refuses a second conversion while one
+            # runs, and the auditor saw it exit 1 in 2 of ~25 runs on unmodified transcripts.
+            done = subprocess.run(  # noqa: S603 — fixed args, path from the local manual store
                 [soffice, "--headless", "--convert-to", "txt", "--outdir", td, str(path)],
-                capture_output=True, check=True,
+                capture_output=True, check=False,
             )
+            if done.returncode != 0:
+                tail = (done.stderr or b"").decode("utf-8", errors="replace").strip()[-200:]
+                raise CiqParseError(
+                    f"{path.name}: LibreOffice exited {done.returncode} converting it"
+                    + (f" ({tail})" if tail else "")
+                    + " — another conversion may have been running; re-run alone")
             txt_path = Path(td) / f"{path.stem}.txt"
             if not txt_path.exists():
                 raise CiqParseError(f"{path.name}: LibreOffice conversion produced no .txt output")
