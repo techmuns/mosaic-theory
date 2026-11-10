@@ -230,6 +230,9 @@ def test_a_claim_is_its_own_record_checked_by_its_hash(tmp_path: Path) -> None:
         spool.get(key)
 
 
+_LLM = object()   # any client: `_require_spool` asks only whether the build is a paid one
+
+
 def test_a_name_with_a_transcript_needs_the_spool_and_a_name_without_one_does_not(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """`assemble._require_spool`, which `assemble_one` calls right after its bundle loads: before
@@ -243,12 +246,49 @@ def test_a_name_with_a_transcript_needs_the_spool_and_a_name_without_one_does_no
         def all_workbooks(self, kind: str) -> tuple[str, ...]:
             return ("call.rtf",) if self.tx and kind == "transcript" else ()
 
-    assemble._require_spool(_Bundle(tx=False))  # type: ignore[arg-type]
+    assemble._require_spool(_Bundle(tx=False), _LLM)  # type: ignore[arg-type]
     with pytest.raises(de.SpoolNotConfiguredError, match="VINCI_EVIDENCE_SPOOL"):
-        assemble._require_spool(_Bundle(tx=True))  # type: ignore[arg-type]
+        assemble._require_spool(_Bundle(tx=True), _LLM)  # type: ignore[arg-type]
     monkeypatch.setenv(de.SPOOL_ENV, str(tmp_path / "not-created"))
     with pytest.raises(de.SpoolMissingError):
-        assemble._require_spool(_Bundle(tx=True))  # type: ignore[arg-type]
+        assemble._require_spool(_Bundle(tx=True), _LLM)  # type: ignore[arg-type]
     assert not (tmp_path / "not-created").exists()
+    # FAILED before the review fix: the $0 pre-spend build (`llm=None`) extracts no transcript
+    # row, so it has no words to file, and was refused for want of the operator's spool
+    monkeypatch.delenv(de.SPOOL_ENV)
+    assemble._require_spool(_Bundle(tx=True), None)  # type: ignore[arg-type]
     src = Path(assemble.__file__).read_text()
-    assert src.index("_require_spool(bundle)") < src.index("extract_transcript_drivers(\n")
+    assert src.index("_require_spool(bundle, llm)") < src.index("extract_transcript_drivers(\n")
+
+
+def test_a_figure_past_six_digits_reads_whole_not_in_exponent_form() -> None:
+    """FAILED before the review fix: `:g` printed 1,234,567 subscribers as "1.23457e+06" in the
+    analyst's template and the synthesis digest — a different number, in a form no call says."""
+    assert syn.figures_text([{"value": 1234567.0}]) == "1234567"
+    assert syn.figures_text([{"value": 1.25, "currency": "$", "scale": "e9"}]) == "$1.25 billion"
+
+
+def test_a_row_read_back_spools_to_the_passage_it_came_from(tmp_path: Path) -> None:
+    """FAILED before the review fix: the passage record embedded the row's locator whole, so a row
+    read back (`rehydrate`, its locator still carrying the claim's `value_sha256`) wrote other
+    bytes under the passage's key and was refused as an overwrite."""
+    spool = de.EvidenceSpool(tmp_path)
+    d = ds.Dossier.model_validate(synthetic_page("BRBR"))
+    od = d.mechanical.operating_drivers
+    assert od is not None
+    located = [r.model_copy(update={"locator": ds.TranscriptLocator(
+        call=r.source_ref.split(": ", 1)[1], quote_sha256=de.quote_key(r.verbatim))})
+        if r.tier == "llm-fenced" and r.verbatim and ": " in r.source_ref else r for r in od.rows]
+    d = d.model_copy(update={"mechanical": d.mechanical.model_copy(update={
+        "operating_drivers": od.model_copy(update={"rows": located})})})
+    written, first = de.spool_dossier(d, spool)
+    assert first.written > 0
+    wod = written.mechanical.operating_drivers
+    assert wod is not None
+    stripped = [r.model_copy(update={"verbatim": None, "following_context": None, "value": None})
+                if r.tier == "llm-fenced" else r for r in wod.rows]
+    back = de.rehydrate(stripped, spool.get)
+    again = d.model_copy(update={"mechanical": d.mechanical.model_copy(update={
+        "operating_drivers": wod.model_copy(update={"rows": back})})})
+    _, second = de.spool_dossier(again, spool)
+    assert second.written == 0 and second.already == first.written + first.already

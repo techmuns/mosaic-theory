@@ -87,7 +87,7 @@ PINNED_AT = "2026-11-10.driver-text-filed"
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
-    "vinci/dossier/assemble.py": "63b80b4cbfd4",
+    "vinci/dossier/assemble.py": "6abeed6bf83c",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "059ec4f12b76",
     "vinci/dossier/ciq.py": "6a636c11c2f3",
@@ -122,7 +122,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/requirements.py": "0d49ceadcac7",
     "vinci/dossier/schemas.py": "927769a0d40c",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "8b473c36f494",
+    "vinci/dossier/synthesis.py": "454036ce5b49",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
     "vinci/dossier/verdict.py": "0b43167d2044",

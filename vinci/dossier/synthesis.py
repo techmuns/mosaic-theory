@@ -1753,7 +1753,8 @@ def figures_text(figures: Sequence[Any] | None) -> str | None:
         scale = _SCALE_WORD.get(g.get("scale") or "", "")
         unit = g.get("unit") or ""
         unit = unit if unit in ("", "%", "x") else f" {unit}"
-        out.append(f"{change}{bound}{g.get('currency') or ''}{g['value']:g}{scale}{unit}")
+        # `.15g`, not `:g`: six significant digits printed 1,234,567 subscribers as "1.23457e+06"
+        out.append(f"{change}{bound}{g.get('currency') or ''}{g['value']:.15g}{scale}{unit}")
     return "; ".join(out) or None
 
 

@@ -1001,19 +1001,23 @@ def _cmd_driver_facts_pass(args: argparse.Namespace) -> int:
     else:
         tickers = sorted(p.name for p in (cfg.data_dir / "dossiers").iterdir()
                          if (p / "dossier.json").is_file())
-    for t in tickers:
-        jp = cfg.data_dir / "dossiers" / t / "dossier.json"
-        if not jp.exists():
-            print(f"{t}: no committed dossier — skipped")
-            continue
-        o = driver_pass.run(jp, ciq_root, spool=spool, dry_run=args.dry_run)
-        if o.status == "written":
-            _rerender_only(jp)
-            o.mirrored = True
-        outcomes.append(o)
-        print(f"{o.ticker}: {o.status.upper()} — {o.detail}")
-    if any(o.mirrored for o in outcomes):
-        mirror_to_frontend()
+    # a refusal raised mid-run (a spool key holding other bytes) must not leave the pages already
+    # written with a stale frontend mirror: the mirror runs on the way out either way
+    try:
+        for t in tickers:
+            jp = cfg.data_dir / "dossiers" / t / "dossier.json"
+            if not jp.exists():
+                print(f"{t}: no committed dossier — skipped")
+                continue
+            o = driver_pass.run(jp, ciq_root, spool=spool, dry_run=args.dry_run)
+            if o.status == "written":
+                _rerender_only(jp)
+                o.mirrored = True
+            outcomes.append(o)
+            print(f"{o.ticker}: {o.status.upper()} — {o.detail}")
+    finally:
+        if any(o.mirrored for o in outcomes):
+            mirror_to_frontend()
     by: dict[str, int] = {}
     for o in outcomes:
         by[o.status] = by.get(o.status, 0) + 1

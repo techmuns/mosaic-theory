@@ -187,8 +187,10 @@ def record_for(row: OperatingDriver) -> EvidenceRecord | None:
     is a filing's or CIQ's, not a transcript's), or a transcript row with no locator or no quote."""
     if row.tier != "llm-fenced" or row.locator is None or not row.verbatim:
         return None
-    return EvidenceRecord(locator=row.locator, verbatim=row.verbatim,
-                          following_context=row.following_context)
+    # the PASSAGE's locator, never one row's claim: a row read back (`rehydrate`) still carries
+    # its `value_sha256`, and the passage's bytes must not move with it or its key refuses it
+    return EvidenceRecord(locator=row.locator.model_copy(update={"value_sha256": None}),
+                          verbatim=row.verbatim, following_context=row.following_context)
 
 
 def records_for(dossier: Dossier) -> tuple[list[EvidenceRecord], int]:
@@ -201,11 +203,10 @@ def records_for(dossier: Dossier) -> tuple[list[EvidenceRecord], int]:
         if r.tier != "llm-fenced":
             continue
         rec = record_for(r)
-        if rec is not None:
-            verify(rec)
         if rec is None:
             missed += 1
         else:
+            verify(rec)
             out.append(rec)
     return out, missed
 
@@ -338,8 +339,18 @@ class EvidenceSpool:
 class SpoolReport:
     written: int = 0
     already: int = 0
-    no_evidence: int = 0  # transcript rows with text but no locator: their words are dropped
+    no_evidence: int = 0  # rows with text that cite no call or state no value: never filed
     stripped: int = 0  # transcript rows already without text: spooled by an earlier write
+
+
+#: How a transcript row cites its call: ``CIQ transcript: <the call's file name>``; a bare
+#: ``CIQ transcript`` cites none.
+CITED = "CIQ transcript: "
+
+
+def cited_call(row: OperatingDriver) -> str | None:
+    """The call a transcript row's ``source_ref`` names, or None when it names none."""
+    return row.source_ref[len(CITED):] or None if row.source_ref.startswith(CITED) else None
 
 
 def spool_dossier(dossier: Dossier, spool: EvidenceSpool) -> tuple[Dossier, SpoolReport]:
@@ -347,9 +358,14 @@ def spool_dossier(dossier: Dossier, spool: EvidenceSpool) -> tuple[Dossier, Spoo
     page as it may now be written: each spooled row's locator carries its ``value_sha256``.
 
     THE ONE SERIALIZER THEN DROPS THE TEXT (`schemas.PRIVATE_TRANSCRIPT_FIELDS`), so this runs
-    FIRST, every time a page with transcript text is written. A row with text but no locator (a
-    quote said on two calls whose period named neither) has nowhere to be filed: it is counted, and
-    its words survive only in the licensed call."""
+    FIRST, every time a page with transcript text is written.
+    - A row that names its call but has no locator (its quote's paragraph was not found) is
+      filed CALL-ONLY: its call and its quote's hash, as the page pass gives one. Never a guessed
+      paragraph.
+    - A row that cites NO call (a quote said on two calls whose period named neither) or states
+      no value has nowhere to be filed. It is counted in ``no_evidence`` and returned as it was:
+      the serializer keeps its words, so the CALLER must refuse to write the page
+      (`assemble._write`, `driver_pass.run`), never publish them."""
     od = dossier.mechanical.operating_drivers
     rep = SpoolReport()
     if od is None:
@@ -363,17 +379,18 @@ def spool_dossier(dossier: Dossier, spool: EvidenceSpool) -> tuple[Dossier, Spoo
             rep.stripped += 1
             rows.append(r)
             continue
+        if r.locator is None and (call := cited_call(r)) is not None:
+            r = r.model_copy(update={"locator": TranscriptLocator(
+                call=call, quote_sha256=quote_key(r.verbatim))})
         rec = record_for(r)
-        if rec is None or r.locator is None:
+        if rec is None or r.locator is None or r.value is None:
             rep.no_evidence += 1
             rows.append(r)
             continue
-        recs: list[Record] = [rec]
-        loc = r.locator
-        if r.value is not None:
-            loc = loc.model_copy(update={"value_sha256": value_key(r.value)})
-            recs.append(ClaimRecord(quote_sha256=loc.quote_sha256,
-                                    value_sha256=value_key(r.value), stated_value=r.value))
+        loc = r.locator.model_copy(update={"value_sha256": value_key(r.value)})
+        recs: list[Record] = [rec, ClaimRecord(quote_sha256=loc.quote_sha256,
+                                               value_sha256=value_key(r.value),
+                                               stated_value=r.value)]
         for x in recs:
             if spool.put(x):
                 rep.written += 1

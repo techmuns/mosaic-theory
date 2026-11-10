@@ -3454,7 +3454,6 @@ TOP_DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("forward_multiple_history", "history_through"),
 )
 
-#: The same rule for the keys added later on EACH `OperatingDriver` row (RG-D8/RG-D19, 2026-11-09).
 #: (RG-D19 PR 3) A transcript driver row's fields that never reach a committed page once its words
 #: are FILED. This repo is public; the quote, the paragraph after it and the model's stated value
 #: are licensed transcript text, kept in the operator's private store. The page carries the row's
@@ -3470,6 +3469,8 @@ def _filed(r: OperatingDriver) -> bool:
     the corpus test refuses the page loud rather than the words vanishing."""
     return r.tier == "llm-fenced" and r.locator is not None and r.locator.value_sha256 is not None
 
+
+#: The same rule for the keys added later on EACH `OperatingDriver` row (RG-D8/RG-D19, 2026-11-09).
 DRIVER_ROW_DROP_WHEN_NONE: tuple[str, ...] = ("figures", "value_status", "unknown_reason",
                                               "locator")
 

@@ -237,8 +237,7 @@ def test_every_committed_rows_locator_finds_its_passage_on_disk() -> None:
 
 
 def test_the_assembly_spools_before_it_writes_the_page_and_a_bad_spool_stops_it(
-        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
-) -> None:
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """(RG-D19 PR 3) The spool is REQUIRED: the page is written without its transcript words, so
     the spool is their only copy outside the licensed call. Unset, the build stops before the
     page; set and created, the words land first, and the page carries none of them."""
@@ -263,14 +262,33 @@ def test_the_assembly_spools_before_it_writes_the_page_and_a_bad_spool_stops_it(
     assert held and rows and not any(k in r for r in rows for k in
                                      ("verbatim", "following_context", "value"))
     assert all(r["locator"]["value_sha256"] for r in rows)
-    # a transcript row with nothing to spool is said, never dropped silently
     od = d.mechanical.operating_drivers
     assert od is not None
+
+    def _with(rows: list[ds.OperatingDriver]) -> ds.Dossier:
+        return d.model_copy(update={"mechanical": d.mechanical.model_copy(update={
+            "operating_drivers": od.model_copy(update={"rows": rows})})})
+
+    def _first(update: dict[str, object]) -> list[ds.OperatingDriver]:
+        first = next(i for i, r in enumerate(od.rows) if r.tier == "llm-fenced")
+        return [r.model_copy(update=update) if i == first else r for i, r in enumerate(od.rows)]
+
+    # a row that names its call but has no locator is filed CALL-ONLY: its words leave the page too
     bare = [r.model_copy(update={"locator": None}) if r.tier == "llm-fenced" else r
             for r in od.rows]
-    assemble._write(d.model_copy(update={"mechanical": d.mechanical.model_copy(update={
-        "operating_drivers": od.model_copy(update={"rows": bare})})}), "", out / "d")
-    assert "kept only in the licensed call" in capsys.readouterr().err
+    assemble._write(_with(bare), "", out / "d")
+    rows = [r for r in json.loads((out / "d" / "BRBR" / "dossier.json").read_text())[
+        "mechanical"]["operating_drivers"]["rows"] if r["tier"] == "llm-fenced"]
+    assert rows and all(r["locator"]["paragraph"] is None and r["locator"]["value_sha256"]
+                        and not any(k in r for k in ("verbatim", "following_context", "value"))
+                        for r in rows)
+    # a row citing NO call, or stating no value, has nowhere to be filed: the page is REFUSED,
+    # never written with its words on it (review of PR 3, round 0: the build used to write them)
+    for n, update in enumerate(({"locator": None, "source_ref": "CIQ transcript"},
+                                {"value": None})):
+        with pytest.raises(de.EvidenceError, match="page not written"):
+            assemble._write(_with(_first(update)), "", out / f"e{n}")
+        assert not (out / f"e{n}" / "BRBR" / "dossier.json").exists()
 
 
 def test_a_bad_spool_stops_the_build_before_any_paid_phase(

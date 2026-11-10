@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import json
 import math
-import sys
 import threading
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
@@ -804,11 +803,13 @@ def _keep_committed_recipe(dossier: Dossier, folder: Path) -> Dossier:
     return dossier.model_copy(update={"anchor": kept, "caveats": [*dossier.caveats, caveat]})
 
 
-def _require_spool(bundle: CiqBundle) -> None:
+def _require_spool(bundle: CiqBundle, llm: LlmClient | None) -> None:
     """(RG-D19 PR 3) A NAME WITH A TRANSCRIPT NEEDS THE SPOOL. `assemble_one` asks right after its
     bundle loads, before any paid phase, rather than at `_write`, after the driver and synthesis
-    calls were bought. A name with no transcript has no words to file and needs none."""
-    if bundle.all_workbooks("transcript"):
+    calls were bought. A name with no transcript has no words to file and needs none, and nor does
+    a $0 build (``llm`` None: the pre-spend check's `prespend.mechanical_build`), which extracts
+    no transcript row."""
+    if llm is not None and bundle.all_workbooks("transcript"):
         driver_evidence.EvidenceSpool.from_env()
 
 
@@ -834,8 +835,13 @@ def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Dossier:
         spool = driver_evidence.EvidenceSpool.from_env()
         dossier, rep = driver_evidence.spool_dossier(dossier, spool)
         if rep.no_evidence:
-            print(f"{dossier.ticker}: {rep.no_evidence} transcript driver row(s) had no locator, "
-                  "so their words are kept only in the licensed call", file=sys.stderr)
+            # NOT FILED, SO NOT WRITTEN: the serializer keeps an unfiled row's words
+            # (`schemas._filed`), so this page would publish them. The page pass refuses the
+            # same page (`driver_pass.run`); none of the 1,042 committed rows cites no call.
+            raise driver_evidence.EvidenceError(
+                f"{dossier.ticker}: {rep.no_evidence} transcript driver row(s) cite no call or "
+                "state no value, so their words cannot be filed, and the page would publish "
+                "them (CLAUDE.md: a driver row quotes no transcript word) — page not written")
     folder.mkdir(parents=True, exist_ok=True)
     write_dossier(folder / "dossier.json", dossier)
     (folder / "dossier.md").write_text(
@@ -1168,7 +1174,7 @@ def assemble_one(
     ticker = rec.identity.ticker
     # every CIQ file the build reads is recorded, a loader refusal's included (`load_bundle`)
     bundle = page_inputs.load_bundle(ticker, manual.files(ticker))
-    _require_spool(bundle)
+    _require_spool(bundle, llm)
     location = manual.location(ticker)
     # MISSING-manifest: per-module 'pull CIQ' flags from the ONE requirements definition (so this
     # and `vinci dossier requirements` can't drift). Empty/partial folder → what's still owed.
