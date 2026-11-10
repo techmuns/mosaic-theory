@@ -147,6 +147,17 @@ def test_rbc_d5_twin_a_file_with_no_table_is_still_unparsed(tmp_path: Path) -> N
     assert "could not parse the Business-Relationships table" in (got.note or ""), got.note
 
 
+def test_rbc_d3_a_file_cut_before_its_table_says_it_may_be_cut(tmp_path: Path) -> None:
+    """(+) A view cut before its header parses nothing; without its closing line it read only
+    'could not parse', the cut unsaid. (-) With the closing line, no cut is said."""
+    head = ["Zinnober Fixture Works Inc (NasdaqGS:ZZFX) > Business Relationships > Customers"]
+    got, n = _roster(_rtf(tmp_path, head))
+    assert n is None and "could not parse" in (got.note or ""), got.note
+    assert "may be cut short" in (got.note or "") and got.source_ref is not None, got.note
+    whole, _n = _roster(_rtf(tmp_path, [*head, "*denotes proprietary relationship"]))
+    assert "may be cut short" not in (whole.note or "") and whole.source_ref is None, whole.note
+
+
 def test_rbc_d5_twin_a_thin_rtf_is_not_called_a_word_document(tmp_path: Path) -> None:
     """(+) Before: "this is an OLE-disguised Word doc, not real RTF" — of a file whose bytes
     `classify` had already read as RTF."""

@@ -4934,11 +4934,13 @@ def customer_roster(bundle: CiqBundle) -> tuple[Sourced[str], int | None]:
         said = (f"{wb.path.name}'s recent section lists no customer and does not say it has none"
                 if prior else named or
                 f"could not parse the Business-Relationships table in {wb.path.name}")
-        cut_prior = _cut_note(wb.path.name, len(prior)) if cut and prior else ""
+        # a file cut before its table reads nothing, and is said to be cut like one cut after it
+        # (RBC-D3); a named shape already says what its end shows
+        cut_said = (_cut_note(wb.path.name, len(prior)) if cut and (prior or not named) else "")
         # a note naming what the file shows makes a claim about the file: cite it (round 2)
         return Sourced.unknown(
-            note="; ".join(filter(None, (said, cut_prior, _prior_note(prior)))),
-            source_ref=cite if prior or named else None), None
+            note="; ".join(filter(None, (said, cut_said, _prior_note(prior)))),
+            source_ref=cite if prior or named or cut_said else None), None
     if cut:
         # A LIST CUT SHORT IS SAID, AND ITS LENGTH IS NOT A COUNT (audit RBC-D3, 2026-11-10): a file
         # cut to 40% of its bytes read 96 of ORCL's 252 rows as the whole list, PRESENT, no note

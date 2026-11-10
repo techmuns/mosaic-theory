@@ -46,6 +46,15 @@ superseded-by:
   - The synthetic Customers RTF ends with CIQ's closing line, as every real export does
     (`generate.CLOSING_ROW`), and the committed ZZFX file is regenerated. The OLE test matches the
     new message.
+- **Review round 0b** (after the rebuild onto main, 10 findings, 1 fixed): a Customers file cut
+  before its table header read only "could not parse"; it now says it may be cut short and cites
+  the file (`::test_rbc_d3_a_file_cut_before_its_table_says_it_may_be_cut`).
+- **Found, not fixed** (round 0b): a real view of one or two rows in an RTF over 4 KB, under the
+  thin-RTF guard's 50-word floor, is still refused by the guard, as it is on `origin/main`. Reading
+  a thin file's table would relax a fail-loud check, which is the operator's call. The thinnest
+  export on disk has 36 words, so the shape is plausible. A cut roster also renders "count not
+  recorded on this page" (`render._fmt_customers`, `dossier.js` `fmtCustomers`), which reads as a
+  page that predates the field; that is a render-layer change, outside this diff.
 - **Built on #957** (merged as `507d4f32`). RBC-D6 there made `_relationship_table` the one
   reader of both routes, and this edits it. It was built and verified on #957's head `e7391bf1`,
   then rebuilt on `507d4f32`. Since that head, main changed none of the files this edits except
