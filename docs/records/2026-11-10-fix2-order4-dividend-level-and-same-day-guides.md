@@ -114,3 +114,37 @@ keeps every period guided on the date, each labelled".
   own LTM 'Dividends per Share' sums two quarters, because the quarterly export's Sep-30-2026 cell
   reads 'NA'. The row reads CIQ's figure as stated; checking a per-share LTM against its quarters
   would be a new rule.
+
+## The operator's rulings, and the panel's $0 step (2026-11-10)
+
+The operator, relayed by the coordinator, verbatim: **"yes to all, merge them one at a time"**.
+- **The tie-break:** keep the EARLIER period, today's read. Nothing is changed.
+- **MCK:** the LTM dividend is printed as CIQ states it, with a note (`_ltm_dividend_note`).
+  - The note names each of the four quarters ending at the LTM column that carries no figure,
+    and the sum of those stated. It never says what CIQ summed.
+  - MCK's note, on its export as it stands: "Dividend/sh LTM to 2026-09-30 (1.64) is CIQ's own
+    LTM figure, printed as stated; of the four quarters ending then, the quarterly export's
+    'Dividends per Share' reads 'NA' for the quarter to 2026-09-30, and the 3 it states sum
+    2.46". CIQ's 1.64 equals two of its 0.82 quarters.
+  - It fires on 1 of the 36 folders on disk (MCK).
+- **The panel check:** APPROVED, cap $35.
+- **The $0 transform** (`vinci/evals/variants.py`, `dividend_and_same_day_guides`, `RA_D2_D4`).
+  - It re-reads the four fields from the page's own CIQ folder. The harness hands it over as
+    `--ciq` / `Context.ciq`, through `replay.capture_at` and `compare.compare_requests`, which
+    records each file's sha256.
+  - Each field is written only where the re-read, with the change's additions taken out, equals
+    the committed field. Otherwise it is left as committed.
+  - On the panel it writes every field on every page except BURL's guidance. BURL's export is the
+    page's own (`758eae1432`, as stamped), but its bridge predates A-D8's block discovery, so no
+    code at #957 rebuilds it. BURL's guidance is therefore NOT covered.
+- **`compare --base 873fbe45 --cand <this branch> --transform dividend_and_same_day_guides`.**
+  Every panel page's request differs; SYSTEM is equal, and only `user.facts` moves:
+
+  | Page | Facts characters |
+  |---|--:|
+  | BURL | +104 |
+  | CNXC | +1,798 |
+  | LLY | +63 |
+  | MCK | +290 |
+  | ROST | +1,256 |
+  | SMPL | +1,283 |

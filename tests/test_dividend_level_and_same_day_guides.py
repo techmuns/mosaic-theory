@@ -219,3 +219,34 @@ def test_ra_d2_the_dividend_cites_the_income_statement_it_is_read_from() -> None
     amzn = cs.key_ratios(_real("AMZN"))
     assert "dividend: none" in (amzn.value or "")
     assert "Income Statement 'Dividends per Share'" in (amzn.source_ref or ""), amzn.source_ref
+
+
+def test_ra_d2_mcks_ltm_dividend_is_ciqs_figure_and_says_which_quarter_it_lacks() -> None:
+    """The operator's ruling (2026-11-10): MCK's LTM dividend is printed as CIQ states it, with a
+    note. On MCK's export as it stands, a quarter of the four ending at the LTM column reads no
+    figure; the note names it and the sum of the quarters stated, never what CIQ summed. (−) A
+    payer whose four quarters are all stated (V) carries no note."""
+    got = cs.return_ratios(_real("MCK"))
+    note = got.note or ""
+    assert "is CIQ's own LTM figure, printed as stated" in note, note
+    assert "for the quarter to" in note and "it states sum" in note, note
+    assert cs.return_ratios(_real("V")).note is None
+
+
+def test_ra_d2_twin_an_ltm_dividend_over_a_marked_quarter_is_noted() -> None:
+    from tests.fixtures.ciq_synthetic import generate as gen
+
+    b = CiqBundle.from_files(gen.TICKER, sorted((gen.HERE / gen.TICKER).iterdir()))
+    inc = b.sheet("financials", "Income Statement", freq="annual")
+    q = b.sheet("financials", "Income Statement", freq="quarterly")
+    ahdr, qhdr = cs._period_header(inc), cs._period_header(q)
+    assert ahdr is not None and qhdr is not None
+    inc.append(["Dividends per Share", *([0.2] * (len(inc[ahdr]) - 2)), 0.4])
+    q.append(["Dividends per Share", *([0.1] * (len(q[qhdr]) - 2)), "NA"])
+    wb = b.workbook("financials", freq="annual")
+    assert wb is not None
+    b._cache[wb.path]["Ratios"] = [list(inc[ahdr]), ["Return on Equity %",
+                                                      *([0.1] * (len(inc[ahdr]) - 1))]]
+    note = cs.return_ratios(b).note or ""
+    assert "Dividend/sh LTM to" in note and "'NA' for the quarter to" in note, note
+    assert "the 3 it states sum 0.30" in note, note

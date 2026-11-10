@@ -40,6 +40,15 @@ FIX 3B rewrites two fields; `FIX_3B` names their transforms:
 RG-D8 (fix request 2), `RG_D8`'s ``driver_facts``: the transcript driver rows' fact check,
 re-run on each committed row's own metric, value and quote (`driver_extract.check_fact`).
 
+RA-D2 AND RA-D4 (fix request 2, #967), `RA_D2_D4`'s ``dividend_and_same_day_guides``: the
+Ratios table's dividend row and `key_ratios`' dividend status (read from the Income Statement, with
+MCK's LTM note), and the guidance bridge and its rows (every period guided on the latest date),
+re-read from the page's OWN CIQ folder (`Context.ciq`) by the ref's code. The identity at a ref
+without the change. A field is written only where the re-read, with the change's own additions
+taken out, equals the committed field — the proof that the export and the code are the page's —
+and is otherwise left as committed, which the registration's note names (BURL's guidance predates
+A-D8's block discovery, so no code at this ref rebuilds it).
+
 THE AS-OF CUT (STATE row 57), `ASOF_CUT`'s ``asof_cut``: a page built before the cut keeps the
 releases filed after its price date; this moves them out of `primary_source.releases` and
 re-derives the two fields the assembly takes from that list (`current_guide`, a release-read
@@ -82,6 +91,9 @@ class Context:
 
     page: dict[str, Any]
     comps: CiqBundle | None = None
+    #: The page's whole CIQ folder, read by the ref's own reader (`--ciq`), for a transform that
+    #: re-reads a field from its exports; it proves the export is the page's own before writing.
+    ciq: CiqBundle | None = None
 
 
 def own_comps(mech: MechanicalLayer, ctx: Context) -> CiqBundle:
@@ -521,6 +533,102 @@ def driver_facts(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
     return mech.model_copy(update={"operating_drivers": od.model_copy(update={"rows": rows})})
 
 
+# ----------------------------------------------- RA-D2 / RA-D4: the dividend and same-day guides
+
+_DPS_LABEL = "Dividend/sh"
+_DPS_REF = " + Income Statement 'Dividends per Share' (the Dividend/sh row)"
+_KR_REF = " + Income Statement 'Dividends per Share'"
+_SAME_DAY = re.compile(r"; same day: [^;]*")
+
+
+def _without_dividend(f: Sourced[Any] | None) -> Any:
+    """`return_ratios` with the change's own parts taken out: the dividend row, its citation and
+    the LTM note. What is left must equal the committed field's own, so no other part moved."""
+    if f is None:
+        return None
+    d = f.model_dump(mode="json")
+    if isinstance(d.get("value"), dict):
+        d["value"]["rows"] = [r for r in d["value"]["rows"] if r.get("label") != _DPS_LABEL]
+    d["source_ref"] = (d.get("source_ref") or "").replace(_DPS_REF, "")
+    d["note"] = None
+    return d
+
+
+def _kr_without_dividend(f: Sourced[str] | None) -> Any:
+    if f is None:
+        return None
+    d = f.model_dump(mode="json")
+    d["value"] = re.sub(r"(; )?dividend: none", "", d.get("value") or "")
+    d["source_ref"] = (d.get("source_ref") or "").replace(_KR_REF, "")
+    return d
+
+
+def _rows_primary(f: Sourced[Any] | None) -> Any:
+    """The guidance rows, one per metric (its first): the change adds a row per period guided
+    the same day after it."""
+    if f is None:
+        return None
+    d = f.model_dump(mode="json")
+    if isinstance(d.get("value"), list):
+        seen: set[str] = set()
+        rows = []
+        for r in d["value"]:
+            if r.get("metric") not in seen:
+                seen.add(r.get("metric"))
+                rows.append(r)
+        d["value"] = rows
+    return d
+
+
+def _bridge_primary(f: Sourced[str] | None) -> Any:
+    if f is None:
+        return None
+    d = f.model_dump(mode="json")
+    d["value"] = _SAME_DAY.sub("", d.get("value") or "") if d.get("value") else d.get("value")
+    return d
+
+
+def dividend_and_same_day_guides(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
+    """(RA-D2, RA-D4) The four fields #967 changes, re-read from the page's own CIQ folder by THIS
+    ref's code: `return_ratios`, `key_ratios`, and the catalyst path's `guidance_bridge` and
+    `guidance_bridge_rows` (read as assembly reads them: the page's reference date, the stale
+    bound, cut at the page's price date). The identity at a ref without the change (no
+    `ciq_sheets._dividend_per_share`). Each field is written only where the re-read, with the
+    change's own additions taken out, equals the committed field; otherwise it is left exactly as
+    committed. Refuses (`TransformError`) only when no CIQ folder was given."""
+    if getattr(ciq_sheets, "_dividend_per_share", None) is None:
+        return mech
+    b = ctx.ciq
+    if b is None:
+        raise TransformError(f"{ctx.page.get('ticker')}: this transform re-reads the page's own "
+                             "CIQ exports (`--ciq`), and no folder was given")
+    out: dict[str, Any] = {}
+    rr = ciq_sheets.return_ratios(b)
+    if _without_dividend(rr) == _without_dividend(mech.return_ratios):
+        out["return_ratios"] = rr
+    kr = ciq_sheets.key_ratios(b)
+    if _kr_without_dividend(kr) == _kr_without_dividend(mech.key_ratios):
+        out["key_ratios"] = kr
+    cp = mech.catalyst_path
+    si = mech.stock_info
+    if cp is not None and si is not None and si.as_of:
+        ref = date.fromisoformat(str(ctx.page["reference_date"])[:10])
+        cut = date.fromisoformat(str(si.as_of)[:10])
+        stale = mechanical._STALE_CLOSE_DAYS
+        gb = ciq_sheets.guidance_bridge(b, as_of=ciq_sheets.estimates_as_of(b).value,
+                                        reference_date=ref, stale_after_days=stale, cut=cut)
+        gr = ciq_sheets.guidance_bridge_rows(b, reference_date=ref, stale_after_days=stale,
+                                             cut=cut)
+        upd: dict[str, Any] = {}
+        if _bridge_primary(gb) == _bridge_primary(cp.guidance_bridge):
+            upd["guidance_bridge"] = gb
+        if _rows_primary(gr) == _rows_primary(cp.guidance_bridge_rows):
+            upd["guidance_bridge_rows"] = gr
+        if upd:
+            out["catalyst_path"] = cp.model_copy(update=upd)
+    return mech.model_copy(update=out) if out else mech
+
+
 Transform = Callable[[MechanicalLayer, Context], MechanicalLayer]
 
 TRANSFORMS: dict[str, Transform] = {
@@ -533,6 +641,7 @@ TRANSFORMS: dict[str, Transform] = {
     "current_buybacks": current_buybacks,
     "asof_cut": asof_cut,
     "driver_facts": driver_facts,
+    "dividend_and_same_day_guides": dividend_and_same_day_guides,
 }
 
 #: Fix 3a's five labels (#923), in the order applied.
@@ -554,3 +663,6 @@ ASOF_CUT: tuple[str, ...] = ("asof_cut",)
 #: RG-D8's one transform: the transcript driver rows' fact check, which the prompt reads as an
 #: unverified row's value.
 RG_D8: tuple[str, ...] = ("driver_facts",)
+
+#: #967's one transform (RA-D2, RA-D4): the dividend row and status, and the same-day guides.
+RA_D2_D4: tuple[str, ...] = ("dividend_and_same_day_guides",)

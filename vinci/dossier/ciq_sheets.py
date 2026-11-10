@@ -2056,7 +2056,48 @@ def return_ratios(bundle: CiqBundle) -> Sourced[FinTable]:
         source_ref="CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)"
         + (" + Income Statement 'Dividends per Share' (the Dividend/sh row)" if dps is not None
            else ""),   # RA-D2: the dividend row cites the sheet it is read from
+        note=_ltm_dividend_note(bundle, rat[hdr], cols, dps) if dps is not None else None,
     )
+
+
+def _ltm_dividend_note(bundle: CiqBundle, ratio_header: list[Any], cols: list[int],
+                       dps: list[tuple[bool, float | None]]) -> str | None:
+    """Why a Ratios LTM column's dividend may not be four quarters' — None when it is, or cannot be
+    told (operator ruling 2026-11-10, #967: print CIQ's figure as stated, and say so).
+
+    MCK's (exports on disk 2026-11-10) reads 1.64 beside FY26's 3.17, no cut: of the four quarters
+    to 2026-09-30, the quarterly export reads 0.82, 0.82, 0.82 and 'NA', and CIQ's LTM equals two
+    of them. The figure is CIQ's and is printed as it states it; the note names each quarter that
+    carries no figure and the sum of those that do, never what CIQ summed."""
+    from vinci.dossier.ltm_quarters import _four_quarters
+
+    try:
+        q = bundle.sheet("financials", "Income Statement", freq="quarterly")
+    except CiqUnavailableError:
+        return None
+    qhdr, qi = _period_header(q), _find_row(q, "Dividends per Share")
+    if qhdr is None or qi is None:
+        return None
+    notes: list[str] = []
+    for c, (_placed, v) in zip(cols, dps, strict=True):
+        p = header_period(ratio_header[c]) if c < len(ratio_header) else None
+        if v is None or p is None or p.kind != "LTM" or p.end is None:
+            continue
+        four, _why = _four_quarters(q, qhdr, p.end)
+        if four is None:
+            continue
+        cells = [(qp, q[qi][j] if j < len(q[qi]) else "") for j, qp in four]
+        missing = [(qp, cell) for qp, cell in cells if clean_num(cell) is None]
+        stated = [x for _qp, cell in cells if (x := clean_num(cell)) is not None]
+        if missing:   # the cells and their sum, as stated: what CIQ summed is not inferred
+            notes.append(
+                f"Dividend/sh LTM to {p.end.isoformat()} ({v:.2f}) is CIQ's own LTM figure, "
+                "printed as stated; of the four quarters ending then, the quarterly export's "
+                "'Dividends per Share' reads "
+                + ", ".join(f"{_cell_words(cell)} for the quarter to "
+                            f"{qp.end.isoformat() if qp.end else '?'}" for qp, cell in missing)
+                + (f", and the {len(stated)} it states sum {sum(stated):.2f}" if stated else ""))
+    return "; ".join(notes) or None
 
 
 def _dividend_per_share(bundle: CiqBundle, ratio_header: list[Any],
