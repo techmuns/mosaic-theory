@@ -325,6 +325,8 @@ NOT_A_FACT: dict[str, str] = {
     "CatalystCalendar.qa_flags": "machine QA",
     "Concentration.customers_listed": ("the structured twin of `concentration.customers` — the "
                                        "count of the roster it cites (audit RBC-D1)"),
+    "ConsensusContext.consensus_levels_note": ("machine QA — why `consensus_levels` is absent "
+                                               "(audit RA-D13); never sent to the synthesis"),
     "DilutionPipeline.window_days": "a parameter of the read",
     "DrawdownCause.gap_threshold": "a parameter of the read",
     "DrawdownCause.gap_window_days": "a parameter of the read",
@@ -634,6 +636,8 @@ def test_both_consensus_level_builders_name_a_row_alike(monkeypatch: pytest.Monk
     cell = cs.ConsensusCell(fy="2027", median=10.0, high=12.0, low=8.0, std_dev=1.0,
                             estimates="9/10", is_forward=True)
     monkeypatch.setattr(cs, "consensus_levels", lambda _b: {"EBITDA": [cell]})
+    # assembly reads the levels with their absence reason (RA-D13); the same builder underneath
+    monkeypatch.setattr(cs, "consensus_levels_read", lambda _b: ({"EBITDA": [cell]}, None))
     for name in ("eps_revisions", "revenue_revisions", "consensus_view", "surprise_history"):
         monkeypatch.setattr(cs, name, lambda _b: ds.Sourced[str].unknown(note="stub"))
     cc = dm._consensus(typing.cast(Any, None))

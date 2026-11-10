@@ -1406,6 +1406,11 @@ class ConsensusContext(BaseModel):
     #: NOTHING RENDERS THIS UNTIL A2. It is machine-complete in the JSON and invisible on the page,
     #: which is stated here so it is not rediscovered as a gap.
     consensus_levels: dict[str, list[ConsensusLevel]] | None = None
+    #: WHY ``consensus_levels`` IS ABSENT, when assembly read the Consensus sheet and identified no
+    #: block or no level (audit RA-D13, 2026-11-10): one marker in the cell that identifies the
+    #: block left the levels empty with nothing said. None when the levels were read, and on every
+    #: page assembled before it. Not sent to the synthesis (`synthesis.NOT_SENT`).
+    consensus_levels_note: str | None = None
     eps_trend: Sourced[str]
     revenue_trend: Sourced[str]
     revision_history: Sourced[str]
@@ -3397,6 +3402,7 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("concentration", "customers_listed"),
     ("capital_allocation", "impairment_headroom"),
     ("consensus_context", "consensus_levels"),
+    ("consensus_context", "consensus_levels_note"),
     ("financial_summary", "ebitda_basis"),
     ("financial_summary", "ebitda_reconciliation"),
     ("financial_summary", "statement_reconciliation"),

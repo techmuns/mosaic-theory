@@ -473,6 +473,50 @@ const EXTRACTION_VERSIONS = [
     "each peer median prints its count ('median of N of M peers'); a row stating no " +
     "total keeps its latest Assets and says 'no current balance' when its one family is " +
     "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5"],
+  ["2026-11-10.part-of-the-debt",
+    "a twelve-month debt figure for part of the debt is not the company's wall (TeamNostra fix " +
+    "request 2, V2-N1, RE2-D13, E2-D15's residual): a 10-Q's due-within-12-months statement is " +
+    "the wall only when the clause before it names the debt in aggregate, or names one " +
+    "instrument whose own principal is the total debt the filing states unqualified; otherwise " +
+    "the wall reads not_stated with a note naming the figure and its sentence. The original " +
+    "'$X million due within the next 12 months' form passes the same debt and lease filters as " +
+    "the widened ones, and the tranche and commitment readers read billions. On the 27 " +
+    "committed pages no filing field moves; outside them, Helmerich & Payne's term-loan $6.9M " +
+    "and Archer's lease $19.1M, both read as walls, now read not_stated"],
+  ["2026-11-10.release-actuals-never-silent",
+    "a release actual the reader cannot place is noted, never dropped silently, and four " +
+    "shapes it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, " +
+    "RE2-D2, D5, D6, D8): an unplaced non-revenue actual writes the note an unplaced revenue " +
+    "figure already did, one note per statement; the first amount of a 'respectively' list " +
+    "is refused; a figure stated for a calendar year is refused; '$(5.5)', '($5.5)' and " +
+    "'-$5.5' are read, signed; and a 'year ended' date takes the release's fiscal offset, so " +
+    "a retailer's fiscal year ending in January is its fiscal year. On the 122 releases the " +
+    "27 committed pages cite no row moves; 16 exhibits on 10 pages gain 28 notes"],
+  ["2026-11-10.going-concern-denials-and-conclusions",
+    "a going-concern denial or hypothetical is not doubt, and a real conclusion is " +
+    "(TeamNostra fix request 2, RE2-D9 and RE2-D10): a doubt that 'does not exist', plans " +
+    "that 'alleviate' it (present tense), and 'there will be substantial doubt' deny or " +
+    "condition it; an alleviation is unsettled only by what precedes it or shares its " +
+    "clause; a filing whose own plans alleviate the doubt its conditions raised states none " +
+    "(ASC 205-40's alleviated outcome: Solo Brands' 10-Q and Aeluma's 10-K, read as doubt " +
+    "before); a frame whose sentence concludes with the verb after the doubt, or with the " +
+    "company having it, is a conclusion; and a 'no' governs only the words up to a " +
+    "conjunction. On the 27 committed pages no going-concern field moves; over three SEC " +
+    "caches (178 reads of filings that mention a going concern, overlapping), two filings " +
+    "move, both from doubt to none, both alleviated"],
+  ["2026-11-10.marker-residuals",
+    "a CIQ marker is a stated gap, never an older value or a dropped row (fix request 2, " +
+    "order 3: RA-D3, RA-D8, RA-D13, RBC-D6, RA-D11): a dated Guidance cell that does not " +
+    "read is the latest guide, read as unread with its cell named, and no older guide is " +
+    "served or checked in its place; a Segments block whose rows no longer sum to their " +
+    "total within 0.5% because a row is marked states no mix and no segment count, naming " +
+    "the row; an empty `consensus_levels` says why (`consensus_levels_note`, not sent to " +
+    "the synthesis); the spreadsheet Customers export is read by the RTF route's reader, " +
+    "so its prior section, a repeated header, a Supplier Name column and CIQ's own " +
+    "'there are no' are read as they are there; a non-zero LibreOffice exit is a call " +
+    "that did not read, left out and named. No figure moves: no export on disk on " +
+    "2026-11-10 holds any of these shapes; ORKA's and TECX's pages, which carry no " +
+    "consensus levels, gain the note"],
   ["2026-11-10.maturity-subject-and-unread-body",
     "a maturity date belongs to its sentence's subject, an option to extend is not a " +
     "maturity, a past 'matured' is not current, and an unread 8-K body is not a clean scan " +

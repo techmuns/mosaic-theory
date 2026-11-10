@@ -1731,6 +1731,7 @@ NOT_SENT: dict[str, Any] = {"primary_source": True,
                             "catalyst_path": {"guidance_after_price_date": True},
                             "concentration": {"customers_listed": True},
                             "capital_allocation": {"impairment_headroom": True},
+                            "consensus_context": {"consensus_levels_note": True},
                             "operating_drivers": {"rows": {"__all__": {
                                 "figures": True, "value_status": True, "unknown_reason": True,
                                 "locator": True}}}}
