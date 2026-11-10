@@ -6,7 +6,7 @@
  },
  "boundary": {
   "measured_on": "2026-11-11",
-  "git_head": "7adfdae4",
+  "git_head": "fee44e8f",
   "inputs_match_head": true,
   "reads": "data/dossiers/*/dossier.json",
   "item_noun": "page",
@@ -6115,7 +6115,7 @@
    },
    "not_run": [
     {
-     "reason": "no anchor.ciq_scale_check — the page predates the field; no back-fill writes it since #905 retired the one that did, so only an assembly writes it",
+     "reason": "no anchor.ciq_scale_check — the page predates the field, or an anchor-backfill could not read its CIQ folder; an assembly, or an anchor-backfill that reads the folder, writes it",
      "names": [
       "FUBO"
      ]
@@ -6154,7 +6154,7 @@
      "unchecked": 0
     },
     "FUBO": {
-     "not_run": "no anchor.ciq_scale_check — the page predates the field; no back-fill writes it since #905 retired the one that did, so only an assembly writes it"
+     "not_run": "no anchor.ciq_scale_check — the page predates the field, or an anchor-backfill could not read its CIQ folder; an assembly, or an anchor-backfill that reads the folder, writes it"
     },
     "GOOGL": {
      "confirmed": 1,
