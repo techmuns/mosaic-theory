@@ -473,6 +473,14 @@ const EXTRACTION_VERSIONS = [
     "each peer median prints its count ('median of N of M peers'); a row stating no " +
     "total keeps its latest Assets and says 'no current balance' when its one family is " +
     "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5"],
+  ["2026-11-10.unit-and-headers",
+    "fix request 2, order 4, two CIQ-reader defects (RA-D9, RA-D14): a Financials money sheet " +
+    "stating a unit other than Millions is refused before assembly and on the anchor's path " +
+    "(`ciq_sheets.require_millions`, `require_usd`'s twin), so no page prints thousands as " +
+    "$M; Consensus's target-price and LT-growth stats and every Recent Changes column are " +
+    "read by their headers, and a missing header leaves the read unread, never positional. " +
+    "No page moves: all 720 money sheets on disk state Millions, and every export's headers " +
+    "sit where the positional reads assumed (2026-11-10)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
