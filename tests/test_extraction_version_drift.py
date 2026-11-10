@@ -80,8 +80,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "a86880c0242f"
-PINNED_AT = "2026-11-10.marker-residuals"
+PINNED_TABLE = "d31d737bb6be"
+PINNED_AT = "2026-11-10.maturity-subject-and-unread-body"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -129,14 +129,14 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/client.py": "e1f2a793bf74",
     "vinci/edgar/concepts.py": "65e2452fe3d4",
     "vinci/edgar/cover_count.py": "24d1e9a7d94a",
-    "vinci/edgar/debt_maturities.py": "a0b1d84be715",
+    "vinci/edgar/debt_maturities.py": "e60bf9b66897",
     "vinci/edgar/filing_sections.py": "72667458db26",
     "vinci/edgar/going_concern.py": "2ffc2e9aebc0",
     "vinci/edgar/net_debt.py": "d60756329d18",
     "vinci/edgar/primary_source.py": "d9054b7a75a0",
     "vinci/edgar/release_parse.py": "3da5e8c3f066",
     "vinci/edgar/segment_facts.py": "9d3c07301296",
-    "vinci/edgar/segments.py": "8aa10f003612",
+    "vinci/edgar/segments.py": "3016c43f216f",
     "vinci/edgar/submissions.py": "6644355e5c3f",
     "vinci/eod/features.py": "8d23c6080234",
     "vinci/finra.py": "5787c9793b1b",
