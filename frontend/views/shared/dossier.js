@@ -473,6 +473,14 @@ const EXTRACTION_VERSIONS = [
     "each peer median prints its count ('median of N of M peers'); a row stating no " +
     "total keeps its latest Assets and says 'no current balance' when its one family is " +
     "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5"],
+  ["2026-11-10.loud-with-the-right-cause",
+    "fix request 2, order 6, two loud failures that named the wrong cause (RA-D16, RA-D15): " +
+    "the LTM-against-its-quarters flag quotes a quarter's own cell ('NA', 'NM', blank, " +
+    "absent) instead of '-' for every marker; an empty `.xlsx` cell states no currency, so " +
+    "an all-USD `.xlsx` export is no longer refused as foreign (H-D3's strict xfail lifted). " +
+    "No figure moves: the flag is QA text, and five committed pages (EPAM, MCK, VITL, VRRM, " +
+    "WLK) print a '-' quarter as '-' (quoted) once re-assembled; every export on disk is " +
+    "BIFF"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
