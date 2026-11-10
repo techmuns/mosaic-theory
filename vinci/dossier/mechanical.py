@@ -100,7 +100,7 @@ from vinci.dossier.schemas import (
 from vinci.edgar import cover_count, filing_sections, primary_source, release_parse, segment_facts
 from vinci.edgar import debt_maturities as dmx
 from vinci.edgar.asof import AsOfEdgar, page_price_date, within_cut
-from vinci.edgar.client import EdgarClient, Filing, annual_report
+from vinci.edgar.client import EdgarClient, Filing, annual_report, quarterly_report
 from vinci.edgar.client import events as eight_k_events
 from vinci.edgar.concepts import (
     ANNUAL_REPORT_FORMS,
@@ -6030,8 +6030,11 @@ def _primary_source(
     periodic_form = "10-Q"
     if cik:
         try:
-            qs = edgar.recent_filings(cik, forms=("10-Q",))
-            amended = ""
+            # the original 10-Q, or a 10-Q/A carrying the quarter's statements, and any later
+            # 10-Q/A named beside it (RE1-D12): `forms=("10-Q",)` neither read nor named one
+            tenq = quarterly_report(edgar, cik)
+            qs = [tenq.filing] if tenq is not None else []
+            amended = f" · {tenq.pointer}" if tenq is not None and tenq.pointer else ""
             if not qs:
                 # the original 20-F, or a 20-F/A carrying the period's facts (E1-D7)
                 fpi = annual_report(edgar, cik, forms=("20-F", "40-F"))

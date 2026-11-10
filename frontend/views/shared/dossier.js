@@ -431,6 +431,18 @@ const EXTRACTION_VERSIONS = [
     "still reads a pointer-linked 8-K/A. On the 28 pages frozen at bcda7ce3 one of 92 " +
     "pointer rows moves: WERN's 0000793074-26-000090 reads 8-K/A, with its covenant terms' " +
     "source labels"],
+  ["2026-11-09.asof-reach-and-quarterly-amendments",
+    "EDGAR as it stood on the price date reaches as far back as EDGAR showed then " +
+    "(TeamNostra fix request 2, RE1-D8): a read with no window reaches back from the cut as " +
+    "far as the submissions recent page reaches back from its newest filing, reading the " +
+    "older pages that overlaps; reads the view cannot cut (the frames API, the share " +
+    "readers on it, the submissions document) raise (RE1-D9); a 10-Q/A is read in its " +
+    "original's place when it carries the quarter's statements and is named otherwise, on " +
+    "the page's 10-Q read (RE1-D12); the exposure graph's annual excerpts take the same /A " +
+    "rule for the numbers, keep the original's narrative unless the /A re-files Item 1 or 7, " +
+    "name a later /A (RE1-D13) and say what their character cap left out " +
+    "(RE1-D14). On the 28 pages frozen at bcda7ce3 no field moves: the catalyst counts on " +
+    "EPAM, IT and PARR, which the old view would now undercount, are reproduced"],
   ["2026-11-09.driver-facts",
     "each transcript operating-driver row carries the fact code read from its quote, and " +
     "where the quote sits (audit RG-D8, RG-D19): `figures` (each number with the currency, " +

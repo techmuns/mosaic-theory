@@ -1,0 +1,5971 @@
+{
+ "cik": 102037,
+ "entityName": "UNIVERSAL CORPORATION",
+ "facts": {
+  "us-gaap": {
+   "AccountsReceivableNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 525262000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 525262000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AccountsReceivableNetCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 525262000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 525262000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AccruedIncomeTaxesCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 7477000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 7477000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 678201000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 678201000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AccumulatedOtherComprehensiveIncomeLossNetOfTax": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": -81585000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": -81585000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AdvancesOnInventoryPurchases": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 139064000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 139064000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AllocatedShareBasedCompensationExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 12063000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 12063000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AmortizationOfIntangibleAssets": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 11279000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 11279000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AssetImpairmentCharges": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2089000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2089000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "Assets": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 2937239000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 2937239000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AssetsCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 2102541000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 2102541000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AssetsFairValueDisclosure": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 19582000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 19582000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "BuildingsAndImprovementsGross": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 323969000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 323969000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "BusinessCombinationContingentConsiderationArrangementsChangeInAmountOfContingentConsiderationLiability1": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CashAndCashEquivalentsAtCarryingValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 55593000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 55593000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CashAndCashEquivalentsFairValueDisclosure": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 145000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 145000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 55593000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 55593000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -9097000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -9097000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CommonStockDividendsPerShareDeclared": {
+    "units": {
+     "USD/shares": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 3.2,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 3.2,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CommonStockSharesAuthorized": {
+    "units": {
+     "shares": [
+      {
+       "end": "2024-03-31",
+       "val": 100000000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 100000000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "CommonStockSharesOutstanding": {
+    "units": {
+     "shares": [
+      {
+       "end": "2024-03-31",
+       "val": 24573408,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 24573408,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CommonStockValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 345596000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 345596000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ComprehensiveIncomeNetOfTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 115070000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 115070000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ComprehensiveIncomeNetOfTaxAttributableToNoncontrollingInterest": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 12424000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 12424000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ComprehensiveIncomeNetOfTaxIncludingPortionAttributableToNoncontrollingInterest": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 127494000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 127494000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ContractWithCustomerLiabilityCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 17179000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 17179000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CostOfGoodsAndServicesSold": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2212475000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2212475000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CurrentFederalTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 5107000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 5107000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CurrentForeignTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 30711000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 30711000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CurrentIncomeTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 36514000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 36514000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "CurrentStateAndLocalTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 696000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 696000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DebtInstrumentCarryingAmount": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 620000000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 620000000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DebtInstrumentUnamortizedDiscountPremiumAndDebtIssuanceCostsNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 2636000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 2636000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredFederalIncomeTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -824000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -824000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredForeignIncomeTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -4443000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -4443000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredIncomeTaxAssetsNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 15181000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 15181000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredIncomeTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -5405000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -5405000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredIncomeTaxesAndTaxCredits": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -5404000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -5404000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredIncomeTaxLiabilities": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "DeferredIncomeTaxLiabilitiesNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 39139000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 39139000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredStateAndLocalIncomeTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -138000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -138000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxAssetsDeferredIncome": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 5827000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 5827000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxAssetsGross": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 62712000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 62712000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxAssetsNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 49696000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 49696000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxAssetsOther": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 9997000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 9997000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxAssetsTaxDeferredExpenseCompensationAndBenefitsEmployeeBenefits": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 15938000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 15938000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxAssetsTaxDeferredExpenseReservesAndAccruals": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 6973000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 6973000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxAssetsUnrealizedCurrencyLosses": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 2156000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 2156000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxAssetsValuationAllowance": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 13016000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 13016000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxLiabilities": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 73654000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 73654000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxLiabilitiesGoodwillAndIntangibleAssetsGoodwill": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 32232000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 32232000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxLiabilitiesLeasingArrangements": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 8119000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 8119000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxLiabilitiesOther": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 1168000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1168000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxLiabilitiesPropertyPlantAndEquipment": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 10604000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 10604000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxLiabilitiesUndistributedForeignEarnings": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 3145000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 3145000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DefinedBenefitPlanAssetsForPlanBenefitsNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 11857000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 11857000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DefinedBenefitPlanExpectedAmortizationOfGainLossNextFiscalYear": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 200000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 200000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "DefinedBenefitPlanExpectedAmortizationOfPriorServiceCostCreditNextFiscalYear": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 100000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 100000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "DefinedBenefitPlanFairValueOfPlanAssets": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 220336000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 220336000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DefinedBenefitPlanPlanAssetsTargetAllocationPercentage": {
+    "units": {
+     "pure": [
+      {
+       "end": "2024-03-31",
+       "val": 1,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DefinedBenefitPlanWeightedAverageAssetAllocations": {
+    "units": {
+     "pure": [
+      {
+       "end": "2024-03-31",
+       "val": 1,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "Depreciation": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 58326000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 58326000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DepreciationDepletionAndAmortization": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 58326000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 58326000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DerivativeFairValueOfDerivativeNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 5400000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 5400000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "DerivativeInstrumentsInHedgesAssetsAtFairValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 6783000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 6783000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DerivativeInstrumentsInHedgesLiabilitiesAtFairValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 9000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 9000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DerivativeInstrumentsNotDesignatedAsHedgingInstrumentsAssetAtFairValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 245000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 245000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DerivativeInstrumentsNotDesignatedAsHedgingInstrumentsLiabilityAtFairValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 12000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 12000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DividendsCommonStockCash": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 78663000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 78663000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DividendsSharebasedCompensationStock": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1266000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1266000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EarningsPerShareBasic": {
+    "units": {
+     "USD/shares": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 4.81,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 4.81,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EarningsPerShareDiluted": {
+    "units": {
+     "USD/shares": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 4.78,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 4.78,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EffectiveIncomeTaxRateContinuingOperations": {
+    "units": {
+     "pure": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0.19,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0.19,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EffectiveIncomeTaxRateReconciliationAtFederalStatutoryIncomeTaxRate": {
+    "units": {
+     "pure": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0.21,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0.21,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EffectiveIncomeTaxRateReconciliationForeignIncomeTaxRateDifferential": {
+    "units": {
+     "pure": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -0.052,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -0.052,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EffectiveIncomeTaxRateReconciliationOtherAdjustments": {
+    "units": {
+     "pure": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0.002,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0.002,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EffectiveIncomeTaxRateReconciliationOtherReconcilingItemsPercent": {
+    "units": {
+     "pure": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0.029,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0.029,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EffectiveIncomeTaxRateReconciliationStateAndLocalIncomeTaxes": {
+    "units": {
+     "pure": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0.003,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0.003,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EffectiveIncomeTaxRateReconciliationTaxContingencies": {
+    "units": {
+     "pure": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -0.002,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -0.002,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -141000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -141000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EmployeeRelatedLiabilitiesCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 39766000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 39766000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EmployeeServiceShareBasedCompensationNonvestedAwardsTotalCompensationCostNotYetRecognized": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 1700000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1700000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "EmployeeServiceShareBasedCompensationTaxBenefitFromCompensationExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2713000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2713000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EquityMethodInvestmentDividendsOrDistributions": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAccumulatedAmortization": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 42799000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 42799000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAmortizationExpenseAfterYearFive": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 32403000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 32403000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAmortizationExpenseNextTwelveMonths": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 11073000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 11073000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAmortizationExpenseYearFour": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 8077000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 8077000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAmortizationExpenseYearThree": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 8077000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 8077000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsAmortizationExpenseYearTwo": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 9253000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 9253000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsGross": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 111682000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 111682000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "FiniteLivedIntangibleAssetsNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 68883000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 68883000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ForeignCurrencyContractAssetFairValueDisclosure": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 322000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 322000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ForeignCurrencyContractsLiabilityFairValueDisclosure": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 21000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 21000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ForeignCurrencyTransactionGainLossRealized": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -3200000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -3200000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ForeignCurrencyTransactionGainLossUnrealized": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -5114000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -5114000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "Goodwill": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 213869000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 213869000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "GoodwillForeignCurrencyTranslationGainLoss": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -53000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -53000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncomeLossFromContinuingOperationsBeforeIncomeTaxesDomestic": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 22517000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 22517000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 164080000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 164080000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncomeLossFromContinuingOperationsBeforeIncomeTaxesForeign": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 141563000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 141563000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 164080000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 164080000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncomeLossFromEquityMethodInvestments": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1239000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1239000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncomeLossFromEquityMethodInvestmentsNetOfDividendsOrDistributions": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1239000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1239000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncomeTaxExpenseBenefit": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 31109000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 31109000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncomeTaxesPaidNet": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 38084000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 38084000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInAccountsAndNotesReceivable": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 109681000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 109681000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInAccruedIncomeTaxesPayable": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 342000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 342000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInContractWithCustomerLiability": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 14365000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 14365000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncrementalCommonSharesAttributableToShareBasedPaymentArrangements": {
+    "units": {
+     "shares": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 189056,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 189056,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IntangibleAssetsNetExcludingGoodwill": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 68883000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 68883000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "InterestCostsCapitalized": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2023"
+      }
+     ]
+    }
+   },
+   "InterestExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 66273000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 66273000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "InterestPaidNet": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 61084000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 61084000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "InterestRateDerivativeAssetsAtFairValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 6706000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 6706000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "InventoryWriteDown": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 9234000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 9234000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "InvestmentIncomeInterest": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 4504000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 4504000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "InvestmentsInAffiliatesSubsidiariesAssociatesAndJointVentures": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 76289000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 76289000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "Land": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 26244000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 26244000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "LesseeOperatingLeaseLiabilityPaymentsDue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 34571000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 34571000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "LesseeOperatingLeaseLiabilityPaymentsDueAfterYearFive": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 4290000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 4290000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "LesseeOperatingLeaseLiabilityPaymentsDueNextTwelveMonths": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 11661000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 11661000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "LesseeOperatingLeaseLiabilityPaymentsDueYearFive": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 2498000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 2498000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "LesseeOperatingLeaseLiabilityPaymentsDueYearFour": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 3405000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 3405000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "LesseeOperatingLeaseLiabilityPaymentsDueYearThree": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 5085000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 5085000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "LesseeOperatingLeaseLiabilityPaymentsDueYearTwo": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 7632000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 7632000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "LesseeOperatingLeaseLiabilityUndiscountedExcessAmount": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 4913000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 4913000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "Liabilities": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 1458316000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1458316000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "LiabilitiesAndStockholdersEquity": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 2937239000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 2937239000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "LiabilitiesCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 711358000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 711358000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "LiabilitiesFairValueDisclosure": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 21000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 21000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "LineOfCredit": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 530000000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 530000000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "LineOfCreditFacilityFairValueOfAmountOutstanding": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 125000000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 125000000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "LineOfCreditFacilityRemainingBorrowingCapacity": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 200000000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 200000000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "LongTermDebtCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "LongTermDebtNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 617364000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 617364000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "MachineryAndEquipmentGross": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 693868000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 693868000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "MinorityInterest": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 41716000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 41716000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "MinorityInterestDecreaseFromDistributionsToNoncontrollingInterestHolders": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 10572000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 10572000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "NetCashProvidedByUsedInFinancingActivities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 125675000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 125675000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "NetCashProvidedByUsedInInvestingActivities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -59999000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -59999000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "NetCashProvidedByUsedInOperatingActivities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -74632000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -74632000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "NetIncomeLoss": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 119598000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 119598000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "NetIncomeLossAttributableToNoncontrollingInterest": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 13373000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 13373000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "NetIncomeLossAttributableToParentDiluted": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 119598000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 119598000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "NoncurrentAssets": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 648632000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 648632000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "NumberOfCountriesInWhichEntityOperates": {
+    "units": {
+     "pure": [
+      {
+       "end": "2024-03-31",
+       "val": 30,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 30,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "OperatingIncomeLoss": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 222009000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 222009000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OperatingLeaseCost": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 22497000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 22497000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OperatingLeaseExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2023"
+      }
+     ]
+    }
+   },
+   "OperatingLeaseLiability": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 29658000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 29658000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OperatingLeaseLiabilityCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 10356000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 10356000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OperatingLeaseLiabilityNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 19302000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 19302000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OperatingLeasePayments": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 13898000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 13898000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OperatingLeaseRightOfUseAsset": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 32510000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 32510000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OperatingLeaseWeightedAverageDiscountRatePercent": {
+    "units": {
+     "pure": [
+      {
+       "end": "2024-03-31",
+       "val": 0.061,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 0.061,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherAssetsCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 93655000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 93655000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherAssetsNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 50229000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 50229000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherCommitment": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 102000000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 102000000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "OtherComprehensiveIncomeForeignCurrencyTransactionAndTranslationGainLossArisingDuringPeriodNetOfTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -1531000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -1531000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherComprehensiveIncomeLossNetOfTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -5477000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -5477000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherComprehensiveIncomeLossPensionAndOtherPostretirementBenefitPlansAdjustmentNetOfTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -1666000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -1666000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherComprehensiveIncomeLossTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -1056000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -1056000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherInventory": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 193518000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 193518000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherLiabilitiesNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 27902000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 27902000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherNoncashIncomeExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -1001000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -1001000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherNonoperatingIncomeExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 3084000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 3084000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherNonrecurringIncome": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2023"
+      }
+     ]
+    }
+   },
+   "PaymentsForRepurchaseOfCommonStock": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 4744000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 4744000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "PaymentsForRestructuring": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1181000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1181000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "PaymentsOfDividendsCommonStock": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 78402000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 78402000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "PaymentsOfDividendsMinorityInterest": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 10572000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 10572000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "PaymentsToAcquireBusinessesNetOfCashAcquired": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2023"
+      }
+     ]
+    }
+   },
+   "PaymentsToAcquirePropertyPlantAndEquipment": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 66013000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 66013000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "PensionAndOtherPostretirementBenefitExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 4300000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 4300000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "PensionAndOtherPostretirementDefinedBenefitPlansLiabilitiesNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 43251000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 43251000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "PreferredStockSharesAuthorized": {
+    "units": {
+     "shares": [
+      {
+       "end": "2024-03-31",
+       "val": 5000000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 5000000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "PreferredStockSharesOutstanding": {
+    "units": {
+     "shares": [
+      {
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "PreferredStockValue": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "PrepaidTaxes": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 19484000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 19484000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ProceedsFromIssuanceOfLongTermDebt": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ProceedsFromPaymentsForOtherFinancingActivities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -3607000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -3607000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ProceedsFromRepaymentsOfShortTermDebt": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 223000000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 223000000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ProceedsFromSaleOfPropertyPlantAndEquipment": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2257000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2257000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ProfitLoss": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 132971000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 132971000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "PropertyPlantAndEquipmentGross": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 1044081000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1044081000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "PropertyPlantAndEquipmentNet": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 365880000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 365880000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ProvisionForLoanLeaseAndOtherLosses": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 14090000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 14090000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "RepaymentsOfLongTermDebt": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "RestrictedCash": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "RestructuringCharges": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 3523000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 3523000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "RestructuringCosts": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1434000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1434000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "RestructuringReserve": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 253000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 253000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "RestructuringSettlementAndImpairmentProvisions": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 3523000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 3523000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "RetainedEarningsAccumulatedDeficit": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 1173196000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1173196000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "RevenueFromContractWithCustomerExcludingAssessedTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2721644000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2721644000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "RevenuesExcludingInterestAndDividends": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2748573000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 2748573000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "RightOfUseAssetObtainedInExchangeForOperatingLeaseLiability": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 8507000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 8507000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "SellingGeneralAndAdministrativeExpense": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 310566000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 310566000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ShareBasedCompensation": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 12063000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 12063000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ShareBasedCompensationArrangementByShareBasedPaymentAwardNumberOfSharesAuthorized": {
+    "units": {
+     "shares": [
+      {
+       "end": "2024-03-31",
+       "val": 1250000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1250000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "ShortTermBorrowings": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 417217000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 417217000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ShortTermDebtWeightedAverageInterestRate": {
+    "units": {
+     "pure": [
+      {
+       "end": "2024-03-31",
+       "val": 0.067,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 0.067,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "SignificantChangeInUnrecognizedTaxBenefitsIsReasonablyPossibleAmountOfUnrecordedBenefit": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 800000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 800000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "StockholdersEquity": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 1437207000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1437207000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 1478923000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1478923000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "StockIssuedDuringPeriodSharesShareBasedCompensation": {
+    "units": {
+     "shares": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 118047,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 118047,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "StockRepurchasedAndRetiredDuringPeriodShares": {
+    "units": {
+     "shares": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 100000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 100000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "StockRepurchasedDuringPeriodValue": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1373000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 1373000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "StockRepurchaseProgramAuthorizedAmount1": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 100000000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "StockRepurchaseProgramRemainingAuthorizedRepurchaseAmount1": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 95000000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 95000000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "TaxAdjustmentsSettlementsAndUnusualProvisions": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "TradingSecurities": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 12409000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 12409000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "UnrealizedGainLossOnForeignCurrencyDerivativesNetBeforeTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 365000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 365000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "UnrecognizedTaxBenefits": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 1070000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1070000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "UnrecognizedTaxBenefitsDecreasesResultingFromForeignCurrencyTranslation": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 43000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 43000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "UnrecognizedTaxBenefitsDecreasesResultingFromSettlementsWithTaxingAuthorities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 311000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 311000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "UnrecognizedTaxBenefitsIncreasesResultingFromCurrentPeriodTaxPositions": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 65000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 65000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "UnrecognizedTaxBenefitsIncreasesResultingFromPriorPeriodTaxPositions": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "UnrecognizedTaxBenefitsReductionsResultingFromLapseOfApplicableStatuteOfLimitations": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 56000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 56000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "UnrecognizedTaxBenefitsThatWouldImpactEffectiveTaxRate": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 1100000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1100000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   },
+   "WeightedAverageNumberOfDilutedSharesOutstanding": {
+    "units": {
+     "shares": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 25040914,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 25040914,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "WeightedAverageNumberOfSharesOutstandingBasic": {
+    "units": {
+     "shares": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 24851858,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 24851858,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherComprehensiveIncomeLossReclassificationAdjustmentFromAOCIPensionAndOtherPostretirementBenefitPlansNetOfTax": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -1666000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": -1666000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "ProceedsFromSalesOfBusinessAffiliateAndProductiveAssets": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 3757000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 3757000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AccountsPayableCurrentAndNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 108727000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 108727000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AccountsPayableOtherCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 1621000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 1621000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "AccruedLiabilitiesAndOtherLiabilities": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 109015000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 109015000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "DeferredTaxAssetsOperatingLossCarryforwards": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 4143000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 4143000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "EffectiveIncomeTaxRateReconciliationTaxSettlements": {
+    "units": {
+     "pure": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 0,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInAccountsPayable": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 20806000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 20806000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInAccruedLiabilitiesAndOtherOperatingLiabilities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 8414000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 8414000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInInventories": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 236243000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 236243000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "IncreaseDecreaseInOtherOperatingAssets": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 768000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 768000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "OtherReceivables": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 5385000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 5385000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "TaxCreditCarryforwardAmount": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 8196000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "end": "2024-03-31",
+       "val": 8196000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   },
+   "SegmentExpenditureAdditionToLongLivedAssets": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 66013000,
+       "accn": "0000102037-24-000014",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2024-05-29"
+      },
+      {
+       "start": "2023-04-01",
+       "end": "2024-03-31",
+       "val": 66013000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21"
+      }
+     ]
+    }
+   }
+  },
+  "srt": {
+   "StockRepurchaseProgramAuthorizedAmount1": {
+    "units": {
+     "USD": [
+      {
+       "end": "2024-03-31",
+       "val": 100000000,
+       "accn": "0000102037-25-000017",
+       "fy": 2024,
+       "fp": "FY",
+       "form": "10-K/A",
+       "filed": "2025-04-21",
+       "frame": "CY2024Q1I"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

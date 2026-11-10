@@ -520,8 +520,10 @@ folder (as a link to the synced Drive copy).
 The score is produced on the operator's machine and lands like any other change. The basis is TOTAL
 return since 2026-10-26 (ruling B, §j), so the run needs `TIINGO_API_KEY`.
 
-**When.** Monthly, and on the first close after a ledger row matures. VRRM matures **2026-12-14**,
-and it is the first outcome the spread will ever carry.
+**When.** Monthly, and on the first close after a ledger row matures. VRRM matures **2026-12-15**
+(its corrected entry, 4.44 on 2026-06-18, + 180 days; RF-D7), and it is the first outcome the
+spread will ever carry. That holds once `R-VRRM-screen2-20260617` is in the committed ledger
+(`vinci ledger` lists it); without it the sealed entry, 4.71 on 2026-06-17, matures 2026-12-14.
 
 1. **Where: a clean worktree of current `main`, wired to the primary's store.** The working price
    store `data/vinci.db` and the grouped-daily history `data/cache/polygon` live in the primary
@@ -558,11 +560,11 @@ and it is the first outcome the spread will ever carry.
 
    `--as-of YYYY-MM-DD` defaults to today. The run first refreshes prices, then scores, exports the
    snapshots and writes `data/snapshots/scoring_report.md`. It prints `spread=… pending=…`. Before
-   2026-12-14 no row has matured, so `pending` counts every ledger row.
+   2026-12-15 no row has matured, so `pending` counts every ledger row.
 4. **Mirror:** `$VENV/python frontend/build.py`.
 5. **Read the report before committing.** Its `Return basis:` line must read total return, with
    the price-return spread printed beside it. Check that the matured rows are the ones expected
-   for the date: VRRM on 2026-12-14, then IT and SMPL on 2027-01-16.
+   for the date: VRRM on 2026-12-15, then IT and SMPL on 2027-01-16.
 6. **Commit through the gate, then open a PR:**
 
    ```
