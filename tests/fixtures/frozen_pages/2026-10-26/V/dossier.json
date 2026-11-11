@@ -9640,301 +9640,861 @@
           "kind": "leading_indicator",
           "metric": "payments volume",
           "period": "fiscal second quarter 2026",
-          "value": "$3.7 trillion, up 9% year-over-year in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Payments volume grew 9% year-over-year in constant dollars to $3.7 trillion and processed transactions grew 9% year-over-year to $66 billion.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.7,
+              "currency": "$",
+              "scale": "e12",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "fc3dc71308c0605256fc3495025866d5823166b363b404da26fc5e2aecc90cb8",
+            "value_sha256": "1f7caf7d5095d8cb38e56d1ac6cd38fdd1ce8e7f4253e390136963034ee3c421"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "processed transactions",
           "period": "fiscal second quarter 2026",
-          "value": "$66 billion, up 9% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Payments volume grew 9% year-over-year in constant dollars to $3.7 trillion and processed transactions grew 9% year-over-year to $66 billion.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 66.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "fc3dc71308c0605256fc3495025866d5823166b363b404da26fc5e2aecc90cb8",
+            "value_sha256": "c127f7ccccb7d27a985b402fd0caf2dfecc9d355ae4c51a2289229727ca5f1bd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "value-added services share of net revenue and growth",
           "period": "fiscal second quarter 2026",
-          "value": "30% of our net revenue, growing at 25% plus in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "value-added services is an even bigger opportunity and has demonstrated its value as a key driver of our growth, now representing 30% of our net revenue, growing at 25% plus in constant dollars.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "5dab379ebc2e14c12d7ff16206bb534933ee2dc7456c454c0cf0729e786fb06f",
+            "value_sha256": "7aff350f86f3b35d010e2fe3c18eec09ed498ef7e773a02c78d00332d77d3061"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "commercial and money movement solutions revenue",
           "period": "fiscal second quarter 2026",
-          "value": "grew 24% in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Shifting to commercial and money movement solutions, where revenue grew 24% in constant dollars as we continue to reinforce the value of our offering with expanded reach and tailored solutions.",
-          "following_context": "Visa Direct, the largest money movement network globally, now has more than 18 billion endpoints. This vast network is helping us win new business and power more transactions. In Q2, we had 3.7 billion transactions, up 23% year-over-year.",
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "b8ea6fee28d507c212ccac0e8d961e6840c7c223d69caabe5ebdb4a5df6dbe44",
+            "value_sha256": "9f50ccf3989341a9eb009d832dff3428ab794706ecafba0f2bd08cf0ddd7a7dd"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Visa Direct endpoints",
           "period": "fiscal second quarter 2026",
-          "value": "more than 18 billion endpoints",
           "value_num": null,
           "unit": null,
-          "verbatim": "Visa Direct, the largest money movement network globally, now has more than 18 billion endpoints.",
-          "following_context": "This vast network is helping us win new business and power more transactions. In Q2, we had 3.7 billion transactions, up 23% year-over-year.",
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 18.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "3afa43d15beef2c8fa909f8c75deed8707b8860f2355f327a0eb8d566ff7fb93",
+            "value_sha256": "e5ff40356417ca5db1936fe681f781a901d3191975e86a2d00284c9985f1b1a5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Visa Direct transactions",
           "period": "fiscal second quarter 2026 (Q2)",
-          "value": "3.7 billion transactions, up 23% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q2, we had 3.7 billion transactions, up 23% year-over-year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.7,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 23.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "17757990a789058027b7d7a9e8b74fbb3cae9de46ddc9c557a90c347fc15cd40",
+            "value_sha256": "fee4bd21ae5bb31b9fab03f2779741178846f76fb13c82aab1cfea75f9f81cd9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "commercial payments volume growth",
           "period": "fiscal second quarter 2026",
-          "value": "11% payments volume growth in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving to commercial, where this quarter, we drove 11% payments volume growth in constant dollars with strength in our travel, fleet and premium business reward portfolios.",
-          "following_context": "Commercial cross-border volume now represents the highest percentage of both commercial volume and total cross-border volume in Visa's history.",
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "d96a47f4774e845e4d459aa69701f6fdd72e6bbbcab0801fa1e227966d95bb74",
+            "value_sha256": "66e5378527bfe036d9da5b4c04783ea6f2bbbd032d46044ebf5f37dbed99af85"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "network scale — seller locations, credentials, financial institution clients",
           "period": null,
-          "value": "more than 175 million seller locations, 5 billion credentials in 200 countries and territories with nearly 14,500 financial institution clients",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our network has enormous scale, more than 175 million seller locations, 5 billion credentials in 200 countries and territories with nearly 14,500 financial institution clients who have opted in to using this network.",
-          "following_context": "Payment security is only going to become more difficult and more valued. With our scale comes over 300 billion transactions annually, equating to an average of about 900 million transactions per day, and all of the data that comes with it. Visa has proven it knows how to manage transaction risk, identity risk and fraud, all enabled by this transaction data.",
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 175.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 14500.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "bb9219f7a5e9607c5993f4a6acd5d6aaf6ba4293b47a481e41f2240794db9ea1",
+            "value_sha256": "3c77c5d878e86099b49c9e0aebe32e3d4bbda37108ef6aa24ae6e69565f5c889"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "annual transactions",
           "period": null,
-          "value": "over 300 billion transactions annually, equating to an average of about 900 million transactions per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "With our scale comes over 300 billion transactions annually, equating to an average of about 900 million transactions per day, and all of the data that comes with it.",
-          "following_context": "Visa has proven it knows how to manage transaction risk, identity risk and fraud, all enabled by this transaction data.",
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 300.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 900.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "5a1f3e7f17bf213af1b37269a9f2c2497b45996bb3b18fd4a9353d996c78fe46",
+            "value_sha256": "470dc8a40288e86cb9d5aa902f19e139c933da1a37f33a44e76bc80df9df3f7b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "stablecoin card programs and payment volume growth",
           "period": null,
-          "value": "over 160 stablecoin card programs globally; payment volume up nearly 200% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "And we now have over 160 stablecoin card programs globally with key partners such as Rain, Reap and Bridge, and the payment volume continues to grow at a very strong rate, up nearly 200% year-over-year in",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 160.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q2 2026 Earnings Call, Apr 28, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "716472ad453253ea7d82877fbd462995744431acf8851fad6b7992ae2564b5f9",
+            "value_sha256": "5ada6c575bbe6c7833afd5061d7ed581a61963dcb44b802f313491d663a4dbd5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "net revenue",
           "period": "fiscal third quarter 2026",
-          "value": "$11.6 billion, up 14% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In our fiscal third quarter, net revenue was up 14% year-over-year to $11.6 billion, and EPS was up 11%, both ahead of expectations.",
-          "following_context": "Quarterly payments volume grew 10% year-over-year in constant dollars to cross $4 trillion, the first time in Visa's history, and processed transactions grew 10% year-over-year to $72 billion, reflecting strong and resilient consumer spending.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.6,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "759bdee43a013068edb407cb7f923523aa551a07bf13c43eca2420cfb4a1140e",
+            "value_sha256": "5127d6c0aaac4d456a9d2b652028fd34a6d9f0292b39f10b6ffb6ff16c8c1898"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "payments volume",
           "period": "fiscal third quarter 2026",
-          "value": "cross $4 trillion, grew 10% year-over-year in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quarterly payments volume grew 10% year-over-year in constant dollars to cross $4 trillion, the first time in Visa's history, and processed transactions grew 10% year-over-year to $72 billion, reflecting strong and resilient consumer spending.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": "$",
+              "scale": "e12",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "eaa07e7a7b514aa3fa21a837d8883fa1bba7c54094294bf7cdd911100b1fc287",
+            "value_sha256": "c41b8a94f58d0c798b849754ec66cba9acf676c6fe929905110b6f2de00bdad6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "processed transactions",
           "period": "fiscal third quarter 2026",
-          "value": "$72 billion, grew 10% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quarterly payments volume grew 10% year-over-year in constant dollars to cross $4 trillion, the first time in Visa's history, and processed transactions grew 10% year-over-year to $72 billion, reflecting strong and resilient consumer spending.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 72.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 2,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "eaa07e7a7b514aa3fa21a837d8883fa1bba7c54094294bf7cdd911100b1fc287",
+            "value_sha256": "c9e04acbae9330103fb7880e5344d439936ab2c6382ffa22a235006538acb8c4"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Net Promoter Score",
           "period": "annual global client engagement survey",
-          "value": "score of 76 for the third consecutive year",
           "value_num": null,
           "unit": null,
-          "verbatim": "For the third consecutive year, we received a score of 76 in our annual global client engagement survey, an enviable number in any industry.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 76.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 4,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "43ac0326b2ceb66fa471f069b2da720383f51f86d259a7b3462fcbab9074a697",
+            "value_sha256": "02e2ec81d11d152c3a6e5414085c81619e33d5f64f08b6e4b6a68f8801374868"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "credentials growth",
           "period": "fiscal third quarter 2026",
-          "value": "growing 8% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We see the strength of these relationships in our consumer and commercial and money movement solutions business with our credentials growing 8% year-over-year in the third quarter and our tokenized penetration nearing 60% of our e-commerce transactions globally.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 5,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "b8b6517706d716c062a5a261cc1a1cefe9fb2a461ffd7580bf9d7eedb463790a",
+            "value_sha256": "f7d2f49af5cb5c70ce0434dbcacc09bd3207cdf966e78d443821b13522ff6e31"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "tokenized penetration of e-commerce transactions",
           "period": "fiscal third quarter 2026",
-          "value": "nearing 60% of our e-commerce transactions globally",
           "value_num": null,
           "unit": null,
-          "verbatim": "We see the strength of these relationships in our consumer and commercial and money movement solutions business with our credentials growing 8% year-over-year in the third quarter and our tokenized penetration nearing 60% of our e-commerce transactions globally.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 5,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "b8b6517706d716c062a5a261cc1a1cefe9fb2a461ffd7580bf9d7eedb463790a",
+            "value_sha256": "786425835552d427f303933895d68bdb25695f638fa14dd2d0424ad297f9767a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Europe credentials growth",
           "period": "last 12 months",
-          "value": "grown credentials by more than 40 million in the last 12 months, which is over 70% faster than the annualized credentials growth from fiscal year 2019 to 2024",
           "value_num": null,
           "unit": null,
-          "verbatim": "First, in Europe, through portfolio migrations and organic expansion, we have grown credentials by more than 40 million in the last 12 months, which is over 70% faster than the annualized credentials growth we saw in the region from fiscal year 2019 to 2024.",
-          "following_context": "And in the next several years, we expect over 30 million more credentials from wins alone in Europe. An example from this quarter is NatWest, where we have won the entire consumer credit portfolio of their retail bank, demonstrating the strength of our strategic partnership that has been restored over the past 5 years.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 2019.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2024.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 6,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "28008849ad277dc6c45b1cc3f2399773d76975ae041712d8607feb20e3767e9b",
+            "value_sha256": "f01b5eed3db5da9bb8ae31863f1cb010472977edc5f05980ea9dddb3f4d6ede0"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Colombia processing penetration",
           "period": null,
-          "value": "now above 90% (was in the single digits 5 years ago)",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our processing penetration in the country, which was in the single digits 5 years ago, is now above 90%.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 90.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 7,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "e1c2562ea29145f748197551bade448fbadc50e946683ff4a07102124f2a664f",
+            "value_sha256": "da6b4b931eda63ea5c6fc83ec56cc564a34ef18bcb6f9296050b50195c081ebf"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "commercial and money movement solutions revenue growth",
           "period": "fiscal third quarter 2026",
-          "value": "grew 17% year-over-year with 13% year-over-year commercial payments volume growth, both in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our commercial and money movement solutions revenue grew 17% year-over-year with 13% year-over-year commercial payments volume growth, both in constant dollars, as our product development continued to help us win business.",
-          "following_context": "For example, in Europe, we signed an agreement with Corpay to bring our Fleet 2.0 solution to their fleet card platform, supporting new opportunities across the region with capabilities such as EMV chips, digital wallet provisioning, contactless payments, rich transaction data and global acceptance.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 9,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "6fcf956a421ddfd104b180b93f36dfe95e30e821fbfee372ee3221faad62ab38",
+            "value_sha256": "5496c38eb7b46d981973b4153fb690439fcf524cd88dbbe7e53ead1264eb13a7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Visa Direct transactions",
           "period": "fiscal third quarter 2026",
-          "value": "$4 billion, grew 21% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In money movement, Visa Direct transactions grew 21% year-over-year this quarter to $4 billion.",
-          "following_context": "Expanding relationships to activate new use cases is one key way we enable growth for Visa Direct. For years, DoorDash, the largest food and grocery delivery platform in North America, has been utilizing Visa Direct for Dasher payouts in the U.S., Australia and Canada as well as Visa virtual commercial cards to enable Dashers to pay for customer orders at physical locations. This past quarter, we enabled Visa Direct-to-card for DoorDash's Crimson platform, a dedicated personal banking and rewards program built specifically for Dashers who receive a Visa debit card when they sign up. With all of these examples, it's clear that our people, products and technology are resonating and building trust with our clients globally, positioning us for the future.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 21.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 11,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "69ebef5a1ef2dbb6b0e166409bc3f8d895148b0965b376d13ae925863c16989a",
+            "value_sha256": "bc974dfe7445599289dfe5cfc5e27a7562060ab2292d0840f9391963cf94a949"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "agentic tool chain productivity — code commits, requirement definition, feature development",
           "period": null,
-          "value": "80% more code commits and 80% plus improvement in requirement definition from 30 days to 5 days, which has translated to 65% plus faster feature development",
           "value_num": null,
           "unit": null,
-          "verbatim": "And the results are meaningful for those teams that are using the agentic tool chain with 80% more code commits and 80% plus improvement in requirement definition from 30 days to 5 days, which has translated to 65% plus faster feature development.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 65.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 14,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "521d5b83fe804c1c66e6daf6bc931f79b2cbab2cd013044e5b657b91be67b148",
+            "value_sha256": "21ea589b7a8ef39d4f3022490117e7a1a8fe6dbbcb1bf145b00876b0e4496303"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI-powered applications and product releases",
           "period": "last 12 months",
-          "value": "more than 150 AI-powered applications; more than 300 major product releases over the last 12 months",
           "value_num": null,
           "unit": null,
-          "verbatim": "We now have more than 150 AI-powered applications. And over the last 12 months, we have shipped more than 300 major product releases.",
-          "following_context": "Changes in the way we work and where we invest also impact how we operate the company. Today, we announced that we are eliminating roles, with the majority being in our technology and product teams, to ensure that we are continuing to position Visa for future growth. Another important area of product development has been in our value-added services, which grew revenue by 34% in constant dollars in Q3 with the vast majority of the revenue linked to transactions, cards and accounts.",
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 150.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 300.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 20,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "692c597cb46b838d95a6ffdf40722cc80742bae8d8b6674bd3a3c66f2dcfcd22",
+            "value_sha256": "24b9806b2e961fceaf2ffc132fdb011fcec79f3d404c9c52636c57dcd3e573f4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "value-added services revenue growth",
           "period": "fiscal third quarter 2026 (Q3)",
-          "value": "grew revenue by 34% in constant dollars",
           "value_num": null,
           "unit": null,
-          "verbatim": "Another important area of product development has been in our value-added services, which grew revenue by 34% in constant dollars in Q3 with the vast majority of the revenue linked to transactions, cards and accounts.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 34.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 20,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "184e3dc10ddf726b7b46d0c3558e5aa4e6fff3d20907fa9df37ab37b0d860225",
+            "value_sha256": "9b154b71a42eb17a33585b2da911ff9548c5aeef444699772d1fd32da4e84a81"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Subscription Manager and Stop Payment Services credentials enrolled",
           "period": null,
-          "value": "2 billion credentials enrolled",
           "value_num": null,
           "unit": null,
-          "verbatim": "For example, 2 of our most popular network products, Subscription Manager and Stop Payment Services, which help cardholders view and decide where their card is on file for a subscription or recurring payment, now have 2 billion credentials enrolled.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 21,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "32d38b616577e958b1d5baddb0e3bf68b3f4972b6f03fe6ce334a0286556eb78",
+            "value_sha256": "7f3d2b3ead524adb6744ae9087fd2e4a9b8b37315d96c487257cd832f91aec02"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Unified Checkout sellers and acquirers enabled",
           "period": null,
-          "value": "Over 4,500 sellers and acquirers globally have enabled this",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over 4,500 sellers and acquirers globally have enabled this with more to come, including one of our largest acquirers in the U.K.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4500.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Visa Inc., Q3 2026 Earnings Call, Jul 28, 2026.rtf",
+            "transcript_sha256": "56d60942b1d50b732d30f1c614bc983afd962e691dff0ed45f8f06132e9fbe0f",
+            "paragraph": 23,
+            "speaker": "Ryan M. McInerney",
+            "quote_sha256": "703f1c5b803bb75c029b2ace055cc84218515e139b46cbe5c26920975af4e9c1",
+            "value_sha256": "655485e4197ee55c1853c8afbdbfe80d66365276e0389e362e81218101016920"
+          }
         }
       ],
       "qa_flags": [

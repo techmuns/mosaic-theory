@@ -197,7 +197,15 @@ verdict placement.
   - it is **extracted, not copied**: the workbook FILE never enters git or the bucket.
 
   Still never published: credentials, `*.db`, PII, and an article's or transcript's text beyond
-  short verbatim quotes.
+  short verbatim quotes. **For a transcript, "short" is a number** *(operator ruling 2026-11-10,
+  RG-D19; `docs/records/2026-11-10-driver-facts-page-pass.md`)*: **NO PUBLIC FIELD QUOTES MORE
+  THAN 12 CONSECUTIVE TRANSCRIPT WORDS, AND A DRIVER ROW QUOTES NONE.** A transcript driver row
+  publishes its FACT (`figures`, `value_status`) and its LOCATOR (the call, its file's sha256, the
+  paragraph, and the hashes of its quote and its stated value). Its words are in the operator's
+  private evidence store (`vinci/dossier/driver_evidence.py`), filed before the page is written;
+  a build refuses a page whose words it cannot file. `tests/test_public_transcript_text.py` holds
+  the rule on every committed page, mirror and test fixture. CIQ Key Developments' text is CIQ's
+  own, not a transcript, and is a separate question.
 - **Execution is human-authorized and paper-gated** (when execution is built): nothing places a trade
   without an explicit, deliberate human action; default is paper; no code path reaches a live broker
   autonomously. State this in any execution code from its first line.
@@ -292,7 +300,9 @@ verdict placement.
      (`dossier.json` + the web). Provenance — quotes, accessions, agreement terms, amendment chains
      — is NOT bulk and still prints in full. Adding a `ds-bulk` is a decision to make the PDF
      incomplete for that block: take it deliberately, and record it here.
-  3. **JSON** — machine-complete, the full record behind every curated value.
+  3. **JSON** — machine-complete, the full record behind every curated value. ONE EXCEPTION: a
+     transcript row's words are in the private evidence store, not the JSON (the transcript rule,
+     Security & secrets). The JSON holds the row's fact and the locator that finds them.
   The **Financial-Summary appendix is decision data → it STAYS in print** (it is not provenance).
   Curating never deletes a fact — a moved fact is reachable in the expanded web on-demand tier, the
   printed PDF, or the JSON. (Discipline/methodology language lives in `source_ref`s + JSON.)

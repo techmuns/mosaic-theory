@@ -16,6 +16,7 @@ from typing import Any
 
 import pytest
 
+from tests.stripped_pages import replayable_text
 from vinci.evals import compare as cm
 from vinci.evals import metrics as mt
 from vinci.evals import replay as rp
@@ -158,7 +159,7 @@ def test_a_gap_the_page_types_a_change_may_be_raised_as_a_risk(
 # ------------------------------------------------------- undefined off its pages, never zero
 
 def test_m_gap_is_undefined_off_the_frozen_pages() -> None:
-    nflx = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    nflx = json.loads(replayable_text("NFLX"))
     ctx = mt.PageContext(page=nflx, mech=pre_synthesis_mech(nflx))
     u = Unit("key_unknowns:0", "key_unknowns", "Segment EBITDA is NOT disclosed — a risk.")
     assert "M-GAP" not in mt.score_units([u], ctx)
@@ -306,7 +307,7 @@ GATED = ["bleed", "trailing-only", "pe-percentile-blocked"]
 
 @pytest.fixture(scope="module")
 def nflx() -> dict[str, Any]:
-    page: dict[str, Any] = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    page: dict[str, Any] = json.loads(replayable_text("NFLX"))
     return page
 
 

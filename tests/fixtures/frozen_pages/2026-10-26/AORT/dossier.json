@@ -9407,325 +9407,704 @@
           "kind": "leading_indicator",
           "metric": "constant currency revenue growth (total)",
           "period": "Q1 2026",
-          "value": "12%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the quarter, we delivered constant currency revenue growth of 12% and adjusted EBITDA growth of 26% year-over-year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "42a77390e6cb322033ecfe924c519731a352e7369ef2076cc961663acbdf6d09",
+            "value_sha256": "234d0e73855ae7bf477734cbd4c1e50d56d5d00af3edb4bc8ddbdf44e8d5c8de"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "stent graft revenue growth (constant currency)",
           "period": "Q1 2026",
-          "value": "10%",
           "value_num": null,
           "unit": null,
-          "verbatim": "From a product category perspective, stent graft revenues grew 10% on a constant currency basis in the first quarter compared to the same period last year.",
-          "following_context": "Year-over-year constant currency growth fell below our expectations due to lower-than-expected AMDS set sales in the U.S. as well as softer-than-expected performance internationally, particularly in the Middle East.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "511e55eaa1799be8c7a41cfdba105be898e58dada1c77d95b07eb5b2051c881d",
+            "value_sha256": "3ccce1f4da948035fd36a399576a50a5248ddc02dd008f3c3668df57c0aa75b5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "On-X revenue growth (constant currency)",
           "period": "Q1 2026",
-          "value": "17%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Meanwhile, our Q1 On-X revenue was 17% year-over-year growth on a constant currency basis.",
-          "following_context": "This growth was driven by further global market share gains and continued early traction in our new $100 million U.S. market opportunity unlocked by recently published data, which demonstrate improved outcomes with mechanical valves versus bioprosthetic valves for younger patients.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "88e4b155f4894cda19ada230a2d590e2eff1ef2c38f2dab91ab8708189ea0274",
+            "value_sha256": "9ff68d1fb292cbc96dca1d6f63353538176ff2bd5ec29c468ffa45da65a135fc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "tissue processing revenue growth (constant currency)",
           "period": "Q1 2026",
-          "value": "23%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Tissue processing revenues increased 23% year-over-year on a constant currency basis in the first quarter as demand for our products remained strong and tissue volumes normalized year-over-year following the cybersecurity incident in late '24.",
-          "following_context": "Q1 results were slightly ahead of our expectations of roughly $24 million per quarter for that business.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 23.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "1260c2db45aec9efebe67d3e886ddd4342bc4477f3931d953a187a15ab7b5321",
+            "value_sha256": "86caccaa0d5f64436e62af33d85447ae6de54c5e48ae30c0d90339f30f2c1a82"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "BioGlue revenue (constant currency)",
           "period": "Q1 2026",
-          "value": "relatively flat",
           "value_num": null,
           "unit": null,
-          "verbatim": "Lastly, BioGlue was relatively flat on a constant currency basis compared to the same period last year.",
-          "following_context": "While this performance was slightly lower than our mid-single-digit growth expectation contemplated in our previously communicated full year revenue guidance, it falls within the range of normal quarter-to-quarter growth variability due to significant amount of stocking distributor business in that product line.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "7138f1ddc12b731d1a8a11210ab4f225c5f743ef4c6e5ff63a40e83456168350",
+            "value_sha256": "588a3f18d9796912faeb9bc79378b94f989a8be7cbe45f5e2e49c757bd9aa0d8"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Asia Pacific revenue growth",
           "period": "Q1 2026",
-          "value": "6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "On a regional basis, revenues in Asia Pacific increased 6%, North America 23%, EMEA increased 5% and Latin America decreased 23%, all compared to the first quarter of 2025.",
-          "following_context": "International growth was below what we typically see from that part of the business. EMEA underperformance was driven by the stent graft-related factors that Pat discussed earlier, while underperformance across APAC and LatAm was driven primarily due to quarterly fluctuations in distributor ordering patterns, which we expect to normalize over the course of the year.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "15b6f9357d3420a266397b4165046dd2e5cf4c4f7af5b8695d27b15702ff5328",
+            "value_sha256": "d9d689c786a2ae27b96d59f2623ccce3b62e32733f1c306c0df59ae4b10b35a3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North America revenue growth",
           "period": "Q1 2026",
-          "value": "23%",
           "value_num": null,
           "unit": null,
-          "verbatim": "On a regional basis, revenues in Asia Pacific increased 6%, North America 23%, EMEA increased 5% and Latin America decreased 23%, all compared to the first quarter of 2025.",
-          "following_context": "International growth was below what we typically see from that part of the business. EMEA underperformance was driven by the stent graft-related factors that Pat discussed earlier, while underperformance across APAC and LatAm was driven primarily due to quarterly fluctuations in distributor ordering patterns, which we expect to normalize over the course of the year.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its quote states 23 2 times, read differently",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "15b6f9357d3420a266397b4165046dd2e5cf4c4f7af5b8695d27b15702ff5328",
+            "value_sha256": "86caccaa0d5f64436e62af33d85447ae6de54c5e48ae30c0d90339f30f2c1a82"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EMEA revenue growth",
           "period": "Q1 2026",
-          "value": "5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "On a regional basis, revenues in Asia Pacific increased 6%, North America 23%, EMEA increased 5% and Latin America decreased 23%, all compared to the first quarter of 2025.",
-          "following_context": "International growth was below what we typically see from that part of the business. EMEA underperformance was driven by the stent graft-related factors that Pat discussed earlier, while underperformance across APAC and LatAm was driven primarily due to quarterly fluctuations in distributor ordering patterns, which we expect to normalize over the course of the year.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "15b6f9357d3420a266397b4165046dd2e5cf4c4f7af5b8695d27b15702ff5328",
+            "value_sha256": "d1ce334b6a7f364b1e97ebb9e661f6d4cf6e20aa741aba4b8f198417aea18326"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Latin America revenue growth",
           "period": "Q1 2026",
-          "value": "decreased 23%",
           "value_num": null,
           "unit": null,
-          "verbatim": "On a regional basis, revenues in Asia Pacific increased 6%, North America 23%, EMEA increased 5% and Latin America decreased 23%, all compared to the first quarter of 2025.",
-          "following_context": "International growth was below what we typically see from that part of the business. EMEA underperformance was driven by the stent graft-related factors that Pat discussed earlier, while underperformance across APAC and LatAm was driven primarily due to quarterly fluctuations in distributor ordering patterns, which we expect to normalize over the course of the year.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 23.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "15b6f9357d3420a266397b4165046dd2e5cf4c4f7af5b8695d27b15702ff5328",
+            "value_sha256": "277240d1b96172cbb2cc8dcfb47645ee0b53f8ad2d62a0b096b48b0d77fe5233"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "On-X market share gains",
           "period": "Q1 2026",
-          "value": "further global market share gains",
           "value_num": null,
           "unit": null,
-          "verbatim": "This growth was driven by further global market share gains and continued early traction in our new $100 million U.S. market opportunity unlocked by recently published data, which demonstrate improved outcomes with mechanical valves versus bioprosthetic valves for younger patients.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "62decb5b97fd2656499069d336ef8db57e9529e98426e79b9215fba52d91f5e3",
+            "value_sha256": "a0e30b6ce2283eaedd77b450d1d770e625fbff12ad5548499278ff80c4664cbc"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Aortic Arch portfolio completeness",
           "period": "Q1 2026",
-          "value": "the only company globally with a complete portfolio of Aortic Arch solutions",
           "value_num": null,
           "unit": null,
-          "verbatim": "This technology, if acquired alongside AMDS and our Arcevo LSA will position us at the forefront of this segment as the only company globally with a complete portfolio of Aortic Arch solutions.",
-          "following_context": "And importantly, NEXUS is the platform technology, not just a single product. It's supported by additional 3 PMA programs in development that we expect to further expand and solidify our leadership in the Aortic Arch market over time.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "f39d3f4924530b08e06ffe0181730c7b05fbf57516260a59445deba131842509",
+            "value_sha256": "ceea74ec750039d25121cd5891b3083784fb7ca329dccab50b05a7c5c4971654"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ARTIZEN trial patients enrolled",
           "period": "Q1 2026",
-          "value": "26 patients enrolled",
           "value_num": null,
           "unit": null,
-          "verbatim": "We now have 26 patients enrolled in the trial, which is a nonrandomized clinical trial consisting of 132 patients in the U.S. and Europe and up to 30 centers for treatment for aortic dissection and aneurysm in the arch.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 26.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "3b598ce3a3e2361bb3a238990cb8d234d0a9a1f08f5726e0e78234ce3cd3a3bf",
+            "value_sha256": "bb7c0e00a8a419c994f9a0f3d2f9055a4e845f73c828f3f5d1251d4d1b09dddd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total adjusted constant currency revenue growth (full year)",
           "period": "Full year 2025",
-          "value": "13%",
           "value_num": null,
           "unit": null,
-          "verbatim": "I'm pleased to report that for the full year of 2025, total adjusted constant currency revenue growth was 13% and adjusted EBITDA growth was 26% year-over-year.",
-          "following_context": "This enabled us to deliver positive free cash flow for the year while also investing significantly in future growth and operational excellence. Our progress through the year culminated in a strong fourth quarter with performance driven by continued growth across our entire product portfolio led by stent grafts and On-X.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "416e286d4b07d11e58c67ca97d52e98b2c9edee98074fa18af7840e1e7b59265",
+            "value_sha256": "1137d6133e74fa34175c38d9e45e9baa1ae4cffef0209f2385e93ee01c90bb8e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "stent graft revenue growth (constant currency)",
           "period": "Q4 2025",
-          "value": "36%",
           "value_num": null,
           "unit": null,
-          "verbatim": "With that in mind, from a product category perspective, stent grafts grew 36% on a constant currency basis in the fourth quarter compared to the same period last year.",
-          "following_context": "Year-over-year growth was again driven in large part by AMDS in the U.S., continued strong growth in stent grafts internationally as well as an easier year-over-year comp due to last year's cyber incident. We see our stent graft portfolio as a foundational component of our growth, and we are encouraged by the continued strong results across the portfolio. Looking ahead, we intend to replicate our proven strategy by bringing additional stent graft products that are already generating revenue in Europe to the U.S. and Japan, which we believe will unlock further meaningful expansion of our stent graft total addressable market.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 36.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "f0a1c80e5aea6f59c652f3f8acc469becf1d7bd2030364422acace8d5bac9b0c",
+            "value_sha256": "16c0f5434ed3ac925b7cc3a45bcdfac1f6cce7a7574aa184469f81936b7fe428"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "On-X revenue growth (constant currency)",
           "period": "Q4 2025",
-          "value": "24%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Also in Q4, our On-X revenues grew 24% year-over-year on a constant currency basis.",
-          "following_context": "Growth was driven by our continued global market share gains and early traction in our new $100 million U.S. market opportunity unlocked by recently published data. As previously discussed, the clinical evidence supported by two leading journals demonstrated improved outcomes with mechanical versus bioprosthetic valves for younger patients. As a result, we maintain a strong conviction that On-X is the best aortic valve on the market for patients under the age of 65 and that we'll continue to take market share worldwide in that product line.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "82682686673c526aceec0a3b6ad7f6b5904fea607a254eb6d20b77a21ee6e695",
+            "value_sha256": "80a49661b4c9e3a4b51d72a4c888a7f0702cbf057df09bc1f5621f02469e1402"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "tissue processing revenue growth (constant currency)",
           "period": "Q4 2025",
-          "value": "6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q4, tissue processing revenue, which was the category most heavily impacted by last year's cybersecurity event, increased 6% year-over-year on a constant currency basis.",
-          "following_context": "Lastly, BioGlue was relatively flat on a constant currency basis compared to the same period last year. As we have discussed previously, we expect to see some variability in the growth rates of BioGlue quarter-over-quarter, driven by the significant amount of stocking distributor business in that product line.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "cc0e1730100d9742c6cbf1e6c7030185246948b7f3762ca20e7a6c0a16563f3d",
+            "value_sha256": "d9d689c786a2ae27b96d59f2623ccce3b62e32733f1c306c0df59ae4b10b35a3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "BioGlue revenue (constant currency)",
           "period": "Q4 2025",
-          "value": "relatively flat",
           "value_num": null,
           "unit": null,
-          "verbatim": "Lastly, BioGlue was relatively flat on a constant currency basis compared to the same period last year.",
-          "following_context": "While this performance was slightly lower than our mid-single-digit growth expectation contemplated in our previously communicated full year revenue guidance, it falls within the range of normal quarter-to-quarter growth variability due to significant amount of stocking distributor business in that product line.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "7138f1ddc12b731d1a8a11210ab4f225c5f743ef4c6e5ff63a40e83456168350",
+            "value_sha256": "588a3f18d9796912faeb9bc79378b94f989a8be7cbe45f5e2e49c757bd9aa0d8"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "On-X market share gains",
           "period": "Q4 2025",
-          "value": "continued global market share gains",
           "value_num": null,
           "unit": null,
-          "verbatim": "Growth was driven by our continued global market share gains and early traction in our new $100 million U.S. market opportunity unlocked by recently published data.",
-          "following_context": "As previously discussed, the clinical evidence supported by two leading journals demonstrated improved outcomes with mechanical versus bioprosthetic valves for younger patients. As a result, we maintain a strong conviction that On-X is the best aortic valve on the market for patients under the age of 65 and that we'll continue to take market share worldwide in that product line.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "546ca06c59425a25c9abcd6692f1810c5d284430688b1f2e751a07d6a431e3d2",
+            "value_sha256": "98a44c045c0b81b1d235c37d1f42e35fc6d13121aa2ac1700cec419d68f1045b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ARTIZEN trial patients enrolled",
           "period": "Q4 2025",
-          "value": "8 patients enrolled",
           "value_num": null,
           "unit": null,
-          "verbatim": "We now have 8 patients enrolled in our trial, which is a nonrandomized clinical trial consisting of 132 patients in the U.S. and Europe and up to 30 centers for treatment of aortic dissection and aneurysm.",
-          "following_context": "The combined primary safety and efficacy endpoints assess the reduction in all-cause mortality, new permanent disabling stroke, new permanent paraplegia or paraparesis, unanticipated aortic reoperation in the treated segment and subclavian artery occlusion. We anticipate completing the full enrollment in mid-'27. We are optimistic that the trial will be successful, supported by the positive clinical results from our current generation frozen elephant trunk, E-vita Open Neo. Where outside the U.S. following our 1-year follow-up period, we're assuming that the trial meets its endpoints, we anticipate FDA approval for our Arcevo LSA in 2029, unlocking an incremental $80 million in annual U.S. market opportunity.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "794462626070c6e0faf1c4010a8a6319d9648ffe99df8707f3467667c2f20889",
+            "value_sha256": "90901a2d0c8870feb8aeb398a24b45aa90f1f0a2186ce59f23560cf12cb225a9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "stent graft revenue growth excluding cyber incident",
           "period": "Q4 2025",
-          "value": "increased 28%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding the previously discussed impact of the cyber incident from our prior year results, our fourth quarter stent graft revenues increased 28% and our tissue processing revenues declined 4%.",
-          "following_context": "I would like to note that tissue processing growth for the full year declined 3% compared to 2024. This came in below our expectations, driven primarily by the lingering impact of the cybersecurity incident in Q1.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 28.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "630cee446acd4844ee28d9c13e7653b38458e33ba9739cc4f0d660a22d31cd95",
+            "value_sha256": "f1a61569edcc49186738b1f26b21b7df9c5c9154adb2f77691d509a61bd6afae"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "tissue processing revenue growth excluding cyber incident",
           "period": "Q4 2025",
-          "value": "declined 4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding the previously discussed impact of the cyber incident from our prior year results, our fourth quarter stent graft revenues increased 28% and our tissue processing revenues declined 4%.",
-          "following_context": "I would like to note that tissue processing growth for the full year declined 3% compared to 2024. This came in below our expectations, driven primarily by the lingering impact of the cybersecurity incident in Q1.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "630cee446acd4844ee28d9c13e7653b38458e33ba9739cc4f0d660a22d31cd95",
+            "value_sha256": "05f57950b209fc31695f2aefe7537fac76095b0d705fa2e5baf7785acf57de80"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "tissue processing revenue growth (full year)",
           "period": "Full year 2025",
-          "value": "declined 3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "I would like to note that tissue processing growth for the full year declined 3% compared to 2024.",
-          "following_context": "This came in below our expectations, driven primarily by the lingering impact of the cybersecurity incident in Q1.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "793407ce57dda58e112f4083bc2a48a50fb7a5b319ad3a53bb3c2dab31be8728",
+            "value_sha256": "12f00dbeaf910d9d630163e99b2a298ee591a7b829b327f5d2c2b7f103b5d12c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "underlying business growth (adjusted for cyber and Italian payback)",
           "period": "Q4 2025",
-          "value": "grew 13%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a result, we estimate that our underlying business grew 13% for the fourth quarter of 2025, adjusted for impacts associated with the cyber incident and Italian payback.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "aa8665016a893902341b44a4d1f99ca913c223717e0e1cb032e5929395bdb84b",
+            "value_sha256": "35575444664f690332e3d070d8faa62ca28382e01d8707e16c783912ed86f849"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Asia Pacific revenue growth",
           "period": "Q4 2025",
-          "value": "32%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenues in Asia Pacific increased 32%, North America increased 18%, EMEA increased 17% and Latin America increased 9%, all compared to the fourth quarter of 2024.",
-          "following_context": "Q4 gross margins were 63% in both 2025 and 2024. As a reminder, the 2024 gross margin was negatively impacted by approximately 2 percentage points by an idle plant charge due to the cyber incident. The 2025 gross margin was negatively impacted by roughly 1 percentage point from the Italian payback adjustment and was also impacted by certain manufacturing inefficiencies that we do not anticipate to repeat in 2026.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 32.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "431ceb641fed5214b9f02ef93880717254c26e693b98456dea230f1fc172225d",
+            "value_sha256": "0f16342ee1c13a8666cbee3c66c8203a9752f46d3e256f0eb55ad613aecd9626"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North America revenue growth",
           "period": "Q4 2025",
-          "value": "18%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenues in Asia Pacific increased 32%, North America increased 18%, EMEA increased 17% and Latin America increased 9%, all compared to the fourth quarter of 2024.",
-          "following_context": "Q4 gross margins were 63% in both 2025 and 2024. As a reminder, the 2024 gross margin was negatively impacted by approximately 2 percentage points by an idle plant charge due to the cyber incident. The 2025 gross margin was negatively impacted by roughly 1 percentage point from the Italian payback adjustment and was also impacted by certain manufacturing inefficiencies that we do not anticipate to repeat in 2026.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 18.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "431ceb641fed5214b9f02ef93880717254c26e693b98456dea230f1fc172225d",
+            "value_sha256": "e70b96ebb11535361c667c2548a9285314f0a1b2cffb213acf55ba792254e734"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EMEA revenue growth",
           "period": "Q4 2025",
-          "value": "17%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenues in Asia Pacific increased 32%, North America increased 18%, EMEA increased 17% and Latin America increased 9%, all compared to the fourth quarter of 2024.",
-          "following_context": "Q4 gross margins were 63% in both 2025 and 2024. As a reminder, the 2024 gross margin was negatively impacted by approximately 2 percentage points by an idle plant charge due to the cyber incident. The 2025 gross margin was negatively impacted by roughly 1 percentage point from the Italian payback adjustment and was also impacted by certain manufacturing inefficiencies that we do not anticipate to repeat in 2026.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "431ceb641fed5214b9f02ef93880717254c26e693b98456dea230f1fc172225d",
+            "value_sha256": "9ff68d1fb292cbc96dca1d6f63353538176ff2bd5ec29c468ffa45da65a135fc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Latin America revenue growth",
           "period": "Q4 2025",
-          "value": "9%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenues in Asia Pacific increased 32%, North America increased 18%, EMEA increased 17% and Latin America increased 9%, all compared to the fourth quarter of 2024.",
-          "following_context": "Q4 gross margins were 63% in both 2025 and 2024. As a reminder, the 2024 gross margin was negatively impacted by approximately 2 percentage points by an idle plant charge due to the cyber incident. The 2025 gross margin was negatively impacted by roughly 1 percentage point from the Italian payback adjustment and was also impacted by certain manufacturing inefficiencies that we do not anticipate to repeat in 2026.",
           "source_ref": "CIQ transcript: Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "431ceb641fed5214b9f02ef93880717254c26e693b98456dea230f1fc172225d",
+            "value_sha256": "f9c014befb62299934be76baa550e42d4421c01053675813b0b94802320b91ef"
+          }
         }
       ],
       "qa_flags": [

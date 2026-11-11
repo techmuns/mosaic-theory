@@ -8283,277 +8283,725 @@
           "kind": "competitive_position",
           "metric": "retail dollar share of shell egg category (year-over-year gain)",
           "period": "second quarter",
-          "value": "more than 200 basis point year-over-year gain",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a result, we delivered a more than 200 basis point year-over-year gain in retail dollar share of the shell egg category during the second quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "3c1015ec4590d1268c90e8cbac719ef244c6f01ae353d3ab3966cce78c1b9567",
+            "paragraph": 3,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "db68705e3ff68c47ce2e8d2605bd0878bbbfb243c238c6460fd7d93140f9c060",
+            "value_sha256": "417f1c9860831f73e807d49d8a214cab97f001bc8162e5e050138a50afae2442"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "price gap to branded competitors",
           "period": null,
-          "value": "from an average of approximately $2.51 in the first quarter, to an average of $2.36 in the second",
           "value_num": null,
           "unit": null,
-          "verbatim": "Since the last earnings call, our price gaps have come down from an average of approximately $2.51 to branded competitors in the first quarter, to an average of $2.36 in the second.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.51,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2.36,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "3c1015ec4590d1268c90e8cbac719ef244c6f01ae353d3ab3966cce78c1b9567",
+            "paragraph": 7,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "3c23f49db92370467e485e5e69f0eb701eeb66f1d4018cb5fdb829a1149cb0bb",
+            "value_sha256": "6af935eb0b9e01b2971e0671def9bb8f394a06dbd9e77e4d135be8cf7b09f44a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "velocity and incremental new households at a top 10 retailer",
           "period": "since mid-April",
-          "value": "improve 27% since mid-April",
           "value_num": null,
           "unit": null,
-          "verbatim": "For example, we studied our price gap impact at one of our top 10 retailers, and where we got our price gaps down to an appropriate level, we saw both velocity and incremental new households improve 27% since mid-April.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 27.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "3c1015ec4590d1268c90e8cbac719ef244c6f01ae353d3ab3966cce78c1b9567",
+            "paragraph": 8,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "9955fba8c9e679353b6737db77155398cbe172cb8148999be8c7e0c18aa7ec08",
+            "value_sha256": "e33a3a2f7813450d9e7eac738122807dc0b78451d7137112bab70ede265cea44"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "retail dollar share of shell egg category in MULO+ (Circana)",
           "period": "second quarter",
-          "value": "more than 200 basis point year-over-year gain",
           "value_num": null,
           "unit": null,
-          "verbatim": "Efforts such as these led to a more than 200 basis point year-over-year gain in Vital Farms' retail dollar share of the shell egg category in MULO+ during the second quarter, according to Circana, even as category pricing fell sharply amid industry-wide oversupply.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "3c1015ec4590d1268c90e8cbac719ef244c6f01ae353d3ab3966cce78c1b9567",
+            "paragraph": 9,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "15b2ba0c30adc43f4d39c9a2bb412c65207acfa8907baab20e5bcb3962d2cc67",
+            "value_sha256": "417f1c9860831f73e807d49d8a214cab97f001bc8162e5e050138a50afae2442"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "shell egg units per store per week per item",
           "period": "by mid-July",
-          "value": "up 12.5% since our first quarter call",
           "value_num": null,
           "unit": null,
-          "verbatim": "Additionally, and more broadly, by mid-July, shell egg units per store per week per item were up 12.5% since our first quarter call, and as of mid-July, reached their highest level since February of 2026, which we believe indicates that our strategy is working.",
-          "following_context": "We will continue to broaden these efforts to lower price gaps, which we expect will continue to drive improved results going forward.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "3c1015ec4590d1268c90e8cbac719ef244c6f01ae353d3ab3966cce78c1b9567",
+            "paragraph": 10,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "bad5c216d1f236e484074d4554141eb4ba7cdce5820d433db51f9389125eb812",
+            "value_sha256": "f97007c20c0f5ab8c38dc322e70cb7c7332bbc3d5843ad89fb4065bf9348ef30"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total distribution points (TDPs) in MULO+ (Circana) year-to-date",
           "period": null,
-          "value": "148.7 TDPs year-to-date through the end of the second quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Circana data for MULO+, we were already at 148.7 TDPs year-to-date through the end of the second quarter.",
-          "following_context": "And we continue to believe we are on track to deliver an average of between 170 to 175 TDPs in the fourth quarter of 2026, given the visibility we already have to commitments for new placements.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 148.7,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf",
+            "transcript_sha256": "3c1015ec4590d1268c90e8cbac719ef244c6f01ae353d3ab3966cce78c1b9567",
+            "paragraph": 12,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "e96734f32d565c14754639b6b9e8558e7616d2dd4387055a1b8300f3a98eb48b",
+            "value_sha256": "6092b838a3b28239382c94118b791118d60d36d898d831bda306ed991e4fe8ce"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "volume to breaker/wholesale channels decline from Q2",
           "period": null,
-          "value": "fell 59% from the second quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "These amendments are in place and the volume we sent to the breaker and wholesale channels fell 59% from the second quarter.",
-          "following_context": "That was the single biggest driver of our margin recovery. We said we would take $6 million to $7 million out of our annual SG&A run rate. We did it.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 59.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 14,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "d79bbc618873376b2ffe8eff71cc36664dbae35921401fc1d6b62b1d4a299f45",
+            "value_sha256": "d63758f20f6e650b7a07ff818777247ce5cddfe35e8ca531a292f6b4dc667fa5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "net revenue (sequential)",
           "period": "third quarter",
-          "value": "$182.2 million, up 10% from the second quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Third quarter net revenue was $182.2 million, up 10% from the second quarter.",
-          "following_context": "Adjusted EBITDA was $1.5 million against a loss of $26.6 million in the second quarter. Gross margin was 23%, up more than 16 points.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 182.2,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 13,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "2633443b2c22bcbc01b245f1499cdab4504e7b5cda8fd83e60d955123edb38bd",
+            "value_sha256": "e7b6c11b2ba6eeba105879eecc69164f0d30f021c749ec3ade08e93cbf3bae1e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "shell egg TDPs average year-to-date in Circana MULO+",
           "period": null,
-          "value": "162 (sic)",
           "value_num": null,
           "unit": null,
-          "verbatim": "Year-to-date through the third quarter, we averaged 152 (sic) [ 162 ] in Circana MULO+ and the latest weekly reading for the week ending October 25 was 176.",
-          "following_context": "The distribution we told you about is on the shelf. And with that, we posted a record 7.2% dollar share and a record 2.3% volume share of shell eggs in Circana MULO+ at the end of the third quarter.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 162.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 15,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "a299a91a403dd5679796e58be82b89e489f04312fca8c308eb2cbe172e401546",
+            "value_sha256": "1ecce13c97eb4afeb59674b62320a75af7a044ee08641a1a7c4d313dceb395e1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "shell egg TDPs latest weekly reading",
           "period": "week ending October 25",
-          "value": "176",
           "value_num": null,
           "unit": null,
-          "verbatim": "Year-to-date through the third quarter, we averaged 152 (sic) [ 162 ] in Circana MULO+ and the latest weekly reading for the week ending October 25 was 176.",
-          "following_context": "The distribution we told you about is on the shelf. And with that, we posted a record 7.2% dollar share and a record 2.3% volume share of shell eggs in Circana MULO+ at the end of the third quarter.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 176.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 15,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "a299a91a403dd5679796e58be82b89e489f04312fca8c308eb2cbe172e401546",
+            "value_sha256": "cba28b89eb859497f544956d64cf2ecf29b76fe2ef7175b33ea59e64293a4461"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "dollar share of shell eggs in Circana MULO+",
           "period": "end of the third quarter",
-          "value": "record 7.2% dollar share",
           "value_num": null,
           "unit": null,
-          "verbatim": "And with that, we posted a record 7.2% dollar share and a record 2.3% volume share of shell eggs in Circana MULO+ at the end of the third quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.2,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 15,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "84921fc249fb2f92a9a33039eaefb0aa24975322fce58f267fe454fa9fd72a8e",
+            "value_sha256": "0b0e300592397af8b643f0f6a9fe150bba9ef6f8f7a8555a00a0980750d13de6"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "volume share of shell eggs in Circana MULO+",
           "period": "end of the third quarter",
-          "value": "record 2.3% volume share",
           "value_num": null,
           "unit": null,
-          "verbatim": "And with that, we posted a record 7.2% dollar share and a record 2.3% volume share of shell eggs in Circana MULO+ at the end of the third quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 15,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "84921fc249fb2f92a9a33039eaefb0aa24975322fce58f267fe454fa9fd72a8e",
+            "value_sha256": "5d0523f472379eceba0a458a3b8cefef64eeb0339cb1b714fd770f4254bd73bb"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "net revenue vs Q3 2023",
           "period": null,
-          "value": "up about 65% from $110 million to $182 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Against that quarter, our net revenue in the third quarter of 2026 is up about 65% from $110 million to $182 million.",
-          "following_context": "Our velocities are about the same as they were then on almost 60% more points of distribution. Our dollar share of shell eggs went from 4.7% to 7.2%, and we had 19% more households than we did then.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 65.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            },
+            {
+              "value": 110.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 182.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 22,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "ff0d818ff8cd397160ecf625780367cd3144ce0d857f7b2c54842e424aa7bb4f",
+            "value_sha256": "d71ee2cf5e3dd47b5d4c3bf8489fea2bd68fa4c7585e502937f51e29bb1bb893"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "dollar share of shell eggs vs Q3 2023",
           "period": null,
-          "value": "went from 4.7% to 7.2%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our dollar share of shell eggs went from 4.7% to 7.2%, and we had 19% more households than we did then.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.7,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 7.2,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 22,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "5cb0771974004d54ec9e96eef8f1ee21377bf608f9315f136da343f34c5a5a90",
+            "value_sha256": "d9bc8eed0e4c479b4eb11a314e498e131ad9c51e72858f5850b552ceb3d3dd6c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "households vs Q3 2023",
           "period": null,
-          "value": "19% more households than we did then",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our dollar share of shell eggs went from 4.7% to 7.2%, and we had 19% more households than we did then.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 19.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 22,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "5cb0771974004d54ec9e96eef8f1ee21377bf608f9315f136da343f34c5a5a90",
+            "value_sha256": "fa23bf0b6b4e7e7c224d6bdde726d58ec440fe94dcad42a21500ce8bcb3df8be"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TDPs added this year",
           "period": null,
-          "value": "more than 25 TDPs this year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are on track to add more than 25 TDPs this year, our biggest gain since the IPO.",
-          "following_context": "We expect volumes from that new distribution to continue growing over time. We plan to continue growing the Vital Farms brand sustainably over time by building velocity on the distribution we have, adding distribution where it makes sense and bringing new households to the brand with our unique voice and clear points of differentiation.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 24,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "419738298fe0e107d20c384a1b5a6fd0042863de235e3905a740445f26981ffb",
+            "value_sha256": "9f0b06d2eb0558983669972f3ba1959759495da9c3e416250d5f51f37774b0cd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "net revenue (year-over-year)",
           "period": "third quarter",
-          "value": "$182.2 million, a decrease of $16.8 million or 8.4% on a year-over-year basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "As Russell noted, the third quarter represented a sequential improvement from the second quarter with net revenue of $182.2 million. However, this was a decrease of $16.8 million or 8.4% on a year-over-year basis.",
-          "following_context": "The decline was primarily driven by $14.3 million from lower price/mix and $2.2 million from lower volume, excluding breaker and wholesale. Breaker and wholesale channels contributed approximately $0.3 million to the decline as a substantial increase in volume was more than offset by lower pricing.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 182.2,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 16.8,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 8.4,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 28,
+            "speaker": "Thilo Wrede",
+            "quote_sha256": "83f7e2b0240085c5918d1a6ca65586b81f2f713a535bb36325abe61bed11e65f",
+            "value_sha256": "97a1fd28ccdff470601696174ddf80f451b1888debb48b9a4d6674bbecd4ca52"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "breaker and wholesale volume decline from Q2",
           "period": null,
-          "value": "declined 59% from Q2",
           "value_num": null,
           "unit": null,
-          "verbatim": "The volume we sent to breaker and wholesale channels declined 59% from Q2.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 59.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 33,
+            "speaker": "Thilo Wrede",
+            "quote_sha256": "23a0a7a87682446d5a80e83def030448e7816ca601825d69243da07a33628e1c",
+            "value_sha256": "3324824b24e6e1a0d6ddee4d600a666ba08324cc10d564346daeb113554e6208"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "average selling TDPs in Circana MULO+",
           "period": null,
-          "value": "now above 175",
           "value_num": null,
           "unit": null,
-          "verbatim": "Based on latest Circana MULO+ data, average selling TDPs are now above 175 compared with our prior expectation of 170 to 175 for the fourth quarter, and we expect them to stay at this level.",
-          "following_context": "However, we are taking a more conservative view on velocity contribution from newer distribution.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 175.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 38,
+            "speaker": "Thilo Wrede",
+            "quote_sha256": "f0632f69a638066ce054c27d98782ba582cbf8cfb7ffd38be18d380f5c6245bc",
+            "value_sha256": "80fe486ffa5952809dff7c60c04616fe095a6e73430050f3d536d6b008da09f4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "shell egg unit velocity (EQ units per store per week per item)",
           "period": null,
-          "value": "approximately 25.9 EQ units per store per week per item in the fourth quarter compared with 25.3 in the third quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "For the business overall, our outlook assumes shell egg unit velocity of approximately 25.9 EQ units per store per week per item in the fourth quarter compared with 25.3 in the third quarter in Circana MULO+.",
-          "following_context": "The modest increase reflects more frequent promotional activity, offset by a full quarter of new distribution that for now is slower turning. On a dollar basis, we assume shell egg retail velocity of approximately $200 per store per week per item compared with approximately $205 in the third quarter, reflecting the impact of that increased promotional activity.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.9,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 25.3,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 39,
+            "speaker": "Thilo Wrede",
+            "quote_sha256": "e94be7ba0f560315b3436846ae75db00546c2bef6e8d4173c2fc9f5f3e09e412",
+            "value_sha256": "54034199007f90a4c869c047c8bd393dd6684111a0b222dac1a9927a375ae64c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "shell egg retail velocity (dollar basis)",
           "period": null,
-          "value": "approximately $200 per store per week per item compared with approximately $205 in the third quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "On a dollar basis, we assume shell egg retail velocity of approximately $200 per store per week per item compared with approximately $205 in the third quarter, reflecting the impact of that increased promotional activity.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 205.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 39,
+            "speaker": "Thilo Wrede",
+            "quote_sha256": "6621da02e201511d111a9c8ed2e2f5d621c83a32ef918807d7bb1e325ed0d865",
+            "value_sha256": "eb85695c9f19f4ca0b9440a095b77927ddeec8bcc17d008b77586bad558ece6f"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "breaker EBITDA impact Q3 vs Q2",
           "period": null,
-          "value": "about an $8 million impact to EBITDA this quarter. It was $21 million impact to the second quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "We put into our presentation this morning that breaker was about an $8 million impact to EBITDA this quarter. It was $21 million impact to the second quarter.",
-          "following_context": "So you see the progress that we are making there simply by being able to manage more of the oversupply with the contract amendments that you just talked about. That progress is supposed to continue. As Russell and I already mentioned, there might still be breaker volume, excess breaker volume in the fourth quarter, but we intend to make further progress there. So that is one swing factor for next year to think about.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 21.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 82,
+            "speaker": "Thilo Wrede",
+            "quote_sha256": "3d1dcb17301c134c20cc7185441d76b7fe9243c432d61e1848f2c16954457bef",
+            "value_sha256": "7e96c94740b6a750553962ff1641c3b7e37735c8dad86aa75cae4bcb21e2b7d6"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "share of American households buying pasture-raised eggs",
           "period": "since 2022",
-          "value": "roughly doubled since 2022",
           "value_num": null,
           "unit": null,
-          "verbatim": "The share of American households buying pasture-raised eggs in any given quarter has roughly doubled since 2022, and it held close to last year's level even as prices across the rest of the category fell.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2022.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
+            "transcript_sha256": "0475d80ec17c4d2050a6697e979540728ee9ae7753683432e3ad4b14e2598297",
+            "paragraph": 23,
+            "speaker": "Russell Diez-Canseco",
+            "quote_sha256": "be21ac6d7f0ed5ac160ddcea1cca2ff1abcfb2fa047d68f7981051b2907e746e",
+            "value_sha256": "1b89426c26ebb3dede683c07334158ab953a12f8f1088b15b9726b326be0da64"
+          }
         }
       ],
       "qa_flags": [
@@ -12814,6 +13262,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

@@ -9130,637 +9130,1538 @@
           "kind": "leading_indicator",
           "metric": "system first quarter throughput",
           "period": "Q1 2026",
-          "value": "first quarter throughput record",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our facilities ran well across the system, setting a first quarter throughput record.",
-          "following_context": "This strong throughput allowed us to prebuild inventory ahead of planned maintenance outages. The Wyoming and Montana facilities have both completed their April outages on time and are prepared to run hard for the highly profitable summer months.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 2,
+            "speaker": "William Monteleone",
+            "quote_sha256": "d49533044b0f1f5575af4e5d658200e5555c9af1b430f20c2b392503fd1e657b",
+            "value_sha256": "35470e79ccb5f648b68d0706c757fcd0eb78e2640c6c21c315abe297e6286c5e"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "crack spread hedges",
           "period": "Q1 2026",
-          "value": "no crack spread hedges in place",
           "value_num": null,
           "unit": null,
-          "verbatim": "In addition, we have no crack spread hedges in place to position us to capture and improved market conditions.",
-          "following_context": "Looking forward, global refined product inventory buffers are drawing down aggressively, setting up for meaningful tightness over the summer months. We see many Asian refiners running at near minimum throughput rates, attempting to preserve crude supply chain duration versus maximizing profits.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 4,
+            "speaker": "William Monteleone",
+            "quote_sha256": "2452d9426f0ebd5bf105040d058eccc332a5882570dbe7567dc1ed2628b76a78",
+            "value_sha256": "f311f8b39119934e6e1d3b07495c4ed937c7af6a3e5d4d090c3ca3c5881402f2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "same-store fuel sales",
           "period": "first quarter of 2025 comparison",
-          "value": "decreased by 3.3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quarterly same-store fuel and in-store sales decreased by 3.3% and 1% compared to the first quarter of 2025.",
-          "following_context": "Fuel volume and in-store results reflect shifting consumer refueling patterns associated with the rising flat price environment and the impact of 3 state level closures during the first quarter from Hawaii flooding events. On the strategic front, we achieved a major milestone with the successful start-up of the Hawaii Renewables Unit. This is a significant step for the renewables business, reflecting our disciplined commissioning approach.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 5,
+            "speaker": "William Monteleone",
+            "quote_sha256": "c279984352e3c69ed46b6973a68fa5ec36a627412f16f23773ad100a89b9cf9a",
+            "value_sha256": "bcf2a053a8f1054d81ee5a4d4a4fb3de1e14b03077caa2ac046d100fb79aac01"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "same-store in-store sales",
           "period": "first quarter of 2025 comparison",
-          "value": "decreased by 1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quarterly same-store fuel and in-store sales decreased by 3.3% and 1% compared to the first quarter of 2025.",
-          "following_context": "Fuel volume and in-store results reflect shifting consumer refueling patterns associated with the rising flat price environment and the impact of 3 state level closures during the first quarter from Hawaii flooding events. On the strategic front, we achieved a major milestone with the successful start-up of the Hawaii Renewables Unit. This is a significant step for the renewables business, reflecting our disciplined commissioning approach.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 5,
+            "speaker": "William Monteleone",
+            "quote_sha256": "c279984352e3c69ed46b6973a68fa5ec36a627412f16f23773ad100a89b9cf9a",
+            "value_sha256": "2aa70ead0828024f7c279afcbf35f9e3d0829d38e9833324c1634f7a705345fe"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "share repurchases",
           "period": "Q1 2026",
-          "value": "$28 million at an average price of $38 per share",
           "value_num": null,
           "unit": null,
-          "verbatim": "On the capital allocation front, we repurchased $28 million during the quarter at an average price of $38 per share.",
-          "following_context": "Since the program's inception, we've repurchased over 14 million shares or just over 20% of shares outstanding at an average price of $25 per share. Our total liquidity position of $938 million combined with a robust forward cash flow outlook, positions the balance sheet to support our strategic objectives and opportunistic share repurchase framework.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 28.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 38.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 7,
+            "speaker": "William Monteleone",
+            "quote_sha256": "4ad5de86d4dd10fa1c4e61aa1f2bffe704c6a0a59ee36c72d43db1bc072677a9",
+            "value_sha256": "c1522713ec05be9505a96a9f628e98e85748a534107b4c1a6c5f6e46f72d4871"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cumulative shares repurchased",
           "period": "since program inception",
-          "value": "over 14 million shares or just over 20% of shares outstanding at an average price of $25 per share",
           "value_num": null,
           "unit": null,
-          "verbatim": "Since the program's inception, we've repurchased over 14 million shares or just over 20% of shares outstanding at an average price of $25 per share.",
-          "following_context": "Our total liquidity position of $938 million combined with a robust forward cash flow outlook, positions the balance sheet to support our strategic objectives and opportunistic share repurchase framework.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 25.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 7,
+            "speaker": "William Monteleone",
+            "quote_sha256": "baca6345dc22bfaead2ec472a74936c43ef3ddd8a31cdb4c1b172a29963e3de0",
+            "value_sha256": "7bb47ef0fd439df4a7b55646340485eff037f34b54c3d7d9493622d05861bc83"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total liquidity",
           "period": "Q1 2026",
-          "value": "$938 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our total liquidity position of $938 million combined with a robust forward cash flow outlook, positions the balance sheet to support our strategic objectives and opportunistic share repurchase framework.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 938.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 7,
+            "speaker": "William Monteleone",
+            "quote_sha256": "ccc38a916bf5c5d4aabb9fc6cdf623091161d131e0dc880eb849ca1d81247a7d",
+            "value_sha256": "de515e96cfefd83d70ac6dea32cb56b5399ab54e7fd1fa47f8ea281e1fdfe864"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "conventional refining throughput",
           "period": "Q1 2026",
-          "value": "184,000 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our first quarter conventional refining throughput was 184,000 barrels per day and we'll begin reporting renewable fuel throughput in the second quarter.",
-          "following_context": "In Hawaii, throughput was a record 90,000 barrels per day and production costs were $4.67 per barrel. Hawaii will begin its planned turnaround in late June, which is expected to last between 30 and 45 days. The renewable fuels unit will be off-line during the turnaround.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 184000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 13,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "a0d3dafecb8d08db6fe3f296b7e10df66e263fc13b8217d2f5926d73895b9d8d",
+            "value_sha256": "4d37ca741fe943d67f2e3e6d5fee6c053742c178622504a11fd800b1dcfb84f4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Hawaii throughput",
           "period": "Q1 2026",
-          "value": "record 90,000 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Hawaii, throughput was a record 90,000 barrels per day and production costs were $4.67 per barrel.",
-          "following_context": "Hawaii will begin its planned turnaround in late June, which is expected to last between 30 and 45 days. The renewable fuels unit will be off-line during the turnaround.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 90000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 13,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "27a53b1a6a68549090e88a992012027ec04657220ea436e842db3003585d96bf",
+            "value_sha256": "b7c41ecb2aec0cee31496045804cb3d1708091c058711f6cf11347f820887ba9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Hawaii production costs",
           "period": "Q1 2026",
-          "value": "$4.67 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Hawaii, throughput was a record 90,000 barrels per day and production costs were $4.67 per barrel.",
-          "following_context": "Hawaii will begin its planned turnaround in late June, which is expected to last between 30 and 45 days. The renewable fuels unit will be off-line during the turnaround.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.67,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 13,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "27a53b1a6a68549090e88a992012027ec04657220ea436e842db3003585d96bf",
+            "value_sha256": "6d784bdbab7ca5e33a83de42ed8a0a859dfc04b3fd044924e1fbd005f41d5b8b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Washington throughput",
           "period": "Q1 2026",
-          "value": "23,000 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "The first quarter Washington throughput was 23,000 barrels per day and production costs were $7.53 per barrel, driven by reduced rates related to the February planned downtime.",
-          "following_context": "The refinery is operating well and delivering fully restored capability.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 23000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 14,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "705d60e381df9344abdf031b283e36d0f3514ec4bd4fae50561af33ceca59e43",
+            "value_sha256": "3425d0faaaf303ff22dc57d942b5876d6ffeadbd0dd3756f2de8286589cbca9e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Washington production costs",
           "period": "Q1 2026",
-          "value": "$7.53 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "The first quarter Washington throughput was 23,000 barrels per day and production costs were $7.53 per barrel, driven by reduced rates related to the February planned downtime.",
-          "following_context": "The refinery is operating well and delivering fully restored capability.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.53,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 14,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "705d60e381df9344abdf031b283e36d0f3514ec4bd4fae50561af33ceca59e43",
+            "value_sha256": "87d62e562ce34f3b2a2461f201cfa2d518ec12000c3abc2170c6642aa7ae0cef"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Wyoming throughput",
           "period": "Q1 2026",
-          "value": "15,000 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "Shifting to Wyoming, throughput was 15,000 barrels per day and production costs were $11.68 per barrel, reflecting lower seasonal throughput.",
-          "following_context": "As I mentioned, the spring refinery outage to address routine maintenance was completed successfully and safely.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 15,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "f06564e47845b55da5653b1d1c03f4c044cdd6c8de423c5f721c41e1b7ff301b",
+            "value_sha256": "4ea1d3f2f21aa1ffd6f11320c5a8fa8088eba56a8e0a17a4edb1dc9c3e8ab25b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Wyoming production costs",
           "period": "Q1 2026",
-          "value": "$11.68 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "Shifting to Wyoming, throughput was 15,000 barrels per day and production costs were $11.68 per barrel, reflecting lower seasonal throughput.",
-          "following_context": "As I mentioned, the spring refinery outage to address routine maintenance was completed successfully and safely.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.68,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 15,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "f06564e47845b55da5653b1d1c03f4c044cdd6c8de423c5f721c41e1b7ff301b",
+            "value_sha256": "7c2d46436c9551a7b8172726d72c9d2f5e7b18020599c3610cde7c5175a79449"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Montana throughput",
           "period": "Q1 2026",
-          "value": "57,000 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "Finally, in Montana, first quarter throughput was 57,000 barrels per day and production costs were $9.05 per barrel.",
-          "following_context": "The team continues to deliver on their plan of efficient operations and OpEx control.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 57000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 16,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "508a9f2f62b7e3d2e85063ff5c7ba02a44169854761420695ddcd9fd89dadf42",
+            "value_sha256": "37b31fbb91d1b9e76e1a2181f4e9aa39f269a4af0ba15c14493855947a70da53"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Montana production costs",
           "period": "Q1 2026",
-          "value": "$9.05 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "Finally, in Montana, first quarter throughput was 57,000 barrels per day and production costs were $9.05 per barrel.",
-          "following_context": "The team continues to deliver on their plan of efficient operations and OpEx control.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.05,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 16,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "508a9f2f62b7e3d2e85063ff5c7ba02a44169854761420695ddcd9fd89dadf42",
+            "value_sha256": "e298655d771c70db4a4d5d03f0d4464c7bfb18c98722580d480efc7db0a3e884"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "Hawaii net price lag",
           "period": "Q1 2026",
-          "value": "net price lag headwind of approximately $125 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Hawaii capture was 42%, including a net price lag headwind of approximately $125 million.",
-          "following_context": "As a reminder, net price lag reflects the Hawaii refineries contractual sales that are structured on prior month and prior week average pricing. The lag impact was driven by the sharp increase in refined product prices in March, resulting in adjusted gross margin trailing current period market conditions. We would expect price lag to be neutral in a stable pricing environment and to reverse into a capture benefit during periods of declining prices. Normalized for the lag impact, Hawaii capture was 92%, reflecting wider West Coast discounts relative to Singapore and lower netbacks on secondary products, such as naphtha and LPG.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 125.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 21,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "692d87b55f431b078c0e3b07737683ce413d41c0a666f06567328a262c902589",
+            "value_sha256": "3b6c44bf744617681c27dafb87b8cc4555ab67243001240fd3c561c0dd81f8a1"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "Hawaii contractual sales pricing structure",
           "period": "Q1 2026",
-          "value": "structured on prior month and prior week average pricing",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a reminder, net price lag reflects the Hawaii refineries contractual sales that are structured on prior month and prior week average pricing.",
-          "following_context": "The lag impact was driven by the sharp increase in refined product prices in March, resulting in adjusted gross margin trailing current period market conditions. We would expect price lag to be neutral in a stable pricing environment and to reverse into a capture benefit during periods of declining prices. Normalized for the lag impact, Hawaii capture was 92%, reflecting wider West Coast discounts relative to Singapore and lower netbacks on secondary products, such as naphtha and LPG.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 21,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "2d42ffea5311f33a2320b6274fb43db17d770960bcaebe1d444035406af9589d",
+            "value_sha256": "1a4e5300c7309b6788cf22e5fe44828fc7e76c3f69947b1919bb16ba17145010"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Hawaii capture",
           "period": "Q1 2026",
-          "value": "42%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Hawaii capture was 42%, including a net price lag headwind of approximately $125 million.",
-          "following_context": "As a reminder, net price lag reflects the Hawaii refineries contractual sales that are structured on prior month and prior week average pricing. The lag impact was driven by the sharp increase in refined product prices in March, resulting in adjusted gross margin trailing current period market conditions. We would expect price lag to be neutral in a stable pricing environment and to reverse into a capture benefit during periods of declining prices. Normalized for the lag impact, Hawaii capture was 92%, reflecting wider West Coast discounts relative to Singapore and lower netbacks on secondary products, such as naphtha and LPG.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 42.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 21,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "692d87b55f431b078c0e3b07737683ce413d41c0a666f06567328a262c902589",
+            "value_sha256": "8640b64bbd40b579f65acec121bb6b2a7cd6a694b0d0f6e148032d6b7c363f85"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Hawaii normalized capture",
           "period": "Q1 2026",
-          "value": "92%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Normalized for the lag impact, Hawaii capture was 92%, reflecting wider West Coast discounts relative to Singapore and lower netbacks on secondary products, such as naphtha and LPG.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 92.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 21,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "745bb8becc0f3714e54f35324a9724a09ff60f4e87b196170e07a488b95c1b64",
+            "value_sha256": "f2612fd38a99c771903458b4a8a027b39a21665df17844aca5791f4be10e240e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Montana margin capture",
           "period": "Q1 2026",
-          "value": "143%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Montana, the first quarter index averaged $4.84 per barrel with a margin capture of 143%.",
-          "following_context": "Capture was above our target range driven by lower asphalt production and favorable sales mix relative to the index.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 143.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 22,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "7f8c5e637463094ec9b069ea2b95ee26bb34d121ae10220f82969e03c669b5cb",
+            "value_sha256": "de802708f198d6c28c4ed9282296d01733d8588cc450bab3b71bb4fc875f6a24"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Wyoming margin capture",
           "period": "Q1 2026",
-          "value": "139%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Wyoming, the first quarter index averaged $19.30 per barrel, margin capture was 139%, including an $18 million FIFO benefit from rising crude oil prices.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 139.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 23,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "40565b8106bc5e64c4469279e895a6b2d2adc836771d2174caf1e444547ef4e8",
+            "value_sha256": "2527cc48cef29920b5340a3e398d49d3b8c8680eb47ac3ba79e6308abf1d366d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Washington margin capture",
           "period": "Q1 2026",
-          "value": "100%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Washington, our index averaged $8.20 per barrel. Margin capture was 100% supported by favorable jet to diesel spreads.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 24,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "b419c66a41d05a563a7c5d3323e6c09c033cc4e2583efc9d073facccde0678a8",
+            "value_sha256": "32e48995f98ce3b76f2d3f5e2d2acddfeff6650b7b18628cfa739bfef4a03312"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "gross term debt",
           "period": "Q1 2026",
-          "value": "$638 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Gross term debt at quarter end was $638 million remaining below the low end of our leverage targets.",
-          "following_context": "Looking ahead to the second quarter, our April consolidated refining index averaged $42 per barrel, an increase of $23 per barrel compared to the first quarter. In Hawaii, refining margins continue to reflect a tight refined product supply environment across the Pacific Basin. We expect our second quarter crude differential to be between $4 to $5 per barrel reflecting the extended crude supply chain we built earlier this year. From a financial standpoint, the impact of the upcoming Hawaii turnaround is expected to be limited in the second quarter with most of the impact shifting into the third quarter.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 638.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 28,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "92c1de7dff7800b060aa8bcc75e17a9c66eecb816b3a8faf5b8299b530c767cf",
+            "value_sha256": "682afc34c7094ca67a7871773f3bb29e069d009a2a7cd763cf79abecc54c2b8b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "April consolidated refining index",
           "period": "April 2026",
-          "value": "$42 per barrel, an increase of $23 per barrel compared to the first quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Looking ahead to the second quarter, our April consolidated refining index averaged $42 per barrel, an increase of $23 per barrel compared to the first quarter.",
-          "following_context": "In Hawaii, refining margins continue to reflect a tight refined product supply environment across the Pacific Basin. We expect our second quarter crude differential to be between $4 to $5 per barrel reflecting the extended crude supply chain we built earlier this year. From a financial standpoint, the impact of the upcoming Hawaii turnaround is expected to be limited in the second quarter with most of the impact shifting into the third quarter.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 42.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 23.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "58d39fa844bb73cec9b68b753ba049734cc63e8db94d9b7dc5ba45a67f7e4253",
+            "paragraph": 28,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "7490dcc310c92743b33e7db5feaaf64719e5901253161a1ec0c9683ab203690b",
+            "value_sha256": "86f6333376642882687dde5b64d64fc846c8a22d5c4848c141307eb3de5eb4a0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "combined market index",
           "period": "Q2 2026",
-          "value": "approximately $33 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our combined market index averaged approximately $33 per barrel, well above the 2025 average of $12.40 per barrel and exceeding the second quarter 2022 when the Russia-Ukraine conflict was intensifying.",
-          "following_context": "Reduced Persian Gulf and Russian origin refined product exports, Asian refiners running conservatively to preserve crude supply chain duration and protectionist policies restricting free trade drove these favorable market conditions. Looking forward, global refined product inventories remain tight and the structural factors supporting margins remain.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 33.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 3,
+            "speaker": "William Monteleone",
+            "quote_sha256": "4cb3f2eeef12a7733c21edd363c572360a2d03a64299aff3baac6f6f889dc62f",
+            "value_sha256": "d16714570180b320a59a55b68fd0d7ffafe8cf4503fcbe306e4138b4365ca91b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "same-store fuel volumes",
           "period": "second quarter of 2025 comparison",
-          "value": "declined by 0.8%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Same-store fuel volumes declined by 0.8%, while in-store sales increased by 1% compared to the second quarter of 2025.",
-          "following_context": "Despite pressure on fuel margins in a higher price environment, the merchandising and food programs continue to advance, strengthening the underlying earnings power of the segment.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.8,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 4,
+            "speaker": "William Monteleone",
+            "quote_sha256": "a781d037583b82e151659041cab7ec0b3ad88a3e53f098fbeb2531f3dd37dc00",
+            "value_sha256": "af94f32f7604ebd96244cbe59b871c835f519b402455a980f1e2119818930940"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "same-store in-store sales",
           "period": "second quarter of 2025 comparison",
-          "value": "increased by 1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Same-store fuel volumes declined by 0.8%, while in-store sales increased by 1% compared to the second quarter of 2025.",
-          "following_context": "Despite pressure on fuel margins in a higher price environment, the merchandising and food programs continue to advance, strengthening the underlying earnings power of the segment.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 4,
+            "speaker": "William Monteleone",
+            "quote_sha256": "a781d037583b82e151659041cab7ec0b3ad88a3e53f098fbeb2531f3dd37dc00",
+            "value_sha256": "c831d7ab4feaf7bfb57f513e2ae62c19e0e00bd3b246618db9fe42cda6900ea6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "renewable diesel June throughput",
           "period": "June 2026",
-          "value": "approximately 3,000 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "Renewable diesel production ramped through the quarter with June throughput reaching approximately 3,000 barrels per day before we commenced the Hawaii plant-wide turnaround.",
-          "following_context": "In addition, we completed first commercial renewable diesel sales during the quarter. Volumes were small and reflect the early-stage nature of the commercial ramp, but they established the operational pathway from production to sales.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 5,
+            "speaker": "William Monteleone",
+            "quote_sha256": "7f41f965f11181a9dd8854da7114e206346c3608cb1564011758fd892e677727",
+            "value_sha256": "fbef27fecc63501909494d00fb05f69fa6389a96785a11a93fdfe08ff9508f28"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "term debt reduction",
           "period": "Q2 2026",
-          "value": "reducing our term debt balance by over 20%",
           "value_num": null,
           "unit": null,
-          "verbatim": "On the capital allocation front, we meaningfully strengthened the balance sheet during the quarter, reducing our term debt balance by over 20% via the inaugural senior unsecured notes issuance.",
-          "following_context": "We ended the quarter with total liquidity of approximately $1.4 billion, placing our balance sheet in a very strong position to pursue growth and continue to allocate capital thoughtfully through cycles.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 6,
+            "speaker": "William Monteleone",
+            "quote_sha256": "220f730618081b47c02f52a19d5d87ba57b33fce251a0cfb67dca7d3fa125910",
+            "value_sha256": "c42dcff73a4c62d20116de7372710c1b5a583c6fff35f187b09e20e27a4ac9d4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total liquidity",
           "period": "Q2 2026",
-          "value": "approximately $1.4 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "We ended the quarter with total liquidity of approximately $1.4 billion, placing our balance sheet in a very strong position to pursue growth and continue to allocate capital thoughtfully through cycles.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.4,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 6,
+            "speaker": "William Monteleone",
+            "quote_sha256": "06e4431d8bfd1cddf28b7696864bc846122131b265bb2bfc74242d4323fc675b",
+            "value_sha256": "3e2a51823ab3cb15188a4da451ac820bd34ae7bfece99b1b0060dac9bf270581"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Tacoma quarterly production rate",
           "period": "Q2 2026",
-          "value": "record quarterly production rate of 41,200 barrels per day or 98.1% utilization",
           "value_num": null,
           "unit": null,
-          "verbatim": "In addition, the Tacoma team achieved a new record quarterly production rate of 41,200 barrels per day or 98.1% utilization through the second quarter.",
-          "following_context": "In Hawaii, the Q2 throughput was 73,200 barrels per day and production costs were $6.43 per barrel. The lower production versus plan was a result of the refinery experiencing end-of-cycle conditions.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 41200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 98.1,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 10,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "c012a061f7ae9b0a2e23377cb6c23b3b6500e3308fa9bcda101e8c21e6b2e717",
+            "value_sha256": "2cd313baeb34d62817120e78083e02bbb49f53de846920fc5beec2b1c1153196"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Hawaii throughput",
           "period": "Q2 2026",
-          "value": "73,200 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Hawaii, the Q2 throughput was 73,200 barrels per day and production costs were $6.43 per barrel.",
-          "following_context": "The lower production versus plan was a result of the refinery experiencing end-of-cycle conditions.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 73200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 10,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "9cf595dc78d9b5cec3867093dcd14c0cf547b20904ed194e70c47093f931db05",
+            "value_sha256": "4b044b0e52baef25d516abc787070b425e1326ea1852497e261155162f5fe6f6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Hawaii production costs",
           "period": "Q2 2026",
-          "value": "$6.43 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Hawaii, the Q2 throughput was 73,200 barrels per day and production costs were $6.43 per barrel.",
-          "following_context": "The lower production versus plan was a result of the refinery experiencing end-of-cycle conditions.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.43,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 10,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "9cf595dc78d9b5cec3867093dcd14c0cf547b20904ed194e70c47093f931db05",
+            "value_sha256": "dd19ff744a6e2756bca53441608fc25b69fa4c1698171ff34c3b01cd41fcf882"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Washington throughput",
           "period": "Q2 2026",
-          "value": "record quarterly record at 41,200 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "As I stated, Washington throughput set a new quarterly record at 41,200 barrels per day and production costs were $4.21 per barrel, capturing market conditions following the Q1 planned outage.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 41200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 12,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "1e6586abb5afe60afd2be33bd6946a0d6d4ca3b41fae8977ebcbdf127b78c1a7",
+            "value_sha256": "ef8617b4e8c8191db18274321c8db5a58087521255111bc87d311edb5ccbe13a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Washington production costs",
           "period": "Q2 2026",
-          "value": "$4.21 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "As I stated, Washington throughput set a new quarterly record at 41,200 barrels per day and production costs were $4.21 per barrel, capturing market conditions following the Q1 planned outage.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.21,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 12,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "1e6586abb5afe60afd2be33bd6946a0d6d4ca3b41fae8977ebcbdf127b78c1a7",
+            "value_sha256": "61014fe66428f15656c0bd05daed156acad64d6506227139f0b5b21214cd9fec"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Wyoming throughput",
           "period": "Q2 2026",
-          "value": "14,000 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "Shifting to Wyoming, throughput was 14,000 barrels per day and production costs were $15.28 per barrel, reflecting the April outage downtime and costs.",
-          "following_context": "Following the outage, the refinery has shifted to routine operations supported by strong seasonal demand.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 13,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "3e9da5dab11895bff4ba869542dd71ecc8b37e51ca847e6504ce76e76c5eb3b1",
+            "value_sha256": "0d3a564b0c060e4da6f55cb001e425676f5af72b8969cd419d7e267763676761"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Wyoming production costs",
           "period": "Q2 2026",
-          "value": "$15.28 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "Shifting to Wyoming, throughput was 14,000 barrels per day and production costs were $15.28 per barrel, reflecting the April outage downtime and costs.",
-          "following_context": "Following the outage, the refinery has shifted to routine operations supported by strong seasonal demand.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.28,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 13,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "3e9da5dab11895bff4ba869542dd71ecc8b37e51ca847e6504ce76e76c5eb3b1",
+            "value_sha256": "feec03ffb80f2346ab0711746ade8607b138ce155aae2c6720f9b7768db71664"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Montana throughput",
           "period": "Q2 2026",
-          "value": "53,000 barrels per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "Finally, in Montana, second quarter throughput was 53,000 barrels per day and production costs were $10.16 per barrel.",
-          "following_context": "The team executed the April crude outage safely, on time and on budget. In May and June, Par Montana Refining set new monthly throughput and OpEx per barrel records of approximately 62,000 barrels per day at $7.56 per barrel.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 53000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 14,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "74f5a84220062f00fb6360cecccbd48594baf4279738943036b6c86eb3a9eda8",
+            "value_sha256": "4e35a1464bc3d45294b9e977ba3c668ea0e2b57914a65b848bc9dd697f213536"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Montana production costs",
           "period": "Q2 2026",
-          "value": "$10.16 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "Finally, in Montana, second quarter throughput was 53,000 barrels per day and production costs were $10.16 per barrel.",
-          "following_context": "The team executed the April crude outage safely, on time and on budget. In May and June, Par Montana Refining set new monthly throughput and OpEx per barrel records of approximately 62,000 barrels per day at $7.56 per barrel.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.16,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 14,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "74f5a84220062f00fb6360cecccbd48594baf4279738943036b6c86eb3a9eda8",
+            "value_sha256": "9ac566a0004fbaed2da1e6b7f8559ad59dee401119a74f73f60b7d197b7fa8f1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Montana monthly throughput and OpEx records",
           "period": "May and June 2026",
-          "value": "approximately 62,000 barrels per day at $7.56 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "In May and June, Par Montana Refining set new monthly throughput and OpEx per barrel records of approximately 62,000 barrels per day at $7.56 per barrel.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 62000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 7.56,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 14,
+            "speaker": "Richard Creamer",
+            "quote_sha256": "1b9012a5e79a709d0ae49218fee5976a57c9b1ef2779347b8ec27b2bf76de956",
+            "value_sha256": "155d8eef6da87fecaa16eeaa539fc452df1fc0fbc59f375f773fc8fa6157dd4c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "system-wide refining capture",
           "period": "Q2 2026",
-          "value": "125% or 112% on a normalized basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "System-wide refining capture was 125% or 112% on a normalized basis after adjusting for Hawaii price lag and Wyoming FIFO impacts.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 125.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 112.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 20,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "8f677ce36b37ea6abcd09e12387463c77b69f68db779eb6319131cef0181cf86",
+            "value_sha256": "1638c0103c51922ef4e5bcea5ec093a926a7fba49d0570a123df1b1044930df5"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "Hawaii net price lag",
           "period": "Q2 2026",
-          "value": "net price lag benefit of approximately $77 million or $11.49 per barrel",
           "value_num": null,
           "unit": null,
-          "verbatim": "Hawaii capture was 124%, including a net price lag benefit of approximately $77 million or $11.49 per barrel.",
-          "following_context": "Normalized for the price lag impact, Hawaii capture was 99%.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 77.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 11.49,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 21,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "8d490139fba21807bad27a250d154059c41899ec6b7cc8545190848ef533438f",
+            "value_sha256": "05da0835c2a5a042a5d51a737f439e9044b3ca5125468d7184360650daca8110"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Hawaii capture",
           "period": "Q2 2026",
-          "value": "124%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Hawaii capture was 124%, including a net price lag benefit of approximately $77 million or $11.49 per barrel.",
-          "following_context": "Normalized for the price lag impact, Hawaii capture was 99%.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 124.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 21,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "8d490139fba21807bad27a250d154059c41899ec6b7cc8545190848ef533438f",
+            "value_sha256": "00b25e79bfb582927b49af8d2281abaac019b3b64e73643b96e16bfa7a33b333"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Hawaii normalized capture",
           "period": "Q2 2026",
-          "value": "99%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Normalized for the price lag impact, Hawaii capture was 99%.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 99.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 21,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "cf43f7c4058d796ce0f0923a29895a3327f8cb84176b8de20d5d2bd028407487",
+            "value_sha256": "73952e0680a8f44b1b8e001b4f608dc891b6b11bd9905f0d32a6a65de1645a8e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Montana margin capture",
           "period": "Q2 2026",
-          "value": "144%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Montana, the second quarter index averaged $25.76 per barrel with margin capture of 144%.",
-          "following_context": "Capture was well above our target range, driven by favorable clean product to asphalt sales mix and refined product inventory drawdowns that sustained volumes during the April outage.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 144.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 22,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "76b7ebc5237cb74c4f4e560fa6c29557e7966ddf52ebe5658acee76869e3f919",
+            "value_sha256": "e7df057fbf40368f77c7cda6cef4aab854e46ee8b40c939e9b29650c358e65d2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Wyoming margin capture",
           "period": "Q2 2026",
-          "value": "118%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Margin capture was 118%, including the benefit of refined product inventory draws during the April outage, partially offset by a $3 million FIFO headwind from declining crude oil prices.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 118.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 23,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "3cf25e7af64ce89b3e16fe804b279afef3ca16777f7da2935d4575d8e9451eff",
+            "value_sha256": "b733a5fb9c76df717bd87f78d79f7370e7b17ebbf589dd6f1e5bdc399ccfdc5f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Washington margin capture",
           "period": "Q2 2026",
-          "value": "100%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Washington, our index averaged $20.27 per barrel. Margin capture was 100%, supported by continued jet to diesel strength on the West Coast.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 24,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "fe3aea773f6c36840fab774a4336684ec163e976b91525116b3c5bd5d6aeb73d",
+            "value_sha256": "32e48995f98ce3b76f2d3f5e2d2acddfeff6650b7b18628cfa739bfef4a03312"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "term debt reduction",
           "period": "Q2 2026",
-          "value": "reducing gross term debt by more than $130 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "We completed a $500 million offering of senior unsecured notes, reducing gross term debt by more than $130 million during the quarter.",
-          "following_context": "We also reduced ABL borrowings by $78 million, resulting in a total net debt reduction of over $220 million. Given the heightened market volatility during the period, we moderated our opportunistic share repurchase activity in favor of strengthening the balance sheet through debt reduction. Year-to-date, through the second quarter, we have repurchased approximately $48 million of common stock, including cash settled options. As of June 30, total liquidity was approximately $1.4 billion, and our cash balance was $185 million.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 130.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 28,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "4c5964dd8c32fc9dd12bc80560d436b9cf2837421b0101c675ac08c4fec34a2e",
+            "value_sha256": "72fdef2d862e380b0b640de7dac3f0156df515b50461096e74d8578382e62888"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ABL borrowings reduction",
           "period": "Q2 2026",
-          "value": "reduced ABL borrowings by $78 million, resulting in a total net debt reduction of over $220 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "We also reduced ABL borrowings by $78 million, resulting in a total net debt reduction of over $220 million.",
-          "following_context": "Given the heightened market volatility during the period, we moderated our opportunistic share repurchase activity in favor of strengthening the balance sheet through debt reduction. Year-to-date, through the second quarter, we have repurchased approximately $48 million of common stock, including cash settled options. As of June 30, total liquidity was approximately $1.4 billion, and our cash balance was $185 million.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 78.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 220.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": "down",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 28,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "12da6160499274ad78036dfd34bce1909a7acc480da351220403adf3810f1054",
+            "value_sha256": "ac1d90324c3cdd91017096d7cab429a065c8944b0d07493c40318414f6a8364d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "year-to-date share repurchases",
           "period": "through Q2 2026",
-          "value": "approximately $48 million of common stock, including cash settled options",
           "value_num": null,
           "unit": null,
-          "verbatim": "Year-to-date, through the second quarter, we have repurchased approximately $48 million of common stock, including cash settled options.",
-          "following_context": "As of June 30, total liquidity was approximately $1.4 billion, and our cash balance was $185 million.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 48.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 28,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "97aee68a41193f3e2cbb9d0d872df2e1b31c0e0616c9766f5b0a185d0211c649",
+            "value_sha256": "16a2a099b80ae50aa0f782c971a64da22b8ab3d7abac3c757f77813f5d24054b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total liquidity",
           "period": "as of June 30",
-          "value": "approximately $1.4 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "As of June 30, total liquidity was approximately $1.4 billion, and our cash balance was $185 million.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.4,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 28,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "b280bc4fd7c8ffc872e1115624f19fb668748aee73dca46c4ecca51eb304f7b2",
+            "value_sha256": "3e2a51823ab3cb15188a4da451ac820bd34ae7bfece99b1b0060dac9bf270581"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "July consolidated refining index",
           "period": "July 2026",
-          "value": "$31.34 per barrel or approximately $1.60 below the Q2 average",
           "value_num": null,
           "unit": null,
-          "verbatim": "Looking to the third quarter, our July consolidated refining index was $31.34 per barrel or approximately $1.60 below the Q2 average.",
-          "following_context": "In Hawaii, the financial impact of the refinery turnaround will be concentrated in the third quarter, increased refined product imports are expected to hold capture below our typical guidance range. Our third quarter Hawaii crude differential is expected to land between $11.50 and $13.50 per barrel, reflecting higher freight costs and steeper backwardation.",
           "source_ref": "CIQ transcript: Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 31.34,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 1.6,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Par Pacific Holdings, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "b07cce0a1e86591b088c1815f8835bc7de1bab28a58a66983e4f9ec8ca4a547e",
+            "paragraph": 29,
+            "speaker": "Shawn Flores",
+            "quote_sha256": "c7269f99cbb8527e155e770ef53858b5641bcbf3348b7cbe0c5883645d7a41ef",
+            "value_sha256": "47016fef23f5c654cc46d5eaf294a789db26a26db64957f0b9cc6f5b5c32d7e7"
+          }
         }
       ],
       "qa_flags": [
@@ -14390,6 +15291,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],
