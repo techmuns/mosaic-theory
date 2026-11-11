@@ -40,6 +40,14 @@ FIX 3B rewrites two fields; `FIX_3B` names their transforms:
 RG-D8 (fix request 2), `RG_D8`'s ``driver_facts``: the transcript driver rows' fact check,
 re-run on each committed row's own metric, value and quote (`driver_extract.check_fact`).
 
+RA-D4 (fix request 2, split from #967), `RA_D4`'s ``same_day_guides``: the guidance bridge and
+its rows (every period guided on the latest date), re-read from the page's OWN CIQ folder
+(`Context.ciq`) by the ref's code. The identity at a ref without the change. A field is written
+only where the re-read, with the change's own additions taken out, equals the committed field —
+the proof that the export and the code are the page's — and is otherwise left as committed, which
+the registration's note names (BURL's guidance predates A-D8's block discovery, so no code at this
+ref rebuilds it).
+
 THE AS-OF CUT (STATE row 57), `ASOF_CUT`'s ``asof_cut``: a page built before the cut keeps the
 releases filed after its price date; this moves them out of `primary_source.releases` and
 re-derives the two fields the assembly takes from that list (`current_guide`, a release-read
@@ -82,6 +90,9 @@ class Context:
 
     page: dict[str, Any]
     comps: CiqBundle | None = None
+    #: The page's whole CIQ folder, read by the ref's own reader (`--ciq`), for a transform that
+    #: re-reads a field from its exports; it proves the export is the page's own before writing.
+    ciq: CiqBundle | None = None
 
 
 def own_comps(mech: MechanicalLayer, ctx: Context) -> CiqBundle:
@@ -521,6 +532,68 @@ def driver_facts(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
     return mech.model_copy(update={"operating_drivers": od.model_copy(update={"rows": rows})})
 
 
+# ------------------------------------------- RA-D4: every period guided on the latest date
+
+_SAME_DAY = re.compile(r"; same day: [^;]*")
+
+
+def _rows_primary(f: Sourced[Any] | None) -> Any:
+    """The guidance rows, one per metric (its first): the change adds a row per period guided
+    the same day after it."""
+    if f is None:
+        return None
+    d = f.model_dump(mode="json")
+    if isinstance(d.get("value"), list):
+        seen: set[str] = set()
+        rows = []
+        for r in d["value"]:
+            if r.get("metric") not in seen:
+                seen.add(r.get("metric"))
+                rows.append(r)
+        d["value"] = rows
+    return d
+
+
+def _bridge_primary(f: Sourced[str] | None) -> Any:
+    if f is None:
+        return None
+    d = f.model_dump(mode="json")
+    d["value"] = _SAME_DAY.sub("", d.get("value") or "") if d.get("value") else d.get("value")
+    return d
+
+
+def same_day_guides(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
+    """(RA-D4) The two fields RA-D4 changes, re-read from the page's own CIQ folder by THIS ref's
+    code: the catalyst path's `guidance_bridge` and `guidance_bridge_rows` (read as assembly reads
+    them: the page's reference date, the stale bound, cut at the page's price date). The identity
+    at a ref without the change (no `same_day` field on `ciq_sheets._GuidanceRead`). Each field is
+    written only where the re-read, with the change's own additions taken out, equals the
+    committed field; otherwise it is left exactly as committed. Refuses (`TransformError`) only
+    when no CIQ folder was given."""
+    if "same_day" not in getattr(ciq_sheets._GuidanceRead, "_fields", ()):
+        return mech
+    b = ctx.ciq
+    if b is None:
+        raise TransformError(f"{ctx.page.get('ticker')}: this transform re-reads the page's own "
+                             "CIQ exports (`--ciq`), and no folder was given")
+    cp = mech.catalyst_path
+    si = mech.stock_info
+    if cp is None or si is None or not si.as_of:
+        return mech
+    ref = date.fromisoformat(str(ctx.page["reference_date"])[:10])
+    cut = date.fromisoformat(str(si.as_of)[:10])
+    stale = mechanical._STALE_CLOSE_DAYS
+    gb = ciq_sheets.guidance_bridge(b, as_of=ciq_sheets.estimates_as_of(b).value,
+                                    reference_date=ref, stale_after_days=stale, cut=cut)
+    gr = ciq_sheets.guidance_bridge_rows(b, reference_date=ref, stale_after_days=stale, cut=cut)
+    upd: dict[str, Any] = {}
+    if _bridge_primary(gb) == _bridge_primary(cp.guidance_bridge):
+        upd["guidance_bridge"] = gb
+    if _rows_primary(gr) == _rows_primary(cp.guidance_bridge_rows):
+        upd["guidance_bridge_rows"] = gr
+    return mech.model_copy(update={"catalyst_path": cp.model_copy(update=upd)}) if upd else mech
+
+
 Transform = Callable[[MechanicalLayer, Context], MechanicalLayer]
 
 TRANSFORMS: dict[str, Transform] = {
@@ -533,6 +606,7 @@ TRANSFORMS: dict[str, Transform] = {
     "current_buybacks": current_buybacks,
     "asof_cut": asof_cut,
     "driver_facts": driver_facts,
+    "same_day_guides": same_day_guides,
 }
 
 #: Fix 3a's five labels (#923), in the order applied.
@@ -554,3 +628,6 @@ ASOF_CUT: tuple[str, ...] = ("asof_cut",)
 #: RG-D8's one transform: the transcript driver rows' fact check, which the prompt reads as an
 #: unverified row's value.
 RG_D8: tuple[str, ...] = ("driver_facts",)
+
+#: #967's one transform (RA-D2, RA-D4): the dividend row and status, and the same-day guides.
+RA_D4: tuple[str, ...] = ("same_day_guides",)

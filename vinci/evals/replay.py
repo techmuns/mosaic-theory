@@ -220,11 +220,12 @@ def capture(page: dict[str, Any], transcript: str | None, *, model: str = DEFAUL
 def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
                model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
                transforms: Sequence[str] = (), comps: Path | None = None,
-               repo: Path = ROOT) -> Request:
+               ciq: Path | None = None, repo: Path = ROOT) -> Request:
     """``capture`` with the code at ``code_ref``: its ``vinci/`` is extracted by ``git archive``
     into a temporary folder and `capture_child.py` runs there in a child process (``-P``: the
     script's own folder is not put on the path), refusing to run against any other ``vinci``. A ref
-    older than #865 clears the material marks its synthesis never read."""
+    older than #865 clears the material marks its synthesis never read. ``ciq`` is the page's own
+    CIQ folder, read only, for a transform that re-reads its exports (`variants.Context.ciq`)."""
     rc = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor",
                          MATERIAL_MARKED_BEFORE_SYNTHESIS, code_ref],
                         capture_output=True).returncode
@@ -249,6 +250,8 @@ def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
             args += ["--transform", t]
         if comps is not None:
             args += ["--comps", str(comps.resolve())]
+        if ciq is not None:   # the page's own CIQ folder, for a transform that re-reads it
+            args += ["--ciq", str(ciq.resolve())]
         if transcript is not None:
             (root / "transcript.txt").write_text(transcript, encoding="utf-8")
             args += ["--transcript", str(root / "transcript.txt")]

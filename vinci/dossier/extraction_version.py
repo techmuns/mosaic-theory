@@ -775,6 +775,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "parse'; and a thin RTF is no longer called an OLE Word doc. On the 36 export folders "
         "on disk no read moves",
     ),
+    (
+        "2026-11-11.same-day-guides",
+        "every period guided on the latest date is kept, in time order (TeamNostra fix request "
+        "2, RA-D4, split from #967): the guidance read carries every period guided on its "
+        "latest date, each labelled ('same day: ...' in the bridge, a row each in the table), "
+        "in time order (FQ and FH before FY), and its own period, the one the guide check "
+        "takes, is the first in time, a tie keeping the earlier period (the operator's ruling, "
+        "2026-11-10); the 'most recent outcome' breaks its own same-date tie the same way",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
