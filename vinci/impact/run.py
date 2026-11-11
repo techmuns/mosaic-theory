@@ -691,11 +691,13 @@ def stale_at_head(lay: Layout, ticker: str, s: Settings) -> dict[str, Any] | Non
 
 def frontend_build(s: Settings, lay: Layout, side: str, tickers: Sequence[str]) -> Path:
     """``frontend/build.py`` of the side's code, over the data ref's tree with every committed
-    ``dossier.md`` replaced by the side's own render of the committed JSON."""
+    ``dossier.md`` replaced by the side's own render of the committed JSON. The side's ``vinci/``
+    sits beside it: the build reads the extraction-version table from it (#988)."""
     root = s.out / "fe" / side
     if root.exists():
         shutil.rmtree(root)
     _clone(lay.inputs_src, root)
+    _clone(lay.code[side] / "vinci", root / "vinci")
     shutil.copy2(lay.code[side] / "frontend" / "build.py", root / "frontend" / "build.py")
     for t in tickers:
         md = s.out / "pages" / side / t / "committed.md"

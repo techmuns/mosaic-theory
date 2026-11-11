@@ -111,3 +111,31 @@ def test_a_child_that_dies_before_its_steps_names_why_and_is_never_kept(
     assert rn._error(page, "build") == ("ChildExit: the head child exited 1 before writing the "
                                         "page — see MCK.log")
     assert rn.compare_page(s, "MCK")["errors"]["head"]["build"].startswith("ChildExit")
+
+
+def test_the_frontend_build_runs_beside_its_own_sides_vinci(tmp_path: pathlib.Path) -> None:
+    """Found by the check's run on itself (2026-11-11): since #988 `frontend/build.py` reads the
+    extraction-version table from `vinci/dossier/` beside it, and the build tree held no `vinci/`,
+    so the base side's build died. Each side's build gets that side's `vinci/`."""
+    import sys
+
+    code = {side: tmp_path / "code" / side for side in rn.SIDES}
+    for side, root in code.items():
+        (root / "vinci" / "dossier").mkdir(parents=True)
+        (root / "vinci" / "dossier" / "extraction_version.py").write_text(f"V = '{side}'\n")
+        (root / "frontend").mkdir()
+        (root / "frontend" / "build.py").write_text(
+            "from pathlib import Path\n"
+            "root = Path(__file__).resolve().parents[1]\n"
+            "text = (root / 'vinci' / 'dossier' / 'extraction_version.py').read_text()\n"
+            "(root / 'frontend' / 'out.txt').write_text(text)\n")
+    src = tmp_path / "inputs-src"
+    (src / "data" / "dossiers").mkdir(parents=True)
+    (src / "frontend").mkdir()
+    lay = rn.Layout(tmp_path, code, {}, {}, src)
+    s = rn.Settings(repo=ROOT, base="b", head="h", out=tmp_path / "o", ciq_root=tmp_path,
+                    cache_root=tmp_path, store=tmp_path, env_file=None, python=sys.executable)
+    outs = {side: rn.frontend_build(s, lay, side, []) for side in rn.SIDES}
+    assert (outs["base"] / "out.txt").read_text() == "V = 'base'\n"
+    assert (outs["head"] / "out.txt").read_text() == "V = 'head'\n"
+    assert rn.tree_diff(outs["base"], outs["head"])["differ"] == ["out.txt"]
