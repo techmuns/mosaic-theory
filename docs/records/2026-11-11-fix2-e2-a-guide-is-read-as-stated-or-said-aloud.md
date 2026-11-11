@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -180,3 +180,6 @@ At each page's next re-assembly:
   that way.
 - **A period phrase before a deal noun is skipped.** "the fiscal 2026 sale of …" gives no period.
   *Falsifier:* a guide whose only stated period is written before such a noun.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `2b9b766c` (#976) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -128,3 +128,6 @@ caches); AMZN's, GOOGL's, TECX's and WLK's were gone.
   filing with the newest 10-Q/10-K its submissions document lists; it is proposed, not built.
   Whether V's committed page read the stale body is not checked here.
 - **Nothing reads the store yet** (STATE §5.0 row 44). No page, screen or synthesis request moves.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `3d55bc31` (#999) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

@@ -1,6 +1,6 @@
 ---
 id: 2026-10-30-press-release-ltm
-status: open
+status: shipped
 date: 2026-10-30
 prs: []
 supersedes:
@@ -207,3 +207,6 @@ refused. It is the operator's call.
     reads both exports;
   - CIQ heading a preliminary column with a word other than `Press Release` would pass the status
     gate, leaving only the value check.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `9503c4fa` (#868) on 2026-10-30. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

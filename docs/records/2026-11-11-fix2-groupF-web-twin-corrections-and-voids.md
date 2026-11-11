@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -119,3 +119,6 @@ collapsed and force-open, was approved with the banner added.
   voided twice, in its pill and its foot line.
 - **This PR is built on V1.** Its pins need V1's readers. It is cut onto `main` once V1 merges,
   and merges before the void is appended (V2).
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `8a72be4c` (#1001) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

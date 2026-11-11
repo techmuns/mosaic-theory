@@ -32,6 +32,7 @@ the SNAPSHOT and `docs/records/` is the LEDGER — one immutable file per entry,
 whole file 19,241 → 1,892. `AGENTS.md` points other tools at CLAUDE.md without copying it. Every
 block is migrated: §2 and §4 keep one summary line per item with a pointer to its record.
 *Records: `docs/records/2026-08-2*-knowledge-ledger-p{0,1,2,3}.md`.*
+**A RECORD READING `status: open` IS CITED BY AN OPEN §5.0 ROW (2026-11-11):** `tests/test_record_status_matches_open_now.py`, by filename in a numbered row, outside struck text (incident → invariant, shipped Y); the sweep that made it true flipped 68 of the 82 open records it met, ending on `cbefc245`, and kept 14 (`docs/records/2026-11-11-record-status-sweep.md`).
 
 Each line: *what it does* — *verified how*.
 
