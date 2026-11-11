@@ -95,13 +95,13 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RA-D11 | 3 | fixed | 507d4f32 (#957) | `tests/test_libreoffice_exit.py::test_ra_d11_twin_an_ole_file_whose_conversion_fails_raises_the_callers_error` | none (latent) |
 | RA-D13 | 3 | fixed | 507d4f32 (#957) | `tests/test_ciq_marker_residuals.py::test_ra_d13_a_marker_in_smpls_probe_cells_empties_the_levels_with_a_reason` | none; ORKA and TECX gain `consensus_levels_note` when next assembled |
 | RBC-D6 | 3 | fixed | 507d4f32 (#957) | `tests/test_customers_sheet_route.py::test_rbc_d6_twin_a_prior_section_and_a_repeated_header_are_not_current_customers` | none (latent) |
-| RE2-D16 | 3 | open | — | — | — |
+| RE2-D16 | 3 | fixed | d9dd48f5 (#961): the covenant fence reads every class a value states — whole dates, ratios, percents and basis points, unmarked amounts — each in its own unit; the six-page panel check passed, no-worsening ($25.79 of $35) | `tests/test_covenant_value_in_quote.py::test_re2_d16_each_constructed_case_is_refused` | none now; 24 committed terms on 13 pages are withheld at their next re-assembly |
 | A-D2 | 3 | fixed | 33ff2024 (#960) | `tests/test_bridge_total_and_band_history.py::test_a_d2_twin_an_unread_preferred_leg_is_named_at_bridge_level` | none yet: 13 bridges (AMZN, EPAM, GOOGL, LLY, MCK, NFLX, SMPL, TECX, UBER, V, VITL, VRRM, WLK) gain the note in the $0 pass after driver facts PR 3 |
 | BC-D7 | 3 | fixed | a71b9f67 (#964), the graph half: removed with `vinci/ciq/`. The dossier half was fixed in 60151ccc (#881) and the spreadsheet half is RBC-D6, 507d4f32 (#957); #957 and #960 each name the graph parser as the half that remained | `tests/test_vinci_ciq_removed.py::test_the_package_is_gone_and_nothing_imports_it`; the spreadsheet half: `tests/test_customers_sheet_route.py::test_rbc_d6_twin_a_prior_section_and_a_repeated_header_are_not_current_customers` | none |
 | BC-D10 | 3 | fixed | 33ff2024 (#960) | `tests/test_ciq_bridge_unit_step.py::test_bc_d10_twin_the_synthetic_operating_cash_flow_a_unit_step_off_is_refused` | none (latent) |
 | D-D3 | 3 | fixed | 33ff2024 (#960) | `tests/test_bridge_total_and_band_history.py::test_d_d3_twin_the_export_day_close_is_not_in_the_band` | none (no committed page carries the band) |
 | E1-D7 | 3 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_graphs_excerpts_read_an_amendment_carrying_the_statements` | none (graph only; data/graph_coverage.json not rebuilt) |
-| E2-D19 | 3 | open | — | — | — |
+| E2-D19 | 3 | fixed | d9dd48f5 (#961): the covenant fence reads every class a value states — whole dates, ratios, percents and basis points, unmarked amounts — each in its own unit; the six-page panel check passed, no-worsening ($25.79 of $35) (E2-D19's residual) | `tests/test_covenant_value_in_quote.py::test_re2_d16_each_constructed_case_is_refused` | none now; 24 committed terms on 13 pages are withheld at their next re-assembly |
 | RE2-D1 | 4 | fixed | 2b9b766c (#976): "and" joins a guide range only after "between"; two actuals are no guide | `tests/test_guidance_fix2_e2.py::test_re2_d1_two_actuals_joined_by_and_are_not_a_guide` | none: 0 of 141 guides on 27 pages move |
 | RE2-D2 | 4 | fixed | bfedbac9 (#962): the first amount of a 'respectively' list is refused; E2-D11's residual (each unplaced actual statement is noted) rides in the same PR | `tests/test_release_actuals_never_silent.py::test_re2_d2_a_respectively_list_is_refused`, `tests/test_release_actuals_never_silent.py::test_e2_d11_an_unplaced_non_revenue_actual_is_noted` | none yet: 0 rows move on the 122 cited releases; 28 notes on 10 pages land with a $0 `release_figures_transform` pass |
 | RE2-D3 | 4 | fixed | 2b9b766c (#976): a range the release withdraws (its own clause, or a prior range in a withdrawing release, at the withdrawal's horizon) is refused aloud | `tests/test_guidance_fix2_e2.py::test_re2_d3_a_withdrawn_outlook_is_refused_aloud` | none: 0 of 141 guides move |
@@ -148,10 +148,10 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RD-D4 | 4 | open | evidence, not a fix: VITL's $0 precheck of 2026-11-09 listed 6 regressions and not its R1 anchor base, 30.0469 → None on the paid page, because the `anchor` block it compares by presence stays present; and UBER's of 2026-11-09 read "0 regressions" while the paid page's `valuation_basis.priceable` went True → False (its bridge $5,356.0M against CIQ's comps TEV less market cap $8,973.0M), the block present either way (`docs/records/2026-11-09-fix-request-2-order-1-rebuilds.md`) | — | — |
 | RA-D5 | 5 | open | — | — | — |
 | RA-D7 | 5 | open | — | — | — |
-| RA-D10 | 5 | open | — | — | — |
-| A-D15 | 5 | open | — | — | — |
+| RA-D10 | 5 | fixed | 173b4818 (#970): a file's kind is its name's exact rule, never a keyword anywhere in it | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d10_an_issuer_named_with_a_kind_word_reads_as_its_own_pack` | none (latent) |
+| A-D15 | 5 | fixed | 173b4818 (#970): = RA-D10 | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d10_twin_the_kind_is_the_names_end_never_a_word_in_it` | none (latent) |
 | RA-D12 | 5 | open | — | — | — |
-| RA-D17 | 5 | open | — | — | — |
+| RA-D17 | 5 | fixed | 173b4818 (#970): a PDF tearsheet is read as a PDF | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d17_a_pdf_tearsheet_reads_its_industry` | none (every tearsheet on disk is RTF) |
 | V1-O2 | 5 | open | — | — | — |
 | V1-O3 | 5 | fixed | c2a4d743 (#975): a row whose type is blank is kept | `tests/test_ciq_relationship_view_edges.py::test_v1_o3_a_row_whose_type_is_blank_is_kept_on_a_real_export` | none (latent) |
 | RBC-D3 | 5 | fixed | c2a4d743 (#975): a Customers file cut short says so and gives no count | `tests/test_ciq_relationship_view_edges.py::test_rbc_d3_a_customers_file_cut_short_says_so_and_gives_no_count` | none (latent) |
@@ -167,7 +167,7 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RFL-D1 | 5 | open | — | — | — |
 | RA-D15 | 6 | fixed | cd832299 (#965) | `tests/test_ciq_reader_contract.py::test_stated_currency_agrees_on_the_xlsx_export` | none (every export on disk is BIFF) |
 | RA-D16 | 6 | fixed | cd832299 (#965) | `tests/test_ltm_flag_and_xlsx_currency.py::test_ra_d16_twin_the_synthetic_marked_quarter_is_quoted` | none now; EPAM's, MCK's, VITL's, VRRM's and WLK's QA flags quote '-' when re-assembled |
-| RBC-D2 | 6 | open | — | — | — |
+| RBC-D2 | 6 | fixed | 173b4818 (#970): = RA-D10 | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d10_twin_the_customers_and_suppliers_files_are_told_apart_by_their_end` | none (latent) |
 | RBC-D5 | 6 | fixed | c2a4d743 (#975): an empty view is named for what it shows | `tests/test_ciq_relationship_view_edges.py::test_rbc_d5_an_empty_view_at_a_real_exports_size_is_named` | none (latent) |
 | RBC-D10 | 6 | fixed | ed2c5f8f (#974): a quality "not run" reason names only live code, and a guard checks every code name a reason gives | `tests/test_quality_not_run_reasons.py::test_rbc_d10_every_code_name_a_not_run_reason_gives_exists` | none; the 2026-11-11 CIQ quality snapshot regenerated |
 | RE2-D19 | 6 | fixed | 2b9b766c (#976): "raised … outlook to $X to $Y from its prior outlook of …" reads the new range | `tests/test_guidance_fix2_e2.py::test_re2_d19_a_raise_reads_the_new_range_not_the_prior` | none: 0 of 141 guides move |

@@ -1,12 +1,12 @@
 ---
 status: shipped
 date: 2026-11-11
-prs: [973, 974, 975, 976]
+prs: [961, 970, 973, 974, 975, 976]
 supersedes:
 superseded-by:
 ---
 
-# Fix request 2 bookkeeping, batch 2, and the faster-fixes process: 14 fix-log rows from #973–#976 (11 to `fixed`, 3 to `in progress`), STATE row 60 recounted (72 fixed, 98 open, 7 in progress, 1 disagreed), and the operator's four process changes recorded, among them the mechanical re-sync's exception from `bin/commit`
+# Fix request 2 bookkeeping, batch 2, and the faster-fixes process: 20 fix-log rows from #961 and #970–#976 (17 to `fixed`, 3 to `in progress`), STATE row 60 recounted (78 fixed, 92 open, 7 in progress, 1 disagreed), and the operator's four process changes recorded, among them the mechanical re-sync's exception from `bin/commit`
 
 **WHAT.** This record covers two things.
 
@@ -23,6 +23,11 @@ section was applied to `docs/fix-log-teamnostra-2.md`, with its squash commit:
   RA-D2 and RA-D4 read `in progress (#967)`, and #967 is being split into two successors, each
   measured on its own.
 - **#978** (`e73e7a54`) closes no ID, as its section says.
+- **#961** (`d9dd48f5`): RE2-D16 and E2-D19's residual fixed. Its section wrote both as
+  `in progress (#961)` before its panel check; the check then passed (no-worsening, $25.79 of
+  $35) and it merged, so both read `fixed`.
+- **#970** (`173b4818`): RA-D10, A-D15 (= RA-D10), RBC-D2 (= RA-D10, document 14) and RA-D17
+  fixed, all latent.
 
 The batch also changed two other things:
 - **Fix-log header.** The paragraph saying "Order 2 is in two PRs … RD-D1 waits for #930" was
@@ -88,15 +93,15 @@ only.
 - `tests/test_fix_log.py` passes on this branch, with `test_state_open_now` and
   `test_state_identifiers`. That lint refuses a `fixed` row whose squash commit is not reachable
   from `origin/main`, or whose test node does not exist. Every test node named above exists on
-  main `2b9b766c`.
+  main `173b4818`.
 - The counts were read by a script over every row's Status cell.
 
 **BOUNDARY.** The counts:
-- 72 fixed, 98 open, 7 in progress and 1 disagreed. These are all 178 rows of
-  `docs/fix-log-teamnostra-2.md`, by Status cell, on this branch, cut from main `2b9b766c` and
+- 78 fixed, 92 open, 7 in progress and 1 disagreed. These are all 178 rows of
+  `docs/fix-log-teamnostra-2.md`, by Status cell, on this branch merged with main `173b4818`,
   counted 2026-11-11.
-- The 30 `§4` rows (TeamNostra builds them) are among the 98 open.
-- The 14 rows changed: 10 from `open` to `fixed`, 1 from `in progress` to `fixed`, and 3 from
+- The 30 `§4` rows (TeamNostra builds them) are among the 92 open.
+- The 20 rows changed: 16 from `open` to `fixed`, 1 from `in progress` to `fixed`, and 3 from
   `open` to `in progress`.
 - "30 to 80 minutes" is the range of local `bin/commit` wall times the streams reported on
   2026-11-10 and 2026-11-11.
