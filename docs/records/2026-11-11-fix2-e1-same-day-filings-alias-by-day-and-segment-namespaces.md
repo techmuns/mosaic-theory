@@ -55,7 +55,8 @@ superseded-by:
     A dimension or member written as text is resolved through the instance's own bindings. A
     filer's own namespace keeps its prefix. A standard prefix bound to another URI matches
     nothing. A prefix bound to two URIs and used in a QName is refused, never guessed between.
-- **Version row** `2026-11-11.same-day-filings-and-alias-by-day`, in both tables, re-pinned. The
+- **Version entry** `vinci/dossier/extraction_versions/2026-11-11.same-day-filings-and-alias-by-day.json`
+  (one file per vintage since #988), re-pinned with `--entry`. The
   FPI1a source-scan guard (`test_every_reader_that_ranks_a_pe_reads_eps_in_the_filers_own_currency`)
   accepts `served_series` as the EPS read, with the same `currency=REPORTING` and `as_of`.
 

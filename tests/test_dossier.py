@@ -141,7 +141,10 @@ def test_synthesis_is_the_only_llm_output_and_carries_no_conclusion() -> None:
         "evidence_balance", "bull_points", "bear_points", "twin_reference_cases",
         "decisive_question", "key_unknowns", "draw_agreement",
     }
-    assert set(ds.DrawAgreement.model_fields) == {"attempted", "completed", "labels", "unanimous"}
+    # the vote rule's R5 (2026-11-11) added four, each a count or a boolean about the DRAWS — the
+    # modal lean and the gate's state are DERIVED from them, never stored on the page
+    assert set(ds.DrawAgreement.model_fields) == {"attempted", "completed", "labels", "unanimous",
+                                                  "modal_count", "required", "passes", "rule"}
     banned = ("verdict", "action", "recommendation", "direction", "score", "rating", "probability",
               "target", "conviction")
     for model in (ds.Synthesis, ds.DrawAgreement):
