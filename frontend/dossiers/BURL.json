@@ -9730,397 +9730,1037 @@
           "kind": "leading_indicator",
           "metric": "total sales growth",
           "period": "Q1 2026",
-          "value": "14%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q1, we notched up 14% total sales growth.",
-          "following_context": "This was on top of 6% total sales growth in 2025 and 11% growth the year before that. This means that cumulatively, our business is now 34% bigger than it was 3 years ago. We are taking retail market share through new store openings and comp store sales growth. And as I described a moment ago, we are achieving strong and consistent earnings flow-through on these incremental sales.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 6,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "df6ce5e565b369237f014b7b27866a9120e2ff11889b2dd25160b2c619ff5402",
+            "value_sha256": "21788f57e84dd2403ecb3a14145c5315f5cc29d0a74c69747c52de54c7b64358"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cumulative business size vs 3 years ago",
           "period": "3 years",
-          "value": "34% bigger",
           "value_num": null,
           "unit": null,
-          "verbatim": "This means that cumulatively, our business is now 34% bigger than it was 3 years ago.",
-          "following_context": "We are taking retail market share through new store openings and comp store sales growth. And as I described a moment ago, we are achieving strong and consistent earnings flow-through on these incremental sales.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 34.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 6,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "2d2fa30a43cc0996905388257a9cc109d5dd8dfaae5da6a8568ebc0eed66152b",
+            "value_sha256": "be643c01b9a06cd9e781d25dbb1a7777787665932e829d692beff8250c1f3fea"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "comp store sales growth",
           "period": "Q1 2026",
-          "value": "6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Comp store sales increased 6% in Q1, well above our guidance of 2% to 4%.",
-          "following_context": "I was very pleased with our flexibility in chasing the sales trend while also managing our liquidity and inventory levels to drive strong merchant margin leverage on this comp growth. Our comp trends were broad-based across businesses and geographies, with particular strength in ladies apparel, beauty and accessories.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 7,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "949fb7cd93983e941a7a5284f3e2c3e21fb88ee2f78f08713679581c74260497",
+            "value_sha256": "d9d689c786a2ae27b96d59f2623ccce3b62e32733f1c306c0df59ae4b10b35a3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "gross new stores opened",
           "period": "Q1 2026",
-          "value": "40",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q1, we opened 40, that's 4-0 gross new stores.",
-          "following_context": "We relocated 6 stores and closed 4 for a net increase of 30, 3-0 stores. We are very pleased with the pace and quality of these new store openings. For the full year, we now anticipate 135 gross new stores. Stripping out relocations and closures, we expect this to yield 115 net new stores. This is slightly ahead of our prior guidance of 110 net new stores for 2026.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 13,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "8c5d2e13c86d079d1387524c2b9ded2f5c4bfe6e4222b49f207d8415016e148b",
+            "value_sha256": "d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "net new stores",
           "period": "Q1 2026",
-          "value": "30",
           "value_num": null,
           "unit": null,
-          "verbatim": "We relocated 6 stores and closed 4 for a net increase of 30, 3-0 stores.",
-          "following_context": "We are very pleased with the pace and quality of these new store openings. For the full year, we now anticipate 135 gross new stores. Stripping out relocations and closures, we expect this to yield 115 net new stores. This is slightly ahead of our prior guidance of 110 net new stores for 2026.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 13,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "a3cc0a6aaf0948758b3ba5b83631e16131969169de6d8b77b7a056188ab5f8b8",
+            "value_sha256": "624b60c58c9d8bfb6ff1886c2fd605d2adeb6ea4da576068201b6c6958ce93f4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "store relocation sales lift",
           "period": null,
-          "value": "5% to 10%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Store relocations continue to perform well, typically delivering a sales lift of 5% to 10% as we upgrade the physical store and move into higher traffic centers with stronger cotenancy.",
-          "following_context": "Our downsized program is also driving very strong results. This program is targeted at older stores where we like the location, but the store is oversized. As a reminder, we downsized 20 stores in 2025, and we are ramping this program to about 30 stores this year.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 14,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "481f844c9a4ec6ca973010e750eab838a9430a2b611da1402d43a12d8fd645c2",
+            "value_sha256": "e06f302855571c75a321b924f0ceb4509a9f21b6f4688f148f65041b756f16e3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "downsized stores occupancy cost reduction",
           "period": null,
-          "value": "about 200 basis points",
           "value_num": null,
           "unit": null,
-          "verbatim": "On average, we are seeing a reduction in occupancy costs of about 200 basis points.",
-          "following_context": "The financial returns are very attractive, and we plan to ramp this program in the years ahead.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 15,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "eebd28ec9813321bbc117396c15f6cab2b5e9df4667ce7b18de72ee34524e717",
+            "value_sha256": "505b1f86c71febed4eda4371e42a911edf04862e47b60bf1703f771a91a34963"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "sales per selling square foot",
           "period": "today",
-          "value": "around $350 per square foot",
           "value_num": null,
           "unit": null,
-          "verbatim": "Fast forward to today, and it is now around $350 per square foot.",
-          "following_context": "That's a 55% increase in sales productivity in a 6-year period. We talk a lot about sales growth, but it is important to call out that our sales growth is happening in smaller, more productive stores. This is important because we expect that this higher sales productivity will drive leverage in occupancy expenses as new stores join the comp base and their sales ramp up over time and as we relocate or downsize many more of our existing stores to our smaller store format.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 350.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 16,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "9f171bc459da90cf3e113fc0a94d236a8e3b0981894e1b7620696a164cf02ed5",
+            "value_sha256": "486486969fdee0d3f861bc086a06fd625e6dfa3002551c2930d73ff00485c752"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "sales per selling square foot (2019)",
           "period": "2019",
-          "value": "around $220",
           "value_num": null,
           "unit": null,
-          "verbatim": "In 2019, our sales per selling square foot was languishing around $220.",
-          "following_context": "Fast forward to today, and it is now around $350 per square foot. That's a 55% increase in sales productivity in a 6-year period. We talk a lot about sales growth, but it is important to call out that our sales growth is happening in smaller, more productive stores. This is important because we expect that this higher sales productivity will drive leverage in occupancy expenses as new stores join the comp base and their sales ramp up over time and as we relocate or downsize many more of our existing stores to our smaller store format.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 220.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 16,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "6e9ea5b45a382b9850c77fc3da53579c2882131e620cca45746a0be0b369c04c",
+            "value_sha256": "e19f0917d7f1db6ed4e93c424a3751c287d191a6ada5a68a89db746b30c7cc40"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "sales productivity increase",
           "period": "6-year period",
-          "value": "55% increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "That's a 55% increase in sales productivity in a 6-year period.",
-          "following_context": "We talk a lot about sales growth, but it is important to call out that our sales growth is happening in smaller, more productive stores. This is important because we expect that this higher sales productivity will drive leverage in occupancy expenses as new stores join the comp base and their sales ramp up over time and as we relocate or downsize many more of our existing stores to our smaller store format.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 55.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 16,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "db249cd82f1e04a7d47c8daa39f0200aa1e7ce8943c6bea85c7e9fa9e221968a",
+            "value_sha256": "928cb36136161cd20623d6e6764a12d2a42bb3558cf693d5c8430c7471eb5861"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "operating margin expansion",
           "period": "Q1 2026",
-          "value": "20 basis points",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our operating margin in Q1 expanded by 20 basis points.",
-          "following_context": "This was significantly ahead of our guidance. As a reminder, we had expected a decline of 60 to 100 basis points, driven by headwinds specific to Q1. As it turned out, we rolled right over these headwinds and delivered operating margin expansion that was 100 basis points above the midpoint of our guidance. The drivers of this margin outperformance were higher merchant margin and stronger supply chain productivity.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 9,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "e395c8615043533e74b9462a015d55e3ac9a37841f508c780d083a129aa0a51b",
+            "value_sha256": "a5161592f3774312a8a8d181248670ad769c42d8d237c652e64166f38e0e0c61"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "gross margin rate",
           "period": "Q1 2026",
-          "value": "44.1%, an increase of 30 basis points",
           "value_num": null,
           "unit": null,
-          "verbatim": "The gross margin rate for the first quarter was 44.1%, an increase of 30 basis points versus last year.",
-          "following_context": "This was driven by a 20 basis point increase in merchandise margin and a 10 basis point decrease in freight expenses. Product sourcing costs were $216 million versus $197 million in the first quarter of 2025. Product sourcing costs decreased 30 basis points as a percentage of sales versus last year as we continue to execute on our supply chain productivity and cost savings initiatives.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 44.1,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 22,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "d6e08b794bdbe472fdd2f5017462e91da15e373ebd836bd4b11e33a42359d0bb",
+            "value_sha256": "4ca6728b0e59b32930860b74e9b88bab637cc2db59255c6d532a21cf2a5643fe"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "merchandise margin increase",
           "period": "Q1 2026",
-          "value": "20 basis point increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "This was driven by a 20 basis point increase in merchandise margin and a 10 basis point decrease in freight expenses.",
-          "following_context": "Product sourcing costs were $216 million versus $197 million in the first quarter of 2025. Product sourcing costs decreased 30 basis points as a percentage of sales versus last year as we continue to execute on our supply chain productivity and cost savings initiatives.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 22,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "711184144a672dddf04c8aac6b6069217d984572d008cf6f9b25adb3ffdaefa9",
+            "value_sha256": "cf8ab606640c6b99df9aa46dfa111afffd25da699f1970b63cccee3e4799284c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "product sourcing costs",
           "period": "Q1 2026",
-          "value": "$216 million versus $197 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Product sourcing costs were $216 million versus $197 million in the first quarter of 2025.",
-          "following_context": "Product sourcing costs decreased 30 basis points as a percentage of sales versus last year as we continue to execute on our supply chain productivity and cost savings initiatives.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 216.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 197.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 22,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "1ff03adaea9836953759e31fd350b6cc6dc325e86af66d16847c8b6adaaa4edd",
+            "value_sha256": "959994261279f999310c4e440d6d3d82033a22eb19093f18463bd895e706cd83"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "comparable store inventories",
           "period": "end of Q1 2026",
-          "value": "increased 11%",
           "value_num": null,
           "unit": null,
-          "verbatim": "At the end of the quarter, comparable store inventories increased 11% versus the end of the first quarter of 2025.",
-          "following_context": "Our reserve inventory was 41% of our total inventory versus 48% of our inventory last year. We are very pleased with the quality of the merchandise and the values that we have in reserve. We ended the quarter with approximately $1.7 billion in total liquidity. This consisted of $747 million in cash and $942 million in availability on our ABL. We had no outstanding borrowings at the end of the quarter on the ABL. During the quarter, we repurchased $81 million in common stock. At the end of Q1, we had $304 million remaining on our share repurchase authorization. This expires in May of 2027.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 24,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "857495538cf25f739c25d174c81295ed0e4c4e078a0c5a8625f6721c8385074b",
+            "value_sha256": "86844b91f740df7d99c660752b0c2de096410999a1e65c304c30d47e3398d01a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "reserve inventory as % of total inventory",
           "period": "Q1 2026",
-          "value": "41% versus 48%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our reserve inventory was 41% of our total inventory versus 48% of our inventory last year.",
-          "following_context": "We are very pleased with the quality of the merchandise and the values that we have in reserve. We ended the quarter with approximately $1.7 billion in total liquidity. This consisted of $747 million in cash and $942 million in availability on our ABL. We had no outstanding borrowings at the end of the quarter on the ABL. During the quarter, we repurchased $81 million in common stock. At the end of Q1, we had $304 million remaining on our share repurchase authorization. This expires in May of 2027.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 41.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 48.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 24,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "b5392019de082fb7a60db1b767b50b56b25dc9bc706d7d757cb5a90c15a78d15",
+            "value_sha256": "f6aea8251a181e1a1f8000aac5a388922c111f93c5969c549e3bb578cd85b18e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "store count",
           "period": "end of Q1 2026",
-          "value": "1,242 stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "This resulted in the addition of 30 net new stores in Q1, bringing our store count at the end of the quarter to 1,242 stores.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1242.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+            "transcript_sha256": "55a8d412caa6eea584a14b241f14120ea5b8350deeb93339b9c413c495bac7d0",
+            "paragraph": 25,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "f10ce11d95372d976258e62b9a0ce2f568ec39117f1364205e1576d6f6fbec3c",
+            "value_sha256": "83256a932f23be72f6c5b711cc4f7d3c32d8b557facc3241328a67f67c875122"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total sales growth",
           "period": "Q2 2026",
-          "value": "11% on top of 10% growth last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total sales grew 11% on top of 10% growth last year.",
-          "following_context": "New stores are a major driver of this growth. In Q2, we opened 51 gross new stores. After store relocations and closures, this represents a net increase of 45 new stores. As we mentioned at the start of the year, the strength of our new store pipeline has enabled us to front-load new store openings this year with 2/3 opening in the spring and 1/3 scheduled for the fall. This means that on a trailing 12-month basis, we have opened an extraordinary 178 gross new stores, translating to 149 net new stores after relocations and closures. We are very pleased with the pace, quality, productivity and profitability of these new store openings.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 10,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "6218b1f629dbdc2a6196a158ff716335141b47bf538d7c08a382fbeb96e5d5d8",
+            "value_sha256": "4498f9c3a3957e95fe658ae93e42016ed3f2359e20fd22296868e0ba431aa111"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "gross new stores opened",
           "period": "Q2 2026",
-          "value": "51",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q2, we opened 51 gross new stores.",
-          "following_context": "After store relocations and closures, this represents a net increase of 45 new stores. As we mentioned at the start of the year, the strength of our new store pipeline has enabled us to front-load new store openings this year with 2/3 opening in the spring and 1/3 scheduled for the fall. This means that on a trailing 12-month basis, we have opened an extraordinary 178 gross new stores, translating to 149 net new stores after relocations and closures. We are very pleased with the pace, quality, productivity and profitability of these new store openings.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 51.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 10,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "50c7f2ed1090474c7e7ad7bdeb78b165caf6787e739fafa9b22b3722133b26c5",
+            "value_sha256": "031b4af5197ec30a926f48cf40e11a7dbc470048a21e4003b7a3c07c5dab1baa"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "net new stores",
           "period": "Q2 2026",
-          "value": "45",
           "value_num": null,
           "unit": null,
-          "verbatim": "After store relocations and closures, this represents a net increase of 45 new stores.",
-          "following_context": "As we mentioned at the start of the year, the strength of our new store pipeline has enabled us to front-load new store openings this year with 2/3 opening in the spring and 1/3 scheduled for the fall. This means that on a trailing 12-month basis, we have opened an extraordinary 178 gross new stores, translating to 149 net new stores after relocations and closures. We are very pleased with the pace, quality, productivity and profitability of these new store openings.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 45.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 10,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "05a45fce133e03bcf0618a3ea2c701025aef8ffda2304a5adced5938eb683ca6",
+            "value_sha256": "811786ad1ae74adfdd20dd0372abaaebc6246e343aebd01da0bfc4c02bf0106c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "trailing 12-month gross new stores",
           "period": "trailing 12 months",
-          "value": "178 gross new stores, 149 net new stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "This means that on a trailing 12-month basis, we have opened an extraordinary 178 gross new stores, translating to 149 net new stores after relocations and closures.",
-          "following_context": "We are very pleased with the pace, quality, productivity and profitability of these new store openings.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 178.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 149.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 10,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "8208f0431ddb4e86c763dd2fe77fd922e4d7745a6f1f5d1433ce49d1e5041df3",
+            "value_sha256": "7297a8392542fed86bba03230d582dcb2b34fc0b485ad2a01894ee69660c817b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "comp sales growth",
           "period": "Q2 2026",
-          "value": "2% on top of 5% comp growth last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Comp sales increased 2% in Q2 on top of 5% comp growth last year.",
-          "following_context": "Our merchant and operating teams executed well in the second quarter, and I am pleased with our solid 7% 2-year comp stack. I should add that the relatively higher number of new store openings in the last 12 months means the comp headwind from cannibalization by new stores is slightly elevated. As a reminder, whenever we approve a new store location, we analyze and estimate the potential cannibalization impact on nearby stores, and we build this into our economic modeling.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 11,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "a622c99002265285194c9d366b646c5fa42afcf766a5495e820a56816bb83ed2",
+            "value_sha256": "98f4c5bc2fca120b9d0ace723d6790b57a4b0388dee7c04f0513cfb7a64ac36b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "2-year comp stack",
           "period": "Q2 2026",
-          "value": "7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our merchant and operating teams executed well in the second quarter, and I am pleased with our solid 7% 2-year comp stack.",
-          "following_context": "I should add that the relatively higher number of new store openings in the last 12 months means the comp headwind from cannibalization by new stores is slightly elevated. As a reminder, whenever we approve a new store location, we analyze and estimate the potential cannibalization impact on nearby stores, and we build this into our economic modeling.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 11,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "d4e4f8f31aaa234716a637adc8951b640f7e11d42c696b2aba7a7a9425a948a0",
+            "value_sha256": "9f753044ad98962e40225692a334009ac3280bb88d182a9e0b90212f3e79a629"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new store cannibalization impact on comp",
           "period": "Q2 2026",
-          "value": "about 1.5 percentage points of comp",
           "value_num": null,
           "unit": null,
-          "verbatim": "Given the large number of new store openings in the past 12 months, it was worth about 1.5 percentage points of comp in Q2.",
-          "following_context": "We expect this to continue through the rest of this year. Again, to be clear, the net sales lift and the overall economics of our new store program are extremely attractive and easily exceed this impact on comp growth.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.5,
+              "currency": null,
+              "scale": null,
+              "unit": "pp",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 12,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "20d8603f516ec388de3d1e9fb1cc60337989051bcc2455ec789b374d48ac7381",
+            "value_sha256": "bdcedab50d257a9f24c14cdb6a7217ed5f6ecd13da07ab35ec66bb4f32a3f172"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "operating margin expansion",
           "period": "Q2 2026",
-          "value": "100 basis points",
           "value_num": null,
           "unit": null,
-          "verbatim": "Operating margin expanded 100 basis points, well above the high end of our guidance for 60 basis points of expansion.",
-          "following_context": "As previously mentioned, adjusted EPS increased 38% on top of 39% for the same period last year. This was a high-quality earnings beat driven by stronger merchandise margin as well as supply chain and SG&A leverage. Once again, these results demonstrate our ability to drive strong margin expansion and earnings growth even on relatively modest comp store sales increases.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 13,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "d37214c4caff3e28b8c7a147b8df894787df04f942eaf2142f22efa8d685cf34",
+            "value_sha256": "fb938b33baa16ffd83d15e218ce75e10dc2159db0d5865d74716d3aacf45e9cf"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EPS growth (last 4 quarters, ex tariff refunds)",
           "period": "last 4 quarters",
-          "value": "24% on total sales growth of 11% and comp store sales growth of 3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over that period, and again, excluding tariff refunds, we have driven EPS growth of 24% on total sales growth of 11% and comp store sales growth of 3%.",
-          "following_context": "Going back even further, over the last 8 quarters, we have driven EPS growth of 51% on 19% total sales growth and 6% comp sales growth on a 2-year stack basis.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 14,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "488b02a259f59212856ffb29cf1d4df6ae5908e50b751ef3fdb46c09a4a9d018",
+            "value_sha256": "e8e1aa867f783680c63287ead62bfade118d6232e6067489579f19561b215a50"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EPS growth (last 8 quarters, 2-year stack)",
           "period": "last 8 quarters",
-          "value": "51% on 19% total sales growth and 6% comp sales growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "Going back even further, over the last 8 quarters, we have driven EPS growth of 51% on 19% total sales growth and 6% comp sales growth on a 2-year stack basis.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 51.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 19.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 14,
+            "speaker": "Michael B. O'Sullivan",
+            "quote_sha256": "ae08c8b499f7e23b69adb337f0fb507b3752697eaaf3554f6aba53476df7d864",
+            "value_sha256": "e4d0eb561f291ae45ddfb6c0c3d8f68ad07790125c628e89ab593e20fb2c0399"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "gross margin rate",
           "period": "Q2 2026",
-          "value": "44.3%, an increase of 60 basis points",
           "value_num": null,
           "unit": null,
-          "verbatim": "The gross margin rate for the second quarter was 44.3%, an increase of 60 basis points versus last year.",
-          "following_context": "This was driven by a 70 basis point increase in merchandise margin, which was partially offset by a 10 basis point increase in freight expenses.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 44.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 22,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "c89a95143d847a6f4bd34369f729fc9e30c54dc00689ace49fffd9afd65eb93f",
+            "value_sha256": "79985460cd93b0e5a0f8501cfea383c0f1d7564963c2d0ab75957dc1368d5b52"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "merchandise margin increase",
           "period": "Q2 2026",
-          "value": "70 basis point increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "This was driven by a 70 basis point increase in merchandise margin, which was partially offset by a 10 basis point increase in freight expenses.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 22,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "9213b8bf7f83c659fced591bfcdc845c555b4b8e3d61d1e2f015a54f4fcc7ca7",
+            "value_sha256": "85f4c78337cd4397c911a7354d6a714a9e87774d00d741810992b027c9d5b5d5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "product sourcing costs",
           "period": "Q2 2026",
-          "value": "$226 million versus $209 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Product sourcing costs were $226 million versus $209 million in the second quarter of 2025.",
-          "following_context": "Product sourcing costs decreased 20 basis points as a percentage of sales versus last year. Supply chain was the driver of the leverage as we continue to execute on our productivity and cost savings initiatives. We achieved leverage in supply chain despite the start-up of our new state-of-the-art Savannah distribution center.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 226.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 209.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 23,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "125052095cdbe97e837bedaa2c575b487cd08b8b9860ad82441d0106d023d476",
+            "value_sha256": "83bd6735367bb14eecb8f6f98d92e256495b0314076df9f99750c6465df08098"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "comparable store inventories",
           "period": "end of Q2 2026",
-          "value": "increased 11%",
           "value_num": null,
           "unit": null,
-          "verbatim": "At the end of the quarter, comparable store inventories increased 11% versus the end of the second quarter of 2025.",
-          "following_context": "Our reserve inventory was 43% of our total inventory versus 50% of our inventory last year. We are very happy with the quality of the merchandise and the values we have in reserve.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 26,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "d74546a6c6324c136fee5e98ddf7f88bbf94914fb26af019f14bb4e950012a16",
+            "value_sha256": "86844b91f740df7d99c660752b0c2de096410999a1e65c304c30d47e3398d01a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "reserve inventory as % of total inventory",
           "period": "Q2 2026",
-          "value": "43% versus 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our reserve inventory was 43% of our total inventory versus 50% of our inventory last year.",
-          "following_context": "We are very happy with the quality of the merchandise and the values we have in reserve.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 43.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 26,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "317cbe5f74584fc026d5c8ac796d4a985c9e7dd678cc0e53d96b8712d25fdbfd",
+            "value_sha256": "b50481f9ad12be4f550917d497ffea37182161cfaf36bab29563154d8d54820d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "store count",
           "period": "end of Q2 2026",
-          "value": "1,287 stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "This resulted in the addition of 45 net new stores in Q2, bringing our store count at the end of the quarter to 1,287 stores.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1287.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+            "transcript_sha256": "14109f0b194bf688f6c8f2967fea03aede5218cbc92ea3d3bb9bfbaf696aec3c",
+            "paragraph": 29,
+            "speaker": "Kristin Wolfe",
+            "quote_sha256": "c04fe9f0011c438992f0c4735ad792beddb776eb80204dad2c6f844a7cb76840",
+            "value_sha256": "f5359f73b0769a80298c54b362da4b463273af9ea0b8ce78fdb14fbe511fc1e2"
+          }
         }
       ],
       "qa_flags": [
@@ -14713,6 +15353,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.peer_capital_intensity"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

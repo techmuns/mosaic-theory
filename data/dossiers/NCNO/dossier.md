@@ -1,6 +1,6 @@
 # Dossier — nCino, Inc. (Nasdaq: NCNO)
 
-_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-10.dated-headroom_
+_August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-10.driver-text-filed_
 
 # Brief — first cut
 
@@ -669,6 +669,7 @@ _Source §: latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm_
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 32d old — 2026-07-17 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 27d old (2026-07-22, valuation.implied_expectations.multiples_as_of) — within the ceiling

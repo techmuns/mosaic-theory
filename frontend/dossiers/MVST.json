@@ -6354,37 +6354,141 @@
           "kind": "leading_indicator",
           "metric": "sales volume (megawatt hours)",
           "period": "Q1 2026 vs prior year period",
-          "value": "approximately 274 megawatt hours for the same period in 2026 (from approximately 536 megawatt hours in the prior year period)",
           "value_num": null,
           "unit": null,
-          "verbatim": "The decrease was primarily driven by a reduction in sales volume from approximately 536 megawatt hours in the prior year period to approximately 274 megawatt hours for the same period in 2026, which will be detailed shortly.",
-          "following_context": "Our gross profit for the first quarter was $19.2 million with a gross margin of 31.6% compared to 36.9% in Q1 2025. The decrease was primarily due to lower production utilization with reduced fixed cost absorption and raw materials and energy price increases resulting from supply chain disruptions. However, even with these reduced sales volumes in the quarter, our margin position held strong, demonstrating the value of our technology. The gross margin profile remains subject to external pressures, including inflationary trends in raw material pricing and the elevated logistics and freight expenses resulting from the ongoing global supply chain disruptions and geopolitical conflicts.",
           "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 274.0,
+              "currency": null,
+              "scale": null,
+              "unit": "MWh",
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2026.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 536.0,
+              "currency": null,
+              "scale": null,
+              "unit": "MWh",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf",
+            "transcript_sha256": "7023481ecc1ace3da871505e6f752ee7de5fca4864481c71b6977366b8310a8e",
+            "paragraph": 18,
+            "speaker": "Rodney Worthen",
+            "quote_sha256": "81db546fb8d3b986bc6fd1e5122210e9b1383aed3f10f572c2222730aa764cf8",
+            "value_sha256": "bc56599d73954eeb85d18ac2afa832d8129e0b696d43bf17af6359906ea01fd5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "sales volume (megawatt hours)",
           "period": "6-month period 2026 vs 2025",
-          "value": "approximately 717 megawatt-hour for the same period in 2026 (from approximately 947 megawatt-hour in 2025), a 24.3% reduction",
           "value_num": null,
           "unit": null,
-          "verbatim": "the decrease was primarily driven by a 24.3% reduction in sales volumes from approximately 947 megawatt-hour in 2025 to approximately 717 megawatt-hour for the same period in 2026, and a $2.7 million tariff refund issued to a customer, which is recorded as a reduction to our revenue in the current period.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 717.0,
+              "currency": null,
+              "scale": null,
+              "unit": "MW",
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2026.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 947.0,
+              "currency": null,
+              "scale": null,
+              "unit": "MW",
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2025.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 24.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
+            "transcript_sha256": "1184027462cec7031781c651954997de0882b493040e349d770c953f027e2a23",
+            "paragraph": 7,
+            "speaker": null,
+            "quote_sha256": "8635a80e060eb191ef87012ddc98ce85753e8397e71b582986bfa0410561e834",
+            "value_sha256": "7bdff172e2d8d3a8ff73b01e6fa2142b24c93b36da6272f3435e577e2a8c8eda"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "European share of quarterly revenue",
           "period": "Q2 2026 vs prior year period",
-          "value": "61% of quarterly revenue, up from 43% last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "European sales increased 35% in the quarter compared to prior year period. The region accounted for 61% of quarterly revenue, up from 43% last year.",
-          "following_context": "Year-to-date sales were down 3%, impacted by customer platform rollout delays in the previous quarter. APAC sales declined 23% in the quarter compared to the prior year period, with the year-to-date sales down 45%. The reduced sales performance in APAC is primarily due to shifting regulatory and geopolitical dynamics and a demand shift towards lower-cost products in India.",
           "source_ref": "CIQ transcript: Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 61.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 43.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Microvast Holdings, Inc., Q2 2026 Earnings Call, Aug 10, 2026.rtf",
+            "transcript_sha256": "1184027462cec7031781c651954997de0882b493040e349d770c953f027e2a23",
+            "paragraph": 13,
+            "speaker": null,
+            "quote_sha256": "b2ef69eff4b925bcc80f540f5784398655334279cddb956ecce0c2bae26d9a5b",
+            "value_sha256": "ab269828acbe9c33c4735678629af5ea01fad265c6f31096d23b123a735e18c8"
+          }
         }
       ],
       "qa_flags": [
@@ -9348,6 +9452,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

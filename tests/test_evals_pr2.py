@@ -9,6 +9,7 @@ from typing import Any
 
 import pytest
 
+from tests.stripped_pages import replayable_text
 from vinci.evals import compare as cm
 from vinci.evals import replay as rp
 
@@ -55,7 +56,7 @@ def test_the_captured_request_keeps_productions_key_order() -> None:
     import json
 
     from vinci.dossier.synthesis import tool_for
-    nflx = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    nflx = json.loads(replayable_text("NFLX"))
     req = rp.capture(nflx, None)
     assert json.dumps(req.kwargs["tools"]) == json.dumps([tool_for(nflx["sleeve"])])
 
@@ -65,7 +66,7 @@ def test_run_request_sends_the_tool_in_productions_order(tmp_path: Path) -> None
     from types import SimpleNamespace
 
     from vinci.dossier.synthesis import tool_for
-    nflx = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    nflx = json.loads(replayable_text("NFLX"))
     sent: list[dict[str, Any]] = []
 
     class Sdk:
@@ -105,7 +106,7 @@ def test_the_guard_refuses_a_reordered_request(tmp_path: Path) -> None:
     from types import SimpleNamespace
 
     from vinci.graph.llm import AnthropicLlmClient
-    nflx = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    nflx = json.loads(replayable_text("NFLX"))
     req = rp.capture(nflx, None)
     kw = _reordered(req.kwargs)
     assert kw == req.kwargs                                   # equal as dicts …
@@ -127,7 +128,7 @@ def test_a_reordering_reaches_the_comparison() -> None:
     import json
 
     from vinci.evals import compare as cm
-    nflx = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    nflx = json.loads(replayable_text("NFLX"))
     base = rp.capture(nflx, None)
     d = cm.page_diff("NFLX", base, rp.Request(_reordered(base.kwargs)))
     assert not d.identical

@@ -17,6 +17,7 @@ from typing import Any
 
 import pytest
 
+from tests.stripped_pages import replayable_text
 from vinci.evals import compare as cm
 from vinci.evals import replay as rp
 
@@ -36,7 +37,7 @@ QUOTE = "Management said 'we will double the dividend next spring'."
 
 @pytest.fixture(scope="module")
 def nflx() -> dict[str, Any]:
-    page: dict[str, Any] = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    page: dict[str, Any] = json.loads(replayable_text("NFLX"))
     return page
 
 

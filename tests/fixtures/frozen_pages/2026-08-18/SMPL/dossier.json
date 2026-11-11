@@ -9286,289 +9286,680 @@
           "kind": "leading_indicator",
           "metric": "total retail takeaway (New Year promotional period)",
           "period": "Q2 2026",
-          "value": "declining 6.4% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "As Joe mentioned, we are disappointed with our Q2 performance as our retail takeaway slowed significantly compared to Q1, especially in the second half of the quarter as we entered the New Year, New Year promotional period declining 6.4% year-over-year.",
-          "following_context": "Quest consumption grew 2.4% as Bars were impacted by softer baseline velocities. Salty grew 14% in the quarter, although this represented a deceleration from Q1. OWYN consumption was down 2.4%, below our expectations due to lapping a heavy promotional period in the prior year and poor base velocities, including on newly expanded distribution. This poor performance will result in lost distribution in the coming months.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.4,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "ea797664d323aa0c2b450d95c29db1e7f2afb6b3e73d50d0e07683dfd7c494b5",
+            "value_sha256": "c8e3a36adcd685803938f7d248566c71b1c3ca927d87a9d3d4713754eb72026f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Quest consumption",
           "period": "Q2 2026",
-          "value": "grew 2.4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quest consumption grew 2.4% as Bars were impacted by softer baseline velocities.",
-          "following_context": "Salty grew 14% in the quarter, although this represented a deceleration from Q1. OWYN consumption was down 2.4%, below our expectations due to lapping a heavy promotional period in the prior year and poor base velocities, including on newly expanded distribution. This poor performance will result in lost distribution in the coming months.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.4,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "aaaa8aff69de3a67f8dc63024bf26974737c802fb1438f4a58c086d7ced2dee8",
+            "value_sha256": "2d5408d8bcdda16a66fde54be1f14f024d651646516cb6c2e6873409f7897e13"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Salty consumption",
           "period": "Q2 2026",
-          "value": "grew 14%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Salty grew 14% in the quarter, although this represented a deceleration from Q1.",
-          "following_context": "OWYN consumption was down 2.4%, below our expectations due to lapping a heavy promotional period in the prior year and poor base velocities, including on newly expanded distribution. This poor performance will result in lost distribution in the coming months.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "e994494fe84b8a2b7e45c12d5be71b7d6d6b4dd0538318badc88381faca518fb",
+            "value_sha256": "f2b2786c6fa8e7934dc6c564ffc89267ad83d301388903edfc22fd0c71bbc04b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "OWYN consumption",
           "period": "Q2 2026",
-          "value": "down 2.4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "OWYN consumption was down 2.4%, below our expectations due to lapping a heavy promotional period in the prior year and poor base velocities, including on newly expanded distribution.",
-          "following_context": "This poor performance will result in lost distribution in the coming months.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.4,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "367cfe706fada75f2b512a772d7ca30d651a01e9cecc4b2352464bffe8e43d25",
+            "value_sha256": "63cdb86d8a62c01197e418b268a484dd80745c84333a9b215be676629aa83698"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Atkins consumption",
           "period": "Q2 2026",
-          "value": "declined by 23.4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Atkins consumption declined by 23.4%, driven by known distribution losses and related trade inventory reductions, both of which were roughly in line with our expectations.",
-          "following_context": "Specifically, we reported second quarter net sales of $326 million, which declined 9.4% versus the prior year, mainly due to weaker consumption. Adjusted EBITDA was $55.5 million, a decline of 18.4% year-over-year. Gross profit of $103 million decreased 20.8% versus the prior year driven by inflationary costs, most notably cocoa, whey and tariffs. Gross margin was 31.6%, a decline of 460 basis points versus prior year, largely reflecting higher input costs and some onetime effects from actions taken to mitigate OWYN product quality issues.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 23.4,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "0b8b0816661d65a813de3ecb0b0ffdd519eea0a14ff2ddd07789b633a1d86c41",
+            "value_sha256": "04e0046917cea54e2a6a86939567db737f93c8fb73a344629f21431738f482a5"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "category structure / private label",
           "period": null,
-          "value": "predominantly branded category with limited private label",
           "value_num": null,
           "unit": null,
-          "verbatim": "Importantly, it also remains a predominantly branded category with limited private label, which reflects the pace of innovation required to compete successfully.",
-          "following_context": "This category backdrop will always attract new entries, and we've seen some targeted directly at our business recently. With that said, we have competed effectively through this type of activity in the past, and we'll do so again moving forward. At the same time, the broader food and beverage landscape is impacted by the growing adoption of GLP-1 medications. While these therapies are changing how some consumers approach eating, they are also reinforcing the importance of nutrient-dense foods, particularly those high in protein and lower in carbs and sugar, as consumers focus on maintaining muscle mass and overall nutrition balance in a lower calorie environment.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "a9c4a3a61ffc44b98b203e8528a20c021d1d0595662848895592c0c34ffafdff",
+            "value_sha256": "07b679b5672d1b2b3629840444bbbadba9b413a8db21818c43e0a2c5cfcebb1b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "net sales",
           "period": "Q3 2026",
-          "value": "declined 6.3% to $357 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Net sales declined 6.3% to $357 million.",
-          "following_context": "Gross margin declined 390 basis points to 32.5%. And adjusted EBITDA declined 22.5% to $57.2 million. Quest and OWYN net sales grew 1.1% and 3.6% versus prior year, respectively, and both brands performed slightly better than we expected. We continue to see encouraging momentum in some parts of the portfolio, particularly Quest chips and milkshakes. Atkins net sales declined 24.6% in the quarter, reflecting continued pressure from declining household penetration as a result of insufficient marketing support behind the brand. Our retail takeaway declined 6.7% during the quarter, essentially unchanged from the second quarter. The purposeful nutrition category grew 10% during the same time frame.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 357.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 10,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "8441d60d4f801870333f944e30dc2372ad351018266ccd9a0dac817da4a796c8",
+            "value_sha256": "5ca7c57cc3a9bffc9c21aa2d255416c870dae74bffb7d4d4510fccc6ef6b0cbd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Quest net sales",
           "period": "Q3 2026",
-          "value": "grew 1.1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quest and OWYN net sales grew 1.1% and 3.6% versus prior year, respectively, and both brands performed slightly better than we expected.",
-          "following_context": "We continue to see encouraging momentum in some parts of the portfolio, particularly Quest chips and milkshakes. Atkins net sales declined 24.6% in the quarter, reflecting continued pressure from declining household penetration as a result of insufficient marketing support behind the brand. Our retail takeaway declined 6.7% during the quarter, essentially unchanged from the second quarter. The purposeful nutrition category grew 10% during the same time frame.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.1,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 10,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "59cb7350c903e14cd99fcf375e5ce9ce6e0450c2d3251d33da2ff3f86304679c",
+            "value_sha256": "70602700d21a3a8b33ae7b9365fbfa45e383e3fdfd588faa25e0457dd05064ce"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "OWYN net sales",
           "period": "Q3 2026",
-          "value": "grew 3.6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quest and OWYN net sales grew 1.1% and 3.6% versus prior year, respectively, and both brands performed slightly better than we expected.",
-          "following_context": "We continue to see encouraging momentum in some parts of the portfolio, particularly Quest chips and milkshakes. Atkins net sales declined 24.6% in the quarter, reflecting continued pressure from declining household penetration as a result of insufficient marketing support behind the brand. Our retail takeaway declined 6.7% during the quarter, essentially unchanged from the second quarter. The purposeful nutrition category grew 10% during the same time frame.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.6,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 10,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "59cb7350c903e14cd99fcf375e5ce9ce6e0450c2d3251d33da2ff3f86304679c",
+            "value_sha256": "8be72ab4fc5142ce95e19ed15006eccc96fcf3ca4c70f76f61bbb0da9b2bfe66"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Atkins net sales",
           "period": "Q3 2026",
-          "value": "declined 24.6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Atkins net sales declined 24.6% in the quarter, reflecting continued pressure from declining household penetration as a result of insufficient marketing support behind the brand.",
-          "following_context": "Our retail takeaway declined 6.7% during the quarter, essentially unchanged from the second quarter. The purposeful nutrition category grew 10% during the same time frame.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.6,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 10,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "73f04899163701477e9059e9145c19a1e0646dac7dc79109f59aadb0e1607ae4",
+            "value_sha256": "404d70bf2f6027891714957bd6f91758810bbe3e13ce206549fcca66d2ad1c10"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total retail takeaway",
           "period": "Q3 2026 (13 weeks ended May 31, 2026)",
-          "value": "declined 6.7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our retail takeaway declined 6.7% during the quarter, essentially unchanged from the second quarter.",
-          "following_context": "The purposeful nutrition category grew 10% during the same time frame.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.7,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 10,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "d26805217eb3964d8868353646f47c7fcb34488e24a8954b837df593f005089b",
+            "value_sha256": "61dc6a3b89f0a1277ae906396cf38f093ed806db83cad6a5e4d16df0c6094a0f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "purposeful nutrition category growth",
           "period": "Q3 2026",
-          "value": "grew 10%",
           "value_num": null,
           "unit": null,
-          "verbatim": "The purposeful nutrition category grew 10% during the same time frame.",
-          "following_context": null,
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 10,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "164ff85c0131877ab58baec1b8b455f658158caf4b68f28d76d975603ebcc399",
+            "value_sha256": "4cf21ec7a6c619b263f188a787ccf3276aad8de758c1a4a3496ff92b6be3c1b9"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "list price increase across most of portfolio",
           "period": "Q3 2026 (effective September)",
-          "value": "high single-digit price increase, effective in September",
           "value_num": null,
           "unit": null,
-          "verbatim": "Given the significant cost inflation we are experiencing this fiscal year and believe will continue into the next year, we recently announced a high single-digit price increase across most of our portfolio that will become effective in September.",
-          "following_context": "This increase is necessary to offset inflation we are experiencing across proteins, packaging, and other key cost inputs. While we remain focused on productivity initiatives and cost reduction efforts, rebuilding margins requires decisive action on pricing, and we believe this increase is appropriate.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its value states no figure and is not the words of its quote",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 13,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "6ff5d1ab142613af0c51b9b99be231bba337c1a6ae33f58c637bf6925627b3d8",
+            "value_sha256": "417f2c22ec4d71dacacb87c039c7a3b540e84d2139e5c99207e87967385c1fa7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Quest retail takeaway",
           "period": "Q3 2026",
-          "value": "grew 1.4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the third quarter, Quest retail takeaway grew 1.4% compared to 2.4% growth last quarter.",
-          "following_context": "Importantly, household penetration increased 120 basis points year-over-year to 20.5%. The most important takeaway is that Quest continues to recruit consumers, demonstrating that the brand remains highly relevant. Our challenge today is to refocus on our core bar and chip segments that represent 80% of the brand, while improving buy rate, particularly within bars.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.4,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 16,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "ff34c0262952c06bf6d1a67f10f8eecc49718418e69cafdf434e62c62a958568",
+            "value_sha256": "8fa682136cc6ece20ee00a9850b8f050e94389de1fc3ef78f22bb0576f2821b4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Quest household penetration",
           "period": "Q3 2026",
-          "value": "increased 120 basis points year-over-year to 20.5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Importantly, household penetration increased 120 basis points year-over-year to 20.5%.",
-          "following_context": "The most important takeaway is that Quest continues to recruit consumers, demonstrating that the brand remains highly relevant. Our challenge today is to refocus on our core bar and chip segments that represent 80% of the brand, while improving buy rate, particularly within bars.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 120.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 20.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 16,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "0a55c834031c71b539bfb08e2bc58433a21b418179536ba9dbe42ef1a1a7605e",
+            "value_sha256": "7a38750286ee9df822f31a2e0f9af75f0fc41d3f3e21b816f3a4ae03fd94af65"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Quest core bar and chip segments share of brand",
           "period": null,
-          "value": "represent 80% of the brand",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our challenge today is to refocus on our core bar and chip segments that represent 80% of the brand, while improving buy rate, particularly within bars.",
-          "following_context": null,
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 16,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "7d561714c3bb8c7b4c3e641d7ac0bb844afa58cbbf1d79753be98e0101a1053f",
+            "value_sha256": "9d147d111c20ecc50429597aaf6cab77456b26078ddd6a3e0e74df97dc9a4aff"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Quest chips consumption",
           "period": "Q3 2026",
-          "value": "grew by over 17%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quest chips consumption grew by over 17% in the quarter, and household penetration for Quest chips is now approximately 11%.",
-          "following_context": "This remains a strong example of where the brand is aligned with consumer demand and where focused investment can continue to drive growth.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 17,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "6f73581b44b0158e55366a588cb7a3c1d32dbfe5f82d6d438f6c379b3db88932",
+            "value_sha256": "8d854af08bad277b601f318660e8c1ace7d607988280267b03bba560cc8a2bd2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Quest chips household penetration",
           "period": "Q3 2026",
-          "value": "approximately 11%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Quest chips consumption grew by over 17% in the quarter, and household penetration for Quest chips is now approximately 11%.",
-          "following_context": "This remains a strong example of where the brand is aligned with consumer demand and where focused investment can continue to drive growth.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 17,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "6f73581b44b0158e55366a588cb7a3c1d32dbfe5f82d6d438f6c379b3db88932",
+            "value_sha256": "b65322414f06cb2f347faa05685a7eb884a9b30bf07d303f6a213ad014f210ca"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Quest milkshake segment consumption",
           "period": "Q3 2026",
-          "value": "up almost 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're seeing a strong growth in our milkshake segment, which was up almost 50% in the period, albeit from a small base.",
-          "following_context": "This is another example of our ability to grow the brand when closely aligned with evolving consumer demand. At the same time, we're not satisfied with the recent performance of our bar business. Despite an incremental club rotation that began during the quarter, bar consumption declined by roughly 5%, which impacted total brand buy rate.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 18,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "699451d0a25a0cbec56d55b6ec6970091a07350e940d32d563554d5e1000fd54",
+            "value_sha256": "8b18623b221017936dbb12615d59e66d136b1393e884c52d9d19e4e016b171bc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Quest bar consumption",
           "period": "Q3 2026",
-          "value": "declined by roughly 5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Despite an incremental club rotation that began during the quarter, bar consumption declined by roughly 5%, which impacted total brand buy rate.",
-          "following_context": null,
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 18,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "8593b1523dd448c87e54be7f18376a9e6912b9be7474f6501cbbfba95cc2b5e8",
+            "value_sha256": "42ba65d499e45a07c1e7fbaa1b26db12532dadddd9833f2180f04ef77863b457"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Atkins retail takeaway",
           "period": "Q3 2026",
-          "value": "declined 23.9%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Atkins retail takeaway declined 23.9% in the quarter, compared to a decline of 23.4% last quarter.",
-          "following_context": "Declining household penetration leading to distribution losses continue to be the main drivers of the decline. Total brand household penetration currently stands at 8.5%, down 220 basis points from last year. Consistent with what we said last quarter, there are also broad brand factors we are addressing. Atkins has not received the proper level of marketing support, messaging was less consistent and moved away from the brand's core weight management proposition, and the ability to recruit new consumers weakened, which led to slower velocities.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 23.9,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 20,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "aa1a169535616ae9eaed2a50b0513a7f28c2ecd27cc378024d3fbee183e1c20e",
+            "value_sha256": "edcff676c9c1920531d69fa6171c7bd54b8d4b4ae78d9d29303300eeef66a99f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Atkins total brand household penetration",
           "period": "Q3 2026",
-          "value": "8.5%, down 220 basis points from last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total brand household penetration currently stands at 8.5%, down 220 basis points from last year.",
-          "following_context": "Consistent with what we said last quarter, there are also broad brand factors we are addressing. Atkins has not received the proper level of marketing support, messaging was less consistent and moved away from the brand's core weight management proposition, and the ability to recruit new consumers weakened, which led to slower velocities.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 220.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 20,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "78c9c991184fe1c29a80380032415a787a13a1d38e0faf4cba0bc18461eebc0b",
+            "value_sha256": "5a2a04c88855ab1d0989ff1fe3ae77bd1b46c807b15f56a0231582c900e3ac8e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "OWYN retail takeaway",
           "period": "Q3 2026",
-          "value": "declined 1.3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "OWYN retail takeaway declined 1.3% in the third quarter compared to a decline of 2.4% last quarter.",
-          "following_context": "Total brand household penetration currently stands at 4.3%, flat year over year. As we reported last quarter, the combination of a product quality issue and ineffective marketing execution negatively impacted performance on a number of OWYN products. We have addressed the product issue, but do expect distribution losses over the next 6 to 12 months because of poor marketplace performance. With that said, we continue to believe OWYN has meaningful long-term potential.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 22,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "f3ac3c218e21ea8a46d103affc0e78a810b4a546a64706425ab330f06aeaf1c3",
+            "value_sha256": "d81ac578f8a069ac675cc80aaf5900c23a860269ba65d2569edaae6c55149ef1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "OWYN total brand household penetration",
           "period": "Q3 2026",
-          "value": "4.3%, flat year over year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total brand household penetration currently stands at 4.3%, flat year over year.",
-          "following_context": "As we reported last quarter, the combination of a product quality issue and ineffective marketing execution negatively impacted performance on a number of OWYN products. We have addressed the product issue, but do expect distribution losses over the next 6 to 12 months because of poor marketplace performance. With that said, we continue to believe OWYN has meaningful long-term potential.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf",
+            "transcript_sha256": "e8b109c0710ba22a3bfa5775e5b380fdd72aeb3d34c1224198854eec02736a53",
+            "paragraph": 22,
+            "speaker": "Joseph E. Scalzo",
+            "quote_sha256": "789717d8c07bc44f79a069c0ac833b514dcd47185e1b27cc45268a17eab1691d",
+            "value_sha256": "61275a7b4d0aef211f6a6456fce96b3bd8c96344efa3642d6efc83ceb7f59d44"
+          }
         }
       ],
       "qa_flags": [

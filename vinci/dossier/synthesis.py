@@ -1741,14 +1741,26 @@ NOT_SENT: dict[str, Any] = {"primary_source": True,
                                 "locator": True}}}}
 
 
-def driver_value_as_read(value: str, status: str | None, reason: str | None) -> str:
+#: (RG-D19 PR 3) What a COMMITTED transcript row's value reads as: its words are in the operator's
+#: private store, and nothing on the page stands in for them
+STRIPPED_VALUE = "not on this page — its words are filed in the operator's private store"
+
+
+def driver_value_as_read(value: str | None, status: str | None, reason: str | None) -> str:
     """A driver row's value as every READER is handed it — the synthesis and the scenario
     template alike. A transcript row whose value code could not verify against its quote
     (`driver_extract.check_fact`) is not handed over as a value — "up 7%" read off "down 7%" was,
-    under the header "validated, cited facts" (RG-D8). Every other row's value is unchanged."""
+    under the header "validated, cited facts" (RG-D8). Every other row's value is unchanged.
+
+    (RG-D19 PR 3) A COMMITTED transcript row carries no `value`: its words are in the private
+    store, and it reads as `STRIPPED_VALUE`. It is NEVER rebuilt from its checked figures (Codex,
+    round 1 of #1006): the figures are not the claim — TGT's "3/4" of sales read "approximately 3;
+    4", and a qualitative row lost its fact to "stated, with no figure". A reader that needs the
+    words reads them back from the store (`confirmation.with_words`); the figures stay in
+    ``dossier.json``."""
     if status == "unknown":
         return f"UNKNOWN — not verified against its quote: {reason}"
-    return value
+    return STRIPPED_VALUE if value is None else value
 
 
 def prompt_driver_value(r: OperatingDriver) -> str:

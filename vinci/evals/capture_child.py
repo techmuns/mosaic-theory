@@ -54,8 +54,21 @@ def production_model() -> str:
 
 
 def pre_synthesis_mech(page: dict[str, Any], *, unmark_material: bool = False) -> MechanicalLayer:
-    """The committed mechanical layer as ``synthesize`` received it."""
+    """The committed mechanical layer as ``synthesize`` received it.
+
+    (RG-D19 PR 3) A page whose transcript rows were taken off it (`driver_pass`) no longer holds
+    what the build sent: the quote, its context and the stated value are in the private store. A
+    replay from it would send a different request and call it the build's, so it is REFUSED —
+    a panel frozen on such a page needs those words read back (`driver_evidence.rehydrate`)."""
     mech = MechanicalLayer.model_validate(page["mechanical"])
+    od = mech.operating_drivers
+    stripped = [r.metric for r in (od.rows if od is not None else [])
+                if r.tier == "llm-fenced" and not r.verbatim]
+    if stripped:
+        raise ValueError(
+            f"{page.get('ticker')}: {len(stripped)} transcript driver row(s) carry no words on the "
+            f"page ({stripped[0]!r}…) — the replay cannot rebuild the request the build sent; read "
+            "them back from the private store first (driver_evidence.rehydrate)")
     fs = mech.financial_summary
     ann = fs.annual if fs is not None else None
     if unmark_material and fs is not None and ann is not None and ann.value is not None:

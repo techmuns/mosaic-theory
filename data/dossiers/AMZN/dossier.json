@@ -12580,1021 +12580,2541 @@
           "kind": "leading_indicator",
           "metric": "AWS revenue growth year-over-year",
           "period": null,
-          "value": "36.7% year-over-year, accelerating for the fifth straight quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenue growth of 36.7% year-over-year, accelerating for the fifth straight quarter, our fastest growth in 18 quarters, back when AWS was less than half its current revenue size.",
-          "following_context": "We added over $4.6 billion in revenue quarter-over-quarter, about 80% more than our largest increase ever, and our backlog stands at $496 billion, growing triple digits year-over-year.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 36.7,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 9,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "6743a6525044f88cc7249c7bc6b4fbe8ca063eb8c69599195b8506a3af065309",
+            "value_sha256": "7245edd899c83b019443575dcc381b4174dfbd4f1df408cbe0a22ee8a2b1b52b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS quarter-over-quarter revenue added",
           "period": null,
-          "value": "over $4.6 billion in revenue quarter-over-quarter, about 80% more than our largest increase ever",
           "value_num": null,
           "unit": null,
-          "verbatim": "We added over $4.6 billion in revenue quarter-over-quarter, about 80% more than our largest increase ever, and our backlog stands at $496 billion, growing triple digits year-over-year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.6,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 9,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "f21886aca4f1e203ca7d6244380571d248cf7180feee8a867b48263970c3fa6d",
+            "value_sha256": "5344619eb283fcf8ff2cfd15799b59fe4873fa187de7b5d51f2d5919be42cd22"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS backlog",
           "period": null,
-          "value": "$496 billion, growing triple digits year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We added over $4.6 billion in revenue quarter-over-quarter, about 80% more than our largest increase ever, and our backlog stands at $496 billion, growing triple digits year-over-year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 496.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 9,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "f21886aca4f1e203ca7d6244380571d248cf7180feee8a867b48263970c3fa6d",
+            "value_sha256": "ea8f1879cbc3210c0dd904d468b081f100dc0aed3f520e5e838fc6f723b21289"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS annualized revenue run rate",
           "period": null,
-          "value": "$169 billion annualized revenue run rate",
           "value_num": null,
           "unit": null,
-          "verbatim": "AWS is now a $169 billion annualized revenue run rate business, which, for perspective, would place it 24th on the Fortune 500 list if it was a stand-alone company.",
-          "following_context": "Our chips business now has an annual revenue run rate of over $25 billion, growing triple-digit percentages year-over-year. Our AI revenue run rate climbed significantly quarter-over-quarter, and is now also over $25 billion, growing triple-digit percentages year-over-year. Customers choose AWS because we offer the broadest capabilities. They want their AI inference to reside near their other applications and data, and more of it resides in AWS than anywhere else. And because AWS has the strongest security and operational performance.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 169.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 10,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "afeddf11c568d9a2bc54758e7ed144d1a259195debdff5ae20f93fab986eeec0",
+            "value_sha256": "e648435e2345e4cfe0df8a7018e56b7f70a5547e2f05d20d809ecf9fbbc1df2b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "chips business annual revenue run rate",
           "period": null,
-          "value": "over $25 billion, growing triple-digit percentages year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our chips business now has an annual revenue run rate of over $25 billion, growing triple-digit percentages year-over-year.",
-          "following_context": "Our AI revenue run rate climbed significantly quarter-over-quarter, and is now also over $25 billion, growing triple-digit percentages year-over-year. Customers choose AWS because we offer the broadest capabilities. They want their AI inference to reside near their other applications and data, and more of it resides in AWS than anywhere else. And because AWS has the strongest security and operational performance.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 10,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "623bf794f97b04811772adb90db763a5b46dfea34ae5d858a465bc22ad3349b9",
+            "value_sha256": "d81fc57ae2e9da075a55f3a0a3d2f4d3ef4f31722c635f36f1f91aee25f4457f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI revenue run rate",
           "period": null,
-          "value": "over $25 billion, growing triple-digit percentages year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our AI revenue run rate climbed significantly quarter-over-quarter, and is now also over $25 billion, growing triple-digit percentages year-over-year.",
-          "following_context": "Customers choose AWS because we offer the broadest capabilities. They want their AI inference to reside near their other applications and data, and more of it resides in AWS than anywhere else. And because AWS has the strongest security and operational performance.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 10,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "66a17af48dcb00eb52a9f5bd679164ed8733a55cb27d976cb67a304ec253b042",
+            "value_sha256": "d81fc57ae2e9da075a55f3a0a3d2f4d3ef4f31722c635f36f1f91aee25f4457f"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Graviton CPU price performance vs alternatives",
           "period": null,
-          "value": "up to 30% to 40% better price performance than other options",
           "value_num": null,
           "unit": null,
-          "verbatim": "This is an advantage for AWS, as our Graviton chip is the strongest CPU chip, offering up to 30% to 40% better price performance than other options.",
-          "following_context": "You need a place to store this AI data and to run vector databases, which are also emblematic of a meaningful edge for AWS because we have the broadest and most capable functionality by a fair bit in these core infrastructure areas.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_most"
+            },
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 11,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "e7bbcbb52a00a7dd83d602de5e3f8bd9cb2abf433a63906a1c1241d712b8753b",
+            "value_sha256": "a8e3d175dff941b161678a157f8cdf0f0774ff5f5cd0242703ca83f9b339ae04"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Kiro cost effectiveness and usage growth",
           "period": null,
-          "value": "up to 50% more cost effective than others and tripled in usage quarter-over-quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Coding agents are a good example, and there are several successful ones, including Claude Code, Codex and our own spec-driven Kiro, which is up to 50% more cost effective than others and tripled in usage quarter-over-quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_most"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 14,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "d04c7172e204fc47dbe571ed26a1f5d550fc5785d3e2abcde99274dd887dd866",
+            "value_sha256": "3bc896ac349584977eae4bacec0de03d660d3a9eaf9eac425c9bb77783660c74"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Graviton adoption among top EC2 customers",
           "period": null,
-          "value": "98% of our top 1,000 EC2 customers",
           "value_num": null,
           "unit": null,
-          "verbatim": "Graviton is used by 98% of our top 1,000 EC2 customers.",
-          "following_context": "The revenue commitments have increased nearly 3x quarter-over-quarter, and Graviton5 is growing nearly 2x faster as Graviton4 did. We also continue to have a deep partnership with NVIDIA, and we'll continue making AWS the best place to run NVIDIA chips, as we have customers who will run on NVIDIA for as long as we can foresee, and we believe strongly that customers want choice. Choice is good for customers, competition and driving the cost of inference down, which customers care deeply about.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 98.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 1000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 20,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "771484e0d878ebf55bf716cf3afb38caf0b5664cac865982960a9fbe2fd0b199",
+            "value_sha256": "bde7972911f734e8e0ba897dd24b5499ca421a9dc3c883c6c67833554e998999"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Graviton revenue commitments growth",
           "period": null,
-          "value": "increased nearly 3x quarter-over-quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "The revenue commitments have increased nearly 3x quarter-over-quarter, and Graviton5 is growing nearly 2x faster as Graviton4 did.",
-          "following_context": "We also continue to have a deep partnership with NVIDIA, and we'll continue making AWS the best place to run NVIDIA chips, as we have customers who will run on NVIDIA for as long as we can foresee, and we believe strongly that customers want choice. Choice is good for customers, competition and driving the cost of inference down, which customers care deeply about.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 20,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "81a5e1076f15a63e3c0245d1eb3415d1a62def5a66a486916f48ff61a8c110cc",
+            "value_sha256": "ff972ea206e80462613d8a734517474a6d6aba39b64be740532dd5db33c58119"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Graviton5 growth vs Graviton4",
           "period": null,
-          "value": "growing nearly 2x faster as Graviton4 did",
           "value_num": null,
           "unit": null,
-          "verbatim": "The revenue commitments have increased nearly 3x quarter-over-quarter, and Graviton5 is growing nearly 2x faster as Graviton4 did.",
-          "following_context": "We also continue to have a deep partnership with NVIDIA, and we'll continue making AWS the best place to run NVIDIA chips, as we have customers who will run on NVIDIA for as long as we can foresee, and we believe strongly that customers want choice. Choice is good for customers, competition and driving the cost of inference down, which customers care deeply about.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 20,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "81a5e1076f15a63e3c0245d1eb3415d1a62def5a66a486916f48ff61a8c110cc",
+            "value_sha256": "2b5ccb5b53f1d18fcea814b74bff32613eeb56e4aa1faa4a736c062104d01383"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Amazon Haul ultra-low price selection expansion",
           "period": null,
-          "value": "nearly 20x since launch and now have over 6 million items priced under $10",
           "value_num": null,
           "unit": null,
-          "verbatim": "We also expanded ultra-low price selection on Amazon Haul in the U.S. by nearly 20x since launch and now have over 6 million items priced under $10.",
-          "following_context": "We continue offering everyday low prices that meet or beat our competitors as well as deep discounts and savings during sales events.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 10.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_most"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 27,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "6bf59f07aced64ab70eb189ef6d4b2b4889bdb86b14527e29a164428d176c262",
+            "value_sha256": "e78c91276408e8102ff8925ece2cb09320a78c069c2066cb355976772fa770e8"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "US grocery market position",
           "period": null,
-          "value": "second largest grocer in the U.S.",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're the second largest grocer in the U.S., and our grocery business continues growing quickly across perishables and nonperishables.",
-          "following_context": "The number of monthly active perishables customers grew over 50% since the start of the year. Same-day orders with perishables average over 3x more units per order, and fresh groceries now make up 6 of the top 20 best sellers on Amazon.com.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 28,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "a69991ba8600b4977173bf0d3cbb80b8b97d152451f0eab529d06a912f4849fb",
+            "value_sha256": "2e6cff1251df1bc79bb420d6b1ddc49f9183e0b3950b8fe287a717027b577a47"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "monthly active perishables customers growth",
           "period": null,
-          "value": "grew over 50% since the start of the year",
           "value_num": null,
           "unit": null,
-          "verbatim": "The number of monthly active perishables customers grew over 50% since the start of the year.",
-          "following_context": "Same-day orders with perishables average over 3x more units per order, and fresh groceries now make up 6 of the top 20 best sellers on Amazon.com.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 28,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "ada6cc491935221c4126aeada9cde9de1ee761de51dc9a4b59cda2fdb03376ab",
+            "value_sha256": "d4b43ca10003680f1ed887fad677907f9baae38361e4879adeb5dc2d75b5b0d6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "same-day perishables order units",
           "period": null,
-          "value": "average over 3x more units per order",
           "value_num": null,
           "unit": null,
-          "verbatim": "Same-day orders with perishables average over 3x more units per order, and fresh groceries now make up 6 of the top 20 best sellers on Amazon.com.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 28,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "f11bd500df2711dfd010b07a90e90c9d14f71090e52794d0899f9a7a57476eb5",
+            "value_sha256": "26ac5831d681a54930a961342d3228ab2a0ac9aad3fcb375efd0400109cda6b6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Amazon Pharmacy new customers growth",
           "period": null,
-          "value": "more than 2x in the first 6 months of the year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We grew the number of new customers for Amazon Pharmacy by more than 2x in the first 6 months of the year, and same-day prescription deliveries nearly 5x.",
-          "following_context": "We also saved customers nearly $250 million so far this year in out-of-pocket costs, up more than 400% year-over-year. We continue speeding up overall delivery and once again achieved record delivery speeds for customers in the first half of the year. We offer millions of items for same-day delivery with Prime, up to 40x more selection than a typical big-box retail store, and our same-day network continues to expand.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 29,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "b262fd28df09e6be672e695c87a134df79d871130f18d78e70ce6910d89cb0a1",
+            "value_sha256": "dd37be363dc6198aede9243d7f8aeffadb73b71ec40d8b274b77652a648542ad"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Amazon Pharmacy same-day prescription deliveries growth",
           "period": null,
-          "value": "nearly 5x",
           "value_num": null,
           "unit": null,
-          "verbatim": "We grew the number of new customers for Amazon Pharmacy by more than 2x in the first 6 months of the year, and same-day prescription deliveries nearly 5x.",
-          "following_context": "We also saved customers nearly $250 million so far this year in out-of-pocket costs, up more than 400% year-over-year. We continue speeding up overall delivery and once again achieved record delivery speeds for customers in the first half of the year. We offer millions of items for same-day delivery with Prime, up to 40x more selection than a typical big-box retail store, and our same-day network continues to expand.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 29,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "b262fd28df09e6be672e695c87a134df79d871130f18d78e70ce6910d89cb0a1",
+            "value_sha256": "3f16966872acd827caef763fc7190048cb263255ed7c37c0363e56f08cf1eac1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "customer out-of-pocket savings on pharmacy",
           "period": null,
-          "value": "nearly $250 million so far this year in out-of-pocket costs, up more than 400% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We also saved customers nearly $250 million so far this year in out-of-pocket costs, up more than 400% year-over-year.",
-          "following_context": "We continue speeding up overall delivery and once again achieved record delivery speeds for customers in the first half of the year. We offer millions of items for same-day delivery with Prime, up to 40x more selection than a typical big-box retail store, and our same-day network continues to expand.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 250.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 400.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 29,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "25356aa19e1ce5917ece1db270093d7b4c2a11f7c2538a7f981bb5d7e3274c77",
+            "value_sha256": "8bd49e3727b5bbb5baf0bb5d1609114c174d978accf7c3fc1bc383d4433d2222"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "same-day or overnight items delivered growth",
           "period": null,
-          "value": "over 40% more items same day or overnight in the first 6 months of the year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Globally, we delivered over 40% more items same day or overnight in the first 6 months of the year than the same period last year.",
-          "following_context": "We also continued to expand our ultrafast service, Amazon Now, which offers delivery in 30 minutes or less on thousands of everyday essentials. We added 80 new cities and towns across the U.S. and several major cities in Egypt in Q2. And Amazon Now is available in 9 countries and over 250 cities and towns globally. We continue to see strong customer response with over 80% growth in gross sales and units sold quarter-over-quarter, and we served over 60% more customers quarter-over-quarter.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 30,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "26671c7762ff528d8e5d1aad522533a410cf89812a9d5cd0784736698a719a5d",
+            "value_sha256": "6512abe797b83884ff1790b0b89b41ea15a25856fddb6b2b755ec48cd03836c4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Amazon Now gross sales and units growth",
           "period": null,
-          "value": "over 80% growth in gross sales and units sold quarter-over-quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "We continue to see strong customer response with over 80% growth in gross sales and units sold quarter-over-quarter, and we served over 60% more customers quarter-over-quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 30,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "575c3f68e913409d929c4401fac9482322b061b00aab1e2613ab338812cd1f91",
+            "value_sha256": "af9329aba77984652e03a7d656a3c603e6bfaf43c0cf5c30183ec7d215e7d0bb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Amazon Now customers served growth",
           "period": null,
-          "value": "over 60% more customers quarter-over-quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "We continue to see strong customer response with over 80% growth in gross sales and units sold quarter-over-quarter, and we served over 60% more customers quarter-over-quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 30,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "575c3f68e913409d929c4401fac9482322b061b00aab1e2613ab338812cd1f91",
+            "value_sha256": "afbf36b79da07eb74596181aec055fbc249df15d1e7a8b20996952f4e58ceb67"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Alexa for Shopping users and engagement",
           "period": null,
-          "value": "Over 350 million customers have used it in the last 12 months, active users nearly doubling and interactions up over 5x year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over 350 million customers have used it in the last 12 months, and engagement accelerated in Q2, with active users nearly doubling and interactions up over 5x year-over-year.",
-          "following_context": "We also expanded Amazon Lens, which lets customers take a photo of anything they see and instantly find the same or similar items on Amazon, to 10 additional countries, and it's now available in 21 countries around the world.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 350.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 31,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "f6797562bad52407600e50c075b432958dc6b1c9dcfaf5d872efe087ebf42394",
+            "value_sha256": "136faccb1a055da23bb15d80b02a7e2630cf021790b206e74410beb784deffa3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Amazon Ads revenue",
           "period": null,
-          "value": "$19.8 billion of revenue, up 26% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving on to Amazon Ads. We saw strong growth across our offerings, generating $19.8 billion of revenue, up 26% year-over-year.",
-          "following_context": "Sponsored Products continues to be our largest offering and a key driver of growth. Additionally, increasingly more shoppers are discovering products in our agentic and conversational experiences, including in Alexa+ and Alexa for Shopping. Shoppers who click a sponsored prompt convert to a sale 48% more often and spend 21% more on average than those who don't.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 19.8,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 26.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 32,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "423312a86d7542c55c57a2a048b85187f6ba28d96bfa29a33c31b4818029109a",
+            "value_sha256": "cd46f8e6e32b72f08abcaec72ed1b7dbed1f880792cc0f84236e3ebb5a74e6d5"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "sponsored prompt conversion and spend",
           "period": null,
-          "value": "convert to a sale 48% more often and spend 21% more on average",
           "value_num": null,
           "unit": null,
-          "verbatim": "Shoppers who click a sponsored prompt convert to a sale 48% more often and spend 21% more on average than those who don't.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 48.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 21.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 32,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "dfa43455a9d33f6ad527a046fd6aa4d961ce200077adb40ad76dc5ac5ba6438f",
+            "value_sha256": "5cf360fbbdec9ba5a2310eac3f552738f08e2265fddcdf1ef87bb549e7acf87f"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "multisport advertiser reach",
           "period": null,
-          "value": "2.3x higher unduplicated reach compared to single sport advertisers",
           "value_num": null,
           "unit": null,
-          "verbatim": "Advertisers are increasingly investing in multisport strategies, with brands activating across multiple sports seeing 2.3x higher unduplicated reach compared to single sport advertisers and multisport viewers are driving 12% higher spend and 17% more orders on Amazon.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.3,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 33,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "58413c89b263b9a3049233b00336ea592f33df8672c3d33aacbca7292c5b6ac4",
+            "value_sha256": "101c71ea2fb96b56b4e4b5546fc6e30e8d58b03dea63230366127d1fbc3e4022"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Ads Agent targeting cost performance",
           "period": null,
-          "value": "8% lower cost per impression and 6% lower cost per acquisition",
           "value_num": null,
           "unit": null,
-          "verbatim": "Advertisers using Ads Agent targeting see 8% lower cost per impression and 6% lower cost per acquisition, and we've expanded it to 11 new countries this year.",
-          "following_context": "We're also continuing to see momentum in several other areas, and I'll mention just a few.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 34,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "0c9c800f5bfc2b6e188070871de3c427f384777606e62a4a8b24f83144ce1948",
+            "value_sha256": "45db799656b8954606b7a5b83386eff4c125d36ba9949c2c0b7f3acdb027e84d"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Alexa for Shopping customer spend per order",
           "period": null,
-          "value": "average of over 40% more per order than those who don't",
           "value_num": null,
           "unit": null,
-          "verbatim": "For example, in the U.S., customers who use Alexa for Shopping spend an average of over 40% more per order than those who don't.",
-          "following_context": "And customers who've tried Alexa+ are signing up for Prime at nearly 25% higher rates.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 35,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "c69fb06eed7161a7636b8ca3b35ec09f09e5f3024b8892d5a80fb8e721cb6e1c",
+            "value_sha256": "a78a335c6479d9bc0324526eb659f4d77baed4cadbd36d3e57ec4db0fa52b4b2"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Alexa+ Prime sign-up rate",
           "period": null,
-          "value": "nearly 25% higher rates",
           "value_num": null,
           "unit": null,
-          "verbatim": "And customers who've tried Alexa+ are signing up for Prime at nearly 25% higher rates.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 35,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "a0fa6fbdd8d722b847430b064c20efef6ad8f427fb0abf2c071cc96d149804be",
+            "value_sha256": "88ec58d6a55fb3c6bb2a27fc64600bda0f2a1d2972cf77557c2904f8ce4afa49"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Amazon Leo satellites in orbit",
           "period": null,
-          "value": "close to 400 satellites in orbit",
           "value_num": null,
           "unit": null,
-          "verbatim": "And finally, Amazon Leo is close to 400 satellites in orbit, enough to begin initial satellite internet service this year.",
-          "following_context": "We already have meaningful revenue commitments from enterprises and government customers, and we have more than 20 partners who will extend the reach of our network across the globe. We continue to be in the middle of some of the biggest inflections of our lifetime, and we're building multiple new long-term businesses that will make customers' lives better and easier and lead to substantial free cash flow and return on invested capital for our shareholders and business. With that, I'll turn it over to Brian.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 400.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 36,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "4f8f301e1f56dfca8964b6175f4db5648d8b09b859eb34e5dce1fb3907ebcf78",
+            "value_sha256": "50bb9d7d9f11fe142f5b498f326209d5deaf5c7638d295ab5311615192d72d3c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "worldwide revenue",
           "period": null,
-          "value": "$200.6 billion, a 20% increase year-over-year, excluding the impact of foreign exchange",
           "value_num": null,
           "unit": null,
-          "verbatim": "Starting with our top line financial results, worldwide revenue was $200.6 billion, a 20% increase year-over-year, excluding the impact of foreign exchange.",
-          "following_context": "These results include the timing shift of Prime Day into Q2 for most of our largest countries, including the United States. In Q2, we reported worldwide operating income of $27.5 billion. This includes the benefit from 2 items that reduced expenses by approximately $1.2 billion during the quarter.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.6,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 38,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "a3420f6dc2f7d0c46f5a8fae40dd5fbf93f03c81f036543bfebcef8633639922",
+            "value_sha256": "2b49394e3e29e137c2cbf7907f3ad98923e03695afbccdbcbebfefeb7bd0ab01"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North America segment revenue",
           "period": null,
-          "value": "$116.2 billion, an increase of 16% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the North America segment, second quarter revenue was $116.2 billion, an increase of 16% year-over-year.",
-          "following_context": "International segment revenue was $42.2 billion, an increase of 15% year-over-year, excluding the impact of foreign exchange. Worldwide paid units grew 17% year-over-year. Prime remains a key pillar of our business, and our double-digit year-over-year membership growth reflects the value our offerings deliver at scale. We saw broad-based momentum across the inputs that drive our customer experience, including new selection, sharp prices and fast delivery.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 116.2,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 41,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "c71d5c565433d6af725d7ebf59fecb7ab42dcfb267710b521a49ed78b248559f",
+            "value_sha256": "0b450cc9ae4e5a7442ff3a7f96b0920d5ef639434e458b95c128ec86d35244a7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "International segment revenue",
           "period": null,
-          "value": "$42.2 billion, an increase of 15% year-over-year, excluding the impact of foreign exchange",
           "value_num": null,
           "unit": null,
-          "verbatim": "International segment revenue was $42.2 billion, an increase of 15% year-over-year, excluding the impact of foreign exchange.",
-          "following_context": "Worldwide paid units grew 17% year-over-year. Prime remains a key pillar of our business, and our double-digit year-over-year membership growth reflects the value our offerings deliver at scale. We saw broad-based momentum across the inputs that drive our customer experience, including new selection, sharp prices and fast delivery.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 42.2,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 41,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "1af0ecea5ac36fb7e76ba82c6ceba885316085023d1c2ade105d42fa869b1d66",
+            "value_sha256": "b33cf70f4ccbbe14e010009ba3f2b3e7cc99177e6f80c00712f948097a4a1323"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "worldwide paid units growth",
           "period": null,
-          "value": "grew 17% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Worldwide paid units grew 17% year-over-year.",
-          "following_context": "Prime remains a key pillar of our business, and our double-digit year-over-year membership growth reflects the value our offerings deliver at scale. We saw broad-based momentum across the inputs that drive our customer experience, including new selection, sharp prices and fast delivery.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 41,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "a9e630fb649a9d89d70e996d4492ffad0b9ed8a08bc4ff5873b4c8eb2d92ddc9",
+            "value_sha256": "c7a89fec58e168a766d27da55358b46b10ad3fa71755f7260a3f60a8a7569e44"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "robotic arms fleet plan",
           "period": "2026",
-          "value": "more than double our fleet of robotic arms, like Cardinal and Sparrow, in 2026",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're retrofitting our facilities with our latest generation technology, and we expect to more than double our fleet of robotic arms, like Cardinal and Sparrow, in 2026.",
-          "following_context": "We continue to lower our overall cost to serve, even as we face heightened transportation costs driven by fuel inflation from the conflict in the Middle East and higher line haul rates from driver capacity limitations.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2026.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 42,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "12c97cb2a93cdd6c735e26b0b17c99d90db711c64d76f2725d1ca820595ae31a",
+            "value_sha256": "650079da4fb936cdc3e61c6c50d970ce0fe3f1dd177fe1617839296d595f0ccb"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "FBA fuel and logistics surcharge",
           "period": null,
-          "value": "FBA fuel and logistics surcharge that was implemented in April",
           "value_num": null,
           "unit": null,
-          "verbatim": "On the operating income side, the impact of these higher costs is partially offset by our FBA fuel and logistics surcharge that was implemented in April.",
-          "following_context": "Looking ahead, we see meaningful opportunities to further enhance productivity across our global fulfillment network, all while continuing to raise the bar on delivery speed. While operating margin may fluctuate and progress may not always be linear, we take a deliberate approach to achieving sustained long-term improvement in our cost to serve.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 43,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "fa35999e47cde5b3bc600f195684f78808c4cf52611ace5896c7c1b66e6a5a2c",
+            "value_sha256": "389fec6d51f6beefcb239676ff2eeb3975a443fffc2397f7d3f542113c0bc08c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Amazon product prices vs other retailers",
           "period": null,
-          "value": "on average, 14% less than other retailers, according to third-party research firm, Profitero",
           "value_num": null,
           "unit": null,
-          "verbatim": "You can see that in how we stayed very sharp in our price throughout the last year. With our product prices, on average, 14% less than other retailers, according to third-party research firm, Profitero.",
-          "following_context": "We have identified a limited set of circumstances where we can trace that we passed specific import charges on to customers. And when we receive those refunds, we will proactively contact affected customers and automatically issue refunds to them. Otherwise, like other large retailers, we'll utilize refunds to continue to invest in low prices for customers.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 47,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "d04aa3351d8c1100dc022ecfc7ec850ccb2fbe7e7da2d11b257be8d473a6c7ae",
+            "value_sha256": "52c33dcf04ee02cbb736a93731a7a240a6f81c0d1771a280534a2f9d82bad892"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS segment revenue",
           "period": null,
-          "value": "$42.2 billion, up 36.7% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving to the AWS segment. Revenue was $42.2 billion, up 36.7% year-over-year, driven by both core and AI services.",
-          "following_context": "AWS now has an annualized revenue run rate of $169 billion. Customers continue to increase cloud migrations and scale up their use of AWS core services. And increasingly, customers seeking the full benefits of AI are accelerating their transition to the cloud. We see a strong linkage between AI spend and core growth. As customers invest in AI, we see a corresponding increase in core consumption.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 42.2,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 36.7,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 44,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "f4c1ab14a9292b72e3410c4f9f03065b9d229aadafe3559ff0c3eb377243a376",
+            "value_sha256": "74a91e7cb4c42236c7696b3b84a64b7a42571c07baebb596d284229cb34aa95b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cash CapEx",
           "period": null,
-          "value": "$53.1 billion in Q2",
           "value_num": null,
           "unit": null,
-          "verbatim": "Now turning to our cash CapEx, which was $53.1 billion in Q2.",
-          "following_context": "This primarily relates to AWS and generative AI as we invest to support strong customer demand. We'll continue to make significant investments, especially in generative AI as we believe it to be a massive opportunity with the potential to drive long-term revenue and free cash flow. Before moving on to guidance, I'll briefly touch on the impact from the tariff-related refunds on our results. We are participating in the tariff refund process, as I mentioned earlier, we received approximately $600 million in Q2. The amount is limited for a couple of reasons. First, our teams did a lot of work forward buying and prepositioning inventory to avoid tariff costs.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 53.1,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 46,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "310c993502756b8b151246f4d36728b9cd7b80fe029a5be9d75bdfa8ae0cb5c3",
+            "value_sha256": "eee86198295da63c7179a0ab16bf367affa93517b68ad427437fa5fdc6e21a21"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "tariff-related refunds received",
           "period": null,
-          "value": "approximately $600 million in Q2",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are participating in the tariff refund process, as I mentioned earlier, we received approximately $600 million in Q2.",
-          "following_context": "The amount is limited for a couple of reasons. First, our teams did a lot of work forward buying and prepositioning inventory to avoid tariff costs.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 600.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 46,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "ff6788cb21303c7a91aae4aca95fb5c2a29bfb9dbdefb93201bb969565d8f01e",
+            "value_sha256": "f1e32a1446860fcd9dea4cf8c3dfdf7102631e0d6b4eac9ae5aee84055b7d356"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "AWS operating margin year-over-year change",
           "period": null,
-          "value": "up 650 basis points year-over-year. 520 basis points if you exclude the derivative accounting gain",
           "value_num": null,
           "unit": null,
-          "verbatim": "You're seeing, despite the large investments, AWS margins have continued to remain strong, and we're up 650 basis points year-over-year. 520 basis points if you exclude the derivative accounting gain that I mentioned.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 650.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 520.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 56,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "3597211ac03168b4cf4bb9f8b1f1387a59238d1b1480a17b6940613b2767504b",
+            "value_sha256": "77d3b0eb6c954f449eb180bf98ab2c9a86dd301932f144c59e4840e7f2118a76"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "global IT spend still on-premises",
           "period": null,
-          "value": "85% of the global IT spend is still on premises",
           "value_num": null,
           "unit": null,
-          "verbatim": "Remember, by the way, that 85% of the global IT spend is still on premises.",
-          "following_context": "That equation is going to flip in the next 10 to 20 years. And you see more and more enterprises that are moving and building plans to move to the cloud, and we're winning the lion's share of those with the capabilities I mentioned earlier and the advantages. And then AI is growing, at such a rapid rate, and it's pulling along core alongside of it. And that's because the post-training and the reinforcement learning and all the agentic tool use is being driven on CPU and core. And with the leading CPU chip, Graviton, it makes AWS an even more attractive choice.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 85.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 70,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "b0d1b47d82e684b3903e1399e631110646d4c7df3232bdbd0296cca3fa3bf4fa",
+            "value_sha256": "93eeecb3a24fd45cbdc53b9fa6a2d6207758c81c7f3786dbd9bb47ddb95aad8e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "grocery gross merchandise sales (prior year)",
           "period": "last year",
-          "value": "over $150 billion in gross merchandise sales",
           "value_num": null,
           "unit": null,
-          "verbatim": "It's -- last year, it was over $150 billion in gross merchandise sales, making us the second largest grocer in the U.S.",
-          "following_context": "And a lot of that are nonperishables, the middle aisles that you'd find in a grocery store where you have consumables and canned goods and beauty items and pharmaceutical items. A big chunk of it is our Whole Foods Market business, which is the leading organic grocer out there.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 150.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 106,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "927edc42bec1564c22c571fb6bd3f452abb1e72c55b52ed16b6cbe6bd8aa5796",
+            "value_sha256": "8e58563033c53fe850e39755e989dd4e4a654acbe1980f852e63af42e03a86bf"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "same-day perishables city coverage",
           "period": null,
-          "value": "same-day perishables in 2,300 cities around the U.S.",
           "value_num": null,
           "unit": null,
-          "verbatim": "But we have finally found something that is a real needle mover for us in offering perishables in our same-day facilities that we're now able to offer same-day perishables in 2,300 cities around the U.S.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2300.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf",
+            "transcript_sha256": "2a387bcc2b8312eaa906b35b72b1f912abbefff26e508e5418f979fb3c7e6622",
+            "paragraph": 108,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "eb99c240d03263384ef1212815b7b29dc4dc4e6ca993d83d26f51b34e858a04c",
+            "value_sha256": "e039dcc63d69b1f85adb1b9817ae25c68cc62df62cd41c63d8e3cb17bc5a9b11"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS revenue growth year-over-year (Q3)",
           "period": null,
-          "value": "AWS grew 39.3% year-over-year, accelerating for the sixth straight quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Despite lapping a comparable year-over-year period where we added a lot of capacity, AWS grew 39.3% year-over-year, accelerating for the sixth straight quarter, our fastest growth in nearly 5 years.",
-          "following_context": "Backlog is $578 billion, growing triple digits year-over-year and well diversified.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 39.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 8,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "a267abd704cfa299ee1634d190caa4484293ad577a1d810dea283203894cccf7",
+            "value_sha256": "b77d2598161520d07c36184b223536609a7a2e3c7d0517c74e3b55bcc937ae1d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS backlog (Q3)",
           "period": null,
-          "value": "$578 billion, growing triple digits year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Backlog is $578 billion, growing triple digits year-over-year and well diversified.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 578.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 8,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "1b3cdb679d186defc0beb530a72b56cd3c6a41bc96fd2af3d308af8532a83652",
+            "value_sha256": "27a667636c6404958488e388cfd0f88d68f84f15a748df77de7823a7cdb1d8bc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI accelerator installation pace",
           "period": null,
-          "value": "installing an AI accelerator about every 14 seconds",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're installing an AI accelerator about every 14 seconds and almost as fast as we install capacity, customers are gobbling it up.",
-          "following_context": "Our core compute and storage revenue grew at their fastest rates in several years. Our operating margins have long been strong on our core offering, but rapidly improving on the AI side, too, well ahead of where they were on core at a similar time of evolution.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 9,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "a0e0535bb322511ed112d7d934a0eb179e8433119a5165f964d643010cc60033",
+            "value_sha256": "50b0cb07027b44ac2918bc9f815b195a5492b214118d87e994ef8725a9db5714"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Bedrock spend by Fortune 500 companies",
           "period": null,
-          "value": "nearly 7x more on Bedrock year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "we continue to expand the capabilities of our inference service, Amazon Bedrock, and it's leading to remarkable growth with Fortune 500 companies spending nearly 7x more on Bedrock year-over-year and total Bedrock token volume growing nearly 17x year-over-year.",
-          "following_context": "Bedrock is the fastest growing multibillion-dollar service in AWS' history. We recently added OpenAI models to Bedrock and usage is growing quickly. We also just added Bedrock managed versions of Kimi, GLM and SpaceX models.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 17,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "5e10faf536822b3c38e91965915e4ecf53c656f659cc22399889968518a4432a",
+            "value_sha256": "9fc91d52cb40d185cd9101a0e526684446d15680879666654978717c4b770a17"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total Bedrock token volume growth",
           "period": null,
-          "value": "nearly 17x year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "we continue to expand the capabilities of our inference service, Amazon Bedrock, and it's leading to remarkable growth with Fortune 500 companies spending nearly 7x more on Bedrock year-over-year and total Bedrock token volume growing nearly 17x year-over-year.",
-          "following_context": "Bedrock is the fastest growing multibillion-dollar service in AWS' history. We recently added OpenAI models to Bedrock and usage is growing quickly. We also just added Bedrock managed versions of Kimi, GLM and SpaceX models.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 17,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "5e10faf536822b3c38e91965915e4ecf53c656f659cc22399889968518a4432a",
+            "value_sha256": "b6b6ff376dfaf0c573ae00b34ff762fae34942301a1e635f59b335963d3fb495"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AgentCore agent deployment growth",
           "period": null,
-          "value": "deploying 2x more agents with it in Q3 than the prior 3 quarters combined",
           "value_num": null,
           "unit": null,
-          "verbatim": "Tens of thousands of customers currently use AgentCore, deploying 2x more agents with it in Q3 than the prior 3 quarters combined.",
-          "following_context": "In addition to building their own purpose-built agents, most companies will also use turnkey agentic services, and we offer several that customers love. Kiro for coding, Amazon Connect for contact center agents and Amazon Transform for migration. They're all iterating quickly and picking up customer momentum. As is Amazon Quick, our intelligent AI work companion, which is growing very rapidly as large enterprises like Mondelez, EchoStar, 3M, Southwest Airlines and DXC are choosing Quick because it's purpose-built for work with no compromises on customer data.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 20,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "8d14c594046c7efd3bb89f242c46e599907b46b06eafd3e321521b47c601c415",
+            "value_sha256": "1f19019142575c1ceebff1956c3c150ba68afcf7e1c1f51ba7891108a6547b80"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Graviton and Trainium revenue commitments growth",
           "period": null,
-          "value": "each increased more than 20x year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Finally, our chips business continues to grow triple-digit percentages year-over-year and revenue commitments for Graviton and Trainium have each increased more than 20x year-over-year.",
-          "following_context": "AI continues to be a tailwind for Graviton because posttraining reinforcement learning and agent tool use is mostly done on CPUs versus AI accelerators, and Graviton is the strongest CPU chip, offering up to 30% to 40% better price performance than alternatives.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 21,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "f4842db13455aa1c84a783850e9914e00646e20faa8c23f63bc467b6607e3ff7",
+            "value_sha256": "a4c3afc7f0199eb3e2a393917f76899d79d83c18bcc08656cfd0c2c8539ec04d"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Graviton CPU price performance vs alternatives (Q3)",
           "period": null,
-          "value": "up to 30% to 40% better price performance than alternatives",
           "value_num": null,
           "unit": null,
-          "verbatim": "AI continues to be a tailwind for Graviton because posttraining reinforcement learning and agent tool use is mostly done on CPUs versus AI accelerators, and Graviton is the strongest CPU chip, offering up to 30% to 40% better price performance than alternatives.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_most"
+            },
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 21,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "076ac0f2d0d158e4d853784f09664cc4673ba99d565c7c301f631458c39e84d4",
+            "value_sha256": "2250e4c58d24e268e9e3ca3bfe9a2d4cd6abec3f1d727a560a821e0802f3ee72"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "customer savings from custom silicon",
           "period": null,
-          "value": "saved more than $2 billion in Q3 alone",
           "value_num": null,
           "unit": null,
-          "verbatim": "Customers using our custom silicon saved more than $2 billion in Q3 alone, and we just open-sourced TorchNeuron so developers can run existing PyTorch code, which most already use on Trainium without rewriting a thing.",
-          "following_context": "As we launch new generations of chips, demand for prior generations remained strong. After our launch of Graviton5, backlog for prior generation Graviton instances still more than doubled quarter-over-quarter. And short-term capacity for prior generation Trainium instances sell at a premium compared to the first half of the year.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 22,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "64f64bc9c7591a3a445265f567f8dc54ae100cc933332e419fa20e734ad193d0",
+            "value_sha256": "af68dc004d492b71ae3dfa5c34076d9d3b8c452785e92acc7bfbf624317f17f6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "prior generation Graviton backlog",
           "period": null,
-          "value": "more than doubled quarter-over-quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "After our launch of Graviton5, backlog for prior generation Graviton instances still more than doubled quarter-over-quarter.",
-          "following_context": "And short-term capacity for prior generation Trainium instances sell at a premium compared to the first half of the year.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 22,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "58fa1f0a903a8b7276ca0bda6459963436e625026737e522c84cebc3caa50e46",
+            "value_sha256": "c96b595d10ce91b6497042202f45d739fb3a00b8d4552b37b91e0c00288ba2df"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "inference share of AWS AI revenue",
           "period": null,
-          "value": "inference already accounts for well over half of AWS' AI revenue and growing",
           "value_num": null,
           "unit": null,
-          "verbatim": "Enterprises are still very early in using inference at scale, and yet inference already accounts for well over half of AWS' AI revenue and growing.",
-          "following_context": "And we have a lot of training revenue as well. We still expect 2026 cash CapEx of approximately $220 billion, the majority for AWS and expect to spend meaningfully more in 2027. And with a clear line of sight to attractive financial returns, as I laid out on our last call.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 23,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "b31fedb032ddad243db9f27143fdc5c51570fb7c276eb905243b9dab6710118e",
+            "value_sha256": "614d438d7e2e9f26257b5656b6c6316ba3c3d9ca0590c8fbdd84707d61340135"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS annualized revenue run rate (Q3)",
           "period": null,
-          "value": "$184 billion annualized revenue run rate",
           "value_num": null,
           "unit": null,
-          "verbatim": "AWS is a $184 billion annualized revenue run rate business, and yet the opportunity remains extraordinary.",
-          "following_context": "With our continued pace of innovation, new core and AI functionality, enterprises wanting to run their core and AI workloads in AWS and the amount of capacity that we're adding each year, we believe that AWS can grow north of 40% in each of 2027 and in 2028, and be a $1 trillion revenue business in the next 5 to 10 years. We're in the very early days of this inflection, our strategy is working, and I expect it will for the foreseeable future.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 184.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 24,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "dcdcf248d850d4ad8df73e5cdbbbe480547236fe527e710b55b3b664bd57e97d",
+            "value_sha256": "5fea67af0a380da8edc88354747f84e22963dd351a4f10d0aebbc7b9281a6dee"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "stores units growth year-to-date",
           "period": null,
-          "value": "units have grown nearly 15% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Year-to-date, units have grown nearly 15% year-over-year, and that's on an enormous base having sold more than 30 billion items last year.",
-          "following_context": "In absolute dollar terms, we've added more than $90 billion in gross sales in the trailing 12 months. And we're growing meaningfully faster than other retail competitors, adding about double the gross sales per quarter than our next largest competitor in the U.S. and consistently taking retail market segment share.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 25,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "93b614d79bf5b8ef99f90a8743cd598c2878aa89913752685259fc75511c994e",
+            "value_sha256": "5012ef6fec777f65c0a247502df8840ff08ae97655782ec45cec1c5d2f23fb14"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "gross sales added trailing 12 months",
           "period": "trailing 12 months",
-          "value": "more than $90 billion in gross sales in the trailing 12 months",
           "value_num": null,
           "unit": null,
-          "verbatim": "In absolute dollar terms, we've added more than $90 billion in gross sales in the trailing 12 months.",
-          "following_context": "And we're growing meaningfully faster than other retail competitors, adding about double the gross sales per quarter than our next largest competitor in the U.S. and consistently taking retail market segment share.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 90.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 25,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "86629a801254e33609f3b3bc3e43f221d61ab2e72fcbc9ab670085167c877c0a",
+            "value_sha256": "4e0d73082f978311486a19524383e3c0c2d5d16c4e4e4e21bc950a2f5a01a92c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "gross sales growth vs next largest US competitor",
           "period": null,
-          "value": "adding about double the gross sales per quarter than our next largest competitor in the U.S.",
           "value_num": null,
           "unit": null,
-          "verbatim": "And we're growing meaningfully faster than other retail competitors, adding about double the gross sales per quarter than our next largest competitor in the U.S. and consistently taking retail market segment share.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 25,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "8e1f8ee414af0d0133f17bae31a8b950dcdafe31e3052627dc7131726ef23c70",
+            "value_sha256": "0f044dfe93e1dbb2774d75892a35ff7caf4cc271f20d372e98f0450a032e9a9c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "retail still in physical stores",
           "period": null,
-          "value": "nearly 80% currently occurs in physical stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "The significant majority of retail, nearly 80% currently occurs in physical stores.",
-          "following_context": "That will eventually flip to e-commerce over time. We're helping enable this shift by rapidly building out our efficient and speedy fulfillment network, providing delightful customer experiences while driving significant free cash flow and return on invested capital.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 26,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "498d8b8e3d4d9e08557b100d493b409d7951a183a11df81c0f1327f60ee37a3c",
+            "value_sha256": "28aa90688d726ad96c40a1560087c2c906302f0e0628ca671b80fe4278284c23"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "items delivered same-day or overnight (Q3)",
           "period": null,
-          "value": "more than 1.5 billion items to Prime customers same-day or overnight in Q3",
           "value_num": null,
           "unit": null,
-          "verbatim": "We had our fastest Q3 ever globally, and we delivered more than 1.5 billion items to Prime customers same-day or overnight in Q3.",
-          "following_context": "We're energized by the customer response to our rapid rollout of Amazon Now around the world, is now available in over 450 towns and cities, and the number of items ordered through Amazon Now is up 10x year-over-year.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.5,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 27,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "fd3cc2d9386e73977a204bbd53426b5cdb7b62ac8fb96608a4ebcda796ebcd3a",
+            "value_sha256": "b4394ad293974601ddd84e9d0e1ec876320e34280bcc5908aea145529b9cb199"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Amazon Now availability and order growth",
           "period": null,
-          "value": "available in over 450 towns and cities, and the number of items ordered through Amazon Now is up 10x year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're energized by the customer response to our rapid rollout of Amazon Now around the world, is now available in over 450 towns and cities, and the number of items ordered through Amazon Now is up 10x year-over-year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 450.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 27,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "5c08fd2f4ea141afb733c299377e48cc3900a83c1ab02ef673a4853d7050ae27",
+            "value_sha256": "5446ccbe9404fbd406d1c78677e00bfb90230701c4c59e83f263e145abdc35f3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "grocery gross sales trailing 12 months",
           "period": "trailing 12 months",
-          "value": "nearly $250 billion in the trailing 12 months",
           "value_num": null,
           "unit": null,
-          "verbatim": "Increasing speed is fueling our grocery business, including perishables and everyday essentials and gross sales grew to nearly $250 billion in the trailing 12 months.",
-          "following_context": "In Q3, fresh groceries and everyday essentials grew about 3x faster than the rest of our store, representing about half of all units sold. Customers who shop perishables with same-day delivery buy nearly 7x more everyday essential units than those who don't. And active grocery customers shop nearly 4x more nongrocery categories like home and apparel and spend over 2x more on those categories compared to nongrocery customers.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 250.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 28,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "c8d9e6e7a7e748b42fa2d42faaa9df6e1b85466aac9534c1a9cbe338c7fce1e0",
+            "value_sha256": "dee9de0115da12cf75200f1ba80682028af879eeaa5267bcd21d8892339f4c39"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "fresh groceries and everyday essentials growth",
           "period": null,
-          "value": "grew about 3x faster than the rest of our store, representing about half of all units sold",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q3, fresh groceries and everyday essentials grew about 3x faster than the rest of our store, representing about half of all units sold.",
-          "following_context": "Customers who shop perishables with same-day delivery buy nearly 7x more everyday essential units than those who don't. And active grocery customers shop nearly 4x more nongrocery categories like home and apparel and spend over 2x more on those categories compared to nongrocery customers.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 28,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "4ff5bc6d958f17b0c9783d74cb5263da1102b1fe8424284827423339cec06dbf",
+            "value_sha256": "5a8973fa5d6f6ffe53974fef39e5078910cf6cb17e16b202f09e236549adef54"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "perishables same-day shopper everyday essential units",
           "period": null,
-          "value": "buy nearly 7x more everyday essential units than those who don't",
           "value_num": null,
           "unit": null,
-          "verbatim": "Customers who shop perishables with same-day delivery buy nearly 7x more everyday essential units than those who don't.",
-          "following_context": "And active grocery customers shop nearly 4x more nongrocery categories like home and apparel and spend over 2x more on those categories compared to nongrocery customers.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 28,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "6564a80633296eeed53eb4664e9f27584dccc77a0487311b4f3aa0e2e400f10d",
+            "value_sha256": "d0039d75c0e0241335a4da396b29e1bd199a5140873f6f997122807b2daa8114"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "active grocery customer non-grocery shopping",
           "period": null,
-          "value": "shop nearly 4x more nongrocery categories like home and apparel and spend over 2x more",
           "value_num": null,
           "unit": null,
-          "verbatim": "And active grocery customers shop nearly 4x more nongrocery categories like home and apparel and spend over 2x more on those categories compared to nongrocery customers.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 28,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "0ac2813c4aef821261c6d84fa2e858feedb81e8888d51e2932469e52ec22f663",
+            "value_sha256": "16df4632cb71c09e38b9d7597c41aaea71d20598bf3bd08c8fd1e4623bb288c6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Amazon Pharmacy customer growth (Q3)",
           "period": null,
-          "value": "up over 60% year-over-year with growth accelerating each quarter, repeat customers grew more than 50% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "The number of customers using it is up over 60% year-over-year with growth accelerating each quarter through 2026, and repeat customers grew more than 50% year-over-year.",
-          "following_context": "J.D. Power recently ranked Amazon Pharmacy, the top mail-order pharmacy for the third year in a row, and we keep making it even better, now offering 3-hour prescription delivery in more than 350 cities.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            },
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 29,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "4d8dbd867eb28aaa773a0433c2010760d2a37792f3b63cac690678c44677740b",
+            "value_sha256": "df0bc1b88c6549206ad8500efcd5de2db82e7f4a0d5a53d40b190ecb12ee3970"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Alexa for Shopping users and interactions (Q3)",
           "period": null,
-          "value": "Over 400 million customers have used it in the last 12 months with customer interactions up 570% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over 400 million customers have used Alexa For shopping, our agentic shopping assistant, in the last 12 months with customer interactions up 570% year-over-year.",
-          "following_context": "U.S. customers using Alexa for Shopping are spending 50% more per order than those who don't. It researches products, compares options, checks a full year of price history, gets personalized gift recommendations, and tracks deals and price drops on customers' behalf. Though we anticipate working with horizontal agents, we believe Alexa for Shopping is going to be the primary shopping agent customers use to shop Amazon.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 400.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 570.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 30,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "65a0848c8fd2dd25605cb71e332230babbe5b19d78e94ad6c4721b6be37a61d3",
+            "value_sha256": "a0bea5c0e390c6c714bd684ce159dfb02f8096b3e3b984cc14fd5f6805a65cd4"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Alexa for Shopping spend per order (Q3)",
           "period": null,
-          "value": "spending 50% more per order than those who don't",
           "value_num": null,
           "unit": null,
-          "verbatim": "U.S. customers using Alexa for Shopping are spending 50% more per order than those who don't.",
-          "following_context": "It researches products, compares options, checks a full year of price history, gets personalized gift recommendations, and tracks deals and price drops on customers' behalf. Though we anticipate working with horizontal agents, we believe Alexa for Shopping is going to be the primary shopping agent customers use to shop Amazon.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 30,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "d0da849f608c45f1a600df91eb81ca1e02d0f551529ab6b683fcd1b80a3afdaa",
+            "value_sha256": "83b573908d0f22fb32cb3f86ce9472c787fc28008c44cd6be5a49f5403ad9715"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Amazon Ads revenue (Q3)",
           "period": null,
-          "value": "$19.6 billion of revenue in Q3, up 12% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving to Amazon Ads. We generated $19.6 billion of revenue in Q3, up 12% year-over-year.",
-          "following_context": "Though there were some timing anomalies in this past quarter, we continue to be pleased with the overall momentum across our ad offerings. I'll mention 3 items impacting the growth rates. First, we shifted Prime Day into Q2 for most countries, moving significant sales and ad revenue that were in Q3 '25 into Q2 '26, a tailwind to our Q2 2026 rate and a headwind to Q3 2026. For advertising, that was 850 basis points sequential impact to Q3 year-over-year growth.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 19.6,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 32,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "8c6924dd0b4d7605d53ccc5398ea80843249839d30ae3f4c6564820de7273c4c",
+            "value_sha256": "fae9da85275e29e166835dc18ce5c4abbc28721c541309546e9c26958d9e41aa"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Prime Day timing impact on ad revenue",
           "period": "Q3 2026",
-          "value": "850 basis points sequential impact to Q3 year-over-year growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "First, we shifted Prime Day into Q2 for most countries, moving significant sales and ad revenue that were in Q3 '25 into Q2 '26, a tailwind to our Q2 2026 rate and a headwind to Q3 2026. For advertising, that was 850 basis points sequential impact to Q3 year-over-year growth.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 850.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 32,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "9f11e8ecb7955a5769ac0fa303c44595125d55aeb6dd1356ce8f766c11eda613",
+            "value_sha256": "9b095736754f1e4dbc6b30d5399627360277ce4e816f9d7061cb05fa0a634caa"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "worldwide revenue (Q3)",
           "period": null,
-          "value": "$201.9 billion, a 12% increase year-over-year and 13% increase year-over-year, excluding the impact of foreign exchange",
           "value_num": null,
           "unit": null,
-          "verbatim": "Worldwide revenue was $201.9 billion, a 12% increase year-over-year and 13% increase year-over-year, excluding the impact of foreign exchange.",
-          "following_context": "Worldwide operating income was $28.1 billion, with an operating margin of 13.9%, which is our highest operating margin ever.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 201.9,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 41,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "ab53eb62ef18a3bd3690460260dd14e5ad328c667b936146f8ae8588c36849b9",
+            "value_sha256": "89e2cc71c76431eeb06e52eacfed64a3f0b3c44c6e056c7d98edc8759eb3bc24"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "worldwide operating margin (Q3)",
           "period": null,
-          "value": "operating margin of 13.9%, which is our highest operating margin ever",
           "value_num": null,
           "unit": null,
-          "verbatim": "Worldwide operating income was $28.1 billion, with an operating margin of 13.9%, which is our highest operating margin ever.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.9,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 41,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "11103641063fb7b72282c514e1ca26621bd100d37f4be633009abda13eba9177",
+            "value_sha256": "dc9fcb936d31123cce3afa404100970d15438913a37fb7bd5146f26120eb2e0e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North America segment revenue (Q3)",
           "period": null,
-          "value": "$112.9 billion, an increase of 6% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the North America segment, third quarter revenue was $112.9 billion, an increase of 6% year-over-year.",
-          "following_context": "International segment revenue was $43.1 billion, an increase of 8% year-over-year, excluding the impact of foreign exchange. Worldwide paid units grew 12% year-over-year.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 112.9,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 42,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "070356805308c65c069535b4b054e9915f8ef2a1cae6632703a4409ce5edbde5",
+            "value_sha256": "fa722c67974851cc09ec51ffffaf906d7d44005d16d895456e0083cd16af4369"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "International segment revenue (Q3)",
           "period": null,
-          "value": "$43.1 billion, an increase of 8% year-over-year, excluding the impact of foreign exchange",
           "value_num": null,
           "unit": null,
-          "verbatim": "International segment revenue was $43.1 billion, an increase of 8% year-over-year, excluding the impact of foreign exchange.",
-          "following_context": "Worldwide paid units grew 12% year-over-year.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 43.1,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 42,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "7d669800c7b98d96d1a20e9c01bf17f2485900d89da5a88ea9c57fbe9da3d4e7",
+            "value_sha256": "b0781f458cafce8b416154f9b8993e5b907ae685962a7ade47d62bc1dbe43bc6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "worldwide paid units growth (Q3)",
           "period": null,
-          "value": "grew 12% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Worldwide paid units grew 12% year-over-year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 42,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "497523bdb759dd57ae7b14536270a33da32a31c5a3e1f49962e56d5cde234b79",
+            "value_sha256": "7a6ce541ce04f2025caeb77bbadcb8d691e7aa8dc658731f73016a0c091814a0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Prime member fresh grocery same-day orders growth",
           "period": "over the past year",
-          "value": "more than tripled",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over the past year, monthly orders of fresh groceries placed by our Prime members for free same-day delivery have more than tripled.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 43,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "abc04772446cd09a76b8300a88e6fbbd7ad30c9278ce72d8f327654d214c1113",
+            "value_sha256": "ae4c92d440e3e2c279d3390178a73d87ee0f75020df8abb732994d41f3ab78c1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "shipping cost vs unit growth (Q3)",
           "period": null,
-          "value": "Shipping costs increased 11% year-over-year versus a 12% increase in units. Excluding fuel and linehaul inflation, shipping costs grew 8% or approximately 400 basis points slower than unit growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "Shipping costs increased 11% year-over-year versus a 12% increase in units. Excluding fuel and linehaul inflation, shipping costs grew 8% or approximately 400 basis points slower than unit growth.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 400.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "down",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 44,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "a667c0e83d69019327f61b4662f5e47dd92c8616bd747f9caf43486dac11f5f7",
+            "value_sha256": "fedf6fd5be076e5f06698afc2a08996043f8c638e089cb58ab30e0512553cbf3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "robotic arms fleet (Q3)",
           "period": "2026",
-          "value": "we doubled our fleet of robotic arms like Cardinal and Sparrow",
           "value_num": null,
           "unit": null,
-          "verbatim": "In 2026, we doubled our fleet of robotic arms like Cardinal and Sparrow.",
-          "following_context": "We're also developing robotics foundation models that enable faster programming and teach robots increasingly complex physical tasks with the goal of delivering useful robotics at scale. Looking ahead, we see meaningful opportunities to improve productivity across our global fulfillment network and lower our cost to serve while continuing to get products to customers faster. Our operating margin may fluctuate quarter-to-quarter, but we're focused on sustained long-term improvement in our cost to serve per unit.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 45,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "3fa9bc7316095a3df93475c7cfdff8c53c067cfd14cdd880664bfec52e1a8ae4",
+            "value_sha256": "81aef522f707a5459e356a00b1a041b485b79f422e41360c210689ea5c51cbb6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS segment revenue (Q3)",
           "period": null,
-          "value": "$46 billion and grew 39.3% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving to our AWS segment. Revenue was $46 billion and grew 39.3% year-over-year driven by both core and AI services.",
-          "following_context": "We added $3.8 billion in quarter-over-quarter revenue. AWS now has an annualized revenue run rate of $184 billion. Customers continue to move to the cloud and scale their use of AWS core services. And increasingly, customers who want the full benefits of AI are accelerating their transition to the cloud.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 46.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 39.3,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 46,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "763d6dfa734bf48d530994d691aecad5f0199b0a9a4f3faf23d6d964afa72339",
+            "value_sha256": "73a12a05c6b74df2435c65417fc4169a0d0966d047d4ff245b02f982881a9cab"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS quarter-over-quarter revenue added (Q3)",
           "period": null,
-          "value": "$3.8 billion in quarter-over-quarter revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "We added $3.8 billion in quarter-over-quarter revenue. AWS now has an annualized revenue run rate of $184 billion.",
-          "following_context": "Customers continue to move to the cloud and scale their use of AWS core services. And increasingly, customers who want the full benefits of AI are accelerating their transition to the cloud.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.8,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 46,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "145cca2589ffe566ecf5a619cd850e556d5bdd8ae9786b7add295155d717a38c",
+            "value_sha256": "d13b67405661766241e7ca3297923ac78dc27a4f5b008afa36809b218b8b4ef6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AWS operating margin (Q3)",
           "period": null,
-          "value": "operating margin of 38.7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "AWS operating income was $17.8 billion with an operating margin of 38.7%, reflecting strong growth and our focus on driving efficiencies.",
-          "following_context": "Our investments in custom chips and custom networking along with software and process improvements are helping us optimize capacity and build a more cost-efficient infrastructure. As we've long said, we expect AWS operating margins to fluctuate driven in part by the level of investment we're making at any point in time. Our AI offerings are gaining traction with customers with AI revenue growing triple digits year-over-year. Bedrock has been a significant growth driver.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 38.7,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 47,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "c42243cb6b53008781f058cfd48e92f3a30578109c1df9285ca7a17a622e5dc7",
+            "value_sha256": "89fbea91d6bf8a491bea208d708e3fb1e754353167691bcdbe4ca1916ee782f3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cash CapEx (Q3)",
           "period": null,
-          "value": "$75.9 billion in Q3",
           "value_num": null,
           "unit": null,
-          "verbatim": "Now turning to our cash CapEx, which was $75.9 billion in Q3.",
-          "following_context": "This primarily relates to AWS and AI as we invest to support strong customer demand. We continue to make significant investments, especially in AI as we believe it to be a massive opportunity with the potential to drive long-term revenue and free cash flow as well as return on invested capital.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 75.9,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 48,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "06c9ad59294731f0e6f2a7c858fb802237e8c2ec5eca230dfbac83e21bd39b4b",
+            "value_sha256": "5ba3f63834b50c4f0dac259139d41c2c4349b6ecc95ff24d756ff38e22c39ded"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "FBA fuel surcharge recovery",
           "period": null,
-          "value": "instituted a fuel surcharge at the beginning of the year for FBA sellers that recovers some, but not all of the costs",
           "value_num": null,
           "unit": null,
-          "verbatim": "If you remember, we instituted a fuel surcharge at the beginning of the year for FBA sellers that recovers some, but not all of the costs that we're seeing on fuel for those shipments and then the remaining part is on the retail inbound shipments and outbound shipments.",
-          "following_context": "So it's in there. It's a little bit higher than Q3.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 66,
+            "speaker": "Brian T. Olsavsky",
+            "quote_sha256": "eeee4bc3eb2731f5c752ec5e71ab1603e54867898ff4e72c3afe5c502444a2e6",
+            "value_sha256": "50089b9ed2b8299e5755cda61e334d7ca1746cdfd58ac5176ec92fcef065954a"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "robots in fulfillment network",
           "period": null,
-          "value": "over 1 million robots now in our fulfillment network",
           "value_num": null,
           "unit": null,
-          "verbatim": "We have over 1 million robots now in our fulfillment network.",
-          "following_context": "And while they're having very significant impact on our cost structure and on our productivity and on safety, if you look at our safety numbers in our fulfillment network, there are at record low numbers. We've made huge progress over the last 4 to 5 years, and robotics has been a big piece of that.",
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 78,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "ffe138e8f96723dc1757154e7ccb90da09361d01036059a4127ee24650110ab2",
+            "value_sha256": "885a75799d830e11e8c1f5d081e253ab0825915cc62963ac60dbd56967f90ba9"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "neocloud operating margin disadvantage",
           "period": null,
-          "value": "neoclouds are about 3,500 basis points worse in operating margin than if you long lease them",
           "value_num": null,
           "unit": null,
-          "verbatim": "I mean neoclouds are about 3,500 basis points worse in operating margin than if you long lease them.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3500.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Amazon.com, Inc., Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "97bdc2e48d0e9978d8b75e2775982f2e12a202377e061a88729773fde67afdd6",
+            "paragraph": 119,
+            "speaker": "Andrew R. Jassy",
+            "quote_sha256": "86f0d4148f42932bb0d237050fa4e6b18fe4ae40b4a8779121b38092e3ba629c",
+            "value_sha256": "70644329c8498160217efeedc7ded9338230795b43808da65d4838c024d5b2d2"
+          }
         }
       ],
       "qa_flags": [
@@ -18903,6 +20423,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.peer_capital_intensity"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

@@ -1,6 +1,6 @@
 # Dossier — Uber Technologies, Inc (NYSE: UBER)
 
-_November 9, 2026 · extraction 2026-11-09.order2-pages · layers refreshed to 2026-11-10.dated-headroom_
+_November 9, 2026 · extraction 2026-11-09.order2-pages · layers refreshed to 2026-11-10.driver-text-filed_
 
 # Brief — first cut
 
@@ -632,6 +632,7 @@ _Source §: 8-K 0001552781-22-000307 · e22228_ex10-1.htm_
 - **Extraction:** 2026-11-09.order2-pages — the customer count is a structured field (audit RBC-D1): `concentration.customers_listed` holds every recently disclosed row the Customers export lists, and both renderers print it, never a count of the capped roster's pieces (a page without it prints no count); the Estimates→Surprise GAAP-EPS series is read from the block CIQ heads with the company's own listing in the fiscal-year table (audit RA-D1), naming that block when the sheet's first is another listing's and refusing the EPS read where no block is the company's; the containing-line tie-break's caveat says the filing reconciles the wider line and the row's own figure is CIQ's, never that the filing confirmed it (audit RBC-D8). Among the exports on file only PARR's surprise history moves; the rest is a new field and words
 - **Refreshed since assembly** (oldest first):
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
 - **Price store:** `artifacts-order1-rebuilds-6a7a7b` · reaching 2026-11-06
 - **Panel age:** oldest panel 5d old — 2026-11-04 (valuation.implied_expectations.tev_as_of), against a 2026-11-09 build
 - **Consensus age:** consensus 5d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -8547,193 +8547,481 @@
           "kind": "leading_indicator",
           "metric": "subscription revenues growth",
           "period": "first quarter (Q1 fiscal '27)",
-          "value": "12%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We delivered a great start to the year, outperforming guidance across all key metrics, including accelerating subscription revenues growth to 12% and improving our non-GAAP operating margin to 28%, achieving the Rule of 40.",
-          "following_context": null,
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+            "transcript_sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061",
+            "paragraph": 5,
+            "speaker": "Sean Desmond",
+            "quote_sha256": "14c83dd46989eb3138d2375eff36c08435368d33b098558c491743847320a074",
+            "value_sha256": "234d0e73855ae7bf477734cbd4c1e50d56d5d00af3edb4bc8ddbdf44e8d5c8de"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ACV transitioned to new platform pricing model",
           "period": "end of Q1 (fiscal '27)",
-          "value": "over 40% of our ACV",
           "value_num": null,
           "unit": null,
-          "verbatim": "At the end of Q1, over 40% of our ACV has already transitioned to this pricing model, which we believe demonstrates the heightened urgency in the market to embrace nCino's AI technology.",
-          "following_context": null,
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+            "transcript_sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061",
+            "paragraph": 10,
+            "speaker": "Sean Desmond",
+            "quote_sha256": "e133e188a549dfa2ded94ca7446a6176ce2fe904213e4e08ac4037528b76045a",
+            "value_sha256": "98bf4936a0ca9ab941985662d6b5b0d67bb1c6123c48172c52534b10f50606ca"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "customers with initial bundle of intelligence units",
           "period": "end of Q1 (fiscal '27)",
-          "value": "over 200 of our customers",
           "value_num": null,
           "unit": null,
-          "verbatim": "As of the end of Q1, over 200 of our customers have their initial bundle of intelligence units.",
-          "following_context": "We've been very intentional about how we package these initial bundles of intelligence units as our near-term strategic goal is to maximize and accelerate the adoption of our AI features.",
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+            "transcript_sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061",
+            "paragraph": 12,
+            "speaker": "Sean Desmond",
+            "quote_sha256": "3aa33298ec19079f3c3e60eaadadd103d3906591a00a67fefe24990cd378711c",
+            "value_sha256": "93e80c10a3d93a22074024ca2ce5946b71314c1a79dc0ab00a1d9f986d1e5fcb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Banking Advisor usage / intelligence unit consumption",
           "period": "May vs. October",
-          "value": "up over 38x so far in the month of May from October",
           "value_num": null,
           "unit": null,
-          "verbatim": "Consumption of intelligence units has continued to inflect higher month-over-month with Banking Advisor usage up over 38x so far in the month of May from October, with a few business days still left for additional usage this month.",
-          "following_context": "This gives us tremendous confidence in our ability to optimize subscription revenues growth from intelligence unit consumption over the medium and long term.",
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 38.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+            "transcript_sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061",
+            "paragraph": 17,
+            "speaker": "Sean Desmond",
+            "quote_sha256": "495873743c88397493ba4e920278c99affe37821ed86c10583f1e612906caaf5",
+            "value_sha256": "e0fdbeae4c320abca77ce79ede524e0e5dff802c20d3c0a297e06850585c6a94"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "attendees at nSight user conference",
           "period": "nSight (fiscal '27)",
-          "value": "over 1,600 attendees",
           "value_num": null,
           "unit": null,
-          "verbatim": "Several of these customers were on stage with us at nSight, where we welcomed over 1,600 attendees, representing an nSight user conference record of over 300 customers and prospects to Charlotte, North Carolina for what has evolved from a software user conference to a symposium for intelligent banking.",
-          "following_context": null,
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1600.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+            "transcript_sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061",
+            "paragraph": 19,
+            "speaker": "Sean Desmond",
+            "quote_sha256": "ef9c6bcc12375142d7497947d07600c6c9cf6ecacc8b19f9e1da7c1181bc9a91",
+            "value_sha256": "260738e54e8a8adc574a11d6c26aff333027d6822fd64003c6bd03409e0c7a8b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "customers and prospects at nSight",
           "period": "nSight (fiscal '27)",
-          "value": "over 300 customers and prospects",
           "value_num": null,
           "unit": null,
-          "verbatim": "Several of these customers were on stage with us at nSight, where we welcomed over 1,600 attendees, representing an nSight user conference record of over 300 customers and prospects to Charlotte, North Carolina for what has evolved from a software user conference to a symposium for intelligent banking.",
-          "following_context": null,
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 300.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+            "transcript_sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061",
+            "paragraph": 19,
+            "speaker": "Sean Desmond",
+            "quote_sha256": "ef9c6bcc12375142d7497947d07600c6c9cf6ecacc8b19f9e1da7c1181bc9a91",
+            "value_sha256": "da760a73175b39e57fee484bfb6b0cf5d7eb4807cc27a8e7bf55925b29c768b6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "professional services hours per engagement compression",
           "period": "over the past year",
-          "value": "over 40%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are seeing the returns on investments we've made in our professional services organization over the past year, developing AI tooling and methodologies that are already compressing professional services hours per engagement by over 40%.",
-          "following_context": null,
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+            "transcript_sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061",
+            "paragraph": 25,
+            "speaker": "Sean Desmond",
+            "quote_sha256": "cb7f97e84c819cb6c3fb77ca31917ceddf12e0abb6f4a96f1c0dda8640ce2a60",
+            "value_sha256": "ad1c8f60afe1eae5e17db6c597ab37a353962c941b9c8f95aac5ef0bc476cbf9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "development team efficiency with AI",
           "period": "over the past year",
-          "value": "approximately 34% more efficiently",
           "value_num": null,
           "unit": null,
-          "verbatim": "On the product development and engineering front, we're seeing development cycles that used to extend beyond a year now compress under 90 days with teams operating approximately 34% more efficiently over the past year with AI, which allows us to invest more aggressively in Agentic and other AI capabilities while continuing to fulfill foundationally functional commitments to our customers.",
-          "following_context": null,
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 34.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+            "transcript_sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061",
+            "paragraph": 27,
+            "speaker": "Sean Desmond",
+            "quote_sha256": "b42dd2e1192ac2f413a05e3915ca117aca6bf9910adef22bb34022a1c06d7274",
+            "value_sha256": "2e76bf885ec26f90fcd467fdcf12ed9e0bfa7079c374bfbb1e220338543485f4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "code written with AI assistance",
           "period": "first quarter of fiscal '26",
-          "value": "about 21% of our code",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the first quarter of fiscal '26, about 21% of our code was written with AI assistance.",
-          "following_context": "That percentage increased to approximately 57% as of the first quarter of fiscal '27. But writing more code is not the goal. The goal is to be faster in the entire product life cycle from idea to production.",
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 21.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+            "transcript_sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061",
+            "paragraph": 28,
+            "speaker": "Sean Desmond",
+            "quote_sha256": "2d3d92be734fa05c35027b556101826aaa9ac7d0bc37bc9d7a4dd7eebf3f30eb",
+            "value_sha256": "e2698c27ef482955d7ebc92ee0983edeb11594296a4c5681101545fc9f4f56a8"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "code written with AI assistance",
           "period": "first quarter of fiscal '27",
-          "value": "approximately 57%",
           "value_num": null,
           "unit": null,
-          "verbatim": "That percentage increased to approximately 57% as of the first quarter of fiscal '27.",
-          "following_context": "But writing more code is not the goal. The goal is to be faster in the entire product life cycle from idea to production.",
           "source_ref": "CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its quote does not name the metric 'code written with AI assistance'",
+          "locator": {
+            "call": "nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf",
+            "transcript_sha256": "df15627f765af8f8059f0dd682556d5556c9748fa60d933f58042734f9245061",
+            "paragraph": 28,
+            "speaker": "Sean Desmond",
+            "quote_sha256": "bbf5a3bf88cd4aab31d3fa15a4892df0e81484d507a846e6de994eb1a65ac10c",
+            "value_sha256": "3baa5d33d82dad145012d5fc5a5c8a3e13344263ba195ece06ea1f339e69ddae"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ACV growth year-over-year",
           "period": "fiscal '26",
-          "value": "up 17% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We exceeded our financial guidance across every key metric and delivered an exceptional ACV result, up 17% year-over-year, which we believe was largely driven by customers embracing our AI strategy and product innovation.",
-          "following_context": null,
           "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "445f1a4f498efe2518f973388fb4d87e8a6900b3591ab187c0dfeec595ff1d33",
+            "value_sha256": "1fb0513d38955d7b3eaa0b57927a6ed25673c892d4151a682e4b290bbae8fb7b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "customers that purchased AI intelligence units",
           "period": "end of fiscal '26",
-          "value": "over 170 customers",
           "value_num": null,
           "unit": null,
-          "verbatim": "I'll get into the details shortly, but with over 170 customers of all sizes, including global, enterprise, regional and community banks and credit unions having already purchased AI intelligence units as of the end of fiscal '26, we believe nCino is rapidly becoming the de facto AI platform for financial institutions across the globe.",
-          "following_context": null,
           "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 170.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "275a5dd2ea783ecfa99d423a7b92b8f1c8de29bae53728155a475efb4d4047a4",
+            "value_sha256": "4308294bf46ca3f950cd6cb8c8dee9710e712ec780d7252d1e1c6e8f2c621c66"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ACV net retention rate",
           "period": "fiscal '26",
-          "value": "112% or 109% organically and in constant currency, up from 106% in fiscal '25",
           "value_num": null,
           "unit": null,
-          "verbatim": "We saw expanded commitments from some of our largest accounts, and our ACV net retention rate improved to 112% or 109% organically and in constant currency, up from 106% in fiscal '25.",
-          "following_context": "Consistent with what we saw throughout fiscal '26, we closed a number of early renewals in the fourth quarter, including a fresh 5-year commitment from our largest customer by ACV. And those customer commitments go beyond dollars. Critically, they come with trust.",
           "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 112.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 109.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 106.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "156b24b29124279f6ca311fcfd963be719aaf32a9de245dfaf906b867d996c46",
+            "value_sha256": "e1d36c77804ad50727bd8069763ed38a75a5ff8859c612188d51ec1d3cc7baab"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Japan total ACV growth",
           "period": "fiscal '26 vs. fiscal '25",
-          "value": "tripling their total ACV in fiscal '26 from fiscal '25",
           "value_num": null,
           "unit": null,
-          "verbatim": "I want to congratulate the Japanese team for tripling their total ACV in fiscal '26 from fiscal '25.",
-          "following_context": "Third, it's gratifying to see our existing customers continue to validate our AI strategy as they move to our new platform pricing framework to access our growing AI capabilities.",
           "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 26.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "dadc687c152747d34a238486d689da9092af45e7abf946856ab73f6d7c4c8636",
+            "value_sha256": "c24355a6aeae28eddd820904585826eb80c940a9aaad865cc1d6a4dd55510602"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Banking Advisor usage / intelligence unit consumption",
           "period": "March vs. October",
-          "value": "up over 25x in March compared to usage in October",
           "value_num": null,
           "unit": null,
-          "verbatim": "Customers are not just buying AI access, they're using it, and we can see that directly in the increasing consumption of intelligence units on our platform, with banking adviser usage up over 25x in March compared to usage in October.",
-          "following_context": "For years, we have said that nCino is not only in the software business, we are in the change management business and moving every customer from contract signing to implementation to pilot to using nCino's AI and production as an integral part of the day job is the sole focus of our forward deployed engineering team.",
           "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "0feeb7367a42083ad7cb7d9f1f66f514ec4958291ddebeeeff4c46df6827812b",
+            "value_sha256": "1f07340a4d210907d835cf808d7a6c4ca9e8fe46d26dded9ae2e5a88c40daf34"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "customers granting data processing rights / assets represented",
           "period": "fiscal '26 (as of the call)",
-          "value": "almost 500 financial institution customers representing over $11 trillion in assets",
           "value_num": null,
           "unit": null,
-          "verbatim": "Today, almost 500 financial institution customers representing over $11 trillion in assets have granted nCino the right to process their data into a proprietary and anonymized data set, one that powers the development of our products, fuels best-in-class industry insights and sharpens the accuracy of our intelligent services.",
-          "following_context": "This proprietary data set that nCino has carefully aggregated and curated for the better part of a decade gives nCino a unique unmatched global perspective on how to more profitably and efficiently operate a financial institution, how work moves seamlessly through the bank, where bottlenecks form, where exceptions happen and what great looks like at scale.",
           "source_ref": "CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 500.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 11.0,
+              "currency": "$",
+              "scale": "e12",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "e19be07466efca7835b57041101d18fa0d95fa4ab0801bd4946b43c4ce57815a",
+            "value_sha256": "7561da0ac18d139d81b595cf24ac1a76723a977ab55566c1097c25b0063f75d2"
+          }
         }
       ],
       "qa_flags": [
@@ -12614,6 +12902,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

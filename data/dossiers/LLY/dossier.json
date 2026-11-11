@@ -11188,589 +11188,1532 @@
           "kind": "leading_indicator",
           "metric": "U.S. price change (Zepbound/Mounjaro)",
           "period": null,
-          "value": "declined by 3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "U.S. price declined by 3%, driven by Zepbound and Mounjaro.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 16,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "750df8583bddda014d2612061f3e0fd4b1b8440d9194300dc038405e9a9eb406",
+            "value_sha256": "a668f9bdefe225827dce48ba1666a61ef4ca74eb5030b2b190d325c7b96e44de"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "U.S. price excluding rebate/discount adjustments",
           "period": null,
-          "value": "declined by 9%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding these adjustments, U.S. price declined by 9%.",
-          "following_context": "Europe revenue grew 55% in constant currency, driven by sustained strong volume growth of Mounjaro. Europe revenue also benefited from a $250 million Jardiance milestone payment.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 17,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "43e598ee8f767831c52c84844af32a53326d86525e1d9bb8991203d0a4a76388",
+            "value_sha256": "8434ba84e3b7b7c331d5fc4fa36d420e178470783388d9f8ad679085aa887340"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Ebglyss U.S. share of new prescriptions in specialty dermatology",
           "period": "since last year",
-          "value": "increasing by approximately 4 percentage points",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the U.S., Ebglyss continued to gain share of new prescriptions, increasing by approximately 4 percentage points in the specialty dermatology market since last year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "pp",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 19,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "9125b23ff38ab8c5cd18dcd7776b2c710001947cca01386269f20c797c3f3cfa",
+            "value_sha256": "880db86e1cc0dddefe157c7254fd520ac0ae50617f80ffae3f68c0bb6821a528"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Inluriyo U.S. share of new prescriptions in oral SERD breast cancer market",
           "period": null,
-          "value": "more than 50% share",
           "value_num": null,
           "unit": null,
-          "verbatim": "After only 2 full quarters, Inluyro is the U.S. leader in new prescriptions, with more than 50% share.",
-          "following_context": "We look forward to the readout of EMBER-4 in the adjuvant setting to see if Inluyro can help even more people with breast cancer. In Neuroscience, Kisunla posted strong revenue growth, expanding its leadership position in the U.S. anti-amyloid targeted therapy market.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 22,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "6cd7ae72b2c0f624cc4597a87980e3b3742f717aa94a5cf98b83e6e4ef4f72db",
+            "value_sha256": "71bdbdf6a62803f9c8a3fe0676da6551ac0d801474ed86b94abf8d3d8de0c12a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Mounjaro and Zepbound combined revenue",
           "period": null,
-          "value": "$14.9 billion of revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "Finally, in Cardiometabolic Health, Mounjaro and Zepbound had another strong quarter, combining for $14.9 billion of revenue, and contributing $6.3 billion of growth compared to Q2 2025.",
-          "following_context": "As seen on Slide 10, total prescriptions in the U.S. incretin analogs market grew 31% compared to Q2 2025. The early uptake of oral GLP-1s has been encouraging, expanding the market of people who are taking incretin therapy. Additionally, injectable incretins continue to be an important growth driver, and account for 3 out of 4 new patient starts.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.9,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 24,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "51439d1da057c97118c6991b9d8ae0bc93e69525b01c870b59ce099e9d8eaa74",
+            "value_sha256": "ccf70d7a3614a9666958874379beed44367d038ce0bed3ef4538a6fd8937aa55"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. incretin analogs market total prescriptions growth",
           "period": null,
-          "value": "grew 31%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As seen on Slide 10, total prescriptions in the U.S. incretin analogs market grew 31% compared to Q2 2025.",
-          "following_context": "The early uptake of oral GLP-1s has been encouraging, expanding the market of people who are taking incretin therapy. Additionally, injectable incretins continue to be an important growth driver, and account for 3 out of 4 new patient starts.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 31.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 24,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "1651e02218a107fe83b91a94050338426e61c2c12fccc22fc9c2ff83931e88f4",
+            "value_sha256": "0507e1146d105118a8b34739eb773317dd593b9ed43997ad87632c92b38f68d4"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Injectable incretins share of new patient starts",
           "period": null,
-          "value": "3 out of 4 new patient starts",
           "value_num": null,
           "unit": null,
-          "verbatim": "Additionally, injectable incretins continue to be an important growth driver, and account for 3 out of 4 new patient starts.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 24,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "e4a832264002a7e13644313b35d2e91c44da0624bea6d53243d6ae0997aa9e0c",
+            "value_sha256": "635676bcc9d77356549893a5e1eb0ff418d31fbfa5adb4734139da3c0d94bc9b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. obesity incretin market total prescription growth",
           "period": null,
-          "value": "grew by 78%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Within the U.S. incretin analogs obesity market, total prescriptions grew by 78% in Q2, and the Lilly anti-obesity portfolio continues to lead.",
-          "following_context": "In Q2, approximately 6 out of 10 total prescriptions and approximately 7 out of 10 injectable prescriptions were for a Lilly medicine. Self-pay continues to be an important segment within obesity, and accounted for approximately 45% of total Zepbound prescriptions in Q2 and approximately 55% of new prescriptions.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 78.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 25,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "554a17927406e716d989dd9706ebbbc4fb7afd14eaabebf4dc0f07472911cd33",
+            "value_sha256": "ac6838a4d4ed390d2f435a6682084d5b8bb609f3c96c4c9b396c4db81f52c781"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Lilly share of U.S. obesity total prescriptions",
           "period": null,
-          "value": "approximately 6 out of 10 total prescriptions and approximately 7 out of 10 injectable prescriptions",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q2, approximately 6 out of 10 total prescriptions and approximately 7 out of 10 injectable prescriptions were for a Lilly medicine.",
-          "following_context": "Self-pay continues to be an important segment within obesity, and accounted for approximately 45% of total Zepbound prescriptions in Q2 and approximately 55% of new prescriptions.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 25,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "5eabd454f3fbc4a4d4aeb95952f0102dace1a04fb0a31c2eef25b987023c3085",
+            "value_sha256": "70cfe34fb5a377258755437e987d0345f7963e57c2ee40612babb5b31e9af07f"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Self-pay share of Zepbound prescriptions",
           "period": null,
-          "value": "approximately 45% of total Zepbound prescriptions and approximately 55% of new prescriptions",
           "value_num": null,
           "unit": null,
-          "verbatim": "Self-pay continues to be an important segment within obesity, and accounted for approximately 45% of total Zepbound prescriptions in Q2 and approximately 55% of new prescriptions.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 45.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 55.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 25,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "b95be8bc27f5e07dc50e272d819d4d6ade1424753e7a2571afbc8f61488dd082",
+            "value_sha256": "b761b6b8c9df42c269f42bddb397f51aebecd58c8c32554cf10c0f2ed206509a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. type 2 diabetes incretin market total prescription growth",
           "period": null,
-          "value": "grew 9%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the U.S., type 2 diabetes incretin analogs market, total prescriptions grew 9% compared to Q2 2025, reflecting a more mature market compared to obesity.",
-          "following_context": "The Lilly portfolio continues to lead here as well, as more than 6 out of 10 prescriptions for an incretin were for a Lilly medicine. Outside the U.S., Lilly's portfolio is also performing well in the incretin analogs market. Slide 11 shows aggregate trends in the international incretin analogs market, which has increased by 74% since the same period last year, as measured by IQVIA gross sales.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 26,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "cef9810fdf545774abdb1a533b63779094f1555ac0302c20f9704de751aaa55e",
+            "value_sha256": "63ec8c0a400bdcf426d84d43eff99ceb108a4a065c1c77ac3a4a273ace0b7aa2"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Lilly share of U.S. type 2 diabetes incretin prescriptions",
           "period": null,
-          "value": "more than 6 out of 10 prescriptions",
           "value_num": null,
           "unit": null,
-          "verbatim": "The Lilly portfolio continues to lead here as well, as more than 6 out of 10 prescriptions for an incretin were for a Lilly medicine.",
-          "following_context": "Outside the U.S., Lilly's portfolio is also performing well in the incretin analogs market. Slide 11 shows aggregate trends in the international incretin analogs market, which has increased by 74% since the same period last year, as measured by IQVIA gross sales.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 26,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "e89eaba6569f2fd104e0884ed6db300051767ebedfbceb91bb70bde9158caf06",
+            "value_sha256": "a2b82a0bcd3b0240e57daa0d4cc2a8e9e2f38e7e5c2de48cc3f8503265c7905c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "International incretin analogs market growth (IQVIA gross sales)",
           "period": "since the same period last year",
-          "value": "increased by 74%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Slide 11 shows aggregate trends in the international incretin analogs market, which has increased by 74% since the same period last year, as measured by IQVIA gross sales.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 74.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 26,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "70fdb3c2765d1049f69ddff257f58e8b8068e481130d9dcd6ebf77ddce6f4fd3",
+            "value_sha256": "cc0ad70e13a3464c4aa913d7db20e1b067d32fb60930e5db2373c385b8b2620b"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Lilly international incretin market share",
           "period": null,
-          "value": "gaining almost 2 percentage points of share compared to Q1 2026, reaching approximately 55%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Lilly is the global market leader, and we strengthened that position, gaining almost 2 percentage points of share compared to Q1 2026, reaching approximately 55%.",
-          "following_context": "Mounjaro Q2 revenue growth was robust, driven by China, Korea, Germany, the U.K., and Mexico. We expect continued strong performance outside the U.S., but with market share leadership already established, market expansion will be key to driving sustainable growth.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "pp",
+              "change": "up",
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2026.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 55.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 27,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "323288c8a08f83df77fe1cf7afb410cbcc778e6168eb364a825180ad65d185f1",
+            "value_sha256": "3f6a3eba151bfd3025b66ec93b8502d85877e818c7d2312be8bfff758a9f3599"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Medicare GLP-1 Bridge coverage expansion",
           "period": null,
-          "value": "35% more people now have coverage",
           "value_num": null,
           "unit": null,
-          "verbatim": "With this expansion, 35% more people now have coverage for our obesity medicines in the United States.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 35.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 10,
+            "speaker": "David A. Ricks",
+            "quote_sha256": "4248c08d229f000ab9e6363f6b1b9b77c2ccfa1a37db050a6749dcb485d7ee5d",
+            "value_sha256": "bba647987a580507c863498aecd730fbc4898d8c55a401455de688dd4250c5ab"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Foundayo new starts (U.S.)",
           "period": null,
-          "value": "nearly around 1 out of 4 starting on Foundayo",
           "value_num": null,
           "unit": null,
-          "verbatim": "And we're starting to see new starts coming in nearly around 1 out of 4 starting on Foundayo.",
-          "following_context": "So we're starting to see an inflection point on Foundayo now and with continued access growth and overall kind of HCP adoption, we believe that we'll continue to see growth in Foundayo over the coming quarters.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 97,
+            "speaker": "Ilya Yuffa",
+            "quote_sha256": "ba9e811cb2d5123a4b10d16f3d1702c9d9e3aa42126d5596bed06e2d62a28773",
+            "value_sha256": "0116e6e4657216733e7bd3bedf32dde5cf8c2a1b90a450a2fa84516621bb3bdd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Medicare Bridge injectable share and new patient share",
           "period": null,
-          "value": "around 80% of people that are getting treatment are injectable",
           "value_num": null,
           "unit": null,
-          "verbatim": "The approximate -- we're seeing a significant preference towards injectable, probably around 80% of people that are getting treatment are injectable, but we're seeing new patients for both.",
-          "following_context": "And we approximate around 60% to 70% being new people that are coming in that have not had access before. So it's still early days, but we're encouraged by the inflection point over the last few weeks, and we'll continue to work on educating consumers and stakeholders on the benefit of the Bridge program.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 119,
+            "speaker": "Ilya Yuffa",
+            "quote_sha256": "93e64edb145dfb9c8bc2e7410cbf9677c0ee72efa0611b1bcc34525b02e5dc26",
+            "value_sha256": "69b2a4fe72d67496f3a444e0fffebd1275b7f2165802bb3772a8041930166606"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Foundayo U.S. prescriber count",
           "period": null,
-          "value": "increased that to 36,000 prescribers",
           "value_num": null,
           "unit": null,
-          "verbatim": "And the last time we had talked -- on earnings, we talked about 8,000 prescribers. We've now increased that to 36,000 prescribers.",
-          "following_context": "And so we continue to see week-on-week and continued progress on the adoption, awareness and the improved perception of Foundayo profile for people living with overweight and obesity. So we feel pretty good about going forward inflection points with increased access and consumer awareness.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 36000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 170,
+            "speaker": "Ilya Yuffa",
+            "quote_sha256": "89614c4bccf0fa726d86421145e860689b205eae0774da4a7d4f5fbb98962084",
+            "value_sha256": "0da81a23adbdc8f98aa766b5408eaecf6b972f1118810e9a93243b7153b1ac3e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Foundayo UAE quarterly revenue",
           "period": null,
-          "value": "$31 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "So sales in the quarter in a single country, albeit a wealthy one, the UAE were $31 million, which was close to half of the $67 million that Foundayo generated in the U.S.",
-          "following_context": "So although the pricing is probably relatively high in the UAE, the results would seem to suggest explosive potential for Foundayo once it's launched throughout the world.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 31.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 209,
+            "speaker": "David Reed Risinger",
+            "quote_sha256": "f1dfffcebcc57f5d18b40ef926ed8809551fed8bc9c952258eb466d8ace68811",
+            "value_sha256": "47ae10dc709f6a57e318a1ac8abe800b936dcbe63eae8c9cbd42c421fd51caba"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Foundayo U.S. quarterly revenue",
           "period": null,
-          "value": "$67 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "So sales in the quarter in a single country, albeit a wealthy one, the UAE were $31 million, which was close to half of the $67 million that Foundayo generated in the U.S.",
-          "following_context": "So although the pricing is probably relatively high in the UAE, the results would seem to suggest explosive potential for Foundayo once it's launched throughout the world.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 67.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "aa50a6db99b4ee639d9cb42aa731bfedfe10c4bd05d8df02a77a901d279daa3b",
+            "paragraph": 209,
+            "speaker": "David Reed Risinger",
+            "quote_sha256": "f1dfffcebcc57f5d18b40ef926ed8809551fed8bc9c952258eb466d8ace68811",
+            "value_sha256": "0a2418ae57191fa3f24a72ecf2755b2d01c7581a4eb04cc3c9c2752021ac475f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Medicare GLP-1 Bridge prescriptions filled",
           "period": "since the July 1 launch",
-          "value": "more than 0.5 million people have filled a prescription",
           "value_num": null,
           "unit": null,
-          "verbatim": "Since the July 1 launch, more than 0.5 million people have filled a prescription for a Lilly medicine through this program.",
-          "following_context": "We've heard positive feedback from patients and physicians about the initial implementation.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.5,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 3,
+            "speaker": "David A. Ricks",
+            "quote_sha256": "8d2189ede4279a9adec74be8ed8964b5145cf02b1887b03932117e0334de5d48",
+            "value_sha256": "8e9246c61d242066fcf9634407657804ac5e3c0feb75ce68a9cf9b3904680785"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Lilly share among new Bridge patients",
           "period": null,
-          "value": "7 out of 10, starting on Lilly obesity medicine",
           "value_num": null,
           "unit": null,
-          "verbatim": "Among new Bridge patients, 7 out of 10, starting on Lilly obesity medicine.",
-          "following_context": "We're encouraged to see the strong uptake of the Bridge program and believe it has the potential to both improve outcomes for seniors, and save costs for Medicare. A recently published paper from the University of Southern California Schaeffer Center for Health Policy & Economics, estimated the expansion of anti-obesity medications in Medicare could deliver over $20 billion of cumulative savings over 10 years. This is an encouraging indicator of the magnitude of savings the GLP-1 bridge program could generate.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 4,
+            "speaker": "David A. Ricks",
+            "quote_sha256": "6344895d005be42677b2c9450300d00c5b4010caec78f49b5b3e283c1e04fc1f",
+            "value_sha256": "000655705f333da9e39acf0145b220dbd2f545c27c9bf2efb1021c7d801827a5"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "U.S. price change",
           "period": null,
-          "value": "a 7% decline in price",
           "value_num": null,
           "unit": null,
-          "verbatim": "U.S. revenue increased 34% in Q3 primarily driven by volume growth from Zepbound and Mounjaro, partially offset by a 7% decline in price.",
-          "following_context": "U.S. price benefited from a favorable adjustment to estimates from rebates and discounts. Excluding this adjustment, U.S. price declined 10%. Europe revenue grew 29% in constant currency driven by sustained strong volume growth of Mounjaro. Growth also benefited from a $410 million onetime milestone payment related to Jardiance. No additional Jardiance milestone payment remains under our agreement with Boehringer Ingelheim.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 11,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "20ee5e756096d9d3065759ad6e3289e8a2bbb8c17a2dcf13aa7336a24f758d5c",
+            "value_sha256": "a9f1b2baf2a835d4fe95ac8e7b350347720b8c5f44981ac73e2710506eeee779"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "U.S. price excluding rebate/discount adjustment",
           "period": null,
-          "value": "declined 10%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding this adjustment, U.S. price declined 10%.",
-          "following_context": "Europe revenue grew 29% in constant currency driven by sustained strong volume growth of Mounjaro. Growth also benefited from a $410 million onetime milestone payment related to Jardiance. No additional Jardiance milestone payment remains under our agreement with Boehringer Ingelheim.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 11,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "e8c8bebb0974569a1180726de9724f38fdc66a5e213b7f64358dfc8bca72e4ed",
+            "value_sha256": "c0e38c71263c41560e2d2d38572ef9f49addb096528103c0e098dacd9f203bcb"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Mounjaro Japan share of new patient starts",
           "period": null,
-          "value": "increased to over 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Mounjaro posted robust volume growth as share of new patient starts increased to over 50%.",
-          "following_context": "In China, revenue grew 62% in constant currency, driven by the uptick of Mounjaro. Mounjaro is the first medicine in China to exceed $1 billion of revenue during its first full year. In Rest of the World, revenue grew 87% in constant currency driven by Mounjaro, primarily in Korea, Turkey and Brazil. Q3 revenue was positively impacted by approximately $900 million of previously mentioned items, including milestones and changes to estimates for rebates and discounts.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 12,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "c0dcba14f05235e766d13bda24d2e8b2c1b45cb8cc23cc402ad72d8ae94a09d9",
+            "value_sha256": "04d9e990e49e0b607c872c35dcb668203c1d39e24e7c4d9da54c955be3d48636"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Mounjaro China first-year revenue",
           "period": null,
-          "value": "first medicine in China to exceed $1 billion of revenue during its first full year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Mounjaro is the first medicine in China to exceed $1 billion of revenue during its first full year.",
-          "following_context": "In Rest of the World, revenue grew 87% in constant currency driven by Mounjaro, primarily in Korea, Turkey and Brazil. Q3 revenue was positively impacted by approximately $900 million of previously mentioned items, including milestones and changes to estimates for rebates and discounts.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 12,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "ad8692c7c89d0399287127703e9addf5c6ddbf050d89e3fb9f14f8c6febb4371",
+            "value_sha256": "eddec75c3a58714edf5a99a8a7fdbc5bf726e89db025925fca4e738e96cb803f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Ebglyss worldwide revenue growth",
           "period": null,
-          "value": "grew 59%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Within immunology, Ebglyss worldwide revenue grew 59% compared to Q3 2025.",
-          "following_context": "In the U.S., Ebglyss continued to gain share of new prescriptions in the specialty dermatology market and is the fastest growing medicine in atopic dermatitis. Oncology, Jaypirca had another strong quarter as worldwide revenue increased 59% compared to Q3 2025. In the U.S., Jaypirca was the fastest-growing BTK inhibitor as measured by total prescriptions. Inluriyo continued its impressive uptick in the metastatic breast cancer oats market, exiting Q3 with more than 60% share of new U.S. prescriptions and 40% of U.S. total prescriptions. In neuroscience, Kisunla revenue grew 175% compared to Q3 2025. Kisunla maintained its leadership position in U.S. amyloid-targeting therapies.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 59.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 13,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "4776af2d3f062948bcd06e616df8ffff7c50dbcf0b1380aa709eb27d890b9713",
+            "value_sha256": "163a398ae3656ed41f7c4b134334621580471436947292f2de1d7d37006fa586"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Jaypirca worldwide revenue growth",
           "period": null,
-          "value": "increased 59%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Oncology, Jaypirca had another strong quarter as worldwide revenue increased 59% compared to Q3 2025.",
-          "following_context": "In the U.S., Jaypirca was the fastest-growing BTK inhibitor as measured by total prescriptions. Inluriyo continued its impressive uptick in the metastatic breast cancer oats market, exiting Q3 with more than 60% share of new U.S. prescriptions and 40% of U.S. total prescriptions. In neuroscience, Kisunla revenue grew 175% compared to Q3 2025. Kisunla maintained its leadership position in U.S. amyloid-targeting therapies.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 59.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 13,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "5edc2a902e223e65ef527399575dda8899e43ff27498db0efa1fb7ae9fd3af3e",
+            "value_sha256": "1c71286b7f2c75e2fcae08e9bf5263a0f034a233afcdd365fb82d9ee6963c689"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Inluriyo U.S. prescription share",
           "period": null,
-          "value": "more than 60% share of new U.S. prescriptions and 40% of U.S. total prescriptions",
           "value_num": null,
           "unit": null,
-          "verbatim": "Inluriyo continued its impressive uptick in the metastatic breast cancer oats market, exiting Q3 with more than 60% share of new U.S. prescriptions and 40% of U.S. total prescriptions.",
-          "following_context": "In neuroscience, Kisunla revenue grew 175% compared to Q3 2025. Kisunla maintained its leadership position in U.S. amyloid-targeting therapies.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 13,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "7c5194249f1302dc04810bba517f8f36a2b138f6a86dc83fc21297990d1641ca",
+            "value_sha256": "b7b97bf50989c29d23aa5e3cdc92d8fa729bbc533f30a1bbadff8950efdf2547"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Kisunla revenue growth",
           "period": null,
-          "value": "grew 175%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In neuroscience, Kisunla revenue grew 175% compared to Q3 2025.",
-          "following_context": "Kisunla maintained its leadership position in U.S. amyloid-targeting therapies.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 175.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 13,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "ece9c24b4ea0c9f7325f67d872072cbc494d3718965ba41ecf26af13f0a683ed",
+            "value_sha256": "b9cc11c7500d12a19c777215cd07c83c97e1c115f9a95af672568e16fce9feee"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Mounjaro and Zepbound combined revenue",
           "period": null,
-          "value": "more than $16 billion of revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "Finally, in Cardiometabolic Health, Mounjaro and Zepbound combined for more than $16 billion of revenue, contributing $6 billion of growth compared to Q3 2025.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 14,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "ed34beddc05f69d41146b7bfff4f35295b7821a7293dddba458ce49177e326dc",
+            "value_sha256": "0f8237097410e3235bbb89a120c22891640ccb8b22b98452e5b238e44586a2ed"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. incretins market total prescription growth",
           "period": null,
-          "value": "grew 32%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As seen on Slide 10, total prescriptions in the U.S., incretins market grew 32% compared to Q3 2025.",
-          "following_context": "Overall GLP-1s and the Medicare GLP-1 Bridge program are expanding the number of people taking incretin therapy. In the U.S., total increasing prescriptions for obesity grew 82% in Q3. Approximately 6 out of 10 total prescriptions and more than 7 out of 10 injectable prescriptions were for a Lilly medicine. In the U.S., Type 2 diabetes incretin total prescriptions grew 8% compared to Q3 2025. And the Lilly portfolio continues to lead here with more than 60% share of market. Outside the U.S., Lilly's portfolio again performed well.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 32.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 15,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "d9cfd7f538225c4526dfd7be760070429d716199e9a15b64930acf55f33adc31",
+            "value_sha256": "f4ef277fc849ae884928440f3d132d530563294bf4342c1726f0a401e30f937f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. obesity incretin total prescription growth",
           "period": null,
-          "value": "grew 82%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the U.S., total increasing prescriptions for obesity grew 82% in Q3.",
-          "following_context": "Approximately 6 out of 10 total prescriptions and more than 7 out of 10 injectable prescriptions were for a Lilly medicine. In the U.S., Type 2 diabetes incretin total prescriptions grew 8% compared to Q3 2025. And the Lilly portfolio continues to lead here with more than 60% share of market. Outside the U.S., Lilly's portfolio again performed well.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 82.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 15,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "74dc5b5cf4e27f6bf157734cdee250922a1093711059cbd97ee1369c9e2eabf9",
+            "value_sha256": "560773b575cd3c1745ce1a0035451b5be01abca7fe822610fe599537f695ea1e"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Lilly share of U.S. obesity prescriptions",
           "period": null,
-          "value": "Approximately 6 out of 10 total prescriptions and more than 7 out of 10 injectable prescriptions",
           "value_num": null,
           "unit": null,
-          "verbatim": "Approximately 6 out of 10 total prescriptions and more than 7 out of 10 injectable prescriptions were for a Lilly medicine.",
-          "following_context": "In the U.S., Type 2 diabetes incretin total prescriptions grew 8% compared to Q3 2025. And the Lilly portfolio continues to lead here with more than 60% share of market. Outside the U.S., Lilly's portfolio again performed well.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 15,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "186dc06cf4fe02d1cf25f12a36593934aa05403720add39948d545ffb6ffe397",
+            "value_sha256": "e47e86985507d159d36fc3122168f89c00853861a41c0d8d276f80a5a062a660"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. type 2 diabetes incretin total prescription growth",
           "period": null,
-          "value": "grew 8%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the U.S., Type 2 diabetes incretin total prescriptions grew 8% compared to Q3 2025.",
-          "following_context": "And the Lilly portfolio continues to lead here with more than 60% share of market. Outside the U.S., Lilly's portfolio again performed well.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 15,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "f23e509bc00e1d5441b26008e904a89a0585e8de181aa373d13e556e421b51b7",
+            "value_sha256": "63b729abf1e243fcf2e161c10a3fea89243eb04caa5db49a55097d81de5628b9"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Lilly U.S. type 2 diabetes incretin share",
           "period": null,
-          "value": "more than 60% share of market",
           "value_num": null,
           "unit": null,
-          "verbatim": "And the Lilly portfolio continues to lead here with more than 60% share of market.",
-          "following_context": "Outside the U.S., Lilly's portfolio again performed well.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 15,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "c0dd2756dc886304e469b1fd224e103efae564a55890ec118e3b71dea4cfc853",
+            "value_sha256": "51abd2c01d377b535c58e8566f7fd57332a48b4d151c0bb20287f8ce89bcf1da"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "International incretins market growth (IQVIA)",
           "period": "since the same period last year",
-          "value": "increased by 53%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Slide 11 shows aggregate trends in international incretins, which have increased by 53% since the same period last year as measured by IQVIA across sales.",
-          "following_context": "Lilly strengthened its leadership position outside the U.S., gaining nearly 4 percentage points of share compared to Q2 2026 to reach approximately 58%. Slide 12 provides an update on the Foundayo launch. In the U.S., total prescriptions and the share of new patients continue to rise. Approximately 4 in 10 patients starting an overall obesity medicine chose Foundayo and the number of new Foundayo patients in Q3 doubled from the previous quarter. We look forward to launching Foundayo in type 2 diabetes in the U.S. and expect regulatory action in Q4. Outside the U.S., Foundayo has launched in 4 countries and is under regulatory review in more than 4 additional countries. We continue to expect a global rollout in all major markets in 2027.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 53.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 16,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "def846f1d1a4303576c52bbaf6aa5318fa9c4e18264217d8e0ab577c38af3582",
+            "value_sha256": "a7396f53c0ae98918773380a5fac0c189cc7b12f9c03a0555dc5d7f494783881"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Lilly international incretin market share",
           "period": null,
-          "value": "gaining nearly 4 percentage points of share compared to Q2 2026 to reach approximately 58%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Lilly strengthened its leadership position outside the U.S., gaining nearly 4 percentage points of share compared to Q2 2026 to reach approximately 58%.",
-          "following_context": "Slide 12 provides an update on the Foundayo launch. In the U.S., total prescriptions and the share of new patients continue to rise. Approximately 4 in 10 patients starting an overall obesity medicine chose Foundayo and the number of new Foundayo patients in Q3 doubled from the previous quarter. We look forward to launching Foundayo in type 2 diabetes in the U.S. and expect regulatory action in Q4. Outside the U.S., Foundayo has launched in 4 countries and is under regulatory review in more than 4 additional countries. We continue to expect a global rollout in all major markets in 2027.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "pp",
+              "change": "up",
+              "qualifier": "approximately"
+            },
+            {
+              "value": 58.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 16,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "3257895d3579efa33cb211009211393b763b50e713be61034de4fbddd7f39c45",
+            "value_sha256": "451f590fddd4282f382da6ad9b517a09a38254797cefd34fec614948311a182c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Foundayo share of new U.S. obesity starts",
           "period": null,
-          "value": "Approximately 4 in 10 patients starting an overall obesity medicine chose Foundayo",
           "value_num": null,
           "unit": null,
-          "verbatim": "Approximately 4 in 10 patients starting an overall obesity medicine chose Foundayo and the number of new Foundayo patients in Q3 doubled from the previous quarter.",
-          "following_context": "We look forward to launching Foundayo in type 2 diabetes in the U.S. and expect regulatory action in Q4. Outside the U.S., Foundayo has launched in 4 countries and is under regulatory review in more than 4 additional countries. We continue to expect a global rollout in all major markets in 2027.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 16,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "84436f238e5f11cdb789307a22fb848d36e746d8cdcf0444f444bab3ac1fba60",
+            "value_sha256": "5081d47adc879c96ec8969a0aea65618ce1416b52e16b79a1f954febca05ffdb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Foundayo new patients quarter-over-quarter",
           "period": null,
-          "value": "number of new Foundayo patients in Q3 doubled from the previous quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Approximately 4 in 10 patients starting an overall obesity medicine chose Foundayo and the number of new Foundayo patients in Q3 doubled from the previous quarter.",
-          "following_context": "We look forward to launching Foundayo in type 2 diabetes in the U.S. and expect regulatory action in Q4. Outside the U.S., Foundayo has launched in 4 countries and is under regulatory review in more than 4 additional countries. We continue to expect a global rollout in all major markets in 2027.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 16,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "84436f238e5f11cdb789307a22fb848d36e746d8cdcf0444f444bab3ac1fba60",
+            "value_sha256": "224055f31d59db4f0d730722c2b446a02c7485994208591ea07ff231c85d84f6"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Bridge injectable share and naive patient share",
           "period": null,
-          "value": "about 3/4, 75% of people coming into Bridge going into injectable therapy. 7 out of 10 in total choosing Lilly medicine",
           "value_num": null,
           "unit": null,
-          "verbatim": "And so all of those things combined, we have seen about 3/4, 75% of people coming into Bridge going into injectable therapy. 7 out of 10 in total choosing Lilly medicine.",
-          "following_context": "And so we've performed really well across Bridge.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 75.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 91,
+            "speaker": "Ilya Yuffa",
+            "quote_sha256": "afdc354824d560cb809efcf54d88d6db62b429beeac92d0529d94ccd6d925d4f",
+            "value_sha256": "fef57894baa73e1b6d05041234b9dac10fa0e1b6271cd2cef6a6a3367afbd006"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Bridge naive patient proportion",
           "period": null,
-          "value": "about 80% of the people getting treatment under Bridge are naive",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're seeing now about 80% of the people getting treatment under Bridge are naive or have not been on incretin therapy in the past.",
-          "following_context": "And so we see this as a significant driver of access long term. And it's still early days. And while it's performing above our expectations, we see continued opportunity here to expand access and utilization and not only improve care of seniors, but as we shared earlier on independent study, also a potential of saving significant amount for Medicare overall.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 93,
+            "speaker": "Ilya Yuffa",
+            "quote_sha256": "ae034054e9d46729e09486bb591263d8f50563439d9c0169ee3bb219a19cc9e2",
+            "value_sha256": "ae490640e6a22fdcbfe91bd0b9ea314a23d6863a20fd8ba928cee7b170927f8b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Foundayo U.S. prescriptions in quarter",
           "period": null,
-          "value": "over 0.5 million TRx in the quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "You've seen over 0.5 million TRx in the quarter, but the fundamentals in some of the communicators that we've been talking about as part of our initial launch have been moving in a really positive direction.",
-          "following_context": "Consumer awareness and interest has improved with our investment in campaign with Martha Stewart, you're seeing Also, a number of trialists have more than doubled since last quarter, and so we're seeing good progression of adoption from providers. And that's showing up in our shared market.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.5,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 105,
+            "speaker": "Ilya Yuffa",
+            "quote_sha256": "8ccb03142820912504ffeefc6e0bcaefe66601298267a4353fb5a1f5e87193ab",
+            "value_sha256": "c040ec485523c9cf83f44506fe6b3eb31185bd3f3f6a63f185b86e43d44f84c8"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Foundayo NBRx share",
           "period": null,
-          "value": "approaching around 4 out of 10",
           "value_num": null,
           "unit": null,
-          "verbatim": "So our NBRx share market is approaching around 4 out of 10.",
-          "following_context": "And so good progress overall for the growth of Foundayo in the oral segment. And even in the sequential growth of orals within -- from Q2 to Q3, we're taking 45% of that growth with Foundayo. In terms of the titration, it's expected that it takes time to titrate to the maintenance doses. But we've actually seen good progress on our maintenance services. We have multiple maintenance doses. So that 25% of people are at one of our maintenance doses. That's actually higher than what you see on Wegovy pill. And so we're encouraged by that. Of course, that's something continue to monitor, but the experience overall that we're seeing both from provider and consumer has been positive.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 106,
+            "speaker": "Ilya Yuffa",
+            "quote_sha256": "ce6468a25cd6fd22f7246e8b56ec40c64afae98e222cce5f69fee6176f4559c1",
+            "value_sha256": "7f422e62acb7a7e7e56f6bd774bbad4a7647171216f47872d97f28aafdef165c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Foundayo share of oral segment sequential growth",
           "period": null,
-          "value": "taking 45% of that growth with Foundayo",
           "value_num": null,
           "unit": null,
-          "verbatim": "And even in the sequential growth of orals within -- from Q2 to Q3, we're taking 45% of that growth with Foundayo.",
-          "following_context": "In terms of the titration, it's expected that it takes time to titrate to the maintenance doses. But we've actually seen good progress on our maintenance services. We have multiple maintenance doses. So that 25% of people are at one of our maintenance doses. That's actually higher than what you see on Wegovy pill. And so we're encouraged by that. Of course, that's something continue to monitor, but the experience overall that we're seeing both from provider and consumer has been positive.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 45.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 106,
+            "speaker": "Ilya Yuffa",
+            "quote_sha256": "0a1bb911c8ae76d0806a2b641011b57d43b81dd42937d61438faa85fbf9b59be",
+            "value_sha256": "e9d1a461d9165eb7e307b11ccc06c21307db1947193cde34361aa3f1c72fea44"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Foundayo patients at maintenance dose",
           "period": null,
-          "value": "25% of people are at one of our maintenance doses",
           "value_num": null,
           "unit": null,
-          "verbatim": "So that 25% of people are at one of our maintenance doses. That's actually higher than what you see on Wegovy pill.",
-          "following_context": "And so we're encouraged by that. Of course, that's something continue to monitor, but the experience overall that we're seeing both from provider and consumer has been positive.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 106,
+            "speaker": "Ilya Yuffa",
+            "quote_sha256": "2d214a59383d95b0784b04d883d7e79405b87e66aed7b514ba357c2d94d34f77",
+            "value_sha256": "ea388cf9644e667962165b1393ef1f9fa9915fbf5f213cc940b0665242164c44"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "2026 onetime revenue items (milestones and rebate/discount estimate changes) not expected to recur",
           "period": "2026",
-          "value": "approximately $2 billion of onetime items",
           "value_num": null,
           "unit": null,
-          "verbatim": "It is also worth noting that the 2026 revenue benefited from approximately $2 billion of onetime items primarily related to milestones payments and changes in estimates for rebates and discounts that we don't expect to record.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 19,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "24c688fce14058b13f1b54cdc997672b8c43946622e7ea4daef5a8a81a87e37c",
+            "value_sha256": "807a0031807897beab5d475587a224b311d98aac5981b1fb8f08367e54857b16"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Q3 revenue impact of onetime items (milestones and rebate/discount changes)",
           "period": null,
-          "value": "approximately $900 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Q3 revenue was positively impacted by approximately $900 million of previously mentioned items, including milestones and changes to estimates for rebates and discounts.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 900.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 12,
+            "speaker": "Lucas E. Montarce",
+            "quote_sha256": "990829b05805c9d677d803d7984d9dfcba0abbef60eaef3c879b36cec649c3e2",
+            "value_sha256": "7d5da1a526698acb4c7ec19c4b61187d19e908f1fbb192d5525146226b0e6686"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "International type 2 reimbursement coverage",
           "period": null,
-          "value": "having 9 European markets covered",
           "value_num": null,
           "unit": null,
-          "verbatim": "And we made some progress in Q3 here now having 9 European markets covered, but we will continue those efforts and continue to take a disciplined approach in terms of pricing.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
+            "transcript_sha256": "94373789d94d7fc7992e33966eefccb8162a400b13ad217b88e765c2423de1b3",
+            "paragraph": 150,
+            "speaker": "Patrik Jonsson",
+            "quote_sha256": "dffd9bdf86d657bd3241d5ac5de932fa466ee11a0477c4fc31b7ce2d7a402c0b",
+            "value_sha256": "9a65aecf516e6db9c8cd04b4e06b8e8126f562fb0d81da5ed6860fc78818231a"
+          }
         }
       ],
       "qa_flags": [
@@ -17106,6 +18049,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],
