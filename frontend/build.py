@@ -22,6 +22,7 @@ and ``frontend/dossiers/`` revert to git-ignored.
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import shutil
 import subprocess
@@ -660,6 +661,49 @@ def _screen_annotations(snap: Path) -> list[Any]:
             for p in sorted((snap / "screen_runs").glob("*.annotations.json"))]
 
 
+EV_MODULE = ROOT / "vinci" / "dossier" / "extraction_version.py"
+EV_ENTRIES = ROOT / "vinci" / "dossier" / "extraction_versions"
+
+
+def _extraction_versions(module: Path = EV_MODULE, entries: Path = EV_ENTRIES) -> dict[str, Any]:
+    """``{"versions": {id: what it names}, "follows": {id: [the ids it follows]}}`` for every
+    declared extraction vintage: the table the dossier page's stamp detail reads (`dossier.js`
+    stampDetail), written to the git-ignored snapshot mirror on every deploy. ``follows`` is what
+    tells a joined stamp (``A+B``, two heads merged in parallel) from two ids that never were.
+
+    WHY HERE AND NOT A HAND-KEPT COPY (2026-11-11). The web twin was a second copy of the table that
+    every output-changing PR appended to by hand, on the same lines as every other such PR. The
+    table is now the frozen `LEGACY_VERSIONS` literal plus one file per vintage, and this reads
+    both. It may not import vinci (the stdlib fence above), so the literal is read with `ast` —
+    implicit string concatenation is resolved by the parser, so each row is the exact string.
+    A parity test binds this to `vinci.dossier.extraction_version.EXTRACTION_VERSIONS`. Missing or
+    malformed input raises: a deploy whose pages cannot say what their vintage names fails here."""
+    tree = ast.parse(module.read_text(encoding="utf-8"))
+    legacy = [ast.literal_eval(n.value) for n in tree.body
+              if isinstance(n, ast.AnnAssign) and isinstance(n.target, ast.Name)
+              and n.target.id == "LEGACY_VERSIONS" and n.value is not None]
+    if len(legacy) != 1:
+        raise RuntimeError(f"{module}: expected one LEGACY_VERSIONS literal, found {len(legacy)}")
+    versions: dict[str, str] = {}
+    follows: dict[str, list[str]] = {}
+    prev: str | None = None
+    for v, names in legacy[0]:  # each frozen row follows the row above it
+        versions[str(v)], follows[str(v)], prev = str(names), [prev] if prev else [], str(v)
+    if not entries.is_dir():
+        raise RuntimeError(f"{entries} is missing — the vintages after the frozen table live there")
+    for p in sorted(entries.glob("*.json")):
+        entry = json.loads(p.read_text(encoding="utf-8"))
+        if (not isinstance(entry, dict) or not isinstance(entry.get("id"), str)
+                or not isinstance(entry.get("names"), str)
+                or not isinstance(entry.get("follows"), list)
+                or not all(isinstance(f, str) for f in entry["follows"])):
+            raise RuntimeError(f"{p}: an extraction vintage holds a string id and names and a "
+                               "list of the ids it follows")
+        versions[entry["id"]] = entry["names"]
+        follows[entry["id"]] = list(entry["follows"])
+    return {"versions": versions, "follows": follows}
+
+
 
 
 def _git_sha() -> str | None:
@@ -690,6 +734,11 @@ def main(argv: list[str] | None = None) -> None:
     # `vinci.screens.annotations` (tests); copied here as written.
     (OUT_SNAP / "screen_annotations.json").write_text(
         json.dumps(_screen_annotations(SNAP), indent=2) + "\n")
+    # EXTRACTION VINTAGES — what each page's stamp names, read by the dossier page's Record &
+    # reproduce row. Derived from vinci/dossier/ on every deploy, never committed (the function).
+    (OUT_SNAP / "extraction_versions.json").write_text(
+        json.dumps(_extraction_versions(), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8")
     # universe gate-exclusion health stats — present once the universe has been built with the
     # stats emit (vinci/universe.py). Absent on older snapshots → the ingestion screen degrades.
     if (SNAP / "universe_stats.json").exists():
