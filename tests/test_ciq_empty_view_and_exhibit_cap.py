@@ -61,7 +61,8 @@ def test_an_empty_ciq_view_is_returned_not_refused(tmp_path: pathlib.Path) -> No
 def test_a_thin_file_without_the_sentinel_still_raises(tmp_path: pathlib.Path) -> None:
     """⊖ THE GUARD IS NOT WEAKENED. An OLE-disguised doc yields fragments and no sentence, so it
     still fails loud — a silent empty there would be a parse failure read as 'no customers'."""
-    with pytest.raises(CiqParseError, match="OLE-disguised"):
+    # RBC-D5 (2026-11-10): the bytes are RTF, so the error no longer calls it an OLE Word doc
+    with pytest.raises(CiqParseError, match="whose bytes are RTF"):
         read_text(_write(tmp_path, "Broken Customers.rtf", _OLE_DISGUISE))
 
 

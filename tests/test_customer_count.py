@@ -41,8 +41,9 @@ def _long_customers_rtf(n_extra: int) -> str:
                                        "Industrial Machinery", "Company Filing"])
                    for i in range(n_extra))
     base = gen.customers_rtf()
-    assert base.endswith("}\n")
-    return base[:-2] + rows + "}\n"
+    assert base.endswith(gen.CLOSING_ROW + "}\n")
+    # before CIQ's closing line, which stays the view's last (audit RBC-D3)
+    return base[:-len(gen.CLOSING_ROW) - 2] + rows + gen.CLOSING_ROW + "}\n"
 
 
 def _bundle_with(tmp: Path, rtf: str, ticker: str = gen.TICKER) -> CiqBundle:

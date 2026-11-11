@@ -24,7 +24,7 @@ from typing import Any, NamedTuple
 
 _OLE_MAGIC = b"\xd0\xcf\x11\xe0"
 _ZIP_MAGIC = b"PK\x03\x04"
-_MIN_RTF_WORDS = 50  # below this from a multi-KB file ⇒ striprtf hit an OLE-disguised doc
+_MIN_RTF_WORDS = 50  # below this from a multi-KB RTF ⇒ content striprtf missed, or an empty view
 
 #: CIQ's OWN WORDS FOR "NOTHING TO LIST" — the difference between a parser that failed and a view
 #: that is genuinely empty. A relationships export for a company with no disclosed counterparties is
@@ -96,20 +96,30 @@ def classify(path: Path) -> CiqFormat:
     return CiqFormat.UNKNOWN
 
 
-def read_text(path: Path, fmt: CiqFormat | None = None) -> str:
-    """Decode a text-bearing CIQ file to clean prose. Fail loud if a needed tool is absent."""
+def read_text(path: Path, fmt: CiqFormat | None = None, *, thin_ok: bool = False) -> str:
+    """Decode a text-bearing CIQ file to clean prose. Fail loud if a needed tool is absent.
+
+    ``thin_ok`` skips the thin-RTF guard, for a caller that names a thin view's shape itself
+    (``ciq_sheets.customer_roster``: a header-only, "No Data Available" or "Entitlement Needed"
+    view is a real RTF of tens of KB with a handful of words, so the guard refused every one of
+    them before the shape could be read — audit RBC-D5)."""
     fmt = fmt or classify(path)
     if fmt is CiqFormat.RTF_TEXT:
         from striprtf.striprtf import rtf_to_text
 
         raw_text = path.read_text(encoding="utf-8", errors="replace")
         text = rtf_to_text(raw_text)  # type: ignore[no-untyped-call]
-        if (path.stat().st_size > 4096 and len(text.split()) < _MIN_RTF_WORDS
+        if (not thin_ok and path.stat().st_size > 4096 and len(text.split()) < _MIN_RTF_WORDS
                 and not is_empty_view(text)):
+            # THE BYTES ARE RTF (`classify` sniffed them), so this does not say the file is an OLE
+            # Word doc (audit RBC-D5, 2026-11-10: a header-only view of 8,764 B read as one). It
+            # says what was seen: too few words, and no sentence saying the view is empty.
             raise CiqParseError(
                 f"{path.name}: striprtf yielded {len(text.split())} words from a "
-                f"{path.stat().st_size}B file — this is an OLE-disguised Word doc, not real RTF; "
-                "pre-convert with LibreOffice/Word (see ciq_extraction_notes.md)"
+                f"{path.stat().st_size}B file whose bytes are RTF, and none says the view is "
+                "empty — its content may be embedded where striprtf cannot read it (pre-convert "
+                "with LibreOffice/Word, see ciq_extraction_notes.md), or the export is empty "
+                "without saying so; re-export it"
             )
         return str(text)
     if fmt in (CiqFormat.MIME_DOC, CiqFormat.HTML):

@@ -527,6 +527,42 @@ const EXTRACTION_VERSIONS = [
     "`rank.structural` marks a filing whose body fetch failed, so a scan that finds no flag " +
     "on it does not count the name covered and its prior flag stands; and (RE2-D15) " +
     "`segments` reads a figure with a footnote mark after it ('$ 1,229 [1]') as its figure"],
+  ["2026-11-10.bridge-total-and-band",
+    "three of document 11's partly fixed items finished (fix request 2, order 3): the EV " +
+    "bridge's note says what its claims total leaves out (A-D2) — each unread preferred or " +
+    "minority leg named with its reason, and whether CIQ's current TEV less market cap, " +
+    "which counts every claim, checks the total (no comps export: nothing does); the " +
+    "mid-cycle multiple band is the own-history band's population (D-D3), every dated close " +
+    "before the latest, so an export-day close the quarter has not completed is no longer " +
+    "history, and an undated sheet builds no band; an anchor-bridge figure one unit step " +
+    "(1,000x or 1,000,000x) from its own parts' re-read is refused, not scored agree " +
+    "(BC-D10). 13 of the 26 committed bridges carry an unread leg and gain the note when " +
+    "refreshed; no committed page carries a mid-cycle band"],
+  ["2026-11-10.unit-and-headers",
+    "fix request 2, order 4, two CIQ-reader defects (RA-D9, RA-D14): a Financials money sheet " +
+    "stating a unit other than Millions is refused before assembly and on the anchor's path " +
+    "(`ciq_sheets.require_millions`, `require_usd`'s twin), so no page prints thousands as " +
+    "$M; Consensus's target-price and LT-growth stats and every Recent Changes column are " +
+    "read by their headers, and a missing header leaves the read unread, never positional. " +
+    "No page moves: all 720 money sheets on disk state Millions, and every export's headers " +
+    "sit where the positional reads assumed (2026-11-10)"],
+  ["2026-11-10.loud-with-the-right-cause",
+    "fix request 2, order 6, two loud failures that named the wrong cause (RA-D16, RA-D15): " +
+    "the LTM-against-its-quarters flag quotes a quarter's own cell ('NA', 'NM', blank, " +
+    "absent) instead of '-' for every marker; an empty `.xlsx` cell states no currency, so " +
+    "an all-USD `.xlsx` export is no longer refused as foreign (H-D3's strict xfail lifted). " +
+    "No figure moves: the flag is QA text, and five committed pages (EPAM, MCK, VITL, VRRM, " +
+    "WLK) print a '-' quarter as '-' (quoted) once re-assembled; every export on disk is " +
+    "BIFF"],
+  ["2026-11-10.relationship-view-edges",
+    "the Customers view's edges are said (TeamNostra fix request 2, RBC-D3, V1-O3, RBC-D5):" +
+    " an RTF view that does not end with CIQ's closing line ('*denotes proprietary " +
+    "relationship', the last line of all 72 exports on disk) says the list may be cut short" +
+    " and gives no count; a row naming a party with its relationship type blank is kept as " +
+    "'type not stated' when it states another column; a header with no rows, a 'No Data " +
+    "Available' body and an 'Entitlement Needed' body are named as such, never 'could not " +
+    "parse'; and a thin RTF is no longer called an OLE Word doc. On the 36 export folders " +
+    "on disk no read moves"],
   ["2026-11-11.guides-as-stated",
     "a guide is read only where the release states one, for the period it states, and a " +
     "guide the reader cannot read is said aloud (TeamNostra fix request 2, RE2-D1, D3, D4, " +
