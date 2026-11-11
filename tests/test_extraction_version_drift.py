@@ -138,7 +138,7 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/segment_facts.py": "9d3c07301296",
     "vinci/edgar/segments.py": "3016c43f216f",
     "vinci/edgar/submissions.py": "6644355e5c3f",
-    "vinci/eod/features.py": "8d23c6080234",
+    "vinci/eod/features.py": "ac91801efa6b",
     "vinci/finra.py": "5787c9793b1b",
     "vinci/provenance.py": "b61b841aa7b2",
     "vinci/verbatim.py": "cb75bef0a20e",

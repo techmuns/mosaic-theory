@@ -105,6 +105,21 @@ _SESSION_LOOKBACK_DAYS = 10
 #: (`docs/records/2026-10-26-split-restatement-and-total-return.md`).
 RESTATE_WINDOW_DAYS = 30
 
+#: THE DATA PLAN'S HISTORY WINDOW, and the margin either side of its edge. Polygon serves about two
+#: years of bars: on 2026-11-11 grouped-daily served 2024-11-20 (721 days back, 10,731 results) and
+#: refused 2024-11-01 (740 days back) with ``403 NOT_AUTHORIZED`` "Attempted to request data past
+#: historical entitlements". The exact edge is not measured, so a date within the margin of it is
+#: read as possibly beyond it: an anchor is not fetched there (RF-D5), and a refusal there is not
+#: called a lapse (RF-D12).
+PLAN_HISTORY_DAYS = 730
+PLAN_EDGE_MARGIN_DAYS = 14
+
+
+def inside_plan_window(day: date, *, today: date) -> bool:
+    """True when ``day`` is CERTAINLY inside the plan's history window — newer than its edge by
+    more than the margin. A refusal on such a day is not the start of available history."""
+    return (today - day).days < PLAN_HISTORY_DAYS - PLAN_EDGE_MARGIN_DAYS
+
 #: A held bar and its re-fetch describe one session on two split bases when all four prices moved
 #: by ONE factor, and that factor is away from 1, both within this fraction. Measured 2026-10-26 on
 #: 2026-08-05's whole market: 2,340 of 2,350 names came back identical, and the other 10 moved by a
@@ -494,29 +509,65 @@ def ingest_prices_per_symbol(
     end: date,
     progress: ProgressFn | None = None,
     first_sessions: Mapping[str, date] | None = None,
-) -> dict[str, int]:
+    today: date | None = None,
+) -> dict[str, Any]:
     """Backfill via ONE per-symbol aggregates call each (``daily_bars``) instead of grouped-daily.
 
     grouped-daily fetches the WHOLE market per day — right for the ongoing universe refresh, but for
     backfilling a NEW name's history that is ~250 whole-market calls at the free tier's ~5/min (the
     NCNO-class stall: a name that entered the tracked set with no history — its stock-perf
     exhibit and 180d returns were all UNKNOWN). Polygon HAS the history; this pulls it in ONE call
-    per symbol. Same store, same PriceBar shape — the efficient path for a per-name backfill."""
+    per symbol. Same store, same PriceBar shape — the efficient path for a per-name backfill.
+
+    A PARTIAL REFRESH IS ANCHORED (TeamNostra fix request 2, RF-D5). Bars are served
+    ``adjusted=true``, on the source's CURRENT split basis, and only ``[start, end]`` is rewritten —
+    so after a split, a ``start`` later than the oldest held bar left the older held bars on the old
+    basis beside new-basis ones: a ×0.5 step on a day with no corporate action, read by the screen's
+    G1 drawdown and G2 relative return, and not named anywhere. Each name's fetch now reaches back
+    to its ANCHOR — the latest held session before ``start`` — and the held anchor is set beside the
+    served one. Where the source has restated it (`restatement_factor`: all four prices by one
+    factor, volume by its inverse), every held bar through the anchor is put on the current basis
+    (`Store.restate_bars`, tagged ``+restated``) — the grouped path's rule (`restate_held`), applied
+    to this one. A move in price alone restates nothing and is NAMED (``price_only``); an anchor
+    beyond the plan's window cannot be fetched, and one the source did not re-serve was not
+    checked: both are named (``unanchored``). Still ONE call
+    per name: the anchor widens its window."""
     secs = list(securities)
     starts = first_sessions or {}
+    on = today or date.today()
     reporter = ProgressReporter("EOD-aggs", len(secs), emit=progress)
     bars_written = 0
     empty: list[str] = []
+    # one shape with the grouped path's summary: per symbol, the factors read (here one, at the
+    # anchor)
+    restated: dict[str, list[float]] = {}
+    price_only: dict[str, list[float]] = {}
+    unanchored: list[str] = []
     for i, s in enumerate(secs, 1):
+        anchor = store.last_bar_before(s.internal_id, start)
+        if anchor is not None and not inside_plan_window(anchor, today=on):
+            unanchored.append(s.eod_symbol)
+            anchor = None
+        served = client.daily_bars(s.eod_symbol, anchor or start, end)
+        if anchor is not None:
+            held = store.bars_on(anchor, [s.internal_id]).get(s.internal_id)
+            fresh = dict(served).get(anchor)
+            if held is None or fresh is None:
+                unanchored.append(s.eod_symbol)   # the anchor was not served: nothing was checked
+            elif (f := restatement_factor(held, fresh)) is not None:
+                store.restate_bars(s.internal_id, f, through=anchor)
+                restated[s.eod_symbol] = [f]
+            elif (pf := price_factor(held, fresh)) is not None:
+                price_only[s.eod_symbol] = [pf]
         rows = [
             PriceBar(
                 internal_id=s.internal_id, bar_date=d, open=b.open, high=b.high, low=b.low,
                 close=b.close, volume=b.volume, source="polygon-aggs",
             )
             # a symbol's aggregates are the TICKER's, whoever held it: none before this id's own
-            # first session is filed under it (`holders`)
-            for d, b in client.daily_bars(s.eod_symbol, start, end)
-            if d >= starts.get(s.internal_id, date.min)
+            # first session is filed under it (`holders`); the anchor is read, never rewritten
+            for d, b in served
+            if d >= start and d >= starts.get(s.internal_id, date.min)
         ]
         if not rows:
             empty.append(s.eod_symbol)  # OK-but-empty ⇒ mis-resolved symbol or out-of-window range
@@ -530,7 +581,9 @@ def ingest_prices_per_symbol(
             f"per-symbol backfill returned NO bars for {empty} — mis-resolved eod_symbol or an "
             f"out-of-window date range; the store gained nothing for these (a silent gap)"
         )
-    return {"symbols": len(secs), "bars_written": bars_written}
+    return {"symbols": len(secs), "bars_written": bars_written,
+            # SAID IN THE SUMMARY, NEVER SILENT, as the grouped path says it
+            "restated": restated, "price_only": price_only, "unanchored": unanchored}
 
 
 class PolygonEodClient(EodClient):
@@ -657,7 +710,21 @@ class PolygonEodClient(EodClient):
         except HttpError as exc:
             # A date before the plan's rolling history window returns 403 NOT_AUTHORIZED — that is
             # "no data for this date" (the start of available history), not a degraded refresh.
+            # BUT ONLY THERE (TeamNostra fix request 2, RF-D12): the same refusal on a date the
+            # plan serves — a lapsed plan, a revoked key — read as a holiday too, and an ingest of
+            # 22 refused sessions reported ``trading_days: 0`` and raised nothing. A refusal inside
+            # the window (`inside_plan_window`) is a failure, and says so. EXCEPT A DAY NOT YET
+            # CLOSED IN ET: the plan refuses "today's data before end of day" until midnight ET,
+            # which is local TOMORROW in IST (2026-10-28 refused at 03:38 UTC on 10-29,
+            # `docs/records/2026-10-29-monitor-day-2026-10-28.md`); `last_completed_session`
+            # probes `today - 1` and must step back past it, as it always did.
             if "NOT_AUTHORIZED" in str(exc):
+                today = date.today()
+                if (today - day).days > 1 and inside_plan_window(day, today=today):
+                    raise EodError(
+                        f"grouped-daily {day}: the source REFUSED a date inside the plan's "
+                        f"{PLAN_HISTORY_DAYS}-day window (403 NOT_AUTHORIZED) — a lapsed plan or "
+                        f"key, not a market holiday; nothing for this date was read") from exc
                 return {}
             raise
         data = cast(dict[str, Any], raw)
