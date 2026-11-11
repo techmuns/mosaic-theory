@@ -540,10 +540,10 @@ def comps_export(ticker: str, *, ciq_root: Path = DEFAULT_CIQ_ROOT) -> Path | No
     """The one CIQ comps export in ``ciq_root/<ticker>`` (the reader's own filename rule), or None
     when there is none. Two are refused, never chosen between. Whether it is the PAGE's own is
     proved where it is read (`variants.own_comps`), by the code under test."""
-    from vinci.dossier.ciq import _WORKBOOK_KEYWORDS
+    from vinci.dossier.ciq import workbook_kind
     folder = ciq_root / ticker
     found = sorted(f for f in folder.glob("*") if f.is_file() and not f.name.startswith((".", "~$"))
-                   and any(w in f.name.lower() for w in _WORKBOOK_KEYWORDS["comps"])) \
+                   and workbook_kind(f.name) == "comps") \
         if folder.is_dir() else []
     if len(found) > 1:
         raise ReplayError(f"{ticker}: {len(found)} comps exports in {folder}: "

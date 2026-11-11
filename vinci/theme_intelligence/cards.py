@@ -1338,11 +1338,23 @@ def _ordinal(n: int) -> str:
     return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
 
 
+#: the P/E column is FIVE YEARS or nothing (operator, 2026-11-11: "5y for all as standard"); a
+#: context stored before the standard keeps its two-year figures (append-only), so the renderer
+#: refuses to show one in that column
+_SHORT_WINDOW = "a two-year figure, from before the desk's five-year standard"
+
+
+def _short_window(f: MarketFigure, kind: str) -> bool:
+    return kind == "rank" and f.value is not None and f.detail != "5y"
+
+
 def market_text(f: MarketFigure, kind: str) -> str:
     """A market figure in the reader's units — one formatter for the HTML and the Markdown record
     (review of #731: the record printed raw fractions, "-0.0137" for a 1.4% gap)."""
     if f.value is None:
         return "not held"
+    if _short_window(f, kind):
+        return f"not held — {_SHORT_WINDOW}"
     v = f.value
     text = (f"{v * 100:+.1f}%" if kind in ("pct", "rev") else f"{v * 100:+.1f} pp" if kind == "pp"
             else f"{v:.1f}×" if kind == "x" else f"{_ordinal(round(v * 100))} pctile")
@@ -1352,15 +1364,14 @@ def market_text(f: MarketFigure, kind: str) -> str:
 def market_cell(f: MarketFigure, kind: str) -> str:
     """One market figure as the reader sees it — its basis on hover, and in the list below the
     table; "not held" when it was not measured (never a blank that reads as zero)."""
-    if f.value is None:
-        return f'<span class="nh" title="{e(f.basis)}">not held</span>'
-    return f'<span title="{e(f.basis)}">{e(market_text(f, kind))}</span>'
+    nh = ' class="nh"' if f.value is None or _short_window(f, kind) else ""
+    return f'<span{nh} title="{e(f.basis)}">{e(market_text(f, kind))}</span>'
 
 
 #: (column, field, format) — the table and the measurement list read the same order
 MARKET_COLUMNS = (("vs 200-day avg", "vs_200d", "pct"), ("From 52-wk high", "from_52w_high", "pct"),
                   ("3m vs SPY", "rel_3m", "pp"), ("12m vs SPY", "rel_12m", "pp"),
-                  ("P/E", "pe", "x"), ("P/E vs own history", "pe_percentile", "rank"),
+                  ("P/E", "pe", "x"), ("P/E vs own 5y history", "pe_percentile", "rank"),
                   ("Revisions (3m)", "revisions", "rev"))
 
 
@@ -1377,7 +1388,9 @@ def market_html(m: MarketContext | None, *, missing: str) -> str:
             + "".join(f"<th>{e(c)}</th>" for c, _f, _k in MARKET_COLUMNS) + "</tr>")
     how = "".join(
         f"<li><b>{e(r.name)}</b><ul>" + "".join(
-            f"<li>{e(c)}: {e(getattr(r, fld).basis)}</li>" for c, fld, _k in MARKET_COLUMNS)
+            f"<li>{e(c)}: "
+            + (f"not held — {e(_SHORT_WINDOW)}; measured as " if _short_window(getattr(r, fld), k)
+               else "") + f"{e(getattr(r, fld).basis)}</li>" for c, fld, k in MARKET_COLUMNS)
         + "</ul></li>" for r in (*m.rows, *m.hypotheses) if r.ticker is not None)
     return (f'<div class="mkt"><p class="mktl"><b>{e(m.label)}</b></p>'
             f'<p class="note">As of {e(m.as_of.isoformat())} · against {e(m.benchmark)} · '
