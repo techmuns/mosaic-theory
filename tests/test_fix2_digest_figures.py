@@ -181,3 +181,19 @@ def test_an_anchored_driver_carries_its_signed_structured_value_and_every_row_it
                                                                   strict=True)
                               if r.value_num is None)
 
+
+
+def test_a_single_value_guide_prints_its_value_never_none() -> None:
+    """(review round 0) A guide stated as one value (`GuidanceItem.high` None) printed
+    "1345.0–None": latent on every committed page, but the line this fix touches."""
+    ps = _smpl().primary_source
+    i, rel = next((i, r) for i, r in enumerate(ps.releases)
+                  if any(g.basis == "level" and not g.qualitative for g in r.guidance))
+    k = next(k for k, g in enumerate(rel.guidance) if g.basis == "level" and not g.qualitative)
+    guide = rel.guidance[k].model_copy(update={"high": None})
+    one = rel.model_copy(update={"guidance": [*rel.guidance[:k], guide, *rel.guidance[k + 1:]]})
+    moved = ps.model_copy(update={"releases": [*ps.releases[:i], one, *ps.releases[i + 1:]]})
+    lines = syn._primary_source_digest(moved).splitlines()
+    want = f"guidance ({guide.metric} {guide.period}): {guide.low} {guide.unit} ["
+    assert any(x.startswith(want) for x in lines), want
+    assert not any("–None" in x for x in lines)

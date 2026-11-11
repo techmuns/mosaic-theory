@@ -1544,6 +1544,11 @@ SYNTHESIS_TOOL: dict[str, Any] = tool_for(DEFAULT_SLEEVE)
 _SYSTEM: str = system_for(DEFAULT_SLEEVE)
 
 
+def _range(low: float | None, high: float | None) -> str:
+    """A stated range, or its one value where the source states one ("None" never printed)."""
+    return f"{low}" if high is None else f"{low}–{high}"
+
+
 def _primary_source_digest(ps: PrimarySource) -> str:
     """(RC-1 C) A term → value → source_ref digest of the primary-source cross-checks for the LLM
     synthesis phase — VERBATIMS EXCLUDED (provenance is on-demand, never LLM input). Both
@@ -1651,11 +1656,11 @@ def _primary_source_digest(ps: PrimarySource) -> str:
             if g.qualitative:
                 v = "QUALITATIVE (no number stated)"
             elif getattr(g, "basis", "level") == "change":
-                v = f"CHANGE of {g.low}–{g.high} {g.unit} vs the prior period"
+                v = f"CHANGE of {_range(g.low, g.high)} {g.unit} vs the prior period"
             else:
                 # ITS UNIT, from the structured field (prompt-fix 2): "10.97–11.09" was an EPS
                 # guide in $/share and "1206.0–1216.0" one in $M, printed alike
-                v = f"{g.low}–{g.high} {g.unit}"
+                v = f"{_range(g.low, g.high)} {g.unit}"
             out.append(f"guidance ({g.metric} {g.period}): {v}{_v} → {g.source_ref}")
         # THE CONTENT WINDOW, unchanged at 4. A release pulled in only for its guide history does
         # not also widen the LTM-shaped blocks — that would be a bigger digest by accident rather
@@ -1670,7 +1675,7 @@ def _primary_source_digest(ps: PrimarySource) -> str:
             out.append(f"one-off charge: ${oo.amount}M {oo.description[:44]} → {oo.source_ref}")
         for ei in (r.event_impacts if r in recent else []):
             # in $M, as the schema states (`EventImpact.low`) — printed, not left implied
-            rng = f"{ei.low}–{ei.high} $M" if ei.low is not None else "unquantified"
+            rng = f"{_range(ei.low, ei.high)} $M" if ei.low is not None else "unquantified"
             out.append(f"event impact: {ei.effect} {ei.metric} {rng} ({ei.period}) "
                        f"→ {ei.source_ref}")
     return "\n".join(out)

@@ -2420,16 +2420,21 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
     cal = next((i for i in range(yhdr + 1, len(rows))
                 if any(str(c).strip() == "Calendar Years" for c in rows[i][:3])), len(rows))
 
+    placeholders: list[int] = []   # the years printed NO_SURPRISE, read from the cells, not text
+
     def series(ri: int | None, hdr: int) -> str | None:
         if ri is None:
             return None
         act, est = _surprise_basis(rows, ri)
-        out = [
-            f"FY{int(yr)} {_surprise_cell(v, act.get(j), est.get(j))}"
-            for j in range(1, len(rows[ri]))
-            if (v := clean_num(rows[ri][j])) is not None
-            and j < len(rows[hdr]) and (yr := clean_num(rows[hdr][j])) is not None
-        ]
+        out = []
+        for j in range(1, len(rows[ri])):
+            if ((v := clean_num(rows[ri][j])) is None or j >= len(rows[hdr])
+                    or (yr := clean_num(rows[hdr][j])) is None):
+                continue
+            cell = _surprise_cell(v, act.get(j), est.get(j))
+            if cell == NO_SURPRISE:
+                placeholders.append(int(yr))
+            out.append(f"FY{int(yr)} {cell}")
         return ", ".join(out) if out else None  # full series; the render windows it
 
     fiscal = [i for i in heads if i < cal]
@@ -2460,7 +2465,7 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
     # the n/a cells are explained ONCE, inside the line's one trailing note — the web parses the
     # last parenthetical as the note and each ", " point's last token as its value (dossier.js
     # `parseSeries`), so an explanation anywhere else would be read as a year's value
-    na = any(f" {NO_SURPRISE}," in f"{p}," for p in parts)
+    na = bool(placeholders)
     return Sourced.present(
         "; ".join(parts) + " (GAAP-EPS basis; +beat / −miss"
         + (f"; {NO_SURPRISE_NOTE}" if na else "") + ")",
