@@ -6,7 +6,7 @@ supersedes:
 superseded-by:
 ---
 
-# STATE row 42 (1): a name whose filings window cannot be read drops its own freshness row, never the monitor day; row 42 now holds only the theme desk's own older-page reader
+# STATE row 42 (1): a name whose filings window cannot be read drops its own freshness row, never the monitor day; row 42 now holds the theme desk's own older-page reader and the web's silence on a dropped name
 
 **WHAT.** `cli._cmd_monitor` reads a 760-day EDGAR filings window for each name in the freshness
 set. When that read now fails, the name's freshness row is not written, and the day carries a note
@@ -164,6 +164,12 @@ only the rows a day has, and returns None when no prior day carries the row at a
   - The fix is a render change to the panel, which the PREVIEW RULE gates on a preview and
     approval.
   - Falsifier: a deployed panel showing the day's names with no mention of one that was dropped.
+  - **THIS PR WIDENS IT (PR round 2, the coordinator):** before, one unreadable window wrote no
+    day at all, which was loud. Now the day is written and the panel shows N−1 names without
+    saying one is missing. That is "A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION", and it was
+    recorded only here. It is now STATE row 42's OPEN (b), owned by the agent, with the fix
+    named as a render change that the PREVIEW RULE gates. §5.0 is at its 60-line cap, so it
+    joins row 42 rather than taking a row of its own.
 - **DEFERRED (PR round 1): which names went unread is carried only in prose.** No typed field on
   the day records it, so any later consumer must parse `FILINGS <T>:` from free text, or use the
   typed state above, which is not built.
@@ -172,10 +178,12 @@ only the rows a day has, and returns None when no prior day carries the row at a
   200 characters (`vinci/netcache.py`, `resp.text[:200]`), against "A TRUNCATED OUTPUT PRINTS ITS
   OWN TRUNCATION". The fix is in netcache's messages, which every caller prints.
 
-**ROW 42 STAYS OPEN, NARROWED.** Both of row 42's edges are fixed. #878's record lists one more
-open item that no other row tracks.
-- `theme_intelligence.securities` reads older pages itself. It holds them for 30 days beside a
-  document held for 1, never checks them against their listing, and stops at a page it cannot read
-  with no note. This is still true at `1df0dc18`: `_walk_filings` holds pages for 30 days and
-  `break`s on `HttpError`/`KeyError`.
-- So #878's record stays `open`, and row 42 now cites it for that item alone.
+**ROW 42 STAYS OPEN, WITH TWO ITEMS.** Both of row 42's edges are fixed.
+- (a) #878's record lists one more open item that no other row tracks:
+  - `theme_intelligence.securities` reads older pages itself. It holds them for 30 days beside
+    a document held for 1, never checks them against their listing, and stops at a page it
+    cannot read with no note.
+  - This is still true at `1df0dc18`: `_walk_filings` holds pages for 30 days and `break`s on
+    `HttpError`/`KeyError`.
+  - So #878's record stays `open`, and row 42 cites it for this item.
+- (b) The web's silence on a dropped name, which this PR widens (above, PR round 2).
