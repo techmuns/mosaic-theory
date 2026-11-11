@@ -128,6 +128,14 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Impact check / cross-setup validation / diff identity** (2026-11-11, operator: "verifies &
+  validates fixes based on data deterministically and its implication across the setup"). Plain
+  words: *one command that runs a PR's changed tests on main's code and on the PR's, builds every
+  committed page at $0 with both codes from the same inputs, compares the pages field by field
+  (list members too), the synthesis requests byte by byte, the rendered pages and the frontend
+  build, and runs the downstream readers the change reaches — then stamps the result with the PR's
+  own diff (`git patch-id`), so a re-sync that only merges main keeps it*. `vinci/impact/`,
+  RUNBOOKS §o, `docs/records/2026-11-11-impact-check-cross-setup-validation.md`.
 - **Gap test / `disclosure_gaps` / our gap · does not apply · company's normal practice · change
   or deviation · type not determined** (2026-11-07, fix 4a, operator ruling "Yes, use the test").
   Plain words: *before the synthesis may treat a missing fact as a risk, the code sorts WHY it is

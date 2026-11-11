@@ -1,0 +1,377 @@
+{
+ "_source": "data/dossiers/EPAM/dossier.json at 7120a4cd^ (the committed page the 2026-11-09 precheck read) and at 7120a4cd (the paid rebuild, #949): the anchor and valuation_basis blocks only, copied as committed",
+ "committed": {
+  "anchor": {
+   "anchor_base_value_per_share": 403.8351,
+   "anchor_base_value_per_share_diluted": 403.2879,
+   "anchor_ev_ebit": 30.0255,
+   "applicable": true,
+   "band_checks": {
+    "d_and_a_source": "edgar",
+    "market_reconciliation": "agree",
+    "recorded_d_and_a": "not_run"
+   },
+   "ciq_scale_check": "agree",
+   "computed_at": "2026-10-21T11:18:47.636236Z",
+   "d_and_a": {
+    "basis": "consolidated latest FY",
+    "source": "EDGAR companyfacts DepreciationAndAmortization (combined, FY2025) \u2014 CHOSEN BY VINTAGE over 1 staler candidate(s), oldest FY2019 (6y behind)",
+    "unit": "$M",
+    "value": 124.811
+   },
+   "data_quality": null,
+   "data_quality_detail": [
+    "lease basis: rent 9.2% of EBITDA (FY ending 2025-12-31: $65M of $707M) \u2014 material (\u22655%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $65M",
+    "recorded-D&A check not run: it tests CIQ's Multiples-sheet ratios, which the ex-lease history does not use"
+   ],
+   "diluted_shares": {
+    "basis": "diluted weighted-average (latest 10-Q)",
+    "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding",
+    "unit": "shares",
+    "value": 52267000.0
+   },
+   "dilutive_increment": {
+    "basis": "diluted less basic weighted average over the latest 10-Q quarter \u2014 the dilution test",
+    "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding 52,267,000 \u2212 WeightedAverageNumberOfSharesOutstandingBasic 52,197,000 (2026-04-01..2026-06-30)",
+    "unit": "shares",
+    "value": 70000.0
+   },
+   "ltm_fcf": {
+    "basis": "latest FY2025 (not LTM)",
+    "source": "EDGAR companyfacts operating_cash_flow \u2212 capex (FY2025, same period)",
+    "unit": "$M",
+    "value": 612.691
+   },
+   "ltm_revenue": {
+    "basis": "LTM revenue",
+    "source": "committed financial_summary.annual (LTM)",
+    "unit": "$M",
+    "value": 5616.749
+   },
+   "margin": {
+    "anchor_years": 10,
+    "basis": "operating margin (EBIT / revenue)",
+    "confidence": "firm",
+    "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax \u2014 reported median over 10 FY",
+    "unit": "fraction",
+    "value": 0.118997
+   },
+   "multiple": {
+    "confidence": "firm",
+    "history_quarters": 34,
+    "source": "valuation.lease_basis.ex_lease_band.median \u2014 TEV less operating leases over reported LTM EBITDA, the basis of the EBITDA R1 prices",
+    "unit": "EV/EBITDA",
+    "value": 25.300835499999998
+   },
+   "multiple_basis": "EV/EBITDA",
+   "net_debt": {
+    "basis": "net debt excluding operating leases (latest 10-Q)",
+    "source": "EDGAR: total debt 25 + finance leases 0 \u2212 cash 789 ($M); operating leases 127 EXCLUDED \u2014 the multiple is struck on TEV less operating leases",
+    "unit": "$M",
+    "value": -764.397
+   },
+   "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+   "overall_confidence": "firm",
+   "reason": null,
+   "recipe_hint": "R1_midcycle_margin_evebitda",
+   "scenario_eligibility": {
+    "eligible_for_scenario_valuation": true,
+    "fields": [
+     "multiple_basis",
+     "margin",
+     "multiple",
+     "d_and_a",
+     "net_debt",
+     "diluted_shares",
+     "shares_outstanding",
+     "dilutive_increment",
+     "ltm_revenue",
+     "ltm_fcf",
+     "anchor_base_value_per_share",
+     "anchor_base_value_per_share_diluted",
+     "midcycle_gap",
+     "anchor_ev_ebit"
+    ],
+    "reason": "the active recipe is R1-family (R1_midcycle_margin_evebitda) and R1's anchor applies \u2014 these fields are an R1 record's inputs (its template reads `d_and_a` and `net_debt` from here)"
+   },
+   "shares_outstanding": {
+    "basis": "point-in-time shares outstanding \u2014 the per-share denominator (item 24)",
+    "source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding); 1.2% below the filer's basic weighted average 52,197,000 (2026-04-01..2026-06-30)",
+    "unit": "shares",
+    "value": 51586981.0
+   }
+  },
+  "valuation_basis": {
+   "anchor_fields_eligible": true,
+   "conflicts": [],
+   "current_multiple": {
+    "as_of": "2026-08-06",
+    "days_price_after_snapshot": null,
+    "metric": "EV/EBITDA ex-lease (TEV less operating leases / LTM EBITDA)",
+    "page_price": 117.17,
+    "page_price_as_of": "2026-09-16",
+    "period": "LTM",
+    "snapshot_as_of": null,
+    "snapshot_market_cap": null,
+    "snapshot_reconciles": null,
+    "snapshot_tev": null,
+    "source": "mechanical.valuation.lease_basis.ex_lease_band.current \u2014 the history's latest quarterly close",
+    "value": 5.5363,
+    "value_at_page_price": 7.240314,
+    "value_at_page_price_basis": "(page price \u00d7 point-in-time shares + net debt excluding operating leases) \u00f7 the history's latest LTM EBITDA \u2014 mechanical.valuation.ev_ebitda_ex_lease_at_price"
+   },
+   "earnings_basis": "EBITDA at exit (revenue \u00d7 operating margin + D&A)",
+   "ev_bridge": {
+    "balance_sheet_date": null,
+    "ciq_tev_less_market_cap": -636.6,
+    "components": [],
+    "cross_check": {
+     "basis": "CIQ TEV claims (ev_bridge)",
+     "eligible_for_primary_bridge": false,
+     "reason": "R1's record subtracts the anchor's EDGAR net debt by its own rule; CIQ's claims are shown beside it, never substituted",
+     "source": "ev_bridge.claims",
+     "value": -636.618
+    },
+    "current_claims": -764.397,
+    "current_claims_source": "anchor.net_debt (EDGAR: total debt 25 + finance leases 0 \u2212 cash 789 ($M); operating leases 127 EXCLUDED \u2014 the multiple is struck on TEV less operating leases)",
+    "primary_basis": "EDGAR net debt excluding operating leases (the anchor's)",
+    "reconciles_to_ciq_tev": null
+   },
+   "ev_bridge_basis": "EDGAR net debt excluding operating leases (the anchor's)",
+   "exit_claims": {
+    "by_year": [],
+    "current_claims": -764.397,
+    "fcf_rollforward_used": false,
+    "forecast_status": "assumption",
+    "method": "HOLD_CURRENT_SAME_BASIS",
+    "reason": null,
+    "rule": "R1's record subtracts the anchor's net debt as given \u2014 today's figure, held"
+   },
+   "exit_share_count": {
+    "count_basis": "BASIC shares outstanding at the EDGAR cover date (point-in-time) \u2014 it EXCLUDES the dilutive increment (options, RSUs, convertibles)",
+    "current_source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding)",
+    "current_value": 51586981.0,
+    "default_method": "HOLD_CURRENT_SHARES_OUTSTANDING",
+    "diluted_weighted_average": {
+     "eligible_as_point_in_time_denominator": false,
+     "source": "anchor.diluted_shares (diluted weighted-average (latest 10-Q); EDGAR WeightedAverageNumberOfDilutedSharesOutstanding)",
+     "unit": "shares",
+     "value": 52267000.0
+    },
+    "forecast_status": "assumption",
+    "includes_dilutive_increment": false,
+    "override_allowed": true,
+    "override_rule": "replace with the point-in-time DILUTED count \u2014 this basic count plus the dilutive increment stated from the filing (options and RSUs by the treasury-stock method, convertibles if-converted) \u2014 or with a reliable, explicit forward share-count forecast on that basis; never the diluted weighted average, which is a period average",
+    "unit": "shares"
+   },
+   "formula_steps": [
+    "EBIT = revenue \u00d7 op margin",
+    "EBITDA = EBIT + D&A",
+    "EV = EBITDA \u00d7 exit multiple (EV/EBITDA)",
+    "equity = EV \u2212 net debt",
+    "value/share = equity \u00f7 diluted shares"
+   ],
+   "history_series": "mechanical.valuation.lease_basis.ex_lease_band (trailing EV/EBITDA ex-lease: TEV less operating leases / LTM EBITDA)",
+   "multiple_basis": "EV/EBITDA",
+   "non_operating_assets": {
+    "adjusted_operating_ev_allowed": true,
+    "adjustment_condition": "only if BOTH the current and the historical valuation series are rebuilt consistently on the adjusted operating-EV basis \u2014 a separate, consistently rebased framework, never a carve-out in the bridge alone",
+    "carve_out": false,
+    "primary_treatment": "included_in_vendor_tev",
+    "reason": "the primary current and historical EV multiple series use the vendor's TEV definition, which carries non-operating investments inside enterprise value; carving them out of the bridge alone would value a different enterprise than the one the multiple was struck on"
+   },
+   "per_share_formula": "exit_equity_value / exit_share_count",
+   "priceable": true,
+   "recipe": "R1_midcycle_margin_evebitda",
+   "scenario_formula": "((exit_revenue * exit_operating_margin) + d_and_a) * exit_ev_ebitda - net_debt",
+   "status_reason": "R1-family (R1_midcycle_margin_evebitda): priced from the anchor's R1 inputs"
+  }
+ },
+ "paid": {
+  "anchor": {
+   "anchor_base_value_per_share": 391.7766,
+   "anchor_base_value_per_share_diluted": 391.462,
+   "anchor_ev_ebit": 28.3396,
+   "applicable": true,
+   "band_checks": {
+    "d_and_a_source": "edgar",
+    "market_reconciliation": "agree",
+    "recorded_d_and_a": "not_run"
+   },
+   "ciq_scale_check": "agree",
+   "computed_at": "2026-11-09T16:30:17.483932Z",
+   "d_and_a": {
+    "basis": "consolidated trailing twelve months to 2026-09-30 (EDGAR: fiscal year + year-to-date \u2212 prior year-to-date)",
+    "source": "EDGAR companyfacts DepreciationAndAmortization (fiscal year + year-to-date \u2212 prior year-to-date, to 2026-09-30)",
+    "unit": "$M",
+    "value": 127.047
+   },
+   "data_quality": null,
+   "data_quality_detail": [
+    "lease basis: rent 9.2% of EBITDA (FY ending 2025-12-31: $65M of $707M) \u2014 material (\u22655%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $65M",
+    "recorded-D&A check not run: it tests CIQ's Multiples-sheet ratios, which the ex-lease history does not use"
+   ],
+   "diluted_shares": {
+    "basis": "diluted weighted-average (latest 10-Q)",
+    "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding",
+    "unit": "shares",
+    "value": 51469000.0
+   },
+   "dilutive_increment": {
+    "basis": "diluted less basic weighted average over the latest 10-Q quarter \u2014 the dilution test",
+    "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding 51,469,000 \u2212 WeightedAverageNumberOfSharesOutstandingBasic 51,428,000 (2026-07-01..2026-09-30)",
+    "unit": "shares",
+    "value": 41000.0
+   },
+   "ltm_fcf": {
+    "basis": "latest FY2025 (not LTM)",
+    "source": "EDGAR companyfacts operating_cash_flow \u2212 capex (FY2025, same period)",
+    "unit": "$M",
+    "value": 612.691
+   },
+   "ltm_revenue": {
+    "basis": "LTM revenue",
+    "source": "committed financial_summary.annual (LTM)",
+    "unit": "$M",
+    "value": 5648.806
+   },
+   "margin": {
+    "anchor_years": 10,
+    "basis": "operating margin (EBIT / revenue)",
+    "confidence": "firm",
+    "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax \u2014 reported median over 10 FY",
+    "unit": "fraction",
+    "value": 0.118997
+   },
+   "multiple": {
+    "confidence": "firm",
+    "history_quarters": 35,
+    "source": "valuation.lease_basis.ex_lease_band.median \u2014 TEV less operating leases over reported LTM EBITDA, the basis of the EBITDA R1 prices",
+    "unit": "EV/EBITDA",
+    "value": 23.834747
+   },
+   "multiple_basis": "EV/EBITDA",
+   "net_debt": {
+    "basis": "net debt excluding operating leases (latest 10-Q)",
+    "source": "EDGAR: total debt 25 + finance leases 0 \u2212 cash 965 ($M); operating leases 121 EXCLUDED \u2014 the multiple is struck on TEV less operating leases",
+    "unit": "$M",
+    "value": -940.173
+   },
+   "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+   "overall_confidence": "firm",
+   "reason": null,
+   "recipe_hint": "R1_midcycle_margin_evebitda",
+   "scenario_eligibility": {
+    "eligible_for_scenario_valuation": true,
+    "fields": [
+     "multiple_basis",
+     "margin",
+     "multiple",
+     "d_and_a",
+     "net_debt",
+     "diluted_shares",
+     "shares_outstanding",
+     "dilutive_increment",
+     "ltm_revenue",
+     "ltm_fcf",
+     "anchor_base_value_per_share",
+     "anchor_base_value_per_share_diluted",
+     "midcycle_gap",
+     "anchor_ev_ebit"
+    ],
+    "reason": "the active recipe is R1-family (R1_midcycle_margin_evebitda) and R1's anchor applies \u2014 these fields are an R1 record's inputs (its template reads `d_and_a` and `net_debt` from here)"
+   },
+   "shares_outstanding": {
+    "basis": "point-in-time shares outstanding \u2014 the per-share denominator (item 24)",
+    "source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding); 0.8% below the filer's basic weighted average 51,428,000 (2026-07-01..2026-09-30)",
+    "unit": "shares",
+    "value": 51023335.0
+   }
+  },
+  "valuation_basis": {
+   "anchor_fields_eligible": true,
+   "conflicts": [],
+   "current_multiple": {
+    "as_of": "2026-11-05",
+    "days_price_after_snapshot": null,
+    "metric": "EV/EBITDA ex-lease (TEV less operating leases / LTM EBITDA)",
+    "page_price": 159.31,
+    "page_price_as_of": "2026-11-06",
+    "period": "LTM",
+    "snapshot_as_of": null,
+    "snapshot_market_cap": null,
+    "snapshot_reconciles": null,
+    "snapshot_tev": null,
+    "source": "mechanical.valuation.lease_basis.ex_lease_band.current \u2014 the history's latest quarterly close",
+    "value": 9.886188,
+    "value_at_page_price": 9.456507,
+    "value_at_page_price_basis": "(page price \u00d7 point-in-time shares + net debt excluding operating leases) \u00f7 the history's latest LTM EBITDA \u2014 mechanical.valuation.ev_ebitda_ex_lease_at_price"
+   },
+   "earnings_basis": "EBITDA at exit (revenue \u00d7 operating margin + D&A)",
+   "ev_bridge": {
+    "balance_sheet_date": null,
+    "ciq_tev_less_market_cap": -818.2,
+    "components": [],
+    "cross_check": {
+     "basis": "CIQ TEV claims (ev_bridge)",
+     "eligible_for_primary_bridge": false,
+     "reason": "R1's record subtracts the anchor's EDGAR net debt by its own rule; CIQ's claims are shown beside it, never substituted",
+     "source": "ev_bridge.claims",
+     "value": -818.218
+    },
+    "current_claims": -940.173,
+    "current_claims_source": "anchor.net_debt (EDGAR: total debt 25 + finance leases 0 \u2212 cash 965 ($M); operating leases 121 EXCLUDED \u2014 the multiple is struck on TEV less operating leases)",
+    "primary_basis": "EDGAR net debt excluding operating leases (the anchor's)",
+    "reconciles_to_ciq_tev": null
+   },
+   "ev_bridge_basis": "EDGAR net debt excluding operating leases (the anchor's)",
+   "exit_claims": {
+    "by_year": [],
+    "current_claims": -940.173,
+    "fcf_rollforward_used": false,
+    "forecast_status": "assumption",
+    "method": "HOLD_CURRENT_SAME_BASIS",
+    "reason": null,
+    "rule": "R1's record subtracts the anchor's net debt as given \u2014 today's figure, held"
+   },
+   "exit_share_count": {
+    "count_basis": "BASIC shares outstanding at the EDGAR cover date (point-in-time) \u2014 it EXCLUDES the dilutive increment (options, RSUs, convertibles)",
+    "current_source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding)",
+    "current_value": 51023335.0,
+    "default_method": "HOLD_CURRENT_SHARES_OUTSTANDING",
+    "diluted_weighted_average": {
+     "eligible_as_point_in_time_denominator": false,
+     "source": "anchor.diluted_shares (diluted weighted-average (latest 10-Q); EDGAR WeightedAverageNumberOfDilutedSharesOutstanding)",
+     "unit": "shares",
+     "value": 51469000.0
+    },
+    "forecast_status": "assumption",
+    "includes_dilutive_increment": false,
+    "override_allowed": true,
+    "override_rule": "replace with the point-in-time DILUTED count \u2014 this basic count plus the dilutive increment stated from the filing (options and RSUs by the treasury-stock method, convertibles if-converted) \u2014 or with a reliable, explicit forward share-count forecast on that basis; never the diluted weighted average, which is a period average",
+    "unit": "shares"
+   },
+   "formula_steps": [
+    "EBIT = revenue \u00d7 op margin",
+    "EBITDA = EBIT + D&A",
+    "EV = EBITDA \u00d7 exit multiple (EV/EBITDA)",
+    "equity = EV \u2212 net debt",
+    "value/share = equity \u00f7 diluted shares"
+   ],
+   "history_series": "mechanical.valuation.lease_basis.ex_lease_band (trailing EV/EBITDA ex-lease: TEV less operating leases / LTM EBITDA)",
+   "multiple_basis": "EV/EBITDA",
+   "non_operating_assets": {
+    "adjusted_operating_ev_allowed": true,
+    "adjustment_condition": "only if BOTH the current and the historical valuation series are rebuilt consistently on the adjusted operating-EV basis \u2014 a separate, consistently rebased framework, never a carve-out in the bridge alone",
+    "carve_out": false,
+    "primary_treatment": "included_in_vendor_tev",
+    "reason": "the primary current and historical EV multiple series use the vendor's TEV definition, which carries non-operating investments inside enterprise value; carving them out of the bridge alone would value a different enterprise than the one the multiple was struck on"
+   },
+   "per_share_formula": "exit_equity_value / exit_share_count",
+   "priceable": true,
+   "recipe": "R1_midcycle_margin_evebitda",
+   "scenario_formula": "((exit_revenue * exit_operating_margin) + d_and_a) * exit_ev_ebitda - net_debt",
+   "status_reason": "R1-family (R1_midcycle_margin_evebitda): priced from the anchor's R1 inputs"
+  }
+ }
+}
