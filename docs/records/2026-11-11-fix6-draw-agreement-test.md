@@ -1,7 +1,7 @@
 ---
 status: recorded
 date: 2026-11-11
-prs: []
+prs: [1005]
 supersedes:
 superseded-by:
 ---
