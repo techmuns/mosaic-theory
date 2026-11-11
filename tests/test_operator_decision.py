@@ -43,6 +43,9 @@ from vinci.dossier.anchor import (
 from vinci.dossier.render import _screening_context_lines
 from vinci.dossier.schemas import Dossier, write_dossier
 
+#: these tests write real pages, whose transcript words `assemble._write` files first (RG-D19)
+pytestmark = pytest.mark.usefixtures("evidence_spool")
+
 ROOT = Path(__file__).resolve().parents[1]
 DOSS = ROOT / "data" / "dossiers"
 FIX = json.loads((ROOT / "tests" / "fixtures" / "operator_decision_erasures.json").read_text())

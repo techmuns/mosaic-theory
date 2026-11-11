@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -195,3 +195,6 @@ edge is this build's own finding 1, counted in scope by the coordinator.
     6 distinct first dates, so they cost about a minute or more at 5 a minute.
   - Reading every name's last date as well would have cost 18, 23 and 24 calls.
   - The ~4,600 lookups that find those dates (~2,300 names) took 147–236 ms.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `87f763d3` (#991) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

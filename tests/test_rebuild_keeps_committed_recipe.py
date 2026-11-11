@@ -25,6 +25,9 @@ from vinci.dossier import assemble as asm
 from vinci.dossier.anchor import OPERATOR_RETAG_MARK, Anchor, preserve_operator_tag
 from vinci.dossier.schemas import Dossier
 
+#: these tests write real pages, whose transcript words `assemble._write` files first (RG-D19)
+pytestmark = pytest.mark.usefixtures("evidence_spool")
+
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = json.loads((ROOT / "tests" / "fixtures" / "anchor_retag_erasures.json").read_text())
 # GOOGL's incident block carries its re-tag in `reason` (the OPERATOR_RETAG_MARK shape), which no
@@ -47,7 +50,8 @@ def _carrier(ticker: str, anchor: dict[str, object]) -> Dossier:
 
 
 @pytest.mark.parametrize("ticker", INCIDENTS)
-def test_a_rebuild_keeps_the_hand_retag_it_used_to_erase(ticker: str, tmp_path: Path) -> None:
+def test_a_rebuild_keeps_the_hand_retag_it_used_to_erase(ticker: str, tmp_path: Path,
+                                                         evidence_spool: Path) -> None:
     """The erasing build replayed: the committed block (hand re-tag) is on disk, the build hands the
     write path the machine's proposal. The written artifact must keep the committed recipe and its
     reason, and the page must say the build proposed something else."""

@@ -1,6 +1,6 @@
 # Dossier — EPAM Systems, Inc. (NYSE: EPAM)
 
-_November 9, 2026 · extraction 2026-11-09.asof-cut · layers refreshed to 2026-11-10.dated-headroom_
+_November 9, 2026 · extraction 2026-11-09.asof-cut · layers refreshed to 2026-11-10.driver-text-filed_
 
 # Brief — first cut
 
@@ -724,6 +724,7 @@ _Source §: 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm_
 - **Refreshed since assembly** (oldest first):
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
 - **Price store:** `artifacts-order1-rebuilds-6a7a7b` · reaching 2026-11-06
 - **Panel age:** oldest panel 3d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-09 build
 - **Consensus age:** consensus 1d old (2026-11-08, valuation.implied_expectations.multiples_as_of) — within the ceiling

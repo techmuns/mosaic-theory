@@ -1,6 +1,6 @@
 # Dossier — BELLRING BRANDS, INC. (NYSE: BRBR)
 
-_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.dated-headroom_
+_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.driver-text-filed_
 
 # Brief — first cut
 
@@ -666,6 +666,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
   - 2026-10-27 · mechanical.financial_summary, mechanical.valuation — refresh at 2026-10-09.3
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 35d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus is 61d old (2026-08-26, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.

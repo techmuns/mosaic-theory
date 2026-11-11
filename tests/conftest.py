@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -36,6 +37,17 @@ def _no_evidence_spool(monkeypatch: pytest.MonkeyPatch) -> None:
     operator's shared Drive: a shell that has it set must never send a test's fixture rows there.
     A test that spools names its own temporary folder."""
     monkeypatch.delenv("VINCI_EVIDENCE_SPOOL", raising=False)
+
+
+@pytest.fixture
+def evidence_spool(tmp_path_factory: pytest.TempPathFactory,
+                   monkeypatch: pytest.MonkeyPatch) -> Path:
+    """A spool of the test's own, for a test that writes a page with transcript text (RG-D19 PR 3:
+    `assemble._write` files those words before it writes the page, and refuses without a spool).
+    Created here, by the test, as the operator creates the real one; never the operator's."""
+    root = tmp_path_factory.mktemp("evidence-spool")
+    monkeypatch.setenv("VINCI_EVIDENCE_SPOOL", str(root))
+    return root
 
 
 @pytest.fixture(autouse=True)

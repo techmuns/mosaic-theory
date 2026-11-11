@@ -981,6 +981,60 @@ def _cmd_peerset_backfill(args: argparse.Namespace) -> int:
     return rc
 
 
+def _cmd_driver_facts_pass(args: argparse.Namespace) -> int:
+    """(RG-D19 PR 3) The $0 page pass (`vinci.dossier.driver_pass`): each committed page's
+    transcript driver rows become their fact and their locator, their words go to the private
+    spool FIRST, and the page is written without them. No model call, no network. Exit 1 when a
+    page is refused."""
+    from vinci.dossier import driver_evidence, driver_pass
+    from vinci.dossier.refresh import _rerender_only, mirror_to_frontend
+
+    cfg = get_config()
+    ciq_root = Path(args.ciq_root) if args.ciq_root else cfg.data_dir / "manual" / "ciq"
+    spool = None if args.dry_run else driver_evidence.EvidenceSpool.from_env()
+    outcomes = []
+    # explicit page files (the committed test fixtures that carry transcript words): the same pass,
+    # but no `dossier.md` is rendered for them and nothing is mirrored
+    for raw_path in (args.pages or "").split(","):
+        if not raw_path.strip():
+            continue
+        jp = Path(raw_path.strip())
+        o = driver_pass.run(jp, ciq_root, spool=spool, dry_run=args.dry_run, record=False)
+        outcomes.append(o)
+        print(f"{jp}: {o.status.upper()} — {o.detail}")
+    if args.pages and not args.tickers:
+        tickers: list[str] = []
+    elif args.tickers:
+        tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    else:
+        tickers = sorted(p.name for p in (cfg.data_dir / "dossiers").iterdir()
+                         if (p / "dossier.json").is_file())
+    # a refusal raised mid-run (a spool key holding other bytes) must not leave the pages already
+    # written with a stale frontend mirror: the mirror runs on the way out either way
+    try:
+        for t in tickers:
+            jp = cfg.data_dir / "dossiers" / t / "dossier.json"
+            if not jp.exists():
+                print(f"{t}: no committed dossier — skipped")
+                continue
+            o = driver_pass.run(jp, ciq_root, spool=spool, dry_run=args.dry_run)
+            if o.status == "written":
+                _rerender_only(jp)
+                o.mirrored = True
+            outcomes.append(o)
+            print(f"{o.ticker}: {o.status.upper()} — {o.detail}")
+    finally:
+        if any(o.mirrored for o in outcomes):
+            mirror_to_frontend()
+    by: dict[str, int] = {}
+    for o in outcomes:
+        by[o.status] = by.get(o.status, 0) + 1
+    print(f"\n=== driver-facts-pass: {len(outcomes)} page(s) · "
+          + " · ".join(f"{k} {v}" for k, v in sorted(by.items()))
+          + (" · DRY-RUN (nothing written, nothing spooled)" if args.dry_run else "") + " ===")
+    return 1 if by.get("refused") else 0
+
+
 def _cmd_ciq_reread(args: argparse.Namespace) -> int:
     """Re-read ONE CIQ field on committed pages from the export on disk ($0: no assembly, no LLM,
     no network), refusing any page whose export cannot be shown to be its own
@@ -3813,6 +3867,22 @@ def build_parser() -> argparse.ArgumentParser:
                            "(default: data/manual/ciq)")
     p_rr.add_argument("--dry-run", action="store_true", dest="dry_run")
     p_rr.set_defaults(func=_cmd_ciq_reread)
+
+    p_dfp = sub.add_parser(
+        "driver-facts-pass",
+        help="(RG-D19) take each committed page's transcript driver text off the page: the rows "
+        "keep their fact and locator, and the words go to $VINCI_EVIDENCE_SPOOL first ($0 — no "
+        "LLM, no network; reads the CIQ transcripts on disk, read only)")
+    p_dfp.add_argument("--tickers", help="comma-separated tickers (default: every committed page, "
+                       "unless --pages is given)")
+    p_dfp.add_argument("--pages", help="comma-separated dossier.json files outside data/dossiers "
+                       "(the committed test fixtures that carry transcript words)")
+    p_dfp.add_argument("--ciq-root", dest="ciq_root",
+                       help="the folder holding one CIQ folder per ticker, read in place "
+                            "(default: data/manual/ciq)")
+    p_dfp.add_argument("--dry-run", action="store_true", dest="dry_run",
+                       help="report what each page would become; write and spool nothing")
+    p_dfp.set_defaults(func=_cmd_driver_facts_pass)
 
     p_cr = sub.add_parser(
         "caveat-reword",

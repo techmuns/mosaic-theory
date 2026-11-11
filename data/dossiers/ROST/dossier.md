@@ -1,6 +1,6 @@
 # Dossier — ROSS STORES, INC. (Nasdaq: ROST)
 
-_October 29, 2026 · extraction 2026-10-29.G-D3 · layers refreshed to 2026-11-10.dated-headroom_
+_October 29, 2026 · extraction 2026-10-29.G-D3 · layers refreshed to 2026-11-10.driver-text-filed_
 
 # Brief — first cut
 
@@ -554,6 +554,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Refreshed since assembly** (oldest first):
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-10-28
 - **Panel age:** oldest panel 34d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-29 build
 - **Consensus age:** consensus 32d old (2026-09-27, valuation.implied_expectations.multiples_as_of) — within the ceiling
