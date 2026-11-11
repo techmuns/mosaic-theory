@@ -96,7 +96,8 @@ class SegmentFactsUnavailableError(RuntimeError):
 
 @dataclass(frozen=True)
 class SegmentFigure:
-    member: str                  # the XBRL member, verbatim — the key a human can check
+    member: str                  # the XBRL member, verbatim — the key a human can check (a standard
+    #                              taxonomy's member under its standard prefix, `_canonical_prefix`)
     segment: str                 # the member humanised ("parr:RefiningMember" → "Refining")
     profit: float                # USD
     revenue: float | None        # USD, from the IDENTICAL context; None when not tagged there
@@ -124,12 +125,52 @@ def humanise(member: str) -> str:
     return words or local
 
 
+#: The standard taxonomies by their namespace URI ("http://fasb.org/us-gaap/2024",
+#: "http://xbrl.sec.gov/dei/2012-01-31", and the 2009-2010 releases at xbrl.us:
+#: "http://xbrl.us/us-gaap/2009-01-31"), and the prefix every constant above writes them with.
+_STANDARD_URI = re.compile(
+    r"^http://(?:fasb\.org/(?P<fasb>us-gaap|srt)|xbrl\.sec\.gov/(?P<sec>dei)"
+    r"|xbrl\.us/(?P<xus>us-gaap|dei))/\d{4}(?:-\d{2}-\d{2})?$")
+_STANDARD_PREFIXES = frozenset({"us-gaap", "srt", "dei"})
+
+
+def _canonical_prefix(uri: str, written: str) -> str:
+    """The prefix a name in ``uri`` is matched under (TeamNostra fix request 2, RE1-D15).
+
+    A NAMESPACE IS ITS URI, NEVER ITS PREFIX. The prefix is the instance's own label for it, and
+    binding the us-gaap namespace to ``gaap`` is valid XBRL: matched on the prefix as written, such
+    an instance's segment axis was never ``us-gaap:StatementBusinessSegmentsAxis`` and a
+    two-segment filer read as single-segment (``None``), silently. So the standard taxonomies are
+    named by their URI under the prefix the constants use, and a filer's own namespace keeps the
+    prefix it wrote, unless that is a standard one bound to another URI, which is then named by its
+    URI and can match no constant."""
+    if m := _STANDARD_URI.match(uri):
+        return m.group("fasb") or m.group("sec") or m.group("xus")
+    return f"{{{uri}}}" if written in _STANDARD_PREFIXES else written
+
+
 def _qname(tag: str, prefixes: dict[str, str]) -> str:
     """``{uri}Local`` → ``prefix:Local`` using the instance's own namespace declarations."""
     if tag.startswith("{"):
         uri, local = tag[1:].split("}", 1)
         return f"{prefixes.get(uri, uri)}:{local}"
     return tag
+
+
+def _resolve_qname(written: str, uris: dict[str, set[str]], prefixes: dict[str, str],
+                   accession: str) -> str:
+    """A QName written as TEXT (a dimension attribute, a member) under the name :func:`_qname`
+    gives the same namespace: its prefix resolved to the URI the instance binds it to. A prefix the
+    instance never binds is kept as written; one it binds to two URIs cannot be read and raises."""
+    pfx, sep, local = written.partition(":")
+    if not sep or pfx not in uris:
+        return written
+    if len(uris[pfx]) != 1:
+        raise SegmentFactsUnavailableError(
+            f"{accession}: the prefix {pfx!r} of {written!r} is bound to {len(uris[pfx])} "
+            f"namespaces ({', '.join(sorted(uris[pfx]))}) — not guessed between")
+    (uri,) = uris[pfx]
+    return f"{prefixes.get(uri, pfx)}:{local}"
 
 
 def _instance_name(http: CachedHttp, cik: str, accession: str) -> str:
@@ -175,10 +216,13 @@ def parse_instance(xml_text: str, *, accession: str = "", instance: str = ""
                    ) -> SegmentProfitRead | None:
     """The per-segment profit read from ONE instance document — pure, no I/O, so it is pinned on
     real filings frozen as fixtures. None = no segment context at all (a single-segment filer)."""
+    # uri -> the prefix its names are matched under; prefix -> every uri the instance binds it to
     prefixes: dict[str, str] = {}
+    uris: dict[str, set[str]] = {}
     for _event, item in ET.iterparse(io.StringIO(xml_text), events=("start-ns",)):
         ns_prefix, ns_uri = cast(tuple[str, str], item)
-        prefixes.setdefault(ns_uri, ns_prefix)
+        prefixes.setdefault(ns_uri, _canonical_prefix(ns_uri, ns_prefix))
+        uris.setdefault(ns_prefix, set()).add(ns_uri)
     root = ET.fromstring(xml_text)
     # THE FACTS' TAXONOMY, NOT THE DECLARATIONS. MEASURED 2026-10-28 on the latest 20-F / 40-F
     # instance of each primary FPI line (252 readable): 164 tag ifrs-full facts and no us-gaap
@@ -193,9 +237,12 @@ def parse_instance(xml_text: str, *, accession: str = "", instance: str = ""
     def qn(node: ET.Element) -> str:
         return _qname(node.tag, prefixes)
 
+    def text_qn(written: str) -> str:
+        return _resolve_qname(written, uris, prefixes, accession)
+
     contexts: dict[str, tuple[dict[str, str], date | None, date | None]] = {}
     for ctx in root.iter(f"{_XBRLI}context"):
-        dims = {m.get("dimension", ""): (m.text or "").strip()
+        dims = {text_qn(m.get("dimension", "")): text_qn((m.text or "").strip())
                 for m in ctx.iter(f"{_XBRLDI}explicitMember")}
         contexts[ctx.get("id", "")] = (dims,
                                        _iso(ctx.find(f"{_XBRLI}period/{_XBRLI}startDate")),
@@ -214,14 +261,14 @@ def parse_instance(xml_text: str, *, accession: str = "", instance: str = ""
     # unit id → its currency (the ISO 4217 code), or None for a non-monetary unit (pure, shares,
     # a ratio). The unitRef is an ID the filer chose ("usd", "U_USD", "U001"); only the unit's own
     # <measure> says what it is — the id is a label, never read as a fact.
-    ns_of = {pfx: uri for uri, pfx in prefixes.items()}
     currency: dict[str, str | None] = {}
     for u in root.iter(f"{_XBRLI}unit"):
         ms = [(m.text or "").strip() for m in u.iter(f"{_XBRLI}measure")]
         pfx, _, code = ms[0].partition(":") if len(ms) == 1 else ("", "", "")
         # the ISO 4217 namespace by its URI; the conventional prefix is accepted only when the
         # document does not bind it to something else (a trimmed instance may omit the xmlns)
-        iso = ns_of.get(pfx, _ISO4217 if pfx == "iso4217" else "") == _ISO4217
+        bound = uris.get(pfx, {_ISO4217} if pfx == "iso4217" else set())
+        iso = bound == {_ISO4217}
         currency[u.get("id", "")] = code.upper() if code and iso else None
 
     def fiscal_year(cid: str) -> bool:

@@ -88,6 +88,7 @@ from vinci.edgar.concepts import (
     ConceptPoint,
     extract_points,
     facts_as_of,
+    filing_precedence,
     latest_instant,
     points_for_tag,
 )
@@ -181,7 +182,8 @@ def _usd(facts: dict[str, Any], tag: str) -> list[ConceptPoint]:
 def _at(facts: dict[str, Any], tag: str, at: date) -> ConceptPoint | None:
     """``tag``'s instant value AT ``at`` (the latest filing of it), else None."""
     pts = [p for p in _usd(facts, tag) if p.period_start is None and p.period_end == at]
-    return max(pts, key=lambda p: p.filed) if pts else None
+    # a same-day 10-K and 10-K/A by the filing served, never by row order (RE1-D7)
+    return max(pts, key=filing_precedence) if pts else None
 
 
 def _short_term_securities(facts: dict[str, Any], at: date) -> ConceptPoint | None:
@@ -256,7 +258,7 @@ def _unread_debt(facts: dict[str, Any], at: date,
     def latest(tag: str) -> float | None:
         # the same parser as the reading (review of #749): one value, one reader
         pts = [p for p in _usd(facts, tag) if p.period_end >= at]
-        return max(pts, key=lambda p: (p.period_end, p.filed)).value if pts else None
+        return max(pts, key=lambda p: (p.period_end, filing_precedence(p))).value if pts else None
 
     full = b.value if b else 0.0
     hold = max(b.long_term, b.current_total or 0.0) if b else 0.0
@@ -471,7 +473,8 @@ def net_debt(facts: dict[str, Any], *, as_of: date | None = None) -> NetDebt | N
         # the latest NONZERO one where any is: a $0 line is not what was being served (KLIC's
         # 2012 `DebtCurrent` of $0 beside the $109M of notes the old reading carried)
         carried = [p for p in earlier if p.value] or earlier
-        stale = max(carried, key=lambda p: (p.period_end, p.filed)) if carried else None
+        stale = (max(carried, key=lambda p: (p.period_end, filing_precedence(p)))
+                 if carried else None)
     fin_pts: list[ConceptPoint] = []
     if b is not None and b.finance_leases_inside:
         fin = 0.0

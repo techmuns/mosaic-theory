@@ -10,6 +10,7 @@ takes the most recent ``filed`` (handling restatements without mutating earlier 
 from __future__ import annotations
 
 import re
+from bisect import bisect_right
 from collections import Counter
 from collections.abc import Sequence
 from datetime import date, timedelta
@@ -256,10 +257,14 @@ def _resolve(
                                          as_of=as_of))]
     if not present:
         return []
-    first_present = present[0][1]
     if frontier is None:
-        return first_present
+        return present[0][1]
+    return _walk(present)
 
+
+def _walk(present: list[tuple[str, list[ConceptPoint]]]) -> list[ConceptPoint]:
+    """The alias the walk serves among ``present`` (each alias carrying points, priority order)."""
+    first_present = present[0][1]
     # MEASURED AGAINST THE BEST SIBLING, NOT THE FILER'S WHOLE FRONTIER (review of #531). Comparing
     # each alias to the filer's newest fact of any kind let GOOGL through: its served revenue alias
     # sits 456d behind that frontier — inside the 550d allowance — while its ANNUAL series stops at
@@ -279,6 +284,82 @@ def _resolve(
             return points
     # every alias stale: fall back to priority order, and let ``stale_served`` name it for the sweep
     return first_present
+
+
+class ServedSeries(NamedTuple):
+    """What :func:`extract_points` served for one concept on EACH day, not only on the reader's.
+
+    ``days[i]`` is a day the served points changed; ``served[i]`` holds from it until
+    ``days[i + 1]``. Before ``days[0]`` nothing was served."""
+
+    days: tuple[date, ...]
+    served: tuple[tuple[ConceptPoint, ...], ...]
+
+    def on(self, day: date) -> list[ConceptPoint]:
+        """The points served on ``day``: the alias the walk chose among the rows filed by then."""
+        i = bisect_right(self.days, day) - 1
+        return list(self.served[i]) if i >= 0 else []
+
+    def by_tag(self) -> dict[str, list[ConceptPoint]]:
+        """Every tag the series ever served, with the most points it served under it."""
+        out: dict[str, list[ConceptPoint]] = {}
+        for pts in self.served:
+            if pts and len(pts) >= len(out.get(pts[0].tag, ())):
+                out[pts[0].tag] = list(pts)
+        return out
+
+
+def served_series(facts: dict[str, Any], concept: str, *, currency: str = "USD",
+                  as_of: date | None = None) -> ServedSeries:
+    """The alias walk of :func:`extract_points` run as of every day a row of ``concept``'s aliases
+    was filed (by ``as_of``), so a reader of a PAST day reads the alias served THAT day.
+
+    ONE ALIAS FOR EVERY DATE WAS A SILENT OMISSION (TeamNostra fix request 2, RE1-D10). The P/E
+    history picked its EPS alias once, on the blob as of its reference date, and then read every
+    past bar through it. A filer that re-tags in a later filing (diluted EPS moving to
+    ``IncomeLossFromContinuingOperationsPerDilutedShare`` in a 10-K filed 2026-02-19, the old years
+    re-tagged with it) left every bar before that filing with no EPS: through the new alias nothing
+    was filed yet, though the EPS known that day stood under the old one (1.50, served alone on a
+    blob cut at 2025-06-30). The note stated the count, so the omission was the range's population.
+
+    On day ``d`` this equals the walk on the blob cut at ``d`` (:func:`facts_as_of`), with ONE
+    difference on purpose: the currency is judged once, at ``as_of`` (the reader's date), as
+    :func:`points_for_tag` judges it. A range that ranks one series against itself must not change
+    currency at a filer's switch (JOYY's CNY to USD in 2022), and the reader states its currency
+    once. The blob is never copied: each alias's points are read once and cut by ``filed``."""
+    #: per alias, per namespace in priority order: (the first day that namespace carries a row of
+    #: the tag, its points) — `facts_as_of` keeps a namespace's tag once ANY row of it is filed, and
+    #: `points_for_tag` then reads the first namespace kept, whether or not its rows parse
+    nsmap = facts.get("facts", {})
+    aliases: list[tuple[str, list[tuple[date, list[ConceptPoint]]]]] = []
+    days: set[date] = set()
+    for tag in CONCEPT_ALIASES[concept]:
+        held: list[tuple[date, list[ConceptPoint]]] = []
+        for ns in _NAMESPACES:
+            node = (nsmap.get(ns) or {}).get(tag)
+            if not node:
+                continue
+            filed = [d for rows in (node.get("units") or {}).values() for r in rows
+                     if (d := _parse_date(r.get("filed"))) is not None
+                     and (as_of is None or d <= as_of)]
+            if filed:
+                held.append((min(filed), _node_points(facts, node, tag, concept=concept,
+                                                      currency=currency, as_of=as_of)))
+                days.update(filed)
+        aliases.append((tag, held))
+    out_days: list[date] = []
+    out_served: list[tuple[ConceptPoint, ...]] = []
+    for d in sorted(days):
+        present: list[tuple[str, list[ConceptPoint]]] = []
+        for tag, held in aliases:
+            first = next((pts for since, pts in held if since <= d), None)
+            if first is not None and (pts := [p for p in first if p.filed <= d]):
+                present.append((tag, pts))
+        served = tuple(_walk(present)) if present else ()
+        if not out_served or served != out_served[-1]:
+            out_days.append(d)
+            out_served.append(served)
+    return ServedSeries(tuple(out_days), tuple(out_served))
 
 
 def stale_served(facts: dict[str, Any], concept: str) -> tuple[str, int] | None:
@@ -440,6 +521,12 @@ def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "",
             break
     if not node:
         return []
+    return _node_points(facts, node, tag, concept=concept, currency=currency, as_of=as_of)
+
+
+def _node_points(facts: dict[str, Any], node: dict[str, Any], tag: str, *, concept: str,
+                 currency: str, as_of: date | None) -> list[ConceptPoint]:
+    """:func:`points_for_tag`'s points from one namespace's ``node`` of ``tag``."""
     points: list[ConceptPoint] = []
     units = node.get("units", {})
     served = (_served_currency(facts, currency, as_of)
@@ -471,23 +558,46 @@ def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "",
     return points
 
 
+def _is_periodic(form: str | None) -> bool:
+    """A periodic report (10-K, 10-Q, 20-F, 40-F) or, by prefix, an amendment of one."""
+    return str(form or "").upper().startswith((*ANNUAL_REPORT_FORMS, "10-Q"))
+
+
+def filing_precedence(p: ConceptPoint) -> tuple[date, bool, bool, str]:
+    """Which of two filings of one figure is SERVED: the later day; on one day, a periodic report
+    over any other form, an amendment over the report it amends, then the greater accession.
+
+    ONE DAY IS NOT ONE MOMENT (TeamNostra fix request 2, RE1-D7). companyfacts dates a filing to
+    the day, so a 10-K and the 10-K/A correcting it, filed the same day, tied on ``filed``, and
+    ``max`` served whichever row the response listed first: the same rows in reverse order served
+    90,000,000 instead of 150,000,000, moved EBITDA by 60,000,000, and :func:`superseded` (strict
+    ``<``) named no restatement either way. An amendment is filed after what it amends, so it is
+    served. A periodic report outranks a proxy or an 8-K stating its figure the same day, which is
+    the fact layer's rule too (`vinci.facts.reader.PERIODIC_FORMS`; NKE's 10-K and DEF 14A of
+    2026-07-15). The accession ranks last, only so the choice never depends on row order."""
+    form = str(p.form or "").upper()
+    return (p.filed, _is_periodic(form), form.endswith("/A"), p.accession or "")
+
+
 def latest_annual(points: list[ConceptPoint]) -> ConceptPoint | None:
-    """Latest full-year flow value (most recent period_end, then most recent filing)."""
+    """Latest full-year flow value (most recent period_end, then the filing served,
+    :func:`filing_precedence`)."""
     annual = [p for p in points if p.is_annual]
     if not annual:
         return None
-    return max(annual, key=lambda p: (p.period_end, p.filed))
+    return max(annual, key=lambda p: (p.period_end, filing_precedence(p)))
 
 
 def annual_by_period(points: list[ConceptPoint]) -> dict[date, ConceptPoint]:
     """Latest-FILED annual point per fiscal ``period_end`` — collapses restatements to the most
-    recent filing without mutating earlier rows (same rule as :func:`latest_annual`)."""
+    recent filing without mutating earlier rows (same rule as :func:`latest_annual`, a same-day tie
+    by :func:`filing_precedence`)."""
     out: dict[date, ConceptPoint] = {}
     for p in points:
         if not p.is_annual:
             continue
         cur = out.get(p.period_end)
-        if cur is None or p.filed > cur.filed:
+        if cur is None or filing_precedence(p) > filing_precedence(cur):
             out[p.period_end] = p
     return out
 
@@ -660,7 +770,7 @@ def _substitute_series(facts: dict[str, Any], concept: str, tags: tuple[str, ...
         legs = [m[end] for m in maps]
         if any(p.period_start != legs[0].period_start for p in legs):
             continue
-        last = max(legs, key=lambda p: p.filed)
+        last = max(legs, key=filing_precedence)
         out[end] = last.model_copy(update={"tag": " + ".join(tags),
                                            "value": sum(p.value for p in legs)})
     return out
@@ -943,13 +1053,21 @@ def superseded(facts: dict[str, Any], p: ConceptPoint) -> ConceptPoint | None:
 
     The served point is the latest filed, which on a forward page is the value known at build; the
     earlier one is what a reader of that first filing saw. WOR's FY2022 revenue is served as 1,309
-    (filed 2024-07-30, after the steel spin-off) and was first filed as 5,242 (2022-08-01)."""
+    (filed 2024-07-30, after the steel spin-off) and was first filed as 5,242 (2022-08-01).
+
+    EARLIER INCLUDES THE SAME DAY (RE1-D7): a filing that day which ``p`` outranks
+    (:func:`filing_precedence`) came before it — the 10-K a same-day 10-K/A corrects. The first
+    filing is the earliest day's, and on that day the original periodic report."""
+    rank = filing_precedence(p)
     earlier = [q for q in points_for_tag(facts, p.tag, currency=EVERY)
                if q.unit == p.unit and q.period_start == p.period_start
-               and q.period_end == p.period_end and q.filed < p.filed]
+               and q.period_end == p.period_end and filing_precedence(q) < rank]
     # the period's FIRST filing, whatever came between: a figure restated and restated back is
     # the figure first filed, not a restatement
-    first = min(earlier, key=lambda q: q.filed) if earlier else None
+    first = (min(earlier, key=lambda q: (q.filed, not _is_periodic(q.form),
+                                         str(q.form or "").upper().endswith("/A"),
+                                         q.accession or ""))
+             if earlier else None)
     return (first if first is not None and not _same_figure(first.value, p.value, unit=p.unit)
             else None)
 
@@ -1055,7 +1173,7 @@ def latest_instant(points: list[ConceptPoint]) -> ConceptPoint | None:
     instants = [p for p in points if p.is_instant]
     if not instants:
         return None
-    return max(instants, key=lambda p: (p.period_end, p.filed))
+    return max(instants, key=lambda p: (p.period_end, filing_precedence(p)))
 
 
 # --- shares-outstanding trajectory (ONE implementation, two consumers) --------------------------
