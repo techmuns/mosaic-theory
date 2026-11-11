@@ -1,0 +1,414 @@
+{
+ "as_of": "2026-11-10",
+ "benchmark": "SPY",
+ "context_id": "MC-05e9a149c6a231",
+ "created_at": "2026-11-10T15:54:22.644330Z",
+ "hypotheses": [
+  {
+   "from_52w_high": {
+    "basis": "close 2026-11-09 against the highest close of the 52 weeks to 2026-11-10 (555.80 on 2026-11-04)",
+    "detail": "",
+    "value": -0.0191075926592299,
+    "why": ""
+   },
+   "kind": "listed",
+   "last_bar": "2026-11-09",
+   "last_close": 545.18,
+   "name": "Microsoft",
+   "pe": {
+    "basis": "price 2026-11-10 \u00f7 annual diluted EPS for the period ending 2026-06-30 (133d old, filed 2026-07-29)",
+    "detail": "",
+    "value": 30.372144846796655,
+    "why": ""
+   },
+   "pe_percentile": {
+    "basis": "share of its daily P/Es from 2021-11-11 to 2026-11-10 at or below today's (Tiingo split-adjusted closes 2021-11-04 to 2024-11-08, rebased onto Polygon's over 95 overlapping days (ratio 1.0000); Polygon from 2024-11-11)",
+    "detail": "5y",
+    "value": 0.2841181165203512,
+    "why": ""
+   },
+   "rel_12m": {
+    "basis": "window 2025-11-10\u21922026-11-09 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.027127164794942482,
+    "why": ""
+   },
+   "rel_3m": {
+    "basis": "window 2026-08-11\u21922026-11-09 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": 0.10530521519666292,
+    "why": ""
+   },
+   "revisions": {
+    "basis": "not held \u2014 no CIQ consensus held for MSFT (the fund holds CIQ exports for its dossier names only)",
+    "detail": "",
+    "value": null,
+    "why": "no CIQ consensus held for MSFT (the fund holds CIQ exports for its dossier names only)"
+   },
+   "ticker": "MSFT",
+   "vs_200d": {
+    "basis": "close 2026-11-09 against the average of the 200 daily closes 2026-01-26 to 2026-11-09",
+    "detail": "",
+    "value": 0.23836013478904272,
+    "why": ""
+   },
+   "warnings": []
+  },
+  {
+   "from_52w_high": {
+    "basis": "close 2026-11-09 against the highest close of the 52 weeks to 2026-11-10 (284.02 on 2026-08-03)",
+    "detail": "",
+    "value": -0.06017181888599388,
+    "why": ""
+   },
+   "kind": "listed",
+   "last_bar": "2026-11-09",
+   "last_close": 266.93,
+   "name": "Amazon.com",
+   "pe": {
+    "basis": "price 2026-11-10 \u00f7 annual diluted EPS for the period ending 2025-12-31 (314d old, filed 2026-02-06)",
+    "detail": "",
+    "value": 37.22873082287308,
+    "why": ""
+   },
+   "pe_percentile": {
+    "basis": "share of its daily P/Es from 2024-11-11 to 2026-11-10 at or below today's (the prices held); five years not used \u2014 a share-basis change (stock split) falls inside the window \u2014 prices are split-adjusted but the older annual EPS is as-filed, so a trailing range would divide the two bases against each other. The current P/E stands; its percentile cannot be built (filer restated its own comparatives by ~20.01x)",
+    "detail": "2y",
+    "value": 0.454,
+    "why": ""
+   },
+   "rel_12m": {
+    "basis": "window 2025-11-10\u21922026-11-09 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.029960571324001206,
+    "why": ""
+   },
+   "rel_3m": {
+    "basis": "window 2026-08-11\u21922026-11-09 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": 0.0035780418104426337,
+    "why": ""
+   },
+   "revisions": {
+    "basis": "FY 2027 EPS Normalized consensus over the 3 months to the CIQ export (on or after 2026-11-01; the fund's dossier assembled 2026-11-03): 10.18 \u2192 10.89; 14 analyst(s) revised up and 1 down, of 33",
+    "detail": "14\u2191 1\u2193",
+    "value": 0.06974459724950899,
+    "why": ""
+   },
+   "ticker": "AMZN",
+   "vs_200d": {
+    "basis": "close 2026-11-09 against the average of the 200 daily closes 2026-01-26 to 2026-11-09",
+    "detail": "",
+    "value": 0.0936213275210076,
+    "why": ""
+   },
+   "warnings": []
+  },
+  {
+   "from_52w_high": {
+    "basis": "close 2026-11-09 against the highest close of the 52 weeks to 2026-11-10 (402.62 on 2026-05-13)",
+    "detail": "",
+    "value": -0.2843127514778203,
+    "why": ""
+   },
+   "kind": "listed",
+   "last_bar": "2026-11-09",
+   "last_close": 288.15,
+   "name": "Alphabet",
+   "pe": {
+    "basis": "price 2026-11-10 \u00f7 annual diluted EPS for the period ending 2025-12-31 (314d old, filed 2026-02-05)",
+    "detail": "",
+    "value": 26.65587419056429,
+    "why": ""
+   },
+   "pe_percentile": {
+    "basis": "share of its daily P/Es from 2024-11-11 to 2026-11-10 at or below today's (the prices held); five years not used \u2014 a share-basis change (stock split) falls inside the window \u2014 prices are split-adjusted but the older annual EPS is as-filed, so a trailing range would divide the two bases against each other. The current P/E stands; its percentile cannot be built (filer restated its own comparatives by ~20x)",
+    "detail": "2y",
+    "value": 0.31,
+    "why": ""
+   },
+   "rel_12m": {
+    "basis": "window 2025-11-10\u21922026-11-09 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.11127981489651584,
+    "why": ""
+   },
+   "rel_3m": {
+    "basis": "window 2026-08-11\u21922026-11-09 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.1386764386672119,
+    "why": ""
+   },
+   "revisions": {
+    "basis": "FY 2027 EPS Normalized consensus over the 3 months to the CIQ export (on or after 2026-11-01; the fund's dossier assembled 2026-11-03): 14.8 \u2192 15.19; 11 analyst(s) revised up and 7 down, of 31",
+    "detail": "11\u2191 7\u2193",
+    "value": 0.02635135135135136,
+    "why": ""
+   },
+   "ticker": "GOOGL",
+   "vs_200d": {
+    "basis": "close 2026-11-09 against the average of the 200 daily closes 2026-01-26 to 2026-11-09",
+    "detail": "",
+    "value": -0.15078702503365815,
+    "why": ""
+   },
+   "warnings": []
+  },
+  {
+   "from_52w_high": {
+    "basis": "close 2026-11-09 against the highest close of the 52 weeks to 2026-11-10 (777.59 on 2026-09-24)",
+    "detail": "",
+    "value": -0.17518229401098273,
+    "why": ""
+   },
+   "kind": "listed",
+   "last_bar": "2026-11-09",
+   "last_close": 641.37,
+   "name": "Meta Platforms",
+   "pe": {
+    "basis": "price 2026-11-10 \u00f7 annual diluted EPS for the period ending 2025-12-31 (314d old, filed 2026-01-29)",
+    "detail": "",
+    "value": 27.30395913154534,
+    "why": ""
+   },
+   "pe_percentile": {
+    "basis": "share of its daily P/Es from 2021-11-11 to 2026-11-10 at or below today's (Tiingo split-adjusted closes 2021-11-04 to 2024-11-08, rebased onto Polygon's over 95 overlapping days (ratio 1.0000); Polygon from 2024-11-11)",
+    "detail": "5y",
+    "value": 0.4229848363926576,
+    "why": ""
+   },
+   "rel_12m": {
+    "basis": "window 2025-11-10\u21922026-11-09 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.08934652212331207,
+    "why": ""
+   },
+   "rel_3m": {
+    "basis": "window 2026-08-11\u21922026-11-09 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": 0.0937110222207409,
+    "why": ""
+   },
+   "revisions": {
+    "basis": "not held \u2014 no CIQ consensus held for META (the fund holds CIQ exports for its dossier names only)",
+    "detail": "",
+    "value": null,
+    "why": "no CIQ consensus held for META (the fund holds CIQ exports for its dossier names only)"
+   },
+   "ticker": "META",
+   "vs_200d": {
+    "basis": "close 2026-11-09 against the average of the 200 daily closes 2026-01-26 to 2026-11-09",
+    "detail": "",
+    "value": 0.015063935282611407,
+    "why": ""
+   },
+   "warnings": []
+  },
+  {
+   "from_52w_high": {
+    "basis": "close 2026-11-09 against the highest close of the 52 weeks to 2026-11-10 (248.15 on 2026-06-01)",
+    "detail": "",
+    "value": -0.5172677815837194,
+    "why": ""
+   },
+   "kind": "listed",
+   "last_bar": "2026-11-09",
+   "last_close": 119.79,
+   "name": "Oracle",
+   "pe": {
+    "basis": "price 2026-11-10 \u00f7 annual diluted EPS for the period ending 2026-05-31 (163d old, filed 2026-06-22)",
+    "detail": "",
+    "value": 20.547169811320757,
+    "why": ""
+   },
+   "pe_percentile": {
+    "basis": "share of its daily P/Es from 2021-11-11 to 2026-11-10 at or below today's (Tiingo split-adjusted closes 2021-11-04 to 2024-11-08, rebased onto Polygon's over 95 overlapping days (ratio 1.0000); Polygon from 2024-11-11)",
+    "detail": "5y",
+    "value": 0.11332801276935354,
+    "why": ""
+   },
+   "rel_12m": {
+    "basis": "window 2025-11-10\u21922026-11-09 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.6071531864634181,
+    "why": ""
+   },
+   "rel_3m": {
+    "basis": "window 2026-08-11\u21922026-11-09 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.15339692104701863,
+    "why": ""
+   },
+   "revisions": {
+    "basis": "not held \u2014 no CIQ consensus held for ORCL (the fund holds CIQ exports for its dossier names only)",
+    "detail": "",
+    "value": null,
+    "why": "no CIQ consensus held for ORCL (the fund holds CIQ exports for its dossier names only)"
+   },
+   "ticker": "ORCL",
+   "vs_200d": {
+    "basis": "close 2026-11-09 against the average of the 200 daily closes 2026-01-26 to 2026-11-09",
+    "detail": "",
+    "value": -0.22773475954307476,
+    "why": ""
+   },
+   "warnings": []
+  },
+  {
+   "from_52w_high": {
+    "basis": "close 2026-11-09 against the highest close of the 52 weeks to 2026-11-10 (1,115.94 on 2026-06-22)",
+    "detail": "",
+    "value": -0.055056723479756986,
+    "why": ""
+   },
+   "kind": "listed",
+   "last_bar": "2026-11-09",
+   "last_close": 1054.5,
+   "name": "Equinix",
+   "pe": {
+    "basis": "price 2026-11-10 \u00f7 annual diluted EPS for the period ending 2025-12-31 (314d old, filed 2026-02-11)",
+    "detail": "",
+    "value": 76.63517441860465,
+    "why": ""
+   },
+   "pe_percentile": {
+    "basis": "share of its daily P/Es from 2024-11-11 to 2026-11-10 at or below today's (the prices held); five years not held \u2014 not fetched this run \u2014 Tiingo's free plan allows 50 requests an hour; a later run fetches it",
+    "detail": "2y",
+    "value": 0.246,
+    "why": ""
+   },
+   "rel_12m": {
+    "basis": "window 2025-11-10\u21922026-11-09 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": 0.1687928075757814,
+    "why": ""
+   },
+   "rel_3m": {
+    "basis": "window 2026-08-11\u21922026-11-09 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": 0.04459735769538686,
+    "why": ""
+   },
+   "revisions": {
+    "basis": "not held \u2014 no CIQ consensus held for EQIX (the fund holds CIQ exports for its dossier names only)",
+    "detail": "",
+    "value": null,
+    "why": "no CIQ consensus held for EQIX (the fund holds CIQ exports for its dossier names only)"
+   },
+   "ticker": "EQIX",
+   "vs_200d": {
+    "basis": "close 2026-11-09 against the average of the 200 daily closes 2026-01-26 to 2026-11-09",
+    "detail": "",
+    "value": 0.03633140060065965,
+    "why": ""
+   },
+   "warnings": []
+  },
+  {
+   "from_52w_high": {
+    "basis": "close 2026-11-09 against the highest close of the 52 weeks to 2026-11-10 (203.91 on 2026-04-20)",
+    "detail": "",
+    "value": -0.11676720121622286,
+    "why": ""
+   },
+   "kind": "listed",
+   "last_bar": "2026-11-09",
+   "last_close": 180.1,
+   "name": "Digital Realty Trust",
+   "pe": {
+    "basis": "price 2026-11-10 \u00f7 annual diluted EPS for the period ending 2025-12-31 (314d old, filed 2026-02-13)",
+    "detail": "",
+    "value": 50.3072625698324,
+    "why": ""
+   },
+   "pe_percentile": {
+    "basis": "share of its daily P/Es from 2024-11-11 to 2026-11-10 at or below today's (the prices held); five years not held \u2014 not fetched this run \u2014 Tiingo's free plan allows 50 requests an hour; a later run fetches it",
+    "detail": "2y",
+    "value": 0.134,
+    "why": ""
+   },
+   "rel_12m": {
+    "basis": "window 2025-11-10\u21922026-11-09 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.04020009636511057,
+    "why": ""
+   },
+   "rel_3m": {
+    "basis": "window 2026-08-11\u21922026-11-09 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.03293820761346866,
+    "why": ""
+   },
+   "revisions": {
+    "basis": "not held \u2014 no CIQ consensus held for DLR (the fund holds CIQ exports for its dossier names only)",
+    "detail": "",
+    "value": null,
+    "why": "no CIQ consensus held for DLR (the fund holds CIQ exports for its dossier names only)"
+   },
+   "ticker": "DLR",
+   "vs_200d": {
+    "basis": "close 2026-11-09 against the average of the 200 daily closes 2026-01-26 to 2026-11-09",
+    "detail": "",
+    "value": -0.020490565083398526,
+    "why": ""
+   },
+   "warnings": []
+  },
+  {
+   "from_52w_high": {
+    "basis": "close 2026-11-09 against the highest close of the 52 weeks to 2026-11-10 (376.23 on 2026-05-14)",
+    "detail": "",
+    "value": -0.4671610451053877,
+    "why": ""
+   },
+   "kind": "listed",
+   "last_bar": "2026-11-09",
+   "last_close": 200.47,
+   "name": "Vertiv Holdings",
+   "pe": {
+    "basis": "price 2026-11-10 \u00f7 annual diluted EPS for the period ending 2025-12-31 (314d old, filed 2026-02-13)",
+    "detail": "",
+    "value": 58.78885630498534,
+    "why": ""
+   },
+   "pe_percentile": {
+    "basis": "share of its daily P/Es from 2024-11-11 to 2026-11-10 at or below today's (the prices held); five years not used \u2014 the per-share basis changes inside the window \u2014 the year ending 2020-12-31: EPS 0.6 as first filed, 1.07 as filed 2023-02-27 (\u00d71.8)",
+    "detail": "2y",
+    "value": 0.042,
+    "why": ""
+   },
+   "rel_12m": {
+    "basis": "window 2025-11-10\u21922026-11-09 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.03731991987705752,
+    "why": ""
+   },
+   "rel_3m": {
+    "basis": "window 2026-08-11\u21922026-11-09 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-11-09, benchmark frontier 2026-11-09; 1d short of the 2026-11-10 reference)",
+    "detail": "",
+    "value": -0.2654432600740575,
+    "why": ""
+   },
+   "revisions": {
+    "basis": "not held \u2014 no CIQ consensus held for VRT (the fund holds CIQ exports for its dossier names only)",
+    "detail": "",
+    "value": null,
+    "why": "no CIQ consensus held for VRT (the fund holds CIQ exports for its dossier names only)"
+   },
+   "ticker": "VRT",
+   "vs_200d": {
+    "basis": "close 2026-11-09 against the average of the 200 daily closes 2026-01-26 to 2026-11-09",
+    "detail": "",
+    "value": -0.26110979856055183,
+    "why": ""
+   },
+   "warnings": []
+  }
+ ],
+ "label": "MARKET CONTEXT \u2014 evidence for your judgement; never read by the research action",
+ "rows": [],
+ "run_id": "R-20261110T153023Z-market",
+ "source": "Polygon daily bars, split-adjusted closes (prices held 2024-11-11 to 2026-11-09); Tiingo raw closes and split factors before them, for five years of P/E; SEC XBRL annual diluted EPS filed on or before each day; consensus revisions from the fund's CIQ dossiers",
+ "thesis_id": "TH-BAA07551ED",
+ "thesis_version": 1
+}

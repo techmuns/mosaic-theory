@@ -30,7 +30,7 @@ from tests.ciq_export_support import (
 from tests.test_ev_gap_transform_idempotent import COMPUTED
 from vinci.config import get_config
 from vinci.dossier import manual_store as ms
-from vinci.dossier.ciq import CiqBundle
+from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
 from vinci.dossier.ciq_sheets import file_provenance
 
 
@@ -263,7 +263,11 @@ def test_an_ambiguous_archived_folder_does_not_stop_the_search(
     _export(tmp_path / "ciq" / "NFLX", b"the later export")
     twice = tmp_path / "ciq-archive" / "replaced-2026-10-20" / "NFLX"
     _export(twice, b"one export")
-    (twice / "Netflix,IncNasdaqGSNFLXEstimatesReport (1).xls").write_bytes(b"another export")
+    # a second Estimates export by CIQ's own name rule (RA-D10: a "(1)" download copy is now an
+    # unrecognised file, which would leave this folder holding ONE export and the negative idle)
+    (twice / "Netflix,IncNasdaqGSNFLXEstimatesReport.xlsx").write_bytes(b"another export")
+    with pytest.raises(CiqAmbiguousError):
+        CiqBundle.from_files("NFLX", sorted(twice.iterdir()))
     held, sha = _export(tmp_path / "ciq-archive" / "replaced-2026-10-28" / "NFLX", b"the pin's")
     got = _must_not_skip(skip_unless_export, "NFLX", "estimates", sha, why="w")
     assert got.workbook("estimates").path == held
