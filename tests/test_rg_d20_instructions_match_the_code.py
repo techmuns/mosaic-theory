@@ -12,8 +12,9 @@ two, (b) and (j), pass on both, because #998 corrected them first as G-D15 and G
 #1009's record says.
 
 TWO ARE PINNED DOC AGAINST DOC. (e) holds CLAUDE.md's loop list against RUNBOOKS's live
-sections, and (i) holds the CIQ notes' rule 4 against the row numbers the notes quote. Each
-resolved two instructions that contradicted each other, and neither has code behind it.
+sections; RUNBOOKS is the authority for those loops. (i) holds the CIQ notes' rule 4 against
+the row numbers the notes quote. Rule 4 is guidance with no code counterpart, so RG-D20 stays
+`in progress` in the fix log on (i) alone, until the operator rules on a rule-3 exception.
 
 THE ITEMS are #1009's record's table, a to m
 (`docs/records/2026-11-11-fix2-rg-d20-instructions-say-what-the-code-does.md`).
