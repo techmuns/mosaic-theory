@@ -3066,11 +3066,13 @@ def test_insider_activity_partitions_open_market_routine_and_other_codes() -> No
     # — a sale vanishing from the count, in the flattering direction, inside the change written to
     # stop exactly that. It now falls back to the FILING date (Section 16: within two business
     # days), so nothing is dropped. No dollars appear because the fixture states no price — a
-    # priced-at-zero transaction would read as "nothing happened".
+    # priced-at-zero transaction would read as "nothing happened" — and each side SAYS so (audit
+    # RD-D2): a count beside no total must state the lines the total cannot hold.
     assert got.value == (
-        "Open-market buys 1 (1 insider) · sells 1 (1 insider) — in the last 182 days · "
-        "last purchase insider, 2026-06-10 (~1mo ago) · last sale insider, 2026-06-12 (~1mo ago) · "
-        "grants 1 · last filing 2026-06-12 · other C×1")
+        "Open-market buys 1 (1 insider, 1 with no price stated) · sells 1 (1 insider, 1 with no "
+        "price stated) — in the last 182 days · last purchase insider, 2026-06-10 (~1mo ago) · "
+        "1 of 1 purchase with no price stated · last sale insider, 2026-06-12 (~1mo ago) · "
+        "1 of 1 sale with no price stated · grants 1 · last filing 2026-06-12 · other C×1")
     assert "0000947871-26-000620" in (got.source_ref or "")
 
 
