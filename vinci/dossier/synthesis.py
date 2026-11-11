@@ -1864,8 +1864,8 @@ def _validate(
         on its own named line, as a point's figure is under its fact's.
 
         WEAKER THAN A POINT'S TRACE, and measured (BURL, CNXC, LLY, MCK, ROST, SMPL at the panel's
-        freeze, 300 random one-decimal figures each): against a whole page 59-85% of percents and
-        35-42% of $M figures pass, named or not. Two stricter pools were tried and refused true
+        freeze, 300 random one-decimal figures each, at 7de1a7d3): against a whole page 41-79% of
+        percents and 26-35% of $M figures pass, named or not. Two stricter pools were tried and refused true
         figures: holding a named metric to the page's labelled lines (ratios in unlabelled fields
         beside a named row: AORT's "3.39x the D&A", the EBITDA-basis bands — about thirty key
         unknowns on the 28 freeze pages), and holding the field to the facts its points cite (135
