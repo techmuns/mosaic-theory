@@ -56,10 +56,13 @@ import pyarrow.parquet as pq  # type: ignore[import-untyped]
 
 from vinci.facts.schema import (
     COLUMNS,
+    FILING_COLUMNS,
     ORDER_COLUMNS,
+    READABLE_SCHEMA_VERSIONS,
     SCHEMA_VERSION,
     arrow_schema,
     contract_text,
+    filing_arrow_schema,
     order_arrow_schema,
 )
 
@@ -162,6 +165,9 @@ _ORDER_NAMES = tuple(c.name for c in ORDER_COLUMNS)
 _DATA_HEADER = json.dumps({"object": "data", "columns": [[c.name, c.type] for c in COLUMNS]})
 _ORDER_HEADER = json.dumps({"object": "order",
                             "columns": [[c.name, c.type] for c in ORDER_COLUMNS]})
+_FILING_NAMES = tuple(c.name for c in FILING_COLUMNS)
+_FILING_HEADER = json.dumps({"object": "filings",
+                             "columns": [[c.name, c.type] for c in FILING_COLUMNS]})
 
 
 #: The float64 columns: a value given as an int is stored as a float, so it is NAMED as one too.
@@ -210,6 +216,32 @@ def order_content_id(order: Iterable[tuple[int, str, int]]) -> str:
     return _digest(_ORDER_HEADER, (_order_text(*o) for o in sorted(order)))
 
 
+def _filing_text(row: Mapping[str, Any]) -> str:
+    return json.dumps([_jsonable(c, row[c]) for c in _FILING_NAMES], ensure_ascii=False,
+                      separators=(",", ":"))
+
+
+def filings_content_id(rows: Iterable[Mapping[str, Any]]) -> str:
+    """A filings object's name: sha256 over its header and every row's text, sorted."""
+    return _digest(_FILING_HEADER, sorted(_filing_text(r) for r in rows))
+
+
+def rows_match_name(rows: Sequence[Mapping[str, Any]], entry: Mapping[str, Any],
+                    kind: str = "data") -> bool:
+    """Whether an object's decoded ``rows`` hash to the content id its entry names it by — the
+    ONE definition the reader (on first read) and :func:`verify_manifest` both apply. ``kind`` is
+    ``data``, ``order`` or ``filings``."""
+    want = str(entry["content_id"])
+    if kind == "order":
+        return order_content_id([(r["source_position"], r["object"], r["row"])
+                                 for r in rows]) == want
+    if kind == "filings":
+        return filings_content_id(rows) == want
+    if kind != "data":
+        raise ValueError(f"no object kind {kind!r}")
+    return content_id(rows) == want
+
+
 # --- writing -------------------------------------------------------------------------------------
 
 @dataclass(frozen=True)
@@ -239,6 +271,10 @@ def object_path(source: str, entity: str, filed_year: int, cid: str) -> str:
 
 def order_path(source: str, entity: str, cid: str) -> str:
     return f"{source}/{entity}/order/{cid}.parquet"
+
+
+def filings_path(source: str, entity: str, cid: str) -> str:
+    return f"{source}/{entity}/filings/{cid}.parquet"
 
 
 def _sha256_file(path: Path) -> str:
@@ -329,6 +365,24 @@ def write_entity(rows: list[dict[str, Any]], root: Path) -> tuple[list[FileEntry
                              bytes=len(obytes))
 
 
+def write_filings(source: str, entity: str, rows: list[dict[str, Any]], root: Path
+                  ) -> OrderEntry:
+    """One entity's filings object (schema v3): every row ``{entity, accession, form,
+    filing_date, accepted_at}``, one per accession, sorted by its text. Returns its entry."""
+    if any(r["entity"] != entity for r in rows):
+        raise FactsStoreError(f"write_filings takes {entity}'s filings only")
+    accessions = [r["accession"] for r in rows]
+    if len(set(accessions)) != len(accessions):
+        raise FactsStoreError(f"{entity}: an accession is listed twice in its filings")
+    ordered = sorted(rows, key=_filing_text)
+    cid = filings_content_id(ordered)
+    data = _parquet(ordered, filing_arrow_schema())
+    rel = filings_path(source, entity, cid)
+    write_object(root, rel, data)
+    return OrderEntry(path=rel, content_id=cid, sha256=hashlib.sha256(data).hexdigest(),
+                      rows=len(ordered), bytes=len(data))
+
+
 def write_partitions(rows: list[dict[str, Any]], root: Path
                      ) -> tuple[list[FileEntry], dict[str, OrderEntry]]:
     """:func:`write_entity` for every entity in ``rows``."""
@@ -359,18 +413,26 @@ def snapshot_id_for(body: dict[str, Any]) -> str:
 def build_manifest(*, source: str, extractor: str, extractor_version: str,
                    scope: dict[str, Any], entities: list[dict[str, Any]],
                    files: list[FileEntry], orders: Mapping[str, OrderEntry],
-                   name: str = DEFAULT_NAME, storage: str = "git") -> dict[str, Any]:
+                   name: str = DEFAULT_NAME, storage: str = "git",
+                   filings: Mapping[str, OrderEntry] | None = None) -> dict[str, Any]:
+    """The manifest naming every object. With ``filings`` (one filings object per entity) it is
+    schema v3 and states each filing's acceptance time; without, schema v2, which states none."""
     if storage not in STORAGES:
         raise FactsStoreError(f"storage {storage!r} is not one of {STORAGES}")
     named = {str(e["entity"]) for e in entities}
     if named != set(orders):
         raise FactsStoreError(f"entities without an order object: {sorted(named - set(orders))}; "
                               f"order objects without an entity: {sorted(set(orders) - named)}")
+    if filings is not None and named != set(filings):
+        raise FactsStoreError(f"entities without a filings object: "
+                              f"{sorted(named - set(filings))}; filings objects without an "
+                              f"entity: {sorted(set(filings) - named)}")
+    version = SCHEMA_VERSION if filings is not None else 2
     ordered = sorted(files, key=lambda f: f.path)
     body: dict[str, Any] = {
         "manifest_version": MANIFEST_VERSION,
-        "schema_version": SCHEMA_VERSION,
-        "schema_sha256": hashlib.sha256(contract_text().encode("utf-8")).hexdigest(),
+        "schema_version": version,
+        "schema_sha256": hashlib.sha256(contract_text(version).encode("utf-8")).hexdigest(),
         "source": source,
         "name": name,
         "storage": storage,
@@ -378,7 +440,9 @@ def build_manifest(*, source: str, extractor: str, extractor_version: str,
         "extractor": extractor,
         "extractor_version": extractor_version,
         "scope": scope,
-        "entities": sorted(({**e, "order": asdict(orders[str(e["entity"])])} for e in entities),
+        "entities": sorted(({**e, "order": asdict(orders[str(e["entity"])]),
+                             **({"filings": asdict(filings[str(e["entity"])])}
+                                if filings is not None else {})} for e in entities),
                            key=lambda e: str(e["entity"])),
         "files": [asdict(f) for f in ordered],
         "totals": {
@@ -388,6 +452,9 @@ def build_manifest(*, source: str, extractor: str, extractor_version: str,
             "bytes": sum(f.bytes for f in ordered),
             "order_files": len(orders),
             "order_bytes": sum(o.bytes for o in orders.values()),
+            **({"filings_files": len(filings),
+                "filings_bytes": sum(o.bytes for o in filings.values())}
+               if filings is not None else {}),
         },
     }
     body["snapshot_id"] = snapshot_id_for(body)
@@ -429,9 +496,9 @@ def load_manifest(snapshot_id: str | None = None, *, source: str = "edgar",
     if manifest.get("manifest_version") != MANIFEST_VERSION:
         raise FactsStoreError(f"{path}: manifest_version {manifest.get('manifest_version')!r} "
                               f"is not {MANIFEST_VERSION}")
-    if manifest.get("schema_version") != SCHEMA_VERSION:
+    if manifest.get("schema_version") not in READABLE_SCHEMA_VERSIONS:
         raise FactsStoreError(f"{path}: schema_version {manifest.get('schema_version')!r} "
-                              f"is not {SCHEMA_VERSION}")
+                              f"is not one of {READABLE_SCHEMA_VERSIONS}")
     check_manifest_shape(manifest)
     return manifest
 
@@ -456,10 +523,14 @@ def check_manifest_shape(manifest: dict[str, Any]) -> None:
         if lack:
             raise FactsStoreError(f"manifest file entry {i} ({f.get('path', '<no path>')}) "
                                   f"lacks {lack}")
+    # schema v3 states every entity's filings (its acceptance times); v2 states none
+    filed = manifest.get("schema_version", SCHEMA_VERSION) >= 3
     for i, e in enumerate(manifest["entities"]):
-        lack = [k for k in _ENTITY_KEYS if k not in e]
+        lack = [k for k in (*_ENTITY_KEYS, *(("filings",) if filed else ())) if k not in e]
         if not lack and isinstance(e["order"], dict):
             lack = [f"order.{k}" for k in _ORDER_KEYS if k not in e["order"]]
+        if not lack and filed and isinstance(e["filings"], dict):
+            lack = [f"filings.{k}" for k in _ORDER_KEYS if k not in e["filings"]]
         if lack:
             raise FactsStoreError(f"manifest entity entry {i} ({e.get('entity', '<no entity>')}) "
                                   f"lacks {lack}")
@@ -502,16 +573,21 @@ def verify_manifest(manifest: dict[str, Any], root: Path, *, check_objects: bool
     problems: list[str] = []
     if snapshot_id_for(manifest) != manifest.get("snapshot_id"):
         problems.append(f"snapshot_id {manifest.get('snapshot_id')} does not recompute")
-    want_schema = hashlib.sha256(contract_text().encode("utf-8")).hexdigest()
+    version = int(manifest["schema_version"])
+    want_schema = hashlib.sha256(contract_text(version).encode("utf-8")).hexdigest()
     if manifest.get("schema_sha256") != want_schema:
-        problems.append("schema_sha256 is not the committed contract's")
+        problems.append(f"schema_sha256 is not the schema v{version} contract's")
+    filed = version >= 3
     files = manifest["files"]
     entities = manifest["entities"]
     totals = manifest.get("totals") or {}
     want_totals = {"entities": len(entities), "files": len(files),
                    "rows": sum(f["rows"] for f in files), "bytes": sum(f["bytes"] for f in files),
                    "order_files": len(entities),
-                   "order_bytes": sum(e["order"]["bytes"] for e in entities)}
+                   "order_bytes": sum(e["order"]["bytes"] for e in entities),
+                   **({"filings_files": len(entities),
+                       "filings_bytes": sum(e["filings"]["bytes"] for e in entities)}
+                      if filed else {})}
     if totals != want_totals or len({f["entity"] for f in files}) != len(entities):
         problems.append(f"totals {totals} do not add up over {len(files)} files and "
                         f"{len(entities)} entities ({want_totals})")
@@ -539,6 +615,11 @@ def verify_manifest(manifest: dict[str, Any], root: Path, *, check_objects: bool
         if not _SHA.match(str(o["content_id"])) or not _SHA.match(str(o["sha256"])) \
                 or o["path"] != order_path(manifest["source"], e["entity"], o["content_id"]):
             problems.append(f"{o['path']}: not the content-addressed name of its entry")
+        if filed:
+            g = e["filings"]
+            if not _SHA.match(str(g["content_id"])) or not _SHA.match(str(g["sha256"])) \
+                    or g["path"] != filings_path(manifest["source"], e["entity"], g["content_id"]):
+                problems.append(f"{g['path']}: not the content-addressed name of its entry")
     if not check_objects:
         return problems
     schema, oschema = arrow_schema(), order_arrow_schema()
@@ -548,7 +629,7 @@ def verify_manifest(manifest: dict[str, Any], root: Path, *, check_objects: bool
         problems.extend(got)
         if not got:
             readable.add(f["path"])
-            if check_content and content_id(_read_rows(root / f["path"])) != f["content_id"]:
+            if check_content and not rows_match_name(_read_rows(root / f["path"]), f):
                 problems.append(f"{f['path']}: its rows do not hash to its name")
     for e in entities:
         o = e["order"]
@@ -556,11 +637,24 @@ def verify_manifest(manifest: dict[str, Any], root: Path, *, check_objects: bool
         problems.extend(got)
         if got or not check_content:
             continue
-        order = [(r["source_position"], r["object"], r["row"])
-                 for r in _read_rows(root / o["path"])]
-        if order_content_id(order) != o["content_id"]:
+        orows = _read_rows(root / o["path"])
+        order = [(r["source_position"], r["object"], r["row"]) for r in orows]
+        if not rows_match_name(orows, o, "order"):
             problems.append(f"{o['path']}: its rows do not hash to its name")
         problems.extend(_check_order(e["entity"], order, by_entity.get(e["entity"], [])))
+    if filed:
+        gschema = filing_arrow_schema()
+        for e in entities:
+            g = e["filings"]
+            got = _check_object(root / g["path"], g, gschema)
+            problems.extend(got)
+            if got or not check_content:
+                continue
+            rows = _read_rows(root / g["path"])
+            if not rows_match_name(rows, g, "filings"):
+                problems.append(f"{g['path']}: its rows do not hash to its name")
+            if any(r["entity"] != e["entity"] for r in rows):
+                problems.append(f"{g['path']}: holds another entity's filings")
     return problems
 
 

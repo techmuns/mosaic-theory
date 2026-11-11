@@ -13,7 +13,7 @@ from __future__ import annotations
 import copy
 import json
 import shutil
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -156,8 +156,10 @@ def test_the_replay_reads_the_same_inputs_from_the_store(screen: tuple[Path, Pat
 class _LateStore(FactStore):
     """A store that reads one day late: the off-by-one the filing-eve cut exists to see."""
 
-    def companyfacts_as_of(self, entity: int | str, as_of: date) -> dict[str, Any]:
-        return super().companyfacts_as_of(entity, as_of + timedelta(days=1))
+    def companyfacts_as_of(self, entity: int | str, as_of: date | datetime,
+                           **kw: Any) -> dict[str, Any]:
+        assert isinstance(as_of, date)
+        return super().companyfacts_as_of(entity, as_of + timedelta(days=1), **kw)
 
 
 def test_the_replay_sees_a_store_reading_one_day_late(screen: tuple[Path, Path]) -> None:
@@ -177,8 +179,9 @@ def test_the_replay_sees_a_store_reading_one_day_late(screen: tuple[Path, Path])
 class _NoCoverStore(FactStore):
     """A store that loses a namespace: the cover share counts (dei) the share change reads."""
 
-    def companyfacts_as_of(self, entity: int | str, as_of: date) -> dict[str, Any]:
-        blob = super().companyfacts_as_of(entity, as_of)
+    def companyfacts_as_of(self, entity: int | str, as_of: date | datetime,
+                           **kw: Any) -> dict[str, Any]:
+        blob = super().companyfacts_as_of(entity, as_of, **kw)
         return {**blob, "facts": {k: v for k, v in blob["facts"].items() if k != "dei"}}
 
 
