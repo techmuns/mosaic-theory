@@ -27,13 +27,16 @@ import pathlib
 import re
 import subprocess
 from typing import Any
+from unittest import mock
 
 import pytest
 
+from tests.fixtures.ciq_synthetic import generate as gen
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier import synthesis as syn
-from vinci.dossier.ciq import CiqBundle, CiqFormat, CiqWorkbook
+from vinci.dossier.ciq import CiqBundle, CiqFormat, CiqWorkbook, clean_num, read_sheets
 from vinci.dossier.schemas import OperatingDriversExtract
+from vinci.edgar import filing_sections as fsec
 from vinci.edgar import release_parse as rp_release
 from vinci.evals import replay as rp
 from vinci.evals.capture_child import pre_synthesis_mech
@@ -74,6 +77,68 @@ def test_the_consensus_paths_net_move_keeps_its_digit() -> None:
     assert cs._net_change(100.0, 100.3) == "net +0.3%"
     assert cs._net_change(100.0, 99.6) == "net -0.4%"
     assert cs._net_change(100.0, 124.0) == "net +24%"
+
+
+# (review round 2) the growth cells, end to end through the summaries that print them. The lint
+# above only counts the format; a cell rewritten as `f"{round(x):+d}%"` passed the whole suite.
+
+LTM = json.loads((ROOT / "tests" / "fixtures" / "ciq_ltm_quarters.json").read_text())
+
+
+def _synthetic() -> CiqBundle:
+    """The committed synthetic CIQ bundle, read through the real decode path."""
+    b = CiqBundle.from_files(gen.TICKER, sorted([*(gen.HERE / gen.TICKER).iterdir(),
+                                                  gen.HERE / gen.ESTIMATES_XLS]))
+    for w in b.workbooks:
+        if w.fmt in {CiqFormat.BIFF_XLS, CiqFormat.OOXML} and w.path not in b._cache:
+            b._cache[w.path] = read_sheets(w.path, w.fmt)
+    return b
+
+
+def _revenue(b: CiqBundle, freq: str) -> list[Any]:
+    w = b.workbook("financials", freq=freq)
+    assert w is not None
+    rows = b._cache[w.path]["Income Statement"]
+    ri = cs._find_row(rows, "Total Revenue")
+    assert ri is not None
+    return rows[ri]
+
+
+def _cells(table: Any, label: str) -> list[str]:
+    return list(next(r.cells for r in table.rows if r.label == label))
+
+
+def test_an_annual_growth_under_half_a_percent_keeps_its_digit() -> None:
+    """FAILED at main ("+0%"): the synthetic bundle's FY25 revenue set 0.3% above FY24's."""
+    b = _synthetic()
+    rev = _revenue(b, "annual")
+    rev[4] = rev[3] * 1.003
+    t = cs.financial_summary_annual(b, as_of="2026-11-10").value
+    assert t is not None and t.columns[3] == "FY25"
+    assert _cells(t, "Revenue growth")[3] == "+0.3%"
+
+
+def test_a_quarterly_yoy_under_half_a_percent_keeps_its_digit() -> None:
+    """FAILED at main ("-0%"): Q1-26 revenue set 0.05% below Q1-25's; SMPL's real Q1 FY27 YoY is
+    the same shape ("-0.05%" in the impact report)."""
+    b = _synthetic()
+    rev = _revenue(b, "quarterly")
+    rev[5] = rev[1] * 0.9995
+    t = cs.financial_summary_quarterly(b).value
+    assert t is not None and t.columns[4] == "Q1-26"
+    assert _cells(t, "Revenue YoY")[4] == "-0.05%"
+
+
+def test_cnxcs_real_quarter_on_quarter_change_keeps_its_digit() -> None:
+    """FAILED at main ("-0%"): CNXC's Q3-26 revenue against Q2-26, in the frozen rows of its real
+    export (`tests/fixtures/ciq_ltm_quarters.json`)."""
+    rows = copy.deepcopy(LTM["names"]["CNXC"]["sheets"]["financials|quarterly|Income Statement"])
+    path = pathlib.Path("/frozen/CNXC-quarterly.xls")
+    wb = CiqWorkbook(kind="financials", path=path, fmt=CiqFormat.BIFF_XLS, freq="quarterly")
+    b = CiqBundle(ticker="CNXC", workbooks=(wb,), _cache={path: {"Income Statement": rows}})
+    t = cs.financial_summary_quarterly(b).value
+    assert t is not None and t.columns[-1] == "Q3-26"
+    assert _cells(t, "Revenue QoQ")[-1] == "-0.4%"
 
 
 # --- 2. CIQ's 0.0 beside an actual and an estimate that differ ---------------------------------
@@ -133,9 +198,57 @@ def test_a_true_zero_stays_a_zero_and_needs_no_note() -> None:
               and str(rows[i][0]).strip().startswith("EPS (GAAP)"))
     act, est = (next(i for i in range(ri, ri + 5) if rows[i]
                      and str(rows[i][0]).strip() == lab) for lab in ("Actual", "Estimate"))
-    col = next(j for j in range(1, len(rows[hdr])) if cs.clean_num(rows[hdr][j]) == 2014)
+    col = next(j for j in range(1, len(rows[hdr])) if clean_num(rows[hdr][j]) == 2014)
     rows[est][col] = rows[act][col]
     assert _eps("PARR", rows)["FY2014"] == "0%"
+
+
+@pytest.mark.parametrize("missing", ["Actual", "Estimate"])
+def test_a_zero_with_one_side_missing_stays_ciqs_zero(missing: str) -> None:
+    """(review round 2) The other negative half: where CIQ prints no Actual, or no Estimate,
+    beside a 0.0, nothing contradicts it, so the page prints what CIQ states, "0%", not "n/a".
+    PARR's FY2014 (0.0 beside −1.44 and −1.87) with one of its two rows removed."""
+    rows = copy.deepcopy(FIX["names"]["PARR"]["rows"])
+    for i, r in enumerate(rows):
+        if r and str(r[0]).strip() == missing:
+            rows[i] = []
+    eps = _eps("PARR", rows)
+    assert "n/a" not in eps.values() and eps["FY2014"] == "0%"
+
+
+# (review round 2) THE FIXTURE HOLDS ONLY WHAT THE READER READS (CLAUDE.md: "a sheet's header row
+# and only the cells its pins read"). The first cut kept every listing's Actual/Estimate rows,
+# Company Level's and the Calendar Years', 46 rows of which `surprise_history` reads 12.
+
+def _basis_read(name: str) -> tuple[list[list[Any]], list[int]]:
+    """The fixture's rows and every surprise row whose basis `surprise_history` reads in them."""
+    seen: list[int] = []
+    real = cs._surprise_basis
+
+    def spy(rows: Any, ri: int) -> tuple[dict[int, float], dict[int, float]]:
+        seen.append(ri)
+        return real(rows, ri)
+
+    with mock.patch.object(cs, "_surprise_basis", spy):
+        cs.surprise_history(_bundle(name))
+    return FIX["names"][name]["rows"], seen
+
+
+@pytest.mark.parametrize("name", ["PARR", "GOOGL", "NFLX"])
+def test_the_fixture_holds_only_the_actual_and_estimate_cells_the_reader_reads(name: str) -> None:
+    """FAILED at the PR's first two heads: PARR kept 18 such rows, GOOGL 20, NFLX 8."""
+    rows, read = _basis_read(name)
+    assert read, name
+    want: dict[int, set[int]] = {}
+    for ri in read:
+        cols = {j for j in range(1, len(rows[ri])) if clean_num(rows[ri][j]) is not None}
+        for _label, i in cs._surprise_basis_rows(rows, ri):
+            want.setdefault(i, set()).update(cols)
+    held = {i for i, r in enumerate(rows) if r and str(r[0]).strip() in ("Actual", "Estimate")}
+    assert held == set(want), (name, sorted(held - set(want)))
+    for i, cols in want.items():
+        filled = {j for j in range(1, len(rows[i])) if rows[i][j] not in (None, "")}
+        assert filled <= cols, (name, i, sorted(filled - cols))
 
 
 def test_the_na_is_explained_once_inside_the_lines_trailing_note() -> None:
@@ -214,6 +327,23 @@ def test_a_kpi_level_is_printed_without_a_sign() -> None:
     up = kpi[0].model_copy(update={"value_num": 6.2, "unit": "%"})
     assert "[structured: +6.2%]" in syn._operating_drivers_digest(
         OperatingDriversExtract(rows=[up]))
+
+
+@pytest.mark.parametrize("sentence", [
+    "Selling, general and administrative expenses decreased $0.1 million, or 0.0%, primarily due "
+    "to lower freight costs.",
+    "Cost of sales increased $0.2 million, or 0.0%, primarily due to higher volume.",
+])
+def test_a_zero_structured_change_prints_no_sign(sentence: str) -> None:
+    """(review round 2) FAILED at `44fb070d`: `filing_sections` stores "decreased …, or 0.0%" as
+    -0.0 and "increased …, or 0.0%" as 0.0, and the digest printed "[structured: -0%]" and
+    "[structured: +0%]", the output this fix removes. Latent: none of the 63 committed structured
+    rows is zero, and no "or 0.0%" change sentence is in the local SEC cache."""
+    rows = fsec.results_attribution(sentence, source_ref="10-Q X")
+    assert len(rows) == 1 and rows[0].value_num == 0
+    digest = syn._operating_drivers_digest(OperatingDriversExtract(rows=rows))
+    assert "[structured: 0%]" in digest
+    assert "[structured: +0" not in digest and "[structured: -0" not in digest
 
 
 def test_a_single_value_guide_prints_its_value_never_none() -> None:

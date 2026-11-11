@@ -48,12 +48,26 @@ can only misread it; fix 2 is the input half of the 644-claim diagnosis's SIGN, 
 classes. The output half (the claim trace) is A's driver-facts stream.
 
 **HOW VERIFIED.** All at $0.
-- **Fail first:** the 19 nodes of `tests/test_fix2_digest_figures.py` fail with main's
-  `ciq_sheets.py` and `synthesis.py` in this tree, and pass here.
+- **Fail first:** the tests of `tests/test_fix2_digest_figures.py` fail with main's
+  `ciq_sheets.py` and `synthesis.py`, and pass here (each review round re-ran it, in a throwaway
+  worktree).
+- **The growth cells, end to end** (review round 2): `financial_summary_annual` and
+  `financial_summary_quarterly` print a sub-half-percent change to its digit — CNXC's real Q3-26
+  QoQ ("-0.4%", frozen in `tests/fixtures/ciq_ltm_quarters.json`) and the committed synthetic
+  bundle with one revenue cell set 0.3% (annual) or −0.05% (YoY) off its base. Each pin fails with
+  main's code, and each kills the mutant that rewrites its cell as `f"{round(x):+d}%"`, which the
+  format lint alone let through.
 - **The CIQ rows themselves:** the surprise fixture (`tests/fixtures/ciq_surprise_listings.json`)
-  now keeps each surprise row's Actual and Estimate rows, regenerated from the same exports (sha256
-  checked against the fixture's `_about` before the run; every previously kept row unchanged). The
-  pins read PARR's, NFLX's and GOOGL's real rows through the real `CiqBundle`.
+  keeps the Actual and Estimate rows `surprise_history` itself reads, regenerated from the same
+  exports (sha256 checked against the fixture's `_about` before each run; every other row equal to
+  the fixture before this PR). The builder runs the reader and cuts by its own walk
+  (`ciq_sheets._surprise_basis_rows`), so the selected listing's fiscal-year block is all it keeps:
+  4 rows per name, and in each only the columns where the surprise row states a number. Review
+  round 2 cut the first version, which kept 46 such rows (PARR 18, GOOGL 20, NFLX 8) of which 12
+  are read; non-empty cells now 571 (PARR), 783 (GOOGL) and 395 (NFLX), against 509, 691 and 299
+  before this PR and 1,265, 1,841 and 795 at the first cut.
+  `::test_the_fixture_holds_only_the_actual_and_estimate_cells_the_reader_reads` holds the rule.
+  The pins read PARR's, NFLX's and GOOGL's real rows through the real `CiqBundle`.
 - **The $0 panel compare** (`python -m vinci.evals compare --base origin/main --cand <branch>`,
   after merging main at `91817458`): all six panel requests move, in the USER message only — the
   primary-source digest (BURL +35, CNXC +66, LLY +3, SMPL +60 characters) and the drivers digest
@@ -75,7 +89,13 @@ classes. The output half (the claim trace) is A's driver-facts stream.
   in `docs/records/2026-11-11-fix2-bookkeeping-batch-3.md` (item 2): FACTS-only request moves need
   no paid panel by default ("Not needed; #953 is the test (Recommended)"), with #953's
   retrospective run as its falsifier. Stated for the operator to overrule: the harness names these
-  lines the `primary_source` and `operating_drivers` sections, not `facts`.
+  lines the `primary_source` and `operating_drivers` sections, not `facts`. Two more facts for that
+  call (review round 2): `vinci/dossier/synthesis.py` is in `compare.SCORER_FILES`, so the scorer
+  fingerprint changes and `score_run` refuses to score a registration made before this merges at
+  any other code; and M-ECHO's instruction set (`metrics.EchoIndex.of`, every USER section but the
+  facts and transcripts) moves on identical draws — on SMPL's frozen request from 3,223 to 3,337
+  shingles (+292 / −178), so a no-worsening check would see M-ECHO move without any draw
+  changing.
 - **The committed pages wait.** The three committed-page equality pins (PARR, GOOGL, NFLX in
   `tests/test_surprise_listing_block.py`) are strict expected failures until each page's $0 re-read
   (`vinci dossier ciq-reread --field surprise_history`) in A's combined pass; the growth cells and
@@ -90,6 +110,22 @@ classes. The output half (the claim trace) is A's driver-facts stream.
   March 31, 2025, the Company produced 2,212 vehicles" carries period "2025", and the digest now
   prints it: a quarter's count labelled with its year. It is the extractor's field
   (`vinci/edgar/release_parse.py`), outside this fix; no committed page carries a KPI row.
+
+**ACCEPTED IN REVIEW ROUND 2 (stated, not fixed).**
+- **The annual summary's ESTIMATE-column growth cell is held by the format lint only.** Neither
+  committed fixture states a forward estimate (the synthetic bundle and the frozen LTM rows have
+  no FY-estimate column), so no end-to-end pin reaches it; its mutant survives the suite.
+- **A 0.0 with its Actual or its Estimate missing stays "0%".** Nothing contradicts CIQ there, so
+  the page prints what CIQ states; "n/a" would withhold a stated value on no evidence. Pinned both
+  ways (`::test_a_zero_with_one_side_missing_stays_ciqs_zero`); no live cell has this shape.
+- **`_range(None, x)` prints "None–x"** — unreachable: every guide constructor sets a number where
+  `qualitative` is False (the level path compares `low > high`), and of the 124 committed guides
+  `low` is None only on the 3 qualitative ones, which the digest prints before `_range`.
+- **`ciq_sheets` line 1205's `{:+.1%}`** (a quarter's YoY in the LTM note) can print "+0.0%"; not
+  among the five, found not fixed.
+- **"(period not stated)" beside a metric that names its quarter** ("Quest household penetration
+  Q4"): the digest prints the row's `period` field as stored, and reading a period out of the
+  metric's label would be a parse of a rendered string.
 
 **NOT DONE.**
 - **A reconciliation's unit**: `ReconciliationValue` has no unit field (its comment: "$M (or

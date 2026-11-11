@@ -1404,7 +1404,10 @@ def _driver_structured(r: OperatingDriver) -> str:
     if r.value_num is None:
         return ""
     if r.unit == "%":
-        return f" [structured: {r.value_num:+.15g}%]"
+        # a zero is "0%" with no sign, -0.0 included ("decreased …, or 0.0%" is stored -0.0):
+        # "+0%" and "-0%" are the output this fix removes (review round 2)
+        signed = "0" if r.value_num == 0 else f"{r.value_num:+.15g}"
+        return f" [structured: {signed}%]"
     unit = r.unit or ""
     unit = unit if unit in ("", "x") else f" {unit}"
     return f" [structured: {r.value_num:.15g}{unit}]"

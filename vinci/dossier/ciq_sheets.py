@@ -2372,19 +2372,28 @@ NO_SURPRISE = "n/a"
 NO_SURPRISE_NOTE = "n/a: CIQ states 0% beside an actual and an estimate that differ"
 
 
-def _surprise_basis(rows: Rows, ri: int) -> tuple[dict[int, float], dict[int, float]]:
-    """The ``Actual`` and ``Estimate`` rows CIQ prints under the surprise row ``ri`` (within the
-    four rows after it, past its ``Difference`` row, before the next labelled row), by column — or
-    empty where it prints none."""
-    act: dict[int, float] = {}
-    est: dict[int, float] = {}
+def _surprise_basis_rows(rows: Rows, ri: int) -> list[tuple[str, int]]:
+    """Where CIQ prints the ``Actual`` and ``Estimate`` rows under the surprise row ``ri``: within
+    the four rows after it, past its ``Difference`` row, before the next labelled row. Each as
+    (label, row index), in sheet order; empty where it prints none. The surprise fixture's builder
+    cuts by it (`scripts/build_surprise_listings_fixture.py`), so the two never drift."""
+    out: list[tuple[str, int]] = []
     for i in range(ri + 1, min(ri + 5, len(rows))):
         label = str(rows[i][0]).strip() if rows[i] and rows[i][0] is not None else ""
-        target = act if label == "Actual" else est if label == "Estimate" else None
-        if target is None:
-            if label and label != "Difference":
-                break
-            continue
+        if label in ("Actual", "Estimate"):
+            out.append((label, i))
+        elif label and label != "Difference":
+            break
+    return out
+
+
+def _surprise_basis(rows: Rows, ri: int) -> tuple[dict[int, float], dict[int, float]]:
+    """The ``Actual`` and ``Estimate`` rows CIQ prints under the surprise row ``ri``
+    (`_surprise_basis_rows`), by column — or empty where it prints none."""
+    act: dict[int, float] = {}
+    est: dict[int, float] = {}
+    for label, i in _surprise_basis_rows(rows, ri):
+        target = act if label == "Actual" else est
         for j in range(1, len(rows[i])):
             if (n := clean_num(rows[i][j])) is not None:
                 target[j] = n
