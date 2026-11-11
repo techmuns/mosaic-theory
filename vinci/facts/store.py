@@ -620,6 +620,23 @@ def verify_manifest(manifest: dict[str, Any], root: Path, *, check_objects: bool
             if not _SHA.match(str(g["content_id"])) or not _SHA.match(str(g["sha256"])) \
                     or g["path"] != filings_path(manifest["source"], e["entity"], g["content_id"]):
                 problems.append(f"{g['path']}: not the content-addressed name of its entry")
+    # THE ORIGINALS ARE NAMED BY THEIR BYTES, and each entity's is the response it read (RFL-D3);
+    # their bytes are read back by `vinci.facts.originals.verify_originals`, from their own root
+    from vinci.facts.originals import check_entry, manifest_originals
+    for org in manifest_originals(manifest):
+        problems.extend(check_entry(org))
+    for e in entities:
+        if (org := e.get("original")) is not None and (
+                org.get("response_sha256"), org.get("url"), org.get("fetched_at")) != (
+                e.get("response_sha256"), e.get("source_url"), e.get("fetched_at")):
+            problems.append(f"entity {e['entity']}: its original is not the response it read")
+        # and each submissions document's original is the document it read
+        for d in (e.get("acceptance") or {}).get("documents", []):
+            if (org := d.get("original")) is not None and (
+                    org.get("response_sha256"), org.get("url"), org.get("fetched_at")) != (
+                    d.get("response_sha256"), d.get("url"), d.get("fetched_at")):
+                problems.append(f"entity {e['entity']}: the original of {d.get('url')} is not "
+                                "the document it read")
     if not check_objects:
         return problems
     schema, oschema = arrow_schema(), order_arrow_schema()

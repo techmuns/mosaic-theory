@@ -404,6 +404,7 @@ class FactStore:
             raise FactsStoreError(f"snapshot {self.snapshot_id}: the manifest's content does not "
                                   "recompute to its id — it was edited after it was sealed")
         self.storage: str = self.manifest["storage"]
+        self._facts_base = facts_base          # where `original()` finds the local originals root
         self._remote: R2Objects | None = None
         self._owns_remote = False
         if is_r2(requested_location(root, storage=self.storage)):
@@ -447,6 +448,30 @@ class FactStore:
     @property
     def entities(self) -> tuple[str, ...]:
         return tuple(sorted(self._files))
+
+    def original(self, entity: int | str, *, originals: Path | None = None) -> dict[str, Any]:
+        """The response the snapshot ingested for ``entity``, rebuilt from its ORIGINAL (RFL-D3):
+        from R2 when the store reads ``r2://``, else from ``originals`` (default: the local
+        originals root beside this store's ``facts_base``). Its bytes and its text are checked
+        against both hashes the manifest records; a snapshot that kept none, or an original that
+        cannot be read or parsed, raises :class:`FactsStoreError`."""
+        from vinci.facts.originals import originals_root, parse, read_original
+        ent = self._held(entity)
+        entry = next((e.get("original") for e in self.manifest["entities"]
+                      if e["entity"] == ent), None)
+        if entry is None:
+            raise FactsStoreError(f"{ent}: snapshot {self.snapshot_id} kept no original of the "
+                                  "response it read")
+        if self._remote is not None:
+            self._remote.fetch(entry)                 # raises on a missing key or other bytes
+            root = self._remote.cache
+        else:
+            root = originals if originals is not None else originals_root(base=self._facts_base)
+        try:
+            return parse(read_original(entry, root))
+        except (OSError, ValueError, EOFError) as exc:   # a torn gzip, a bad encoding, bad JSON
+            raise FactsStoreError(f"{entry.get('path')}: the original is unreadable "
+                                  f"({type(exc).__name__})") from exc
 
     def fetched_at(self, entity: int | str) -> datetime | None:
         """When the snapshot's copy of ``entity``'s facts was fetched (UTC), None if not stated."""

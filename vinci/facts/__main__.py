@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections.abc import Callable
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -38,6 +39,7 @@ from vinci.facts.edgar_ingest import (
     EXTRACTOR,
     EXTRACTOR_VERSION,
     SOURCE,
+    CachedResponse,
     IngestShapeError,
     NotInCacheError,
     acceptance_rows,
@@ -45,6 +47,13 @@ from vinci.facts.edgar_ingest import (
     rows_from_companyfacts,
     unread_reason,
 )
+from vinci.facts.originals import (
+    entry_dict,
+    manifest_originals,
+    originals_root,
+    verify_originals,
+)
+from vinci.facts.originals import keep as keep_original
 from vinci.facts.reader import FactStore, manifest_summary
 from vinci.facts.scope import (
     RULE,
@@ -101,6 +110,9 @@ def cmd_ingest(a: argparse.Namespace) -> int:
             by_cik.setdefault(n.cik, []).append(n.ticker)
     storage = STORAGE[name]
     root = store_root(a.store, storage=storage)
+    # THE PAGES' ORIGINALS ONLY (operator 2026-11-11: "Keep the pages' originals"; not the
+    # screen's universe of ~1,700 companies)
+    oroot = originals_root(a.originals) if name == "pages" else None
     # EVERY RESPONSE IS CHECKED BEFORE ANY OBJECT IS WRITTEN (TeamNostra fix request 2, RFL-D9).
     # One row of an unknown shape stopped the ingest after it had written earlier companies'
     # objects, which no manifest then named (6 left on disk, no manifest, in the audit's run).
@@ -134,7 +146,10 @@ def cmd_ingest(a: argparse.Namespace) -> int:
             unread.extend({"ticker": t, "cik": cik, "reason": why} for t in tickers)
             print(f"UNREAD {'/'.join(tickers)} {cik}: {why}")
             continue
-        accepted = acceptance_rows(cik, got.rows, a.cache_dir)
+        # EVERY RESPONSE READ IS KEPT, write-once by its sha256 (RFL-D3), so each fact rebuilds
+        kept = keep_original(resp, oroot) if oroot is not None else None
+        accepted = acceptance_rows(cik, got.rows, a.cache_dir,
+                                   keep_original=_keeper(oroot))
         # ONE ENTITY AT A TIME: the screen's universe is ~28M rows, never all held at once
         got_files, orders[cik] = write_entity(got.rows, root)
         filings[cik] = write_filings(SOURCE, cik, accepted.rows, root)
@@ -149,6 +164,7 @@ def cmd_ingest(a: argparse.Namespace) -> int:
             **({"rows_without_filed_named": got.rows_without_filed_named}
                if got.rows_without_filed_named else {}),
             "acceptance": accepted.summary(),
+            **({"original": entry_dict(kept)} if kept is not None else {}),
         })
         print(f"read {'/'.join(tickers):6} {cik} fetched {resp.fetched_at:%Y-%m-%d} "
               f"{got.rows_in_response:>7,} rows, {got.exact_duplicates_dropped} exact duplicates, "
@@ -168,6 +184,16 @@ def cmd_ingest(a: argparse.Namespace) -> int:
     path = write_manifest(manifest)
     print(f"wrote {path} ({storage}: objects under {root})\n  {manifest_summary(manifest)}")
     return 0
+
+
+def _keeper(root: Path | None) -> Callable[[CachedResponse], dict[str, Any]] | None:
+    """What keeps each submissions document an ingest reads, under ``root`` (None keeps none)."""
+    if root is None:
+        return None
+
+    def keep_it(resp: CachedResponse) -> dict[str, Any]:
+        return entry_dict(keep_original(resp, root))
+    return keep_it
 
 
 def _shape_problems(by_cik: dict[str, list[str]], cache_dir: Path) -> list[str]:
@@ -208,7 +234,9 @@ def cmd_parity(a: argparse.Namespace) -> int:
                 if n.page is None:
                     continue
                 doc = json.loads(n.page.read_text())
-                results.append(compare_page(n.ticker, doc, store, a.cache_dir, at=at, eve=eve))
+                results.append(compare_page(
+                    n.ticker, doc, store, a.cache_dir, at=at, eve=eve,
+                    originals=Path(a.originals) if a.originals is not None else None))
     head = ("page", "cut", "fetched", "past fetch", "rows in resp", "filed after cut",
             "dups held once", "rows compared", "store rows", "row diffs", "order diffs",
             "keys compared", "key diffs", "keys restated", "ambiguous keys", "get() sample",
@@ -279,10 +307,20 @@ def cmd_verify(a: argparse.Namespace) -> int:
         fetch_problems = rep.problems
         _shown(fetch_problems)
         root = remote.cache
+        oroot = root
     else:
         root = store_root(a.store, storage=manifest["storage"])
+        oroot = originals_root(a.originals)
     problems = verify_manifest(manifest, root, check_content=not a.no_content)
     _shown(problems)
+    originals = list(manifest_originals(manifest))
+    oproblems = verify_originals(manifest, oroot)
+    # a malformed entry is one of `oproblems`, never a crash of the count
+    stored = sum(o["bytes"] for o in originals if isinstance(o.get("bytes"), int))
+    print(f"  originals: {len(originals):,} recorded ({stored:,} bytes stored), read back from "
+          f"{oroot} and checked against both hashes; {len(oproblems)} problems")
+    _shown(oproblems)
+    problems += oproblems
     print(("verified: every object present, its bytes as sealed, rows as stated"
            + ("" if a.no_content else ", its rows hashing to its name, every order complete"))
           if not problems else f"{len(problems)} problems")
@@ -310,7 +348,8 @@ def cmd_upload(a: argparse.Namespace) -> int:
             print(f"HeadBucket HTTP {status}: the bucket cannot be read with these keys; "
                   "nothing uploaded")
             return 1
-        rep = upload_snapshot(manifest, root, client, workers=a.workers)
+        rep = upload_snapshot(manifest, root, client, workers=a.workers,
+                              originals_root=originals_root(a.originals))
         print(f"  objects the manifest names: {rep.objects:,} ({rep.bytes:,} bytes)\n"
               f"  written: {rep.written:,} ({rep.written_bytes:,} bytes); already in the bucket "
               f"with the same bytes: {rep.present:,} ({rep.present_bytes:,} bytes); not "
@@ -358,6 +397,10 @@ def main(argv: list[str] | None = None) -> int:
                             + ("" if name in ("ingest", "upload") else "; r2:// reads from R2"))
         if name != "ingest":
             p.add_argument("--snapshot", default=None, help="snapshot id (default: current.json)")
+        if name in ("ingest", "parity", "verify", "upload"):
+            p.add_argument("--originals", default=None,
+                           help="where originals are kept locally (default: $VINCI_FACTS_STORE "
+                                "or the git-ignored data/facts/local)")
         if name in ("verify", "upload"):
             p.add_argument("--name", default=DEFAULT_NAME, choices=sorted(STORAGE),
                            help="which current snapshot (default: pages)")

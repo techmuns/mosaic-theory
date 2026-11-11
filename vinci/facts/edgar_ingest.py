@@ -35,7 +35,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -170,7 +170,8 @@ def _listed(page: Any, *, where: str) -> list[tuple[str, str, str | None, str]]:
     return list(zip(*(page[c] for c in cols), strict=True))
 
 
-def acceptance_rows(entity: str, data_rows: list[dict[str, Any]], cache_dir: Path
+def acceptance_rows(entity: str, data_rows: list[dict[str, Any]], cache_dir: Path, *,
+                    keep_original: Callable[[CachedResponse], dict[str, Any]] | None = None
                     ) -> Acceptance:
     """Each accession ``data_rows`` carry, with SEC's acceptance time from the CACHED submissions
     documents. Never fetched: a document not cached leaves its filings with no time, stated."""
@@ -197,7 +198,9 @@ def acceptance_rows(entity: str, data_rows: list[dict[str, Any]], cache_dir: Pat
         resp = read_cached(url, cache_dir)
         body = json.loads(resp.text)
         documents.append({"url": url, "fetched_at": resp.fetched_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                          "response_sha256": resp.sha256})
+                          "response_sha256": resp.sha256,
+                          # the document itself, kept write-once (RFL-D3), when the writer keeps it
+                          **({"original": keep_original(resp)} if keep_original else {})})
         return body
 
     main_url = submissions_url(entity)
