@@ -89,12 +89,23 @@ caches); AMZN's, GOOGL's, TECX's and WLK's were gone.
       was stale at 16 of the pages' own price dates (RFL-D1's case).
     - 531 were filed on the old copy's fetch day, 2026-10-27, and accepted after its fetch
       (10:08-10:09 UTC), by the new snapshot's acceptance times.
-    - **345 are one filing: V's 10-Q 0001403161-26-000104, filed 2026-07-29.** The copy the old
-      snapshot ingested (stated `fetched_at` 2026-10-27T10:09:07Z, its sha256 matching the
-      manifest, recovered from a local cache) carries no V filing after 2026-07-01. The rows
-      are explained: that copy lacked the filing. **Why it lacked a filing three months older
-      than its stated fetch is not determined**: whether SEC served it so, or the cache entry's
-      text predates its stamp.
+    - **345 are one filing: V's 10-Q 0001403161-26-000104, filed 2026-07-29 (accepted
+      2026-07-28T22:08:12Z).** Explained by a $0 probe of every local cache, with no fetch.
+      **SEC's companyfacts served V an unchanged, months-old body.**
+      - **The body.** The old snapshot ingested sha256 `df3caf7c5667…`. Its latest filing is
+        2026-04-29, V's highest own accession in it is `0001403161-26-000079`, and no row of
+        the 10-Q appears under any concept.
+      - **Three fetches served it.** Two local caches hold those exact bytes, stamped
+        2026-09-02T10:52:20Z and 2026-11-04T14:26:39Z; the old manifest records a third,
+        2026-10-27T10:09:07Z, on the ingest machine. Each stamp is written by `CachedHttp` at
+        its own fetch, and the stamps differ, so neither file is a copy of the other.
+      - **Since 2026-11-10 it is current.** Every copy fetched from 2026-11-10T04:42:34Z on (5
+        copies, sha256 `ac85fe9b07ad…`) carries the 10-Q, and its latest filing is 2026-11-05.
+      - **SEC's own filing list had it.** V's submissions document fetched 2026-11-04T14:13:09Z
+        already lists the 10-Q, 12 minutes before a companyfacts fetch that lacked it.
+      - **What this rules out.** The old ingest's stamp is not at fault: the stamp is the
+        response's own fetch, not the snapshot's date. The RFL-D1 staleness check (cut against
+        fetch time) cannot catch this either, because the copy was freshly fetched.
 
 **BOUNDARY.**
 - **Snapshots.** `edgar-4f3207f4da9fb71a` (committed at `bfd6a41a`) against
@@ -111,6 +122,9 @@ caches); AMZN's, GOOGL's, TECX's and WLK's were gone.
   6.4 MB. The screen's universe keeps no originals (operator: pages only).
 - **A local original lives outside git.** On a machine that did not ingest, it is read from R2,
   and without R2 the rebuild raises. That is loud, by design.
-- **V's missing 10-Q** is reported, not resolved. Falsifier: a fresh fetch of V's companyfacts
-  that, cut at 2026-10-27, lacks the 10-Q, which would mean SEC served the old response so.
+- **A companyfacts copy can lag SEC's own filings by months while freshly fetched** (V, at
+  least 2026-09-02 to 2026-11-04). Nothing in the fact layer checks a copy's newest filing
+  against the submissions document. A check would compare each company's newest companyfacts
+  filing with the newest 10-Q/10-K its submissions document lists; it is proposed, not built.
+  Whether V's committed page read the stale body is not checked here.
 - **Nothing reads the store yet** (STATE §5.0 row 44). No page, screen or synthesis request moves.
