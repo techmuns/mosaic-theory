@@ -24,7 +24,7 @@ from typing import Any, NamedTuple
 
 _OLE_MAGIC = b"\xd0\xcf\x11\xe0"
 _ZIP_MAGIC = b"PK\x03\x04"
-_MIN_RTF_WORDS = 50  # below this from a multi-KB file ⇒ striprtf hit an OLE-disguised doc
+_MIN_RTF_WORDS = 50  # below this from a multi-KB RTF ⇒ content striprtf missed, or an empty view
 
 #: CIQ's OWN WORDS FOR "NOTHING TO LIST" — the difference between a parser that failed and a view
 #: that is genuinely empty. A relationships export for a company with no disclosed counterparties is
@@ -96,20 +96,30 @@ def classify(path: Path) -> CiqFormat:
     return CiqFormat.UNKNOWN
 
 
-def read_text(path: Path, fmt: CiqFormat | None = None) -> str:
-    """Decode a text-bearing CIQ file to clean prose. Fail loud if a needed tool is absent."""
+def read_text(path: Path, fmt: CiqFormat | None = None, *, thin_ok: bool = False) -> str:
+    """Decode a text-bearing CIQ file to clean prose. Fail loud if a needed tool is absent.
+
+    ``thin_ok`` skips the thin-RTF guard, for a caller that names a thin view's shape itself
+    (``ciq_sheets.customer_roster``: a header-only, "No Data Available" or "Entitlement Needed"
+    view is a real RTF of tens of KB with a handful of words, so the guard refused every one of
+    them before the shape could be read — audit RBC-D5)."""
     fmt = fmt or classify(path)
     if fmt is CiqFormat.RTF_TEXT:
         from striprtf.striprtf import rtf_to_text
 
         raw_text = path.read_text(encoding="utf-8", errors="replace")
         text = rtf_to_text(raw_text)  # type: ignore[no-untyped-call]
-        if (path.stat().st_size > 4096 and len(text.split()) < _MIN_RTF_WORDS
+        if (not thin_ok and path.stat().st_size > 4096 and len(text.split()) < _MIN_RTF_WORDS
                 and not is_empty_view(text)):
+            # THE BYTES ARE RTF (`classify` sniffed them), so this does not say the file is an OLE
+            # Word doc (audit RBC-D5, 2026-11-10: a header-only view of 8,764 B read as one). It
+            # says what was seen: too few words, and no sentence saying the view is empty.
             raise CiqParseError(
                 f"{path.name}: striprtf yielded {len(text.split())} words from a "
-                f"{path.stat().st_size}B file — this is an OLE-disguised Word doc, not real RTF; "
-                "pre-convert with LibreOffice/Word (see ciq_extraction_notes.md)"
+                f"{path.stat().st_size}B file whose bytes are RTF, and none says the view is "
+                "empty — its content may be embedded where striprtf cannot read it (pre-convert "
+                "with LibreOffice/Word, see ciq_extraction_notes.md), or the export is empty "
+                "without saying so; re-export it"
             )
         return str(text)
     if fmt in (CiqFormat.MIME_DOC, CiqFormat.HTML):
@@ -146,10 +156,21 @@ def read_text(path: Path, fmt: CiqFormat | None = None) -> str:
                 "(ciq_extraction_notes.md: striprtf returns ~12 words of garbage)"
             )
         with tempfile.TemporaryDirectory() as td:
-            subprocess.run(  # noqa: S603 — fixed args, path from the local manual store
+            # A NON-ZERO EXIT IS A PARSE FAILURE, NOT A CRASH (audit RA-D11, 2026-11-10).
+            # `check=True` raised `CalledProcessError`, which no caller catches, so the
+            # skip-and-flag path (`transcript_for_synthesis` → `unparsed_transcript_flag`) never
+            # ran and the build died instead: LibreOffice refuses a second conversion while one
+            # runs, and the auditor saw it exit 1 in 2 of ~25 runs on unmodified transcripts.
+            done = subprocess.run(  # noqa: S603 — fixed args, path from the local manual store
                 [soffice, "--headless", "--convert-to", "txt", "--outdir", td, str(path)],
-                capture_output=True, check=True,
+                capture_output=True, check=False,
             )
+            if done.returncode != 0:
+                tail = (done.stderr or b"").decode("utf-8", errors="replace").strip()[-200:]
+                raise CiqParseError(
+                    f"{path.name}: LibreOffice exited {done.returncode} converting it"
+                    + (f" ({tail})" if tail else "")
+                    + " — another conversion may have been running; re-run alone")
             txt_path = Path(td) / f"{path.stem}.txt"
             if not txt_path.exists():
                 raise CiqParseError(f"{path.name}: LibreOffice conversion produced no .txt output")
@@ -212,8 +233,10 @@ def read_sheets(path: Path, fmt: CiqFormat | None = None) -> dict[str, list[list
 # explicit (workbook-kind, sheet) ADDRESS — never module→file by filename keyword, which silently
 # grabs the WRONG Multiples (the historical Financials one vs the forward Estimates one differ).
 
-# Filename → workbook KIND (the export type). Financials may appear twice (Annual + Quarterly),
-# disambiguated by a verbatim Period-Type read, not the filename.
+# The workbook KINDS (the export types) — the registry the assembler and the quality checks list.
+# A file's kind is decided by `workbook_kind`'s exact name rule (RA-D10), not by these keywords,
+# which say what each kind is. Financials may appear twice (Annual + Quarterly), disambiguated by
+# a verbatim Period-Type read, not the filename.
 _WORKBOOK_KEYWORDS: dict[str, tuple[str, ...]] = {
     "estimates": ("estimate", "consensus"),
     "financials": ("financial", "income", "balance", "cash flow", "cashflow"),
@@ -232,6 +255,47 @@ _WORKBOOK_KEYWORDS: dict[str, tuple[str, ...]] = {
     # exports were dropped without a word — the `charting` failure, a second time.
     "credit_health": ("credit health",),
 }
+#: Each kind's EXACT name rule (audits RA-D10 = A-D15 = RBC-D2, 2026-11-10), on the file's stem.
+#: CIQ names an export "<company> <exchange> <ticker> <kind>", so the kind is the stem's END — or,
+#: for the comps book, its START ("Company Comparable Analysis <company>"), and for a call the
+#: dated tail ("<company>, Q2 2026 Earnings Call, Jul 30, 2026"). The keywords above matched
+#: ANYWHERE in the name, so a company's own name chose the kind: "Synchrony Financial" made every
+#: file of its pack financials and refused it as "more than one export of a kind"; with only its
+#: Customers file, F27 read MISSING; "Customers Bancorp"'s Suppliers file was read as its Customers.
+#: Census of the 36 folders on disk (2026-11-10): every one of their 382 files matches its kind
+#: here exactly as it did by keyword. The comps rule is checked first: a comps book's stem ends in
+#: a company name, which may end in any word.
+_KIND_NAME_RULES: tuple[tuple[str, re.Pattern[str]], ...] = (
+    ("comps", re.compile(r"^company comparable analysis\b|(^|[\s_-])comps?$")),
+    ("transcript", re.compile(r"(earnings|conference) call(, [a-z]{3} \d{1,2}, \d{4})?$"
+                              r"|transcript$")),
+    ("financials", re.compile(r"(^|[\s_-])(financials(_(annual|quarterly))?|income statement"
+                              r"|balance sheet|cash ?flow)$")),
+    ("estimates", re.compile(r"(estimates ?report|estimates|consensus)$")),
+    ("customers", re.compile(r"(^|\s)(customers|suppliers|business relationships)$")),
+    ("key_developments", re.compile(r"(^|\s)key developments$")),
+    ("profile", re.compile(r"(^|\s)(public company profile|public investment firm profile"
+                           r"|company profile|tearsheet)$")),
+    ("credit_health", re.compile(r"(^|\s)credit health( panel)?$")),
+)
+
+
+#: A download's duplicate marker after the kind: "… Financials_Annual (1)", "… Customers 2",
+#: "… EstimatesReport copy". Tried only when the stem matches no rule as it is (a call's stem ends
+#: in its year), so a re-downloaded export keeps its kind and meets the one-export refusal
+#: (`ambiguous_exports`) beside the old one, never silently losing to it.
+_DUPLICATE_MARK = re.compile(r"( \(\d+\)| \d{1,2}| copy( \d{1,2})?)$")
+
+
+def workbook_kind(name: str) -> str | None:
+    """A CIQ export's kind by its exact name rule (`_KIND_NAME_RULES`), or None (unrecognised)."""
+    stem = Path(name).stem.strip().lower()
+    for candidate in (stem, _DUPLICATE_MARK.sub("", stem)):
+        if (kind := next((k for k, rule in _KIND_NAME_RULES if rule.search(candidate)), None)):
+            return kind
+    return None
+
+
 # unparseable / withheld CIQ cells — ALL mean UNAVAILABLE (notes lines 61, 74); never coerce to 0.
 # 'No Data Available' joined 2026-10-30 (audit RC1): CIQ writes it in a cell as well as over an
 # empty subsheet, and it was read as an unparseable string rather than as a marker.
@@ -308,9 +372,11 @@ _AMBIGUITY_REMEDY = ("keep ONE export per kind: move the stale one(s) to "
 
 
 def _customers_role(name: str) -> str | None:
-    """Which of the two business-relationship exports a `customers`-kind file is, by name."""
-    low = name.lower()
-    return "customers" if "customer" in low else "suppliers" if "supplier" in low else None
+    """Which of the two business-relationship exports a `customers`-kind file is, by the END of its
+    name (RA-D10: "Customers Bancorp NYSE CUBI Suppliers" is the Suppliers file)."""
+    stem = _DUPLICATE_MARK.sub("", Path(name).stem.strip().lower())
+    return ("customers" if stem.endswith("customers") else
+            "suppliers" if stem.endswith("suppliers") else None)
 
 
 def ambiguous_exports(workbooks: tuple[CiqWorkbook, ...] | list[CiqWorkbook]) -> list[str]:
@@ -533,10 +599,7 @@ class CiqBundle:
             # (an Excel window open on the comps would refuse the whole folder).
             if p.name.startswith((".", "~$")):
                 continue
-            name = p.name.lower()
-            kind = next(
-                (k for k, kws in _WORKBOOK_KEYWORDS.items() if any(w in name for w in kws)), None
-            )
+            kind = workbook_kind(p.name)   # RA-D10: an exact name rule, never a keyword anywhere
             if kind is None:
                 unrecognised.append(p.name)
                 continue

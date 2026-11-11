@@ -14,11 +14,10 @@ fetched). Nothing is written back.
 
     PYTHONPATH=. python scripts/ads_ratio_moves.py --cache-dir <checkout>/data/cache \\
         --types-cache <checkout>/data/cache --types-date 2026-10-17 --ref origin/main \\
-        --out <path.json> --skip-file <path>
+        --out <path.json>
 
-THE SKIP IS REQUIRED: ``--skip-file`` lists the tickers never to read, one per line; a line is
-left out by ticker and by CIK (SEC's ticker map, from the caches) before its issuer's filings are
-read. The list lives outside the repo; nothing here names it.
+NO NAME IS HELD BACK (operator ruling 2026-11-05, #919): the script reads every name,
+and a copied `--skip-file` is refused by argparse, as #922 refused a copied `--exclude`.
 
 (`PYTHONPATH=.` imports THIS checkout's `vinci`. The script runs from the repo root, so a relative
 path argument is read from there.)
@@ -70,19 +69,6 @@ class _CacheOnly(CachedHttp):
         raise AssertionError("a cache-only replay never writes")
 
 
-def held_ciks(dirs: list[Path], tickers: set[str]) -> set[int]:
-    """The CIKs of the ``--skip-file`` tickers, from SEC's ticker map in the caches — so a held
-    issuer is left out under any of its tickers, never only under the one written down."""
-    url = "https://www.sec.gov/files/company_tickers.json"
-    for d in dirs:
-        hit = CachedHttp(cache_dir=d, user_agent="cache-only", min_interval_sec=0,
-                         namespace="sec")._read_cache(url, None)
-        if hit is not None:
-            rows = json.loads(hit).values()
-            return {int(r["cik_str"]) for r in rows if r["ticker"] in tickers}
-    raise SystemExit(f"SEC's ticker map ({url}) is in no --cache-dir: the --skip-file tickers "
-                     "cannot be matched to their CIKs, so nothing is run")
-
 
 def _reader_at(ref: str) -> Callable[..., Any]:
     """`read_ratio` as ``ref`` has it, loaded from git — never this checkout's."""
@@ -118,15 +104,13 @@ def _ratio(a: Any) -> dict[str, Any]:
             "accession": a.accession, "reason": a.reason}
 
 
-def run(dirs: list[Path], sec_types: dict[str, str | None], old: Callable[..., Any],
-        skip: set[str], skip_ciks: set[int]) -> dict[str, Any]:
+def run(dirs: list[Path], sec_types: dict[str, str | None], old: Callable[..., Any]
+        ) -> dict[str, Any]:
     rows = [json.loads(x) for x in Path("data/snapshots/universe_snapshot.jsonl").read_text()
             .splitlines() if x.strip()]
     lines = []
     for r in rows:
         _sec, cik, ticker = r["internal_id"].split("-", 2)
-        if ticker in skip or int(cik) in skip_ciks:
-            continue
         if sec_types.get(to_eod_symbol(ticker)) in DEPOSITARY_TYPES:
             lines.append((ticker, cik, date.fromisoformat(r["as_of"])))
     out: list[dict[str, Any]] = []
@@ -164,15 +148,12 @@ def main() -> int:
     ap.add_argument("--types-date", required=True, help="the day the reference pull was fetched")
     ap.add_argument("--ref", default="origin/main", help="the git ref whose reader is 'old'")
     ap.add_argument("--out", required=True)
-    ap.add_argument("--skip-file", required=True,
-                    help="tickers never to read, one per line (ticker and CIK)")
     a = ap.parse_args()
     dirs = [Path(d) for d in a.cache_dir]
-    skip = set(Path(a.skip_file).read_text().split())
     sec_types = security_types(Path(a.types_cache), date.fromisoformat(a.types_date))
     if not sec_types:
         raise SystemExit(f"no Polygon reference pull fetched {a.types_date} in {a.types_cache}")
-    rep = run(dirs, sec_types, _reader_at(a.ref), skip, held_ciks(dirs, skip))
+    rep = run(dirs, sec_types, _reader_at(a.ref))
     Path(a.out).write_text(json.dumps(rep, indent=1, ensure_ascii=False, default=str))
     print(f"typed tickers {len(sec_types)} | depositary lines {rep['lines']} | covered "
           f"{rep['covered']} | known {rep['known_old']} -> {rep['known_new']} | moved "

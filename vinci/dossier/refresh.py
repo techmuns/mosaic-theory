@@ -415,6 +415,7 @@ def consensus_transform(ticker: str) -> Transform:
         if not isinstance(cc, dict):
             return mech
         cc["consensus_levels"] = levels
+        cc.pop("consensus_levels_note", None)   # RA-D13: the note says why levels are ABSENT
         return out
 
     return _apply
