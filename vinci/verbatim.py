@@ -6,7 +6,10 @@ weights. The prompt cannot tell the two apart; only the document can. This modul
 document, deterministically and with no model: a quote is kept only when it is a span of the source
 text, and refused otherwise. The operating-driver extractor has refused an uncontained quote since
 #131 (`driver_extract`, with its own whitespace-and-case rule); this is that rule as one shared
-helper, so the covenant and graph extractors stop trusting the prompt alone.
+helper, so the covenant and graph extractors stop trusting the prompt alone. `driver_extract` has
+NOT moved onto it (fix request 2, RG-D20 k): it still compares with its own `_norm` (whitespace
+and case, no NFKC, quote or dash folding), so a quote the model re-types with a curly quote passes
+here and drops a driver row there.
 
 WHAT COUNTS AS THE SAME TEXT. Both sides reduce to one comparison key, and every step of the
 reduction removes something that is NOT the document's wording:

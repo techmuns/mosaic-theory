@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -94,3 +94,6 @@ itself shallow and held `bcda7ce3`, 55 commits back. Measured 2026-11-11.
   refuses then, rather than passing. Delete the copies and re-run.
 - A refused `SEC_USER_AGENT` now fails `validate-keys`, where it was informational. The pipelines
   refuse the same value at their first SEC call.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `7edbfa36` (#996) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

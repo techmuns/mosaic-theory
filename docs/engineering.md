@@ -107,9 +107,11 @@ Five record-only PRs is **the review cadence, not a requirement**. Three rules:
 ## Conventions (light — expand as needed)
 
 - **Quality gate:** ruff + `mypy --strict` clean before commit. **State its SCOPE when you report
-  it** *(2026-07-28)*: strict comes from `pyproject.toml` and the gate runs over **`vinci` only —
-  111 source files; `tests/` is excluded and carries 308 strict errors.** Written as
-  `mypy --strict clean (vinci, 111 files; tests/ excluded, 308 known errors)`. Unqualified, the
+  it** *(2026-07-28)*: strict comes from `pyproject.toml` and the gate runs over **`vinci` only;
+  `tests/` is excluded.** State the count `mypy` prints, never a remembered one: 111 source files
+  and 308 strict errors in `tests/` when this was written; 206 files at `6d9907d7` (2026-11-11),
+  the `tests/` count not re-measured. Written as `mypy --strict clean (vinci, <N> files; tests/
+  excluded)`. Unqualified, the
   line reads as *the codebase type-checks* and means *production type-checks* — the
   assertion-integrity class applied to our own gate, and it matters here because **the tests are
   the safety layer**: every guard in the audit remediation is a test. Whether to clear `tests/` is

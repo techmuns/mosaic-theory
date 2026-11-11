@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-10
 prs: [970]
 supersedes:
@@ -60,3 +60,11 @@ never a keyword anywhere in the name".
   here, which the first such file shows by being named, never misfiled.
 
 **Extraction version** `2026-11-10.kind-by-exact-name`; the drift pins are re-pinned.
+## Amendments
+
+- **2026-11-11.** #970's PR checked its pages with a $0 build of every committed page, which built 17
+  of 27: the primary checkout's store had no price bars for BURL, GOOGL, LLY, MCK, NFLX, ROST, TGT, TJX, UBER and V. Those 10 have now been built on
+  the full store, at the same pair as that check, base `2b9b766c` → head `03e6d660`.
+  - **Built 10 of 10 on both sides. 0 of 10 move.**
+  - The price store is a read-only master copy of the full store, sha256 `4e77757f5cb370050ab9b43c450053379e8d20c0f605d4d4213b9e152e6a8e9d`, with bars through 2026-11-09. Every single-page build started from its own fresh APFS clone of it, because a build writes to its store. The other inputs are the primary checkout's.
+  - So the PR's "no page moves" holds for all 27 committed pages.

@@ -1,6 +1,6 @@
 ---
 id: 2026-11-05-fact-layer-r2-upload
-status: open
+status: shipped
 date: 2026-11-05
 prs: [912, 913]
 supersedes:

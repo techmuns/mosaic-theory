@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: recorded
 date: 2026-08-26
 prs: [507]
 supersedes:

@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -121,3 +121,6 @@ superseded-by:
     already;
   - an unpriced latest sale prints its event with no amount ("last sale CEO, 2026-07-01"). The
     unpriced-count clause beside it states the gap.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `6d9907d7` (#995) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

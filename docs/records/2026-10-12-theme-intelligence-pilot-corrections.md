@@ -1,6 +1,6 @@
 ---
 id: 2026-10-12-theme-intelligence-pilot-corrections
-status: open
+status: shipped
 date: 2026-10-12
 prs: [703]
 supersedes:
