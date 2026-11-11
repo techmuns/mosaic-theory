@@ -42,7 +42,9 @@ def _paths(manifest: dict[str, object]) -> set[str]:
     files = manifest["files"]
     entities = manifest["entities"]
     assert isinstance(files, list) and isinstance(entities, list)
-    return {f["path"] for f in files} | {e["order"]["path"] for e in entities}
+    # schema v3's filings objects are committed objects too (a v2 manifest names none)
+    return ({f["path"] for f in files} | {e["order"]["path"] for e in entities}
+            | {e["filings"]["path"] for e in entities if "filings" in e})
 
 
 def test_the_committed_schema_is_the_codes_contract() -> None:

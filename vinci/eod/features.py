@@ -135,9 +135,16 @@ def compute_price_features(
     page's prices run past its reference date, and its "52-week" window ran from the reference
     date less 365 days to the newest bar: 368–387 days on the committed pages. Without a frontier
     (the screen, whose bars stop at its reference date) the windows end on the reference date as
-    before."""
-    bars = sorted((b for b in bars if frontier is None or b.bar_date <= frontier),
-                  key=lambda b: b.bar_date)
+    before.
+
+    WITHOUT A FRONTIER, NOTHING AFTER THE REFERENCE DATE IS READ EITHER (TeamNostra fix request 2,
+    RF-D10). The reference date bounded only the staleness and the window starts, so bars running
+    past it were read as the latest close — stamped PRESENT, a lookahead: 62 days of later bars
+    read ``ret_3m`` +50%. Every caller cut its bars or passed a frontier, so this was latent; the
+    function no longer depends on it. A frontier still bounds at itself (a page's price date may
+    run past its reference date by design)."""
+    bound = frontier if frontier is not None else reference_date
+    bars = sorted((b for b in bars if b.bar_date <= bound), key=lambda b: b.bar_date)
     if not bars:
         u = _unknown("no price bars")
         return PriceFeatures(

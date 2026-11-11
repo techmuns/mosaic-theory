@@ -247,8 +247,20 @@ def _reconciles(rows_sum: float, fin: float, op_edgar: float, *,
     return None
 
 
+def _first_own_operating(facts: dict[str, Any]) -> date | None:
+    """The first balance-sheet date a report filed for THAT period carried a positive
+    operating-lease figure, under any of the three tags — when the filer's balance sheets, as
+    originally filed, began to carry the standard (audit RD-D3). A figure first filed later is a
+    comparative (:data:`_ORIGINAL_FILING_DAYS`) and says nothing about the original report."""
+    own = [p.period_end for t in _OPERATING_TAGS for p in points_for_tag(facts, t)
+           if p.is_instant and p.value > 0
+           and (p.filed - p.period_end).days <= _ORIGINAL_FILING_DAYS]
+    return min(own) if own else None
+
+
 def _split(rows_sum: float, fin: float, op_edgar: float | None, *, adopted: bool,
-           comparative: bool, nearest: bool | None, fin_dated: bool = True) -> _Split:
+           comparative: bool, nearest: bool | None, fin_dated: bool = True,
+           hidden: bool = False) -> _Split:
     """How much of CIQ's lease rows is OPERATING on one date, and how sure we are.
 
     ``comparative``: EDGAR's operating figure for the date was first filed AFTER the period's own
@@ -261,7 +273,11 @@ def _split(rows_sum: float, fin: float, op_edgar: float | None, *, adopted: bool
     EDGAR gives no complete figure to check; None when no quarter reconciled at all.
     ``fin_dated``: the finance-lease figure is for this date — where it is another date's, the rows
     are checked only as the operating leases alone, and a miss is UNCHECKED (the decomposition with
-    finance leases cannot be tested like with like), never unreconciled."""
+    finance leases cannot be tested like with like), never unreconciled.
+    ``hidden``: a lease cell CIQ does not state may be what makes the rows short — one is
+    UNAVAILABLE and the filer's own reports already carried operating leases before this date
+    (audit RD-D3). A short row is then no evidence the standard was not yet applied, so it is not
+    read as pre-adoption: the quarter stays unreconciled (``observations`` names the cell)."""
     if not adopted or (op_edgar is not None and op_edgar <= 0):
         return _Split(0.0, "pre-adoption", None)
     if op_edgar is None:
@@ -270,7 +286,7 @@ def _split(rows_sum: float, fin: float, op_edgar: float | None, *, adopted: bool
     proved = _reconciles(rows_sum, fin, op_edgar, fin_dated=fin_dated)
     if proved is not None:
         return _Split(max(rows_sum - (fin if proved else 0.0), 0.0), "reconciled", proved)
-    if comparative and rows_sum < _PRE_ADOPTION_SHARE * op_edgar:
+    if comparative and not hidden and rows_sum < _PRE_ADOPTION_SHARE * op_edgar:
         return _Split(0.0, "pre-adoption", None)
     # ...but only where the rows EXCEED EDGAR's operating figure: an excess is what finance leases
     # could explain; rows SHORT of it no finance figure can (WERN's 2019-12-31: none against $11.7M)
@@ -345,6 +361,13 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
         k = min(near, key=lambda x: abs((x - d).days)) if near else None
         return k is not None and (op_filed[k] - k).days > _ORIGINAL_FILING_DAYS
 
+    # A COMPARATIVE IS PRE-ADOPTION FOR CIQ ONLY BEFORE THE FILER'S OWN REPORTS CARRIED LEASES
+    # (audit RD-D3). Before that date CIQ's balance sheet, as originally filed, predates the
+    # standard, and a lease cell it leaves '-' hides at most a capital lease, which stays in TEV
+    # either way: TGT's 2017 quarters, MCK's 2019-03-31 and TJX's 2019-02-02 opening balance, all
+    # real. After it, a short row with an UNAVAILABLE cell may be the cell: not pre-adoption.
+    first_own = _first_own_operating(facts)
+
     # PASS 2 — each quarter's split, with its context from BOTH sides
     out: list[LeaseObservation] = []
     for d, t, ltm, rows_sum, op_e in rows_in:
@@ -352,14 +375,26 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
         adopted = first_op is not None and d >= first_op - timedelta(days=_OPERATING_NEAR_DAYS)
         nearest = (proved[min(proved, key=lambda p: (abs((p - d).days), p))]
                    if proved else None)
-        sp = _split(rows_sum, fin, op_e, adopted=adopted, comparative=_comparative(d),
+        cells_out = unavailable(d)
+        hidden = (bool(cells_out) and first_own is not None
+                  and d >= first_own - timedelta(days=_OPERATING_NEAR_DAYS))
+        comparative = _comparative(d)
+        sp = _split(rows_sum, fin, op_e, adopted=adopted, comparative=comparative,
                     nearest=nearest, fin_dated=fin_dated[d])
+        kept_out = False
+        if hidden and sp.status == "pre-adoption":
+            sp = _split(rows_sum, fin, op_e, adopted=adopted, comparative=comparative,
+                        nearest=nearest, fin_dated=fin_dated[d], hidden=True)
+            kept_out = sp.status != "pre-adoption"
         pd = priced.get(d)
         # UNCHECKED AND A LEASE CELL UNAVAILABLE (audit D-D1): nothing vouches for the sum, and
         # pricing it would take the missing cell as zero — WLK's 2025-09-30 states 'Long-Term
         # Leases' $709M and '-' for the current portion its neighbours put at $136-138M. A
         # reconciled quarter is EDGAR-vouched; a pre-adoption one removes nothing either way.
-        missing = unavailable(d) if sp.status == "unchecked" and ltm > 0 else []
+        missing = cells_out if sp.status == "unchecked" and ltm > 0 else []
+        # ...and a comparative that a hidden cell kept from reading as pre-adoption (RD-D3) is
+        # unreconciled, unpriced like any other, and names the cell that kept it there
+        refused = cells_out if kept_out else []
         usable = sp.status != "unreconciled" and ltm > 0 and not missing
         out.append(LeaseObservation(
             balance_sheet_date=d.isoformat(), pricing_date=pd.isoformat() if pd else None,
@@ -372,7 +407,12 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
             status=sp.status,
             unpriced_reason=(f"{'; '.join(missing)} (UNAVAILABLE), and EDGAR has no complete "
                              "operating-lease figure that day to check the cells CIQ does state"
-                             if missing else None)))
+                             if missing else
+                             f"{'; '.join(refused)} (UNAVAILABLE), and the cells CIQ does state "
+                             "fall short of EDGAR's later operating-lease figure for a date the "
+                             f"filer's own reports already carried leases (from {first_own}), so "
+                             "the shortfall may be that cell and is not read as pre-adoption"
+                             if refused else None)))
     return out
 
 
@@ -552,7 +592,8 @@ def history(obs: list[LeaseObservation], *, source_file: str | None = None,
         (date.fromisoformat(o.pricing_date or o.balance_sheet_date), o.multiple) for o in obs]
     last = obs[-1] if obs else None
     if last is not None and last.multiple is None:
-        why_not = ("does not reconcile" if last.status == "unreconciled"
+        why_not = ((f"does not reconcile: {last.unpriced_reason}" if last.unpriced_reason
+                    else "does not reconcile") if last.status == "unreconciled"
                    else "has no positive LTM EBITDA" if last.ltm_ebitda <= 0
                    else f"is left unpriced: {last.unpriced_reason}" if last.unpriced_reason
                    else "has no multiple")

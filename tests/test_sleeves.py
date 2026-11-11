@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import ast
 import pathlib
+import shutil
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any, cast
@@ -959,10 +960,12 @@ def test_the_web_page_refuses_to_frame_an_unknown_sleeve_as_overshoot() -> None:
         "for (const v of [null, '', 'quality', 'momentum']) out[String(v)] = sleeveCopy(v);",
         "console.log(JSON.stringify(out));",
     ]
+    if not shutil.which("node"):  # RH-D6: without node, run() raises before any stderr
+        pytest.skip("node unavailable")
     proc = subprocess.run(["node", "--input-type=module", "-e", "\n".join(parts)],
                           capture_output=True, text=True)
     if proc.returncode != 0:
-        pytest.skip(f"node unavailable or module changed shape: {proc.stderr[:120]}")
+        raise AssertionError(f"the lifted resolver failed to execute: {proc.stderr}")
     got = json.loads(proc.stdout)
 
     overshoot_q = sl.BY_KEY[sl.DEFAULT_SLEEVE].drawdown_heading
@@ -1068,6 +1071,8 @@ def test_the_web_gate_stat_is_screen_origin_and_the_books_are_counted_beside_it(
         "would stay green if this call were deleted.)")
 
     # the display helper both views now share
+    if not shutil.which("node"):  # RH-D6: without node, run() raises before any stderr
+        pytest.skip("node unavailable")
     proc = subprocess.run(
         ["node", "--input-type=module", "-e", "\n".join([
             re.search(r"export function verdictWord\(verdict\) \{.*?\n\}", lib, re.S)
@@ -1075,7 +1080,7 @@ def test_the_web_gate_stat_is_screen_origin_and_the_books_are_counted_beside_it(
             "console.log(JSON.stringify(['BUY','AVOID_TERMINAL','PASS'].map(verdictWord)));"])],
         capture_output=True, text=True)
     if proc.returncode != 0:
-        pytest.skip("node unavailable")
+        raise AssertionError(f"verdictWord failed to execute: {proc.stderr}")
     assert json.loads(proc.stdout) == ["BUY", "AVOID", "PASS"], (
         "verdictWord no longer renders each label as itself (bar the documented AVOID shortening)")
 
@@ -1105,14 +1110,14 @@ def test_a_followed_row_under_the_default_book_is_still_counted_as_its_own_book(
         {"origin": "followed", "sleeve": "quality", "verdict": "PASS", "resolved": True},
         {"verdict": "AVOID_TERMINAL", "resolved": True},  # legacy: untagged ⇒ screen/overshoot
     ]
+    if not shutil.which("node"):  # RH-D6: without node, run() raises before any stderr
+        pytest.skip("node unavailable")
     proc = subprocess.run(
         ["node", "--input-type=module", "-e",
          f'const m = await import({json.dumps(str(lib))});'
          f'console.log(JSON.stringify(m.groupOtherBooks({json.dumps(rows)})));'],
         capture_output=True, text=True)
     if proc.returncode != 0:
-        if "node" in proc.stderr.lower() and "not found" in proc.stderr.lower():
-            pytest.skip("node unavailable")
         raise AssertionError(f"the real module failed to execute: {proc.stderr}")
     books = json.loads(proc.stdout)
 
@@ -1204,11 +1209,11 @@ await v.render(root, {}, { item: { title: 'Decision log', blurb: '' },
                            frame: (i, o) => o.bodyHtml });
 console.log(JSON.stringify({ html: root.innerHTML }));
 """.replace("__ROOT__", json.dumps(str(fe)))
+    if not shutil.which("node"):  # RH-D6: without node, run() raises before any stderr
+        pytest.skip("node unavailable")
     proc = subprocess.run(["node", "--input-type=module", "-e", script],
                           capture_output=True, text=True)
     if proc.returncode != 0:
-        if "not found" in proc.stderr.lower() and "node" in proc.stderr.lower():
-            pytest.skip("node unavailable")
         raise AssertionError(
             f"the decision-log page THREW while rendering the committed ledger — in the browser "
             f"it shows nothing but its loading placeholder:\n{proc.stderr.strip()}")
@@ -1355,6 +1360,8 @@ def test_the_book_chip_is_gated_on_origin_not_only_on_the_sleeve() -> None:
         {"origin": "followed", "sleeve": "overshoot"},  # THE DEFECT: must be chipped
         {"origin": "followed", "sleeve": "quality"},
     ]
+    if not shutil.which("node"):  # RH-D6: without node, run() raises before any stderr
+        pytest.skip("node unavailable")
     proc = subprocess.run(
         ["node", "--input-type=module", "-e", "\n".join([
             "const escapeHtml = (s) => String(s);",
@@ -1362,8 +1369,6 @@ def test_the_book_chip_is_gated_on_origin_not_only_on_the_sleeve() -> None:
             f"console.log(JSON.stringify({json.dumps(cases)}.map(sleeveChip)));"])],
         capture_output=True, text=True)
     if proc.returncode != 0:
-        if "not found" in proc.stderr.lower():
-            pytest.skip("node unavailable")
         raise AssertionError(f"sleeveChip failed to execute: {proc.stderr}")
     screen, legacy, followed_overshoot, followed_quality = json.loads(proc.stdout)
 

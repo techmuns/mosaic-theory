@@ -34,6 +34,8 @@ from vinci.schemas.ledger import (
     corrections_by_decision,
     origin_of,
     sleeve_of,
+    void_note,
+    voids_by_decision,
 )
 from vinci.schemas.market import PriceBar
 
@@ -239,6 +241,12 @@ def score_ledger(
     # 2026-11-09): the decision row keeps its sealed price, and the return, the dividend window
     # and the horizon run from the corrected entry; every corrected row says so under the report.
     corrections = corrections_by_decision(ledger)
+    # A VOIDED DECISION IS OUT OF THE RECORD (operator ruling 2026-11-11, GOOGL): it is never
+    # scored, so it reaches no count, spread, curve or listing — and the report names it ONCE, with
+    # the result to date its void sealed, so the removal is seen rather than missing. IN EFFECT
+    # FROM ITS RULING DATE, as a close is from its exit (operator, 2026-11-11): a report cut before
+    # the ruling scores the decision as it was live then.
+    voids = voids_by_decision(ledger, as_of=as_of)
     scores: list[VerdictScore] = []
     pending = 0
     book_rets: list[float] = []
@@ -256,7 +264,10 @@ def score_ledger(
         # has resolved yet. Filtered here rather than inside `aggregate`, so a close never reaches
         # `scores` either — the per-verdict listing the report renders would otherwise show a
         # phantom row that the counts alone would not reveal.
-        if entry.event is not None:     # a close or a correction is not a decision
+        if entry.event is not None:     # a close, a correction or a void is not a decision
+            continue
+        if (void := voids.get(entry.entry_id)) is not None:
+            notes.append(void_note(entry, void))
             continue
         sealed = entry
         if (fix := corrections.get(entry.entry_id)) is not None:

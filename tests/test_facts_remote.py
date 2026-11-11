@@ -58,6 +58,9 @@ from vinci.facts.store import (
     write_entity,
 )
 
+#: when the constructed copies were fetched: after every cut these tests read (RFL-D1)
+FETCHED_AT = "2027-01-02T00:00:00Z"
+
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "tests" / "fixtures" / "facts"
 PAGES = "edgar-4f3207f4da9fb71a"
@@ -315,7 +318,9 @@ def test_the_committed_snapshot_uploads_with_no_exclusion_list(monkeypatch: pyte
             pages["scope"]["exclusions_listed"]) == (1, 6)
     bucket = FakeBucket()
     monkeypatch.setattr(remote.R2Client, "from_env", classmethod(lambda cls: _client(bucket)))
-    assert main(["upload", "--no-audit", "--workers", "2"]) == 0
+    # the snapshot written under the hold, named: `current.json` has since moved to the pages
+    # snapshot that keeps its originals (RFL-D3)
+    assert main(["upload", "--snapshot", PAGES, "--no-audit", "--workers", "2"]) == 0
     assert {k: _sha(v) for k, v in bucket.objects.items()} == {
         e["path"]: e["sha256"] for e in manifest_objects(pages)}
 
@@ -591,9 +596,11 @@ def test_a_manifest_the_audit_cannot_read_is_counted_not_fatal(
     monkeypatch.chdir(tmp_path)
     bucket = FakeBucket()
     monkeypatch.setattr(remote.R2Client, "from_env", classmethod(lambda cls: _client(bucket)))
-    assert main(["upload", "--workers", "2"]) == 0
+    # an upload of a snapshot whose objects are all in the tree: the current pages snapshot's
+    # originals are kept outside git (RFL-D3), and CI has none
+    assert main(["upload", "--snapshot", PAGES, "--workers", "2"]) == 0
     out = capsys.readouterr().out
-    assert "against the 2 committed manifests it reads" in out
+    assert "against the 3 committed manifests it reads" in out
     assert "1 manifest not read" in out
 
 
@@ -654,7 +661,8 @@ def test_a_snapshot_naming_no_exclusion_uploads_beside_the_committed_ones(
     files, order = write_entity(got.rows, facts / "objects")
     manifest = build_manifest(
         source=SOURCE, extractor=EXTRACTOR, extractor_version=EXTRACTOR_VERSION, scope=scope,
-        entities=[{"entity": got.entity, "tickers": ["FUBO"], "rows_kept": len(got.rows)}],
+        entities=[{"entity": got.entity, "tickers": ["FUBO"], "rows_kept": len(got.rows),
+                   "fetched_at": FETCHED_AT}],
         files=files, orders={got.entity: order})
     sid = manifest["snapshot_id"]
     (facts / "manifests" / f"{sid}.json").write_text(json.dumps(manifest, indent=2,
@@ -675,7 +683,9 @@ def test_the_upload_fails_when_the_bucket_holds_what_no_manifest_names(
     so a key no manifest names, or a named key of another size, fails the run."""
     from vinci.facts import remote
     from vinci.facts.__main__ import main
-    argv = ["upload", "--workers", "2"]
+    # the snapshot whose objects are all in the tree (the current pages snapshot's originals are
+    # kept outside git, RFL-D3)
+    argv = ["upload", "--snapshot", PAGES, "--workers", "2"]
     for extra in ({"edgar/stray/2020/" + "0" * 64 + ".parquet": b"x"},
                   {load_manifest(name="screen")["files"][0]["path"]: b"x"}):
         bucket = FakeBucket()

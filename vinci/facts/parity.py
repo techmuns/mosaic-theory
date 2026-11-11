@@ -19,6 +19,22 @@ nothing about the cut) is visible as such; and the keys whose cut holds two or m
 across filings (restatements), so the latest-filing-wins rule is shown exercised, not assumed.
 ``at`` replays a page at another as-of than its own price date, for the same reason.
 
+IT COMPARES THE RESPONSE THE SNAPSHOT INGESTED, OR SAYS IT CANNOT (TeamNostra fix request 2,
+RFL-D7). The cache is read as it is now. A copy refetched since the ingest is another response:
+compared as the same one, its new filings showed as hundreds of row "differences" in the store,
+under the new copy's fetch time. A page whose cached response is not the one the snapshot
+ingested (by sha256) is reported CHANGED, with both copies' fetch times, and compared no further,
+as the screen replay already does.
+
+AN EXACT DUPLICATE THE INGEST HOLDS ONCE IS NAMED, NOT A DIFFERENCE (RFL-D8). The ingest stores an
+identical row once and counts the drop; `facts_as_of` keeps both, so every cut after it showed an
+unexplained row difference. Later exact duplicates are dropped from the reference as the ingest
+drops them, and counted beside the snapshot's own count.
+
+THE CUT IS THE PAGE'S: BY DAY. The page's reader still cuts on ``filed`` (``facts_as_of``), so the
+store is read with ``basis="filed"`` and ``stale_ok=True``: both sides read the same copy, and a
+cut past its fetch is shown in its own column, never refused here.
+
 NOTHING IS SWITCHED. No page or screen reader reads the store in this slice. A mismatch here is a
 finding to report, never something to tune away.
 """
@@ -34,12 +50,15 @@ from typing import Any, NamedTuple
 from vinci.edgar.concepts import facts_as_of
 from vinci.facts.edgar_ingest import NotInCacheError, read_cached_companyfacts
 from vinci.facts.reader import (
+    FILED,
     FactAmbiguousError,
+    FactNotHeldError,
     FactStore,
     FactUnknownError,
     Period,
     is_periodic,
 )
+from vinci.facts.store import FactsStoreError
 
 #: How many keys per page go through the public `get()` (the rest are compared in bulk).
 GET_SAMPLE = 200
@@ -68,6 +87,30 @@ def _tree(blob: dict[str, Any]) -> dict[tuple[str, str, str], list[dict[str, Any
 
 def _row_key(r: dict[str, Any]) -> str:
     return json.dumps(r, sort_keys=True)
+
+
+def held_once(blob: dict[str, Any]) -> tuple[dict[str, Any], int]:
+    """``blob`` with every LATER exact duplicate of a row under its taxonomy, tag and unit
+    removed, as the ingest stores it (`edgar_ingest.rows_from_companyfacts` keeps the first), and
+    how many were removed."""
+    dropped = 0
+    nsmap: dict[str, Any] = {}
+    for ns, tags in (blob.get("facts") or {}).items():
+        for tag, body in (tags or {}).items():
+            units: dict[str, list[dict[str, Any]]] = {}
+            for unit, rows in (body.get("units") or {}).items():
+                seen: set[str] = set()
+                kept = []
+                for r in rows:
+                    k = _row_key(r)
+                    if k in seen:
+                        dropped += 1
+                        continue
+                    seen.add(k)
+                    kept.append(r)
+                units[unit] = kept
+            nsmap.setdefault(ns, {})[tag] = {**body, "units": units}
+    return {**blob, "facts": nsmap}, dropped
 
 
 class RefLatest(NamedTuple):
@@ -169,38 +212,75 @@ class PageParity:
     #: why this page could not be compared at all (its response is not cached, or its entity is
     #: not in the snapshot); such a page is never zero-diff
     unread: str | None = None
+    #: the cache holds another response than the snapshot ingested (RFL-D7): never zero-diff
+    changed: str | None = None
+    #: later exact duplicates in the cut, which the ingest stores once (RFL-D8), and how many the
+    #: snapshot says it dropped from the whole response
+    duplicates_held_once: int = 0
+    duplicates_dropped_by_ingest: int = 0
+    #: the cut is past the moment the snapshot's copy was fetched (RFL-D1)
+    past_fetch: bool = False
 
     @property
     def zero_diff(self) -> bool:
-        return (self.unread is None and self.row_diffs == 0 and self.order_diffs == 0
-                and self.key_diffs == 0
-                and self.get_diffs == 0 and self.rows_compared == self.store_rows)
+        return (self.unread is None and self.changed is None and self.row_diffs == 0
+                and self.order_diffs == 0 and self.key_diffs == 0
+                and self.get_diffs == 0 and self.rows_compared == self.store_rows
+                and self.duplicates_held_once <= self.duplicates_dropped_by_ingest)
 
 
 def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: Path, *,
-                 at: date | None = None, eve: bool = False) -> PageParity:
+                 at: date | None = None, eve: bool = False,
+                 originals: Path | None = None) -> PageParity:
     """``doc``'s page at its own price date, or at ``at`` when given; with ``eve``, at the eve of
-    the last filing day on or before that date (:func:`filing_eve`)."""
+    the last filing day on or before that date (:func:`filing_eve`). The reference is the
+    snapshot's own ORIGINAL of the response where it kept one (from ``originals``, default the
+    local originals root, or R2 for an ``r2://`` store), else the cache's copy."""
     entity = f"{int(doc['cik']):010d}"
     cut = at if at is not None else page_cut(doc)
+
+    def unreadable(why: str, *, changed: bool = False, fetched: str = "") -> PageParity:
+        # REPORTED, NOT RAISED: one page that cannot be read must not hide every other page's
+        # result, and it is never counted as a zero diff
+        return PageParity(ticker=ticker, entity=entity, cut=cut.isoformat(), fetched_at=fetched,
+                          rows_in_response=0, rows_after_cut=0, rows_compared=0, store_rows=0,
+                          row_diffs=0, order_diffs=0, keys_compared=0, key_diffs=0,
+                          keys_restated=0, ambiguous_keys=0, get_sampled=0, get_diffs=0,
+                          examples=[], unread=None if changed else why,
+                          changed=why if changed else None)
+
+    ingested = next((e for e in store.manifest["entities"] if e["entity"] == entity), None)
     try:
-        resp = read_cached_companyfacts(entity, cache_dir)
-        blob = json.loads(resp.text)
+        if ingested is None:
+            raise FactNotHeldError(f"{entity}: not in snapshot {store.snapshot_id} — it was not "
+                                   "ingested")
+        if "original" in ingested:
+            # THE ORIGINAL, NOT THE CACHE (RFL-D3): the response the snapshot read, kept
+            # write-once, so a refetched cache no longer stops the comparison
+            blob = store.original(entity, originals=originals)
+        else:
+            resp = read_cached_companyfacts(entity, cache_dir)
+            if not ingested.get("response_sha256"):
+                return unreadable(f"snapshot {store.snapshot_id} states no response hash for "
+                                  f"{entity}, so the cached response cannot be shown to be the "
+                                  "one it ingested")
+            if resp.sha256 != ingested["response_sha256"]:
+                return unreadable(
+                    f"the SEC cache now holds another response than snapshot "
+                    f"{store.snapshot_id} ingested: the snapshot's copy was fetched "
+                    f"{ingested['fetched_at']} (sha256 {ingested['response_sha256'][:12]}…), the "
+                    f"cache's {resp.fetched_at:%Y-%m-%dT%H:%M:%SZ} (sha256 {resp.sha256[:12]}…); "
+                    "re-ingest to compare", changed=True, fetched=str(ingested["fetched_at"]))
+            blob = json.loads(resp.text)
         if eve:
             day = filing_eve(blob, cut)
             if day is None:
                 raise FactUnknownError(f"nothing filed by {cut}: no filing eve")
             cut = day
-        reference = facts_as_of(blob, cut)
-        candidate = store.companyfacts_as_of(entity, cut)
-    except (NotInCacheError, FactUnknownError) as exc:
-        # REPORTED, NOT RAISED: one page that cannot be read must not hide every other page's
-        # result, and it is never counted as a zero diff
-        return PageParity(ticker=ticker, entity=entity, cut=cut.isoformat(), fetched_at="",
-                          rows_in_response=0, rows_after_cut=0, rows_compared=0, store_rows=0,
-                          row_diffs=0, order_diffs=0, keys_compared=0, key_diffs=0,
-                          keys_restated=0, ambiguous_keys=0, get_sampled=0, get_diffs=0,
-                          examples=[], unread=str(exc))
+        reference, dupes = held_once(facts_as_of(blob, cut))
+        candidate = store.companyfacts_as_of(entity, cut, basis=FILED, stale_ok=True)
+    except (NotInCacheError, FactUnknownError, FactNotHeldError, FactsStoreError) as exc:
+        return unreadable(str(exc))
     examples: list[str] = []
 
     # 1. ROWS — every field of every row, as a multiset per (taxonomy, tag, unit), then in order
@@ -211,7 +291,7 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
 
     # 2. LATEST — plain Python on the cut blob against the store's SQL
     ref = reference_latest(reference)
-    got = store.latest(entity, cut)
+    got = store.latest(entity, cut, basis=FILED, stale_ok=True)
     got_by_key: dict[RefKey, Any] = {
         (k[1], k[2], k[3], k[4].isoformat() if k[4] else None, k[5].isoformat()): v
         for k, v in got.items()}
@@ -250,7 +330,8 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
                         start=date.fromisoformat(start) if start else None)
         want = ref[sk]
         try:
-            fact = store.get(entity, f"{ns}:{tag}", period, cut, unit=unit)
+            fact = store.get(entity, f"{ns}:{tag}", period, cut, unit=unit, basis=FILED,
+                             stale_ok=True)
             ok = (want.kind == "value" and fact.value == want.value
                   and fact.filed_date.isoformat() == want.filed
                   and fact.snapshot_id == store.snapshot_id
@@ -266,13 +347,16 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
 
     return PageParity(
         ticker=ticker, entity=entity, cut=cut.isoformat(),
-        fetched_at=resp.fetched_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        rows_in_response=rows_in_response, rows_after_cut=rows_in_response - rows_compared,
+        fetched_at=str(ingested["fetched_at"]),
+        rows_in_response=rows_in_response, rows_after_cut=rows_in_response - rows_compared - dupes,
         rows_compared=rows_compared, store_rows=store_rows, row_diffs=row_diffs,
         order_diffs=order_diffs, keys_compared=len(set(ref) | set(got_by_key)),
         key_diffs=key_diffs, keys_restated=keys_restated, ambiguous_keys=ambiguous_keys,
         get_sampled=len(sample), get_diffs=get_diffs, examples=examples,
-        discrepancies=row_diffs + order_diffs + key_diffs + get_diffs)
+        discrepancies=row_diffs + order_diffs + key_diffs + get_diffs,
+        duplicates_held_once=dupes,
+        duplicates_dropped_by_ingest=int(ingested.get("exact_duplicates_dropped", 0)),
+        past_fetch=store.is_stale(entity, cut, basis=FILED))
 
 
 def as_json(results: list[PageParity]) -> str:

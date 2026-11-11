@@ -8,7 +8,6 @@ raise rather than recording a verdict with no anchor.
 from __future__ import annotations
 
 import json
-import sqlite3
 from datetime import date, datetime
 from pathlib import Path
 
@@ -143,10 +142,14 @@ def test_log_avoid_and_append_only(tmp_path: Path) -> None:
         log_verdict(store, candidate_id=cid, verdict=Verdict.AVOID_TERMINAL,
                     decided_at=datetime(2026, 6, 15, 10, 0), **_KW)
         assert [e.verdict for e in store.iter_ledger()] == [Verdict.AVOID_TERMINAL]
-        # re-logging the same candidate must fail loud (a verdict is never silently overwritten)
-        with pytest.raises(sqlite3.IntegrityError):
+        # re-logging the same candidate must fail loud (a verdict is never silently overwritten).
+        # Since the fresh-decision id scheme (operator ruling 2026-11-11) it is refused BEFORE the
+        # append, naming the open decision — the primary key stays the backstop — and nothing is
+        # written
+        with pytest.raises(LedgerError, match="already holds an open decision"):
             log_verdict(store, candidate_id=cid, verdict=Verdict.BUY,
                         decided_at=datetime(2026, 6, 16, 10, 0), **_KW)
+        assert [e.verdict for e in store.iter_ledger()] == [Verdict.AVOID_TERMINAL]
 
 
 def test_unknown_candidate_raises(tmp_path: Path) -> None:

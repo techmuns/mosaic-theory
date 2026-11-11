@@ -50,6 +50,9 @@ cannot quietly stop covering a new extractor (`--repin` then pins it as watched)
 outside them build page fields and are watched too: vinci/verbatim.py (which quoted values a page
 keeps), vinci/finra.py (short interest) and vinci/eod/features.py (the price box's 52-week range,
 whose window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction.
+Since 2026-11-11 every other module a page build reaches is classified too, `EXTRA_WATCHED` or
+`NOT_EXTRACTION` — the declared set stays declared, and tests/test_page_build_modules_classified.py
+refuses a reached module that is neither.
 vinci/ciq, which built no page field, was removed on 2026-11-10 (fix request 2: A-D13, A-D16,
 RBC-D7): its last caller, graph Test 0, left in #905, and vinci/graph/extract.py now holds the
 SUPPLY_CHAIN_TYPES taxonomy it took from it.
@@ -96,13 +99,91 @@ NOT_EXTRACTION: dict[str, str] = {
     "vinci/dossier/run_metrics.py": "the cost-and-outcome series beside a build, not the page",
     "vinci/dossier/tagger.py": "propose-only: reads committed pages, writes nothing",
     "vinci/edgar/__init__.py": "re-exports the client",
+    # OUTSIDE THE TWO PACKAGES (2026-11-11): every other module a page build reaches, and why it
+    # cannot change a page value given the same source data
+    # (tests/test_page_build_modules_classified.py holds the rule).
+    "vinci/__init__.py": "the package's docstring",
+    "vinci/eod/__init__.py": "re-exports the EOD clients and the watched features module",
+    "vinci/eod/client.py": "market-data transport (Polygon bars and reference types): what a page "
+                           "read is recorded in its inputs block, how is not a value rule",
+    "vinci/eod/tiingo.py": "market-data transport (Tiingo bars)",
+    "vinci/eod/dividends.py": "dividends for scored and monitored total return; no page field",
+    "vinci/eod/splits.py": "the split basis of scored returns and of the universe build; no page "
+                           "field",
+    "vinci/eod/identity.py": "which stored bars belong to a line, repaired as bars are written; a "
+                             "page reads the store as written",
+    "vinci/facts/__init__.py": "the fact layer, in shadow (STATE §5.0 row 44): re-exports",
+    "vinci/facts/reader.py": "the fact layer's reader; no page field reads the store yet",
+    "vinci/facts/remote.py": "the fact layer's remote transport",
+    "vinci/facts/schema.py": "the fact layer's row schema",
+    "vinci/facts/sigv4.py": "request signing for the fact layer's bucket",
+    "vinci/facts/store.py": "the fact layer's storage; inputs.py reads only its manifests path",
+    "vinci/graph/__init__.py": "re-exports the graph track",
+    "vinci/graph/extract.py": "builds graph_coverage.json offline; a page reads that committed "
+                              "file through vinci/graph/exposure.py",
+    "vinci/graph/judge.py": "the graph's offline precision judge; no page field",
+    "vinci/netcache.py": "HTTP transport and cache: returns what the source served",
+    "vinci/progress.py": "progress lines on stderr",
+    "vinci/prose_lint.py": "flags a scenario record's prose; writes no page field",
+    "vinci/seal.py": "the verdict rationale seal; no page field",
+    "vinci/sec.py": "the shared SEC HTTP client configuration (transport)",
+    "vinci/triggers.py": "re-underwrite triggers the monitor runs against a committed page",
+    "vinci/rank/__init__.py": "re-exports the ranker",
+    "vinci/rank/cause.py": "a screen-time ranking channel; a page reads the committed candidate "
+                           "record",
+    "vinci/rank/profile.py": "a screen-time ranking profile; a page reads the committed record",
+    "vinci/rank/structural.py": "a screen-time ranking channel; a page reads the committed record",
+    "vinci/resolver/__init__.py": "re-exports the resolver",
+    "vinci/resolver/errors.py": "the resolver's exception types",
+    "vinci/resolver/index.py": "the SEC reference index: which CIK a ticker is — identity, which "
+                               "fails loud, not a value rule",
+    "vinci/resolver/aliases.py": "the alias table that carries a renamed line's record — identity",
+    "vinci/schemas/__init__.py": "re-exports the schemas",
+    "vinci/schemas/candidate.py": "the candidate record's type; its validators only refuse",
+    "vinci/schemas/cohort.py": "the cohort split's type",
+    "vinci/schemas/data_record.py": "the data record's type",
+    "vinci/schemas/envelope.py": "the data-field envelope's type; its validator only refuses",
+    "vinci/schemas/market.py": "the price bar's type; its validator only refuses",
+    "vinci/screens/__init__.py": "re-exports the screen",
+    "vinci/screens/annotations.py": "notes on a committed screen run, printed by the queue view",
+    "vinci/screens/retention.py": "persists a screen run's calibration data",
+    "vinci/screens/screen2.py": "the screen's gates, run at screen time; a page reads the "
+                                "committed candidate record",
+    "vinci/store/__init__.py": "re-exports the SQLite store",
+    "vinci/store/schema.py": "the SQLite store's tables",
+    "vinci/store/store.py": "the SQLite store: storage, read as written",
 }
 
 #: Watched beyond the two classified packages.
 #: `vinci/provenance.py` (2026-11-05, review round 2): its hashing and redaction set values in every
 #: page's `inputs` block.
-EXTRA_WATCHED = ("vinci/verbatim.py", "vinci/finra.py", "vinci/eod/features.py",
-                 "vinci/provenance.py")
+#: THE SWEEP (2026-11-11, fix request 2): every module a page build reaches whose code, given the
+#: same source data, can change a field a page carries — the rule is
+#: tests/test_page_build_modules_classified.py. The theme session found the first, the P/E pair.
+EXTRA_WATCHED = (
+    "vinci/verbatim.py", "vinci/finra.py", "vinci/eod/features.py", "vinci/provenance.py",
+    "vinci/screens/assemble.py",    # the P/E pair, share-basis change and gap-downs (mechanical)
+                                    # and the data record a page is assembled from
+    "vinci/screens/run.py",         # listing_basis: the ADS basis per-share figures are read on
+    "vinci/rank/ranker.py",         # load_candidates_from_snapshot: a page's candidate record
+    "vinci/graph/filings.py",       # html_to_text/normalize_text: the text every quote is read from
+    "vinci/graph/exposure.py",      # ExposureGraph: a page's customer and supplier exposure
+    "vinci/graph/llm.py",           # the one request every LLM-written field is drawn from
+    "vinci/monitor.py",             # benchmark_for_cap: the benchmark a page is measured against
+    "vinci/universe.py",            # benchmark_identity: the benchmark instrument read
+    "vinci/labels.py",              # resolve_label: a page's sector label
+    "vinci/sectors.py",             # the SIC→sector map resolve_label reads
+    "vinci/sic_table.py",           # the SIC code list that map reads
+    "vinci/followed.py",            # follow_records: which book a followed name's page is under
+    "vinci/sleeves.py",             # a page's book, its prompt copy and its verdict mapping
+    "vinci/scenarios.py",           # read_record: the underwrite a valuation basis is built from
+    "vinci/config.py",              # price_staleness_days, the pipelines' model and paths
+    "vinci/resolver/resolver.py",   # ads_ratio: which filing's ADS ratio a page is read on
+    "vinci/resolver/ads_ratio.py",  # the ratio read from that filing
+    "vinci/resolver/instrument.py",  # what a listed line is (its 12(b) title)
+    "vinci/schemas/listing.py",     # AdsRatio.describe(): text pages print
+    "vinci/schemas/ledger.py",      # Verdict: the words a page's machine proposal is written in
+)
 CLASSIFIED_PACKAGES = ("vinci/dossier", "vinci/edgar")
 
 

@@ -19,9 +19,11 @@ from typing import Any
 from pydantic import BaseModel, Field, field_validator, model_serializer, model_validator
 
 # The non-decision events a ledger row may record, each an APPENDED row, never an edit: a close,
-# and a correction of a decision's entry (RF-D7, operator ruling 2026-11-09).
+# a correction of a decision's entry (RF-D7, operator ruling 2026-11-09), and a VOID of a decision
+# (operator ruling 2026-11-11 on GOOGL's BUY).
 EVENT_CLOSE = "CLOSE"
 EVENT_CORRECTION = "CORRECTION"
+EVENT_VOID = "VOID"
 
 # NOTE (item 18a, review finding): there is deliberately NO `FACTS_AVAILABLE_FROM` constant here.
 # The first cut declared one, citing the BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern — but
@@ -39,7 +41,8 @@ CLOSE_ID_PREFIX = "C-"
 
 
 def close_entry_id(candidate_id: str) -> str:
-    """The close row's id for ``candidate_id`` — one per candidate, by construction."""
+    """The close row's id for ``candidate_id``'s FIRST decision (``follow_up_id`` names every
+    close the writer appends)."""
     return f"{CLOSE_ID_PREFIX}{candidate_id}"
 
 
@@ -48,9 +51,51 @@ def close_entry_id(candidate_id: str) -> str:
 CORRECTION_ID_PREFIX = "R-"
 
 
-def correction_entry_id(candidate_id: str) -> str:
-    """The correction row's id for ``candidate_id``'s decision."""
-    return f"{CORRECTION_ID_PREFIX}{candidate_id}"
+# Void-row id convention: one void per decision, named from the DECISION's own id ("V-GOOGL" ->
+# "X-GOOGL"), so it is unique wherever the decision is.
+VOID_ID_PREFIX = "X-"
+DECISION_ID_PREFIX = "V-"
+
+
+def decision_entry_id(candidate_id: str, n: int = 1) -> str:
+    """The ``n``-th decision's id for ``candidate_id``: ``V-{candidate}``, then
+    ``V-{candidate}-{n}`` (operator ruling 2026-11-11). A candidate holds ONE open decision at a
+    time (`log_verdict` refuses a second); a fresh one is logged only after the earlier is closed
+    or voided — GOOGL's voided BUY is ``V-GOOGL``, a fresh GOOGL decision ``V-GOOGL-2``."""
+    return f"{DECISION_ID_PREFIX}{candidate_id}" + (f"-{n}" if n > 1 else "")
+
+
+def follow_up_id(prefix: str, decision_entry_id: str) -> str:
+    """A row that follows a decision — its close (``C-``), correction (``R-``) or void (``X-``) — is
+    named from the DECISION's id, so a candidate's second decision gets its own (``C-GOOGL-2``).
+    For every first decision the name is the candidate-keyed one it always was (``C-{candidate}``).
+    Given the decision's id, never a candidate's: a candidate id may itself start with ``V-``
+    (a screen candidate of Visa is ``V-screen2-…``), and stripping it would mis-name the row."""
+    if not decision_entry_id.startswith(DECISION_ID_PREFIX):
+        raise ValueError(f"{decision_entry_id!r} is not a decision id ({DECISION_ID_PREFIX}…)")
+    return f"{prefix}{decision_entry_id[len(DECISION_ID_PREFIX):]}"
+
+
+def void_entry_id(decision_entry_id: str) -> str:
+    """The void row's id for decision ``decision_entry_id``."""
+    return follow_up_id(VOID_ID_PREFIX, decision_entry_id)
+
+
+class VoidMark(BaseModel, frozen=True):
+    """A voided decision's RESULT TO DATE, sealed in its void row when it is voided — the monitor's
+    own mark of the decision at the last session it could read, so the removal can be seen and can
+    never read as a hidden loser. The entry is the one the decision was READ at (its correction's,
+    when corrected), its price on the mark's split basis as the monitor's row states it; the returns
+    are on ``return_basis``."""
+    entry_price: float
+    entry_date: date
+    as_of: date
+    price: float
+    position_return: float
+    benchmark: str
+    benchmark_return: float
+    excess: float
+    return_basis: str
 
 
 # How a name reached the ledger. SCREEN = through the $300M–$10B hunting ground; FOLLOWED = an
@@ -261,6 +306,16 @@ class LedgerEntry(BaseModel, frozen=True):
     # its sealed price forever; every reader of returns reads the corrected one (`corrected`), and
     # the horizon runs from the corrected date. Like a close, it is not a position.
     corrects_entry_id: str | None = None     # CORRECTION only — the decision's entry_id
+    # --- VOID ROWS (operator ruling 2026-11-11, GOOGL) -----------------------------------------
+    # A decision RULED OUT of the record — "done based on really old and wrong data" — is VOIDED
+    # by appending a row that names it here. The decision row, its correction and its void all
+    # stay as audit history; every reader of positions and returns leaves a voided decision out
+    # (scoring, the curves, the monitor, the supersede guard, a close, a correction), and the void
+    # row itself seals the decision's result to date (``void_mark``) and the ruling's date. Only an
+    # operator's ruling applies it; the mechanism is generic.
+    voids_entry_id: str | None = None        # VOID only — the voided decision's entry_id
+    ruled_on: date | None = None             # VOID only — the date of the ruling
+    void_mark: VoidMark | None = None        # VOID only — the result to date at the void
 
     @model_serializer(mode="wrap")
     def _omit_unset_tally(self, handler: Any) -> dict[str, Any]:
@@ -314,12 +369,17 @@ class LedgerEntry(BaseModel, frozen=True):
             if self.corrects_entry_id is not None:
                 raise ValueError(f"corrects_entry_id set on a DECISION row {self.entry_id!r} — it "
                                  f"belongs to a correction row (event={EVENT_CORRECTION!r})")
+            self._no_void_fields("DECISION")
             return self
         if self.event == EVENT_CORRECTION:
+            self._no_void_fields("correction")
             return self._correction_row_shape(close_only)
+        if self.event == EVENT_VOID:
+            return self._void_row_shape(close_only)
         if self.event != EVENT_CLOSE:
             raise ValueError(f"unknown ledger event {self.event!r} — expected {EVENT_CLOSE!r}, "
-                             f"{EVENT_CORRECTION!r}, or None for a decision row")
+                             f"{EVENT_CORRECTION!r}, {EVENT_VOID!r}, or None for a decision row")
+        self._no_void_fields("close")
         if self.corrects_entry_id is not None:
             raise ValueError(f"close row {self.entry_id!r} sets corrects_entry_id — a close "
                              "corrects nothing")
@@ -342,6 +402,42 @@ class LedgerEntry(BaseModel, frozen=True):
             raise ValueError(
                 f"close row {self.entry_id!r} carries facts {sorted(self.facts)} — facts belong to "
                 f"the decision row they justified ({self.closes_entry_id!r}), not to its close")
+        return self
+
+    def _no_void_fields(self, kind: str) -> None:
+        """The void fields belong to a void row alone: on any other row they would read as a
+        void that no reader treats as one."""
+        stray = sorted(k for k, v in (("voids_entry_id", self.voids_entry_id),
+                                       ("ruled_on", self.ruled_on),
+                                       ("void_mark", self.void_mark)) if v is not None)
+        if stray:
+            raise ValueError(f"{stray} set on a {kind} row {self.entry_id!r} — they belong to a "
+                             f"void row (event={EVENT_VOID!r})")
+
+    def _void_row_shape(self, close_only: Mapping[str, object]) -> LedgerEntry:
+        """A void names its decision, states its grounds and the ruling's date, seals the result
+        to date, and carries no close, no correction and no facts."""
+        stray = sorted(k for k, v in close_only.items() if v is not None)
+        if stray or self.corrects_entry_id is not None:
+            raise ValueError(f"void row {self.entry_id!r} sets "
+                             f"{stray or ['corrects_entry_id']} — a void is not a close or a "
+                             f"correction")
+        if not self.voids_entry_id:
+            raise ValueError(f"void row {self.entry_id!r} names no decision (voids_entry_id)")
+        if self.voids_entry_id == self.entry_id:
+            raise ValueError(f"void row {self.entry_id!r} voids itself")
+        if not (self.reason or "").strip():
+            raise ValueError(f"void row {self.entry_id!r} has no reason — a decision is voided "
+                             "only on stated grounds")
+        if self.ruled_on is None:
+            raise ValueError(f"void row {self.entry_id!r} has no ruled_on — a void is applied by "
+                             "an operator's ruling, and states its date")
+        if self.void_mark is None:
+            raise ValueError(f"void row {self.entry_id!r} has no void_mark — the result to date is "
+                             "sealed with the void, so the removal can be seen")
+        if self.facts:
+            raise ValueError(f"void row {self.entry_id!r} carries facts — facts belong to the "
+                             f"decision row ({self.voids_entry_id!r})")
         return self
 
     def _correction_row_shape(self, close_only: Mapping[str, object]) -> LedgerEntry:
@@ -429,3 +525,49 @@ def correction_note(entry: LedgerEntry, correction: LedgerEntry) -> str:
             f"{correction.entry_price:g} on {correction.entry_price_as_of} "
             f"({(correction.reason or '').strip()}); the horizon "
             f"runs from {correction.entry_price_as_of}.")
+
+
+def voids_by_decision(entries: Iterable[LedgerEntry], *, as_of: date | None = None
+                      ) -> dict[str, LedgerEntry]:
+    """Each voided decision's VOID row, by the decision's ``entry_id`` (operator ruling 2026-11-11).
+    ``entries`` is the WHOLE ledger: a void naming no decision row in it raises, as an orphan
+    correction does, and two voids of one decision raise — the writer refuses a second.
+
+    A VOID IS IN EFFECT FROM ITS RULING DATE, AS A CLOSE IS FROM ITS EXIT (operator, 2026-11-11:
+    "From 2026-11-11 on (Recommended)"; Codex P1 on #984). With ``as_of``, only voids whose
+    ``ruled_on`` is on or before it are returned, so a report cut before the ruling reads the
+    decision as it was live then and a committed past monitor day still reproduces. Without
+    ``as_of`` every void is returned: the ledger as it stands now, which is what a WRITER reads
+    (no close or correction of a voided decision, ever). The checks above run on every void either
+    way."""
+    out: dict[str, LedgerEntry] = {}
+    decisions: set[str] = set()
+    for e in entries:
+        if e.event is None:
+            decisions.add(e.entry_id)
+        if e.event == EVENT_VOID and e.voids_entry_id is not None:
+            if e.voids_entry_id in out:
+                raise ValueError(f"decision {e.voids_entry_id!r} is voided twice "
+                                 f"({out[e.voids_entry_id].entry_id!r}, {e.entry_id!r})")
+            out[e.voids_entry_id] = e
+    orphans = sorted(f"{v.entry_id} -> {k}" for k, v in out.items() if k not in decisions)
+    if orphans:
+        raise ValueError(f"void row(s) {orphans} name no decision row in the ledger — a void must "
+                         f"void something")
+    if as_of is None:
+        return out
+    return {k: v for k, v in out.items() if v.ruled_on is not None and v.ruled_on <= as_of}
+
+
+def void_note(entry: LedgerEntry, void: LedgerEntry) -> str:
+    """The line every surface prints for a voided decision, ONCE: what was voided, on what grounds
+    and ruling, and its result to date as the void sealed it — so the removal is seen, never a
+    quietly missing loser."""
+    m = void.void_mark
+    result = (f"; its result to date when voided: {m.position_return:+.2%} vs {m.benchmark} "
+              f"{m.benchmark_return:+.2%}, excess {m.excess * 100:+.2f} pts ({m.return_basis} "
+              f"return, entry {m.entry_price:g} on {m.entry_date}, marked {m.price:g} on "
+              f"{m.as_of})") if m is not None else ""
+    return (f"{entry.entry_id} ({entry.ticker} {entry.verdict.value}): VOIDED by {void.entry_id} "
+            f"on the operator's ruling of {void.ruled_on} — {(void.reason or '').strip()}{result}. "
+            f"It is left out of every position, return and curve; its rows stay as audit history.")

@@ -10,6 +10,7 @@ Every assertion reads values out of those real rows; none is hand-rolled.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 from datetime import date
@@ -20,7 +21,9 @@ import pytest
 
 from vinci.edgar.concepts import facts_as_of
 from vinci.facts import (
+    FILED,
     FactAmbiguousError,
+    FactNotHeldError,
     FactStore,
     FactUnknownError,
     Period,
@@ -49,6 +52,9 @@ from vinci.facts.store import (
 )
 from vinci.netcache import CachedHttp
 
+#: when the constructed copies were fetched: after every cut these tests read (RFL-D1)
+FETCHED_AT = "2027-01-02T00:00:00Z"
+
 FIX = Path(__file__).parent / "fixtures" / "facts"
 COMMITTED = Path(__file__).resolve().parent.parent / "data" / "facts"
 NFLX, FUBO = "0001065280", "0001484769"
@@ -63,13 +69,18 @@ def _load(name: str) -> dict[str, Any]:
     return blob
 
 
-def _publish(tmp: Path, blobs: list[dict[str, Any]]) -> dict[str, Any]:
+def _publish(tmp: Path, blobs: list[dict[str, Any] | str]) -> dict[str, Any]:
+    """A snapshot of ``blobs``; a fixture NAMED in place of a blob also records its response's
+    sha256, as the ingest does, so the parity can tell the cache still holds it (RFL-D7)."""
     rows: list[dict[str, Any]] = []
     entities = []
     for b in blobs:
-        got = rows_from_companyfacts(b)
+        sha = {} if isinstance(b, dict) else {
+            "response_sha256": hashlib.sha256((FIX / b).read_text().encode("utf-8")).hexdigest()}
+        got = rows_from_companyfacts(b if isinstance(b, dict) else _load(b))
         rows += got.rows
-        entities.append({"entity": got.entity, "rows_kept": len(got.rows)})
+        entities.append({"entity": got.entity, "rows_kept": len(got.rows),
+                         "fetched_at": FETCHED_AT, **sha})
     files, orders = write_partitions(rows, tmp / "objects")
     manifest = build_manifest(source=SOURCE, extractor=EXTRACTOR,
                               extractor_version=EXTRACTOR_VERSION, scope={"rule": "test"},
@@ -94,8 +105,9 @@ def test_a_fact_filed_after_the_as_of_is_absent(store: FactStore) -> None:
 
 
 def test_the_filing_day_itself_is_inside_the_cut(store: FactStore) -> None:
-    """POSITIVE: `filed == as_of` is kept, as in facts_as_of."""
-    f = store.get(NFLX, EPS, FY2023, date(2024, 1, 26))
+    """POSITIVE: on the day-level cut (``basis="filed"``, the page's reader) `filed == as_of` is
+    kept, as in facts_as_of. The acceptance-time cut is `test_facts_acceptance_and_errors.py`'s."""
+    f = store.get(NFLX, EPS, FY2023, date(2024, 1, 26), basis=FILED)
     assert (f.value, f.accession, f.filed_date) == (
         12.03, "0001065280-24-000030", date(2024, 1, 26))
 
@@ -103,7 +115,7 @@ def test_the_filing_day_itself_is_inside_the_cut(store: FactStore) -> None:
 def test_a_frame_query_cuts_the_same_way(store: FactStore) -> None:
     before = store.frame(EPS, FY2023, date(2024, 1, 25), entities=[NFLX, FUBO])
     assert before.facts == {} and before.unknown == (NFLX, FUBO)
-    after = store.frame(EPS, FY2023, date(2024, 3, 5), entities=[NFLX, FUBO])
+    after = store.frame(EPS, FY2023, date(2024, 3, 5), entities=[NFLX, FUBO], basis=FILED)
     assert {e: f.value for e, f in after.facts.items()} == {NFLX: 12.03, FUBO: -1.04}
     assert after.unknown == ()
 
@@ -111,13 +123,13 @@ def test_a_frame_query_cuts_the_same_way(store: FactStore) -> None:
 # --- a restated value: the later filing at a later as-of, the earlier at an earlier one ---------
 
 def test_a_restated_value_returns_the_earlier_filing_at_an_earlier_as_of(store: FactStore) -> None:
-    f = store.get(NFLX, EPS, FY2023, date(2026, 1, 22))
+    f = store.get(NFLX, EPS, FY2023, date(2026, 1, 22), basis=FILED)
     assert (f.value, f.accession, f.filed_date) == (
         12.03, "0001065280-25-000044", date(2025, 1, 27))
 
 
 def test_a_restated_value_returns_the_later_filing_at_a_later_as_of(store: FactStore) -> None:
-    f = store.get(NFLX, EPS, FY2023, date(2026, 1, 23))
+    f = store.get(NFLX, EPS, FY2023, date(2026, 1, 23), basis=FILED)
     assert (f.value, f.accession, f.filed_date) == (1.2, "0001065280-26-000034", date(2026, 1, 23))
     assert f.snapshot_id == store.snapshot_id
     assert str(f.source_ref) == (
@@ -146,11 +158,12 @@ def test_a_missing_period_raises_unknown(store: FactStore) -> None:
                   date(2026, 12, 31))
 
 
-def test_an_entity_outside_the_snapshot_raises_unknown(store: FactStore) -> None:
-    with pytest.raises(FactUnknownError, match="not in snapshot"):
+def test_an_entity_outside_the_snapshot_raises_not_held(store: FactStore) -> None:
+    """RFL-D5: "not ingested" is its own error and its own frame field, never "nothing filed"."""
+    with pytest.raises(FactNotHeldError, match="not in snapshot"):
         store.get(320193, EPS, FY2023, date(2026, 12, 31))
     outside = store.frame(EPS, FY2023, date(2026, 12, 31), entities=[320193])
-    assert outside.unknown == ("0000320193",)
+    assert outside.not_held == ("0000320193",) and outside.unknown == ()
 
 
 def test_an_unqualified_concept_is_refused(store: FactStore) -> None:
@@ -161,15 +174,15 @@ def test_an_unqualified_concept_is_refused(store: FactStore) -> None:
 def test_a_same_day_disagreement_is_ambiguous_never_chosen(store: FactStore) -> None:
     """NEGATIVE: a 10-K/A (710000) and a 10-Q/A (456000) both filed 2020-08-11."""
     with pytest.raises(FactAmbiguousError, match="0001493152-20-015142"):
-        store.get(FUBO, DISCOUNT, YE2019, date(2020, 8, 11))
-    fr = store.frame(DISCOUNT, YE2019, date(2020, 8, 11), entities=[FUBO])
+        store.get(FUBO, DISCOUNT, YE2019, date(2020, 8, 11), basis=FILED)
+    fr = store.frame(DISCOUNT, YE2019, date(2020, 8, 11), entities=[FUBO], basis=FILED)
     assert FUBO in fr.ambiguous and fr.facts == {} and fr.unknown == ()
 
 
 def test_the_disagreement_resolves_when_a_later_filing_lands(store: FactStore) -> None:
     """POSITIVE on both sides of the ambiguous day."""
-    assert store.get(FUBO, DISCOUNT, YE2019, date(2020, 8, 10)).value == 456000
-    later = store.get(FUBO, DISCOUNT, YE2019, date(2020, 8, 13))
+    assert store.get(FUBO, DISCOUNT, YE2019, date(2020, 8, 10), basis=FILED).value == 456000
+    later = store.get(FUBO, DISCOUNT, YE2019, date(2020, 8, 13), basis=FILED)
     assert (later.value, later.accession) == (710000, "0001493152-20-015517")
 
 
@@ -183,14 +196,15 @@ def test_the_store_reproduces_facts_as_of(store: FactStore, name: str, as_of: da
     want = {ns: {t: b["units"] for t, b in tags.items()}
             for ns, tags in facts_as_of(blob, as_of)["facts"].items()}
     got = {ns: {t: b["units"] for t, b in tags.items()}
-           for ns, tags in store.companyfacts_as_of(blob["cik"], as_of)["facts"].items()}
+           for ns, tags in store.companyfacts_as_of(blob["cik"], as_of,
+                                                    basis=FILED)["facts"].items()}
     assert got == want
 
 
 def test_latest_agrees_with_the_plain_python_reference(store: FactStore) -> None:
     as_of = date(2020, 8, 11)
     ref = reference_latest(facts_as_of(_load("FUBO-companyfacts-slice.json"), as_of))
-    got = store.latest(FUBO, as_of)
+    got = store.latest(FUBO, as_of, basis=FILED)
     assert len(got) == len(ref) > 0
     ambiguous = [k for k, v in got.items() if isinstance(v, FactAmbiguousError)]
     assert [(k[2], k[5]) for k in ambiguous] == [("DebtInstrumentUnamortizedDiscountCurrent",
@@ -375,7 +389,9 @@ def test_an_ingest_needs_no_exclusion_list(tmp_path: Path, monkeypatch: pytest.M
         listed = {json.loads((facts / "manifests" / f"{sid}.json").read_text())["scope"][
             "exclusions_listed"] for sid in json.loads((facts / "current.json").read_text())
             .values()}
-        assert listed == {6}
+        # the screen's was written under the lifted hold; the pages snapshot that keeps its
+        # originals (RFL-D3) was written after it, and states 0
+        assert listed == {0, 6}
     else:
         _publish(facts, [_load("FUBO-companyfacts-slice.json")])  # its scope states no count
     prior = json.loads((facts / "current.json").read_text())
@@ -418,16 +434,18 @@ def test_the_parity_skip_is_an_ordinary_skip_and_its_output_counts_it(
     comparison, as BURL's must be against the committed pages snapshot, which does not hold it.
     Under the hold the output said nothing of the pages it left out; it now counts them."""
     from vinci.facts.__main__ import main
-    _publish(tmp_path / "data" / "facts", [_load("FUBO-companyfacts-slice.json")])  # FUBO only
+    _publish(tmp_path / "data" / "facts", ["FUBO-companyfacts-slice.json"])  # FUBO only
     cache = _two_pages(tmp_path)
     monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("VINCI_FACTS_STORE", raising=False)
     assert main(["parity", "--cache-dir", str(cache)]) == 1          # NFLX: not in the snapshot
-    assert ("2 page-cuts compared; 1 zero-diff; 1 with a diff: NFLX; 0 name(s) of the pages' "
-            "scope left out by --exclude") in capsys.readouterr().out
+    assert ("2 page-cuts compared; 1 zero-diff; 1 not zero-diff: NFLX — of them 0 CHANGED (the "
+            "cache holds another response than the snapshot ingested) and 1 UNREAD; 0 name(s) of "
+            "the pages' scope left out by --exclude") in capsys.readouterr().out
     assert main(["parity", "--cache-dir", str(cache), "--exclude", "nflx"]) == 0  # as typed
-    assert ("1 page-cuts compared; 1 zero-diff; 0 with a diff; 1 name(s) of the pages' scope "
-            "left out by --exclude") in capsys.readouterr().out
+    assert ("1 page-cuts compared; 1 zero-diff; 0 not zero-diff — of them 0 CHANGED (the cache "
+            "holds another response than the snapshot ingested) and 0 UNREAD; 1 name(s) of the "
+            "pages' scope left out by --exclude") in capsys.readouterr().out
 
 
 def test_a_same_day_tie_names_the_periodic_report_over_a_proxy(tmp_path: Path) -> None:
@@ -435,7 +453,7 @@ def test_a_same_day_tie_names_the_periodic_report_over_a_proxy(tmp_path: Path) -
     on 2026-07-15. The greatest accession is the proxy; the store names the 10-K."""
     _publish(tmp_path, [_load("NKE-companyfacts-slice.json")])
     f = FactStore(facts_base=tmp_path, root=tmp_path / "objects").get(
-        NKE, NET_INCOME, NKE_FY2024, date(2026, 7, 15))
+        NKE, NET_INCOME, NKE_FY2024, date(2026, 7, 15), basis=FILED)
     assert (f.value, f.accession, f.form) == (5700000000, "0000320187-26-000088", "10-K")
     assert f.concurrent_accessions == ("0000320187-26-000089",)
 
@@ -443,7 +461,8 @@ def test_a_same_day_tie_names_the_periodic_report_over_a_proxy(tmp_path: Path) -
 def test_a_same_day_tie_between_periodic_reports_names_the_greatest_accession(
         store: FactStore) -> None:
     """FUBO's 2016-11-16 cover count, stated identically by two 10-Qs filed 2016-11-23."""
-    f = store.get(FUBO, SHARES, Period.instant(date(2016, 11, 16)), date(2016, 11, 23))
+    f = store.get(FUBO, SHARES, Period.instant(date(2016, 11, 16)), date(2016, 11, 23),
+                  basis=FILED)
     assert (f.accession, f.concurrent_accessions) == ("0001493152-16-015421",
                                                       ("0001493152-16-015415",))
 
@@ -463,7 +482,8 @@ def test_the_filing_eve_is_the_day_before_the_last_filing_by_the_cut(store: Fact
     blob = _load("NFLX-companyfacts-slice.json")
     assert filing_eve(blob, date(2026, 11, 2)) == date(2026, 10, 20)
     with pytest.raises(FactUnknownError):          # the Q3 10-Q's cover count, filed 2026-10-21
-        store.get(NFLX, SHARES, Period.instant(date(2026, 9, 30)), date(2026, 10, 20))
+        store.get(NFLX, SHARES, Period.instant(date(2026, 9, 30)), date(2026, 10, 20),
+                  basis=FILED)
 
 
 def test_a_row_with_no_filed_date_is_still_shape_checked() -> None:

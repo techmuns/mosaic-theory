@@ -12,6 +12,16 @@ each later comparative, each restatement. All of them become rows, each with its
 duplicate (an identical row under the same taxonomy, tag and unit) is dropped, and the drop is
 counted.
 
+EVERY FILING'S ACCEPTANCE TIME, FROM THE SAME CACHE (schema v3, TeamNostra fix request 2,
+RFL-D2). companyfacts dates a filing only to the day; SEC's submissions documents (the recent page
+and the older pages it lists) carry each filing's ``acceptanceDateTime``. :func:`acceptance_rows`
+reads them from the cache, never fetched, and writes one row per accession the entity's data rows
+carry: the reader's cut stands on it. The clock is UTC, as written: read so, 3,749 of 3,760
+periodic and 8-K filings of the committed pages' companies obey SEC's 17:30 New York filing-date
+rule (read as New York time, 1,374), the rest at the 17:30 boundary or carrying a filing date SEC
+later moved. An accession no read document lists, a page the cache does not hold, and a filing
+whose SEC filing date is not the data rows' ``filed`` are stated as such and given no time.
+
 A ROW OF AN UNKNOWN SHAPE RAISES. A replay is only faithful if every key a row carries is stored,
 so a key outside :data:`_ROW_KEYS`, a missing required key, or a value that is not a finite number
 stops the ingest (:class:`IngestShapeError`) rather than storing part of a row. The one exception
@@ -25,13 +35,13 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
-from vinci.edgar.client import _COMPANYFACTS
+from vinci.edgar.client import _COMPANYFACTS, _SUBMISSIONS, _SUBMISSIONS_PAGE
 from vinci.netcache import CachedHttp
 
 SOURCE = "edgar"
@@ -106,6 +116,146 @@ def cik_for_ticker(ticker: str, cache_dir: Path) -> str:
     return hits.pop()
 
 
+def submissions_url(cik: int | str) -> str:
+    return _SUBMISSIONS.format(cik=pad_cik(cik))
+
+
+@dataclass(frozen=True)
+class Acceptance:
+    """One entity's filings rows (``vinci.facts.schema.FILING_COLUMNS``) and what was read for
+    them: each submissions document, and every accession of the data rows given no time, why."""
+
+    rows: list[dict[str, Any]]
+    #: each document read: url, fetched_at, response_sha256, the filings it lists
+    documents: list[dict[str, Any]]
+    #: documents listed by the recent page and not in the cache: url -> why
+    unread: dict[str, str]
+    accessions: int                   # distinct accessions the data rows carry
+    #: accession -> why it has no time (listed by no document read; dates disagree)
+    unstated: dict[str, str]
+
+    def summary(self) -> dict[str, Any]:
+        """The manifest's ``acceptance`` entry: every count, with the reason for each gap."""
+        return {"documents": self.documents, "documents_unread": self.unread,
+                "accessions": self.accessions, "stated": len(self.rows),
+                "unstated": len(self.unstated),
+                **({"unstated_named": self.unstated} if self.unstated else {})}
+
+
+_ACCEPTED_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
+
+
+def _accepted_at(raw: Any, *, where: str) -> datetime:
+    """``acceptanceDateTime`` (``2025-02-20T21:05:12.000Z``) as a naive UTC datetime."""
+    if not isinstance(raw, str):
+        raise IngestShapeError(f"{where}: acceptanceDateTime {raw!r} is not a string")
+    try:
+        return datetime.strptime(raw, _ACCEPTED_FORMAT)
+    except ValueError as exc:
+        raise IngestShapeError(f"{where}: acceptanceDateTime {raw!r} is not "
+                               f"{_ACCEPTED_FORMAT}") from exc
+
+
+def _listed(page: Any, *, where: str) -> list[tuple[str, str, str | None, str]]:
+    """(accession, filingDate, form, acceptanceDateTime) for every filing one page lists."""
+    if not isinstance(page, dict):
+        raise IngestShapeError(f"{where}: not an object")
+    cols = ("accessionNumber", "filingDate", "form", "acceptanceDateTime")
+    missing = [c for c in cols if not isinstance(page.get(c), list)]
+    if missing:
+        raise IngestShapeError(f"{where}: no {missing} list")
+    lens = {len(page[c]) for c in cols}
+    if len(lens) != 1:
+        raise IngestShapeError(f"{where}: its lists are of different lengths {sorted(lens)}")
+    return list(zip(*(page[c] for c in cols), strict=True))
+
+
+def acceptance_rows(entity: str, data_rows: list[dict[str, Any]], cache_dir: Path, *,
+                    keep_original: Callable[[CachedResponse], dict[str, Any]] | None = None
+                    ) -> Acceptance:
+    """Each accession ``data_rows`` carry, with SEC's acceptance time from the CACHED submissions
+    documents. Never fetched: a document not cached leaves its filings with no time, stated."""
+    filed: dict[str, set[date]] = {}
+    for r in data_rows:
+        filed.setdefault(r["accession"], set()).add(r["filed_date"])
+    documents: list[dict[str, Any]] = []
+    unread: dict[str, str] = {}
+    listed: dict[str, tuple[date, str | None, datetime]] = {}
+
+    def read(url: str, page: Any) -> None:
+        listing = _listed(page, where=url)
+        for accn, fdate, form, at in listing:
+            if not isinstance(accn, str) or (form is not None and not isinstance(form, str)):
+                raise IngestShapeError(f"{url}: accession {accn!r} / form {form!r} not strings")
+            # ONLY THE FILINGS THE DATA ROWS CARRY are read strictly (review round 0): one odd
+            # time on a Form 4 the store never reads must not stop every company's ingest
+            if accn in filed and accn not in listed:
+                listed[accn] = (_date(fdate, where=f"{url} {accn}"), form,
+                                _accepted_at(at, where=f"{url} {accn}"))
+        documents[-1]["filings"] = len(listing)
+
+    def doc(url: str) -> Any:
+        resp = read_cached(url, cache_dir)
+        body = json.loads(resp.text)
+        documents.append({"url": url, "fetched_at": resp.fetched_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                          "response_sha256": resp.sha256,
+                          # the document itself, kept write-once (RFL-D3), when the writer keeps it
+                          **({"original": keep_original(resp)} if keep_original else {})})
+        return body
+
+    main_url = submissions_url(entity)
+    try:
+        main = doc(main_url)
+    except NotInCacheError as exc:
+        unread[main_url] = str(exc)
+        main = None
+    if main is not None:
+        filings = main.get("filings") if isinstance(main, dict) else None
+        if not isinstance(filings, dict) or not isinstance(filings.get("files", []), list):
+            raise IngestShapeError(f"{main_url}: no 'filings' object with a 'files' list")
+        read(main_url, filings.get("recent"))
+        for f in filings.get("files", []):
+            name = f.get("name") if isinstance(f, dict) else None
+            if not isinstance(name, str) or "/" in name:
+                raise IngestShapeError(f"{main_url}: an older page named {name!r}")
+            url = _SUBMISSIONS_PAGE.format(name=name)
+            try:
+                page = doc(url)
+            except NotInCacheError as exc:
+                unread[url] = str(exc)
+                continue
+            read(url, page)
+    rows: list[dict[str, Any]] = []
+    unstated: dict[str, str] = {}
+    for accn in sorted(filed):
+        hit = listed.get(accn)
+        if hit is None:
+            unstated[accn] = ("listed by no submissions document read" if documents
+                              else "no submissions document in the SEC cache")
+            continue
+        fdate, form, at = hit
+        if filed[accn] != {fdate}:
+            unstated[accn] = (f"SEC's filing date {fdate} is not the data rows' "
+                              f"{', '.join(sorted(d.isoformat() for d in filed[accn]))}")
+            continue
+        rows.append({"entity": entity, "accession": accn, "form": form, "filing_date": fdate,
+                     "accepted_at": at})
+    return Acceptance(rows=rows, documents=documents, unread=unread, accessions=len(filed),
+                      unstated=unstated)
+
+
+def unread_reason(facts: Any, got: IngestResult) -> str:
+    """Why a parsed response yields no row to store, as the response shows it (RFL-D10): a
+    response with no ``facts`` key is not "no row with a filed date"."""
+    if not isinstance(facts, dict) or "facts" not in facts:
+        keys = sorted(facts) if isinstance(facts, dict) else type(facts).__name__
+        return f"the cached response has no 'facts' key (its keys: {keys}): not companyfacts"
+    if got.rows_in_response == 0:
+        return "the cached response's 'facts' holds no fact row"
+    return (f"the cached response's {got.rows_in_response:,} fact rows all lack a filed date, "
+            "so none can be dated")
+
+
 @dataclass(frozen=True)
 class IngestResult:
     entity: str
@@ -155,8 +305,11 @@ def _walk(facts: dict[str, Any]) -> Iterator[tuple[str, str, str, dict[str, Any]
 
 def rows_from_companyfacts(facts: dict[str, Any]) -> IngestResult:
     """Every fact row in ``facts`` (a parsed companyfacts response), every filing's version kept."""
-    if "cik" not in facts:
+    if not isinstance(facts, dict) or "cik" not in facts:
         raise IngestShapeError("companyfacts response carries no cik")
+    if "facts" in facts and not isinstance(facts["facts"], dict):
+        raise IngestShapeError(f"companyfacts 'facts' is a {type(facts['facts']).__name__}, "
+                               "not an object")
     entity = pad_cik(facts["cik"])
     out: list[dict[str, Any]] = []
     seen: set[tuple[str, str, str, str]] = set()

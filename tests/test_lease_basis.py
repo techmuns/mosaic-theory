@@ -927,3 +927,88 @@ def test_the_web_page_names_the_ex_lease_basis(tmp_path: pathlib.Path) -> None:
     label = rend._EX_LEASE_LABEL.strip()
     assert label in _web(_page_doc("TJX", _lb("TJX"), _lb("TJX")), tmp_path)
     assert label not in _web(_page_doc("TJX", None, None), tmp_path)
+
+
+# --- audit RD-D3: a hidden lease cell never makes a comparative read as pre-adoption ------------
+
+#: The audit's shape (fix request 2, RD-D3) through `observations`: a filer whose OWN 10-K carried
+#: operating leases at 2024-12-31 (reconciled, both cells stated), and a later quarter whose EDGAR
+#: figure is a comparative first filed eight months on, while CIQ states its current portion and
+#: '-' for 'Long-Term Leases'. No committed page has this shape (measured 2026-11-11 over the 27
+#: pages' own exports: every comparative quarter with a '-' lease cell precedes its filer's first
+#: own-reported figure), so it is constructed; the negative pins below are the real ones.
+_RD3_QS = ["2024-03-31", "2024-06-30", "2024-09-30", "2024-12-31", "2025-03-31", "2025-06-30"]
+_RD3_FACTS = {"OperatingLeaseLiability": [(None, "2024-12-31", 500.0, "2025-02-20"),
+                                          (None, "2025-06-30", 520.0, "2026-02-20")]}
+
+
+def _rd3(long_term_0630: float | None) -> dict[str, Any]:
+    lt = {"2024-12-31": 430.0,
+          **({"2025-06-30": long_term_0630} if long_term_0630 is not None else {})}
+    b = _stub(_RD3_QS, [100] * 6, {"2024-12-31": 5000.0, "2025-06-30": 5200.0}, lt,
+              current={"2024-12-31": 70.0, "2025-06-30": 75.0})
+    return {o.balance_sheet_date: o for o in lbm.observations(b, _facts_of(_RD3_FACTS))}
+
+
+def test_rd_d3_a_hidden_cell_after_the_filers_own_leases_is_not_pre_adoption() -> None:
+    """(+) THE RED, on base: 2025-06-30 read "pre-adoption" — CIQ's stated $75M is short of half
+    EDGAR's $520M — and priced at 13.0x with no lease removed, the '-' never named. The filer's own
+    report had carried leases since 2024-12-31, so the shortfall may be the missing cell: the
+    quarter is unreconciled, unpriced, and names the cell."""
+    obs = _rd3(None)
+    assert obs["2024-12-31"].status == "reconciled"
+    o = obs["2025-06-30"]
+    assert o.status == "unreconciled", f"read as {o.status}"
+    assert o.multiple is None, f"priced at {o.multiple} with nothing removed"
+    assert o.unpriced_reason and "'Long-Term Leases' is '-'" in o.unpriced_reason
+    assert "2024-12-31" in o.unpriced_reason and "UNAVAILABLE" in o.unpriced_reason
+    band, why = lbm.history(list(obs.values()))
+    assert band is None and why and "2025-06-30" in why and "does not reconcile" in why
+    assert "'Long-Term Leases' is '-'" in why, "the band's refusal names the cell, too"
+
+
+def test_rd_d3_neg_the_fence_is_the_hidden_cell_not_the_date() -> None:
+    """(-) The same quarter with BOTH cells stated and still short ($100M + $75M of $520M) is the
+    comparative rule exactly as before: pre-adoption, nothing removed, no reason — nothing hides."""
+    o = _rd3(100.0)["2025-06-30"]
+    assert o.status == "pre-adoption" and o.operating_leases == 0.0
+    assert o.multiple == pytest.approx(5200.0 / 400.0) and o.unpriced_reason is None
+
+
+@pytest.mark.parametrize(("t", "comparative_with_a_dash"), [
+    ("TGT", ("2017-04-29", "2017-07-29", "2017-10-28")),
+    ("TJX", ("2019-02-02",)),
+    ("MCK", ("2019-03-31",))])
+def test_rd_d3_neg_real_comparatives_with_a_dash_precede_the_filers_own_leases(
+        t: str, comparative_with_a_dash: tuple[str, ...]) -> None:
+    """(-) Every live comparative quarter with a '-' lease cell, from the 27 pages' own exports
+    (2026-11-11), comes BEFORE the filer's own reports carried operating leases — so CIQ's balance
+    sheet there predates the standard and the '-' hides at most a capital lease, which stays in TEV.
+    Read off each filer's real companyfacts; each stays pre-adoption on its committed page."""
+    first_own = lbm._first_own_operating(_facts(t))
+    assert first_own is not None
+    obs = {o["balance_sheet_date"]: o
+           for o in _doc(t)["mechanical"]["valuation"]["lease_basis"]["observations"]}
+    for d in comparative_with_a_dash:
+        assert date.fromisoformat(d) < first_own, (t, d, first_own)
+        assert obs[d]["status"] == "pre-adoption" and obs[d]["edgar_operating_leases"], (t, d)
+
+
+@pytest.mark.parametrize(("quarters", "tev", "long_term", "ltm", "mult", "t"), [
+    # TJX 2019-02-02, real: its adoption-date opening balance ($8,840.7M, a comparative) beside
+    # CIQ's capital leases ($243.3M long-term, '-' current) — the committed page's values
+    (["2018-05-05", "2018-08-04", "2018-11-03", "2019-02-02"], 64026.316, 243.258, 5037.848,
+     12.709061, "TJX"),
+    # MCK 2019-03-31, real: $2,200M first filed as a comparative, CIQ's $43M long-term, '-' current
+    (["2018-06-30", "2018-09-30", "2018-12-31", "2019-03-31"], 30245.044, 43.0, 4111.0,
+     7.357101, "MCK")])
+def test_rd_d3_neg_a_real_opening_balance_still_prices_as_pre_adoption(
+        quarters: list[str], tev: float, long_term: float, ltm: float, mult: float,
+        t: str) -> None:
+    """(-) Through `observations`, on the filer's REAL companyfacts and its committed page's cells:
+    the quarter keeps its committed status and multiple, and names nothing."""
+    d = quarters[-1]
+    b = _stub(quarters, [ltm / 4] * 4, {d: tev}, {d: long_term})
+    (o,) = lbm.observations(b, _facts(t))
+    assert o.status == "pre-adoption" and o.operating_leases == 0.0
+    assert o.multiple == pytest.approx(mult, abs=1e-6) and o.unpriced_reason is None
