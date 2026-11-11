@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -55,3 +55,6 @@ thirteen, each checked at the pin and again here against main `6d9907d7`.
   amendment is appended.
 
 **BOUNDARY.** "206 source files": `python -m mypy --strict vinci` at main `6d9907d7`, 2026-11-11.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `d8147e97` (#1009) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.
