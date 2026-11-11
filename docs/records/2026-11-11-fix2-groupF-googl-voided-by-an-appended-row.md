@@ -76,6 +76,16 @@ superseded-by:
   - A close, correction or void is named from its DECISION's id (`follow_up_id`): `C-GOOGL-2` for
     the second decision. Every committed row keeps its id (pinned over the corpus).
   - `close_position` by candidate names the one open decision.
+  - **Never entered before the earlier decision left the book** (Codex round 2). A close takes a
+    decision out of the book from its exit session, and a void from its ruling date.
+    - A fresh decision entered earlier than that (a back-dated `--ref` inside the staleness window)
+      would stand beside it in every cut between the two dates, so `next_decision_id(…,
+      entering_on=…)` refuses it.
+    - `log_verdict` passes its real entry date. `log-verdict` passes `--ref` first, before the
+      confirmation's draws.
+    - `test_a_back_dated_fresh_decision_is_refused_and_one_from_the_exit_on_is_not` (through
+      `log_verdict`) logged the back-dated decision on `84f59cd0`. Its void twin is
+      `test_a_fresh_decision_after_a_void_enters_on_or_after_its_ruling`.
   - `log_verdict` changes in its one id line only. **The vote rule (#982) merged first**, adding
     its ten-draw confirmation, `machine_tally` and the transcript check to `log_verdict` and
     `log-verdict`. Main merged here with no textual conflict, and both hold: `log_verdict` carries

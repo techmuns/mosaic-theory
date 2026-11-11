@@ -263,7 +263,8 @@ def log_verdict(
         else Disposition.OVERRIDDEN
     )
     entry = LedgerEntry(
-        entry_id=next_decision_id(store, candidate_id),  # one OPEN decision per candidate
+        # one OPEN decision per candidate, never entered before the earlier one left the book
+        entry_id=next_decision_id(store, candidate_id, entering_on=close.as_of),
         candidate_id=candidate_id,
         internal_id=ident.internal_id,
         ticker=ident.ticker,
@@ -292,11 +293,17 @@ def log_verdict(
     return entry
 
 
-def next_decision_id(store: Store, candidate_id: str) -> str:
+def next_decision_id(store: Store, candidate_id: str, *, entering_on: date | None = None) -> str:
     """The id the next decision for ``candidate_id`` takes (operator ruling 2026-11-11): its first
     is ``V-{candidate}``; a fresh one after the earlier is CLOSED or VOIDED is ``V-{candidate}-{n}``
     (`decision_entry_id`). While an earlier decision is still open it is refused — a candidate
-    holds one open decision, so a re-log can never stand beside the call it would contradict."""
+    holds one open decision, so a re-log can never stand beside the call it would contradict.
+
+    NOR BEFORE THE EARLIER ONE LEFT THE BOOK (Codex round 2 on #984). A close takes a decision out
+    of the book from its exit session and a void from its ruling date, as every reader reads them
+    (`closed_decision_ids`, `voids_by_decision(as_of=…)`). A fresh decision ``entering_on`` an
+    earlier date — a back-dated ``--ref`` — would stand beside it in every cut between the two, so
+    it is refused. On or after that date it is the next decision."""
     rows = list(store.iter_ledger())
     mine = [r for r in rows if r.candidate_id == candidate_id and r.event is None]
     if not mine:
@@ -306,6 +313,17 @@ def next_decision_id(store: Store, candidate_id: str) -> str:
             f"{candidate_id!r} already holds an open decision {still_open[0].entry_id!r} — the "
             f"ledger is append-only: close it, or have it voided by a ruling, before a fresh "
             f"decision is logged")
+    if entering_on is not None:
+        left = {r.closes_entry_id: r.exit_price_as_of for r in rows
+                if r.event == EVENT_CLOSE and r.exit_price_as_of is not None}
+        left.update({k: v.ruled_on for k, v in voids_by_decision(rows).items()
+                     if v.ruled_on is not None})
+        for d in mine:
+            if (gone := left.get(d.entry_id)) is not None and entering_on < gone:
+                raise LedgerError(
+                    f"a fresh {candidate_id!r} decision would enter on {entering_on}, before "
+                    f"{d.entry_id!r} left the book on {gone} — every cut between the two would "
+                    f"hold both; enter it on or after {gone}")
     return decision_entry_id(candidate_id, len(mine) + 1)
 
 

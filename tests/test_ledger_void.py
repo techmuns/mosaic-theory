@@ -37,6 +37,7 @@ from vinci.schemas.ledger import (
     void_entry_id,
     voids_by_decision,
 )
+from vinci.schemas.market import PriceBar
 from vinci.store import Store
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -544,3 +545,50 @@ def test_a_log_on_an_open_decision_is_refused_before_the_confirmations_draws(
     with pytest.raises(_ReachedError):
         cli._cmd_log_verdict(args)
     assert drawn == ["GOOGL"]
+
+
+# --- a fresh decision never enters before the earlier one left the book (Codex round 2, #984) ---
+
+def test_a_back_dated_fresh_decision_is_refused_and_one_from_the_exit_on_is_not(
+        tmp_path: Path) -> None:
+    """THROUGH `log_verdict`: XYZ's AVOID entered 2026-06-12 and was CLOSED at the 2026-06-16
+    close. A fresh decision logged on 06-17 with ``--ref 2026-06-15`` would enter at the 06-12 close
+    — inside the closed decision's life, so every cut from 06-12 to 06-16 would hold both. It is
+    refused, nothing written. Entered at the 06-17 close (on or after the exit), it is
+    ``V-…-2``."""
+    from tests.test_ledger import _KW, _ident, _seed
+    from vinci.ledger import log_verdict
+    from vinci.schemas.ledger import Verdict
+    with Store(tmp_path / "t.db") as store:
+        ident = _ident("XYZ", "SEC-0000000009-XYZ", "0000000009")
+        cid = _seed(store, ident)
+        log_verdict(store, candidate_id=cid, verdict=Verdict.AVOID_TERMINAL,
+                    decided_at=datetime(2026, 6, 15, 10, 0), **_KW)
+        close_position(store, candidate_id=cid, exit_price=40.0,
+                       exit_price_as_of=date(2026, 6, 16), reason="test",
+                       closed_at=datetime(2026, 6, 16, 22))
+        rows = len(list(store.iter_ledger()))
+        with pytest.raises(LedgerError, match="before .* left the book on 2026-06-16"):
+            log_verdict(store, candidate_id=cid, verdict=Verdict.BUY,
+                        decided_at=datetime(2026, 6, 17, 10, 0), **_KW)
+        assert len(list(store.iter_ledger())) == rows
+        store.write_prices([PriceBar(internal_id=ident.internal_id, bar_date=date(2026, 6, 17),
+                                     open=41.0, high=42.0, low=40.0, close=41.5, volume=1e7,
+                                     source="polygon-grouped")])
+        fresh = log_verdict(store, candidate_id=cid, verdict=Verdict.BUY,
+                            decided_at=datetime(2026, 6, 17, 22, 0),
+                            **{**_KW, "reference_date": date(2026, 6, 17)})
+    assert (fresh.entry_id, fresh.entry_price_as_of) == (f"V-{cid}-2", date(2026, 6, 17))
+
+
+def test_a_fresh_decision_after_a_void_enters_on_or_after_its_ruling(tmp_path: Path) -> None:
+    """THE VOID HALF: GOOGL voided on the ruling of 2026-11-11 — a fresh GOOGL decision entering
+    on 11-10 is refused, one entering on 11-11 is ``V-GOOGL-2``. Without an entry date (the id
+    alone) nothing changes."""
+    from vinci.ledger.workflow import next_decision_id
+    with _store(tmp_path) as store:
+        _void(store)
+        with pytest.raises(LedgerError, match="before 'V-GOOGL' left the book on 2026-11-11"):
+            next_decision_id(store, "GOOGL", entering_on=date(2026, 11, 10))
+        assert next_decision_id(store, "GOOGL", entering_on=RULING) == "V-GOOGL-2"
+        assert next_decision_id(store, "GOOGL") == "V-GOOGL-2"

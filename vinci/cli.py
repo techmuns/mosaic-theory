@@ -1696,8 +1696,10 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
             # A CANDIDATE WITH AN OPEN DECISION IS REFUSED FIRST (#984 × #982). `log_verdict` takes
             # its id from `next_decision_id`, which refuses while an earlier decision is open; the
             # vote rule's confirmation below draws ten paid syntheses BEFORE that write, so asking
-            # it here keeps a log that can never land from spending anything.
-            next_decision_id(store, args.candidate_id)
+            # it here keeps a log that can never land from spending anything. The entry is a close
+            # on or before ``ref``, so a ``ref`` before the earlier decision left the book is
+            # refused here too (the exact entry date is checked again at the write).
+            next_decision_id(store, args.candidate_id, entering_on=ref)
             cand = store.get_candidate(args.candidate_id)
             if cand is not None and (
                 clash := _screen_id_book_conflict(cfg, cand.data_record.identity.ticker)
