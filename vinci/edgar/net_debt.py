@@ -90,6 +90,7 @@ from vinci.edgar.concepts import (
     facts_as_of,
     latest_instant,
     points_for_tag,
+    served_filing,
 )
 
 #: The refusal for a filer with no cash line or no debt tag ever: nothing to read, as opposed to a
@@ -181,7 +182,8 @@ def _usd(facts: dict[str, Any], tag: str) -> list[ConceptPoint]:
 def _at(facts: dict[str, Any], tag: str, at: date) -> ConceptPoint | None:
     """``tag``'s instant value AT ``at`` (the latest filing of it), else None."""
     pts = [p for p in _usd(facts, tag) if p.period_start is None and p.period_end == at]
-    return max(pts, key=lambda p: p.filed) if pts else None
+    # a same-day 10-K and 10-K/A by the filing served, never by row order (RE1-D7)
+    return served_filing(pts) if pts else None
 
 
 def _short_term_securities(facts: dict[str, Any], at: date) -> ConceptPoint | None:
@@ -256,7 +258,10 @@ def _unread_debt(facts: dict[str, Any], at: date,
     def latest(tag: str) -> float | None:
         # the same parser as the reading (review of #749): one value, one reader
         pts = [p for p in _usd(facts, tag) if p.period_end >= at]
-        return max(pts, key=lambda p: (p.period_end, p.filed)).value if pts else None
+        if not pts:
+            return None
+        end = max(p.period_end for p in pts)
+        return served_filing(p for p in pts if p.period_end == end).value
 
     full = b.value if b else 0.0
     hold = max(b.long_term, b.current_total or 0.0) if b else 0.0
@@ -471,7 +476,9 @@ def net_debt(facts: dict[str, Any], *, as_of: date | None = None) -> NetDebt | N
         # the latest NONZERO one where any is: a $0 line is not what was being served (KLIC's
         # 2012 `DebtCurrent` of $0 beside the $109M of notes the old reading carried)
         carried = [p for p in earlier if p.value] or earlier
-        stale = max(carried, key=lambda p: (p.period_end, p.filed)) if carried else None
+        stale = (served_filing(p for p in carried
+                               if p.period_end == max(q.period_end for q in carried))
+                 if carried else None)
     fin_pts: list[ConceptPoint] = []
     if b is not None and b.finance_leases_inside:
         fin = 0.0
