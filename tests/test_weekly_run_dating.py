@@ -192,7 +192,7 @@ def test_the_fixture_builder_writes_nothing_until_every_series_is_built() -> Non
             f"write only once they all succeeded.")
 
 
-def test_the_weekly_job_rebuilds_the_fixture_before_it_gates_and_commits_it() -> None:
+def test_the_weekly_job_rebuilds_the_fixture_before_it_gates() -> None:
     """BOTH MIRRORS MOVE WITH THE DATA. `frontend/` was rebuilt from the refreshed store and
     `tests/fixtures/prices/` was not — but the gate compares the freshly-screened fleet as-of
     against those committed bars (`test_maintenance_path._cfg` builds its store from them on every
@@ -207,9 +207,8 @@ def test_the_weekly_job_rebuilds_the_fixture_before_it_gates_and_commits_it() ->
     assert screen < build < gate, (
         "the price fixture must be rebuilt AFTER the screen refreshes the store and BEFORE the "
         "gate moves that store aside")
-    assert "git add data/snapshots frontend tests/fixtures/prices" in wf, (
-        "the rebuilt fixture is never committed — the next run would rebuild it again and the "
-        "gate would keep failing on the committed one")
+    # The rebuilt fixture lands with the snapshots by the operator's PR, never a commit from the
+    # job (RH-D10, 2026-11-11: tests/test_scheduled_workflows.py pins that the job commits nothing).
 
 
 def test_the_fixture_and_the_committed_fleet_as_of_still_straddle() -> None:
@@ -322,19 +321,6 @@ def test_the_benchmark_never_trails_the_names_measured_against_it() -> None:
         f"python scripts/build_price_fixture.py --refresh")
 
 
-def test_both_pushes_rebase_so_a_slow_run_cannot_lose_a_race() -> None:
-    """THE JOB TAKES ~26 MINUTES AND MAIN IS NOT FROZEN WHILE IT RUNS. The reporting step already
-    rebased; the SNAPSHOT commit — the one that actually advances the queue — pushed bare, so any
-    merge landing mid-run would fail the whole thing after the screen, both mirrors and the gate had
-    all succeeded. Both commits carry derived data only, so replaying onto a newer main is safe."""
-    wf = (ROOT / ".github" / "workflows" / "weekly-screen.yml").read_text()
-    for step in ("Commit refreshed snapshots", "Report the run's outcome"):
-        body = wf.split(step, 1)[1].split("- name:", 1)[0]
-        assert "git pull --rebase" in body, (
-            f"the {step!r} step pushes without rebasing — a merge to main during the run loses the "
-            f"race and marks a successful run failed")
-
-
 def test_a_name_that_flips_out_of_the_maintained_set_is_still_rebuilt(
     tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """THE FLIP IS THE WHOLE POINT, AND IT IS INVISIBLE TODAY. `maintained_names` is `committed
@@ -399,29 +385,6 @@ def test_main_actually_calls_names_to_rebuild() -> None:
         f"`wanted` is built from {source!r}, not names_to_rebuild — the union with the files "
         f"already on disk is bypassed, and a name that flips out of the maintained set keeps a "
         f"stale vintage while every other series advances")
-
-
-def test_a_conflicted_rebase_cannot_silence_the_status_report() -> None:
-    """THE #495 BLIND SPOT, REOPENED BY THE #496 REBASE, CLOSED HERE (review, #497).
-
-    The snapshot commit rebases onto main so a mid-run merge does not lose the race. But an
-    interrupted rebase leaves UNMERGED PATHS, and the `if: always()` reporting step then dies on
-    `git commit` before it can write anything — so the run fails AND publishes no status, in
-    exactly the situation the status report exists for. Two guards, both required: the commit step
-    aborts its own failed rebase rather than leaving the tree wedged, and the reporting step clears
-    the deck before it tries to commit, because its job is to work when everything else did not."""
-    wf = (ROOT / ".github" / "workflows" / "weekly-screen.yml").read_text()
-
-    commit = wf.split("Commit refreshed snapshots", 1)[1].split("- name:", 1)[0]
-    assert "git rebase --abort" in commit, (
-        "the snapshot commit can leave an interrupted rebase, which stops the reporting step from "
-        "committing anything at all")
-
-    report = wf.split("Report the run's outcome", 1)[1]
-    before_commit = report.split("git add data/snapshots/run_status.json", 1)[0]
-    assert "git rebase --abort" in before_commit, (
-        "the reporting step clears a wedged tree only AFTER its commit — by then `git commit` has "
-        "already refused on unmerged paths and no status is published")
 
 
 def test_an_unknown_flag_is_refused_rather_than_ignored() -> None:

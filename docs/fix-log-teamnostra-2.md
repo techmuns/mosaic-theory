@@ -24,6 +24,12 @@ pack 2 (2026-11-09), held by the operator; none is committed. STATE.md §5.0 row
    - the test that failed before the fix and passes after, as a node id
      (`tests/test_x.py::test_y`);
    - the committed pages the fix changed and rebuilt.
+
+   **The guidance exception** (operator 2026-11-11, verbatim: "Allow the narrow exception (Recommended)"; recorded on issue #1004). It applies
+   only to pure guidance text with no code counterpart. Such an item may read `fixed` with a
+   document-level test, either doc to doc or the document's own consistency, that fails before the
+   fix and passes after; its row cites this ruling. Every other item still needs a test against
+   the code that fails first.
 4. **Status is one of exactly five:**
    - `open`;
    - `in progress (#N)`;
@@ -65,7 +71,7 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 
 | ID | Order | Status | Commit or PR | Test | Pages rebuilt |
 |---|---|---|---|---|---|
-| E2-D5 | 1 | open | — | — | — |
+| E2-D5 | 1 | fixed | 7e1fb468 (code); 0d08979a (#993): FUBO refreshed at $0 | `tests/test_pages_await_parser_rebuild.py::test_fubo_q1_2026_adjusted_ebitda_is_the_quarters_own` | FUBO (refreshed at $0, 2026-11-11): Q1 2026 adjusted EBITDA 77.9 (the TTM) → 41.4 |
 | E2-D10 | 1, 3 | fixed | 7120a4cd (#949) | `tests/test_pages_await_parser_rebuild.py::test_vitl_q2_2026_adjusted_ebitda_loss_is_on_the_page` | VITL (re-assembled 2026-11-09) |
 | E2-D16 | 1 | fixed | 7120a4cd (#949; the pin re-pointed to VITL's Q3 10-Q) | `tests/test_pages_await_parser_rebuild.py::test_vitl_concentration_carries_no_receivables_row` | VITL (re-assembled 2026-11-09) |
 | E2-D12 | 1 | fixed | 7120a4cd (#949) | `tests/test_pages_await_parser_rebuild.py::test_vrrm_one_offs_are_the_impairments_not_the_cash_flow_change` | VRRM (re-assembled 2026-11-09) |
@@ -122,16 +128,16 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RE2-D20 | 4 | in progress (#976) | 2b9b766c (#976), partial: a guide filed under the next-fy default writes a machine-tier "Guidance period not read" flag; the page label is unchanged. Reading the 21 unread list headers, which relabels all 21 `next-fy` guides, is still to come | `tests/test_guidance_fix2_e2.py::test_re2_d20_a_defaulted_period_is_flagged` | none now; 21 flags on BURL, EPAM, SMPL, VITL, VRRM at re-assembly |
 | RF-D3 | 4 | fixed | 93a50599 (#943) | `tests/test_realized_total_return.py::test_a_flat_stock_with_a_20pct_special_dividend_realizes_zero` | none; monitor days from now carry `realized_price_return` |
 | RF-D4 | 4 | fixed | 7d0e3c91 (#946) | `tests/test_universe_one_basis.py::test_a_split_since_the_filed_count_is_sized_on_the_current_count` | none; the universe snapshot is re-sized at the next weekly build (6 lines leave the band) |
-| RF-D7 | 4 | fixed | 81644a28 (#947) | `tests/test_seal_is_current.py::test_every_committed_seal_read_against_the_rule[V-GOOGL]` | none; the sealed rows stay as written, and GOOGL's and VRRM's are read at appended corrections, R-GOOGL and R-VRRM-screen2-20260617 (operator ruling 2026-11-09, approved 2026-11-10; `docs/records/2026-11-10-fix2-groupF-d-two-stale-seals-corrected-by-appended-rows.md`) |
+| RF-D7 | 4 | fixed | 81644a28 (#947); the web twin, its last open piece, 8a72be4c (#1001): the page reads a decision at its correction | `tests/test_seal_is_current.py::test_every_committed_seal_read_against_the_rule[V-GOOGL]`; the web twin: `tests/test_web_twin_corrections_and_voids.py::test_the_page_twin_reads_the_book_the_monitor_reads` | none; the sealed rows stay as written, and GOOGL's and VRRM's are read at appended corrections, R-GOOGL and R-VRRM-screen2-20260617 (operator ruling 2026-11-09, approved 2026-11-10; `docs/records/2026-11-10-fix2-groupF-d-two-stale-seals-corrected-by-appended-rows.md`); the web twin rebuilt `frontend/scenarios/GOOGL.json` and `GOOGL-2026-08-17.json` (#1001), and GOOGL's cards again, voided, with X-GOOGL (#1008) |
 | RF-D9 | 4 | fixed | 7d0e3c91 (#946) | `tests/test_universe_one_basis.py::test_adv_is_over_the_markets_sessions_not_the_days_a_name_traded` | none |
 | RF-D13 | 4 | fixed | 93a50599 (#943) | `tests/test_scoring_pending_reasons.py::test_an_interim_row_whose_dividends_cannot_be_read_is_named` | none |
-| RE1-D7 | 4 | open | — | — | — |
-| RE1-D10 | 4 | open | — | — | — |
+| RE1-D7 | 4 | fixed | 65758333 (#986): a same-day 10-K and 10-K/A resolve by a stated precedence (`served_filing`), never by row order | `tests/test_fix2_e1_concepts.py::test_re1_d7_a_same_day_amendment_is_served_whatever_the_row_order` | none: 0 of 13,986 values move on 27 pages |
+| RE1-D10 | 4 | fixed | 65758333 (#986): a past bar reads the EPS alias of its own day | `tests/test_fix2_e1_concepts.py::test_re1_d10_the_pe_range_reads_bars_before_a_retag` | none: 0 of 13,986 values move on 27 pages |
 | RE1-D11 | 4 | fixed | 9f6175db (#948) | `tests/test_fts_amendment_form.py::test_the_covenant_pointer_names_an_amendment_as_filed` | WERN (1 of 92 pointer rows; 20 labels at its next re-assembly, on order 1's rebuild list) |
 | RE1-D14 | 4 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_excerpt_cap_says_how_much_it_left_unread` | none (graph only) |
 | RE1-D16 | 4 | fixed | 1d0c374c (#945) | `tests/test_point_guide_verification.py::test_a_point_guide_against_a_range_ending_at_zero_is_a_mismatch` | none (28 frozen pages compared; every compared line has both bounds) |
-| RA-D2 | 4 | in progress (#981) | #967 measured on the panel does not ship (56d777af, #973: M-ABSENT 45 → 70, p_upper 0.018); split into two successors, each measured on its own (RA-D2 under the NA ruling); the RA-D2 successor is #981 (open, its own panel check) | — | — |
-| RA-D4 | 4 | in progress (#967) | #967 measured on the panel does not ship (56d777af, #973); split into two successors, each measured on its own | — | — |
+| RA-D2 | 4 | fixed | 62d682c6 (#981): the Dividend/sh row and key_ratios read the Income Statement's dividend level, never the growth rate; CIQ's 'NA' reads "not stated", never "none". The NA ruling's third leg (a filing's own "no dividend" statement) is not read: no filing reader is wired into this row | `tests/test_dividend_level_and_na.py::test_ra_d2_the_dividend_row_is_the_income_statements_level_never_a_growth_rate` | none rebuilt; 17 of 27 pages move at re-assembly (the other 10 are measured in the CIQ stream's completions PR); panel #985, no class metric worse (operator: "Merge, moves are noise") |
+| RA-D4 | 4 | fixed | 85306351 (#983): every period guided on the latest date is kept, in time order | `tests/test_same_day_guides.py::test_ra_d4_smpls_latest_guides_are_all_kept_whatever_the_column_order` | none rebuilt; 16 of 27 move at re-assembly; panel #994, no class metric worse (operator: "Merge, moves are explained") |
 | RA-D9 | 4 | fixed | 2f920944 (#963) | `tests/test_ciq_units_and_headers.py::test_ra_d9_a_statement_in_thousands_is_refused_before_assembly` | none (latent) |
 | RA-D14 | 4 | fixed | 2f920944 (#963) | `tests/test_ciq_units_and_headers.py::test_ra_d14_twin_each_column_is_found_by_its_header_and_a_missing_one_is_said` | none (latent) |
 | RG-D1 | 4 | open | — | — | — |
@@ -142,49 +148,49 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RG-D6 | 4 | open | — | — | — |
 | RG-D7 | 4 | open | — | — | — |
 | RG-D8 | 4 | in progress (#941) | d0563738 (#941): the direction, presence and metric-naming checks are on main; a committed page carries them only from PR 3's $0 pass; the clause-binding half is not built (misfired on 6 of 6 committed rows; strict xfail) | `tests/test_driver_facts.py::test_a_value_whose_direction_its_quote_contradicts_reads_unknown` | none yet: PR 3 |
-| RG-D21 | 4 | open | — | — | — |
-| RD-D2 | 4 | open | — | — | — |
-| RD-D3 | 4 | open | — | — | — |
-| RD-D4 | 4 | open | evidence, not a fix: VITL's $0 precheck of 2026-11-09 listed 6 regressions and not its R1 anchor base, 30.0469 → None on the paid page, because the `anchor` block it compares by presence stays present; and UBER's of 2026-11-09 read "0 regressions" while the paid page's `valuation_basis.priceable` went True → False (its bridge $5,356.0M against CIQ's comps TEV less market cap $8,973.0M), the block present either way (`docs/records/2026-11-09-fix-request-2-order-1-rebuilds.md`) | — | — |
-| RA-D5 | 5 | open | — | — | — |
-| RA-D7 | 5 | open | — | — | — |
+| RG-D21 | 4 | in progress (#987) | bfd6a41a (#987): a stated decline's sign is read ("down 27%" is −27). Residual, Codex round 2 (deferred at the cap): a decline in percentage points or basis points ("a 27 percentage point decline") still reads +27; its own small PR follows | `tests/test_theme_intelligence_number_sign.py::test_a_stated_decline_read_as_positive_is_refused` | none: 0 desk renders move; 1 of 696 stored claims refused at its next analysis |
+| RD-D2 | 4 | fixed | 6d9907d7 (#995); 3410860a (#1003): the insider total names its unpriced lines and their horizon; "largest" ranks priced lines only | `tests/test_insider_occurrence.py::test_rd_d2_the_window_total_says_how_many_lines_it_leaves_out` | none (latent: 0 of 27 pages carry an unpriced line) |
+| RD-D3 | 4 | fixed | 6d9907d7 (#995): a hidden lease cell after the filer's own leases is not "pre-adoption" | `tests/test_lease_basis.py::test_rd_d3_a_hidden_cell_after_the_filers_own_leases_is_not_pre_adoption` | none (latent: 0 of 27 pages carry a post-adoption comparative with a '-' cell) |
+| RD-D4 | 4 | fixed | fb568c7f (#1000): the pre-spend check compares values, list members and decision leaves (`vinci.impact.values`) and never says nothing is lost | `tests/test_prespend.py::test_rd_d4_a_list_member_that_reads_worse_is_a_regression` | none: the check commits nothing |
+| RA-D5 | 5 | fixed | cbefc245 (#972): period columns are read in time order, never in sheet order | `tests/test_ciq_period_order_and_duration.py::test_ra_d5_reversed_period_columns_read_as_the_export_does` | none (latent) |
+| RA-D7 | 5 | fixed | df24ff35 (#971): a renamed 'Cash Flow' or 'Trends' tab is said on the three surfaces RA-D7 names (the annual summary, the recommendation and ratings lines, the bridge); other 'Trends' readers still return nothing, found and not fixed (#971's record) | `tests/test_ciq_header_offset_and_renamed_tabs.py::test_ra_d7_a_renamed_cash_flow_tab_is_named_by_the_summary_and_the_bridge` | none (latent) |
 | RA-D10 | 5 | fixed | 173b4818 (#970): a file's kind is its name's exact rule, never a keyword anywhere in it | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d10_an_issuer_named_with_a_kind_word_reads_as_its_own_pack` | none (latent) |
 | A-D15 | 5 | fixed | 173b4818 (#970): = RA-D10 | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d10_twin_the_kind_is_the_names_end_never_a_word_in_it` | none (latent) |
-| RA-D12 | 5 | open | — | — | — |
+| RA-D12 | 5 | fixed | df24ff35 (#971): a sheet's settings block is read from its first filled row, so blank rows above it change no header read | `tests/test_ciq_header_offset_and_renamed_tabs.py::test_ra_d12_thirty_blank_rows_above_every_sheet_change_no_header_read` | none (latent) |
 | RA-D17 | 5 | fixed | 173b4818 (#970): a PDF tearsheet is read as a PDF | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d17_a_pdf_tearsheet_reads_its_industry` | none (every tearsheet on disk is RTF) |
-| V1-O2 | 5 | open | — | — | — |
+| V1-O2 | 5 | fixed | cbefc245 (#972): a 6- or 9-month column is year to date, never a quarter | `tests/test_ciq_period_order_and_duration.py::test_v1_o2_a_six_or_nine_month_column_is_year_to_date_never_a_quarter` | none (latent) |
 | V1-O3 | 5 | fixed | c2a4d743 (#975): a row whose type is blank is kept | `tests/test_ciq_relationship_view_edges.py::test_v1_o3_a_row_whose_type_is_blank_is_kept_on_a_real_export` | none (latent) |
 | RBC-D3 | 5 | fixed | c2a4d743 (#975): a Customers file cut short says so and gives no count | `tests/test_ciq_relationship_view_edges.py::test_rbc_d3_a_customers_file_cut_short_says_so_and_gives_no_count` | none (latent) |
 | RBC-D7 | 5 | fixed | a71b9f67 (#964): removed with `vinci/ciq/`, which no production code called (RBC-D7 = BC-D1 and BC-D2) | `tests/test_vinci_ciq_removed.py::test_the_package_is_gone_and_nothing_imports_it` | none |
 | BC-D1 | 5 | fixed | a71b9f67 (#964): removed with `vinci/ciq/`, which no production code called (BC-D1 = RBC-D7) | `tests/test_vinci_ciq_removed.py::test_the_package_is_gone_and_nothing_imports_it` | none |
 | BC-D2 | 5 | fixed | a71b9f67 (#964): removed with `vinci/ciq/`, which no production code called (BC-D2 = RBC-D7) | `tests/test_vinci_ciq_removed.py::test_the_package_is_gone_and_nothing_imports_it` | none |
-| RE1-D15 | 5 | open | — | — | — |
+| RE1-D15 | 5 | fixed | 65758333 (#986): segment profit matches us-gaap, srt and dei by namespace URI, whatever prefix binds them | `tests/test_fix2_e1_concepts.py::test_re1_d15_segments_are_read_whatever_prefix_binds_us_gaap` | none: 10 of 10 segment blocks re-read identically |
 | RE2-D15 | 5 | fixed | 670a784c (#969): a footnote mark after a segment figure is presentation | `tests/test_maturity_reader_and_structural_scan.py::test_re2_d15_a_footnoted_cell_keeps_its_year_end_to_end` | none: `segment_rows` has no production consumer |
-| RF-D5 | 5 | open | — | — | — |
-| RF-D10 | 5 | open | — | — | — |
-| RF-D11 | 5 | open | — | — | — |
-| RF-D12 | 5 | open | — | — | — |
-| RFL-D1 | 5 | open | — | — | — |
+| RF-D5 | 5 | fixed | 87f763d3 (#991): a partial refresh never mixes split bases at either edge, on either path | `tests/test_prices_order5.py::test_a_partial_aggs_refresh_after_a_split_puts_the_held_bars_on_the_current_basis` | none (the primary store was then refreshed through it, 2026-11-11: restated, price_only and unanchored all empty) |
+| RF-D10 | 5 | fixed | 87f763d3 (#991): price features read nothing after the reference date without a frontier | `tests/test_prices_order5.py::test_features_read_no_bar_after_the_reference_date_without_a_frontier` | none: 0 committed screen inputs move |
+| RF-D11 | 5 | fixed | 87f763d3 (#991): Tiingo bars carry splits only, so a total return counts a dividend once | `tests/test_prices_order5.py::test_tiingo_bars_carry_no_dividend_so_a_total_return_counts_it_once` | none (latent) |
+| RF-D12 | 5 | fixed | 87f763d3 (#991): a refusal inside the plan window raises, except the ET session not yet closed (Codex round 2) | `tests/test_prices_order5.py::test_a_refusal_inside_the_plan_window_raises` | none |
+| RFL-D1 | 5 | fixed | 31ff7b87 (#992): a read past its copy's fetch is refused | `tests/test_facts_fix2.py::test_rfl_d1_a_read_past_the_copys_fetch_is_refused` | none (nothing reads the store) |
 | RA-D15 | 6 | fixed | cd832299 (#965) | `tests/test_ciq_reader_contract.py::test_stated_currency_agrees_on_the_xlsx_export` | none (every export on disk is BIFF) |
 | RA-D16 | 6 | fixed | cd832299 (#965) | `tests/test_ltm_flag_and_xlsx_currency.py::test_ra_d16_twin_the_synthetic_marked_quarter_is_quoted` | none now; EPAM's, MCK's, VITL's, VRRM's and WLK's QA flags quote '-' when re-assembled |
 | RBC-D2 | 6 | fixed | 173b4818 (#970): = RA-D10 | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d10_twin_the_customers_and_suppliers_files_are_told_apart_by_their_end` | none (latent) |
 | RBC-D5 | 6 | fixed | c2a4d743 (#975): an empty view is named for what it shows | `tests/test_ciq_relationship_view_edges.py::test_rbc_d5_an_empty_view_at_a_real_exports_size_is_named` | none (latent) |
 | RBC-D10 | 6 | fixed | ed2c5f8f (#974): a quality "not run" reason names only live code, and a guard checks every code name a reason gives | `tests/test_quality_not_run_reasons.py::test_rbc_d10_every_code_name_a_not_run_reason_gives_exists` | none; the 2026-11-11 CIQ quality snapshot regenerated |
 | RE2-D19 | 6 | fixed | 2b9b766c (#976): "raised … outlook to $X to $Y from its prior outlook of …" reads the new range | `tests/test_guidance_fix2_e2.py::test_re2_d19_a_raise_reads_the_new_range_not_the_prior` | none: 0 of 141 guides move |
-| RFL-D7 | 6 | open | — | — | — |
-| RFL-D8 | 6 | open | — | — | — |
-| RFL-D9 | 6 | open | — | — | — |
-| RFL-D10 | 6 | open | — | — | — |
-| RH-D2 | 6 | open | — | — | — |
-| H-D1 | 6 | open | — | — | — |
-| RH-D3 | 6 | open | — | — | — |
-| RH-D5 | 6 | open | — | — | — |
-| RH-D6 | 6 | open | — | — | — |
-| RFL-D2 | 7 | open | — | — | — |
-| RFL-D3 | 7 | open | — | — | — |
-| RFL-D4 | 7 | open | — | — | — |
-| RFL-D5 | 7 | open | — | — | — |
-| RFL-D6 | 7 | open | — | — | — |
+| RFL-D7 | 6 | fixed | 31ff7b87 (#992): a refreshed copy is reported changed | `tests/test_facts_fix2.py::test_rfl_d7_a_refreshed_copy_is_reported_changed_not_as_store_differences` | none (nothing reads the store) |
+| RFL-D8 | 6 | fixed | 31ff7b87 (#992): an exact duplicate is named, not a difference | `tests/test_facts_fix2.py::test_rfl_d8_an_exact_duplicate_the_ingest_holds_once_is_named_not_a_difference` | none (nothing reads the store) |
+| RFL-D9 | 6 | fixed | 31ff7b87 (#992): an unknown-shape row writes nothing | `tests/test_facts_fix2.py::test_rfl_d9_an_unknown_shape_row_writes_nothing` | none (nothing reads the store) |
+| RFL-D10 | 6 | fixed | 31ff7b87 (#992): an unread response names its real cause | `tests/test_facts_fix2.py::test_rfl_d10_an_unread_response_names_its_real_cause` | none (nothing reads the store) |
+| RH-D2 | 6 | in progress (#1002) | e3f715b0 (#1002): the regression test is in, as a strict xfail; the 2-line hook patch awaits the operator (refused three times as self-modification; operator: "I'll allow the hook edit") | — | none |
+| H-D1 | 6 | in progress (#1002) | = RH-D2 | — | none |
+| RH-D3 | 6 | fixed | 7edbfa36 (#996): `bin/commit` resolves its interpreter from the checkout | `tests/test_one_gate.py::test_the_local_gate_finds_the_checkouts_own_interpreter` | none |
+| RH-D5 | 6 | fixed | 7edbfa36 (#996): a shallow clone skips (= RG-D22) | `tests/test_evals_round2.py::test_a_shallow_clone_holding_the_freeze_commit_is_not_full_history` | none |
+| RH-D6 | 6 | fixed | 7edbfa36 (#996): node-launching tests check for node first | `tests/test_node_tests_skip_without_node.py::test_every_node_launch_in_the_suite_checks_for_node_first` | none |
+| RFL-D2 | 7 | fixed | 31ff7b87 (#992): a cut stands at the close and reads SEC's acceptance time | `tests/test_facts_fix2.py::test_rfl_d2_a_filing_accepted_after_the_close_is_not_in_that_days_cut` | none (nothing reads the store) |
+| RFL-D3 | 7 | fixed | 3d55bc31 (#999): every response the pages ingest reads is kept write-once by sha256 (operator: "Keep the pages' originals"); the pages snapshot re-ingested from them | `tests/test_facts_originals.py::test_the_ingest_keeps_every_response_it_reads` | none (nothing reads the store); the new pages snapshot is schema v3 (#999's record names it) |
+| RFL-D4 | 7 | fixed | 31ff7b87 (#992): the reader checks the snapshot id and rows | `tests/test_facts_fix2.py::test_rfl_d4_a_consistent_object_and_entry_edit_is_refused_on_open` | none (nothing reads the store) |
+| RFL-D5 | 7 | fixed | 31ff7b87 (#992): a company the snapshot does not hold is not held | `tests/test_facts_fix2.py::test_rfl_d5_a_company_the_snapshot_does_not_hold_is_not_held` | none (nothing reads the store) |
+| RFL-D6 | 7 | fixed | 31ff7b87 (#992): a CIQ snapshot is refused before any request | `tests/test_facts_fix2.py::test_rfl_d6_a_ciq_snapshot_is_refused_before_any_request` | none (nothing reads the store) |
 | RG-D9 | 8 | open | — | — | — |
 | RG-D10 | 8 | open | — | — | — |
 | RG-D11 | 8 | open | — | — | — |
@@ -192,22 +198,22 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RG-D13 | 8 | open | — | — | — |
 | RG-D14 | 8 | open | — | — | — |
 | RG-D15 | 8 | open | — | — | — |
-| RG-D18 | 8 | open | — | — | — |
-| RG-D20 | 9 | open | — | — | — |
-| G-D8 | 9 | open | — | — | — |
-| G-D9 | 9 | open | — | — | — |
-| G-D10 | 9 | open | — | — | — |
-| G-D11 | 9 | open | — | — | — |
-| G-D12 | 9 | open | — | — | — |
-| G-D13 | 9 | open | — | — | — |
-| G-D14 | 9 | open | — | — | — |
-| G-D15 | 9 | open | — | — | — |
-| RE1-D17 | 9 | open | — | — | — |
-| RH-D1 | 10 | open | — | — | — |
-| RH-D4 | 10 | open | — | — | — |
-| RH-D7 | 10 | open | — | — | — |
-| RH-D8 | 10 | open | — | — | — |
-| RH-D10 | 10 | open | — | — | — |
+| RG-D18 | 8 | fixed | 7edbfa36 (#996): the hooks protect the grader (`vinci/evals/`, the gold sets); the review gate counts the grader as code | `tests/test_claude_hooks.py::test_guard_protects_the_gates_configuration_and_the_grader` | none |
+| RG-D20 | 9 | fixed | d8147e97 (#1009): the 13 contradictions (G-D20 a–m) are corrected in comments, docstrings and docs; batch 4 adds the pin, one case per item, and each case fails before the commit that fixed its item: 11 on #1009's parent `d6001465`, and (b) and (j) on #998's parent `7edbfa36`, because #998 corrected those first as G-D15 and G-D14. Items (e) and (i) have no code counterpart and are pinned doc to doc: (e) against RUNBOOKS; (i), the CIQ notes' rule 4, against the row numbers the notes quote. They read `fixed` under rule 3's guidance exception (operator 2026-11-11: "Allow the narrow exception (Recommended)") | `tests/test_rg_d20_instructions_match_the_code.py::test_rg_d20_each_instruction_says_what_the_code_does` | none (prose only; no page or request moves) |
+| G-D8 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d8_the_notes_say_the_surprise_sheet_has_quarters_and_company_level_blocks` | none (docs) |
+| G-D9 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d9_no_code_reads_a_holders_export_and_the_notes_mark_its_rules_superseded` | none (docs) |
+| G-D10 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d10_the_roster_filters_no_relationship_type_and_the_notes_say_so` | none (docs) |
+| G-D11 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d11_the_notes_list_the_codes_missing_data_markers_and_nm_is_one` | none (docs) |
+| G-D12 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d12_the_notes_find_key_development_columns_by_label` | none (docs) |
+| G-D13 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d13_the_notes_state_the_clients_output_cap_and_the_six_required_fields` | none (docs) |
+| G-D14 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d14_no_checklist_md_is_tracked_and_no_doc_claims_a_verification_date` | none (docs) |
+| G-D15 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d15_engineering_passes_no_sampling_parameter_as_the_client_refuses_them` | none (docs) |
+| RE1-D17 | 9 | fixed | 7edbfa36 (#996): the SEC key check sends no request and applies the pipeline's contact rule | `tests/test_validate_keys_sec.py::test_the_sec_check_applies_the_pipelines_rule_and_sends_nothing` | none |
+| RH-D1 | 10 | fixed | fdf85180 (#988): the stale-pin test fails under the gate's own flags; one file per extraction vintage | `tests/test_extraction_version_drift.py::test_a_stale_pin_fails_under_the_gates_own_flags` | none |
+| RH-D4 | 10 | fixed | 7edbfa36 (#996): one gate; the mirror check in `bin/commit`; `-rs` in every workflow | `tests/test_one_gate.py::test_every_gate_runs_pytest_with_the_gates_own_flags` | none |
+| RH-D7 | 10 | fixed | 7edbfa36 (#996): the edit guard covers pyproject, conftest, `.github/scripts/` and the grader | `tests/test_claude_hooks.py::test_guard_protects_the_gates_configuration_and_the_grader` | none |
+| RH-D8 | 10 | fixed | 7edbfa36 (#996): an unexpected error fails the key check and names its type | `tests/test_validate_keys_model.py::test_an_unexpected_error_fails_the_key_and_is_never_called_connectivity` | none |
+| RH-D10 | 10 | fixed | e3f715b0 (#1002): the weekly screen pushes and commits nothing (operator ruling (a): run locally, land by PR) | `tests/test_scheduled_workflows.py::test_the_weekly_screen_pushes_nothing_and_commits_nothing` | none |
 | RA-D6 | §4 | open | — | — | — |
 | RA-D18 | §4 | open | — | — | — |
 | RA-D19 | §4 | open | — | — | — |

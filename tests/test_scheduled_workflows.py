@@ -40,6 +40,7 @@ a commit message, and the workflows have to be able to explain why the marker is
 from __future__ import annotations
 
 import pathlib
+import re
 import subprocess
 
 import pytest
@@ -113,13 +114,14 @@ def _pushing_workflows() -> list[pathlib.Path]:
 
 
 def _compliant_substrate() -> str:
-    """The live weekly workflow, for the two mutation pins to derive their variants from.
+    """The live monthly workflow, for the two mutation pins to derive their variants from — the
+    weekly one pushed until 2026-11-11 and was the substrate then; it pushes nothing now (RH-D10).
 
     They mutate REAL text rather than a hand-rolled snippet, which means an already-broken workflow
     would redden them too and bury the one failure that matters under three. Skip instead, and let
     `test_a_scheduled_push_is_gated_before_it_can_reach_main` be the single reporter of that state.
     """
-    path = WORKFLOWS / "weekly-screen.yml"
+    path = WORKFLOWS / "monthly-score.yml"
     text = path.read_text()
     if violations(path.name, text):
         pytest.skip(f"{path.name} is itself non-compliant — mutating it proves nothing; see "
@@ -131,8 +133,27 @@ def test_the_corpus_actually_contains_workflows_that_push() -> None:
     """CORPUS BEFORE SYNTHETIC. A selector that matches nothing makes the two pins below vacuous —
     they would stay green through any edit, including deleting the gate they exist to protect."""
     names = [p.name for p in _pushing_workflows()]
-    assert {"weekly-screen.yml", "monthly-score.yml"} <= set(names), (
-        f"the scheduled jobs that commit to main are not being selected: {names}")
+    assert "monthly-score.yml" in names, (
+        f"the scheduled job that commits to main is not being selected: {names}")
+
+
+def test_the_weekly_screen_pushes_nothing_and_commits_nothing() -> None:
+    """RH-D10 (fix request 2; operator ruling 2026-11-11, option (a), the monthly-score
+    precedent). `main` requires a PR and the `gate` check, so the weekly job's two pushes —
+    the snapshots and `run_status.json` — were refused by design while its comments described
+    them as working. It now runs no push and no commit, holds only read access, and says so; its
+    snapshots land by the operator's PR. A workflow change cannot be proven by a real run here
+    (the screen cannot run in CI under the Polygon plan, STATE §5.0 row 31), so this pins the
+    text."""
+    text = (WORKFLOWS / "weekly-screen.yml").read_text()
+    commands = [ln.strip() for ln in text.splitlines()
+                if ln.strip() and not ln.strip().startswith("#")]
+    writes = re.compile(r"\bgit\b.*\b(push|commit|add)\b")
+    assert not [c for c in commands if writes.search(c)], (
+        "weekly-screen.yml runs git again — a push to main is refused by the branch protection, "
+        "and its snapshots land by the operator's PR")
+    assert "contents: read" in text and "contents: write" not in text and "write-all" not in text
+    assert "THIS JOB DOES NOT PUSH TO MAIN" in text and "RH-D10" in text
 
 
 @pytest.mark.parametrize("path", _pushing_workflows(), ids=lambda p: p.name)
@@ -174,7 +195,7 @@ def test_the_lint_rejects_the_workflow_that_actually_caused_the_incident() -> No
 
 def test_a_gate_moved_below_the_push_is_rejected() -> None:
     """PROPERTY 2 ISOLATED. The incident workflow violates both properties at once, so it cannot
-    show that ORDER is checked rather than mere presence. This reorders the LIVE weekly workflow —
+    show that ORDER is checked rather than mere presence. This reorders the LIVE monthly workflow —
     the gate still exists, it just runs too late to stop anything."""
     text = _compliant_substrate()
     lines = text.splitlines()
@@ -204,12 +225,14 @@ def test_a_marker_inside_a_comment_is_not_a_violation() -> None:
     message, and a lint that forbade the words would force the reasoning out of the file."""
     text = _compliant_substrate()
     commented = text.replace(
-        "      - name: Commit refreshed snapshots",
+        "      - name: Commit scoring report",
         "      # the push below deliberately carries no [skip ci] marker\n"
-        "      - name: Commit refreshed snapshots")
+        "      - name: Commit scoring report")
+    assert commented != text, "the substrate lost the step this pin comments beside"
     assert not violations("commented", commented)
     # ...and the same text OUTSIDE a comment still fires, so the exemption is not a hole
     uncommented = text.replace(
-        'git commit -m "weekly screen: refresh snapshots"',
-        'git commit -m "weekly screen: refresh snapshots [skip ci]"')
+        'git commit -m "monthly score: update report"',
+        'git commit -m "monthly score: update report [skip ci]"')
+    assert uncommented != text, "the substrate lost the commit this pin marks"
     assert any("[skip ci]" in v for v in violations("uncommented", uncommented))

@@ -1,5 +1,5 @@
 ---
-status: open
+status: recorded
 date: 2026-11-11
 prs: []
 supersedes:
@@ -60,7 +60,13 @@ should, and random dollar figures no longer trace against the annual table at an
    'N' in <where> [from the call <ref>]`, a shown caveat; the point keeps `cited=True`. A
    computed figure with such an input is UNDERIVED. `TRANSCRIPT-FIGURE` is no longer emitted (the
    QA list keeps it, for the flags old pages store).
-8. **The panel's instrument does not move.** `evals.metrics` finds figures through
+8. **Two of RG-D20's statements (#1009, merged while this was built) describe the trace before
+   this change**: its (c) said a figure is traced by magnitude alone, and its (d) that a call
+   figure earns a hidden TRANSCRIPT-FIGURE note. RG-D1 and RG-D7 change both; the comment in
+   `_num_traces` and `synthesize`'s docstring say so now, and keep RG-D20's still-true pointers
+   (the directional lint reads words, never a sign; `material_direction_flags` and `_recompute`
+   compare a sign in words and a computed one).
+9. **The panel's instrument does not move.** `evals.metrics` finds figures through
    `synthesis._claim_figure_ends` and reads `_stated_numbers`' years and ranks. Both are unchanged:
    `_claim_figure_ends` is a filter over the new reader that returns what it returned before (it
    still skips the old labels and reads a match's hyphen as a sign).

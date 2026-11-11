@@ -118,3 +118,67 @@ def test_a_priced_gift_never_reports_as_a_dollar_sale() -> None:
     transfer as a $0 event, which reads as *nothing happened*."""
     assert Form4Line("G", 1_000, 0.0, date(2026, 1, 1), "cikA", "director").usd is None
     assert Form4Line("S", 1_000, 10.0, date(2026, 1, 1), "cikA", "director").usd == 10_000
+
+
+# --- audit RD-D2: a line with no price is counted, never silently left out of the dollars --------
+
+#: The audit's shape (fix request 2, RD-D2), on the real type: one sale at a price, and a LATER,
+#: LARGER sale whose Form 4 states a price of 0 — `Form4Line.usd` is None for it. No committed page
+#: carries one (measured 2026-11-11: 5,791 Form 4 filings in the 27 pages' 3-year scans, 0 P or S
+#: lines without a price), so the shape is constructed; the line is a pure function of the rows.
+#: The reader-to-line path is pinned end to end in `test_dossier.py` (a Form 4 with no price).
+_UNPRICED = [line("S", date(2026, 6, 1), 10_000, 50.0, "cikA"),
+             line("S", date(2026, 7, 1), 200_000, 0.0, "cikB", "CEO")]
+
+
+def test_rd_d2_the_window_total_says_how_many_lines_it_leaves_out() -> None:
+    """(+) THE RED, on base: "sells 2 (2 insiders, $0.50M)" — two sales, a total of one of them, and
+    nothing saying so. The count holds every line, so the dollars state the line they omit."""
+    out = compose(_UNPRICED)
+    assert "sells 2 (2 insiders, $0.50M + 1 with no price stated)" in out
+    alone = compose(_UNPRICED[1:])
+    assert "sells 1 (1 insider, 1 with no price stated)" in alone, (
+        "a side with no priced line at all prints no total, and says why")
+
+
+def test_rd_d2_largest_ranks_only_priced_lines_and_counts_the_rest() -> None:
+    """(+) THE RED, on base: "largest sale $0.50M, director" while a 200,000-share sale with no
+    price stood beside it, ranked as $0. The largest is named among the priced lines only, and says
+    so, and the unpriced lines are counted beside it — "1 of 2", so the count is of the set and
+    never reads as a third sale (review, 2026-11-11)."""
+    out = compose(_UNPRICED)
+    assert "last sale CEO, 2026-07-01 (~1mo ago)" in out
+    assert "largest priced sale $0.50M, director, 2026-06-01 (~2mo ago)" in out
+    assert "largest sale" not in out
+    assert "1 of 2 sales in the 3y scanned with no price stated, not ranked" in out
+    alone = compose(_UNPRICED[1:])
+    assert "largest" not in alone and "1 of 1 sale in the 3y scanned with no price stated" in alone
+    assert "not ranked" not in alone, "nothing was ranked, so nothing was left out of a ranking"
+
+
+def test_rd_d2_neg_a_fully_priced_line_is_byte_identical() -> None:
+    """(-) No line without a price ⇒ no new clause: SMPL's shape composes to exactly the line it
+    composed before RD-D2, and 25 of the 27 committed lines re-composed byte for byte from their own
+    Form 4 rows on 2026-11-11 (LLY carries no line; ORKA's cached index stops five days earlier)."""
+    assert compose(SMPL) == (
+        "Open-market buys 2 (2 insiders, $1.11M) · sells 0 — in the last 182 days · last purchase "
+        "$0.12M, director, 2026-05-14 (~3mo ago) · largest purchase $0.99M, director, 2026-04-23 "
+        "(~3mo ago) · last sale $0.11M, VP, Controller and CAO, 2025-11-11 (~9mo ago) · largest "
+        "sale $8.06M, director, 2024-11-07 (~21mo ago) · grants 0 · last filing 2026-07-24 · "
+        "other F×1")
+    assert "no price stated" not in compose(SMPL)
+
+
+def test_rd_d2_the_unpriced_count_states_its_horizon() -> None:
+    """(+) Codex, #995 round 1: the count sits after "sells 1 … — in the last 182 days", but it is
+    of the whole scan, so an unpriced sale outside the window read as one inside it. It names its
+    horizon, the absence clause's own: "in the 3y scanned" (or "since" a foreign issuer's date)."""
+    rows = [line("S", date(2026, 6, 1), 10_000, 50.0, "cikA"),
+            line("S", date(2025, 9, 1), 200_000, 0.0, "cikB", "CEO")]
+    out = compose(rows)
+    assert "sells 1 (1 insider, $0.50M) — in the last 182 days" in out, "the window holds one"
+    assert (f"1 of 2 sales in the {_INSIDER_SCAN_DAYS // 365}y scanned with no price stated, "
+            f"not ranked") in out
+    fpi = compose_insider_line(rows, reference_date=REF, last_filing=LAST_FILING,
+                               since=date(2025, 3, 18))
+    assert "1 of 2 sales since 2025-03-18 with no price stated, not ranked" in fpi

@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-10
 prs: []
 supersedes:
@@ -74,3 +74,6 @@ superseded-by:
   accession it names is correct.
 - **`FtsHit` carries one form.** A reader that wants the family as well reads it from the form
   (`8-K/A` → `8-K`); none does today.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `9f6175db` (#948) on 2026-11-10. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

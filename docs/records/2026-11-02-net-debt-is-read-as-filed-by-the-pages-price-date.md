@@ -1,6 +1,6 @@
 ---
 id: 2026-11-02-net-debt-as-of
-status: open
+status: shipped
 date: 2026-11-02
 prs: [885]
 supersedes:

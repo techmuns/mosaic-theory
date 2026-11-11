@@ -1,7 +1,8 @@
 name: weekly-screen
 
 # ONE CALL IS THE WHOLE WEEK: refresh EOD for the stored universe, rebuild the universe, run
-# Screen 2, scan for structural disqualifiers, rank, export, and commit the JSONL snapshots.
+# Screen 2, scan for structural disqualifiers, rank and export the JSONL snapshots — which land on
+# main through the operator's PR, never a push from here (below).
 # MANUAL TRIGGER ONLY — the operator's ruling, 2026-08-24. There was never a sanctioned cron here:
 # the schedule arrived with "Loop 1 step 8: configure-once scheduled automation" (274339a,
 # 2026-06-17) and ran unasked every Monday since, pushing SIX automated commits to main. A job that
@@ -10,14 +11,24 @@ name: weekly-screen
 #
 # `workflow_dispatch` keeps the one-call convenience (Actions -> weekly-screen -> Run workflow), and
 # `vinci run-weekly` remains the same single command locally.
+#
+# THIS JOB DOES NOT PUSH TO MAIN. RUN IT LOCALLY; ITS SNAPSHOTS LAND BY PR (operator ruling
+# 2026-11-11, fix request 2 RH-D10, option (a): the monthly-score precedent, docs/RUNBOOKS.md §l;
+# record docs/records/2026-11-11-fix2-rh-d2-rh-d10.md). `main` requires a PR and the `gate` check
+# (branch protection, read 2026-11-11), so a push from here was refused by design. Its last landed
+# run is 2026-08-25, before the protection, and STATE §5.0 row 31 says the screen cannot run in CI
+# under the current Polygon plan anyway. The operator runs `vinci run-weekly`, rebuilds both mirrors
+# and lands the result through a PR, gated like any change. Dispatched here, the job is a dry run:
+# it screens, rebuilds and gates, and reports its outcome in the run's summary; it commits nothing.
+# A test holds that this file runs no push and no commit (tests/test_scheduled_workflows.py).
 on:
   workflow_dispatch: {} # OPERATOR-TRIGGERED ONLY — see the note above; no schedule, deliberately
 
 permissions:
-  contents: write # to commit the refreshed snapshots back
+  contents: read # a dry run: it commits nothing (RH-D10)
 
 concurrency:
-  group: vinci-scheduled # weekly + monthly never race on the snapshot commit
+  group: vinci-scheduled # weekly + monthly never run at once; only monthly commits (RH-D10)
   cancel-in-progress: false
 
 jobs:
@@ -27,7 +38,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           # FULL HISTORY, for the same reason gate.yml takes it — and here it is load-bearing,
-          # because the pre-push gate below is the ONLY gate this commit gets. Several pins read
+          # because the gate below is this dry run's only check of its rebuild. Several pins read
           # real historical blobs (`test_state_identifiers` reads `c112f25:STATE.md`;
           # `test_scheduled_workflows` reads the incident workflow out of `607e7d1`) and SKIP on a
           # shallow clone. At the default depth 1 this job would run a quietly WEAKER suite than
@@ -42,7 +53,7 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          # `[dev]` for the pre-push gate below — this job now runs the offline suite itself.
+          # `[dev]` for the gate below — this job runs the offline suite itself.
           python -m pip install -e ".[dev]"
 
       # Immutable per-day grouped-daily responses are cached, so only new days hit the network.
@@ -84,9 +95,9 @@ jobs:
       # store. Refresh the store and leave the fixture behind, and the run fails its own gate.
       #
       # DERIVED DATA, NOT CODE, and the distinction is the one CLAUDE.md draws: these are
-      # regenerable price bars carrying no analytical claim and no logic, staged by directory name
-      # so this cannot become a door for a code change. The script is ALL-OR-NOTHING — a name with
-      # no bars aborts before anything is written — so a partial build can never be committed.
+      # regenerable price bars carrying no analytical claim and no logic. The script is
+      # ALL-OR-NOTHING — a name with no bars aborts before anything is written — so a partial
+      # build never reaches the operator's PR.
       #
       # `--refresh` IS REQUIRED HERE, NOT AN OPTIMISATION. The screen above refreshes EOD for the
       # SCREENING UNIVERSE; this fixture covers the MAINTENANCE-ROUTE set, which is by definition
@@ -110,17 +121,12 @@ jobs:
       # a docs-only PR went red identically to a code one, and main's own last gate had run BEFORE
       # the push and stayed green. So the breakage read as the innocent PR's regression.
       #
-      # THIS IS THE ONLY GATE THIS COMMIT GETS — there is no second one downstream. A push
-      # authenticated with the workflow's own GITHUB_TOKEN does not create a new workflow run
-      # (GitHub's anti-recursion rule; only workflow_dispatch and repository_dispatch are exempt),
-      # so `gate.yml`'s `on: push` will NOT fire for the commit below whatever its message says.
-      # Removing `[skip ci]` therefore deletes a marker that was never doing the work — it is kept
-      # out because it would suppress the gate for real the day this push moves to an App/PAT
-      # token, and because a marker that claims a gate is being skipped when none would have run is
-      # a lie in the record. THE GATING HAPPENS HERE OR NOWHERE. Review finding, #456.
+      # SINCE 2026-11-11 THIS JOB COMMITS NOTHING (RH-D10, the header), so this gate stops no
+      # push: it tells a dry run whether the artifacts it rebuilt would pass. Those artifacts reach
+      # main only through the operator's PR, which the PR's own `gate` run gates.
       #
-      # SO IT RUNS gate.yml's THREE CHECKS, in gate.yml's order, and that file's standing rule
-      # applies to this block too: if you change one, change the other.
+      # IT RUNS gate.yml's THREE CHECKS, in gate.yml's order, and that file's standing rule applies
+      # to this block too: if you change one, change the other.
       #
       # THE STORE IS MOVED ASIDE FIRST so this runs under the conditions gate.yml runs under. A
       # populated `data/vinci.db` makes some pins mean something different here than on main — the
@@ -131,63 +137,23 @@ jobs:
           if [ -f data/vinci.db ]; then mv data/vinci.db "$RUNNER_TEMP/vinci.db"; fi
           python -m ruff check vinci tests frontend
           python -m mypy --strict vinci
-          python -m pytest -m "not network" -p no:warnings --tb=short
+          python -m pytest -m "not network" -p no:warnings --tb=short -rs
 
-      - name: Commit refreshed snapshots
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/snapshots frontend tests/fixtures/prices
-          git diff --staged --quiet || git commit -m "weekly screen: refresh snapshots"
-          # REBASE BEFORE PUSHING, as the reporting step below already does. This job runs for ~26
-          # minutes; anything merged to main in that window makes a bare push lose the race and
-          # marks the whole run failed — after the screen, the mirrors and the gate all succeeded.
-          # The commit is derived data only, so replaying it onto a newer main is always safe.
-          #
-          # A CONFLICTED REBASE MUST NOT BE LEFT IN PLACE (review, #497). An interrupted rebase
-          # leaves unmerged paths in the tree, and the `if: always()` reporting step below then
-          # dies on `git commit` — so the run would fail AND publish no status, reopening the exact
-          # blind spot #495 exists to close, in exactly the case it exists for. Abort first, leave
-          # a clean tree, then fail on our own terms.
-          git pull --rebase --autostash || {
-            echo "::error::rebase onto origin/main conflicted — aborting it so the run can still report"
-            git rebase --abort || true
-            git checkout -- . || true
-            exit 1
-          }
-          git push
-
-      # THE RUN REPORTS ITS OWN OUTCOME — A DELIBERATE, NAMED EXCEPTION TO THE GATE ABOVE.
+      # THE RUN REPORTS ITS OWN OUTCOME, IN THE RUN — it no longer commits a status file.
       #
-      # WHY IT EXISTS. The frontend reads COMMITTED snapshots and nothing else, so a run that fails
-      # commits nothing and is INDISTINGUISHABLE from a run nobody started. That blind spot cost
-      # four weeks: 2026-08-03 through 08-24 all failed, the served queue sat frozen, and the only
-      # trace was in the Actions tab. The queue-age chip on the ranker could say the queue was old;
-      # it could never say an attempt had been made and broken.
+      # WHY IT EXISTS. A failed run commits nothing, so it was indistinguishable from a run nobody
+      # started: 2026-08-03 through 08-24 all failed and the only trace was the Actions tab. Until
+      # 2026-11-11 this step committed `run_status.json` past the gate so the served chip could
+      # say so. A dry run lands nothing, so the outcome is written to the run's summary and the
+      # file stays in the runner. The served chip reads the COMMITTED file, last written 2026-08-25:
+      # what writes it for a local run is an operator call, recorded with RH-D10.
       #
-      # WHY IT IS ALLOWED PAST THE GATE, stated so nobody has to infer it. The gate exists to stop
-      # bad DATA reaching main. This step writes ONE machine-generated file carrying no analytical
-      # claim — an attempt time, an outcome, and the step that failed. It stages `run_status.json`
-      # BY NAME and nothing else, so a red run cannot smuggle its half-built snapshots out through
-      # this door. A system that cannot report its own state is not safer for it.
-      #
-      # `if: always()` — the whole point is the FAILING case. `--rebase` because a green run has
-      # already pushed above.
+      # `if: always()` — the whole point is the FAILING case.
       - name: Report the run's outcome
         if: always()
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          # CLEAR THE DECK FIRST (review, #497). This step's whole purpose is to report when
-          # something ELSE went wrong, so it must assume the tree it inherits is a mess. An
-          # interrupted rebase leaves unmerged paths and `git commit` then refuses outright — the
-          # run would fail AND publish nothing, which is the #495 blind spot reopened in precisely
-          # the case #495 exists for. Nothing here is load-bearing state: every artifact this job
-          # produces is either already committed or already discarded by the time we arrive.
-          git rebase --abort 2>/dev/null || true
-          git merge --abort 2>/dev/null || true
           python - <<'PY'
-          import json, os, pathlib
+          import json, os
           from datetime import UTC, datetime
           # CANCELLED IS NOT FAILED (review, #495). `job.status` is one of success / failure /
           # cancelled, and folding the third into "failure" publishes a red chip telling the
@@ -196,28 +162,26 @@ jobs:
           # as not-healthy without claiming it broke.
           status = os.environ["JOB_STATUS"]
           remedy = {
-              "success": "",
+              "success": "a dry run: nothing was committed; land a run by PR from the operator's "
+                         "machine (the header of .github/workflows/weekly-screen.yml)",
               "cancelled": "the run was cancelled before it finished — nothing was committed; "
                            "re-trigger when ready: Actions -> weekly-screen -> Run workflow",
           }.get(status,
                 "Open the run log, fix the cause, then re-trigger: Actions -> weekly-screen -> "
                 "Run workflow. If the gate failed on a stale fixture, RUNBOOKS.md step 5 "
                 "regenerates both fixtures.")
-          pathlib.Path("data/snapshots/run_status.json").write_text(json.dumps({
+          report = json.dumps({
               "job": "weekly-screen",
               "attempted_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
               "conclusion": status,
               "run_url": f"{os.environ['SERVER']}/{os.environ['REPO']}/actions/runs/{os.environ['RUN_ID']}",
               # NAMED, not inferred: the remediation a human would otherwise dig out of the log.
               "remediation": remedy,
-          }, indent=2) + "\n")
+          }, indent=2) + "\n"
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+              summary.write("## weekly-screen (dry run)\n\n```json\n" + report + "```\n")
+          print(report)
           PY
-          git add data/snapshots/run_status.json
-          git diff --staged --quiet && exit 0
-          git commit -m "weekly screen: run status ($JOB_STATUS)"
-          # A failed pull here costs only the push — the status file is already committed locally.
-          git pull --rebase --autostash || git rebase --abort || true
-          git push
         env:
           JOB_STATUS: ${{ job.status }}
           SERVER: ${{ github.server_url }}

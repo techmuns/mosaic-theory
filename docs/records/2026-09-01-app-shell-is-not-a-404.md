@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 prs: []
 date: 2026-09-01
 supersedes:
@@ -56,3 +56,6 @@ bug pointing the other way.
    `analyst_notes` are the operator's and are not invented here. `tests/test_theme_context.py`
    checks a HARDCODED map of the three July slugs, so the two new drivers escape that guard
    entirely; deriving it from the registry is the follow-up, and it will fail until the notes exist.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `8d57e6a7` (#565) on 2026-09-02. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

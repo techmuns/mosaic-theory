@@ -23,7 +23,6 @@ import re
 import time
 import warnings
 from collections import Counter
-from collections.abc import Sequence
 from dataclasses import dataclass, field, replace
 from datetime import date
 from decimal import ROUND_FLOOR, Decimal
@@ -1274,8 +1273,11 @@ def _validate(
                     as_rank: bool = False) -> bool:
         # Trace AS WRITTEN (RG-D1 to RG-D5, above `_ClaimFigure`): the LLM writes the stored −0.726
         # as "−72.6%", 29,643,500 shares as "29.6 million" and a stored −0.027 as "shrunk by 2.7%"
-        # (a sign in words is not read here). A printed sign must be the fact's; the unit class
-        # picks the scales; the width is the smaller of the written one and the old 2% / 0.05.
+        # (a sign in words is not read here). A printed sign must be the fact's (RG-D1); the
+        # unit class picks the scales; the width is the smaller of the written one and the old
+        # 2% / 0.05. The directional lint reads recommendation words (`_DIRECTIONAL`), never a
+        # sign (fix request 2, RG-D20 c); a sign carried in words is compared only for a MATERIAL
+        # figure, by `material_direction_flags`, and a computed one by `_recompute`.
         a = f.value
         if f.unit == "plain" and not f.sign and a in cited.years:
             return True  # the year of a date the fact carries — as that year, never rescaled
@@ -2152,47 +2154,31 @@ NOT_SENT: dict[str, Any] = {"primary_source": True,
                                 "locator": True}}}}
 
 
-_SCALE_WORD = {"e3": " thousand", "e6": " million", "e9": " billion", "e12": " trillion"}
-_BOUND_WORD = {"approximately": "approximately ", "at_least": "at least ", "at_most": "at most "}
+#: (RG-D19 PR 3) What a COMMITTED transcript row's value reads as: its words are in the operator's
+#: private store, and nothing on the page stands in for them
+STRIPPED_VALUE = "not on this page — its words are filed in the operator's private store"
 
 
-def figures_text(figures: Sequence[Any] | None) -> str | None:
-    """A transcript row's checked figures as words — "down 7%", "at least $175 million" — from the
-    structured fields alone (`DriverFigure`, or its JSON), never from the model's words. None when
-    the row carries no figure. (RG-D19 PR 3: a committed transcript row has no `value`.)"""
-    out = []
-    for f in figures or []:
-        g = f if isinstance(f, dict) else f.model_dump()
-        change = f"{g['change']} " if g.get("change") else ""
-        bound = _BOUND_WORD.get(g.get("qualifier") or "", "")
-        scale = _SCALE_WORD.get(g.get("scale") or "", "")
-        unit = g.get("unit") or ""
-        unit = unit if unit in ("", "%", "x") else f" {unit}"
-        # `.15g`, not `:g`: six significant digits printed 1,234,567 subscribers as "1.23457e+06"
-        out.append(f"{change}{bound}{g.get('currency') or ''}{g['value']:.15g}{scale}{unit}")
-    return "; ".join(out) or None
-
-
-def driver_value_as_read(value: str | None, status: str | None, reason: str | None,
-                         figures: Sequence[Any] | None = None) -> str:
+def driver_value_as_read(value: str | None, status: str | None, reason: str | None) -> str:
     """A driver row's value as every READER is handed it — the synthesis and the scenario
     template alike. A transcript row whose value code could not verify against its quote
     (`driver_extract.check_fact`) is not handed over as a value — "up 7%" read off "down 7%" was,
     under the header "validated, cited facts" (RG-D8). Every other row's value is unchanged.
 
     (RG-D19 PR 3) A COMMITTED transcript row carries no `value`: its words are in the private
-    store. It reads as its checked figures (`figures_text`), and a qualitative one says that its
-    words are not on the page — never a reconstruction of them."""
+    store, and it reads as `STRIPPED_VALUE`. It is NEVER rebuilt from its checked figures (Codex,
+    round 1 of #1006): the figures are not the claim — TGT's "3/4" of sales read "approximately 3;
+    4", and a qualitative row lost its fact to "stated, with no figure". A reader that needs the
+    words reads them back from the store (`confirmation.with_words`); the figures stay in
+    ``dossier.json``."""
     if status == "unknown":
         return f"UNKNOWN — not verified against its quote: {reason}"
-    if value is not None:
-        return value
-    return figures_text(figures) or "stated, with no figure; its words are kept off this page"
+    return STRIPPED_VALUE if value is None else value
 
 
 def prompt_driver_value(r: OperatingDriver) -> str:
     """`driver_value_as_read` for a row of the layer."""
-    return driver_value_as_read(r.value, r.value_status, r.unknown_reason, r.figures)
+    return driver_value_as_read(r.value, r.value_status, r.unknown_reason)
 
 
 def _mark_unverified_drivers(dumped: dict[str, Any], od: OperatingDriversExtract | None) -> None:
@@ -2211,7 +2197,11 @@ def synthesize(
 ) -> tuple[Synthesis | None, list[str], str]:
     """Run the fenced synthesis → (synthesis|None, flags, log). Fail-loud, never fabricates. The
     ``transcript`` (every call on file, whole — NOT embedded in the dossier) is QUALITATIVE
-    context only; no numbers are derived from it and points still bind to the mechanical facts.
+    context: the prompt asks for no numbers from it, and points still bind to the mechanical facts.
+    A figure the model cites to a call anyway is KEPT, not refused, and traced to that call's
+    VALIDATED figures (its driver rows'); one none of them states is an UNTRACEABLE caveat naming
+    the call, shown on the page (fix request 2, RG-D7, 2026-11-11). Before RG-D7 it was a hidden
+    TRANSCRIPT-FIGURE note, as RG-D20 d recorded.
 
     ``draws`` (default ONE, so every existing caller and artifact is unmoved) asks the model that
     many times on the IDENTICAL prompt and keeps the FIRST draw carrying the modal lean label —

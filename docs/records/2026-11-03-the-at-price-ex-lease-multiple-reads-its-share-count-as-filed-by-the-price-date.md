@@ -1,6 +1,6 @@
 ---
 id: 2026-11-03-ex-lease-share-cut
-status: open
+status: shipped
 date: 2026-11-03
 prs: [888]
 supersedes:

@@ -3994,6 +3994,8 @@ def compose_insider_line(
         win_start = since
         window = f"in the last {(reference_date - since).days} days, since {since}"
     win = [ln for ln in lines if ln.on is not None and ln.on >= win_start]
+    # THE SCAN'S HORIZON, ONE STRING: the absence clause and the unpriced count both state it
+    scan = f"since {since}" if since is not None else f"in the {_INSIDER_SCAN_DAYS // 365}y scanned"
 
     def side(code: str) -> str:
         """One side of the window, NEVER netted against the other. $1.1M of buying against $12.4M
@@ -4005,8 +4007,14 @@ def compose_insider_line(
             return "0"
         usd = sum(x for ln in rows if (x := ln.usd) is not None)
         people = len({ln.who for ln in rows})
-        return (f"{len(rows)} ({people} insider{'s' if people != 1 else ''}"
-                + (f", ${usd / 1e6:.2f}M)" if usd else ")"))
+        # A LINE WITH NO PRICE IS NOT IN THE TOTAL, AND THE TOTAL SAYS SO (audit RD-D2). The count
+        # holds every line while the dollars hold only the priced ones, so "2 ($0.50M)" read as two
+        # sales worth $0.50M when one of them stated no price — the wall total's rule (D-D4).
+        gap = sum(1 for ln in rows if ln.usd is None)
+        unpriced = f"{gap} with no price stated" if gap else ""
+        dollars = (f", ${usd / 1e6:.2f}M" + (f" + {unpriced}" if gap else "") if usd
+                   else f", {unpriced}" if gap else "")
+        return f"{len(rows)} ({people} insider{'s' if people != 1 else ''}{dollars})"
 
     def _amount(ln: Form4Line) -> str:
         return f"${ln.usd / 1e6:.2f}M, " if ln.usd else ""
@@ -4032,17 +4040,28 @@ def compose_insider_line(
         the visible-absence rule broken by the fix written to honour it."""
         rows = [ln for ln in lines if ln.code == code and ln.on is not None]
         if not rows:
-            if since is not None:
-                return f"no {label} since {since}"
-            return f"no {label} in the {_INSIDER_SCAN_DAYS // 365}y scanned"
+            return f"no {label} {scan}"
         latest = max(rows, key=lambda r: r.on or date.min)
         out = _event(latest, f"last {label}")
-        biggest = max(rows, key=lambda r: r.usd or 0.0)
+        # ONLY A PRICED LINE IS RANKED (audit RD-D2). Ranking a line with no price as $0 meant a
+        # larger unpriced sale was never the largest, and nothing said one had been passed over:
+        # the largest is named among the priced lines, and the unpriced ones are counted beside it.
+        priced = [r for r in rows if r.usd is not None]
+        gap = len(rows) - len(priced)
+        biggest = max(priced, key=lambda r: r.usd or 0.0) if priced else latest
         # SUPPRESSED WHEN IT RENDERS THE SAME. AORT's two largest buys differ by cents and both
         # print "$0.26M", so the second clause repeated a number the reader cannot tell apart —
         # noise dressed as a finding. Compared at the PRECISION SHOWN, not the underlying float.
         if biggest is not latest and _amount(biggest) != _amount(latest):
-            out += f" · largest {label} " + _event(biggest, "").lstrip()
+            out += (f" · largest {'priced ' if gap else ''}{label} "
+                    + _event(biggest, "").lstrip())
+        # "1 OF 2", so the clause counts the set and never reads as one more sale; "not ranked"
+        # only where a largest was named for it to be left out of. ITS HORIZON IS STATED (Codex,
+        # #995 round 1): the set is the whole scan, not the window the count before it states, so
+        # it names the scan exactly as the absence clause does
+        if gap:
+            out += (f" · {gap} of {len(rows)} {label}{'s' if len(rows) != 1 else ''} {scan} "
+                    f"with no price stated" + (", not ranked" if priced else ""))
         return out
 
     counts: dict[str, int] = {}

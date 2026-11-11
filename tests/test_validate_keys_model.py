@@ -118,3 +118,19 @@ def test_a_rate_limit_or_an_overloaded_service_only_warns(monkeypatch: Any, caps
         assert vk.check_anthropic() is True
         out = capsys.readouterr().out
         assert f"ANTHROPIC_API_KEY: WARN — HTTP {err.status_code} " in out and "transient" in out
+
+
+def test_an_unexpected_error_fails_the_key_and_is_never_called_connectivity(
+        monkeypatch: Any, capsys: Any) -> None:
+    """RH-D8 (fix request 2). Every exception that was not an API error printed "connectivity, NOT
+    a key problem" and PASSED — the audit's stand-in for an SDK change, a TypeError on a renamed
+    argument, read as a valid key. The check did not run, so it fails, and says what was raised.
+    The connection-error test above is the negative half: that one still only warns."""
+    vk = validator()
+    err = TypeError("create() got an unexpected keyword argument 'max_tokens' sk-ant-test")
+    monkeypatch.setattr(anthropic, "Anthropic", _client({}, err))
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
+    assert vk.check_anthropic() is False
+    out = capsys.readouterr().out
+    assert "ANTHROPIC_API_KEY: FAIL — TypeError" in out
+    assert "connectivity" not in out and "sk-ant-test" not in out

@@ -105,6 +105,24 @@ def test_guard_protects_the_hooks_and_the_ci_gate_themselves() -> None:
         assert json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask", path
 
 
+def test_guard_protects_the_gates_configuration_and_the_grader() -> None:
+    """RH-D7 and RG-D18 (fix request 2). The guard covered the hooks, the workflows and bin/commit
+    but not what configures the gate (pyproject's pytest/ruff/mypy settings, the suite's conftest,
+    the CI key check) nor the grader a prompt change is judged by (vinci/evals and its gold sets) —
+    an agent could weaken either without a prompt. NEGATIVE: a test or an ordinary fixture is not
+    protected, so the prompt stays rare enough to be read."""
+    for path in ("pyproject.toml", "tests/conftest.py", ".github/scripts/validate_keys.py",
+                 "vinci/evals/metrics.py", "vinci/evals/synthesis_gap_types.json",
+                 "vinci/evals/synthesis_panel.json",
+                 "tests/fixtures/synthesis_gap_gold/adjudication.jsonl",
+                 "tests/fixtures/synthesis_gold/MANIFEST.json"):
+        out = _edit(path, _session())
+        assert json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask", path
+    for path in ("tests/test_sleeves.py", "tests/fixtures/ciq_reader_contract.json",
+                 "vinci/evalsx.py"):
+        assert _edit(path, _session()).stdout == "", path
+
+
 def test_guard_asks_once_per_file_per_session_and_only_after_an_approved_edit() -> None:
     session = _session()
     assert _edit("vinci/scoring/harness.py", session).stdout          # asks
@@ -185,6 +203,56 @@ def test_fast_gate_lets_a_clean_change_finish(tmp_path: pathlib.Path) -> None:
     repo = _scratch_checkout(tmp_path, "VALUE = 1\n")
     out = _stop(repo, _session(), continuing=False)
     assert out.returncode == 0 and out.stderr == ""
+
+
+def _venv_without(tmp_path: pathlib.Path, stderr: str) -> str:
+    """A stand-in venv interpreter whose `-m ruff` prints `stderr` and exits 1, the way Python
+    itself answers, and which runs everything else on this interpreter."""
+    stand_in = tmp_path / "bare-venv" / "python"
+    stand_in.parent.mkdir(parents=True)
+    stand_in.write_text(f'#!/bin/sh\nif [ "$1" = "-m" ] && [ "$2" = "ruff" ]; then\n'
+                        f"  cat >&2 <<'EOF'\n{stderr}\nEOF\n  exit 1\nfi\n"
+                        f'exec "{sys.executable}" "$@"\n')
+    stand_in.chmod(0o755)
+    return str(stand_in)
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "RH-D2: the operator approved the fix on 2026-11-11, but this session's permission check "
+    "refused the edit to .claude/hooks/fast_gate.py; the patch is in the PR body. Applying it "
+    "turns this into an XPASS, which fails until this marker is removed."))
+def test_fast_gate_warns_and_lets_a_clean_change_finish_when_a_tool_is_missing(
+        tmp_path: pathlib.Path) -> None:
+    """RH-D2 (= H-D1; operator ruling 2026-11-11, "Approve the fix"). The hook's own rule is that
+    missing tooling is a WARNING, never a block — but a venv without ruff answered exit 1 and the
+    hook blocked a clean change for up to three turns. The tool's OWN `No module named <tool>` is
+    an INCOMPLETE warning."""
+    repo = _scratch_checkout(tmp_path, "VALUE = 1\n")
+    out = _run("fast_gate.py", {"session_id": _session(), "cwd": str(repo),
+                                "stop_hook_active": False},
+               cwd=repo, env={"VENV": _venv_without(
+                   tmp_path, f"{tmp_path}/bare-venv/python: No module named ruff")})
+    assert out.returncode == 0, out.stderr
+    message = json.loads(out.stdout)["systemMessage"]
+    assert "INCOMPLETE" in message and "ruff is not installed" in message
+
+
+def test_fast_gate_still_blocks_when_a_tool_fails_importing_something_else(
+        tmp_path: pathlib.Path) -> None:
+    """NEGATIVE PIN: only the tool's own absence may become a warning. A tool that is there but
+    fails importing another module is broken, not missing, and still blocks the turn. The shape
+    is Python's own for that case — a traceback ending in `ModuleNotFoundError`, the module name
+    quoted — not the one-line `<python>: No module named <tool>` of a tool that is absent."""
+    repo = _scratch_checkout(tmp_path, "VALUE = 1\n")
+    traceback = ('Traceback (most recent call last):\n'
+                 '  File "<frozen runpy>", line 198, in _run_module_as_main\n'
+                 '  File "ruff/__main__.py", line 4, in <module>\n'
+                 "ModuleNotFoundError: No module named 'tomli'")
+    out = _run("fast_gate.py", {"session_id": _session(), "cwd": str(repo),
+                                "stop_hook_active": False},
+               cwd=repo, env={"VENV": _venv_without(tmp_path, traceback)})
+    assert out.returncode == 2
+    assert "FAST GATE FAILED" in out.stderr and "No module named 'tomli'" in out.stderr
 
 
 def test_fast_gate_gives_up_blocking_after_its_cap(tmp_path: pathlib.Path) -> None:
@@ -272,6 +340,17 @@ def test_review_gate_does_not_gate_a_docs_or_data_branch(tmp_path: pathlib.Path)
     for changed in ("docs/records/x.md", "data/snapshots/x.jsonl", "STATE.md"):
         repo = _branch_checkout(tmp_path / changed.replace("/", "_"), changed)
         assert _create(repo, []).returncode == 0, changed
+
+
+def test_review_gate_gates_a_pr_that_moves_only_the_grader(tmp_path: pathlib.Path) -> None:
+    """RG-D18's second half (fix request 2): the grader's gap types and panel and its gold sets
+    are JSON, which the code rule did not count, so a PR moving only them skipped /code-review and
+    Codex. They count now; the docs-and-data test above is the negative half."""
+    for changed in ("vinci/evals/synthesis_gap_types.json", "vinci/evals/synthesis_panel.json",
+                    "tests/fixtures/synthesis_gap_gold/adjudication.jsonl",
+                    "tests/fixtures/synthesis_gold/MANIFEST.json"):
+        repo = _branch_checkout(tmp_path / changed.replace("/", "_"), changed)
+        assert _create(repo, []).returncode == 2, changed
 
 
 def test_review_gate_ignores_every_other_command(tmp_path: pathlib.Path) -> None:

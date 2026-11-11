@@ -469,6 +469,15 @@ class Store:
             (internal_id, _iso(day))).fetchone()
         return date.fromisoformat(row["d"]) if row and row["d"] else None
 
+    def first_bar_after(self, internal_id: str, day: date) -> date | None:
+        """The oldest bar date for one name strictly after ``day`` — None when it has none. The
+        right-edge twin of `last_bar_before` (TeamNostra fix request 2, RF-D5)."""
+        provenance.note_series(internal_id, via="first_bar_after")
+        row = self._conn.execute(
+            "SELECT MIN(bar_date) AS d FROM prices WHERE internal_id = ? AND bar_date > ?",
+            (internal_id, _iso(day))).fetchone()
+        return date.fromisoformat(row["d"]) if row and row["d"] else None
+
     def restate_bars(self, internal_id: str, factor: float, *, through: date,
                      after: date | None = None) -> int:
         """Put one name's held bars dated in ``(after, through]`` on the current split basis:

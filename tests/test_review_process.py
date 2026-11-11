@@ -1,7 +1,8 @@
 """THE BOUNDED PR-REVIEW PROCESS — its configuration pinned, positive and negative.
 
-WHY (2026-10-23). Codex and Gemini Code Assist review this repo's PRs as comment-only second
-reviewers, and the PR's own Claude session triages their findings with
+WHY (2026-10-23). Codex reviews this repo's PRs as a comment-only second reviewer (Gemini Code
+Assist is NOT installed, operator decision 2026-10-23; its files are kept inert for the day it is,
+fix request 2, RG-D20 g), and the PR's own Claude session triages the findings with
 `.claude/skills/pr-feedback` (FIX only behind a failing test, at most 2 rounds). The process
 lives in four files — `.gemini/config.yaml`, `.gemini/styleguide.md`, the `## Code Review Rules`
 in `AGENTS.md`, and the skill — plus one CLAUDE.md line. Each pin here guards a way those files
