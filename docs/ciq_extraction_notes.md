@@ -213,7 +213,7 @@ table only, so the surfaced surprise is annual: the GAAP-EPS row of the company'
 (`_surprise_eps_block`, never the sheet's first listing) and the Revenue row, each against its own
 block's year header. The 'Calendar Years' repeat is never read as FY. No extractor reads the
 quarterly section's values: searched 2026-11-11 for `Fiscal Quarters` and `Calendar Quarters` (each
-appears only as a section end, `_SURPRISE_BANNER`) and read every `sheet("estimates", "Surprise")`
+is matched only as a section end, by `_SURPRISE_BANNER`) and read every `sheet("estimates", "Surprise")`
 call, all of which read the fiscal-year section or check the sheet is there.
 FUBO and ORKA have no fiscal-year header of three or more years, so their surprise reads UNKNOWN.
 The EPS row is GAAP-EPS basis (distinct from the 99.1 adjusted guide) and is labelled as such;
@@ -423,7 +423,7 @@ When computing rolling drawdowns from CIQ Charting price history:
 
 ---
 
-## Business Relationships export (Customers & Suppliers) — the customer roster (a graph source until #964)
+## Business Relationships export (Customers & Suppliers) — the customer roster (a graph source until #905)
 
 **STATUS, 2026-11-11 (G-D10).** This section was written for `vinci/ciq/relationships.py`, which turned both views into graph edges. That parser had no production caller after #905 and was removed in #964 (`docs/records/2026-11-10-fix2-vinci-ciq-removed.md`; its code: `git show 9da0d096:vinci/ciq/relationships.py`). From *Layout* down, this section is the removed parser's, kept as history. What the code does now:
 - **One reader, the Customers file only.** `ciq_sheets.customer_roster` (F27) picks the Customers file by name. No code reads the Suppliers file for a page. RTF and spreadsheet exports go through the same table reader (`_relationship_table`). On disk (36 folders, 2026-11-11) all 36 Customers and all 36 Suppliers files are real RTF.

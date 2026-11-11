@@ -40,7 +40,17 @@ superseded-by:
 **WHY.** Document 15, order 9: "the notes file corrected or marked superseded". Document 14: the file
 "still says 'NM is a REAL value, not missing'".
 
+**THE GUARD.** `tests/test_ciq_notes_follow_the_code.py` has one test per ID, and two for G-D15.
+Each ties a corrected claim to the code it describes: the doc must state it, and the code must still
+hold it, read from the symbol itself (`ciq._UNAVAILABLE_CELLS`, the client's `max_tokens` default,
+`synthesis._TOOL_TEMPLATE`, `llm._REJECTED_SAMPLING_PARAMS`, the 19c error's own words). A doc
+that drifts, or code that moves under it, fails that ID's test. The fix log's `fixed` status needs
+a test node, and a docs-only change gave none.
+
 **HOW VERIFIED.**
+- **Fail first.** On `origin/main`'s docs (`173b4818`), all 9 tests fail, each on its doc claim:
+  for example, rule 1 names 2 of the 7 non-blank markers, and the notes give an 8,192-token cap.
+  Here, all 9 pass.
 - **Every claim checked against the code or the exports.** The CIQ export claims were counted on the
   36 ticker folders under the primary checkout's `data/manual/ciq/` on 2026-11-11 (382 export files),
   read only, through `classify`, `read_sheets`, `read_text` and the live readers.
@@ -59,7 +69,7 @@ superseded-by:
 - **The lints that read docs pass:** `test_record_hygiene`, `test_config`, `test_no_local_paths`,
   `test_records_ledger`, `test_state_identifiers`, `test_fix_log`, `test_cohort_split`.
 
-**BOUNDARY.** The exports above on 2026-11-11; the repository at `origin/main` `91b1af4a`.
+**BOUNDARY.** The exports above on 2026-11-11; the repository at `origin/main` `91b1af4a`, and the tests at `173b4818`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **Found, not fixed (code comments, outside a docs PR):**
@@ -67,11 +77,16 @@ superseded-by:
   - "~line 204" (`ciq_sheets.py:1100`, `tests/test_dossier.py:3693`) points at the adjusted-basis
     paragraph, where the same-quarter YoY rule they mean is at lines 159-167;
   - a `ciq_sheets.py` section comment still says transcripts carry "no numbers derived", and another
-    still describes the fixed four-column Key Developments header.
+    still describes the fixed four-column Key Developments header;
+  - the `surprise_history` docstring (`ciq_sheets.py:2159`) still says the sheet is "by FISCAL YEAR
+    (no quarterly view)", the claim G-D8 corrects.
 
   These were already wrong on main. Fixing them changes code.
 - **For the operator:** whether Koyfin is still used (it decides whether it stays in the source
   inventory), and whether re-running a build until the 19c guard passes, which no code caps, is
   acceptable. The docs now state what the code does.
 - **Untouched, separate IDs:** the notes' fixed row positions (RG-D20(i)); `docs/data_sources.md`'s
-  source map still lists CIQ Holders, Charting and Insider Trading, which no code reads.
+  source map still lists CIQ Holders, Charting and Insider Trading, which no code reads; and the
+  notes' own Insider Trading rules (the date, forward-fill and *Transaction Type filtering*
+  sections) and *Charting file* rules still read as live, though no code reads either export (no
+  `charting` kind since #908; insider activity comes from Form 4).

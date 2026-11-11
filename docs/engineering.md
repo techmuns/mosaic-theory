@@ -16,8 +16,8 @@ The BUY−AVOID spread's integrity depends on these. They are real today.
   snapshots) + the code at that commit.
 - LLM calls (the ranker's Tier-3 cause-classifier, the dossier-assembler) are NON-DETERMINISTIC.
   Therefore: **pass no sampling parameter** — no `temperature`, `top_p` or `top_k`. The API
-  refuses them on the configured model family with a 400 error, measured 2026-09-24
-  (`vinci/graph/llm.py:_REJECTED_SAMPLING_PARAMS`, "DO NOT ADD THEM BACK"). This line used to say
+  refuses them on the configured model family with a 400 error (`temperature` measured 2026-09-24,
+  `vinci/graph/llm.py:_REJECTED_SAMPLING_PARAMS`, "DO NOT ADD THEM BACK"). This line used to say
   "low/0 temperature where a stable label is wanted" (G-D15, corrected 2026-11-11). An unstable
   label is handled by design instead: five draws, and the machine proposal is withheld unless they
   agree (`vinci/dossier/synthesis.py:SYNTHESIS_DRAWS`, `verdict.derive_proposal`). **Log the model
