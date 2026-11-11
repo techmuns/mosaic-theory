@@ -150,9 +150,9 @@ def test_rd_d2_largest_ranks_only_priced_lines_and_counts_the_rest() -> None:
     assert "last sale CEO, 2026-07-01 (~1mo ago)" in out
     assert "largest priced sale $0.50M, director, 2026-06-01 (~2mo ago)" in out
     assert "largest sale" not in out
-    assert "1 of 2 sales with no price stated, not ranked" in out
+    assert "1 of 2 sales in the 3y scanned with no price stated, not ranked" in out
     alone = compose(_UNPRICED[1:])
-    assert "largest" not in alone and "1 of 1 sale with no price stated" in alone
+    assert "largest" not in alone and "1 of 1 sale in the 3y scanned with no price stated" in alone
     assert "not ranked" not in alone, "nothing was ranked, so nothing was left out of a ranking"
 
 
@@ -167,3 +167,18 @@ def test_rd_d2_neg_a_fully_priced_line_is_byte_identical() -> None:
         "sale $8.06M, director, 2024-11-07 (~21mo ago) · grants 0 · last filing 2026-07-24 · "
         "other F×1")
     assert "no price stated" not in compose(SMPL)
+
+
+def test_rd_d2_the_unpriced_count_states_its_horizon() -> None:
+    """(+) Codex, #995 round 1: the count sits after "sells 1 … — in the last 182 days", but it is
+    of the whole scan, so an unpriced sale outside the window read as one inside it. It names its
+    horizon, the absence clause's own: "in the 3y scanned" (or "since" a foreign issuer's date)."""
+    rows = [line("S", date(2026, 6, 1), 10_000, 50.0, "cikA"),
+            line("S", date(2025, 9, 1), 200_000, 0.0, "cikB", "CEO")]
+    out = compose(rows)
+    assert "sells 1 (1 insider, $0.50M) — in the last 182 days" in out, "the window holds one"
+    assert (f"1 of 2 sales in the {_INSIDER_SCAN_DAYS // 365}y scanned with no price stated, "
+            f"not ranked") in out
+    fpi = compose_insider_line(rows, reference_date=REF, last_filing=LAST_FILING,
+                               since=date(2025, 3, 18))
+    assert "1 of 2 sales since 2025-03-18 with no price stated, not ranked" in fpi
