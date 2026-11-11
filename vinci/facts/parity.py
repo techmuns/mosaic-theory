@@ -58,6 +58,7 @@ from vinci.facts.reader import (
     Period,
     is_periodic,
 )
+from vinci.facts.store import FactsStoreError
 
 #: How many keys per page go through the public `get()` (the rest are compared in bulk).
 GET_SAMPLE = 200
@@ -229,9 +230,12 @@ class PageParity:
 
 
 def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: Path, *,
-                 at: date | None = None, eve: bool = False) -> PageParity:
+                 at: date | None = None, eve: bool = False,
+                 originals: Path | None = None) -> PageParity:
     """``doc``'s page at its own price date, or at ``at`` when given; with ``eve``, at the eve of
-    the last filing day on or before that date (:func:`filing_eve`)."""
+    the last filing day on or before that date (:func:`filing_eve`). The reference is the
+    snapshot's own ORIGINAL of the response where it kept one (from ``originals``, default the
+    local originals root, or R2 for an ``r2://`` store), else the cache's copy."""
     entity = f"{int(doc['cik']):010d}"
     cut = at if at is not None else page_cut(doc)
 
@@ -250,18 +254,24 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
         if ingested is None:
             raise FactNotHeldError(f"{entity}: not in snapshot {store.snapshot_id} — it was not "
                                    "ingested")
-        resp = read_cached_companyfacts(entity, cache_dir)
-        if not ingested.get("response_sha256"):
-            return unreadable(f"snapshot {store.snapshot_id} states no response hash for {entity}, "
-                              "so the cached response cannot be shown to be the one it ingested")
-        if resp.sha256 != ingested["response_sha256"]:
-            return unreadable(
-                f"the SEC cache now holds another response than snapshot {store.snapshot_id} "
-                f"ingested: the snapshot's copy was fetched {ingested['fetched_at']} (sha256 "
-                f"{ingested['response_sha256'][:12]}…), the cache's "
-                f"{resp.fetched_at:%Y-%m-%dT%H:%M:%SZ} (sha256 {resp.sha256[:12]}…); re-ingest to "
-                "compare", changed=True, fetched=str(ingested["fetched_at"]))
-        blob = json.loads(resp.text)
+        if "original" in ingested:
+            # THE ORIGINAL, NOT THE CACHE (RFL-D3): the response the snapshot read, kept
+            # write-once, so a refetched cache no longer stops the comparison
+            blob = store.original(entity, originals=originals)
+        else:
+            resp = read_cached_companyfacts(entity, cache_dir)
+            if not ingested.get("response_sha256"):
+                return unreadable(f"snapshot {store.snapshot_id} states no response hash for "
+                                  f"{entity}, so the cached response cannot be shown to be the "
+                                  "one it ingested")
+            if resp.sha256 != ingested["response_sha256"]:
+                return unreadable(
+                    f"the SEC cache now holds another response than snapshot "
+                    f"{store.snapshot_id} ingested: the snapshot's copy was fetched "
+                    f"{ingested['fetched_at']} (sha256 {ingested['response_sha256'][:12]}…), the "
+                    f"cache's {resp.fetched_at:%Y-%m-%dT%H:%M:%SZ} (sha256 {resp.sha256[:12]}…); "
+                    "re-ingest to compare", changed=True, fetched=str(ingested["fetched_at"]))
+            blob = json.loads(resp.text)
         if eve:
             day = filing_eve(blob, cut)
             if day is None:
@@ -269,7 +279,7 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
             cut = day
         reference, dupes = held_once(facts_as_of(blob, cut))
         candidate = store.companyfacts_as_of(entity, cut, basis=FILED, stale_ok=True)
-    except (NotInCacheError, FactUnknownError, FactNotHeldError) as exc:
+    except (NotInCacheError, FactUnknownError, FactNotHeldError, FactsStoreError) as exc:
         return unreadable(str(exc))
     examples: list[str] = []
 

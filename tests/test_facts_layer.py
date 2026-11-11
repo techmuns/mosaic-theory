@@ -389,7 +389,9 @@ def test_an_ingest_needs_no_exclusion_list(tmp_path: Path, monkeypatch: pytest.M
         listed = {json.loads((facts / "manifests" / f"{sid}.json").read_text())["scope"][
             "exclusions_listed"] for sid in json.loads((facts / "current.json").read_text())
             .values()}
-        assert listed == {6}
+        # the screen's was written under the lifted hold; the pages snapshot that keeps its
+        # originals (RFL-D3) was written after it, and states 0
+        assert listed == {0, 6}
     else:
         _publish(facts, [_load("FUBO-companyfacts-slice.json")])  # its scope states no count
     prior = json.loads((facts / "current.json").read_text())

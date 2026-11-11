@@ -15,7 +15,16 @@ The BUY−AVOID spread's integrity depends on these. They are real today.
 - Same inputs → same outputs. A run's result must be reproducible from committed state (JSONL
   snapshots) + the code at that commit.
 - LLM calls (the ranker's Tier-3 cause-classifier, the dossier-assembler) are NON-DETERMINISTIC.
-  Therefore: pin what you can (low/0 temperature where a stable label is wanted); **log the model
+  Therefore: **pass no sampling parameter** — no `temperature`, `top_p` or `top_k`. The API
+  refuses them on the configured model family with a 400 error (`temperature` measured 2026-09-24,
+  `vinci/graph/llm.py:_REJECTED_SAMPLING_PARAMS`, "DO NOT ADD THEM BACK"). This line used to say
+  "low/0 temperature where a stable label is wanted" (G-D15, corrected 2026-11-11). The dossier
+  synthesis's unstable lean label is handled by design instead: five draws, and the machine proposal is withheld unless the
+  modal committed lean reaches the vote rule's bar, 5 of 5 attempted, so a failed draw counts as
+  dissent (`vinci/dossier/synthesis.py:SYNTHESIS_DRAWS`, `verdict.draw_gate`). The proposal
+  `log-verdict` seals is decided by a ten-draw confirmation, 9 of 10 (`confirmation.CONFIRM_DRAWS`).
+  The ranker's cause-classifier has no such design: `vinci/rank/cause.py:classify_cause` makes one
+  call, so its label is a single draw. **Log the model
   identifier and the raw LLM output** alongside any artifact derived from it; and never let an LLM
   output silently become a NUMBER that feeds the spread. LLM output may annotate or classify; the
   numeric inputs to the spread come from deterministic computation on real data.

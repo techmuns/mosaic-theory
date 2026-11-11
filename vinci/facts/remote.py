@@ -50,6 +50,8 @@ import httpx
 
 from vinci.facts.edgar_ingest import EXTRACTOR as EDGAR_EXTRACTOR
 from vinci.facts.edgar_ingest import SOURCE as EDGAR_SOURCE
+from vinci.facts.originals import NAMESPACE as ORIGINALS_NAMESPACE
+from vinci.facts.originals import ORIGINAL_KEY
 from vinci.facts.sigv4 import canonical_query, canonical_uri, sign
 from vinci.facts.store import (
     FactsStoreError,
@@ -71,7 +73,9 @@ _PLACEHOLDER = "replace-with-"
 _CODE = re.compile(r"<Code>([A-Za-z]+)</Code>")
 #: A content-addressed key and nothing else: no ``..``, no absolute path, no other file.
 _KEY = re.compile(
-    r"^[a-z0-9_-]+/[A-Za-z0-9_-]+/(?:[0-9]{4}|order|filings)/[0-9a-f]{64}\.parquet$")
+    r"^[a-z0-9_-]+/[A-Za-z0-9_-]+/(?:[0-9]{4}|order|filings)/[0-9a-f]{64}\.parquet$"
+    # an original response, kept write-once by the sha256 of its bytes (RFL-D3)
+    "|" + ORIGINAL_KEY.pattern)
 _S3_NS = "{http://s3.amazonaws.com/doc/2006-03-01/}"
 
 
@@ -316,19 +320,24 @@ def check_key(rel: str) -> str:
 
 
 def manifest_objects(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
-    """Every object a manifest names, data, order and (schema v3) filings, once each, sorted by
-    path; each path checked (:func:`check_key`)."""
+    """Every object a manifest names, data, order, (schema v3) filings and every original it
+    records, once each, sorted by path; each path checked (:func:`check_key`)."""
+    from vinci.facts.originals import manifest_originals
     entries = {f["path"]: f for f in manifest["files"]}
     for e in manifest["entities"]:
         entries.setdefault(e["order"]["path"], e["order"])
         if "filings" in e:
             entries.setdefault(e["filings"]["path"], e["filings"])
+    for o in manifest_originals(manifest):
+        entries.setdefault(o["path"], o)
     return [entries[check_key(str(p))] for p in sorted(entries)]
 
 
 #: The sources a snapshot may be uploaded for, each with the ONE writer of this code that makes
 #: its rows (TeamNostra fix request 2, RFL-D6). Only EDGAR has one.
 UPLOADABLE: dict[str, str] = {EDGAR_SOURCE: EDGAR_EXTRACTOR}
+#: The namespace of the originals each source's writer keeps (RFL-D3): EDGAR's are SEC responses.
+ORIGINALS_OF: dict[str, str] = {EDGAR_SOURCE: ORIGINALS_NAMESPACE}
 
 
 def upload_refusal(manifest: Mapping[str, Any]) -> str | None:
@@ -350,9 +359,10 @@ def upload_refusal(manifest: Mapping[str, Any]) -> str | None:
     if extractor != UPLOADABLE[source]:
         return (f"its extractor {extractor!r} is not source {source!r}'s writer "
                 f"{UPLOADABLE[source]!r}")
+    own = (f"{source}/", f"originals/{ORIGINALS_OF[source]}/")
     wrong = sorted({str(f["path"]) for f in manifest["files"] if f.get("source") != source}
                    | {str(e["path"]) for e in manifest_objects(manifest)
-                      if not str(e["path"]).startswith(f"{source}/")})
+                      if not str(e["path"]).startswith(own)})
     if wrong:
         return f"{len(wrong)} object(s) it names are not source {source!r}'s ({_shown(wrong)})"
     return None
@@ -460,7 +470,8 @@ class UploadReport:
 
 
 def upload_snapshot(manifest: dict[str, Any], local_root: Path, client: R2Client, *,
-                    workers: int = 16, read_back: bool = True) -> UploadReport:
+                    workers: int = 16, read_back: bool = True,
+                    originals_root: Path | None = None) -> UploadReport:
     """Upload every object ``manifest`` names from ``local_root``, then read each one back.
 
     Refused before any request when the local copy does not verify against the manifest (an
@@ -474,7 +485,14 @@ def upload_snapshot(manifest: dict[str, Any], local_root: Path, client: R2Client
     sid = str(manifest["snapshot_id"])
     if (why := upload_refusal(manifest)) is not None:
         raise FactsStoreError(f"{sid}: nothing was uploaded — {why}")
+    from vinci.facts.originals import manifest_originals, verify_originals
+    has_originals = any(True for _ in manifest_originals(manifest))
+    if has_originals and originals_root is None:
+        raise FactsStoreError(f"{sid}: it records originals and no originals root was given, so "
+                              "nothing was uploaded")
     local = verify_manifest(manifest, local_root, check_content=False)
+    if has_originals and originals_root is not None:
+        local += verify_originals(manifest, originals_root)
     if local:
         raise FactsStoreError(f"{sid}: the local copy under {local_root} does not verify, so "
                               f"nothing was uploaded ({_shown(local)})")
@@ -486,8 +504,10 @@ def upload_snapshot(manifest: dict[str, Any], local_root: Path, client: R2Client
     def put(e: dict[str, Any]) -> str:
         if stop.is_set():
             return "not attempted"
+        src = (originals_root if str(e["path"]).startswith("originals/") and originals_root
+               else local_root)
         try:
-            data = (local_root / e["path"]).read_bytes()
+            data = (src / e["path"]).read_bytes()
         except OSError as exc:
             return f"{e['path']}: unreadable on disk ({type(exc).__name__}); not uploaded"
         if _sha256(data) != e["sha256"]:
