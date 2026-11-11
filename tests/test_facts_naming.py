@@ -40,6 +40,9 @@ from vinci.facts.store import (
     write_manifest,
 )
 
+#: when the constructed copies were fetched: after every cut these tests read (RFL-D1)
+FETCHED_AT = "2027-01-02T00:00:00Z"
+
 FIX = Path(__file__).parent / "fixtures" / "facts"
 ROOT = Path(__file__).resolve().parents[1]
 NFLX = "0001065280"
@@ -70,7 +73,8 @@ def _publish(base: Path, blob: dict[str, Any], *, name: str = "pages",
     manifest = build_manifest(
         source=SOURCE, extractor=EXTRACTOR, extractor_version=EXTRACTOR_VERSION,
         scope={"rule": "test", "excluded_by_operator_instruction": 0, "exclusions_listed": 0},
-        entities=[{"entity": got.entity, "rows_kept": len(got.rows)}], files=files,
+        entities=[{"entity": got.entity, "rows_kept": len(got.rows), "fetched_at": FETCHED_AT}],
+        files=files,
         orders={got.entity: order}, name=name, storage=storage)
     write_manifest(manifest, base)
     return manifest
@@ -271,7 +275,8 @@ def test_an_integer_value_names_its_object_as_the_stored_float_does(tmp_path: Pa
     files, order = write_entity(as_int, tmp_path / "objects")
     manifest = build_manifest(
         source=SOURCE, extractor=EXTRACTOR, extractor_version=EXTRACTOR_VERSION,
-        scope={"rule": "test"}, entities=[{"entity": "0001484769", "rows_kept": len(rows)}],
+        scope={"rule": "test"},
+        entities=[{"entity": "0001484769", "rows_kept": len(rows), "fetched_at": FETCHED_AT}],
         files=files, orders={"0001484769": order})
     assert verify_manifest(manifest, tmp_path / "objects") == []
 

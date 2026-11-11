@@ -58,6 +58,9 @@ from vinci.facts.store import (
     write_entity,
 )
 
+#: when the constructed copies were fetched: after every cut these tests read (RFL-D1)
+FETCHED_AT = "2027-01-02T00:00:00Z"
+
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "tests" / "fixtures" / "facts"
 PAGES = "edgar-4f3207f4da9fb71a"
@@ -654,7 +657,8 @@ def test_a_snapshot_naming_no_exclusion_uploads_beside_the_committed_ones(
     files, order = write_entity(got.rows, facts / "objects")
     manifest = build_manifest(
         source=SOURCE, extractor=EXTRACTOR, extractor_version=EXTRACTOR_VERSION, scope=scope,
-        entities=[{"entity": got.entity, "tickers": ["FUBO"], "rows_kept": len(got.rows)}],
+        entities=[{"entity": got.entity, "tickers": ["FUBO"], "rows_kept": len(got.rows),
+                   "fetched_at": FETCHED_AT}],
         files=files, orders={got.entity: order})
     sid = manifest["snapshot_id"]
     (facts / "manifests" / f"{sid}.json").write_text(json.dumps(manifest, indent=2,

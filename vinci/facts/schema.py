@@ -27,9 +27,14 @@ from typing import Any
 
 import pyarrow as pa  # type: ignore[import-untyped]
 
-#: Bumped on any change to :data:`COLUMNS`. A manifest records the version its files were written
-#: at, and the reader refuses a manifest whose version it does not know.
-SCHEMA_VERSION = 2
+#: Bumped on any change to the contract. A manifest records the version its files were written at,
+#: and the reader refuses a manifest whose version it does not know. 3 (TeamNostra fix request 2,
+#: RFL-D2): a per-entity FILINGS object (:data:`FILING_COLUMNS`), each filing's SEC acceptance time,
+#: beside the data and order objects. Version 3's data and order columns ARE version 2's, so a
+#: version-2 manifest is still read, and verified against version 2's contract
+#: (:func:`contract_text`); it states no acceptance time.
+SCHEMA_VERSION = 3
+READABLE_SCHEMA_VERSIONS: tuple[int, ...] = (2, 3)
 
 #: Where the committed contract lives, relative to the repository root.
 CONTRACT_RELPATH = Path("data") / "facts" / "schema.json"
@@ -40,6 +45,8 @@ _TYPES: dict[str, pa.DataType] = {
     "float64": pa.float64(),
     "int32": pa.int32(),
     "int64": pa.int64(),
+    # naive, and always UTC: DuckDB moves a zone-aware value only through pytz, not a dependency
+    "timestamp_utc": pa.timestamp("us"),
 }
 
 
@@ -88,6 +95,24 @@ ORDER_COLUMNS: tuple[Column, ...] = (
 )
 
 
+#: One entity's filings as SEC's submissions documents list them (schema v3, RFL-D2): one row per
+#: accession the entity's data rows carry and the documents date. A data row is knowable from its
+#: filing's ``accepted_at``, not from the start of its ``filed_date``: companyfacts dates a filing
+#: to the day, and a 10-Q accepted at 16:25 on its filing day was served to a replay priced at that
+#: day's 16:00 close.
+FILING_COLUMNS: tuple[Column, ...] = (
+    Column("entity", "string", False, "SEC CIK, zero-padded to 10 digits."),
+    Column("accession", "string", False,
+           "The filing's accession number, as its data rows carry it."),
+    Column("form", "string", True, "The form SEC's submissions document lists for the filing."),
+    Column("filing_date", "date32", False,
+           "SEC's filing date, which the filing's data rows carry as filed_date."),
+    Column("accepted_at", "timestamp_utc", False,
+           "When SEC accepted the filing (acceptanceDateTime), in UTC with no zone stored: "
+           "the moment the cut reads."),
+)
+
+
 def _schema(columns: tuple[Column, ...]) -> pa.Schema:
     return pa.schema([pa.field(c.name, _TYPES[c.type], nullable=c.nullable) for c in columns])
 
@@ -102,17 +127,28 @@ def order_arrow_schema() -> pa.Schema:
     return _schema(ORDER_COLUMNS)
 
 
+def filing_arrow_schema() -> pa.Schema:
+    """The Arrow schema every filings object is written with (schema v3)."""
+    return _schema(FILING_COLUMNS)
+
+
 def _doc(columns: tuple[Column, ...]) -> list[dict[str, Any]]:
     return [{"name": c.name, "type": c.type, "nullable": c.nullable, "doc": c.doc}
             for c in columns]
 
 
-def contract() -> dict[str, Any]:
-    """The contract as committed: the version; each column's name, type, nullability, meaning."""
-    return {"schema_version": SCHEMA_VERSION, "columns": _doc(COLUMNS),
-            "order_columns": _doc(ORDER_COLUMNS)}
+def contract(version: int = SCHEMA_VERSION) -> dict[str, Any]:
+    """The contract as committed: the version; each column's name, type, nullability, meaning.
+    ``version`` 2 is the contract version-2 manifests hashed, without the filings object."""
+    if version not in READABLE_SCHEMA_VERSIONS:
+        raise ValueError(f"schema version {version!r} is not one of {READABLE_SCHEMA_VERSIONS}")
+    out: dict[str, Any] = {"schema_version": version, "columns": _doc(COLUMNS),
+                           "order_columns": _doc(ORDER_COLUMNS)}
+    if version >= 3:
+        out["filing_columns"] = _doc(FILING_COLUMNS)
+    return out
 
 
-def contract_text() -> str:
+def contract_text(version: int = SCHEMA_VERSION) -> str:
     """The contract's exact committed bytes (sorted keys, two-space indent, trailing newline)."""
-    return json.dumps(contract(), indent=2, sort_keys=True) + "\n"
+    return json.dumps(contract(version), indent=2, sort_keys=True) + "\n"
