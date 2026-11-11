@@ -36,6 +36,14 @@ superseded-by:
   - **G-D15:** pass no sampling parameter (`vinci/graph/llm.py`, "DO NOT ADD THEM BACK"), in
     `docs/engineering.md`; never re-roll a WRITTEN synthesis for cleaner flags, and a build the 19c
     guard refuses is re-run as its own error says, in `docs/RUNBOOKS.md`.
+- **The vote rule (#982, merged 2026-11-11).** The draw statements in G-D13 and G-D15 describe it
+  as it stands on `origin/main`:
+  - a skipped draw still counts as attempted, so it is dissent, and at five draws the bar is 5 of 5
+    attempted (`verdict.draw_gate`);
+  - the proposal `log-verdict` seals is decided by a ten-draw confirmation, 9 of 10
+    (`confirmation.CONFIRM_DRAWS`).
+
+  The branch merged `c99974c2` first, so the docs and the tests read the code they describe.
 
 **WHY.** Document 15, order 9: "the notes file corrected or marked superseded". Document 14: the file
 "still says 'NM is a REAL value, not missing'".
@@ -69,7 +77,8 @@ a test node, and a docs-only change gave none.
 - **The lints that read docs pass:** `test_record_hygiene`, `test_config`, `test_no_local_paths`,
   `test_records_ledger`, `test_state_identifiers`, `test_fix_log`, `test_cohort_split`.
 
-**BOUNDARY.** The exports above on 2026-11-11; the repository at `origin/main` `91b1af4a`, and the tests at `173b4818`.
+**BOUNDARY.** The exports above on 2026-11-11; the repository at `origin/main` `91b1af4a`; the
+fail-first run at `173b4818`; the vote-rule statements and their tests at `c99974c2`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **Found, not fixed (code comments, outside a docs PR):**

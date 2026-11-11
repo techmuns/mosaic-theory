@@ -20,10 +20,21 @@ import re
 import subprocess
 from pathlib import Path
 
-from vinci.dossier import assemble, ciq, ciq_sheets, driver_extract, requirements, synthesis
+from vinci.dossier import (
+    assemble,
+    ciq,
+    ciq_sheets,
+    confirmation,
+    driver_extract,
+    requirements,
+    synthesis,
+    verdict,
+)
 from vinci.graph import extract, llm
 
 ROOT = Path(__file__).resolve().parents[1]
+#: A count as the docs spell it; a count with no entry fails the test that reads it.
+_COUNT_WORDS = {3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 10: "ten"}
 
 
 def _doc(name: str) -> str:
@@ -74,6 +85,14 @@ def test_g_d10_the_roster_filters_no_relationship_type_and_the_notes_say_so() ->
         ciq_sheets._relationship_table)
     assert "SUPPLY_CHAIN_TYPES" not in reader
     assert extract.SUPPLY_CHAIN_TYPES
+    # The behaviour, not only the symbol: two types the removed parser dropped (Creditor, Landlord,
+    # both in its 2026-06 census) are kept, in the four-column header the Customers files carry.
+    rel = ciq_sheets._relationship_table([
+        ["Customer Name", "Relationship Type", "Primary Industry", "Source"],
+        ["Acme Bank", "Creditor", "Banks", "10-K"],
+        ["Landco", "Landlord", "REITs", "10-K"]])
+    assert rel is not None and [ln.split(" — ")[0] for ln in rel.recent] == ["Acme Bank", "Landco"]
+    assert not {"Creditor", "Landlord"} & set(extract.SUPPLY_CHAIN_TYPES)
     notes = _live(_doc("ciq_extraction_notes.md"))
     assert "**Relationship-type filter (keep supply-chain only).**" not in notes
     assert "**No relationship-type filter.**" in notes
@@ -99,10 +118,16 @@ def test_g_d12_the_notes_find_key_development_columns_by_label() -> None:
     notes = _flat(_doc("ciq_extraction_notes.md"))
     assert "**Key Developments (real RTF):**" not in notes
     assert "(`_kd_columns`), never by position" in notes
-    for header in ("Date | Company | Type | Headline | Other Parties",
-                   "Date | Type | Headline | Other Parties"):
+    five, four = ("Date | Company | Type | Headline | Other Parties",
+                  "Date | Type | Headline | Other Parties")
+    for header in (five, four):
         assert f"`{header}`" in notes, header
-        assert ciq_sheets._kd_columns([header]) is not None, header
+    # By label: the Type column moves with the header and Company is read only where it is, and
+    # a header without a Headline column is not read at all.
+    cols5, cols4 = ciq_sheets._kd_columns([five]), ciq_sheets._kd_columns([four])
+    assert cols5 is not None and cols4 is not None
+    assert cols5[0] != cols4[0] and cols5[2] is not None and cols4[2] is None
+    assert ciq_sheets._kd_columns(["Date | Company | Type | Other Parties"]) is None
     assert "The reader refuses a spreadsheet and says so in a QA flag" in notes
 
 
@@ -114,11 +139,20 @@ def test_g_d13_the_notes_state_the_clients_output_cap_and_the_six_required_field
     notes = _live(_doc("ciq_extraction_notes.md"))
     assert f"The output cap is **{cap:,} tokens**" in notes
     assert "The output cap is 8192 tokens." not in notes
+    # "… builds through `from_config` without overriding it": the default is the cap only while
+    # `from_config` passes no `max_tokens`.
+    assert "max_tokens" not in inspect.getsource(llm.AnthropicLlmClient.from_config)
+    assert "through `from_config` without overriding it" in notes
     required = synthesis._TOOL_TEMPLATE["input_schema"]["required"]
     assert len(required) == 6 and "The forced tool marks SIX fields required" in notes
     assert all(f"`{f}`" in notes for f in required), required
     assert "check_fact(" in inspect.getsource(driver_extract.extract_transcript_drivers)
     assert "(`driver_extract.extract_transcript_drivers`, run before the synthesis) DOES" in notes
+    # A skipped draw still counts as attempted (#982's vote rule): with one of five failed, the
+    # other four agreeing on a committed lean do not reach the bar.
+    n = synthesis.SYNTHESIS_DRAWS
+    assert not verdict.draw_gate(["strongly-bullish"] * (n - 1), n).passes
+    assert f"({verdict.r1_required(n)} of {n} attempted to propose, `verdict.draw_gate`)" in notes
 
 
 def test_g_d14_no_checklist_md_is_tracked_and_no_doc_claims_a_verification_date() -> None:
@@ -126,7 +160,7 @@ def test_g_d14_no_checklist_md_is_tracked_and_no_doc_claims_a_verification_date(
     and the inventory's "Last verified" line was a placeholder."""
     tracked = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True,
                              check=True).stdout.splitlines()
-    assert tracked and not [p for p in tracked if p.rsplit("/", 1)[-1] == "checklist.md"]
+    assert tracked and not [p for p in tracked if p.rsplit("/", 1)[-1].lower() == "checklist.md"]
     assert "**`checklist.md` is not in this repository**" in _flat(_doc("ciq_extraction_notes.md"))
     sources = _flat(_doc("data_sources.md"))
     assert "**Last verified:** YYYY-MM-DD" not in sources
@@ -143,6 +177,13 @@ def test_g_d15_engineering_passes_no_sampling_parameter_as_the_client_refuses_th
     assert llm._REJECTED_SAMPLING_PARAMS
     missing = [p for p in llm._REJECTED_SAMPLING_PARAMS if f"`{p}`" not in eng]
     assert not missing, missing
+    # The draw count the handbook states is the code's (a KeyError here is a count with no word).
+    word = _COUNT_WORDS[synthesis.SYNTHESIS_DRAWS]
+    assert f"{word} draws, and the machine proposal is withheld" in eng
+    # The vote rule's bar (#982): every attempted draw at five, 9 of 10 at the confirmation's ten.
+    n, ten = synthesis.SYNTHESIS_DRAWS, confirmation.CONFIRM_DRAWS
+    assert f"{verdict.r1_required(n)} of {n} attempted, so a failed draw counts as dissent" in eng
+    assert f"a {_COUNT_WORDS[ten]}-draw confirmation, {verdict.r1_required(ten)} of {ten}" in eng
 
 
 def test_g_d15_runbooks_quotes_the_19c_guards_own_rerun_instruction() -> None:
@@ -150,8 +191,19 @@ def test_g_d15_runbooks_quotes_the_19c_guards_own_rerun_instruction() -> None:
     a build the 19c guard refuses wrote no page, and the guard's error says to re-run it. The
     runbook quotes that instruction, so it must stay the code's."""
     quote = "Re-run: synthesis varies between runs"
-    assert quote in inspect.getsource(assemble)
+    src = inspect.getsource(assemble)
+    # The quote must be the 19c guard's own error, not any message in the module.
+    guard = src[src.index("uncited_material_figures(synthesis, mech)"):]
+    guard = guard[:guard.index("_materiality_check(")]
+    assert quote in guard
+    comment = "the bad roll FAILS and is re-rolled; the good one ships"
+    assert comment in src
     runbooks = _flat(_doc("RUNBOOKS.md"))
     assert f'its error ends "{quote}"' in runbooks
+    assert f'reads "{comment}"' in runbooks
+    for other in ("Re-run when the model is answering", "Re-run WITH a client"):
+        assert other in src and f'"{other}"' in runbooks, other
+    word = _COUNT_WORDS[synthesis.SYNTHESIS_DRAWS]
+    assert f"the {word} draws are fixed in advance (`synthesis.SYNTHESIS_DRAWS`)" in runbooks
     assert "**A build the 19c guard REFUSES is re-run:**" in runbooks
     assert "**Do NOT re-roll a WRITTEN synthesis" in runbooks

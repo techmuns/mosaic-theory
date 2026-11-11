@@ -323,8 +323,9 @@ is the 3.9 system one).
 changed, or you ship the defect the fix removed (#365→#368). **Do NOT re-roll a WRITTEN synthesis
 to get cleaner flags or another lean** — that is selecting prose on outcome; the flags stay on the
 page for the human, and the five draws are fixed in advance (`synthesis.SYNTHESIS_DRAWS`). **A build
-the 19c guard REFUSES is re-run:** it wrote no page. That guard refuses a synthesis that never
-states a material figure (`assemble.py`, `uncited_material_figures`); its error ends "Re-run:
+the 19c guard REFUSES is re-run:** it wrote no page. That guard refuses a synthesis that leaves
+out ANY material figure its own financial summary shows (`assemble.py`,
+`uncited_material_figures`); its error ends "Re-run:
 synthesis varies between runs", and the code's comment there reads "the bad roll FAILS and is
 re-rolled; the good one ships". Other refusals name their own fix in their message ("Re-run when
 the model is answering", "Re-run WITH a client", an export to re-pull); follow that. Every refused

@@ -253,8 +253,10 @@ curated.** Two separate paths, by design:
 - If the model is cut at `max_tokens` mid-tool-call, `AnthropicLlmClient.extract` raises
   `LlmError` (it checks `stop_reason`).
 - `synthesize` rejects a draw missing any of the first FIVE (the structural fields). With several
-  draws, that draw is skipped and the build goes on; the whole synthesis is UNAVAILABLE, with a loud
-  flag, only when no draw is usable. Missing trailing fields are never defaulted to blank, which
+  draws, that draw is skipped and the build goes on, but it still counts as attempted: under the
+  vote rule it is dissent, so at five draws (5 of 5 attempted to propose, `verdict.draw_gate`) the
+  build carries no machine proposal. The whole synthesis is UNAVAILABLE, with a loud flag, only when
+  no draw is usable. Missing trailing fields are never defaulted to blank, which
   would be indistinguishable from a genuine empty field.
 - A draw missing `evidence_balance` is NOT refused; the code chooses this on purpose (`synthesize`:
   "flag, don't drop"). Its lean counts as unparsed, a bucket of its own in the draws' vote, so it
@@ -350,7 +352,7 @@ What the code reads, all from the Fiscal Years section: Revenue beside GAAP EPS 
 **Estimates Report → Consensus sheet — multi-listing column risk:** large-cap names often have multiple listing columns side-by-side: e.g., a primary listing (USD on US exchange) next to a GDR/ADR equivalent on a foreign exchange in local currency, or multi-class share variants. LLM picking "first non-blank consensus PT" could pick the foreign-currency-denominated equivalent and produce a number in wrong currency. **Always read column header to confirm primary listing and verify currency before extracting any price/PT/multiple value.**
 
 **Holders file — SUPERSEDED (G-D9, 2026-11-11). No code reads a holders export, so the rules below describe no extraction in this repo.**
-- `ciq._WORKBOOK_KEYWORDS` has no ownership kind, so a holders or Public Ownership export is an unrecognised file. Assembly names it in a caveat as "not recognised and NOT READ" (`assemble.py`).
+- No kind's name rule (`ciq._KIND_NAME_RULES`, read by `ciq.workbook_kind`; the registry `ciq._WORKBOOK_KEYWORDS` holds the same kinds) is an ownership kind, so a holders or Public Ownership export is an unrecognised file. Assembly names it in a caveat as "not recognised and NOT READ" (`assemble.py`).
 - `requirements.CIQ_MODULES` lists no ownership module.
 - The page's ownership facts come from EDGAR: Schedule 13D/G filings (`mechanical._ownership_events`) and Form 4 (`mechanical._insider_activity`; `requirements.EDGAR_FREE_INPUTS`). Short interest comes from FINRA (`requirements.FREE_FEED_INPUTS`).
 - None of the 36 folders holds a holders, Public Ownership or Insider Trading export (2026-11-11).
