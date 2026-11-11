@@ -605,6 +605,27 @@ def _states_decline(vt_n: str, quote: str, *, reads: list[re.Match[str]] | None 
     return bool(beside) and (all(beside) if every else any(beside))
 
 
+#: a number WORD where it stands — a compound first ("twenty-seven" is one number), then a single
+#: word — so a figure written in words carries its sign as a digit does (Codex on #987)
+_WORD_SPAN = re.compile(r"\b(?:(?:" + "|".join(("twenty", "thirty", "forty", "fifty", "sixty",
+                                                 "seventy", "eighty", "ninety"))
+                        + r")[-\s](?:one|two|three|four|five|six|seven|eight|nine)|"
+                        + "|".join(sorted(_WORD_NUM, key=len, reverse=True)) + r")\b", re.I)
+#: "x" or "times" directly after a number: the figure is a multiple
+_MULTIPLE_AFTER = re.compile(r"\s*(?:x|times)\b", re.I)
+
+
+def _figures_in(vt_n: str) -> list[tuple[re.Match[str], float]]:
+    """Every number the value text writes — in digits or in words — with its value."""
+    out = [(m, float(m.group(0).replace(",", ""))) for m in _NUM.finditer(vt_n)]
+    for m in _WORD_SPAN.finditer(vt_n):
+        w = m.group(0).lower()
+        c = _COMPOUND.fullmatch(w)
+        out.append((m, float(_WORD_NUM[c.group(1).lower()] + _WORD_NUM[c.group(2).lower()])
+                       if c else float(_WORD_NUM[w])))
+    return out
+
+
 #: a METRIC that names the decline itself — its positive value is the decline's size ("mean
 #: reward reduction": a 3x lower mean reward is 3), so a positive value is not a wrong sign there.
 #: Never a noun that names the THING that fell: "net loss fell 27%", "rate cuts", a "drop-off rate"
@@ -652,10 +673,13 @@ def _number_check(value: float | None, value_text: str | None, unit: str | None,
     else:
         ok = in_quote and any(abs(n * k - value) <= 1e-9 * max(1.0, abs(value))
                               for n in nums for k in scales)
-        # the value text's numbers that read as the value — only their words state its sign
-        reads = [m for m in _NUM.finditer(vt_n)
-                 if any(abs(abs(float(m.group(0).replace(",", ""))) * k - abs(value))
-                        <= 1e-9 * max(1.0, abs(value)) for k in scales)]
+        # the value text's numbers — in digits or in words — that read as the value: only their
+        # words state its sign, and only they can make it a multiple
+        reads = [m for m, n in _figures_in(vt_n)
+                 if any(abs(abs(n) * k - abs(value)) <= 1e-9 * max(1.0, abs(value))
+                        for k in scales)]
+        multiple = (any(_MULTIPLE_AFTER.match(vt_n, m.end()) for m in reads) if reads
+                    else bool(_MULTIPLE.search(vt_n)))
         if not ok and in_quote and value < 0 and any(
                 abs(n * k + value) <= 1e-9 * max(1.0, abs(value)) for n in nums for k in scales):
             # "down ~27%" read as -27: the minus is the word
@@ -663,8 +687,7 @@ def _number_check(value: float | None, value_text: str | None, unit: str | None,
         # THE SIGN THE WORDS STATE (RG-D21): "down 27%" read as +27 passed — a silent wrong value
         # (C-f5fcf829b5a474: MLCC spot prices "slipped approximately 5%", stored +5). A positive
         # value stays where the metric names the decline (its size) or the figure is a multiple.
-        if (ok and value > 0 and not _DECLINE_METRIC.search(metric or "")
-                and not _MULTIPLE.search(vt_n)
+        if (ok and value > 0 and not _DECLINE_METRIC.search(metric or "") and not multiple
                 and _states_decline(vt_n, quote, reads=reads, every=True)):
             notes.append(f"the quote states a decline but the value is positive: value={value} "
                          f"value_text={vt!r} — a decline reads negative (\"down 27%\" is −27)")

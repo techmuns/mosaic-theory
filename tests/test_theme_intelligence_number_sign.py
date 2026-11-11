@@ -107,3 +107,27 @@ def test_times_as_a_noun_is_not_a_multiple() -> None:
 def test_a_decline_after_a_spelled_percent_is_read() -> None:
     q = "Orders posted a 27 percent decline."
     assert _number_check(-27.0, "27 percent decline", "%", q)[0] is True
+
+
+# --- review round 1 (Codex, #987) ---------------------------------------------------------------
+
+def test_a_spelled_out_figure_carries_its_sign_too() -> None:
+    """Codex P2 (4534697293): the sign was read beside DIGIT numbers only, so a figure written in
+    words lost it — "down twenty-seven percent" read as −27 was refused, and "twenty-seven
+    percent decline" read as +27 passed."""
+    q = "Orders were down twenty-seven percent YoY."
+    assert _number_check(-27.0, "down twenty-seven percent", "%", q)[0] is True
+    q2 = "Orders posted a twenty-seven percent decline."
+    ok, notes = _number_check(27.0, "twenty-seven percent decline", "%", q2)
+    assert ok is False and any("states a decline" in n for n in notes), notes
+
+
+def test_a_multiple_elsewhere_in_the_value_text_does_not_exempt_the_value() -> None:
+    """Codex P2 (4534697300): the multiple exemption read the whole value text, so an unrelated
+    "3x" let a decline stored positive pass. It binds to the number that reads as the value."""
+    q = "Net debt sits at 3x leverage, with EBITDA down 27 million in the quarter."
+    vt = "3x leverage, with EBITDA down 27 million"
+    ok, notes = _number_check(27_000_000.0, vt, "USD", q)
+    assert ok is False and any("states a decline" in n for n in notes), notes
+    assert _number_check(-27_000_000.0, vt, "USD", q)[0] is True
+    assert _number_check(3.0, "3x lower", "x", "Costs were 3x lower.")[0] is True  # still kept
