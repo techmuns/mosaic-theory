@@ -105,14 +105,18 @@ def test_parse_aggregates_error_status_fails_loud() -> None:
 
 # --- parse_tiingo_prices ----------------------------------------------------------------------
 def test_parse_tiingo_prices() -> None:
-    rows = [
-        {"date": "2024-01-02T00:00:00.000Z", "adjOpen": 10.0, "adjHigh": 11.0,
-         "adjLow": 9.0, "adjClose": 10.5, "adjVolume": 1000.0},
-    ]
-    bars = parse_tiingo_prices(rows, "SEC-X-FOO")
+    """A row as Tiingo serves it — the last of GOOGL's committed 2022-07 rows, after its split —
+    parses to the UNADJUSTED bar (RF-D11: the ``adj*`` fields also take dividends out, which the
+    store's bars never do). The split and dividend cases are in `test_prices_order5`."""
+    import json
+    from pathlib import Path
+    rows = json.loads((Path(__file__).parent / "fixtures" / "splits_reference"
+                       / "tiingo_googl_2022-07.json").read_text())["rows"]
+    last = max(rows, key=lambda r: r["date"])
+    bars = parse_tiingo_prices([last], "SEC-X-FOO")
     assert len(bars) == 1
-    assert bars[0].bar_date == date(2024, 1, 2)
-    assert bars[0].close == 10.5 and bars[0].source == "tiingo"
+    assert bars[0].bar_date == date.fromisoformat(last["date"][:10])
+    assert bars[0].close == last["close"] and bars[0].source == "tiingo"
 
 
 # --- feature math (synthetic, deterministic) --------------------------------------------------
@@ -240,7 +244,9 @@ def test_ingest_prices_per_symbol_is_one_call_each(tmp_path) -> None:
         summary = ingest_prices_per_symbol(
             client, store, secs, start=date(2026, 6, 1), end=date(2026, 6, 30))  # type: ignore[arg-type]
     assert client.calls == ["NCNO", "IWM"]  # ONE call per symbol, in order
-    assert summary == {"symbols": 2, "bars_written": 4}
+    # nothing held, so no anchor: nothing restated, named or unanchored (RF-D5)
+    assert summary == {"symbols": 2, "bars_written": 4, "restated": {}, "price_only": {},
+                       "unanchored": []}
     with Store(tmp_path / "aggs.db") as store:
         hist = store.get_price_history("SEC-1-NCNO")
     assert len(hist) == 2 and hist[0].source == "polygon-aggs"

@@ -72,23 +72,36 @@ def month_of(at: datetime) -> str:
 
 
 def parse_tiingo_prices(rows: list[dict[str, Any]], internal_id: str) -> list[PriceBar]:
-    """Pure parser: Tiingo daily rows → split/dividend-adjusted PriceBars (unit-testable)."""
-    out: list[PriceBar] = []
+    """Pure parser: Tiingo daily rows → PriceBars on the SPLIT-ONLY basis of the LAST row given.
+
+    SPLITS ONLY, NEVER DIVIDENDS (TeamNostra fix request 2, RF-D11). Tiingo's ``adj*`` fields take
+    dividends out as well as splits, while the store holds Polygon's ``adjusted=true`` bars, which
+    take out splits only — and every total return here adds Tiingo's ``divCash`` on top of the
+    price ratio (`eod.dividends`). Bars read from ``adj*`` would carry each dividend twice: a flat
+    $10 dividend read +11.1%. So the bars are the UNADJUSTED open/high/low/close, divided — and the
+    volume multiplied — by every ``splitFactor`` dated after the row among the rows given (a split's
+    factor sits on its ex-date's row, whose prices are already on the new basis). That is the basis
+    of the last row given; `TiingoEodClient.price_history` passes rows through today, Polygon's.
+    A row missing a field, or with a factor that is not positive, raises: no bar is guessed."""
+    parsed: list[tuple[date, float, float, float, float, float, float]] = []
     for r in rows:
-        d = str(r["date"])[:10]  # "2024-01-02T00:00:00.000Z" -> "2024-01-02"
-        out.append(
-            PriceBar(
-                internal_id=internal_id,
-                bar_date=date.fromisoformat(d),
-                open=r["adjOpen"],
-                high=r["adjHigh"],
-                low=r["adjLow"],
-                close=r["adjClose"],
-                volume=r["adjVolume"],
-                source="tiingo",
-            )
-        )
-    return out
+        try:
+            d = date.fromisoformat(str(r["date"])[:10])  # "2024-01-02T00:00:00.000Z"
+            o, h, lo, c, v, sf = (float(r[k]) for k in
+                                  ("open", "high", "low", "close", "volume", "splitFactor"))
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(f"{internal_id}: an unreadable Tiingo row ({exc!r}) — no bar is "
+                             f"guessed") from exc
+        if not sf > 0:
+            raise ValueError(f"{internal_id} {d}: splitFactor {sf!r} is not positive")
+        parsed.append((d, o, h, lo, c, v, sf))
+    out: list[PriceBar] = []
+    later = 1.0           # the product of the split factors dated after the row being read
+    for d, o, h, lo, c, v, sf in sorted(parsed, reverse=True):
+        out.append(PriceBar(internal_id=internal_id, bar_date=d, open=o / later, high=h / later,
+                            low=lo / later, close=c / later, volume=v * later, source="tiingo"))
+        later *= sf
+    return out[::-1]
 
 
 class TiingoEodClient:
@@ -172,4 +185,7 @@ class TiingoEodClient:
     def price_history(
         self, symbol: str, internal_id: str, *, start: date, end: date
     ) -> list[PriceBar]:
-        return parse_tiingo_prices(self.daily_rows(symbol, start=start, end=end), internal_id)
+        """``[start, end]`` on TODAY's split basis — Polygon's: the rows are read through today, so
+        a split after ``end`` is divided out too (`parse_tiingo_prices`), then cut to the window."""
+        rows = self.daily_rows(symbol, start=start, end=max(end, date.today()))
+        return [b for b in parse_tiingo_prices(rows, internal_id) if b.bar_date <= end]

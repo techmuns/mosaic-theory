@@ -77,9 +77,9 @@ _INTEGER_TOLERANCE = 0.03
 #: four rows produced four copies of one date. And it is a copy of a date that STILL GATES —
 #: ``forward_multiples``' price and ``stock_info.as_of`` are both ``max(bars).bar_date`` from the
 #: same ``store.get_price_history`` call (``_refresh_price_and_pe`` takes the max directly;
-#: ``compute_price_features`` reads ``bars[-1]`` and uses its ``reference_date`` only to flag
-#: staleness), so the ceiling, which reads the OLDEST panel, cannot move. Counting them would
-#: have added N duplicates of an already-gating date to the inventory and nothing else.
+#: ``compute_price_features`` reads ``bars[-1]`` of the bars at or before its frontier, the
+#: page's price date), so the ceiling, which reads the OLDEST panel, cannot move. Counting them
+#: would have added N duplicates of an already-gating date to the inventory and nothing else.
 #:
 #: ``lease_basis`` joined it 2026-10-19 (#750's pages): its ex-lease band is an own-history band
 #: rebuilt on one lease basis, and its ``as_of`` is that band's latest FILING date — the date its
