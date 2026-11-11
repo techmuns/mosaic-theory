@@ -1,0 +1,407 @@
+"""A DECISION THE OPERATOR RULES OUT OF THE RECORD IS VOIDED BY AN APPENDED ROW, AND EVERY READER
+LEAVES IT OUT (operator ruling 2026-11-11, GOOGL: "we want to remove the buy card/ buy verdict
+altogether given it was done based on really old and wrong data and we dont want this buy verdict
+to interfere in future at all").
+
+The ledger is append-only and has no delete, so the decision is VOIDED: a `EVENT_VOID` row names
+it, states the ruling and its date, and seals the decision's result to date as the monitor marks
+it. Its decision, correction and void rows stay as audit history. Every test runs on the committed
+ledger — GOOGL's real BUY, sealed 345.90 on 2026-08-14 and corrected to 340.65 on 2026-08-27 — with
+the void appended on a COPY; the committed ledger is never written.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import shutil
+from datetime import date, datetime
+from pathlib import Path
+from typing import Any
+
+import pytest
+
+from vinci import monitor as mon
+from vinci.config import Config
+from vinci.ledger.correction import correct_entry, void_decision
+from vinci.ledger.workflow import LedgerError, close_position
+from vinci.schemas.ledger import (
+    EVENT_VOID,
+    LedgerEntry,
+    LedgerFact,
+    VoidMark,
+    corrected,
+    corrections_by_decision,
+    origin_of,
+    sleeve_of,
+    void_entry_id,
+    voids_by_decision,
+)
+from vinci.store import Store
+
+ROOT = Path(__file__).resolve().parents[1]
+LEDGER = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
+GOOGL = "V-GOOGL"
+RULING = date(2026, 11, 11)
+REASON = ("operator ruling 2026-11-11: \"we want to remove the buy card/ buy verdict altogether "
+          "given it was done based on really old and wrong data and we dont want this buy verdict "
+          "to interfere in future at all\"; the entry was sealed on the 2026-08-14 close, 14 days "
+          "before the decision (RF-D7)")
+
+
+def _committed() -> list[LedgerEntry]:
+    return [LedgerEntry.model_validate(json.loads(json.loads(ln)["payload"]))
+            for ln in LEDGER.read_text().splitlines() if ln.strip()]
+
+
+def _googl_read() -> LedgerEntry:
+    rows = _committed()
+    d = next(e for e in rows if e.entry_id == GOOGL)
+    return corrected(d, corrections_by_decision(rows).get(GOOGL))
+
+
+def _mark(**update: Any) -> VoidMark:
+    """A mark on GOOGL's entry AS READ (its correction's), the shape `vinci void-decision`
+    seals."""
+    r = _googl_read()
+    base = {"entry_price": r.entry_price, "entry_date": r.entry_price_as_of,
+            "as_of": date(2026, 11, 6), "price": 284.78, "position_return": -0.1635,
+            "benchmark": "SPY", "benchmark_return": -0.0441, "excess": -0.1194,
+            "return_basis": "total"}
+    return VoidMark(**{**base, **update})
+
+
+def _store(tmp_path: Path) -> Store:
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    store = Store(tmp_path / "l.db")
+    for e in _committed():
+        store.append_ledger(e)
+    return store
+
+
+def _void(store: Store, **kw: Any) -> LedgerEntry:
+    args: dict[str, Any] = {"entry_id": GOOGL, "reason": REASON, "ruled_on": RULING,
+                            "mark": _mark(), "voided_at": datetime(2026, 11, 11, 12)}
+    return void_decision(store, **{**args, **kw})
+
+
+def test_the_committed_ledger_is_what_these_tests_assume() -> None:
+    """GOOGL's BUY and its correction are committed; no void is, yet."""
+    rows = {e.entry_id: e for e in _committed()}
+    assert rows[GOOGL].verdict.value == "BUY" and rows[GOOGL].entry_price == 345.9
+    assert "R-GOOGL" in rows and not voids_by_decision(rows.values())
+
+
+# --- the row -------------------------------------------------------------------------------------
+
+def test_a_void_is_appended_and_every_googl_row_stays(tmp_path: Path) -> None:
+    with _store(tmp_path) as store:
+        row = _void(store)
+        rows = {e.entry_id: e for e in store.iter_ledger()}
+    assert (row.entry_id, row.event, row.voids_entry_id) == ("X-GOOGL", EVENT_VOID, GOOGL)
+    assert row.entry_id == void_entry_id(GOOGL)
+    assert (row.ruled_on, row.void_mark) == (RULING, _mark())
+    assert (row.origin, row.sleeve) == (origin_of(rows[GOOGL]), sleeve_of(rows[GOOGL]))
+    assert {GOOGL, "R-GOOGL", "X-GOOGL"} <= set(rows)               # audit history, all kept
+    assert rows[GOOGL].entry_price == 345.9                          # the sealed row, unchanged
+
+
+@pytest.mark.parametrize("kw, expect", [
+    ({"entry_id": "V-NOPE"}, "no decision row"),
+    ({"entry_id": "C-IT-screen2-20260706"}, "no decision row"),
+    ({"entry_id": "V-IT-screen2-20260706", "mark": None}, "was closed by C-IT"),
+    ({"reason": "  "}, "only on stated grounds"),
+    ({"mark": "at the sealed entry"}, "the result sealed with a void is the decision's own"),
+])
+def test_a_void_that_does_not_belong_is_refused(tmp_path: Path, kw: dict[str, Any],
+                                                expect: str) -> None:
+    """A void names a live decision, on stated grounds, sealing the result of the entry the
+    decision is READ at — a mark taken at GOOGL's sealed 345.90 is not its result."""
+    if kw.get("mark") == "at the sealed entry":
+        kw = {"mark": _mark(entry_price=345.9, entry_date=date(2026, 8, 14))}
+    elif "mark" in kw and kw["mark"] is None:
+        kw = {k: v for k, v in kw.items() if k != "mark"}
+    with _store(tmp_path) as store:
+        n = len(list(store.iter_ledger()))
+        with pytest.raises(LedgerError, match=expect):
+            _void(store, **kw)
+        assert len(list(store.iter_ledger())) == n
+
+
+def test_a_mark_on_the_split_basis_is_the_decisions_own(tmp_path: Path) -> None:
+    """The monitor's row states the entry on the MARK's split basis (`entry_on_basis`): a name that
+    split since its entry reads a restated entry price on the SAME session. That mark is the
+    decision's own, and is sealed as the row states it — never refused for the restatement."""
+    split = _mark(entry_price=340.65 / 2, price=284.78 / 2)
+    with _store(tmp_path) as store:
+        row = _void(store, mark=split)
+    assert row.void_mark == split and row.entry_price == 340.65
+
+
+def test_a_second_void_is_refused(tmp_path: Path) -> None:
+    with _store(tmp_path) as store:
+        _void(store)
+        with pytest.raises(LedgerError, match="already voided"):
+            _void(store, voided_at=datetime(2026, 11, 11, 13))
+
+
+def _void_row(**update: Any) -> dict[str, Any]:
+    with_void = _committed()
+    d = next(e for e in with_void if e.entry_id == GOOGL)
+    row = d.model_copy(update={
+        "entry_id": "X-GOOGL", "event": EVENT_VOID, "voids_entry_id": GOOGL, "reason": REASON,
+        "ruled_on": RULING, "void_mark": _mark(), "facts": {}, "machine_proposal": None,
+        "machine_lean": None, "proposal_assembled_at": None, "disposition": None,
+        "stated_limit": None})
+    return {**row.model_dump(), **update}
+
+
+def test_a_well_formed_void_row_validates() -> None:
+    """THE POSITIVE PIN for the shape guards below."""
+    assert LedgerEntry.model_validate(_void_row()).event == EVENT_VOID
+
+
+@pytest.mark.parametrize("update, expect", [
+    ({"voids_entry_id": None}, "names no decision"),
+    ({"voids_entry_id": "X-GOOGL"}, "voids itself"),
+    ({"reason": " "}, "only on stated grounds"),
+    ({"ruled_on": None}, "has no ruled_on"),
+    ({"void_mark": None}, "has no void_mark"),
+    ({"exit_price": 300.0}, "a void is not a close"),
+    ({"corrects_entry_id": GOOGL}, "a void is not a close or a correction"),
+    ({"facts": "a sealed fact"}, "carries facts"),
+])
+def test_a_malformed_void_row_is_refused(update: dict[str, Any], expect: str) -> None:
+    if update.get("facts") == "a sealed fact":
+        fact = LedgerFact(value=340.65, unit="$/share", basis="GOOGL close, 2026-08-27",
+                          source="Polygon daily aggregates, GOOGL, 2026-08-27")
+        update = {"facts": {"entry_close": fact.model_dump()}}
+    with pytest.raises(ValueError, match=expect):
+        LedgerEntry.model_validate(_void_row(**update))
+
+
+def test_only_a_void_row_carries_the_void_fields() -> None:
+    """A decision, a close or a correction carrying a void field is refused: it would read as a
+    void no reader treats as one."""
+    rows = {e.entry_id: e for e in _committed()}
+    for eid in (GOOGL, "C-IT-screen2-20260706", "R-GOOGL"):
+        with pytest.raises(ValueError, match="belong to a void row"):
+            LedgerEntry.model_validate({**rows[eid].model_dump(), "ruled_on": RULING})
+
+
+def test_an_orphan_or_a_double_void_raises_in_every_reader() -> None:
+    rows = _committed()
+    void = LedgerEntry.model_validate(_void_row())
+    assert voids_by_decision([*rows, void])[GOOGL] is void
+    with pytest.raises(ValueError, match="name no decision row"):
+        voids_by_decision([e for e in rows if e.entry_id != GOOGL] + [void])
+    twice = LedgerEntry.model_validate(_void_row(entry_id="X-GOOGL-2"))
+    with pytest.raises(ValueError, match="voided twice"):
+        voids_by_decision([*rows, void, twice])
+    with pytest.raises(ValueError, match="voided twice"):
+        mon.apply_corrections([{"payload": e.model_dump_json()} for e in [*rows, void, twice]])
+
+
+# --- the writers refuse a voided decision --------------------------------------------------------
+
+def test_a_voided_decision_is_never_closed_or_corrected(tmp_path: Path) -> None:
+    with _store(tmp_path) as store:
+        _void(store)
+        with pytest.raises(LedgerError, match="VOIDED by X-GOOGL"):
+            close_position(store, candidate_id="GOOGL", exit_price=300.0,
+                           exit_price_as_of=date(2026, 11, 10), reason="test",
+                           closed_at=datetime(2026, 11, 11, 13))
+        with pytest.raises(LedgerError, match="VOIDED"):
+            correct_entry(store, entry_id=GOOGL, entry_price=341.0,
+                          entry_price_as_of=date(2026, 8, 26), reason="test",
+                          corrected_at=datetime(2026, 11, 11, 13))
+
+
+# --- the readers leave it out --------------------------------------------------------------------
+
+def _raw(with_void: bool) -> list[dict[str, Any]]:
+    raw = [json.loads(ln) for ln in LEDGER.read_text().splitlines() if ln.strip()]
+    if with_void:
+        v = LedgerEntry.model_validate(_void_row())
+        raw.append({"entry_id": v.entry_id, "ticker": v.ticker, "verdict": v.verdict.value,
+                    "payload": v.model_dump_json()})
+    return raw
+
+
+def test_the_monitors_book_leaves_a_voided_decision_out() -> None:
+    """`decision_rows` — the book, the spread, `live_verdicts`, the supersede guard — and
+    `apply_corrections` (the first thing `vinci monitor` does) leave GOOGL out, and name the void
+    ONCE, with the result its void sealed. Without the void (the negative pin) GOOGL is there."""
+    assert GOOGL in {r["entry_id"] for r in mon.decision_rows(_raw(False))}
+    raw = _raw(True)
+    assert GOOGL not in {r["entry_id"] for r in mon.decision_rows(raw)}
+    assert "GOOGL" not in mon.live_verdicts(raw, as_of=date(2026, 11, 11))
+    kept, notes = mon.apply_corrections(raw)
+    assert not [r for r in kept if mon.entry_of(r).get("ticker") == "GOOGL"]
+    (note,) = [n for n in notes if "VOIDED" in n]
+    assert "X-GOOGL" in note and "2026-11-11" in note and "-16.35%" in note
+
+
+def test_scoring_leaves_a_voided_decision_out_and_the_primary_spread_does_not_move(
+        tmp_path: Path) -> None:
+    """THE REPORT: on the committed ledger with flat bars (`test_per_row_benchmark`'s store), GOOGL
+    resolves by 2027-03-19 and sits in the quality sleeve's curve; voided, it is in no score and no
+    curve, the report names the void once, and the PRIMARY screen-origin spread is unchanged (GOOGL
+    is followed-origin)."""
+    from tests.dividend_support import no_dividends, no_splits
+    from tests.test_per_row_benchmark import _committed_ledger_store
+    from vinci.monitor import read_assignments_file
+    from vinci.scoring import score_ledger
+    asg = read_assignments_file(ROOT / "data" / "monitor" / "benchmark_assignments.json")
+    as_of = date(2027, 3, 19)
+    with _committed_ledger_store(tmp_path / "a.db") as store:
+        before, rb = score_ledger(store, as_of=as_of, dividends=no_dividends, splits=no_splits,
+                                  assignments=asg)
+    with _committed_ledger_store(tmp_path / "b.db") as store:
+        _void(store)
+        after, ra = score_ledger(store, as_of=as_of, dividends=no_dividends, splits=no_splits,
+                                 assignments=asg)
+    assert GOOGL in {s.entry_id for s in before} and "quality" in rb.by_sleeve
+    assert GOOGL not in {s.entry_id for s in after} and "quality" not in ra.by_sleeve
+    assert [s for s in before if s.entry_id != GOOGL] == after
+    assert ra.buy_avoid_spread == rb.buy_avoid_spread
+    assert (ra.n_resolved_buy, ra.n_resolved_avoid) == (rb.n_resolved_buy, rb.n_resolved_avoid)
+    assert sum("VOIDED by X-GOOGL" in n for n in ra.row_notes) == 1
+
+
+# --- the command ---------------------------------------------------------------------------------
+
+@pytest.fixture
+def tree(tmp_path: Path) -> Config:
+    data = tmp_path / "data"
+    data.mkdir()
+    shutil.copytree(ROOT / "data" / "snapshots", data / "snapshots")
+    cfg = Config(data_dir=data)
+    cfg.ensure_dirs()
+    return cfg
+
+
+def _run(tree: Config, monkeypatch: pytest.MonkeyPatch, *, dry: bool) -> int:
+    from vinci import cli
+    monkeypatch.setattr(cli, "get_config", lambda: tree)
+    monkeypatch.setattr(cli, "_void_mark", lambda _d: _mark())
+    return cli._cmd_void_decision(argparse.Namespace(entry_id=GOOGL, reason=REASON,
+                                                     ruled_on=RULING.isoformat(), dry_run=dry))
+
+
+def _lines(tree: Config) -> list[str]:
+    return [ln for ln in (tree.snapshots_dir / "decision_ledger.jsonl").read_text().splitlines()
+            if ln.strip()]
+
+
+def test_the_dry_run_prints_the_void_and_writes_nothing(
+        tree: Config, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    before = _lines(tree)
+    assert _run(tree, monkeypatch, dry=True) == 0
+    out = capsys.readouterr().out
+    assert "read at 340.65 on 2026-08-27" in out and "-16.35%" in out and "DRY RUN" in out
+    assert _lines(tree) == before and not tree.db_path.exists()
+
+
+def test_the_command_appends_the_void_and_keeps_every_committed_line(
+        tree: Config, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    before = _lines(tree)
+    assert _run(tree, monkeypatch, dry=False) == 0
+    after = _lines(tree)
+    assert len(after) == len(before) + 1 and all(ln in after for ln in before)
+    (new,) = [json.loads(ln) for ln in after if ln not in before]
+    assert new["entry_id"] == "X-GOOGL"
+    assert _run(tree, monkeypatch, dry=False) == 1
+    assert "already voided" in capsys.readouterr().out
+
+
+def test_the_sealed_mark_is_the_monitors_own_row(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """END TO END: `_void_mark` runs `vinci monitor` into a scratch root (on the monitor tests'
+    wired vendors) and seals GOOGL's own row of that day — the entry it is read at, the mark, the
+    returns — never a second computation."""
+    from tests.test_monitor_ref_date_bound import _wire
+    from vinci import cli
+    _wire(tmp_path, monkeypatch, [])
+    mark = cli._void_mark(_googl_read())
+    assert (mark.entry_price, mark.entry_date) == (340.65, date(2026, 8, 27))
+    assert cli._cmd_monitor(argparse.Namespace(ref=None, out=str(tmp_path / "m"))) == 0
+    (day,) = [json.loads(p.read_text()) for p in (tmp_path / "m" / "data" / "monitor").glob("2*")]
+    (row,) = [r for r in day["rows"] if r["ticker"] == "GOOGL"]
+    assert (mark.as_of.isoformat(), mark.price, mark.position_return, mark.excess) == (
+        row["current_date"], row["current_price"], row["position_return"], row["excess"])
+
+
+def test_a_monitor_that_cannot_mark_is_a_refusal_not_a_traceback(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """`vinci monitor` raises RuntimeError when it refuses to mark a leg (a missing bar, UNKNOWN
+    dividends or splits); `_void_mark` says that as a LedgerError, which the command prints as
+    REFUSED with nothing written."""
+    from vinci import cli
+
+    def refuse(_args: argparse.Namespace) -> int:
+        raise RuntimeError("GOOGL: no position bar for GOOGL — refusing to guess a price")
+    monkeypatch.setattr(cli, "_cmd_monitor", refuse)
+    with pytest.raises(LedgerError, match="could not mark the book.*refusing to guess"):
+        cli._void_mark(_googl_read())
+
+
+# --- a fresh decision after a void (the id scheme)-----------------------------------------------
+
+def test_every_committed_follow_up_row_keeps_its_id() -> None:
+    """THE CORPUS: every committed close and correction is named as `follow_up_id` names it from
+    its decision's id — the scheme renames nothing that exists."""
+    from vinci.schemas.ledger import (
+        CLOSE_ID_PREFIX,
+        CORRECTION_ID_PREFIX,
+        EVENT_CLOSE,
+        EVENT_CORRECTION,
+        follow_up_id,
+    )
+    rows = _committed()
+    follow = [(e, CLOSE_ID_PREFIX, e.closes_entry_id) for e in rows if e.event == EVENT_CLOSE] + [
+        (e, CORRECTION_ID_PREFIX, e.corrects_entry_id) for e in rows
+        if e.event == EVENT_CORRECTION]
+    assert len(follow) >= 4
+    for e, prefix, target in follow:
+        assert e.entry_id == follow_up_id(prefix, str(target)), e.entry_id
+
+
+def test_a_fresh_decision_is_refused_while_one_is_open_and_numbered_after_a_void(
+        tmp_path: Path) -> None:
+    """GOOGL's BUY is open: a fresh GOOGL decision is refused. Voided, the next is ``V-GOOGL-2``.
+    IT's decision is CLOSED, so its next is ``-2`` too; a new candidate starts at ``V-…``."""
+    from vinci.ledger.workflow import next_decision_id
+    with _store(tmp_path) as store:
+        with pytest.raises(LedgerError, match="already holds an open decision 'V-GOOGL'"):
+            next_decision_id(store, "GOOGL")
+        _void(store)
+        assert next_decision_id(store, "GOOGL") == "V-GOOGL-2"
+        assert next_decision_id(store, "IT-screen2-20260706") == "V-IT-screen2-20260706-2"
+        assert next_decision_id(store, "NEW-screen2-20261111") == "V-NEW-screen2-20261111"
+
+
+def test_a_follow_up_id_is_named_from_the_decision_never_a_candidate() -> None:
+    """A candidate id may itself start with ``V-`` (Visa's screen candidates do): the decision id
+    carries one more prefix, and the close is named from that — never stripped twice."""
+    from vinci.schemas.ledger import CLOSE_ID_PREFIX, decision_entry_id, follow_up_id
+    assert decision_entry_id("V-screen2-20261016") == "V-V-screen2-20261016"
+    assert follow_up_id(CLOSE_ID_PREFIX, "V-V-screen2-20261016") == "C-V-screen2-20261016"
+    assert follow_up_id(CLOSE_ID_PREFIX, "V-GOOGL-2") == "C-GOOGL-2"
+    with pytest.raises(ValueError, match="not a decision id"):
+        follow_up_id(CLOSE_ID_PREFIX, "GOOGL")
+
+
+def test_a_close_names_the_one_open_decision_of_a_candidate(tmp_path: Path) -> None:
+    """GOOGL voided, then a fresh GOOGL decision (``V-GOOGL-2``): a close of candidate GOOGL closes
+    the fresh one, named ``C-GOOGL-2``; the voided one is never touched."""
+    with _store(tmp_path) as store:
+        _void(store)
+        d = next(e for e in store.iter_ledger() if e.entry_id == GOOGL)
+        store.append_ledger(LedgerEntry.model_validate(d.model_copy(update={
+            "entry_id": "V-GOOGL-2", "entry_price": 300.0,
+            "entry_price_as_of": date(2026, 11, 10),
+            "decided_at": datetime(2026, 11, 11, 9)}).model_dump()))
+        close = close_position(store, candidate_id="GOOGL", exit_price=310.0,
+                               exit_price_as_of=date(2026, 11, 11), reason="test",
+                               closed_at=datetime(2026, 11, 11, 13))
+    assert (close.entry_id, close.closes_entry_id) == ("C-GOOGL-2", "V-GOOGL-2")

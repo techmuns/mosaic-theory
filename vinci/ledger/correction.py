@@ -30,12 +30,19 @@ from pydantic import ValidationError
 
 from vinci.ledger.workflow import LedgerError
 from vinci.schemas.ledger import (
+    CORRECTION_ID_PREFIX,
+    EVENT_CLOSE,
     EVENT_CORRECTION,
+    EVENT_VOID,
     LedgerEntry,
-    correction_entry_id,
+    VoidMark,
+    corrected,
     corrections_by_decision,
+    follow_up_id,
     origin_of,
     sleeve_of,
+    void_entry_id,
+    voids_by_decision,
 )
 from vinci.store import Store
 
@@ -75,6 +82,9 @@ def correct_entry(store: Store, *, entry_id: str, entry_price: float, entry_pric
     decision = next((r for r in rows if r.entry_id == entry_id and r.event is None), None)
     if decision is None:
         raise LedgerError(f"no decision row {entry_id!r} in the ledger — nothing to correct")
+    if entry_id in voids_by_decision(rows):
+        raise LedgerError(f"{entry_id!r} is VOIDED — a voided decision is out of the record, and "
+                          f"nothing is corrected on it")
     if entry_id in corrections_by_decision(rows):
         raise LedgerError(f"{entry_id!r} is already corrected; the ledger is append-only, and one "
                           f"correction per decision is the rule")
@@ -94,7 +104,7 @@ def correct_entry(store: Store, *, entry_id: str, entry_price: float, entry_pric
                           f"{early[0].exit_price_as_of}, before the corrected entry date "
                           f"{entry_price_as_of} — a position cannot close before it opened")
     row = decision.model_copy(update={
-        "entry_id": correction_entry_id(decision.candidate_id),
+        "entry_id": follow_up_id(CORRECTION_ID_PREFIX, decision.entry_id),
         "event": EVENT_CORRECTION,
         "corrects_entry_id": decision.entry_id,
         "entry_price": entry_price,
@@ -122,6 +132,78 @@ def correct_entry(store: Store, *, entry_id: str, entry_price: float, entry_pric
         row = LedgerEntry.model_validate(row.model_dump())
     except ValidationError as exc:
         raise LedgerError(f"the correction row for {entry_id!r} is invalid and was NOT written: "
+                          f"{exc}") from exc
+    store.append_ledger(row)
+    return row
+
+
+def void_decision(store: Store, *, entry_id: str, reason: str, ruled_on: date, mark: VoidMark,
+                  voided_at: datetime) -> LedgerEntry:
+    """Append the VOID row for decision ``entry_id`` (operator ruling 2026-11-11); returns it.
+
+    WHY A VOID. The operator ruled GOOGL's BUY out of the record — "we want to remove the buy card/
+    buy verdict altogether given it was done based on really old and wrong data and we dont want
+    this buy verdict to interfere in future at all". The ledger is append-only and has no delete,
+    so the decision is VOIDED by an appended row: every reader of positions and returns leaves it
+    out, and its decision, correction and void rows stay as audit history. Only a ruling applies it
+    — ``reason`` states it and ``ruled_on`` dates it — though the mechanism is generic.
+
+    THE RESULT TO DATE IS SEALED WITH IT (``mark``): the monitor's own mark of the decision at the
+    last session it could read, taken by the caller, so the removal is seen and can never read as
+    a hidden loser. It must describe the decision AS READ — its corrected entry when corrected.
+
+    Refused, with nothing written: an unknown or non-decision ``entry_id``; a decision already
+    voided; a closed decision (its outcome is realized — a close is the record of it); a blank
+    reason; a mark taken on another entry than the one the decision is read at. The row copies the
+    decision's provenance, as a close does, tagged as the decision is read, and is re-validated."""
+    rows = list(store.iter_ledger())
+    decision = next((r for r in rows if r.entry_id == entry_id and r.event is None), None)
+    if decision is None:
+        raise LedgerError(f"no decision row {entry_id!r} in the ledger — nothing to void")
+    if entry_id in voids_by_decision(rows):
+        raise LedgerError(f"{entry_id!r} is already voided; one void per decision")
+    closes = [r for r in rows if r.event == EVENT_CLOSE and r.closes_entry_id == entry_id]
+    if closes:
+        raise LedgerError(f"{entry_id!r} was closed by {closes[0].entry_id} — a closed position's "
+                          f"outcome is realized, and a void does not undo it")
+    if not reason.strip():
+        raise LedgerError(f"no reason given — {entry_id!r} is voided only on stated grounds")
+    read = corrected(decision, corrections_by_decision(rows).get(entry_id))
+    # THE ENTRY SESSION, not the price: the monitor marks the entry on the MARK's split basis
+    # (`entry_on_basis`), so a name that split since its entry carries a restated entry price in
+    # its own row — comparing the price would refuse every split name's void
+    if mark.entry_date != read.entry_price_as_of:
+        raise LedgerError(f"the mark reads {entry_id!r} at {mark.entry_price:g} on "
+                          f"{mark.entry_date}, but the decision is read at {read.entry_price:g} on "
+                          f"{read.entry_price_as_of} — the result sealed with a void is the "
+                          f"decision's own")
+    row = decision.model_copy(update={
+        "entry_id": void_entry_id(decision.entry_id),
+        "event": EVENT_VOID,
+        "voids_entry_id": decision.entry_id,
+        "ruled_on": ruled_on,
+        "void_mark": mark,
+        "entry_price": read.entry_price,
+        "entry_price_as_of": read.entry_price_as_of,
+        "reason": reason,
+        "decided_at": voided_at,
+        "origin": origin_of(decision),
+        "sleeve": sleeve_of(decision),
+        # cleared, as on a close and a correction: none of these describe a void
+        "facts": {},
+        "machine_proposal": None,
+        "machine_lean": None,
+        "proposal_assembled_at": None,
+        "disposition": None,
+        "stated_limit": None,
+        "thesis": f"void row - see reason; the thesis of record stays on {decision.entry_id}",
+        "twin_call": f"n/a - void row; the twin call of record is on {decision.entry_id}",
+        "kill_criteria": "n/a - void row",
+    })
+    try:
+        row = LedgerEntry.model_validate(row.model_dump())
+    except ValidationError as exc:
+        raise LedgerError(f"the void row for {entry_id!r} is invalid and was NOT written: "
                           f"{exc}") from exc
     store.append_ledger(row)
     return row
