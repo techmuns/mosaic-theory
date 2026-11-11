@@ -575,11 +575,64 @@ def _whole_figure(vt_n: str) -> re.Pattern[str]:
     return re.compile(r"(?<!\d)(?<!\d[.,])" + re.escape(vt_n) + r"(?!\d)(?![.,]\d)")
 
 
-def _states_decline(vt_n: str, quote: str) -> bool:
-    """The quote states a decline in words directly beside this figure."""
+#: a percent unit between a figure and the decline word after it ("27% decline", "27 percent drop")
+_PCT_UNIT = re.compile(r"\s*(?:%|percent\b|per\s+cent\b|pct\b)?")
+
+
+def _decline_beside(text: str, start: int, end: int) -> bool:
+    """`text` states a decline in words directly before `start` or after `end` (past a % unit)."""
+    after = text[end:]
+    pct = _PCT_UNIT.match(after)
+    return bool(_DECLINE_BEFORE.search(text[:start])
+                or _DECLINE_AFTER.match(after[pct.end() if pct else 0:]))
+
+
+def _states_decline(vt_n: str, quote: str, *, reads: list[re.Match[str]] | None = None,
+                    every: bool = False) -> bool:
+    """The quote states a decline in words directly beside this figure — or the figure's own
+    words do ("down 27%", "a 27% decline"): with the word inside the value text, nothing beside it
+    in the quote says so, and "down 27%" read as −27 was refused (RG-D21).
+
+    `reads` are the numbers in the value text that read as the value: only THEIR words count
+    ("2025 shipments down 27%" states 27's decline; "down 27%, up 5%" states none for 5). Without
+    them, every number's do. `every`: the quote states the decline at EVERY place the figure
+    stands — "rose 27% while costs fell 27%" states no decline for a value read as +27."""
     q = norm_text(quote)
-    return any(_DECLINE_BEFORE.search(q[:m.start()]) or _DECLINE_AFTER.match(q[m.end():])
-               for m in _whole_figure(vt_n).finditer(q))
+    nums = reads if reads else list(_NUM.finditer(vt_n))
+    if any(_decline_beside(vt_n, m.start(), m.end()) for m in nums):
+        return True
+    beside = [_decline_beside(q, m.start(), m.end()) for m in _whole_figure(vt_n).finditer(q)]
+    return bool(beside) and (all(beside) if every else any(beside))
+
+
+#: a number WORD where it stands — a compound first ("twenty-seven" is one number), then a single
+#: word — so a figure written in words carries its sign as a digit does (Codex on #987)
+_WORD_SPAN = re.compile(r"\b(?:(?:" + "|".join(("twenty", "thirty", "forty", "fifty", "sixty",
+                                                 "seventy", "eighty", "ninety"))
+                        + r")[-\s](?:one|two|three|four|five|six|seven|eight|nine)|"
+                        + "|".join(sorted(_WORD_NUM, key=len, reverse=True)) + r")\b", re.I)
+#: "x" or "times" directly after a number: the figure is a multiple
+_MULTIPLE_AFTER = re.compile(r"\s*(?:x|times)\b", re.I)
+
+
+def _figures_in(vt_n: str) -> list[tuple[re.Match[str], float]]:
+    """Every number the value text writes — in digits or in words — with its value."""
+    out = [(m, float(m.group(0).replace(",", ""))) for m in _NUM.finditer(vt_n)]
+    for m in _WORD_SPAN.finditer(vt_n):
+        w = m.group(0).lower()
+        c = _COMPOUND.fullmatch(w)
+        out.append((m, float(_WORD_NUM[c.group(1).lower()] + _WORD_NUM[c.group(2).lower()])
+                       if c else float(_WORD_NUM[w])))
+    return out
+
+
+#: a METRIC that names the decline itself — its positive value is the decline's size ("mean
+#: reward reduction": a 3x lower mean reward is 3), so a positive value is not a wrong sign there.
+#: Never a noun that names the THING that fell: "net loss fell 27%", "rate cuts", a "drop-off rate"
+_DECLINE_METRIC = re.compile(r"\b(?:decline|drop|fall|decrease|reduction|contraction|"
+                             r"shrinkage|downturn)s?\b(?!-)", re.I)
+#: a multiple ("3x lower", "two times lower") is a factor, never signed — "wait times" is not one
+_MULTIPLE = re.compile(r"(?:\d|\b(?:" + "|".join(_WORD_NUM) + r"))\s*(?:x|times)\b", re.I)
 
 
 def _elided_in(vt_n: str, quote: str) -> bool:
@@ -599,7 +652,7 @@ def _elided_in(vt_n: str, quote: str) -> bool:
 
 
 def _number_check(value: float | None, value_text: str | None, unit: str | None,
-                  quote: str) -> tuple[bool | None, list[str]]:
+                  quote: str, *, metric: str | None = None) -> tuple[bool | None, list[str]]:
     if value is None and not value_text:
         return None, []
     notes: list[str] = []
@@ -620,9 +673,25 @@ def _number_check(value: float | None, value_text: str | None, unit: str | None,
     else:
         ok = in_quote and any(abs(n * k - value) <= 1e-9 * max(1.0, abs(value))
                               for n in nums for k in scales)
+        # the value text's numbers — in digits or in words — that read as the value: only their
+        # words state its sign, and only they can make it a multiple
+        reads = [m for m, n in _figures_in(vt_n)
+                 if any(abs(abs(n) * k - abs(value)) <= 1e-9 * max(1.0, abs(value))
+                        for k in scales)]
+        multiple = (any(_MULTIPLE_AFTER.match(vt_n, m.end()) for m in reads) if reads
+                    else bool(_MULTIPLE.search(vt_n)))
         if not ok and in_quote and value < 0 and any(
                 abs(n * k + value) <= 1e-9 * max(1.0, abs(value)) for n in nums for k in scales):
-            ok = _states_decline(vt_n, quote)  # "down ~27%" read as -27: the minus is the word
+            # "down ~27%" read as -27: the minus is the word
+            ok = _states_decline(vt_n, quote, reads=reads)
+        # THE SIGN THE WORDS STATE (RG-D21): "down 27%" read as +27 passed — a silent wrong value
+        # (C-f5fcf829b5a474: MLCC spot prices "slipped approximately 5%", stored +5). A positive
+        # value stays where the metric names the decline (its size) or the figure is a multiple.
+        if (ok and value > 0 and not _DECLINE_METRIC.search(metric or "") and not multiple
+                and _states_decline(vt_n, quote, reads=reads, every=True)):
+            notes.append(f"the quote states a decline but the value is positive: value={value} "
+                         f"value_text={vt!r} — a decline reads negative (\"down 27%\" is −27)")
+            return False, notes
     if not ok:
         notes.append(f"number check failed: value={value} value_text={vt!r} vs quote")
     u = (unit or "").lower()
@@ -696,11 +765,13 @@ def verify_extraction(doc: ParsedDocument, x: Extraction, *, article_id: str,
             epistemic = Epistemic.FORECAST
             notes.append("relabelled forecast: the figure is forward-looking (NTM / estimate)")
 
-        number_ok, num_notes = _number_check(xc.value, xc.value_text, xc.unit, xc.quote)
+        number_ok, num_notes = _number_check(xc.value, xc.value_text, xc.unit, xc.quote,
+                                             metric=xc.metric)
         if number_ok is False and span_ok and b is not None and not reanchored:
             ext = extend_to_sentence(xc.quote, b.text, xc.value_text)
             if ext is not None and ext != xc.quote:
-                ok2, notes2 = _number_check(xc.value, xc.value_text, xc.unit, ext)
+                ok2, notes2 = _number_check(xc.value, xc.value_text, xc.unit, ext,
+                                            metric=xc.metric)
                 if ok2:
                     notes.append(f"re-anchored: the quote stopped short of its figure; extended "
                                  f"to the verbatim source sentence (model quote was "
@@ -1087,7 +1158,7 @@ def number_passes(c: Claim) -> bool:
     """Whether a STORED claim's figure passes TODAY's number check — read-only: it tells a past
     failure of a since-corrected check from a figure that still fails. The record is never
     edited (a claim is re-verified only when its article is applied again)."""
-    return _number_check(c.value, c.value_text, c.unit, c.quote)[0] is True
+    return _number_check(c.value, c.value_text, c.unit, c.quote, metric=c.metric)[0] is True
 
 
 #: A NAMED index or basket carries a number that is part of its NAME, not a figure the line

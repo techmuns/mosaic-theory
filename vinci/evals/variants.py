@@ -47,6 +47,14 @@ folder (`Context.ciq`) by the ref's code. The identity at a ref without the chan
 written only where the re-read, with the change's own additions taken out, equals the committed
 field — the proof that the export and the code are the page's — and is otherwise left as committed.
 
+RA-D4 (fix request 2, split from #967), `RA_D4`'s ``same_day_guides``: the guidance bridge and
+its rows (every period guided on the latest date), re-read from the page's OWN CIQ folder
+(`Context.ciq`) by the ref's code. The identity at a ref without the change. A field is written
+only where the re-read, with the change's own additions taken out, equals the committed field —
+the proof that the export and the code are the page's — and is otherwise left as committed, which
+the registration's note names (BURL's guidance predates A-D8's block discovery, so no code at this
+ref rebuilds it).
+
 THE AS-OF CUT (STATE row 57), `ASOF_CUT`'s ``asof_cut``: a page built before the cut keeps the
 releases filed after its price date; this moves them out of `primary_source.releases` and
 re-derives the two fields the assembly takes from that list (`current_guide`, a release-read
@@ -666,6 +674,70 @@ def dividend_level(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
     return mech.model_copy(update=out) if out else mech
 
 
+# ------------------------------------------- RA-D4: every period guided on the latest date
+
+#: The change's addition to a bridge segment: up to the segment's next clause ("; …"), or, on the
+#: last segment, the as-of suffix (`ciq_sheets._asof_suffix`, "  [") or the end of the string.
+_SAME_DAY = re.compile(r"; same day: .*?(?=; |  \[|$)")
+
+
+def _rows_primary(f: Sourced[Any] | None) -> Any:
+    """The guidance rows, one per metric (its first): the change adds a row per period guided
+    the same day after it."""
+    if f is None:
+        return None
+    d = f.model_dump(mode="json")
+    if isinstance(d.get("value"), list):
+        seen: set[str] = set()
+        rows = []
+        for r in d["value"]:
+            if r.get("metric") not in seen:
+                seen.add(r.get("metric"))
+                rows.append(r)
+        d["value"] = rows
+    return d
+
+
+def _bridge_primary(f: Sourced[str] | None) -> Any:
+    if f is None:
+        return None
+    d = f.model_dump(mode="json")
+    d["value"] = _SAME_DAY.sub("", d.get("value") or "") if d.get("value") else d.get("value")
+    return d
+
+
+def same_day_guides(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
+    """(RA-D4) The two fields RA-D4 changes, re-read from the page's own CIQ folder by THIS ref's
+    code: the catalyst path's `guidance_bridge` and `guidance_bridge_rows` (read as assembly reads
+    them: the page's reference date, the stale bound, cut at the page's price date). The identity
+    at a ref without the change (no `same_day` field on `ciq_sheets._GuidanceRead`). Each field is
+    written only where the re-read, with the change's own additions taken out, equals the
+    committed field; otherwise it is left exactly as committed. Refuses (`TransformError`) only
+    when no CIQ folder was given."""
+    if "same_day" not in getattr(ciq_sheets._GuidanceRead, "_fields", ()):
+        return mech
+    b = ctx.ciq
+    if b is None:
+        raise TransformError(f"{ctx.page.get('ticker')}: this transform re-reads the page's own "
+                             "CIQ exports (`--ciq`), and no folder was given")
+    cp = mech.catalyst_path
+    si = mech.stock_info
+    if cp is None or si is None or not si.as_of:
+        return mech
+    ref = date.fromisoformat(str(ctx.page["reference_date"])[:10])
+    cut = date.fromisoformat(str(si.as_of)[:10])
+    stale = mechanical._STALE_CLOSE_DAYS
+    gb = ciq_sheets.guidance_bridge(b, as_of=ciq_sheets.estimates_as_of(b).value,
+                                    reference_date=ref, stale_after_days=stale, cut=cut)
+    gr = ciq_sheets.guidance_bridge_rows(b, reference_date=ref, stale_after_days=stale, cut=cut)
+    upd: dict[str, Any] = {}
+    if _bridge_primary(gb) == _bridge_primary(cp.guidance_bridge):
+        upd["guidance_bridge"] = gb
+    if _rows_primary(gr) == _rows_primary(cp.guidance_bridge_rows):
+        upd["guidance_bridge_rows"] = gr
+    return mech.model_copy(update={"catalyst_path": cp.model_copy(update=upd)}) if upd else mech
+
+
 Transform = Callable[[MechanicalLayer, Context], MechanicalLayer]
 
 TRANSFORMS: dict[str, Transform] = {
@@ -680,6 +752,7 @@ TRANSFORMS: dict[str, Transform] = {
     "driver_facts": driver_facts,
     "covenant_value_figures": covenant_value_figures,
     "dividend_level": dividend_level,
+    "same_day_guides": same_day_guides,
 }
 
 #: Fix 3a's five labels (#923), in the order applied.
@@ -706,3 +779,5 @@ RG_D8: tuple[str, ...] = ("driver_facts",)
 RE2_D16: tuple[str, ...] = ("covenant_value_figures",)
 #: RA-D2's one transform (split from #967): the dividend row and status. RA-D4 is measured apart.
 RA_D2: tuple[str, ...] = ("dividend_level",)
+#: RA-D4's one transform (split from #967; RA-D2 is measured on its own): the same-day guides.
+RA_D4: tuple[str, ...] = ("same_day_guides",)

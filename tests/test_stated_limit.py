@@ -61,6 +61,11 @@ class _Store:
         self.appended.append(entry)
         return entry
 
+    def iter_ledger(self) -> list[Any]:
+        """As the real `Store`: the rows appended so far — `log_verdict` reads them to name the
+        decision (`next_decision_id`, operator ruling 2026-11-11)."""
+        return list(self.appended)
+
 
 class _Resolver:
     @staticmethod

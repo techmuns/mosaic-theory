@@ -4436,6 +4436,32 @@ class _GuidanceRead(NamedTuple):
     #: (audit RA-D3): the cell named, in words. ``guide`` is then "unread", ``guide_num`` and
     #: ``guide_range`` None, ``period`` and ``dated`` that cell's. None when the latest guide reads.
     unread: str | None = None
+    #: The OTHER periods guided on the latest date, each (period, guide display) in time order
+    #: (audit RA-D4): F12 asks for every period guided that day, and the read kept one.
+    same_day: tuple[tuple[str, str], ...] = ()
+
+
+def _newer(gd: date, period: str, recent: tuple[date, str, str] | None) -> bool:
+    """Whether a period (guided ``gd``) is newer than ``recent`` (date, period, …) — by date, and on
+    one date by time order, never by column (audit RA-D4: SMPL's FQ4 2026 and FY 2026, both guided
+    2026-07-09, swapped places as its "most recent outcome" when the columns reversed). The most
+    recent outcome and the newest unread guide both choose by it."""
+    return recent is None or gd > recent[0] or (
+        gd == recent[0] and _period_order(period) < _period_order(recent[1]))
+
+
+def _period_order(period: str) -> tuple[int, int, int, str]:
+    """A guidance period in time order — by fiscal year, then the month of the year it ends in,
+    then the shorter span first: 'FQ2 2026' before 'FH1 2026', 'FQ4 2026' before 'FH2 2026' before
+    'FY 2026' before 'FQ1 2027'. CIQ's Guidance headers on disk (2026-11-10, 36 sheets) are FY,
+    FQ1-FQ4, FH1-FH2 (70 cells) and 'Non-periodic' (13). An unrecognised label sorts last, by its
+    text — never by its column."""
+    if m := re.fullmatch(r"F(Q[1-4]|H[12])\s+(\d{4})", period.strip()):
+        span, n = m.group(1)[0], int(m.group(1)[1])
+        return int(m.group(2)), (3 if span == "Q" else 6) * n, 0 if span == "Q" else 1, ""
+    if m := re.fullmatch(r"FY\s+(\d{4})", period.strip()):
+        return int(m.group(1)), 12, 2, ""
+    return 9999, 99, 9, period
 
 
 #: The display a guide carries when its cell does not read (`_GuidanceRead.unread`).
@@ -4493,7 +4519,7 @@ def _guidance_reads(
         header = _nearest_period_header(rows, bi)
         if gdate is None or guide is None or header is None:
             continue
-        latest: tuple[date, str, str, bool] | None = None  # date, period, range, cost_like
+        dated: list[tuple[date, str, str, bool]] = []  # date, period, range, cost_like
         unread: tuple[date, str, str] | None = None  # date, period, why — the newest unread guide
         recent: tuple[date, str, str] | None = None  # date, period, verdict — most-recent resolved
         resolved = met_n = at_guide_n = 0
@@ -4516,7 +4542,7 @@ def _guidance_reads(
                             metric=metric, period=per_j, read="guide",
                             value=str(cell if cell is not None else "").strip(),
                             dated=gd.isoformat(), source_ref=_guidance_cell_ref(guide, j)))
-                elif unread is None or gd > unread[0]:
+                elif _newer(gd, per_j, unread):  # one date: time order, never column
                     unread = (gd, per_j, f"its Guidance cell reads {_cell_words(cell)} "
                                          f"({_guidance_cell_ref(guide, j)})")
                 continue
@@ -4530,8 +4556,8 @@ def _guidance_reads(
                         value=str(rows[guide][j]).strip(), dated=gd.isoformat(),
                         source_ref=_guidance_cell_ref(guide, j)))
                 continue
-            if gd is not None and (latest is None or gd > latest[0]):
-                latest = (gd, per_j, str(rows[guide][j]).strip(), cost_like)
+            if gd is not None:
+                dated.append((gd, per_j, str(rows[guide][j]).strip(), cost_like))
             av = _cell_at(rows, actual, j)
             if av is not None and higher_is_delivery is not None:
                 # an outcome CIQ dates after the cut was not known on the price date: the period
@@ -4555,7 +4581,7 @@ def _guidance_reads(
                 if (rng[0] == rng[1] and bound
                         and abs(av - bound) / abs(bound) < _POINT_DECISION_BAND):
                     at_guide_n += 1
-                    if gd is not None and (recent is None or gd > recent[0]):
+                    if gd is not None and _newer(gd, per_j, recent):
                         recent = (gd, per_j, "at_guide")
                     continue
                 resolved += 1
@@ -4563,9 +4589,18 @@ def _guidance_reads(
                 # ≤ ceiling when lower is (a tax RATE, stated positive).
                 met = av >= rng[0] if higher_is_delivery else av <= rng[1]
                 met_n += int(met)
-                if gd is not None and (recent is None or gd > recent[0]):
+                if gd is not None and _newer(gd, per_j, recent):
                     recent = (gd, per_j, "met" if met else "missed")
         rp, rv = (recent[1], recent[2]) if recent is not None else (None, None)
+        # EVERY PERIOD GUIDED ON THE LATEST DATE, IN TIME ORDER (audit RA-D4, 2026-11-10). The
+        # walk kept the leftmost column of that date (a strict `>`), so a second period guided the
+        # same day was dropped and which one survived was the sheet's column order: SMPL's FY 2026
+        # revenue guide (1,345.00 - 1,355.00) given with its FQ4 2026 guide on 2026-07-09 never
+        # reached the page, and with the columns reversed it was the one kept. The first in time
+        # order is the read's own period (the one the guide check takes); the rest ride with it.
+        top = max((d for d, *_ in dated), default=None)
+        day = sorted((x for x in dated if x[0] == top), key=lambda x: _period_order(x[1]))
+        latest = day[0] if day else None
         if unread is not None and (latest is None or unread[0] > latest[0]):
             ud, uper, why = unread
             ustale = ((reference_date - ud).days if reference_date is not None
@@ -4580,13 +4615,20 @@ def _guidance_reads(
         pr = _parse_range(rng_s)
         gnum = pr[0] if (pr is not None and " - " not in rng_s) else None
         grange = (pr[0], pr[1]) if (pr is not None and " - " in rng_s) else None
-        gval = _fig(gnum) if gnum is not None else f"'{rng_s}'"
+        gval = _guide_display(rng_s)
         stale = ((reference_date - gd).days if reference_date is not None
                  and (reference_date - gd).days > stale_after_days else None)
+        others = tuple((p, _guide_display(r)) for _d, p, r, _c in day[1:])
         reads.append(_GuidanceRead(
             metric, gval, gnum, grange, per, gd, stale, cost_like, resolved, met_n, at_guide_n,
-            recent[1] if recent is not None else None, recent[2] if recent is not None else None))
+            rp, rv, same_day=others))
     return reads
+
+
+def _guide_display(rng_s: str) -> str:
+    """A guide cell as a read shows it: a point by `_fig`, a range verbatim, quoted."""
+    pr = _parse_range(rng_s)
+    return _fig(pr[0]) if pr is not None and " - " not in rng_s else f"'{rng_s}'"
 
 
 #: Why a Guidance sheet is not read at the page's price date. Written into the synthesis's facts
@@ -4646,6 +4688,10 @@ def guidance_bridge(
             seg += f" — {r.unread}; an older guide is never read in its place"
         if r.stale_days is not None:
             seg += f" (stale — {r.stale_days}d old)"  # R3: age once, no date repeat
+        # RA-D4: every period guided that day, each labelled — AFTER the age, which is the date's
+        # and so every one of theirs: after the list it read as the last period's alone
+        if r.same_day:
+            seg += "; same day: " + ", ".join(f"{g} for {p}" for p, g in r.same_day)
         if r.resolved or r.at_guide_n:
             sem = "spend ≤ guided ceiling" if r.cost_like else "actual ≥ guided floor"
             seg += (f"; {sem} {r.met_n}/{r.resolved} resolved" if r.resolved
@@ -4763,6 +4809,11 @@ def guidance_bridge_rows(
             latest_guide=r.guide if r.unread is None else f"{r.guide} — {r.unread}",
             period=r.period, dated=r.dated.isoformat(),
             age=age, record=record, most_recent=recent))
+        # RA-D4: each other period guided the same day is its own row; the metric's delivery
+        # record is said once, on its first
+        out.extend(GuidanceRow(metric=r.metric, latest_guide=g, period=p,
+                               dated=r.dated.isoformat(), age=age, record="—", most_recent="—")
+                   for p, g in r.same_day)
     return Sourced.present(
         out, source_ref=GUIDANCE_BASIS_REF)
 
