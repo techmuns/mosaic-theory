@@ -82,16 +82,27 @@ fail-first run at `173b4818`; the vote-rule statements and their tests at `c9997
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **Found, not fixed (code comments, outside a docs PR):**
-  - `ciq_sheets.py:384` cites notes "line 197" for the Close-column rule, which sits at line 291;
-  - "~line 204" (`ciq_sheets.py:1100`, `tests/test_dossier.py:3693`) points at the adjusted-basis
+  Code line numbers are at this branch's head; note line numbers are in the notes as this change
+  leaves them.
+  - `ciq_sheets.py:386` cites notes "line 197" for the Close-column rule, which sits at line 330
+    (292 on `origin/main`; this change's growth from line 208 moves it);
+  - "~line 204" (`ciq_sheets.py:1102`, `tests/test_dossier.py:3696`) points at the adjusted-basis
     paragraph, where the same-quarter YoY rule they mean is at lines 159-167;
+  - `ciq_sheets._SURPRISE_SUB_ROWS` has `Guidance Low`, `Guidance High` and `Guidance Mid` but not
+    the plain `Guidance` row the Surprise census found (on 28 of the 36 sheets), so `_surprise_line`
+    stops there and loses the `Guidance High` and `Acctg. Standard` rows below it. Shown on the
+    exports on disk (2026-11-11): the fiscal-year Revenue block of LLY, NFLX, V and WST reads no
+    `Acctg. Standard`, AMZN's and TJX's (no plain `Guidance` row) do, so
+    `historical_forecast_error` leaves `accounting_basis` empty where CIQ states it;
   - a `ciq_sheets.py` section comment still says transcripts carry "no numbers derived", and another
     still describes the fixed four-column Key Developments header;
   - the `surprise_history` docstring (`ciq_sheets.py:2159`) still says the sheet is "by FISCAL YEAR
     (no quarterly view)", the claim G-D8 corrects.
 
   These were already wrong on main. Fixing them changes code.
-- **For the operator:** whether Koyfin is still used (it decides whether it stays in the source
+- **For the operator:** what follows a materiality refusal (`materiality.check_materiality`,
+  `assemble._materiality_check`), whose messages name no fix and which RUNBOOKS does not rule;
+  whether Koyfin is still used (it decides whether it stays in the source
   inventory), and whether re-running a build until the 19c guard passes, which no code caps, is
   acceptable. The docs now state what the code does.
 - **Untouched, separate IDs:** the notes' fixed row positions (RG-D20(i)); `docs/data_sources.md`'s

@@ -211,7 +211,12 @@ every Surprise sheet has a 'Fiscal Quarters' section, 35 a 'Fiscal Years' sectio
 quarters only) and 10 a 'Calendar Years' section too. `surprise_history()` reads the FISCAL-YEAR
 table only, so the surfaced surprise is annual: the GAAP-EPS row of the company's OWN listing's block
 (`_surprise_eps_block`, never the sheet's first listing) and the Revenue row, each against its own
-block's year header. The 'Calendar Years' repeat is never read as FY. No extractor reads the
+block's year header. The 'Calendar Years' repeat is never read as FY. That is the code's cut,
+and its only one: `surprise_history` stops at 'Calendar Years' and not at 'Fiscal Quarters', so
+on the 26 sheets with no 'Calendar Years' section its window runs through the quarterly section
+too. It reads the fiscal-year rows there because they come first: the year headers it keys on
+are the fiscal-year ones, and the first 'Revenue' row is the fiscal-year block's, on every
+export on disk (2026-11-11). An export ordering the sections otherwise is not guarded. No extractor reads the
 quarterly section's values: searched 2026-11-11 for `Fiscal Quarters` and `Calendar Quarters` (each
 is matched only as a section end, by `_SURPRISE_BANNER`) and read every `sheet("estimates", "Surprise")`
 call, all of which read the fiscal-year section or check the sheet is there.
@@ -256,7 +261,9 @@ curated.** Two separate paths, by design:
   draws, that draw is skipped and the build goes on, but it still counts as attempted: under the
   vote rule it is dissent, so at five draws (5 of 5 attempted to propose, `verdict.draw_gate`) the
   build carries no machine proposal. The whole synthesis is UNAVAILABLE, with a loud flag, only when
-  no draw is usable. Missing trailing fields are never defaulted to blank, which
+  no draw is usable, and then the dossier command, whose client is configured, writes no page:
+  `assemble._require_synthesis` refuses the build ("Re-run when the model is answering"). Missing
+  trailing fields are never defaulted to blank, which
   would be indistinguishable from a genuine empty field.
 - A draw missing `evidence_balance` is NOT refused; the code chooses this on purpose (`synthesize`:
   "flag, don't drop"). Its lean counts as unparsed, a bucket of its own in the draws' vote, so it

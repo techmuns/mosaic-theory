@@ -49,7 +49,10 @@ def _flat(text: str) -> str:
 
 def _live(text: str) -> str:
     """The flattened text without its struck spans (`~~…~~`). A correction strikes the old claim
-    and keeps it in view; what stays is what the doc asserts."""
+    and keeps it in view; what stays is what the doc asserts. An unpaired `~~` would strike
+    everything up to the next one, and a "not in" check on that text would pass on nothing, so
+    the markers must pair."""
+    assert text.count("~~") % 2 == 0, "an unpaired ~~ strikes to the next one"
     return _flat(re.sub(r"~~.*?~~", "", text, flags=re.S))
 
 
@@ -129,6 +132,13 @@ def test_g_d12_the_notes_find_key_development_columns_by_label() -> None:
     assert cols5[0] != cols4[0] and cols5[2] is not None and cols4[2] is None
     assert ciq_sheets._kd_columns(["Date | Company | Type | Other Parties"]) is None
     assert "The reader refuses a spreadsheet and says so in a QA flag" in notes
+    # The behaviour, not only the doc: a spreadsheet export gives no rows and a flag naming it.
+    # The refusal returns before the file is opened, so the path need not exist.
+    xls = Path("ACME Inc NYSE ACME Key Developments.xls")
+    bundle = ciq.CiqBundle("ACME", (ciq.CiqWorkbook("key_developments", xls,
+                                                    ciq.CiqFormat.BIFF_XLS, None),))
+    rows, flag = ciq_sheets.key_developments(bundle)
+    assert rows == [] and flag is not None and xls.name in flag and "spreadsheet" in flag
 
 
 def test_g_d13_the_notes_state_the_clients_output_cap_and_the_six_required_fields() -> None:

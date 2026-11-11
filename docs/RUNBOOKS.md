@@ -327,8 +327,11 @@ the 19c guard REFUSES is re-run:** it wrote no page. That guard refuses a synthe
 out ANY material figure its own financial summary shows (`assemble.py`,
 `uncited_material_figures`); its error ends "Re-run:
 synthesis varies between runs", and the code's comment there reads "the bad roll FAILS and is
-re-rolled; the good one ships". Other refusals name their own fix in their message ("Re-run when
-the model is answering", "Re-run WITH a client", an export to re-pull); follow that. Every refused
+re-rolled; the good one ships". Most other refusals name their own fix in their message ("Re-run when
+the model is answering", "Re-run WITH a client", an export to re-pull); follow that. The
+materiality guard's refusals name none (`materiality.check_materiality`, which also reads the
+synthesis, and `assemble._materiality_check`'s "cannot run"); what follows one is not ruled here.
+Every refused
 attempt stays in `assembly_runs` (step 7). *(G-D15, corrected 2026-11-11: this read as barring the
 19c re-run too, against `assemble.py`.)*
 
