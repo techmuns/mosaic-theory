@@ -60,6 +60,9 @@ SMPL_REGRESSIONS = {
     "mechanical.financial_summary.coherence",
     "mechanical.key_ratios",
     "mechanical.stock_info.book_value_ps",
+    # RD-D4 (2026-11-11): a decision leaf inside a block, lost with the EV bridge — the page no
+    # longer prices the name; presence alone never saw it, the block being present either way
+    "valuation_basis.priceable",
 }
 
 
@@ -105,8 +108,9 @@ def test_the_report_prints_every_regression_with_its_note_and_stops() -> None:
     lines = report("SMPL", committed, fresh, result, [("financials/annual", "cc99900b61")],
                    PostSpend((), (), None))
     text = "\n".join(lines)
-    for path in SMPL_REGRESSIONS:
+    for path in SMPL_REGRESSIONS - {"valuation_basis.priceable"}:
         assert f"  {path.removeprefix('mechanical.')}: present → " in text, path
+    assert "  valuation_basis.priceable: true → false" in text
     notes = [ln for ln in lines if ln.startswith("      note: ")]
     assert len(notes) == len(SMPL_REGRESSIONS)
     # the boundary: both stamps, the page's export stamps against the disk, the population
@@ -130,7 +134,7 @@ def test_run_exits_one_on_a_regression_and_writes_no_page(
     _exports_pass(monkeypatch)
     out: list[str] = []
     assert prespend.run("smpl", Config(data_dir=tmp_path), emit=out.append) == 1
-    assert out[-1].startswith("=== 13 regression(s)")
+    assert out[-1].startswith("=== 14 regression(s)")
 
 
 def test_the_build_writes_only_into_a_folder_it_deletes(
@@ -226,15 +230,141 @@ def test_each_block_lost_or_nulled_is_one_regression(block: str) -> None:
     assert [(m.path, m.before) for m in compare(dropped, page).gained] == [(block, ABSENT)]
 
 
-def test_a_sourced_field_inside_a_list_is_counted_not_compared() -> None:
+# --- RD-D4 (TeamNostra fix request 2): values and list members --------------------------------
+# The check compared presence only and skipped every Sourced field inside a list, while its last
+# line said "nothing present on the committed page is lost at $0" and it exited 0. Each pin below
+# fails on main `2b9b766c`.
+
+def test_rd_d4_a_list_member_that_reads_worse_is_a_regression() -> None:
+    """A real page's list member (SMPL's first drawdown filing) whose PRESENT field goes UNKNOWN,
+    the member itself still there: a regression, as an outermost field's would be."""
     page = _load(FROZEN_PAGE)
     fresh = copy.deepcopy(page)
     drivers = fresh["mechanical"]["drawdown_cause"]["filings"][0]["drivers"]
     assert drivers["status"] == "present"
-    drivers["status"] = "unknown"
+    drivers.update(status="unknown", value=None, note="the 8-K's body was not read")
     result = compare(page, fresh)
-    assert result.regressions == ()
+    assert [(m.path, m.before, m.after, m.note) for m in result.regressions] == [
+        ("mechanical.drawdown_cause.filings[gap_date=2026-04-09].drivers", "present", "unknown",
+         "the 8-K's body was not read")]
     assert result.in_lists == (2, 2)
+    lines = report("SMPL", page, fresh, result, [], PostSpend((), (), None))
+    assert lines[-1].startswith("=== 1 regression(s) · 0 post-spend refusal(s) — STOP")
+
+
+def test_rd_d4_teamnostras_construction_reports_the_value_and_the_list_member() -> None:
+    """TeamNostra's reproduction (D-D4, `repro_prespend.py`): an EV/EBITDA that moves from a
+    Jun-30-2026 source to a Dec-31-2024 one, and a segment revenue inside a list that goes UNKNOWN.
+    Main reported `regressions: ()` for both."""
+    def s(v: object, ref: str) -> dict[str, object]:
+        return {"value": v, "status": "present", "source_ref": ref, "note": None}
+    committed = {"mechanical": {
+        "valuation": {"ev_ebitda": s(12.3, "CIQ Multiples TEV/LTM EBITDA [Jun-30-2026]")},
+        "segments": [{"name": "A", "revenue": s(500.0, "CIQ Segments FY2025")}]}}
+    fresh = {"mechanical": {
+        "valuation": {"ev_ebitda": s(19.8, "CIQ Multiples TEV/LTM EBITDA [Dec-31-2024]")},
+        "segments": [{"name": "A", "revenue": {"value": None, "status": "unknown",
+                                                "source_ref": None, "note": "row missing"}}]}}
+    result = compare(committed, fresh)
+    assert [(m.path, m.after, m.note) for m in result.regressions] == [
+        ("mechanical.segments[name=A].revenue", "unknown", "row missing")]
+    [ev] = result.changed
+    assert (ev.path, ev.before, ev.after) == ("mechanical.valuation.ev_ebitda", "12.3", "19.8")
+    assert (ev.source_before, ev.source_after) == (
+        "CIQ Multiples TEV/LTM EBITDA [Jun-30-2026]", "CIQ Multiples TEV/LTM EBITDA [Dec-31-2024]")
+    assert ev.parts == ("source_ref", "value")
+    text = "\n".join(report("X", committed, fresh, result, [], PostSpend((), (), None)))
+    assert ("  valuation.ev_ebitda [source_ref, value]: 12.3 → 19.8\n"
+            "      source: CIQ Multiples TEV/LTM EBITDA [Jun-30-2026] → "
+            "CIQ Multiples TEV/LTM EBITDA [Dec-31-2024]") in text
+
+
+def test_rd_d4_the_last_line_says_what_moved_never_that_nothing_is_lost() -> None:
+    """With nothing reading worse, the verdict states what was compared and how many fields moved
+    — the old line claimed "nothing present on the committed page is lost", which presence alone
+    could not show."""
+    page = _load(FROZEN_PAGE)
+    same = compare(page, copy.deepcopy(page))
+    assert (same.regressions, same.changed, same.left) == ((), (), ())
+    last = report("SMPL", page, page, same, [], PostSpend((), (), None))[-1]
+    assert "is lost" not in last
+    assert last.startswith("=== 0 regressions · 0 post-spend refusals — no field present on the "
+                           "committed page, outside a list or inside one, reads worse at $0")
+    assert "0 field(s) present on both change value, source or note, 0 block leaf(ves) change, " \
+           "and 0 list-member field(s) left their list" in last
+    moved = copy.deepcopy(page)
+    moved["mechanical"]["stock_info"]["book_value_ps"]["value"] = 1.0
+    result = compare(page, moved)
+    assert [v.path for v in result.changed] == ["mechanical.stock_info.book_value_ps"]
+    assert "1 field(s) present on both change value" in report(
+        "SMPL", page, moved, result, [], PostSpend((), (), None))[-1]
+
+
+def test_rd_d4_smpls_real_pair_lists_its_moves_and_still_stops_on_its_regressions() -> None:
+    """SMPL's real pair (its 2026-08-18 page, its 2026-11-04 $0 build): the thirteen regressions
+    are unchanged, no list member that stays reads worse, the two drawdown filings that aged out of
+    the window are listed as LEFT, and 75 fields present on both are listed as CHANGED."""
+    result = compare(_load(FROZEN_PAGE), _load(BUILD / "SMPL-mechanical.json"), _forecast())
+    assert {m.path for m in result.regressions} == SMPL_REGRESSIONS
+    assert [m.path for m in result.left] == [
+        "mechanical.drawdown_cause.filings[gap_date=2026-04-09].drivers",
+        "mechanical.drawdown_cause.filings[gap_date=2026-04-10].drivers"]
+    assert len(result.changed) == 75
+    # an LLM-written field is never value-compared: the $0 build does not write it
+    assert not any(v.path.startswith("mechanical.capital_structure.covenant")
+                   for v in result.changed)
+
+
+def _blocks(ticker: str) -> dict[str, Any]:
+    doc: dict[str, Any] = json.loads(
+        (ROOT / "tests" / "fixtures" / "prespend" / "rd-d4" / f"{ticker}-blocks.json").read_text())
+    return doc
+
+
+def test_rd_d4_the_fix_logs_evidence_vitls_anchor_and_ubers_priceable_are_regressions() -> None:
+    """The fix log's RD-D4 evidence, on the real pages (the committed page the 2026-11-09 precheck
+    read, and the paid rebuild of #949): VITL's R1 anchor base 30.0469 → None and UBER's
+    ``priceable`` True → False were invisible, both blocks present either way."""
+    vitl = compare(_blocks("VITL")["committed"], _blocks("VITL")["paid"])
+    assert [(m.path, m.before, m.after) for m in vitl.regressions] == [
+        ("valuation_basis.priceable", "true", "false"),
+        ("anchor.anchor_base_value_per_share", "30.0469", "null"),
+        ("anchor.applicable", "true", "false")]
+    assert all(m.note and "decision leaf" in m.note for m in vitl.regressions)
+    uber = compare(_blocks("UBER")["committed"], _blocks("UBER")["paid"])
+    assert [(m.path, m.before, m.after) for m in uber.regressions] == [
+        ("valuation_basis.priceable", "true", "false")]
+    # every other leaf that moved is listed, not a stop
+    assert len(uber.in_blocks) == 45
+    assert "valuation_basis.ev_bridge.reconciles_to_ciq_tev" in {m.path for m in uber.in_blocks}
+
+
+def test_rd_d4_a_rebuild_that_keeps_its_valuation_stops_on_nothing_in_its_blocks() -> None:
+    """EPAM's real pair, rebuilt the same day: 28 block leaves move, none a decision leaf."""
+    epam = compare(_blocks("EPAM")["committed"], _blocks("EPAM")["paid"])
+    assert epam.regressions == ()
+    assert len(epam.in_blocks) == 28
+    page = _blocks("EPAM")["committed"]
+    assert compare(page, copy.deepcopy(page)).in_blocks == ()
+
+
+def test_rd_d4_run_exits_one_on_a_list_member_that_reads_worse(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    page = tmp_path / "dossiers" / "SMPL" / "dossier.json"
+    page.parent.mkdir(parents=True)
+    page.write_bytes(FROZEN_PAGE.read_bytes())
+    fresh = _load(FROZEN_PAGE)
+    fresh["mechanical"]["drawdown_cause"]["filings"][0]["drivers"].update(
+        status="unknown", value=None, note="the 8-K's body was not read")
+    built = Dossier.model_validate(fresh)
+    monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: built)
+    monkeypatch.setattr(prespend, "forecast_llm_fields", lambda d, http: {})
+    monkeypatch.setattr(prespend, "post_spend_checks",
+                        lambda built, bundle, committed: PostSpend((), (), None))
+    out: list[str] = []
+    assert prespend.run("smpl", Config(data_dir=tmp_path), emit=out.append) == 1
+    assert "  drawdown_cause.filings[gap_date=2026-04-09].drivers: present → unknown" in out
 
 
 def test_the_synthesis_carries_no_sourced_field() -> None:
@@ -389,7 +519,7 @@ def test_a_refusal_and_a_regression_both_stop_and_both_print(
     assert prespend.run("SMPL", Config(data_dir=tmp_path), emit=out.append) == 1
     assert any(ln.startswith("  _materiality_check · MaterialityUnavailableError: SMPL: no "
                              "annual Income Statement") for ln in out)
-    assert out[-1].startswith("=== 13 regression(s) · 1 post-spend refusal(s) — STOP: the paid "
+    assert out[-1].startswith("=== 14 regression(s) · 1 post-spend refusal(s) — STOP: the paid "
                               "build would pay for its LLM calls and then refuse, and once the "
                               "refusal is cleared it would publish the regressions")
 
@@ -473,9 +603,12 @@ def test_googls_page_run_against_itself_exits_zero(
     _exports_pass(monkeypatch)
     out: list[str] = []
     assert prespend.run("GOOGL", Config(data_dir=tmp_path), emit=out.append) == 0
-    assert out[-1] == ("=== 0 regressions · 0 post-spend refusals — nothing present on the "
-                       "committed page is lost at $0, and no refusal the paid build makes after "
-                       "its LLM calls fires ===")
+    assert out[-1] == ("=== 0 regressions · 0 post-spend refusals — no field present on the "
+                       "committed page, outside a list or inside one, reads worse at $0, and no "
+                       "refusal the paid build makes after its LLM calls fires; 0 field(s) "
+                       "present on both change value, source or note, 0 block leaf(ves) change, "
+                       "and 0 list-member field(s) left their list — listed above, not a "
+                       "stop ===")
     assert any(ln.startswith("  freshness measured at this build's date: oldest panel ")
                for ln in out)
 
@@ -588,3 +721,16 @@ def test_every_refusal_write_makes_is_classified() -> None:
               and n.func.id.startswith("_refuse")}
     assert called == {*prespend.POST_WRITE, "_refuse_after_sec_refusal",
                       "_refuse_synthesis_overwrite"}
+
+
+def test_rd_d4_a_list_members_optional_field_written_as_null_is_a_regression_not_a_crash() -> None:
+    """``DrawdownFiling.drivers`` is ``Sourced[str] | None``: a $0 build whose release join found
+    nothing writes it as null. Present → null inside a member both pages hold reads worse; the
+    comparison crashed on ``None.get``."""
+    page = _load(FROZEN_PAGE)
+    fresh = copy.deepcopy(page)
+    fresh["mechanical"]["drawdown_cause"]["filings"][0]["drivers"] = None
+    result = compare(page, fresh)
+    assert [(m.path, m.before, m.after, m.note) for m in result.regressions] == [
+        ("mechanical.drawdown_cause.filings[gap_date=2026-04-09].drivers", "present", "absent",
+         None)]

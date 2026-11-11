@@ -27,6 +27,31 @@ WHAT IT CANNOT SEE. A $0 build makes no LLM call, so:
   or why it found nothing). These rules mirror ``assemble.assemble_one``;
   ``test_prespend.py`` pins the SET of fields that block writes against its source, not each rule.
 
+VALUES AND LIST MEMBERS (2026-11-11, TeamNostra fix request 2, RD-D4). The check compared
+presence only and skipped every Sourced field inside a list, while its last line said nothing
+present on the committed page was lost. It now pairs every outermost Sourced field through the one
+value comparator (`vinci.impact.values.sourced_pairs`), list members matched by identity:
+
+- a list member both pages hold whose field reads worse (PRESENT on the committed page, not in this
+  build) is a REGRESSION, as an outermost field is, and stops the pass;
+- a list member that LEFT its list is listed, not a stop: a list's population moves with the
+  calendar (a filing ages out of a window), so its absence is not a reader's failure;
+- a field PRESENT on both whose value, source or note differs is listed in full, not a stop:
+  measured on SMPL's real pair (its 2026-08-18 page, its 2026-11-04 $0 build), 75 of 112 Sourced
+  fields change value across eleven weeks of new prices and exports, so a stop on any change would
+  stop every pass and mean nothing.
+
+- the six top-level BLOCKS, compared by presence before, are compared leaf by leaf when both
+  pages carry one. The fix log's evidence for RD-D4 sat there: VITL's precheck of 2026-11-09 did
+  not see its R1 anchor base go 30.0469 → None, nor UBER's ``valuation_basis.priceable`` go
+  True → False. Losing one of `DECISION_LEAVES` — the page's own valuation result — is a
+  REGRESSION; every other leaf that moved is listed (a leaf losing its value is not, by itself, a
+  loss: measured on the eight real pairs of 2026-11-04 and 2026-11-09, 1 to 14 leaves per page,
+  mostly consensus multiples and EV-bridge cells that move with the calendar, do so on every one).
+
+The last line says what was compared and how many moved, never that nothing was lost. The
+LLM-written fields (`LLM_WRITTEN`) are never value-compared: the $0 build does not write them.
+
 WHAT IT ATTRIBUTES: nothing. A regression can come from the export, the code (SMPL's covenant rows
 went because a guard added since its page refuses both exhibits) or the store (a stale benchmark);
 the note says which reader gave up and why, and the boundary block says what moved.
@@ -76,7 +101,7 @@ import json
 import tempfile
 from collections import Counter
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeGuard
 
@@ -86,6 +111,7 @@ from vinci.dossier import inputs as page_inputs
 from vinci.dossier.freshness import MAX_PANEL_AGE_DAYS, PanelAge, panel_age
 from vinci.dossier.schemas import Dossier, MechanicalLayer, SourceStatus, dossier_json
 from vinci.graph.llm import LlmClient, LlmError
+from vinci.impact.values import VOLATILE, SourcedPair, show, sourced_pairs, value_changes
 
 if TYPE_CHECKING:
     from vinci.dossier.ciq import CiqBundle
@@ -112,6 +138,15 @@ POST_WRITE = ("_refuse_degraded_drawdown_overwrite",)
 #: (`carried_by`); every other field's loss is a regression.
 _DD = "mechanical.drawdown_cause."
 MOVABLE = (_DD + "gap_down_dates", _DD + "revised_guidance")
+
+#: The leaves of `BLOCKS` that ARE the page's valuation: one the committed page carries (true, or
+#: a number) that this build loses (false, null or absent) is a regression (RD-D4's evidence:
+#: VITL's anchor base, UBER's priceable flag).
+DECISION_LEAVES = ("anchor.applicable", "anchor.anchor_base_value_per_share",
+                   "valuation_basis.priceable")
+
+#: Block-leaf changes printed per block before the cut (every one: ``--changes-json``).
+BLOCK_SHOWN = 25
 
 #: The drawdown's dated parts, compared by value (`dated_part_losses`).
 DATED_PARTS = ("at_anchor", "since")
@@ -150,6 +185,20 @@ class Forecast:
 
 
 @dataclass(frozen=True)
+class ValueMove:
+    """A Sourced field PRESENT on both pages whose content differs (RD-D4): listed, not a stop."""
+
+    path: str
+    before: str
+    after: str
+    #: the field's citation on each page (equal when only the value moved)
+    source_before: str | None
+    source_after: str | None
+    #: which of the field's own keys moved (``value``, ``source_ref``, ``note``, …)
+    parts: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class Comparison:
     regressions: tuple[Move, ...]
     gained: tuple[Move, ...]
@@ -157,12 +206,19 @@ class Comparison:
     #: Sourced fields compared: the union of both pages' outermost fields outside lists, minus the
     #: undecided ones.
     compared: int
-    #: Sourced fields inside lists, (committed, this build): NOT compared — a list's population
-    #: moves with the calendar, so position is not identity.
+    #: Sourced fields inside lists, (committed, this build): each COMPARED with the same member's
+    #: field (`sourced_pairs`, matched by identity); one that reads worse is a regression
     in_lists: tuple[int, int]
     #: current-window drawdown fields that left the window and a dated part of this build carries
     #: (`carried_by`): listed, not regressions
     moved: tuple[Move, ...] = ()
+    #: PRESENT on both pages, content differs (RD-D4): listed in full, not a stop
+    changed: tuple[ValueMove, ...] = ()
+    #: PRESENT fields of a list member the committed page holds and this build does not: listed,
+    #: not a stop (a list's population moves with the calendar)
+    left: tuple[Move, ...] = ()
+    #: leaves of a block both pages carry that differ (`DECISION_LEAVES` aside): listed
+    in_blocks: tuple[Move, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -267,8 +323,57 @@ def compare(committed: Mapping[str, Any], fresh: Mapping[str, Any],
         else:
             moved.append(Move(m.path, m.before, m.after, carrier))
     kept += dated_part_losses(committed, fresh)
+    skip = {p for p, _ in undecided} | {_CS + f for f in LLM_WRITTEN}
+    changed: list[ValueMove] = []
+    left: list[Move] = []
+    for pair in sourced_pairs(committed, fresh, ignore=VOLATILE | {"inputs"}):
+        if any(pair.path == p or pair.path.startswith(p + ".") for p in skip):
+            continue
+        was, now = pair.status("base"), pair.status("head")
+        if pair.in_list and was == _PRESENT and now != _PRESENT:
+            if pair.member_moved:
+                left.append(Move(pair.path, was, ABSENT, None))
+            else:
+                note = pair.head.get("note") if isinstance(pair.head, Mapping) else None
+                kept.append(Move(pair.path, was, now, str(note) if note else None))
+        elif pair.in_list and was != _PRESENT and now == _PRESENT:
+            gained.append(Move(pair.path, was, now, None))
+        elif was == _PRESENT and now == _PRESENT and (vm := _value_move(pair)) is not None:
+            changed.append(vm)
+    in_blocks: list[Move] = []
+    for block in BLOCKS:
+        if committed.get(block) is None or fresh.get(block) is None:
+            continue
+        for c in value_changes(committed[block], fresh[block], path=block, ignore=VOLATILE):
+            lost = (c.path in DECISION_LEAVES and _carries(c.base) and not _carries(c.head))
+            move = Move(c.path, show(c.base), show(c.head),
+                        "a decision leaf: the committed page's valuation result, which this "
+                        "build no longer carries" if lost else None)
+            (kept if lost else in_blocks).append(move)
+    # a field already a regression (a dated part that changed, `dated_part_losses`) is not also
+    # listed as a mere change
+    stopped = {m.path for m in kept}
+    changed = [v for v in changed if v.path not in stopped]
     return Comparison(tuple(kept), tuple(gained), tuple(undecided), len(compared),
-                      (n_before, n_after), tuple(moved))
+                      (n_before, n_after), tuple(moved), tuple(changed), tuple(left),
+                      tuple(in_blocks))
+
+
+def _carries(v: Any) -> bool:
+    """A decision leaf that says something: true, or a number."""
+    return v is True or (isinstance(v, (int, float)) and not isinstance(v, bool))
+
+
+def _value_move(pair: SourcedPair) -> ValueMove | None:
+    """``pair``'s content change, or None when both pages carry the same field."""
+    changes = pair.changes(ignore=VOLATILE)
+    if not changes:
+        return None
+    parts = sorted({c.path.removeprefix(pair.path + ".").split(".")[0].split("[")[0]
+                    for c in changes})
+    b, h = pair.base, pair.head
+    return ValueMove(pair.path, show(b.get("value")), show(h.get("value")),
+                     b.get("source_ref"), h.get("source_ref"), tuple(parts))
 
 
 def _dig(doc: Mapping[str, Any], *keys: str) -> Any:
@@ -577,13 +682,19 @@ def _post_spend_lines(post: PostSpend) -> list[str]:
     return lines
 
 
-def _verdict(regressions: int | None, refusals: int) -> str:
-    """The last line. ``regressions`` is None on a first assembly: nothing was compared."""
+def _verdict(regressions: int | None, refusals: int, result: Comparison | None = None) -> str:
+    """The last line. ``regressions`` is None on a first assembly: nothing was compared. It says
+    what was compared and what moved (RD-D4) — never that nothing was lost."""
     head = ("no committed page to compare" if regressions is None
             else f"{regressions} regression(s)" if regressions else "0 regressions")
+    moved = ("" if result is None else
+             f"; {len(result.changed)} field(s) present on both change value, source or note, "
+             f"{len(result.in_blocks)} block leaf(ves) change, and {len(result.left)} "
+             "list-member field(s) left their list — listed above, not a stop")
     if not (regressions or refusals):
-        return (f"=== {head} · 0 post-spend refusals — nothing present on the committed page is "
-                "lost at $0, and no refusal the paid build makes after its LLM calls fires ==="
+        return (f"=== {head} · 0 post-spend refusals — no field present on the committed page, "
+                "outside a list or inside one, reads worse at $0, and no refusal the paid build "
+                f"makes after its LLM calls fires{moved} ==="
                 if regressions is not None else
                 f"=== {head} · 0 post-spend refusals — no refusal the paid build makes after its "
                 "LLM calls fires ===")
@@ -592,7 +703,7 @@ def _verdict(regressions: int | None, refusals: int) -> str:
     if refusals and regressions:
         why += ", and once the refusal is cleared it would publish the regressions"
     return (f"=== {head} · {refusals} post-spend refusal(s) — STOP: {why}; the operator decides "
-            "before any spend ===")
+            f"before any spend{moved} ===")
 
 
 def report(ticker: str, committed: Mapping[str, Any] | None, fresh: Mapping[str, Any],
@@ -620,10 +731,13 @@ def report(ticker: str, committed: Mapping[str, Any] | None, fresh: Mapping[str,
             "the committed page's export stamps: "
             + ("; ".join(f"{sha} ×{n} ({'on disk' if sha in on_disk else 'NOT on disk'})"
                          for sha, n in sorted(stamps.items())) or "none"),
-            f"compared: {result.compared} Sourced field(s) (outermost, outside lists) + "
-            f"{len(BLOCKS)} block(s); not compared: {result.in_lists[0]} on the committed "
-            f"page and {result.in_lists[1]} in this build inside lists, and "
-            f"{len(result.undecided)} the paid draw decides",
+            f"compared: {result.compared} Sourced field(s) outside lists, and every one inside "
+            f"a list ({result.in_lists[0]} on the committed page, {result.in_lists[1]} in this "
+            f"build), each with the same list member's (matched by identity), by presence AND "
+            f"value; + {len(BLOCKS)} block(s) by presence, and leaf by leaf where both pages "
+            f"carry one; not compared: "
+            f"{len(result.undecided)} the paid draw decides, and the {len(LLM_WRITTEN)} "
+            "LLM-written field(s) by value",
         ]
         for path, why in result.undecided:
             lines.append(f"  decided by the paid draw, not compared: {_shown(path)} — {why}")
@@ -641,14 +755,40 @@ def report(ticker: str, committed: Mapping[str, Any] | None, fresh: Mapping[str,
         lines.append(f"NEWLY PRESENT — not present on the committed page, present in this build "
                      f"({len(result.gained)}):")
         lines += [f"  {_shown(m.path)}: {m.before} → {m.after}" for m in result.gained]
+        lines.append(f"LEFT THEIR LIST — present fields of a list member the committed page holds "
+                     f"and this build does not; a list's population moves with the calendar, so "
+                     f"listed, not a stop ({len(result.left)}):")
+        lines += [f"  {_shown(m.path)}: {m.before} → {m.after}" for m in result.left]
+        lines.append(f"CHANGED IN A BLOCK — a leaf of a block both pages carry differs; listed, "
+                     f"not a stop ({len(result.in_blocks)}):")
+        for block in BLOCKS:
+            rows = [m for m in result.in_blocks if m.path.split(".")[0].split("[")[0] == block]
+            if not rows:
+                continue
+            cut = (f" — showing {BLOCK_SHOWN} of {len(rows)}; every one: --changes-json"
+                   if len(rows) > BLOCK_SHOWN else "")
+            lines.append(f"  {block}: {len(rows)} leaf change(s){cut}")
+            lines += [f"    {m.path}: {m.before} → {m.after}" for m in rows[:BLOCK_SHOWN]]
+        lines.append(f"CHANGED — present on both, the value, its source or its note differs; "
+                     f"listed, not a stop ({len(result.changed)}):")
+        for v in result.changed:
+            lines.append(f"  {_shown(v.path)} [{', '.join(v.parts)}]: {v.before} → {v.after}")
+            if v.source_before != v.source_after:
+                lines.append(f"      source: {v.source_before} → {v.source_after}")
     lines += _post_spend_lines(post)
     lines.append(_verdict(len(result.regressions) if result is not None else None,
-                          len(post.refusals)))
+                          len(post.refusals), result))
     return lines
 
 
+def write_changes(result: Comparison, path: Path) -> None:
+    """Every comparison row as its own JSON file (the precheck's ``--changes-json``) — never a
+    page, as `inputs.write_json` is not."""
+    path.write_text(json.dumps(asdict(result), indent=1, default=str), encoding="utf-8")
+
+
 def run(ticker: str, cfg: Config, *, emit: Callable[[str], None] = print,
-        inputs_json: Path | None = None) -> int:
+        inputs_json: Path | None = None, changes_json: Path | None = None) -> int:
     """The check for one name: 0 when nothing present on the committed page is lost and no
     ``POST_SPEND`` refusal fires, else 1. With no committed page only the refusals are checked.
     ``inputs_json``: where to write this build's input record in full (`vinci.dossier.inputs`)."""
@@ -693,4 +833,9 @@ def run(ticker: str, cfg: Config, *, emit: Callable[[str], None] = print,
     if inputs_json is not None:
         page_inputs.write_json(present, inputs_json)
         emit(f"input record written to {inputs_json}")
+    if changes_json is not None and result is None:
+        emit(f"no committed page, so no comparison: nothing written to {changes_json}")
+    elif changes_json is not None and result is not None:
+        write_changes(result, changes_json)
+        emit(f"every comparison row written to {changes_json}")
     return 1 if post.refusals or (result is not None and result.regressions) else 0
