@@ -1,6 +1,6 @@
 ---
 id: 2026-11-01-small-items
-status: open
+status: shipped
 date: 2026-11-01
 prs: []
 supersedes:
@@ -146,3 +146,6 @@ superseded-by:
   - TECX is not rebuilt, so no page renders it today.
 - **REPORTED:** `vinci/ciq/relationships.py`'s Prior-rows defect (above), for Session E.
 
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `60151ccc` (#881) on 2026-11-02. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

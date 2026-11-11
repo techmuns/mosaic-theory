@@ -1,6 +1,6 @@
 ---
 id: 2026-10-30-one-latest-cell-reader
-status: open
+status: shipped
 date: 2026-10-30
 prs: []
 supersedes:
@@ -185,3 +185,6 @@ superseded-by:
 - **For the coordinator:** the corpus tests here, like every existing corpus test, iterate every
   folder under `data/manual/ciq`. In a checkout that holds the held test pack they read its
   exports. Excluding it needs its names in code, which this PR may not write.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `ad84cb3f` (#872) on 2026-10-30. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.
