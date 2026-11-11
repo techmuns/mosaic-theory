@@ -158,3 +158,13 @@ superseded-by:
   - **What it cannot catch:** a weak correlation. The design's simulated power at ρ 0.05 was 37%.
   - **Falsifier:** a later registered run on pages near p̂ 0.5 reads X² over the 5% point.
 - **Not shown by this run:** the flip rates near a threshold. No page here sits there (§4).
+- **Deferred from Codex's round 2 on #978, both in the FROZEN scorer, so both wait for its next
+  version.** The scorer is the file whose sha256 the drawn registration carries, and editing it
+  after the run would make the committed scorer differ from the one that scored. Neither case
+  occurs in this run.
+  - **An unknown first-draw cache state** (`first_draw_cache_read` None, when the first API
+    attempt fails) is read as "not uncached" and leaves the exact test silently. It should be
+    reported as UNKNOWN. Here all 24 builds recorded 0.
+  - **A runs test with no variance** (every build unanimous) prints z 0, p 1, a fabricated null.
+    It should be reported as UNKNOWN or suppressed. Here the pooled statistic had variance: z
+    −0.11.
