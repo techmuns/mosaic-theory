@@ -311,17 +311,19 @@ def restate_after(store: Any, iid: str, edge: Sequence[tuple[Any, RawBar | None]
     A refresh of ``[start, end]`` rewrites that window on the source's CURRENT split basis. A name
     that also holds bars AFTER ``end`` keeps them on the basis they were pulled on, so a split
     since that pull left a step at ``end``'s next session — the left edge's defect, at the other
-    end. ``edge`` holds the name's FIRST and LAST held bars after ``end``, each beside the source's
-    bar for that session (one pair when they are one session).
+    end. ``edge`` holds held bars after ``end``, each beside the source's bar for that session,
+    oldest first. The grouped path gives the FIRST and — only where that reads a restatement — the
+    LAST; the aggregates path, which already holds every served session through the last, gives
+    every one (review of order 5, finding 2).
 
     Restated only when every pair reads ONE restatement (`restatement_factor`, agreeing within
     `RESTATE_TOL`): then every held bar after ``end`` is put on the current basis
-    (`Store.restate_bars`, tagged ``+restated``). Why both ends: a split leaves the bars on and
-    after its ex-date as they were, so held bars after ``end`` that straddle a pull made after a
-    split are on two bases already — one factor over all of them would make a step, not remove
+    (`Store.restate_bars`, tagged ``+restated``). Why more than one bar: a split leaves the bars on
+    and after its ex-date as they were, so held bars after ``end`` that straddle a pull made after
+    a split are on two bases already — one factor over all of them would make a step, not remove
     one. That shape is restated nothing and named, as is an edge the source did not serve
-    (``unanchored``). The bars between the two ends are taken to share their pull, the rule
-    `restate_held` states for the left edge.
+    (``unanchored``). On the grouped path the bars between the two ends are taken to share their
+    pull, the rule `restate_held` states for the left edge.
 
     Returns ``(outcome, factor)``: ``restated`` with its factor, ``price_only`` with the factor
     prices alone moved by (a correction, never a split: nothing restated), ``unanchored``, or
@@ -529,26 +531,47 @@ def ingest_prices(
             restated.update(restate_held(store, client.grouped_daily, [last], group,
                                          price_only=price_only))
     # THE RIGHT EDGE (RF-D5): a name this run wrote that also holds bars AFTER ``end`` is set beside
-    # the source at its first and last such sessions (`restate_after`) — one call per distinct
-    # date, mostly two. A refresh ending on the latest session, the routine one, holds nothing
-    # after ``end`` and costs nothing here; a screen replay at an earlier reference date does.
+    # the source at its FIRST such session — where a splice at ``end``'s next session shows — and,
+    # only where that reads a restatement, at its LAST too (`restate_after`). One whole-market call
+    # per distinct date: a replay on the backed-up primary store has 4 to 6 distinct first dates
+    # but 15 to 18 distinct last ones (names that stopped trading), so reading every name's last
+    # cost 18 to 24 calls (review of order 5, finding 4); splits are rare, so now it costs the
+    # first dates plus the last dates of the names that split. A refresh ending on the latest
+    # session, the routine one, holds nothing after ``end`` and costs nothing here.
     unanchored: list[str] = []
-    checked: dict[str, dict[date, tuple[Any, RawBar | None]]] = {}
     after = getattr(store, "first_bar_after", None)
     if callable(after) and callable(getattr(store, "bars_on", None)):
-        edges: dict[str, tuple[date, date]] = {}
+        firsts: dict[str, date] = {}
         for iid in sorted(written):
             if (first := after(iid, end)) is not None:
-                edges[iid] = (first, store.last_bar_before(iid, date.max) or first)
-        for d in sorted({d for pair in edges.values() for d in pair}):
-            days_fetched += 1
-            fresh_on = client.grouped_daily(d)
-            on_d = [iid for iid, pair in edges.items() if d in pair]
-            held_on = store.bars_on(d, on_d)
-            for iid in on_d:
-                checked.setdefault(iid, {})[d] = (held_on.get(iid), fresh_on.get(id_to_sym[iid]))
-        for iid, (first, last) in edges.items():
-            outcome, f = restate_after(store, iid, [checked[iid][d] for d in sorted({first, last})],
+                firsts[iid] = first
+        fetched: dict[date, dict[str, RawBar]] = {}
+        checked: dict[str, dict[date, tuple[Any, RawBar | None]]] = {}
+
+        def read(wanted: Mapping[str, date]) -> None:
+            by_day: dict[date, list[str]] = {}
+            for iid, d in wanted.items():
+                by_day.setdefault(d, []).append(iid)
+            for d, iids in sorted(by_day.items()):
+                if d not in fetched:
+                    fetched[d] = client.grouped_daily(d)
+                held_on = store.bars_on(d, iids)
+                for iid in iids:
+                    checked.setdefault(iid, {})[d] = (held_on.get(iid),
+                                                      fetched[d].get(id_to_sym[iid]))
+
+        read(firsts)
+        lasts: dict[str, date] = {}
+        for iid, first in firsts.items():
+            held, fresh = checked[iid][first]
+            if (held is not None and fresh is not None
+                    and restatement_factor(held, fresh) is not None
+                    and (last := store.price_frontier_for(iid)) is not None and last != first):
+                lasts[iid] = last
+        read(lasts)
+        days_fetched += len(fetched)
+        for iid, first in firsts.items():
+            outcome, f = restate_after(store, iid, [checked[iid][d] for d in sorted(checked[iid])],
                                        end=end)
             if outcome == "restated" and f is not None:
                 restated.setdefault(iid, []).append((first, f))
@@ -607,11 +630,12 @@ def ingest_prices_per_symbol(
 
     THE RIGHT EDGE TOO (RF-D5, coordinator 2026-11-11). A name that also holds bars AFTER ``end``
     had them left on the basis they were pulled on — the same splice at ``end``'s next session. The
-    fetch now reaches through the name's last held bar, and its first and last held sessions after
-    ``end`` are set beside the source (`restate_after`): one restatement read at both ends puts
-    every held bar after ``end`` on the current basis; two bases there, or an end the source did not
-    serve, restates nothing and is named ``unanchored``. Still ONE call per name: the anchors widen
-    its window, and only ``[start, end]`` is written."""
+    fetch now reaches through the name's last held bar, and every held bar after ``end`` is set
+    beside the source (`restate_after`): one restatement read across them all puts them on the
+    current basis; two bases there, or an end the source did not serve, restates nothing and is
+    named ``unanchored``. Still ONE call per name: the anchors widen its window, and only
+    ``[start, end]`` is written — and a name whose window writes nothing has neither edge
+    restated."""
     secs = list(securities)
     starts = first_sessions or {}
     on = today or date.today()
@@ -629,33 +653,12 @@ def ingest_prices_per_symbol(
             unanchored.append(s.eod_symbol)
             anchor = None
         # THE RIGHT EDGE: a name holding bars after ``end`` is fetched through its last one —
-        # still one call — so its first and last held sessions after ``end`` meet the source
+        # still one call — so every held session after ``end`` meets the source
         first_after = store.first_bar_after(s.internal_id, end)
-        last_after = (store.last_bar_before(s.internal_id, date.max)
+        last_after = (store.price_frontier_for(s.internal_id)
                       if first_after is not None else None)
         served = client.daily_bars(s.eod_symbol, anchor or start, last_after or end)
-        if anchor is not None:
-            held = store.bars_on(anchor, [s.internal_id]).get(s.internal_id)
-            fresh = dict(served).get(anchor)
-            if held is None or fresh is None:
-                unanchored.append(s.eod_symbol)   # the anchor was not served: nothing was checked
-            elif (f := restatement_factor(held, fresh)) is not None:
-                store.restate_bars(s.internal_id, f, through=anchor)
-                restated.setdefault(s.eod_symbol, []).append(f)
-            elif (pf := price_factor(held, fresh)) is not None:
-                price_only.setdefault(s.eod_symbol, []).append(pf)
-        if first_after is not None and last_after is not None:
-            fresh_by = dict(served)
-            outcome, rf = restate_after(
-                store, s.internal_id,
-                [(store.bars_on(d, [s.internal_id]).get(s.internal_id), fresh_by.get(d))
-                 for d in sorted({first_after, last_after})], end=end)
-            if outcome == "restated" and rf is not None:
-                restated.setdefault(s.eod_symbol, []).append(rf)
-            elif outcome == "price_only" and rf is not None:
-                price_only.setdefault(s.eod_symbol, []).append(rf)
-            elif outcome == "unanchored" and s.eod_symbol not in unanchored:
-                unanchored.append(s.eod_symbol)
+        fresh_by = dict(served)
         rows = [
             PriceBar(
                 internal_id=s.internal_id, bar_date=d, open=b.open, high=b.high, low=b.low,
@@ -668,7 +671,36 @@ def ingest_prices_per_symbol(
             if start <= d <= end and d >= starts.get(s.internal_id, date.min)
         ]
         if not rows:
-            empty.append(s.eod_symbol)  # OK-but-empty ⇒ mis-resolved symbol or out-of-window range
+            # OK-but-empty ⇒ mis-resolved symbol or out-of-window range. And NO EDGE IS RESTATED
+            # (review of order 5, finding 3): the held window keeps its basis, so restating the
+            # bars either side of it would MAKE the two steps the anchors exist to remove.
+            empty.append(s.eod_symbol)
+            reporter.tick(i, suffix=f"{s.eod_symbol} 0 bars")
+            continue
+        if anchor is not None:
+            held = store.bars_on(anchor, [s.internal_id]).get(s.internal_id)
+            fresh = fresh_by.get(anchor)
+            if held is None or fresh is None:
+                unanchored.append(s.eod_symbol)   # the anchor was not served: nothing was checked
+            elif (f := restatement_factor(held, fresh)) is not None:
+                store.restate_bars(s.internal_id, f, through=anchor)
+                restated.setdefault(s.eod_symbol, []).append(f)
+            elif (pf := price_factor(held, fresh)) is not None:
+                price_only.setdefault(s.eod_symbol, []).append(pf)
+        if first_after is not None:
+            # EVERY held bar after ``end``, each beside the served one: the call already carries
+            # them all (finding 2). The two ends must be served; an interior session the source
+            # does not carry is not read.
+            pairs = [(b, fresh_by.get(b.bar_date))
+                     for b in store.get_price_history(s.internal_id) if b.bar_date > end]
+            pairs = pairs[:1] + [p for p in pairs[1:-1] if p[1] is not None] + pairs[1:][-1:]
+            outcome, rf = restate_after(store, s.internal_id, pairs, end=end)
+            if outcome == "restated" and rf is not None:
+                restated.setdefault(s.eod_symbol, []).append(rf)
+            elif outcome == "price_only" and rf is not None:
+                price_only.setdefault(s.eod_symbol, []).append(rf)
+            elif outcome == "unanchored" and s.eod_symbol not in unanchored:
+                unanchored.append(s.eod_symbol)
         bars_written += store.write_prices(rows)
         reporter.tick(i, suffix=f"{s.eod_symbol} {len(rows)} bars")
     # FAIL LOUD: a 0-bar backfill IS the NCNO-class silent gap this path exists to prevent — an OK

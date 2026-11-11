@@ -147,13 +147,12 @@ class _Served:
         return {"IESC": RawBar(ticker="IESC", **self.fresh)} if day in _WEEK else {}
 
 
-def _store_holding_the_week(path: Path, *, current_from: date | None = None) -> Store:
-    """The week held on the PRE-split basis — or, from ``current_from``, already on the current one
-    (a later pull made after the split)."""
+def _store_holding_the_week(path: Path, *, current: tuple[date, ...] = ()) -> Store:
+    """The week held on the PRE-split basis — except the ``current`` sessions, already on the
+    current one (a later pull made after the split)."""
     store = Store(path)
     store.upsert_security(_IDENT)
-    store.write_prices([_held(d, scale=_IESC["factor"] if current_from and d >= current_from
-                              else 1.0) for d in _WEEK])
+    store.write_prices([_held(d, scale=_IESC["factor"] if d in current else 1.0) for d in _WEEK])
     return store
 
 
@@ -201,7 +200,7 @@ def test_held_bars_after_end_on_two_bases_are_restated_nothing_and_named(
     after the split). One factor over all three would make a step at 08-06, not remove one — so
     nothing after ``end`` is rescaled, and the name is listed unanchored."""
     client = _Served(_IESC["fresh"])
-    with _store_holding_the_week(tmp_path / "s.db", current_from=_WEEK[3]) as store:
+    with _store_holding_the_week(tmp_path / "s.db", current=tuple(_WEEK[3:])) as store:
         before = {b.bar_date: b.close for b in store.get_price_history(_IDENT.internal_id)}
         if path == "aggs":
             summary = ingest_prices_per_symbol(client, store, [_IDENT], start=_WEEK[0],
@@ -212,6 +211,78 @@ def test_held_bars_after_end_on_two_bases_are_restated_nothing_and_named(
         after = {b.bar_date: b.close for b in store.get_price_history(_IDENT.internal_id)}
     assert summary["unanchored"] == ["IESC"] and summary["restated"] == {}
     assert all(after[d] == before[d] for d in _WEEK[2:])
+
+
+def test_a_current_bar_between_two_stale_ones_after_end_is_never_rescaled(tmp_path: Path) -> None:
+    """REVIEW, FINDING 2: 08-05 and 08-07 held pre-split, 08-06 already current — a store spliced
+    before this fix. Both ends read 0.5, and one factor over all three would halve 08-06 a second
+    time. The aggregates path already holds every served session through the last one, so it sets
+    EVERY held bar after ``end`` beside the source: two bases there restate nothing, named."""
+    client = _Served(_IESC["fresh"])
+    with _store_holding_the_week(tmp_path / "s.db", current=(_WEEK[3],)) as store:
+        before = {b.bar_date: b.close for b in store.get_price_history(_IDENT.internal_id)}
+        summary = ingest_prices_per_symbol(client, store, [_IDENT], start=_WEEK[0], end=_WEEK[1],
+                                           today=date(2026, 11, 11))
+        after = {b.bar_date: b.close for b in store.get_price_history(_IDENT.internal_id)}
+    assert summary["unanchored"] == ["IESC"] and summary["restated"] == {}
+    assert all(after[d] == before[d] for d in _WEEK[2:])
+
+
+def test_a_name_whose_window_writes_nothing_has_neither_edge_restated(tmp_path: Path) -> None:
+    """REVIEW, FINDING 3: every served session of the window falls before the id's own first
+    session (`holders`), so nothing in ``[start, end]`` is written — and the held window stays on
+    the old basis. Restating the edges around an unwritten window MAKES the two steps it exists to
+    remove; the name raises as empty with every held bar as it was."""
+    client = _Served(_IESC["fresh"])
+    with _store_holding_the_week(tmp_path / "s.db") as store:
+        before = [(b.bar_date, b.close) for b in store.get_price_history(_IDENT.internal_id)]
+        with pytest.raises(EodError, match="NO bars"):
+            ingest_prices_per_symbol(client, store, [_IDENT], start=_WEEK[1], end=_WEEK[2],
+                                     first_sessions={_IDENT.internal_id: _WEEK[3]},
+                                     today=date(2026, 11, 11))
+        after = [(b.bar_date, b.close) for b in store.get_price_history(_IDENT.internal_id)]
+    assert after == before
+
+
+def test_a_grouped_replay_with_no_split_reads_only_the_first_session_after_end(
+        tmp_path: Path) -> None:
+    """REVIEW, FINDING 4: on the backed-up primary store a replay's names end on 15 to 18 distinct
+    dates (the names that stopped trading), so reading every name's LAST session cost 18 to 24
+    whole-market calls. The last session guards only a restatement; a name that reads none at its
+    first session after ``end`` needs no second read."""
+    client = _Served(_IESC["fresh"])
+    with _store_holding_the_week(tmp_path / "s.db", current=tuple(_WEEK)) as store:
+        summary = ingest_prices(client, store, [_IDENT], start=_WEEK[0],  # type: ignore[arg-type]
+                                end=_WEEK[1])
+    assert client.grouped == [_WEEK[0], _WEEK[1], _WEEK[2]]
+    assert summary["restated"] == {} and summary["unanchored"] == []
+
+
+def test_a_right_edge_the_grouped_source_did_not_serve_is_named(tmp_path: Path) -> None:
+    """REVIEW, FINDING 10: the first held session after ``end`` absent from the whole-market day is
+    never counted as checked: named unanchored, nothing restated."""
+
+    class _Gap(_Served):
+        def grouped_daily(self, day: date) -> dict[str, RawBar]:
+            return {} if day == _WEEK[2] else super().grouped_daily(day)
+
+    with _store_holding_the_week(tmp_path / "s.db") as store:
+        summary = ingest_prices(_Gap(_IESC["fresh"]), store, [_IDENT],  # type: ignore[arg-type]
+                                start=_WEEK[0], end=_WEEK[1])
+    assert summary["unanchored"] == ["IESC"] and summary["restated"] == {}
+
+
+def test_a_price_only_move_after_end_restates_nothing_and_is_named(tmp_path: Path) -> None:
+    """REVIEW, FINDING 10: every held bar after ``end`` re-served 4% higher with the SAME volume is
+    a correction, not a split — nothing after ``end`` is rescaled, and the summary names it."""
+    h = _IESC["held"]
+    corrected = {k: h[k] * 1.04 for k in ("open", "high", "low", "close")} | {"volume": h["volume"]}
+    with _store_holding_the_week(tmp_path / "s.db") as store:
+        summary = ingest_prices_per_symbol(_Served(corrected), store, [_IDENT], start=_WEEK[0],
+                                           end=_WEEK[1], today=date(2026, 11, 11))
+        after = [b for b in store.get_price_history(_IDENT.internal_id) if b.bar_date > _WEEK[1]]
+    assert summary["restated"] == {} and summary["price_only"] == {"IESC": [pytest.approx(1.04)]}
+    assert all(b.close == h["close"] and b.source == "polygon-grouped" for b in after)
 
 
 def test_a_refresh_ending_on_the_last_held_session_reaches_no_further(tmp_path: Path) -> None:
