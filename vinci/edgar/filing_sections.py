@@ -60,10 +60,27 @@ def _sentence(text: str, pos: int, *, cap: int = 400) -> str:
 _PLANS = re.compile(r"(plans?\s+to\s+alleviate[^.]*\.)", re.I)
 
 
+#: The heading of a filing's notes — where ASC 205-40's going-concern evaluation is disclosed. A
+#: filing read with no doubt statement is CHECKED-ABSENT only where the reader saw its notes; text
+#: without them (a fragment, an exhibit) makes no claim either way. All 27 committed pages' cited
+#: 10-Qs carry one (measured 2026-11-11).
+_NOTES_HEADING = re.compile(r"\bnotes\s+to\s+(?:the\s+)?(?:unaudited\s+)?(?:condensed\s+)?"
+                            r"(?:consolidated\s+)?(?:interim\s+)?financial\s+statements\b", re.I)
+
+
 def _going_concern(text: str, src: str) -> GoingConcern | None:
+    """The filing's going-concern read: SUBSTANTIAL DOUBT stated, CHECKED-ABSENT, or None.
+
+    CHECKED-ABSENT IS A STATE, NOT A SILENCE (TeamNostra fix request 2, RE2-D10). A filing read
+    in full with no doubt statement returned None, the same answer as a filing never read, so the
+    digest's "none stated (checked, absent)" and the Brief's "not flagged" could never print, and
+    a reader that missed a real conclusion looked exactly like one that found none. It now
+    returns the read: no doubt, no verbatim, bound to the filing."""
     hit = find_going_concern_statement(text)
     if hit is None:
-        return None
+        if not _NOTES_HEADING.search(text):
+            return None
+        return GoingConcern(substantial_doubt=False, verbatim="", plans="", source_ref=src)
     pm = _PLANS.search(text, hit.start, hit.start + 900)
     return GoingConcern(
         substantial_doubt=True, verbatim=hit.sentence,

@@ -189,9 +189,11 @@ def test_re2_d20_a_defaulted_period_is_flagged() -> None:
     assert _refusals(text) == []
 
 
-def test_re2_d20_verra_mobility_header_period_unread_is_flagged() -> None:
-    """REAL TEXT — Verra Mobility's 8-K 0001628280-26-068453 EX-99.1. The header states 2026, the
-    reader does not read it, and each guide was filed `next-fy` with no trace."""
+def test_re2_d20_verra_mobility_header_period_is_read() -> None:
+    """REAL TEXT — Verra Mobility's 8-K 0001628280-26-068453 EX-99.1. The header states 2026. #976
+    pinned the partial state here: each guide filed `next-fy`, now with a flag. The E2 remainder
+    reads the header's forward clause, so each guide is 2026 and none is flagged
+    (`tests/test_fix2_e2_remainder.py` pins every shape)."""
     text = ("2026 Full Year Guidance Based on year-to-date 2026 results and our outlook for the "
             "fourth quarter, we are reaffirming 2026 full year guidance for all financial "
             "measures, provided in our second quarter earnings announcement, dated August 5, "
@@ -199,9 +201,8 @@ def test_re2_d20_verra_mobility_header_period_unread_is_flagged() -> None:
             "Revenue of $945 million to $965 million • Adjusted EBITDA of $360 million to $370 "
             "million • Adjusted EPS of $1.11 to $1.17")
     r = parse_release(text, source_ref="8-K 0001628280-26-068453 EX-99.1")
-    defaulted = [g.metric for g in r.guidance if g.period == "next-fy"]
-    flags = [f for f in r.qa_flags if f.startswith(GUIDANCE_PERIOD_DEFAULT_PREFIX)]
-    assert defaulted and len(flags) == len(defaulted), (defaulted, flags)
+    assert {g.period for g in r.guidance} == {"2026"}, [(g.metric, g.period) for g in r.guidance]
+    assert not [f for f in r.qa_flags if f.startswith(GUIDANCE_PERIOD_DEFAULT_PREFIX)]
 
 
 def test_re2_d20_a_read_period_is_not_flagged() -> None:
