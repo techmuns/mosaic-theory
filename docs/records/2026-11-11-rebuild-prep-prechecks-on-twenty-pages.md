@@ -89,8 +89,14 @@ bottleneck, so the operator needs, before any spend: which pages are ready, whic
 which losses to rule on, and what it costs.
 
 **HOW VERIFIED.**
-- **The precheck's own output, per page.** All 20 ran on `main` at `2637e91b` (extraction
-  `2026-11-11.unpriced-count-names-its-horizon`).
+- **The precheck's own output, per page,** on two code heads with identical results:
+  - first on `main` at `2637e91b` (extraction `2026-11-11.unpriced-count-names-its-horizon`);
+  - then on `main` at `c0d6d830`, after #971 and #972 (CIQ reader, order 5) merged (extraction
+    `2026-11-10.header-offset-and-renamed-tabs+2026-11-10.period-order-and-duration+2026-11-11.unpriced-count-names-its-horizon`).
+  - All 20 are the same on both: exit, regression paths, post-spend refusals and panel age. This
+    agrees with both PRs' "no page moves".
+  - Every log opens with the spreadsheet reader's warnings that an `.xls` export's size is "not
+    512 + multiple of sector size". These are the reader's warnings on CIQ's files, not a failure.
   - Exits are 6 at 0 and 14 at 1.
   - 11 regressions on 8 pages: AMZN 1, BURL 1, FUBO 2, LLY 1, MCK 2, NFLX 1, ORKA 2, ROST 1.
   - 9 freshness refusals.
@@ -115,7 +121,7 @@ which losses to rule on, and what it costs.
   - `git status` in the scratch worktree is clean.
 
 **BOUNDARY.**
-- **Code:** `main` at `2637e91b`, in a detached scratch worktree.
+- **Code:** `main` at `2637e91b`, then at `c0d6d830`, in a detached scratch worktree.
 - **Pages:** the 27 committed under `data/dossiers/` at that commit, less the 7 named above, so 20.
 - **Store:** the S5 rehearsal's refreshed clone (bars to 2026-11-10;
   `docs/records/2026-11-11-vrrm-run-monthly-rehearsed-on-a-copy.md`) plus the 8-name backfill,
@@ -130,7 +136,8 @@ which losses to rule on, and what it costs.
 - **Costs:** `usd` from `data/snapshots/assembly_runs/*.jsonl` at `2637e91b` (44 files): the latest
   `written` line per name, list price, `claude-opus-4-8`.
 - **Live calls:** SEC 8,884, EFTS 28, FINRA 20, Polygon 22 (14 ticker references and the 8
-  backfills), Tiingo 0. Counted as cache files written in the scratch worktree from 13:30Z.
+  backfills), Tiingo 0. Counted as cache files written in the scratch worktree from 13:30Z; the
+  re-run on `c0d6d830` (15:20–15:28Z) wrote none.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - $0 of LLM.

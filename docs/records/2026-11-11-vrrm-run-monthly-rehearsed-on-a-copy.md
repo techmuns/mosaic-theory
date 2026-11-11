@@ -125,7 +125,10 @@ coordinator A asked on #1004.
   copy, fetched 13:24–13:26Z.
 
 **BOUNDARY.**
-- Code: `main` at `2637e91b`.
+- Code: `main` at `2637e91b`. Nothing on the scoring path changed by `c0d6d830`: `git diff`
+  over `vinci/scoring`, `vinci/eod`, `vinci/store`, `vinci/ledger`, `vinci/orchestrator.py`,
+  `vinci/universe.py`, `vinci/monitor.py`, `vinci/cli.py`, the ledger snapshot and the benchmark
+  assignments is empty.
 - Store: the clone above, before the run (`78e22391…`) and after it (`ce418fbf…`; content
   `befeffd1…`).
 - Returns: total return, as of 2026-11-11, on the store's bars through 2026-11-10, for the four
