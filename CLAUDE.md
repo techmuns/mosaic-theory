@@ -336,6 +336,10 @@ incomplete regardless of code state.
 - **COMPLETION CONTRACT.** Every PR description ends with a per-brief-item disposition table —
   **SHIPPED / PARTIAL / SKIPPED / STOPPED** (+ a one-line reason for anything not SHIPPED) — and the
   real-run verify outputs. A build without this table is incomplete regardless of code state.
+- **CROSS-SETUP VALIDATION (operator 2026-11-11).** Every fix PR body carries `## Cross-setup
+  validation (deterministic)`, written by `python -m vinci.impact run` (RUNBOOKS §o) from real
+  committed data, base code against head code, at $0, stamped with the PR's diff identity; a
+  re-sync keeps it only while `python -m vinci.impact verify` passes.
 - **TEST-LAYER RULE.** A behavior observed failing in the rendered artifact is regression-pinned
   **end-to-end** (real committed JSON → render → assertion). Unit pins may accompany, never
   substitute. A second production failure of a pinned behavior ⇒ the pin was at the wrong layer.

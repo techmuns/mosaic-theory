@@ -1,0 +1,44 @@
+{
+ "_cut": "frozen from a real impact report: local paths scrubbed, request text and CIQ file names dropped, list families kept only where moved or named, and the per-page lists of live-fetched URLs emptied (0 entries over pages and sides)",
+ "census": [],
+ "fail_first": {
+  "cases": [],
+  "note": "the PR changes no test file",
+  "tests": []
+ },
+ "same_code": true,
+ "schema": 1,
+ "shortcut": "base and head carry byte-identical `vinci/` and `frontend/build.py` trees, so every page, request, render and consumer is the same by construction",
+ "stamp": {
+  "base": {
+   "ref": "cd832299",
+   "sha": "cd832299449ee7caf7fbcb663e009173d66ad812",
+   "tip": "cd832299449ee7caf7fbcb663e009173d66ad812"
+  },
+  "date": "2026-11-11T06:06:59Z",
+  "diff_identity": {
+   "all_paths": [
+    "STATE.md",
+    "docs/fix-log-teamnostra-2.md",
+    "docs/records/2026-11-11-fix2-bookkeeping-batch-1.md"
+   ],
+   "excluded": [
+    "docs/",
+    "planning/",
+    "STATE.md",
+    "CLAUDE.md",
+    "AGENTS.md",
+    "README.md"
+   ],
+   "merge_base": "cd832299449ee7caf7fbcb663e009173d66ad812",
+   "patch_id": null,
+   "paths": []
+  },
+  "head": {
+   "ref": "1d6c7d9f",
+   "sha": "1d6c7d9fc814fe93bc16d5b425efa1ee2dfb4e3c"
+  }
+ },
+ "tool": "vinci.impact",
+ "wall_seconds": 0.2
+}

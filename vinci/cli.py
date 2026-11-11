@@ -515,7 +515,9 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
         from vinci.dossier.prespend import run as precheck
 
         out = getattr(args, "inputs_json", None)
-        return precheck(args.ticker, get_config(), inputs_json=Path(out) if out else None)
+        ch = getattr(args, "changes_json", None)
+        return precheck(args.ticker, get_config(), inputs_json=Path(out) if out else None,
+                        changes_json=Path(ch) if ch else None)
     if getattr(args, "mode", "assemble") == "inputs-backfill":
         if not (args.ticker or args.all_pages):
             print("inputs-backfill requires --ticker or --all")
@@ -3703,6 +3705,11 @@ def build_parser() -> argparse.ArgumentParser:
                            "assembler's folder and its ciq-archive")
     p_dossier.add_argument("--write", action="store_true",
                            help="with 'inputs-backfill': save the records (default: dry run)")
+    p_dossier.add_argument(
+        "--changes-json", dest="changes_json",
+        help="with 'precheck': write every comparison row (regressions, value changes, block "
+        "leaves, list members that left) to this path, the printed lists' cuts included",
+    )
     p_dossier.add_argument(
         "--inputs-json", dest="inputs_json",
         help="with 'precheck': write the $0 build's input record (every CIQ export, response and "
