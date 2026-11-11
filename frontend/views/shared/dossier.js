@@ -583,6 +583,14 @@ const EXTRACTION_VERSIONS = [
     "states figures for the value too. On the 27 committed pages 24 more PRESENT terms on 13 " +
     "pages are withheld at their next re-assembly (23 a percent or bps figure, 1 a date); none " +
     "moves until then"],
+  ["2026-11-10.kind-by-exact-name",
+    "fix request 2, order 5 (RA-D10 = A-D15 = RBC-D2, RA-D17): a CIQ export's kind is its " +
+    "name's exact rule, the stem's end after the listing (the comps book's start, a call's " +
+    "dated tail), never a keyword anywhere in the name, so an issuer named 'Financial', " +
+    "'Income', 'Customers' or 'Consensus' reads as its own pack; the Customers and Suppliers " +
+    "files are told apart by their end; a PDF tearsheet is decoded as a PDF and its industry " +
+    "read, the value on its label's line or the next. No page moves: all 382 files on " +
+    "disk keep their kind, and every tearsheet on disk is RTF"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

@@ -233,8 +233,10 @@ def read_sheets(path: Path, fmt: CiqFormat | None = None) -> dict[str, list[list
 # explicit (workbook-kind, sheet) ADDRESS — never module→file by filename keyword, which silently
 # grabs the WRONG Multiples (the historical Financials one vs the forward Estimates one differ).
 
-# Filename → workbook KIND (the export type). Financials may appear twice (Annual + Quarterly),
-# disambiguated by a verbatim Period-Type read, not the filename.
+# The workbook KINDS (the export types) — the registry the assembler and the quality checks list.
+# A file's kind is decided by `workbook_kind`'s exact name rule (RA-D10), not by these keywords,
+# which say what each kind is. Financials may appear twice (Annual + Quarterly), disambiguated by
+# a verbatim Period-Type read, not the filename.
 _WORKBOOK_KEYWORDS: dict[str, tuple[str, ...]] = {
     "estimates": ("estimate", "consensus"),
     "financials": ("financial", "income", "balance", "cash flow", "cashflow"),
@@ -253,6 +255,47 @@ _WORKBOOK_KEYWORDS: dict[str, tuple[str, ...]] = {
     # exports were dropped without a word — the `charting` failure, a second time.
     "credit_health": ("credit health",),
 }
+#: Each kind's EXACT name rule (audits RA-D10 = A-D15 = RBC-D2, 2026-11-10), on the file's stem.
+#: CIQ names an export "<company> <exchange> <ticker> <kind>", so the kind is the stem's END — or,
+#: for the comps book, its START ("Company Comparable Analysis <company>"), and for a call the
+#: dated tail ("<company>, Q2 2026 Earnings Call, Jul 30, 2026"). The keywords above matched
+#: ANYWHERE in the name, so a company's own name chose the kind: "Synchrony Financial" made every
+#: file of its pack financials and refused it as "more than one export of a kind"; with only its
+#: Customers file, F27 read MISSING; "Customers Bancorp"'s Suppliers file was read as its Customers.
+#: Census of the 36 folders on disk (2026-11-10): every one of their 382 files matches its kind
+#: here exactly as it did by keyword. The comps rule is checked first: a comps book's stem ends in
+#: a company name, which may end in any word.
+_KIND_NAME_RULES: tuple[tuple[str, re.Pattern[str]], ...] = (
+    ("comps", re.compile(r"^company comparable analysis\b|(^|[\s_-])comps?$")),
+    ("transcript", re.compile(r"(earnings|conference) call(, [a-z]{3} \d{1,2}, \d{4})?$"
+                              r"|transcript$")),
+    ("financials", re.compile(r"(^|[\s_-])(financials(_(annual|quarterly))?|income statement"
+                              r"|balance sheet|cash ?flow)$")),
+    ("estimates", re.compile(r"(estimates ?report|estimates|consensus)$")),
+    ("customers", re.compile(r"(^|\s)(customers|suppliers|business relationships)$")),
+    ("key_developments", re.compile(r"(^|\s)key developments$")),
+    ("profile", re.compile(r"(^|\s)(public company profile|public investment firm profile"
+                           r"|company profile|tearsheet)$")),
+    ("credit_health", re.compile(r"(^|\s)credit health( panel)?$")),
+)
+
+
+#: A download's duplicate marker after the kind: "… Financials_Annual (1)", "… Customers 2",
+#: "… EstimatesReport copy". Tried only when the stem matches no rule as it is (a call's stem ends
+#: in its year), so a re-downloaded export keeps its kind and meets the one-export refusal
+#: (`ambiguous_exports`) beside the old one, never silently losing to it.
+_DUPLICATE_MARK = re.compile(r"( \(\d+\)| \d{1,2}| copy( \d{1,2})?)$")
+
+
+def workbook_kind(name: str) -> str | None:
+    """A CIQ export's kind by its exact name rule (`_KIND_NAME_RULES`), or None (unrecognised)."""
+    stem = Path(name).stem.strip().lower()
+    for candidate in (stem, _DUPLICATE_MARK.sub("", stem)):
+        if (kind := next((k for k, rule in _KIND_NAME_RULES if rule.search(candidate)), None)):
+            return kind
+    return None
+
+
 # unparseable / withheld CIQ cells — ALL mean UNAVAILABLE (notes lines 61, 74); never coerce to 0.
 # 'No Data Available' joined 2026-10-30 (audit RC1): CIQ writes it in a cell as well as over an
 # empty subsheet, and it was read as an unparseable string rather than as a marker.
@@ -329,9 +372,11 @@ _AMBIGUITY_REMEDY = ("keep ONE export per kind: move the stale one(s) to "
 
 
 def _customers_role(name: str) -> str | None:
-    """Which of the two business-relationship exports a `customers`-kind file is, by name."""
-    low = name.lower()
-    return "customers" if "customer" in low else "suppliers" if "supplier" in low else None
+    """Which of the two business-relationship exports a `customers`-kind file is, by the END of its
+    name (RA-D10: "Customers Bancorp NYSE CUBI Suppliers" is the Suppliers file)."""
+    stem = _DUPLICATE_MARK.sub("", Path(name).stem.strip().lower())
+    return ("customers" if stem.endswith("customers") else
+            "suppliers" if stem.endswith("suppliers") else None)
 
 
 def ambiguous_exports(workbooks: tuple[CiqWorkbook, ...] | list[CiqWorkbook]) -> list[str]:
@@ -534,10 +579,7 @@ class CiqBundle:
             # (an Excel window open on the comps would refuse the whole folder).
             if p.name.startswith((".", "~$")):
                 continue
-            name = p.name.lower()
-            kind = next(
-                (k for k, kws in _WORKBOOK_KEYWORDS.items() if any(w in name for w in kws)), None
-            )
+            kind = workbook_kind(p.name)   # RA-D10: an exact name rule, never a keyword anywhere
             if kind is None:
                 unrecognised.append(p.name)
                 continue
