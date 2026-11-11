@@ -24,7 +24,7 @@ import time
 import warnings
 from collections import Counter
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date
 from decimal import ROUND_FLOOR, Decimal
 from typing import Any, cast
@@ -119,10 +119,11 @@ _ID_KEYS = frozenset({"accession", "url", "cik", "id", "locator", "unknown_reaso
 # (`ForwardHistoryBand.percentile` sits on the Dossier, outside the layer this trace reads.)
 _PERCENTILE_FIELDS = frozenset({"percentile", "pe_percentile_5y", "ev_ebitda_percentile_5y"})
 # A point's source_ref pointing at the earnings-call TRANSCRIPT (verbatim prose) rather than a
-# structured CIQ cell. A figure cited to the transcript is NOT in the mechanical layer's number
-# universe, so it earns a soft 'verify-against-the-call' note — NOT a hard UNTRACEABLE, which
-# means a number cited to STRUCTURED data that lacks it (a real misbinding/fabrication).
-# The canonical ref is `CIQ transcript(s): <names>` (ciq_sheets.management_commentary).
+# structured CIQ cell. (RG-D7, 2026-11-11) A figure cited to a call of the page traces to that
+# call's VALIDATED figures — its driver rows' — and one none of them states is a SHOWN
+# UNTRACEABLE caveat naming the call; it was a hidden 'verify-against-the-call' note.
+# The canonical refs are `CIQ transcript: <call>` (a driver row) and `CIQ transcript(s): <names>`
+# (ciq_sheets.management_commentary, a pointer that states no figure).
 _TRANSCRIPT_REF = re.compile(r"transcript", re.IGNORECASE)
 # recommendation / verdict language — flagged for human review (the dossier frames, never concludes)
 _DIRECTIONAL = re.compile(
@@ -604,12 +605,23 @@ def _digit_strings(text: str) -> set[str]:
 
 
 def _floats(text: str) -> list[float]:
-    out: list[float] = []
+    """The numbers a FACT's text states, signed as printed (`_prose_numbers`)."""
+    return [v for v, _ in _prose_numbers(text)]
+
+
+def _prose_numbers(text: str) -> list[tuple[float, int]]:
+    """Each number a fact's text states with the sign printed before it (RG-D1): -1 for a minus,
+    ASCII or "−"; +1 for a plus; 0 for none — "a loss of $156M" carries its sign in words, which
+    this does not read. A hyphen after a digit or a letter is a range or a name ("18.6-34.3x",
+    "Q1-26"), never a sign. The ONE reader of a fact's prose numbers."""
+    out: list[tuple[float, int]] = []
     for m in _NUM.finditer(text):
         try:
-            out.append(float(m.group().replace(",", "")))
+            v = float(m.group().lstrip("-").replace(",", ""))
         except ValueError:
             continue
+        sign = _printed_sign(text, m)
+        out.append((-v if sign < 0 else v, sign))
     return out
 
 
@@ -623,8 +635,100 @@ def _claim_figures(text: str) -> list[float]:
 def _claim_figure_ends(text: str) -> list[tuple[float, int]]:
     """`_claim_figures`, each with where its digits end — so the trace can read what is written
     after a figure (a rank's "rd" / "percentile", `_RANK_AFTER`), and a footnote is matched to the
-    place the claim writes its figure (item 29), never to another figure of the same magnitude."""
-    out: list[tuple[float, int]] = []
+    place the claim writes its figure (item 29), never to another figure of the same magnitude.
+
+    UNCHANGED BY RG-D5 (2026-11-11), deliberately: it still leaves out what the trace once read as
+    a calendar label ("90 days ago", "a 5-year window"), and still reads a `_NUM` match's own
+    hyphen as a sign, because the panel's M-ABSENT metric (`evals.metrics.absent_number`) finds
+    its figures through it, and a change here would move every baseline. The TRACE reads every
+    figure, durations included, through `_claim_figures_as_written`; this is a filter over it."""
+    return [(f.raw, f.end) for f in _claim_figures_as_written(text) if not f.label]
+
+
+# --- RG-D1 to RG-D5 (2026-11-11): a figure is traced AS WRITTEN -------------------------------
+# The trace compared magnitudes only (`abs`), at every one of nine scales, inside 2% or 0.05 of
+# anything the cited fact states. So "+$198.8M" traced a loss of 198.8 (RG-D1), "$29.1M" and
+# "29.1x" traced a -29.1% return (RG-D2), "$1,479.0M" traced $1,450.9M (2% high), and "$0.04"
+# traced every fact (RG-D4: a scale of 1e-9 puts a target of ~0 inside the 0.05 floor). Each figure
+# is now read with what the writing states beside it, and nothing it does not:
+# - its SIGN, when one is printed before it ("+29%", "-$5M", "(−24%"); a sign carried in words
+#   ("fell 24%") is not read here, and an unsigned figure is compared on magnitudes as before;
+# - its UNIT CLASS: a % may be the fact's percent or its fraction (scales 1, 1e2); an "x" is the
+#   fact's multiple (scale 1); a "$" figure is the fact's amount at a power of a thousand (never
+#   1e2, which is the fraction-to-percent rendering); a duration is the fact's span in any time
+#   unit; a figure written with none of these keeps all nine scales;
+# - its WIDTH: half a unit of its last written digit. The tolerance is the SMALLER of that and the
+#   old one, so the change only removes passes: "$1,479.0M" is 1,478.95 to 1,479.05, and a coarse
+#   "15%" keeps the old 2% (a written-precision rule that WIDENED for coarse figures cleared real
+#   misbindings, `tests/test_untraceable_rank_and_duration.py`'s docstring).
+_UNIT_AFTER = re.compile(
+    r"\s*(?P<scale>thousand|million|billion|trillion|mn|bn|tn|[kmbt](?![a-z]))?\s*"
+    r"(?P<unit>%|percent(?:age\s+points?)?\b|pts?\b|pp\b|bps?\b|basis\s+points?\b|x(?![a-z])|×)?",
+    re.IGNORECASE)
+#: the abbreviations too ("3 yrs", "16mo", "8 wks"), as `_WINDOW` and the page's own strings
+#: write them — else "3 yrs" escapes the span trace and meets any number at nine scales
+_DUR_UNIT = re.compile(r"(?:\s*|-)(?P<u>days?|weeks?|wks?|months?|mos?|quarters?|qtrs?|years?|yrs?)"
+                       r"\b|(?P<y>y)\b", re.IGNORECASE)
+#: a time unit's length in days — a duration is compared with a fact's span in ANY time unit
+_DAYS = {"day": 1.0, "week": 7.0, "wk": 7.0, "month": 365.25 / 12, "mo": 365.25 / 12,
+         "quarter": 365.25 / 4, "qtr": 365.25 / 4, "year": 365.25, "yr": 365.25, "y": 365.25}
+#: the scales a figure of each unit class may trace at (the fact's own unit is not recorded)
+_UNIT_SCALES: dict[str, tuple[float, ...]] = {
+    "pct": (1.0, 1e2), "bps": (1.0, 1e2, 1e4), "x": (1.0,),
+    "money": (1.0, 1e3, 1e-3, 1e6, 1e-6, 1e9, 1e-9), "plain": _TRACE_SCALES}
+
+
+@dataclass(frozen=True)
+class _ClaimFigure:
+    """One figure a claim writes, read as written: its magnitude (the digits, no scale word
+    applied — the fact's own scale is not recorded), where its digits end, half a unit of its last
+    written digit, its unit class ("pct", "bps", "x", "money", "plain", or "dur:<unit>") and the
+    sign printed before it (+1 / -1, or 0 when none is)."""
+
+    value: float
+    end: int
+    half: float
+    unit: str
+    sign: int = 0
+    #: the scale word written after it ("M" → 1e6), 1.0 when none is
+    scale: float = 1.0
+    #: written as a year: four digits from 1900 to 2099, no comma, no sign, no unit ("in 2027")
+    year: bool = False
+    #: the `_NUM` match's own value, its hyphen read as a sign ("5-10%" → -10), as the trace read
+    #: it before RG-D1 — kept for `_claim_figure_ends` only
+    raw: float = 0.0
+    #: a duration the trace read as a calendar LABEL before RG-D5 — spaced ("90 days"), or a
+    #: whole number hyphenated or abbreviated ("a 5-year window", "~9y") — kept for
+    #: `_claim_figure_ends` only
+    label: bool = False
+    #: where its digits start
+    start: int = 0
+
+    @property
+    def signed_value(self) -> float:
+        return -self.value if self.sign < 0 else self.value
+
+
+def _printed_sign(text: str, m: re.Match[str]) -> int:
+    """The sign printed before a `_NUM` match — "+29%", "-$5M", "−0.3%", "(-24%" — or 0. A hyphen
+    after a digit or a letter is a range or a name ("8-15x", "Q1-26"), never a sign."""
+    if m.group().startswith("-"):
+        prev = text[m.start() - 1] if m.start() else " "
+        return 0 if (prev.isalnum() or prev in ".,%") else -1
+    j = m.start()
+    if j and text[j - 1] == "$":
+        j -= 1
+    if j and text[j - 1] in "+−-":
+        prev = text[j - 2] if j >= 2 else " "
+        if not (prev.isalnum() or prev in ".,%)"):
+            return 1 if text[j - 1] == "+" else -1
+    return 0
+
+
+def _claim_figures_as_written(text: str) -> list[_ClaimFigure]:
+    """Every figure a claim CLAIMS, as written (`_ClaimFigure`) — excluding the labels `_NUM`
+    would extract (a date, an accession, FY21, Q1, GLP-1). A duration is a figure (RG-D5)."""
+    out: list[_ClaimFigure] = []
     labels = [(d.start(), d.end()) for d in _DATE_OR_ID.finditer(text)]
     for m in _NUM.finditer(text):
         if any(lo <= m.start() < hi for lo, hi in labels):
@@ -634,14 +738,36 @@ def _claim_figure_ends(text: str) -> list[tuple[float, int]]:
             continue  # GLP-1 / B2B / low-20s — a digit fused to a word is part of a name
         if _CAL_BEFORE.search(text[max(0, m.start() - 9):m.start()]):
             continue  # FY21 / Q1 / fiscal 2025
-        if _CAL_AFTER.match(text[m.end():m.end() + 10]):
-            continue  # 90 days ago / 8 quarters
-        if "." not in m.group() and _DURATION_AFTER.match(text[m.end():m.end() + 10]):
-            continue  # a 5-year window / the 52-week low / over ~9y — never "2.3y"
+        digits = m.group().lstrip("-").replace(",", "")
         try:
-            out.append((float(m.group().replace(",", "")), m.end()))
+            value = float(digits)
         except ValueError:
             continue
+        dec = len(digits.split(".")[1]) if "." in digits else 0
+        half = 0.5 * 10.0 ** -dec
+        tail = text[m.end():m.end() + 24]
+        scale = 1.0
+        if _RANK_AFTER.match(tail):
+            unit = "plain"   # "8%ile", "3rd percentile": a rank, traced as before (`_num_traces`)
+        elif d := _DUR_UNIT.match(tail):
+            unit = "dur:" + (d.group("u") or d.group("y")).lower().rstrip("s")
+        else:
+            u = _UNIT_AFTER.match(tail)
+            if u and u.group("scale"):
+                scale = _SCALE.get(u.group("scale").lower(), 1.0)
+            word = " ".join(((u.group("unit") or "") if u else "").lower().split())
+            money = text[max(0, m.start() - 2):m.start()].rstrip("+−-").endswith("$")
+            unit = ("bps" if word.startswith(("bp", "basis")) else
+                    "pct" if word.startswith(("%", "percent", "pt", "pp")) else
+                    "x" if word in ("x", "×") else "money" if money else "plain")
+        sign = _printed_sign(text, m)
+        year = (unit == "plain" and not sign and scale == 1.0 and len(m.group()) == 4
+                and 1900 <= value <= 2099)
+        label = bool(_CAL_AFTER.match(text[m.end():m.end() + 10])
+                     or ("." not in m.group()
+                         and _DURATION_AFTER.match(text[m.end():m.end() + 10])))
+        out.append(_ClaimFigure(value, m.end(), half, unit, sign, scale, year,
+                                float(m.group().replace(",", "")), label, m.start()))
     return out
 
 
@@ -775,6 +901,159 @@ class _FactNumbers:
     values: list[float] = field(default_factory=list)
     years: set[float] = field(default_factory=set)
     ranks: set[float] = field(default_factory=set)
+    #: (RG-D3) a TABLE's numbers, each with its row's metric and its column's period
+    #: (`_table_cells`), so a figure the claim writes for "FY25 revenue" meets FY25's revenue only
+    cells: list[_Cell] = field(default_factory=list)
+    #: (RG-D5) the spans, in days, a fact states: a number in a field its name times
+    #: (`window_span_years`, `days_to_cover`), and a window it names in its ref or its field names
+    #: ("EOD X 180d", `pe_percentile_5y`, `high_52w`). Only these trace a duration: a number of
+    #: no stated time unit is no span (NCNO's 27.8x multiple traced "2.3y" as 27.8 months)
+    windows: set[float] = field(default_factory=set)
+    #: (RG-D1) the subset of ``values`` whose SIGN the fact does not state: a number its prose
+    #: prints with no sign ("a loss of $156M"), and a transcript figure with no ``change`` word.
+    #: A claim's printed sign is never checked against these — only a sign the fact states
+    unsigned: set[float] = field(default_factory=set)
+
+    def merge(self, other: _FactNumbers) -> None:
+        self.unsigned |= other.unsigned
+        self.values.extend(other.values)
+        self.years |= other.years
+        self.ranks |= other.ranks
+        self.cells.extend(other.cells)
+        self.windows |= other.windows
+
+
+#: a window named in a ref or a field name: "180d", "5y", "52w", "12m", "8q", "_5y", "180-day".
+#: Lower case only, as the code writes them, so a form name ("10-Q") is no ten quarters, and never
+#: after a "$" ("$5m" is five million).
+_WINDOW = re.compile(r"(?<![\d.$])(\d+(?:\.\d+)?)[\s_-]?"
+                     r"(d|days?|w|wks?|weeks?|m|mos?|months?|q|qtrs?|quarters?|y|yrs?|years?)"
+                     r"(?![a-z])")
+_WINDOW_DAYS = {"d": 1.0, "w": 7.0, "m": 365.25 / 12, "q": 365.25 / 4, "y": 365.25}
+
+
+#: a field whose name states its time unit: `window_span_years`, `days_to_cover`, `age_days`
+_SPAN_FIELD = re.compile(r"(?:^|_)(days?|weeks?|months?|quarters?|years?|yrs?)(?:_|$)")
+
+
+def _windows_in(name: str) -> set[float]:
+    """The spans, in days, a ref or a field name names ("EOD SMPL 180d" → 180; `pe_percentile_5y`
+    → 1826.25). Read from identifiers the CODE wrote, never from a fact's prose."""
+    return {float(m.group(1)) * _WINDOW_DAYS[m.group(2)[0].lower()]
+            for m in _WINDOW.finditer(name)}
+
+
+def _period_key(label: str) -> str | None:
+    """A table column's or a claim's period on one key: "FY25", "FY25 (R)", "FY25E", "fiscal 2025"
+    → "FY25"; "Q2-26", "Q2 2026", "FQ2 FY26", "2Q26" → "Q2-26"; "LTM", "TTM", "trailing twelve
+    months" → "LTM". None for anything else."""
+    s = label.strip()
+    if re.fullmatch(r"(?i)(?:LTM|TTM|trailing[\s-]+(?:twelve|12)[\s-]+months?)", s):
+        return "LTM"
+    if m := re.fullmatch(r"(?i)(?:F?Y|fiscal(?:\s+year)?)\s?'?((?:19|20)?\d\d)E?(?:\s*\(R\))?", s):
+        return f"FY{m.group(1)[-2:]}"
+    if m := re.fullmatch(r"(?i)F?Q([1-4])[\s-]?(?:FY\s?)?'?((?:19|20)?\d\d)E?(?:\s*\(R\))?", s):
+        return f"Q{m.group(1)}-{m.group(2)[-2:]}"
+    if m := re.fullmatch(r"(?i)([1-4])Q'?((?:19|20)?\d\d)", s):
+        return f"Q{m.group(1)}-{m.group(2)[-2:]}"
+    return None
+
+
+_CLAIM_PERIOD = re.compile(
+    r"(?i)\b(?:LTM|TTM|trailing[\s-]+(?:twelve|12)[\s-]+months?|(?:F?Y|fiscal(?:\s+year)?)\s?'?"
+    r"(?:19|20)?\d\dE?|F?Q[1-4][\s-]?(?:FY\s?)?'?(?:19|20)?\d\dE?|[1-4]Q'?(?:19|20)?\d\d)\b")
+
+
+def _claim_periods(text: str, fig: _ClaimFigure | None = None) -> set[str]:
+    """The periods a claim names, on `_period_key`'s key — those beside ``fig`` when one is given:
+    with no other figure of the claim between the period and it (`_bound_cells`)."""
+    if fig is not None and fig.start < 0:
+        fig = None   # a figure read from a literal, not from the claim: bound claim-wide
+    others = ([(f.start, f.end) for f in _claim_figures_as_written(text) if f.start != fig.start]
+              if fig is not None else [])
+    out: set[str] = set()
+    for m in _CLAIM_PERIOD.finditer(text):
+        k = _period_key(m.group())
+        if k is None:
+            continue
+        if fig is not None:
+            lo, hi = sorted((m.start(), fig.start))
+            if any(lo < s < hi for s, _ in others):
+                continue   # another figure is written between the period and this one
+        out.add(k)
+    return out
+
+
+#: a table row's metric as a claim names it: its label before the unit ("Revenue ($M)" →
+#: "revenue"), its content words in any order ("Impairment of Goodwill" is a "goodwill
+#: impairment"), and the few other names of an abbreviated or signed label
+_ROW_SYNONYMS = {"fcf": ("free cash flow",), "cfo": ("operating cash flow", "cash from operations"),
+                 "capex": ("capital expenditure",), "d&a": ("depreciation",),
+                 "eps": ("earnings per share",),
+                 "net income": ("net loss", "net earnings", "net profit")}
+_ROW_STOP = frozenset({"of", "and", "&", "the", "related", "basis"})
+_WORD = re.compile(r"[a-z0-9&]+(?:\.)?")
+
+
+def _row_metric(label: str) -> str:
+    """A row label less EVERY parenthetical — its unit and its qualifiers ("Revenue ($M)" →
+    "revenue", "EPS (GAAP, dil.)" → "eps") — never cut at the first one, which made "Gain (Loss)
+    On Sale Of Assets ($M)" the metric "gain"."""
+    return re.sub(r"\s*\([^)]*\)", "", label).strip().lower()
+
+
+def _words(text: str) -> list[str]:
+    return [w.rstrip(".") for w in _WORD.findall(text.lower())]
+
+
+def _names_metric(tokens: list[str], phrase: str) -> bool:
+    """True iff the claim's ``tokens`` hold every content word of ``phrase`` within a span of the
+    phrase's own length and two more, in any order — whole words, so "EBIT" is not in "EBITDA"."""
+    want = [w for w in _words(phrase) if w not in _ROW_STOP]
+    if not want:
+        return False
+    span = len(want) + 2
+    return any(set(want) <= set(tokens[i:i + span])
+               for i, tok in enumerate(tokens) if tok == want[0] or tok in want)
+
+
+def _claim_rows(text: str, metrics: set[str]) -> set[str]:
+    """The table metrics a claim names, from ``metrics`` (each `_row_metric`)."""
+    tokens = _words(text)
+    return {r for r in metrics
+            if any(_names_metric(tokens, w) for w in (r, *_ROW_SYNONYMS.get(r, ())))}
+
+
+def _bound_cells(cells: list[_Cell], claim: str, fig: _ClaimFigure | None = None) -> list[_Cell]:
+    """(RG-D3) The table numbers a claim's figure may be: those in the columns of the periods it
+    names and the rows of the metrics it names, each where the table HAS one. A claim that names
+    none of the table's periods (or rows) is bound on the other axis alone, or not at all — so a
+    period the table lacks restricts nothing (a residual: such a figure is traced against every
+    column, as before).
+
+    A PERIOD BINDS THE FIGURES IT IS WRITTEN BESIDE (``fig``): a period the claim names binds a
+    figure only when no other figure of the claim lies between them. In "revenue rose from $1,331M
+    to $1,451M in FY25" FY25 binds $1,451M and leaves $1,331M — FY24's, unnamed — to every column
+    (the review of this change: a claim-wide binding flagged FY24's true revenue)."""
+    if not cells:
+        return []
+    periods = _claim_periods(claim, fig) & {c.period for c in cells}
+    metrics = {c.metric for c in cells}
+    rows = _claim_rows(claim, metrics)
+    # a named metric's own rate rows: "FY25 revenue grew 9%" names "revenue", and its 9% is the
+    # "Revenue growth" row's — binding the amount row alone refused the fact as written
+    rows |= {m for m in metrics if any(m.startswith(r + " ") for r in rows)}
+    return [c for c in cells
+            if (not periods or c.period in periods) and (not rows or c.metric in rows)]
+
+
+def _within(a: float, target: float, half: float) -> bool:
+    """A written magnitude ``a`` is ``target`` within the SMALLER of its written width (``half``
+    a unit of its last digit) and the old tolerance (2%, at least 0.05), with float noise allowed
+    — so "$1,479.0M" is not $1,450.9M, "$0.04" is no target of ~0, and a coarse figure keeps the
+    old bound."""
+    tol = min(half, max(0.05, target * 0.02))
+    return abs(a - target) <= tol + 1e-9 * max(1.0, abs(target))
 
 
 def _percentile_ranks(p: float) -> set[float]:
@@ -802,6 +1081,28 @@ def _stated_numbers(o: Any, into: _FactNumbers, name: str = "") -> None:
         into.values.append(float(o))
         if name in _PERCENTILE_FIELDS and 0 <= o <= 1:
             into.ranks |= _percentile_ranks(float(o))
+        if s := _SPAN_FIELD.search(name):
+            into.windows.add(abs(float(o)) * _WINDOW_DAYS[s.group(1)[0]])
+    elif (isinstance(o, dict) and o.get("change") in ("up", "down")
+          and isinstance(o.get("value"), (int, float)) and not isinstance(o["value"], bool)):
+        # a transcript row's `DriverFigure`: "down 3%" is value 3 with change "down", and its
+        # sign is that word (RG-D1) — so "-3%" meets it and "+3%" does not
+        v = abs(float(o["value"]))
+        into.values.append(-v if o["change"] == "down" else v)   # a stated sign
+        _stated_numbers({k: x for k, x in o.items() if k not in ("value", "change")}, into, name)
+    elif (isinstance(o, dict) and "change" in o and "qualifier" in o
+          and isinstance(o.get("value"), (int, float)) and not isinstance(o["value"], bool)):
+        # a `DriverFigure` with no direction word: a printed minus is kept in its value; a
+        # non-negative one may be a level or an unsigned change — its sign is not stated
+        into.values.append(float(o["value"]))
+        if o["value"] >= 0:
+            into.unsigned.add(float(o["value"]))
+        _stated_numbers({k: x for k, x in o.items() if k not in ("value", "change")}, into, name)
+    elif isinstance(o, dict) and _is_table(o):
+        into.cells.extend(_table_cells(o))
+        _stated_numbers(o.get("note"), into, "note")
+        for col in o["columns"]:
+            _stated_numbers(col, into, "columns")   # a column's year, as that year only
     elif isinstance(o, date):
         into.years.add(float(o.year))
     elif isinstance(o, str):
@@ -809,16 +1110,76 @@ def _stated_numbers(o: Any, into: _FactNumbers, name: str = "") -> None:
             if (year := _label_year(m)) is not None:
                 into.years.add(year)
             return " "
+        into.windows |= _windows_in(o)   # "trailing ~1.7y", "DTC 8.8d": a span it states
         rest = _DATE_OR_ID.sub(label, o)
         into.years.update(float(y) for y in _BARE_YEAR.findall(rest))
-        into.values.extend(_floats(_BARE_YEAR.sub(" ", rest)))
+        for v, sign in _prose_numbers(_BARE_YEAR.sub(" ", rest)):
+            into.values.append(v)
+            if sign == 0:
+                into.unsigned.add(v)   # "a loss of $156M": its sign is in words, unread
     elif isinstance(o, dict):
         for k, v in o.items():
-            if k not in _ID_KEYS and not str(k).endswith("_id"):
-                _stated_numbers(v, into, name if k == "value" else str(k))
+            if k in _ID_KEYS or str(k).endswith("_id"):
+                continue
+            if k == "scale" and isinstance(v, str):
+                continue   # a `DriverFigure`'s scale word ("e6"): its digits are no figure
+            # `pe_percentile_5y`, `high_52w` — the window is the field's, stated or UNKNOWN
+            into.windows |= _windows_in(str(k))
+            _stated_numbers(v, into, name if k == "value" else str(k))
     elif isinstance(o, (list, tuple, set, frozenset)):
         for v in o:
             _stated_numbers(v, into, name)
+
+
+@dataclass(frozen=True)
+class _Cell:
+    """(RG-D3) One number of a financial table: its row's metric, its column's period key, the
+    value, and the amount unit its row states: "Revenue ($M)" → 1e6, a per-share row ("EPS
+    (GAAP, dil.)") → 1.0, and None for a row that states a RATE (a growth, a margin), which no
+    amount is."""
+
+    metric: str
+    period: str
+    value: float
+    amount: float | None = None
+
+
+#: the amount unit a table row's label states — "($M)", "($B)", "($K)", "($)" — set by the code
+_AMOUNT_UNIT = re.compile(r"\(\$(?P<s>[KMB]?)\)")
+_AMOUNT = {"": 1.0, "K": 1e3, "M": 1e6, "B": 1e9}
+
+
+def _is_table(o: dict[str, Any]) -> bool:
+    """A `FinTable` as dumped: column labels and labelled rows."""
+    rows = o.get("rows")
+    return (isinstance(o.get("columns"), list) and isinstance(rows, list)
+            and all(isinstance(r, dict) and "label" in r and "cells" in r for r in rows))
+
+
+def _table_cells(t: dict[str, Any]) -> list[_Cell]:
+    """(RG-D3) Each number of a dumped `FinTable` as (its row's metric, its column's period key,
+    the value). A row's STRUCTURED ``values`` where it carries them; a row that carries none (the
+    growth and margin rows) is read from its cells as every other string fact is
+    (`_stated_numbers`), cell by cell, so each number keeps its column. A column with no period key
+    ("Unnamed", a blank) keys as its label."""
+    out: list[_Cell] = []
+    cols = [_period_key(str(c)) or str(c) for c in t["columns"]]
+    for r in t["rows"]:
+        metric = _row_metric(str(r["label"]))
+        u = _AMOUNT_UNIT.search(str(r["label"]))
+        # a per-share row ("EPS (GAAP, dil.)", "Dividend/sh") is dollars, no rate
+        per_share = metric.startswith("eps") or metric.endswith("/sh")
+        amount = _AMOUNT[u.group("s")] if u else 1.0 if per_share else None
+        vals = r.get("values") or []
+        for i, col in enumerate(cols):
+            v = vals[i] if i < len(vals) else None
+            if v is not None:
+                out.append(_Cell(metric, col, float(v), amount))
+            elif i < len(r["cells"]):
+                cell = _FactNumbers()
+                _stated_numbers(r["cells"][i], cell, "cells")
+                out.extend(_Cell(metric, col, x, amount) for x in cell.values)
+    return out
 
 
 def _values_by_ref(mech: MechanicalLayer) -> dict[str, _FactNumbers]:
@@ -834,11 +1195,11 @@ def _values_by_ref(mech: MechanicalLayer) -> dict[str, _FactNumbers]:
             if keys:
                 nums = _FactNumbers()
                 _stated_numbers(o, nums, name)
+                for k in ("source_ref", "accession", "url"):
+                    if o.get(k):
+                        nums.windows |= _windows_in(str(o[k]))   # "EOD SMPL 180d to …"
                 for k in keys:
-                    acc = out.setdefault(k, _FactNumbers())
-                    acc.values.extend(nums.values)
-                    acc.years |= nums.years
-                    acc.ranks |= nums.ranks
+                    out.setdefault(k, _FactNumbers()).merge(nums)
             for k, v in o.items():
                 rec(v, str(k))
         elif isinstance(o, (list, tuple)):
@@ -903,22 +1264,58 @@ def _validate(
     # the frozen SMPL page: a universe that large contains every figure at some scale. A point
     # cites ONE fact; its figures are checked against that fact.
     values_by_ref = _values_by_ref(mech)
+    # everything the page states at once — every fact, cited or not, and the notes and caveats the
+    # layer carries beside them ("only 95 points, below the 450 floor"): what a figure with no
+    # source_ref (RG-D6) and a duration (RG-D5) are traced against
+    page_nums = _FactNumbers()
+    _stated_numbers(mech.model_dump(), page_nums)
 
-    def _num_traces(n: float, cited: _FactNumbers, *, as_rank: bool = False) -> bool:
-        # Trace by MAGNITUDE at any standard financial unit rendering (%, thousands, millions,
-        # billions): the LLM writes the stored −0.726 as "−72.6%", 29,643,500 shares as "29.6
-        # million", and a stored −0.027 as "shrunk by 2.7%" (sign carried in words, not the digit).
-        # Direction is the directional-lint's job; this only asks whether the figure exists.
-        a = abs(n)
-        if a in cited.years:
+    def _num_traces(f: _ClaimFigure, cited: _FactNumbers, claim: str, *,
+                    as_rank: bool = False) -> bool:
+        # Trace AS WRITTEN (RG-D1 to RG-D5, above `_ClaimFigure`): the LLM writes the stored −0.726
+        # as "−72.6%", 29,643,500 shares as "29.6 million" and a stored −0.027 as "shrunk by 2.7%"
+        # (a sign in words is not read here). A printed sign must be the fact's; the unit class
+        # picks the scales; the width is the smaller of the written one and the old 2% / 0.05.
+        a = f.value
+        if f.unit == "plain" and not f.sign and a in cited.years:
             return True  # the year of a date the fact carries — as that year, never rescaled
+        if f.year and a in page_nums.years:
+            return True  # "capex for 2027": a year the page dates something in, never a scale
         if as_rank and a in cited.ranks:
             return True  # a figure WRITTEN as a rank, as the rank of a percentile the fact states
-        for mf in cited.values:
-            for s in _TRACE_SCALES:
-                target = abs(mf) * s
-                if abs(a - target) <= max(0.05, target * 0.02):
-                    return True
+        if f.unit.startswith("dur:"):
+            per = _DAYS[f.unit[4:]]
+            # a span a fact OF THE PAGE states, in the unit its field names, or a window it names
+            # in its ref or its field names ("180d", `pe_percentile_5y`): a point that writes "the
+            # 52-week high" cites the price it compares, not the stock-performance fact that
+            # states the window. Never a number of no stated time unit, read at every one: at
+            # five units a financial table's 315 numbers traced a made-up "47 months" of runway,
+            # and NCNO's 27.8x multiple traced "2.3y"
+            # A span is SPECIFIC, so it takes its written width alone: "the band spans ~9y" is the
+            # page's 8.8 years, which the 2% bound refused (the widening #890 refused was a coarse
+            # figure meeting any of a fact's arbitrary numbers, which a page's few spans are not)
+            return any(abs(a - w / per) <= f.half + 1e-9 for w in cited.windows | page_nums.windows)
+        stated: list[tuple[float, tuple[float, ...]]] = [
+            (x, _UNIT_SCALES[f.unit]) for x in cited.values]
+        for c in _bound_cells(cited.cells, claim, f):
+            if c.amount is None:
+                if f.unit != "money":   # a rate row: no amount is a growth or a margin
+                    stated.append((c.value, _UNIT_SCALES[f.unit]))
+            elif f.unit == "money" or (f.unit == "plain" and f.scale != 1.0):
+                # an amount row ("Revenue ($M)") at the scale the figure WRITES: "$1.5B" is
+                # $1,450.9M, "$1.5M" is not — a power of a thousand is never free here. A "$979"
+                # with no scale word is the writer's dollars or the table's own unit (VRRM's
+                # "FY27E revenue is $873M versus FY25 $979")
+                stated.append((c.value, (c.amount / f.scale,) if f.scale != 1.0
+                               else (c.amount, 1.0)))
+            elif f.unit == "plain":
+                stated.append((c.value, (1.0,)))   # "revenue of 1,450.9": the table's own unit
+            # a %, an "x" or a bps figure is no amount
+        for x, scales in stated:
+            if f.sign and a and x not in cited.unsigned and (x == 0 or (x > 0) != (f.sign > 0)):
+                continue  # "+$198.8M" is not a loss of 198.8; "+29%" is not a fall of 29%
+            if any(_within(a, abs(x) * s, f.half) for s in scales):
+                return True
         return False
 
     # (signed value, type, cited ref) for decisive-mirror dedup — the ref since a figure traces or
@@ -952,53 +1349,66 @@ def _validate(
                 out.setdefault(end, e)
         return out
 
-    def check_figure(n: float, e: FigureCite, p: SourcedPoint, where: str, *,
+    def untraced(n: float, where: str, claim: str, ref: str | None, call: bool) -> str:
+        """The flag for a figure that does not trace. (RG-D7) One cited to a call of the page names
+        the call: the instruction says no number is read from a call's text, so a figure that is
+        none of that call's VALIDATED figures (its driver rows') breaks it, and is shown."""
+        if call:
+            return f"UNTRACEABLE figure '{n:g}' in {where} [from the call {ref}]: '{claim}'"
+        if ref is not None:
+            return f"UNTRACEABLE figure '{n:g}' in {where} [cited to {ref}]: '{claim}'"
+        return f"UNTRACEABLE figure '{n:g}' in {where}: '{claim}'"
+
+    def check_figure(f: _ClaimFigure, e: FigureCite, p: SourcedPoint, where: str, *,
                      dedup: bool, as_rank: bool = False) -> None:
         """One footnoted figure: a cited one traces to the fact it names (as that fact's
         percentile rank only when the claim writes it as one, ``as_rank``, #899); a computed one
         has inputs that each trace to theirs, and recomputes to the figure as written."""
-        def direct(x: FigureCite, rank: bool = False) -> tuple[bool, bool]:
-            """(traces, cited to a transcript OF THE PAGE) for a cited entry's own figure. A ref
-            that only LOOKS like a transcript — 'transcript' in a ref the layer does not carry — is
-            no softer than any other unknown ref: the soft route is for a real call's prose."""
+        n = f.signed_value
+
+        def direct(x: FigureCite, fig: _ClaimFigure | None,
+                   rank: bool = False) -> tuple[bool, bool]:
+            """(traces, cited to a transcript OF THE PAGE) for a cited entry's own figure, read as
+            the claim writes it (``fig``) or, for an input, as its literal is written. A ref that
+            only LOOKS like a transcript — 'transcript' in a ref the layer does not carry — is no
+            call of the page."""
             ref = x.source_ref or ""
             key = comparison_key(ref)
             nums = values_by_ref.get(key, _FactNumbers())
-            v = _claim_figures(x.figure)
+            if fig is None:   # an input: the claim's own figure where its literal is written
+                at = p.claim.find(x.figure)
+                v = [g for g in _claim_figures_as_written(p.claim)
+                     if at >= 0 and at <= g.start < at + len(x.figure)][:1]
+                v = v or [replace(g, start=-1) for g in _claim_figures_as_written(x.figure)]
+            else:
+                v = [fig]
             known = bool(key) and key in ref_keys
-            ok = bool(v) and known and _num_traces(v[0], nums, as_rank=rank)
+            ok = bool(v) and known and _num_traces(v[0], nums, p.claim, as_rank=rank)
             return ok, known and bool(_TRANSCRIPT_REF.search(ref))
 
         if e.derived is None:
-            ok, tx = direct(e, as_rank)
+            ok, tx = direct(e, f, as_rank)
             fkey = comparison_key(e.source_ref or "")
             if ok:
                 return
-            key = (round(n, 2), tx, fkey)
+            key = (round(n, 2), False, fkey)
             if dedup and key in flagged_figs:
                 return
             flagged_figs.add(key)
-            if tx:
-                flags.append(
-                    f"TRANSCRIPT-FIGURE '{n:g}' in {where}: '{_snip(p.claim)}' — from the cited "
-                    "earnings call, not its validated facts; verify against the call")
-            else:
-                flags.append(f"UNTRACEABLE figure '{n:g}' in {where} [cited to {e.source_ref}]: "
-                             f"'{p.claim}'")
+            flags.append(untraced(n, where, p.claim, e.source_ref, tx))
             return
         why: str | None = None
-        soft = False
         operands: list[_Written] = []
         for lit in e.inputs:
             src = next((x for x in p.figures if x.derived is None and x.figure == lit), None)
             if src is None or lit not in p.claim:
                 why = f"its input {lit!r} is not a cited figure of the claim"
                 break
-            ok, tx = direct(src)
-            if not ok and tx:
-                soft = True
-            elif not ok:
-                why = f"its input {lit!r} does not trace to the fact it cites ({src.source_ref})"
+            ok, tx = direct(src, None)
+            if not ok:   # (RG-D7) a call's input is held to the call's validated figures too
+                why = (f"its input {lit!r} is none of the validated figures of the call it cites "
+                       f"({src.source_ref})" if tx else
+                       f"its input {lit!r} does not trace to the fact it cites ({src.source_ref})")
                 break
             w = _written(lit)
             if w is None:
@@ -1010,20 +1420,14 @@ def _validate(
             why = f"{e.figure!r} is not a figure"
         if why is None and fig is not None and len(operands) == 2:
             why = _recompute(e.derived, operands[0], operands[1], fig)
-        key = (round(n, 2), soft and why is None, f"derived:{e.derived}:{'|'.join(e.inputs)}")
-        if why is None and not soft:
+        key = (round(n, 2), False, f"derived:{e.derived}:{'|'.join(e.inputs)}")
+        if why is None:
             return
         if dedup and key in flagged_figs:
             return
         flagged_figs.add(key)
-        if why is None:
-            flags.append(
-                f"TRANSCRIPT-FIGURE '{n:g}' in {where}: '{_snip(p.claim)}' — computed from a "
-                "figure of the cited earnings call, not its validated facts; verify against the "
-                "call")
-        else:
-            flags.append(f"UNDERIVED figure '{n:g}' in {where}: '{p.claim}' — {e.derived}("
-                         f"{', '.join(e.inputs)}): {why}, but the claim writes {e.figure}")
+        flags.append(f"UNDERIVED figure '{n:g}' in {where}: '{p.claim}' — {e.derived}("
+                     f"{', '.join(e.inputs)}): {why}, but the claim writes {e.figure}")
 
     def check_point(p: SourcedPoint, where: str, *, dedup: bool = False) -> SourcedPoint:
         cited = _traces(p.source_ref, refs)
@@ -1037,34 +1441,28 @@ def _validate(
                 f"MISMATCH {where}: '{_snip(p.claim, 55)}' asserts missing/UNKNOWN data yet cites "
                 "a PRESENT field — move to key_unknowns, don't source-bind it"
             )
-        ref_is_transcript = bool(_TRANSCRIPT_REF.search(p.source_ref))
         ref_key = comparison_key(p.source_ref)
+        # (RG-D7) a call OF THE PAGE: its figures are its driver rows' validated figures, which
+        # `_values_by_ref` holds under the call's ref — any other number is read from its text
+        ref_is_call = bool(_TRANSCRIPT_REF.search(p.source_ref)) and ref_key in ref_keys
         cited_nums = values_by_ref.get(ref_key, _FactNumbers()) if ref_key else _FactNumbers()
         entries = _figure_entries(p, where)
-        for n, end in _claim_figure_ends(p.claim):
-            as_rank = bool(_RANK_AFTER.match(p.claim[end:end + 32]))
-            e = entries.get(end)
+        for f in _claim_figures_as_written(p.claim):
+            n = f.signed_value
+            as_rank = bool(_RANK_AFTER.match(p.claim[f.end:f.end + 32]))
+            e = entries.get(f.end)
             if e is not None:   # (item 29) this figure carries its own footnote
-                check_figure(n, e, p, where, dedup=dedup, as_rank=as_rank)
+                check_figure(f, e, p, where, dedup=dedup, as_rank=as_rank)
                 continue
-            if _num_traces(n, cited_nums, as_rank=as_rank):
+            if _num_traces(f, cited_nums, p.claim, as_rank=as_rank):
                 continue
-            # key on SIGNED value + flag-type: don't let abs() collapse +N/-N (distinct facts) and
-            # don't let a soft TRANSCRIPT-FIGURE on one point suppress a hard UNTRACEABLE elsewhere.
-            key = (round(n, 2), ref_is_transcript, ref_key)
+            # key on SIGNED value: don't let abs() collapse +N/-N (distinct facts)
+            key = (round(n, 2), False, ref_key)
             if dedup and key in flagged_figs:
                 continue  # decisive mirror of an already-flagged bull/bear figure
             flagged_figs.add(key)
-            if ref_is_transcript:
-                # the figure lives in the cited call's prose, not the structured layer — route it to
-                # human verification; don't brand a sourced number untraceable (that would gut a
-                # high-value transcript-only point, e.g. 'the GAAP profit is a non-cash artifact').
-                flags.append(
-                    f"TRANSCRIPT-FIGURE '{n:g}' in {where}: '{_snip(p.claim)}' — from the cited "
-                    "earnings call, not its validated facts; verify against the call"
-                )
-            else:
-                flags.append(f"UNTRACEABLE figure '{n:g}' in {where}: '{p.claim}'")  # D4 full
+            flags.append(untraced(n, where, p.claim, p.source_ref if ref_is_call else None,
+                                  ref_is_call))
         return p.model_copy(update={"cited": cited})
 
     bull = [check_point(p, "bull_point") for p in synth.bull_points]
@@ -1078,6 +1476,22 @@ def _validate(
             ],
         }
     )
+    # (RG-D6, 2026-11-11) A FIGURE IN A KEY UNKNOWN, THE DECISIVE QUESTION OR THE EVIDENCE BALANCE
+    # WAS NEVER TRACED: only the points were, so "$7,777.7M" in the lean passed unread. These carry
+    # no source_ref, so each figure is traced, as written, against EVERY fact of the page — a
+    # wider universe than one cited fact, which the written width keeps narrow. The material-
+    # figures rule asks for figures in `key_unknowns`; this asks only that the page state them.
+    free = ([("key_unknown", u) for u in synth.key_unknowns]
+            + [("decisive.question", dq.question), ("evidence_balance", synth.evidence_balance)])
+    for where, text in free:
+        seen: set[float] = set()
+        for f in _claim_figures_as_written(text or ""):
+            as_rank = bool(_RANK_AFTER.match(text[f.end:f.end + 32]))
+            if f.signed_value in seen or _num_traces(f, page_nums, text, as_rank=as_rank):
+                continue
+            seen.add(f.signed_value)
+            flags.append(f"UNTRACEABLE figure '{f.signed_value:g}' in {where} [on no fact of the "
+                         f"page]: '{text}'")
     # THE FLAG SAID "should be tagged unverified" AND NOTHING TAGGED IT (review finding, #455).
     # This loop only APPENDED a flag; `tw` kept whatever source the model wrote. When that source is
     # plausible-looking but untraceable — FUBO drew `CIQ peer_capital_intensity impairment
