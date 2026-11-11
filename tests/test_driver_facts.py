@@ -315,9 +315,12 @@ def test_an_unknown_rows_value_reaches_the_synthesis_as_unknown_in_the_facts_and
     good, _ = _one(_DOWN_7, "down 7%")
     od = ds.OperatingDriversExtract(rows=[bad, good])
     digest = syn._operating_drivers_digest(od)
-    assert "widget shipments: up 7%" not in digest
-    assert "widget shipments: UNKNOWN — not verified against its quote" in digest
-    assert "widget shipments: down 7%" in digest
+    # each row now names its period (prompt-fix 2, fix request 2): the three move together, so the
+    # negative half still bites on the line's real shape
+    assert "widget shipments (period not stated): up 7%" not in digest
+    assert ("widget shipments (period not stated): UNKNOWN — not verified against its quote"
+            in digest)
+    assert "widget shipments (period not stated): down 7%" in digest
     dumped = _layer_with(bad, good).model_dump(exclude=syn.NOT_SENT)
     syn._mark_unverified_drivers(dumped, od)
     values = [r["value"] for r in dumped["operating_drivers"]["rows"]]

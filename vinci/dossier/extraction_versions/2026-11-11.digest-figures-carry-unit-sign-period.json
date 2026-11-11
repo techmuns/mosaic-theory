@@ -1,0 +1,9 @@
+{
+  "id": "2026-11-11.digest-figures-carry-unit-sign-period",
+  "follows": [
+    "2026-11-10.header-offset-and-renamed-tabs",
+    "2026-11-10.period-order-and-duration",
+    "2026-11-11.unpriced-count-names-its-horizon"
+  ],
+  "names": "every figure the synthesis is handed carries its sign, unit and period from the structured value (the prompt-fix program's fix 2, handed to fix request 2's streams on #1004): a signed change is printed to the digit it has, never '+0%' or '-0%' (the annual and quarterly growth rows, the consensus path's net move, the surprise history — ciq_sheets.signed_pct); a surprise year where CIQ states 0.0 beside an actual and an estimate of its own that differ reads 'n/a', explained once in the line's note (NFLX FY2004-FY2013, PARR FY2014-FY2016); the primary-source digest prints each level guide's unit and each event impact's $M, and a reconciliation's stated change; the operating-drivers digest prints each row's period and an anchored row's signed structured value. No committed page moves until it is re-read or re-assembled"
+}
