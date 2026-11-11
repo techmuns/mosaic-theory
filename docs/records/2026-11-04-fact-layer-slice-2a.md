@@ -1,6 +1,6 @@
 ---
 id: 2026-11-04-fact-layer-slice-2a
-status: open
+status: shipped
 date: 2026-11-04
 prs: [901, 904]
 supersedes:

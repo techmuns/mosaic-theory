@@ -1,6 +1,6 @@
 ---
 id: r3-reaches-the-create-path
-status: open
+status: shipped
 date: 2026-09-01
 prs: []
 supersedes:
@@ -85,3 +85,6 @@ ACCEPTED: `scenario-propose` still emits an R1-shaped template (hardcodes
 `multiple_basis: "EV/EBITDA"` plus revenue/margin assumption stubs), both hand-corrected to write
 this record. The VALIDATOR is recipe-aware; the PROPOSER is not. Falsifier: the next R3 name needs
 the same two hand edits. Recorded as STATE §5.0 row 9 rather than fixed silently.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `c005449f` (#557) on 2026-09-01. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

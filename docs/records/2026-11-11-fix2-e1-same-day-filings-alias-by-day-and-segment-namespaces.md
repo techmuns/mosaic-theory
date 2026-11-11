@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -130,3 +130,6 @@ RE1-D10 and RE1-D15 are latent on the corpus.
   `anchor.py`, `capital_allocation.py`, `ebitda_recon.py`, `cover_count.py`) keep breaking a
   same-day tie by row order. The theme-intelligence desk's P/E (`theme_intelligence.market`)
   still reads one alias for every date. Both are reported as follow-ups.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `65758333` (#986) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

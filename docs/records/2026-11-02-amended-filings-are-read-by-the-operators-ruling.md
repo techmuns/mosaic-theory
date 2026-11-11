@@ -1,6 +1,6 @@
 ---
 id: 2026-11-02-amended-filings
-status: open
+status: shipped
 date: 2026-11-02
 prs: [882]
 supersedes:

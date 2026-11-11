@@ -687,9 +687,11 @@ first"** — no prompt change or paid rebuild ships unmeasured.
 
 1. **Declare the TARGET in the PR before any draw** — one deterministic metric (`M-LABEL`; a
    material-direction change targets `M-SIGN` on NFLX, the page where it fires), or a judged class
-   once a judge passes its bar (record §9). The record's R2 says which metrics can be a target:
-   today only `M-LABEL` on the panel. The LLM judge FAILED its bar on TEST (PR 2: kappa 0.23), so
-   no judged class can be a target or a gate.
+   once a judge passes its bar (record §9). The record's R2 named `M-LABEL` on the panel; `M-GAP`
+   joined it after meeting its pre-registered bar on fresh gold (step 7;
+   `docs/records/2026-11-09-m-gap-gold-and-metric.md`), and #927's registration targeted it
+   (`docs/records/2026-11-09-fix4a-measured-on-the-panel.md`). The LLM judge FAILED its bar on
+   TEST (PR 2: kappa 0.23), so no judged class can be a target or a gate.
 2. **$0 first.** `python -m vinci.evals panel` (the rule still yields the frozen six), then
    `python -m vinci.evals compare --base origin/main --cand <branch> [--transform NAME]` (its
    capture child holds no key and no network): every
