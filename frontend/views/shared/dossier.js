@@ -573,6 +573,16 @@ const EXTRACTION_VERSIONS = [
     "are read; a single-point guide a forward verb governs is refused with a note; and a " +
     "guide filed under the next-fy default carries a machine-tier flag saying no period was " +
     "read"],
+  ["2026-11-10.covenant-value-figures",
+    "a covenant term's value states only figures its own quote states, in every class, not " +
+    "years and currency figures alone (TeamNostra fix request 2, RE2-D16 with E2-D19's " +
+    "residual): a whole date compares day, month and year; a ratio against one compares in " +
+    "any form (4.50x is 4.50 to 1.00, and a conformed copy's struck ratio is read); a percent " +
+    "compares with basis points, and 0% with 'zero'; an unmarked amount compares with any " +
+    "amount the quote states. A rate component's own clause, when it is a span of the exhibit, " +
+    "states figures for the value too. On the 27 committed pages 24 more PRESENT terms on 13 " +
+    "pages are withheld at their next re-assembly (23 a percent or bps figure, 1 a date); none " +
+    "moves until then"],
   ["2026-11-10.kind-by-exact-name",
     "fix request 2, order 5 (RA-D10 = A-D15 = RBC-D2, RA-D17): a CIQ export's kind is its " +
     "name's exact rule, the stem's end after the listing (the comps book's start, a call's " +
