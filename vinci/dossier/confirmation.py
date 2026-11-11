@@ -18,8 +18,11 @@ not the request the page's own draws used, and the record carries the request's 
 can be told apart.
 
 ONE CONFIRMATION PER PAGE VERSION. Each is recorded (`record`) whether or not the verdict is then
-logged, keyed by ticker and the page's `assembled_at`; a second log of the same page REUSES it and
-draws nothing, so a confirmation cannot be re-run until it agrees. A dry run's confirmation is
+logged, keyed by ticker, the page's `assembled_at` AND the sha256 of what the synthesis receives
+(`inputs_sha256`: a layer refresh keeps the stamp and moves the layers — Codex round 1); a second
+log of the same page REUSES it and draws nothing, so a confirmation cannot be re-run until it
+agrees. A page whose input record cannot identify its transcripts (a backfill) is NOT confirmed:
+today's files are not the page's inputs (Codex round 1). A dry run's confirmation is
 recorded too. Every command prints the confirmation it draws or reuses, so a later log that
 REUSES one seals `revealed_pre_verdict`: the human has seen it.
 The proposal stays sealed until the verdict is logged, as today.
@@ -65,9 +68,11 @@ class Confirmation:
     drawn_at: str
     dry_run: bool
     reused: bool
-    #: True when the transcripts read equal the page's own input record; False when the record
-    #: cannot say (a backfill, which never lists a transcript, or no record) — said, not hidden.
+    #: True when the transcripts read equal the page's own input record. A fresh confirmation is
+    #: never drawn without it (Codex round 1); a row recorded before that rule may carry False.
     transcripts_verified: bool = False
+    #: The sha256 of what the synthesis received (`inputs_sha256`), the reuse key's third part.
+    inputs_sha256: str | None = None
 
     def tally(self) -> dict[str, Any]:
         """What the ledger seals beside the proposal (R4): the split as counts, and which draws."""
@@ -77,7 +82,8 @@ class Confirmation:
                 "state": self.gate.state, "rule": GATE_RULE, "model": self.model,
                 "request_sha256": self.request_sha256, "drawn_at": self.drawn_at,
                 "assembled_at": self.assembled_at, "revealed_by_dry_run": self.dry_run,
-                "transcripts_verified": self.transcripts_verified}
+                "transcripts_verified": self.transcripts_verified,
+                "inputs_sha256": self.inputs_sha256}
 
 
 class _Recording(LlmClient):
@@ -115,6 +121,21 @@ def layer_as_synthesized(page: dict[str, Any]) -> MechanicalLayer:
         mech = mech.model_copy(update={
             "capital_structure": cs.model_copy(update={"covenant_term_rows": None})})
     return mech
+
+
+def inputs_sha256(page: dict[str, Any]) -> str:
+    """The sha256 of what the synthesis receives from the committed page: its layer as synthesized,
+    its ticker, name and sleeve, and the transcripts its input record names (file and sha256). The
+    third part of the reuse key, because `layer_refresh.write_recorded` (ciq-reread,
+    financials-backfill, the anchor refresh) moves a page's layers and keeps its `assembled_at`."""
+    recorded = sorted((str(c["file"]), str(c["sha256"]))
+                      for c in ((page.get("inputs") or {}).get("ciq") or [])
+                      if c.get("kind") == "transcript")
+    body = json.dumps({"ticker": page.get("ticker"), "name": page.get("name"),
+                       "sleeve": str(page.get("sleeve") or DEFAULT_SLEEVE),
+                       "layer": json.loads(layer_as_synthesized(page).model_dump_json()),
+                       "transcripts": recorded}, sort_keys=True)
+    return hashlib.sha256(body.encode()).hexdigest()
 
 
 def _sha256(path: Path) -> str:
@@ -181,7 +202,8 @@ def _from_row(row: dict[str, Any], sleeve: str) -> Confirmation:
     return Confirmation(ticker=row["ticker"], assembled_at=row.get("assembled_at"), gate=gate,
                         proposal=prop, model=row["model"], request_sha256=row.get("request_sha256"),
                         drawn_at=row["drawn_at"], dry_run=bool(row.get("dry_run")), reused=True,
-                        transcripts_verified=bool(row.get("transcripts_verified")))
+                        transcripts_verified=bool(row.get("transcripts_verified")),
+                        inputs_sha256=row.get("inputs_sha256"))
 
 
 def confirm(page: dict[str, Any], *, llm: LlmClient, ciq_root: Path, record: Path,
@@ -192,7 +214,9 @@ def confirm(page: dict[str, Any], *, llm: LlmClient, ciq_root: Path, record: Pat
 
     ticker, stamp = str(page["ticker"]), page.get("assembled_at")
     sleeve = str(page.get("sleeve") or DEFAULT_SLEEVE)
-    prior = [r for r in _rows(record) if r["ticker"] == ticker and r.get("assembled_at") == stamp]
+    key = inputs_sha256(page)
+    prior = [r for r in _rows(record) if r["ticker"] == ticker and r.get("assembled_at") == stamp
+             and r.get("inputs_sha256") == key]
     if prior:
         return _from_row(prior[0], sleeve)
     try:
@@ -201,6 +225,14 @@ def confirm(page: dict[str, Any], *, llm: LlmClient, ciq_root: Path, record: Pat
         raise ConfirmationError(f"{ticker}: the page's transcripts cannot be read as recorded "
                                 f"({exc}); the confirmation refuses rather than draw on other "
                                 "inputs") from exc
+    if not verified:
+        # TODAY'S FILES ARE NOT THE PAGE'S INPUTS (Codex round 1). A backfilled record never lists a
+        # transcript, so a call exported after the page was assembled would sway a proposal the
+        # ledger seals against the old page; printing UNVERIFIED did not stop it being sealed
+        raise ConfirmationError(f"{ticker}: the page's input record cannot identify the "
+                                "transcripts its build read (a backfilled record lists none), so "
+                                "today's files are not known to be its inputs — re-assemble the "
+                                "page, which records them; nothing drawn, nothing recorded")
     mech = layer_as_synthesized(page)
     rec = _Recording(llm)
     synth, flags, _log = synthesize(mech, llm=rec, ticker=ticker, name=str(page["name"]),
@@ -227,11 +259,12 @@ def confirm(page: dict[str, Any], *, llm: LlmClient, ciq_root: Path, record: Pat
            "state": gate.state, "rule": GATE_RULE, "evidence_balance": balance,
            "proposal": prop.action.value if prop.action is not None else None,
            "request_sha256": rec.request_sha256, "dry_run": dry_run,
-           "transcripts_verified": verified,
+           "transcripts_verified": verified, "inputs_sha256": key,
            "flags": [f for f in flags if "synthesis" in f]}
     record.parent.mkdir(parents=True, exist_ok=True)
     with record.open("a", encoding="utf-8") as f:
         f.write(json.dumps(row, sort_keys=True) + "\n")
     return Confirmation(ticker=ticker, assembled_at=stamp, gate=gate, proposal=prop,
                         model=llm.model, request_sha256=rec.request_sha256, drawn_at=drawn_at,
-                        dry_run=dry_run, reused=False, transcripts_verified=verified)
+                        dry_run=dry_run, reused=False, transcripts_verified=verified,
+                        inputs_sha256=key)

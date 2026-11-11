@@ -51,11 +51,19 @@ class _Scripted:
 
 @pytest.fixture()
 def googl() -> dict[str, typing.Any]:
-    """GOOGL's committed page. Its input record lists no transcripts (built before input records),
-    so on an empty CIQ folder the confirmation reads none, unverified — no stub needed."""
+    """GOOGL's committed page: a BACKFILLED input record, which never lists a transcript, so its
+    transcript inputs cannot be identified (Codex round 1: such a page cannot be confirmed)."""
     page: dict[str, typing.Any] = json.loads(
         (ROOT / "data/dossiers/GOOGL/dossier.json").read_text())
+    assert page["inputs"]["recorded"] == "backfill"
     return page
+
+
+@pytest.fixture()
+def built() -> dict[str, typing.Any]:
+    """TECX's committed page: a BUILD record (complete) listing no transcript, so on an empty CIQ
+    folder its transcript inputs are identified and verified — none — and no stub is needed."""
+    return _tecx()
 
 
 def _confirm(page: dict[str, typing.Any], leans: list[str], record: Path,
@@ -69,57 +77,57 @@ def _confirm(page: dict[str, typing.Any], leans: list[str], record: Path,
 
 
 def test_the_confirmation_draws_ten_and_r1_at_ten_decides(
-        googl: dict[str, typing.Any], tmp_path: Path) -> None:
+        built: dict[str, typing.Any], tmp_path: Path) -> None:
     """(+) 9 of 10 bullish passes R1 at ten (5 of 5 would be needed at five), so the sealed
     proposal is BUY, with its split; the row records the request's sha256 and the model."""
-    conf, llm = _confirm(googl, [BULL] * 9 + [MIXED], tmp_path / "c.jsonl")
+    conf, llm = _confirm(built, [BULL] * 9 + [MIXED], tmp_path / "c.jsonl")
     assert llm.calls == 10 and not conf.reused
     assert (conf.gate.count, conf.gate.attempted, conf.gate.required) == (9, 10, 9)
     assert conf.gate.passes and conf.proposal.action is not None
     assert conf.proposal.split == "9x strongly-bullish, 1x mixed of 10 draws (the 9-of-10 rule)"
     (row,) = [json.loads(x) for x in (tmp_path / "c.jsonl").read_text().splitlines()]
-    assert row["ticker"] == "GOOGL" and row["assembled_at"] == googl["assembled_at"]
+    assert row["ticker"] == "TECX" and row["assembled_at"] == built["assembled_at"]
     assert row["model"] == "scripted-model" and len(row["request_sha256"]) == 64
     assert row["proposal"] == conf.proposal.action.value and row["dry_run"] is False
-    # GOOGL's page predates input records: the transcripts read could not be checked, and say so
-    assert row["transcripts_verified"] is False and conf.transcripts_verified is False
+    # TECX's BUILD record lists no transcript, and none is on disk: identified and verified
+    assert row["transcripts_verified"] is True and conf.transcripts_verified is True
 
 
-def test_eight_of_ten_is_borderline(googl: dict[str, typing.Any], tmp_path: Path) -> None:
+def test_eight_of_ten_is_borderline(built: dict[str, typing.Any], tmp_path: Path) -> None:
     """(−) 8 of 10 fails R1 at ten: no proposal, C(iii)'s borderline, the split printed."""
-    conf, _ = _confirm(googl, [BULL] * 8 + [MIXED] * 2, tmp_path / "c.jsonl")
+    conf, _ = _confirm(built, [BULL] * 8 + [MIXED] * 2, tmp_path / "c.jsonl")
     assert conf.proposal.action is None and conf.gate.state == "borderline"
 
 
-def test_a_page_version_is_confirmed_once(googl: dict[str, typing.Any], tmp_path: Path) -> None:
+def test_a_page_version_is_confirmed_once(built: dict[str, typing.Any], tmp_path: Path) -> None:
     """(−) A second log of the same page REUSES the recorded confirmation and draws nothing, so
     it cannot be re-drawn until it agrees; (+) a re-assembled page is a new version and draws."""
     record = tmp_path / "c.jsonl"
-    first, _ = _confirm(googl, [BULL] * 8 + [MIXED] * 2, record)
-    again, llm = _confirm(googl, [BULL] * 10, record)
+    first, _ = _confirm(built, [BULL] * 8 + [MIXED] * 2, record)
+    again, llm = _confirm(built, [BULL] * 10, record)
     assert llm.calls == 0 and again.reused and again.gate == first.gate
     assert again.proposal.action is None
-    newer = {**googl, "assembled_at": "2026-12-01T00:00:00+00:00"}
+    newer = {**built, "assembled_at": "2026-12-01T00:00:00+00:00"}
     fresh, llm2 = _confirm(newer, [BULL] * 10, record)
     assert llm2.calls == 10 and not fresh.reused and fresh.proposal.action is not None
 
 
 def test_a_confirmation_that_learned_nothing_is_not_recorded(
-        googl: dict[str, typing.Any], tmp_path: Path) -> None:
+        built: dict[str, typing.Any], tmp_path: Path) -> None:
     """(−) Every draw failed (an outage, a missing key): refused, and NOT recorded, so the page's
     one confirmation is not used up."""
     from vinci.dossier.confirmation import ConfirmationError
     with pytest.raises(ConfirmationError, match="nothing recorded"):
-        _confirm(googl, ["fail"] * 10, tmp_path / "c.jsonl")
+        _confirm(built, ["fail"] * 10, tmp_path / "c.jsonl")
     assert not (tmp_path / "c.jsonl").exists()
 
 
 def test_transcripts_that_differ_from_the_page_s_record_refuse_before_any_draw(
-        googl: dict[str, typing.Any], tmp_path: Path) -> None:
+        built: dict[str, typing.Any], tmp_path: Path) -> None:
     """(−) A page whose input record lists a transcript that is not on disk: refused before any
     draw — the confirmation never draws on other inputs than the page's."""
     from vinci.dossier.confirmation import ConfirmationError
-    page = json.loads(json.dumps(googl))
+    page = json.loads(json.dumps(built))
     page.setdefault("inputs", {}).setdefault("ciq", []).append(
         {"file": "GOOGL call.pdf", "kind": "transcript", "sha256": "0" * 64})
     with pytest.raises(ConfirmationError, match="transcripts"):
@@ -208,7 +216,7 @@ def _record_in_tmp(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_log_verdict_seals_the_confirmation_and_both_splits(
-        googl: dict[str, typing.Any], tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        built: dict[str, typing.Any], tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """(+) R4: the sealed tally carries the page's own build and the confirmation; the sealed
     proposal is the confirmation's. A dry run's confirmation is REVEALED: reused by a later log,
     it seals `revealed_pre_verdict`."""
@@ -218,14 +226,14 @@ def test_log_verdict_seals_the_confirmation_and_both_splits(
     monkeypatch.setattr(llm_mod.AnthropicLlmClient, "from_config",
                         classmethod(lambda cls, c=None: _Scripted([BULL] * 10)))
     cfg = get_config()
-    dry = cli._confirm_seal(cfg, _args(tmp_path, dry_run=True), "GOOGL")
+    dry = cli._confirm_seal(cfg, _args(tmp_path, dry_run=True), "TECX")
     assert dry.action is not None and not dry.revealed
     assert dry.tally is not None and dry.tally["sealed_from"] == "confirmation"
-    assert dry.tally["page"] == googl["synthesis"]["draw_agreement"]
+    assert dry.tally["page"] == built["synthesis"]["draw_agreement"]
     assert dry.tally["confirmation"]["modal_count"] == 10
     assert dry.tally["confirmation"]["revealed_by_dry_run"] is True
     assert any("R1 at 10" in line for line in dry.lines)
-    real = cli._confirm_seal(cfg, _args(tmp_path, dry_run=False), "GOOGL")
+    real = cli._confirm_seal(cfg, _args(tmp_path, dry_run=False), "TECX")
     assert real.revealed and real.action == dry.action
 
 
@@ -280,7 +288,7 @@ def test_the_sealed_split_round_trips_through_the_store(tmp_path: Path) -> None:
 
 
 def test_a_reused_confirmation_is_revealed_whichever_command_drew_it(
-        googl: dict[str, typing.Any], tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        built: dict[str, typing.Any], tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """(−) Every `log-verdict` prints the confirmation BEFORE `log_verdict`'s own gates run, so a
     real log REFUSED there (a stale entry price, a stated limit) has shown the human the proposal
     exactly as a dry run does. A later log reusing that confirmation must seal it as revealed; it
@@ -291,44 +299,44 @@ def test_a_reused_confirmation_is_revealed_whichever_command_drew_it(
     monkeypatch.setattr(llm_mod.AnthropicLlmClient, "from_config",
                         classmethod(lambda cls, c=None: _Scripted([BULL] * 10)))
     cfg = get_config()
-    first = cli._confirm_seal(cfg, _args(tmp_path, dry_run=False), "GOOGL")
+    first = cli._confirm_seal(cfg, _args(tmp_path, dry_run=False), "TECX")
     assert not first.revealed   # drawn by this command, which already carries its verdict
-    again = cli._confirm_seal(cfg, _args(tmp_path, dry_run=False), "GOOGL")
+    again = cli._confirm_seal(cfg, _args(tmp_path, dry_run=False), "TECX")
     assert again.revealed, "a confirmation printed by an earlier command sealed as unseen"
 
 
 def test_a_reused_confirmation_is_the_gate_that_was_drawn_on_a_tie(
-        googl: dict[str, typing.Any], tmp_path: Path) -> None:
+        built: dict[str, typing.Any], tmp_path: Path) -> None:
     """(−) The record is written with sorted keys, so a TIED split came back from it in name
     order and the reused gate named another modal lean than the one drawn and recorded."""
     record = tmp_path / "c.jsonl"
-    first, _ = _confirm(googl, [BULL] * 5 + [MIXED] * 5, record)
+    first, _ = _confirm(built, [BULL] * 5 + [MIXED] * 5, record)
     assert first.gate.lean == "strongly-bullish"
-    again, llm = _confirm(googl, [BULL] * 10, record)
+    again, llm = _confirm(built, [BULL] * 10, record)
     assert llm.calls == 0 and again.gate == first.gate
 
 
 # ------------------------------------------------------------------- review round 0 (pre-PR)
 
 
-def test_a_partial_outage_is_not_recorded(googl: dict[str, typing.Any], tmp_path: Path) -> None:
+def test_a_partial_outage_is_not_recorded(built: dict[str, typing.Any], tmp_path: Path) -> None:
     """(−) More than two of ten draws FAILED (an outage, a rate limit): not the model's read, so
     it is refused and NOT recorded, and the page's one confirmation is not used up."""
     from vinci.dossier.confirmation import ConfirmationError
     with pytest.raises(ConfirmationError, match="nothing recorded"):
-        _confirm(googl, ["fail"] * 3 + [BULL] * 7, tmp_path / "c.jsonl")
+        _confirm(built, ["fail"] * 3 + [BULL] * 7, tmp_path / "c.jsonl")
     assert not (tmp_path / "c.jsonl").exists()
 
 
-def test_two_failed_draws_count_as_dissent(googl: dict[str, typing.Any], tmp_path: Path) -> None:
+def test_two_failed_draws_count_as_dissent(built: dict[str, typing.Any], tmp_path: Path) -> None:
     """(+) Up to two failed draws are R3's dissent: 8 bullish of 10 attempted is borderline, and
     it is recorded."""
-    conf, _ = _confirm(googl, ["fail"] * 2 + [BULL] * 8, tmp_path / "c.jsonl")
+    conf, _ = _confirm(built, ["fail"] * 2 + [BULL] * 8, tmp_path / "c.jsonl")
     assert (conf.gate.count, conf.gate.attempted, conf.gate.state) == (8, 10, "borderline")
     assert (tmp_path / "c.jsonl").exists()
 
 
-def test_a_corrupt_record_refuses_cleanly(googl: dict[str, typing.Any], tmp_path: Path,
+def test_a_corrupt_record_refuses_cleanly(built: dict[str, typing.Any], tmp_path: Path,
                                           monkeypatch: pytest.MonkeyPatch) -> None:
     """(−) A truncated record line is a LedgerError the command reports, not a traceback."""
     from vinci import cli
@@ -337,9 +345,9 @@ def test_a_corrupt_record_refuses_cleanly(googl: dict[str, typing.Any], tmp_path
     from vinci.ledger import LedgerError
     monkeypatch.setattr(llm_mod.AnthropicLlmClient, "from_config",
                         classmethod(lambda cls, c=None: _Scripted([BULL] * 10)))
-    (tmp_path / "c.jsonl").write_text('{"ticker": "GOOGL", "assembled_')
+    (tmp_path / "c.jsonl").write_text('{"ticker": "TECX", "assembled_')
     with pytest.raises(LedgerError, match="C\\(iv\\)"):
-        cli._confirm_seal(get_config(), _args(tmp_path, dry_run=True), "GOOGL")
+        cli._confirm_seal(get_config(), _args(tmp_path, dry_run=True), "TECX")
 
 
 def test_there_is_one_record_and_no_flag_to_name_another() -> None:
@@ -352,17 +360,17 @@ def test_there_is_one_record_and_no_flag_to_name_another() -> None:
 
 
 def test_a_page_without_a_sleeve_draws_on_the_default_sleeve(
-        googl: dict[str, typing.Any], tmp_path: Path) -> None:
+        built: dict[str, typing.Any], tmp_path: Path) -> None:
     """(+) Review round 0: a page that records no `sleeve` is drawn on `DEFAULT_SLEEVE`, as the
     build defaults it — never `None`, which `synthesize` refuses. The request is the one an
     explicit default-sleeve page sends, and differs from the page's own sleeve's."""
     from vinci.sleeves import DEFAULT_SLEEVE
-    assert googl["sleeve"] != DEFAULT_SLEEVE     # GOOGL is quality: the default is visible
-    bare = {k: v for k, v in googl.items() if k != "sleeve"}
-    explicit = {**googl, "sleeve": DEFAULT_SLEEVE}
+    assert built["sleeve"] != DEFAULT_SLEEVE     # TECX is quality: the default is visible
+    bare = {k: v for k, v in built.items() if k != "sleeve"}
+    explicit = {**built, "sleeve": DEFAULT_SLEEVE}
     got, _ = _confirm(bare, [BULL] * 10, tmp_path / "a" / "c.jsonl")
     want, _ = _confirm(explicit, [BULL] * 10, tmp_path / "b" / "c.jsonl")
-    own, _ = _confirm(googl, [BULL] * 10, tmp_path / "c" / "c.jsonl")
+    own, _ = _confirm(built, [BULL] * 10, tmp_path / "c" / "c.jsonl")
     assert got.request_sha256 == want.request_sha256 != own.request_sha256
 
 
@@ -376,10 +384,10 @@ def test_a_page_built_before_the_rule_prints_its_split_not_a_dict(
     from vinci.graph import llm as llm_mod
     monkeypatch.setattr(llm_mod.AnthropicLlmClient, "from_config",
                         classmethod(lambda cls, c=None: _Scripted([BULL] * 10)))
-    seal = cli._confirm_seal(get_config(), _args(tmp_path, dry_run=True), "GOOGL")
+    seal = cli._confirm_seal(get_config(), _args(tmp_path, dry_run=True), "TECX")
     (line,) = [x for x in seal.lines if "the page's own build" in x]
     assert "{" not in line
-    assert "4x mixed, 1x strongly-bullish of 5 draws" in line
+    assert "4x mixed, 1x strongly-bearish on reported economics of 5 draws" in line
     assert "unanimity" in line and "not unanimous" in line
 
 
@@ -415,39 +423,69 @@ def test_a_complete_build_that_read_no_transcript_is_verified_on_an_empty_folder
     assert page_transcripts("TECX", ciq_root=tmp_path, page=_tecx()) == (None, True)
 
 
-def test_a_backfilled_record_reads_unverified_and_says_why(
+def test_a_page_that_cannot_identify_its_transcripts_is_not_confirmed(
         googl: dict[str, typing.Any], tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """(+) GOOGL's record is a BACKFILL, which never lists a transcript: unverified, and the line
-    says so rather than claim the page has no input record (the real dry run printed that)."""
+    """(−) Codex round 1, P1: GOOGL's record is a BACKFILL, which never lists a transcript, so the
+    confirmation read TODAY's files: a call exported after the page was assembled would sway a
+    proposal the ledger seals against the old page. "UNVERIFIED" was printed, and sealed anyway.
+    It refuses before any draw, records nothing, and log-verdict refuses with it."""
     from vinci import cli
     from vinci.config import get_config
-    from vinci.dossier.confirmation import page_transcripts
+    from vinci.dossier.confirmation import ConfirmationError, page_transcripts
     from vinci.graph import llm as llm_mod
-    assert googl["inputs"]["recorded"] == "backfill"
+    from vinci.ledger import LedgerError
     assert page_transcripts("GOOGL", ciq_root=tmp_path, page=googl)[1] is False
+    llm = _Scripted([BULL] * 10)
+    with pytest.raises(ConfirmationError, match="cannot identify"):
+        _confirm(googl, [BULL] * 10, tmp_path / "c.jsonl")
     monkeypatch.setattr(llm_mod.AnthropicLlmClient, "from_config",
-                        classmethod(lambda cls, c=None: _Scripted([BULL] * 10)))
-    seal = cli._confirm_seal(get_config(), _args(tmp_path, dry_run=True), "GOOGL")
-    (line,) = [x for x in seal.lines if "its transcripts" in x]
-    assert "UNVERIFIED" in line and "backfill" in line
-    assert "built before input records" not in line
+                        classmethod(lambda cls, c=None: llm))
+    with pytest.raises(LedgerError, match="cannot identify"):
+        cli._confirm_seal(get_config(), _args(tmp_path, dry_run=True), "GOOGL")
+    assert llm.calls == 0 and not (tmp_path / "c.jsonl").exists()
 
+
+def test_a_refreshed_page_under_the_same_stamp_is_confirmed_again(
+        built: dict[str, typing.Any], tmp_path: Path) -> None:
+    """(−) Codex round 1, P2: `layer_refresh.write_recorded` (ciq-reread, financials-backfill, the
+    anchor refresh) changes a page's layers and keeps its `assembled_at`, so a confirmation keyed
+    on the stamp alone was REUSED for a page whose synthesis inputs had moved. The key carries the
+    inputs' sha256: a refreshed page draws afresh; an unchanged one still reuses."""
+    record = tmp_path / "c.jsonl"
+    first, _ = _confirm(built, [BULL] * 8 + [MIXED] * 2, record)
+    same, llm = _confirm(json.loads(json.dumps(built)), [BULL] * 10, record)
+    assert llm.calls == 0 and same.reused
+    refreshed = json.loads(json.dumps(built))
+    gaps = refreshed["mechanical"]["disclosure_gaps"]
+    gaps.append({**gaps[0], "item": gaps[0]["item"] + " (re-read)"})
+    assert refreshed["assembled_at"] == built["assembled_at"]
+    again, llm2 = _confirm(refreshed, [BULL] * 10, record)
+    assert llm2.calls == 10 and not again.reused and again.proposal.action is not None
+    rows = [json.loads(x) for x in record.read_text().splitlines()]
+    assert len(rows) == 2 and rows[0]["inputs_sha256"] != rows[1]["inputs_sha256"]
 
 _PROSE = ("Thank you, operator. Revenue grew in every segment this quarter and cloud backlog rose "
           "again; we continue to invest in capacity while holding operating discipline. ") * 8
 
 
-def _two_calls(tmp_path: Path) -> Path:
-    """A GOOGL folder holding two RTF-text calls (plain striprtf reads, no LibreOffice)."""
-    folder = tmp_path / "ciq" / "GOOGL"
+def _two_calls(tmp_path: Path) -> tuple[Path, dict[str, typing.Any]]:
+    """A TECX folder holding two RTF-text calls (plain striprtf reads, no LibreOffice), and TECX's
+    BUILD-record page with both calls listed in its input record by name and sha256 — a page whose
+    transcript inputs are identified, as a page built since 2026-11-05 records them."""
+    import hashlib
+    folder = tmp_path / "ciq" / "TECX"
     folder.mkdir(parents=True)
-    for q in ("Q2 2026 Earnings Call, Jul 22, 2026", "Q3 2026 Earnings Call, Oct 28, 2026"):
-        (folder / f"Alphabet Inc., {q}.rtf").write_text("{\\rtf1\\ansi " + _PROSE + "}")
-    return folder.parent
+    page = _tecx()
+    for q in ("Q2 2026 Earnings Call, Aug 10, 2026", "Q3 2026 Earnings Call, Nov 06, 2026"):
+        f = folder / f"Tectonic Therapeutic, Inc., {q}.rtf"
+        f.write_text("{\\rtf1\\ansi " + _PROSE + "}")
+        page["inputs"]["ciq"].append({"kind": "transcript", "freq": None, "file": f.name,
+                                      "sha256": hashlib.sha256(f.read_bytes()).hexdigest()})
+    return folder.parent, page
 
 
 def test_a_call_that_does_not_read_refuses_rather_than_draw_on_fewer_calls(
-        googl: dict[str, typing.Any], tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """(−) Found by the gate: GOOGL's Q3 call is an OLE Word doc read through LibreOffice, which
     fails a conversion while another runs, and production's reader then drops the call silently
     (the build flags it). A confirmation is drawn ONCE per page version, so drawing on fewer calls
@@ -455,7 +493,7 @@ def test_a_call_that_does_not_read_refuses_rather_than_draw_on_fewer_calls(
     from vinci.dossier import ciq_sheets
     from vinci.dossier.ciq import CiqParseError
     from vinci.dossier.confirmation import ConfirmationError, confirm
-    root = _two_calls(tmp_path)
+    root, page = _two_calls(tmp_path)
     real = ciq_sheets.read_text
 
     def busy(path: Path, fmt: typing.Any = None, **kw: typing.Any) -> str:
@@ -466,12 +504,17 @@ def test_a_call_that_does_not_read_refuses_rather_than_draw_on_fewer_calls(
     record = tmp_path / "c.jsonl"
     llm = _Scripted([BULL] * 10)
     with pytest.raises(ConfirmationError, match="did not read"):
-        confirm(googl, llm=llm, ciq_root=root, record=record)
+        confirm(page, llm=llm, ciq_root=root, record=record)
     assert llm.calls == 0 and not record.exists()
 
 
-def test_every_call_that_reads_is_drawn_on(googl: dict[str, typing.Any], tmp_path: Path) -> None:
-    """(+) Both calls read: both reach the request, and the confirmation is drawn."""
-    from vinci.dossier.confirmation import page_transcripts
-    text, verified = page_transcripts("GOOGL", ciq_root=_two_calls(tmp_path), page=googl)
-    assert text is not None and text.count("Earnings Call") == 2 and verified is False
+def test_every_call_that_reads_is_drawn_on(tmp_path: Path) -> None:
+    """(+) Both recorded calls read: both reach the request, verified, and the confirmation is
+    drawn."""
+    from vinci.dossier.confirmation import confirm, page_transcripts
+    root, page = _two_calls(tmp_path)
+    text, verified = page_transcripts("TECX", ciq_root=root, page=page)
+    assert text is not None and text.count("Earnings Call") == 2 and verified is True
+    llm = _Scripted([BULL] * 10)
+    conf = confirm(page, llm=llm, ciq_root=root, record=tmp_path / "c.jsonl")
+    assert llm.calls == 10 and conf.transcripts_verified is True

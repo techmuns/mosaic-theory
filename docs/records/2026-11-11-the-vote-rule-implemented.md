@@ -6,7 +6,7 @@ supersedes:
 superseded-by:
 ---
 
-# The vote rule is built (decision path): R1's binomial gate — today's 5-of-5 rule at five draws with every draw completed — counts failed, unparsed and unrecognized draws as dissent and keys two spellings of one lean as one; the split is printed beside every proposal and sealed in the ledger; a failing committed lean reads BORDERLINE; and `log-verdict` seals the proposal from a recorded ten-draw confirmation (R1 at ten). No committed page's proposal moves until it is re-assembled
+# The vote rule is built (decision path): R1's binomial gate — today's 5-of-5 rule at five draws with every draw completed — counts failed, unparsed and unrecognized draws as dissent and keys two spellings of one lean as one; the split is printed beside every proposal and sealed in the ledger; a failing committed lean reads BORDERLINE; and `log-verdict` seals the proposal from a recorded ten-draw confirmation (R1 at ten). No committed page's proposal moves until it is re-assembled, and a page whose input record cannot identify its transcripts (the 18 backfills) cannot be confirmed until then
 
 **THE ASK.** Step 4 of the vote-rule decision (`docs/records/2026-11-10-the-proposal-vote-rule-design.md` §8–§9), from the coordinator after #978 merged, under the operator's 2026-11-11 "go ahead with the correct steps as per experts". The independence the design's tables assume was not falsified (`docs/records/2026-11-11-vote-rule-independence-measured.md`).
 
@@ -46,6 +46,8 @@ What does not change:
   - **The decision path never imports the replay harness.** `test_nothing_on_the_decision_path_imports_the_harness` holds. Both readers are the harness's own readings written on the decision path. Tests pin them equal to `evals.capture_child.pre_synthesis_mech` on every committed page, and to `evals.replay.transcript_for` on the pages whose licensed transcripts are on the machine (skipped in CI).
   - **One confirmation per page version** (ticker + `assembled_at`). It is recorded in ONE file, `data/snapshots/proposal_confirmations.jsonl`, whether or not the verdict is then logged. A later log REUSES it, so it is never re-drawn until it agrees. No flag names another record.
   - **A confirmation that learned nothing is refused and NOT recorded.** That covers every draw failing, or more than `MAX_FAILED_DRAWS` = 2 failing (an outage, not a read), so an outage cannot use up a page's one confirmation. Up to two failed draws are R3's dissent.
+  - **A page whose input record cannot identify its transcripts is NOT confirmed** (Codex round 1, P1). A BACKFILLED record never lists a transcript, so today's files are not known to be the page's inputs. A call exported after the page was assembled would otherwise sway a proposal sealed against the old page. Such a page refuses before any draw and records nothing, so `log-verdict` refuses with it until the page is re-assembled, which records its inputs.
+  - **Reuse is keyed on what the synthesis receives** (Codex round 1, P2): ticker, `assembled_at` AND `inputs_sha256`, which covers the layer as synthesized, the name, the sleeve and the recorded transcripts. `layer_refresh.write_recorded` (ciq-reread, financials-backfill, the anchor refresh) moves the layers and keeps the stamp. A refreshed page therefore draws afresh, and an unchanged page still reuses.
   - **Every call on file must read.** Production's reader drops a call whose read fails, and the build flags it. LibreOffice fails a conversion while another runs, and GOOGL's Q3 call is an OLE Word document it converts. A call short would seal a read of other inputs for that page version for good, so the confirmation refuses and records nothing. No committed page carries the build's unparsed-call flag (0 of 27), so this blocks none today.
   - **`--dry-run` draws (or reuses) the confirmation**, prints what would be sealed, and writes nothing to the ledger. Every command prints the confirmation it draws or reuses, so a log that REUSES one seals `revealed_pre_verdict`, whichever command drew it.
   - **The record states whether the transcripts were verified** against the page's input record. A BACKFILLED record never lists a transcript, so it (18 of the 27 committed pages), or a page with no record, says UNVERIFIED rather than hide it.
@@ -128,6 +130,31 @@ Nine findings. **Seven are FIXED**:
 
 The pre-check full suite also caught the decision path importing the harness, through the first draft of `confirmation.py`. It was fixed by the two production readers above.
 
+## Codex round 1 (on `e3a14eaf`): two findings, two FIXes
+
+Both are pinned by a test that fails on the PR head `0ec5d6d0`.
+
+| finding | test, and its failing line on `0ec5d6d0` |
+|---|---|
+| **P1, `confirmation.py:150`:** a backfilled page was confirmed on today's transcript files | `test_a_page_that_cannot_identify_its_transcripts_is_not_confirmed`: `Failed: DID NOT RAISE ConfirmationError` |
+| **P2, `confirmation.py:197`:** a page refreshed under the same `assembled_at` reused a confirmation drawn on its old layers | `test_a_refreshed_page_under_the_same_stamp_is_confirmed_again`: `assert (0 == 10)` (no draw) |
+
+**The test fixture page moved.** Every test that draws a confirmation moved from GOOGL (a backfill, which now refuses) to TECX, a BUILD record listing no transcript, which is verified on an empty folder. The two-call tests now record both calls in TECX's input record, by name and sha256.
+
+**On the corpus** (all 27 committed pages, against the licensed folder, 2026-11-11):
+- The split is by input-record kind. The **9 build records can be confirmed**: EPAM, MCK, NFLX, TECX, UBER, V, VITL, VRRM and WLK. The **18 backfills cannot**.
+- `inputs_sha256` is stable across two computations on all 27.
+- **The first run of this check was taken under load.** Other sessions were converting with LibreOffice, so 10 pages refused because a call "did not read": 7 backfills, plus MCK, NFLX and V. Retried one at a time, MCK and V verified at once, and NFLX refused once and verified on its second try. That is the transient, loud refusal of the every-call rule above, and it means "re-run alone".
+
+**The paid demonstration's page now refuses.** GOOGL is a backfill. The same dry run, at $0 after the fix:
+
+```
+machine proposal for GOOGL: none — evidence two-sided (mixed) — the human's call
+could not log verdict: C(iv): the ten-draw confirmation could not be drawn (GOOGL: the page's input record cannot identify the transcripts its build read (a backfilled record lists none), so today's files are not known to be its inputs — re-assemble the page, which records them; nothing drawn, nothing recorded) — the proposal is sealed only from a confirmation; nothing was logged
+```
+
+The ten-draw path the paid run showed is the same code on a build-record page. A paid dry run on one (~$4) is for the coordinator or the operator to ask for; it is not run here.
+
 ## Found, not fixed / follow-ups
 
 - **#978's two deferred Codex findings,** in the frozen independence scorer (`vinci/evals/independence.py`), for its next version:
@@ -145,6 +172,7 @@ The pre-check full suite also caught the decision path importing the harness, th
 - **Accepted, as decided (§9):**
   - a page's own proposal keeps the five-draw instability;
   - each logged verdict costs one ten-draw confirmation (~$3–4), once per page version.
+- **A consequence for the operator, new in Codex round 1: a verdict on a backfilled page needs that page re-assembled first.** That is 18 of the 27 committed pages, and each re-assembly is a paid build. The alternative was to seal a proposal drawn on today's files against an older page, which is the defect P1 names. The falsifier: a confirmation row whose `transcripts_verified` is false and whose `drawn_at` is after this PR merged.
 - **Accepted, new here: the confirmation record is a file in the checkout that runs `log-verdict`.**
   - **The cost:** reuse holds only where that file is. A log run from another checkout before it is committed would draw again.
   - **The operator's step:** commit `data/snapshots/proposal_confirmations.jsonl` beside `decision_ledger.jsonl` after a real log. No runbook step commits either today.
