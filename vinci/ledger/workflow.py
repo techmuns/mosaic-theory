@@ -22,6 +22,7 @@ from pydantic import ValidationError
 from vinci.labels import resolve_label
 from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import (
+    CLOSE_ID_PREFIX,
     EVENT_CLOSE,
     ORIGIN_FOLLOWED,
     ORIGIN_SCREEN,
@@ -30,9 +31,11 @@ from vinci.schemas.ledger import (
     LedgerEntry,
     LedgerFact,
     Verdict,
-    close_entry_id,
     corrected,
     corrections_by_decision,
+    decision_entry_id,
+    follow_up_id,
+    voids_by_decision,
 )
 from vinci.store import Store
 
@@ -260,7 +263,8 @@ def log_verdict(
         else Disposition.OVERRIDDEN
     )
     entry = LedgerEntry(
-        entry_id=f"V-{candidate_id}",  # one verdict per candidate; re-log → append-only conflict
+        # one OPEN decision per candidate, never entered before the earlier one left the book
+        entry_id=next_decision_id(store, candidate_id, entering_on=close.as_of),
         candidate_id=candidate_id,
         internal_id=ident.internal_id,
         ticker=ident.ticker,
@@ -287,6 +291,48 @@ def log_verdict(
     )
     store.append_ledger(entry)
     return entry
+
+
+def next_decision_id(store: Store, candidate_id: str, *, entering_on: date | None = None) -> str:
+    """The id the next decision for ``candidate_id`` takes (operator ruling 2026-11-11): its first
+    is ``V-{candidate}``; a fresh one after the earlier is CLOSED or VOIDED is ``V-{candidate}-{n}``
+    (`decision_entry_id`). While an earlier decision is still open it is refused — a candidate
+    holds one open decision, so a re-log can never stand beside the call it would contradict.
+
+    NOR BEFORE THE EARLIER ONE LEFT THE BOOK (Codex round 2 on #984). A close takes a decision out
+    of the book from its exit session and a void from its ruling date, as every reader reads them
+    (`closed_decision_ids`, `voids_by_decision(as_of=…)`). A fresh decision ``entering_on`` an
+    earlier date — a back-dated ``--ref`` — would stand beside it in every cut between the two, so
+    it is refused. On or after that date it is the next decision."""
+    rows = list(store.iter_ledger())
+    mine = [r for r in rows if r.candidate_id == candidate_id and r.event is None]
+    if not mine:
+        return decision_entry_id(candidate_id)
+    if still_open := _open_decisions(rows, mine):
+        raise LedgerError(
+            f"{candidate_id!r} already holds an open decision {still_open[0].entry_id!r} — the "
+            f"ledger is append-only: close it, or have it voided by a ruling, before a fresh "
+            f"decision is logged")
+    if entering_on is not None:
+        left = {r.closes_entry_id: r.exit_price_as_of for r in rows
+                if r.event == EVENT_CLOSE and r.exit_price_as_of is not None}
+        left.update({k: v.ruled_on for k, v in voids_by_decision(rows).items()
+                     if v.ruled_on is not None})
+        for d in mine:
+            if (gone := left.get(d.entry_id)) is not None and entering_on < gone:
+                raise LedgerError(
+                    f"a fresh {candidate_id!r} decision would enter on {entering_on}, before "
+                    f"{d.entry_id!r} left the book on {gone} — every cut between the two would "
+                    f"hold both; enter it on or after {gone}")
+    return decision_entry_id(candidate_id, len(mine) + 1)
+
+
+def _open_decisions(rows: list[LedgerEntry], decisions: list[LedgerEntry]) -> list[LedgerEntry]:
+    """``decisions`` that neither a close nor a void in ``rows`` (the whole ledger) names — the
+    one rule `next_decision_id` and `close_position` both read "open" by."""
+    closed = {r.closes_entry_id for r in rows if r.event == EVENT_CLOSE}
+    voided = voids_by_decision(rows)
+    return [d for d in decisions if d.entry_id not in closed and d.entry_id not in voided]
 
 
 def close_position(
@@ -326,10 +372,21 @@ def close_position(
         raise LedgerError(
             f"no open decision for candidate {candidate_id!r} — nothing to close. Known: {known}")
     if len(decisions) > 1:
+        # A FRESH DECISION AFTER A CLOSE OR A VOID (`next_decision_id`): the candidate holds one
+        # OPEN decision, and that is the one a close names
+        live = _open_decisions(rows, decisions)
+        if len(live) != 1:
+            raise LedgerError(
+                f"{candidate_id!r} has {len(decisions)} decision rows "
+                f"({sorted(d.entry_id for d in decisions)}) and {len(live)} of them open — a close "
+                f"names exactly one open position.")
+        decisions = live
+    # A VOIDED DECISION IS NO POSITION (operator ruling 2026-11-11): it was ruled out of the
+    # record, so there is nothing to close — a close row would put it back into the realized book
+    if (void := voids_by_decision(rows).get(decisions[0].entry_id)) is not None:
         raise LedgerError(
-            f"{candidate_id!r} has {len(decisions)} decision rows "
-            f"({sorted(d.entry_id for d in decisions)}) — close by entry_id is not supported, so "
-            f"this must be resolved before a close can name its position unambiguously.")
+            f"{decisions[0].entry_id!r} is VOIDED by {void.entry_id} (ruled {void.ruled_on}) — it "
+            f"is out of the record, and a voided decision is never closed")
     # READ AT ITS CORRECTION (RF-D7): the exit is guarded against, and the close repeats, the entry
     # every reader of returns measures from — a close typed between the sealed and the corrected
     # entry date would otherwise pass here and pair an exit before its entry in the realized view
@@ -369,7 +426,7 @@ def _append_close(
     call site is simply the one that had the hole.
     """
     close = decision.model_copy(update={
-        "entry_id": close_entry_id(decision.candidate_id),
+        "entry_id": follow_up_id(CLOSE_ID_PREFIX, decision.entry_id),
         "event": EVENT_CLOSE,
         "closes_entry_id": decision.entry_id,
         "exit_price": exit_price,

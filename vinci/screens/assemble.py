@@ -16,10 +16,12 @@ from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import (
     REPORTING,
     ConceptPoint,
+    ServedSeries,
     currency_withheld,
-    extract_points,
     facts_as_of,
     refused_endpoint,
+    served_filing,
+    served_series,
     share_count_change,
     unit_currency,
 )
@@ -340,7 +342,9 @@ def annual_eps_point_as_of(points: list[ConceptPoint], d: date,
             and (max_age_days is None or (d - p.period_end).days <= max_age_days)]
     if not cand:
         return None
-    return max(cand, key=lambda p: (p.period_end, p.filed))
+    # a same-day 10-K and 10-K/A by the filing served, never by row order (RE1-D7)
+    end = max(p.period_end for p in cand)
+    return served_filing(p for p in cand if p.period_end == end)
 
 
 def annual_eps_as_of(points: list[ConceptPoint], d: date,
@@ -370,8 +374,13 @@ def pe_current_and_percentile(
     reference_date: date,
     min_points: int = _PE_MIN_POINTS,
     ads: AdsRatio | None = None,
+    history: ServedSeries | None = None,
 ) -> tuple[DataField[float], DataField[float]]:
     """(current P/E, percentile of current P/E within its trailing range). Each may be UNKNOWN.
+
+    ``history`` (:func:`vinci.edgar.concepts.served_series` of ``eps_diluted``) makes each bar of
+    the range read the EPS alias served on ITS day (RE1-D10); without it every bar reads
+    ``annual_eps``, the alias served on ``reference_date``.
 
     The percentile defers to UNKNOWN unless ≥ ``min_points`` P/E observations exist in the trailing
     window — a too-short range cannot reliably establish "at floor".
@@ -390,7 +399,7 @@ def pe_current_and_percentile(
     same in any, so callers read EPS in the filer's own currency (``REPORTING``) and only the level
     is refused. What a constant currency does not cancel is FX drift across the window."""
     pe, pct = _pe_pair_per_reported_share(price_bars, annual_eps, reference_date=reference_date,
-                                          min_points=min_points)
+                                          min_points=min_points, history=history)
     foreign = sorted({c for p in annual_eps
                       if (c := unit_currency(p.unit)) is not None and c != "USD"})
     if foreign and pe.value is not None:
@@ -419,6 +428,7 @@ def _pe_pair_per_reported_share(
     *,
     reference_date: date,
     min_points: int,
+    history: ServedSeries | None = None,
 ) -> tuple[DataField[float], DataField[float]]:
     """The P/E pair with the price and the EPS taken as the filer reports them — one unit, as for
     every line that is not a depositary receipt (:func:`pe_current_and_percentile`)."""
@@ -490,28 +500,53 @@ def _pe_pair_per_reported_share(
     # HLF still returns None (its 2018 restatement is far outside even the extended window) and
     # NFLX still returns 10.02 — the fix this PR shipped is unchanged, its boundary is closed.
     _split_start = reference_date - timedelta(days=_PE_WINDOW_DAYS + MAX_EPS_AGE_DAYS)
-    _in_window = [p for p in annual_eps if p.period_end >= _split_start]
-    adjusted = ""
-    if (factor := share_basis_change(_in_window)) is not None:
-        split = split_restatement([p for p in _in_window if p.filed <= reference_date])
-        if split is None or cur_pt.filed < split.restated_from:
-            return pe_df, DataField.unknown(
-                source="EDGAR", tier=SourceTier.DERIVED,
-                note=f"{G3_SPLIT_BASIS} (filer restated its own comparatives by ~{factor:.4g}x)",
-            )
-        annual_eps = [p.model_copy(update={"value": p.value * split.scale})
-                      if p.filed < split.restated_from else p for p in annual_eps]
-        adjusted = (f"; EPS filed before {split.restated_from.isoformat()} put on the current "
-                    f"share basis by the filer's own ~{split.factor:.4g}x restatement (a "
-                    f"{'forward' if split.scale < 1 else 'reverse'} split)")
+    # EVERY ALIAS THE RANGE CAN READ, each on its own (RE1-D10): a bar before a re-tag reads the
+    # alias served then, and a split inside that alias's series divides across bases the same way.
+    # One alias at a time, because two aliases' figures for one period are two measures (total
+    # versus continuing operations), not a restatement of one. A split the filer states in an
+    # alias's series is ADJUSTED, not refused (operator, 2026-11-11), and the adjustment is kept
+    # per alias TAG, so each bar puts the EPS IT reads on the current basis.
+    current = {p.tag for p in annual_eps}
+    series = [annual_eps, *(pts for tag, pts in (history.by_tag() if history else {}).items()
+                            if tag not in current)]
+    split_of: dict[str, SplitRestatement] = {}
+    stated: list[SplitRestatement] = []
+    for pts in series:
+        _in_window = [p for p in pts if p.period_end >= _split_start]
+        if (factor := share_basis_change(_in_window)) is not None:
+            split = split_restatement([p for p in _in_window if p.filed <= reference_date])
+            if split is None or (pts is annual_eps and cur_pt.filed < split.restated_from):
+                return pe_df, DataField.unknown(
+                    source="EDGAR", tier=SourceTier.DERIVED,
+                    note=f"{G3_SPLIT_BASIS} (filer restated its own comparatives by "
+                         f"~{factor:.4g}x)",
+                )
+            split_of.update({p.tag: split for p in pts})
+            if split not in stated:
+                stated.append(split)
+    adjusted = "".join(
+        f"; EPS filed before {s.restated_from.isoformat()} put on the current share basis by the "
+        f"filer's own ~{s.factor:.4g}x restatement (a {'forward' if s.scale < 1 else 'reverse'} "
+        f"split)" for s in stated)
 
     start = reference_date - timedelta(days=_PE_WINDOW_DAYS)
     hist: list[float] = []
+    #: each RUN of bars priced under one tag, in bar order, so a range read across a re-tag says
+    #: so — a run, not a tag's first and last bar, because an alias the walk leaves can return
+    read_under: list[tuple[str, date, date]] = []
     for b in bars:
         if start <= b.bar_date <= reference_date:
-            e = annual_eps_as_of(annual_eps, b.bar_date)
-            if e:
-                hist.append(b.close / e)
+            pt = annual_eps_point_as_of(history.on(b.bar_date) if history is not None
+                                        else annual_eps, b.bar_date)
+            if pt is not None:
+                s = split_of.get(pt.tag)
+                hist.append(b.close / (pt.value * s.scale
+                                       if s is not None and pt.filed < s.restated_from
+                                       else pt.value))
+                if read_under and read_under[-1][0] == pt.tag:
+                    read_under[-1] = (pt.tag, read_under[-1][1], b.bar_date)
+                else:
+                    read_under.append((pt.tag, b.bar_date, b.bar_date))
     if len(hist) < min_points:
         pctile_u: DataField[float] = DataField.unknown(
             source="EDGAR",
@@ -523,9 +558,11 @@ def _pe_pair_per_reported_share(
     # The percentile compares TODAY's P/E to a trailing range of P/Es, every one of which carries
     # the same EPS-vintage lag — so its as-of is the EPS period too, and the note says what the
     # range covers rather than leaving "reference_date" to imply a same-day range.
+    tags = ("" if len(read_under) < 2 else "; EPS read under " + ", then ".join(
+        f"{tag} ({a.isoformat()}..{z.isoformat()})" for tag, a, z in read_under))
     pctile_df = DataField.present(
         pctile, as_of=cur_pt.period_end, source="EDGAR", tier=SourceTier.DERIVED,
-        note=(f"{len(hist)} P/E observations over {_PE_WINDOW_DAYS}d; {basis}{adjusted}"),
+        note=(f"{len(hist)} P/E observations over {_PE_WINDOW_DAYS}d; {basis}{adjusted}{tags}"),
     )
     return pe_df, pctile_df
 
@@ -633,11 +670,14 @@ def enrich_with_fundamentals(
         facts = facts_as_of(facts, cut)
     # the filer's own currency as of the reference date: the percentile is currency-free and the
     # level is withheld when it is not USD (pe_current_and_percentile)
-    annual_eps = ([p for p in extract_points(facts, "eps_diluted", currency=REPORTING,
-                                             as_of=reference_date)
-                   if p.is_annual] if facts else [])
+    # each bar of the range reads the EPS alias served on its day (RE1-D10); the blob is cut at
+    # the price date, so the series on the reference date is `extract_points`' own
+    history = (served_series(facts, "eps_diluted", currency=REPORTING, as_of=reference_date)
+               if facts else None)
+    annual_eps = ([p for p in history.on(reference_date) if p.is_annual]
+                  if history is not None else [])
     pe, pe_pctile = pe_current_and_percentile(price_bars, annual_eps, reference_date=reference_date,
-                                              ads=rec.ads)
+                                              ads=rec.ads, history=history)
     # EV/EBITDA — the multiple and its trailing-range percentile are both DEFERRED (need net-debt).
     # The multiple stays UNKNOWN: do NOT write EBITDA *dollars* (``snap.ebitda_annual``) into a
     # field named for a multiple — that mislabel traps any reader (the dossier sources it from CIQ).

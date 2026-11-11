@@ -113,6 +113,7 @@ from vinci.edgar.concepts import (
     fiscal_calendar,
     foreign_currency,
     points_for_tag,
+    served_series,
     superseded,
 )
 from vinci.edgar.net_debt import not_applicable
@@ -297,10 +298,12 @@ def _at_latest_close(record: DataRecord, store: Store, edgar: EdgarClient) -> Da
                  f"{bar.bar_date.isoformat()} close")
         pct = pe
     else:
-        annual_eps = [p for p in extract_points(facts, "eps_diluted", currency=REPORTING,
-                                                as_of=bar.bar_date) if p.is_annual]
+        # THE ALIAS SERVED ON EACH BAR'S DAY, the latest close's included (RE1-D10): the walk read
+        # every row of the blob, so a re-tag filed after a bar decided which alias that bar read
+        history = served_series(facts, "eps_diluted", currency=REPORTING, as_of=bar.bar_date)
+        annual_eps = [p for p in history.on(bar.bar_date) if p.is_annual]
         pe, pct = pe_current_and_percentile(bars, annual_eps, reference_date=bar.bar_date,
-                                            ads=record.ads)
+                                            ads=record.ads, history=history)
     return record.model_copy(update={
         "prices": record.prices.model_copy(update={"last": last}),
         "fundamentals": f.model_copy(update={"pe": pe, "pe_pctile_vs_history": pct})})

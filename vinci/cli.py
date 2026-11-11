@@ -41,6 +41,7 @@ from vinci.eod.splits import (
 )
 from vinci.eod.tiingo import TIINGO_LEAD
 from vinci.ledger import LedgerError, log_verdict
+from vinci.ledger.workflow import next_decision_id
 from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
 from vinci.monitor import read_assignments_file as mon_assignments
 from vinci.orchestrator import (
@@ -64,14 +65,18 @@ from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
     EVENT_CORRECTION,
+    EVENT_VOID,
     ORIGIN_FOLLOWED,
     ORIGIN_SCREEN,
     Confidence,
     LedgerEntry,
     Verdict,
+    VoidMark,
+    corrected,
     corrections_by_decision,
     origin_of,
     sleeve_of,
+    voids_by_decision,
 )
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
@@ -1688,6 +1693,13 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
     resolver = EntityResolver.from_config(cfg)  # sources the name's EDGAR SIC → sector at log time
     with Store(cfg.db_path) as store:
         try:
+            # A CANDIDATE WITH AN OPEN DECISION IS REFUSED FIRST (#984 × #982). `log_verdict` takes
+            # its id from `next_decision_id`, which refuses while an earlier decision is open; the
+            # vote rule's confirmation below draws ten paid syntheses BEFORE that write, so asking
+            # it here keeps a log that can never land from spending anything. The entry is a close
+            # on or before ``ref``, so a ``ref`` before the earlier decision left the book is
+            # refused here too (the exact entry date is checked again at the write).
+            next_decision_id(store, args.candidate_id, entering_on=ref)
             cand = store.get_candidate(args.candidate_id)
             if cand is not None and (
                 clash := _screen_id_book_conflict(cfg, cand.data_record.identity.ticker)
@@ -1933,6 +1945,11 @@ def _cmd_correct_entry(args: argparse.Namespace) -> int:
     if decision is None:
         print(f"REFUSED: no decision row {args.entry_id!r} in {path}.")
         return 1
+    # VOIDED → refused before any fetch: a voided decision is out of the record
+    if (gone := voids_by_decision(committed).get(decision.entry_id)) is not None:
+        print(f"REFUSED: {decision.entry_id} is VOIDED by {gone.entry_id} (ruled "
+              f"{gone.ruled_on}) — nothing is corrected on a voided decision.")
+        return 1
     # ALREADY CORRECTED → said before any fetch, so a dry run never prints a correction as pending
     if (done := corrections_by_decision(committed).get(decision.entry_id)) is not None:
         print(f"REFUSED: {decision.entry_id} is already corrected by {done.entry_id} "
@@ -1984,6 +2001,107 @@ def _cmd_correct_entry(args: argparse.Namespace) -> int:
     print(f"  appended {row.entry_id}, correcting {row.corrects_entry_id}; the decision row keeps "
           f"its sealed price, and every reader of returns reads this one.")
     _export_ledger(cfg, "correct-entry")
+    return 0
+
+
+def _void_mark(decision: LedgerEntry) -> VoidMark:
+    """The decision's result to date as THE MONITOR marks it: `vinci monitor` run into a scratch
+    root at the latest close (nothing is written into ``data/monitor/``), and the decision's own
+    row read back — the same marking code every monitor day uses, never a second computation. The
+    row is the one at the entry the decision is read at (its correction's, when corrected)."""
+    import contextlib
+    import io
+    import tempfile
+
+    with tempfile.TemporaryDirectory(prefix="vinci-void-mark-") as scratch:
+        try:
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = _cmd_monitor(argparse.Namespace(ref=None, out=scratch))
+        except RuntimeError as exc:     # the monitor's own refusal to mark a leg (a missing bar,
+            # UNKNOWN dividends or splits) — said as this command's refusal, never a traceback
+            raise LedgerError(f"the monitor could not mark the book, so {decision.entry_id} has "
+                              f"no result to seal: {exc}") from exc
+        days = sorted((Path(scratch) / "data" / "monitor").glob("2*.json"))
+        if rc != 0 or not days:
+            raise LedgerError(f"the monitor could not mark {decision.entry_id} (exit {rc}) — a "
+                              f"void seals the result to date, and none could be read")
+        day = json.loads(days[-1].read_text())
+    rows = [r for r in day["rows"] if r["ticker"] == decision.ticker
+            and r["entry_date"] == decision.entry_price_as_of.isoformat()]
+    if len(rows) != 1:
+        raise LedgerError(f"the monitor's day {days[-1].name} holds {len(rows)} rows for "
+                          f"{decision.ticker} entered {decision.entry_price_as_of} — expected one")
+    r = rows[0]
+    return VoidMark(entry_price=r["entry_price"], entry_date=date.fromisoformat(r["entry_date"]),
+                    as_of=date.fromisoformat(r["current_date"]), price=r["current_price"],
+                    position_return=r["position_return"], benchmark=r["benchmark"],
+                    benchmark_return=r["benchmark_return"], excess=r["excess"],
+                    return_basis=str(day.get("return_basis") or "unstated"))
+
+
+def _cmd_void_decision(args: argparse.Namespace) -> int:
+    """Append the VOID row for one decision, on an operator's ruling (2026-11-11, GOOGL).
+
+    The decision, its correction and its void stay as audit history; every reader of positions and
+    returns leaves it out (`ledger.correction.void_decision`). The void seals the decision's result
+    to date AS THE MONITOR MARKS IT (`_void_mark`), so the removal is seen. ``--ruled-on`` dates
+    the ruling and ``--reason`` states it; ``--dry-run`` prints the void and writes nothing.
+
+    WHAT IS WRITTEN, beyond the one row: the working store's ledger table is first re-seeded from
+    the committed snapshot (additive), as `correct-entry` does, because the export after the append
+    writes the store's whole ledger over the committed file."""
+    from vinci.ledger.correction import void_decision
+
+    cfg = get_config()
+    reason = (args.reason or "").strip()
+    if not reason:
+        print("REFUSED: --reason is required — a decision is voided only on stated grounds.")
+        return 1
+    ruled_on = date.fromisoformat(args.ruled_on)
+    path = cfg.snapshots_dir / "decision_ledger.jsonl"
+    committed = [LedgerEntry.model_validate(json.loads(json.loads(ln)["payload"]))
+                 for ln in path.read_text().splitlines() if ln.strip()]
+    decision = next((e for e in committed if e.entry_id == args.entry_id and e.event is None),
+                    None)
+    if decision is None:
+        print(f"REFUSED: no decision row {args.entry_id!r} in {path}.")
+        return 1
+    if (gone := voids_by_decision(committed).get(decision.entry_id)) is not None:
+        print(f"REFUSED: {decision.entry_id} is already voided by {gone.entry_id}.")
+        return 1
+    if any(e.event == EVENT_CLOSE and e.closes_entry_id == decision.entry_id for e in committed):
+        print(f"REFUSED: {decision.entry_id} is closed — a closed position's outcome is realized, "
+              f"and a void does not undo it.")
+        return 1
+    read = corrected(decision, corrections_by_decision(committed).get(decision.entry_id))
+    try:
+        mark = _void_mark(read)
+    except LedgerError as exc:
+        print(f"REFUSED: {exc}")
+        return 1
+    print(f"{decision.entry_id} ({decision.ticker} {decision.verdict.value}, decided "
+          f"{decision.decided_at:%Y-%m-%d}): sealed {decision.entry_price:g} on "
+          f"{decision.entry_price_as_of}, read at {read.entry_price:g} on {read.entry_price_as_of}")
+    print(f"  the result to date the void seals: {mark.position_return:+.2%} vs {mark.benchmark} "
+          f"{mark.benchmark_return:+.2%}, excess {mark.excess * 100:+.2f} pts "
+          f"({mark.return_basis}, marked {mark.price:g} on {mark.as_of})")
+    print(f"  ruled {ruled_on}: {reason}")
+    if args.dry_run:
+        print("  DRY RUN: nothing written.")
+        return 0
+    try:
+        with Store(cfg.db_path) as store:
+            store.rebuild_from_snapshots(cfg.snapshots_dir, tables=["decision_ledger"])
+            # stamped as a close is (naive UTC, as `close-position`): an event's time
+            row = void_decision(store, entry_id=decision.entry_id, reason=reason,
+                                ruled_on=ruled_on, mark=mark,
+                                voided_at=datetime.now(UTC).replace(tzinfo=None))
+    except LedgerError as exc:
+        print(f"could not void: {exc}")
+        return 1
+    print(f"  appended {row.entry_id}, voiding {row.voids_entry_id}; its rows stay as audit "
+          f"history, and every reader of positions and returns leaves it out.")
+    _export_ledger(cfg, "void-decision")
     return 0
 
 
@@ -2721,7 +2839,9 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     ledger_all = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
     # A DECISION SEALED ON A STALE CLOSE IS MARKED FROM ITS CORRECTION (RF-D7): every reader below
     # sees the corrected entry; the day's notes name the sealed one beside it
-    ledger_all, correction_notes = mon.apply_corrections(ledger_all)
+    # A VOID IS IN EFFECT FROM ITS RULING DATE (operator, 2026-11-11): a day before the ruling keeps
+    # the decision in its book, so a past day re-cut reproduces the day as it was committed
+    ledger_all, correction_notes = mon.apply_corrections(ledger_all, as_of=ref)
     if not ledger_all:
         print("decision ledger is empty — nothing to monitor")
         return 0
@@ -3222,6 +3342,8 @@ def _cmd_ledger(args: argparse.Namespace) -> int:
             if e.event == EVENT_CLOSE and e.exit_price is not None
             else f"  ← CORRECTS {e.corrects_entry_id}: the entry is read here (RF-D7)"
             if e.event == EVENT_CORRECTION
+            else f"  ← VOIDS {e.voids_entry_id} (ruled {e.ruled_on}): out of the record"
+            if e.event == EVENT_VOID
             else ""
         )
         print(
@@ -3231,10 +3353,12 @@ def _cmd_ledger(args: argparse.Namespace) -> int:
         )
     n_close = sum(1 for e in entries if e.event == EVENT_CLOSE)
     n_fix = sum(1 for e in entries if e.event == EVENT_CORRECTION)
-    if n_close or n_fix:
-        print(f"\n{len(entries) - n_close - n_fix} decision(s) · {n_close} close(s) · {n_fix} "
-              f"correction(s) — neither a close nor a correction is a second verdict; the spread "
-              f"counts decisions only, each read at its correction where it has one.")
+    n_void = sum(1 for e in entries if e.event == EVENT_VOID)
+    if n_close or n_fix or n_void:
+        print(f"\n{len(entries) - n_close - n_fix - n_void} decision(s) · {n_close} close(s) · "
+              f"{n_fix} correction(s) · {n_void} void(s) — none of them is a second verdict; the "
+              f"spread counts decisions only, each read at its correction where it has one, and "
+              f"never a voided one.")
     return 0
 
 
@@ -3720,6 +3844,17 @@ def build_parser() -> argparse.ArgumentParser:
     p_fix.add_argument("--dry-run", dest="dry_run", action="store_true",
                        help="print the correction the rule reads, and write nothing")
     p_fix.set_defaults(func=_cmd_correct_entry)
+
+    p_void = sub.add_parser(
+        "void-decision",
+        help="append the VOID row for a decision an operator's ruling removes from the record")
+    p_void.add_argument("entry_id", help="the decision's entry id, e.g. V-GOOGL")
+    p_void.add_argument("--reason", required=True, help="the ruling's grounds, sealed into the row")
+    p_void.add_argument("--ruled-on", dest="ruled_on", required=True,
+                        help="the ruling's date, YYYY-MM-DD")
+    p_void.add_argument("--dry-run", dest="dry_run", action="store_true",
+                        help="print the void and the result it seals, and write nothing")
+    p_void.set_defaults(func=_cmd_void_decision)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `vinci screen`")
