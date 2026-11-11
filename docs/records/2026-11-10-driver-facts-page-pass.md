@@ -256,6 +256,22 @@ file per session. In this session it asked on 2026-11-09 (PR 1), and the edit we
 - The review round moved one doc comment in it.
 - The change adds no verdict field and touches no decision field. `Synthesis` is untouched.
 
+**WHAT THE RULE'S TEST DOES NOT HOLD (Codex, round 2 of #1006).** The rule says no public field
+quotes more than 12 consecutive transcript words. `tests/test_public_transcript_text.py` holds it
+for a driver row and, in a synthesis item, for a run BETWEEN QUOTATION MARKS only, as its docstring
+says. A synthesis claim can copy a call's words without quotation marks, and three committed claims
+do.
+- Measured on 2026-11-11, at `4204f564`: every string of the 27 committed syntheses (2,525), each
+  against the text of every call its page has on disk (25 pages, all read; CIQ read in place). Three
+  share a run of more than 12 consecutive words with their page's calls, none quoted: LLY's
+  `bull_points[5].claim` (15 words), VITL's `bull_points[2].claim` (14) and WERN's
+  `bull_points[5].claim` (14).
+- **DEFERRED, not fixed here.** Those claims are the model's prose, which this repo never edits by
+  hand, so bringing them under the rule means re-assembling the three pages (paid) or an operator
+  ruling. A check that compares a page with its calls can run only where the licensed calls are,
+  and it would fail on main today. A build-time guard, in `_validate`, would hold it for every page
+  built after it: the build has the words. Both are the coordinator's and the operator's to route.
+
 **BOUNDARY.**
 - **Firing counts:** `tests/test_public_transcript_text.py`'s two corpus checks (`violations()`;
   fact + locator) run over every `*.json` with a `mechanical` key, under `data/dossiers`,
