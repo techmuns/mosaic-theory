@@ -21,11 +21,16 @@ to a **cloud-triggered** flow:
 
 ## 2. Current state (ground truth, with file refs)
 
+> **The `file:line` references in this proposal are as of 2026-06-26 and have moved since** (fix
+> request 2, RG-D20 l): read each by the symbol it names, or, where it names none, as a pointer to
+> that file as it stood then. `require_env` is `vinci/config.py`'s `require_env`, and the
+> `assemble.py` lines refer to the assembler as it stood then.
+
 Two deliberately separate planes:
 
 - **Backend (`vinci/`, Python).** Ingestion (Polygon EOD + EDGAR) → universe/screen/rank →
   dossier-assembler (CIQ + EDGAR + Anthropic) → ledger/scoring. Secrets via `os.environ` /
-  `require_env()` (`config.py:136`), fail-loud. Local SQLite working DB (`data/vinci.db`,
+  `require_env()`, fail-loud. Local SQLite working DB (`data/vinci.db`,
   rebuildable from snapshots, never committed). `rebuild_from_snapshots` reconstructs it
   (`store/store.py:375`, called inside `run-weekly`/`run-monthly` via `orchestrator.py:42,72`).
 - **Frontend (Cloudflare Pages, static).** Read-only viewer over *committed* snapshots/dossiers, now

@@ -907,7 +907,11 @@ def _validate(
         # Trace by MAGNITUDE at any standard financial unit rendering (%, thousands, millions,
         # billions): the LLM writes the stored −0.726 as "−72.6%", 29,643,500 shares as "29.6
         # million", and a stored −0.027 as "shrunk by 2.7%" (sign carried in words, not the digit).
-        # Direction is the directional-lint's job; this only asks whether the figure exists.
+        # This only asks whether the figure EXISTS. Its direction is not checked here, nor by the
+        # directional lint, which reads recommendation words (`_DIRECTIONAL`), never a sign (fix
+        # request 2, RG-D20 c). A sign is compared by `_recompute` (a computed figure written
+        # with one) and by `material_direction_flags` (a MATERIAL figure framed against its sign);
+        # any other figure is traced by magnitude alone.
         a = abs(n)
         if a in cited.years:
             return True  # the year of a date the fact carries — as that year, never rescaled
@@ -1768,7 +1772,10 @@ def synthesize(
 ) -> tuple[Synthesis | None, list[str], str]:
     """Run the fenced synthesis → (synthesis|None, flags, log). Fail-loud, never fabricates. The
     ``transcript`` (every call on file, whole — NOT embedded in the dossier) is QUALITATIVE
-    context only; no numbers are derived from it and points still bind to the mechanical facts.
+    context: the prompt asks for no numbers from it, and points still bind to the mechanical facts.
+    A figure the model cites to a call anyway is KEPT, not refused: it earns a TRANSCRIPT-FIGURE
+    flag, which is machine-tier QA hidden from the page (`flags._QA_MARKERS`; fix request 2,
+    RG-D20 d).
 
     ``draws`` (default ONE, so every existing caller and artifact is unmoved) asks the model that
     many times on the IDENTICAL prompt and keeps the FIRST draw carrying the modal lean label —

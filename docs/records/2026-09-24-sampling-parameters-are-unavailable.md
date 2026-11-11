@@ -186,3 +186,16 @@ names as signal.
 4. **§5.0 OPEN NOW is at its 60-line cap**, so item (2) could not take a row without evicting
    another. It is recorded here and in §2 instead, and the capacity conflict is raised to the
    operator rather than resolved by quietly compressing someone else's entry.
+## Amendments
+
+**2026-11-11 — "the package's ONLY `messages.create` call site" is no longer so (fix request 2,
+RG-D20 a).** It was true when written; two more `messages.create` sites have been added since:
+- the theme client's cached-article path, `vinci/theme_intelligence/llm.py` (added 2026-10-14,
+  `e7e49a13`), a subclass of `AnthropicLlmClient` that builds and sends its own call;
+- the eval harness's replay, `vinci/evals/replay.py` (added 2026-11-06, `8a1fab7a`), whose
+  `GuardedSdk` wraps the shared client's SDK object and forwards the arguments the shared call
+  built, unchanged, once they match the captured request.
+
+Neither passes a sampling parameter, so the finding above stands. Its scope has narrowed: the guard
+covers the shared client's call, which the replay forwards, and not the theme client's own call.
+The source comment in `vinci/graph/llm.py` now says so.
