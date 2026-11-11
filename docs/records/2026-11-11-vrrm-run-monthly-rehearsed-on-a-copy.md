@@ -1,7 +1,7 @@
 ---
 status: recorded
 date: 2026-11-11
-prs: []
+prs: [1018]
 supersedes:
 superseded-by:
 ---
@@ -95,30 +95,35 @@ superseded-by:
    `scoring_report.md` also predates both appended rows. The real run's report adds VRRM's
    correction note and GOOGL's void note, as this one did.
 
-**WHAT MUST CHANGE BEFORE THE REAL RUN.** These are proposals, not code in this task:
-1. **Name the store.** Row 38 says "the primary's `data/vinci.db`", and there are two primaries.
-   - The store A refreshed on 2026-11-11 (`c9986363…` → `a6a18e7d…`) and voided GOOGL on
-     (`→ 2b75fe39…`) is `/Users/mac/…/data/vinci.db`.
-   - This machine's (`/Users/work/…`) is the one rehearsed here: bars to 2026-08-05, ledger
-     table empty.
-   - The run does not depend on which: it re-seeds the ledger from the committed snapshot, and
-     its export matched it byte for byte. Only the number of Polygon calls differs (96 grouped
-     calls from 08-05; about 25 sessions plus the 21 holidays from 11-10).
-   - The operator names the machine, and the real run uses a clean `main` worktree there.
-2. **Do not commit the `issuers.jsonl` flip** (warning 1) unless the IDX issuer's name is made
-   independent of the last benchmark upserted. The fix is a neutral name in
-   `universe.benchmark_identity`, or an issuer per benchmark; it is S3-adjacent and is not built
-   here.
-3. **Timing.**
-   - Re-rehearse on a copy around 2026-12-07 (about 12 minutes from a store that is current to
-     11-10).
-   - Score on 2026-12-16 after 10:30 IST (00:00 ET): the plan refuses a session's grouped-daily
-     until midnight ET, and a refused session reads as a holiday, so an earlier run reads 12-15
-     as missing and holds VRRM PENDING.
-   - If Tiingo has not served 12-15 yet, the run stops with `TotalReturnUnknownError` by design;
-     re-run once it has.
-4. **Optional, efficiency only:** the 21 holiday re-asks cost about 5 minutes a run at 4
-   requests a minute.
+**BEFORE THE REAL RUN — RULED, WITH ONE QUESTION OPEN.**
+- **The ruling.** The operator accepted this record's proposals (operator 2026-11-11, verbatim:
+  "Yes, as proposed (Recommended)", recorded by A on issue #1004 at 14:09Z):
+  1. score on `/Users/mac`'s store (refreshed, with the void in; sha256 `2b75fe39…`) on
+     **2026-12-16 after 10:30 IST**;
+  2. re-rehearse on a copy around **2026-12-07**;
+  3. keep the `issuers.jsonl` `IDX` flip (warning 1) **out of the commit**;
+  4. B owns it;
+  5. A's monitor void-keying PR (#1015) lands first, and A posts on #1004 when it does.
+- **Why those dates.**
+  - The plan refuses a session's grouped-daily until midnight ET (10:30 IST), and a refused
+    session reads as a holiday. A run before then reads 12-15 as missing and holds VRRM PENDING.
+  - If Tiingo has not served 12-15 yet, the run stops with `TotalReturnUnknownError` by design;
+    re-run once it has.
+  - The 12-07 re-rehearsal takes about 12 minutes from a store current to 11-10.
+- **OPEN, for the operator; not resolved here: who runs it, where.**
+  - B owns the run, but the named store is on A's machine (`/Users/mac`), and B's sessions run on
+    `/Users/work`. This machine's primary store is the one rehearsed above: bars to 2026-08-05,
+    ledger table empty.
+  - The run re-seeds the ledger from the committed snapshot, and its export matched it byte for
+    byte, so the two stores differ only in the Polygon calls the refresh makes (96 grouped calls
+    from 08-05 here; about 25 sessions plus the 21 holidays from 11-10 on `/Users/mac`).
+  - Two ways: A runs it on `/Users/mac` for B, or the operator allows `/Users/work`'s store after
+    a refresh.
+- **Not ruled, efficiency and hygiene only:**
+  - the `IDX` issuer's name could be made independent of the last benchmark upserted, with a
+    neutral name in `universe.benchmark_identity` or an issuer per benchmark (S3-adjacent, not
+    built here);
+  - the 21 holiday re-asks cost about 5 minutes a run at 4 requests a minute.
 
 **WHY.** STATE row 38: VRRM is the first outcome the spread will ever carry, and it is scored
 from a store that `run-monthly` itself refreshes. Its refusals surface only when it runs. The
