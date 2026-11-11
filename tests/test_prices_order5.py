@@ -1,9 +1,10 @@
 """TeamNostra fix request 2, order 5, prices: RF-D5, RF-D10, RF-D11, RF-D12 — each behind a test
 that fails on the code before it, on real data wherever the corpus holds it.
 
-- RF-D5: a partial `refresh --aggs` after a split spliced two split bases. The anchor session is
-  IESC's real 2026-08-05 bar, as the primary store held it and as Polygon re-served it after its
-  2-for-1 (`tests/fixtures/splits_reference/restated_2026-08-05.json`).
+- RF-D5: a partial `refresh --aggs` after a split spliced two split bases, at either edge of its
+  window, and so did the grouped path at its right edge. The anchor session is IESC's real
+  2026-08-05 bar, as the primary store held it and as Polygon re-served it after its 2-for-1
+  (`tests/fixtures/splits_reference/restated_2026-08-05.json`).
 - RF-D10: price features read bars after the reference date when no frontier was passed. The
   bars are GOOGL's committed Polygon bars (`tests/fixtures/prices/GOOGL.jsonl`).
 - RF-D11: Tiingo's dividend-adjusted bars would carry each dividend twice. The rows are Tiingo's
@@ -25,6 +26,7 @@ from vinci.eod.client import (
     EodError,
     PolygonEodClient,
     RawBar,
+    ingest_prices,
     ingest_prices_per_symbol,
 )
 from vinci.eod.dividends import growth
@@ -120,6 +122,107 @@ def test_an_anchor_beyond_the_plan_window_is_not_fetched_and_is_named(tmp_path: 
                                            end=date(2026, 8, 7), today=later)
     assert client.calls == [("IESC", date(2026, 8, 6), date(2026, 8, 7))]
     assert summary["unanchored"] == ["IESC"] and summary["restated"] == {}
+
+
+# --- RF-D5's RIGHT EDGE: the held bars after ``end`` (coordinator, 2026-11-11: "Fix both edges") --
+
+_WEEK = [date(2026, 8, d) for d in range(3, 8)]          # Mon 08-03 .. Fri 08-07
+
+
+class _Served:
+    """The source after IESC's 2-for-1: every session of the week on the current basis, as
+    Polygon re-served 08-05 — per symbol (``daily_bars``) and whole-market (``grouped_daily``)."""
+
+    def __init__(self, fresh: dict[str, float]) -> None:
+        self.fresh = fresh
+        self.aggs: list[tuple[str, date, date]] = []
+        self.grouped: list[date] = []
+
+    def daily_bars(self, symbol: str, start: date, end: date) -> list[tuple[date, RawBar]]:
+        self.aggs.append((symbol, start, end))
+        return [(d, RawBar(ticker=symbol, **self.fresh)) for d in _WEEK if start <= d <= end]
+
+    def grouped_daily(self, day: date) -> dict[str, RawBar]:
+        self.grouped.append(day)
+        return {"IESC": RawBar(ticker="IESC", **self.fresh)} if day in _WEEK else {}
+
+
+def _store_holding_the_week(path: Path, *, current_from: date | None = None) -> Store:
+    """The week held on the PRE-split basis — or, from ``current_from``, already on the current one
+    (a later pull made after the split)."""
+    store = Store(path)
+    store.upsert_security(_IDENT)
+    store.write_prices([_held(d, scale=_IESC["factor"] if current_from and d >= current_from
+                              else 1.0) for d in _WEEK])
+    return store
+
+
+def _no_step(store: Store) -> list[float]:
+    closes = [b.close for b in store.get_price_history(_IDENT.internal_id)]
+    return [b / a for a, b in zip(closes, closes[1:], strict=False)]
+
+
+def test_a_partial_aggs_refresh_puts_the_held_bars_after_its_end_on_the_current_basis(
+        tmp_path: Path) -> None:
+    """THE DEFECT, RIGHT EDGE: refreshed over 08-03..08-04, the window was rewritten on the current
+    basis while the held 08-05..08-07 kept the pre-split one — a ×2 step on 08-05. Now the one call
+    reaches through the last held bar, both ends after ``end`` read IESC's real 0.5, and every held
+    bar after ``end`` is put on the current basis, named in the summary."""
+    client = _Served(_IESC["fresh"])
+    with _store_holding_the_week(tmp_path / "s.db") as store:
+        summary = ingest_prices_per_symbol(client, store, [_IDENT], start=_WEEK[0], end=_WEEK[1],
+                                           today=date(2026, 11, 11))
+        steps = _no_step(store)
+        hist = store.get_price_history(_IDENT.internal_id)
+    assert client.aggs == [("IESC", _WEEK[0], _WEEK[-1])]               # still ONE call
+    assert summary["restated"] == {"IESC": [pytest.approx(_IESC["factor"], rel=1e-6)]}
+    assert all(x == pytest.approx(1.0, rel=1e-6) for x in steps), steps
+    assert [b.source for b in hist] == ["polygon-aggs"] * 2 + ["polygon-grouped+restated"] * 3
+
+
+def test_a_partial_grouped_refresh_puts_the_held_bars_after_its_end_on_the_current_basis(
+        tmp_path: Path) -> None:
+    """THE SAME DEFECT ON THE GROUPED PATH (a screen replay at an earlier reference date is one):
+    the right edge is fetched at its first and last held sessions, one call each."""
+    client = _Served(_IESC["fresh"])
+    with _store_holding_the_week(tmp_path / "s.db") as store:
+        summary = ingest_prices(client, store, [_IDENT], start=_WEEK[0],  # type: ignore[arg-type]
+                                end=_WEEK[1])
+        steps = _no_step(store)
+    assert client.grouped == [_WEEK[0], _WEEK[1], _WEEK[2], _WEEK[-1]]
+    assert summary["restated"] == {"IESC": [pytest.approx(_IESC["factor"], rel=1e-6)]}
+    assert all(x == pytest.approx(1.0, rel=1e-6) for x in steps), steps
+
+
+@pytest.mark.parametrize("path", ["aggs", "grouped"])
+def test_held_bars_after_end_on_two_bases_are_restated_nothing_and_named(
+        tmp_path: Path, path: str) -> None:
+    """THE NEGATIVE PIN: 08-05 held pre-split, 08-06..08-07 already on the current basis (a pull
+    after the split). One factor over all three would make a step at 08-06, not remove one — so
+    nothing after ``end`` is rescaled, and the name is listed unanchored."""
+    client = _Served(_IESC["fresh"])
+    with _store_holding_the_week(tmp_path / "s.db", current_from=_WEEK[3]) as store:
+        before = {b.bar_date: b.close for b in store.get_price_history(_IDENT.internal_id)}
+        if path == "aggs":
+            summary = ingest_prices_per_symbol(client, store, [_IDENT], start=_WEEK[0],
+                                               end=_WEEK[1], today=date(2026, 11, 11))
+        else:
+            summary = ingest_prices(client, store, [_IDENT], start=_WEEK[0],  # type: ignore[arg-type]
+                                    end=_WEEK[1])
+        after = {b.bar_date: b.close for b in store.get_price_history(_IDENT.internal_id)}
+    assert summary["unanchored"] == ["IESC"] and summary["restated"] == {}
+    assert all(after[d] == before[d] for d in _WEEK[2:])
+
+
+def test_a_refresh_ending_on_the_last_held_session_reaches_no_further(tmp_path: Path) -> None:
+    """THE ROUTINE CASE COSTS NOTHING: nothing is held after ``end``, so the call's window is
+    ``[start, end]`` as before, and no edge is checked."""
+    client = _Served(_IESC["fresh"])
+    with _store_holding_the_week(tmp_path / "s.db") as store:
+        summary = ingest_prices_per_symbol(client, store, [_IDENT], start=_WEEK[0], end=_WEEK[-1],
+                                           today=date(2026, 11, 11))
+    assert client.aggs == [("IESC", _WEEK[0], _WEEK[-1])]
+    assert summary["restated"] == {} and summary["unanchored"] == []
 
 
 # --- RF-D10: no bar after the reference date is read without a frontier -------------------------
