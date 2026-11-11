@@ -141,7 +141,10 @@ def test_synthesis_is_the_only_llm_output_and_carries_no_conclusion() -> None:
         "evidence_balance", "bull_points", "bear_points", "twin_reference_cases",
         "decisive_question", "key_unknowns", "draw_agreement",
     }
-    assert set(ds.DrawAgreement.model_fields) == {"attempted", "completed", "labels", "unanimous"}
+    # the vote rule's R5 (2026-11-11) added four, each a count or a boolean about the DRAWS — the
+    # modal lean and the gate's state are DERIVED from them, never stored on the page
+    assert set(ds.DrawAgreement.model_fields) == {"attempted", "completed", "labels", "unanimous",
+                                                  "modal_count", "required", "passes", "rule"}
     banned = ("verdict", "action", "recommendation", "direction", "score", "rating", "probability",
               "target", "conviction")
     for model in (ds.Synthesis, ds.DrawAgreement):
@@ -3066,11 +3069,13 @@ def test_insider_activity_partitions_open_market_routine_and_other_codes() -> No
     # — a sale vanishing from the count, in the flattering direction, inside the change written to
     # stop exactly that. It now falls back to the FILING date (Section 16: within two business
     # days), so nothing is dropped. No dollars appear because the fixture states no price — a
-    # priced-at-zero transaction would read as "nothing happened".
+    # priced-at-zero transaction would read as "nothing happened" — and each side SAYS so (audit
+    # RD-D2): a count beside no total must state the lines the total cannot hold.
     assert got.value == (
-        "Open-market buys 1 (1 insider) · sells 1 (1 insider) — in the last 182 days · "
-        "last purchase insider, 2026-06-10 (~1mo ago) · last sale insider, 2026-06-12 (~1mo ago) · "
-        "grants 1 · last filing 2026-06-12 · other C×1")
+        "Open-market buys 1 (1 insider, 1 with no price stated) · sells 1 (1 insider, 1 with no "
+        "price stated) — in the last 182 days · last purchase insider, 2026-06-10 (~1mo ago) · "
+        "1 of 1 purchase with no price stated · last sale insider, 2026-06-12 (~1mo ago) · "
+        "1 of 1 sale with no price stated · grants 1 · last filing 2026-06-12 · other C×1")
     assert "0000947871-26-000620" in (got.source_ref or "")
 
 
@@ -3941,7 +3946,14 @@ def test_return_ratios_fintable_structured_and_fail_honest() -> None:
         ["Current Ratio", 1.05, 1.30, 0.96],
         ["Dividend per Share", "NA", "NA", "NA"],
     ]
-    s = cs.return_ratios(_fin_bundle({"Ratios": rat}, "annual"))
+    # the dividend LEVEL is the Income Statement's (RA-D2): a non-payer's reads 'NA' there, as
+    # AMZN's export does in every column
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2023", "12 months Dec-31-2024",
+         "LTM 12 months Mar-31-2025"],
+        ["Dividends per Share", "NA", "NA", "NA"],
+    ]
+    s = cs.return_ratios(_fin_bundle({"Ratios": rat, "Income Statement": inc}, "annual"))
     assert s.status is ds.SourceStatus.PRESENT and s.value is not None
     t = s.value
     assert t.columns == ["FY23", "FY24", "LTM"]
@@ -3951,10 +3963,11 @@ def test_return_ratios_fintable_structured_and_fail_honest() -> None:
     assert rows["RoE %"].values == [-0.18, -0.41, -0.09]
     assert rows["RoE %"].cells == ["-18.0%", "-41.0%", "-9.0%"]
     assert rows["RoCE %"].values[-1] == 0.015 and rows["RoA %"].values[-1] == 0.012
-    # x-ratios: display-only (NOT charted) → cells but empty `values`; dividend NA → "none"
+    # x-ratios: display-only (NOT charted) → cells but empty `values`; dividend 'NA' → "—": 'NA' is
+    # not stated, never no dividend (the operator's ruling on #967's Codex P1, 2026-11-11)
     assert rows["Total debt/equity"].cells == ["0.36x", "0.85x", "0.70x"]
     assert rows["Total debt/equity"].values == []
-    assert rows["Dividend/sh"].cells == ["none", "none", "none"]
+    assert rows["Dividend/sh"].cells == ["—", "—", "—"]
     unk = ds.SourceStatus.UNKNOWN
     no_hdr: list[list[typing.Any]] = [["Return on Equity %", -0.1, -0.2]]
     assert cs.return_ratios(_fin_bundle({"Ratios": no_hdr}, "annual")).status is unk  # no header

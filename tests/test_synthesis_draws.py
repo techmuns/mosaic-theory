@@ -80,8 +80,10 @@ def test_unanimous_draws_publish_the_proposal_and_say_so() -> None:
     proposal the frozen mapping makes is NOT withheld."""
     s, flags, llm = _run(["bull"] * 5, 5)
     assert llm.calls == 5, "the model was not asked five times"
+    # the tally now records the vote rule's gate beside it (R1, `tests/test_vote_rule.py`)
     assert s is not None and s.draw_agreement == DrawAgreement(
-        attempted=5, completed=5, labels={"strongly-bullish": 5}, unanimous=True)
+        attempted=5, completed=5, labels={"strongly-bullish": 5}, unanimous=True,
+        modal_count=5, required=5, passes=True, rule=s.draw_agreement.rule)
     assert not [f for f in flags if "DISAGREED" in f]
     prop = derive_proposal(s.evidence_balance, sleeve="quality", draws_unanimous=True)
     assert prop.action is not None and prop.action.value == "BUY"

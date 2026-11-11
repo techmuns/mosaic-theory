@@ -1,7 +1,7 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict, verdictWord, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow, getSleeves, getFollowed } from "../../lib/snapshots.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict, verdictWord, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow, getSleeves, getFollowed, getExtractionVersions } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 // THE citation system now lives in lib/cites.js — one implementation, shared with uw-card.js
 // (it was private here, which is why the underwrite card had to hardcode the inline form).
@@ -9,589 +9,14 @@ import { citeMark, withEndnotes, auditCitesInline } from "../../lib/cites.js";
 import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT, xLabelKeeper } from "../../lib/exhibit.js";
 import { uwCard, uwCardParts, amendMarks } from "./uw-card.js";
 
-// (26a) EXTRACTION VERSION — the twin of vinci/dossier/extraction_version.py. The dossier's date
-// says WHEN it was built; this says WITH WHAT, which is what "are these two dossiers comparable?"
-// actually turns on (#238 left the fleet holding two vintages that dated alike). Mirrored rather
-// than imported — python↔JS twins cannot share a module — and PINNED in test_parity_pins.py, so a
-// one-sided edit reddens the suite instead of shipping a web page that disagrees with the markdown.
-// The table is append-only and the LAST row is current; a bump must say what it names.
-const EXTRACTION_VERSIONS = [
-  ["2026-07-28.1",
-    "unusual-items surfacing in the financial summary (#238) · multiples read from the " +
-    "latest close, NM rather than a stale figure (#241)"],
-  ["2026-08-16.1",
-    "every Multiples reader selects the latest close BY DATE, never by column position, and " +
-    "refuses on an NM or undated one rather than reaching back a quarter (#459)"],
-  ["2026-10-07.1",
-    "forward consensus (FY+0..FY+2 paths, spreads, revision counts) and the forward-multiple " +
-    "history sit beside the page, outside the synthesis (#673, #676) · horizon_read takes " +
-    "each metric's revision counts from its OWN block — values change on every page (#674) · " +
-    "a claim citing a GAAP-EPS move normalized EPS did not make is caveated (#678)"],
-  ["2026-10-08.1",
-    "the forward layers state their own basis: today's forward multiples beside their history" +
-    " (`current_multiples`), the history's latest close marked quarter-end or not, CIQ's FCF " +
-    "and EBITDA consensus set against CFO − CapEx and EBIT + D&A, and the Estimates export's " +
-    "file and hash"],
-  ["2026-10-08.2",
-    "the final consensus's miss per completed fiscal year beside the page " +
-    "(`historical_forecast_error`): revenue as a percentage, profit lines and capex as " +
-    "dollars, per forecast revenue and as a margin or intensity error — a cross-check, never " +
-    "a revision distribution"],
-  ["2026-10-08.3",
-    "the forward P/E states which consensus EPS line it is struck on " +
-    "(`forward_consensus.pe_eps_basis`): the FY rows and the NTM row each measured, never " +
-    "assumed · the anchor's net debt nets the short-term securities a CIQ TEV nets (#684)"],
-  ["2026-10-08.4",
-    "CIQ's current TEV claims beside the page (`ev_bridge`): Net Debt + preferred + minority " +
-    "interest at the latest balance-sheet column, checked against CIQ's own TEV less market " +
-    "cap, the consensus net-debt line tested for basis over three years, and the exit " +
-    "default per the operator's rule"],
-  ["2026-10-09.1",
-    "a page records each change made to it after assembly (`layer_refreshes`): the layers that " +
-    "moved, the extraction version that ran the writer, the date and the writer — printed " +
-    "beside the stamp, which still names the assembly"],
-  ["2026-10-09.2",
-    "the non-operating read carries its count (`quality.nonoperating_quarters`: material " +
-    "quarters of the trailing four), and the build proposes R4 when the operator's three " +
-    "ratified conditions hold — shown beside a committed recipe, never written over one"],
-  ["2026-10-09.3",
-    "the active recipe's basis beside the page (`valuation_basis`: bases, today's multiple " +
-    "and the snapshot it is struck at, bridge, exit claims, the basic share count, " +
-    "non-operating policy, conflicts — the template's share guard among them) and its dates " +
-    "named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the " +
-    "forward history's latest close is `latest_observed_close`, never `current`; every writer " +
-    "saves through one write"],
-  ["2026-10-29.D-D1",
-    "an unchecked quarter of the ex-lease history whose lease cell CIQ states as UNAVAILABLE " +
-    "is left unpriced (`lease_basis.observations`), never priced on the cells it does state " +
-    "with the missing one read as zero; the quarter names the cell (`unpriced_reason`) and " +
-    "the block its date (`unpriced_dates`) (audit D-D1)"],
-  ["2026-10-29.D-D5",
-    "the materiality guard runs on both thresholds: a summary row and an unusual line at 5% " +
-    "of the revenue in the column each reads are material (`revenue` was never passed), and " +
-    "a missing annual Income Statement, revenue row or unusual-items block refuses the build " +
-    "instead of passing it (audit D-D5)"],
-  ["2026-10-29.G-V1",
-    "a transcript row's call, following paragraph and period come from ONE located quote; " +
-    "its period stands only where the quote states it, else none; each value figure equals " +
-    "a figure of its quote in the quote's unit (audit G-V1, G-D1, G-D2) · a synthesis " +
-    "citation is a ref of the layer, never a fragment, and each figure traces to the numbers " +
-    "the fact it cites states, never its dates or ids; an exposure fact cites one filing and " +
-    "is always grounded (audit G-D5, G-D6)"],
-  ["2026-10-29.E2",
-    "release and 10-Q figures read from what their own text states (audit E2): a footnote " +
-    "digit after a measure's name and a trailing-twelve-month lead-in (D5), a loss stated in " +
-    "words (D10), 'Revenues of' with the closing company profile refused (D11), a one-off " +
-    "whose amount the charge noun names (D12), the ≤12m wall's stated zero and its " +
-    "principal-and-interest basis (D15, `maturity_wall.basis`), a concentration column's " +
-    "role from its header, a refused row named (D16); a non-positive LTM EBITDA has no " +
-    "leverage multiple (E1-D13)"],
-  ["2026-10-29.A-D14",
-    "the dossier-output changes merged after 2026-10-09.3 that appended no row: 45 " +
-    "commits to vinci/dossier, vinci/edgar and vinci/ciq (#706 … #855, 2026-10-11 → " +
-    "10-29), among them #819, #826, #827, #831, #834 and #836 — from here a watched " +
-    "extraction module that moves with no row appended reds " +
-    "tests/test_extraction_version_drift.py"],
-  ["2026-10-29.A-D3",
-    "one parser reads every Financials period header: an 'FQ4/CQ2' quarter is a quarter, " +
-    "with its year-on-year growth, and a quarter carries its fiscal year (A-X2); a " +
-    "same-quarter YoY reads only the prior fiscal year's quarter, never one two to four " +
-    "years back"],
-  ["2026-10-29.A-D6",
-    "a bridged anchor input names the CIQ export it was read from — D&A, OCF and capex " +
-    "the annual workbook, the balance sheet the quarterly one — never the quarterly file " +
-    "for all"],
-  ["2026-10-29.A-D8",
-    "every guided metric the Guidance sheet lays out is read, found by the structure of " +
-    "the sheet rather than a fixed list; a metric with no decided delivery direction " +
-    "shows its guide with no MET/MISSED record"],
-  ["2026-10-29.A-D10",
-    "the recommendation and the rating counts come from the block of the listing itself " +
-    "in Trends, never from the industry or another listing"],
-  ["2026-10-29.A-X1",
-    "a Financials export whose filename and statements state different period types is " +
-    "refused, and a lone export never answers for the other period type (A-D11), so an " +
-    "annual balance-sheet date prints as a date, never a raw serial"],
-  ["2026-10-29.BC-D10",
-    "the anchor's CIQ bridge reads each statement's own unit line and refuses a sheet stated in " +
-    "another unit, or two exports in different units — the magnitude screen against revenue " +
-    "could not see either (audit BC-D10); every export on file states Millions, so no value " +
-    "moves"],
-  ["2026-10-29.G-D3",
-    "each earnings call reaches the driver extraction and the synthesis WHOLE — prepared " +
-    "remarks and the full Q&A — where it was cut at 12,000 characters unmarked; a call past " +
-    "the 100,000-character ceiling ends in a marker and a QA flag, and a call on file that " +
-    "does not read is named in a QA flag (audit G-D3, G-D4)"],
-  ["2026-10-29.D-D5-prompt",
-    "the synthesis is asked for every material figure the citation guard demands: the rows " +
-    "are marked material before the model is asked, and a section lists each figure, its " +
-    "period and the table's source_ref from the guard's own selection; a page with no " +
-    "material row is sent the prompt it was sent before (audit D-D5 follow-up)"],
-  ["2026-10-30.press-release-ltm",
-    "a CIQ Income Statement whose latest LTM, fiscal-year or quarter column is a 'Press " +
-    "Release' column is refused at assembly and by the anchor's CIQ bridge, the header's " +
-    "status (filed, reclassified, " +
-    "restated, press release) being a parsed field; each additive annual-summary row's LTM is " +
-    "checked against the four quarters ending on its date, a disagreement or a '-' quarter " +
-    "is a QA flag, and a material row its quarters contradict refuses the build"],
-  ["2026-10-30.E2-guidance",
-    "a guidance range is read as its sentence states it (audit E2-D1, D2, D7, D8, D13): a " +
-    "dollar range stated in thousands or with no scale is refused aloud, never stored as $M; " +
-    "a revenue guide qualified by a sub-line word (subscription, a region) is refused by the " +
-    "actuals' allowlist; a range stated as the prior outlook beside a new one never takes " +
-    "the metric's slot; a gross margin stated in dollars is refused; a second range joined by " +
-    "'and' is read when it states its own period and refused aloud when it does not"],
-  ["2026-10-30.G-D7",
-    "an LLM's quote is a span of its document only with every gap between two digits kept: " +
-    "a quote reading 'Level 11.25%' is refused where the exhibit prints 'Level 1 1.25%', " +
-    "where whitespace removal had joined the two figures into one (audit G-D7); every " +
-    "committed quote reads as before"],
-  ["2026-10-30.cover-dated-shares",
-    "a share count tagged after its own filing is dated from its cover sentence (an anchored " +
-    "parse; unread, at its filing day, printed 'filed <date>'), its value cross-checked " +
-    "against another count in the same filing and UNKNOWN past that comparison's tolerance " +
-    "(5% to a balance-sheet count, 10% to a diluted average or a previous count), each " +
-    "correction a QA flag " +
-    "(audit X1(a)); the covenant-pointer table names the aggregate lines and agreement " +
-    "families its caps leave out, and a full-text search reads every page or says it did not " +
-    "(audit E1-D11)"],
-  ["2026-10-30.E2-D19",
-    "a covenant term whose value states a year or a currency figure its own quote does not " +
-    "is refused, UNKNOWN with an (E5) flag naming the figure as the value states it (audit " +
-    "E2-D19); figures compare in their own currency at any scale, a conformed amendment's " +
-    "replacement figure counts as stated, a percent or 'zero' is left to the rate-component " +
-    "check, and a later exhibit withheld this way leads its term as a value that could not " +
-    "be verified"],
-  ["2026-10-30.latest-cell",
-    "every CIQ Financials reader of a row's latest figure reads the column whose header " +
-    "states the latest date, never the rightmost valued one: a marker there is UNKNOWN with " +
-    "its reason, never an older period (LLY's free cash flow, OCF and vendor FCF; ORKA's " +
-    "interest coverage, both legs at that column; the EV bridge's balance-sheet column); a " +
-    "header naming an undated column places none; the EBITDA reconciliation is refused, its " +
-    "reason on the page, at a marker in its four latest quarters; the own-history multiple " +
-    "band is unavailable at an NM latest close; the anchor bridge fills from a narrower row " +
-    "(cash and equivalents, a D&A component, an annual diluted count) only where the row is " +
-    "absent, and its revenue states its period (audit A-D5, A-D7, " +
-    "A-D12, D-D2, D-D3); a Balance Sheet or Cash Flow whose latest column is a 'Press " +
-    "Release' column is refused at assembly and by the anchor's CIQ bridge, as the Income " +
-    "Statement is (operator ruling 2026-10-30)"],
-  ["2026-10-30.E2-spans-frames",
-    "a release figure under a six- or nine-month heading or bullet lead-in that states a span " +
-    "(ended, a period, or a section noun such as Highlights or Results; singular or plural) " +
-    "takes no quarter label, and a twelve-month section heading none either (audit E2-D4); " +
-    "the release frame never comes from the phrase a comparison in its head compares " +
-    "against, and a calendar head naming its quarter only by its end date frames by that " +
-    "date (E2-D6); the GAAP gross margin is the first statement that is the company's own " +
-    "and states its period, never a non-GAAP, segment, sub-line, prior-period or " +
-    "year-to-date one, and the reader stops at one it cannot place (E2-D9)"],
-  ["2026-10-30.edgar-provenance",
-    "every EDGAR fallback figure says where it was filed — its tag, period, form, " +
-    "accession and day — and one a later filing restated names the figure it restates; a " +
-    "capex or D&A leg filed negative, or a D&A under the accretion-net tag, is refused, " +
-    "naming it, never sign-flipped (audit E1-D5, E1-D12); the screen's share change, the " +
-    "rank's dilution demote and the theme desk's basis check read a share count tagged " +
-    "after its own filing at its filing day, cross-checked (audit X1(a))"],
-  ["2026-10-30.zero-coercion",
-    "a CIQ marker or an absent row is no value, never 0 (audit RC1: A-D1, A-D2): a revision " +
-    "count CIQ states as a marker prints 'n/a', never 0; the EV bridge's preferred and minority " +
-    "lines say why they carry no figure — the row is absent, or its cell is a marker — and the " +
-    "claims sum the legs CIQ states (no value moves); the R4 basis states such a leg 'not " +
-    "stated'; the anchor bridge's net debt says CIQ's Total Debt carries its lease rows " +
-    "where its own rows show it (33 of 34 exports), and elsewhere names the lease rows it " +
-    "lacks and refuses a marker on one; the EV gap's EBITDA margin is converted as " +
-    "`our_ebitda` converts it, or not shown; an unknown mid-cycle year count is None; 'No " +
-    "Data Available' is a marker"],
-  ["2026-10-30.submissions-pages",
-    "a filings window that reaches past the submissions index's recent page (a heavy " +
-    "filer's newest ~1,000 filings) reads every older page it overlaps, through the SEC " +
-    "client, each checked against the document's listing of it and read again fresh when " +
-    "the two are of different vintages, or raises naming the page it could not read — " +
-    "never a short list read as complete (audit E1-D10)"],
-  ["2026-10-30.E2-D17",
-    "a going-concern statement is read as stated (audit E2-D17): a denial of the doubt (no " +
-    "longer, none, not believed, no longer present, removed, already alleviated) and a " +
-    "hypothetical about it are not doubt; the frame is the going-concern question, the cited " +
-    "standard or the disclosure policy unless the sentence states its own result, so a " +
-    "conclusion of doubt that cites ASC 205-40 is doubt, as is an IFRS material uncertainty " +
-    "and a plan that cannot or will alleviate it"],
-  ["2026-11-02.amended-filings",
-    "amended filings are read by the operator's ruling of 2026-11-01 (audit E1-D7): a figure " +
-    "is the latest filed by the as-of, naming the one it restates, and the SBC reader reads an " +
-    "annual /A as its base form; a document reader reads the original annual unless an /A " +
-    "carries the period's financial statements, and names every later /A; an 8-K/A counts " +
-    "only for the item codes it adds over an 8-K of its report date sharing a non-9.01 code " +
-    "with it, and one with no such original counts nothing"],
-  ["2026-11-01.small-items",
-    "four small reader fixes (audit A-D4, A-D9, D-D9; the relationships sections): a 1904 " +
-    "date-system workbook's dates are read as the true days; a Key Developments export on file " +
-    "that is not read (a spreadsheet, an undecodable file, no header) is named in the " +
-    "operating-drivers QA flags, and one stating it is empty is read; a positive annual " +
-    "capex is unavailable with its reason, never netted as a spend in the FCF fill, and the " +
-    "anchor's EDGAR FCF refuses a capex leg filed negative by #875's rule, never " +
-    "sign-flipped; and a Customers view's rows under 'Prior and Not Recently " +
-    "Disclosed' are said in its note, never counted as current, while the recent section's own " +
-    "'no recently disclosed customers' is read"],
-  ["2026-11-02.D14-D18-FD2-X3",
-    "a sentence that pairs its loans with its dates by position, respectively, states no " +
-    "loan maturity (audit E2-D14); a segment report's column is named by its duration and " +
-    "its date, and a header or a row whose column count disagrees is refused (E2-D18); an " +
-    "ADS count is the whole number, its hyphenated tens, hundreds and thousands separators " +
-    "read, and a count that runs on past what was read is refused (F-D2); the dilutive " +
-    "increment is never paired over a span longer than a quarter (X3)"],
-  ["2026-11-02.asof-price-date",
-    "inputs are cut at the page's price date, by the operator's ruling of 2026-11-01: the " +
-    "price features are bounded at it, so the 52-week window is the 365 days ending on the " +
-    "price date (audit F-D4); a share count filed after it is never used (X1(b)); the " +
-    "page's adjusted facts and EDGAR fallback, and the screen's fundamentals, read " +
-    "companyfacts as they stood on it (E1-D6)"],
-  ["2026-11-02.net-debt-as-of",
-    "net debt is read as filed by the page's price date (audit E2-D21; operator ruling C4): every " +
-    "net-debt reader cuts the companyfacts at `stock_info.as_of` before any leg is read, so a " +
-    "later re-filing of a balance sheet, or a later balance sheet, never moves a sealed figure — " +
-    "the anchor, the assembly's EV-bridge cross-check, the at-price ex-lease multiple and the " +
-    "bridge refresh alike"],
-  ["2026-11-03.anchor-cut-at-price-date",
-    "the anchor reads every leg as filed by the page's price date (review of #885): " +
-    "`compute_anchor` cuts the companyfacts once at its entry, at " +
-    "`vinci.edgar.asof.page_price_date` (the reference date when there is no stored close), " +
-    "so the margin, D&A, FCF, the share counts and net debt read the same filings and one " +
-    "anchor never pairs a balance sheet with a later quarter's figures"],
-  ["2026-11-03.ex-lease-share-cut",
-    "the at-price ex-lease multiple reads its share count as filed by the price date of the " +
-    "page: `ex_lease_at_price` cuts the companyfacts once at the date of the stored close, so " +
-    "its share count and its net debt read the same filings — the valuation-bases refresh, " +
-    "which hands it the uncut blob, no longer divides by the average of a later 10-Q"],
-  ["2026-11-04.trace-rank-and-duration",
-    "a synthesis figure traces as its cited fact's percentile rank and a duration label is no " +
-    "figure: a whole number that a 0..1 percentile the cited fact states rounds to at x100 " +
-    "traces (0.026 is the 3rd percentile; both neighbours at an exact half), and a duration " +
-    "written hyphenated or abbreviated to y (5-year, 52-week, ~2y) is skipped like its spaced " +
-    "form; every other figure still traces only to the fact its point cites"],
-  ["2026-11-04.filed-ltm-tiebreak",
-    "a material annual-summary LTM that CIQ's annual and quarterly exports disagree on is " +
-    "decided by the SEC filing (operator approval 2026-11-04): the filer's XBRL figure for the " +
-    "same four quarters, as filed by the page's price date, on an explicit reviewed mapping, " +
-    "is stated in the row's LTM cell with every accession named and a main-body caveat when " +
-    "it reproduces one of CIQ's readings within 2%; where the item is filed only inside a " +
-    "wider line (NFLX's merger fee, in its non-operating line), the page states CIQ's " +
-    "quarterly reading when CIQ's breakdown of that line reproduces it in every quarter " +
-    "within 0.5 $M (operator ruling 2026-11-04, NFLX: option B); a row the filing cannot decide still " +
-    "refuses the build, saying why (`financial_summary.filed_ltm`)"],
-  ["2026-11-04.amendment-recital",
-    "a covenant exhibit whose capitals heading is an amendment naming no contract (REPRICING " +
-    "AMENDMENT, AMENDMENT NO 2.) is named for the first contract its recital names and marked " +
-    "an amendment, so a credit-agreement amendment reaches the covenant extractor and any " +
-    "other is refused for what it amends (an office lease); a CERTIFICATE or ARTICLES OF " +
-    "AMENDMENT and a title-cased heading are not read this way"],
-  ["2026-11-04.fiscal-year-change-marker",
-    "a fiscal-year change is no column: CIQ's 'Fiscal Year Change' period-header marker is " +
-    "registered as a known non-period cell (`ciq_sheets.PERIOD_HEADER_MARKERS`, closed), so a " +
-    "latest read skips it while any other undated header still places nothing; the summary " +
-    "tables and the Ratios panel drop it as a column, and no growth, year-on-year, step or " +
-    "order check " +
-    "spans the two fiscal calendars it divides; a page with no EV bridge says why " +
-    "(`ev_bridge_unbuilt`)"],
-  ["2026-11-04.rank-written-as-rank",
-    "the #890 trace is narrowed (its cross-review): a percentile's rank traces only for a figure " +
-    "written as a rank (a number, ordinal or not, before percentile / pctile / %ile; never an " +
-    "ordinal alone or a percentile-point move) — '2.0x' or 'fell 2%' cited to a percentile is a " +
-    "figure again — and only a whole-number duration (5-year, 52-week, " +
-    "~9y) is a label; a decimal one (2.3y, a 7.4-year payback) is a figure the cited fact must state"],
-  ["2026-11-04.footnote-every-figure",
-    "every synthesis figure is footnoted (item 29, operator ruling 2026-11-04 '1 + 4'): a point " +
-    "carries one entry per figure of its claim, citing the one fact that states it or naming an " +
-    "operation (difference, sum, ratio, premium, growth) on two cited inputs of the claim, " +
-    "recomputed at their written precision; a figure with no entry is traced to the point's own " +
-    "ref as before; and the blocks the assembler builds (consensus levels, peer capital intensity, " +
-    "checked maturities, the EV/EBITDA bases, the EBITDA basis, implied expectations, a filed " +
-    "LTM's two CIQ readings) carry a source_ref a point can cite"],
-  ["2026-11-04.anchored-drawdown",
-    "a name with an underwrite record, else a follow, keeps its drawdown at that date " +
-    "(`drawdown_cause.anchor`): the gap-downs of the 180 days ending on it, each with its " +
-    "move, its 8-K's item labels and the revised-outlook exhibit, read only from closes on or" +
-    " before it and 8-Ks filed by it, so no later build changes it; and the gap-downs since " +
-    "it to the price date, read the same way at the price date; a name with neither is " +
-    "unchanged"],
-  ["2026-11-04.drawdown-window-at-price-date",
-    "the rolling drawdown window ends on the page's price date, not the screen's reference " +
-    "date: the screen's detector over the 180 days ending on the stored close the price box " +
-    "shows, so a drop after the last screen run is classified, not only charted " +
-    "(`drawdown_cause.gap_window_end`)"],
-  ["2026-11-04.guidance-quote-cut",
-    "the drawdown outlook quote says where it stops: `_extract_revised_guidance` quotes 800 " +
-    "raw characters of the 99.1 from its outlook heading and now records whether the release " +
-    "goes on past them (`revised_guidance_cut` on `drawdown_cause` and on each dated part, " +
-    "absent until built); the quote is unchanged, and the page marks it cut, or on a page " +
-    "built before the field, possibly cut"],
-  ["2026-11-05.consensus-ref-names-its-sheet",
-    "a forward-year consensus row's ref names its sheet, then its row: " +
-    "`consensus_level_ref` writes 'CIQ Estimates→Consensus · EBITDA FY2027 (…)', where the " +
-    "first cut ran the metric into the sheet name ('Consensus EBITDA FY2027'); the figures " +
-    "are unchanged"],
-  ["2026-11-05.input-record",
-    "every page records what it was built from (`inputs`, JSON-only): the full sha256 of each " +
-    "CIQ export, HTTP response and price series the build read, cut on the page to the fact " +
-    "layer's sources plus a digest of the rest (the build's run record carries them all); a " +
-    "page built before it is backfilled from its own stamps, the rest `unrecorded`. No " +
-    "extracted value changes"],
-  ["2026-11-05.store-checkout-name",
-    "the price-store stamp names each store by its checkout's folder alone " +
-    "(`price_store.declared_path` / `resolved_path`, e.g. 'mosaic-theory-wb'), never the " +
-    "absolute local path that named the user and the session; the rendered page is unchanged, " +
-    "and the pages stamped before it were rewritten in place to the same form. No extracted " +
-    "value changes"],
-  ["2026-11-05.nonop-window-fourth-quarter",
-    "the non-operating read's trailing four are the filer's calendar quarters ending at its" +
-    " window end: a quarter no 80-100-day fact states — each 10-K's fiscal Q4 on the 26 " +
-    "committed pages checked, which the 10-K states only inside the year — is derived as " +
-    "the longer period less the shorter on one tag (`filed_tiebreak.filed_quarter`; Q4 = " +
-    "the year less the nine months) and cited with both filings; a year restated after its " +
-    "nine months were filed is never paired with them, and a derived revenue below zero is " +
-    "no quarter; a quarter that cannot be read leaves the window short, said in the count " +
-    "(`nonoperating_quarters.window`), the prose and the cite, and no older quarter is read" +
-    " in its place"],
-  ["2026-11-05.material-figure-direction",
-    "each material-figure line of the synthesis prompt states the figure's SIGNED value " +
-    "and, for a row of CIQ's Income Statement unusual-items block " +
-    "(`materiality.UNUSUAL_ITEM_LABELS`), which way it moves pre-tax income, read off the " +
-    "sign and never the label, naming a label word that points the other way (NFLX's " +
-    "+2,800.0 on 'Merger & Related Restruct. Charges' ADDS $2,800.0M); " +
-    "`material_direction_flags` adds a MATERIAL-DIRECTION QA flag where a claim stating " +
-    "a material figure frames it only against its sign. No extracted value changes; the " +
-    "prompt and the QA flags do"],
-  ["2026-11-06.descriptive-labels",
-    "the fact layer's labels describe and never judge: a rolling drawdown window with no " +
-    "-10% day reads 'no single-day drop of -10% or worse in the window (detector threshold " +
-    "-10%)'; the trailing EV/EBITDA's blind-flag note stands only where the page has no " +
-    "consensus forward P/E, no numeric NTM cell for the name on its comps sheet and no banded, " +
-    "non-context forward history (`mechanical.ev_ebitda_note`), and is otherwise deleted; the " +
-    "survival read's verdict tags are deleted, 'cash not derived' kept; the peer-delta " +
-    "question is asked only in the one direction every known trading-multiple gap, " +
-    "LTM and NTM, shows, " +
-    "and deleted where none is single; the web's peer subtitle assumes no discount; the " +
-    "catalyst print row names the drawdown guide only when it is the current guide, without " +
-    "'committed'. No figure changes; these strings do, most of them shorter"],
-  ["2026-11-07.gap-test",
-    "each missing item the synthesis prompt's rule 8 governs is sorted by the gap test " +
-    "(operator ruling 2026-11-07): `disclosure_gaps` types a segment-profit gap, the " +
-    "drawdown outlook and its company-adjusted figures, the newest release's adjusted-EPS" +
-    " guide, the current guide, the FCF sign and net debt / EBITDA as our gap, does not " +
-    "apply, the company's normal practice, a change or deviation, or type not determined," +
-    " read from statuses, lists, dates and table cells and never a note, CIQ's Guidance " +
-    "sheet being the second read the practice type needs, as of the page's price date, " +
-    "and no path emitting a change, whose evidence the layer cannot yet show; rule 8 lets" +
-    " only a change or deviation lower confidence, and the prompt asks no trailing " +
-    "multiple for a blind-flag. No extracted value changes; a new field and the prompt do"],
-  ["2026-11-09.asof-cut",
-    "the fact layer cuts its releases and CIQ's guidance at the page's price date and " +
-    "states what it leaves out (STATE row 57): each results 8-K filed after it is named " +
-    "in `primary_source.releases_after_price_date` and never fetched; an actual CIQ dates " +
-    "after it leaves the guidance delivery record, and a guide CIQ dates after it " +
-    "withholds the guidance read (the bridge, its rows and the revenue guide UNKNOWN), " +
-    "CIQ keeping one guide per period; each cell left out is kept in " +
-    "`catalyst_path.guidance_after_price_date`, never sent to the synthesis, and a caveat " +
-    "names each input. A page with nothing dated after its price date changes in no " +
-    "value; two new fields do"],
-  ["2026-11-09.order2-pages",
-    "the customer count is a structured field (audit RBC-D1): " +
-    "`concentration.customers_listed` holds every recently disclosed row the Customers " +
-    "export lists, and both renderers print it, never a count of the capped roster's " +
-    "pieces (a page without it prints no count); the Estimates→Surprise GAAP-EPS series " +
-    "is read from the block CIQ heads with the company's own listing in the fiscal-year " +
-    "table (audit RA-D1), naming that block when the sheet's first is another listing's " +
-    "and refusing the EPS read where no block is the company's; the containing-line " +
-    "tie-break's caveat says the filing reconciles the wider line and the row's own " +
-    "figure is CIQ's, never that the filing confirmed it (audit RBC-D8). Among the " +
-    "exports on file only PARR's surprise history moves; the rest is a new field and words"],
-  ["2026-11-10.point-guide",
-    "a point guide is the range [low, low] (TeamNostra fix request 2, RE1-D16): the guide " +
-    "check compares each side's top, its high or else its low, where `high or 0.0` read a " +
-    "missing high as zero, so a CIQ point of -0.05 against a release -0.05 to 0.00 read " +
-    "VERIFIED and a range of one against its own point read MISMATCH. On the 28 pages " +
-    "frozen at bcda7ce3 no line moves"],
-  ["2026-11-09.stale-and-conflicting",
-    "a buyback leg whose period ends more than a year (366 days) before the page's price " +
-    "date is no longer stated: its field reads UNKNOWN, naming the tag and the period it " +
-    "covers (`capital_allocation.CURRENT_DAYS`), and a PERIOD MISMATCH note names only " +
-    "legs still stated; the survival line carries net leverage only, its one-input " +
-    "FCF-sign leg deleted, so the two-input self-funding read is the only one, and the " +
-    "gap test's FCF-sign item names `quality.fcf_sign` itself. Figures leave the page; " +
-    "none changes"],
-  ["2026-11-09.restatement-precision",
-    "a restatement of a round figure is named (TeamNostra fix request 2, RE1-D6): " +
-    "`concepts._same_figure` reads a figure's precision from its trailing zeros but never " +
-    "coarser than its second significant figure, and a per-share figure's at the cent " +
-    "or finer, so NFLX's $900,000 thousand of debt restated to $885,849 thousand and " +
-    "HLF's 3.30 EPS restated to 3.32 are named where they were read as the same figure. " +
-    "On the 28 pages frozen at bcda7ce3 no cited figure moves"],
-  ["2026-11-10.fts-amendment-form",
-    "a full-text-search hit is reported by its filing's own form (TeamNostra fix request 2, " +
-    "RE1-D11): efts's `form` before its family `root_forms`, so an 8-K/A is an 8-K/A, and " +
-    "the covenant pointer writes the hit's form where it wrote `8-K`; the maturity check " +
-    "still reads a pointer-linked 8-K/A. On the 28 pages frozen at bcda7ce3 one of 92 " +
-    "pointer rows moves: WERN's 0000793074-26-000090 reads 8-K/A, with its covenant terms' " +
-    "source labels"],
-  ["2026-11-09.asof-reach-and-quarterly-amendments",
-    "EDGAR as it stood on the price date reaches as far back as EDGAR showed then " +
-    "(TeamNostra fix request 2, RE1-D8): a read with no window reaches back from the cut as " +
-    "far as the submissions recent page reaches back from its newest filing, reading the " +
-    "older pages that overlaps; reads the view cannot cut (the frames API, the share " +
-    "readers on it, the submissions document) raise (RE1-D9); a 10-Q/A is read in its " +
-    "original's place when it carries the quarter's statements and is named otherwise, on " +
-    "the page's 10-Q read (RE1-D12); the exposure graph's annual excerpts take the same /A " +
-    "rule for the numbers, keep the original's narrative unless the /A re-files Item 1 or 7, " +
-    "name a later /A (RE1-D13) and say what their character cap left out " +
-    "(RE1-D14). On the 28 pages frozen at bcda7ce3 no field moves: the catalyst counts on " +
-    "EPAM, IT and PARR, which the old view would now undercount, are reproduced"],
-  ["2026-11-09.driver-facts",
-    "each transcript operating-driver row carries the fact code read from its quote, and " +
-    "where the quote sits (audit RG-D8, RG-D19): `figures` (each number with the currency, " +
-    "scale, unit, change and bound its quote prints beside it), `value_status` (verified, " +
-    "qualitative or unknown) with `unknown_reason`, and `locator` (the call, its sha256, " +
-    "the paragraph, the speaker and the quote's sha256). A quote that does not name its " +
-    "metric, a figure-less value that is not the quote's words, and a direction or reading " +
-    "the quote does not support read UNKNOWN with no figure, and the synthesis reads that " +
-    "row's value as UNKNOWN. 10 of the 881 committed transcript rows would; no page carries " +
-    "the fields until it is re-assembled"],
-  ["2026-11-10.dated-headroom",
-    "impairment headroom is two balances at one date (audit RD-D1): an instant is the " +
-    "first tag in the preference order whose latest balance is within 366 days of the " +
-    "family's newest, so a first tag the filer stopped using no longer wins and a current " +
-    "total still beats a newer partial leg; `capital_allocation.impairment_headroom` " +
-    "reads goodwill and intangibles under those tags at the latest date they share, " +
-    "within 366 days of the price date, and states that date, or is UNKNOWN naming the " +
-    "dates found, and both renderers print it, never a sum of their own; a peer row " +
-    "totals its legs at one date with Assets at that date, states no total when they " +
-    "share no current date, and labels a single leg. MCK's headroom moves from $12,950.0M " +
-    "to $15,214.0M; AMZN's is dated 2025-12-31; TGT's and BURL's are UNKNOWN"],
-  ["2026-11-10.one-family-peers",
-    "the operator's ruling on one-family peers (#953): a peer tagging goodwill or " +
-    "intangibles alone is shown with that one leg, labelled, and left out of the " +
-    "goodwill-plus-intangibles medians; the impairment base rate counts every large peer " +
-    "measured over its window, whether or not its balance sheet gives a total, and that " +
-    "window ends at the filer's latest balance, never at a family it stopped tagging; " +
-    "each peer median prints its count ('median of N of M peers'); a row stating no " +
-    "total keeps its latest Assets and says 'no current balance' when its one family is " +
-    "not current. TGT's base rate moves from 3 of 6 to 5 of 8, BURL's from 1 of 2 to 2 of 5"],
-  ["2026-11-10.part-of-the-debt",
-    "a twelve-month debt figure for part of the debt is not the company's wall (TeamNostra fix " +
-    "request 2, V2-N1, RE2-D13, E2-D15's residual): a 10-Q's due-within-12-months statement is " +
-    "the wall only when the clause before it names the debt in aggregate, or names one " +
-    "instrument whose own principal is the total debt the filing states unqualified; otherwise " +
-    "the wall reads not_stated with a note naming the figure and its sentence. The original " +
-    "'$X million due within the next 12 months' form passes the same debt and lease filters as " +
-    "the widened ones, and the tranche and commitment readers read billions. On the 27 " +
-    "committed pages no filing field moves; outside them, Helmerich & Payne's term-loan $6.9M " +
-    "and Archer's lease $19.1M, both read as walls, now read not_stated"],
-  ["2026-11-10.release-actuals-never-silent",
-    "a release actual the reader cannot place is noted, never dropped silently, and four " +
-    "shapes it misread are read as stated (TeamNostra fix request 2: E2-D11's residual, " +
-    "RE2-D2, D5, D6, D8): an unplaced non-revenue actual writes the note an unplaced revenue " +
-    "figure already did, one note per statement; the first amount of a 'respectively' list " +
-    "is refused; a figure stated for a calendar year is refused; '$(5.5)', '($5.5)' and " +
-    "'-$5.5' are read, signed; and a 'year ended' date takes the release's fiscal offset, so " +
-    "a retailer's fiscal year ending in January is its fiscal year. On the 122 releases the " +
-    "27 committed pages cite no row moves; 16 exhibits on 10 pages gain 28 notes"],
-  ["2026-11-10.going-concern-denials-and-conclusions",
-    "a going-concern denial or hypothetical is not doubt, and a real conclusion is " +
-    "(TeamNostra fix request 2, RE2-D9 and RE2-D10): a doubt that 'does not exist', plans " +
-    "that 'alleviate' it (present tense), and 'there will be substantial doubt' deny or " +
-    "condition it; an alleviation is unsettled only by what precedes it or shares its " +
-    "clause; a filing whose own plans alleviate the doubt its conditions raised states none " +
-    "(ASC 205-40's alleviated outcome: Solo Brands' 10-Q and Aeluma's 10-K, read as doubt " +
-    "before); a frame whose sentence concludes with the verb after the doubt, or with the " +
-    "company having it, is a conclusion; and a 'no' governs only the words up to a " +
-    "conjunction. On the 27 committed pages no going-concern field moves; over three SEC " +
-    "caches (178 reads of filings that mention a going concern, overlapping), two filings " +
-    "move, both from doubt to none, both alleviated"],
-  ["2026-11-10.marker-residuals",
-    "a CIQ marker is a stated gap, never an older value or a dropped row (fix request 2, " +
-    "order 3: RA-D3, RA-D8, RA-D13, RBC-D6, RA-D11): a dated Guidance cell that does not " +
-    "read is the latest guide, read as unread with its cell named, and no older guide is " +
-    "served or checked in its place; a Segments block whose rows no longer sum to their " +
-    "total within 0.5% because a row is marked states no mix and no segment count, naming " +
-    "the row; an empty `consensus_levels` says why (`consensus_levels_note`, not sent to " +
-    "the synthesis); the spreadsheet Customers export is read by the RTF route's reader, " +
-    "so its prior section, a repeated header, a Supplier Name column and CIQ's own " +
-    "'there are no' are read as they are there; a non-zero LibreOffice exit is a call " +
-    "that did not read, left out and named. No figure moves: no export on disk on " +
-    "2026-11-10 holds any of these shapes; ORKA's and TECX's pages, which carry no " +
-    "consensus levels, gain the note"],
-  ["2026-11-10.maturity-subject-and-unread-body",
-    "a maturity date belongs to its sentence's subject, an option to extend is not a " +
-    "maturity, a past 'matured' is not current, and an unread 8-K body is not a clean scan " +
-    "(TeamNostra fix request 2, RE2-D11, D12, D14): `debt_maturities` skips a noun inside a " +
-    "comma-set aside ('which was entered into alongside the Term Loan') when it pairs a date " +
-    "with the nearest instrument; a modal or a stated option or right governing 'extend' reads " +
-    "no date, unless the option was exercised; 'matured' is the past tense; and " +
-    "`rank.structural` marks a filing whose body fetch failed, so a scan that finds no flag " +
-    "on it does not count the name covered and its prior flag stands; and (RE2-D15) " +
-    "`segments` reads a figure with a footnote mark after it ('$ 1,229 [1]') as its figure"],
-  ["2026-11-10.bridge-total-and-band",
-    "three of document 11's partly fixed items finished (fix request 2, order 3): the EV " +
-    "bridge's note says what its claims total leaves out (A-D2) — each unread preferred or " +
-    "minority leg named with its reason, and whether CIQ's current TEV less market cap, " +
-    "which counts every claim, checks the total (no comps export: nothing does); the " +
-    "mid-cycle multiple band is the own-history band's population (D-D3), every dated close " +
-    "before the latest, so an export-day close the quarter has not completed is no longer " +
-    "history, and an undated sheet builds no band; an anchor-bridge figure one unit step " +
-    "(1,000x or 1,000,000x) from its own parts' re-read is refused, not scored agree " +
-    "(BC-D10). 13 of the 26 committed bridges carry an unread leg and gain the note when " +
-    "refreshed; no committed page carries a mid-cycle band"],
-  ["2026-11-10.unit-and-headers",
-    "fix request 2, order 4, two CIQ-reader defects (RA-D9, RA-D14): a Financials money sheet " +
-    "stating a unit other than Millions is refused before assembly and on the anchor's path " +
-    "(`ciq_sheets.require_millions`, `require_usd`'s twin), so no page prints thousands as " +
-    "$M; Consensus's target-price and LT-growth stats and every Recent Changes column are " +
-    "read by their headers, and a missing header leaves the read unread, never positional. " +
-    "No page moves: all 720 money sheets on disk state Millions, and every export's headers " +
-    "sit where the positional reads assumed (2026-11-10)"],
-  ["2026-11-10.loud-with-the-right-cause",
-    "fix request 2, order 6, two loud failures that named the wrong cause (RA-D16, RA-D15): " +
-    "the LTM-against-its-quarters flag quotes a quarter's own cell ('NA', 'NM', blank, " +
-    "absent) instead of '-' for every marker; an empty `.xlsx` cell states no currency, so " +
-    "an all-USD `.xlsx` export is no longer refused as foreign (H-D3's strict xfail lifted). " +
-    "No figure moves: the flag is QA text, and five committed pages (EPAM, MCK, VITL, VRRM, " +
-    "WLK) print a '-' quarter as '-' (quoted) once re-assembled; every export on disk is " +
-    "BIFF"],
-  ["2026-11-10.relationship-view-edges",
-    "the Customers view's edges are said (TeamNostra fix request 2, RBC-D3, V1-O3, RBC-D5):" +
-    " an RTF view that does not end with CIQ's closing line ('*denotes proprietary " +
-    "relationship', the last line of all 72 exports on disk) says the list may be cut short" +
-    " and gives no count; a row naming a party with its relationship type blank is kept as " +
-    "'type not stated' when it states another column; a header with no rows, a 'No Data " +
-    "Available' body and an 'Entitlement Needed' body are named as such, never 'could not " +
-    "parse'; and a thin RTF is no longer called an OLE Word doc. On the 36 export folders " +
-    "on disk no read moves"],
-  ["2026-11-11.guides-as-stated",
-    "a guide is read only where the release states one, for the period it states, and a " +
-    "guide the reader cannot read is said aloud (TeamNostra fix request 2, RE2-D1, D3, D4, " +
-    "D5, D7, D19, D20): two figures joined by 'and' outside 'between' are no range; a range " +
-    "the release withdraws, or one stated for a calendar period, is refused with a note; a " +
-    "period phrase naming a deal ('the 2025 acquisition') is not the guide's period; a " +
-    "qualifier before the low side, 'is expected to increase', and 'guidance to $X to $Y' " +
-    "are read; a single-point guide a forward verb governs is refused with a note; and a " +
-    "guide filed under the next-fy default carries a machine-tier flag saying no period was " +
-    "read"],
-  ["2026-11-10.covenant-value-figures",
-    "a covenant term's value states only figures its own quote states, in every class, not " +
-    "years and currency figures alone (TeamNostra fix request 2, RE2-D16 with E2-D19's " +
-    "residual): a whole date compares day, month and year; a ratio against one compares in " +
-    "any form (4.50x is 4.50 to 1.00, and a conformed copy's struck ratio is read); a percent " +
-    "compares with basis points, and 0% with 'zero'; an unmarked amount compares with any " +
-    "amount the quote states. A rate component's own clause, when it is a span of the exhibit, " +
-    "states figures for the value too. On the 27 committed pages 24 more PRESENT terms on 13 " +
-    "pages are withheld at their next re-assembly (23 a percent or bps figure, 1 a date); none " +
-    "moves until then"],
-  ["2026-11-10.kind-by-exact-name",
-    "fix request 2, order 5 (RA-D10 = A-D15 = RBC-D2, RA-D17): a CIQ export's kind is its " +
-    "name's exact rule, the stem's end after the listing (the comps book's start, a call's " +
-    "dated tail), never a keyword anywhere in the name, so an issuer named 'Financial', " +
-    "'Income', 'Customers' or 'Consensus' reads as its own pack; the Customers and Suppliers " +
-    "files are told apart by their end; a PDF tearsheet is decoded as a PDF and its industry " +
-    "read, the value on its label's line or the next. No page moves: all 382 files on " +
-    "disk keep their kind, and every tearsheet on disk is RTF"],
-];
+// (26a) EXTRACTION VERSION — the twin of the stamp helpers in vinci/dossier/extraction_version.py.
+// The dossier's date says WHEN it was built; this says WITH WHAT, which is what "are these two
+// dossiers comparable?" actually turns on (#238 left the fleet holding two vintages that dated
+// alike). THE TABLE ITSELF IS NOT HERE (2026-11-11): it was a hand-kept copy every output-changing
+// PR appended to on the same lines as every other, so each merge sent the rest DIRTY. build.py now
+// writes it to snapshots/extraction_versions.json on every deploy, render() fetches it and hands it
+// to useExtractionVersions() before the page is drawn. test_extraction_version.py pins this twin to
+// python's on every stamp shape, and test_parity_pins.py pins build.py's table to python's.
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
 // whitespace-only all mean "no version was recorded". Records are hand-edited so a blank is
@@ -608,11 +33,42 @@ const refreshedTo = (entries) =>
   entries && entries.length ? stampLabel(entries[entries.length - 1].extraction_version) : null;
 const refreshLine = (e) =>
   `${e.date} · ${(e.layers || []).join(", ")} — ${e.writer} at ${stampLabel(e.extraction_version)}`;
-const stampDetail = (v) => {
+// A vintage and every vintage it follows — the twin of _lineage().
+const stampLineage = (v, follows) => {
+  const seen = new Set();
+  const stack = [v];
+  while (stack.length) {
+    const x = stack.pop();
+    if (!seen.has(x)) { seen.add(x); stack.push(...(follows[x] || [])); }
+  }
+  return seen;
+};
+// What a declared stamp names — the twin of names_of(): one vintage's own words, or each head of a
+// parallel merge ("A+B": parts once each, in id order, none following another), bracketed. null
+// when the stamp is not one the code can produce.
+const stampNames = (c, table) => {
+  const { versions, follows } = table;
+  const parts = c.split("+");
+  if (!parts.every((p) => Object.prototype.hasOwnProperty.call(versions, p))) return null;
+  if (parts.length > 1 && (parts.join("+") !== [...new Set(parts)].sort().join("+")
+    || parts.some((a) => parts.some((b) => a !== b && stampLineage(b, follows).has(a))))) return null;
+  if (parts.length === 1) return versions[parts[0]];
+  return "vintages merged in parallel, none following another: "
+    + parts.map((p) => `[${p}] ${versions[p]}`).join(" ");
+};
+// The deploy's {versions, follows} (getExtractionVersions), set by render() before a page is drawn.
+// Module state rather than an argument down render → renderDossier → appendixTier →
+// recordAndReproduce: the table is one per deploy, never per page, and those call sites are pinned
+// (test_log_command_id). Unset, the page SAYS the table did not load — never "not a version this
+// code declares", which would be a claim about the page's vintage made from a missing file.
+let versionTable = null;
+export function useExtractionVersions(table) { versionTable = table || null; }
+const stampDetail = (v, table = versionTable) => {
   const c = declaredVersion(v);
   if (!c) return `${UNSTAMPED} — assembled before extraction versions were declared; vintage unknown`;
-  const row = EXTRACTION_VERSIONS.find(([ver]) => ver === c);
-  return row ? `${c} — ${row[1]}`
+  if (!table) return `${c} — the extraction-version table did not load in this deploy, so what this version names is not shown`;
+  const named = stampNames(c, table);
+  return named !== null ? `${c} — ${named}`
     : `${c} — not a version this code declares; built by a different extractor`;
 };
 
@@ -781,6 +237,7 @@ export async function render(root, params, { item, frame }) {
   // tolerates 404, so it rethrew and this view died at "Loading dossier…". It bit exactly one name:
   // WERN, the only ticker with an underwrite but no dossier, i.e. the only page whose normal path
   // requires a MISSING file. The index lists exactly what the build emitted — ask it, don't probe.
+  const versionTableLoad = getExtractionVersions();  // never rejects: a failed load is null
   const [known, led, followed] = await Promise.all([getDossierIndex(), getLedger(), getFollowed()]);
   const d = known.includes(ticker) ? await getDossier(ticker) : null;
   // The underwrite record is read ONCE, for BOTH paths — a name may have a dossier, a record, or
@@ -834,6 +291,7 @@ export async function render(root, params, { item, frame }) {
   // one match the other reintroduces a bug: ticker-binding there showed a stale BUY on a reissued
   // watch record; id-binding here would blank the history the moment a record was superseded.
   const verdict = led.entries.find((e) => e.ticker === ticker) || null;
+  useExtractionVersions(await versionTableLoad);
   root.innerHTML = frame(item, {
     crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict, card, mark, followed) });
   // (3-tier) client-side tabs — default Brief; toggle the active panel, no re-fetch, no router change.
@@ -1641,9 +1099,60 @@ function briefTier(d, verdict, m, card, mark) {
 // A COUNT, NEVER A RATE: five draws cannot support a percentage (3-of-5 is a 95% CI of roughly
 // [23%, 88%]), so this prints what happened. An ABSENT tally prints nothing at all — a page built
 // before the gate was never measured, and silence must not read as agreement.
+// THE VOTE RULE'S SPLIT (R4) — the twin of verdict.DrawGate.split: the labels by count then name,
+// the failed draws named, and R1's bar. A count, never a rate.
+// The modal lean and C(iii)'s state, DERIVED as verdict.DrawGate.from_record derives them: the
+// page stores counts and a boolean, never a direction.
+function drawGateLean(a) {
+  const entries = Object.entries(a.labels || {});
+  const top = entries.reduce((m, [, n]) => Math.max(m, n), 0);
+  const hit = entries.find(([, n]) => n === top);
+  return hit ? hit[0] : "";
+}
+
+function drawGateState(a) {
+  if (a.passes) return "proposed";
+  const lean = drawGateLean(a);
+  const committed = lean === "strongly-bullish" || lean === "strongly-bearish";
+  return committed && 2 * a.modal_count > a.attempted ? "borderline" : "none";
+}
+
+function drawGateSplit(a) {
+  const rule = `the ${a.required}-of-${a.attempted} rule`;
+  const labels = Object.entries(a.labels || {})
+    .sort((x, y) => y[1] - x[1] || (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0));
+  if (labels.length === 1 && a.modal_count === a.attempted) {
+    return `${a.modal_count} of ${a.attempted} draws ${drawGateLean(a)} (${rule})`;
+  }
+  const parts = labels.map(([lab, n]) => `${n}x ${lab || "unparsed"}`);
+  const drawn = labels.reduce((t, [, n]) => t + n, 0);
+  if (drawn < a.attempted) parts.push(`${a.attempted - drawn}x failed`);
+  return `${parts.join(", ")} of ${a.attempted} draws (${rule})`;
+}
+
 function drawAgreementHtml(s) {
   const a = s && s.draw_agreement;
   if (!a || !a.attempted || a.attempted < 2) return "";
+  // R1's record (the vote rule, verdict.draw_gate); a page written before it has no `passes` and
+  // reads below exactly as it always did
+  if (a.passes !== undefined && a.passes !== null) {
+    const split = escapeHtml(drawGateSplit(a));
+    if (a.passes) {
+      return `<div style="margin-top:4px; font-size:12px; opacity:.72;">Reproducibility: ${split}
+        — the rule is met.</div>`;
+    }
+    if (drawGateState(a) === "borderline") {
+      return `<div style="margin-top:4px; font-size:12px; font-weight:600;">Reproducibility:
+        BORDERLINE — ${split}. The rule is not met, so no machine proposal is made; the read is the
+        first draw carrying the majority lean. A tally of this build, not a rate.</div>`;
+    }
+    const lean = drawGateLean(a);
+    if (a.unanimous && (lean === "strongly-bullish" || lean === "strongly-bearish")) {
+      return `<div style="margin-top:4px; font-size:12px; font-weight:600;">Reproducibility:
+        ${split} — a failed draw counts as dissent, so no machine proposal is made. A tally of this
+        build, not a rate.</div>`;
+    }
+  }
   if (a.unanimous) {
     return `<div style="margin-top:4px; font-size:12px; opacity:.72;">Reproducibility: all
       ${a.completed} of ${a.attempted} draws on this build returned the same lean.</div>`;

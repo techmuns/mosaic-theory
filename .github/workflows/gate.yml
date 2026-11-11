@@ -19,6 +19,15 @@ name: gate
 #
 # SO THIS IS A FLOOR, NOT A REPLACEMENT. The CIQ-bound extraction pins run only where the licensed
 # export exists, which means `bin/commit` stays mandatory before a push — CI cannot see those.
+#
+# ONE EXCEPTION, THE MECHANICAL RE-SYNC (operator 2026-11-11, approving item 2: "yes, approve 1–4"):
+# a merge from main whose conflicts are ONLY extraction-version rows and their drift pins, STATE.md
+# rows or fix-log rows, and which changes no other code, is gated by THIS workflow alone, after the
+# four shared-file tests run locally (test_state_identifiers, test_state_open_now, test_fix_log,
+# test_extraction_version_drift). A re-sync touching any other code still goes through `bin/commit`.
+# The accepted risk (main's code meets the branch's away from the CIQ-bound pins) and its falsifier
+# (the full local suite on main after each merge batch): docs/records/2026-11-11-fix2-bookkeeping-
+# batch-2-and-faster-fixes.md.
 
 on:
   pull_request:

@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-11.unpriced-insider-lines-and-hidden-lease-cells",
+  "follows": [
+    "2026-11-10.kind-by-exact-name"
+  ],
+  "names": "the insider line's dollar total states the open-market lines it leaves out for want of a price ('$0.50M + 1 with no price stated'), its largest is named among priced lines only ('largest priced sale') with the unpriced ones counted beside it, and a lease quarter whose EDGAR figure is a later comparative is no longer read as pre-adoption when a lease cell CIQ leaves '-' may be what makes its rows short after the filer's own reports carried leases: it is unreconciled, unpriced, and names the cell (audit RD-D2, RD-D3; 0 of 27 committed pages carry either shape)"
+}

@@ -2,7 +2,8 @@
 
 It holds EDGAR companyfacts (ADR: ``docs/records/2026-11-04-fact-layer-adr.md``). A snapshot is a
 set of immutable Parquet objects, each named by a hash of its rows, listed by a committed JSON
-manifest; DuckDB reads them in memory; "as of a date" is ``filed_date <= :as_of``. Two snapshots
+manifest; DuckDB reads them in memory; "as of a date" is "accepted by that day's 16:00 New York
+close" (:mod:`vinci.facts.reader`). Two snapshots
 are current: ``pages`` (the committed pages' companies, objects in git) and ``screen`` (the
 screen's universe, objects on the machine that ingested it). Both are uploaded to R2, and any
 reader given ``root="r2://"`` reads them from there (:mod:`vinci.facts.remote`).
@@ -22,14 +23,20 @@ from __future__ import annotations
 from pathlib import Path
 
 from vinci.facts.reader import (
+    ACCEPTED,
+    FILED,
     Fact,
     FactAmbiguousError,
+    FactCutUndeterminedError,
+    FactNotHeldError,
     FactsStoreNotPresentError,
+    FactStaleError,
     FactStore,
     FactUnknownError,
     FrameResult,
     Period,
     SourceRef,
+    cut_instant,
 )
 from vinci.facts.store import DEFAULT_NAME, FactsStoreError, RemoteStoreNotConfiguredError
 
@@ -44,8 +51,13 @@ def open_store(snapshot_id: str | None = None, *, source: str = "edgar",
 
 
 __all__ = [
+    "ACCEPTED",
+    "FILED",
     "Fact",
     "FactAmbiguousError",
+    "FactCutUndeterminedError",
+    "FactNotHeldError",
+    "FactStaleError",
     "FactStore",
     "FactUnknownError",
     "FactsStoreError",
@@ -54,5 +66,6 @@ __all__ = [
     "Period",
     "RemoteStoreNotConfiguredError",
     "SourceRef",
+    "cut_instant",
     "open_store",
 ]

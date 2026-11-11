@@ -41,11 +41,15 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
     THE POINT IS THE CALL, not the mirror's own correctness — #319 already byte-pins that. What
     was missing is that anything invokes it at all."""
     # `frontend/build.py` mirrors the SNAPSHOTS too, so the tmp tree needs them or the build
-    # raises before it ever reaches the dossiers.
-    for rel in ("data/dossiers", "data/snapshots", "frontend", "scenarios"):
+    # raises before it ever reaches the dossiers — and since 2026-11-11 it reads the extraction-
+    # version table (the frozen rows and one file per vintage) to write the web's copy.
+    for rel in ("data/dossiers", "data/snapshots", "frontend", "scenarios",
+                "vinci/dossier/extraction_versions"):
         src = ROOT / rel
         if src.is_dir():
             shutil.copytree(src, tmp_path / rel, dirs_exist_ok=False)
+    shutil.copy(ROOT / "vinci/dossier/extraction_version.py",
+                tmp_path / "vinci/dossier/extraction_version.py")
     (tmp_path / "frontend" / "build.py").write_text(
         (ROOT / "frontend" / "build.py").read_text())
 

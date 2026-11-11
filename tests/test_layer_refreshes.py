@@ -20,7 +20,7 @@ from typing import Any
 import pytest
 
 from vinci.dossier import layer_refresh as lr
-from vinci.dossier.extraction_version import EXTRACTION_VERSION, EXTRACTION_VERSIONS
+from vinci.dossier.extraction_version import EXTRACTION_VERSION, declares
 from vinci.dossier.schemas import Dossier, dossier_json
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -165,9 +165,10 @@ def test_no_committed_page_carries_a_null_record() -> None:
 
 
 def _undeclared(doc: dict[str, Any]) -> list[str]:
-    declared = {v for v, _ in EXTRACTION_VERSIONS}
+    # `declares`, not membership of the table: a refresh run between two parallel merges records a
+    # joined stamp (`A+B`), which is declared though it is no single row (2026-11-11).
     return [e["extraction_version"] for e in doc.get("layer_refreshes") or []
-            if e["extraction_version"] not in declared]
+            if not declares(e["extraction_version"])]
 
 
 def test_every_recorded_refresh_names_a_declared_version() -> None:

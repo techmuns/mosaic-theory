@@ -60,8 +60,13 @@ def test_a_negative_value_without_a_stated_decline_still_fails(value: float, vt:
     assert _number_check(value, vt, "%", quote)[0] is False
 
 
-def test_a_positive_reading_of_a_stated_decline_is_unchanged() -> None:
-    assert _number_check(27.0, "~27%", "%", EV)[0] is True  # "a 27% decline", as before
+def test_a_positive_reading_of_a_stated_decline_is_refused() -> None:
+    """REVERSED by RG-D21 (fix request 2, group G). This pin read "as before": when the minus was
+    first accepted, a positive reading of a stated decline was left passing — a silent wrong value
+    (MLCC spot prices "slipped approximately 5%" stored +5, C-f5fcf829b5a474). It is refused now,
+    unless the metric names the decline or the figure is a multiple
+    (`test_theme_intelligence_number_sign.py`)."""
+    assert _number_check(27.0, "~27%", "%", EV)[0] is False
 
 
 # --- 2. a figure written with an ellipsis ----------------------------------------------------

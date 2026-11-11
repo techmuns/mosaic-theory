@@ -38,9 +38,12 @@ from vinci.facts.edgar_ingest import (
     EXTRACTOR,
     EXTRACTOR_VERSION,
     SOURCE,
+    IngestShapeError,
     NotInCacheError,
+    acceptance_rows,
     read_cached_companyfacts,
     rows_from_companyfacts,
+    unread_reason,
 )
 from vinci.facts.reader import FactStore, manifest_summary
 from vinci.facts.scope import (
@@ -62,6 +65,7 @@ from vinci.facts.store import (
     store_root,
     verify_manifest,
     write_entity,
+    write_filings,
     write_manifest,
 )
 
@@ -97,8 +101,22 @@ def cmd_ingest(a: argparse.Namespace) -> int:
             by_cik.setdefault(n.cik, []).append(n.ticker)
     storage = STORAGE[name]
     root = store_root(a.store, storage=storage)
+    # EVERY RESPONSE IS CHECKED BEFORE ANY OBJECT IS WRITTEN (TeamNostra fix request 2, RFL-D9).
+    # One row of an unknown shape stopped the ingest after it had written earlier companies'
+    # objects, which no manifest then named (6 left on disk, no manifest, in the audit's run).
+    # Objects are named by content and may be another snapshot's too, so none is ever deleted:
+    # the run refuses before it writes. Each response is read twice, never held: the screen's
+    # universe is ~28M rows.
+    problems = _shape_problems(by_cik, a.cache_dir)
+    if problems:
+        for p in problems:
+            print(f"SHAPE {p}")
+        print(f"nothing written: {len(problems)} cached response(s) of a shape this ingest cannot "
+              "store faithfully (each named above); no object and no manifest")
+        return 1
     files: list[FileEntry] = []
     orders: dict[str, OrderEntry] = {}
+    filings: dict[str, OrderEntry] = {}
     entities: list[dict[str, Any]] = []
     for cik, tickers in sorted(by_cik.items()):
         try:
@@ -107,16 +125,19 @@ def cmd_ingest(a: argparse.Namespace) -> int:
             unread.extend({"ticker": t, "cik": cik, "reason": str(exc)} for t in tickers)
             print(f"UNREAD {'/'.join(tickers)} {cik}: {exc}")
             continue
-        got = rows_from_companyfacts(json.loads(resp.text))
+        facts = json.loads(resp.text)
+        got = rows_from_companyfacts(facts)
         if got.entity != cik:
             raise SystemExit(f"{cik}: the cached response is for CIK {got.entity}")
         if not got.rows:
-            unread.extend({"ticker": t, "cik": cik, "reason": "the cached response holds no row "
-                           "with a filed date"} for t in tickers)
-            print(f"UNREAD {'/'.join(tickers)} {cik}: no row with a filed date")
+            why = unread_reason(facts, got)
+            unread.extend({"ticker": t, "cik": cik, "reason": why} for t in tickers)
+            print(f"UNREAD {'/'.join(tickers)} {cik}: {why}")
             continue
+        accepted = acceptance_rows(cik, got.rows, a.cache_dir)
         # ONE ENTITY AT A TIME: the screen's universe is ~28M rows, never all held at once
         got_files, orders[cik] = write_entity(got.rows, root)
+        filings[cik] = write_filings(SOURCE, cik, accepted.rows, root)
         files.extend(got_files)
         entities.append({
             "entity": cik, "tickers": sorted(tickers), "entity_name": got.entity_name,
@@ -127,10 +148,12 @@ def cmd_ingest(a: argparse.Namespace) -> int:
             # named beside the count, and only when there are any
             **({"rows_without_filed_named": got.rows_without_filed_named}
                if got.rows_without_filed_named else {}),
+            "acceptance": accepted.summary(),
         })
         print(f"read {'/'.join(tickers):6} {cik} fetched {resp.fetched_at:%Y-%m-%d} "
               f"{got.rows_in_response:>7,} rows, {got.exact_duplicates_dropped} exact duplicates, "
-              f"{got.rows_without_filed} without a filed date", flush=True)
+              f"{got.rows_without_filed} without a filed date; acceptance time for "
+              f"{len(accepted.rows):,} of {accepted.accessions:,} accessions", flush=True)
     scope = {"rule": rule, "names_selected": len(names),
              # Both counts are kept, as 0, so every manifest states one scope shape: the two
              # written under the lifted hold state 1 and 6, and the screen replay reads the first
@@ -141,10 +164,33 @@ def cmd_ingest(a: argparse.Namespace) -> int:
     manifest = build_manifest(source=SOURCE, extractor=EXTRACTOR,
                               extractor_version=EXTRACTOR_VERSION, scope=scope,
                               entities=entities, files=files, orders=orders, name=name,
-                              storage=storage)
+                              storage=storage, filings=filings)
     path = write_manifest(manifest)
     print(f"wrote {path} ({storage}: objects under {root})\n  {manifest_summary(manifest)}")
     return 0
+
+
+def _shape_problems(by_cik: dict[str, list[str]], cache_dir: Path) -> list[str]:
+    """Every cached response, and its submissions documents, read as the ingest reads them,
+    nothing written: one line per entity this ingest cannot store faithfully."""
+    problems: list[str] = []
+    for cik, tickers in sorted(by_cik.items()):
+        try:
+            resp = read_cached_companyfacts(cik, cache_dir)
+        except NotInCacheError:
+            continue                          # reported as unread by the writing pass
+        try:
+            got = rows_from_companyfacts(json.loads(resp.text))
+            if got.entity != cik:
+                # the writing pass's own refusal, made here so it too precedes every write
+                problems.append(f"{'/'.join(tickers)} {cik}: the cached response is for CIK "
+                                f"{got.entity}")
+                continue
+            if got.rows:
+                acceptance_rows(cik, got.rows, cache_dir)
+        except (IngestShapeError, json.JSONDecodeError) as exc:
+            problems.append(f"{'/'.join(tickers)} {cik}: {type(exc).__name__}: {exc}")
+    return problems
 
 
 def cmd_parity(a: argparse.Namespace) -> int:
@@ -163,16 +209,22 @@ def cmd_parity(a: argparse.Namespace) -> int:
                     continue
                 doc = json.loads(n.page.read_text())
                 results.append(compare_page(n.ticker, doc, store, a.cache_dir, at=at, eve=eve))
-    head = ("page", "cut", "fetched", "rows in resp", "filed after cut", "rows compared",
-            "store rows", "row diffs", "order diffs", "keys compared", "key diffs",
-            "keys restated", "ambiguous keys", "get() sample", "get() diffs")
+    head = ("page", "cut", "fetched", "past fetch", "rows in resp", "filed after cut",
+            "dups held once", "rows compared", "store rows", "row diffs", "order diffs",
+            "keys compared", "key diffs", "keys restated", "ambiguous keys", "get() sample",
+            "get() diffs")
     print("| " + " | ".join(head) + " |\n|" + "---|" * len(head))
     for r in results:
         if r.unread:
             print(f"| {r.ticker} | {r.cut} | UNREAD: {r.unread} |")
             continue
-        cells = (r.ticker, r.cut, r.fetched_at[:10], f"{r.rows_in_response:,}",
-                 f"{r.rows_after_cut:,}", f"{r.rows_compared:,}", f"{r.store_rows:,}",
+        if r.changed:
+            print(f"| {r.ticker} | {r.cut} | CHANGED: {r.changed} |")
+            continue
+        cells = (r.ticker, r.cut, r.fetched_at[:10], "yes" if r.past_fetch else "no",
+                 f"{r.rows_in_response:,}", f"{r.rows_after_cut:,}",
+                 f"{r.duplicates_held_once} (of {r.duplicates_dropped_by_ingest})",
+                 f"{r.rows_compared:,}", f"{r.store_rows:,}",
                  r.row_diffs, r.order_diffs, f"{r.keys_compared:,}", r.key_diffs,
                  f"{r.keys_restated:,}", r.ambiguous_keys, r.get_sampled, r.get_diffs)
         print("| " + " | ".join(str(c) for c in cells) + " |")
@@ -182,9 +234,13 @@ def cmd_parity(a: argparse.Namespace) -> int:
         for e in r.examples:
             print(f"    {r.ticker}: {e}")
     bad = [r.ticker for r in results if not r.zero_diff]
+    changed = [r.ticker for r in results if r.changed]
+    unread = [r.ticker for r in results if r.unread]
     print(f"\n{len(results)} page-cuts compared; {len(results) - len(bad)} zero-diff; "
-          f"{len(bad)} with a diff{(': ' + ', '.join(bad)) if bad else ''}; "
-          f"{skipped} name(s) of the pages' scope left out by --exclude")
+          f"{len(bad)} not zero-diff{(': ' + ', '.join(bad)) if bad else ''} — of them "
+          f"{len(changed)} CHANGED (the cache holds another response than the snapshot "
+          f"ingested) and {len(unread)} UNREAD; {skipped} name(s) of the pages' scope left out "
+          "by --exclude")
     if a.json:
         Path(a.json).write_text(as_json(results))
     return 1 if bad else 0
@@ -234,8 +290,16 @@ def cmd_verify(a: argparse.Namespace) -> int:
 
 
 def cmd_upload(a: argparse.Namespace) -> int:
-    from vinci.facts.remote import R2Client, bucket_against_manifests, upload_snapshot
+    from vinci.facts.remote import (
+        R2Client,
+        bucket_against_manifests,
+        upload_refusal,
+        upload_snapshot,
+    )
     manifest = load_manifest(a.snapshot, name=a.name)
+    if (why := upload_refusal(manifest)) is not None:      # before any request (RFL-D6)
+        print(f"snapshot {manifest['snapshot_id']}: nothing uploaded — {why}")
+        return 1
     root = store_root(a.store, storage=manifest["storage"])
     t = manifest["totals"]
     print(f"snapshot {manifest_summary(manifest)}\n  + {t['order_files']:,} order objects "
