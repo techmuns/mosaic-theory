@@ -45,6 +45,10 @@ the path the monitor and every windowed caller read through.
     path (`_get`), and a refused cached copy's fetch time is forgotten, so `fetched_at` never
     states a read that failed. Pinned by `test_a_rejected_copy_whose_refetch_fails_states_no_fetch_time`,
     red on `fa40c5d0`.
+  - PR round 1 (the in-session `/code-review high`, Codex's review having failed on its usage
+    limit): the refused copy is now removed from disk as well, because `fetched_at` falls back
+    to the disk entry and still stated the refused copy's time. Pinned by the same test, now
+    asserting `fetched_at(url) is None`, red on `cc7a7fff`.
 - **The callers' suites pass**, `-m "not network"`: netcache, older pages, EDGAR, SEC pacing,
   budget and refusals, and amended filings.
 
@@ -60,3 +64,6 @@ the path the monitor and every windowed caller read through.
   none, and the read failed for a day. SEC's pacing and refusal rules (#854, #939) apply to every
   retry. A 403 or 429 refusal is unchanged: it never reaches the body check.
 - **The monitor still aborts on an unreadable older page** until row 42 (1) lands.
+- **DEFERRED (PR round 1): `post_json` still caches a 200 body before it parses it.** That is the
+  same class on FINRA's short-interest query path (`finra.py`), outside row 42's submissions reads.
+  The fix would route `post_json` through the same body check.

@@ -309,8 +309,8 @@ class CachedHttp:
              check: Callable[[str], Any] | None) -> tuple[str, Any]:
         """The one read path of `get_text` and `get_json`: the on-disk copy when fresh, else a
         fetch that is written. ``check`` (`get_json`'s parse) runs BEFORE the write, so a body it
-        refuses raises with nothing cached; a cached copy it refuses is a miss, its fetch time
-        forgotten. Returns (text, check(text) or None)."""
+        refuses raises with nothing cached; a cached copy it refuses is a miss, removed from
+        memory and disk. Returns (text, check(text) or None)."""
         full_url = self._with_params(url, params)
         cached = self._read_cache(full_url, ttl_seconds)
         value: Any = None
@@ -318,8 +318,11 @@ class CachedHttp:
             try:
                 value = check(cached)
             except ValueError:
-                cached = None                     # cached before bodies were checked: refetch it
+                # cached before bodies were checked: NOT A HELD COPY, so it is dropped from memory
+                # and disk alike (`fetched_at` reads both), then fetched again
+                cached = None
                 self._fetched.pop(full_url, None)
+                self._cache_path(full_url).unlink(missing_ok=True)
         if cached is None:
             cached = self._fetch_with_retries(full_url)
             if check is not None:

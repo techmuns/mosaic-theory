@@ -126,3 +126,5 @@ def test_a_rejected_copy_whose_refetch_fails_states_no_fetch_time(tmp_path: Path
     with pytest.raises(HttpError):
         http.get_json(url, ttl_seconds=86_400)
     assert url not in http._fetched                 # noqa: SLF001
+    # PR round 1: the PUBLIC answer, which falls back to the disk entry, states no time either
+    assert http.fetched_at(url) is None
