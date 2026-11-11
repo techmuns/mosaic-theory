@@ -534,7 +534,9 @@ def driver_facts(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
 
 # ------------------------------------------- RA-D4: every period guided on the latest date
 
-_SAME_DAY = re.compile(r"; same day: [^;]*")
+#: The change's addition to a bridge segment: up to the segment's next clause ("; …"), or, on the
+#: last segment, the as-of suffix (`ciq_sheets._asof_suffix`, "  [") or the end of the string.
+_SAME_DAY = re.compile(r"; same day: .*?(?=; |  \[|$)")
 
 
 def _rows_primary(f: Sourced[Any] | None) -> Any:
@@ -629,5 +631,5 @@ ASOF_CUT: tuple[str, ...] = ("asof_cut",)
 #: unverified row's value.
 RG_D8: tuple[str, ...] = ("driver_facts",)
 
-#: #967's one transform (RA-D2, RA-D4): the dividend row and status, and the same-day guides.
+#: RA-D4's one transform (split from #967; RA-D2 is measured on its own): the same-day guides.
 RA_D4: tuple[str, ...] = ("same_day_guides",)

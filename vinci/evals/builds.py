@@ -109,10 +109,13 @@ def _resolve(code_ref: str, repo: Path = rp.ROOT) -> str:
 def capture_request(code_ref: str, ticker: str, *, transforms: Sequence[str], draws: int,
                     ciq_root: Path) -> rp.Request:
     """The page's request at ``code_ref``'s code, from the frozen inputs read at ``ciq_root`` —
-    the transcripts and, where a transform reads it, the page's own comps export (as `compare`)."""
+    the transcripts and, where a transform reads them, the page's own comps export and CIQ folder
+    (as `compare`)."""
     page, tx = rp.panel_inputs(ticker, ciq_root=ciq_root)
     comps = rp.comps_export(ticker, ciq_root=ciq_root) if transforms else None
-    return rp.capture_at(code_ref, page, tx, draws=draws, transforms=transforms, comps=comps)
+    ciq = (Path(ciq_root) / ticker) if transforms and (Path(ciq_root) / ticker).is_dir() else None
+    return rp.capture_at(code_ref, page, tx, draws=draws, transforms=transforms, comps=comps,
+                         ciq=ciq)
 
 
 def register_run(*, code_ref: str, pages: Sequence[str], transforms: Sequence[str], draws: int,
