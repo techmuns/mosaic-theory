@@ -33,6 +33,7 @@ from pydantic import (
 from vinci.dossier.anchor import Anchor, check_decision_write, committed_anchor_block
 from vinci.dossier.inputs_schema import InputManifest
 from vinci.dossier.midcycle import MidCycle
+from vinci.dossier.verdict import DrawGate
 from vinci.schemas.listing import AdsRatio
 from vinci.sleeves import DEFAULT_SLEEVE, UnknownSleeveError, require_sleeve
 
@@ -3149,9 +3150,37 @@ class DrawAgreement(BaseModel):
     attempted: int  # draws asked for
     completed: int  # draws that returned a usable tool call (a 4.8-era incomplete call is a MISS)
     labels: dict[str, int]  # lean label -> how many completed draws produced it
-    unanimous: bool  # every COMPLETED draw agreed; the publish gate for the machine proposal
+    unanimous: bool  # every COMPLETED draw agreed — the publish gate for a page written before R1
+    # THE VOTE RULE'S RECORD (R5; `verdict.draw_gate`), written by every build since the rule and
+    # absent on every page before it — which therefore decides by `unanimous`, as it always did
+    # (C7). COUNTS AND A BOOLEAN ABOUT THE DRAWS, never a direction: `modal_count` is how many
+    # draws carry the modal label of `labels`, `required` R1's bar over the `attempted`, `passes`
+    # the gate and `rule` its words. The modal lean and C(iii)'s state are derived from these,
+    # never stored.
+    # Omitted from the JSON while unset, so an old page re-serializes byte for byte.
+    modal_count: int | None = None
+    required: int | None = None
+    passes: bool | None = None
+    rule: str | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _omit_unset_gate(
+            self, handler: Callable[[DrawAgreement], dict[str, Any]]) -> dict[str, Any]:
+        data = handler(self)
+        for k in _GATE_FIELDS:
+            if data.get(k) is None:
+                data.pop(k, None)
+        return data
+
+    def gate(self) -> DrawGate | None:
+        """R1's gate as this build recorded it, or None for a page written before the rule."""
+        return DrawGate.from_record(self.model_dump())
+
+
+#: `DrawAgreement`'s vote-rule fields, serialized only when set.
+_GATE_FIELDS = ("modal_count", "required", "passes", "rule")
 
 
 class Synthesis(BaseModel):

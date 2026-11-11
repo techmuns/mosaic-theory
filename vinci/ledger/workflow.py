@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from datetime import date, datetime
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:  # annotation only — no runtime import, so no cycle with `vinci.scenarios`
     from vinci.scenarios import StatedLimit
@@ -128,6 +128,7 @@ def log_verdict(
     machine_lean: str | None = None,
     proposal_assembled_at: datetime | None = None,
     revealed_pre_verdict: bool = False,
+    machine_tally: Mapping[str, Any] | None = None,
     identity: Identity | None = None,
     origin: str = ORIGIN_SCREEN,
     sleeve: str | None = None,
@@ -283,6 +284,7 @@ def log_verdict(
         machine_proposal=machine_proposal,
         machine_lean=machine_lean,
         proposal_assembled_at=proposal_assembled_at,
+        machine_tally=dict(machine_tally) if machine_tally is not None else None,
         disposition=disposition,
         revealed_pre_verdict=revealed_pre_verdict,  # anti-anchoring: did the human peek? (No)
     )

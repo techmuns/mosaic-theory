@@ -6,150 +6,88 @@ every commit to vinci/dossier, vinci/edgar and vinci/ciq appended no row — at 
 changed output — so the 155 layer refreshes dated 10-27 or later stamped `2026-10-09.3`, naming
 code that did not make them. Nothing noticed, because nothing could: a version is a declaration.
 
-THIS TEST NOTICES. Each module that can change what a dossier carries is PINNED to a hash of its
-code (`WATCHED`), taken when `EXTRACTION_VERSIONS` held the rows `PINNED_TABLE` digests (`PINNED_AT`
-names the last of them, for a reader). A module that moved since its pin — or joined or left the
-watched set — is refused WHILE THE TABLE HOLDS NO ROW IT DID NOT HOLD THEN: the code moved and the
-declared version did not. Once any row has been added, wherever it sits, the moves are accepted.
+THIS TEST NOTICES. Each module that can change what a dossier carries has ONE PIN FILE,
+``tests/extraction_pins/<module path>.pin``, holding a hash of its code and WHY it was last pinned:
+the extraction vintage that declared the change, or ``refactor`` (no output change, said in the
+PR). The rule is STRICT — every watched module's hash equals its pin, always — and every pin names
+a declared vintage or ``refactor``. So a PR that moves a watched module re-pins it, and the pin it
+writes says, in the diff, which entry it added or that it changed no output.
 
-THAT RULE IS WHAT LETS PARALLEL PRS MERGE IN ANY ORDER. A sibling PR that changes a watched module
-and adds its own row never reds main or a branch merging main — before or after this file last
-re-pinned, its row last or (merged first) before another batch's — because the moves arrive with a
-row the pins have not seen.
+STRICT, AND STILL MERGEABLE IN ANY ORDER (2026-11-11, fix request 2). The pins were one block here
+with the table's digest and its last row beside them, and every re-pin rewrote those two lines, so
+two PRs that each added a vintage always conflicted here, and a strict rule could not hold: a merge
+leaves the digest matching neither branch. That forced the old rule — any move passes once the
+table holds a row the pins have not seen — and its accepted risk: in that window an unrelated
+move passed with only a WARNING, which every gate's ``-p no:warnings`` dropped (fix request 2,
+RH-D1: the check could not fail and its one signal reached no log). With one file per module and
+no shared line, two PRs that move DIFFERENT modules touch different files and merge clean, each
+pin matching the merged tree; two that move the SAME module edit the same file, git refuses the
+merge, and the re-sync re-pins it — correctly, because the merged module's hash is new. There is
+no stale window left to warn about.
 
-ITS COST IS AN ACCEPTED RISK, AND THE PROCEDURE BELOW IS PART OF THE RULE (coordinator review of
-#861, 2026-10-29). Once the table holds a row the pins do not know, any further move of a watched
-module passes until the next re-pin: after two batches each add a row, the pins reflect neither
-tree, and an unrelated refactor merged in that window goes unseen. The strict alternative — a move
-reds unless the pins are current — is not available, because it reds main whenever a batch merges
-on a CI run that predates another batch's merge (`gate` is required but not strict). So:
+    python -m tests.test_extraction_version_drift                        # print every hash
+    python -m tests.test_extraction_version_drift --repin --entry <id>   # output changed
+    python -m tests.test_extraction_version_drift --repin --refactor     # no output change
 
-  * A PR THAT ADDS A VERSION ROW RUNS `--repin` IN ITS FINAL COMMIT, and again in the merge of
-    main that lands it, so main lands tight.
-  * While the pins are stale, `test_stale_pins_are_said` warns, naming the rows the pins do not
-    know — the window is printed in every CI log, never silent.
-  * Falsifier: a watched-module change merged with no row while the pins were stale. It shows as a
-    re-pin moving a module that no row since the last re-pin names.
-
-    python -m tests.test_extraction_version_drift --repin   # recompute WATCHED, set PINNED_AT
-
-ONE MECHANICAL STEP, NEVER A HAND-MERGE. It rewrites `WATCHED` to the tree's hashes (a new module
-joins as watched; exclude one by adding it to `NOT_EXTRACTION` with the reason), `PINNED_TABLE` to
-the table's digest and `PINNED_AT` to its last row. On a merge conflict in this file, take either
-side and run it in the merge commit. A refactor that moves a watched module with no output change
-re-pins too, and says so in its PR.
-
-MERGING THE VERSION TABLE ITSELF: every row of `EXTRACTION_VERSIONS` (and of its web twin in
-`frontend/views/shared/dossier.js`) is its own `(` … `),` block; a line-wise union of two branches'
-table ends fuses two rows into one element. Keep each block whole, in merge order.
+ONE MECHANICAL STEP, NEVER A HAND-MERGE. ``--repin`` rewrites only the pins whose hash moved (a
+module that joined is pinned; one that left loses its file) and names the entry, or ``refactor``,
+in each. Exclude a module by adding it to `NOT_EXTRACTION` with the reason. On a conflict in a pin
+file, take either side and re-pin in the merge commit.
 
 WHAT IS HASHED: the module's TOKENS, with comments, blank lines and docstrings dropped — the prose
 this repo writes beside its code can change freely; a changed constant, condition or call cannot.
 
+WHAT IT DOES NOT CATCH, stated rather than implied: a pin naming an OLD vintage for a new hash. The
+tree cannot tell a pin written today from one written last month, so whether the named entry is
+the PR's own is read in the PR's diff (the old rule had the same limit: its refactor re-pin moved
+no line a reviewer could not also see).
+
 THE DECLARED SET, NOT A COMPUTED CLOSURE (26b's spec, corrected 2026-07-28: the import closure from
 `assemble` is ~58 modules and a guard that always fires is switched off). Every module under
-vinci/dossier and vinci/edgar is classified — `WATCHED`, or `NOT_EXTRACTION` with the reason — and a
-module joining either package unclassified is a MOVE under the rule above, so the set cannot quietly
-stop covering a new extractor (`--repin` then pins it as watched). Three modules outside them build
-page fields and are watched too: vinci/verbatim.py (which quoted values a page keeps),
-vinci/finra.py (short interest) and vinci/eod/features.py (the price box's 52-week range, whose
-window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction.
+vinci/dossier and vinci/edgar is classified — watched (it has a pin), or `NOT_EXTRACTION` with the
+reason — and a module joining either package unclassified has no pin, which is a MOVE, so the set
+cannot quietly stop covering a new extractor (`--repin` then pins it as watched). Three modules
+outside them build page fields and are watched too: vinci/verbatim.py (which quoted values a page
+keeps), vinci/finra.py (short interest) and vinci/eod/features.py (the price box's 52-week range,
+whose window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction.
 vinci/ciq, which built no page field, was removed on 2026-11-10 (fix request 2: A-D13, A-D16,
 RBC-D7): its last caller, graph Test 0, left in #905, and vinci/graph/extract.py now holds the
 SUPPLY_CHAIN_TYPES taxonomy it took from it.
-
-    python -m tests.test_extraction_version_drift            # print every watched module's hash
-    python -m tests.test_extraction_version_drift --repin    # re-pin this file in place
 """
 from __future__ import annotations
 
 import ast
 import hashlib
 import io
-import re
+import os
+import shutil
+import subprocess
 import sys
 import tokenize
-import warnings
 from pathlib import Path
 
 import pytest
 
-from vinci.dossier.extraction_version import EXTRACTION_VERSION, EXTRACTION_VERSIONS
+from vinci.dossier.extraction_version import EXTRACTION_VERSIONS
 
 ROOT = Path(__file__).resolve().parents[1]
 
-#: The table the pins below were taken against — `--repin` sets both: the digest of every row id
-#: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "0154f1cc7845"
-PINNED_AT = "2026-11-11.guides-as-stated"
+#: One file per watched module: ``<module path>.pin`` = ``<code hash> <why>``. The environment
+#: override exists for ONE test, which runs this file under the gate's own flags against a copy.
+PINS = Path(os.environ.get("EXTRACTION_PINS_DIR") or ROOT / "tests" / "extraction_pins")
 
-#: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
-#: different modules merge without a conflict. The value is :func:`code_hash` of the module.
-WATCHED: dict[str, str] = {
-    "vinci/dossier/anchor.py": "e54fef8abb1e",
-    "vinci/dossier/assemble.py": "7aa870cc9eaf",
-    "vinci/dossier/band_guards.py": "dceaef85746c",
-    "vinci/dossier/capital_allocation.py": "059ec4f12b76",
-    "vinci/dossier/ciq.py": "9f7e31e4a048",
-    "vinci/dossier/ciq_balance.py": "dfecb79caca4",
-    "vinci/dossier/ciq_reread.py": "eed0a6fb4773",
-    "vinci/dossier/ciq_sheets.py": "a216c3ce09d1",
-    "vinci/dossier/covenant_extract.py": "3e162b1951f9",
-    "vinci/dossier/dilution.py": "f25b60e1ea18",
-    "vinci/dossier/driver_extract.py": "7873fe4db242",
-    "vinci/dossier/ebitda_basis.py": "812d1852f461",
-    "vinci/dossier/ebitda_recon.py": "9befc99c437a",
-    "vinci/dossier/edgar_fundamentals.py": "6054321e6ca4",
-    "vinci/dossier/ev_ebitda_basis.py": "4acf3d7a1bde",
-    "vinci/dossier/ev_gap.py": "c1cd503b7723",
-    "vinci/dossier/filed_tiebreak.py": "65d2da06e516",
-    "vinci/dossier/flags.py": "27fde9822fe1",
-    "vinci/dossier/freshness.py": "e5852b313d22",
-    "vinci/dossier/gaps.py": "9f61184df018",
-    "vinci/dossier/inputs.py": "fcda11ef218f",
-    "vinci/dossier/inputs_backfill.py": "a3567b23a569",
-    "vinci/dossier/inputs_schema.py": "6f7d41f25223",
-    "vinci/dossier/layer_refresh.py": "4be8899e5872",
-    "vinci/dossier/lease_basis.py": "a93d880597ba",
-    "vinci/dossier/ltm_quarters.py": "500dc0b38917",
-    "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
-    "vinci/dossier/materiality.py": "c91b8d44c5fe",
-    "vinci/dossier/mechanical.py": "75843c5ac4ea",
-    "vinci/dossier/midcycle.py": "e14e64ec5ff7",
-    "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
-    "vinci/dossier/refresh.py": "f116dfce4dfd",
-    "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "54b78847cf8a",
-    "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "a7d5ed4385e2",
-    "vinci/dossier/terminal_margin.py": "35398ebe5918",
-    "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
-    "vinci/dossier/verdict.py": "0b43167d2044",
-    "vinci/edgar/asof.py": "9f8027c3556c",
-    "vinci/edgar/client.py": "e1f2a793bf74",
-    "vinci/edgar/concepts.py": "65e2452fe3d4",
-    "vinci/edgar/cover_count.py": "24d1e9a7d94a",
-    "vinci/edgar/debt_maturities.py": "e60bf9b66897",
-    "vinci/edgar/filing_sections.py": "72667458db26",
-    "vinci/edgar/going_concern.py": "2ffc2e9aebc0",
-    "vinci/edgar/net_debt.py": "d60756329d18",
-    "vinci/edgar/primary_source.py": "d9054b7a75a0",
-    "vinci/edgar/release_parse.py": "0fe2c43ce72c",
-    "vinci/edgar/segment_facts.py": "9d3c07301296",
-    "vinci/edgar/segments.py": "3016c43f216f",
-    "vinci/edgar/submissions.py": "6644355e5c3f",
-    "vinci/eod/features.py": "8d23c6080234",
-    "vinci/finra.py": "5787c9793b1b",
-    "vinci/provenance.py": "b61b841aa7b2",
-    "vinci/verbatim.py": "cb75bef0a20e",
-}
+#: A pin's WHY when the module moved without changing what a page carries.
+REFACTOR = "refactor"
 
 #: Modules in the classified packages that cannot change what a dossier carries, each with why.
 NOT_EXTRACTION: dict[str, str] = {
     "vinci/dossier/__init__.py": "the package's docstring",
+    "vinci/dossier/confirmation.py": "the vote rule's ten-draw confirmation at log-verdict "
+                                     "(C(iv)): seals a ledger row, never writes a page",
     "vinci/dossier/driver_evidence.py": "writes a page's transcript evidence to the operator's "
                                         "private spool, never a page field",
-    "vinci/dossier/extraction_version.py": "the version table itself — editing it IS the bump",
+    "vinci/dossier/extraction_version.py": "the version table and the stamp it derives — a bump is "
+                                           "a file in vinci/dossier/extraction_versions/",
     "vinci/dossier/prespend.py": "the $0 pre-spend check: builds into a deleted folder and "
                                  "compares, never writes a page",
     "vinci/dossier/propose.py": "writes scenario records from a committed page, never a page",
@@ -195,144 +133,170 @@ def code_hash(source: str) -> str:
 
 
 def current_hashes() -> dict[str, str]:
-    """Every watched module's hash as the tree stands — the set `WATCHED` must equal."""
+    """Every watched module's hash as the tree stands — the set the pins must equal."""
     paths = [p.relative_to(ROOT).as_posix() for pkg in CLASSIFIED_PACKAGES
              for p in sorted((ROOT / pkg).glob("*.py"))]
     watched = [p for p in paths if p not in NOT_EXTRACTION] + list(EXTRA_WATCHED)
     return {p: code_hash((ROOT / p).read_text()) for p in sorted(watched)}
 
 
-def _pin_lines(hashes: dict[str, str]) -> str:
-    return "\n".join(f'    "{p}": "{h}",' for p, h in hashes.items())
+def read_pins(pins: Path = PINS) -> dict[str, tuple[str, str]]:
+    """Every pin file as ``{module: (hash, why)}``. A pin that is not two fields raises."""
+    out: dict[str, tuple[str, str]] = {}
+    for path in sorted(pins.rglob("*.pin")):
+        fields = path.read_text().split()
+        if len(fields) != 2:
+            raise ValueError(f"{path}: a pin is '<hash> <why>', found {fields}")
+        out[path.relative_to(pins).as_posix().removesuffix(".pin")] = (fields[0], fields[1])
+    return out
 
 
-def table_digest(versions: tuple[tuple[str, str], ...] | list[tuple[str, str]]) -> str:
-    """sha256[:12] of the table's row ids, sorted — the same whatever order a merge put them in."""
-    return hashlib.sha256("\n".join(sorted(v for v, _ in versions)).encode()).hexdigest()[:12]
-
-
-def refused_moves(pins: dict[str, str], pinned_table: str, now: dict[str, str],
-                  current_table: str) -> dict[str, str | None]:
-    """The watched modules that moved since their pins — changed, joined or gone (None) — IF the
-    version table holds no row it did not hold then; empty once it does, because then the
-    declared version moved too."""
-    if current_table != pinned_table:
-        return {}
+def refused_moves(pins: dict[str, str], now: dict[str, str]) -> dict[str, str | None]:
+    """The watched modules whose code is not what their pin says — changed, joined (no pin) or gone
+    (None). STRICT: a version entry landing elsewhere excuses nothing (fix request 2, RH-D1)."""
     moved: dict[str, str | None] = {p: h for p, h in now.items() if pins.get(p) != h}
     moved.update({p: None for p in pins if p not in now})
     return moved
 
 
-def test_a_watched_module_never_moves_while_the_version_stands_still() -> None:
-    """THE 26b INVARIANT. A watched module that moved — or joined vinci/dossier or vinci/edgar
-    unclassified, or left it — while the last row is still the one the pins were taken at."""
+def unexplained(pins: dict[str, tuple[str, str]], declared: set[str]) -> dict[str, str]:
+    """Pins whose WHY is neither a declared vintage nor ``refactor``."""
+    return {m: why for m, (_, why) in pins.items() if why != REFACTOR and why not in declared}
+
+
+def repin(pins: Path, now: dict[str, str], why: str) -> list[str]:
+    """Rewrite only the pins that differ from ``now`` (naming ``why``), delete the pins of modules
+    no longer watched, and return every module touched — the whole of ``--repin``."""
+    have = read_pins(pins)
+    touched = []
+    for module, h in now.items():
+        if have.get(module, ("", ""))[0] != h:
+            path = pins / f"{module}.pin"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(f"{h} {why}\n")
+            touched.append(module)
+    for module in sorted(set(have) - set(now)):
+        (pins / f"{module}.pin").unlink()
+        touched.append(module)
+    return touched
+
+
+_STEPS = (
+    "To clear it: (1) take main first — `git merge origin/main`; a conflict in a pin file means "
+    "both sides moved that module, so take either side; (2) if extraction OUTPUT changed and this "
+    "PR has no vintage yet, add one — `python -m vinci.dossier.extraction_version new <slug> "
+    "--names \"...\"`, which writes one file in vinci/dossier/extraction_versions/; (3) run "
+    "`python -m tests.test_extraction_version_drift --repin --entry <its id>`, or `--repin "
+    "--refactor` when no output changed (say so in the PR). It re-pins only the modules whose "
+    "hash moved — a module both sides touched has a merged hash matching neither side, so never "
+    "hand-pick one. A module that cannot change a dossier goes in NOT_EXTRACTION with the reason.")
+
+
+def test_a_watched_module_never_moves_without_its_pin() -> None:
+    """THE 26b INVARIANT, STRICT. A watched module whose code is not its pin's — changed, joined
+    vinci/dossier or vinci/edgar unclassified, or left it — reds, whatever the table holds."""
     gone = sorted(p for p in NOT_EXTRACTION if not (ROOT / p).exists())
-    now_table = table_digest(EXTRACTION_VERSIONS)
-    moved = refused_moves(WATCHED, PINNED_TABLE, current_hashes(), now_table)
-    moved.update({p: None for p in gone if now_table == PINNED_TABLE})
-    assert not moved, (
-        f"{sorted(moved)} moved since the pins were taken (last row then {PINNED_AT}), and "
-        "the version table has gained no row since. To clear it, in order: (1) take main "
-        "first — `git merge origin/main` — keeping every EXTRACTION_VERSIONS row its own "
-        "`(` … `),` block, in merge order (a line-wise union fuses two rows); (2) run "
-        "`python -m tests.test_extraction_version_drift` to print the hashes as they now "
-        "stand — a module two branches both touched has a merged hash that matches neither "
-        "pin, so read the printed value, never pick a side; (3) if extraction OUTPUT changed, "
-        "append your row to vinci/dossier/extraction_version.py and the same row to "
-        "frontend/views/shared/dossier.js; (4) run "
-        "`python -m tests.test_extraction_version_drift --repin`, which re-pins every moved "
-        "line and the table digest. A refactor alone skips (3) and says so in its PR. A PR "
-        "that adds a version row runs (4) in its final commit, and again in the merge of "
-        "main that lands it. A module that cannot change a dossier goes in NOT_EXTRACTION "
-        "with the reason.")
+    moved = refused_moves({m: h for m, (h, _) in read_pins().items()}, current_hashes())
+    moved.update(dict.fromkeys(gone))
+    assert not moved, f"{sorted(moved)} moved since their pins were written. {_STEPS}"
 
 
-def test_stale_pins_are_said() -> None:
-    """The accepted risk's window, printed: while the version table holds rows the pins do not
-    know, every CI log carries a warning naming them — a stale pin is never silent."""
-    if table_digest(EXTRACTION_VERSIONS) != PINNED_TABLE:
-        warnings.warn(
-            "extraction-version drift pins are STALE: the table has rows they do not know "
-            f"(pinned at {PINNED_AT}; last row now {EXTRACTION_VERSION}). A moved watched "
-            "module passes unseen until `python -m tests.test_extraction_version_drift "
-            "--repin` runs — the PR that added the row owes it.", UserWarning, stacklevel=1)
+def test_every_pin_says_why_it_was_written() -> None:
+    """A pin names the vintage that declared its module's change, or `refactor` — never a typo or
+    a stamp this code does not declare, so the re-pin in a PR's diff always says which it was."""
+    pins = read_pins()
+    assert pins, f"no pin under {PINS} — the guard would pass vacuously"
+    bad = unexplained(pins, {v for v, _ in EXTRACTION_VERSIONS})
+    assert not bad, f"pins naming neither a declared vintage nor {REFACTOR!r}: {bad}"
 
 
 def test_the_failure_tells_a_merger_each_step(monkeypatch: pytest.MonkeyPatch) -> None:
-    """The red a merger meets names every step in order: take main keeping each version row whole,
-    print the hashes, append a row if output changed, re-pin — and warns that a module two branches
-    both touched has a merged hash matching neither pin (PR #861 round 1)."""
-    monkeypatch.setitem(WATCHED, "vinci/dossier/ciq.py", "0" * 12)
+    """The red a merger meets names every step in order: take main, add a vintage if output
+    changed, re-pin naming it — and warns that a module both sides touched matches neither."""
+    real = read_pins()
+    some = next(iter(real))
+    monkeypatch.setattr(sys.modules[__name__], "read_pins",
+                        lambda pins=PINS: {**real, some: ("0" * 12, real[some][1])})
     with pytest.raises(AssertionError) as red:
-        test_a_watched_module_never_moves_while_the_version_stands_still()
+        test_a_watched_module_never_moves_without_its_pin()
     msg = str(red.value)
-    steps = ["git merge origin/main", "`(` … `),` block",
-             "python -m tests.test_extraction_version_drift`", "matches neither pin",
-             "append your row", "frontend/views/shared/dossier.js", "--repin"]
+    steps = [some, "git merge origin/main", "a conflict in a pin file",
+             "python -m vinci.dossier.extraction_version new", "--repin --entry",
+             "--refactor", "matching neither side"]
     for step in steps:
         assert step in msg, step
     at = [msg.index(s) for s in steps]
     assert at == sorted(at), "the steps are out of order"
 
 
-def test_the_stale_warning_fires_only_when_the_pins_are_stale(
-        monkeypatch: pytest.MonkeyPatch) -> None:
-    """Both halves: pins taken against another table warn; pins taken against this one do not."""
-    mod = sys.modules[__name__]
-    monkeypatch.setattr(mod, "PINNED_TABLE", "0" * 12)
-    with pytest.warns(UserWarning, match="drift pins are STALE"):
-        test_stale_pins_are_said()
-    monkeypatch.setattr(mod, "PINNED_TABLE", table_digest(EXTRACTION_VERSIONS))
-    with warnings.catch_warnings():
-        warnings.simplefilter("error")
-        test_stale_pins_are_said()
-
-
-def test_the_pins_name_a_declared_version() -> None:
-    """`PINNED_AT` names a real row — a re-pin can only take the pins at a version that exists."""
-    assert PINNED_AT in {v for v, _ in EXTRACTION_VERSIONS}, PINNED_AT
-
-
-def test_the_table_digest_ignores_merge_order() -> None:
-    """Two batches' rows merged in either order are one table; a new row is a new table."""
-    a, b, c = ("v1", "x"), ("v2.A", "y"), ("v2.B", "z")
-    assert table_digest([a, b, c]) == table_digest([a, c, b])
-    assert table_digest([a, b]) != table_digest([a, b, c])
-
-
-def test_a_move_is_refused_only_while_the_version_stands_still() -> None:
-    """Both halves of the rule, on the pure function: the same move is refused against the pinned
-    table and accepted once the table has a new row (a sibling PR merging with its own row, in
-    either order), and a module that joins or leaves the set is a move."""
+def test_a_move_is_refused_even_after_a_version_entry_lands() -> None:
+    """RH-D1, on the pure function. The old rule let ANY move pass once the table held a row the
+    pins had not seen, and said so only in a warning the gates suppress; now the table is not an
+    argument at all — a module whose code is not its pin's is refused, joined and gone included."""
     pins = {"vinci/dossier/a.py": "aaa", "vinci/dossier/b.py": "bbb"}
     moved = {"vinci/dossier/a.py": "AAA", "vinci/dossier/b.py": "bbb", "vinci/dossier/c.py": "ccc"}
-    assert refused_moves(pins, "v1", moved, "v1") == {"vinci/dossier/a.py": "AAA",
-                                                      "vinci/dossier/c.py": "ccc"}
-    assert refused_moves(pins, "v1", moved, "v2") == {}
-    assert refused_moves(pins, "v1", {"vinci/dossier/a.py": "aaa"}, "v1") == {
-        "vinci/dossier/b.py": None}
-    assert refused_moves(pins, "v1", dict(pins), "v1") == {}
+    assert refused_moves(pins, moved) == {"vinci/dossier/a.py": "AAA", "vinci/dossier/c.py": "ccc"}
+    assert refused_moves(pins, {"vinci/dossier/a.py": "aaa"}) == {"vinci/dossier/b.py": None}
+    assert refused_moves(pins, dict(pins)) == {}
 
 
-def repinned(source: str, hashes: dict[str, str], table: str, version: str) -> str:
-    """This file's source with `WATCHED` set to ``hashes``, `PINNED_TABLE` to ``table`` and
-    `PINNED_AT` to ``version``."""
-    out = re.sub(r"(?ms)^WATCHED: dict\[str, str\] = \{\n.*?^\}",
-                 "WATCHED: dict[str, str] = {\n" + _pin_lines(hashes).replace("\\", "\\\\")
-                 + "\n}", source, count=1)
-    out = re.sub(r'(?m)^PINNED_TABLE = "[^"]*"', f'PINNED_TABLE = "{table}"', out, count=1)
-    return re.sub(r'(?m)^PINNED_AT = "[^"]*"', f'PINNED_AT = "{version}"', out, count=1)
+def _gate(pins: Path) -> subprocess.CompletedProcess[str]:
+    """The strict test, run exactly as gate.yml and bin/commit run pytest, against ``pins``."""
+    node = f"{Path(__file__).relative_to(ROOT).as_posix()}::" \
+           "test_a_watched_module_never_moves_without_its_pin"
+    return subprocess.run(
+        [sys.executable, "-m", "pytest", "-m", "not network", "-p", "no:warnings", "--tb=short",
+         "-rs", "-p", "no:cacheprovider", node],
+        cwd=ROOT, capture_output=True, text=True, timeout=300,
+        env={**os.environ, "EXTRACTION_PINS_DIR": str(pins)})
 
 
-def test_repin_is_one_mechanical_step() -> None:
-    """`--repin` rewrites exactly the pinned values: re-pinning this file at its own pins is a
-    no-op, and a re-pin at other values changes only those lines."""
-    src = Path(__file__).read_text()
-    assert repinned(src, WATCHED, PINNED_TABLE, PINNED_AT) == src
-    other = repinned(src, {"vinci/dossier/x.py": "0" * 12}, "f" * 12, "2099-01-01.X")
-    changed = [ln for ln in other.splitlines() if ln not in src.splitlines()]
-    assert sorted(changed) == ['    "vinci/dossier/x.py": "000000000000",',
-                               'PINNED_AT = "2099-01-01.X"', f'PINNED_TABLE = "{"f" * 12}"']
+def test_a_stale_pin_fails_under_the_gates_own_flags(tmp_path: Path) -> None:
+    """RH-D1, end to end: the stale state the old rule printed only as a warning — a watched module
+    whose pin is behind its code — must turn the gate's own command red, ``-p no:warnings`` and
+    all. The control is the same command on an unmodified copy of the pins: green."""
+    good, stale = tmp_path / "good", tmp_path / "stale"
+    good.mkdir()
+    repin(good, current_hashes(), REFACTOR)  # current whatever this tree's own pins say
+    shutil.copytree(good, stale)
+    module = "vinci/dossier/anchor.py"
+    (stale / f"{module}.pin").write_text(f"{'0' * 12} {REFACTOR}\n")
+    ok, red = _gate(good), _gate(stale)
+    assert ok.returncode == 0, ok.stdout[-2000:]
+    assert red.returncode == 1, red.stdout[-2000:]
+    assert module in red.stdout and "1 failed" in red.stdout, red.stdout[-2000:]
+
+
+def test_repin_is_one_mechanical_step(tmp_path: Path) -> None:
+    """``--repin`` touches only what moved: re-pinning at the tree's own hashes is a no-op; a moved
+    module rewrites its one file naming the entry; a module that joined gains a file; one that left
+    loses it — and no other file changes, which is what keeps two PRs' re-pins apart."""
+    pins = tmp_path / "pins"
+    shutil.copytree(PINS, pins)
+    now = current_hashes()
+    repin(pins, now, REFACTOR)  # current whatever this tree's own pins say (the invariant's job)
+    assert repin(pins, now, "never-written") == []
+    before = {p: p.read_text() for p in pins.rglob("*.pin")}
+    moved, joined = "vinci/dossier/anchor.py", "vinci/dossier/new_reader.py"
+    gone = "vinci/finra.py"
+    tree = {**{m: h for m, h in now.items() if m != gone}, moved: "f" * 12, joined: "e" * 12}
+    assert sorted(repin(pins, tree, "2099-01-01.an-entry")) == sorted([moved, joined, gone])
+    after = {p: p.read_text() for p in pins.rglob("*.pin")}
+    changed = sorted(p.relative_to(pins).as_posix() for p in set(before) | set(after)
+                     if before.get(p) != after.get(p))
+    assert changed == sorted(f"{m}.pin" for m in (moved, joined, gone))
+    assert (pins / f"{moved}.pin").read_text() == f"{'f' * 12} 2099-01-01.an-entry\n"
+    assert not (pins / f"{gone}.pin").exists()
+
+
+def test_a_pin_naming_no_declared_vintage_is_refused() -> None:
+    """Both halves: a declared vintage and `refactor` explain a pin; a typo or a joined stamp
+    (a page's, never a change's) does not."""
+    declared = {"2026-11-11.guides-as-stated"}
+    pins = {"a": ("x", "2026-11-11.guides-as-stated"), "b": ("y", REFACTOR),
+            "c": ("z", "2026-11-11.guides-as-stat"), "d": ("w", "2026-11-11.a+2026-11-11.b")}
+    assert unexplained(pins, declared) == {"c": "2026-11-11.guides-as-stat",
+                                           "d": "2026-11-11.a+2026-11-11.b"}
 
 
 # --- the hash itself: blind to prose, never to code ----------------------------------------------
@@ -368,10 +332,16 @@ def test_any_code_change_moves_the_hash(code_change: str) -> None:
 
 
 if __name__ == "__main__":
-    if sys.argv[1:] == ["--repin"]:
-        me = Path(__file__)
-        me.write_text(repinned(me.read_text(), current_hashes(), table_digest(EXTRACTION_VERSIONS),
-                               EXTRACTION_VERSION))
-        sys.stdout.write(f"re-pinned {len(current_hashes())} modules at {EXTRACTION_VERSION}\n")
+    args = sys.argv[1:]
+    declared = {v for v, _ in EXTRACTION_VERSIONS}
+    if args[:1] == ["--repin"]:
+        if args[1:] == ["--refactor"]:
+            why = REFACTOR
+        elif len(args) == 3 and args[1] == "--entry" and args[2] in declared:
+            why = args[2]
+        else:
+            sys.exit("usage: --repin --entry <a declared vintage id> | --repin --refactor")
+        touched = repin(PINS, current_hashes(), why)
+        sys.stdout.write(f"re-pinned {len(touched)} module(s) as {why}: {', '.join(touched)}\n")
     else:
-        sys.stdout.write(_pin_lines(current_hashes()) + "\n")
+        sys.stdout.write("\n".join(f"{m} {h}" for m, h in current_hashes().items()) + "\n")

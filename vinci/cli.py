@@ -12,13 +12,14 @@ import os
 import re
 import sqlite3
 import sys
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
 from vinci.config import Config, get_config, load_local_env
-from vinci.dossier.verdict import derive_proposal
+from vinci.dossier.verdict import DrawGate, derive_proposal
 from vinci.edgar import EdgarClient
 from vinci.edge_basis import EDGE_BASES, EdgeBasisError, require_edge_basis
 from vinci.eod import (
@@ -1501,9 +1502,14 @@ def _sealed_proposal(
         # proposal into the ledger that a re-assembly would not reproduce; `None` (a single-draw
         # artifact) means not measured and keeps the pre-2026-09-26 behaviour.
         _agree = (synth.get("draw_agreement") or {}).get("unanimous")
+        # THE VOTE RULE'S GATE (R1) where the page's build recorded it; a page written before the
+        # rule has none and decides by `unanimous`, as it always did (C7)
+        _da = synth.get("draw_agreement")
+        _gate = DrawGate.from_record(_da) if _da else None
         prop = derive_proposal(synth.get("evidence_balance"),
                                sleeve=str(doc.get("sleeve") or DEFAULT_SLEEVE),
-                               draws_unanimous=_agree if isinstance(_agree, bool) else None)
+                               draws_unanimous=_agree if isinstance(_agree, bool) else None,
+                               gate=_gate)
         stamp = doc.get("assembled_at")
         assembled = datetime.fromisoformat(stamp) if stamp else None
     except (ValueError, OSError) as exc:  # corrupt/unreadable artifact → loud, actionable
@@ -1511,6 +1517,87 @@ def _sealed_proposal(
     if prop.action is None:
         print(f"machine proposal for {ticker}: none — {prop.note}")
     return prop.action, prop.lean, assembled
+
+
+@dataclass(frozen=True)
+class _Seal:
+    """What `log-verdict` seals beside the human's verdict: the proposal C(iv)'s confirmation
+    decided (or the page's, where there is nothing to confirm), and the split it stands on."""
+
+    action: Verdict | None
+    lean: str | None
+    assembled: datetime | None
+    tally: dict[str, Any] | None
+    revealed: bool
+    lines: tuple[str, ...]
+
+
+def _pre_rule_split(da: Mapping[str, Any]) -> str:
+    """A tally recorded BEFORE the vote rule, as the human reads it: its labels, and the rule that
+    page still decides by (unanimity, C7) — never R1's bar, which it was not built under. Every
+    committed page is in this state, so this is the line printed at every log until re-assembly."""
+    labels = sorted((da.get("labels") or {}).items(), key=lambda kv: (-int(kv[1]), str(kv[0])))
+    parts = ", ".join(f"{int(n)}x {k}" for k, n in labels) or "no completed draw"
+    attempted, completed = da.get("attempted"), da.get("completed")
+    failed = (f", {int(attempted) - int(completed)}x failed"
+              if isinstance(attempted, int) and isinstance(completed, int) and attempted > completed
+              else "")
+    verdict = "unanimous" if da.get("unanimous") else "not unanimous"
+    return (f"{parts}{failed} of {attempted} draws (recorded before the vote rule; that page "
+            f"decides by unanimity: {verdict})")
+
+
+def _confirmation_record(cfg: Config) -> Path:
+    """THE ONE record of C(iv)'s confirmations — never a flag: a log that could name a fresh record
+    could re-draw a page version until it agreed (review round 0)."""
+    from vinci.dossier.confirmation import RECORD_NAME
+    return cfg.snapshots_dir / RECORD_NAME
+
+
+def _confirm_seal(cfg: Config, args: argparse.Namespace, ticker: str) -> _Seal:
+    """C(iv), the vote rule's confirmation at decision time
+    (`docs/records/2026-11-10-the-proposal-vote-rule-design.md` §9): before the ledger row is
+    written, the committed page's synthesis is drawn TEN times (`vinci.dossier.confirmation`) and
+    R1 at ten (9 of 10) decides the sealed proposal; the page's own five-draw tally is sealed beside
+    it. One confirmation per page version, recorded and reused, so it is never re-drawn until it
+    agrees. A page with no machine read has nothing to confirm. PAID when it draws (~$3–4)."""
+    action, lean, assembled = _sealed_proposal(cfg, ticker)
+    path = cfg.data_dir / "dossiers" / ticker / "dossier.json"
+    page = json.loads(path.read_text()) if path.exists() else None
+    synth = (page or {}).get("synthesis") or {}
+    if page is None or not synth.get("evidence_balance"):
+        return _Seal(action, lean, assembled, None, False, ())
+    from vinci.dossier.confirmation import ConfirmationError, confirm
+    from vinci.graph.llm import AnthropicLlmClient
+    record = _confirmation_record(cfg)
+    ciq_root = Path(args.ciq_root) if args.ciq_root else cfg.data_dir / "manual" / "ciq"
+    try:
+        conf = confirm(page, llm=AnthropicLlmClient.from_config(cfg), ciq_root=ciq_root,
+                       record=record, dry_run=bool(args.dry_run))
+    except (ConfirmationError, RuntimeError, ValueError, OSError) as exc:
+        raise LedgerError(f"C(iv): the ten-draw confirmation could not be drawn ({exc}) — the "
+                          "proposal is sealed only from a confirmation; nothing was logged"
+                          ) from exc
+    p = conf.proposal
+    page_da = synth.get("draw_agreement")
+    page_gate = DrawGate.from_record(page_da) if page_da else None
+    page_split = page_gate.split if page_gate is not None else (
+        _pre_rule_split(page_da) if isinstance(page_da, Mapping) else "a single draw (no tally)")
+    tally = {"sealed_from": "confirmation", "page": synth.get("draw_agreement"),
+             "confirmation": conf.tally()}
+    word = p.action_word or ("none (borderline)" if p.state == "borderline" else "none")
+    lines = (f"machine proposal (C(iv), R1 at {conf.gate.attempted}): {word} — {conf.gate.split}",
+             f"  the page's own build: {page_split}",
+             f"  the confirmation: {'reused, recorded' if conf.reused else 'drawn'} "
+             f"{conf.drawn_at}, model {conf.model}, request sha256 "
+             f"{(conf.request_sha256 or '—')[:16]}; recorded in {record}",
+             "  its transcripts: " + ("equal the page's input record" if conf.transcripts_verified
+                                      else "UNVERIFIED — the page's input record cannot say which "
+                                           "it read (a backfill lists no transcript, or there is "
+                                           "no record), so today's files were read"))
+    # A REUSED confirmation was printed by an earlier command — a dry run, or a real log that a
+    # later gate refused after printing it — so the human has seen it before this verdict
+    return _Seal(p.action, p.lean, assembled, tally, conf.reused, lines)
 
 
 def _committed_limit(ticker: str) -> Any:
@@ -1636,7 +1723,15 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 getattr(args, "edge_basis", None),
                 ev_gap=_committed_ev_gap(cfg, ticker),
                 note=getattr(args, "edge_note", None))
-            mp, ml, stamp = _sealed_proposal(cfg, ticker)
+            seal = _confirm_seal(cfg, args, ticker)
+            for line in seal.lines:
+                print(line)
+            if getattr(args, "dry_run", False):
+                # the seal shown, NOTHING written to the ledger; the ledger's own gates (the entry
+                # price, its staleness, a stated limit) run only on a real log
+                print(f"dry run: nothing written to the ledger for {ticker}; this reveals the "
+                      "confirmation's proposal, so a later log of this page seals it as revealed")
+                return 0
             entry = log_verdict(
                 store, resolver=resolver, candidate_id=args.candidate_id,
                 identity=identity, origin=origin, sleeve=sleeve,
@@ -1653,8 +1748,9 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 # reach for a file. A name with no record, or a record with no limit, passes None
                 # and is unenforced, which is every name today.
                 stated_limit=_committed_limit(ticker),
-                machine_proposal=mp, machine_lean=ml, proposal_assembled_at=stamp,
-                revealed_pre_verdict=getattr(args, "saw_proposal", False),
+                machine_proposal=seal.action, machine_lean=seal.lean,
+                proposal_assembled_at=seal.assembled, machine_tally=seal.tally,
+                revealed_pre_verdict=getattr(args, "saw_proposal", False) or seal.revealed,
             )
         except EdgeBasisError as exc:
             print(f"REFUSED — no verdict without a stated edge basis:\n{exc}")
@@ -3787,6 +3883,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="self-report: you peeked at the machine proposal (dossier --show-proposal) BEFORE "
         "deciding. Stamps revealed_pre_verdict=True so the anchored disposition is down-weighted.",
     )
+    p_log.add_argument(
+        "--dry-run", action="store_true",
+        help="draw (or reuse) the ten-draw confirmation and print what would be sealed; write "
+             "nothing to the ledger. It reveals the proposal, and a later log seals it as revealed")
+    p_log.add_argument("--ciq-root", help="the CIQ folders the page's transcripts are read from "
+                                          "(default: data/manual/ciq)")
     p_log.set_defaults(func=_cmd_log_verdict)
 
     p_mon = sub.add_parser("monitor", help="mark the book to market vs benchmarks (manual)")
