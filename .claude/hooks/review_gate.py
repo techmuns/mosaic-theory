@@ -94,8 +94,11 @@ TYPED_ARGS = re.compile(r"<command-args>([^<]*)</command-args>")
 EFFORTS = {"high", "xhigh", "max", "ultra"}
 #: A GitHub pull-request URL: owner, repository, number.
 PR_URL = re.compile(r"https://github\.com/([\w.-]+)/([\w.-]+)/pull/(\d+)")
-#: What counts as CODE for the gate — anything that executes or configures execution.
-CODE = re.compile(r"\.(py|js|mjs|ts|sh|toml|ya?ml)$|^bin/|^functions/|^\.claude/settings\.json$")
+#: What counts as CODE for the gate — anything that executes or configures execution, and the
+#: grader's data: its gap types and panel and the gold sets it is measured against are JSON, so a
+#: PR moving only them skipped /code-review and Codex (fix request 2, RG-D18).
+CODE = re.compile(r"\.(py|js|mjs|ts|sh|toml|ya?ml)$|^bin/|^functions/|^\.claude/settings\.json$"
+                  r"|^vinci/evals/|^tests/fixtures/synthesis_(?:gap_)?gold/")
 
 
 def git(root: Path, *args: str) -> tuple[int, str]:

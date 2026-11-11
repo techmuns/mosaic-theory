@@ -44,6 +44,16 @@ PROTECTED: tuple[tuple[str, str], ...] = (
     (".claude/hooks/", "an agent hook"),
     (".github/workflows/", "a CI workflow (the gate)"),
     ("bin/commit", "the local gate"),
+    # The gate's own configuration and the grader (fix request 2, RH-D7 and RG-D18): an agent
+    # could weaken the gate through pytest's addopts, ruff's rule set or mypy's strictness, or
+    # move the measure a prompt change is judged by, without a prompt.
+    ("pyproject.toml", "the gate's configuration (pytest options and markers, the ruff rule "
+                       "set, mypy strictness, dependency pins)"),
+    ("tests/conftest.py", "the fixtures and hooks every test runs under"),
+    (".github/scripts/", "a CI script (the key check)"),
+    ("vinci/evals/", "the synthesis grader: its metrics, gap types and panel"),
+    ("tests/fixtures/synthesis_gap_gold/", "the gold set the M-GAP grader is measured against"),
+    ("tests/fixtures/synthesis_gold/", "the synthesis gold set the grader is measured against"),
 )
 STATE_DIR = Path(tempfile.gettempdir()) / "mosaic-theory-hooks"
 

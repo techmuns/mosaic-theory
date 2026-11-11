@@ -2,20 +2,26 @@
 
 PM-maintained. Sole source of truth for what data PM can actually pull. Framework LLM is bound to this file: source proposals must reference tools/modules listed here, not external or unverified sources.
 
-**Last verified:** YYYY-MM-DD (PM updates on each material change)
+**Last verified:** never recorded. This line read "YYYY-MM-DD", a placeholder never filled in. The file came into this repo on 2026-06-18 (`5a1469b2`) and was not edited again until this correction (G-D14, 2026-11-11), so no tool below carries a date of verification. PM updates on each material change.
+
+> **Corrected 2026-11-11 (G-D14).** This inventory was written for the chat-session framework
+> (Sessions A–C). Its `checklist.md` is not in this repository: `git ls-files` finds none, and no
+> commit on any branch or on `origin/main` ever added one. No code reads Koyfin. Where the code
+> reads a source, the code says which: `vinci/dossier/requirements.py` (`CIQ_MODULES`,
+> `EDGAR_FREE_INPUTS`, `FREE_FEED_INPUTS`).
 
 ---
 
 ## SOURCE-BINDING DISCIPLINE — APPLIES THROUGHOUT
 
-The source-binding discipline previously focused on Sessions A2 through C ("consensus / multiple / positioning pulls"). **Source-binding extends upstream to A1 (Parts 1, 4, 5) and remains in effect at A2.** Rules SBC-1 (numerical claims), SBC-2 (event claims), and SBC-3 (narrative exception) are defined in `checklist.md` STEP A1. Summary for sourcing decisions:
+The source-binding discipline previously focused on Sessions A2 through C ("consensus / multiple / positioning pulls"). **Source-binding extends upstream to A1 (Parts 1, 4, 5) and remains in effect at A2.** Rules SBC-1 (numerical claims), SBC-2 (event claims), and SBC-3 (narrative exception) are defined in `checklist.md` STEP A1 (not in this repository, G-D14; the summary below is all of those rules this repo holds). Summary for sourcing decisions:
 
 - Specific numerical claims about a candidate name's current state (price, return, multiple, business metric, rating, PT) → require in-session `web_search` tool call with visible URL, PM-upload extraction per the tools listed below, OR `[LLM-narrative, not verified]` tag.
 - Specific event citations (M&A, listing notices, regulatory actions, named broker actions, named precedents) → same requirement.
 - Qualitative mechanism-fit judgments (how a name maps to the thesis) → no source required (SBC-3 narrative exception).
 - Training-memory claims without an in-session tool call are NOT acceptable as sourced claims, regardless of LLM confidence.
 
-Verification at Session C: a new "Source-binding carry-forward check" runs at the start of Session C BEFORE C1-PRE. It surfaces any A1/A2 claim that is currently driving the live decision basis without source-binding or B3 verification. See `checklist.md` STEP C1-SB SOURCE-BINDING CARRY-FORWARD CHECK (named STEP C1-SB to avoid a naming collision with the pre-existing STEP C1 — SCENARIO REFINEMENT step).
+Verification at Session C: a new "Source-binding carry-forward check" runs at the start of Session C BEFORE C1-PRE. It surfaces any A1/A2 claim that is currently driving the live decision basis without source-binding or B3 verification. See `checklist.md` STEP C1-SB SOURCE-BINDING CARRY-FORWARD CHECK (named STEP C1-SB to avoid a naming collision with the pre-existing STEP C1 — SCENARIO REFINEMENT step). That file is not in this repository (G-D14), so the step's text is not here either.
 
 ---
 
@@ -186,12 +192,12 @@ When PM is uncertain about how to ground a declaration in Session A/B/C, consult
 ### "What is consensus currently pricing?"
 - **Primary:** CIQ Estimates → Consensus sheet (current EPS/Rev/Margins + revision history)
 - **Supplementary:** CIQ Key Developments filtered to `Type = Research Notes` over last 30-60 days (qualitative analyst views)
-- **Verification:** Koyfin FY1 EPS for cross-check
+- **Verification:** Koyfin FY1 EPS for cross-check — a manual UI check only, and its access is unverified (see *Last verified*). No code reads Koyfin; the dossier reads consensus from the CIQ Estimates export (`requirements.CIQ_MODULES`) (G-D14)
 
 ### "What is positioning showing?"
 - **Primary:** CIQ Holders (institutional flow snapshots, top-5 holder deltas) + CIQ Charting → Short Interest history
 - **Liquid-options names:** IBKR options chain (skew, implied move on next earnings, ATM straddle)
-- **Supplementary:** Koyfin short interest for cross-check
+- **Supplementary:** Koyfin short interest for cross-check — manual and unverified, as above. No code reads Koyfin; the dossier's short interest is FINRA's (`requirements.FREE_FEED_INPUTS`) (G-D14)
 - **Insider angle:** CIQ Insider Trading (forward-filled by holder name)
 
 ### "What is the trade-press narrative on this thesis?"

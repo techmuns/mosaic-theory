@@ -21,6 +21,7 @@ from bisect import bisect_left, bisect_right
 from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from datetime import UTC, date, datetime, timedelta
 from typing import Any, cast
+from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
 
@@ -104,6 +105,21 @@ _SESSION_LOOKBACK_DAYS = 10
 #: source has restated onto the current basis
 #: (`docs/records/2026-10-26-split-restatement-and-total-return.md`).
 RESTATE_WINDOW_DAYS = 30
+
+#: THE DATA PLAN'S HISTORY WINDOW, and the margin either side of its edge. Polygon serves about two
+#: years of bars: on 2026-11-11 grouped-daily served 2024-11-20 (721 days back, 10,731 results) and
+#: refused 2024-11-01 (740 days back) with ``403 NOT_AUTHORIZED`` "Attempted to request data past
+#: historical entitlements". The exact edge is not measured, so a date within the margin of it is
+#: read as possibly beyond it: an anchor is not fetched there (RF-D5), and a refusal there is not
+#: called a lapse (RF-D12).
+PLAN_HISTORY_DAYS = 730
+PLAN_EDGE_MARGIN_DAYS = 14
+
+
+def inside_plan_window(day: date, *, today: date) -> bool:
+    """True when ``day`` is CERTAINLY inside the plan's history window — newer than its edge by
+    more than the margin. A refusal on such a day is not the start of available history."""
+    return (today - day).days < PLAN_HISTORY_DAYS - PLAN_EDGE_MARGIN_DAYS
 
 #: A held bar and its re-fetch describe one session on two split bases when all four prices moved
 #: by ONE factor, and that factor is away from 1, both within this fraction. Measured 2026-10-26 on
@@ -289,6 +305,55 @@ def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
     return {iid: sorted(v.items()) for iid, v in found.items()}
 
 
+def restate_after(store: Any, iid: str, edge: Sequence[tuple[Any, RawBar | None]], *,
+                  end: date) -> tuple[str, float | None]:
+    """THE RIGHT EDGE OF A PARTIAL REFRESH (TeamNostra fix request 2, RF-D5, both paths).
+
+    A refresh of ``[start, end]`` rewrites that window on the source's CURRENT split basis. A name
+    that also holds bars AFTER ``end`` keeps them on the basis they were pulled on, so a split
+    since that pull left a step at ``end``'s next session — the left edge's defect, at the other
+    end. ``edge`` holds held bars after ``end``, each beside the source's bar for that session,
+    oldest first. The grouped path gives the FIRST and — only where that reads a restatement — the
+    LAST; the aggregates path, which already holds every served session through the last, gives
+    every one (review of order 5, finding 2).
+
+    Restated only when every pair reads ONE restatement (`restatement_factor`, agreeing within
+    `RESTATE_TOL`): then every held bar after ``end`` is put on the current basis
+    (`Store.restate_bars`, tagged ``+restated``). Why more than one bar: a split leaves the bars on
+    and after its ex-date as they were, so held bars after ``end`` that straddle a pull made after
+    a split are on two bases already — one factor over all of them would make a step, not remove
+    one. That shape is restated nothing and named, as is an edge the source did not serve
+    (``unanchored``). On the grouped path the bars between the two ends are taken to share their
+    pull, the rule `restate_held` states for the left edge.
+
+    Returns ``(outcome, factor)``: ``restated`` with its factor, ``price_only`` with the factor
+    prices alone moved by (a correction, never a split: nothing restated), ``unanchored``, or
+    ``unchanged``."""
+    pairs = []
+    for held, fresh in edge:
+        if held is None or fresh is None:
+            return "unanchored", None
+        pairs.append((held, fresh))
+    factors = [restatement_factor(h, f) for h, f in pairs]
+    first = factors[0] if factors else None
+    if first is None and all(f is None for f in factors):
+        moved = next((m for h, f in pairs if (m := price_factor(h, f)) is not None), None)
+        return ("price_only", moved) if moved is not None else ("unchanged", None)
+    if first is not None and all(f is not None and abs(f / first - 1.0) <= RESTATE_TOL
+                                 for f in factors):
+        store.restate_bars(iid, first, through=date.max, after=end)
+        return "restated", first
+    return "unanchored", None
+
+
+def et_today(now: datetime | None = None) -> date:
+    """The exchange's own calendar date (America/New_York) at ``now`` (an aware instant; the
+    present by default). The plan refuses a date's data until that date has ended in ET, so this
+    — never the local date — says which refusal is "not yet closed"
+    (`PolygonEodClient.grouped_daily`)."""
+    return (now or datetime.now(UTC)).astimezone(ZoneInfo("America/New_York")).date()
+
+
 #: How far back a rename's carry asks the source for the old ticker's bars: the two years the data
 #: plan serves (`docs/records/2026-10-26-split-restatement-and-total-return.md`). Older sessions
 #: come from the bars the store already holds under the old id.
@@ -379,6 +444,10 @@ def ingest_prices(
     it holds is never trusted into a skip: it re-pulls everything, exactly as before.
 
     A bar is filed under the id that held its symbol THAT day (`holders`, ``first_sessions``).
+
+    BOTH EDGES OF THE RANGE ARE ANCHORED. The left by the anchor session (below); the right, where
+    a name this run wrote also holds bars after ``end``, by `restate_after` (TeamNostra fix
+    request 2, RF-D5) — names it could not put on one basis are listed as ``unanchored``.
     """
     secs = list(securities)
     on = holders(secs, first_sessions)
@@ -470,6 +539,55 @@ def ingest_prices(
             days_fetched += 1
             restated.update(restate_held(store, client.grouped_daily, [last], group,
                                          price_only=price_only))
+    # THE RIGHT EDGE (RF-D5): a name this run wrote that also holds bars AFTER ``end`` is set beside
+    # the source at its FIRST such session — where a splice at ``end``'s next session shows — and,
+    # only where that reads a restatement, at its LAST too (`restate_after`). One whole-market call
+    # per distinct date: a replay on the backed-up primary store has 4 to 6 distinct first dates
+    # but 15 to 18 distinct last ones (names that stopped trading), so reading every name's last
+    # cost 18 to 24 calls (review of order 5, finding 4); splits are rare, so now it costs the
+    # first dates plus the last dates of the names that split. A refresh ending on the latest
+    # session, the routine one, holds nothing after ``end`` and costs nothing here.
+    unanchored: list[str] = []
+    after = getattr(store, "first_bar_after", None)
+    if callable(after) and callable(getattr(store, "bars_on", None)):
+        firsts: dict[str, date] = {}
+        for iid in sorted(written):
+            if (first := after(iid, end)) is not None:
+                firsts[iid] = first
+        fetched: dict[date, dict[str, RawBar]] = {}
+        checked: dict[str, dict[date, tuple[Any, RawBar | None]]] = {}
+
+        def read(wanted: Mapping[str, date]) -> None:
+            by_day: dict[date, list[str]] = {}
+            for iid, d in wanted.items():
+                by_day.setdefault(d, []).append(iid)
+            for d, iids in sorted(by_day.items()):
+                if d not in fetched:
+                    fetched[d] = client.grouped_daily(d)
+                held_on = store.bars_on(d, iids)
+                for iid in iids:
+                    checked.setdefault(iid, {})[d] = (held_on.get(iid),
+                                                      fetched[d].get(id_to_sym[iid]))
+
+        read(firsts)
+        lasts: dict[str, date] = {}
+        for iid, first in firsts.items():
+            held, fresh = checked[iid][first]
+            if (held is not None and fresh is not None
+                    and restatement_factor(held, fresh) is not None
+                    and (last := store.price_frontier_for(iid)) is not None and last != first):
+                lasts[iid] = last
+        read(lasts)
+        days_fetched += len(fetched)
+        for iid, first in firsts.items():
+            outcome, f = restate_after(store, iid, [checked[iid][d] for d in sorted(checked[iid])],
+                                       end=end)
+            if outcome == "restated" and f is not None:
+                restated.setdefault(iid, []).append((first, f))
+            elif outcome == "price_only" and f is not None:
+                price_only.setdefault(iid, []).append((first, f))
+            elif outcome == "unanchored":
+                unanchored.append(id_to_sym[iid])
     return {
         "days_fetched": days_fetched,
         "days_skipped": days_skipped,
@@ -482,6 +600,8 @@ def ingest_prices(
         # and which moved like a split in price alone, so restated nothing (`restatement_factor`)
         "price_only": {id_to_sym[iid]: [f for _b, f in v]
                        for iid, v in sorted(price_only.items())},
+        # and which held bars after ``end`` this run could not put on one basis (`restate_after`)
+        "unanchored": sorted(set(unanchored)),
     }
 
 
@@ -494,32 +614,101 @@ def ingest_prices_per_symbol(
     end: date,
     progress: ProgressFn | None = None,
     first_sessions: Mapping[str, date] | None = None,
-) -> dict[str, int]:
+    today: date | None = None,
+) -> dict[str, Any]:
     """Backfill via ONE per-symbol aggregates call each (``daily_bars``) instead of grouped-daily.
 
     grouped-daily fetches the WHOLE market per day — right for the ongoing universe refresh, but for
     backfilling a NEW name's history that is ~250 whole-market calls at the free tier's ~5/min (the
     NCNO-class stall: a name that entered the tracked set with no history — its stock-perf
     exhibit and 180d returns were all UNKNOWN). Polygon HAS the history; this pulls it in ONE call
-    per symbol. Same store, same PriceBar shape — the efficient path for a per-name backfill."""
+    per symbol. Same store, same PriceBar shape — the efficient path for a per-name backfill.
+
+    A PARTIAL REFRESH IS ANCHORED (TeamNostra fix request 2, RF-D5). Bars are served
+    ``adjusted=true``, on the source's CURRENT split basis, and only ``[start, end]`` is rewritten —
+    so after a split, a ``start`` later than the oldest held bar left the older held bars on the old
+    basis beside new-basis ones: a ×0.5 step on a day with no corporate action, read by the screen's
+    G1 drawdown and G2 relative return, and not named anywhere. Each name's fetch now reaches back
+    to its ANCHOR — the latest held session before ``start`` — and the held anchor is set beside the
+    served one. Where the source has restated it (`restatement_factor`: all four prices by one
+    factor, volume by its inverse), every held bar through the anchor is put on the current basis
+    (`Store.restate_bars`, tagged ``+restated``) — the grouped path's rule (`restate_held`), applied
+    to this one. A move in price alone restates nothing and is NAMED (``price_only``); an anchor
+    beyond the plan's window cannot be fetched, and one the source did not re-serve was not
+    checked: both are named (``unanchored``).
+
+    THE RIGHT EDGE TOO (RF-D5, coordinator 2026-11-11). A name that also holds bars AFTER ``end``
+    had them left on the basis they were pulled on — the same splice at ``end``'s next session. The
+    fetch now reaches through the name's last held bar, and every held bar after ``end`` is set
+    beside the source (`restate_after`): one restatement read across them all puts them on the
+    current basis; two bases there, or any held session after ``end`` the source did not serve,
+    restates nothing and is named ``unanchored``. Still ONE call per name: the anchors widen its
+    window, and only ``[start, end]`` is written — and a name whose window writes nothing has
+    neither edge restated."""
     secs = list(securities)
     starts = first_sessions or {}
+    on = today or date.today()
     reporter = ProgressReporter("EOD-aggs", len(secs), emit=progress)
     bars_written = 0
     empty: list[str] = []
+    # one shape with the grouped path's summary: per symbol, the factors read (here one, at the
+    # anchor)
+    restated: dict[str, list[float]] = {}
+    price_only: dict[str, list[float]] = {}
+    unanchored: list[str] = []
     for i, s in enumerate(secs, 1):
+        anchor = store.last_bar_before(s.internal_id, start)
+        if anchor is not None and not inside_plan_window(anchor, today=on):
+            unanchored.append(s.eod_symbol)
+            anchor = None
+        # THE RIGHT EDGE: a name holding bars after ``end`` is fetched through its last one —
+        # still one call — so every held session after ``end`` meets the source
+        first_after = store.first_bar_after(s.internal_id, end)
+        last_after = (store.price_frontier_for(s.internal_id)
+                      if first_after is not None else None)
+        served = client.daily_bars(s.eod_symbol, anchor or start, last_after or end)
+        fresh_by = dict(served)
         rows = [
             PriceBar(
                 internal_id=s.internal_id, bar_date=d, open=b.open, high=b.high, low=b.low,
                 close=b.close, volume=b.volume, source="polygon-aggs",
             )
             # a symbol's aggregates are the TICKER's, whoever held it: none before this id's own
-            # first session is filed under it (`holders`)
-            for d, b in client.daily_bars(s.eod_symbol, start, end)
-            if d >= starts.get(s.internal_id, date.min)
+            # first session is filed under it (`holders`); the anchors either side are read,
+            # never rewritten
+            for d, b in served
+            if start <= d <= end and d >= starts.get(s.internal_id, date.min)
         ]
         if not rows:
-            empty.append(s.eod_symbol)  # OK-but-empty ⇒ mis-resolved symbol or out-of-window range
+            # OK-but-empty ⇒ mis-resolved symbol or out-of-window range. And NO EDGE IS RESTATED
+            # (review of order 5, finding 3): the held window keeps its basis, so restating the
+            # bars either side of it would MAKE the two steps the anchors exist to remove.
+            empty.append(s.eod_symbol)
+            reporter.tick(i, suffix=f"{s.eod_symbol} 0 bars")
+            continue
+        if anchor is not None:
+            held = store.bars_on(anchor, [s.internal_id]).get(s.internal_id)
+            fresh = fresh_by.get(anchor)
+            if held is None or fresh is None:
+                unanchored.append(s.eod_symbol)   # the anchor was not served: nothing was checked
+            elif (f := restatement_factor(held, fresh)) is not None:
+                store.restate_bars(s.internal_id, f, through=anchor)
+                restated.setdefault(s.eod_symbol, []).append(f)
+            elif (pf := price_factor(held, fresh)) is not None:
+                price_only.setdefault(s.eod_symbol, []).append(pf)
+        if first_after is not None:
+            # EVERY held bar after ``end``, each beside the served one: the call already carries
+            # them all (finding 2). A held session the source did not serve cannot be read, so it
+            # makes the name unanchored — never inferred from the bars around it (Codex, #991).
+            pairs = [(b, fresh_by.get(b.bar_date))
+                     for b in store.get_price_history(s.internal_id) if b.bar_date > end]
+            outcome, rf = restate_after(store, s.internal_id, pairs, end=end)
+            if outcome == "restated" and rf is not None:
+                restated.setdefault(s.eod_symbol, []).append(rf)
+            elif outcome == "price_only" and rf is not None:
+                price_only.setdefault(s.eod_symbol, []).append(rf)
+            elif outcome == "unanchored" and s.eod_symbol not in unanchored:
+                unanchored.append(s.eod_symbol)
         bars_written += store.write_prices(rows)
         reporter.tick(i, suffix=f"{s.eod_symbol} {len(rows)} bars")
     # FAIL LOUD: a 0-bar backfill IS the NCNO-class silent gap this path exists to prevent — an OK
@@ -530,7 +719,9 @@ def ingest_prices_per_symbol(
             f"per-symbol backfill returned NO bars for {empty} — mis-resolved eod_symbol or an "
             f"out-of-window date range; the store gained nothing for these (a silent gap)"
         )
-    return {"symbols": len(secs), "bars_written": bars_written}
+    return {"symbols": len(secs), "bars_written": bars_written,
+            # SAID IN THE SUMMARY, NEVER SILENT, as the grouped path says it
+            "restated": restated, "price_only": price_only, "unanchored": unanchored}
 
 
 class PolygonEodClient(EodClient):
@@ -657,7 +848,23 @@ class PolygonEodClient(EodClient):
         except HttpError as exc:
             # A date before the plan's rolling history window returns 403 NOT_AUTHORIZED — that is
             # "no data for this date" (the start of available history), not a degraded refresh.
+            # BUT ONLY THERE (TeamNostra fix request 2, RF-D12): the same refusal on a date the
+            # plan serves — a lapsed plan, a revoked key — read as a holiday too, and an ingest of
+            # 22 refused sessions reported ``trading_days: 0`` and raised nothing. A refusal inside
+            # the window (`inside_plan_window`) is a failure, and says so. EXCEPT THE ET DATE STILL
+            # OPEN, or a later one: the plan refuses "today's data before end of day" until
+            # midnight ET, which is local TOMORROW in IST (2026-10-28 refused at 03:38 UTC on
+            # 10-29, `docs/records/2026-10-29-monitor-day-2026-10-28.md`); `last_completed_session`
+            # probes `today - 1` and must step back past it, as it always did. Only that date — a
+            # session already closed in ET and refused is a lapse, whatever the local date (Codex
+            # round 2 on #991: "local yesterday" exempted it for the whole IST day).
             if "NOT_AUTHORIZED" in str(exc):
+                today = date.today()
+                if day < et_today() and inside_plan_window(day, today=today):
+                    raise EodError(
+                        f"grouped-daily {day}: the source REFUSED a date inside the plan's "
+                        f"{PLAN_HISTORY_DAYS}-day window (403 NOT_AUTHORIZED) — a lapsed plan or "
+                        f"key, not a market holiday; nothing for this date was read") from exc
                 return {}
             raise
         data = cast(dict[str, Any], raw)

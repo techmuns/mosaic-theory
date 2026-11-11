@@ -64,7 +64,7 @@ jobs:
           if [ -f data/vinci.db ]; then mv data/vinci.db "$RUNNER_TEMP/vinci.db"; fi
           python -m ruff check vinci tests frontend
           python -m mypy --strict vinci
-          python -m pytest -m "not network" -p no:warnings --tb=short
+          python -m pytest -m "not network" -p no:warnings --tb=short -rs
 
       - name: Commit scoring report
         run: |
