@@ -280,12 +280,27 @@ def test_multiple_anchor_absent_ciq_degrades_loudly() -> None:
 
 
 def test_multiple_anchor_too_few_closes_is_unavailable() -> None:
-    a = mc.multiple_anchor(_StubBundle(_mult_rows([8.0, 9.0, 10.0])))   # <4
+    # four closes: the latest is the current, not history (D-D3), so three remain — <4
+    a = mc.multiple_anchor(_StubBundle(_mult_rows([8.0, 9.0, 10.0, 11.0])))
     assert not a.available and "too short for a band" in a.note and a.n_quarters == 3
 
 
+def test_multiple_anchor_no_close_row_is_not_called_undated() -> None:
+    """(−) A Multiples sheet with no TEV/LTM EBITDA Close row has no close at all — it is too short
+    for a band, never 'no close is dated'. (+) Closes under an undated header are undated."""
+    a = mc.multiple_anchor(_StubBundle([["For Quarter Ending", "", 45000, 45001]]))
+    assert not a.available and "too short for a band" in a.note and "dated" not in a.note
+    undated = _mult_rows([6.0, 8.0, 10.0, 12.0, 14.0])
+    undated[0] = ["For Quarter Ending", "", *([""] * 5)]
+    b = mc.multiple_anchor(_StubBundle(undated))
+    assert not b.available and "no TEV/LTM EBITDA close is dated" in b.note
+
+
 def test_multiple_anchor_band_from_own_history() -> None:
-    a = mc.multiple_anchor(_StubBundle(_mult_rows([6.0, 8.0, 10.0, 12.0, 14.0])))
+    """The band is the closes BEFORE the latest (audit D-D3's remainder): the latest is the
+    current read, which the own-history band excludes too. This pin counted it (n 5, median 10)
+    until 2026-11-10."""
+    a = mc.multiple_anchor(_StubBundle(_mult_rows([6.0, 8.0, 10.0, 12.0, 14.0, 99.0])))
     assert a.available and a.n_quarters == 5
     assert a.trough == pytest.approx(6.0) and a.median == pytest.approx(10.0)
     assert a.upper_quartile == pytest.approx(12.0)          # 75th pct of 6,8,10,12,14
