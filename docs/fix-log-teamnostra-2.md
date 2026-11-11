@@ -130,7 +130,7 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RE1-D11 | 4 | fixed | 9f6175db (#948) | `tests/test_fts_amendment_form.py::test_the_covenant_pointer_names_an_amendment_as_filed` | WERN (1 of 92 pointer rows; 20 labels at its next re-assembly, on order 1's rebuild list) |
 | RE1-D14 | 4 | fixed | a9c60902 (#944) | `tests/test_asof_reads_and_amendments.py::test_the_excerpt_cap_says_how_much_it_left_unread` | none (graph only) |
 | RE1-D16 | 4 | fixed | 1d0c374c (#945) | `tests/test_point_guide_verification.py::test_a_point_guide_against_a_range_ending_at_zero_is_a_mismatch` | none (28 frozen pages compared; every compared line has both bounds) |
-| RA-D2 | 4 | in progress (#967) | #967 measured on the panel does not ship (56d777af, #973: M-ABSENT 45 → 70, p_upper 0.018); split into two successors, each measured on its own (RA-D2 under the NA ruling) | — | — |
+| RA-D2 | 4 | in progress (#981) | #967 measured on the panel does not ship (56d777af, #973: M-ABSENT 45 → 70, p_upper 0.018); split into two successors, each measured on its own (RA-D2 under the NA ruling); the RA-D2 successor is #981 (open, its own panel check) | — | — |
 | RA-D4 | 4 | in progress (#967) | #967 measured on the panel does not ship (56d777af, #973); split into two successors, each measured on its own | — | — |
 | RA-D9 | 4 | fixed | 2f920944 (#963) | `tests/test_ciq_units_and_headers.py::test_ra_d9_a_statement_in_thousands_is_refused_before_assembly` | none (latent) |
 | RA-D14 | 4 | fixed | 2f920944 (#963) | `tests/test_ciq_units_and_headers.py::test_ra_d14_twin_each_column_is_found_by_its_header_and_a_missing_one_is_said` | none (latent) |

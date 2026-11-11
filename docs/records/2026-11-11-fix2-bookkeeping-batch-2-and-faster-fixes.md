@@ -6,7 +6,7 @@ supersedes:
 superseded-by:
 ---
 
-# Fix request 2 bookkeeping, batch 2, and the faster-fixes process: 20 fix-log rows from #961 and #970–#976 (17 to `fixed`, 3 to `in progress`), STATE row 60 recounted (78 fixed, 92 open, 7 in progress, 1 disagreed), and the operator's four process changes recorded, among them the mechanical re-sync's exception from `bin/commit`
+# Fix request 2 bookkeeping, batch 2, and the faster-fixes process: 20 fix-log rows from #961, #970 and #973–#976 (17 to `fixed`, 3 to `in progress`), STATE row 60 recounted (78 fixed, 92 open, 7 in progress, 1 disagreed), and the operator's four process changes recorded, among them the mechanical re-sync's exception from `bin/commit`
 
 **WHAT.** This record covers two things.
 
@@ -92,8 +92,8 @@ only.
 **HOW VERIFIED.**
 - `tests/test_fix_log.py` passes on this branch, with `test_state_open_now` and
   `test_state_identifiers`. That lint refuses a `fixed` row whose squash commit is not reachable
-  from `origin/main`, or whose test node does not exist. Every test node named above exists on
-  main `173b4818`.
+  from `origin/main`, or whose test node does not exist. Every test node the 20 changed rows name
+  exists on main `173b4818`.
 - The counts were read by a script over every row's Status cell.
 
 **BOUNDARY.** The counts:
@@ -112,10 +112,26 @@ only.
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **The mechanical re-sync's exception (item 2) is an accepted risk.** After such a re-sync,
   main's code and the branch's meet with no CIQ-bound pin run before merge. CI has no licensed
-  export, so those pins skip there. The cheap fix is unavailable by construction: it is the local
-  `bin/commit` the exception exists to skip.
-  **FALSIFIER:** the coordinator runs the full local suite on main, in the primary checkout, which
-  holds the exports, after each merge batch. If a CIQ-bound pin reds there, and the batch merged a
+  export, so those pins skip there.
+  **The cheaper fix was measured, not assumed, and it is not cheap.** It would mean running locally
+  only the test files CI skips. CI run `42961443683` on main `173b4818` skipped 603 tests in 58
+  files. Those 58 files took **2,184 s (36 minutes)** in the primary checkout on 2026-11-11,
+  under a 1-minute load average of about 30. That is most of a local `bin/commit`, which takes 30
+  to 80 minutes, so it would save little of the re-gate the exception exists to skip.
+  **The same run found main red in the primary checkout, on local data state, before any
+  mechanical re-sync merged.** Seven tests in six files fail at `173b4818`:
+  - `test_estimate_year_derivation[V-want3]`: V's re-export derives FY27E/FY28E;
+  - `test_ev_bridge::test_claims_equal_ciqs_current_figure_on_every_committed_name`: UBER, 5356.0
+    vs 8973.0;
+  - `test_forward_consensus[GOOGL]` and `[LLY]`: a spread's mean off its trends figure beyond 2%;
+  - `test_forward_multiple_history::test_nm_and_no_data_stay_different_states`;
+  - `test_run_visibility`: the local `frontend/snapshots/` build is from 2026-08-12;
+  - `test_store_freshness`: the primary's store is 40 to 60 days behind on the benchmark IWM and on
+    14 page names.
+  None of the six test files changed on 2026-11-11.
+  **FALSIFIER, against that baseline:** after each merge batch, the coordinator runs the full local
+  suite on main in the primary checkout, which holds the exports. If a test fails that is not in
+  the baseline set above (or in a baseline the record of its fix restates), and the batch merged a
   mechanically re-synced PR, the exception is withdrawn.
 - **Hand-built validation sections, until the command lands, can miss a reader.**
   **FALSIFIER:** once the command merges, it is run on the PRs merged with hand-built sections.
