@@ -52,7 +52,7 @@ What does not change:
   - **`--dry-run` draws (or reuses) the confirmation**, prints what would be sealed, and writes nothing to the ledger. Every command prints the confirmation it draws or reuses, so a log that REUSES one seals `revealed_pre_verdict`, whichever command drew it.
   - **The record states whether the transcripts were verified** against the page's input record. A BACKFILLED record never lists a transcript, so it (18 of the 27 committed pages), or a page with no record, says UNVERIFIED rather than hide it.
   - **It is this code's request on the page's committed layer.** The record keeps the request's sha256, since `llm_call.log` is not committed and the page's own request cannot be proved from the repository.
-- **The extraction version** `2026-11-11.vote-rule` is added, with its web twin. The drift pins are re-pinned (56 modules). `confirmation.py` is classed NOT_EXTRACTION: it seals a ledger row and never writes a page.
+- **The extraction version** `2026-11-11.vote-rule` is added. Since #988 it is its own file, `vinci/dossier/extraction_versions/2026-11-11.vote-rule.json`, following `2026-11-10.kind-by-exact-name`, with its names byte for byte as the row first written in the table. The drift pins for `schemas.py`, `synthesis.py` and `verdict.py` are re-pinned to it. `confirmation.py` is classed NOT_EXTRACTION: it seals a ledger row and never writes a page.
 
 ## How verified
 

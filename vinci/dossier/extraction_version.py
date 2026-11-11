@@ -34,13 +34,44 @@ changed. Bumping the version without saying what it names is not expressible.
 WHAT THIS DOES NOT DO. Nothing here notices that extraction behaviour changed — a version is
 declared by hand. Queue item 26b does the noticing, as a TEST (2026-10-29, audit A-D14):
 `tests/test_extraction_version_drift.py` hashes each declared extraction module and reds when one
-moved while its pin did not — the PR that moves it says, in that file, whether output changed
-(append a row here) or not. Without it the stamp stood still across 45 commits.
+moved while its pin did not — the PR that moves it says, in its pin, whether output changed (the
+entry it added) or not (`refactor`). Without it the stamp stood still across 45 commits.
+
+ONE FILE PER VINTAGE, AND CURRENT IS THE HEAD — NEVER THE LAST LINE (2026-11-11, fix request 2).
+Until then every vintage was a row appended to the END of one tuple here and of its hand-kept web
+twin, so every open PR that changed output went DIRTY on the same lines the moment another merged,
+and each re-sync cost a 30–80 minute re-gate. The rows below are now FROZEN (`LEGACY_VERSIONS`,
+never appended to again); each new vintage is ONE FILE, ``extraction_versions/<id>.json``:
+
+  * ``id`` — ``<YYYY-MM-DD>.<slug>``: the day it was written and a lowercase kebab slug holding a
+    letter. Unique WITHOUT a counter — a ``.N`` suffix collides when two PRs pick the same next
+    number, so a counter slug is refused. Two PRs that pick the same id write the same file, which
+    git refuses to merge — a collision is a conflict, never a silent duplicate.
+  * ``follows`` — the vintage(s) current on the main the PR was cut from (``new`` fills it in).
+  * ``names`` — what the vintage names, exactly as a row did.
+
+ORDER IS ANCESTRY, NOT SORT. A vintage INCLUDES every vintage it follows, transitively; each legacy
+row follows the row above it. CURRENT is the set of HEADS — vintages nothing follows: one head is
+the stamp (its id, exactly as before); two or more — PRs cut from the same main and merged in either
+order — stamp as their ids joined by ``+`` in id order, a DECLARED stamp whose detail names every
+part. The next vintage, written on that main, follows every head and the join closes. Sorting was
+measured and refused: replayed in real merge order, 47 of the table's 78 appends (at main
+`173b4818`) would have left a date-sorted "current" where it stood — the stamp standing still
+while the code moved, the defect this module exists to end. Ancestry also needs no knowledge of
+merge order, which is what lets two entry files merge in either order with no textual conflict.
+
+    python -m vinci.dossier.extraction_version new <slug> --names "<what it names>"
 """
 
 from __future__ import annotations
 
+import argparse
+import json
+import re
+import sys
 from collections.abc import Sequence
+from datetime import date
+from pathlib import Path
 from typing import Any
 
 # APPEND-ONLY — with ONE recorded exception, 2026-08-17. The `2026-08-16.1` row was AMENDED, not
@@ -55,7 +86,11 @@ from typing import Any
 # APPEND-ONLY. One row per extraction vintage: (version, what this version NAMES). The LAST row is
 # current. A new row is written when extraction OUTPUT changes — not when the code is merely
 # refactored — and writing one forces you to say what changed, which is the point of the pairing.
-EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
+# FROZEN 2026-11-11: no row is added here again — a new vintage is a file in extraction_versions/
+# (the module docstring). Each row below follows the one above it; the last is followed by the
+# first entry file. `frontend/build.py` reads this literal with `ast` (it may not import vinci), so
+# it stays ONE plain tuple of string pairs.
+LEGACY_VERSIONS: tuple[tuple[str, str], ...] = (
     (
         "2026-07-28.1",
         "unusual-items surfacing in the financial summary (#238) · multiples read from the "
@@ -809,25 +844,185 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "read, the value on its label's line or the next. No page moves: all 382 files on "
         "disk keep their kind, and every tearsheet on disk is RTF",
     ),
-    (
-        "2026-11-11.vote-rule",
-        "the vote rule (R1, R3, R5, C(iii); "
-        "docs/records/2026-11-10-the-proposal-vote-rule-design.md §9): a build's "
-        "`draw_agreement` records R1's gate — `modal_count`, `required`, `passes` and `rule`,"
-        " the lean and the state derived from them — over the draws ATTEMPTED, a failed, "
-        "unparsed or unrecognized draw counting as dissent, and the tally keys two spellings "
-        "of one lean as one. At five draws with every draw completed R1 passes only 5 of 5, "
-        "today's rule; a build with a failed draw now withholds where it proposed before "
-        "(the 1-of-5 hole). A page built before the fields omits them and decides by "
-        "`unanimous` as before, so no committed page moves until it is re-assembled",
-    ),
 )
 
-#: The version stamped on every dossier assembled by this code.
-EXTRACTION_VERSION: str = EXTRACTION_VERSIONS[-1][0]
+#: Where every vintage after the frozen table lives — one JSON file per vintage (module docstring).
+ENTRIES_DIR = Path(__file__).with_name("extraction_versions")
+
+#: Joins the heads of a parallel merge into one stamp. No id can contain it.
+JOIN = "+"
+
+#: A new vintage's id: the day it was written, then a lowercase kebab slug holding a letter — so a
+#: counter (`.1`, `.2`), the shape two PRs pick alike, is refused. Lowercase also keeps two ids from
+#: colliding on a case-blind filesystem (this repo's primary checkout is one).
+_NEW_ID = re.compile(r"\d{4}-\d{2}-\d{2}\.(?=[a-z0-9-]*[a-z])[a-z0-9]+(?:-[a-z0-9]+)*")
+_REQUIRED = frozenset({"id", "follows", "names"})
+_OPTIONAL = frozenset({"note"})
+
+
+def read_entries(directory: Path = ENTRIES_DIR,
+                 legacy: Sequence[tuple[str, str]] = LEGACY_VERSIONS,
+                 ) -> list[tuple[str, tuple[str, ...], str]]:
+    """Every vintage file in ``directory`` as ``(id, follows, names)``, each validated on its own.
+
+    Raises naming the file and the fault. A malformed entry stops every import of this module —
+    and so every build — rather than stamping a page with a vintage the table cannot place. A file
+    that is not ``*.json`` (the README) is not an entry; one that is, under any other name (an
+    editor's or a sync client's copy, ``<id> 2.json``), is refused, never skipped."""
+    if not directory.is_dir():
+        raise RuntimeError(
+            f"{directory} is missing — without it this code cannot say which extraction vintage "
+            "it is, and a stamp read off the frozen table alone would name older code")
+    legacy_ids = {v for v, _ in legacy}
+    out: list[tuple[str, tuple[str, ...], str]] = []
+    for path in sorted(directory.glob("*.json")):
+        def bad(why: str, path: Path = path) -> ValueError:
+            return ValueError(f"extraction version {path.name}: {why}")
+        try:
+            raw = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as e:
+            raise bad(f"not JSON ({e})") from e
+        if not isinstance(raw, dict):
+            raise bad("not a JSON object")
+        keys = set(raw)
+        if not keys >= _REQUIRED or keys - _REQUIRED - _OPTIONAL:
+            raise bad(f"keys {sorted(keys)} — an entry holds exactly id, follows and names, and "
+                      "may hold a note")
+        vid, follows, names = raw["id"], raw["follows"], raw["names"]
+        if not isinstance(vid, str) or not _NEW_ID.fullmatch(vid):
+            raise bad(f"id {vid!r} is not <YYYY-MM-DD>.<lowercase-kebab-slug holding a letter>")
+        try:
+            date.fromisoformat(vid[:10])
+        except ValueError as e:
+            raise bad(f"id {vid!r} does not open with a real date") from e
+        if path.name != f"{vid}.json":
+            raise bad(f"the file must be named {vid}.json, after its id")
+        if vid in legacy_ids:
+            raise bad(f"id {vid!r} is already a row of the frozen table")
+        if (not isinstance(follows, list) or not follows
+                or not all(isinstance(f, str) and f for f in follows)
+                or len(set(follows)) != len(follows)):
+            raise bad("follows must list, once each, the vintage(s) current where it was written")
+        if not isinstance(names, str) or not names.strip():
+            raise bad("names must say what this vintage names")
+        if not isinstance(raw.get("note", ""), str):
+            raise bad("a note is text")
+        out.append((vid, tuple(follows), names))
+    return out
+
+
+def build_table(legacy: Sequence[tuple[str, str]],
+                entries: Sequence[tuple[str, tuple[str, ...], str]],
+                ) -> tuple[tuple[tuple[str, str], ...], dict[str, tuple[str, ...]]]:
+    """The whole table in a stable order, and each vintage's parents.
+
+    Each legacy row's parent is the row above it; an entry's parents are its ``follows``. ORDER:
+    the legacy rows as listed, then the entries topologically, ties by id. That order is for a
+    reader and for tests; precedence is ANCESTRY (:func:`includes`), never a position."""
+    parents: dict[str, tuple[str, ...]] = {}
+    names: dict[str, str] = {}
+    prev: str | None = None
+    for v, n in legacy:
+        parents[v], names[v], prev = ((prev,) if prev else ()), n, v
+    for v, f, n in entries:
+        parents[v], names[v] = f, n
+    for v, f, _ in entries:
+        unknown = [p for p in f if p not in names]
+        if unknown:
+            raise ValueError(f"extraction version {v}.json follows {unknown}, which no vintage "
+                             "declares")
+    order = list(legacy)
+    placed = {v for v, _ in legacy}
+    pending = sorted(v for v, _, _ in entries)
+    while pending:
+        ready = [v for v in pending if all(p in placed for p in parents[v])]
+        if not ready:
+            raise ValueError(f"extraction versions {pending} follow each other in a cycle")
+        order.append((ready[0], names[ready[0]]))
+        placed.add(ready[0])
+        pending.remove(ready[0])
+    return tuple(order), parents
+
+
+def heads_of(parents: dict[str, tuple[str, ...]]) -> tuple[str, ...]:
+    """The vintages nothing follows, in id order — together, what the code at hand is."""
+    followed = {p for ps in parents.values() for p in ps}
+    heads = tuple(sorted(v for v in parents if v not in followed))
+    if not heads:
+        raise ValueError("the extraction-version table declares no vintage")
+    return heads
+
+
+#: Every declared vintage, ``(version, what it NAMES)``: the frozen rows, then each entry file.
+EXTRACTION_VERSIONS: tuple[tuple[str, str], ...]
+_PARENTS: dict[str, tuple[str, ...]]
+EXTRACTION_VERSIONS, _PARENTS = build_table(LEGACY_VERSIONS, read_entries())
+_NAMES: dict[str, str] = dict(EXTRACTION_VERSIONS)
+
+#: The vintages nothing follows. One, except between two parallel merges and the next entry.
+HEADS: tuple[str, ...] = heads_of(_PARENTS)
+
+#: The version stamped on every dossier assembled by this code: the one head, or every head
+#: joined by ``+`` — two vintages merged in parallel, each of which this code holds.
+EXTRACTION_VERSION: str = JOIN.join(HEADS)
+
+
+def _lineage(version: str) -> set[str]:
+    """A vintage and every vintage it follows, transitively — what code stamped with it holds."""
+    seen: set[str] = set()
+    stack = [version]
+    while stack:
+        v = stack.pop()
+        if v not in seen:
+            seen.add(v)
+            stack.extend(_PARENTS[v])
+    return seen
+
+
+def _parts(version: str) -> list[str] | None:
+    """The declared vintages a stamp names — itself, or each head of a parallel merge — or None
+    when it is not a stamp this code can produce. A join lists its parts once each, in id order,
+    none following another: ``A+B`` where B follows A was never a set of heads (B alone was)."""
+    parts = version.split(JOIN)
+    if not all(p in _NAMES for p in parts):
+        return None
+    if len(parts) > 1 and (parts != sorted(set(parts))
+                           or any(a in _lineage(b) for a in parts for b in parts if a != b)):
+        return None
+    return parts
+
+
+def names_of(version: str | None) -> str | None:
+    """What a declared stamp names, or None. A joined stamp names each of its parts, bracketed."""
+    v = (version or "").strip()
+    parts = _parts(v) if v else None
+    if parts is None:
+        return None
+    if len(parts) == 1:
+        return _NAMES[parts[0]]
+    return ("vintages merged in parallel, none following another: "
+            + " ".join(f"[{p}] {_NAMES[p]}" for p in parts))
+
+
+def declares(version: str | None) -> bool:
+    """Is ``version`` a stamp this code declares — a vintage, or a join of vintages?"""
+    return names_of(version) is not None
+
+
+def includes(version: str | None, ref: str) -> bool | None:
+    """Was a page stamped ``version`` built by code holding ``ref``'s change? None when the stamp
+    is not one this code declares (unstamped, or another extractor's): unknown, never "no"."""
+    if ref not in _NAMES:
+        raise ValueError(f"{ref!r} is not a declared extraction vintage")
+    v = (version or "").strip()
+    parts = _parts(v) if v else None
+    if parts is None:
+        return None
+    return any(ref in _lineage(p) for p in parts)
+
 
 #: What that version names — the reader-facing description of this extraction vintage.
-EXTRACTION_VERSION_NAMES: str = EXTRACTION_VERSIONS[-1][1]
+EXTRACTION_VERSION_NAMES: str = names_of(EXTRACTION_VERSION) or ""
 
 #: Rendered where a stamped dossier would show its version, for dossiers assembled BEFORE 26a. An
 #: absent stamp must be VISIBLE, never silent: "unstamped" and "I did not look" are different
@@ -878,7 +1073,58 @@ def stamp_detail(version: str | None) -> str:
     v = _declared(version)
     if v is None:
         return f"{UNSTAMPED} — assembled before extraction versions were declared; vintage unknown"
-    for ver, names in EXTRACTION_VERSIONS:
-        if ver == v:
-            return f"{v} — {names}"
+    named = names_of(v)
+    if named is not None:
+        return f"{v} — {named}"
     return f"{v} — not a version this code declares; built by a different extractor"
+
+
+def new_entry(slug: str, names: str, *, on: date | None = None,
+              directory: Path = ENTRIES_DIR) -> Path:
+    """Write the file for a new vintage, following every head of this tree, and return its path.
+
+    The one step a PR that changes extraction output takes here. It refuses an id the table holds
+    or a file already on disk — a vintage is written once and never rewritten under a page."""
+    vid = f"{(on or date.today()).isoformat()}.{slug}"
+    if not _NEW_ID.fullmatch(vid):
+        raise ValueError(f"{vid!r}: the slug must be lowercase kebab-case holding a letter")
+    if vid in _NAMES:
+        raise ValueError(f"{vid!r} is already a declared vintage")
+    if len(names.strip()) <= 20:  # the suite's own floor (test_extraction_version.py)
+        raise ValueError("a vintage must say what it names, in more than twenty characters")
+    path = directory / f"{vid}.json"
+    if path.exists():
+        raise FileExistsError(path)
+    body = {"id": vid, "follows": list(HEADS), "names": names}
+    path.write_text(json.dumps(body, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    try:
+        read_entries(directory)  # the file just written must read back, or nothing lands
+    except Exception:
+        path.unlink()
+        raise
+    return path
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(
+        prog="python -m vinci.dossier.extraction_version",
+        description="Declare a new extraction vintage, or print the current stamp.")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    new = sub.add_parser("new", help="write extraction_versions/<today>.<slug>.json")
+    new.add_argument("slug", help="lowercase kebab-case, holding a letter")
+    new.add_argument("--names", required=True, help="what this vintage names")
+    sub.add_parser("current", help="print the stamp this code puts on a page")
+    args = ap.parse_args(argv)
+    if args.cmd == "new":
+        try:
+            path = new_entry(args.slug, args.names)
+        except (ValueError, FileExistsError) as e:
+            ap.error(str(e))
+        sys.stdout.write(f"wrote {path.name}, following {', '.join(HEADS)}\n")
+    else:
+        sys.stdout.write(f"{EXTRACTION_VERSION}\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
