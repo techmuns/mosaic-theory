@@ -51,7 +51,7 @@ from vinci.dossier.schemas import (
     StockInfo,
     Synthesis,
 )
-from vinci.dossier.verdict import MachineProposal, derive_proposal, split_lean
+from vinci.dossier.verdict import COMMITTED_LEANS, MachineProposal, derive_proposal, split_lean
 from vinci.sleeves import BY_KEY, DEFAULT_SLEEVE, require_sleeve
 
 if TYPE_CHECKING:  # typing only — a RUNTIME import would cycle (scenarios → dossier.midcycle)
@@ -2868,6 +2868,17 @@ def _draw_agreement_md(s: Synthesis) -> list[str]:
     a = s.draw_agreement
     if a is None or a.attempted < 2:
         return []
+    gate = a.gate()
+    if gate is not None:   # R1's record (the vote rule): the split and the state, as a count
+        if gate.passes:
+            return [f"_Reproducibility: {gate.split} — the rule is met._", ""]
+        if gate.state == "borderline":
+            return [f"**Reproducibility: BORDERLINE** — {gate.split}. The rule is not met, so no "
+                    f"machine proposal is made; the read below is the first draw carrying the "
+                    f"majority lean. A tally of this build, not a rate.", ""]
+        if a.unanimous and gate.lean in COMMITTED_LEANS:
+            return [f"**Reproducibility: {gate.split}** — a failed draw counts as dissent, so no "
+                    f"machine proposal is made. A tally of this build, not a rate.", ""]
     if a.unanimous:
         return [f"_Reproducibility: all {a.completed} of {a.attempted} draws on this build "
                 f"returned the same lean._", ""]
@@ -3398,7 +3409,10 @@ def _machine_proposal_md(p: MachineProposal) -> str:
     proposal renders its fail-honest note — never a coin-flip. AVOID_TERMINAL displays as AVOID
     (display only; the enum is the structured value in the ledger/JSON)."""
     if p.action is None:
-        return f"**Machine proposal:** none — {p.note}"
+        word = "none (borderline)" if p.state == "borderline" else "none"
+        return f"**Machine proposal:** {word} — {p.note}"
+    if p.split:   # R4: never a proposal without the count it stands on
+        return f"**Machine proposal:** {p.action_word} — derived from the lean above ({p.split})"
     return f"**Machine proposal:** {p.action_word} — derived from the lean above"
 
 
@@ -3942,7 +3956,9 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
                 derive_proposal(s.evidence_balance if s is not None else None,
                                 sleeve=d.sleeve,
                                 draws_unanimous=(s.draw_agreement.unanimous
-                                                 if s is not None and s.draw_agreement else None))),
+                                                 if s is not None and s.draw_agreement else None),
+                                gate=(s.draw_agreement.gate()
+                                      if s is not None and s.draw_agreement else None))),
                 ""]
         out += screen
     # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
