@@ -554,6 +554,25 @@ const EXTRACTION_VERSIONS = [
     "No figure moves: the flag is QA text, and five committed pages (EPAM, MCK, VITL, VRRM, " +
     "WLK) print a '-' quarter as '-' (quoted) once re-assembled; every export on disk is " +
     "BIFF"],
+  ["2026-11-10.relationship-view-edges",
+    "the Customers view's edges are said (TeamNostra fix request 2, RBC-D3, V1-O3, RBC-D5):" +
+    " an RTF view that does not end with CIQ's closing line ('*denotes proprietary " +
+    "relationship', the last line of all 72 exports on disk) says the list may be cut short" +
+    " and gives no count; a row naming a party with its relationship type blank is kept as " +
+    "'type not stated' when it states another column; a header with no rows, a 'No Data " +
+    "Available' body and an 'Entitlement Needed' body are named as such, never 'could not " +
+    "parse'; and a thin RTF is no longer called an OLE Word doc. On the 36 export folders " +
+    "on disk no read moves"],
+  ["2026-11-11.guides-as-stated",
+    "a guide is read only where the release states one, for the period it states, and a " +
+    "guide the reader cannot read is said aloud (TeamNostra fix request 2, RE2-D1, D3, D4, " +
+    "D5, D7, D19, D20): two figures joined by 'and' outside 'between' are no range; a range " +
+    "the release withdraws, or one stated for a calendar period, is refused with a note; a " +
+    "period phrase naming a deal ('the 2025 acquisition') is not the guide's period; a " +
+    "qualifier before the low side, 'is expected to increase', and 'guidance to $X to $Y' " +
+    "are read; a single-point guide a forward verb governs is refused with a note; and a " +
+    "guide filed under the next-fy default carries a machine-tier flag saying no period was " +
+    "read"],
   ["2026-11-10.covenant-value-figures",
     "a covenant term's value states only figures its own quote states, in every class, not " +
     "years and currency figures alone (TeamNostra fix request 2, RE2-D16 with E2-D19's " +
