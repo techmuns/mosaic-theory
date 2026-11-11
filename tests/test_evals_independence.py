@@ -4,12 +4,13 @@
 Every test fails on #958's head `31d21828`, where the scorer does not exist. The runs are drawn
 through the REAL `builds.run_build` with a scripted SDK, so the scorer reads the rows the guard and
 the build ledger actually write; only the licensed inputs are stubbed (as in
-`test_evals_run_builds.py`). The χ² tail is checked against its closed form for even degrees of
-freedom and against table points, never against the scorer's own output.
+`test_evals_run_builds.py`), and the page is the committed one less the transcript rows whose words
+are off it, which a replay refuses (`tests/stripped_pages.replayable`, RG-D19). The χ² tail is
+checked against its closed form for even degrees of freedom and against table points, never
+against the scorer's own output.
 """
 from __future__ import annotations
 
-import json
 import math
 from pathlib import Path
 from types import SimpleNamespace
@@ -17,6 +18,7 @@ from typing import Any
 
 import pytest
 
+from tests.stripped_pages import committed_page, replayable
 from vinci.evals import replay as rp
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,8 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @pytest.fixture(scope="module")
 def nflx() -> dict[str, Any]:
-    page: dict[str, Any] = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
-    return page
+    return replayable(committed_page("NFLX"))
 
 
 @pytest.fixture()

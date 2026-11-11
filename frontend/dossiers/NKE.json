@@ -9556,997 +9556,2460 @@
           "kind": "leading_indicator",
           "metric": "NIKE Performance revenue (prior fiscal year)",
           "period": "Last fiscal year",
-          "value": "$16 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Last fiscal year, we grew this business to $16 billion.",
-          "following_context": "We built on that foundation this quarter, growing NIKE Performance by another high single digits. Today, I'll share more about the momentum we're seeing across our key sports.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 9,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "286536b7ef0f000d5f8db2722e2d36ee4bda6812ed34ea5be35ac25a3ad097a3",
+            "value_sha256": "a30c9b4df2a65752022f4eec5e669841a3c40667e3fc17d6bad5499f70e84809"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "NIKE Performance growth",
           "period": null,
-          "value": "high single digits",
           "value_num": null,
           "unit": null,
-          "verbatim": "We built on that foundation this quarter, growing NIKE Performance by another high single digits.",
-          "following_context": "Today, I'll share more about the momentum we're seeing across our key sports.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 9,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "93408ed317deddcbe1450d774d8f621744fc10878ba1df4bb65d9fba01118894",
+            "value_sha256": "e3c9607b86691c651591c64718214c2e880b38f9da5b27ea314e4990dd7d92f4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "NIKE Sportswear revenue change",
           "period": null,
-          "value": "down low double digits",
           "value_num": null,
           "unit": null,
-          "verbatim": "NIKE Sportswear, which accounted for just under half of this quarter's revenue, was down low double digits.",
-          "following_context": "The decline reflected a combination of deliberate actions, product underperformance and broader marketplace pressure. The first factor was one we expected. As planned, we reduced revenue from the Dunk by nearly 50% in the quarter. That resulted in roughly $200 million headwind in Sportswear. In addition, some aged, higher volume sportswear footwear sold through below expectations.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 11,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "1d9a10bf08ba255dbe8c178a8225260583def9b48ededa6424eefc1b3bb6764b",
+            "value_sha256": "6f600bb0047bb663164edd85583c3ac7618031bd7407dbefda44e17899b830bb"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "Dunk revenue reduction",
           "period": null,
-          "value": "nearly 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As planned, we reduced revenue from the Dunk by nearly 50% in the quarter.",
-          "following_context": "That resulted in roughly $200 million headwind in Sportswear. In addition, some aged, higher volume sportswear footwear sold through below expectations.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 11,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "6ae2e4eace738bd61bdf6b6727963581def06c6d09135a5d3b8c8dad6fb9507e",
+            "value_sha256": "5574d2b373c269261ac6cebeb0c23bcd372ae76822435510dee9e0683139760b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Dunk reduction revenue headwind in Sportswear",
           "period": null,
-          "value": "roughly $200 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "That resulted in roughly $200 million headwind in Sportswear.",
-          "following_context": "In addition, some aged, higher volume sportswear footwear sold through below expectations.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 11,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "c0115119df5262f677798a811a445ae2a3d4db1cd65ec36d3d2cded92d145c29",
+            "value_sha256": "47a7065c6422aa0a3a5a8b48fa4177014884a7f31f58e202f342d9b8a3626633"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Jordan Brand share of global business",
           "period": "Q1",
-          "value": "13%",
           "value_num": null,
           "unit": null,
-          "verbatim": "in Q1, the Jordan Brand represented 13% of our global business with revenue falling by mid-teens.",
-          "following_context": "Here's why we're doing this. When consumers see the Jumpman, it should feel special, it should feel earned. And every decision we're making is designed to ensure the Jordan Brand remains as coveted a decade from now as it has been for the past several decades.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 16,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "c31fdae9759d3dabf0596ebe827d97e95799ee445e2f8263b58f4ae2ed903c9c",
+            "value_sha256": "1137d6133e74fa34175c38d9e45e9baa1ae4cffef0209f2385e93ee01c90bb8e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Jordan Brand revenue change",
           "period": "Q1",
-          "value": "falling by mid-teens",
           "value_num": null,
           "unit": null,
-          "verbatim": "in Q1, the Jordan Brand represented 13% of our global business with revenue falling by mid-teens.",
-          "following_context": "Here's why we're doing this. When consumers see the Jumpman, it should feel special, it should feel earned. And every decision we're making is designed to ensure the Jordan Brand remains as coveted a decade from now as it has been for the past several decades.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 16,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "c31fdae9759d3dabf0596ebe827d97e95799ee445e2f8263b58f4ae2ed903c9c",
+            "value_sha256": "c24647a67aa92a038d599c49f96f8b7a6a8b25b3452b885f28dca3761a226d13"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Greater China revenue change",
           "period": null,
-          "value": "declined 26%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Let's turn to Greater China where, for the quarter, revenue declined 26%.",
-          "following_context": "With a new leadership team in place for the past 6 months, we have been moving with urgency to alter the landscape and improve our position in the marketplace. As we announced in July, we are activating a plan to clean up the digital side of this market. We are eliminating distribution through channels that are not aligned with our marketplace strategy, which will decrease the deep discounting of our brands. We will anchor NIKE's and Jordan's digital marketplace in China around fewer, higher-quality experiences through the official NIKE flagship storefronts on Tmall, JD and Douyin alongside NIKE.com and the NIKE app.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 26.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 17,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "a235a7eb6bc1234ce22911ab57d05b765d59371afe3496a975ec400f46dd702c",
+            "value_sha256": "55e2fe04fdd491b9ee66d5d678ebfca0dbe46047d4225e8b3800cb3fe3f880e6"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "House of Innovation Shanghai consecutive months of growth",
           "period": null,
-          "value": "10 consecutive months of growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Shanghai, our House of Innovation has delivered 10 consecutive months of growth since making that shift.",
-          "following_context": "In the near term, revenues and profitability in China will be impacted. We expect our digital cleanup to take multiple seasons as we continue to take targeted actions with our partners to improve inventory levels.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 18,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "d2c95f4cc70d7416838681565c1e5ff5ddde4522618ea2a895d85cd317428f9c",
+            "value_sha256": "5873d74b2e7988a69be3d139a374f5685a963e1c8fce5d2fd8d28036bda004a9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Max cushioning category share",
           "period": "over the past year",
-          "value": "nearly tripled",
           "value_num": null,
           "unit": null,
-          "verbatim": "Led by the strength of the Vomero franchise, we've nearly tripled our share of the Max cushioning category over the past year.",
-          "following_context": "Now we're entering the next phase of NIKE Running. Over the past 2 months, we've introduced 4 new footwear innovations, 3 in our racing silo and 1 in our Pegasus silo, each built around a different runner, a distance and a goal. In August, we launched the Pegasus Plus 2, a fast-tempo training shoe with a curved Air Zoom unit for a quick smooth ride. In September, we unveiled the Alphafly 4, a lighter, more energy-giving version of our most celebrated marathon shoe. And yesterday, we introduced 2 new shoes that span the spectrum of runners. The Swooshfly, our entry-level marathon racing shoe designed for the 4-hour-plus runner, and NIKE Apex, a super shoe with double-stacked Air Zoom units that deliver an incredible 40% more energy than the Alphafly 3.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 20,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "dacfb4e9199f1c31e1a6fca33d83ca3edf9ca8a44e36e49169adffcbd6bce8b7",
+            "value_sha256": "c9f1a7be770e4626a07bbcf235f8cea231f8b41afb4a15cae967f57b50096fbb"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "NIKE Apex energy return vs Alphafly 3",
           "period": null,
-          "value": "40% more energy than the Alphafly 3",
           "value_num": null,
           "unit": null,
-          "verbatim": "and NIKE Apex, a super shoe with double-stacked Air Zoom units that deliver an incredible 40% more energy than the Alphafly 3.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 20,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "526a63fb7d2484bbca96e0848e36fc51715acd70e73a639ec7ece649f4336b9e",
+            "value_sha256": "f884bf97a22fb94f8a9a014a12ca0b742f3cf1cd7dbede42a1172d28cf3fce2e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "World Cup team kits sales vs 2022 tournament",
           "period": null,
-          "value": "doubled",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Global Football, we're pleased with our World Cup results as we doubled our World Cup team kits sales compared to the 2022 tournament.",
-          "following_context": "One of our strategies going into the tournament was to use the energy to invest in a much needed refresh of the Global Football marketplace. This quarter, the newly elevated marketplace helped drive stronger sales in our club football kits this quarter, which was up high teens. That's critical because club football fans buy season after season.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 21,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "d73ea51b4cd9e3deede11ea7a177f3e7c4057375f9eac289815131380a81ddf8",
+            "value_sha256": "c43fb05de4d8a9a0a442824f677d9753397cdd29cd123404e434bc457256b6d2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Club football kits sales change",
           "period": "this quarter",
-          "value": "up high teens",
           "value_num": null,
           "unit": null,
-          "verbatim": "the newly elevated marketplace helped drive stronger sales in our club football kits this quarter, which was up high teens.",
-          "following_context": "That's critical because club football fans buy season after season.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 21,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "dbcb946f486e2ceedb124aeb4126bf7c11c201a173ffb20ac02d7375eec8d26b",
+            "value_sha256": "d5f50526bb674bee51a23fbf0a523b1f16fdccd4a965adc805b574782a3b9a25"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Women's signature basketball business growth",
           "period": null,
-          "value": "nearly 500% from FY '22 to FY '26",
           "value_num": null,
           "unit": null,
-          "verbatim": "NIKE Basketball has grown our women's signature business nearly 500% from FY '22 to FY '26.",
-          "following_context": "Today, we activated the largest women's signature shoe launch in NIKE's history, the Caitlin 1. It will launch in 5,000 doors, twice the average for a NIKE Basketball signature shoe, supported by our largest NIKE product campaign for the holiday season.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 500.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 23,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "2a100f367d109e29fe294357fa13892e51989433cde20364d7bd8c5126138769",
+            "value_sha256": "5ba629f60a6665415ae22a2ec721f80ce495968e82c3589459b68aca488b4149"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Caitlin 1 launch doors",
           "period": null,
-          "value": "5,000 doors, twice the average for a NIKE Basketball signature shoe",
           "value_num": null,
           "unit": null,
-          "verbatim": "It will launch in 5,000 doors, twice the average for a NIKE Basketball signature shoe, supported by our largest NIKE product campaign for the holiday season.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 23,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "442d9841eb005d12a89d9e5c75ed81926bd4b05724216e23ce1a69d1e9142120",
+            "value_sha256": "9d0daeb8ec899a2aa1ae89e693910b2dcc27e5bc943c24208b6c02d789d62b17"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Pace program expected savings",
           "period": null,
-          "value": "approximately $2.5 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "We expect Pace will deliver approximately $2.5 billion in savings.",
-          "following_context": "As we move forward with this work, we intend to reinvest a portion of the savings from Pace back into the business with discipline, prioritizing the opportunities with a clear strategic impact and the strongest return.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.5,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 40,
+            "speaker": "David M. Denton",
+            "quote_sha256": "3d6b8fb0c50244d44d06cfda223c00544a90ccb2204b3e0033e0c29f315b95c7",
+            "value_sha256": "984800a761ea499db27035d955516ff069d76ded8f328a71db8de3fd889ea7fc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "NIKE, Inc. revenue",
           "period": null,
-          "value": "$11.2 billion, a decline of 4% on a reported basis and 5% on a currency-neutral basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q1, revenues were $11.2 billion, a decline of 4% on a reported basis and 5% on a currency-neutral basis.",
-          "following_context": "And by geography, Greater China declined 26%, EMEA declined 5%, while APLA was flat, partially offset by a 2% growth in North America.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.2,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 35,
+            "speaker": "David M. Denton",
+            "quote_sha256": "90e7b921245acb27384f4dc786848ae598eab4c664df2ff7df6483fd1a768bdd",
+            "value_sha256": "155dfd811f526bd3e0fc5b74852163bed64da7ee412b0c61c78cf9f6a4686ef3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Greater China revenue change (geography)",
           "period": null,
-          "value": "declined 26%",
           "value_num": null,
           "unit": null,
-          "verbatim": "And by geography, Greater China declined 26%, EMEA declined 5%, while APLA was flat, partially offset by a 2% growth in North America.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 26.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 35,
+            "speaker": "David M. Denton",
+            "quote_sha256": "b02a9149033393f3551da84a6b78b1b49c1424dad92522b6c502ee5d19f80ec2",
+            "value_sha256": "55e2fe04fdd491b9ee66d5d678ebfca0dbe46047d4225e8b3800cb3fe3f880e6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EMEA revenue change",
           "period": null,
-          "value": "declined 5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "And by geography, Greater China declined 26%, EMEA declined 5%, while APLA was flat, partially offset by a 2% growth in North America.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 35,
+            "speaker": "David M. Denton",
+            "quote_sha256": "b02a9149033393f3551da84a6b78b1b49c1424dad92522b6c502ee5d19f80ec2",
+            "value_sha256": "838940b7ece16f9ec7538cbae5d04ae4b6be9baafb04a93bb90cc8ea79c18a1b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "APLA revenue change",
           "period": null,
-          "value": "flat",
           "value_num": null,
           "unit": null,
-          "verbatim": "And by geography, Greater China declined 26%, EMEA declined 5%, while APLA was flat, partially offset by a 2% growth in North America.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 35,
+            "speaker": "David M. Denton",
+            "quote_sha256": "b02a9149033393f3551da84a6b78b1b49c1424dad92522b6c502ee5d19f80ec2",
+            "value_sha256": "5dc27af287fa554aa10fec9de8d724a7964572f1ffd24c2b00e1a3a860ce7679"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North America revenue change",
           "period": null,
-          "value": "2% growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "And by geography, Greater China declined 26%, EMEA declined 5%, while APLA was flat, partially offset by a 2% growth in North America.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 35,
+            "speaker": "David M. Denton",
+            "quote_sha256": "b02a9149033393f3551da84a6b78b1b49c1424dad92522b6c502ee5d19f80ec2",
+            "value_sha256": "185ad2fffd56f93624f06b343dae576f51bef3ce3cbf5f02e4c1e6486cf828fb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "NIKE Performance business growth",
           "period": null,
-          "value": "up high single digits",
           "value_num": null,
           "unit": null,
-          "verbatim": "And if you were to isolate our NIKE Performance business, it was up high single digits this quarter, benefiting from the World Cup.",
-          "following_context": "Additionally, if you were to exclude the reset in Greater China, NIKE Performance would have been up low double digits in Q1. Performance was driven by double-digit growth in Running, Global Football, Tennis and Golf.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 36,
+            "speaker": "David M. Denton",
+            "quote_sha256": "f6b913a335d987f86d8b2f5f34bef4837942139369b0482cc7111bb4e7106693",
+            "value_sha256": "a5cf1eba0db73cff527ee8b51099fecc9d00c35d8eb3983a62ef7a9c2bba4e4d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "NIKE Performance growth excluding Greater China reset",
           "period": "Q1",
-          "value": "up low double digits",
           "value_num": null,
           "unit": null,
-          "verbatim": "Additionally, if you were to exclude the reset in Greater China, NIKE Performance would have been up low double digits in Q1.",
-          "following_context": "Performance was driven by double-digit growth in Running, Global Football, Tennis and Golf.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 36,
+            "speaker": "David M. Denton",
+            "quote_sha256": "2952718728ddec0a0e64df9ecc3a10bcfd2e719391105ffb1d649d346d02913e",
+            "value_sha256": "a17eeeee7d3092953de29b0d723fe1ca11d6c677fa47efa4f506404bc6a68112"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Gross margin",
           "period": null,
-          "value": "42.8%, up 60 basis points compared to LY",
           "value_num": null,
           "unit": null,
-          "verbatim": "Gross margin was 42.8%, up 60 basis points compared to LY.",
-          "following_context": "The results included benefits from our supply chain cost management efforts and FX tailwinds, partially offset by increased discounts as well as channel mix. Importantly, SG&A declined 3% on a reported basis. The team has maintained strong discipline on expenses in the quarter while increasing investments in demand creation associated with the World Cup. Earnings per share for the quarter were $0.48, down 2% versus LY.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 42.8,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 37,
+            "speaker": "David M. Denton",
+            "quote_sha256": "73c9c0edfe0cd5f5e0b30f8e05cbd0fbd45f549414b68a4f5054c4a463138e61",
+            "value_sha256": "7ddafc5b06da2a4a31d430abe0dcd9fdbb0fc8f1f4bf78c762e3587b9d826ab1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "SG&A change",
           "period": null,
-          "value": "declined 3% on a reported basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "Importantly, SG&A declined 3% on a reported basis.",
-          "following_context": "The team has maintained strong discipline on expenses in the quarter while increasing investments in demand creation associated with the World Cup. Earnings per share for the quarter were $0.48, down 2% versus LY.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 37,
+            "speaker": "David M. Denton",
+            "quote_sha256": "4796d6c826dff076eb1d9d4275c8060542871906348f5315a28c9292007a4278",
+            "value_sha256": "fd239058aea239287d2de489c9210da9f8e0175ea68d8939832a936a9969059d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Earnings per share",
           "period": null,
-          "value": "$0.48, down 2% versus LY",
           "value_num": null,
           "unit": null,
-          "verbatim": "Earnings per share for the quarter were $0.48, down 2% versus LY.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.48,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 37,
+            "speaker": "David M. Denton",
+            "quote_sha256": "a6beba24cc10d0404e2271312cf4623395b5ccc2bd0147da25ac2e350f339c9c",
+            "value_sha256": "8ae222ef315732fdb1bac74c56a14ed62cec30e6e1bd9b05b82493684e1dd8dd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Cash and short-term investments",
           "period": null,
-          "value": "$8.4 billion in cash and short-term investments, with leverage at roughly 2x",
           "value_num": null,
           "unit": null,
-          "verbatim": "We ended the quarter in a net cash position with $8.4 billion in cash and short-term investments, with leverage at roughly 2x.",
-          "following_context": "We remain disciplined in how we allocate capital with an emphasis on prioritizing investments that can strengthen the business and improving returns on those investments over time.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.4,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 38,
+            "speaker": "David M. Denton",
+            "quote_sha256": "0606cd01f7220963d61b09ab43a716508bf8978effdd7b8ff0043ff63f857cad",
+            "value_sha256": "3867e93b11f599f7b01a7e29e13e23e45612c31731749a36398f0bd0c75887ce"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Capital returned to shareholders via dividends",
           "period": null,
-          "value": "approximately $610 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the quarter, we returned approximately $610 million to shareholders through dividends, and the dividend remains a significant priority in our capital allocation strategy.",
-          "following_context": "Taken together, the quarter shows a business in transition. We are not where we want to be yet, but we have a strong understanding of the trends throughout the business and importantly, the actions required to improve results over the long term.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 610.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 39,
+            "speaker": "David M. Denton",
+            "quote_sha256": "7c309265ce8c82edd7e58eba7549c7e18ce443448763bc9d5535596a4c8626cc",
+            "value_sha256": "17c7e6512f6bb299172ce0297e0dc7987bef56e52910ea1d02fe892dfa12f842"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Cyber Week / North America sell-in comparison headwind to revenues",
           "period": "second quarter",
-          "value": "approximately 400 basis points",
           "value_num": null,
           "unit": null,
-          "verbatim": "These 2 items will represent a headwind of approximately 400 basis points to revenues in the second quarter.",
-          "following_context": "While these decisions can dampen near-term top line results, our focus is on improving the quality of revenue and creating a more sustainable foundation for long-term growth.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 400.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 45,
+            "speaker": "David M. Denton",
+            "quote_sha256": "99915c2d008d5fd276abc9a5010fde39ca0bea61982cc7d3fd82b20050fcfc26",
+            "value_sha256": "a2b2723344ab2c918588a450fd7ad6c2cf451dc52a22407110d692ba4cff01ad"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "NIL athletes / university partnerships reach",
           "period": null,
-          "value": "1,000 partnerships ... across universities in North America that reach over 13 million students",
           "value_num": null,
           "unit": null,
-          "verbatim": "And when you have 1,000 partnerships like we do across universities in North America that reach over 13 million students, it's clear to me that Austin wasn't a destination.",
-          "following_context": "It was a reminder of what's possible, of a larger opportunity in front of us, of what happens when NIKE plays to our strengths.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 54,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "60e84ce40d487aabc18305fae98ec33c2aef53c3563e9ace662922127729a010",
+            "value_sha256": "82454cf0d7cce88f8aeb1fc731cc1fb6bb11d36ecfbf0417b52b49c6ebdb4213"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North America revenue growth (Q&A)",
           "period": null,
-          "value": "grow 2%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As it relates to North America, North America did grow 2%, as we said, and it was driven by performance led by Running, Global Football and Basketball, those were the drivers there.",
-          "following_context": "So overall, excited about the direction that we're headed from a performance perspective. And the last thing I'll say about North America, we are seeing good sell-through across all channels, whether it's sporting -- in North America specifically, whether it's sporting goods at a DICK'S, an Academy, a SCHEELS, Athletic Specialties, JD Foot Locker performance product is selling and then also at our specialty accounts. So overall, we're pleased with the sell-through and performance product in North America.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 68,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "78d0b094f3fc18b4417839f3f27b7d0b0c6c7b74f9347f18a46d7bc6a62d7b27",
+            "value_sha256": "0bf3cc35273dccde7e047a03da751c93ac00da0c4edb05c6273023810aa9d386"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Women's basketball business growth (Q&A)",
           "period": "over the last few years",
-          "value": "up over 600%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Obviously, we have -- our women's business was up over 600% over the last few years.",
-          "following_context": "So it's a new opportunity. We see the women's game helping us dimensionalize the overall basketball business between A'ja and Sabrina and now Caitlin. And so Caitlin was our largest, by the way, signature launch for women ever at 5,000 doors and great sell-through.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 600.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 102,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "730f22f955e839bd75e7c8e39c6329c11a2dbe942ee0e24a332e392fbbb82867",
+            "value_sha256": "044c2f00a9d47a36f74f13d8bb33deaed36b02a6b6d042eb8918e612398a8779"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Core/Family Footwear price segment",
           "period": null,
-          "value": "$65 to $85 segment",
           "value_num": null,
           "unit": null,
-          "verbatim": "And that's at $65 to $85 segment.",
-          "following_context": "And again, the teams continue to focus on that and are driving, I think, some really nice progress there.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 65.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 85.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q1 2027 Earnings Call, Oct 01, 2026.rtf",
+            "transcript_sha256": "b862c74611ce53c97cc2132449d62340eeed47ff426f4d11ee4ae2ae1c6c0bc8",
+            "paragraph": 112,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "0fa143b8f0a3ca17341596162818b757db7f044c8d0cce11ab72f60a89d1b24a",
+            "value_sha256": "091e7f86a34a8262211d0dd66b49895c737ffac96b1297fba4fa22e33d09c152"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "NIKE Performance business growth (FY2026)",
           "period": null,
-          "value": "grew mid-single digits",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our renewed obsession with sport and the success of our athletes is fueling energy for our brands and building momentum in our performance business, which grew mid-single digits this fiscal year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 8,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "4b6bc8473b406c9fe213ba8532691e0f1cd1ce395e9e1c98ad31188d3199d587",
+            "value_sha256": "e062ea2bd7ca8b752fdd01ce668a017f08fe1ab1ef4ab6b5d2ba2f4288ea6cb5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Teammates moved into vertical sport teams",
           "period": null,
-          "value": "about 8,000 teammates",
           "value_num": null,
           "unit": null,
-          "verbatim": "it's what's enabled us to move about 8,000 teammates into vertical sport teams under our new operating model, the Sport Offense, while also taking meaningful steps to simplify and accelerate our supply chain and technology.",
-          "following_context": "As our foundation improves, the Sport Offense is starting to create impact. Our renewed obsession with sport and the success of our athletes is fueling energy for our brands and building momentum in our performance business, which grew mid-single digits this fiscal year.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 8,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "20516b2280e1763e41c23d88528b3e9279cca946ec25a481b463930e0800a220",
+            "value_sha256": "790a15f81590c1c796b02a1d016ee43ae7787b15ab92b8564afc45d38d0ab5a5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "NIKE Running consecutive quarters of double-digit growth",
           "period": null,
-          "value": "5 consecutive quarters of double-digit growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've now delivered 5 consecutive quarters of double-digit growth in NIKE Running.",
-          "following_context": "And over that period, we've added roughly $1 billion to our Running business. In FY '26, across Western Europe and North America, we gained 5 points of running market share in statement footwear, more than any other top 5 brand.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 12,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "36e43159b84ac033821f8f594e77172842b91a5812e3893683b4b6ede3f4de19",
+            "value_sha256": "2d2552bbafa16a91c067f289422740781f9c751cbb7afbddc178e809a21a3489"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Running business added revenue",
           "period": "over that period",
-          "value": "roughly $1 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "And over that period, we've added roughly $1 billion to our Running business.",
-          "following_context": "In FY '26, across Western Europe and North America, we gained 5 points of running market share in statement footwear, more than any other top 5 brand.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 12,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "34532e95a096a3d42b701d807cd19908dbcfede6e6b6d84c50f0f9dae44ef5f9",
+            "value_sha256": "896c511d0698abfce36e239cce6b6225b7be32d942b7f05d1f33207d902aa139"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Running market share in statement footwear",
           "period": "FY '26, across Western Europe and North America",
-          "value": "gained 5 points of running market share in statement footwear, more than any other top 5 brand",
           "value_num": null,
           "unit": null,
-          "verbatim": "In FY '26, across Western Europe and North America, we gained 5 points of running market share in statement footwear, more than any other top 5 brand.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 12,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "aaa1181ba5ea60a0f69cca9f1f4160e526ca9f78d44b5d58e465ac314b61adf4",
+            "value_sha256": "637c5852503864ad6effdf2e87625aa44ff1868dd2c7b2c8ab3d048773cb150d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Wholesale revenue growth",
           "period": "fiscal year",
-          "value": "grew 4%, led by double-digit growth in North America",
           "value_num": null,
           "unit": null,
-          "verbatim": "For the fiscal year, wholesale revenue grew 4%, led by double-digit growth in North America.",
-          "following_context": "And we've also made significant investments in physical marketplace, refreshing more than 15,000 spaces in wholesale doors around the world.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 13,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "c2ad0c128264ee48da9d05bb15b54d6ac1b8c18d0697712bcbd6d5f2a1784f7f",
+            "value_sha256": "b9132157b2110367e4241f7aab83975def52dddff73f092ef221503d98be0295"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Wholesale door spaces refreshed",
           "period": null,
-          "value": "more than 15,000 spaces in wholesale doors around the world",
           "value_num": null,
           "unit": null,
-          "verbatim": "And we've also made significant investments in physical marketplace, refreshing more than 15,000 spaces in wholesale doors around the world.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 13,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "5d88e9e586fdfd8873c0f1cb2e4e980ea818b375d7535e3da2d85375b6844847",
+            "value_sha256": "f62415d97beddd8db67fec72d12fdb14d95b90fc47f936340318073165dd6a2c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Stores elevated with sport-led experiences",
           "period": "FY '26",
-          "value": "more than 150 stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "In FY '26, we've elevated more than 150 stores with sport-led experiences.",
-          "following_context": "Over time, we will continue to rezone and elevate our fleet and close the doors that are no longer aligned to our strategy. At our scale, this takes time. We're not finished yet. I'm confident our investments in the integrated marketplace will pay dividends for years to come.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 150.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 14,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "74855f546da088ed06b87578a1bbac662656d6f255339a0e9d7cd3f6e7e4e8b8",
+            "value_sha256": "c2545b6aa073c1f476e55196d0aa05586c2230c5a4ffa884ef1142a7578464c7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Classic footwear franchises reduction",
           "period": null,
-          "value": "more than $2 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "reducing classic footwear franchises by more than $2 billion, keeping revenue flat on a reported basis versus the prior year",
-          "following_context": ", stabilizing gross margins, excluding the impact of incremental tariffs, taking initial steps to reset our cost base and improve operating efficiency and effectiveness and our balance sheet is strong with substantial liquidity and flexibility to operate as we go forward.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 31,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "39a34044e601b05a22e535dc8150920695ad4a94184e3bc1ad613a2c2a3830c4",
+            "value_sha256": "9b776b9e0587c4499db92bf67573368a020dd3595ca0c1f847fed2010eff4310"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "World Cup kits sold vs World Cup '22",
           "period": null,
-          "value": "2.5x the number of kits compared to the same period in World Cup '22",
           "value_num": null,
           "unit": null,
-          "verbatim": "By the start of the tournament, we had already sold 2.5x the number of kits compared to the same period in World Cup '22.",
-          "following_context": "Earlier in the year, we redesigned our Tiempo and Phantom franchises. And before the tournament, we launched our new Mercurial in two expressions of speed. At launch, the Mercurial became the fastest-selling 24-hour launch for cleated footwear in the history of NIKE Direct.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.5,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 22.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 24,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "e57f68c1b9c51e37be2fc691bee0162cef94dd5df1b20e9708da23bf5618a4e8",
+            "value_sha256": "f1d6967d6805a12f773f880be998837a9e3f03a8e8146e1524b518b050645d8e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "World Cup story views",
           "period": "By the first week of the World Cup",
-          "value": "1.5 billion views",
           "value_num": null,
           "unit": null,
-          "verbatim": "By the first week of the World Cup, we had 1.5 billion views of our various stories.",
-          "following_context": "This is about deeply understanding today's consumers and building modern, meaningful and innovative connections with them. This is nothing new for NIKE. Once again, we're out front rewriting our own marketing playbook.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.5,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 23,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "6633cc09cbd0f4fab37e24bb16d8365c468fabe7fab4cb243eca67913dfb9c9b",
+            "value_sha256": "d64138fc0604e57971aa23dfcad27c8aa9650cb9b5c4de4d92264088d5d58abc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "IEEPA tariff recovery one-time benefit",
           "period": null,
-          "value": "one-time benefit of $986 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "This resulted in the recognition of a one-time benefit of $986 million, offsetting the IEEPA tariffs embedded within cost of sales that had been expensed through the income statement throughout fiscal '26.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 986.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 34,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "98e7a6b65f448cf807e4d556f2a7de3c255ea9bb44a7227a2eae07263b80be0e",
+            "value_sha256": "ca7c07131b52aa7b6f4f11f15946ed7bc642082ae57adddb4de812597566ae6d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Cash collected related to tariff claims",
           "period": "As of quarter end on May 31",
-          "value": "over $300 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "As of quarter end on May 31, we collected over $300 million of cash related to these claims.",
-          "following_context": "The remainder of the benefit was recorded to accounts receivable as we await recovery. Tariffs remain a dynamic cost headwind that we expect to continue looking forward. And so I will share more on our rate assumptions later in my remarks.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 300.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 35,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "19392fce5272643d2755e81e978087b62500cdfdf4f395f5a64399cc8e54e347",
+            "value_sha256": "8e06d7217320765816fdfd3065d584eed3acc8e7e8a9c43a34bcdee5980a9de9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Q4 revenue change",
           "period": null,
-          "value": "down 1% on a reported basis and down 4% on a currency-neutral basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "For the quarter, revenues were down 1% on a reported basis and down 4% on a currency-neutral basis, reflecting modest growth in North America, more than offset by expected declines in Greater China, EMEA and Converse.",
-          "following_context": "NIKE Direct was down 9%, with NIKE Digital declining 12% and NIKE stores down 7%. Wholesale grew 1%. Gross margin was 49.2%, up 890 basis points versus the prior year, driven by a 900 basis point benefit related to recovery of IEEPA tariffs. Excluding this benefit, gross margin would have been 40.2%, down 10 basis points versus the prior year, which included additional severance costs related to supply chain actions in North America and EMEA we highlighted last quarter.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 36,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "42aa016a12b31ef0798158b15bfafca80a6f85f76acc778b370aefca369ca725",
+            "value_sha256": "1b7c1cba9caa7c03cd7ba6ae9424f45219ee10221e1141728b6a291c1a8a3073"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "NIKE Direct change",
           "period": null,
-          "value": "down 9%, with NIKE Digital declining 12% and NIKE stores down 7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "NIKE Direct was down 9%, with NIKE Digital declining 12% and NIKE stores down 7%.",
-          "following_context": "Wholesale grew 1%. Gross margin was 49.2%, up 890 basis points versus the prior year, driven by a 900 basis point benefit related to recovery of IEEPA tariffs. Excluding this benefit, gross margin would have been 40.2%, down 10 basis points versus the prior year, which included additional severance costs related to supply chain actions in North America and EMEA we highlighted last quarter.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 36,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "c4b708089f5fafe6ab1f110cdd38880b130fde6b16b3ff0f9895be89ba460cd4",
+            "value_sha256": "b61ddd22dfce32b3a8a086bd5a743eb5cac83e1dbbe2a352ee9fb566908afb96"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Wholesale change",
           "period": null,
-          "value": "grew 1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Wholesale grew 1%.",
-          "following_context": "Gross margin was 49.2%, up 890 basis points versus the prior year, driven by a 900 basis point benefit related to recovery of IEEPA tariffs. Excluding this benefit, gross margin would have been 40.2%, down 10 basis points versus the prior year, which included additional severance costs related to supply chain actions in North America and EMEA we highlighted last quarter.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 36,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "d10733fee4f2233b82b14c3303da9039df7d30b4d919afac3cb3d160184103b9",
+            "value_sha256": "6214df736d4639841363f178f9190a78e540d5cc0c5bdeee4d45aa1ee03cfe64"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Gross margin",
           "period": null,
-          "value": "49.2%, up 890 basis points versus the prior year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Gross margin was 49.2%, up 890 basis points versus the prior year, driven by a 900 basis point benefit related to recovery of IEEPA tariffs.",
-          "following_context": "Excluding this benefit, gross margin would have been 40.2%, down 10 basis points versus the prior year, which included additional severance costs related to supply chain actions in North America and EMEA we highlighted last quarter.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 49.2,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 890.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 36,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "ab6df843c573ba73ad78f41ea62d6f2351ca6fda54feb60cf3a4b49ce42e078d",
+            "value_sha256": "45e64de0a9fb588e1747cf36a7f7043b47c2b78e3f0a66e44b3d7b014371dc4b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Gross margin excluding tariff benefit",
           "period": null,
-          "value": "40.2%, down 10 basis points versus the prior year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding this benefit, gross margin would have been 40.2%, down 10 basis points versus the prior year, which included additional severance costs related to supply chain actions in North America and EMEA we highlighted last quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.2,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 36,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "c7760cd0cf1f8e4d8dcf2e85ed0dd3d347462dde634c2bf231c232b0177967ca",
+            "value_sha256": "19aaa810e33a66ca81c3cbb485949bd74e2628515278799ebfb25765637afc9c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "SG&A change",
           "period": null,
-          "value": "down 2% on a reported basis versus the prior year",
           "value_num": null,
           "unit": null,
-          "verbatim": "SG&A was down 2% on a reported basis versus the prior year, reflecting continued discipline managing expenses while accelerating investment for the World Cup.",
-          "following_context": "Our effective tax rate was 19.6%. Earnings per share for the quarter was $0.72 and excluding the benefit on tariff recovery was $0.20. Inventory was flat versus the prior year, with continued progress made to address aged inventory in Greater China.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 37,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "8af54e8baa6e53ac3ad49f5dedc3d90befb54161fa926423bf7c94aa756bfd83",
+            "value_sha256": "bdeec06d42a529442a4bd8a4462cfc4b67040238da8dc757788e3b0bc69f88e4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Effective tax rate",
           "period": null,
-          "value": "19.6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our effective tax rate was 19.6%.",
-          "following_context": "Earnings per share for the quarter was $0.72 and excluding the benefit on tariff recovery was $0.20. Inventory was flat versus the prior year, with continued progress made to address aged inventory in Greater China.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 19.6,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 37,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "165cc6d63f35e1dc224f29bce0a42d655b681f210ac031e099d94e0a75b57342",
+            "value_sha256": "868ca243cde77c04757b3c7da81a3c3d70abbee43aeac2a192827ed22b00906d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Earnings per share",
           "period": null,
-          "value": "$0.72 and excluding the benefit on tariff recovery was $0.20",
           "value_num": null,
           "unit": null,
-          "verbatim": "Earnings per share for the quarter was $0.72 and excluding the benefit on tariff recovery was $0.20.",
-          "following_context": "Inventory was flat versus the prior year, with continued progress made to address aged inventory in Greater China.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.72,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 0.2,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 37,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "7aa36ce16675a94bc38ea0a1a67f3c7d341c1a463769de41f87a12ca3a71aff4",
+            "value_sha256": "5b9915d33eb7151dc2a754c3f402b9528bb8a0cde631043cd40996e757aa9bbd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Full year revenue change",
           "period": null,
-          "value": "flat on a reported basis and down 2% on a currency-neutral basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "For the full year, revenue was flat on a reported basis and down 2% on a currency-neutral basis.",
-          "following_context": "Gross margin was 42.9%, up 20 basis points versus the prior year, including a 210 basis point benefit related to recovery of IEEPA tariffs. Excluding the benefit, gross margin would have been 40.8%. Diluted earnings per share was $2.10, down 3% versus the prior year. Excluding the benefit on tariff recovery, earnings per share would have been $1.58.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 38,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "96c460726e54323720de717cfbc050316036c284307062192321fdfd5a35e3ae",
+            "value_sha256": "1c0269029f16c09c9622f634271753c9a0a67c3b145751a9262fa2de798ac098"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Full year gross margin",
           "period": null,
-          "value": "42.9%, up 20 basis points versus the prior year, including a 210 basis point benefit related to recovery of IEEPA tariffs",
           "value_num": null,
           "unit": null,
-          "verbatim": "Gross margin was 42.9%, up 20 basis points versus the prior year, including a 210 basis point benefit related to recovery of IEEPA tariffs.",
-          "following_context": "Excluding the benefit, gross margin would have been 40.8%. Diluted earnings per share was $2.10, down 3% versus the prior year. Excluding the benefit on tariff recovery, earnings per share would have been $1.58.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 42.9,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 210.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 38,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "d34e46f43bc1511912c8f0d39629120f784de2c69a570986e1d335f75469e9b9",
+            "value_sha256": "f68268bd9c420c06ca70f63cd470c7d0347be65aec2e07902032355ec7acea21"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Full year gross margin excluding benefit",
           "period": null,
-          "value": "40.8%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding the benefit, gross margin would have been 40.8%.",
-          "following_context": "Diluted earnings per share was $2.10, down 3% versus the prior year. Excluding the benefit on tariff recovery, earnings per share would have been $1.58.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.8,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 38,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "97a626c132893453767308f627dc95632b4ee9697f3738b37fe8a87789e55eee",
+            "value_sha256": "1e861b6bfdd40e05e3cd5389663faacc5fd85d2cd71f4a95ae71dfdc44483d3c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Full year diluted EPS",
           "period": null,
-          "value": "$2.10, down 3% versus the prior year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Diluted earnings per share was $2.10, down 3% versus the prior year.",
-          "following_context": "Excluding the benefit on tariff recovery, earnings per share would have been $1.58.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.1,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 38,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "21d7f56ed866ed1a0ea2b062722a85a6e24eccc6db13101fb50d13b534cdfacd",
+            "value_sha256": "eab31fe5013f83750b5c1098828ab2671e749a294378bfe62cb5cfdb3097e19f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Full year EPS excluding tariff recovery benefit",
           "period": null,
-          "value": "$1.58",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding the benefit on tariff recovery, earnings per share would have been $1.58.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.58,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 38,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "b8a64cd3cd57b4571656d79be092bc548bbec66fa2dbb9f98c0a5366c9d48c10",
+            "value_sha256": "ee5f6187214ef3e410453f14160acee0316c2ee152cf003c0f043aaf6637cfa2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North America Q4 revenue change",
           "period": null,
-          "value": "grew 3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In North America, Q4 revenue grew 3%.",
-          "following_context": "NIKE Direct was down 6%, while NIKE Digital was down 5%. NIKE stores were down 7%. Wholesale grew 10%. EBIT increased 91% on a reported basis. And excluding the tariff refund benefit, EBIT would have declined 1%. North America continues to drive momentum in performance, including strong double-digit growth in Global Football and Running as well as growth in kids and golf. Sportswear was down high single digits. Retail sales grew over the first 6 weeks of the quarter. However, we did see a deceleration in late April, which we continue to monitor closely, particularly in Sportswear and Jordan Streetwear.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 40,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "4196dfceaa9b949257ffc54577af247abfea18bcb0c6aac40aa103a8c3e3b56d",
+            "value_sha256": "7b952f0cbddd9d5c55eaf00e7a5cef61e665b33133286146edfe1ee37ec1f1b6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North America NIKE Direct / Digital / stores / wholesale change",
           "period": null,
-          "value": "NIKE Direct was down 6%, while NIKE Digital was down 5%. NIKE stores were down 7%. Wholesale grew 10%",
           "value_num": null,
           "unit": null,
-          "verbatim": "NIKE Direct was down 6%, while NIKE Digital was down 5%. NIKE stores were down 7%. Wholesale grew 10%.",
-          "following_context": "EBIT increased 91% on a reported basis. And excluding the tariff refund benefit, EBIT would have declined 1%. North America continues to drive momentum in performance, including strong double-digit growth in Global Football and Running as well as growth in kids and golf. Sportswear was down high single digits. Retail sales grew over the first 6 weeks of the quarter. However, we did see a deceleration in late April, which we continue to monitor closely, particularly in Sportswear and Jordan Streetwear.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 40,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "bfbcb9f907e8e633aff3b3dfc99514fd8914deb540c4ab24375ce75243b927dc",
+            "value_sha256": "a9e31a19efb660106b55141ce4735efc01e8cf72d576e9076fc631fb30157c22"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North America EBIT change",
           "period": null,
-          "value": "increased 91% on a reported basis. And excluding the tariff refund benefit, EBIT would have declined 1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "EBIT increased 91% on a reported basis. And excluding the tariff refund benefit, EBIT would have declined 1%.",
-          "following_context": "North America continues to drive momentum in performance, including strong double-digit growth in Global Football and Running as well as growth in kids and golf. Sportswear was down high single digits. Retail sales grew over the first 6 weeks of the quarter. However, we did see a deceleration in late April, which we continue to monitor closely, particularly in Sportswear and Jordan Streetwear.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 91.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 40,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "ebe127a6c3528d4bf5883451cbe0f1dba891ce248ca0aef4553f191b6eb06539",
+            "value_sha256": "4ebc48b171be03177991501247efbda7fe66d83ad21a2ab2ceaff39fc2c5cd80"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North America Sportswear change",
           "period": null,
-          "value": "down high single digits",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sportswear was down high single digits.",
-          "following_context": "Retail sales grew over the first 6 weeks of the quarter. However, we did see a deceleration in late April, which we continue to monitor closely, particularly in Sportswear and Jordan Streetwear.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 40,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "e6a652a0e574b2a50c97a4ece66e3556e5c818519ee40e905f2b3be1850e0349",
+            "value_sha256": "4151a827fc66fd771394436c40d6becdb3c62aa10c872bee3312c57264deadf9"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Foot Locker revenue growth and retail sales comps",
           "period": null,
-          "value": "positive for the first time in 4 years",
           "value_num": null,
           "unit": null,
-          "verbatim": "One highlight I'd like to note is that our revenue growth and retail sales comps with Foot Locker were positive for the first time in 4 years, and we continue to be encouraged about the path ahead.",
-          "following_context": "Inventory grew mid-single digits, in line with our plans with a healthy closeout mix. And importantly, excluding the tariff refund benefit, underlying gross margin profitability continued to improve year-over-year.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 41,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "d2ca81676989bb62a0992d4ed777bef81ae9ee5fdc7d78aea7b540020fa3c698",
+            "value_sha256": "5508f74bb611f1c2a96a60314ed8216d255550e5245d7dcac18972a229d4fb73"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EMEA Q4 revenue change",
           "period": null,
-          "value": "down 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In EMEA, Q4 revenue was down 6%.",
-          "following_context": "NIKE Direct declined 16% with NIKE Digital down 24% and NIKE stores down 9%. Wholesale was down 1%. EBIT was down 8% on a reported basis. EMEA continues to work through heightened inventory and promotional levels, disruption in the Middle East and a higher portfolio mix with Sportswear than our other geographies. We had continued momentum in performance through running, global football and golf, all of which grew double digits versus the prior year.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 42,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "0cc48d595efe2833ab638f50cc4a751c094b643df8d03614d287a01125c6e970",
+            "value_sha256": "5e36c61c98c5bb9f92103662e89097b2686105cff6960f920a7482fc51693e01"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EMEA NIKE Direct / Digital / stores / wholesale change",
           "period": null,
-          "value": "NIKE Direct declined 16% with NIKE Digital down 24% and NIKE stores down 9%. Wholesale was down 1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "NIKE Direct declined 16% with NIKE Digital down 24% and NIKE stores down 9%. Wholesale was down 1%.",
-          "following_context": "EBIT was down 8% on a reported basis. EMEA continues to work through heightened inventory and promotional levels, disruption in the Middle East and a higher portfolio mix with Sportswear than our other geographies. We had continued momentum in performance through running, global football and golf, all of which grew double digits versus the prior year.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 42,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "9443cf696657792ef72700e2cc7fe0d63ccb593c751cf73b3e09f377475f32ca",
+            "value_sha256": "b2f212f1448daec21e120226ebc07aad7669366fd3c97eddd49bbbbfddca61a5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EMEA EBIT change",
           "period": null,
-          "value": "down 8% on a reported basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "EBIT was down 8% on a reported basis.",
-          "following_context": "EMEA continues to work through heightened inventory and promotional levels, disruption in the Middle East and a higher portfolio mix with Sportswear than our other geographies. We had continued momentum in performance through running, global football and golf, all of which grew double digits versus the prior year.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 42,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "ad4bf5d1e98cbf3e1359cabe4cdc1f4c37b231035813d3669fe3e38b402fc50b",
+            "value_sha256": "41c198acc1b93776f391f1adb511005d62e2041b0f2543a8721cb80189150847"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EMEA off-price change and full price realization improvement",
           "period": null,
-          "value": "off-price was down over 50% ... a 15-point improvement in full price realization",
           "value_num": null,
           "unit": null,
-          "verbatim": "Although digital revenue declined, off-price was down over 50% following aggressive actions to reduce promotions. This resulted in a 15-point improvement in full price realization.",
-          "following_context": "Sportswear declined double digits and sell-through continues to be challenging. And so we have tightened buys and moderated sell-in plans for the near term. Total inventory dollars were up low double digits with actions in place to reduce supply and accelerate liquidation to improve marketplace health.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "at_least"
+            },
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 43,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "d804cf206b3ee92bcd482542ef3729923e464d33869cd08c13a7ca38e1dc5369",
+            "value_sha256": "b7b3c129685ed1d3d2426da2670a971b7c887a93f76f17dc33de42bc8f17b98c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "EMEA inventory change",
           "period": null,
-          "value": "up low double digits",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total inventory dollars were up low double digits with actions in place to reduce supply and accelerate liquidation to improve marketplace health.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 43,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "78bf288677f927e9e8ec78c51e20e2870cb0964448fee69bdf9bc87b70567ad2",
+            "value_sha256": "a17eeeee7d3092953de29b0d723fe1ca11d6c677fa47efa4f506404bc6a68112"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Greater China Q4 revenue change",
           "period": null,
-          "value": "declined 17%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Greater China, Q4 revenue declined 17%.",
-          "following_context": "NIKE Direct declined 14%, with NIKE Digital down 25% and NIKE stores down 9%. Wholesale declined 19%. EBIT was down 20% on a reported basis. As you heard Elliott say, there are several changes underway in Greater China, and the team continues to execute on their plan. In-season sell-through has improved sequentially and average retail discounts are down. We are seeing recovery in full price realization on digital after more aggressive actions to reduce promotions over the last 2 quarters. Running grew mid-single digits and Global Football and Tennis were up double digits.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 44,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "b90b39292c5c0f408ed8a4f14bbb9421395d6979ceb507a633e8c4d193c348c4",
+            "value_sha256": "98133da967bbca1a7585877a269bec0f5b7b584e210a9101760447c3b92ff045"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Greater China NIKE Direct / Digital / stores / wholesale change",
           "period": null,
-          "value": "NIKE Direct declined 14%, with NIKE Digital down 25% and NIKE stores down 9%. Wholesale declined 19%",
           "value_num": null,
           "unit": null,
-          "verbatim": "NIKE Direct declined 14%, with NIKE Digital down 25% and NIKE stores down 9%. Wholesale declined 19%.",
-          "following_context": "EBIT was down 20% on a reported basis. As you heard Elliott say, there are several changes underway in Greater China, and the team continues to execute on their plan. In-season sell-through has improved sequentially and average retail discounts are down. We are seeing recovery in full price realization on digital after more aggressive actions to reduce promotions over the last 2 quarters. Running grew mid-single digits and Global Football and Tennis were up double digits.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 19.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 44,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "7e0ee176ef21875314ca69bbcdb64bdb40e4a3f218c577f3af3381c82d631248",
+            "value_sha256": "45848fb0aa441a7675fbc63b07b1fcf723247da42409cbe43d2b056d9ce2f1b1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Greater China EBIT change",
           "period": null,
-          "value": "down 20% on a reported basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "EBIT was down 20% on a reported basis.",
-          "following_context": "As you heard Elliott say, there are several changes underway in Greater China, and the team continues to execute on their plan. In-season sell-through has improved sequentially and average retail discounts are down. We are seeing recovery in full price realization on digital after more aggressive actions to reduce promotions over the last 2 quarters. Running grew mid-single digits and Global Football and Tennis were up double digits.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 44,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "1508e8ad54a0f33c60a93a8c7ffedf1fbd469ff8e3a121815ba79e160a30fa63",
+            "value_sha256": "7728c67b6ad1761ba8e4d95e89018dda8f632575d4ddba12495021c9b3df1229"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Greater China Running growth",
           "period": null,
-          "value": "grew mid-single digits",
           "value_num": null,
           "unit": null,
-          "verbatim": "Running grew mid-single digits and Global Football and Tennis were up double digits.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 44,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "a0816ddfd07cb93a2b8398eb7c928c8d780cce4fd70257adc91ef81edc178483",
+            "value_sha256": "e062ea2bd7ca8b752fdd01ce668a017f08fe1ab1ef4ab6b5d2ba2f4288ea6cb5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Greater China House of Innovation Shanghai growth",
           "period": null,
-          "value": "posted double-digit growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our pinnacle retail expression, the House of Innovation in Shanghai, posted double-digit growth for the quarter.",
-          "following_context": "We also saw sales growth in the doors that we have reset and encouraging initial results at our newest ACG door in Nanjing. Inventory was down double digits with units also down double digits. We continue to take actions with partners to clean up the marketplace and expect revenue trends in Greater China over the near term to be in line with recent performance.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 45,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "5cb5259edd3eb9e7d32542aa2ceea86e2b511a8b0d7b1f41d80638eedb984138",
+            "value_sha256": "d03c7068decf5e24e941f33658b0b979e7b5985f6faadf9ad72a1dacd69e9b48"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Greater China inventory change",
           "period": null,
-          "value": "down double digits with units also down double digits",
           "value_num": null,
           "unit": null,
-          "verbatim": "Inventory was down double digits with units also down double digits.",
-          "following_context": "We continue to take actions with partners to clean up the marketplace and expect revenue trends in Greater China over the near term to be in line with recent performance.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 45,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "81a8181639ca45d6dd730b8223da2696097ffc444d2fff7ac4326428b2a802ff",
+            "value_sha256": "8582229acddeafbb3e6c053b24deed587981a239da9ad70bd976104913cc972c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "APLA Q4 revenue change",
           "period": null,
-          "value": "down 1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In APLA, Q4 revenue was down 1%.",
-          "following_context": "NIKE Direct declined 3% with NIKE Digital down 8% and NIKE stores up 2%. Wholesale was up 1%. EBIT declined 1% on a reported basis. The business across this geography continues to be mixed, with strength in select territories and performance sports, offset by ongoing pressure in sportswear. Running and Global Football grew double digits with high single-digit growth in tennis and ACG. Across the marketplace, the team is focused on elevation and expansion. Where we have invested in elevated retail, we are seeing a strong increase in comps sales growth.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 46,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "d8676cf1210b4e85f1a600fae1a28120a87f605eb218e52ceb8b648df5d2d9f9",
+            "value_sha256": "4b861126d0c51609f2b1d1c7611d02648959d3ebec52043ca1bcc0923ffc372f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "APLA NIKE Direct / Digital / stores / wholesale change",
           "period": null,
-          "value": "NIKE Direct declined 3% with NIKE Digital down 8% and NIKE stores up 2%. Wholesale was up 1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "NIKE Direct declined 3% with NIKE Digital down 8% and NIKE stores up 2%. Wholesale was up 1%.",
-          "following_context": "EBIT declined 1% on a reported basis. The business across this geography continues to be mixed, with strength in select territories and performance sports, offset by ongoing pressure in sportswear. Running and Global Football grew double digits with high single-digit growth in tennis and ACG. Across the marketplace, the team is focused on elevation and expansion. Where we have invested in elevated retail, we are seeing a strong increase in comps sales growth.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 46,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "7980e5af9d2bf563ae9ba298e64aedb34a2f3c95d3e77103f1a5555ef8e77d53",
+            "value_sha256": "8d23a03699281ced7d82b068fb4d67fdd98ae9ec1b1c71667e292a6cdb0cd010"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "APLA EBIT change",
           "period": null,
-          "value": "declined 1% on a reported basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "EBIT declined 1% on a reported basis.",
-          "following_context": "The business across this geography continues to be mixed, with strength in select territories and performance sports, offset by ongoing pressure in sportswear. Running and Global Football grew double digits with high single-digit growth in tennis and ACG. Across the marketplace, the team is focused on elevation and expansion. Where we have invested in elevated retail, we are seeing a strong increase in comps sales growth.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 46,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "ff38f61dab5792b06de79e8944ccbcd2b72692d7218484616823ea2cf3767b84",
+            "value_sha256": "799e31c89a8b18df862453b2b785ba4f1d5df569c680f61c18298180af7c264a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "APLA inventory change",
           "period": null,
-          "value": "grew high single digits versus the prior year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Inventory grew high single digits versus the prior year with a sequential improvement in closeout mix as inventory actions continue across the geography.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 47,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "15435121b1bfa4f910b2368512e1ddaa60b571ca2ee723e368dc8f6e7eeef020",
+            "value_sha256": "bc02aa901453453c71bef85aab32f59296365ff4047b363d64a9b4ebc78a8818"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "Incremental tariff rate assumption",
           "period": null,
-          "value": "10% continuing through the end of July and then increasing to 15% thereafter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our forecast is based on incremental tariff rates of 10% continuing through the end of July and then increasing to 15% thereafter as we communicated last quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 51,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "0a8db55533ff6a8dddf45bf1aca68aa2eb7ad4843f49dd4fb4cef2cfd22cc2a3",
+            "value_sha256": "3a5fc62a8eef179cc10e25257f8398a593c21754ce6765d5c778eac2bcc79300"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Mercurial launch ranking",
           "period": null,
-          "value": "the fastest-selling 24-hour launch for cleated footwear in the history of NIKE Direct",
           "value_num": null,
           "unit": null,
-          "verbatim": "At launch, the Mercurial became the fastest-selling 24-hour launch for cleated footwear in the history of NIKE Direct.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 24,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "1b159d65d2c948e68f34db3dc56fecb724309b611e8f4af3e1cdf0fe540ad6ba",
+            "value_sha256": "c86c1c4315dec4bea1f7d0adb8791ef5c3d5d03274616f8d19a00603cc1b6392"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "After Dark Tour runners / first-time runners",
           "period": "Last year",
-          "value": "50,000 runners joined and 1/3 were first-time runners",
           "value_num": null,
           "unit": null,
-          "verbatim": "Last year, 50,000 runners joined and 1/3 were first-time runners.",
-          "following_context": "And with our more expanded reach, we expect even more impact. Being more local matters, it deepens connection, it builds loyalty and it creates a pull market for our brands and products. As we strengthen NIKE, Inc.'s foundation, we're taking decisive action across our supply chain to lower cost, streamline operations and rightsize our distribution network to match the demand ahead.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 16,
+            "speaker": "Elliott J. Hill",
+            "quote_sha256": "33a955d76b03a4a1bd1c9d4302011d35264338cde1d42b5f656b0b075caf773a",
+            "value_sha256": "aad21cc0d75cd80ce0acbb8ec7b1df40140792724e2890776ade62b210331ac7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Severance charges FY2026",
           "period": null,
-          "value": "nearly $400 million of severance charges",
           "value_num": null,
           "unit": null,
-          "verbatim": "despite significant investment and nearly $400 million of severance charges made to reposition and create a healthier foundation for our business.",
-          "following_context": null,
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 400.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+            "transcript_sha256": "fe11e59d43f5fad6507ed1d3aded0971cf76a9a57eda9326dcc8a706d1226640",
+            "paragraph": 39,
+            "speaker": "Matthew Friend",
+            "quote_sha256": "5047be795f2e3b2049e51557f6fb0d03e11f9162d208e39690156468f2257608",
+            "value_sha256": "ec0f1df08c8ed1732cfde2e949b9572a8fc58a09c3ec102e3f12b630e50fdef9"
+          }
         }
       ],
       "qa_flags": [
@@ -15848,6 +17311,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

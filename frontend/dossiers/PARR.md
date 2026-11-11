@@ -1,6 +1,6 @@
 # Dossier — PAR PACIFIC HOLDINGS, INC. (NYSE: PARR)
 
-_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.dated-headroom_
+_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.driver-text-filed_
 
 # Brief — first cut
 
@@ -599,6 +599,7 @@ _Source §: 8-K 0001193125-23-158690 · d292719dex102.htm_
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-09 · mechanical.consensus_context — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 40d old — 2026-09-16 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 42d old (2026-09-14, valuation.implied_expectations.multiples_as_of) — within the ceiling

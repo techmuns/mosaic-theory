@@ -137,13 +137,18 @@ def test_transcripts_that_differ_from_the_page_s_record_refuse_before_any_draw(
 
 def test_the_layer_is_read_as_the_replay_harness_reads_it() -> None:
     """(+) Parity: the decision path's reader (it may not import the harness) equals the harness's
-    `pre_synthesis_mech` on every committed page."""
+    `pre_synthesis_mech` on every committed page, each read with its words: since RG-D19 PR 3 a
+    committed page's filed transcript rows hold none, the harness refuses such a page, and the
+    confirmation reads them back from the store first (`confirmation.with_words`, pinned on a
+    re-filled page in `test_driver_facts_page_pass.py`). Here the rows without words are left out
+    (`stripped_pages.replayable`), so both readers see the same page."""
+    from tests.stripped_pages import replayable
     from vinci.dossier.confirmation import layer_as_synthesized
     from vinci.evals.capture_child import pre_synthesis_mech
     pages = sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))
     assert len(pages) >= 20
     for p in pages:
-        page = json.loads(p.read_text())
+        page = replayable(json.loads(p.read_text()))
         if not page.get("mechanical"):
             continue
         assert (layer_as_synthesized(page).model_dump_json()

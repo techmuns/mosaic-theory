@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-10.driver-text-filed",
+  "follows": [
+    "2026-11-11.dividend-level-na-unstated",
+    "2026-11-11.same-day-filings-and-alias-by-day"
+  ],
+  "names": "a transcript driver row's words leave the page once they are filed in the operator's private store (audit RG-D19): the one serializer writes no `verbatim`, `following_context` or `value` for a row whose locator carries its claim's `value_sha256`, which only the spool sets; a paid assembly with a transcript refuses to start without `$VINCI_EVIDENCE_SPOOL` and files every passage and claim before it writes the page, call-only for a row with no locator, and refuses the page when a row cites no call or states no value; `vinci driver-facts-pass` does the same for the committed pages at $0, giving a row its file's paragraph and hash only when its words, its context included, are that file's; and the pre-spend census counts only 10-hex export stamps, never a locator's hashes. A page whose rows were not filed is written byte for byte as before"
+}

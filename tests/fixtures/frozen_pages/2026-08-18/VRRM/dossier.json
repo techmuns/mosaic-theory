@@ -7862,313 +7862,776 @@
           "kind": "leading_indicator",
           "metric": "new bookings (new awards)",
           "period": "Q1 2026",
-          "value": "up to $13 million in new awards",
           "value_num": null,
           "unit": null,
-          "verbatim": "We saw strong momentum in bookings with up to $13 million in new awards during Q1.",
-          "following_context": "Key wins came in across the portfolio, including enforcement programs at Red-Light, speed, work zone, mobile bus lane, and school bus product offerings. Over the trailing 12 months, new bookings totaled approximately $71 million, reflecting sustained demand and strong conversion across our pipeline. We continue to see healthy activity levels driven by increasing adoption of automated traffic enforcement solutions by municipalities. These programs are attractive due to their ability to change driver behavior and improve road safety. Moreover, these programs are long-term recurring contracts that provide strong visibility into future revenue streams and support durable growth over time.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_most"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "16396acd2599563c571ff133ff3d24bed21ce51d57034d260fbf627e439cee4d",
+            "paragraph": 7,
+            "speaker": "David Martin Roberts",
+            "quote_sha256": "3073109210c6974ccf1375be49477bfd9e64207f0a3eb2f62cc899280b5fb208",
+            "value_sha256": "af382707682d186be7dab0413d4d8008b48b3b1e90eb51e8d53896ad5851acee"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "trailing 12-month new bookings",
           "period": "trailing 12 months",
-          "value": "approximately $71 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over the trailing 12 months, new bookings totaled approximately $71 million, reflecting sustained demand and strong conversion across our pipeline.",
-          "following_context": "We continue to see healthy activity levels driven by increasing adoption of automated traffic enforcement solutions by municipalities. These programs are attractive due to their ability to change driver behavior and improve road safety. Moreover, these programs are long-term recurring contracts that provide strong visibility into future revenue streams and support durable growth over time.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 71.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "16396acd2599563c571ff133ff3d24bed21ce51d57034d260fbf627e439cee4d",
+            "paragraph": 7,
+            "speaker": "David Martin Roberts",
+            "quote_sha256": "fe942aa880659c4945a8b6bdd004d11f18921c9a025220143a6f667265fc909b",
+            "value_sha256": "5fd197968b73cac80bc1760fc5a968cb4d2a5e7a33c4dd3edeb27c0ff21c6217"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "traffic fatalities",
           "period": "2025",
-          "value": "decreased significantly in 2025 by more than 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In fact, we are energized by the latest reporting for the National Highway Safety Administration, which indicates that traffic fatalities decreased significantly in 2025 by more than 6%.",
-          "following_context": "This is a great indication that safety measures are working. And in the vein of safe, smart and connected, we believe continued deployment of automated enforcement will make significant impact on safety and ultimately saving lives.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2025.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "16396acd2599563c571ff133ff3d24bed21ce51d57034d260fbf627e439cee4d",
+            "paragraph": 8,
+            "speaker": "David Martin Roberts",
+            "quote_sha256": "aa18ed45754e17428d112bcacae53ba097c910e9ce2f0473050094f82df3a281",
+            "value_sha256": "8324b63d79ee0cd18002a219186387577227184043d419f8851fd09102bce9b7"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "significant customer relationship as share of revenue",
           "period": "Q1 2026",
-          "value": "over 10% of our revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a reminder, significant customer relationship which represents over 10% of our revenue is currently operating under a short-term contract extension.",
-          "following_context": "This contract extension enables us to continue to serve the customer without interruption while we continue to negotiate a long-term renewal. These discussions are ongoing and constructive.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "16396acd2599563c571ff133ff3d24bed21ce51d57034d260fbf627e439cee4d",
+            "paragraph": 10,
+            "speaker": "David Martin Roberts",
+            "quote_sha256": "37032fb8b17cb2d0be6e726a078171d3d79a63e2a71ef0d3a2f0b068a80ad2f6",
+            "value_sha256": "61b2836a9de8d569e785177497dd88e24ada91f43e157b1532f67d03dcb13aa0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Government Solutions service revenue growth",
           "period": "Q1 2026",
-          "value": "increased 4% in the quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Starting with service revenue. Government Solutions increased 4% in the quarter, driven by 12% growth outside of New York City.",
-          "following_context": "Within New York City, incremental new camera installation growth was more than offset by the updated contract pricing change. Commercial Services revenue declined about 4% year-over-year due to the impact of prior period churn and a small nonrecurring accounting true up. Parking Solutions service revenue increased 6% on SaaS and subscription revenue performance.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "16396acd2599563c571ff133ff3d24bed21ce51d57034d260fbf627e439cee4d",
+            "paragraph": 21,
+            "speaker": "Craig C. Conti",
+            "quote_sha256": "b3b890a0a507014792dcb481deb459df46629f76b4ce5dcfea77162c8583524a",
+            "value_sha256": "34d3ed61812a99bb561793bcb640dc980f5963ca0644f231a7080cf7ba5de640"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Government Solutions growth outside New York City",
           "period": "Q1 2026",
-          "value": "12% growth outside of New York City",
           "value_num": null,
           "unit": null,
-          "verbatim": "Starting with service revenue. Government Solutions increased 4% in the quarter, driven by 12% growth outside of New York City.",
-          "following_context": "Within New York City, incremental new camera installation growth was more than offset by the updated contract pricing change. Commercial Services revenue declined about 4% year-over-year due to the impact of prior period churn and a small nonrecurring accounting true up. Parking Solutions service revenue increased 6% on SaaS and subscription revenue performance.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "16396acd2599563c571ff133ff3d24bed21ce51d57034d260fbf627e439cee4d",
+            "paragraph": 21,
+            "speaker": "Craig C. Conti",
+            "quote_sha256": "b3b890a0a507014792dcb481deb459df46629f76b4ce5dcfea77162c8583524a",
+            "value_sha256": "9f7cfc35f96a5caa36c4a91dcaf0aeea888b32e849a43a3cb8f3c1ad35877ac3"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "New York City contract pricing change",
           "period": "Q1 2026",
-          "value": "updated contract pricing change",
           "value_num": null,
           "unit": null,
-          "verbatim": "Within New York City, incremental new camera installation growth was more than offset by the updated contract pricing change.",
-          "following_context": "Commercial Services revenue declined about 4% year-over-year due to the impact of prior period churn and a small nonrecurring accounting true up. Parking Solutions service revenue increased 6% on SaaS and subscription revenue performance.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "16396acd2599563c571ff133ff3d24bed21ce51d57034d260fbf627e439cee4d",
+            "paragraph": 21,
+            "speaker": "Craig C. Conti",
+            "quote_sha256": "0ca56f103c827e03dd84b5197029c7a3229652cf1bcf553652acc1917f118d85",
+            "value_sha256": "298ae9fc9648098fb0bac2caa72fedd3fc57d049672f60ba6b5dfe62685db183"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Commercial Services revenue growth",
           "period": "Q1 2026",
-          "value": "declined about 4% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Commercial Services revenue declined about 4% year-over-year due to the impact of prior period churn and a small nonrecurring accounting true up.",
-          "following_context": "Parking Solutions service revenue increased 6% on SaaS and subscription revenue performance.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "16396acd2599563c571ff133ff3d24bed21ce51d57034d260fbf627e439cee4d",
+            "paragraph": 21,
+            "speaker": "Craig C. Conti",
+            "quote_sha256": "60fb9da202216ba539b6ef2a0a0ac0fdd5251c5892132aa829b5846cd5f7de92",
+            "value_sha256": "06a125695de32033d7756621454f9e694689c35e69e5040abf3ae2e41f7ad30c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Parking Solutions service revenue growth",
           "period": "Q1 2026",
-          "value": "increased 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Parking Solutions service revenue increased 6% on SaaS and subscription revenue performance.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": "16396acd2599563c571ff133ff3d24bed21ce51d57034d260fbf627e439cee4d",
+            "paragraph": 21,
+            "speaker": "Craig C. Conti",
+            "quote_sha256": "df21c9e7c604144f70ca4ddab3c8b9cb3ef55855e4034f552440b1db9fb151f4",
+            "value_sha256": "a53f14ea2003859cfda90b1b488c194c5ac7d828d1b0ff7ea6399d43af217fd2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total product revenue",
           "period": "Q1 2026",
-          "value": "$10 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total product revenue was $10 million for the quarter, Government Solutions contributed roughly $7 million and T2 delivered about $3 million in product sales overall for the quarter.",
-          "following_context": "Consolidated adjusted EBITDA for the quarter was $86 million, modestly stronger than our internal expectations as New York City camera installations were better than expected once the weather improved in March. We reported net income of $27 million for the quarter, including a tax provision of about $14 million, representing an effective tax rate of 34%. The effective tax rate is temporarily higher this quarter due to the year-over-year impact of stock-based compensation and reserve timing. We expect the full year effective tax rate to be 28% to 29",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "768e3b6f46bfc88d309ae550468fab74bffb6f1a6c141ef37928489c834c1a15",
+            "value_sha256": "d34b6bf1fb9313fbd797efd3a5a4824f066a34624925cf3cae84e353fe53916c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total revenue growth",
           "period": "Q4 2025",
-          "value": "increased 16% from the fourth quarter of 2024",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total revenue for the fourth quarter increased 16% from the fourth quarter of 2024, exceeding our internal expectations, while adjusted EBITDA and adjusted EPS were generally in line with our internal expectations.",
-          "following_context": "Looking ahead to 2026 and beyond, we are executing against a focused value creation strategy designed to strengthen our core, enhance profitability and position Verra Mobility for durable long-term growth.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 2024.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "fcb2d27a041c87a988c7e55842c7996714febbb16d566be11a78afcac53f4fcd",
+            "value_sha256": "03c0b545fe4c188ce4c906997c580f6dc9ae0b7c2543c0f6a62b8af1955580c9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "New York City total contract value",
           "period": "signed end of December 2025",
-          "value": "$998 million over a 5-year period",
           "value_num": null,
           "unit": null,
-          "verbatim": "The total contract value now stands at $998 million over a 5-year period and includes an option for a 5-year renewal.",
-          "following_context": "Under our then existing contract with New York City Department of Transportation, we generated $22 million of revenue attributable to the Red-Light camera installations in the fourth quarter of 2025, of which approximately $14 million was installation services revenue and about $8 million was product revenue.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 998.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "508e76819257c20571530ea83a25a1ebf85faf654e48db0dd1c5a626ac212465",
+            "value_sha256": "c825bedd27b983e0c797c3276fc98bb829d846dd6019ad4e3f8dadfcd5bef07f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "New York City Red-Light camera revenue",
           "period": "Q4 2025",
-          "value": "$22 million of revenue attributable to the Red-Light camera installations",
           "value_num": null,
           "unit": null,
-          "verbatim": "Under our then existing contract with New York City Department of Transportation, we generated $22 million of revenue attributable to the Red-Light camera installations in the fourth quarter of 2025, of which approximately $14 million was installation services revenue and about $8 million was product revenue.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 22.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "51eaad1efbb5a73913b859278a500463b2b9111037e822dc9c0c67a2696eb8df",
+            "value_sha256": "d98abc8256f4deb0b16a6256fec953bb5fc2e53bfc3a64e6d656773d1e027c6a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Government Solutions total revenue growth",
           "period": "Q4 2025",
-          "value": "increased 25% over the fourth quarter of 2024",
           "value_num": null,
           "unit": null,
-          "verbatim": "Starting with growth and high win rates in the fourth quarter of 2025, Government Solutions total revenue increased 25% over the fourth quarter of 2024, driven primarily by the New York City Red-Light expansion.",
-          "following_context": "Additionally, we entered into bookings of about $23 million of incremental annual recurring revenue based on a full run rate, bringing the full year 2025 total to about $64 million in bookings. Notable fourth quarter bookings included school zone speed program in Orlando, Florida, our Red-Light enforcement program in Pittsburgh, Pennsylvania and a speed enforcement program across the state of Hawaii. These recent wins reinforce our structural advantage serving cities and public sector partners. Moreover, our addressable market in the U.S. has expanded by approximately $365 million due to new enabling legislation over the past 3 years with the potential to expand to about $500 million if California passes additional enabling legislation for the statewide deployment of speed enforcement.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 2024.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "7b347c0c3412ace02f66ee009967056127272152026ae69fbe12b6cc0a4b4b52",
+            "value_sha256": "c63ca9ae840704a8e8b0fd47cfecdefb492491a87879e280a4068e525b232783"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Government Solutions bookings (incremental annual recurring revenue)",
           "period": "Q4 2025",
-          "value": "about $23 million of incremental annual recurring revenue based on a full run rate",
           "value_num": null,
           "unit": null,
-          "verbatim": "Additionally, we entered into bookings of about $23 million of incremental annual recurring revenue based on a full run rate, bringing the full year 2025 total to about $64 million in bookings.",
-          "following_context": "Notable fourth quarter bookings included school zone speed program in Orlando, Florida, our Red-Light enforcement program in Pittsburgh, Pennsylvania and a speed enforcement program across the state of Hawaii. These recent wins reinforce our structural advantage serving cities and public sector partners. Moreover, our addressable market in the U.S. has expanded by approximately $365 million due to new enabling legislation over the past 3 years with the potential to expand to about $500 million if California passes additional enabling legislation for the statewide deployment of speed enforcement.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 23.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "c02deda5a5c48bfebd3c923c34fdddf6db1eec15ca2e2ae55fa511fa99a2a614",
+            "value_sha256": "d275b316c271709d80c437842b0a732c727def70d607d5e476e208b9f1bb4cf5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "full year 2025 bookings",
           "period": "full year 2025",
-          "value": "about $64 million in bookings",
           "value_num": null,
           "unit": null,
-          "verbatim": "Additionally, we entered into bookings of about $23 million of incremental annual recurring revenue based on a full run rate, bringing the full year 2025 total to about $64 million in bookings.",
-          "following_context": "Notable fourth quarter bookings included school zone speed program in Orlando, Florida, our Red-Light enforcement program in Pittsburgh, Pennsylvania and a speed enforcement program across the state of Hawaii. These recent wins reinforce our structural advantage serving cities and public sector partners. Moreover, our addressable market in the U.S. has expanded by approximately $365 million due to new enabling legislation over the past 3 years with the potential to expand to about $500 million if California passes additional enabling legislation for the statewide deployment of speed enforcement.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 64.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "c02deda5a5c48bfebd3c923c34fdddf6db1eec15ca2e2ae55fa511fa99a2a614",
+            "value_sha256": "f8c213e20843f1127d0f4fcc0363d0259ca49d6116f64cb56deab713c4ef02ea"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "U.S. addressable market expansion",
           "period": "over the past 3 years",
-          "value": "expanded by approximately $365 million ... potential to expand to about $500 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moreover, our addressable market in the U.S. has expanded by approximately $365 million due to new enabling legislation over the past 3 years with the potential to expand to about $500 million if California passes additional enabling legislation for the statewide deployment of speed enforcement.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 365.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": "up",
+              "qualifier": "approximately"
+            },
+            {
+              "value": 500.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "9a1b342e7abb963569e7a2bbb12ddabc8ca207f6452a155bd9d4115ef707031b",
+            "value_sha256": "c6efb55c0fc975eb97040fa7664b53ac285461f495368d03e42ac39adc9cf46c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "crash reduction from speed cameras",
           "period": null,
-          "value": "14% reduction in crashes in major cities",
           "value_num": null,
           "unit": null,
-          "verbatim": "Speed cameras contribute to significant declines in violations as well as a 14% reduction in crashes in major cities.",
-          "following_context": "National safety authorities, including the United States Department of Transportation's Federal Highway Administration and the National Highway Traffic Safety Administration recognize that automated speed enforcement is a proven safety countermeasure that can reduce fatalities and serious injuries by meaningful margins.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "a69abedb6a02e9eab62a62f7c63306d5ef70cd9c744b5f296b6cc2422739f842",
+            "value_sha256": "972c00480144e7e225ed726fc7bcba38a326c4092109fc912e343ff7aea1735f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Parking Solutions (T2) total revenue growth",
           "period": "Q4 2025",
-          "value": "increased 5% over the year -- prior year quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Fourth quarter total revenue increased 5% over the year -- prior year quarter, in line with our internal expectations.",
-          "following_context": "In 2025, T2 performed in line with its internal plan along with an improving outlook. We are seeing an early signs of momentum, primarily in the context of decreasing customer churn, while growth is primarily driven by SaaS bookings and investments in the transaction-based business area. Our operational focus is twofold, improving utilization and monetization of our SaaS and transaction-based revenue model, coupled with disciplined self-funded growth.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "efabe5d21a5bc8ba20185c22fdc139d2faadc5bb98c7c909ec8bc8bcb6fc2e64",
+            "value_sha256": "f00815ce882be2e2fc852d20d3262d58e25ec093f6a88f63b83f27ac9af13571"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Commercial Services revenue growth",
           "period": "Q4 2025",
-          "value": "increased about 10%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving on to Commercial Services. Fourth quarter revenue and segment profit increased about 10% and 7%, respectively, over the prior year period.",
-          "following_context": "Rental car or RAC tolling increased 16% over the prior year period, driven by increased travel volume and product adoption as well as higher tolling activity compared to the fourth quarter of last year. The growth in RAC tolling was partially offset by a decline in fleet management revenue of about 8% compared to the fourth quarter of 2024 due to the prior period customer churn we had discussed in our second quarter earnings call. Strategically, Commercial Services remains a durable cash-generative business with clear competitive advantage, while the operating environment is more normalized relative to recent years, we believe that the fundamentals of the business remain solid.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "467536770b70534dea548a4308b1103e1929fea23eb0713c5623f2661a04f4d3",
+            "value_sha256": "7925cf6031c248b3f7e172045cc9c1d9d5e1b86f305a01ef8195e13f018fc899"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Commercial Services segment profit growth",
           "period": "Q4 2025",
-          "value": "increased about ... 7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Moving on to Commercial Services. Fourth quarter revenue and segment profit increased about 10% and 7%, respectively, over the prior year period.",
-          "following_context": "Rental car or RAC tolling increased 16% over the prior year period, driven by increased travel volume and product adoption as well as higher tolling activity compared to the fourth quarter of last year. The growth in RAC tolling was partially offset by a decline in fleet management revenue of about 8% compared to the fourth quarter of 2024 due to the prior period customer churn we had discussed in our second quarter earnings call. Strategically, Commercial Services remains a durable cash-generative business with clear competitive advantage, while the operating environment is more normalized relative to recent years, we believe that the fundamentals of the business remain solid.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "467536770b70534dea548a4308b1103e1929fea23eb0713c5623f2661a04f4d3",
+            "value_sha256": "1ba344ad904a8f718942342653b7689ba5e51f01e94b999ba8d578f0a9f46dd9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Rental car (RAC) tolling growth",
           "period": "Q4 2025",
-          "value": "increased 16% over the prior year period",
           "value_num": null,
           "unit": null,
-          "verbatim": "Rental car or RAC tolling increased 16% over the prior year period, driven by increased travel volume and product adoption as well as higher tolling activity compared to the fourth quarter of last year.",
-          "following_context": "The growth in RAC tolling was partially offset by a decline in fleet management revenue of about 8% compared to the fourth quarter of 2024 due to the prior period customer churn we had discussed in our second quarter earnings call. Strategically, Commercial Services remains a durable cash-generative business with clear competitive advantage, while the operating environment is more normalized relative to recent years, we believe that the fundamentals of the business remain solid.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "4ad95f9084266255e01c8696d83824305cad824b7c2d8f442ab65beee9f34fe7",
+            "value_sha256": "849a75ed51183978d0982bf793b43b1bc42224660ab022439e3acd209fffc3d3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "fleet management revenue growth",
           "period": "Q4 2025",
-          "value": "decline in fleet management revenue of about 8% compared to the fourth quarter of 2024",
           "value_num": null,
           "unit": null,
-          "verbatim": "The growth in RAC tolling was partially offset by a decline in fleet management revenue of about 8% compared to the fourth quarter of 2024 due to the prior period customer churn we had discussed in our second quarter earnings call.",
-          "following_context": "Strategically, Commercial Services remains a durable cash-generative business with clear competitive advantage, while the operating environment is more normalized relative to recent years, we believe that the fundamentals of the business remain solid.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2024.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "bf82196f3ed9af49168408b3c930af3c7e80f8fce4a2a1bed764c82c2b8e44e7",
+            "value_sha256": "910bd09c9eecc043bbb077f3004399b5fb57d96956af49ff8f9e98d69efcf5f5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "capital returned to shareholders via buybacks",
           "period": "over the past 5 years",
-          "value": "over $650 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Third, share repurchases remain an available tool within our capital allocation framework, and we have returned over $650 million to shareholders through buybacks over the past 5 years.",
-          "following_context": "Across all capital deployment decisions, we are sharpening our portfolio to maximize performance in businesses that are already growing and to improve returns on invested capital, allocating capital with greater focus and selectivity. We believe this discipline supports both near-term margin performance and long-term strategic flexibility.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 650.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "a872ccb109844a244b2a5de781eebc5331238ff70d035820e4a49a8bdef4005e",
+            "value_sha256": "736d5fa983422804d93fd2e5523c379424ec6b4847d9a4fa3b28c3e59a9651ee"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "service revenue growth",
           "period": "Q4 2025",
-          "value": "14% service revenue growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our Q4 revenue performance, which included 14% service revenue growth and 16% total revenue growth year-over-year exceeded our internal expectations.",
-          "following_context": "Service revenue growth, which consists primarily of recurring revenue, was driven by the change order for the New York City Red-Light expansion program a",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "754adc9731db8b219289586101a8ae1f78370412620da9bf17e117798c815181",
+            "value_sha256": "872fe279e75b2e864c9480ff7b54cdaecf77b41e1c59e253a45d831c3e46f51c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "consumer survey support for stop-arm safety cameras",
           "period": "late last year",
-          "value": "82% of respondents supported safety cameras ... 70% of respondents favor automated enforcement in school zones",
           "value_num": null,
           "unit": null,
-          "verbatim": "In fact, we recently shared the results of a consumer survey we conducted late last year, which showed 82% of respondents supported safety cameras to monitor and penalize drivers who illegally pass stop school buses and 70% of respondents favor automated enforcement in school zones.",
-          "following_context": "Automated enforcement remains a core catalyst for driver safety, which continues to be a top public priority.",
           "source_ref": "CIQ transcript: Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 82.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "b8f1381b499a5cb619218a715c14ee0d105c405ea9e9f7c85689603212f63494",
+            "value_sha256": "df4b3e8c63d05e87f5067ae3bbffd75cd3c43fbd25ed2cdbc549909e608359b1"
+          }
         }
       ],
       "qa_flags": [

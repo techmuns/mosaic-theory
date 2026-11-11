@@ -9939,601 +9939,1412 @@
           "kind": "leading_indicator",
           "metric": "PEM average sales price (sequential)",
           "period": null,
-          "value": "21% sequential increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "During the second quarter, a spike in global oil price drove significantly higher cost for competitors in higher cost regions like Asia and Europe, which along with tighter global supply-demand conditions contributed to a 21% sequential increase in PEM's average sales price.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 21.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 8,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "c08eebf343f01f3e8a45c03eeae0c191cc89a4b6d6f41be9467246e95a824ed6",
+            "value_sha256": "e65084a466e1ebf64065c4582c2a92213572a2fc2b4c4e8c81d67b6d457c90a7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "PEM sales volume (sequential)",
           "period": null,
-          "value": "2% sequential increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "PEM also benefited from a 2% sequential increase in sales volume, driven by improved North American demand.",
-          "following_context": "Taken together, we believe that PEM's second quarter performance demonstrates the value of PEM's globally advantaged feedstock and energy position and the substantial earnings leverage that PEM has to a better global supply-demand balance for its products, particularly polyethylene, caustic soda and PVC resin.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 9,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "06cc25ce1e7ab5b9b6dd4a4cdf12085072db14a8bc20330a9dfafc5b59b51e6c",
+            "value_sha256": "3b44ca6ba23e1a97f3db0f0ff8ce32f2e2cf8dcc4081772b98bbad79249ad3b7"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "share of production capacity in North America",
           "period": null,
-          "value": "over 85%",
           "value_num": null,
           "unit": null,
-          "verbatim": "PEMs feedstock and energy cost advantage in North America, where over 85% of our production capacity resides, was an important factor in PEM's second quarter earnings improvement.",
-          "following_context": "During the second quarter, a spike in global oil price drove significantly higher cost for competitors in higher cost regions like Asia and Europe, which along with tighter global supply-demand conditions contributed to a 21% sequential increase in PEM's average sales price.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 85.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 8,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "68fec9480aec8e220fe985a3c44d25f6f8e4317b424e0c0adbc65fa690448338",
+            "value_sha256": "4eab4751970971c9f132a0c6c89147ed38b7c976a717edc24660cbf336417ce1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HIP organic sales volume growth (year-over-year)",
           "period": null,
-          "value": "6% year-over-year organic sales volume growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "Third, HIP's 6% year-over-year organic sales volume growth against the backdrop of South and North American residential construction activity drove stable segment EBITDA and demonstrates why we continue to view HIP as a key growth driver for Westlake.",
-          "following_context": "I'd like to expand on each of these 3 drivers in more detail to provide more context on how the quarter played out. PEMs feedstock and energy cost advantage in North America, where over 85% of our production capacity resides, was an important factor in PEM's second quarter earnings improvement. During the second quarter, a spike in global oil price drove significantly higher cost for competitors in higher cost regions like Asia and Europe, which along with tighter global supply-demand conditions contributed to a 21% sequential increase in PEM's average sales price.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 8,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "2a151f72b45fd5063afa570151a1717d507e09425ff385b213673c76daa6136a",
+            "value_sha256": "2d7713e029f47c4139bcc0b1b38b47203c2ae09a638263f0ef167b3ead62155f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HIP revenue growth (year-over-year)",
           "period": null,
-          "value": "grew 8% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "HIP second quarter revenue grew 8% year-over-year, driven by solid 6% organic sales volume growth, which translated into stable EBITDA despite cost inflation and a lower average sales price.",
-          "following_context": "As has been the case in recent quarters, pipe and fittings drove the volume growth. In fact, pipe and fittings sales volume grew roughly 20% year-over-year as a result of continued North American infrastructure investments, including the growth in data center projects.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 12,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "c3cc12181cea060b9a692d127e97bb9fdc1c17b0bd5f682f7334f58f45cdfd2e",
+            "value_sha256": "fb8b6b9a1c3a5f72a8fd3caea63d7ad66a9270e178e41e208f876252f7f657d1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Pipe and fittings sales volume growth (year-over-year)",
           "period": null,
-          "value": "grew roughly 20% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In fact, pipe and fittings sales volume grew roughly 20% year-over-year as a result of continued North American infrastructure investments, including the growth in data center projects.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 12,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "b2b785d3f658acda7ad65886efa1fe82725c25235aed672202a5723cef681311",
+            "value_sha256": "3914eeb0897004346b2c160c9fba08fe446ecb7074bc70814b97b9ecdce60d3a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HIP net sales (year-over-year)",
           "period": null,
-          "value": "increased nearly $100 million or 8%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Net sales of $1.3 billion increased nearly $100 million or 8% from the second quarter of 2025, driven by the January acquisition of ACI and solid double-digit sales volume growth in Pipe and Fittings.",
-          "following_context": "Excluding ACI, HIP sales volume grew 6%, while average sales prices declined 3% with Pipe and Fittings driving both trends. HIP sales volume also benefited from solid growth in siding and trim through our strong position with large national homebuilders and distributors. HIP EBITDA of $276 million increased by $1 million from the second quarter of 2025 as HIP sales growth more than offset a slight decline in EBITDA margin to 22% from 24% in the prior year period, driven by a lower average sales price and inflation in transportation and raw material costs.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": "up",
+              "qualifier": "approximately"
+            },
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 22,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "e1fcef8395d5fafb952d6d7c9eea46a32036d772fdc0a61ef2b72fc6e4d85379",
+            "value_sha256": "5369a888f9d6bdff78b63d7b236ceca8d3e014962701393092108c8c03c260ee"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HIP sales volume ex-ACI (year-over-year)",
           "period": null,
-          "value": "grew 6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding ACI, HIP sales volume grew 6%, while average sales prices declined 3% with Pipe and Fittings driving both trends.",
-          "following_context": "HIP sales volume also benefited from solid growth in siding and trim through our strong position with large national homebuilders and distributors. HIP EBITDA of $276 million increased by $1 million from the second quarter of 2025 as HIP sales growth more than offset a slight decline in EBITDA margin to 22% from 24% in the prior year period, driven by a lower average sales price and inflation in transportation and raw material costs.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 22,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "10df263a4757974e1cc2407ae8dbb39b27d269094fc9cc0de7b69ef215f15ed8",
+            "value_sha256": "f73ca1d043fcbf42ba76a27483dcd0821b76c4eac22a6858171412b57142dc55"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "HIP average sales price (year-over-year)",
           "period": null,
-          "value": "declined 3%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding ACI, HIP sales volume grew 6%, while average sales prices declined 3% with Pipe and Fittings driving both trends.",
-          "following_context": "HIP sales volume also benefited from solid growth in siding and trim through our strong position with large national homebuilders and distributors. HIP EBITDA of $276 million increased by $1 million from the second quarter of 2025 as HIP sales growth more than offset a slight decline in EBITDA margin to 22% from 24% in the prior year period, driven by a lower average sales price and inflation in transportation and raw material costs.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 22,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "10df263a4757974e1cc2407ae8dbb39b27d269094fc9cc0de7b69ef215f15ed8",
+            "value_sha256": "12f00dbeaf910d9d630163e99b2a298ee591a7b829b327f5d2c2b7f103b5d12c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HIP sales volume (sequential)",
           "period": null,
-          "value": "increased 26%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sequentially, HIP sales volume of $1.3 billion increased 26%, driven by a 24% increase in sales volume and a 2% increase in average sales price.",
-          "following_context": "The sales volume growth was led by Pipe and Fittings, where growth was the result of solid end market demand for Pipe, driven by higher U.S. infrastructure spending, including the construction of data centers. We also believe that some Pipe orders and demand may have shifted from the third quarter into the second quarter of 2026 as customers sought to secure supply in the wake of the onset of the conflict in the Middle East. As a result, there could be a modest impact to our third quarter Pipe sales volumes from this shift in the timing of orders. Aside from Pipe, HIP's second quarter sales volumes benefited from seasonally higher demand for exterior building products.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 26.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 23,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "f91277c5dfd6694ecfa629708b1419bfcdc558d983fc9eaaad48a5ad8cc243f8",
+            "value_sha256": "35555bedccda91880aecc04e3a0dd932cd3dec67a96475830f4bad2b2184f098"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "HIP average sales price (sequential)",
           "period": null,
-          "value": "2% increase in average sales price",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sequentially, HIP sales volume of $1.3 billion increased 26%, driven by a 24% increase in sales volume and a 2% increase in average sales price.",
-          "following_context": "The sales volume growth was led by Pipe and Fittings, where growth was the result of solid end market demand for Pipe, driven by higher U.S. infrastructure spending, including the construction of data centers. We also believe that some Pipe orders and demand may have shifted from the third quarter into the second quarter of 2026 as customers sought to secure supply in the wake of the onset of the conflict in the Middle East. As a result, there could be a modest impact to our third quarter Pipe sales volumes from this shift in the timing of orders. Aside from Pipe, HIP's second quarter sales volumes benefited from seasonally higher demand for exterior building products.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 23,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "f91277c5dfd6694ecfa629708b1419bfcdc558d983fc9eaaad48a5ad8cc243f8",
+            "value_sha256": "71badaef62c05e3fb4a1e3aae488985640410634355a9fb76efcedb79ccb365d"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "global compounds pricing actions",
           "period": null,
-          "value": "pricing actions in global compounds aimed at offsetting rising costs",
           "value_num": null,
           "unit": null,
-          "verbatim": "Meanwhile, Infrastructure Products sales of $241 million rose $36 million from the first quarter, primarily due to higher Pipe and Fitting sales volume and pricing actions in global compounds aimed at offsetting rising costs.",
-          "following_context": "Moving to our PEM segment. PEM second quarter EBITDA of $416 million increased by $364 million versus the second quarter of 2025, driven by the benefits of our 3-pillar profitability improvement plan and a 14% increase in average sales price led by polyethylene and PVC resin. Excluding the impact of plant closures, sales volume increased 7%, driven by caustic soda and PVC resin.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 24,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "ecaad8ed6429e4d09faa806ad9304f3bf9a6b1837a365b5f6cbe3e1dbbc42a88",
+            "value_sha256": "1455b4f19d7deca35e66fc981fdb377ab3e82f93391413ddcbd75dcba2b04323"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "PEM average sales price (year-over-year)",
           "period": null,
-          "value": "14% increase in average sales price",
           "value_num": null,
           "unit": null,
-          "verbatim": "PEM second quarter EBITDA of $416 million increased by $364 million versus the second quarter of 2025, driven by the benefits of our 3-pillar profitability improvement plan and a 14% increase in average sales price led by polyethylene and PVC resin.",
-          "following_context": "Excluding the impact of plant closures, sales volume increased 7%, driven by caustic soda and PVC resin.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 24,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "c486e9936d151acef9c0cdb407da70d7492dc882b5a6f6a2aa40682c592809b5",
+            "value_sha256": "2a6bbf839a0beeef065c9206f0c493b78296fed3eb2a307d62d4200b2d631c1f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "PEM sales volume ex-closures (year-over-year)",
           "period": null,
-          "value": "increased 7%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding the impact of plant closures, sales volume increased 7%, driven by caustic soda and PVC resin.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 24,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "75e154c64ecc1f8153a67d8c514672c09fb6a111651081ed7a65ea698c9fb4e8",
+            "value_sha256": "621c927c4f90c88ecbfca17adade8df658b344ca6befb995b914e41acf5adff1"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "PEM average sales price (sequential)",
           "period": null,
-          "value": "21% increase in average sales price",
           "value_num": null,
           "unit": null,
-          "verbatim": "Compared to the first quarter, PEM EBITDA increased by $380 million due to a 21% increase in average sales price and lower natural gas and ethane costs.",
-          "following_context": "Sales volume rose 2% sequentially as higher caustic soda, chlorine and epoxy resin sales volume more than offset lower polyethylene and PVC resin sales volume. Now turning to the balance sheet and cash flow statements. We continue to maintain financial flexibility with a strong balance sheet as well as our long-standing commitment to a solid investment-grade credit rating. As of June 30, 2026, cash and investments totaled $1.9 billion and total debt was $5.1 billion with a staggered long-term fixed rate debt maturity schedule. I'd like to thank Steve for establishing the company's enviable debt profile with a weighted average maturity of over 17 years with an average coupon rate of 4%.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 21.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 25,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "76dcd4e1b83520df3232885002703868e25bd2c3b56c152d350683d42a3657b0",
+            "value_sha256": "ad7a5cd9d659207ce170234894d4a0e243991fa505f23e46ce528a5c0f7bb75d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "PEM sales volume (sequential)",
           "period": null,
-          "value": "rose 2% sequentially",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sales volume rose 2% sequentially as higher caustic soda, chlorine and epoxy resin sales volume more than offset lower polyethylene and PVC resin sales volume.",
-          "following_context": "Now turning to the balance sheet and cash flow statements. We continue to maintain financial flexibility with a strong balance sheet as well as our long-standing commitment to a solid investment-grade credit rating. As of June 30, 2026, cash and investments totaled $1.9 billion and total debt was $5.1 billion with a staggered long-term fixed rate debt maturity schedule. I'd like to thank Steve for establishing the company's enviable debt profile with a weighted average maturity of over 17 years with an average coupon rate of 4%.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 25,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "30dfe1b4d601050270fc9462912e781cdf9212c960200b858c33b72ad9e7a703",
+            "value_sha256": "88a71c71653f85c15a5c1cbb98a33527eb1bd66da08f13ab1da0a8d2696c044f"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "polyethylene price (year-to-date)",
           "period": null,
-          "value": "up 25%",
           "value_num": null,
           "unit": null,
-          "verbatim": "What we've seen on polyethylene is it's up 25% through the second quarter of the year, so year-to-date.",
-          "following_context": "July has not settled yet. And so I really don't have a comment on that one. The August announcements are out and at up 5%. What I'd tell you is 0.5 -- yes, sorry, $0.05, excuse me. By year-end, we expect the pricing to be higher than the prior year.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 56,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "3e8fb655e02d52392c6d6ddbfe1087e15f61ce7a254b0d09d22896ae418b6028",
+            "value_sha256": "de166609326770c2c1c9e2f380cf402e4a3cd69049dd3739a58bfd5285425d53"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "polyethylene exported share of production",
           "period": null,
-          "value": "between 10% and 20%",
           "value_num": null,
           "unit": null,
-          "verbatim": "So I would say between 10% and 20% is being exported, much lower than our competitors.",
-          "following_context": "Hence, we are less exposed to export pricing than our competitors.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 69,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "38b009a0feef6bac1fa4bfd947355ed8c4465ef96d297398c9a31e54c8bec0ef",
+            "value_sha256": "90590173406020b54283b2d915525678f34bb16b30b928fdee67514c262cc7b8"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "caustic soda price (through Q2)",
           "period": null,
-          "value": "up 75%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Yes. And caustic is up 75% to the second quarter, and we expect the second half to average higher than the first half.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 75.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 75,
+            "speaker": "Jeffrey A. Holy",
+            "quote_sha256": "b5466d8e70b5dee0b7f6ad3a47b367ca44a54990d20c1590dd7cb9005a4abef1",
+            "value_sha256": "84f852211a72c44726c333cebb3aa19cb9749328dd67b926ac08d21023427128"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "PVC resin price (through Q2)",
           "period": null,
-          "value": "up 9%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Yes. And if you look at the pricing, we're up 9% through Q2.",
-          "following_context": "Like Jean-Marc said, inventory, we're seeing high inventories, but solid demand with the pickup in the export pricing. By year-end, we expect pricing to be higher than the prior year.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 83,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "868fe1bff315d4814a9b87f790a47b3b27ead0c4a8689bcb23246b9b3e01135d",
+            "value_sha256": "47b553f5a27ad2560be6ad915976fc882c52c22376fbd9e98a05c5df25cf9dfc"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "ECU production operating rate",
           "period": null,
-          "value": "running above 90%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In terms of our ECU production, we've been running above 90%.",
-          "following_context": "And if you look at PVC, we're in the mid-80s, climbing back up. But as you very well know, PVC is related to VCM production and VCM from a low last year, we are really performing better and better. So if you look at the second half of the year, our expectations based on everything that we've done, all the fixing that we've done, and I would say the relatively small number of planned shutdown that we would see in the second half of the year, we would be expecting to running our assets at a higher rate than what we've seen in the first half.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 90.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 88,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "9abb09ca694f4b9346692560ab6a9f8b366d55293beada9455025ee6ac343514",
+            "value_sha256": "823ad3e2c36d53cd7bf43c42dd9350ec3018ab2ffc168bf1cbd031a5b3025980"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "PVC operating rate",
           "period": null,
-          "value": "we're in the mid-80s",
           "value_num": null,
           "unit": null,
-          "verbatim": "And if you look at PVC, we're in the mid-80s, climbing back up.",
-          "following_context": "But as you very well know, PVC is related to VCM production and VCM from a low last year, we are really performing better and better. So if you look at the second half of the year, our expectations based on everything that we've done, all the fixing that we've done, and I would say the relatively small number of planned shutdown that we would see in the second half of the year, we would be expecting to running our assets at a higher rate than what we've seen in the first half.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 88,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "75a23eb0f1ec68ca3277f8391095804cd4c19408a0630fb95b6b136ef34d9f53",
+            "value_sha256": "465ae441e5b6679f2fb9b1e02bf1e58d56c5d89e46113b8c46dc01af8af9bc7f"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "China PVC export run-rate",
           "period": null,
-          "value": "about 300,000 ton per month from a peak of 700,000 tonnes",
           "value_num": null,
           "unit": null,
-          "verbatim": "That really fell back into more normal, about 300,000 ton per month from a peak of 700,000 tonnes.",
-          "following_context": "And so we are starting to see a little bit of a pickup right now in terms of export demand because also price is getting back to -- it's still higher than where we started. But I think lower price is starting to peak the interest of traders again.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its quote does not name the metric 'China PVC export run-rate'",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 81,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "2ccf7e53dae8f0a3b3f6abebe5d0a1756eb89441d54e2f8a3837f930a95eaa4f",
+            "value_sha256": "c0518220c0841c67b9da33b34744807491186f82396000f627259b071b1f2723"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "first half cost of sales reduction (year-over-year)",
           "period": null,
-          "value": "$150 million of reduction in our cost of sales",
           "value_num": null,
           "unit": null,
-          "verbatim": "I would just point to our first half, if you look at our cost of sales line, first half year-over-year, our volume is up 3% in an inflationary environment, and you see $150 million of reduction in our cost of sales just in the first half of the year.",
-          "following_context": "And then when you consider that the 3% volume increase would translate into additional cost of sales as well, you can translate that at the same run rate of our other volume right to the $300 million. So you're seeing it in our P&L today in the first half of the year.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 150.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 45,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "bb199806d4f9f647d5fb67dd4f8c8c2db6cec89f4af9e5b973ff0b7ae8c9f20e",
+            "value_sha256": "0d2471edc2be9e9789791237d54704067c5f80eae157dfb29cde0688cc0356b6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "3-pillar EBITDA benefit (quarter / year-to-date)",
           "period": null,
-          "value": "about $300 million... about $150 million in this quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "So we've added about $300 million to EBITDA, thanks to these savings so far this year and about $150 million in this quarter.",
-          "following_context": "And as I said, we are expecting to deliver the full value of the program over the course of the year and getting into a better operating mode into 2027 and beyond.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 300.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 150.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+            "transcript_sha256": "015e13bc1223ccab6a02c7f04f42352abcce3c4697611d1621f388e50ea69a96",
+            "paragraph": 43,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "b944ef15bb055c15dc15d244ba60129ecddf6e7505848ea954c0f414175411d3",
+            "value_sha256": "d148791a5df295f1e5f5e18210d22b4f35ccff51ebc71a164989c7b51ac87d90"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "3-pillar EBITDA benefit (year-to-date Q3)",
           "period": null,
-          "value": "$500 million of EBITDA uplift",
           "value_num": null,
           "unit": null,
-          "verbatim": "Through the first 3 quarters of 2026, it has delivered $500 million of EBITDA uplift, and it remains on track to deliver $600 million of combined full year earnings improvement.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 500.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 14,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "9d45358457f6e0899549c089cd94dcf76163078cf770959fb0f63932530dde95",
+            "value_sha256": "eebfa030ee4ff49cc37a426f641881f0ea68f51b8e539b45a44113e7684e5c0d"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "European commodity PVC resin operating rates",
           "period": null,
-          "value": "roughly 60%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Industry-wide, commodity PVC resin operating rates are roughly 60% in Europe today, which is indicative of the high and escalating cost environment and regional supply-demand imbalance.",
-          "following_context": "In response, we have taken the strategic action to reposition our European commodity PVC resin business by consolidating our Cologne sales operations and sales volume to our recently acquired regionally advantaged site in Wilhelmshaven, Germany. The combination of Wilhelmshaven access to low-cost North American feedstock and sales volume from the Cologne consolidation should enable us to run a highly competitive European commodity PVC business.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 60.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 16,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "3e6389a44650b7d45cc667d150340f84c940bf04013266bbec8e4b58d3e02e66",
+            "value_sha256": "7d694742c4b4dcd32b280b42026b85feca4267145f0806392ed3d23d3f9bbd0d"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "PEM operations globally advantaged in North America",
           "period": null,
-          "value": "85%",
           "value_num": null,
           "unit": null,
-          "verbatim": "The year-over-year earnings and cash flow growth was driven by a significant improvement in margins in our PEM segment as a result of the benefit from our 3-pillar profitability improvement plan and higher average sales price which were largely driven by the impact of the Middle East conflict on global oil and feedstock cost, whereas 85% of our PEM operations are globally advantaged in North America, utilizing feedstock from low-cost natural gas.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 85.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 12,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "5134bc19d8392d31c39bd6eec699fa93a91d5d0019d454cbfde96155edcfa826",
+            "value_sha256": "821343c8782b17473fc0ec391a7c2d66f648be47cb71d8455f81ebc84dd9f93c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HIP sales volume (sequential decline)",
           "period": null,
-          "value": "17% from the second to the third quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "we experienced a larger than usual seasonal decline in sales volume of 17% from the second to the third quarter this year, largely due to the Pipe & Fittings customer order timing shift that I mentioned earlier.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 19,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "39ae5de30ece28c0bb847214403f1699f4611f0c2e3fbce775f69a13a5f99227",
+            "value_sha256": "f4c53134edeabc53b747fe644df496c6c095ef66ae0abb4c927ad8edce810d94"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "3-pillar EBITDA contribution (year-over-year)",
           "period": null,
-          "value": "approximately $200 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our 3-pillar profitability improvement plan contributed approximately $200 million to the year-over-year EBITDA increase with another approximately $100 million contribution from higher PEM selling prices.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 23,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "92f36151dbad3011c13beb10e70aa3825451e7f17452c8eda75b25a77d58cfe9",
+            "value_sha256": "9bc60e4a3e976b58a4c1ff7be299d14c2ca70c95f9762849532b84c70d6a0450"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HIP sales (year-over-year)",
           "period": null,
-          "value": "essentially unchanged from the prior year period",
           "value_num": null,
           "unit": null,
-          "verbatim": "At the segment level, HIP sales of $1.1 billion in the third quarter of 2026 were essentially unchanged from the prior year period.",
-          "following_context": "Excluding the ACI acquisition, which added 5% to third quarter sales, HIP sales volume declined 6% year-over-year, driven by lower housing product demand, particularly for roofing and stone as a result of the slowdown in North American residential construction.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 25,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "5a4c1b860c2d613d3e735db681b0ae4defc79ae3bf123ff1a79beaa90b33e539",
+            "value_sha256": "7e5b17618fded5e7d5b26935bbc0063fc5700d03143f807dc8d0b1b722b2d50c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HIP sales volume ex-ACI (year-over-year)",
           "period": null,
-          "value": "declined 6% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding the ACI acquisition, which added 5% to third quarter sales, HIP sales volume declined 6% year-over-year, driven by lower housing product demand, particularly for roofing and stone as a result of the slowdown in North American residential construction.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 25,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "bb85771a5f7e5d9fc3ec158968a2acc1a29f13faa1bbdc9d80377c6706de0196",
+            "value_sha256": "687ce2a4ff22702fd737892c4600acdef9d5ec8fe5acf27ddaa75bd8536c524d"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "HIP average sales price (year-over-year)",
           "period": null,
-          "value": "increased 1% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "HIP's average sale price increased 1% year-over-year, driven by higher housing product prices.",
-          "following_context": "HIP EBITDA of $195 million decreased by $20 million from the third quarter of 2025 as the higher average sales price was not enough to offset cost inflation, which, along with unfavorable mix shifts, drove a slight decline in HIP EBITDA margin to 18% from 20% in the prior year period.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 26,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "8a0d79e8cb6dce30bc2c883502c1c91ce7dfdd2fb6261178469d70beab4a106a",
+            "value_sha256": "e7b5e1123bc966c1e3593fc73ce7061f2f2775462b1a11106d5ecb41e49cdba4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "HIP sales (sequential)",
           "period": null,
-          "value": "decreased by $165 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sequentially, HIP sales of $1.1 billion decreased by $165 million, driven by a 17% decrease in sales volume and a 4% increase in average sales price.",
-          "following_context": "The sales volume decline was most significant at Pipe & Fittings, which was impacted by a portion of pipe orders shifting from the third quarter of 2026 into the second quarter of 2026 as customers sought to secure supply in the wake of the onset of the conflict in the Middle East.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 165.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 27,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "b213cb24256d8f7fbbe92b8fe71da72ba059b69fc81670447d5744c029127efc",
+            "value_sha256": "4e7c87e287b28506d641b9157fe1bb6020085db35bab059f7ab898e52aee938b"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "HIP average sales price (sequential)",
           "period": null,
-          "value": "4% increase in average sales price",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sequentially, HIP sales of $1.1 billion decreased by $165 million, driven by a 17% decrease in sales volume and a 4% increase in average sales price.",
-          "following_context": "The sales volume decline was most significant at Pipe & Fittings, which was impacted by a portion of pipe orders shifting from the third quarter of 2026 into the second quarter of 2026 as customers sought to secure supply in the wake of the onset of the conflict in the Middle East.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 27,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "b213cb24256d8f7fbbe92b8fe71da72ba059b69fc81670447d5744c029127efc",
+            "value_sha256": "7e01bb29fc59dd5c795ccb1beb0c0c3d9a2bddc9aac1a872ce2cbc3f6175d8c2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Pipe & Fittings sales volume (year-to-date)",
           "period": null,
-          "value": "8% higher than the first 3 quarters of 2025",
           "value_num": null,
           "unit": null,
-          "verbatim": "Putting the timing shift aside, Pipe & Fittings sales volume through the first 3 quarters of 2026 was 8% higher than the first 3 quarters of 2025, which we believe is more indicative of the overall trend of Pipe & Fitting sales volume growth driven by infrastructure spending, including increased demand from the construction of data centers.",
-          "following_context": "HIP's third quarter EBITDA decreased sequentially by $81 million due to the lower sales volume and cost inflation, particularly higher diesel fuel and freight prices. Where contracts and market conditions allow, we are passing along the higher freight costs with fuel surcharges. And in other cases, we will be going out to the market with selling price increases to offset the inflationary pressure that we have been facing.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 2025.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 28,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "3a59120527c2bfd0725392748f07ee42ac2ed6a25f80be6b3383e6de1ac5ead3",
+            "value_sha256": "d7117818b2ff87cbac8c3cd004a2d96968792b491543a3221ec02cf5e087d6af"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "freight cost pass-through via fuel surcharges",
           "period": null,
-          "value": "passing along the higher freight costs with fuel surcharges",
           "value_num": null,
           "unit": null,
-          "verbatim": "Where contracts and market conditions allow, we are passing along the higher freight costs with fuel surcharges.",
-          "following_context": "And in other cases, we will be going out to the market with selling price increases to offset the inflationary pressure that we have been facing.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 28,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "61cd0c96b1df62b260cfc2753e6337339d5448944cc9f1df30e409e92f9314cb",
+            "value_sha256": "0ea2115b599038ee5778c43e3684b17a21535c1b5d569ddeba5bdd92312fe24c"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "PEM average sales price (year-over-year)",
           "period": null,
-          "value": "9% increase in average sales price",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sales of $1.9 billion increased 8% year-over-year, driven by a 9% increase in average sales price, led by polyethylene and PVC resin and a 4% increase in comparable sales volume.",
-          "following_context": "The combined impact to PEM sales from plant closures and the Wilhelmshaven acquisition was a year-over-year reduction in sales of 5%. PEM's third quarter of 2026 EBITDA margin expanded to 11% from 5% in the third quarter of 2025 as a result of the higher average sales price and benefit from our 3-pillar profitability improvement plan.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 29,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "79f6a37d1fff5e7d82430c7729bbdc5edfd8c9ae979e099f47273269aba0f05f",
+            "value_sha256": "4efb0f14fe784449e0899fa925ed54533207e257efce16af413826a7aeeda135"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "PEM comparable sales volume (year-over-year)",
           "period": null,
-          "value": "4% increase in comparable sales volume",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sales of $1.9 billion increased 8% year-over-year, driven by a 9% increase in average sales price, led by polyethylene and PVC resin and a 4% increase in comparable sales volume.",
-          "following_context": "The combined impact to PEM sales from plant closures and the Wilhelmshaven acquisition was a year-over-year reduction in sales of 5%. PEM's third quarter of 2026 EBITDA margin expanded to 11% from 5% in the third quarter of 2025 as a result of the higher average sales price and benefit from our 3-pillar profitability improvement plan.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 29,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "79f6a37d1fff5e7d82430c7729bbdc5edfd8c9ae979e099f47273269aba0f05f",
+            "value_sha256": "30d9b0494055fd2f152d7cd7fa7576b8b1c76b68e49292ba3130811f7f626ad9"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "PEM average sales price (sequential)",
           "period": null,
-          "value": "8% decline in average sales price",
           "value_num": null,
           "unit": null,
-          "verbatim": "Compared to the second quarter, PEM's third quarter of 2026 sales decreased by 6%, driven by an 8% decline in average sales price, particularly for PVC resin and polyethylene that was partially offset by a 2% contribution to sales from the Wilhelmshaven acquisition.",
-          "following_context": "Since peaking in May, U.S. contract prices for polyethylene fell $0.15 per pound in June and $0.10 in July before recovery of $0.05 in September, which brought polyethylene's year-to-date price gains to $0.25 at the end of the third quarter.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 31,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "158aa2343fa54d23a560faacdd4b0becb99916349471867a419b5c41c09deecc",
+            "value_sha256": "5c8b4837bbc6da306cef4a63b2eacb7bb46b88adc8dca996fc06dd5d10b25ca4"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "U.S. contract polyethylene price (monthly moves)",
           "period": null,
-          "value": "fell $0.15 per pound in June and $0.10 in July before recovery of $0.05 in September",
           "value_num": null,
           "unit": null,
-          "verbatim": "Since peaking in May, U.S. contract prices for polyethylene fell $0.15 per pound in June and $0.10 in July before recovery of $0.05 in September, which brought polyethylene's year-to-date price gains to $0.25 at the end of the third quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.15,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 0.1,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 0.05,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 31,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "d684e5f10a68509de59f5bede83234e87a0891df786eb57afb0d50ee37c628b2",
+            "value_sha256": "2d1b98473a9706946a96a01e5becc42ca5c1491e500a0f8ac4e661c8ffa5ba7f"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "U.S. PVC contract price (July)",
           "period": null,
-          "value": "fell $0.03 per pound in July",
           "value_num": null,
           "unit": null,
-          "verbatim": "Meanwhile, contract prices for U.S. PVC fell $0.03 per pound in July with export prices down approximately $0.09 per pound on average from the second to third quarter.",
-          "following_context": "As of the end of the third quarter, both contract export PVC prices were up $0.10 per pound since the start of the year. Prices for commodity PVC in Europe ran up even more in the second quarter and came down even more sharply in the third quarter, with average prices down approximately $0.20 per pound sequentially. The lower average selling prices were the primary driver of PEM's $201 million sequential EBITDA decline with additional earnings headwinds from higher European energy costs and planned turnarounds, including actions taken to integrate the recently acquired Wilhelmshaven site into Westlake's global manufacturing footprint.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.03,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 32,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "586144903c98bb97a44b08973c1944cfe80d0b144214f82f7161ee097e5a37ae",
+            "value_sha256": "91b5dae5cb20a7b7c10cc65e1b3881e74e19d427b2e63e7f838da127d00cacc5"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "European commodity PVC price (sequential)",
           "period": null,
-          "value": "down approximately $0.20 per pound sequentially",
           "value_num": null,
           "unit": null,
-          "verbatim": "Prices for commodity PVC in Europe ran up even more in the second quarter and came down even more sharply in the third quarter, with average prices down approximately $0.20 per pound sequentially.",
-          "following_context": "The lower average selling prices were the primary driver of PEM's $201 million sequential EBITDA decline with additional earnings headwinds from higher European energy costs and planned turnarounds, including actions taken to integrate the recently acquired Wilhelmshaven site into Westlake's global manufacturing footprint.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.2,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": "down",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 32,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "2bf43a33a5bfc9f45bfdf7322075049b36e2c1ff3119734932a8376dd4a7bab3",
+            "value_sha256": "ed0b0cc147cb51d907bd4c741e942d57ddaef308e616361f69a73985d9d425c4"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "polyethylene price increase announcement",
           "period": null,
-          "value": "$0.05 per pound increase announcement in addition to the $0.05 per pound price increase realized in September",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are working to implement our $0.05 per pound increase announcement in addition to the $0.05 per pound price increase realized in September, which will help to offset sequentially lower expected PEM sales volumes due to turnaround and seasonality.",
-          "following_context": "Total capital expenditures for the company for 2026 are now expected to be $850 million, which is $50 million lower than our prior guidance and is approximately $150 million lower than last year due to cost reduction efforts. We will also continue to invest inorganically to drive growth.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.05,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 0.05,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 35,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "6cde3d92f20df10833e96b7d2c013bff39de4ade3b92fd686a06db842a90244f",
+            "value_sha256": "90c6c9ff130ae4f947eddb690ebc3ef79cc3764adff7f68390026ce19c5b6d46"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "global polyethylene capacity addition (2027)",
           "period": "2027",
-          "value": "6% addition to global polyethylene capacity",
           "value_num": null,
           "unit": null,
-          "verbatim": "In PEM, the market continues to be oversupplied globally in a number of key products with a 6% addition to global polyethylene capacity expected in 2027.",
-          "following_context": "Chlorovinyl supply dynamics are relatively more favorable with a 2% capacity increase expected for each of PVC resin and caustic soda next year. We will continue to be proactive in responding to changes in the market by matching our supply to profitable demand opportunities.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 37,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "83b74666cbf577bd220e199115a5a733a823a5af1ce03aa0fea405ada032f5fd",
+            "value_sha256": "c399f52ed5f4307704dc41310bac98275f8c520efb55b66bfee59d646746e3e5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "PVC resin and caustic soda capacity increase (2027)",
           "period": null,
-          "value": "2% capacity increase expected for each of PVC resin and caustic soda",
           "value_num": null,
           "unit": null,
-          "verbatim": "Chlorovinyl supply dynamics are relatively more favorable with a 2% capacity increase expected for each of PVC resin and caustic soda next year.",
-          "following_context": "We will continue to be proactive in responding to changes in the market by matching our supply to profitable demand opportunities.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 37,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "b9eaf2be30ddcccdae1fcf48a3523dcc0aa02562c4968aa0d9864074e9ec7db8",
+            "value_sha256": "7a5ad180b0116d35200ad133ebbafad5a0a4422648ff78de4271f0ef8a4c8a1a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "European power cost (year-over-year)",
           "period": null,
-          "value": "50% increase in power costs",
           "value_num": null,
           "unit": null,
-          "verbatim": "Well, to give you a sense of what's going on in European energy prices, just year-over-year, we saw for Q3, a 50% increase in power costs and so this is in euro terms.",
-          "following_context": "But on average, in Q3, we were around EUR 84 per megawatt hour. Q3 averaged closer to EUR 126 per megawatt hour. And if you look at where things were in October, it went up to EUR 170 on average. And today, we're seeing prices in excess of EUR 200 per megawatt hour. So clearly, there is a big impact that is going on in Europe right now in terms of what we're seeing in that market.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 64,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "b053f6a241f7ff81865d7a657c65c3404d769c351d95d898cd5e2d0c0934a0d8",
+            "value_sha256": "4746a23f3b1aaf8649e310b659b3924ec323c09b80798255c381c2fb28259e26"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "caustic soda price (October / November)",
           "period": null,
-          "value": "October was up 5, and right now, with CMA forecast, another 10 in November",
           "value_num": null,
           "unit": null,
-          "verbatim": "Yes. Kevin, I was just going to add, just specifics for your question, if you want some pricing. October was up 5, and right now, with CMA forecast, another 10 in November.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 134,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "cece05e457cb7de8e5dce241314f192ba9bc60be72d37401b6c30e3e64f6b9e5",
+            "value_sha256": "08ac8c4c9b94316e8be28a7b8ca2cc1e75001705efac3232923353580128213f"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "industry cracker fleet utilization",
           "period": null,
-          "value": "running around mid-90% utilization",
           "value_num": null,
           "unit": null,
-          "verbatim": "Right now, if you look at the cracker fleet for the industry, we're running around mid-90% utilization, which is very high.",
-          "following_context": "You've seen Golden Triangle starting up early that's also increasing some demand. And then you're also seeing exports near records. There's limited dock capacity right now, but it is -- there is a strong pull on the ethane right now.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 87,
+            "speaker": "Jonathan H. Baksht",
+            "quote_sha256": "e5354b7490d8ed93bce4b9139dae0ada8cfc196da0223964d0962a4db2e242bb",
+            "value_sha256": "97f43ba4502be44827725c48a06b6d56bbbbba8100ea10768e695c8adc30a4cc"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "crude feed slate (ethane)",
           "period": null,
-          "value": "100% ethane",
           "value_num": null,
           "unit": null,
-          "verbatim": "We have no exposure except ethane in our fleet. So it's 100% ethane, as far as our crackers are concerned.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Westlake Corporation, Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "7de14dc87336faef3b25ca0f32f57fa39bcaa71f686bec46f46928ae7714673a",
+            "paragraph": 144,
+            "speaker": "Jean-Marc Gilson",
+            "quote_sha256": "b2d250c68f2ce1ece5f7f3e136d0a11d67a4637ceaacc5d2950d581545db59e2",
+            "value_sha256": "c622be44a7611d26bf2c8d9faf18e52c71bc15dd30751ef37cd1d165ab260843"
+          }
         }
       ],
       "qa_flags": [
@@ -16052,6 +16863,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

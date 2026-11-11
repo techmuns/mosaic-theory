@@ -635,10 +635,15 @@ def post_spend_checks(built: Dossier, bundle: CiqBundle, *,
 
 
 def _stamps(doc: Mapping[str, Any]) -> Counter[str]:
-    """Every export sha256 the page stamps (any key ending ``sha256``, and a stamp written into a
-    string — an anchor input's source — through the one shared reader,
-    `ciq_balance.stamps_in_text`), with how often."""
+    """Every export sha256 the page stamps (a key ending ``sha256`` whose value is a 10-hex stamp,
+    and a stamp written into a string — an anchor input's source — through the one shared reader,
+    `ciq_balance.stamps_in_text`), with how often.
+
+    ONLY A 10-HEX VALUE IS AN EXPORT STAMP, the rule `inputs.stamps` already kept. A transcript
+    driver row's `locator` carries three full sha256s (the call's file, the quote, the stated
+    value; RG-D19), and counting them listed each as an export missing from disk."""
     from vinci.dossier.ciq_balance import stamps_in_text
+    from vinci.dossier.inputs import _STAMP
 
     seen: Counter[str] = Counter()
 
@@ -646,7 +651,8 @@ def _stamps(doc: Mapping[str, Any]) -> Counter[str]:
         if isinstance(node, dict):
             for key, child in node.items():
                 if str(key).endswith("sha256") and isinstance(child, str):
-                    seen[child] += 1
+                    if _STAMP.fullmatch(child):
+                        seen[child] += 1
                 else:
                     walk(child)
         elif isinstance(node, list):

@@ -8,9 +8,10 @@ Before this PR `run` captured with no transform (it defined no ``--transform``, 
 Every test here fails on main `9da0d096`: the module does not exist there, and `run` refuses the
 new flags or draws unregistered.
 
-The pages are real committed ones; only the transcripts and the comps export (licensed, never in
-CI) are stubbed, and the capture child runs in-process (`replay.capture`) for speed — one test
-keeps the real child (`capture_at`).
+The pages are real committed ones, less the transcript rows whose words are off them (a replay
+refuses those: `tests/stripped_pages.replayable`, RG-D19); only the transcripts and the comps
+export (licensed, never in CI) are stubbed, and the capture child runs in-process
+(`replay.capture`) for speed — one test keeps the real child (`capture_at`).
 """
 from __future__ import annotations
 
@@ -21,6 +22,7 @@ from typing import Any
 
 import pytest
 
+from tests.stripped_pages import committed_page, replayable
 from vinci.evals import __main__ as cli
 from vinci.evals import replay as rp
 
@@ -30,8 +32,7 @@ TRANSFORMS = ("relabel_drawdown_shape", "survival_read", "gap_types")
 
 @pytest.fixture(scope="module")
 def nflx() -> dict[str, Any]:
-    page: dict[str, Any] = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
-    return page
+    return replayable(committed_page("NFLX"))
 
 
 class _FakeSdk:

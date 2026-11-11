@@ -10124,649 +10124,1578 @@
           "kind": "leading_indicator",
           "metric": "gross bookings growth",
           "period": null,
-          "value": "grew 22% year-on-year to more than $58 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Gross bookings grew 22% year-on-year to more than $58 billion, above the high end of our guidance and marking our fourth consecutive quarter above 20% growth.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 22.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 58.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 2,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "a113d57de22a703a42686d8581867221472df28f30cdeaa8cb0411c3df766c83",
+            "value_sha256": "aaba9e9c6d9e52bb5f5da0ae7aa2442ffd75d3457af6be647c5943abd508ecd4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "non-GAAP EPS growth",
           "period": null,
-          "value": "growing 35% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Just as importantly, that growth translated into significant operating leverage with non-GAAP EPS growing 35% year-over-year and trailing 12-month free cash flow exceeding $10 billion for the first time in our history.",
-          "following_context": "Those results give us the ability to continue investing from a position of strength across our priorities.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 35.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 3,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "63d1fc74241b537889619b3ad485cb5c5822c0b8ff506567430d559caaacae4b",
+            "value_sha256": "ee377cb25e0cc2858ca451748eb327936c941537265e54ffe63e59ddff406d71"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "trailing 12-month free cash flow",
           "period": "trailing 12-month",
-          "value": "exceeding $10 billion for the first time",
           "value_num": null,
           "unit": null,
-          "verbatim": "Just as importantly, that growth translated into significant operating leverage with non-GAAP EPS growing 35% year-over-year and trailing 12-month free cash flow exceeding $10 billion for the first time in our history.",
-          "following_context": "Those results give us the ability to continue investing from a position of strength across our priorities.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 3,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "63d1fc74241b537889619b3ad485cb5c5822c0b8ff506567430d559caaacae4b",
+            "value_sha256": "2ef86863c9324239cf9aba5fbd408ab9d5852dc6f3071da4b35bb54a2c9c0a5d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cities live with AV",
           "period": null,
-          "value": "live in 7 cities, and we're on track to be live in 15 cities by year-end",
           "value_num": null,
           "unit": null,
-          "verbatim": "So to remind you, we're live in 7 cities, and we're on track to be live in 15 cities by year-end.",
-          "following_context": "We've got a Nuro, Lucid launch coming in the Bay. We've got Zoox coming in Vegas. We've got Wayve in London and Tokyo, Baidu also in London and then Pony and Verne in Zagreb and potentially more. So there's a bunch of launches coming up in the balance of the year.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 15,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "71b1dd3ef8e82b0902939b8a9ef30e636d33bc3ff6dfaf1c9f3bfbd10b86bbcb",
+            "value_sha256": "2e8db58b227fc7184fce5da63ab4806c3cb16ffce0fafc37363804cb8bc310c1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AV utilization (trips per vehicle per day)",
           "period": null,
-          "value": "often mid- to high 20s, low 30s in terms of trips per vehicle per day",
           "value_num": null,
           "unit": null,
-          "verbatim": "we can drive very significant utilization per vehicle, often mid- to high 20s, low 30s in terms of trips per vehicle per day, which is quite substantial in terms of the needed monetization as it relates to these vehicles.",
-          "following_context": "So it's getting partners in market, quality of service and then obviously, the economics of the service that we're looking at.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 18,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "ba07682892682efecea121851affc8b5cb78408971fc106f70304a5874d523c5",
+            "value_sha256": "a0ee4f9ea72b976370533d6e442d3190ae9dae64871e6fa6f4ea888d55af7998"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U4B year-on-year growth",
           "period": null,
-          "value": "40% year-on-year growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "U4B, in particular, we saw 40% year-on-year growth.",
-          "following_context": "Uber Health is growing even faster. So that's the second theme.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 28,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "252752b1d3ad261977d227ea497397d97ee7451581f7cf6b37914bd76d976a89",
+            "value_sha256": "d4726abcb7848110001d3f791315119c3306d36dfc2fedbfee90edab121eee76"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "sparse market penetration vs dense markets",
           "period": null,
-          "value": "less than 10% of eligible consumers in our sparse markets have used Uber in the past 12 months, whereas in dense markets, that number is over 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "in the U.S., less than 10% of eligible consumers in our sparse markets have used Uber in the past 12 months, whereas in dense markets, that number is over 50%.",
-          "following_context": "So we're making really good progress there in improving supply, reliability and investing in marketing to drive awareness and trial. So I think all in, it's broad and sustainable.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_most"
+            },
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 29,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "e6af5465ca7444159da71e0e78005a9722fd4ca49ff357b8e357fba7c074912b",
+            "value_sha256": "af67df87b96fe04bb199fc99e3423f405656da3f68f7b0c6ea4768d1a0ed0b63"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "cross-platform (Rides and Eats) usage",
           "period": null,
-          "value": "only 20% of our consumers at this point use both Rides and Eats, and that's growing 1.5x faster than single product users",
           "value_num": null,
           "unit": null,
-          "verbatim": "only 20% of our consumers at this point use both Rides and Eats, and that's growing 1.5x faster than single product users as well.",
-          "following_context": "So that's a very sustainable advantage that we have as it relates to cross-platform. And as our Eats business is getting bigger, not only is Rides moving consumers to Eats, but then our Eats business is moving consumers on to Rides as well, and that's true both globally and in the U.S. as well.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 1.5,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 33,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "4d4119650e9f0b3d9a6a8a8b69a37e6f69deed2cb6624ac06715f89e870aa1c6",
+            "value_sha256": "4b06946bf258bdb6ef097d32244a830ee994475608631d0381f2482f8000be92"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Brazil share",
           "period": null,
-          "value": "we continue to hold our share in Brazil",
           "value_num": null,
           "unit": null,
-          "verbatim": "The good news as it relates to Brazil is that we continue to hold our share in Brazil, but you just see kind of share move from the Mobility side of the business to the Delivery side of the business because it's a period of time where there's a lot of investment going there.",
-          "following_context": "I think the good news, if you want to call that, is our 2-wheeler business is one of our newer businesses. The margins in that business are quite low. So it's certainly not hitting the bottom line, but it is affecting trip volumes and it's actually competition outside of our space that is affecting those trip volumes.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 42,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "0d43d8089cbbf4455c7ce6f835d1243a79440dd1830dc8a2ede29bf260532b96",
+            "value_sha256": "9262b7ccff656862edaa12215a74d235d840e714677bdfb0b3529e4ef919295e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AV trips per week vs total trips",
           "period": null,
-          "value": "AVs are doing kind of hundreds of thousands of trips per week. We're at 300 million kind of trips per week",
           "value_num": null,
           "unit": null,
-          "verbatim": "And just as a reminder of our scale, AVs are doing kind of hundreds of thousands of trips per week. We're at 300 million kind of trips per week as well. So it's even less than 0.5% of our overall trip volume.",
-          "following_context": "You compare that again to the foundation model space, people estimate that 20% of search now has gone to AI, 40% of users are using AI search one way or the other. So the penetration of kind of physical AV is going to be slower. It's going to some extent be more deliberate. It's way below where it is at AI. Regulations are a consideration there. And we have time to develop the partnerships with our other set of partners to create a competitive playing field with attractive commercials.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 300.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 44,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "8f8cb3da15c591c594134f0fc3f831d6beda3d773837ea6e85de40a62278cf13",
+            "value_sha256": "7655d8dfb7049d1f6f23b069f538b1c4d8a4d8230b1059d01284485abb336c00"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "engineer AI coding tool adoption",
           "period": null,
-          "value": "near 100% adoption with our engineers on AI-based coding tools",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are seeing, at the moment, near 100% adoption with our engineers on AI-based coding tools.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 55,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "7dbbebb4eb3c5b24e2403350f2b8937b6841b6281ffa7fdc89b0b618c162d66e",
+            "value_sha256": "e4140b64d881f0f082b46d15f63aad80439802129e450c235848d7453acfddea"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "code output per engineer",
           "period": null,
-          "value": "a doubling in the code output per engineer",
           "value_num": null,
           "unit": null,
-          "verbatim": "And for the measurement that we are looking at right now, we are seeing a doubling in the code output per engineer.",
-          "following_context": "So there is a lot more nuance to this, and we are being quite smart internally on how we're measuring this and not getting ahead of our skis. But at a minimum, it has allowed us to moderate the pace with which we are adding headcount there.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 56,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "d01c561c417c7cc603ae5b6c58ebddc2b23b12e888123e2af2de702f971f0dea",
+            "value_sha256": "e34b5a68bb8b95d563224645c2f18776a3b8db04af62daee695ae404838a3472"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "headcount cut in certain organizations",
           "period": "through the quarter",
-          "value": "cut headcount by about 10% to 20%",
           "value_num": null,
           "unit": null,
-          "verbatim": "through the quarter, we were able to surgically, in a couple of organizations, cut headcount by about 10% to 20%, and that drives some savings as well, although modest in the grand scheme of things.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "approximately"
+            },
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 58,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "360856c560ac2b151dd20aad7ed310097f49c3051b9dc124e7524eb1ac411bf4",
+            "value_sha256": "4e16b65971531e671924b645b255139d9ba351ed4213a19af4942ace86e3a3a3"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "partner external fundraising per Uber dollar invested",
           "period": null,
-          "value": "for every dollar that we have invested, our partners have been able to raise an additional $2.50 from other investors",
           "value_num": null,
           "unit": null,
-          "verbatim": "And so far, for every dollar that we have invested, our partners have been able to raise an additional $2.50 from other investors.",
-          "following_context": "So that's the first piece.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.5,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 68,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "5712a65f58e68db3c6f6183859012acc1199efb79757bc22e3559c4df7eb2a24",
+            "value_sha256": "b7fd467cf0e95eac7ac4c2b0180636b11a1c4162bb252cc0a0196fd30453fe32"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AV vehicle commitments",
           "period": null,
-          "value": "120,000 vehicle commitments that we are looking to deliver over the next few years",
           "value_num": null,
           "unit": null,
-          "verbatim": "We talked about 120,000 vehicle commitments that we are looking to deliver over the next few years, and a lot of that would be sort of the example of what we're talking about here.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 120000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 69,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "01547f4fc754921885d9759d33616852149d7f01a7ed7d656acac707e438096c",
+            "value_sha256": "062c86be21340b70c49ab46e492feb994811714ce312cc0614435bdd37482828"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Mobility revenue margin decline year-on-year",
           "period": null,
-          "value": "a nearly 500 basis points decline year-on-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "I'll touch on Mobility, where you are seeing a nearly 500 basis points decline year-on-year. Of that 500 basis points, about 400 basis points is entirely related to this U.K. business model change, and it's an optical impact.",
-          "following_context": "It moves cost from [indiscernible] cost of revenue.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 500.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "down",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 76,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "638cb769a2c83b6f18b96b00284706e01d684d2991958d644db2638351925925",
+            "value_sha256": "02addf5ebdbe9d06e6d795e21c2a2c05dc6911696e2f7c175db20873c7be3330"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Mobility operating income margin",
           "period": null,
-          "value": "remains very strong at 7.6%",
           "value_num": null,
           "unit": null,
-          "verbatim": "And then from an operating income standpoint, our Mobility operating income margin remains very strong at 7.6% as well.",
-          "following_context": "So that's all the risk to it in terms of the take rate movement here.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.6,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 77,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "d07a4fb7e4479577fc56e1041ad2ebdb570389961aa406e0be3edf4c9c4ac5cd",
+            "value_sha256": "1360b9f4a7ce7cb5a4194bb9dbbf4ac35327325532481ba7f65605f9e8033230"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI-built cart size (cart builder)",
           "period": null,
-          "value": "often twice the size of kind of non-AI built carts",
           "value_num": null,
           "unit": null,
-          "verbatim": "the size of those carts is often twice the size of kind of non-AI built carts.",
-          "following_context": "So that's one where your average order size, you kind of drive consumer delight and you are driving average order size as well.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 83,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "28df529c1ff4cf20a9b061d93cfe67e7c669bb522c06149f55c814733fcda4e8",
+            "value_sha256": "433e99924e38b1dbd14103c4fe116eb841fcbc16d86ebd30b4ac650e3b504f3e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "personalized destination suggestion share of rides",
           "period": null,
-          "value": "3/4 of our rides on Uber happen via a personalized destination suggestion",
           "value_num": null,
           "unit": null,
-          "verbatim": "another example is 3/4 of our rides on Uber happen via a personalized destination suggestion.",
-          "following_context": "3/4 of the time, we're actually guessing where you're going to go based on your history, and we're getting it right and don't require any typing whatsoever. That's another small example of what AI can do. And I wouldn't look for like one giant hit from AI. It's going to be thousands of small hits and improvements to our ecosystem that's going to drive, we think, growth for the foreseeable future.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 87,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "2420fd163d2adea8877cf64ccf21350cfb8bcb29345718f421ae42e47f3b67f9",
+            "value_sha256": "8bd2af0f1949f8345ae91037a65de477878bdf1bc9922cd41c7b578a27c6377a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "trailing 12-month free cash flow",
           "period": "trailing 12 months",
-          "value": "just a little bit over $10 billion in free cash flows over the trailing 12 months",
           "value_num": null,
           "unit": null,
-          "verbatim": "we have generated about just a little bit over $10 billion in free cash flows over the trailing 12 months.",
-          "following_context": "And what we've said historically is that we want to be deploying about 50% of our free cash flows towards buybacks. Where we are so far halfway through the year is that we have bought back about $3.5 billion of our stock this year. And we tactically pivoted quite heavily towards M&A in the second quarter. And largely, that was a function of our market purchases of Delivery Hero stock. We deployed about $4 billion of capital in the second quarter to ensure that we were in a place to be able to act fast on an opportunity that existed there. Now that we are through that announcement, we are steadily looking to rebuild our share repurchase levels. So to answer your question, Mark, I don't think this is a year away. We are talking about months, not quarters.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 89,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "9395f45e1079f27927dd4c462b5cb808b303d15071994207ecdfd532fabdc439",
+            "value_sha256": "29d1190af96445019f0987a4102639eaf7631390a4505ed9e07e9cde25481000"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "share buybacks year-to-date",
           "period": "halfway through the year",
-          "value": "bought back about $3.5 billion of our stock this year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Where we are so far halfway through the year is that we have bought back about $3.5 billion of our stock this year.",
-          "following_context": "And we tactically pivoted quite heavily towards M&A in the second quarter. And largely, that was a function of our market purchases of Delivery Hero stock. We deployed about $4 billion of capital in the second quarter to ensure that we were in a place to be able to act fast on an opportunity that existed there. Now that we are through that announcement, we are steadily looking to rebuild our share repurchase levels. So to answer your question, Mark, I don't think this is a year away. We are talking about months, not quarters.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.5,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 89,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "60c42b59db66e3c1d45c2d906e782026813efcada965f41beaa92faa1e93d8d4",
+            "value_sha256": "4b5d9db4ba38412ad7e9a0c6cec8c259f5b6e6218868879ffc759034a1fabe13"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "capital deployed on Delivery Hero stock purchases",
           "period": null,
-          "value": "about $4 billion of capital in the second quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "We deployed about $4 billion of capital in the second quarter to ensure that we were in a place to be able to act fast on an opportunity that existed there.",
-          "following_context": "Now that we are through that announcement, we are steadily looking to rebuild our share repurchase levels. So to answer your question, Mark, I don't think this is a year away. We are talking about months, not quarters.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 89,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "7832ad8e3beb3007dcce0f4f84bb0a97b4055346a35723dd42d57f17276f1d6a",
+            "value_sha256": "c0a4ba6fcd83f881afa289bd2a7404c12b87c82b04c3b33e6ebc5f07d1273033"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "trip growth in SF, LA and Phoenix (AV markets)",
           "period": null,
-          "value": "trip growth in San Francisco, L.A. and Phoenix accelerated in Q2 versus Q1",
           "value_num": null,
           "unit": null,
-          "verbatim": "specifically, for example, our trip growth in San Francisco, L.A. and Phoenix accelerated in Q2 versus Q1.",
-          "following_context": "And our category position in these markets is actually higher today than it was a year ago.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 100,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "ed35a083a5e7941e7301bc085bf18246b13ff5dc5a7ed782f0c6feab6a0478bc",
+            "value_sha256": "b032a0c87b17322d3a4325ba5a171a29e3f2aeda8d4790b9ef974b74ec49093d"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "category position in AV markets",
           "period": null,
-          "value": "our category position in these markets is actually higher today than it was a year ago",
           "value_num": null,
           "unit": null,
-          "verbatim": "And our category position in these markets is actually higher today than it was a year ago.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 100,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "4856f8a9fbdb330c184a02cfe410e3a280953bf944a2cfcf9154437c80c1653a",
+            "value_sha256": "2e4564aa66cf4bc6c076b15197eadfb4788c95f3201886437b146f436bb4702f"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "US gross bookings and profits from top 20 cities",
           "period": null,
-          "value": "Only 30% of our U.S. gross bookings and 25% of our profits are coming from the top 20 cities",
           "value_num": null,
           "unit": null,
-          "verbatim": "Only 30% of our U.S. gross bookings and 25% of our profits are coming from the top 20 cities and the long tail of thousands of other cities and suburbs, they will remain a primary growth and profit engine for Uber for many years to come.",
-          "following_context": "So we are continuing to invest in both humans and in AVs. And you should expect that the U.S. remains a great market for these teams.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "58458cbc87086ff8b867e187881569f9504340749017aaf36471c5f2067954b8",
+            "paragraph": 104,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "83c33eff9f1804565a07b6b4fda8d915f082163bee69ced04b6983e8a4d24955",
+            "value_sha256": "f3aa362e2e20a1441aa93900e7c7e4ec5aa7ec895b2fa03cd1b065a78c780bee"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "monthly active platform consumers",
           "period": null,
-          "value": "215 million monthly active platform consumers",
           "value_num": null,
           "unit": null,
-          "verbatim": "We reached 215 million monthly active platform consumers who are using Uber more frequently than ever.",
-          "following_context": "That helped us deliver our fifth consecutive quarter of 20-plus percent year-over-year gross bookings growth, alongside 35% growth in non-GAAP EPS and record trailing 12-month free cash flow of $10.4 billion.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 215.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 2,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "55ae68488dc652fd20a650beee7ff6e3ae87a1e53ae4b13f519f30a3ac218c9c",
+            "value_sha256": "400ce5543cab5cd9f1c46a5872b98f5a01ae3f3839d1fd2fd04a46bc0208996c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "consecutive quarters of 20-plus percent gross bookings growth",
           "period": null,
-          "value": "fifth consecutive quarter of 20-plus percent year-over-year gross bookings growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "That helped us deliver our fifth consecutive quarter of 20-plus percent year-over-year gross bookings growth, alongside 35% growth in non-GAAP EPS and record trailing 12-month free cash flow of $10.4 billion.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 2,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "bbb8e74bba73394d1f0c1346286b2c910a5c77051f7698d44341a74e428a5595",
+            "value_sha256": "d2595d0011356f7c19d12b62a3a272bc9c711523e0ce76f40e39c67af8ae1440"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "non-GAAP EPS growth",
           "period": null,
-          "value": "35% growth in non-GAAP EPS",
           "value_num": null,
           "unit": null,
-          "verbatim": "That helped us deliver our fifth consecutive quarter of 20-plus percent year-over-year gross bookings growth, alongside 35% growth in non-GAAP EPS and record trailing 12-month free cash flow of $10.4 billion.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 35.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 2,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "bbb8e74bba73394d1f0c1346286b2c910a5c77051f7698d44341a74e428a5595",
+            "value_sha256": "ca2c378c52314f54adbbdaac3d4caaa1be5081cdae9a426d49cdd12a690154fa"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "trailing 12-month free cash flow",
           "period": "trailing 12-month",
-          "value": "record trailing 12-month free cash flow of $10.4 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "That helped us deliver our fifth consecutive quarter of 20-plus percent year-over-year gross bookings growth, alongside 35% growth in non-GAAP EPS and record trailing 12-month free cash flow of $10.4 billion.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.4,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 2,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "bbb8e74bba73394d1f0c1346286b2c910a5c77051f7698d44341a74e428a5595",
+            "value_sha256": "9ca912ea453f7f8170bbfcbb434197f4b8d462fccd5eeddfebfd012d09acb58b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Delivery gross bookings growth",
           "period": null,
-          "value": "gross bookings up 23% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Delivery had another excellent quarter, with gross bookings up 23% year-over-year and organic growth accelerating.",
-          "following_context": "Our investments in selection, affordability and reliability are making Uber Eats even more useful for everyday occasions, from restaurant meals to weekly groceries and last-minute essentials. And with approximately 55 million Uber One members, we're deepening consumer relationships across both Mobility and Delivery. Those direct consumer relationships are central to our approach to AI. We're using AI to make everyday transactions simpler and discovery more personalized while selectively exploring new distribution channels that can bring incremental demand.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 23.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 4,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "d6f8a9470be0b422b7f46d19100674f405263d6ae9bdee14464c92ca6ac35360",
+            "value_sha256": "71177fde44602971a0e10e3b97a16204fcdaeb3551483f8d552641c408a8c9f7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Uber One members",
           "period": null,
-          "value": "approximately 55 million Uber One members",
           "value_num": null,
           "unit": null,
-          "verbatim": "And with approximately 55 million Uber One members, we're deepening consumer relationships across both Mobility and Delivery.",
-          "following_context": "Those direct consumer relationships are central to our approach to AI. We're using AI to make everyday transactions simpler and discovery more personalized while selectively exploring new distribution channels that can bring incremental demand.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 55.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 4,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "3936c69ded1a4798500c57beb9aad3bf26775d0c65a8ba75899d5894fa1f9345",
+            "value_sha256": "263bb2951b957aeae6011f5b604c276c66ac22f36d5f99027729fd8774dd1b0b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "fully driverless vehicles on Uber",
           "period": null,
-          "value": "approximately 700 fully driverless vehicles on Uber by year-end and more than 2,000 by the end of 2027",
           "value_num": null,
           "unit": null,
-          "verbatim": "We expect approximately 700 fully driverless vehicles on Uber by year-end and more than 2,000 by the end of 2027.",
-          "following_context": "Just as importantly, we're focused on demonstrating utilization and economics that are needed to scale. As we enter Q4, our priorities are clear: improve Mobility supply, build on Delivery's momentum and deliver against our AV milestones, all while continuing to grow profitably.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 700.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 2027.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 5,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "034a938393ab00c906bfad540cb143946d8995bc7cc21fdafea84afff9a77b1c",
+            "value_sha256": "da5137bbeaa5e79b2813e387936dca139a027018189965f8299e7f30fc5b54b6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Santander fleet financing arrangement",
           "period": null,
-          "value": "$1 billion financing arrangement that we had set up with Santander earlier in the year",
           "value_num": null,
           "unit": null,
-          "verbatim": "what I would point you to is the $1 billion financing arrangement that we had set up with Santander earlier in the year that was focused on our traditional fleet partners.",
-          "following_context": "That is a template for what we could be doing with our AV fleets as we go through the next few months. We are actively working on these kinds of setups. And specifically, you should expect that we will have announcements to make both on infrastructure financing, but also on vehicle financing as we go forward.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 14,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "a9ee72fb159a3f3d7379ddaae6db7890b3e1e146409560d45b31d0d330939234",
+            "value_sha256": "c5a038b1ff84e522a30a5540e97277f04056930ac1f9760d4a62553d327a8fce"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "AV utilization premium on Uber network",
           "period": null,
-          "value": "a 30% kind of utilization premium on our network",
           "value_num": null,
           "unit": null,
-          "verbatim": "We show a 30% kind of utilization premium on our network, and we're able to do so very flexibly.",
-          "following_context": "So if there's a fleet that, for some reason, fails in terms of their operations, we can take that AV vehicle and put it under separate ownership, and it will still earn on the Uber network, so to speak.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 18,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "9660c9324cff63360ed9d3131979de81dfcd10defd0522bc62f54c3f881d32db",
+            "value_sha256": "47b62d749d586e3027389761bb243bd71a8332f59ddfd47986bb9e2aec1f2612"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "supply hours growth in October",
           "period": "October",
-          "value": "supply hours growth globally accelerated in October, including notable improvements in Brazil and India",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're making targeted supply investments, so this is focused on driver acquisition, retention and engagement. And as we go through that kind of investment, we are already encouraged with the early signs of supply improvement we saw in October and supply hours growth globally accelerated in October, including notable improvements in Brazil and India.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 28,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "66df4be04990b425c0038f94c583b91a912a09f4b8f9add11bbc0c4daf9dc9fc",
+            "value_sha256": "a73046febee4e15dcd7c79bc1f879d47d0610b3fc2a9fb296a0eebb162c9cba7"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "eligible population penetration in top 10 markets",
           "period": "Over the last 5 years",
-          "value": "doubled our eligible population penetration in our top 10 markets, but it's still at only 10%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over the last 5 years, we have doubled our eligible population penetration in our top 10 markets, but it's still at only 10%, right?",
-          "following_context": "So we feel really good about where we can go from here.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 29,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "d1324c77ef1ff09183672b99e678be28adab0efbd1b707b9bf0b14f7e9f357f5",
+            "value_sha256": "a96bec2c2cee379a5565acdec42d0e058d46a940d7e04b472c2491fb9b293d57"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "grocery and retail run rate and growth",
           "period": null,
-          "value": "$15 billion run rate, growing 40% on a year-on-year basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're -- run rate now at a $15 billion run rate, growing 40% on a year-on-year basis.",
-          "following_context": "We think this is like a $10 trillion TAM, so it's an enormous market for us. And what we see from consumers is, over and over, is they want more stuff faster. They want everything faster. I think when Amazon brought overnight shipping, it was magic. And now next hour shipping is magic, and pretty soon people are going to expect everything in 15 minutes. And we play right into that area.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 37,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "a5ca1e78405afd78a4dc34dfd4b436616f81ab1877817e618afa9adc92fb4fa2",
+            "value_sha256": "576eb10332405b2db9daf8a282d37b37bca98767db387f485c2e2fee77274267"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "AV trips per vehicle per day: competitors vs Uber",
           "period": null,
-          "value": "their trips per vehicle per day in the new markets that they have launched this year is in the low teens versus high 20s that we are seeing on our network",
           "value_num": null,
           "unit": null,
-          "verbatim": "Both for Waymo and Tesla, their trips per vehicle per day in the new markets that they have launched this year is in the low teens versus high 20s that we are seeing on our network in these hybrid markets.",
-          "following_context": "And effectively, you're looking at 100% plus utilization for us in those markets.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 63,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "24fb420a3895022ac528e16dd9b3f0a8b1775cd7cec137d03900d84106a7d215",
+            "value_sha256": "83bbe88a1455c129f91d1284a405a201d1d797ffa483bcf57d8d6e425cbdb060"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "premium business year-on-year growth",
           "period": null,
-          "value": "grown 35% year-on-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've talked, for example, it's grown 35% year-on-year, and our U4B business grew almost 50% year-on-year.",
-          "following_context": "So premium as a theme for us and corporate business as a theme for us is something that we want to kind of double down on. And those, for example, are the acquisitions of Blacklane and ezCater that you asked about.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 35.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 69,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "d62e9bf332d1adb19ac91d39363acbb7664971a86bd0214f3094a9a39611fe34",
+            "value_sha256": "ddf3fd8676860949ff9bcbe20aee621a5fa8b60dae9a20ccdddf00f285a963d2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U4B business year-on-year growth",
           "period": null,
-          "value": "grew almost 50% year-on-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've talked, for example, it's grown 35% year-on-year, and our U4B business grew almost 50% year-on-year.",
-          "following_context": "So premium as a theme for us and corporate business as a theme for us is something that we want to kind of double down on. And those, for example, are the acquisitions of Blacklane and ezCater that you asked about.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 69,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "d62e9bf332d1adb19ac91d39363acbb7664971a86bd0214f3094a9a39611fe34",
+            "value_sha256": "5979c0ce31abb5486249f04353bde8f1d7af35ea312f0806595c2c567fe1064a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ezCater build vs buy profit swing",
           "period": null,
-          "value": "a few hundred million dollars of profit swing in the build case versus buy",
           "value_num": null,
           "unit": null,
-          "verbatim": "relative to building this business, we expect that you would see a few hundred million dollars of profit swing in the build case versus buy.",
-          "following_context": "So I think we feel very good about the deal logic, and we now are focused on executing against it.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 73,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "41ccd1d2a2a863fb206ebab73e2988ef382701136c76b71772322876fdd412a5",
+            "value_sha256": "059a717ff9252781f1177f8f2d47c1c8db46c396e57b6f4ee08b90caad61efc4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "US barbell products growth rate",
           "period": null,
-          "value": "grew at 3x the rate of the overall business in Q3",
           "value_num": null,
           "unit": null,
-          "verbatim": "U.S. barbell products grew at 3x the rate of the overall business in Q3, and it's driven by strong innovation in our Growth Bets portfolio, including Wait & Save, Comfort, Reserve Black, but then also expanding to new demographics with teens and women preferences that are targeting just new cohorts of consumers and creating more options for our consumer base.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 88,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "66445747a21087fae200dfcf2b9bbb050c5635606414b5d5cb43d6dad5e11102",
+            "value_sha256": "629304578b61754f2cdbebb7dfb823b9cd8f81699e9ce13dae724ced7264c468"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "US sparse market penetration vs dense markets",
           "period": null,
-          "value": "Less than 10% of eligible consumers in sparse markets have used Uber in the last 12 months. That number in dense markets is 50% of consumers",
           "value_num": null,
           "unit": null,
-          "verbatim": "Less than 10% of eligible consumers in sparse markets have used Uber in the last 12 months. That number in dense markets is 50% of consumers.",
-          "following_context": "So we continue to make improvements on supply and reliability in these markets, and that should have long-term impacts that are very favorable. Dara, do you want to take the second one?",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_most"
+            },
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 89,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "6331148ee726ea5021c67c04972c632a681f2d956dbbf4a0f4b52df6cee10ff3",
+            "value_sha256": "70d59b7fd164358ac8f26d60e5ee739842bc59c99c76ff7bd2dc92cb67bd827e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "US merchant selection growth",
           "period": null,
-          "value": "The number of merchants that we added in the U.S. was up nicely, about 12% on a year-on-year basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "The number of merchants that we added in the U.S. was up nicely, about 12% on a year-on-year basis.",
-          "following_context": "So as we add more selection, everything helps, conversion improves, we get new customers on the platform as well.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 91,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "61aac4a1b77677aef4627f6b238547714861091eb1a641bc63cf4d1711694074",
+            "value_sha256": "c8a4779dc1a4c32f5003738f769d4691f53617f5ead1a6d9fbff85bf98a19995"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "membership share of Delivery gross bookings",
           "period": null,
-          "value": "members are now 70% of Delivery gross bookings",
           "value_num": null,
           "unit": null,
-          "verbatim": "So members are now 70% of Delivery gross bookings. So membership is deepening in engagement with our consumers as well.",
-          "following_context": "And then, of course, sparse markets. As Balaji said, sparse markets is a play that we're running globally, but it's absolutely a play that we're running in the U.S. as well for Delivery. That helps.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 92,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "45863a7df309840e35fc48171285ec093da1d5e9eee4f9c921daf64fa5f2ba3d",
+            "value_sha256": "1915a879bc01997931289f7973b89352c5d5e9a2b7419271a22e3a83ce124db2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ad business and merchant-funded promotions",
           "period": null,
-          "value": "grew to over $10 billion on a year-on-year basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "If you look at our ad business and merchant-funded promotions, they grew to over $10 billion on a year-on-year basis.",
-          "following_context": "And these are dollars that we're giving to our consumers, and the return for merchants is new consumers and kind of higher penetration in the marketplace. So all of it is working at this point.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 93,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "1f38fe2d0d388350dd381ee3bf9e09ee8453395fbd9aef5411ee71672edcbd3b",
+            "value_sha256": "6e479ed80415f3871861631de9b6f8d201c3e3c8b9e6115222e9e175605bca65"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Mobility segment margin",
           "period": null,
-          "value": "these 8% margins you had this last quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "I just want to ask one question on the profitability of the Mobility segment, these 8% margins you had this last quarter.",
-          "following_context": "With the supply initiatives that you're introducing in international markets, does that -- can you maintain the profitability performance that you've had? Or is it -- do we have a detour? Is it structural? Or is it a temporary detour? Or is there any detour just in those profit margins?",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 98,
+            "speaker": "Mark Stephen F. Mahaney",
+            "quote_sha256": "4be24707b81950eadd9492c9e493748d7c514415da8a48c3e9d0bb40e08cd726",
+            "value_sha256": "5b7d010cadb1a24d0c6b71162fd89359c20605150d46c23b071cc51ca9301722"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Q4 non-GAAP EPS growth outlook",
           "period": null,
-          "value": "a 37% year-on-year growth on our non-GAAP EPS",
           "value_num": null,
           "unit": null,
-          "verbatim": "The Q4 outlook that we just provided at the midpoint is a 37% year-on-year growth on our non-GAAP EPS.",
-          "following_context": "So if anything, you're seeing the profit ramp expand, and that puts us in a pretty good spot for 2027.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 37.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 101,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "af129f2a6923fdb733640ae04a2b48dd8816f1e03ad2409f0e0d03674d29d342",
+            "value_sha256": "c67bbda7c7c0f0d228b97727212a95c6239b9826cca8f0e32adb9f4a63807d2e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "member share of bookings",
           "period": null,
-          "value": "members now account for more than 50% of our bookings",
           "value_num": null,
           "unit": null,
-          "verbatim": "Obviously, we have membership benefits, and members now account for more than 50% of our bookings.",
-          "following_context": "It just builds the best experience when you come direct. And we're really focused on making sure that the direct app experience is already frictionless, right?",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 110,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "4aea3680ac9e5cc579358285b0aaceeda2b94c5f0f9833b6e65f1174342c53d4",
+            "value_sha256": "a8025fd8010174ea1d12925117ea82d0aafa34bea9b456ab0cdfe461646e7a12"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "mean ride booking time",
           "period": null,
-          "value": "the mean ride time booking is less than a minute. It's actually 50 seconds",
           "value_num": null,
           "unit": null,
-          "verbatim": "So like the mean ride time booking is less than a minute. It's actually 50 seconds.",
-          "following_context": "That's how much time people spend on our app, and 75% of our rides are a single tap based on personalizing your destination based on the data that we have on you. Our mean -- if you look at the median time for an eater to reorder their favorite food, it's only 90 seconds. So we make sure that kind of coming to Uber doesn't require a bunch of toil. You can get in, you can get out. And because of the data that we have, where you're going, when you're going there, et cetera, we think we're going to have a ton of people come direct to our site.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 111,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "edb20535d01dba397396255c91b084f5fca9aaa0cc52b267027289b9bb54df2b",
+            "value_sha256": "55a073c52623db3a178e677b444a90b23dc139733df56dbe2400775af8f2b120"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "single-tap rides share",
           "period": null,
-          "value": "75% of our rides are a single tap based on personalizing your destination",
           "value_num": null,
           "unit": null,
-          "verbatim": "and 75% of our rides are a single tap based on personalizing your destination based on the data that we have on you.",
-          "following_context": "Our mean -- if you look at the median time for an eater to reorder their favorite food, it's only 90 seconds. So we make sure that kind of coming to Uber doesn't require a bunch of toil. You can get in, you can get out. And because of the data that we have, where you're going, when you're going there, et cetera, we think we're going to have a ton of people come direct to our site.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 75.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 111,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "b4fd00d5f5e68300d4e4b87a147df08a6f1100aedce5d56fe24d01a1fc92c025",
+            "value_sha256": "4df263e5f22931acbafaa0a6a1e1c7488ff8fb954837ef74b501a06cee231466"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "median eater reorder time",
           "period": null,
-          "value": "the median time for an eater to reorder their favorite food, it's only 90 seconds",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our mean -- if you look at the median time for an eater to reorder their favorite food, it's only 90 seconds.",
-          "following_context": "So we make sure that kind of coming to Uber doesn't require a bunch of toil. You can get in, you can get out. And because of the data that we have, where you're going, when you're going there, et cetera, we think we're going to have a ton of people come direct to our site.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 90.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 111,
+            "speaker": "Dara Khosrowshahi",
+            "quote_sha256": "39ac3af46c4b62e94d64a2e209914a3a2f2332cb66d844b5882967ad3af2e21c",
+            "value_sha256": "e8fee723baa14aff81130dd6d98200b4fcf338e605a3dd6f67ed4dfe8b59d120"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total trips in Halloween week",
           "period": null,
-          "value": "just around 320 million trips on Uber and Uber Eats",
           "value_num": null,
           "unit": null,
-          "verbatim": "we did just around 320 million trips on Uber and Uber Eats.",
-          "following_context": "The volumes coming from AI agents for Uber Eats were around 500 orders total. And for our rides business, it was a grand total of 4 trips that we fulfilled from agents. So it's very, very early and very limited traction that we've seen so far.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 320.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 116,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "a19da71798b8bf23cd53b522498fb5136dd0ecf8881dd00fdd6c2b752ec65ad9",
+            "value_sha256": "33fe922fd71ebc93d8db152b9075c296d42b6af758caa4dafeb78bd129fca685"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI agent order/trip volumes",
           "period": null,
-          "value": "around 500 orders total for Uber Eats and a grand total of 4 trips for rides",
           "value_num": null,
           "unit": null,
-          "verbatim": "The volumes coming from AI agents for Uber Eats were around 500 orders total. And for our rides business, it was a grand total of 4 trips that we fulfilled from agents.",
-          "following_context": "So it's very, very early and very limited traction that we've seen so far.",
           "source_ref": "CIQ transcript: Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 500.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Uber Technologies, Inc., Q3 2026 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "602f2a13f03f1b3f677048138f18ea5584dfb2f60ef16d85c652bee5627fe99d",
+            "paragraph": 116,
+            "speaker": "Balaji Krishnamurthy",
+            "quote_sha256": "e257c0a1dea0c460d2785c4c34a079c8cc84ec1579407d50360b99f0b46e7e6a",
+            "value_sha256": "f1720aed000041eb1624f6a8a57eb0030e329f34984cb8a8e212d4feba149115"
+          }
         }
       ],
       "qa_flags": [
@@ -15536,6 +16465,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

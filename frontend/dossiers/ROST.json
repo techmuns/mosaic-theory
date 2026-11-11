@@ -8999,265 +8999,637 @@
           "kind": "leading_indicator",
           "metric": "comparable store sales",
           "period": null,
-          "value": "up 21%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We delivered an outstanding quarter with total sales up 21% and earnings per share growth of 37%.",
-          "following_context": "The overall growth in total sales was driven by a very robust 17% increase in comparable store sales. While we attribute a portion of this growth to the increase in tax refunds versus last year, we are quite pleased that the underlying fundamentals of our growth were extremely healthy. The comp increase was primarily driven by growth in transactions, and we saw healthy increases in customer count on a comp store basis across income levels, ethnicities and all age groups, including the young customer.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 21.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 4,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "1dcb7961a9ca0c2fe1cab4c08db065c896677d7b7db7a413dc963e909b5441de",
+            "value_sha256": "7a14a6536434ce3dea6658bdb32a9dc6152bb0be75d3f7361b72b430244dc3c7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "comparable store sales",
           "period": null,
-          "value": "17% increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "The overall growth in total sales was driven by a very robust 17% increase in comparable store sales.",
-          "following_context": "While we attribute a portion of this growth to the increase in tax refunds versus last year, we are quite pleased that the underlying fundamentals of our growth were extremely healthy. The comp increase was primarily driven by growth in transactions, and we saw healthy increases in customer count on a comp store basis across income levels, ethnicities and all age groups, including the young customer.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 4,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "11e698facc2d423fc2379c92d0e94b164c2453e9ea8e66d4f41fe6ab2336c98c",
+            "value_sha256": "1a0f52432c5c23473fa595b01a2d2fa0b4dd7c07dee3c901771bba0546e4bd92"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "customer count on a comp store basis",
           "period": null,
-          "value": "double-digit increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "So we're seeing a double-digit increase in customer count on a comp store basis.",
-          "following_context": "We're seeing that very strong growth across all ethnicities, all age groups, including the young customer, all income levels. And then if you think about the flywheel concept of bringing more customers through marketing initiatives, great in-store environment, great merchandise selection, getting them in the store, converting shoppers into buyers with just compelling assortments and tidier stores and better in-store merchandising.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 26,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "f0a09253e427f25b0bfa06ebd767aedeb38c2ac149a6a3a0304f9a4cbbac600d",
+            "value_sha256": "a02c38e585df7ffa177374b03e23cd359f21de92f73643df4480b42f6e0ee025"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "consolidated inventories",
           "period": null,
-          "value": "up 12%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Consolidated inventories at the end of the quarter were up 12% and packaway represented 36% of total inventory compared with 41% last year.",
-          "following_context": "We are pleased with the overall level and composition of our inventory entering the second quarter. Turning to store growth. We expanded into new and existing markets and opened 13 new Ross and 4 dd's DISCOUNTS locations in the first quarter. We continue to plan for 5% unit growth for approximately 110 new stores this year comprised of about 85 Ross and 25 dd's. As usual, these numbers do not reflect our plans to close or relocate about 10 to 15 older stores.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 6,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "1e5faf6deeecc6bddf9d57ed8e1abcd13d66a68d6cb66308fdd16c4212342c94",
+            "value_sha256": "8095fedc1e60b4d32adf3ed2b24df5ab8bfaab52ee7aab931dfb332f723abbe0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "packaway as percent of total inventory",
           "period": null,
-          "value": "36% of total inventory compared with 41% last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Consolidated inventories at the end of the quarter were up 12% and packaway represented 36% of total inventory compared with 41% last year.",
-          "following_context": "We are pleased with the overall level and composition of our inventory entering the second quarter. Turning to store growth. We expanded into new and existing markets and opened 13 new Ross and 4 dd's DISCOUNTS locations in the first quarter. We continue to plan for 5% unit growth for approximately 110 new stores this year comprised of about 85 Ross and 25 dd's. As usual, these numbers do not reflect our plans to close or relocate about 10 to 15 older stores.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 36.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 41.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 6,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "1e5faf6deeecc6bddf9d57ed8e1abcd13d66a68d6cb66308fdd16c4212342c94",
+            "value_sha256": "edbb6c68b17bfc8950ff3187f0a8c4a80cb1014400560367abcb49d38528c422"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new store openings",
           "period": null,
-          "value": "13 new Ross and 4 dd's DISCOUNTS locations",
           "value_num": null,
           "unit": null,
-          "verbatim": "We expanded into new and existing markets and opened 13 new Ross and 4 dd's DISCOUNTS locations in the first quarter.",
-          "following_context": "We continue to plan for 5% unit growth for approximately 110 new stores this year comprised of about 85 Ross and 25 dd's. As usual, these numbers do not reflect our plans to close or relocate about 10 to 15 older stores.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 6,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "7a223157b43343fb2438603aa5e34726e977e719efbee815256256ee31242e78",
+            "value_sha256": "329f8f4bdfc74d3e232c23ec589344e2902f1cb63e2a0f1f0f629e3da3dd1a33"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "units per transaction",
           "period": null,
-          "value": "flat",
           "value_num": null,
           "unit": null,
-          "verbatim": "Flat. Yes, units per transaction were flat.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 57,
+            "speaker": "Michael J. Hartshorn",
+            "quote_sha256": "addafb1890afbdc599e137e40c698b58a70e2d67984cdeff62d86f654ed4e731",
+            "value_sha256": "5dc27af287fa554aa10fec9de8d724a7964572f1ffd24c2b00e1a3a860ce7679"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "New York area store count",
           "period": null,
-          "value": "12 stores in the New York area and have 2 locations in the first quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "we exited '25 with 12 stores in the New York area and have 2 locations in the first quarter.",
-          "following_context": "And those stores are doing very well for us.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 92,
+            "speaker": "Michael J. Hartshorn",
+            "quote_sha256": "cef3f3885f77daba589f85c9463906584432f42bc9e74318c89971f0d3071c1c",
+            "value_sha256": "db385b4122d3c6590851176caf9b01c2b7d8c1453eec5ef1de3e5e89e64059f9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new store productivity (percent of mature store)",
           "period": null,
-          "value": "70% to 75% of a mature store",
           "value_num": null,
           "unit": null,
-          "verbatim": "We gave you guidance for 70% to 75% of a mature store for the new stores this year.",
-          "following_context": "I'd say it's very early, but we hope to beat that number.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 75.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 82,
+            "speaker": "Michael J. Hartshorn",
+            "quote_sha256": "722d1673123770619665968155a43bbdfee63d05bb06b4dcfa4e45b6ab4f548d",
+            "value_sha256": "7c6869be72f7b9291750ad1eefdcfafc00d7daf05ac79ef6ba49713305239522"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "same-store sales growth record",
           "period": null,
-          "value": "the highest same-store sales growth in the company's 40-year history",
           "value_num": null,
           "unit": null,
-          "verbatim": "We were able to grow sales in the quarter by more than $1 billion and posted the highest same-store sales growth in the company's 40-year history.",
-          "following_context": "Thank you all for all of your hard work and for the fantastic execution on our new growth initiatives. At this point, we would like to open the call and respond to any questions that you may have. John?",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 17,
+            "speaker": "William W. Sheehan",
+            "quote_sha256": "6c6238cbc4651b3e69691fa2b8c2eb7a6addeaba23b5b41c5952460c9763197e",
+            "value_sha256": "3f2b0de9686fd01c50dbcd797e4a1b1c655f71ade5414fade650bc7078d6cc74"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "younger customer acquisition vs. other retailers",
           "period": null,
-          "value": "outperforming virtually every other retailer that we can track",
           "value_num": null,
           "unit": null,
-          "verbatim": "And then notably, the younger customer, that sort of very difficult to attract 18- to 24-year-old customer, we're just outperforming virtually every other retailer that we can track.",
-          "following_context": "So those 2 pieces, if you're looking for nuances, that younger customer has really gravitated towards us, which is -- has been part of the strategy and is really starting to take root.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Ross Stores, Inc., Q1 2027 Earnings Call, May 21, 2026.rtf",
+            "transcript_sha256": "842c74e5006887fcac15fd5b03b8c62de8433a79c70f3dd249f82dd98f0590fa",
+            "paragraph": 128,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "b5f9c9f66943409989bf70d31ca0f7428f0d2d4ae062d20d49caab4cb36b32cf",
+            "value_sha256": "abedf3e85ec0b411e00cbadfca13b39add00e46fde8e0268f4f17bcfe0c7c9c7"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "average unit retail (AUR)",
           "period": null,
-          "value": "very modest AUR increases ... low single digit",
           "value_num": null,
           "unit": null,
-          "verbatim": "For the back half of the year, you'll likely see some very modest AUR increases sort of at the same sort of levels that we're seeing now, low single digit.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its value states no figure and is not the words of its quote",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 115,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "9a44cae87b6bcbc586ae193402ef407ea88b594ba545a428d1089e1ea5bc8665",
+            "value_sha256": "a6f3a0125f13d0c06e66ae63fb7cfc6d5a98bb7a5dd51912d84c3e2f39970c33"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "comparable store sales",
           "period": null,
-          "value": "10% comparable store sales growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are extremely pleased with the 10% comparable store sales growth we delivered in the second quarter, marking the second quarter in a row with double-digit comp growth.",
-          "following_context": "Sales were strong in May and improved sequentially each month with July delivering our strongest performance despite cycling a strong back-to-school performance last year. Customer traffic once again served as a primary driver of our comparable store sales increase, which underscores the durability of our growth and the momentum we are building. We believe the increased traffic reflects the effectiveness of our customer acquisition efforts.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 3,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "7ff313c723991295111e15bdc9f49b807c15bdc385ea0c9737942b027e160594",
+            "value_sha256": "9193a3b888ec96b1ab01577c8f382719bf90014d8e23150add710c3fdc139e6e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total sales",
           "period": null,
-          "value": "grew 13% to $6.3 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total sales for the period grew 13% to $6.3 billion, with comparable store sales increasing 10%.",
-          "following_context": "As Jim mentioned earlier, the double-digit comp growth was primarily driven by an increase in the number of transactions. Gross margin improved by 625 basis points, driven primarily by 405 basis points of tariff refunds. Merchandise margin increased by 110 basis points, while distribution costs were lower by 100 basis points given favorable timing of packaway-related expenses, higher productivity and as we anniversaried last year's tariff-related processing costs.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 6.3,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 11,
+            "speaker": "William W. Sheehan",
+            "quote_sha256": "2a2f440b230060aea539fdc761f1aa327b4d34933ffac1e6849ad855d3426da4",
+            "value_sha256": "3023d0df02e64885225ba36b00ff03897f817db5fb51c603e37bfe914b65607e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "consolidated inventories",
           "period": null,
-          "value": "increased 18%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Consolidated inventories at quarter end increased 18%.",
-          "following_context": "Packaway represented 36% of total inventory compared with 38% last year. We are leveraging our inventory position to not only meet the demand of higher customer traffic in our stores, but also to broaden our merchandise offerings on the selling floor across our store base. These efforts are leading to higher sales and improved merchandise margins while maintaining fast inventory turns. We are pleased with both the level and composition of our inventory and continue to have plenty of flexibility to capitalize on closeout opportunities as we enter the fall season.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 18.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 6,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "e28a5fba5b8ac0969357b3754f319e79e590b29961d437aafa6e7b79c182a5e7",
+            "value_sha256": "887a4b9bfe9923c5e9dc4041cdfb1742892737629a22c37212742715679228db"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "packaway as percent of total inventory",
           "period": null,
-          "value": "36% of total inventory compared with 38% last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Packaway represented 36% of total inventory compared with 38% last year.",
-          "following_context": "We are leveraging our inventory position to not only meet the demand of higher customer traffic in our stores, but also to broaden our merchandise offerings on the selling floor across our store base. These efforts are leading to higher sales and improved merchandise margins while maintaining fast inventory turns. We are pleased with both the level and composition of our inventory and continue to have plenty of flexibility to capitalize on closeout opportunities as we enter the fall season.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 36.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 38.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 6,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "929bc0f3b6e6db208b7677e038226107c12bbdcb6220da7177fe82aa7f692303",
+            "value_sha256": "d2bed7426d6bbd451efcb1899781c3cae99ba68f03b64a81c5e821b3fd94a4c6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "comparable store sales (first half)",
           "period": null,
-          "value": "up 13%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Comparable store sales for the first half of 2026 were up 13% and earnings per share were $4.69 compared to $3.03 for the first half of 2025.",
-          "following_context": "As a reminder, both the second quarter and first 6 months results in 2026 include $253 million or approximately $0.60 in earnings per share of tariff refunds.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 13,
+            "speaker": "William W. Sheehan",
+            "quote_sha256": "3f84a2b76a4ebc3b247b62b9cdb3fe0e2addba41f3ec3cdf2b356ba0bb7b841a",
+            "value_sha256": "4cf42b99b93fbc7566021ca4fef8c6c6873d7c167bcba269e7f3dc6801b1f79d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "total sales (first half)",
           "period": "first 6 months of 2026",
-          "value": "grew 17% to $12.3 billion, up from $10.5 billion in the prior year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sales for the first 6 months of 2026 grew 17% to $12.3 billion, up from $10.5 billion in the prior year.",
-          "following_context": "Comparable store sales for the first half of 2026 were up 13% and earnings per share were $4.69 compared to $3.03 for the first half of 2025. As a reminder, both the second quarter and first 6 months results in 2026 include $253 million or approximately $0.60 in earnings per share of tariff refunds.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 12.3,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.5,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 13,
+            "speaker": "William W. Sheehan",
+            "quote_sha256": "abe22246bb4fdca4617186383f30b8b7ef60d7be391ca0c6826c082b01066d49",
+            "value_sha256": "01d1a9ff0f14047a025f84445ca2ccdcd9fdf7ac5064ee05fa51419a39b89763"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "comp growth vs. other off-price players",
           "period": "last 4 quarters",
-          "value": "we've grown stronger than each of the other 2 players",
           "value_num": null,
           "unit": null,
-          "verbatim": "just mathematically, over the last 4 quarters, we've grown stronger than each of the other 2 players. So mathematically, we've captured more share.",
-          "following_context": "So of the off-price retail market, we're a bigger piece than we were a year ago because we've outgrown them.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 185,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "19d8b94807f14302de0dd4a8bc59b65fde982e798e6a363def681aa7764db709",
+            "value_sha256": "d3f12aefd03f18e91300c4eef53e9477d38666b10073a13326bf53e4673e5dcb"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "average unit retail (AUR)",
           "period": null,
-          "value": "some very modest AUR increases ... low single digit",
           "value_num": null,
           "unit": null,
-          "verbatim": "For the back half of the year, you'll likely see some very modest AUR increases sort of at the same sort of levels that we're seeing now, low single digit.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its value states no figure and is not the words of its quote",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 115,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "9a44cae87b6bcbc586ae193402ef407ea88b594ba545a428d1089e1ea5bc8665",
+            "value_sha256": "709044cb3bbab737e6cfeeeb98ca55f09aacec25c9149acebe5b04a4d0397281"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "home category comp growth",
           "period": null,
-          "value": "growth in mid-teens",
           "value_num": null,
           "unit": null,
-          "verbatim": "So we've seen particular strength in both Ross and dd's and even really unique strength in sort of the more fashionable parts of home, decorative home and housewares and with that growth in mid-teens.",
-          "following_context": "So hats off to Gurmeet and his team. From a ladies perspective, the ladies business continues to be very strong. We didn't call it out, so it's not one of the top 2, but you often kind of remind us of how that was part of the brand strategy, et cetera.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 147,
+            "speaker": "James G. Conroy",
+            "quote_sha256": "c7e4947b4ebdc9ce0409312e85ad6d8010dddb988b77d01807d7cb7ef364b8fc",
+            "value_sha256": "0f23124cf01150542045a0039d77fd834d011455c1c3bd61e56ab0a74bef6d35"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new store productivity (percent of mature store)",
           "period": null,
-          "value": "70% to 75% ... they're running ahead of that",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our overall new store performance this year, we had planned the year around 70% to 75%. We have half of the fleet in place this year, and they're running ahead of that.",
-          "following_context": "So we'll see how the fall openings do. But we're very excited about growth, growth in the Northeast. You also mentioned store size. We really haven't changed our store size, but it's on a site-by-site basis. Sometimes we'll take on more real estate and sometimes less than the average. But we're really excited about our expansion opportunities.",
           "source_ref": "CIQ transcript: Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 75.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Ross Stores, Inc., Q2 2027 Earnings Call, Aug 20, 2026.rtf",
+            "transcript_sha256": "8db6aa9429a2a256d3fc39a9a552609231420c4be4192df8f1a77bef6c5c2b02",
+            "paragraph": 151,
+            "speaker": "Michael J. Hartshorn",
+            "quote_sha256": "00b8712e95fc8c6b793dff7c4a267d725283241cc6ba187c1f91df8a53b156e6",
+            "value_sha256": "6dd516f57cb1d313e7280ae85de8743bdf242d2e44fbd45a2bb58fe472e2c6c2"
+          }
         }
       ],
       "qa_flags": [
@@ -14393,6 +14765,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],
