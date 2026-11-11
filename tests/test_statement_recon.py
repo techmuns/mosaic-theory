@@ -266,8 +266,10 @@ def _tjx_doc(block: dict[str, Any] | None = None) -> dict[str, Any]:
         "rows": [{"label": "Revenue ($M)", "values": [60372.0, 62363.0, 64000.0]}]}}}
     if block is not None:
         fs["statement_reconciliation"] = block
+    # a page states the date its facts are cut at (`refresh.statement_recon_transform` refuses one
+    # that states none); with no stored close it is the reference date, as every committed page's
     return {"ticker": "TJX", "cik": "0000109198", "assembled_at": "2026-10-21T11:18:48Z",
-            "mechanical": {"financial_summary": fs}}
+            "reference_date": "2026-10-16", "mechanical": {"financial_summary": fs}}
 
 
 def _tjx_figures(nudge: float = 0.0) -> list[sr.CiqFigure]:
