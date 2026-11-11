@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import types
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -499,3 +500,47 @@ def test_a_close_names_the_one_open_decision_of_a_candidate(tmp_path: Path) -> N
                                exit_price_as_of=date(2026, 11, 11), reason="test",
                                closed_at=datetime(2026, 11, 11, 13))
     assert (close.entry_id, close.closes_entry_id) == ("C-GOOGL-2", "V-GOOGL-2")
+
+
+# --- the vote rule's paid confirmation (#982) never runs for a log the id scheme refuses ---------
+
+def test_a_log_on_an_open_decision_is_refused_before_the_confirmations_draws(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """`vinci log-verdict GOOGL` while V-GOOGL is open can never land (`next_decision_id`), and the
+    confirmation (#982) draws ten paid syntheses before the write. So the open decision is refused
+    FIRST: nothing drawn, nothing written. Once the decision is voided, the same log reaches the
+    confirmation (the negative pin), as any fresh decision does."""
+    from vinci import cli
+    data = tmp_path / "data"
+    shutil.copytree(ROOT / "data" / "snapshots", data / "snapshots")
+    (data / "snapshots" / "decision_ledger.jsonl").write_text(
+        "".join(json.dumps(r) + "\n" for r in _raw(False)))
+    cfg = Config(data_dir=data)
+    cfg.ensure_dirs()
+    with _store(tmp_path / "s"):
+        pass
+    shutil.copy(tmp_path / "s" / "l.db", cfg.db_path)
+    drawn: list[str] = []
+
+    class _ReachedError(Exception):
+        pass
+
+    def _seal(_cfg: Config, _args: argparse.Namespace, ticker: str) -> Any:
+        drawn.append(ticker)
+        raise _ReachedError
+    monkeypatch.setattr(cli, "get_config", lambda: cfg)
+    monkeypatch.setattr(cli.EntityResolver, "from_config", classmethod(lambda c, _cfg=None: None))
+    monkeypatch.setattr(cli, "_confirm_seal", _seal)
+    monkeypatch.setattr(cli, "_screen_id_book_conflict", lambda *_a: None)
+    monkeypatch.setattr(cli, "_followed_identity",
+                        lambda *_a: (types.SimpleNamespace(ticker="GOOGL"), "quality"))
+    monkeypatch.setattr(cli, "require_edge_basis", lambda *_a, **_k: "")
+    monkeypatch.setattr(cli, "_committed_ev_gap", lambda *_a: None)
+    args = argparse.Namespace(candidate_id="GOOGL", ref=None, dry_run=True)
+    assert cli._cmd_log_verdict(args) == 1
+    assert drawn == []
+    with Store(cfg.db_path) as store:
+        _void(store)
+    with pytest.raises(_ReachedError):
+        cli._cmd_log_verdict(args)
+    assert drawn == ["GOOGL"]

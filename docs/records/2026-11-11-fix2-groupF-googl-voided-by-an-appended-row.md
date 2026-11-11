@@ -76,8 +76,21 @@ superseded-by:
   - A close, correction or void is named from its DECISION's id (`follow_up_id`): `C-GOOGL-2` for
     the second decision. Every committed row keeps its id (pinned over the corpus).
   - `close_position` by candidate names the one open decision.
-  - `log_verdict` changes in its one id line only. The vote-rule session's step-4 PR changes the
-    same function, so one rebase is expected.
+  - `log_verdict` changes in its one id line only. **The vote rule (#982) merged first**, adding
+    its ten-draw confirmation, `machine_tally` and the transcript check to `log_verdict` and
+    `log-verdict`. Main merged here with no textual conflict, and both hold: `log_verdict` carries
+    `next_decision_id` and `machine_tally`, and none of #982's lines is dropped.
+  - **The confirmation's paid draws never run for a log the id scheme refuses.** `log-verdict`
+    drew the ten syntheses BEFORE `log_verdict`'s write, so a log on a candidate with an open
+    decision would spend them and then be refused. `next_decision_id` is now asked first.
+    - `test_a_log_on_an_open_decision_is_refused_before_the_confirmations_draws` failed on the
+      merge: the confirmation was reached.
+    - Once the decision is voided, the same log reaches the confirmation, as any fresh decision
+      does.
+  - **A void needs no confirmation.** It is not a verdict and never calls it. A fresh GOOGL
+    decision goes through it like any other. GOOGL's committed page is one of the backfilled pages
+    the confirmation refuses ("cannot identify" its transcripts; #982 pins exactly this), so a
+    fresh GOOGL decision needs that page rebuilt first.
 
 **WHY.** The operator's ruling above. The mechanism is generic, but only a ruling applies it:
 `--reason` and `--ruled-on` are required, and the void is appended through the command, never by

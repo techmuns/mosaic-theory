@@ -41,6 +41,7 @@ from vinci.eod.splits import (
 )
 from vinci.eod.tiingo import TIINGO_LEAD
 from vinci.ledger import LedgerError, log_verdict
+from vinci.ledger.workflow import next_decision_id
 from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
 from vinci.monitor import read_assignments_file as mon_assignments
 from vinci.orchestrator import (
@@ -1692,6 +1693,11 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
     resolver = EntityResolver.from_config(cfg)  # sources the name's EDGAR SIC → sector at log time
     with Store(cfg.db_path) as store:
         try:
+            # A CANDIDATE WITH AN OPEN DECISION IS REFUSED FIRST (#984 × #982). `log_verdict` takes
+            # its id from `next_decision_id`, which refuses while an earlier decision is open; the
+            # vote rule's confirmation below draws ten paid syntheses BEFORE that write, so asking
+            # it here keeps a log that can never land from spending anything.
+            next_decision_id(store, args.candidate_id)
             cand = store.get_candidate(args.candidate_id)
             if cand is not None and (
                 clash := _screen_id_book_conflict(cfg, cand.data_record.identity.ticker)
