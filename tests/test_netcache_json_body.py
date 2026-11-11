@@ -108,3 +108,21 @@ def test_get_text_still_caches_any_200_body(tmp_path: Path) -> None:
     url = "https://data.sec.gov/submissions/CIK0000749251-submissions-001.json"
     assert http.get_text(url, ttl_seconds=86_400) == INTERSTITIAL
     assert http.get_text(url, ttl_seconds=86_400) == INTERSTITIAL and sec.page_requests == 1
+
+
+def test_a_rejected_copy_whose_refetch_fails_states_no_fetch_time(tmp_path: Path) -> None:
+    """Review round 0: a non-JSON copy on disk is refused, and SEC then answers with an error. The
+    read raises, and `fetched_at` must not go on stating the refused copy's fetch time as if a
+    readable copy were held."""
+    def down(_request: httpx.Request) -> httpx.Response:
+        return httpx.Response(404, text="not served")
+
+    http = CachedHttp(cache_dir=tmp_path, user_agent="test test@example.com",
+                      min_interval_sec=0.0, namespace="sec")
+    http._client = httpx.Client(transport=httpx.MockTransport(down))  # noqa: SLF001
+    url = "https://data.sec.gov/submissions/CIK0000749251-submissions-001.json"
+    http._write_cache(url, INTERSTITIAL)            # noqa: SLF001
+    http._fetched.clear()                           # noqa: SLF001 — a fresh process
+    with pytest.raises(HttpError):
+        http.get_json(url, ttl_seconds=86_400)
+    assert url not in http._fetched                 # noqa: SLF001

@@ -24,6 +24,7 @@ import json
 import os
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC
 from pathlib import Path
@@ -286,15 +287,7 @@ class CachedHttp:
         ``ttl_seconds=None`` means cache forever (use for immutable resources); a number means
         refetch once the cached copy is older than that.
         """
-        full_url = self._with_params(url, params)
-        cached = self._read_cache(full_url, ttl_seconds)
-        if cached is None:
-            cached = self._fetch_with_retries(full_url)
-            self._write_cache(full_url, cached)
-        # EVERY RESPONSE RETURNED IS AN INPUT, cached or fetched (`vinci.provenance`): recorded
-        # only while a build's recorder is open, and never changing what is returned
-        provenance.note_http(self._namespace, full_url, cached, self._fetched.get(full_url))
-        return cached
+        return self._get(url, ttl_seconds=ttl_seconds, params=params, check=None)[0]
 
     def get_json(
         self,
@@ -310,19 +303,32 @@ class CachedHttp:
         not be read" until it expired. Now the parse comes first: a non-JSON body raises the same
         ``ValueError`` it did, with nothing written, and a non-JSON copy already on disk is a miss,
         fetched again."""
+        return self._get(url, ttl_seconds=ttl_seconds, params=params, check=json.loads)[1]
+
+    def _get(self, url: str, *, ttl_seconds: float | None, params: dict[str, Any] | None,
+             check: Callable[[str], Any] | None) -> tuple[str, Any]:
+        """The one read path of `get_text` and `get_json`: the on-disk copy when fresh, else a
+        fetch that is written. ``check`` (`get_json`'s parse) runs BEFORE the write, so a body it
+        refuses raises with nothing cached; a cached copy it refuses is a miss, its fetch time
+        forgotten. Returns (text, check(text) or None)."""
         full_url = self._with_params(url, params)
         cached = self._read_cache(full_url, ttl_seconds)
-        if cached is not None:
+        value: Any = None
+        if cached is not None and check is not None:
             try:
-                value = json.loads(cached)
+                value = check(cached)
             except ValueError:
-                cached = None                 # cached before bodies were checked: refetch it
+                cached = None                     # cached before bodies were checked: refetch it
+                self._fetched.pop(full_url, None)
         if cached is None:
             cached = self._fetch_with_retries(full_url)
-            value = json.loads(cached)        # raises BEFORE the write: nothing is cached
+            if check is not None:
+                value = check(cached)             # raises BEFORE the write: nothing is cached
             self._write_cache(full_url, cached)
+        # EVERY RESPONSE RETURNED IS AN INPUT, cached or fetched (`vinci.provenance`): recorded
+        # only while a build's recorder is open, and never changing what is returned
         provenance.note_http(self._namespace, full_url, cached, self._fetched.get(full_url))
-        return value
+        return cached, value
 
     def fetched_at(self, url: str, *, params: dict[str, Any] | None = None) -> float | None:
         """When the cached copy of ``url`` was fetched (epoch seconds), or None when no readable
