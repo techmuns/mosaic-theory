@@ -12,7 +12,7 @@ superseded-by:
 **WHAT.**
 - **The sweep.** It covers every `docs/records/*.md` reading `status: open` on main `cbefc245`, 82 in all: 79 open on `2637e91b`, where the sweep began, plus three added by #971, #1009 and #972, which merged before it finished. Each is flipped to `shipped`, `recorded` or `superseded`, or kept `open`, by the rule below. The decision and evidence for each of the 82 are in the table at the end.
   - The only existing line changed in any record is its front-matter `status:`.
-  - 33 of the `shipped` records had an empty `prs:` and no amendments heading. Each gains one appended `## Amendments` entry naming its PR, because `tests/test_records_ledger.py::test_a_shipped_record_names_the_pr_that_carried_it` refuses a shipped record with neither. The README allows nothing else after merge.
+  - 32 of the `shipped` records had an empty `prs:` and no amendments heading. Each gains one appended `## Amendments` entry naming its PR, because `tests/test_records_ledger.py::test_a_shipped_record_names_the_pr_that_carried_it` refuses a shipped record with neither. The README allows nothing else after merge.
 - **The lint**, `tests/test_record_status_matches_open_now.py`. A record reading `status: open` must be cited by filename in a numbered row of §5.0 OPEN NOW, outside struck (`~~…~~`) text. It failed first on `2637e91b`, naming 27 records, and passes after the sweep. On `cbefc245`, before the last flip, it names 1: #972's record. Incident → invariant, shipped Y.
 
 **THE RULE THE SWEEP APPLIED.**
@@ -46,7 +46,7 @@ Every flip rests on its merged PR. `gh pr view` reads each of the 81 PRs as MERG
 - **The lint checks one direction.** An open row may cite a shipped record as background, so "cited ⇒ open" is not pinned. Whether a cited record's item is still open is a judgment. It was made here for each of the 52 cited records: 14 kept, 38 flipped. *Falsifier:* a kept record whose row's item has closed, or a flipped one whose own item is still open.
 - **PRs in flight.** At its head, #1006 adds a record reading `status: open` that no open row cites. #971's, #1009's and #972's merged while this was open, and are swept here. Once this merges, each needs `shipped` at merge, or a citation in the row that tracks it, before its re-sync passes. A new build record is written `shipped`, as A's bookkeeping records already are.
 - **§5.0's prose lines do not count.** The cohort falsifier (#507) is named only in §5.0's "PRE-REGISTERED, WAITING ON DATA" line, which calls it "not a build". So it is `recorded`, and its readout will be a record of its own.
-- **33 appended amendments** are what flipping an empty-`prs:` record honestly costs. The alternative, `recorded`, would call a merged code change something that only happened and was written down.
+- **32 appended amendments** are what flipping an empty-`prs:` record honestly costs. The alternative, `recorded`, would call a merged code change something that only happened and was written down.
 - **Three partial fixes are `shipped`**: #962 (RE2-D6), #966 (RE2-D10) and #976 (RE2-D20). Their remaining halves are `in progress` rows in the fix log, under row 60.
 
 ## The 79 decisions
