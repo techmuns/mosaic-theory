@@ -3,9 +3,10 @@ name: validate-keys
 # On-demand check that the API-key SECRETS are set + valid in GitHub Actions, WITHOUT running
 # the pipeline. Cheap (one trivial ping per service), no commits, no side effects. Run it from the
 # Actions tab ("Run workflow") any time — e.g. after rotating a key. Required keys (Polygon,
-# Anthropic, the four R2 values) failing turns the run red, and so does an optional key that is SET
-# and refused (Tiingo); SEC_USER_AGENT is optional and only reported. Every secret a workflow reads
-# is checked here (tests/test_theme_intelligence_open_leads.py).
+# Anthropic, the four R2 values) failing turns the run red, and so does an optional value that is
+# SET and refused (Tiingo; SEC_USER_AGENT, checked against vinci's own rule with no request sent —
+# fix request 2, RE1-D17). Every secret a workflow reads is checked here
+# (tests/test_theme_intelligence_open_leads.py).
 on:
   workflow_dispatch: {}
 

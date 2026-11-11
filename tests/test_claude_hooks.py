@@ -105,6 +105,24 @@ def test_guard_protects_the_hooks_and_the_ci_gate_themselves() -> None:
         assert json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask", path
 
 
+def test_guard_protects_the_gates_configuration_and_the_grader() -> None:
+    """RH-D7 and RG-D18 (fix request 2). The guard covered the hooks, the workflows and bin/commit
+    but not what configures the gate (pyproject's pytest/ruff/mypy settings, the suite's conftest,
+    the CI key check) nor the grader a prompt change is judged by (vinci/evals and its gold sets) —
+    an agent could weaken either without a prompt. NEGATIVE: a test or an ordinary fixture is not
+    protected, so the prompt stays rare enough to be read."""
+    for path in ("pyproject.toml", "tests/conftest.py", ".github/scripts/validate_keys.py",
+                 "vinci/evals/metrics.py", "vinci/evals/synthesis_gap_types.json",
+                 "vinci/evals/synthesis_panel.json",
+                 "tests/fixtures/synthesis_gap_gold/adjudication.jsonl",
+                 "tests/fixtures/synthesis_gold/MANIFEST.json"):
+        out = _edit(path, _session())
+        assert json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask", path
+    for path in ("tests/test_sleeves.py", "tests/fixtures/ciq_reader_contract.json",
+                 "vinci/evalsx.py"):
+        assert _edit(path, _session()).stdout == "", path
+
+
 def test_guard_asks_once_per_file_per_session_and_only_after_an_approved_edit() -> None:
     session = _session()
     assert _edit("vinci/scoring/harness.py", session).stdout          # asks
@@ -272,6 +290,17 @@ def test_review_gate_does_not_gate_a_docs_or_data_branch(tmp_path: pathlib.Path)
     for changed in ("docs/records/x.md", "data/snapshots/x.jsonl", "STATE.md"):
         repo = _branch_checkout(tmp_path / changed.replace("/", "_"), changed)
         assert _create(repo, []).returncode == 0, changed
+
+
+def test_review_gate_gates_a_pr_that_moves_only_the_grader(tmp_path: pathlib.Path) -> None:
+    """RG-D18's second half (fix request 2): the grader's gap types and panel and its gold sets
+    are JSON, which the code rule did not count, so a PR moving only them skipped /code-review and
+    Codex. They count now; the docs-and-data test above is the negative half."""
+    for changed in ("vinci/evals/synthesis_gap_types.json", "vinci/evals/synthesis_panel.json",
+                    "tests/fixtures/synthesis_gap_gold/adjudication.jsonl",
+                    "tests/fixtures/synthesis_gold/MANIFEST.json"):
+        repo = _branch_checkout(tmp_path / changed.replace("/", "_"), changed)
+        assert _create(repo, []).returncode == 2, changed
 
 
 def test_review_gate_ignores_every_other_command(tmp_path: pathlib.Path) -> None:
