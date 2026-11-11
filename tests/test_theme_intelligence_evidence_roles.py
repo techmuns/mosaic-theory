@@ -285,7 +285,10 @@ def _memory_hyp(text: str, *, direction: str, geography: str = "US", period: str
     art = Hypo(slug=f"mem-{direction}-{geography}-{period}-{node[-6:]}".lower().replace(" ", ""),
                publisher="Hypo Research A", published=date(2026, 3, 2),
                blocks=[("paragraph", text)])
-    x = extraction([claim("c1", "b001", text.rstrip("."), "memory price change", value=15,
+    # a fall the text states reads NEGATIVE (RG-D21: "fell 15%" stored +15 is a wrong sign, and the
+    # number check now refuses it)
+    x = extraction([claim("c1", "b001", text.rstrip("."), "memory price change",
+                          value=-15 if " fell " in f" {text} " else 15,
                           value_text="15%", unit="%", period=period)],
                    [hyp("h1", f"memory pricing {direction}", node=node, mechanism=mechanism,
                         direction=direction, geography=geography, supporting=["c1"])])

@@ -113,6 +113,7 @@ from vinci.edgar.concepts import (
     fiscal_calendar,
     foreign_currency,
     points_for_tag,
+    served_series,
     superseded,
 )
 from vinci.edgar.net_debt import not_applicable
@@ -297,10 +298,12 @@ def _at_latest_close(record: DataRecord, store: Store, edgar: EdgarClient) -> Da
                  f"{bar.bar_date.isoformat()} close")
         pct = pe
     else:
-        annual_eps = [p for p in extract_points(facts, "eps_diluted", currency=REPORTING,
-                                                as_of=bar.bar_date) if p.is_annual]
+        # THE ALIAS SERVED ON EACH BAR'S DAY, the latest close's included (RE1-D10): the walk read
+        # every row of the blob, so a re-tag filed after a bar decided which alias that bar read
+        history = served_series(facts, "eps_diluted", currency=REPORTING, as_of=bar.bar_date)
+        annual_eps = [p for p in history.on(bar.bar_date) if p.is_annual]
         pe, pct = pe_current_and_percentile(bars, annual_eps, reference_date=bar.bar_date,
-                                            ads=record.ads)
+                                            ads=record.ads, history=history)
     return record.model_copy(update={
         "prices": record.prices.model_copy(update={"last": last}),
         "fundamentals": f.model_copy(update={"pe": pe, "pe_pctile_vs_history": pct})})
@@ -4004,8 +4007,14 @@ def compose_insider_line(
             return "0"
         usd = sum(x for ln in rows if (x := ln.usd) is not None)
         people = len({ln.who for ln in rows})
-        return (f"{len(rows)} ({people} insider{'s' if people != 1 else ''}"
-                + (f", ${usd / 1e6:.2f}M)" if usd else ")"))
+        # A LINE WITH NO PRICE IS NOT IN THE TOTAL, AND THE TOTAL SAYS SO (audit RD-D2). The count
+        # holds every line while the dollars hold only the priced ones, so "2 ($0.50M)" read as two
+        # sales worth $0.50M when one of them stated no price — the wall total's rule (D-D4).
+        gap = sum(1 for ln in rows if ln.usd is None)
+        unpriced = f"{gap} with no price stated" if gap else ""
+        dollars = (f", ${usd / 1e6:.2f}M" + (f" + {unpriced}" if gap else "") if usd
+                   else f", {unpriced}" if gap else "")
+        return f"{len(rows)} ({people} insider{'s' if people != 1 else ''}{dollars})"
 
     def _amount(ln: Form4Line) -> str:
         return f"${ln.usd / 1e6:.2f}M, " if ln.usd else ""
@@ -4036,12 +4045,23 @@ def compose_insider_line(
             return f"no {label} in the {_INSIDER_SCAN_DAYS // 365}y scanned"
         latest = max(rows, key=lambda r: r.on or date.min)
         out = _event(latest, f"last {label}")
-        biggest = max(rows, key=lambda r: r.usd or 0.0)
+        # ONLY A PRICED LINE IS RANKED (audit RD-D2). Ranking a line with no price as $0 meant a
+        # larger unpriced sale was never the largest, and nothing said one had been passed over:
+        # the largest is named among the priced lines, and the unpriced ones are counted beside it.
+        priced = [r for r in rows if r.usd is not None]
+        gap = len(rows) - len(priced)
+        biggest = max(priced, key=lambda r: r.usd or 0.0) if priced else latest
         # SUPPRESSED WHEN IT RENDERS THE SAME. AORT's two largest buys differ by cents and both
         # print "$0.26M", so the second clause repeated a number the reader cannot tell apart —
         # noise dressed as a finding. Compared at the PRECISION SHOWN, not the underlying float.
         if biggest is not latest and _amount(biggest) != _amount(latest):
-            out += f" · largest {label} " + _event(biggest, "").lstrip()
+            out += (f" · largest {'priced ' if gap else ''}{label} "
+                    + _event(biggest, "").lstrip())
+        # "1 OF 2", so the clause counts the set and never reads as one more sale; "not ranked"
+        # only where a largest was named for it to be left out of
+        if gap:
+            out += (f" · {gap} of {len(rows)} {label}{'s' if len(rows) != 1 else ''} with no "
+                    f"price stated" + (", not ranked" if priced else ""))
         return out
 
     counts: dict[str, int] = {}

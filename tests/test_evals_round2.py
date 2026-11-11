@@ -31,9 +31,38 @@ ROOT = Path(__file__).resolve().parents[1]
 FREEZE = rp.load_panel_file()["freeze_ref"]
 
 
-def _full_history() -> bool:
-    return subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e", f"{FREEZE}^{{commit}}"],
-                          capture_output=True).returncode == 0
+def _full_history(root: Path = ROOT, ref: str = FREEZE) -> bool:
+    """What `pn.motivated_from_git` needs: the freeze commit reachable AND the clone not shallow.
+    It raises on ANY shallow repository, so a shallow clone that happens to hold the freeze commit
+    errored here instead of skipping (fix request 2, RH-D5 = RG-D22)."""
+    git = ["git", "-C", str(root)]
+    shallow = subprocess.run([*git, "rev-parse", "--is-shallow-repository"],
+                             capture_output=True, text=True).stdout.strip()
+    return shallow == "false" and subprocess.run(
+        [*git, "cat-file", "-e", f"{ref}^{{commit}}"], capture_output=True).returncode == 0
+
+
+def test_a_shallow_clone_holding_the_freeze_commit_is_not_full_history(tmp_path: Path) -> None:
+    """RH-D5, both halves on a real three-commit repository: its full clone holds history; a
+    depth-2 clone holds the freeze commit and is still NOT full history, so the motivated-set tests
+    skip there rather than raise. Negative: a ref the clone does not hold is not full history."""
+    full = tmp_path / "full"
+    git = ["git", "-C", str(full), "-c", "user.email=t@t", "-c", "user.name=t"]
+    subprocess.run(["git", "init", "-q", str(full)], check=True)
+    for n in ("a", "b", "c"):
+        (full / n).write_text(n)
+        subprocess.run([*git, "add", n], check=True)
+        subprocess.run([*git, "commit", "-qm", n], check=True)
+    freeze = subprocess.run([*git, "rev-parse", "HEAD~1"], capture_output=True, text=True,
+                            check=True).stdout.strip()
+    shallow = tmp_path / "shallow"
+    subprocess.run(["git", "clone", "-q", "--depth", "2", f"file://{full}", str(shallow)],
+                   check=True)
+    assert _full_history(full, freeze)
+    assert not _full_history(shallow, freeze)
+    assert subprocess.run(["git", "-C", str(shallow), "cat-file", "-e", f"{freeze}^{{commit}}"],
+                          capture_output=True).returncode == 0, "the clone must hold the commit"
+    assert not _full_history(full, "0" * 40)
 
 
 @pytest.fixture(scope="module")

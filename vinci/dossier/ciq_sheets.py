@@ -2047,17 +2047,150 @@ def return_ratios(bundle: CiqBundle) -> Sourced[FinTable]:
         else:  # leverage/liquidity — table-only display (no chart series)
             xcells = [f"{v:.2f}x" if v is not None else "—" for v in vals]
             rows.append(FinRow(label=disp, cells=xcells))
-    dvi = _find_row(rat, "Dividend per Share")
-    if dvi is not None:  # NA across ⇒ "none"; a figure ⇒ the per-share dividend. Table-only.
-        dvals = [clean_num(rat[dvi][c]) if c < len(rat[dvi]) else None for c in cols]
-        cells = [f"{v:.2f}" if v is not None else "none" for v in dvals]
+    dps = _dividend_per_share(bundle, rat[hdr], cols)
+    if dps is not None:  # a figure ⇒ the per-share dividend; "none" ONLY where CIQ states none
+        # 'NA' is NOT STATED, never no dividend (operator ruling 2026-11-11 on #967's Codex P1): a
+        # cell CIQ marks, a column the Income Statement does not state, read "—"
+        cells = [f"{d.value:.2f}" if d.value else "none" if d.no_dividend else "—" for d in dps]
         rows.append(FinRow(label="Dividend/sh", cells=cells))
     if not any(r.values for r in rows):  # no charted return-ratio row survived → not an exhibit
         return Sourced.unknown(note="Ratios: no return-ratio (RoE/RoCE/RoA) row with values")
     return Sourced.present(
-        FinTable(columns=columns, rows=rows, is_estimate=[False] * len(columns)),
-        source_ref="CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)",
+        # THE NOTES ARE THE TABLE'S OWN (review round 0): the renderers print `FinTable.note` under
+        # the table and never the field's, so a row of "—" with its reason on the field read as an
+        # unexplained row on every non-payer's page
+        FinTable(columns=columns, rows=rows, is_estimate=[False] * len(columns),
+                 note="; ".join(filter(None, (_dps_not_stated_note(dps),
+                                              _ltm_dividend_note(bundle, rat[hdr], cols, dps))))
+                 if dps is not None else ""),
+        source_ref="CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)"
+        + (" + Income Statement 'Dividends per Share' (the Dividend/sh row)" if dps is not None
+           else ""),   # RA-D2: the dividend row cites the sheet it is read from
     )
+
+
+def _dps_not_stated_note(dps: list[_Dps]) -> str | None:
+    """Which dividend cells CIQ marks rather than states — they print "—", and this says why."""
+    marked = [d.cell for d in dps if d.placed and d.value is None and not d.no_dividend]
+    unplaced = sum(1 for d in dps if not d.placed)
+    notes: list[str] = []
+    if marked:
+        words = sorted({_cell_words(c) for c in marked})
+        notes.append(f"Dividend/sh: the Income Statement's 'Dividends per Share' reads "
+                     f"{', '.join(words)} in {len(marked)} of {len(dps)} column(s) — not stated, "
+                     "and never read as no dividend")
+    if unplaced:   # its "—" is no read, and says so: no column, or two, state that period
+        notes.append(f"Dividend/sh: {unplaced} of {len(dps)} column(s) read no figure — no single "
+                     "Income Statement column states that period")
+    return "; ".join(notes) or None
+
+
+def _ltm_dividend_note(bundle: CiqBundle, ratio_header: list[Any], cols: list[int],
+                       dps: list[_Dps]) -> str | None:
+    """Why a Ratios LTM column's dividend may not be four quarters' — None when it is, or cannot be
+    told (operator ruling 2026-11-10, #967: print CIQ's figure as stated, and say so).
+
+    MCK's (exports on disk 2026-11-10) reads 1.64 beside FY26's 3.17, no cut: of the four quarters
+    to 2026-09-30, the quarterly export reads 0.82, 0.82, 0.82 and 'NA', and CIQ's LTM equals two
+    of them. The figure is CIQ's and is printed as it states it; the note names each quarter that
+    carries no figure and the sum of those that do, never what CIQ summed."""
+    from vinci.dossier.ltm_quarters import _four_quarters
+
+    try:
+        q = bundle.sheet("financials", "Income Statement", freq="quarterly")
+    except CiqUnavailableError:
+        return None
+    qhdr, qi = _period_header(q), _find_row(q, "Dividends per Share")
+    if qhdr is None or qi is None:
+        return None
+    notes: list[str] = []
+    for c, d in zip(cols, dps, strict=True):
+        v = d.value
+        p = header_period(ratio_header[c]) if c < len(ratio_header) else None
+        if v is None or p is None or p.kind != "LTM" or p.end is None:
+            continue
+        four, _why = _four_quarters(q, qhdr, p.end)
+        if four is None:
+            continue
+        cells = [(qp, q[qi][j] if j < len(q[qi]) else "") for j, qp in four]
+        # a dash STATES no dividend (`_NO_DIVIDEND_CELLS`): a quarter of 0, never a missing one
+        read = [(qp, cell, 0.0 if str(cell if cell is not None else "").strip()
+                 in _NO_DIVIDEND_CELLS else clean_num(cell)) for qp, cell in cells]
+        missing = [(qp, cell) for qp, cell, x in read if x is None]
+        stated = [x for _qp, _cell, x in read if x is not None]
+        if missing:   # the cells and their sum, as stated: what CIQ summed is not inferred
+            notes.append(
+                f"Dividend/sh LTM to {p.end.isoformat()} ({v:.2f}) is CIQ's own LTM figure, "
+                "printed as stated; of the four quarters ending then, the quarterly export's "
+                "'Dividends per Share' reads "
+                + ", ".join(f"{_cell_words(cell)} for the quarter to "
+                            f"{qp.end.isoformat() if qp.end else '?'}" for qp, cell in missing)
+                + (f", and the {len(stated)} it states sum {sum(stated):.2f}" if stated else ""))
+    return "; ".join(notes) or None
+
+
+#: CIQ's own statement of no dividend in a 'Dividends per Share' cell: a dash. (A 0 states it too.)
+_NO_DIVIDEND_CELLS = frozenset({"-", "–", "—"})
+
+
+class _Dps(NamedTuple):
+    """One Ratios column's dividend LEVEL, read from the Income Statement
+    (:func:`_dividend_per_share`)."""
+
+    placed: bool              # exactly one Income Statement column states this period
+    value: float | None       # the per-share dividend, or None when the cell states no figure
+    no_dividend: bool         # CIQ STATES none: a 0, or a dash — never 'NA', which states nothing
+    cell: Any = None          # the cell as CIQ wrote it, for a note
+
+
+def _dividend_per_share(bundle: CiqBundle, ratio_header: list[Any],
+                        cols: list[int]) -> list[_Dps] | None:
+    """The per-share dividend LEVEL at each Ratios column (:class:`_Dps`) — the Income
+    Statement's 'Dividends per Share' row at the column whose header states the same period (audit
+    RA-D2, 2026-11-10). None when the Income Statement carries no such row. ``placed`` is False
+    when no single Income Statement column states that period (none, or two — a restated copy
+    beside an as-reported one, as :func:`latest_cell` refuses): the value is then None and says
+    nothing about whether the company pays, so no caller may print it as "none".
+
+    THE RATIOS SHEET HAS NO DIVIDEND LEVEL. Its four 'Dividend per Share' rows are growth rates,
+    one under each of 'Growth Over Prior Year' and the two-, three- and five-year CAGR heads, and
+    the first was printed as "Dividend/sh": V's page read 0.19, 0.15, 0.13, 0.14 for a dividend of
+    1.87, 2.15, 2.44, 2.79; GOOGL's 0.38 and 0.05 beside 0.83 and 0.86. And a growth cell at a
+    marker printed "dividend: none" for a payer. The Income Statement states the level, for the
+    same periods (both sheets of one annual export), matched by period kind and end; a Ratios
+    column with no Income Statement column for its period reads no value, never a neighbour's."""
+    try:
+        inc = bundle.sheet("financials", "Income Statement", freq="annual")
+    except CiqUnavailableError:
+        return None
+    ihdr, di = _period_header(inc), _find_row(inc, "Dividends per Share")
+    if ihdr is None or di is None:
+        return None
+    def period(cell: Any) -> tuple[str, date] | None:
+        p = header_period(cell)
+        return (p.kind, p.end) if p.kind is not None and p.end is not None else None
+
+    # BY PERIOD (kind and end), never by text: GOOGL's Income Statement heads FY24 'Reclassified
+    # 12 months Dec-31-2024' where its Ratios sheet heads it '12 months Dec-31-2024'
+    by_period: dict[tuple[str, date], list[int]] = {}
+    for j, c in enumerate(inc[ihdr]):
+        if j and (key := period(c)) is not None:
+            by_period.setdefault(key, []).append(j)
+
+    def at(c: int) -> _Dps:
+        key = period(ratio_header[c]) if c < len(ratio_header) else None
+        js = by_period.get(key, []) if key is not None else []
+        if len(js) != 1:  # no column states the period, or two do: no column is chosen by position
+            return _Dps(False, None, False)
+        cell = inc[di][js[0]] if js[0] < len(inc[di]) else ""
+        v = clean_num(cell)
+        # 'NA' IS NOT STATED (operator ruling 2026-11-11): only a 0 or a dash states no dividend.
+        # On disk (2026-11-11) CIQ writes neither: every non-payer's cell, and 6 payers' quarters
+        # (MCK's to 2026-09-30 among them), read 'NA'
+        none = v == 0 or str(cell if cell is not None else "").strip() in _NO_DIVIDEND_CELLS
+        return _Dps(True, v if v else None, none, cell)
+
+    return [at(c) for c in cols]
 
 
 def multi_year_trajectory(bundle: CiqBundle) -> Sourced[str]:
@@ -4292,6 +4425,32 @@ class _GuidanceRead(NamedTuple):
     #: (audit RA-D3): the cell named, in words. ``guide`` is then "unread", ``guide_num`` and
     #: ``guide_range`` None, ``period`` and ``dated`` that cell's. None when the latest guide reads.
     unread: str | None = None
+    #: The OTHER periods guided on the latest date, each (period, guide display) in time order
+    #: (audit RA-D4): F12 asks for every period guided that day, and the read kept one.
+    same_day: tuple[tuple[str, str], ...] = ()
+
+
+def _newer(gd: date, period: str, recent: tuple[date, str, str] | None) -> bool:
+    """Whether a period (guided ``gd``) is newer than ``recent`` (date, period, …) — by date, and on
+    one date by time order, never by column (audit RA-D4: SMPL's FQ4 2026 and FY 2026, both guided
+    2026-07-09, swapped places as its "most recent outcome" when the columns reversed). The most
+    recent outcome and the newest unread guide both choose by it."""
+    return recent is None or gd > recent[0] or (
+        gd == recent[0] and _period_order(period) < _period_order(recent[1]))
+
+
+def _period_order(period: str) -> tuple[int, int, int, str]:
+    """A guidance period in time order — by fiscal year, then the month of the year it ends in,
+    then the shorter span first: 'FQ2 2026' before 'FH1 2026', 'FQ4 2026' before 'FH2 2026' before
+    'FY 2026' before 'FQ1 2027'. CIQ's Guidance headers on disk (2026-11-10, 36 sheets) are FY,
+    FQ1-FQ4, FH1-FH2 (70 cells) and 'Non-periodic' (13). An unrecognised label sorts last, by its
+    text — never by its column."""
+    if m := re.fullmatch(r"F(Q[1-4]|H[12])\s+(\d{4})", period.strip()):
+        span, n = m.group(1)[0], int(m.group(1)[1])
+        return int(m.group(2)), (3 if span == "Q" else 6) * n, 0 if span == "Q" else 1, ""
+    if m := re.fullmatch(r"FY\s+(\d{4})", period.strip()):
+        return int(m.group(1)), 12, 2, ""
+    return 9999, 99, 9, period
 
 
 #: The display a guide carries when its cell does not read (`_GuidanceRead.unread`).
@@ -4349,7 +4508,7 @@ def _guidance_reads(
         header = _nearest_period_header(rows, bi)
         if gdate is None or guide is None or header is None:
             continue
-        latest: tuple[date, str, str, bool] | None = None  # date, period, range, cost_like
+        dated: list[tuple[date, str, str, bool]] = []  # date, period, range, cost_like
         unread: tuple[date, str, str] | None = None  # date, period, why — the newest unread guide
         recent: tuple[date, str, str] | None = None  # date, period, verdict — most-recent resolved
         resolved = met_n = at_guide_n = 0
@@ -4372,7 +4531,7 @@ def _guidance_reads(
                             metric=metric, period=per_j, read="guide",
                             value=str(cell if cell is not None else "").strip(),
                             dated=gd.isoformat(), source_ref=_guidance_cell_ref(guide, j)))
-                elif unread is None or gd > unread[0]:
+                elif _newer(gd, per_j, unread):  # one date: time order, never column
                     unread = (gd, per_j, f"its Guidance cell reads {_cell_words(cell)} "
                                          f"({_guidance_cell_ref(guide, j)})")
                 continue
@@ -4386,8 +4545,8 @@ def _guidance_reads(
                         value=str(rows[guide][j]).strip(), dated=gd.isoformat(),
                         source_ref=_guidance_cell_ref(guide, j)))
                 continue
-            if gd is not None and (latest is None or gd > latest[0]):
-                latest = (gd, per_j, str(rows[guide][j]).strip(), cost_like)
+            if gd is not None:
+                dated.append((gd, per_j, str(rows[guide][j]).strip(), cost_like))
             av = _cell_at(rows, actual, j)
             if av is not None and higher_is_delivery is not None:
                 # an outcome CIQ dates after the cut was not known on the price date: the period
@@ -4411,7 +4570,7 @@ def _guidance_reads(
                 if (rng[0] == rng[1] and bound
                         and abs(av - bound) / abs(bound) < _POINT_DECISION_BAND):
                     at_guide_n += 1
-                    if gd is not None and (recent is None or gd > recent[0]):
+                    if gd is not None and _newer(gd, per_j, recent):
                         recent = (gd, per_j, "at_guide")
                     continue
                 resolved += 1
@@ -4419,9 +4578,18 @@ def _guidance_reads(
                 # ≤ ceiling when lower is (a tax RATE, stated positive).
                 met = av >= rng[0] if higher_is_delivery else av <= rng[1]
                 met_n += int(met)
-                if gd is not None and (recent is None or gd > recent[0]):
+                if gd is not None and _newer(gd, per_j, recent):
                     recent = (gd, per_j, "met" if met else "missed")
         rp, rv = (recent[1], recent[2]) if recent is not None else (None, None)
+        # EVERY PERIOD GUIDED ON THE LATEST DATE, IN TIME ORDER (audit RA-D4, 2026-11-10). The
+        # walk kept the leftmost column of that date (a strict `>`), so a second period guided the
+        # same day was dropped and which one survived was the sheet's column order: SMPL's FY 2026
+        # revenue guide (1,345.00 - 1,355.00) given with its FQ4 2026 guide on 2026-07-09 never
+        # reached the page, and with the columns reversed it was the one kept. The first in time
+        # order is the read's own period (the one the guide check takes); the rest ride with it.
+        top = max((d for d, *_ in dated), default=None)
+        day = sorted((x for x in dated if x[0] == top), key=lambda x: _period_order(x[1]))
+        latest = day[0] if day else None
         if unread is not None and (latest is None or unread[0] > latest[0]):
             ud, uper, why = unread
             ustale = ((reference_date - ud).days if reference_date is not None
@@ -4436,13 +4604,20 @@ def _guidance_reads(
         pr = _parse_range(rng_s)
         gnum = pr[0] if (pr is not None and " - " not in rng_s) else None
         grange = (pr[0], pr[1]) if (pr is not None and " - " in rng_s) else None
-        gval = _fig(gnum) if gnum is not None else f"'{rng_s}'"
+        gval = _guide_display(rng_s)
         stale = ((reference_date - gd).days if reference_date is not None
                  and (reference_date - gd).days > stale_after_days else None)
+        others = tuple((p, _guide_display(r)) for _d, p, r, _c in day[1:])
         reads.append(_GuidanceRead(
             metric, gval, gnum, grange, per, gd, stale, cost_like, resolved, met_n, at_guide_n,
-            recent[1] if recent is not None else None, recent[2] if recent is not None else None))
+            rp, rv, same_day=others))
     return reads
+
+
+def _guide_display(rng_s: str) -> str:
+    """A guide cell as a read shows it: a point by `_fig`, a range verbatim, quoted."""
+    pr = _parse_range(rng_s)
+    return _fig(pr[0]) if pr is not None and " - " not in rng_s else f"'{rng_s}'"
 
 
 #: Why a Guidance sheet is not read at the page's price date. Written into the synthesis's facts
@@ -4502,6 +4677,10 @@ def guidance_bridge(
             seg += f" — {r.unread}; an older guide is never read in its place"
         if r.stale_days is not None:
             seg += f" (stale — {r.stale_days}d old)"  # R3: age once, no date repeat
+        # RA-D4: every period guided that day, each labelled — AFTER the age, which is the date's
+        # and so every one of theirs: after the list it read as the last period's alone
+        if r.same_day:
+            seg += "; same day: " + ", ".join(f"{g} for {p}" for p, g in r.same_day)
         if r.resolved or r.at_guide_n:
             sem = "spend ≤ guided ceiling" if r.cost_like else "actual ≥ guided floor"
             seg += (f"; {sem} {r.met_n}/{r.resolved} resolved" if r.resolved
@@ -4619,6 +4798,11 @@ def guidance_bridge_rows(
             latest_guide=r.guide if r.unread is None else f"{r.guide} — {r.unread}",
             period=r.period, dated=r.dated.isoformat(),
             age=age, record=record, most_recent=recent))
+        # RA-D4: each other period guided the same day is its own row; the metric's delivery
+        # record is said once, on its first
+        out.extend(GuidanceRow(metric=r.metric, latest_guide=g, period=p,
+                               dated=r.dated.isoformat(), age=age, record="—", most_recent="—")
+                   for p, g in r.same_day)
     return Sourced.present(
         out, source_ref=GUIDANCE_BASIS_REF)
 
@@ -5758,7 +5942,7 @@ def key_ratios(bundle: CiqBundle) -> Sourced[str]:
     hdr = _period_header(rs)
     rows_by_label = {
         lbl: next((i for i, r in enumerate(rs) if r and str(r[0]).strip() == lbl), None)
-        for lbl, _n, _p in (*_KEY_RATIO_ROWS, ("Dividend per Share", "", False))
+        for lbl, _n, _p in _KEY_RATIO_ROWS
     }
     # THE PINNED COLUMN is the sheet's latest; a panel no key ratio reports there is UNKNOWN
     reads = [latest_cell(rs, ri, hdr) for lbl, _n, _p in _KEY_RATIO_ROWS
@@ -5788,9 +5972,18 @@ def key_ratios(bundle: CiqBundle) -> Sourced[str]:
             parts.append(f"{name} {v * 100:.1f}%" if is_pct else f"{name} {v:.2f}")
         elif ri is not None:
             missing.append(name)
-    if rows_by_label["Dividend per Share"] is not None and (
-            _cell_at(rs, rows_by_label["Dividend per Share"], col) is None):
-        parts.append("dividend: none")
+    # the dividend LEVEL at the pinned column, from the Income Statement (audit RA-D2): the Ratios
+    # sheet's 'Dividend per Share' rows are growth rates, so a payer whose growth read 'NM' printed
+    # "dividend: none"
+    dps = _dividend_per_share(bundle, rs[hdr], [col]) if hdr is not None else None
+    said = None   # an unplaced column says nothing of a payer
+    if dps is not None and dps[0].no_dividend:
+        said = "dividend: none"
+    elif dps is not None and dps[0].placed and dps[0].value is None:
+        # 'NA' is not stated, never no dividend (operator ruling 2026-11-11): it is said as such
+        said = f"dividend: not stated (the Income Statement reads {_cell_words(dps[0].cell)})"
+    if said:
+        parts.append(said)
     if missing:
         parts.append(f"not reported this period: {', '.join(missing)}")
     if not parts:
@@ -5801,7 +5994,9 @@ def key_ratios(bundle: CiqBundle) -> Sourced[str]:
         period = d.isoformat() if d else _cs_col_label(rs[hdr][col])
     return Sourced.present(
         "; ".join(parts) + (f" [{period}]" if period else ""),
-        source_ref=("CIQ Financials→Ratios" + (f" [{period}]" if period else "")))
+        source_ref=("CIQ Financials→Ratios" + (f" [{period}]" if period else "")
+                    + (" + Income Statement 'Dividends per Share'" if said else "")))
+    # RA-D2: the dividend line cites the sheet it is read from
 
 
 def book_value_per_share(bundle: CiqBundle) -> Sourced[float]:

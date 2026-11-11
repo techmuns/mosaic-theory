@@ -61,7 +61,7 @@ jobs:
         run: |
           python -m ruff check vinci tests frontend
           python -m mypy --strict vinci
-          python -m pytest -m "not network" -p no:warnings --tb=short
+          python -m pytest -m "not network" -p no:warnings --tb=short -rs
 
       - name: Restore the durable registry from the state branch
         id: restore
