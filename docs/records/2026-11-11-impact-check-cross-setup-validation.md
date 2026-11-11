@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -179,3 +179,6 @@ was taken:
   - #953's "every request stays byte-identical": it holds for the frozen replay only.
 - **The CI check** that refuses a code PR body without this section, or with a stamp that no longer
   matches, is its own PR, opened after this one merges.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `fb568c7f` (#1000) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

@@ -1,6 +1,6 @@
 ---
 id: 2026-10-30-edgar-provenance
-status: open
+status: shipped
 date: 2026-10-30
 prs: []
 supersedes:
@@ -149,3 +149,6 @@ newest point and anchored a window with nothing else in it; THM's 2033 tag did t
   count's own date: `_shares_for` returns bare tuples, so the bound would have to be threaded
   through `classify_structural_disqualifier`'s signature (nit 7 of review round 2; the screen and
   the theme desk print "filed").
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `08948b5a` (#875) on 2026-10-30. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

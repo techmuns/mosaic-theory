@@ -1,6 +1,6 @@
 ---
 id: 2026-10-12-theme-intelligence-supervised-pilot
-status: open
+status: recorded
 date: 2026-10-12
 prs: [703]
 supersedes:
