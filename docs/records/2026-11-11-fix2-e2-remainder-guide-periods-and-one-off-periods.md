@@ -102,6 +102,16 @@ superseded-by:
   - **`_fy_impairment`:** moves on LLY (35.0 → None) and VRRM (64.0 → None). Neither page prints
     the margin line it feeds.
 
+- **The third review's two fixes, after the full build:**
+  - a lowercase quarter header ("Fourth quarter 2026 Outlook:") keeps its quarter, because a clean
+    sentence-final tail is tried before the glued run;
+  - "excluding special items, Adjusted Net Income of …" is the figure, not a component, because a
+    component's reach stops at a comma.
+
+  Each is pinned and fails first on the code before it. **They move 0 fields** on the 122 cited
+  exhibits, and 0 on the full build's own release set (122 exhibits, 0 misses, pre-fix vs fixed).
+  So the full build's numbers above hold for the final code.
+
 **BOUNDARY.**
 - **Pages:** the 27 committed pages at `7edbfa36`.
 - **Exhibits:** their 122 cited EX-99.1s and 27 cited 10-Qs (the replay); each page's own $0-build

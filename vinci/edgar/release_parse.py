@@ -570,7 +570,10 @@ _CHANGE_LEAD = re.compile(
 #: an Adjusted Net Loss of $(5.5) million in the third quarter of 2024" — the SRE impact was taken
 #: for the current figure, so the comparison read as a sub-unit's and was set aside silently.
 _COMPONENT_LEAD = re.compile(
-    r"\b(?:including|includes|included|excluding|excludes|excluded|of\s+which)\b[^$.;]{0,40}$",
+    # no comma in the reach (code review): "…$100.0 million and, excluding special items, Adjusted
+    # Net Income of $302.6 million" names the FIGURE after its exclusion, not a part of the one
+    # before, and reading it as a component set the comparison aside as a sub-unit's
+    r"\b(?:including|includes|included|excluding|excludes|excluded|of\s+which)\b[^$.;,]{0,40}$",
     re.I)
 #: Clause edges — a sentence end or any bullet glyph a release uses. "·" (middle dot) included:
 #: Ribbon's "· Non-GAAP Adjusted EBITDA was $40 million, compared to $55 million for the fourth
@@ -1885,9 +1888,11 @@ _ITEM_REACH = 600
 #: ending in an outlook noun and a colon is the header of the list it opens. A lowercase joiner
 #: between two capitalised words belongs to the run (code review): "Fourth Quarter and Fiscal Year
 #: 2026 Outlook:" cut at its "and" read as one period, the year, for a two-period header.
+#: The lowercase period words belong to the run too (code review): "Fourth quarter 2026 Outlook:"
+#: cut at its "quarter" read as "2026 Outlook:", a quarterly list filed as the year.
 _GLUED_HEADER = re.compile(
-    r"(?:^|(?<=\s))((?:(?:[A-Z][A-Za-z-]*|20\d\d|\(\d{1,2}\))\s+(?:(?:and|&|of|for|the)\s+)?)"
-    r"{0,8}(?:Outlook|Guidance|Expectations)\s*:)\s*$")
+    r"(?:^|(?<=\s))((?:(?:[A-Z][A-Za-z-]*|quarter|year|half|full|fiscal|20\d\d|\(\d{1,2}\))\s+"
+    r"(?:(?:and|&|of|for|the)\s+)?){0,8}(?:Outlook|Guidance|Expectations)\s*:)\s*$")
 #: The words that make a header an OUTLOOK's: `_FORWARD`, plus the noun Concentrix heads its list
 #: with ("Fourth Quarter Fiscal 2026 Expectations:"), which `_FORWARD`'s verb forms do not cover.
 _HEADER_FORWARD = re.compile(rf"{_FORWARD.pattern}|\bexpectations\b", re.I)
@@ -1955,8 +1960,6 @@ def _list_header(text: str, start: int) -> str | None:
         item = bool(bullets)           # a bullet opens this segment: it may be one item of the list
         lo = bullets.pop() + 1 if item else floor
         seg = text[lo:pos]
-        if item and (glued := _GLUED_HEADER.search(seg)):
-            return glued.group(1)                        # the header, after the last list's item
         ends = list(_SENTENCE_END.finditer(seg))
         tail = seg[ends[-1].end():].strip() if ends else ""
         # ...but a tail ending ";" is the rest of the PREVIOUS item, never a header (RE2-D20):
@@ -1964,6 +1967,11 @@ def _list_header(text: str, start: int) -> str | None:
         # expenditures are still uncertain; •" and that clause was taken for the list's header
         if tail and not _AMOUNT.search(tail) and not tail.endswith(";"):
             return tail                                  # text after the last stop: a header
+        # only where no clean tail heads the list (code review): a whole header after a stop
+        # ("For the fourth quarter of 2026, the Company provides the following Outlook:") cut to
+        # its glued run read as "Outlook:" and lost its quarter
+        if item and (glued := _GLUED_HEADER.search(seg)):
+            return glued.group(1)                        # the header, after the last list's item
         if len(seg) > _ITEM_REACH or not item:
             if not ends:
                 return None                              # prose with no sentence to stand alone
@@ -2006,8 +2014,10 @@ def _header_period(text: str, start: int) -> str | None:
         return None
     clause = header[verbs[0].start():].split(",", 1)[0]
     sub, _amb, own_years = _named_period(clause)
-    if sub is None or own_years or len(years) != 1:
-        return sub if sub is not None and own_years else None
+    if sub is None or own_years:
+        return sub                     # the clause's own period, its year with it, or no answer
+    if len(years) != 1:
+        return None
     year = next(iter(years))
     if sub != "FY":
         return f"{sub} {year}"

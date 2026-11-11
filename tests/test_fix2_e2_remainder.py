@@ -387,6 +387,33 @@ def test_re2_d6_neg_a_real_sub_units_comparison_is_still_set_aside() -> None:
     assert ("adjusted ebitda", "Q4 2024") not in rows, rows
 
 
+def test_re2_d6_neg_an_exclusion_naming_the_figure_is_its_lead() -> None:
+    """(-) CONSTRUCTED (code review). "excluding special items, Adjusted Net Income of $302.6
+    million" names the FIGURE after its exclusion, not a part of the GAAP figure before it: its
+    comparison is the company's, and is read."""
+    for joint in (" and, excluding", "; excluding"):
+        text = ("PAR PACIFIC HOLDINGS REPORTS THIRD QUARTER 2025 RESULTS. Third quarter 2025 "
+                "Adjusted Net Income was $302.6 million. Net income of $100.0 million"
+                f"{joint} special items, Adjusted Net Income of $302.6 million, compared to an "
+                "Adjusted Net Loss of $(5.5) million in the third quarter of 2024.")
+        rows = {(r.metric, r.period): r.value
+                for r in parse_release(text, source_ref="8-K x EX-99.1").reconciliation}
+        assert rows.get(("adjusted net income", "Q3 2024")) == -5.5, (joint, rows)
+
+
+def test_re2_d20_neg_a_lowercase_quarter_header_keeps_its_quarter() -> None:
+    """(-) CONSTRUCTED (code review). A header whose period words are lowercase is still one
+    header: "Fourth quarter 2026 Outlook:", glued or after a stop, and a whole header sentence
+    after a stop, give the quarter — never the year a cut run leaves."""
+    for head in (" Fourth quarter 2026 Outlook:", ". Fourth quarter 2026 Outlook:",
+                 ". For the fourth quarter of 2026, the Company provides the following Outlook:"):
+        text = ("Third Quarter 2026 Summary: • Net sales of $300.0 million versus $290.0 million"
+                f"{head} • Net sales expected to be $100 million to $110 million • Adjusted "
+                "EBITDA expected to be $20 million to $25 million")
+        got = _guides(text)
+        assert got == {"net sales": "Q4 2026", "adjusted ebitda": "Q4 2026"}, (head, got)
+
+
 # --- RE2-D10's other half: a filing read with no doubt statement is CHECKED-ABSENT ---------------
 
 #: TECX 10-Q 0001193125-26-450019, verbatim: its contents entry naming the notes (to its page
