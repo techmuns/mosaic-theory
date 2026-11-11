@@ -65,3 +65,15 @@ folders. The panel is the frozen six (BURL, CNXC, LLY, MCK, ROST, SMPL).
   ships only if its own panel check passes (RUNBOOKS §n). No page is refreshed here.
 - The 'NA' ruling moves the key ratios of every non-payer from "dividend: none" to "not stated".
 - **Extraction version** `2026-11-11.dividend-level-na-unstated`; the drift pins are re-pinned.
+## Amendments
+
+- **2026-11-11.** Two lines under HOW VERIFIED merged as template placeholders and were never filled
+  ("COMPARE_LINE", "PANEL_LINE"), and `prs:` stayed empty. What they were to say:
+  - **$0 compare:** `--base 2b9b766c --cand 9ae02bac --transform dividend_level`. All six panel
+    pages differ, in `user.facts` only: BURL +305, CNXC +209, LLY +63, MCK +292, ROST +62 and SMPL
+    +309 characters.
+  - **The panel:** registration `b29121ebdc675bd3`, no-worsening only, drawn once and scored at $0.
+    No class metric worsens. Five lean moves, LLY's proposal none → BUY.
+    `docs/records/2026-11-11-ra-d2-measured-on-the-panel.md` records it. The operator ruled the
+    moves noise ("Merge, moves are noise"), and the change merged as `62d682c6`.
+  - The PR that carried this record is #981.
