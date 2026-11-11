@@ -24,6 +24,12 @@ pack 2 (2026-11-09), held by the operator; none is committed. STATE.md §5.0 row
    - the test that failed before the fix and passes after, as a node id
      (`tests/test_x.py::test_y`);
    - the committed pages the fix changed and rebuilt.
+
+   **The guidance exception** (operator 2026-11-11, verbatim: "Allow the narrow exception (Recommended)"; recorded on issue #1004). It applies
+   only to pure guidance text with no code counterpart. Such an item may read `fixed` with a
+   document-level test, either doc to doc or the document's own consistency, that fails before the
+   fix and passes after; its row cites this ruling. Every other item still needs a test against
+   the code that fails first.
 4. **Status is one of exactly five:**
    - `open`;
    - `in progress (#N)`;
@@ -122,7 +128,7 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RE2-D20 | 4 | in progress (#976) | 2b9b766c (#976), partial: a guide filed under the next-fy default writes a machine-tier "Guidance period not read" flag; the page label is unchanged. Reading the 21 unread list headers, which relabels all 21 `next-fy` guides, is still to come | `tests/test_guidance_fix2_e2.py::test_re2_d20_a_defaulted_period_is_flagged` | none now; 21 flags on BURL, EPAM, SMPL, VITL, VRRM at re-assembly |
 | RF-D3 | 4 | fixed | 93a50599 (#943) | `tests/test_realized_total_return.py::test_a_flat_stock_with_a_20pct_special_dividend_realizes_zero` | none; monitor days from now carry `realized_price_return` |
 | RF-D4 | 4 | fixed | 7d0e3c91 (#946) | `tests/test_universe_one_basis.py::test_a_split_since_the_filed_count_is_sized_on_the_current_count` | none; the universe snapshot is re-sized at the next weekly build (6 lines leave the band) |
-| RF-D7 | 4 | fixed | 81644a28 (#947) | `tests/test_seal_is_current.py::test_every_committed_seal_read_against_the_rule[V-GOOGL]` | none; the sealed rows stay as written, and GOOGL's and VRRM's are read at appended corrections, R-GOOGL and R-VRRM-screen2-20260617 (operator ruling 2026-11-09, approved 2026-11-10; `docs/records/2026-11-10-fix2-groupF-d-two-stale-seals-corrected-by-appended-rows.md`) |
+| RF-D7 | 4 | fixed | 81644a28 (#947); the web twin, its last open piece, 8a72be4c (#1001): the page reads a decision at its correction | `tests/test_seal_is_current.py::test_every_committed_seal_read_against_the_rule[V-GOOGL]`; the web twin: `tests/test_web_twin_corrections_and_voids.py::test_the_page_twin_reads_the_book_the_monitor_reads` | none; the sealed rows stay as written, and GOOGL's and VRRM's are read at appended corrections, R-GOOGL and R-VRRM-screen2-20260617 (operator ruling 2026-11-09, approved 2026-11-10; `docs/records/2026-11-10-fix2-groupF-d-two-stale-seals-corrected-by-appended-rows.md`); the web twin rebuilt `frontend/scenarios/GOOGL.json` and `GOOGL-2026-08-17.json` (#1001), and GOOGL's cards again, voided, with X-GOOGL (#1008) |
 | RF-D9 | 4 | fixed | 7d0e3c91 (#946) | `tests/test_universe_one_basis.py::test_adv_is_over_the_markets_sessions_not_the_days_a_name_traded` | none |
 | RF-D13 | 4 | fixed | 93a50599 (#943) | `tests/test_scoring_pending_reasons.py::test_an_interim_row_whose_dividends_cannot_be_read_is_named` | none |
 | RE1-D7 | 4 | fixed | 65758333 (#986): a same-day 10-K and 10-K/A resolve by a stated precedence (`served_filing`), never by row order | `tests/test_fix2_e1_concepts.py::test_re1_d7_a_same_day_amendment_is_served_whatever_the_row_order` | none: 0 of 13,986 values move on 27 pages |
@@ -146,13 +152,13 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RD-D2 | 4 | fixed | 6d9907d7 (#995); 3410860a (#1003): the insider total names its unpriced lines and their horizon; "largest" ranks priced lines only | `tests/test_insider_occurrence.py::test_rd_d2_the_window_total_says_how_many_lines_it_leaves_out` | none (latent: 0 of 27 pages carry an unpriced line) |
 | RD-D3 | 4 | fixed | 6d9907d7 (#995): a hidden lease cell after the filer's own leases is not "pre-adoption" | `tests/test_lease_basis.py::test_rd_d3_a_hidden_cell_after_the_filers_own_leases_is_not_pre_adoption` | none (latent: 0 of 27 pages carry a post-adoption comparative with a '-' cell) |
 | RD-D4 | 4 | fixed | fb568c7f (#1000): the pre-spend check compares values, list members and decision leaves (`vinci.impact.values`) and never says nothing is lost | `tests/test_prespend.py::test_rd_d4_a_list_member_that_reads_worse_is_a_regression` | none: the check commits nothing |
-| RA-D5 | 5 | open | — | — | — |
-| RA-D7 | 5 | open | — | — | — |
+| RA-D5 | 5 | fixed | cbefc245 (#972): period columns are read in time order, never in sheet order | `tests/test_ciq_period_order_and_duration.py::test_ra_d5_reversed_period_columns_read_as_the_export_does` | none (latent) |
+| RA-D7 | 5 | fixed | df24ff35 (#971): a renamed 'Cash Flow' or 'Trends' tab is said on the three surfaces RA-D7 names (the annual summary, the recommendation and ratings lines, the bridge); other 'Trends' readers still return nothing, found and not fixed (#971's record) | `tests/test_ciq_header_offset_and_renamed_tabs.py::test_ra_d7_a_renamed_cash_flow_tab_is_named_by_the_summary_and_the_bridge` | none (latent) |
 | RA-D10 | 5 | fixed | 173b4818 (#970): a file's kind is its name's exact rule, never a keyword anywhere in it | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d10_an_issuer_named_with_a_kind_word_reads_as_its_own_pack` | none (latent) |
 | A-D15 | 5 | fixed | 173b4818 (#970): = RA-D10 | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d10_twin_the_kind_is_the_names_end_never_a_word_in_it` | none (latent) |
-| RA-D12 | 5 | open | — | — | — |
+| RA-D12 | 5 | fixed | df24ff35 (#971): a sheet's settings block is read from its first filled row, so blank rows above it change no header read | `tests/test_ciq_header_offset_and_renamed_tabs.py::test_ra_d12_thirty_blank_rows_above_every_sheet_change_no_header_read` | none (latent) |
 | RA-D17 | 5 | fixed | 173b4818 (#970): a PDF tearsheet is read as a PDF | `tests/test_ciq_file_kinds_and_pdf_profile.py::test_ra_d17_a_pdf_tearsheet_reads_its_industry` | none (every tearsheet on disk is RTF) |
-| V1-O2 | 5 | open | — | — | — |
+| V1-O2 | 5 | fixed | cbefc245 (#972): a 6- or 9-month column is year to date, never a quarter | `tests/test_ciq_period_order_and_duration.py::test_v1_o2_a_six_or_nine_month_column_is_year_to_date_never_a_quarter` | none (latent) |
 | V1-O3 | 5 | fixed | c2a4d743 (#975): a row whose type is blank is kept | `tests/test_ciq_relationship_view_edges.py::test_v1_o3_a_row_whose_type_is_blank_is_kept_on_a_real_export` | none (latent) |
 | RBC-D3 | 5 | fixed | c2a4d743 (#975): a Customers file cut short says so and gives no count | `tests/test_ciq_relationship_view_edges.py::test_rbc_d3_a_customers_file_cut_short_says_so_and_gives_no_count` | none (latent) |
 | RBC-D7 | 5 | fixed | a71b9f67 (#964): removed with `vinci/ciq/`, which no production code called (RBC-D7 = BC-D1 and BC-D2) | `tests/test_vinci_ciq_removed.py::test_the_package_is_gone_and_nothing_imports_it` | none |
@@ -193,7 +199,7 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RG-D14 | 8 | open | — | — | — |
 | RG-D15 | 8 | open | — | — | — |
 | RG-D18 | 8 | fixed | 7edbfa36 (#996): the hooks protect the grader (`vinci/evals/`, the gold sets); the review gate counts the grader as code | `tests/test_claude_hooks.py::test_guard_protects_the_gates_configuration_and_the_grader` | none |
-| RG-D20 | 9 | open | — | — | — |
+| RG-D20 | 9 | fixed | d8147e97 (#1009): the 13 contradictions (G-D20 a–m) are corrected in comments, docstrings and docs; batch 4 adds the pin, one case per item, and each case fails before the commit that fixed its item: 11 on #1009's parent `d6001465`, and (b) and (j) on #998's parent `7edbfa36`, because #998 corrected those first as G-D15 and G-D14. Items (e) and (i) have no code counterpart and are pinned doc to doc: (e) against RUNBOOKS; (i), the CIQ notes' rule 4, against the row numbers the notes quote. They read `fixed` under rule 3's guidance exception (operator 2026-11-11: "Allow the narrow exception (Recommended)") | `tests/test_rg_d20_instructions_match_the_code.py::test_rg_d20_each_instruction_says_what_the_code_does` | none (prose only; no page or request moves) |
 | G-D8 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d8_the_notes_say_the_surprise_sheet_has_quarters_and_company_level_blocks` | none (docs) |
 | G-D9 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d9_no_code_reads_a_holders_export_and_the_notes_mark_its_rules_superseded` | none (docs) |
 | G-D10 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d10_the_roster_filters_no_relationship_type_and_the_notes_say_so` | none (docs) |
