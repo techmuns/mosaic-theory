@@ -313,6 +313,90 @@ def test_re1_d10_an_older_aliases_split_is_checked_and_adjusted() -> None:
                 "~10x restatement" in (pct.note or "")) is split_named, (restated, pct.note)
 
 
+_OLD, _NEW = "EarningsPerShareDiluted", "IncomeLossFromContinuingOperationsPerDilutedShare"
+
+
+def _pct_of(blob: dict[str, Any], ref: date) -> tuple[float | None, str]:
+    series = served_series(facts_as_of(blob, ref), "eps_diluted", as_of=ref)
+    annual = [p for p in series.on(ref) if p.is_annual]
+    _, pct = pe_current_and_percentile(_weekly(date(2021, 3, 1), ref), annual, reference_date=ref,
+                                       min_points=5, history=series)
+    return pct.value, pct.note or ""
+
+
+def test_a_split_one_alias_states_puts_a_retired_aliases_eps_on_the_current_basis() -> None:
+    """Codex on #997 (P1): the filer re-tags diluted EPS in its FY2024 10-K, splits 10-for-1 in
+    2025, and its FY2025 10-K restates FY2023-FY2024 under the NEW tag only. Bars before the re-tag
+    read the RETIRED tag, which never restated: a split kept per alias left its old-basis EPS
+    divided into split-adjusted prices, and the range stood PRESENT on the mix. The split is the
+    issuer's, so it reaches every alias's EPS filed before the restating filing — the range reads
+    exactly what the same filer with every figure already on the current basis reads."""
+    ref = date(2026, 3, 1)
+
+    def blob(k: float) -> dict[str, Any]:  # k: the pre-split basis (10, as filed; 1, already new)
+        old = [_eps_row("2021-12-31", 0.20 * k, "0000999999-22-000005", "2022-02-20"),
+               _eps_row("2022-12-31", 0.22 * k, "0000999999-23-000005", "2023-02-20"),
+               _eps_row("2023-12-31", 0.24 * k, "0000999999-24-000005", "2024-02-20")]
+        new = [_eps_row("2023-12-31", 0.24 * k, "0000999999-25-000004", "2025-02-20", fy=2024),
+               _eps_row("2024-12-31", 0.26 * k, "0000999999-25-000004", "2025-02-20"),
+               _eps_row("2023-12-31", 0.24, "0000999999-26-000003", "2026-02-19", fy=2025),
+               _eps_row("2024-12-31", 0.26, "0000999999-26-000003", "2026-02-19", fy=2025),
+               _eps_row("2025-12-31", 0.30, "0000999999-26-000003", "2026-02-19")]
+        return {"cik": 999999, "facts": {"us-gaap": {_OLD: {"units": {"USD/shares": old}},
+                                                     _NEW: {"units": {"USD/shares": new}}}}}
+
+    consistent, _ = _pct_of(blob(1.0), ref)
+    value, note = _pct_of(blob(10.0), ref)
+    assert consistent is not None and value == pytest.approx(consistent), (value, consistent, note)
+    assert "EPS filed before 2026-02-19 put on the current share basis" in note, note
+    assert _OLD in note and _NEW in note, note  # the range did read both tags
+
+
+def test_two_splits_stated_in_two_aliases_are_refused_never_chained() -> None:
+    """The retired tag states its own 2-for-1 (restated 2023-02-20) and the new tag a 10-for-1
+    (restated 2026-02-19). The retired tag's EPS filed before 2023 sits under BOTH, so one factor
+    per alias is wrong: two basis changes in one window are refused, across aliases as within
+    one."""
+    ref = date(2026, 3, 1)
+    old = [_eps_row("2019-12-31", 1.0, "0000999999-20-000005", "2020-02-20"),
+           _eps_row("2020-12-31", 1.2, "0000999999-21-000005", "2021-02-20"),
+           _eps_row("2021-12-31", 1.4, "0000999999-22-000005", "2022-02-20"),
+           _eps_row("2020-12-31", 0.6, "0000999999-23-000005", "2023-02-20", fy=2022),
+           _eps_row("2021-12-31", 0.7, "0000999999-23-000005", "2023-02-20", fy=2022),
+           _eps_row("2022-12-31", 0.8, "0000999999-23-000005", "2023-02-20"),
+           _eps_row("2023-12-31", 0.9, "0000999999-24-000005", "2024-02-20")]
+    new = [_eps_row("2023-12-31", 0.9, "0000999999-25-000004", "2025-02-20", fy=2024),
+           _eps_row("2024-12-31", 1.0, "0000999999-25-000004", "2025-02-20"),
+           _eps_row("2023-12-31", 0.09, "0000999999-26-000003", "2026-02-19", fy=2025),
+           _eps_row("2024-12-31", 0.10, "0000999999-26-000003", "2026-02-19", fy=2025),
+           _eps_row("2025-12-31", 0.12, "0000999999-26-000003", "2026-02-19")]
+    value, note = _pct_of({"cik": 999999, "facts": {"us-gaap": {
+        _OLD: {"units": {"USD/shares": old}}, _NEW: {"units": {"USD/shares": new}}}}}, ref)
+    assert value is None and G3_SPLIT_BASIS in note, (value, note)
+
+
+def test_one_split_restated_under_both_tags_is_one_split() -> None:
+    """Negative pin for the refusal above: a filer tagging both measures restates both in its
+    restating 10-K — the retired tag at ×9.98 by rounding, the new at ×10.0. The retired tag's
+    restated rows arrive after the walk has left it, so the range reads ONE split — adjusted, not
+    refused as two."""
+    ref = date(2026, 3, 1)
+    old = [_eps_row("2022-12-31", 2.2, "0000999999-23-000005", "2023-02-20"),
+           _eps_row("2023-12-31", 2.4, "0000999999-24-000005", "2024-02-20"),
+           _eps_row("2024-12-31", 2.6, "0000999999-25-000004", "2025-02-20"),
+           _eps_row("2023-12-31", 0.241, "0000999999-26-000003", "2026-02-19", fy=2025),
+           _eps_row("2024-12-31", 0.26, "0000999999-26-000003", "2026-02-19", fy=2025)]
+    new = [_eps_row("2023-12-31", 2.4, "0000999999-25-000004", "2025-02-20", fy=2024),
+           _eps_row("2024-12-31", 2.6, "0000999999-25-000004", "2025-02-20"),
+           _eps_row("2023-12-31", 0.24, "0000999999-26-000003", "2026-02-19", fy=2025),
+           _eps_row("2024-12-31", 0.26, "0000999999-26-000003", "2026-02-19", fy=2025),
+           _eps_row("2025-12-31", 0.30, "0000999999-26-000003", "2026-02-19")]
+    value, note = _pct_of({"cik": 999999, "facts": {"us-gaap": {
+        _OLD: {"units": {"USD/shares": old}}, _NEW: {"units": {"USD/shares": new}}}}}, ref)
+    assert value is not None and G3_SPLIT_BASIS not in note, (value, note)
+    assert note.count("put on the current share basis") == 1, note
+
+
 def test_re1_d10_an_alias_the_walk_leaves_and_returns_to_is_read_as_three_runs() -> None:
     """Review round 0: the note gave each tag its first and last bar, so an alias served, left and
     served again read as one span overlapping the other's. Diluted EPS stops after FY2023, the

@@ -504,30 +504,47 @@ def _pe_pair_per_reported_share(
     # alias served then, and a split inside that alias's series divides across bases the same way.
     # One alias at a time, because two aliases' figures for one period are two measures (total
     # versus continuing operations), not a restatement of one. A split the filer states in an
-    # alias's series is ADJUSTED, not refused (operator, 2026-11-11), and the adjustment is kept
-    # per alias TAG, so each bar puts the EPS IT reads on the current basis.
+    # alias's series is ADJUSTED, not refused (operator, 2026-11-11).
     current = {p.tag for p in annual_eps}
     series = [annual_eps, *(pts for tag, pts in (history.by_tag() if history else {}).items()
                             if tag not in current)]
-    split_of: dict[str, SplitRestatement] = {}
     stated: list[SplitRestatement] = []
     for pts in series:
         _in_window = [p for p in pts if p.period_end >= _split_start]
         if (factor := share_basis_change(_in_window)) is not None:
             split = split_restatement([p for p in _in_window if p.filed <= reference_date])
-            if split is None or (pts is annual_eps and cur_pt.filed < split.restated_from):
+            if split is None:
                 return pe_df, DataField.unknown(
                     source="EDGAR", tier=SourceTier.DERIVED,
                     note=f"{G3_SPLIT_BASIS} (filer restated its own comparatives by "
                          f"~{factor:.4g}x)",
                 )
-            split_of.update({p.tag: split for p in pts})
             if split not in stated:
                 stated.append(split)
-    adjusted = "".join(
-        f"; EPS filed before {s.restated_from.isoformat()} put on the current share basis by the "
-        f"filer's own ~{s.factor:.4g}x restatement (a {'forward' if s.scale < 1 else 'reverse'} "
-        f"split)" for s in stated)
+    # THE SPLIT IS THE ISSUER'S, NOT ONE ALIAS'S (Codex on #997): a filer that re-tags and then
+    # splits restates its comparatives under the NEW tag only, and a bar before the re-tag reads
+    # the RETIRED one — kept per tag, that tag never carried the split and its old-basis EPS was
+    # divided into split-adjusted prices, the range PRESENT on the mix. So the one split stated
+    # reaches every alias's EPS filed before the restating filing. Two stated across aliases are
+    # two basis changes in one window — refused, never chained, as within one alias (an EPS filed
+    # before both would need both factors, and one per alias gives it one).
+    if len(stated) > 1:
+        return pe_df, DataField.unknown(
+            source="EDGAR", tier=SourceTier.DERIVED,
+            note=f"{G3_SPLIT_BASIS} (the filer's EPS aliases state two restatements: "
+                 + ", ".join(f"~{s.factor:.4g}x from {s.restated_from.isoformat()}"
+                             for s in stated) + ")",
+        )
+    split = stated[0] if stated else None
+    if split is not None and cur_pt.filed < split.restated_from:  # the EPS in use: old basis
+        return pe_df, DataField.unknown(
+            source="EDGAR", tier=SourceTier.DERIVED,
+            note=f"{G3_SPLIT_BASIS} (filer restated its own comparatives by ~{split.factor:.4g}x)",
+        )
+    adjusted = ("" if split is None else
+                f"; EPS filed before {split.restated_from.isoformat()} put on the current share "
+                f"basis by the filer's own ~{split.factor:.4g}x restatement (a "
+                f"{'forward' if split.scale < 1 else 'reverse'} split)")
 
     start = reference_date - timedelta(days=_PE_WINDOW_DAYS)
     hist: list[float] = []
@@ -539,9 +556,8 @@ def _pe_pair_per_reported_share(
             pt = annual_eps_point_as_of(history.on(b.bar_date) if history is not None
                                         else annual_eps, b.bar_date)
             if pt is not None:
-                s = split_of.get(pt.tag)
-                hist.append(b.close / (pt.value * s.scale
-                                       if s is not None and pt.filed < s.restated_from
+                hist.append(b.close / (pt.value * split.scale
+                                       if split is not None and pt.filed < split.restated_from
                                        else pt.value))
                 if read_under and read_under[-1][0] == pt.tag:
                     read_under[-1] = (pt.tag, read_under[-1][1], b.bar_date)

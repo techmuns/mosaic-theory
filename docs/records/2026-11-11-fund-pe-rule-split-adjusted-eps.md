@@ -32,6 +32,10 @@ theme desk.
     note says so.
   - **Still refused (`G3_SPLIT_BASIS`):** two basis changes, a split the filings known by the date
     do not yet state, and an EPS in use still on the old basis.
+  - **Across EPS aliases** (main's RE1-D10, where each bar reads the alias served on its day): the
+    split is the issuer's. The one split the aliases state reaches every alias's EPS filed before
+    the restating filing, including a retired tag that never restated. Two splits stated across
+    aliases are two basis changes, and are refused as within one alias.
 - **The desk (`theme_intelligence/market.py`).** `basis_breaks` takes the filer's factor
   (`explained`), and a break within 5% of it is the split already adjusted for. Until now the
   desk refused AMZN and GOOGL on their ×20 EPS restatements and ×20 cover-page share jumps. A
@@ -110,6 +114,20 @@ desk a five-year percentile on AMZN and GOOGL (11 rows on 2026-11-10).
 - **The second code review** (on the re-synced branch) fixed one defect behind a failing pin: a
   profit restated into a loss of the split's size was read as "explained" by it. It also
   corrected a stale comment in `mechanical.py`.
+- **Merged with main's RE1-D10, and Codex's P1 on #997.**
+  - **The defect.** The first merge kept the split per alias tag. A filer that re-tags and then
+    splits restates under the new tag only, so bars before the re-tag read the retired tag's
+    old-basis EPS against split-adjusted prices.
+  - **The constructed case.** It read 0.752 where the same filer on one basis reads 0.005. Two
+    splits stated in two aliases were adjusted, not refused.
+  - **Fixed behind pins that fail first on the pre-fix head**
+    (`tests/test_fix2_e1_concepts.py`): the retired tag is put on the current basis, two splits
+    in two aliases are refused, and the same split restated under both tags is one split.
+  - **One of main's pins changes deliberately:** RE1-D10's older-alias ×10 test, which expected
+    a refusal, now expects the adjustment.
+  - **Re-run at main `a3fc8e1b` with RE1-D10's calls** (the pages and the screen pass the served
+    series): the 3 pages, 6 desk companies and 6 G3 names above move to the same values. The P1
+    fix moves none of them.
 - **The suite:** see the PR.
 
 **BOUNDARY.**
