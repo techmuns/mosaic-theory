@@ -1000,6 +1000,9 @@ _RANGE_UNIT = re.compile(r"\s*(?:–|—|-|to)\s*[-−+]?\$?\d[\d,]*(?:\.\d+)?\s
 _FORM_AFTER = re.compile(r"^-(?:K|Q|F|D)\b")
 
 
+#: why a figure cited to an earnings call does not trace (RG-D7), footnoted or not
+_CALL_MISS = ("no checked driver figure of that call states it — the call's own text is not a "
+              "validated fact")
 _SCALE_KEY = {"e3": 1e3, "e6": 1e6, "e9": 1e9, "e12": 1e12}   # `DriverFigure.scale`
 
 
@@ -1286,10 +1289,10 @@ def _line_kind(label: str | None) -> str:
         return "pct"
     if "(x)" in lab or _MULTIPLE_LINE.search(label or ""):
         return "x"
+    if _PCT_LINE.search(lab):
+        return "pct_like"   # before EPS: "EPS growth" is a percent, "EPS (GAAP, dil.)" money
     if "($)" in lab or re.search(r"\beps\b", lab):
         return "money"
-    if _PCT_LINE.search(lab):
-        return "pct_like"
     return "unknown"
 
 
@@ -1360,8 +1363,10 @@ def _segment_cells(seg: str, line: str | None, periods: frozenset[str]) -> list[
     """One segment's cells, on ``line`` (`_text_cells`)."""
     out: list[_Cell] = []
     said = _line_kind(line)
+    # its own label's period, or the period of the line it continues ("FY 2027 Revenue: …; net
+    # -24%" — the sub-segment after "; " is still FY 2027's)
     lab = _SEG_LABEL.match(seg)
-    labelled = _period_keys(lab.group(1)) if lab else frozenset()
+    labelled = _period_keys(lab.group(1) if lab else (line or ""))
     for f, _end in _read_figures(seg):
         # ITS PERIOD: its segment label's ("FY 2027 Revenue: …"), else one written RIGHT before it
         # ("FY2004 -1%"), else the record's — never the nearest year of prose, which may be a
@@ -1777,6 +1782,9 @@ def _validate(
             if dedup and key in flagged_figs:
                 return
             flagged_figs.add(key)
+            if (miss is None and _TRANSCRIPT_REF.search(e.source_ref or "")
+                    and comparison_key(e.source_ref or "") in ref_keys):
+                miss = _CALL_MISS
             flags.append(untraceable(fig, where, p.claim, e.source_ref, miss))
             return
         why: str | None = None
@@ -1851,8 +1859,7 @@ def _validate(
                 continue  # decisive mirror of an already-flagged bull/bear figure
             flagged_figs.add(key)
             if why is None and _TRANSCRIPT_REF.search(p.source_ref) and ref_key in ref_keys:
-                why = ("no checked driver figure of that call states it — the call's own text is "
-                       "not a validated fact")
+                why = _CALL_MISS
             flags.append(untraceable(fig, where, p.claim, None, why))  # D4 full
         return p.model_copy(update={"cited": cited})
 
@@ -1865,13 +1872,13 @@ def _validate(
 
         WEAKER THAN A POINT'S TRACE, and measured (BURL, CNXC, LLY, MCK, ROST, SMPL at the panel's
         freeze, 300 random one-decimal figures each, at 7de1a7d3): against a whole page 41-79% of
-        percents and 26-35% of $M figures pass, named or not. Two stricter pools were tried and refused true
-        figures: holding a named metric to the page's labelled lines (ratios in unlabelled fields
-        beside a named row: AORT's "3.39x the D&A", the EBITDA-basis bands — about thirty key
-        unknowns on the 28 freeze pages), and holding the field to the facts its points cite (135
-        of the 375 real figures). Binding these fields for real needs footnotes on them, a schema
-        and prompt change of its own. What this catches: a figure no cell of the page states to
-        its written precision, in its unit and sign — "$7,777.7M", "$8,888.8M"."""
+        percents and 26-35% of $M figures pass, named or not. Two stricter pools were tried and
+        refused true figures: holding a named metric to the page's labelled lines (ratios in
+        unlabelled fields beside a named row: AORT's "3.39x the D&A", the EBITDA-basis bands — about
+        thirty key unknowns on the 28 freeze pages), and holding the field to the facts its points
+        cite (135 of the 375 real figures). Binding these fields for real needs footnotes on them, a
+        schema and prompt change of its own. What this catches: a figure no cell of the page states
+        to its written precision, in its unit and sign — "$7,777.7M", "$8,888.8M"."""
         if not text:
             return
         for fig, end in _read_figures(text):
