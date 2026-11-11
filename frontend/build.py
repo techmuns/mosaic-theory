@@ -99,6 +99,36 @@ def _ledger_join() -> dict[str, list[dict[str, Any]]]:
     entries = [entry_of(r) for r in rows]
     by_entry: dict[str, dict[str, Any]] = {
         str(e.get("entry_id")): dict(e) for e in entries if not e.get("event")}
+    # A DECISION'S CORRECTION (RF-D7) rides WITH it, as `closed` does: a stdlib twin of
+    # `vinci.monitor.apply_corrections`. The card keeps the decision's SEALED entry beside the
+    # underwrite record's own (they are the same price, and the record's ratio was computed at
+    # it); the entry the ledger READS the decision at is carried as `_correction`, so the card can
+    # say so.
+    for e in entries:
+        if e.get("event") != "CORRECTION":
+            continue
+        target = by_entry.get(str(e.get("corrects_entry_id")))
+        if target is None:
+            continue          # an orphan correction is the ledger's problem (the readers raise)
+        target["_correction"] = {
+            "correctionId": e.get("entry_id"),
+            "entryPrice": _rd(e.get("entry_price"), 2),
+            "entryPriceAsOf": e.get("entry_price_as_of"),
+            "reason": e.get("reason"),
+        }
+    # A VOIDED DECISION IS NO VERDICT OF RECORD (operator ruling 2026-11-11, GOOGL): a stdlib twin
+    # of `vinci.monitor.decision_rows`' rule. The row is MARKED here, never dropped, so the tenure
+    # walk below still finds the record it belonged to — and `_scenario_card` then shows that card
+    # as voided rather than as holding a BUY, or as "no ledger verdict logged" (a verdict was
+    # logged; it was ruled out).
+    for e in entries:
+        if e.get("event") != "VOID":
+            continue
+        target = by_entry.get(str(e.get("voids_entry_id")))
+        if target is None:
+            continue          # an orphan void is the ledger's problem (the python readers raise)
+        target["_voided"] = {"entryId": target.get("entry_id"), "voidId": e.get("entry_id"),
+                             "ruledOn": e.get("ruled_on")}
     for e in entries:
         if e.get("event") != "CLOSE":
             continue
@@ -189,7 +219,12 @@ def _ledger_for_record(
     t_up = str(rec.get("ticker", "")).upper()
     found = (ledger or {}).get(t_up)
     if isinstance(found, list):
-        for cand in reversed(found):
+        # a LIVE row this record owns outranks a VOIDED one (operator ruling 2026-11-11):
+        # `vinci.monitor.decision_rows` drops the voided row before anything is read, so a newer
+        # void must not hide an older live position of the same record. A voided row is returned
+        # only when the record owns no live one, so the card can say its verdict was voided.
+        for cand in [c for c in reversed(found) if not c.get("_voided")] + [
+                c for c in reversed(found) if c.get("_voided")]:
             owned = _ledger_for_record(rec, {t_up: cand})
             if owned is not None:
                 return owned
@@ -256,6 +291,7 @@ def _superseded_ledger(
                             ("entryPrice", "entry_price"),
                             ("entryPriceAsOf", "entry_price_as_of"))
                if led.get(j) is not None},
+            **({"correction": led["_correction"]} if led.get("_correction") else {}),
             # `closed` RIDES WITH THE VERDICT HERE TOO (external-honesty pass 2026-07-27, extended
             # 2026-09-01). The rule is that no surface may render the word "BUY" without the fact
             # that the position was closed — and this block is a new surface for exactly that word.
@@ -263,7 +299,10 @@ def _superseded_ledger(
             # superseded SMPL-2026-07-21" for a position closed 2026-07-22, on a card that had
             # been correct before. Same shape as the owned row's `closed`, so one renderer reads
             # both; omitted on an open position, so those stay byte-identical.
-            **({"closed": led["_closed"]} if led.get("_closed") else {})}
+            **({"closed": led["_closed"]} if led.get("_closed") else {}),
+            # the predecessor's row VOIDED (operator ruling 2026-11-11): carried so `_scenario_card`
+            # drops this block and marks the card voided — never emitted itself
+            **({"_voided": led["_voided"]} if led.get("_voided") else {})}
 
 
 def _record_key(rec: dict[str, Any]) -> str:
@@ -381,7 +420,14 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
     # value and the condition re-ran the ownership walk AND re-read the predecessor off disk for
     # every card.
     sled = _superseded_ledger(rec, ledger)
+    # A VOIDED ROW IS NO LEDGER VERDICT ON THE CARD (operator ruling 2026-11-11): neither its own
+    # nor a predecessor's. The card carries `voided` instead — the fact, never the BUY — and the
+    # decision log's audit tier holds the voided call itself, once.
+    gone = next((x["_voided"] for x in (led, sled) if x and x.get("_voided")), None)
+    led = None if led and led.get("_voided") else led
+    sled = None if sled and sled.get("_voided") else sled
     return {
+        **({"voided": gone} if gone else {}),
         "ticker": rec["ticker"], "recipeId": rec["recipe_id"], "recipeDesc": rec["recipe_desc"],
         # schema-1.1 methodology: the stamped arithmetic chain + per-axis derivations. Keys are
         # OMITTED (not emptied) for pre-1.1 records — the degrade is silence, never a fabricated
@@ -573,7 +619,8 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
                        "decidedAt": led.get("decided_at"),
                        **({"sleeve": led["sleeve"]}
                           if (led.get("sleeve") or "overshoot") != "overshoot" else {}),
-                       **({"closed": led["_closed"]} if led.get("_closed") else {})}}
+                       **({"closed": led["_closed"]} if led.get("_closed") else {}),
+                       **({"correction": led["_correction"]} if led.get("_correction") else {})}}
            if led else {}),
     }
 

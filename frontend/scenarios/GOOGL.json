@@ -107,7 +107,13 @@
   "verdict": "BUY",
   "decidedAt": "2026-08-28T11:24:47.926278",
   "entryPrice": 345.9,
-  "entryPriceAsOf": "2026-08-14"
+  "entryPriceAsOf": "2026-08-14",
+  "correction": {
+   "correctionId": "R-GOOGL",
+   "entryPrice": 340.65,
+   "entryPriceAsOf": "2026-08-27",
+   "reason": "RF-D7: the entry is the last US close completed at the decision moment (operator ruling 2026-11-09, approved 2026-11-10); the sealed close was stale"
+  }
  },
  "verdict": {
   "status": "confirmed",

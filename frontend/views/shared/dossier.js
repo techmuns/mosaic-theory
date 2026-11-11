@@ -8,6 +8,7 @@ import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib
 import { citeMark, withEndnotes, auditCitesInline } from "../../lib/cites.js";
 import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT, xLabelKeeper } from "../../lib/exhibit.js";
 import { uwCard, uwCardParts, amendMarks } from "./uw-card.js";
+import { entryCell, correctionTier } from "../../lib/correction.js";
 
 // (26a) EXTRACTION VERSION — the twin of the stamp helpers in vinci/dossier/extraction_version.py.
 // The dossier's date says WHEN it was built; this says WITH WHAT, which is what "are these two
@@ -273,7 +274,11 @@ export async function render(root, params, { item, frame }) {
         <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite —
           not assembled facts. The full dossier is built on a re-underwrite trigger.</div>
         ${uwCard(card, { ticker: false, mark })}
-        ${loggedVerdict(verdict, tk, card.underwriteDate, { sleeve: card.sleeve, followed })}
+        ${loggedVerdict(verdict, tk, card.underwriteDate, { sleeve: card.sleeve, followed,
+          // RECORD-SCOPED like `verdict` above: the voided call THIS card's row was, by its id —
+          // never any voided call on the ticker, which would tell another record it made it
+          voided: verdict || !card.voided ? null
+            : ((led.voided || []).find((e) => e.entryId === card.voided.entryId) || null) })}
         ${assembleHelp()}` });
       return;
     }
@@ -292,8 +297,12 @@ export async function render(root, params, { item, frame }) {
   // watch record; id-binding here would blank the history the moment a record was superseded.
   const verdict = led.entries.find((e) => e.ticker === ticker) || null;
   useExtractionVersions(await versionTableLoad);
+  // A VOIDED CALL (operator ruling 2026-11-11) is not a live verdict, but the record says one was
+  // logged and ruled out — never "no verdict logged yet"
+  const voidedCall = verdict ? null : ((led.voided || []).find((e) => e.ticker === ticker) || null);
   root.innerHTML = frame(item, {
-    crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict, card, mark, followed) });
+    crumbExtra: crumb, bare: true,
+    bodyHtml: renderDossier(d, verdict, card, mark, followed, voidedCall) });
   // (3-tier) client-side tabs — default Brief; toggle the active panel, no re-fetch, no router change.
   root.querySelectorAll(".ds-tab").forEach((tab) => tab.addEventListener("click", () => {
     const tier = tab.dataset.tier;
@@ -776,7 +785,8 @@ function trajectoryTable(q, m = {}) {
 
 // `card` is the OPTIONAL committed underwrite record (frontend/scenarios/<T>.json) — passed in by
 // render() because it needs a fetch; defaulted so the node smoke test keeps calling with two args.
-export function renderDossier(d, verdict, card = null, mark = null, followed = {}) {  // exported for the module-load smoke test
+export function renderDossier(d, verdict, card = null, mark = null, followed = {},
+                              voidedCall = null) {  // exported for the module-load smoke test
   const m = d.mechanical || {};              // (renders committed dossier JSON to HTML, no DOM/fetch)
   // (3-tier) Brief (first cut) · Analysis (full dossier) · Appendix (data & audit). ONE document; the
   // tabs are client-side chrome (default Brief, no re-fetch). Mirrors the # Brief / # Analysis /
@@ -787,7 +797,7 @@ export function renderDossier(d, verdict, card = null, mark = null, followed = {
   return header(d) + tierTabs() + `<div class="ds-tiers">
     <section class="ds-tier on" data-tier="brief">${withEndnotes("B", () => briefTier(d, verdict, m, card, mark))}</section>
     <section class="ds-tier" data-tier="analysis">${withEndnotes("A", () => analysisTier(d, m, card))}</section>
-    <section class="ds-tier" data-tier="appendix">${withEndnotes("X", () => appendixTier(d, verdict, m, card, followed))}</section>
+    <section class="ds-tier" data-tier="appendix">${withEndnotes("X", () => appendixTier(d, verdict, m, card, followed, voidedCall))}</section>
   </div>`;
 }
 
@@ -875,14 +885,14 @@ function isProcessCaveat(c) { return String(c).startsWith("primary-source:"); }
 // screening-context panel moved to the Brief's underwrite-detail card — user decision.)
 // verdictFooter is GONE — it was a third copy of the pivot statement (beside the decision strip's
 // sealed-proposal suffix and Record & reproduce's verdict row).
-function appendixTier(d, verdict, m, card, followed = {}) {
+function appendixTier(d, verdict, m, card, followed = {}, voidedCall = null) {
   return howToRead()
     // (addition #1) the ANALYST's own inputs are audited first — everything below is
     // machine-assembled evidence, so "why these numbers" opens the audit tier.
     + assumptionMethodology(card)
     + appendixBlock(m)
     + positioning(m)                    // (relocation) insider + short interest, from "The street"
-    + recordAndReproduce(d, verdict, card, followed);
+    + recordAndReproduce(d, verdict, card, followed, voidedCall);
 }
 
 // The reading guide — the discipline/methodology language that used to repeat as per-card
@@ -957,7 +967,7 @@ function panelAgeNote(m, assembledAt) {
   return `oldest panel ${days}d old — ${ov} (${ok}), against a ${ref} build`;
 }
 
-function recordAndReproduce(d, verdict, card = null, followed = {}) {
+function recordAndReproduce(d, verdict, card = null, followed = {}, voidedCall = null) {
   const proc = (d.caveats || []).filter(isProcessCaveat);
   const row = (label, val) => `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
     <div class="fact-val">${val}</div></div>`;
@@ -982,7 +992,7 @@ function recordAndReproduce(d, verdict, card = null, followed = {}) {
     ${row("Re-run", `<pre class="ds-rerun"><code>python -m vinci dossier --ticker ${escapeHtml(d.ticker)}</code></pre>
       <span class="muted" style="font-size:11px;">regenerates every assembled fact from the same sources; committed values change only when the sources have</span>`)}
     ${loggedVerdict(verdict, d.ticker, d.reference_date,
-      { bare: true, sleeve: d.sleeve, rank: d.rank, followed })}
+      { bare: true, sleeve: d.sleeve, rank: d.rank, followed, voided: voidedCall })}
   </div>`;
 }
 
@@ -1203,7 +1213,14 @@ function thesisBlock(card) {
       <div class="brief-vlab brief-eyebrow">Appended since the verdict</div>
       ${parts.amendments.map((a) => `<div class="brief-amend">${amendMarks(a)}</div>`).join("")}
     </div>` : "";
-  return `<div class="brief-vlab brief-eyebrow">Thesis — our rationale</div>
+  // A VOIDED VERDICT'S SEALED TEXT IS SHOWN AS IT WAS SEALED, UNDER ONE LINE THAT SAYS SO
+  // (operator, 2026-11-11: "Approve + add a banner"). The words below are never edited; the line
+  // is the only thing a void adds here, and its date is the void row's own ruling date.
+  const voidedLine = (card && card.voided) ? `
+    <div class="fact-caveat brief-voided" style="margin-bottom:6px;">This verdict was voided by the
+      operator's ruling of ${escapeHtml(String(card.voided.ruledOn || ""))} — the text below is the
+      sealed record, unedited.</div>` : "";
+  return `<div class="brief-vlab brief-eyebrow">Thesis — our rationale</div>${voidedLine}
     <div class="brief-thesis">${amendMarks(parts.base)}</div>${appended}`;
 }
 
@@ -4648,20 +4665,29 @@ export function logVerdictId(ticker, refDate, { sleeve, rank = null, followed = 
 const ENTRY_PRICE_RULE = "the entry price freezes at the latest close on or before the day you "
   + "run it (pass --ref YYYY-MM-DD to decide as of an earlier date)";
 
-function loggedVerdict(v, ticker, refDate, { bare = false, sleeve, rank = null, followed = {} } = {}) {
+function loggedVerdict(v, ticker, refDate,
+                       { bare = false, sleeve, rank = null, followed = {}, voided = null } = {}) {
   const wrap = (inner) => bare
     ? `<div class="fact"><div class="fact-label">Verdict record</div><div class="fact-val">${inner}</div></div>`
     : inner;
   if (!v) {
     const cid = logVerdictId(ticker, refDate, { sleeve, rank, followed });
+    // A VOIDED CALL: the verdict logged on this name was ruled out of the record — said, never
+    // "no verdict logged yet"; the decision log's audit tier holds the call itself, once
+    const lead = voided
+      ? `the ${escapeHtml(verdictWord(voided.verdict))} logged ${fmtDate(voided.decidedAt)} was
+         VOIDED by the operator's ruling of ${fmtDate(voided.ruledOn)} — out of the record (the
+         decision log's audit tier holds it). No verdict is live; a fresh one is logged via the CLI
+         only, never from this dashboard (the friction is the safeguard):`
+      : `no verdict logged yet — verdicts are logged via the CLI only, never from this
+        dashboard (the friction is the safeguard):`;
     if (bare) {
-      return wrap(`no verdict logged yet — verdicts are logged via the CLI only, never from this
-        dashboard (the friction is the safeguard):
+      return wrap(`${lead}
         <pre class="ds-rerun"><code>python -m vinci log-verdict ${escapeHtml(cid)} --verdict &lt;BUY|AVOID_TERMINAL|PASS&gt; …</code></pre>
         <span class="muted" style="font-size:11px;">append-only — ${escapeHtml(ENTRY_PRICE_RULE)}; a logged verdict cannot be edited or deleted</span>`);
     }
     return `<details class="card ds-section">
-      <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Logged verdict <span class="muted" style="font-weight:400;">— none yet for ${escapeHtml(ticker)} · how to log it (read-only — run locally)</span></summary>
+      <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Logged verdict <span class="muted" style="font-weight:400;">— ${voided ? `voided ${fmtDate(voided.ruledOn)}; none live` : "none yet"} for ${escapeHtml(ticker)} · how to log it (read-only — run locally)</span></summary>
       <div class="logged-verdict none" style="margin-top:10px;">Verdicts are logged via the CLI only — never from this dashboard (the friction is the safeguard). After deciding from the facts above, run this locally from the repo root:</div>
       <pre style="background:var(--nav-bg); color:var(--nav-ink); padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:10px 0 0; line-height:1.6;"><code>python -m vinci log-verdict ${escapeHtml(cid)} \\
   --verdict &lt;BUY|AVOID_TERMINAL|PASS&gt; \\
@@ -4694,11 +4720,12 @@ function loggedVerdict(v, ticker, refDate, { bare = false, sleeve, rank = null, 
       </div>
       ${cl && cl.reason ? `<div class="muted" style="font-size:11.5px; margin-top:6px;">Close reason — ${escapeHtml(cl.reason)}</div>` : ""}
       <div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:10px; font-size:13px;">
-        <div><span class="muted">Frozen entry</span> <span class="mono" style="font-weight:600;">${fmtPrice(v.entryPrice)}</span> <span class="muted">@ ${fmtDate(v.entryPriceAsOf)}</span></div>
+        ${entryCell(v)}
         <div><span class="muted">Horizon</span> <span class="mono">${v.horizonDays}d</span> → ${fmtDate(v.horizonDate)}</div>
         <div><span class="muted">Confidence</span> ${escapeHtml(v.confidence || DASH)}</div>
         <div><span class="muted">Benchmark</span> <span class="mono">${escapeHtml(v.benchmark || DASH)}</span></div>
       </div>
+      ${correctionTier(v)}
       ${v.thesis ? `<div style="margin-top:10px;"><span class="muted" style="font-size:11px; text-transform:uppercase;">Thesis</span><div style="font-size:13px; color:var(--ink-2);">${escapeHtml(v.thesis)}</div></div>` : ""}
       ${v.killCriteria ? `<div style="margin-top:8px;"><span class="muted" style="font-size:11px; text-transform:uppercase;">Kill criteria</span><div style="font-size:13px; color:var(--ink-2);">${escapeHtml(v.killCriteria)}</div></div>` : ""}
     </div>`;

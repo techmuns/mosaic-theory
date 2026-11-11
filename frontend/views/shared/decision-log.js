@@ -2,6 +2,7 @@
 // Displayed here; logged ONLY via the CLI. No edit / delete / write path exists.
 import { getLedger, isBuyVerdict, verdictWord, getMonitor } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtInt, escapeHtml, DASH } from "../../lib/format.js";
+import { entryCell, correctionTier } from "../../lib/correction.js";
 
 // The LIVE columns come from the latest COMMITTED monitor snapshot (vinci monitor, manual
 // cadence) — never a live fetch. Absent history → every live cell reads "—": the ledger's frozen
@@ -54,7 +55,47 @@ export async function render(root, _params, { item, frame }) {
     ? led.entries.map((e) => entryCard(e, marks[String(e.ticker).toUpperCase()])).join("")
     : `<div class="notice">No verdicts logged yet.</div>`;
 
-  root.innerHTML = frame(item, { bodyHtml: counts + banner + spread + entries });
+  root.innerHTML = frame(item, { bodyHtml: counts + banner + spread + entries + voidedTier(led.voided) });
+}
+
+// THE VOIDED CALLS, ONCE (operator ruling 2026-11-11, GOOGL). A voided decision is out of the live
+// book, the counts and the spread; this tier is the one place it still shows, so the removal can be
+// seen and never reads as a hidden loser: the sealed entry, its correction, the ruling and its
+// reason, and the result to date the void itself sealed. Collapsed on the web — audit detail, never
+// a decision value — and force-opened in print with every other <details>. Exported for the node pin.
+export function voidedTier(voided) {
+  if (!voided || !voided.length) return "";
+  const rows = voided.map((v) => {
+    const m = v.mark;
+    const result = m
+      ? `${pct(m.position_return)} vs ${escapeHtml(m.benchmark)} ${pct(m.benchmark_return)}, excess
+         ${m.excess * 100 >= 0 ? "+" : "−"}${Math.abs(m.excess * 100).toFixed(2)} pts
+         (${escapeHtml(m.return_basis)} return, entry ${fmtPrice(m.entry_price)} on ${fmtDate(m.entry_date)},
+         marked ${fmtPrice(m.price)} on ${fmtDate(m.as_of)})`
+      : DASH;
+    const fx = v.correction;
+    return `
+      <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--line); font-size:13px;">
+        <div style="display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;">
+          <span class="mono" style="font-weight:650;">${escapeHtml(v.ticker)}</span>
+          <span class="pill unresolved">${escapeHtml(verdictWord(v.verdict))} · voided</span>
+          <span class="muted" style="font-size:12px;">decided ${fmtDate(v.decidedAt)} · voided by
+            <span class="mono">${escapeHtml(v.voidId)}</span> on the operator's ruling of ${fmtDate(v.ruledOn)}</span>
+        </div>
+        <div style="margin-top:6px; color:var(--ink-2);">Sealed at <span class="mono">${fmtPrice(v.sealedPrice)}</span>
+          on ${fmtDate(v.sealedAsOf)}${fx ? `, read at <span class="mono">${fmtPrice(fx.entryPrice)}</span> on
+          ${fmtDate(fx.entryPriceAsOf)} by <span class="mono">${escapeHtml(fx.correctionId)}</span>` : ""}.</div>
+        <div style="margin-top:4px;"><span class="muted">Result to date when voided</span> ${result}</div>
+        ${v.reason ? `<div class="muted" style="margin-top:4px; font-size:12px;">Reason — ${escapeHtml(v.reason)}</div>` : ""}
+      </div>`;
+  }).join("");
+  return `
+    <details class="ds-voided card" style="margin-top:18px;">
+      <summary class="muted">Voided — ${fmtInt(voided.length)} call${voided.length === 1 ? "" : "s"} ruled out of the record, shown here once</summary>
+      <div class="muted" style="font-size:12px; margin-top:6px;">Out of the live book, the counts and the
+        spread. The rows stay in the append-only ledger as audit history.</div>
+      ${rows}
+    </details>`;
 }
 
 // The BUY−AVOID spread, carrying its own caveats — a DIAGNOSTIC until every row reaches its
@@ -209,12 +250,13 @@ function entryCard(e, mark) {
       </div>
       ${closeReason}
       <div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:10px; font-size:13px;">
-        <div><span class="muted">Frozen entry</span> <span class="mono" style="font-weight:600;">${fmtPrice(e.entryPrice)}</span> <span class="muted">@ ${fmtDate(e.entryPriceAsOf)}</span></div>
+        ${entryCell(e)}
         <div><span class="muted">Horizon</span> <span class="mono">${fmtInt(e.horizonDays)}d</span> <span class="muted">→ ${fmtDate(e.horizonDate)}</span></div>
         <div><span class="muted">Confidence</span> ${escapeHtml(e.confidence || DASH)}</div>
         <div><span class="muted">Benchmark</span> <span class="mono">${escapeHtml((mark && mark.benchmark) || e.benchmark || DASH)}</span>${mark && mark.benchmark && mark.benchmark !== e.benchmark ? ` <span class="muted" style="font-size:11px;">(cap-band; supersedes ${escapeHtml(e.benchmark)})</span>` : ""}</div>
         ${mark && mark.sector ? `<div><span class="muted">Sector</span> ${escapeHtml(mark.sector)}</div>` : ""}
       </div>
+      ${correctionTier(e)}
       ${liveRow(mark)}
       ${field("Thesis", e.thesis)}
       ${field("Kill criteria", e.killCriteria)}
