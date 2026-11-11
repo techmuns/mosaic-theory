@@ -66,8 +66,17 @@ superseded-by:
   inside the window raises `EodError`.
   - One exception (code review round 0): the plan also refuses "today's data before end of day"
     until midnight ET, which is local tomorrow in IST (2026-10-28 was refused at 03:38 UTC on
-    10-29, `docs/records/2026-10-29-monitor-day-2026-10-28.md`). So a refusal of today or yesterday
-    still reads as no data, and `last_completed_session` steps back past it as it always did.
+    10-29, `docs/records/2026-10-29-monitor-day-2026-10-28.md`). So a refusal of the ET date still
+    open, or a later one (`et_today()`, America/New_York), still reads as no data, and
+    `last_completed_session` steps back past it as it always did.
+  - Codex round 2 on #991: the first cut exempted local today and yesterday for the whole IST
+    day. A refused session that had already closed in ET therefore read as a holiday after
+    midnight ET, so a revoked key on a one-day ingest wrote and raised nothing. Only the ET date
+    still open is exempt now (`test_a_refusal_of_a_session_already_closed_in_et_raises`, red on
+    `c94dd27a`; the negative pin keeps the early-hours case at no data).
+  - It is pinned at the real instants, both with Polygon's real 403 text. 2026-10-29T03:38Z is
+    23:38 EDT on 10-28, so 10-28's refusal is no data. 04:30Z is 00:30 EDT on 10-29, just after
+    midnight, so the same refusal raises.
   - The window is named once (`PLAN_HISTORY_DAYS` = 730, `PLAN_EDGE_MARGIN_DAYS` = 14,
     `inside_plan_window`).
   - It was measured live on 2026-11-11: grouped-daily served 2024-11-20 (721 days back, 10,731
@@ -86,7 +95,7 @@ RF-D11 and RF-D12, all latent per the audit (group F notes, F-D5 and F-D10 to F-
 edge is this build's own finding 1, counted in scope by the coordinator.
 
 **HOW VERIFIED.** See the PR's "Cross-setup validation (deterministic)".
-- **Fail first.** `tests/test_prices_order5.py` has 23 tests.
+- **Fail first.** `tests/test_prices_order5.py` has 26 tests.
   - The first 10: 8 fail on `2b9b766c`, and the 2 negative pins pass there, as they should.
   - Review 0a's 2 (a day not yet closed in ET; an anchor the source did not serve): each fails
     with its fix reverted.
@@ -99,7 +108,8 @@ edge is this build's own finding 1, counted in scope by the coordinator.
     edge, and a price-only move after `end`.
   - Codex round 1's 1 (a held session after `end` the source did not serve): fails on
     `0135392d`.
-  - All 23 pass on head.
+  - Codex round 2's 1 fails on `c94dd27a`.
+  - All 26 pass on head.
 - **The real data in those tests:**
   - IESC's real 2026-08-05 restatement pair, from the primary store and Polygon;
   - GOOGL's committed Polygon bars;

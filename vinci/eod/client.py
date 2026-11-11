@@ -21,6 +21,7 @@ from bisect import bisect_left, bisect_right
 from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from datetime import UTC, date, datetime, timedelta
 from typing import Any, cast
+from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
 
@@ -343,6 +344,14 @@ def restate_after(store: Any, iid: str, edge: Sequence[tuple[Any, RawBar | None]
         store.restate_bars(iid, first, through=date.max, after=end)
         return "restated", first
     return "unanchored", None
+
+
+def et_today(now: datetime | None = None) -> date:
+    """The exchange's own calendar date (America/New_York) at ``now`` (an aware instant; the
+    present by default). The plan refuses a date's data until that date has ended in ET, so this
+    — never the local date — says which refusal is "not yet closed"
+    (`PolygonEodClient.grouped_daily`)."""
+    return (now or datetime.now(UTC)).astimezone(ZoneInfo("America/New_York")).date()
 
 
 #: How far back a rename's carry asks the source for the old ticker's bars: the two years the data
@@ -842,14 +851,16 @@ class PolygonEodClient(EodClient):
             # BUT ONLY THERE (TeamNostra fix request 2, RF-D12): the same refusal on a date the
             # plan serves — a lapsed plan, a revoked key — read as a holiday too, and an ingest of
             # 22 refused sessions reported ``trading_days: 0`` and raised nothing. A refusal inside
-            # the window (`inside_plan_window`) is a failure, and says so. EXCEPT A DAY NOT YET
-            # CLOSED IN ET: the plan refuses "today's data before end of day" until midnight ET,
-            # which is local TOMORROW in IST (2026-10-28 refused at 03:38 UTC on 10-29,
-            # `docs/records/2026-10-29-monitor-day-2026-10-28.md`); `last_completed_session`
-            # probes `today - 1` and must step back past it, as it always did.
+            # the window (`inside_plan_window`) is a failure, and says so. EXCEPT THE ET DATE STILL
+            # OPEN, or a later one: the plan refuses "today's data before end of day" until
+            # midnight ET, which is local TOMORROW in IST (2026-10-28 refused at 03:38 UTC on
+            # 10-29, `docs/records/2026-10-29-monitor-day-2026-10-28.md`); `last_completed_session`
+            # probes `today - 1` and must step back past it, as it always did. Only that date — a
+            # session already closed in ET and refused is a lapse, whatever the local date (Codex
+            # round 2 on #991: "local yesterday" exempted it for the whole IST day).
             if "NOT_AUTHORIZED" in str(exc):
                 today = date.today()
-                if (today - day).days > 1 and inside_plan_window(day, today=today):
+                if day < et_today() and inside_plan_window(day, today=today):
                     raise EodError(
                         f"grouped-daily {day}: the source REFUSED a date inside the plan's "
                         f"{PLAN_HISTORY_DAYS}-day window (403 NOT_AUTHORIZED) — a lapsed plan or "

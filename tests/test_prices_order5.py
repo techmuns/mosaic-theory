@@ -417,14 +417,61 @@ def test_a_refusal_beyond_the_plan_window_is_still_no_data() -> None:
     assert client.grouped_daily(date.today() - timedelta(days=PLAN_HISTORY_DAYS + 10)) == {}
 
 
-def test_a_refusal_of_a_day_not_yet_closed_in_et_is_still_no_data() -> None:
+def test_a_refusal_of_a_day_not_yet_closed_in_et_is_still_no_data(
+        monkeypatch: pytest.MonkeyPatch) -> None:
     """THE OTHER NEGATIVE PIN (review of order 5): the plan refuses "today's data before end of
     day" until midnight ET — on 2026-10-29 at 03:38 UTC it refused 2026-10-28, local yesterday in
     IST (`docs/records/2026-10-29-monitor-day-2026-10-28.md`). `last_completed_session` probes
-    ``today - 1`` and must step back past it, so that refusal is no data, never a lapse."""
+    ``today - 1`` and must step back past it, so a refusal of the ET date still open — and of any
+    later date — is no data, never a lapse. Pinned at that hour: ET's date is local yesterday."""
+    from vinci.eod import client as client_mod
+    monkeypatch.setattr(client_mod, "et_today", lambda: date.today() - timedelta(days=1),
+                        raising=False)
     client = PolygonEodClient(_Refusing(), min_results=1)  # type: ignore[arg-type]
     for back in (0, 1):
         assert client.grouped_daily(date.today() - timedelta(days=back)) == {}
+
+
+@pytest.mark.parametrize(("instant", "et_date", "refused", "raises"), [
+    # THE REAL INCIDENT: 03:38 UTC on 2026-10-29 is 23:38 EDT on 10-28 — the session still open in
+    # ET, so the plan's refusal of 10-28 is "today's data before end of day": no data
+    ("2026-10-29T03:38:00+00:00", date(2026, 10, 28), date(2026, 10, 28), False),
+    # JUST AFTER MIDNIGHT ET: 04:30 UTC on 10-29 is 00:30 EDT on 10-29 — 10-28 has closed, so the
+    # same refusal of 10-28 is a lapsed plan or key, and raises (Codex round 2 on #991)
+    ("2026-10-29T04:30:00+00:00", date(2026, 10, 29), date(2026, 10, 28), True),
+])
+def test_the_refusal_rule_reads_the_et_date_at_the_real_instants(
+        monkeypatch: pytest.MonkeyPatch, instant: str, et_date: date, refused: date,
+        raises: bool) -> None:
+    """The ET date at each instant, and what Polygon's real 403 on ``refused`` then means. The
+    plan's window is read against the local date, so ``today`` is pinned beside the instant."""
+    from datetime import datetime as dt
+
+    from vinci.eod import client as client_mod
+    at = dt.fromisoformat(instant)
+    assert client_mod.et_today(at) == et_date
+    monkeypatch.setattr(client_mod, "et_today", lambda now=None: et_date)
+    client = PolygonEodClient(_Refusing(), min_results=1)  # type: ignore[arg-type]
+    if raises:
+        with pytest.raises(EodError, match="inside the plan's"):
+            client.grouped_daily(refused)
+    else:
+        assert client.grouped_daily(refused) == {}
+
+
+def test_a_refusal_of_a_session_already_closed_in_et_raises(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """CODEX P2 ON #991, ROUND 2: the exemption covered local today AND yesterday for the whole
+    day, so after midnight ET a refused CLOSED session — local yesterday, ET yesterday too — read
+    as a holiday, and a revoked key on a one-day ingest wrote nothing and raised nothing. Only the
+    ET date still open is exempt: here ET's date is local today, so yesterday's refusal is a
+    lapse."""
+    from vinci.eod import client as client_mod
+    monkeypatch.setattr(client_mod, "et_today", lambda: date.today(), raising=False)
+    client = PolygonEodClient(_Refusing(), min_results=1)  # type: ignore[arg-type]
+    with pytest.raises(EodError, match="inside the plan's"):
+        client.grouped_daily(date.today() - timedelta(days=1))
+    assert client.grouped_daily(date.today()) == {}
 
 
 def test_an_anchor_the_source_did_not_serve_is_named_unanchored(tmp_path: Path) -> None:
