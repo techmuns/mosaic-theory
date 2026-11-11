@@ -563,6 +563,16 @@ const EXTRACTION_VERSIONS = [
     "Available' body and an 'Entitlement Needed' body are named as such, never 'could not " +
     "parse'; and a thin RTF is no longer called an OLE Word doc. On the 36 export folders " +
     "on disk no read moves"],
+  ["2026-11-11.guides-as-stated",
+    "a guide is read only where the release states one, for the period it states, and a " +
+    "guide the reader cannot read is said aloud (TeamNostra fix request 2, RE2-D1, D3, D4, " +
+    "D5, D7, D19, D20): two figures joined by 'and' outside 'between' are no range; a range " +
+    "the release withdraws, or one stated for a calendar period, is refused with a note; a " +
+    "period phrase naming a deal ('the 2025 acquisition') is not the guide's period; a " +
+    "qualifier before the low side, 'is expected to increase', and 'guidance to $X to $Y' " +
+    "are read; a single-point guide a forward verb governs is refused with a note; and a " +
+    "guide filed under the next-fy default carries a machine-tier flag saying no period was " +
+    "read"],
   ["2026-11-11.dividend-level-na-unstated",
     "the dividend per share is the dividend, and CIQ's 'NA' is not stated (TeamNostra fix " +
     "request 2, RA-D2, split from #967; the operator's ruling of 2026-11-11 on #967's Codex" +
