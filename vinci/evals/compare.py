@@ -90,13 +90,18 @@ def compare_requests(base_ref: str, cand_ref: str, *, tickers: Sequence[str] | N
     for t in tickers or p["panel"]:
         page, tx = rp.panel_inputs(t, panel=p, ciq_root=ciq_root)
         comps = rp.comps_export(t, ciq_root=ciq_root) if transforms else None
-        base = rp.capture_at(base_ref, page, tx, transforms=transforms, comps=comps)
-        cand = rp.capture_at(cand_ref, page, tx, transforms=transforms, comps=comps)
+        # the page's own CIQ folder, for a transform re-reading its exports (`variants.Context.ciq`)
+        ciq = (Path(ciq_root) / t) if transforms and (Path(ciq_root) / t).is_dir() else None
+        base = rp.capture_at(base_ref, page, tx, transforms=transforms, comps=comps, ciq=ciq)
+        cand = rp.capture_at(cand_ref, page, tx, transforms=transforms, comps=comps, ciq=ciq)
         out.requests[(t, "BASE")], out.requests[(t, "CAND")] = base, cand
         out.diffs.append(page_diff(t, base, cand))
         out.inputs["pages"][t] = {
             "comps": ({"file": comps.name, "sha256": hashlib.sha256(comps.read_bytes()).hexdigest()}
                       if comps is not None else None),
+            "ciq": ({f.name: hashlib.sha256(f.read_bytes()).hexdigest()
+                     for f in sorted(ciq.iterdir()) if f.is_file() and not f.name.startswith(".")}
+                    if ciq is not None else None),
             "transcripts": p["pages"][t]["transcripts"]}
     return out
 
