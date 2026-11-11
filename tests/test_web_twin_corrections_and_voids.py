@@ -34,6 +34,8 @@ _ROOT = Path(__file__).resolve().parents[1]
 _LEDGER = _ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
 _VOID_ROW = _ROOT / "tests" / "fixtures" / "ledger_void" / "x_googl_dry_run.jsonl"
 _FE = _ROOT / "frontend"
+#: A committed monitor day cut BEFORE GOOGL's 2026-11-11 ruling: GOOGL is in its book and freshness.
+_PRE_RULING_DAY = "2026-11-02"
 
 
 def _load_build() -> Any:
@@ -168,7 +170,15 @@ def test_the_decision_log_shows_a_voided_call_once_and_never_in_the_book(tmp_pat
     fixes = {str(e.corrects_entry_id): e.entry_id for e in
              (LedgerEntry.model_validate(mon.entry_of(r)) for r in raw) if e.corrects_entry_id}
     led = _write(raw, tmp_path / "decision_ledger.jsonl")
-    html = _node(_driver({"snapshots/decision_ledger.jsonl": led}, """
+    # THE MONITOR DAY IS FIXED: 2026-11-02, cut before the 2026-11-11 ruling, served as the page's
+    # "latest". The freshness label below is a property of a day that PREDATES a ruling; reading
+    # whatever day is latest made this pin vacuous — and red — the moment a post-void day landed.
+    index = json.loads((_FE / "monitor" / "index.json").read_text())
+    index["latest"] = _PRE_RULING_DAY
+    fixed_index = tmp_path / "index.json"
+    fixed_index.write_text(json.dumps(index))
+    html = _node(_driver({"snapshots/decision_ledger.jsonl": led,
+                          "monitor/index.json": fixed_index}, """
 const v = await import(FE + "/views/shared/decision-log.js");
 await v.render(root, {}, { item: { title: "Decision log", blurb: "" },
                            frame: (i, o) => o.bodyHtml });
@@ -184,12 +194,11 @@ console.log(JSON.stringify(root.innerHTML));
     for decision in live:
         if decision in fixes:
             assert fixes[decision] in book               # a live correction still shows
-    # THE FRESHNESS PANEL'S LABEL IS THE LATEST MONITOR DAY'S (review of the V3 re-cut). A day cut
+    # THE FRESHNESS PANEL'S LABEL IS THE MONITOR DAY'S (review of the V3 re-cut). A day cut
     # before the ruling still names the voided call's verdict (`live_verdicts` kept it then), and
     # the live book printed "GOOGL BUY" above the tier that says it was ruled out.
-    day = json.loads((_FE / "monitor" / "index.json").read_text())["latest"]
-    fresh = {str(f["ticker"]) for f in
-             json.loads((_FE / "monitor" / f"{day}.json").read_text()).get("freshness", [])}
+    fresh = {str(f["ticker"]) for f in json.loads(
+        (_FE / "monitor" / f"{_PRE_RULING_DAY}.json").read_text()).get("freshness", [])}
     names = {str(mon.entry_of(r)["ticker"]) for r in raw
              if str(mon.entry_of(r).get("entry_id")) in voided}
     assert names & fresh, "the committed monitor day carries no voided name — the pin is vacuous"

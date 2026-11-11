@@ -2892,22 +2892,22 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     if not ledger_path.exists():
         print(f"no committed ledger at {ledger_path}")
         return 1
-    ledger_all = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
+    raw_ledger = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
     # A DECISION SEALED ON A STALE CLOSE IS MARKED FROM ITS CORRECTION (RF-D7): every reader below
-    # sees the corrected entry; the day's notes name the sealed one beside it
-    # A VOID IS IN EFFECT FROM ITS RULING DATE (operator, 2026-11-11): a day before the ruling keeps
-    # the decision in its book, so a past day re-cut reproduces the day as it was committed
-    ledger_all, correction_notes = mon.apply_corrections(ledger_all, as_of=ref)
-    if not ledger_all:
+    # sees the corrected entry; the day's notes name the sealed one beside it. Read here with NO
+    # void in effect (``date.min``): the checks made before the session is known (the assignments)
+    # cover every decision any day could hold. The day's own read is below, once its session is.
+    # Named apart from the day's read below, so no reader between the two can take this one.
+    any_day_ledger, _notes = mon.apply_corrections(raw_ledger, as_of=date.min)
+    if not any_day_ledger:
         print("decision ledger is empty — nothing to monitor")
         return 0
     # POSITIONS ONLY. A close row carries the original verdict for provenance, so feeding the raw
     # ledger to the spread would count a closed name a SECOND time on its own original side.
     # `pair_closes` refuses loud on an unpairable or duplicated close, so a malformed realized book
     # stops the run rather than rendering wrong.
-    rows_raw = mon.decision_rows(ledger_all)
     assignments = mon.read_assignments(root)
-    missing = sorted({r["ticker"] for r in rows_raw} - set(assignments))
+    missing = sorted({r["ticker"] for r in mon.decision_rows(any_day_ledger)} - set(assignments))
     if missing:
         print(f"no benchmark assignment for {missing} — refusing to measure against an "
               f"unassigned yardstick (write data/monitor/benchmark_assignments.json first)")
@@ -2938,6 +2938,13 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         return mon.session_on_or_before(eod.grouped_daily, day, cache)
 
     now_date, now_bars = bars_on_or_before(ref)
+    # A VOID IS IN EFFECT FROM ITS RULING DATE, ON THE SESSION THE DAY IS FILED UNDER — as a close
+    # is (`closed_decision_ids(as_of=now_date)`), never on the run's ``--ref``. Keyed on ``ref``,
+    # the routine run of 2026-11-11 filed day 2026-11-10 without GOOGL, voided 2026-11-11, while a
+    # re-cut of 2026-11-10 keeps it: the committed day would not reproduce (operator, 2026-11-11:
+    # "From 2026-11-11 on"). The day's book, notes and every count below read this.
+    ledger_all, correction_notes = mon.apply_corrections(raw_ledger, as_of=now_date)
+    rows_raw = mon.decision_rows(ledger_all)
     # THE BOOK'S SPAN: every decision entered by the snapshot date, the closed ones included (their
     # realized view reads it too). Each source below reads it once per symbol.
     span_start = min((date.fromisoformat(r["entry_price_as_of"])
