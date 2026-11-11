@@ -175,7 +175,8 @@ def test_committed_assignments_supersede_the_ledger_and_reproduce_their_own_caps
         # THE DECISION ROW: a close or a CORRECTION row shares its ticker, and the assignment is
         # stamped at the entry the decision SEALED — a correction moves the entry it is read at,
         # never the benchmark chosen at entry (RF-D7)
-        row = next(r for r in mon.decision_rows(ledger) if r["ticker"] == t)
+        # (a voided decision too: the assignment was stamped at its entry all the same)
+        row = next(r for r in mon.decision_rows(ledger, as_of=date.min) if r["ticker"] == t)
         assert a.entry_price == row["entry_price"] and \
             a.entry_date.isoformat() == row["entry_price_as_of"]   # assigned AT ENTRY, not now
 

@@ -32,7 +32,8 @@ superseded-by:
     is on the mark's split basis, so it is matched to the decision by its entry DATE. A monitor that
     cannot mark is a refusal, not a traceback (review round 0).
   - It refuses: an unknown decision; a second void; a closed decision (its outcome is realized); a
-    blank reason; a mark taken on another entry date than the one the decision is read at.
+    blank reason; a mark taken on another entry date than the one the decision is read at; and a
+    ruling dated after the void's own append (review round 1, below).
   - It re-seeds the store's ledger table from the committed snapshot first (additive), as
     `correct-entry` does.
 - **The readers.** A voided decision, its correction and its void leave:
@@ -40,14 +41,36 @@ superseded-by:
     report names the void ONCE, with its sealed result;
   - the monitor: `decision_rows` (so the book, the spread, `live_verdicts` and the supersede guard
     at `cli.py`) and `apply_corrections`, the first thing `vinci monitor` does, which names the void
-    once in the day's notes. Committed monitor days are dated artifacts and stay as they are;
+    once in the day's notes. Committed monitor days are dated artifacts and stay as they are, and
+    each one still reproduces (below);
   - `close_position`, which refuses to close a voided decision;
   - `correct_entry`, and `vinci correct-entry`, which refuse to correct one.
   - Input-provisioning reads (`orchestrator.run_monthly`, `vinci score`: which benchmarks to
     ingest, how far back) still see the decision. They only widen what is fetched (GOOGL's SPY) and
     change no value.
+- **A void is in effect FROM ITS RULING DATE, as a close is from its exit** (review round 1:
+  Codex P1 on #984). The operator answered on 2026-11-11: "From 2026-11-11 on (Recommended)".
+  - A report cut before `ruled_on` reads the decision as it was live then:
+    `score_ledger(as_of=2026-11-06)` and `vinci monitor --ref 2026-11-06` keep GOOGL. One cut on
+    or after 2026-11-11 leaves it out.
+  - `voids_by_decision(entries, as_of=…)` returns only the voids ruled by then.
+    `apply_corrections(raw, as_of=…)` and `decision_rows(raw, as_of=…)` keep a decision whose void
+    is not yet in effect. `decisions_as_of` and `live_verdicts` pass their date through.
+  - Where the date comes from: scoring reads its own `as_of`, and `vinci monitor` its `--ref`.
+  - The orphan and double-void checks still run on every void.
+  - Without `as_of`, every void counts. That is the ledger as it stands now, which is what the
+    writers read: no close or correction of a voided decision, ever.
+  - **The web needs no date.** Its twins (V3) key on the void row's presence, and the writer
+    refuses a ruling dated after the void's own append (local date). So every committed void is
+    already in effect on the day any page is built.
+  - **This reverses one result of the first dry run.** That run showed GOOGL gone from
+    `monitor --ref 2026-11-06`. That no longer holds: at 2026-11-06 GOOGL is in the book, and it is
+    gone from 2026-11-11 on (the dry run below).
 - **A fresh decision after a void, or after a close** (the id scheme the #947 record's option 3
-  needed).
+  needed). This is the operator's ruling of 2026-11-11, asked by the coordinator, whose answer was
+  "After a close or a void (Recommended)". A new decision on a name is allowed once its earlier
+  decision is CLOSED or VOIDED, and refused while one is open. Each new decision is a separate
+  call, scored from its own entry.
   - `log_verdict` takes its id from `next_decision_id`: `V-{candidate}` first, then
     `V-{candidate}-{n}`. It refuses while an earlier decision of the candidate is still open.
   - A close, correction or void is named from its DECISION's id (`follow_up_id`): `C-GOOGL-2` for
@@ -75,34 +98,70 @@ hand.
   - a close is named from the candidate, not the decision.
 - **The sealed mark is the monitor's own row.** End to end, `_void_mark` matches the GOOGL row of
   a `vinci monitor` day on the same wired vendors.
-- **The dry run on a `.backup` of the primary's store** (sha256 `07575ae4…` at the copy). It used
-  the real `vinci void-decision V-GOOGL` on a scratch tree, appending and exporting there only.
-  Live reads were the seven ledger names and benchmarks: Polygon 12, Tiingo 7.
+- **The dry run on a `.backup` of the primary's store**, re-run for review round 1 at both refs.
+  - The copy's sha256 is `b66a6979…`, of the primary at `b237f3a0…`; the primary was the same
+    before and after.
+  - It used the real `vinci void-decision V-GOOGL` on a scratch tree, appending and exporting there
+    only.
+  - Live reads were the seven ledger names and benchmarks: Polygon 12, Tiingo 10.
 
-  | Reader | Before | After |
+  | Reader | Before the void | After the void |
   |---|---|---|
-  | Monitor, `--ref 2026-11-06` | GOOGL BUY, followed/quality, 340.65 @ 08-27, −16.35%, excess −11.94 pts | no GOOGL row; one "VOIDED by X-GOOGL" note |
-  | Quality-sleeve rows | `['GOOGL']` | `[]` |
-  | **Primary screen-origin spread** | **+66.89 pts** (price +66.88) | **+66.89 pts** (price +66.88) |
-  | Scoring report (store copy, as of 2026-11-11) | GOOGL pending (the store holds no SPY bars); screen pending 4 | GOOGL gone, the void named once; screen pending 4 |
+  | Monitor `--ref 2026-11-06` (before the ruling) | GOOGL BUY, followed/quality, 340.65 @ 08-27, −16.35%, excess −11.94 pts; primary spread +66.89 | **the same, byte for byte**: GOOGL in the book, no void named; primary spread +66.89 |
+  | Monitor `--ref 2026-11-11` (marks 2026-11-10) | GOOGL BUY, −15.58%, excess −13.08 pts; quality rows `['GOOGL']`; primary spread +71.64 | no GOOGL row; quality rows `[]`; one "VOIDED by X-GOOGL" note; primary spread **+71.64** |
+  | Scoring, store copy, as of 2026-11-06 | screen pending 4; GOOGL's correction noted | the same; no void named |
+  | Scoring, store copy, as of 2026-11-11 | screen pending 4; GOOGL's correction noted | GOOGL out, the void named once; screen pending 4 |
   | Snapshot | 9 rows | 10 rows: `X-GOOGL` added, the 9 byte-identical |
-  | `frontend/build.py` | — | no file changes: the twins skip event rows, so GOOGL's card still reads BUY until V3 |
 
-  - The result to date the void would seal: **−15.36% vs SPY −2.15%, excess −13.21 pts**,
-    total return, marked 288.15 on 2026-11-09.
-  - The scoring report's `by_sleeve` is empty both ways, because no row has resolved; the quality
-    curve's only member was GOOGL. On flat synthetic bars to 2027-03-19, GOOGL resolves into
-    `by_sleeve["quality"]` before the void and is in no score or curve after, with the PRIMARY
-    spread equal (`test_scoring_leaves_a_voided_decision_out_and_the_primary_spread_does_not_move`).
+  - **The first dry run's 2026-11-06 result no longer holds.** It showed GOOGL gone from
+    `--ref 2026-11-06`. Under the operator's answer ("From 2026-11-11 on"), GOOGL stays in every
+    report cut before 2026-11-11 and leaves from 2026-11-11 on.
+  - The result to date the void would seal, appended today: **−15.58% vs SPY −2.51%, excess −13.08
+    pts**, total return, marked 287.38 on 2026-11-10. The first run marked 288.15 on 2026-11-09.
+    The real append (V2) seals its own day's mark.
+  - The scoring report's `by_sleeve` is empty, because no row has resolved. On flat synthetic bars
+    to 2027-03-19, GOOGL resolves into `by_sleeve["quality"]` before the void and is in no score or
+    curve after, with the PRIMARY spread equal
+    (`test_scoring_leaves_a_voided_decision_out_and_the_primary_spread_does_not_move`).
+- **Every committed monitor day reproduces with the void appended.** For each of the 9 committed
+  `data/monitor/<day>.json` (2026-07-20 to 2026-11-02), the book the code derives at the day's
+  `as_of` from the ledger plus GOOGL's void names the day's own rows
+  (`test_every_committed_monitor_day_reproduces_with_a_void_ruled_after_it`). On `b377795e`, 7 of
+  them (2026-09-16 to 2026-11-02) lost GOOGL.
+- **Round 1's pins fail first.** On `b377795e` (its two readers shimmed to accept and ignore
+  `as_of`), 4 tests fail on base behaviour:
+  - the monitor in both directions;
+  - the committed days;
+  - the 2026-11-06 report;
+  - a ruling dated after its append.
+- **The suite reads a committed void** (found while fixing round 1, as #955 found for corrections).
+  It was checked on a simulation of V2: this round's code, GOOGL's void appended to the committed
+  ledger, and the frontend rebuilt.
+  - **Before:** 21 tests in 8 files went red only with the void committed:
+    - the correction tests and the void command's own (both act on V-GOOGL, which the writers
+      rightly refuse once voided);
+    - six monitor tests whose synthetic bars left out a voided decision;
+    - two that enumerate the committed decisions.
+  - **The fix.** Each now reads the ledger its subject needs: as sealed, without VOID rows, or
+    every decision with `as_of=date.min` (before any ruling). Coverage is kept: SPY's only
+    resolved row is still GOOGL's.
+  - **After:** all 37 test files that read the ledger or the monitor pass on the 9-row ledger and
+    on the 10-row one. V2's artifact commit therefore turns nothing red.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **The void is permanent.** The ledger refuses an UPDATE or DELETE, and the rule is one void per
-  decision. It is appended only after this PR merges and the operator approves the dry run, as an
-  artifact-only PR with the store's sha256 before and after.
+  decision. It is appended only after this PR and V3 merge and the operator approves the dry run,
+  as an artifact-only PR with the store's sha256 before and after.
 - **Timing.** The scoring path changes before VRRM is scored on 2026-12-15, and VRRM's
-  monthly-scoring rehearsal (STATE row 38, by 2026-12-07) must run on `main` with the void in. The
-  plan is: this PR, then the void's artifact PR, then the web twin (V3), all well before
-  2026-12-07.
-- **The frontend still shows GOOGL's BUY until V3.** `frontend/build.py` and `snapshots.js` skip a
-  VOID row (any `event` row), so nothing breaks, but they do not yet apply the void. V3 takes GOOGL
-  off the live book and the card, and shows the voided call once in an audit tier.
+  monthly-scoring rehearsal (STATE row 38, by 2026-12-07) must run on `main` with the void in.
+  The ORDER is V1 → V3 → V2 (coordinator, 2026-11-11):
+  - this PR (V1);
+  - then the web twin (V3);
+  - then the void's artifact PR (V2), the append itself, only after V3 merges.
+
+  All three land well before 2026-12-07. The reason for V3 before V2 is that the web never shows a
+  voided BUY, which serves the ruling ("remove the buy card").
+- **The frontend does not apply a void until V3.** `frontend/build.py` and `snapshots.js` skip a
+  VOID row (any `event` row), so nothing breaks; they just do not take the decision off the page.
+  Because the void is appended only after V3 merges, no committed void ever meets that frontend. V3
+  takes GOOGL off the live book and the card, and shows the voided call once in an audit tier.

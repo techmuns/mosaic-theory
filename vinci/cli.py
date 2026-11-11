@@ -2735,7 +2735,9 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     ledger_all = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
     # A DECISION SEALED ON A STALE CLOSE IS MARKED FROM ITS CORRECTION (RF-D7): every reader below
     # sees the corrected entry; the day's notes name the sealed one beside it
-    ledger_all, correction_notes = mon.apply_corrections(ledger_all)
+    # A VOID IS IN EFFECT FROM ITS RULING DATE (operator, 2026-11-11): a day before the ruling keeps
+    # the decision in its book, so a past day re-cut reproduces the day as it was committed
+    ledger_all, correction_notes = mon.apply_corrections(ledger_all, as_of=ref)
     if not ledger_all:
         print("decision ledger is empty — nothing to monitor")
         return 0

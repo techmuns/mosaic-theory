@@ -243,8 +243,10 @@ def score_ledger(
     corrections = corrections_by_decision(ledger)
     # A VOIDED DECISION IS OUT OF THE RECORD (operator ruling 2026-11-11, GOOGL): it is never
     # scored, so it reaches no count, spread, curve or listing — and the report names it ONCE, with
-    # the result to date its void sealed, so the removal is seen rather than missing.
-    voids = voids_by_decision(ledger)
+    # the result to date its void sealed, so the removal is seen rather than missing. IN EFFECT
+    # FROM ITS RULING DATE, as a close is from its exit (operator, 2026-11-11): a report cut before
+    # the ruling scores the decision as it was live then.
+    voids = voids_by_decision(ledger, as_of=as_of)
     scores: list[VerdictScore] = []
     pending = 0
     book_rets: list[float] = []

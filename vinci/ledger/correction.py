@@ -23,7 +23,7 @@ decision.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from datetime import date, datetime, time
+from datetime import UTC, date, datetime, time
 from zoneinfo import ZoneInfo
 
 from pydantic import ValidationError
@@ -168,6 +168,14 @@ def void_decision(store: Store, *, entry_id: str, reason: str, ruled_on: date, m
                           f"outcome is realized, and a void does not undo it")
     if not reason.strip():
         raise LedgerError(f"no reason given — {entry_id!r} is voided only on stated grounds")
+    # A RULING IS NEVER IN THE FUTURE. A void is in effect from ``ruled_on`` (`voids_by_decision`),
+    # and the pages key on the row's presence alone, so a row dated after its own append would take
+    # the decision off the web before the reports drop it.
+    # ``voided_at`` is naive UTC (as `decided_at` is); a ruling is dated locally, as `--ref` is.
+    appended_on = voided_at.replace(tzinfo=UTC).astimezone().date()
+    if ruled_on > appended_on:
+        raise LedgerError(f"ruled on {ruled_on}, after the void is appended ({appended_on}) — a "
+                          f"void records a ruling already made")
     read = corrected(decision, corrections_by_decision(rows).get(entry_id))
     # THE ENTRY SESSION, not the price: the monitor marks the entry on the MARK's split basis
     # (`entry_on_basis`), so a name that split since its entry carries a restated entry price in

@@ -511,10 +511,19 @@ def correction_note(entry: LedgerEntry, correction: LedgerEntry) -> str:
             f"runs from {correction.entry_price_as_of}.")
 
 
-def voids_by_decision(entries: Iterable[LedgerEntry]) -> dict[str, LedgerEntry]:
+def voids_by_decision(entries: Iterable[LedgerEntry], *, as_of: date | None = None
+                      ) -> dict[str, LedgerEntry]:
     """Each voided decision's VOID row, by the decision's ``entry_id`` (operator ruling 2026-11-11).
     ``entries`` is the WHOLE ledger: a void naming no decision row in it raises, as an orphan
-    correction does, and two voids of one decision raise — the writer refuses a second."""
+    correction does, and two voids of one decision raise — the writer refuses a second.
+
+    A VOID IS IN EFFECT FROM ITS RULING DATE, AS A CLOSE IS FROM ITS EXIT (operator, 2026-11-11:
+    "From 2026-11-11 on (Recommended)"; Codex P1 on #984). With ``as_of``, only voids whose
+    ``ruled_on`` is on or before it are returned, so a report cut before the ruling reads the
+    decision as it was live then and a committed past monitor day still reproduces. Without
+    ``as_of`` every void is returned: the ledger as it stands now, which is what a WRITER reads
+    (no close or correction of a voided decision, ever). The checks above run on every void either
+    way."""
     out: dict[str, LedgerEntry] = {}
     decisions: set[str] = set()
     for e in entries:
@@ -529,7 +538,9 @@ def voids_by_decision(entries: Iterable[LedgerEntry]) -> dict[str, LedgerEntry]:
     if orphans:
         raise ValueError(f"void row(s) {orphans} name no decision row in the ledger — a void must "
                          f"void something")
-    return out
+    if as_of is None:
+        return out
+    return {k: v for k, v in out.items() if v.ruled_on is not None and v.ruled_on <= as_of}
 
 
 def void_note(entry: LedgerEntry, void: LedgerEntry) -> str:

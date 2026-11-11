@@ -211,10 +211,12 @@ def _wire(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, records: list[dict[st
     # the entry beside the entry session's close and refuses a gap no recorded split explains, so
     # the flat synthetic price is each name's entry — the sealed one, or its committed CORRECTION's
     # (`monitor.apply_corrections`, as the monitor reads it) — stepping at SMPL's re-entry;
-    # benchmarks 100.
+    # benchmarks 100. EVERY decision, a voided one too: a void is in effect only from its ruling
+    # date, so a day re-cut before it marks the decision (``as_of=date.min``: before any ruling).
     read_at = sorted((date.fromisoformat(str(r["entry_price_as_of"])), str(r["ticker"]),
                       float(r["entry_price"]))
-                     for r in mon.decision_rows(mon.apply_corrections(_ledger())[0]))
+                     for r in mon.decision_rows(
+                         mon.apply_corrections(_ledger(), as_of=date.min)[0]))
 
     def _close(t: str, d: date) -> float:
         mine = [px for on, tk, px in read_at if tk == t]

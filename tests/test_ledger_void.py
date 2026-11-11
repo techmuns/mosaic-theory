@@ -48,9 +48,15 @@ REASON = ("operator ruling 2026-11-11: \"we want to remove the buy card/ buy ver
           "before the decision (RF-D7)")
 
 
-def _committed() -> list[LedgerEntry]:
+def _committed_all() -> list[LedgerEntry]:
     return [LedgerEntry.model_validate(json.loads(json.loads(ln)["payload"]))
             for ln in LEDGER.read_text().splitlines() if ln.strip()]
+
+
+def _committed() -> list[LedgerEntry]:
+    """The committed ledger WITHOUT its void rows: these tests append GOOGL's void themselves, so
+    they read the same once the real void is committed (V2) — the lesson of #955, for voids."""
+    return [e for e in _committed_all() if e.event != EVENT_VOID]
 
 
 def _googl_read() -> LedgerEntry:
@@ -85,10 +91,10 @@ def _void(store: Store, **kw: Any) -> LedgerEntry:
 
 
 def test_the_committed_ledger_is_what_these_tests_assume() -> None:
-    """GOOGL's BUY and its correction are committed; no void is, yet."""
-    rows = {e.entry_id: e for e in _committed()}
+    """GOOGL's BUY and its correction are committed; a committed void, if any, is GOOGL's alone."""
+    rows = {e.entry_id: e for e in _committed_all()}
     assert rows[GOOGL].verdict.value == "BUY" and rows[GOOGL].entry_price == 345.9
-    assert "R-GOOGL" in rows and not voids_by_decision(rows.values())
+    assert "R-GOOGL" in rows and set(voids_by_decision(rows.values())) <= {GOOGL}
 
 
 # --- the row -------------------------------------------------------------------------------------
@@ -219,7 +225,8 @@ def test_a_voided_decision_is_never_closed_or_corrected(tmp_path: Path) -> None:
 # --- the readers leave it out --------------------------------------------------------------------
 
 def _raw(with_void: bool) -> list[dict[str, Any]]:
-    raw = [json.loads(ln) for ln in LEDGER.read_text().splitlines() if ln.strip()]
+    raw = [r for r in (json.loads(ln) for ln in LEDGER.read_text().splitlines() if ln.strip())
+           if mon.entry_of(r).get("event") != EVENT_VOID]
     if with_void:
         v = LedgerEntry.model_validate(_void_row())
         raw.append({"entry_id": v.entry_id, "ticker": v.ticker, "verdict": v.verdict.value,
@@ -241,6 +248,85 @@ def test_the_monitors_book_leaves_a_voided_decision_out() -> None:
     assert "X-GOOGL" in note and "2026-11-11" in note and "-16.35%" in note
 
 
+def _snapshots_without_void(out: Path) -> Path:
+    from tests.test_per_row_benchmark import snapshots_without_void
+    return snapshots_without_void(out)
+
+
+# --- a void is in effect FROM ITS RULING DATE (operator, 2026-11-11: "From 2026-11-11 on") ------
+
+BEFORE_RULING = date(2026, 11, 6)
+
+
+def test_the_monitor_reads_a_void_from_its_ruling_date() -> None:
+    """THE CODEX P1 ON #984, in both directions. Cut before 2026-11-11, the book holds GOOGL as it
+    was live that day, and names no void; cut on or after it, GOOGL is out and the void is named
+    once. Without ``as_of`` (a writer's read of the ledger as it stands) every void counts."""
+    raw = _raw(True)
+    kept, notes = mon.apply_corrections(raw, as_of=BEFORE_RULING)
+    assert GOOGL in {r["entry_id"] for r in mon.decisions_as_of(kept, as_of=BEFORE_RULING)}
+    assert not [n for n in notes if "VOIDED" in n]
+    assert GOOGL in {r["entry_id"] for r in mon.decision_rows(raw, as_of=BEFORE_RULING)}
+    assert mon.live_verdicts(raw, as_of=BEFORE_RULING)["GOOGL"] == "BUY"
+    for on in (RULING, date(2026, 12, 15)):
+        kept, notes = mon.apply_corrections(raw, as_of=on)
+        assert GOOGL not in {r["entry_id"] for r in mon.decisions_as_of(kept, as_of=on)}
+        assert len([n for n in notes if "VOIDED by X-GOOGL" in n]) == 1
+        assert "GOOGL" not in mon.live_verdicts(raw, as_of=on)
+    assert GOOGL not in {r["entry_id"] for r in mon.decision_rows(raw)}
+
+
+def test_every_committed_monitor_day_reproduces_with_a_void_ruled_after_it() -> None:
+    """A PAST DAY RE-CUT IS THE DAY AS COMMITTED. For every committed `data/monitor/<day>.json`, the
+    book `vinci monitor --ref <day>` derives from the ledger WITH GOOGL's void — its tickers, as the
+    day's rows name them — is the committed day's. Before the fix, the seven days from 2026-09-16
+    to 2026-11-02 lost GOOGL."""
+    raw = _raw(True)
+    days = sorted((ROOT / "data" / "monitor").glob("2026-*.json"))
+    assert days, "no committed monitor day to reproduce"
+    for p in days:
+        day = json.loads(p.read_text())
+        on = date.fromisoformat(str(day["as_of"])[:10])
+        if on >= RULING:
+            continue                      # a day on or after the ruling is the void's to change
+        kept, _ = mon.apply_corrections(raw, as_of=on)
+        book = sorted(str(r["ticker"]) for r in mon.decisions_as_of(kept, as_of=on))
+        assert book == sorted(str(r["ticker"]) for r in day["rows"]), p.name
+
+
+def test_a_report_cut_before_the_ruling_scores_the_decision_as_it_was(tmp_path: Path) -> None:
+    """THE SCORING HALF: as of 2026-11-06 the report with GOOGL's void is the report without it —
+    every score, count and note; as of the ruling it leaves GOOGL out and names the void once."""
+    from tests.dividend_support import no_dividends, no_splits
+    from tests.test_per_row_benchmark import _committed_ledger_store
+    from vinci.monitor import read_assignments_file
+    from vinci.scoring import score_ledger
+    asg = read_assignments_file(ROOT / "data" / "monitor" / "benchmark_assignments.json")
+    snaps = _snapshots_without_void(tmp_path / "snaps")
+    out = {}
+    for name, void in (("plain", False), ("voided", True)):
+        with _committed_ledger_store(tmp_path / f"{name}.db", snaps) as store:
+            if void:
+                _void(store)
+            out[name] = {on: score_ledger(store, as_of=on, dividends=no_dividends,
+                                          splits=no_splits, assignments=asg)
+                         for on in (BEFORE_RULING, RULING)}
+    assert out["voided"][BEFORE_RULING] == out["plain"][BEFORE_RULING]
+    scores, report = out["voided"][RULING]
+    assert GOOGL not in {s.entry_id for s in scores}
+    assert sum("VOIDED by X-GOOGL" in n for n in report.row_notes) == 1
+    assert not any("VOIDED" in n for n in out["plain"][RULING][1].row_notes)
+
+
+def test_a_ruling_dated_after_its_append_is_refused(tmp_path: Path) -> None:
+    """A void records a ruling already made: the pages key on the row's presence, so a row dated
+    after its own append would take the decision off the web before any report drops it."""
+    with _store(tmp_path) as store:
+        with pytest.raises(LedgerError, match="a void records a ruling already made"):
+            _void(store, ruled_on=date(2026, 11, 20))
+        assert not voids_by_decision(store.iter_ledger())
+
+
 def test_scoring_leaves_a_voided_decision_out_and_the_primary_spread_does_not_move(
         tmp_path: Path) -> None:
     """THE REPORT: on the committed ledger with flat bars (`test_per_row_benchmark`'s store), GOOGL
@@ -253,10 +339,11 @@ def test_scoring_leaves_a_voided_decision_out_and_the_primary_spread_does_not_mo
     from vinci.scoring import score_ledger
     asg = read_assignments_file(ROOT / "data" / "monitor" / "benchmark_assignments.json")
     as_of = date(2027, 3, 19)
-    with _committed_ledger_store(tmp_path / "a.db") as store:
+    snaps = _snapshots_without_void(tmp_path / "snaps")
+    with _committed_ledger_store(tmp_path / "a.db", snaps) as store:
         before, rb = score_ledger(store, as_of=as_of, dividends=no_dividends, splits=no_splits,
                                   assignments=asg)
-    with _committed_ledger_store(tmp_path / "b.db") as store:
+    with _committed_ledger_store(tmp_path / "b.db", snaps) as store:
         _void(store)
         after, ra = score_ledger(store, as_of=as_of, dividends=no_dividends, splits=no_splits,
                                  assignments=asg)
@@ -275,6 +362,9 @@ def tree(tmp_path: Path) -> Config:
     data = tmp_path / "data"
     data.mkdir()
     shutil.copytree(ROOT / "data" / "snapshots", data / "snapshots")
+    # the command voids GOOGL itself, so its tree holds the ledger without a committed void
+    (data / "snapshots" / "decision_ledger.jsonl").write_text("".join(
+        json.dumps(r) + "\n" for r in _raw(False)))
     cfg = Config(data_dir=data)
     cfg.ensure_dirs()
     return cfg
@@ -322,6 +412,10 @@ def test_the_sealed_mark_is_the_monitors_own_row(
     from tests.test_monitor_ref_date_bound import _wire
     from vinci import cli
     _wire(tmp_path, monkeypatch, [])
+    # the mark is taken BEFORE the void is appended, so the wired ledger holds none (once GOOGL's
+    # void is committed, today's book rightly leaves it out)
+    (tmp_path / "data" / "snapshots" / "decision_ledger.jsonl").write_text(
+        "".join(json.dumps(r) + "\n" for r in _raw(False)))
     mark = cli._void_mark(_googl_read())
     assert (mark.entry_price, mark.entry_date) == (340.65, date(2026, 8, 27))
     assert cli._cmd_monitor(argparse.Namespace(ref=None, out=str(tmp_path / "m"))) == 0

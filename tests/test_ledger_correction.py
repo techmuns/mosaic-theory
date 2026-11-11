@@ -29,6 +29,7 @@ from vinci.ledger.correction import correct_entry, decision_moment, rule_session
 from vinci.ledger.workflow import LedgerError
 from vinci.schemas.ledger import (
     EVENT_CORRECTION,
+    EVENT_VOID,
     LedgerEntry,
     LedgerFact,
     corrected,
@@ -45,11 +46,13 @@ LEDGER = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
 
 
 def _committed_lines() -> list[str]:
-    """The committed ledger's lines AS SEALED: its CORRECTION rows left out. These tests write the
-    corrections themselves, so they hold before the two are appended to the committed ledger and
-    after; the rows they read are append-only and never change."""
+    """The committed ledger's lines AS SEALED: its CORRECTION and VOID rows left out. These tests
+    write the corrections themselves, so they hold before the two are appended to the committed
+    ledger and after — and once GOOGL's void is committed, which would otherwise refuse every
+    correction of it; the rows they read are append-only and never change."""
     return [ln for ln in LEDGER.read_text().splitlines() if ln.strip()
-            and json.loads(json.loads(ln)["payload"]).get("event") != EVENT_CORRECTION]
+            and json.loads(json.loads(ln)["payload"]).get("event")
+            not in (EVENT_CORRECTION, EVENT_VOID)]
 
 
 def _committed() -> list[LedgerEntry]:
