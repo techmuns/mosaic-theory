@@ -33,6 +33,8 @@ import pytest
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier import synthesis as syn
 from vinci.dossier.ciq import CiqBundle, CiqFormat, CiqWorkbook
+from vinci.dossier.schemas import OperatingDriversExtract
+from vinci.edgar import release_parse as rp_release
 from vinci.evals import replay as rp
 from vinci.evals.capture_child import pre_synthesis_mech
 
@@ -102,10 +104,20 @@ def test_parrs_zero_cells_beside_differing_rows_print_na() -> None:
 
 def test_nflxs_pre_split_years_print_na_and_its_real_surprises_stay() -> None:
     """NFLX's sub-cent split-adjusted EPS: CIQ's 0.0 for FY2004–FY2013 sits beside actuals and
-    estimates that differ (FY2004: 0.00457 against 0.00423); its "Difference" row reads 0.0 too."""
+    estimates that differ (FY2004: 0.00457 against 0.00423); its "Difference" row reads 0.0 too.
+    (review round 1) The set is pinned EXACTLY: FY2016 (0.043 against 0.04042) and FY2024 (1.983
+    against 1.97564) are in it too, and the PR's first prose named only FY2004–FY2013."""
     eps = _eps("NFLX")
-    assert all(eps[f"FY{y}"] == "n/a" for y in range(2004, 2014))
+    assert [y for y, v in eps.items() if v == "n/a"] == [
+        *(f"FY{y}" for y in range(2004, 2014)), "FY2016", "FY2024"]
     assert eps["FY2014"] == "+20%" and eps["FY2015"] == "+50%"
+
+
+def test_googls_one_placeholder_year_prints_na() -> None:
+    """(review round 1) GOOGL FY2005: CIQ's 0.0 beside an actual of 0.1255 against an estimate of
+    0.13215, a miss the page printed "+0%". It is the GOOGL block's only such year."""
+    eps = _eps("GOOGL")
+    assert [y for y, v in eps.items() if v == "n/a"] == ["FY2005"]
 
 
 def test_googls_half_percent_surprise_is_not_printed_as_zero() -> None:
@@ -181,6 +193,27 @@ def test_an_anchored_driver_carries_its_signed_structured_value_and_every_row_it
                                                                   strict=True)
                               if r.value_num is None)
 
+
+
+def test_a_kpi_level_is_printed_without_a_sign() -> None:
+    """(review round 1) FAILED at the PR's first head: a release KPI row stores a LEVEL, and the
+    digest forced a sign onto it, so "produced 5,500 vehicles" read "[structured: +5500
+    vehicles]", a count shown as a rise. Real text: Lucid's 8-K 0001104659-26-042847 EX-99.1.
+    Only a percent row is a signed change (`filing_sections` attribution rows, `release_parse`
+    pricing rows), and it keeps its sign."""
+    rows = rp_release.operating_drivers(
+        "As previously announced, during the quarter ended March 31, 2026, the Company produced "
+        "5,500 vehicles and delivered 3,093 vehicles.", source_ref="8-K 0001104659-26-042847")
+    kpi = [r for r in rows if r.kind.value == "leading_indicator"]
+    assert [(r.value_num, r.unit) for r in kpi] == [(5500.0, "vehicles"), (3093.0, "vehicles")]
+    lines = syn._operating_drivers_digest(OperatingDriversExtract(rows=kpi)).splitlines()
+    assert sum("[structured: 5500 vehicles]" in x for x in lines) == 1
+    assert sum("[structured: 3093 vehicles]" in x for x in lines) == 1
+    assert not any("[structured: +" in x for x in lines)
+    # the positive half: a percent row's sign is kept (SMPL's fall, pinned above, and a rise)
+    up = kpi[0].model_copy(update={"value_num": 6.2, "unit": "%"})
+    assert "[structured: +6.2%]" in syn._operating_drivers_digest(
+        OperatingDriversExtract(rows=[up]))
 
 
 def test_a_single_value_guide_prints_its_value_never_none() -> None:

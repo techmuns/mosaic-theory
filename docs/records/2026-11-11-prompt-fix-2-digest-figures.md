@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# Prompt-fix 2: every figure the synthesis is handed carries its sign, unit and period from the structured value — no change prints as "+0%", CIQ's 0.0 beside a differing actual and estimate reads "n/a", the digests print their units, stated changes, periods and signed structured values; in code, no committed page moves until it is re-read or re-assembled
+# Prompt-fix 2: every figure the synthesis is handed carries its sign, unit and period from the structured value — no change prints as "+0%", CIQ's 0.0 beside a differing actual and estimate reads "n/a", the digests print their units, stated changes, periods and structured values (signed where a change); in code, no committed page moves until it is re-read or re-assembled
 
 **WHAT.** The prompt-fix program's fix 2, handed to fix request 2's streams on #1004 and kept by
 S2 when A's driver-facts stream took RG-D1 to RG-D7 and fix 5 (A's 13:14Z comment, operator-
@@ -21,9 +21,11 @@ approved). Four places dropped a figure's sign, unit or period:
    printed whole, so −0.5 (Python rounds .5 to even) is "-0.5%", not "-0%".
 2. **CIQ's 0.0 surprise beside an Actual and an Estimate of its own that differ** (the "+0%"
    placeholders): NFLX's GAAP EPS FY2004–FY2013 (sub-cent split-adjusted EPS; CIQ's "Difference"
-   row reads 0.0 too, so the 0% comes from a difference rounded to the cent) and PARR's FY2014,
-   FY2015, FY2016, FY2020, FY2021, FY2024 (FY2014: actual −1.44 against estimate −1.87; FY2015:
-   −1.06 against 0.65). Each printed "+0%", a met estimate the rows contradict. Now "n/a",
+   row reads 0.0 too, so the 0% comes from a difference rounded to the cent), FY2016 (0.043
+   against 0.04042) and FY2024 (1.983 against 1.97564); GOOGL's FY2005 (0.1255 against 0.13215, a
+   miss); and PARR's FY2014, FY2015, FY2016, FY2020, FY2021, FY2024 (FY2014: actual −1.44 against
+   estimate −1.87; FY2015: −1.06 against 0.65). *(Review round 1 corrected this list: the first
+   draft named NFLX FY2004–FY2013 only and omitted GOOGL; the pins now hold each set exactly.)* Each printed "+0%", a met estimate the rows contradict. Now "n/a",
    explained once inside the line's trailing note, the only place the web's `parseSeries` reads
    as a note; nothing is computed in CIQ's place. A 0.0 whose actual equals its estimate stays
    "0%".
@@ -34,9 +36,12 @@ approved). Four places dropped a figure's sign, unit or period:
 4. **The operating-drivers digest** printed an anchored row's verbatim value and never its
    structured one, and no row its period: SMPL's "general and administrative expenses: $0.8
    million, or 1.9%" is a FALL (`value_num` −1.9). Each row now prints its period as its source
-   states it (or "period not stated") and an anchored row its signed `value_num` in its unit
-   ("[structured: -1.9%]"). Transcript rows are unchanged: their checked figures reach the prompt
-   through `prompt_driver_value` (#1006).
+   states it (or "period not stated") and an anchored row its `value_num` in its unit
+   ("[structured: -1.9%]"). Only a percent row is a signed change and prints its sign; a
+   release KPI row stores a level and prints none ("[structured: 5500 vehicles]", Lucid's 8-K
+   0001104659-26-042847 — review round 1: the first head printed "+5500", a count read as a
+   rise). Transcript rows are unchanged: their checked figures reach the prompt through
+   `prompt_driver_value` (#1006).
 
 **WHY.** A synthesis that is handed "+0%" for a surprise CIQ never computed, or "1.9%" for a fall,
 can only misread it; fix 2 is the input half of the 644-claim diagnosis's SIGN, UNIT and PERIOD
@@ -75,6 +80,16 @@ classes. The output half (the claim trace) is A's driver-facts stream.
   `tests/test_surprise_listing_block.py`) are strict expected failures until each page's $0 re-read
   (`vinci dossier ciq-reread --field surprise_history`) in A's combined pass; the growth cells and
   digests move on re-assembly.
+
+**ACCEPTED IN REVIEW ROUND 1 (stated, not fixed).**
+- **A near-tie reads "n/a" too.** NFLX FY2024's actual 1.983 against its estimate 1.97564 is a
+  true surprise of about +0.37%, and the page printed "+0%", nearly right; it now prints "n/a".
+  The rule states what CIQ's rows show and computes nothing in CIQ's place; a tolerance that would
+  keep "+0%" for a near-tie is a threshold, and none is set here.
+- **A release KPI's period is the year `_period_near` reads.** Lucid's "during the quarter ended
+  March 31, 2025, the Company produced 2,212 vehicles" carries period "2025", and the digest now
+  prints it: a quarter's count labelled with its year. It is the extractor's field
+  (`vinci/edgar/release_parse.py`), outside this fix; no committed page carries a KPI row.
 
 **NOT DONE.**
 - **A reconciliation's unit**: `ReconciliationValue` has no unit field (its comment: "$M (or

@@ -1396,14 +1396,18 @@ def _operating_drivers_digest(od: OperatingDriversExtract) -> str:
 
 
 def _driver_structured(r: OperatingDriver) -> str:
-    """An anchored row's structured value, signed, in its unit — " [structured: -1.9%]" — or ""
-    where the row carries none (a transcript row's checked figures reach the prompt through its
-    value, `prompt_driver_value`)."""
+    """An anchored row's structured value in its unit — " [structured: -1.9%]" — or "" where the
+    row carries none (a transcript row's checked figures reach the prompt through its value,
+    `prompt_driver_value`). Only a PERCENT row is a signed change (a `filing_sections`
+    attribution row, a `release_parse` pricing row) and prints its sign; a KPI row is a LEVEL
+    ("produced 5,500 vehicles"), and a forced "+" would show a count as a rise (review round 1)."""
     if r.value_num is None:
         return ""
+    if r.unit == "%":
+        return f" [structured: {r.value_num:+.15g}%]"
     unit = r.unit or ""
-    unit = unit if unit in ("", "%", "x") else f" {unit}"
-    return f" [structured: {r.value_num:+.15g}{unit}]"
+    unit = unit if unit in ("", "x") else f" {unit}"
+    return f" [structured: {r.value_num:.15g}{unit}]"
 
 
 def newest_guidance_date(ps: PrimarySource) -> Any:
