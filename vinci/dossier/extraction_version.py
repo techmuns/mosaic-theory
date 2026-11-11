@@ -787,6 +787,18 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "guide filed under the next-fy default carries a machine-tier flag saying no period was "
         "read"
     ),
+    (
+        "2026-11-11.vote-rule",
+        "the vote rule (R1, R3, R5, C(iii); "
+        "docs/records/2026-11-10-the-proposal-vote-rule-design.md §9): a build's "
+        "`draw_agreement` records R1's gate — `modal_count`, `required`, `passes` and `rule`,"
+        " the lean and the state derived from them — over the draws ATTEMPTED, a failed, "
+        "unparsed or unrecognized draw counting as dissent, and the tally keys two spellings "
+        "of one lean as one. At five draws with every draw completed R1 passes only 5 of 5, "
+        "today's rule; a build with a failed draw now withholds where it proposed before "
+        "(the 1-of-5 hole). A page built before the fields omits them and decides by "
+        "`unanimous` as before, so no committed page moves until it is re-assembled",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

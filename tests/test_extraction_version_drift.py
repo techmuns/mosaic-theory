@@ -80,8 +80,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "0154f1cc7845"
-PINNED_AT = "2026-11-11.guides-as-stated"
+PINNED_TABLE = "749f1e1a59a9"
+PINNED_AT = "2026-11-11.vote-rule"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -119,12 +119,12 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "f116dfce4dfd",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "54b78847cf8a",
+    "vinci/dossier/schemas.py": "d618ce054fc6",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "a7d5ed4385e2",
+    "vinci/dossier/synthesis.py": "4cb3eda5c548",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
-    "vinci/dossier/verdict.py": "0b43167d2044",
+    "vinci/dossier/verdict.py": "b4d46c9e825f",
     "vinci/edgar/asof.py": "9f8027c3556c",
     "vinci/edgar/client.py": "e1f2a793bf74",
     "vinci/edgar/concepts.py": "65e2452fe3d4",
@@ -147,6 +147,8 @@ WATCHED: dict[str, str] = {
 #: Modules in the classified packages that cannot change what a dossier carries, each with why.
 NOT_EXTRACTION: dict[str, str] = {
     "vinci/dossier/__init__.py": "the package's docstring",
+    "vinci/dossier/confirmation.py": "the vote rule's ten-draw confirmation at log-verdict "
+                                     "(C(iv)): seals a ledger row, never writes a page",
     "vinci/dossier/driver_evidence.py": "writes a page's transcript evidence to the operator's "
                                         "private spool, never a page field",
     "vinci/dossier/extraction_version.py": "the version table itself — editing it IS the bump",
