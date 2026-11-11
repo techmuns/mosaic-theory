@@ -123,6 +123,14 @@ desk a five-year percentile on AMZN and GOOGL (11 rows on 2026-11-10).
   - **Fixed behind pins that fail first on the pre-fix head**
     (`tests/test_fix2_e1_concepts.py`): the retired tag is put on the current basis, two splits
     in two aliases are refused, and the same split restated under both tags is one split.
+  - **Codex round 2 (P1), fixed the same way.** A retired tag that restated only ONE comparative
+    for an older split holds a lone factor, never a split of its own, so its EPS filed before
+    both splits got one factor (constructed: PRESENT 0.396).
+    - With a split stated, a restatement in another alias that the split does not explain now
+      refuses the range, as one outside the group does within one alias.
+    - With no split stated, a lone factor stays the operator's open one-restated-period gap,
+      unchanged.
+    - The pin failed first. The cross-setup inputs move nowhere.
   - **One of main's pins changes deliberately:** RE1-D10's older-alias ×10 test, which expected
     a refusal, now expects the adjustment.
   - **Re-run at main `a3fc8e1b` with RE1-D10's calls** (the pages and the screen pass the served

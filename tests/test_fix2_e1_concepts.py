@@ -375,6 +375,29 @@ def test_two_splits_stated_in_two_aliases_are_refused_never_chained() -> None:
     assert value is None and G3_SPLIT_BASIS in note, (value, note)
 
 
+def test_a_lone_older_restatement_in_a_retired_alias_refuses_the_newer_split() -> None:
+    """Codex on #997, round 2 (P1): the retired tag restates ONE comparative for its 2-for-1
+    (FY2021, in 2023) — a lone factor, never a split of its own — and the new tag states a
+    10-for-1 (restated 2026-02-19). The retired tag's EPS filed before 2023 needs both factors;
+    the issuer-wide split gives it one. Any restatement in the window the stated split does not
+    explain is a second basis change: refused, as within one alias (`split_restatement`)."""
+    ref = date(2026, 3, 1)
+    old = [_eps_row("2019-12-31", 1.0, "0000999999-20-000005", "2020-02-20"),
+           _eps_row("2020-12-31", 1.2, "0000999999-21-000005", "2021-02-20"),
+           _eps_row("2021-12-31", 1.4, "0000999999-22-000005", "2022-02-20"),
+           _eps_row("2021-12-31", 0.7, "0000999999-23-000005", "2023-02-20", fy=2022),
+           _eps_row("2022-12-31", 0.8, "0000999999-23-000005", "2023-02-20"),
+           _eps_row("2023-12-31", 0.9, "0000999999-24-000005", "2024-02-20")]
+    new = [_eps_row("2023-12-31", 0.9, "0000999999-25-000004", "2025-02-20", fy=2024),
+           _eps_row("2024-12-31", 1.0, "0000999999-25-000004", "2025-02-20"),
+           _eps_row("2023-12-31", 0.09, "0000999999-26-000003", "2026-02-19", fy=2025),
+           _eps_row("2024-12-31", 0.10, "0000999999-26-000003", "2026-02-19", fy=2025),
+           _eps_row("2025-12-31", 0.12, "0000999999-26-000003", "2026-02-19")]
+    value, note = _pct_of({"cik": 999999, "facts": {"us-gaap": {
+        _OLD: {"units": {"USD/shares": old}}, _NEW: {"units": {"USD/shares": new}}}}}, ref)
+    assert value is None and G3_SPLIT_BASIS in note, (value, note)
+
+
 def test_one_split_restated_under_both_tags_is_one_split() -> None:
     """Negative pin for the refusal above: a filer tagging both measures restates both in its
     restating 10-K — the retired tag at ×9.98 by rounding, the new at ×10.0. The retired tag's

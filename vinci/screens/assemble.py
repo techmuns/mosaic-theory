@@ -509,6 +509,7 @@ def _pe_pair_per_reported_share(
     series = [annual_eps, *(pts for tag, pts in (history.by_tag() if history else {}).items()
                             if tag not in current)]
     stated: list[SplitRestatement] = []
+    unsplit: list[list[ConceptPoint]] = []   # the aliases stating no split of their own
     for pts in series:
         _in_window = [p for p in pts if p.period_end >= _split_start]
         if (factor := share_basis_change(_in_window)) is not None:
@@ -521,6 +522,8 @@ def _pe_pair_per_reported_share(
                 )
             if split not in stated:
                 stated.append(split)
+        else:
+            unsplit.append([p for p in _in_window if p.filed <= reference_date])
     # THE SPLIT IS THE ISSUER'S, NOT ONE ALIAS'S (Codex on #997): a filer that re-tags and then
     # splits restates its comparatives under the NEW tag only, and a bar before the re-tag reads
     # the RETIRED one — kept per tag, that tag never carried the split and its old-basis EPS was
@@ -536,6 +539,23 @@ def _pe_pair_per_reported_share(
                              for s in stated) + ")",
         )
     split = stated[0] if stated else None
+    # ...AND IT EXPLAINS EVERY RESTATEMENT THE OTHER ALIASES CARRY (Codex on #997, round 2): a
+    # retired tag that restated ONE comparative for an older split holds a lone factor, never a
+    # split of its own, so the scan above passes it — and its EPS filed before that older split
+    # needs both factors, where the issuer-wide split gives it one. Within one alias
+    # `split_restatement` refuses any factor outside its group; across aliases, the same rule.
+    # (With NO split stated, a lone factor is the one-restated-period gap the operator holds open.)
+    if split is not None:
+        for f in (f for pts in unsplit for f in _restatement_factors(pts)):
+            if f.forward != (split.scale < 1) or not (
+                    abs(f.ratio - split.factor) / split.factor <= _SPLIT_TOL
+                    or (f.range is not None and f.range[0] <= split.factor <= f.range[1])):
+                return pe_df, DataField.unknown(
+                    source="EDGAR", tier=SourceTier.DERIVED,
+                    note=f"{G3_SPLIT_BASIS} (an EPS alias restated FY{f.end.year} by "
+                         f"~{f.ratio:.4g}x, which the ~{split.factor:.4g}x split from "
+                         f"{split.restated_from.isoformat()} does not explain)",
+                )
     if split is not None and cur_pt.filed < split.restated_from:  # the EPS in use: old basis
         return pe_df, DataField.unknown(
             source="EDGAR", tier=SourceTier.DERIVED,
