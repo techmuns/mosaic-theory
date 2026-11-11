@@ -1,6 +1,6 @@
 ---
 id: 2026-11-02-asof-price-date
-status: open
+status: shipped
 date: 2026-11-02
 prs: [884]
 supersedes:

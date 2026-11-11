@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -93,3 +93,6 @@ session scratchpad, never in the repository.
 - The spreadsheet route has no end-of-table check until a spreadsheet export shows what its last
   line is.
 - **Extraction version** `2026-11-10.relationship-view-edges`; the drift pins are re-pinned.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `c2a4d743` (#975) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

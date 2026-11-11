@@ -1,6 +1,6 @@
 ---
 id: 2026-10-30-zero-coercion
-status: open
+status: shipped
 date: 2026-10-30
 prs: []
 supersedes:
@@ -139,3 +139,6 @@ superseded-by:
   that census, on EDGAR/CIQ values:
   - `edgar/net_debt.py`'s `_borrowings` and `_unread_debt` (`… if b else 0.0`, A4's file);
   - `ciq_sheets.pe_eps_basis`'s `pe.get(p, 0)`, a `> 0` gate.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `01c95fde` (#877) on 2026-10-31. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.
