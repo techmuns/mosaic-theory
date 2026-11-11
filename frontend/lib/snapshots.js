@@ -510,6 +510,26 @@ export async function getScenarioCard(ticker) {
   }
 }
 
+// getExtractionVersions() -> {versions: {version: what it names}, follows: {version: [parents]}}
+// for every declared extraction vintage, or null when the deploy did not emit the table. build.py
+// writes it on every deploy from vinci/dossier/ (the frozen rows plus one file per vintage), so
+// the page never carries a hand-kept copy that every output-changing PR would edit on the same
+// lines. A null is shown as such on the page (dossier.js stampDetail) — never read as "this code
+// does not declare that version".
+export async function getExtractionVersions() {
+  return _once("extraction-versions", () =>
+    _json(`${SNAPSHOTS}/extraction_versions.json`).then((t) =>
+      t && t.versions && typeof t.versions === "object" && t.follows && typeof t.follows === "object"
+        ? t : null,
+    )).catch((e) => {
+      // Never fatal: the page renders without it and its Extraction row says the table did not
+      // load. A rethrow here would leave the whole dossier on "Loading dossier…". Caught OUTSIDE
+      // _once, so a failed fetch is cleared and retried on the next page, never memoized as null.
+      if (e.status !== 404) console.error("extraction-version table unreadable:", e);
+      return null;
+    });
+}
+
 // getDossier(ticker) -> the Dossier shape (mechanical + synthesis + flags + meta), or null if absent.
 export async function getDossier(ticker) {
   try {
