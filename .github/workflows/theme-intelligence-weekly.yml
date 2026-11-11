@@ -143,6 +143,20 @@ jobs:
           esac
           exit $code
 
+      # FIVE-YEAR P/E HISTORIES, KEPT BETWEEN RUNS. The market step fetches at most TIINGO_PER_RUN
+      # (45) new five-year histories a run, and a row it could not fetch said "a later run fetches
+      # it" — but the runner's cache died with the runner, so every run fetched the same 45 again
+      # and the rest never got five years (2026-11-09 and -10). Restore and save are two steps, the
+      # save always(), keyed by run and attempt: the LLM cache's pattern (U31f). A span is
+      # quarter-aligned, so a held one serves until its quarter rolls over; a name listed for
+      # under ~5 months asks again each run (its span ends at the run's date).
+      - name: Restore the five-year price histories (Tiingo)
+        uses: actions/cache/restore@v4
+        with:
+          path: data/theme_intelligence/http_cache/tiingo
+          key: theme-intelligence-tiingo-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: theme-intelligence-tiingo-
+
       # IS IT PRICED? — market context for every active thesis, as of today: its exposures and the
       # companies it implies, against SPY, P/E against its own history, consensus revisions from
       # the fund's committed dossiers. DISPLAY ONLY ($0, no model call; never read by a research
@@ -153,9 +167,16 @@ jobs:
         env:
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
-          # five years of P/E history (Tiingo); absent, the panel reads the two Polygon serves
+          # five years of P/E history (Tiingo); absent, the P/E percentile is not held, with why
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
         run: python -m vinci.theme_intelligence market --as-of "$(date -u +%F)"
+
+      - name: Save the five-year price histories, whatever the market step's outcome
+        if: always() && steps.market.outcome != 'skipped' && hashFiles('data/theme_intelligence/http_cache/tiingo/**') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: data/theme_intelligence/http_cache/tiingo
+          key: theme-intelligence-tiingo-${{ github.run_id }}-${{ github.run_attempt }}
 
       # Committed even when the scan failed (its run record is the evidence), but NEVER when the
       # restore did not succeed: the registry here would then be empty or partial, and pushing it
