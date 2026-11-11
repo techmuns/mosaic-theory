@@ -46,10 +46,53 @@ Store: `docs/records/2026-11-10-driver-evidence-store.md`.
      pass keeps the same rule.
    - None of the 1,042 committed rows cites no call.
 7. **The vintage is its own entry file.** `2026-11-10.driver-text-filed` is
-   `vinci/dossier/extraction_versions/2026-11-10.driver-text-filed.json`, following
-   `2026-11-10.kind-by-exact-name`. The re-sync onto #988 and #989 (`76c21609`) moved it out
-   of the frozen table. The id the pages carry is unchanged, and so is its names text, byte for
-   byte.
+   `vinci/dossier/extraction_versions/2026-11-10.driver-text-filed.json`.
+   - The re-sync onto #988 and #989 (`76c21609`) moved it out of the frozen table, following
+     `2026-11-10.kind-by-exact-name`.
+   - The re-sync onto #986 (`cb8f8a7f`) re-created it with `new_entry`. It now follows main's two
+     heads, `2026-11-11.dividend-level-na-unstated` and
+     `2026-11-11.same-day-filings-and-alias-by-day`, so it is again the one head.
+   - The id the pages carry is unchanged, and so is its names text, byte for byte.
+8. **A cited call that is on disk and does not read refuses the page** (found on the re-sync onto
+   #986, 2026-11-11).
+   - FUBO's dry run there located 0 of its 8 rows, where the first real pass had located all 8.
+     Another session's LibreOffice conversion was running, and LibreOffice fails a conversion
+     while another runs.
+   - The reader leaves out a call whose read fails. So before this, the pass would have written
+     those rows call-only because of a failed read, not because the file lacks the quote.
+   - `prepare` now refuses such a page, unwritten and unspooled, just as
+     `confirmation.page_transcripts` (#982) refuses the same failure.
+   - Pinned by `test_a_cited_call_on_disk_that_does_not_read_refuses_the_page`, which runs through
+     the real `_calls_on_disk` with a file on disk. On the unfixed pass it failed:
+     `'written' == 'refused'`.
+   - The first real write is unaffected. Each of its call-only rows was measured: its context is
+     not the file's, or its call is not in today's CIQ folder (WHERE THE LOCATOR REACHES).
+9. **The vote rule's ten-draw confirmation reads the words back from the store** (#982 meeting
+   PR 3 on the re-sync onto #986; operator, 2026-11-11, relayed by the coordinator: "Read them
+   back from the store (Recommended)").
+   - `log-verdict` seals a proposal only from C(iv)'s confirmation, which draws ten syntheses
+     on the committed page's layer (`confirmation.layer_as_synthesized`). After PR 3 that
+     layer's filed transcript rows hold no words. The confirmation would have drawn on their
+     figures alone, less evidence than the build had, and the ledger would have sealed it.
+   - Main's parity test (`test_the_layer_is_read_as_the_replay_harness_reads_it`) failed on the
+     merge for this reason: PR 3's replay reader refuses such a page, and the confirmation's
+     reader did not.
+   - `confirmation.with_words` now reads each stripped row's quote, context and stated value
+     back (`driver_evidence.rehydrate` over `EvidenceSpool.from_env().get`) before the draws.
+   - It refuses before any draw, recording nothing, when the store is not configured, a record
+     is missing from it, or a row still holds no words. The words are never guessed.
+   - The reuse key still reads the committed layer, whose locators carry the words' hashes, so a
+     recorded confirmation is found without the store.
+   - `confirmation.py` is #982's decision path. The change adds no verdict field and does not
+     touch the proposal mapping; it gives the draws the input the build had.
+   - Pinned on a stripped page holding invented rows, re-filled from a temporary store:
+     - its ten requests are byte-identical to those on the same page before its words came off;
+     - drawn without the read-back, they differ;
+     - with no store, or an empty one, it is refused before any draw.
+
+     Both pins failed on main's `confirmation.py` (the requests differed; `DID NOT RAISE`). The
+     parity test now compares the two readers on each committed page with its words
+     (`stripped_pages.replayable`).
 
 **THE FIRST REAL WRITE** to the operator's spool (`$VINCI_EVIDENCE_SPOOL`, the operator's
 `driver-evidence` folder beside `manual/ciq` on the shared Drive) happened on 2026-11-10 from
@@ -60,6 +103,14 @@ review fixes and main merged), before PR 3 opened.
   call-only passages (`unlocated/`) and 1,183 claims, from the pages and the fixtures.
 - The ingest Mac uploads them to the private bucket. Nothing here touches R2, and nothing was
   written under `manual/ciq`.
+
+**FUBO, PASSED AGAIN ON THE RE-SYNC ONTO #986** (2026-11-11, 08:27:59Z to 08:28:04Z, in the
+merge's resolution).
+- #993 rebuilt FUBO's page at $0, so the merge took main's page and ran the pass on it.
+- It ran only after a dry run with no other conversion running located 8 of 8 rows.
+- The spool wrote 0 files; all 16 were already held.
+- The 8 rows are identical to PR 3's own, and the rest of the page, refresh entries included, is
+  main's. One refresh entry is added: `driver-facts-pass`.
 
 **WHY.**
 - **The rule had to be held by a test, not by memory.** Before the pass, at `70fa224d`, it fired
@@ -167,7 +218,10 @@ review fixes and main merged), before PR 3 opened.
   - The independence test passes on the passed tree (32 of 32 across the two files).
   - Production reads every panel page at its `freeze_ref`, so it is unaffected.
 - **The gate** (`bin/commit`: ruff, `mypy --strict`, `pytest -m "not network" -rs`) was green
-  at every commit of this PR.
+  at every commit of this PR except the mechanical re-sync `76c21609` (rule A). That one was
+  checked as its commit message lists, and the `bin/commit` after it ran the full suite on top of
+  it. The re-sync onto #986 (`cb8f8a7f`) resolved a semantic conflict (WHAT item 9), so it went
+  through `bin/commit` itself.
 
 **THE SCHEMA EDIT, DISCLOSED.** `vinci/dossier/schemas.py` is a decision-line file. Its hook
 (`.claude/hooks/decision_path_guard.py`) asks the operator before an Edit or a Write, once per

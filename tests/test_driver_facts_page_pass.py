@@ -164,6 +164,42 @@ def test_the_pass_never_drops_a_word_unfiled(tmp_path: Path) -> None:
     assert dp.run(jp, tmp_path, spool=None, dry_run=False).status == "refused"
 
 
+def test_a_cited_call_on_disk_that_does_not_read_refuses_the_page(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A cited call that is on disk but does not read refuses the page, unwritten and unspooled.
+    LibreOffice fails a conversion while another runs: on the re-sync onto #986 (2026-11-11) FUBO's
+    dry run located 0 of its 8 rows, where the first real pass had located all 8. Before this,
+    those rows went call-only for a failed read, not for a quote the file lacks, and a call-only
+    passage is filed for good under another key. The same file reading gives the full locator
+    through the same path, and a call not on disk stays call-only
+    (`test_the_pass_files_the_words_then_writes_the_page_without_them`)."""
+    from vinci.dossier import ciq_sheets
+    from vinci.dossier.ciq import CiqParseError
+
+    jp = _page_file(tmp_path, "BRBR")
+    text = jp.read_text()
+    row = _tx_rows(json.loads(text))[0]
+    call = row["source_ref"].split(": ", 1)[1]
+    folder = tmp_path / "ciq" / "BRBR"
+    folder.mkdir(parents=True)
+    (folder / call).write_bytes(b"{\\rtf1 a stand-in call}")
+
+    def failed_read(path: Path, *_: object, **__: object) -> str:
+        raise CiqParseError(f"{path.name}: a failed read")
+
+    monkeypatch.setattr(ciq_sheets, "read_text", failed_read)
+    spool_dir = tmp_path / "spool"
+    spool_dir.mkdir()
+    out = dp.run(jp, tmp_path / "ciq", spool=de.EvidenceSpool(spool_dir), dry_run=False)
+    assert out.status == "refused" and call in out.detail
+    assert jp.read_text() == text and not any(spool_dir.iterdir())
+    # the same file reading: the full locator, through the same `_calls_on_disk`
+    body = f"Jane  Roe \nChief Financial Officer \n\n{row['verbatim']} {row['following_context']}\n"
+    monkeypatch.setattr(ciq_sheets, "read_text", lambda path, *_, **__: body)
+    _, out = dp.prepare(ds.Dossier.model_validate_json(text), tmp_path / "ciq")
+    assert out.status != "refused" and out.located >= 1
+
+
 # --- every reader, once the words are off the page ------------------------------------------------
 
 def _stripped(tmp_path: Path, ticker: str = "BRBR") -> dict[str, Any]:

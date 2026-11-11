@@ -26,7 +26,8 @@ committed page, the pass does the following, with no model call, no network and 
    (`schemas.PRIVATE_TRANSCRIPT_FIELDS`).
 
 A page is REFUSED, unwritten, when a transcript row cites no call: there would be nowhere to file
-its words. There are none on the committed corpus.
+its words. There are none on the committed corpus. It is also refused when a row cites a call
+that is on disk and does not read, so the row is never call-only for a failed read.
 """
 
 from __future__ import annotations
@@ -80,7 +81,8 @@ def _calls_on_disk(ticker: str, ciq_root: Path) -> tuple[dict[str, str], dict[st
 
 def prepare(dossier: Dossier, ciq_root: Path) -> tuple[Dossier, PassOutcome]:
     """The page with each unstripped transcript row given its fact and its locator — nothing
-    written. Refused (outcome ``refused``, the page returned unchanged) when a row cites no call."""
+    written. Refused (outcome ``refused``, the page returned unchanged) when a row cites no call,
+    or cites a call that is on disk and does not read."""
     out = PassOutcome(dossier.ticker, "unchanged", "")
     od = dossier.mechanical.operating_drivers
     todo = [r for r in (od.rows if od is not None else []) if r.tier == "llm-fenced" and r.verbatim]
@@ -94,6 +96,18 @@ def prepare(dossier: Dossier, ciq_root: Path) -> tuple[Dossier, PassOutcome]:
                       "words would have nowhere to be filed")
         return dossier, out
     bodies, shas = _calls_on_disk(dossier.ticker, ciq_root)
+    # A CITED CALL ON DISK MUST READ (2026-11-11). The reader leaves out a call whose read fails,
+    # and LibreOffice fails a conversion while another runs: FUBO's dry run on the re-sync onto
+    # #986 located 0 of 8 rows where the first pass located all 8. Its rows would go call-only for
+    # a failed read, not for a quote the file lacks. `confirmation.page_transcripts` refuses the
+    # same.
+    unread = sorted({r.source_ref[len(_CITED):] for r in todo if r.locator is None}
+                    & (set(shas) - set(bodies)))
+    if unread:
+        out.status = "refused"
+        out.detail = (f"{len(unread)} cited call(s) on disk did not read ({'; '.join(unread)}): "
+                      "LibreOffice fails a conversion while another runs, so re-run alone")
+        return dossier, out
     rows: list[OperatingDriver] = []
     for r in od.rows:
         if r.tier != "llm-fenced" or not r.verbatim:
