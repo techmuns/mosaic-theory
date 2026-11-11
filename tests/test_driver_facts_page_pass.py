@@ -26,6 +26,7 @@ from vinci.evals import variants
 from vinci.evals.capture_child import pre_synthesis_mech
 
 PRIVATE = ("verbatim", "following_context", "value")
+_PAGES = sorted((Path(__file__).resolve().parents[1] / "data/dossiers").glob("*/dossier.json"))
 
 
 def _tx_rows(page: dict[str, Any]) -> list[dict[str, Any]]:
@@ -232,8 +233,13 @@ def test_the_panel_transform_keeps_a_stripped_rows_committed_fact(tmp_path: Path
             update={"rows": blank})}), variants.Context(page=page))
 
 
-def test_a_stripped_row_reads_as_its_checked_figures_never_its_lost_words(tmp_path: Path) -> None:
-    """The scenario template and the digest read a stripped row from its fact alone."""
+def test_a_stripped_row_reads_as_not_on_the_page_never_rebuilt(tmp_path: Path) -> None:
+    """(Codex P1, round 1 of #1006) The scenario template and the digest read a stripped row as NOT
+    ON THIS PAGE. They read it as its checked figures (`figures_text`), or "stated, with no figure"
+    for a qualitative row, under the template's evidence block — and the figures are not the claim:
+    TGT's "3/4" of sales read "approximately 3; 4", and EPAM's "sixth consecutive quarter of
+    sequential double-digit growth" read only "stated, with no figure". A row whose value code
+    could not verify still reads UNKNOWN with its reason, which is the code's and public."""
     from vinci.dossier import propose
 
     page = _stripped(tmp_path)
@@ -242,13 +248,30 @@ def test_a_stripped_row_reads_as_its_checked_figures_never_its_lost_words(tmp_pa
     assert len(lines) == len(page["mechanical"]["operating_drivers"]["rows"]) + 1
     assert not any(": None →" in ln for ln in lines)
     for r in rows:
-        want = syn.driver_value_as_read(None, r["value_status"], r.get("unknown_reason"),
-                                        r.get("figures"))
+        want = (f"UNKNOWN — not verified against its quote: {r.get('unknown_reason')}"
+                if r["value_status"] == "unknown" else syn.STRIPPED_VALUE)
         assert any(f"{r['metric']}: {want} →" in ln for ln in lines), r["metric"]
-    assert syn.figures_text([{"value": 7.0, "unit": "%", "change": "down"},
-                             {"value": 175.0, "scale": "e6", "qualifier": "at_least"}]) == \
-        "down 7%; at least 175 million"
-    assert syn.driver_value_as_read(None, "qualitative", None, []).startswith("stated, with no")
+    assert syn.driver_value_as_read(None, "qualitative", None) == syn.STRIPPED_VALUE
+    assert syn.driver_value_as_read(None, "verified", None) == syn.STRIPPED_VALUE
+
+
+@pytest.mark.parametrize("path", _PAGES, ids=lambda p: p.parent.name)
+def test_no_committed_stripped_row_is_rebuilt_in_the_scenario_template(path: Path) -> None:
+    """The committed corpus (Codex P1, round 1 of #1006): every transcript row whose words are off
+    the page reads in the scenario template as not on this page, or UNKNOWN with code's reason —
+    never a value built from its figures. FAILED on 6fe06f1c (TGT's "approximately 3; 4")."""
+    from vinci.dossier import propose
+
+    page = json.loads(path.read_text())
+    stripped = [r for r in _tx_rows(page) if r.get("value") is None]
+    if not stripped:
+        pytest.skip("no stripped transcript row on this page")
+    lines = propose._operating_driver_lines(page)
+    for r in stripped:
+        mine = [ln for ln in lines if f"] {r['metric']}: " in ln]
+        assert mine and all(
+            f": {syn.STRIPPED_VALUE} →" in ln or ": UNKNOWN — not verified" in ln for ln in mine), \
+            (r["metric"], mine)
 
 
 def test_a_claim_is_its_own_record_checked_by_its_hash(tmp_path: Path) -> None:
@@ -295,13 +318,6 @@ def test_a_name_with_a_transcript_needs_the_spool_and_a_name_without_one_does_no
     assemble._require_spool(_Bundle(tx=True), None)  # type: ignore[arg-type]
     src = Path(assemble.__file__).read_text()
     assert src.index("_require_spool(bundle, llm)") < src.index("extract_transcript_drivers(\n")
-
-
-def test_a_figure_past_six_digits_reads_whole_not_in_exponent_form() -> None:
-    """FAILED before the review fix: `:g` printed 1,234,567 subscribers as "1.23457e+06" in the
-    analyst's template and the synthesis digest — a different number, in a form no call says."""
-    assert syn.figures_text([{"value": 1234567.0}]) == "1234567"
-    assert syn.figures_text([{"value": 1.25, "currency": "$", "scale": "e9"}]) == "$1.25 billion"
 
 
 def test_a_row_read_back_spools_to_the_passage_it_came_from(tmp_path: Path) -> None:

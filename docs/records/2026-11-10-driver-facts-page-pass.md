@@ -164,8 +164,14 @@ merge's resolution).
   as every row's is.
 
 **WHAT ELSE PR 1's §9 ASKED, AND WHERE IT LANDED.**
-- `propose.py` and the digest read a stripped row from its `figures` (`synthesis.figures_text`).
-  This was in PR 3's first commit.
+- `propose.py` and the digest read a stripped row as NOT ON THIS PAGE
+  (`synthesis.STRIPPED_VALUE`), never as a value rebuilt from its figures. PR 3's first commit
+  rebuilt it (`figures_text`), and Codex's round-1 P1 on #1006 showed that the figures are not
+  the claim: TGT's "3/4" of sales read "approximately 3; 4" in the scenario template, and a
+  qualitative row lost its fact to "stated, with no figure". `tests/test_driver_facts_page_pass.
+  py::test_no_committed_stripped_row_is_rebuilt_in_the_scenario_template` failed on every
+  committed page with a stripped row at `6fe06f1c`. The figures stay in `dossier.json`; a reader
+  that needs the words reads them back from the store, as the confirmation does.
 - **The figure trace** (`synthesis._values_by_ref`) runs only in a build, at `_validate`, on the
   build's own layer. That layer still holds the words, because they are spooled and stripped
   later, at `_write`. **So no production path traces a stripped row, and no committed point's
