@@ -592,3 +592,42 @@ def test_a_fresh_decision_after_a_void_enters_on_or_after_its_ruling(tmp_path: P
             next_decision_id(store, "GOOGL", entering_on=date(2026, 11, 10))
         assert next_decision_id(store, "GOOGL", entering_on=RULING) == "V-GOOGL-2"
         assert next_decision_id(store, "GOOGL") == "V-GOOGL-2"
+
+
+# --- a monitor day keys a void on the SESSION it files, as a close is (the 2026-11-11 case) ------
+
+def test_a_day_filed_before_the_ruling_keeps_the_voided_decision_and_reproduces(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE REAL CASE, 2026-11-11. The routine `vinci monitor` ran on the ruling day before that
+    session closed, so it filed 2026-11-10. Keyed on the run's ``--ref``, that day dropped GOOGL
+    while a re-cut of 2026-11-10 kept it: the committed day did not reproduce, and V2's first gate
+    refused it. Keyed on the filed session, as closes are, the 11-10 day keeps GOOGL and equals its
+    re-cut, and the 11-11 session's day is the first to leave it out. The void row is the one the
+    real `vinci void-decision` wrote (#984's dry run); a committed void is used as committed."""
+    from tests.test_monitor_ref_date_bound import _wire, _written
+    from vinci import cli
+    void_row = json.loads((ROOT / "tests" / "fixtures" / "ledger_void" / "x_googl_dry_run.jsonl")
+                          .read_text())
+
+    def run(name: str, ref: str, no_close: frozenset[date]) -> dict[str, Any]:
+        root = tmp_path / name
+        _wire(root, monkeypatch, [], no_close=no_close)
+        led = root / "data" / "snapshots" / "decision_ledger.jsonl"
+        rows = [json.loads(ln) for ln in led.read_text().splitlines() if ln.strip()]
+        if not any(mon.entry_of(r).get("event") == EVENT_VOID for r in rows):
+            led.write_text("".join(json.dumps(r) + "\n" for r in [*rows, void_row]))
+        scratch = root / "scratch"
+        assert cli._cmd_monitor(argparse.Namespace(ref=ref, out=str(scratch))) == 0
+        return _written(scratch / "data" / "monitor")
+
+    def book(day: dict[str, Any]) -> list[str]:
+        return sorted(str(r["ticker"]) for r in day["rows"])
+
+    routine = run("routine", "2026-11-11", frozenset({date(2026, 11, 11)}))
+    recut = run("recut", "2026-11-10", frozenset())
+    after = run("after", "2026-11-11", frozenset())
+    assert str(routine["as_of"])[:10] == str(recut["as_of"])[:10] == "2026-11-10"
+    assert "GOOGL" in book(routine) and book(routine) == book(recut)
+    assert not any("VOIDED" in n for n in routine["notes"])
+    assert str(after["as_of"])[:10] == "2026-11-11" and "GOOGL" not in book(after)
+    assert sum("VOIDED by X-GOOGL" in n for n in after["notes"]) == 1
