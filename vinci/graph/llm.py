@@ -46,9 +46,13 @@ class LlmClient(ABC):
 #:     BadRequestError: 400 — {'type': 'invalid_request_error',
 #:                             'message': '`temperature` is deprecated for this model.'}
 #:
-#: Every LLM phase in the package runs through this one call site, so a single added parameter
+#: Every LLM phase in the package runs through this client, so a single added parameter here
 #: takes down dossier synthesis, the graph extractions and the theme phases together. It did:
-#: five names failed assembly this way before the parameter was removed again.
+#: five names failed assembly this way before the parameter was removed again. It is not the ONLY
+#: `messages.create` (fix request 2, RG-D20 a): the theme client's cached-article path
+#: (`vinci/theme_intelligence/llm.py`, a subclass of this one) and the eval harness's replay
+#: (`vinci/evals/replay.py`, which re-sends a captured call's arguments) call it too, and neither
+#: passes a sampling parameter either.
 #:
 #: WHY ANYONE WOULD TRY. Artifacts here are supposed to be reproducible from their inputs, and
 #: `vinci/dossier/assemble.py` used to reason about that as "the property temperature-0 protects".

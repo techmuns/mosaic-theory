@@ -1,4 +1,6 @@
-# Gemini Code Assist on GitHub — a COMMENT-ONLY second reviewer.
+# Gemini Code Assist on GitHub — INERT: it is NOT installed (operator decision 2026-10-23; CLAUDE.md,
+# "PR feedback is bounded"), so nothing reads this file today (fix request 2, RG-D20 g). Kept for
+# the day it is installed, when it is a COMMENT-ONLY second reviewer.
 # The process it feeds: `.claude/skills/pr-feedback/SKILL.md` (bounded triage by the PR's own
 # Claude session); the reasoning: `docs/records/2026-10-23-bounded-pr-review.md`.
 #

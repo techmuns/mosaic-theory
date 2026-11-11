@@ -5,10 +5,13 @@ deterministically. This layer reads the earnings-call transcript SLICE and pulls
 drivers management STATES on the call — a shipped/added KPI, a pricing action, a pass-through or
 competitive-position claim — as :class:`OperatingDriver` rows, each verbatim-bound and cited.
 
-It is the covenant-extraction pattern (``covenant_extract.py``) with ONE load-bearing UPGRADE: a
-**code-level verbatim + digit-trace validator**. Covenant extraction trusts the model to quote
-verbatim (prompt-only) and stores the quote for a human to grep; transcripts are messier and these
-rows feed a decision block, so here every row is VALIDATED before it is kept:
+It is the covenant-extraction pattern (``covenant_extract.py``) with a **code-level verbatim +
+digit-trace validator**. When this was written that was the UPGRADE — covenant extraction trusted
+the model to quote verbatim (prompt-only). Covenants now check containment too, through the shared
+`vinci.verbatim`, so what is this module's own is the digit trace below; its containment check
+does not use that helper, and its own `_norm` folds whitespace and case only (fix request 2,
+RG-D20 k). Transcripts are messier and these rows feed a decision block, so here every row is
+VALIDATED before it is kept:
 
 - **Quote containment.** The model's ``quote`` must appear (whitespace-normalized) in the slice —
   a paraphrased or fabricated quote DROPS the row.

@@ -8,6 +8,10 @@ rules into both — is the twin-constant bug this repo has already paid for twic
 from 6 to 5 in code while three surfaces went on saying "under 6", and eleven committed rows
 contradicted their own caption. Rules restated in two places drift; a pointer cannot.
 `tests/test_records_ledger.py::test_the_cross_tool_entry_point_points_and_does_not_copy` holds that.
+ONE DELIBERATE EXCEPTION (fix request 2, RG-D20 f): the Code Review Rules section below holds the
+checks Codex reads, and `.gemini/styleguide.md` repeats them for Gemini (not installed today; kept
+inert), because each reviewer reads only its own file. `tests/test_review_process.py::test_codex_and_gemini_are_given_the_same_checks` holds
+the two lists equal, so they cannot drift apart unseen.
 
 ## Where to look, by what you are doing
 
