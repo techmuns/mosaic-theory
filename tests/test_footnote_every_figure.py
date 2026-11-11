@@ -32,7 +32,7 @@ from pydantic import BaseModel, ValidationError
 from vinci.dossier import flags as dflags
 from vinci.dossier import schemas as ds
 from vinci.dossier import synthesis as syn
-from vinci.dossier.extraction_version import EXTRACTION_VERSIONS
+from vinci.dossier.extraction_version import includes
 
 ROOT = Path(__file__).resolve().parents[1]
 _FROZEN_SMPL = ROOT / "tests/fixtures/frozen_pages/2026-08-18/SMPL/dossier.json"
@@ -413,9 +413,9 @@ _NOW_REFFED = ("ConsensusLevel", "PeerCapitalRow", "PeerCapitalIntensity", "Matu
 
 
 def _before_this_version(raw: dict[str, Any]) -> bool:
-    order = [v for v, _ in EXTRACTION_VERSIONS]
-    v = raw.get("extraction_version")
-    return v not in order or order.index(v) < order.index(_THIS_VERSION)
+    # ANCESTRY, not a row position (2026-11-11): a vintage after the frozen table is a file, and
+    # what a page's code holds is what its stamp follows. An undeclared stamp is legacy, as before.
+    return includes(raw.get("extraction_version"), _THIS_VERSION) is not True
 
 
 def _uncitable(raw: dict[str, Any]) -> set[str]:

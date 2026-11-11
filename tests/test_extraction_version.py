@@ -25,6 +25,7 @@ import shutil
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -35,12 +36,27 @@ from vinci.dossier.extraction_version import (
     EXTRACTION_VERSION,
     EXTRACTION_VERSION_NAMES,
     EXTRACTION_VERSIONS,
+    HEADS,
     UNSTAMPED,
+    declares,
+    names_of,
     stamp_detail,
     stamp_label,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _web_table(entries: Path | None = None) -> Any:
+    """The table the web reads: what `frontend/build.py` writes to the deploy's snapshot mirror —
+    the real tree's, or one built over ``entries`` (a folder of vintage files)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("fe_build_ev", ROOT / "frontend" / "build.py")
+    assert spec and spec.loader
+    build = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(build)
+    return build._extraction_versions() if entries is None else build._extraction_versions(
+        entries=entries)
 
 
 def _doss(version: str | None) -> ds.Dossier:
@@ -133,9 +149,14 @@ def test_the_changelog_forces_a_bump_to_say_what_it_names() -> None:
         assert len(names) > 20, (
             f"version {ver!r} names its state in {len(names)} chars — too short to tell a reader "
             "what changed, which is the whole reason the pairing exists")
-    assert EXTRACTION_VERSIONS[-1] == (EXTRACTION_VERSION, EXTRACTION_VERSION_NAMES), (
-        "the exported current version is not the last changelog row — appending a vintage must "
-        "move the stamp, or the table and the stamp disagree about what is current")
+    # CURRENT IS THE HEADS (2026-11-11): one head is the stamp and the table's last row; two or more
+    # (vintages merged in parallel) stamp as their join, which names each of them.
+    assert "+".join(HEADS) == EXTRACTION_VERSION, (
+        "the exported current version is not the table's heads — adding a vintage must move the "
+        "stamp, or the table and the stamp disagree about what is current")
+    assert names_of(EXTRACTION_VERSION) == EXTRACTION_VERSION_NAMES
+    if len(HEADS) == 1:
+        assert EXTRACTION_VERSIONS[-1] == (EXTRACTION_VERSION, EXTRACTION_VERSION_NAMES)
 
 
 def test_both_twins_agree_on_every_stamp_edge_case_e2e() -> None:
@@ -159,7 +180,8 @@ def test_both_twins_agree_on_every_stamp_edge_case_e2e() -> None:
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
 const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
-const {{ renderDossier }} = await import("{dj}");
+const {{ renderDossier, useExtractionVersions }} = await import("{dj}");
+useExtractionVersions({json.dumps(_web_table())});  // what render() sets from the deploy
 const bare = {{ ticker: "X", name: "X Co", cik: "0", reference_date: "2026-06-01",
   assembled_at: "2026-06-01T12:00:00", mechanical: {{}}, synthesis: null }};
 const strip = (s) => s.replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&#39;/g, "'")
@@ -265,7 +287,7 @@ def test_every_committed_stamp_names_a_vintage_this_code_declares() -> None:
         if not stamp:
             continue  # assembled before 26a — `stamp_label` renders "unstamped", which is honest
         scanned += 1
-        if stamp not in declared:
+        if not declares(stamp):  # a row, or a join of heads merged in parallel (2026-11-11)
             orphaned.append(f"{path.parent.name}={stamp}")
     assert scanned, "no committed dossier carries a stamp — the guard ran vacuously"
     assert not orphaned, (
