@@ -27,7 +27,9 @@ superseded-by:
   on, so a split since left the same step at `end`'s next session. This happened on the aggregates
   path and on the grouped one; a screen replay at an earlier reference date is a grouped case.
   - **Aggregates path:** still one call per name, now reaching through the name's last held bar.
-    EVERY held bar after `end` is set beside the served one.
+    EVERY held bar after `end` is set beside the served one. A held session there that the source
+    did not serve cannot be read, so it makes the name `unanchored` and is never inferred from the
+    bars around it (Codex round 1 on #991).
   - **Grouped path:** every name this run wrote that holds bars after `end` is read at its FIRST
     held session after `end`, which is where a splice at `end`'s next session shows. Only a name
     that reads a restatement there is read at its LAST held session too. That costs one
@@ -84,7 +86,7 @@ RF-D11 and RF-D12, all latent per the audit (group F notes, F-D5 and F-D10 to F-
 edge is this build's own finding 1, counted in scope by the coordinator.
 
 **HOW VERIFIED.** See the PR's "Cross-setup validation (deterministic)".
-- **Fail first.** `tests/test_prices_order5.py` has 22 tests.
+- **Fail first.** `tests/test_prices_order5.py` has 23 tests.
   - The first 10: 8 fail on `2b9b766c`, and the 2 negative pins pass there, as they should.
   - Review 0a's 2 (a day not yet closed in ET; an anchor the source did not serve): each fails
     with its fix reverted.
@@ -95,7 +97,9 @@ edge is this build's own finding 1, counted in scope by the coordinator.
     bar between two stale ones, a window that writes nothing, and a grouped replay with no split
     reading only the first session. The other 2 pin shipped behaviour: an unserved grouped right
     edge, and a price-only move after `end`.
-  - All 22 pass on head.
+  - Codex round 1's 1 (a held session after `end` the source did not serve): fails on
+    `0135392d`.
+  - All 23 pass on head.
 - **The real data in those tests:**
   - IESC's real 2026-08-05 restatement pair, from the primary store and Polygon;
   - GOOGL's committed Polygon bars;

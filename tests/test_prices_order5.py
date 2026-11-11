@@ -228,6 +228,25 @@ def test_a_current_bar_between_two_stale_ones_after_end_is_never_rescaled(tmp_pa
     assert all(after[d] == before[d] for d in _WEEK[2:])
 
 
+def test_a_held_session_after_end_the_source_did_not_serve_restates_nothing(
+        tmp_path: Path) -> None:
+    """CODEX P1 ON #991: 08-05 and 08-07 re-served on the current basis, but 08-06 — held, between
+    them — not served at all. Its basis cannot be read, so nothing after ``end`` is rescaled and the
+    name is listed unanchored; it is never inferred from the bars around it."""
+
+    class _Gap(_Served):
+        def daily_bars(self, symbol: str, start: date, end: date) -> list[tuple[date, RawBar]]:
+            return [(d, b) for d, b in super().daily_bars(symbol, start, end) if d != _WEEK[3]]
+
+    with _store_holding_the_week(tmp_path / "s.db") as store:
+        before = {b.bar_date: b.close for b in store.get_price_history(_IDENT.internal_id)}
+        summary = ingest_prices_per_symbol(_Gap(_IESC["fresh"]), store, [_IDENT], start=_WEEK[0],
+                                           end=_WEEK[1], today=date(2026, 11, 11))
+        after = {b.bar_date: b.close for b in store.get_price_history(_IDENT.internal_id)}
+    assert summary["unanchored"] == ["IESC"] and summary["restated"] == {}
+    assert all(after[d] == before[d] for d in _WEEK[2:])
+
+
 def test_a_name_whose_window_writes_nothing_has_neither_edge_restated(tmp_path: Path) -> None:
     """REVIEW, FINDING 3: every served session of the window falls before the id's own first
     session (`holders`), so nothing in ``[start, end]`` is written — and the held window stays on

@@ -632,10 +632,10 @@ def ingest_prices_per_symbol(
     had them left on the basis they were pulled on — the same splice at ``end``'s next session. The
     fetch now reaches through the name's last held bar, and every held bar after ``end`` is set
     beside the source (`restate_after`): one restatement read across them all puts them on the
-    current basis; two bases there, or an end the source did not serve, restates nothing and is
-    named ``unanchored``. Still ONE call per name: the anchors widen its window, and only
-    ``[start, end]`` is written — and a name whose window writes nothing has neither edge
-    restated."""
+    current basis; two bases there, or any held session after ``end`` the source did not serve,
+    restates nothing and is named ``unanchored``. Still ONE call per name: the anchors widen its
+    window, and only ``[start, end]`` is written — and a name whose window writes nothing has
+    neither edge restated."""
     secs = list(securities)
     starts = first_sessions or {}
     on = today or date.today()
@@ -689,11 +689,10 @@ def ingest_prices_per_symbol(
                 price_only.setdefault(s.eod_symbol, []).append(pf)
         if first_after is not None:
             # EVERY held bar after ``end``, each beside the served one: the call already carries
-            # them all (finding 2). The two ends must be served; an interior session the source
-            # does not carry is not read.
+            # them all (finding 2). A held session the source did not serve cannot be read, so it
+            # makes the name unanchored — never inferred from the bars around it (Codex, #991).
             pairs = [(b, fresh_by.get(b.bar_date))
                      for b in store.get_price_history(s.internal_id) if b.bar_date > end]
-            pairs = pairs[:1] + [p for p in pairs[1:-1] if p[1] is not None] + pairs[1:][-1:]
             outcome, rf = restate_after(store, s.internal_id, pairs, end=end)
             if outcome == "restated" and rf is not None:
                 restated.setdefault(s.eod_symbol, []).append(rf)
