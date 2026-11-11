@@ -609,9 +609,14 @@ def test_a_day_filed_before_the_ruling_keeps_the_voided_decision_and_reproduces(
     void_row = json.loads((ROOT / "tests" / "fixtures" / "ledger_void" / "x_googl_dry_run.jsonl")
                           .read_text())
 
+    # THE REAL RECORD TOO: the routine day also dropped GOOGL from the FRESHNESS panel, which
+    # reads `live_verdicts` on the same ledger read — with no record served it is empty either way
+    record = json.loads((ROOT / "scenarios" / "GOOGL.json").read_text())
+    ruled = str(mon.entry_of(void_row)["ruled_on"])
+
     def run(name: str, ref: str, no_close: frozenset[date]) -> dict[str, Any]:
         root = tmp_path / name
-        _wire(root, monkeypatch, [], no_close=no_close)
+        _wire(root, monkeypatch, [record], no_close=no_close)
         led = root / "data" / "snapshots" / "decision_ledger.jsonl"
         rows = [json.loads(ln) for ln in led.read_text().splitlines() if ln.strip()]
         if not any(mon.entry_of(r).get("event") == EVENT_VOID for r in rows):
@@ -623,11 +628,20 @@ def test_a_day_filed_before_the_ruling_keeps_the_voided_decision_and_reproduces(
     def book(day: dict[str, Any]) -> list[str]:
         return sorted(str(r["ticker"]) for r in day["rows"])
 
+    def fresh(day: dict[str, Any]) -> set[str]:
+        return {str(f["ticker"]) for f in day["freshness"]}
+
+    def voided_call(day: dict[str, Any]) -> list[dict[str, Any]]:
+        # THE VOIDED DECISION, not the ticker: a fresh GOOGL decision may enter on or after the
+        # ruling (`next_decision_id`), so "GOOGL in the book" alone reddens on the living ledger
+        return [r for r in day["rows"] if r["ticker"] == "GOOGL" and str(r["entry_date"]) < ruled]
+
     routine = run("routine", "2026-11-11", frozenset({date(2026, 11, 11)}))
     recut = run("recut", "2026-11-10", frozenset())
     after = run("after", "2026-11-11", frozenset())
     assert str(routine["as_of"])[:10] == str(recut["as_of"])[:10] == "2026-11-10"
-    assert "GOOGL" in book(routine) and book(routine) == book(recut)
+    assert voided_call(routine) and book(routine) == book(recut)
+    assert "GOOGL" in fresh(routine) and fresh(routine) == fresh(recut)
     assert not any("VOIDED" in n for n in routine["notes"])
-    assert str(after["as_of"])[:10] == "2026-11-11" and "GOOGL" not in book(after)
+    assert str(after["as_of"])[:10] == "2026-11-11" and not voided_call(after)
     assert sum("VOIDED by X-GOOGL" in n for n in after["notes"]) == 1
