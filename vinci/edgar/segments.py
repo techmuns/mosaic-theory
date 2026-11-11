@@ -140,6 +140,9 @@ def _durations(row_html: str) -> list[str]:
 _AXIS_PREFIX = re.compile(r"^[^|]*\|\s*")
 
 
+_FOOTNOTE = re.compile(r"(?<=[\d)])\s*(?:\[\s*\w{1,3}\s*\]|[*†‡§]+|\s\(\s*\d{1,2}\s*\))\s*$")
+
+
 def _number(cell: str) -> float | None:
     """A stated figure as a float, or None when the cell is not one.
 
@@ -147,7 +150,10 @@ def _number(cell: str) -> float | None:
     lost money renders as "(1,229)" and reading it as positive would invert the sign on exactly the
     lines a reader is looking for. `$`, commas and stray spacing are presentation.
     """
-    raw = cell.replace("$", "").replace(",", "").strip()
+    # A FOOTNOTE MARK after the figure is presentation too (TeamNostra fix request 2, RE2-D15):
+    # "$ 1,229 [1]" read as no figure, so the row kept only its earlier years. A bracketed loss
+    # "(1,229)" is never one: a mark is "[1]", "*", "†", or "(1)" set after the figure.
+    raw = _FOOTNOTE.sub("", cell.replace("$", "").replace(",", "")).strip()
     neg = raw.startswith("(") and raw.endswith(")")
     if neg:
         raw = raw[1:-1].strip()

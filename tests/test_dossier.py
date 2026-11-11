@@ -2257,8 +2257,9 @@ _KD_4COL = (
 def _kd_bundle(monkeypatch: pytest.MonkeyPatch, text: str,
                filename: str = "Acme Co NasdaqGM ACME Key Developments.rtf") -> ciq.CiqBundle:
     """A bundle carrying one key_developments workbook; read_text is stubbed to `text` (the RTF
-    decode itself is covered by test_ciq — here we pin the parse/filter/header logic). The
-    filename is REAL-shaped because issuer attribution derives its name-head from it (#458)."""
+    decode itself is covered by test_ciq_reader_contract — here we pin the parse/filter/header
+    logic). The filename is REAL-shaped because issuer attribution derives its name-head
+    from it (#458)."""
     from pathlib import Path
     monkeypatch.setattr(cs, "read_text", lambda path, fmt=None: text)
     wb = ciq.CiqWorkbook(
@@ -6633,8 +6634,10 @@ def test_entitlement_renders_undisclosed(monkeypatch: typing.Any) -> None:
     'Entitlement Needed' groups as 'broker undisclosed'."""
     assert cs._undisclosed_name("Entitlement Needed") == "undisclosed (CIQ entitlement)"
     assert cs._undisclosed_name("H.C. Wainwright") == "H.C. Wainwright"
+    # CIQ's own ten headers (all 36 exports on disk, 2026-11-10): the log is read by them (RA-D14)
     rows = [["", ""], ["Change Type", "Date", "Broker", "Analyst", "Data Point", "Period",
-                       "Cur", "Pri", "After", "Before"],
+                       "Broker Value Current", "Broker Value Prior", "Consensus After",
+                       "Consensus Before"],
             ["Downward Revision", 46100.0, "Entitlement Needed", "-", "EBITDA", "FY 2026",
              1.0, 2.0, 1.0, 2.0]]
     ev = cs.revision_events(_est_bundle({"Recent Changes": rows}))
