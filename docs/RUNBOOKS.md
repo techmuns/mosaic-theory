@@ -320,8 +320,16 @@ is the 3.9 system one).
    leaves a gap in the series no later run can fill.
 
 **Do NOT re-use a parked copy of an earlier build** — re-assemble whenever any rendering input has
-changed, or you ship the defect the fix removed (#365→#368). **Do NOT re-roll a synthesis to get
-cleaner flags** — that is selecting prose on outcome; the flags stay on the page for the human.
+changed, or you ship the defect the fix removed (#365→#368). **Do NOT re-roll a WRITTEN synthesis
+to get cleaner flags or another lean** — that is selecting prose on outcome; the flags stay on the
+page for the human, and the five draws are fixed in advance (`synthesis.SYNTHESIS_DRAWS`). **A build
+the 19c guard REFUSES is re-run:** it wrote no page. That guard refuses a synthesis that never
+states a material figure (`assemble.py`, `uncited_material_figures`); its error ends "Re-run:
+synthesis varies between runs", and the code's comment there reads "the bad roll FAILS and is
+re-rolled; the good one ships". Other refusals name their own fix in their message ("Re-run when
+the model is answering", "Re-run WITH a client", an export to re-pull); follow that. Every refused
+attempt stays in `assembly_runs` (step 7). *(G-D15, corrected 2026-11-11: this read as barring the
+19c re-run too, against `assemble.py`.)*
 
 ---
 
