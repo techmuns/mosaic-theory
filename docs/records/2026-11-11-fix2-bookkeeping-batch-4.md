@@ -34,8 +34,9 @@ superseded-by:
 **HOW VERIFIED.** Every row was checked on main `cbefc245`:
 - each SHA is on `main` and is its PR's squash commit;
 - each PR names its ID in its title, body or squash message;
-- each named test node exists, is new in its row's PR (absent at the squash commit's parent), and passes on `main`;
+- each named test node exists, is new in its row's PR (absent at the squash commit's parent), and passes on `main`. Three pass only with the licensed CIQ bundles linked read-only, because they skip without them (RA-D5's bundle case, RA-D7's and RA-D12's; see below);
 - `tests/test_fix_log.py`, `tests/test_state_open_now.py`, `tests/test_state_identifiers.py` and `tests/test_records_ledger.py` pass.
+- the full offline suite, `pytest -m "not network"` with the two `customers()` corpus tests deselected, run on this batch before the merge of #972: 10,643 passed, 635 skipped, 6 xfailed, exit 0. After the merge, the lint files above and #972's test file pass locally, and CI runs the rest.
 
 **BOUNDARY.** The batch covers PRs merged after #1003 and not booked by batch 3, read on 2026-11-11 at main `cbefc245`: #971, #972, #1001, #1008, #1009 and #1010, plus #984, #985 and #994, which merged before #1003 but whose row-60 clauses batch 3 did not carry. The counts are every one of the 178 fix-log rows by its Status cell, and, separately, the 148 asked (every Order but `§4`).
 

@@ -153,6 +153,8 @@ def g_the_gemini_config_is_inert() -> None:
 
 
 def _registers_as_a_target(metric: str) -> bool:
+    """Whether `register` takes `metric` as a target. A ValueError is the refusal; any other
+    error means `Registration`'s shape moved, and this helper must follow it."""
     try:
         Registration(base_ref="a", cand_ref="b", transforms=(), pages=("BURL",), draws=2,
                      targets=(metric,), held_out=(), scorer="s")
