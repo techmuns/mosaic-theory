@@ -2,6 +2,7 @@
 // Displayed here; logged ONLY via the CLI. No edit / delete / write path exists.
 import { getLedger, isBuyVerdict, verdictWord, getMonitor } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtInt, escapeHtml, DASH } from "../../lib/format.js";
+import { entryCell, correctionTier } from "../../lib/correction.js";
 
 // The LIVE columns come from the latest COMMITTED monitor snapshot (vinci monitor, manual
 // cadence) — never a live fetch. Absent history → every live cell reads "—": the ledger's frozen
@@ -49,12 +50,72 @@ export async function render(root, _params, { item, frame }) {
       outcomes. Logging happens via the <span class="mono">log-verdict</span> CLI; this dashboard only displays it.
     </div>`;
 
-  const spread = spreadCard(mon) + freshnessPanel(mon);
+  const spread = spreadCard(mon) + freshnessPanel(mon, voidedBefore(led, mon));
   const entries = led.entries.length
     ? led.entries.map((e) => entryCard(e, marks[String(e.ticker).toUpperCase()])).join("")
     : `<div class="notice">No verdicts logged yet.</div>`;
 
-  root.innerHTML = frame(item, { bodyHtml: counts + banner + spread + entries });
+  root.innerHTML = frame(item, {
+    bodyHtml: counts + banner + spread + entries + voidedTier(led.voided, mon) });
+}
+
+// THE MONITOR DAY MAY PREDATE A VOID (operator, 2026-11-11: a void is in effect from its ruling
+// date). The day's freshness labels are `live_verdicts` AS OF that day, so a day cut before the
+// ruling still names the voided call's verdict. The tickers here — a voided call ruled after the
+// day, and no open live decision now — print "verdict voided" instead of that stale word.
+function voidedBefore(led, mon) {
+  const asOf = String((mon && mon.as_of) || "");
+  const open = new Set((led.entries || []).filter((e) => !e.closed)
+    .map((e) => String(e.ticker).toUpperCase()));
+  return new Set((led.voided || [])
+    .filter((v) => asOf && String(v.ruledOn || "") > asOf && !open.has(String(v.ticker).toUpperCase()))
+    .map((v) => String(v.ticker).toUpperCase()));
+}
+
+// THE VOIDED CALLS, ONCE (operator ruling 2026-11-11, GOOGL). A voided decision is out of the live
+// book, the counts and the spread; this tier is the one place it still shows, so the removal can be
+// seen and never reads as a hidden loser: the sealed entry, its correction, the ruling and its
+// reason, and the result to date the void itself sealed. Collapsed on the web — audit detail, never
+// a decision value — and force-opened in print with every other <details>. Exported for the node pin.
+export function voidedTier(voided, mon = null) {
+  if (!voided || !voided.length) return "";
+  // the spread and marks above are the monitor day's; one cut before a ruling still carries that
+  // call, so the tier says so rather than claiming a removal the day above does not show yet
+  const asOf = String((mon && mon.as_of) || "");
+  const early = asOf && voided.some((v) => String(v.ruledOn || "") > asOf)
+    ? ` The monitor day above is marked ${fmtDate(asOf)}, before a ruling here: its spread and marks
+        are that day's, cut while the call was still live.` : "";
+  const rows = voided.map((v) => {
+    const m = v.mark;
+    const result = m
+      ? `${pct(m.position_return)} vs ${escapeHtml(m.benchmark)} ${pct(m.benchmark_return)}, excess
+         ${m.excess * 100 >= 0 ? "+" : ""}${(m.excess * 100).toFixed(2)} pts
+         (${escapeHtml(m.return_basis)} return, entry ${fmtPrice(m.entry_price)} on ${fmtDate(m.entry_date)},
+         marked ${fmtPrice(m.price)} on ${fmtDate(m.as_of)})`
+      : DASH;
+    const fx = v.correction;
+    return `
+      <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--line); font-size:13px;">
+        <div style="display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;">
+          <span class="mono" style="font-weight:650;">${escapeHtml(v.ticker)}</span>
+          <span class="pill unresolved">${escapeHtml(verdictWord(v.verdict))} · voided</span>
+          <span class="muted" style="font-size:12px;">decided ${fmtDate(v.decidedAt)} · voided by
+            <span class="mono">${escapeHtml(v.voidId)}</span> on the operator's ruling of ${fmtDate(v.ruledOn)}</span>
+        </div>
+        <div style="margin-top:6px; color:var(--ink-2);">Sealed at <span class="mono">${fmtPrice(v.sealedPrice)}</span>
+          on ${fmtDate(v.sealedAsOf)}${fx ? `, read at <span class="mono">${fmtPrice(fx.entryPrice)}</span> on
+          ${fmtDate(fx.entryPriceAsOf)} by <span class="mono">${escapeHtml(fx.correctionId)}</span>` : ""}.</div>
+        <div style="margin-top:4px;"><span class="muted">Result to date when voided</span> ${result}</div>
+        ${v.reason ? `<div class="muted" style="margin-top:4px; font-size:12px;">Reason — ${escapeHtml(v.reason)}</div>` : ""}
+      </div>`;
+  }).join("");
+  return `
+    <details class="ds-voided card" style="margin-top:18px;">
+      <summary class="muted">Voided — ${fmtInt(voided.length)} call${voided.length === 1 ? "" : "s"} ruled out of the record, shown here once</summary>
+      <div class="muted" style="font-size:12px; margin-top:6px;">Out of the live book, the counts and the
+        spread. The rows stay in the append-only ledger as audit history.${early}</div>
+      ${rows}
+    </details>`;
 }
 
 // The BUY−AVOID spread, carrying its own caveats — a DIAGNOSTIC until every row reaches its
@@ -90,7 +151,7 @@ export function spreadCard(mon) {
 
 // FRESHNESS / TRIGGERS — the machine FLAGS (a filing newer than the record's evidence), it never
 // adjudicates a trigger as fired. Triggers print verbatim so the human reads the actual wording.
-function freshnessPanel(mon) {
+function freshnessPanel(mon, voidedNames = new Set()) {
   const rows = (mon && mon.freshness) || [];
   if (!rows.length) return "";
   const card = (f) => {
@@ -133,7 +194,7 @@ function freshnessPanel(mon) {
       <div class="card" style="margin-bottom:10px;">
         <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;">
           <span class="mono" style="font-weight:650;">${escapeHtml(f.ticker)}</span>
-          <span class="muted" style="font-size:12px;">${escapeHtml(f.verdict || "")}</span>
+          <span class="muted" style="font-size:12px;">${escapeHtml(voidedNames.has(String(f.ticker).toUpperCase()) ? "verdict voided" : (f.verdict || ""))}</span>
           ${flag}
           <span class="muted" style="font-size:12px; margin-left:auto;">evidence ${fmtDate(f.last_evidence_date)}${f.last_evidence_source ? ` · ${escapeHtml(f.last_evidence_source)}` : ""}</span>
         </div>
@@ -209,12 +270,13 @@ function entryCard(e, mark) {
       </div>
       ${closeReason}
       <div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:10px; font-size:13px;">
-        <div><span class="muted">Frozen entry</span> <span class="mono" style="font-weight:600;">${fmtPrice(e.entryPrice)}</span> <span class="muted">@ ${fmtDate(e.entryPriceAsOf)}</span></div>
+        ${entryCell(e)}
         <div><span class="muted">Horizon</span> <span class="mono">${fmtInt(e.horizonDays)}d</span> <span class="muted">→ ${fmtDate(e.horizonDate)}</span></div>
         <div><span class="muted">Confidence</span> ${escapeHtml(e.confidence || DASH)}</div>
         <div><span class="muted">Benchmark</span> <span class="mono">${escapeHtml((mark && mark.benchmark) || e.benchmark || DASH)}</span>${mark && mark.benchmark && mark.benchmark !== e.benchmark ? ` <span class="muted" style="font-size:11px;">(cap-band; supersedes ${escapeHtml(e.benchmark)})</span>` : ""}</div>
         ${mark && mark.sector ? `<div><span class="muted">Sector</span> ${escapeHtml(mark.sector)}</div>` : ""}
       </div>
+      ${correctionTier(e)}
       ${liveRow(mark)}
       ${field("Thesis", e.thesis)}
       ${field("Kill criteria", e.killCriteria)}

@@ -229,8 +229,11 @@ export async function getRankedQueue() {
 // getLedger() -> {
 //   counts: { logged, resolved, buy, avoid },
 //   entries: [{ ticker, verdict, entryPrice, entryPriceAsOf, horizonDays, horizonDate,
+//               correction?,   // { correctionId, sealedPrice, sealedAsOf, reason } — RF-D7
 //               confidence, benchmark, decidedAt, resolved, daysToHorizon,
-//               thesis, killCriteria, twinCall }]   // immutable, append-only
+//               thesis, killCriteria, twinCall }],  // immutable, append-only; voided ones left out
+//   voided: [{ ticker, entryId, verdict, sealedPrice, sealedAsOf, correction?, voidId,
+//              ruledOn, reason, mark }]   // ruled out of the record (2026-11-11), shown once
 // }
 export function getLedger() { return _once("ledger", _loadLedger); }
 async function _loadLedger() {
@@ -249,6 +252,46 @@ async function _loadLedger() {
   for (const p of payloads) {
     if (p.event === "CLOSE" && p.closes_entry_id) closeBy[p.closes_entry_id] = p;
   }
+  // A DECISION SEALED ON A STALE CLOSE IS READ AT ITS CORRECTION (RF-D7, operator ruling
+  // 2026-11-09). JS twin of `vinci.monitor.apply_corrections`: the entry price and date — and so
+  // the horizon, the days to it and `resolved` — come from the decision's CORRECTION row, the
+  // sealed entry riding beside as `correction`. The row itself is never shown as a position.
+  const fixBy = {};
+  for (const p of payloads) {
+    if (p.event === "CORRECTION" && p.corrects_entry_id) fixBy[p.corrects_entry_id] = p;
+  }
+  // A VOIDED DECISION IS OUT OF THE RECORD (operator ruling 2026-11-11, GOOGL). JS twin of
+  // `vinci.monitor.decision_rows`: it leaves the live book, the counts and every per-book group,
+  // and is returned ONCE as `voided` — the sealed entry, its correction, the ruling and the result
+  // its void sealed — for the decision log's audit tier, so the removal is seen, never hidden.
+  const voidBy = {};
+  for (const p of payloads) {
+    if (p.event === "VOID" && p.voids_entry_id) voidBy[p.voids_entry_id] = p;
+  }
+  const voided = payloads
+    .filter((p) => !p.event && voidBy[p.entry_id])
+    .map((p) => {
+      const v = voidBy[p.entry_id];
+      const fx = fixBy[p.entry_id];
+      return {
+        ticker: p.ticker,
+        entryId: p.entry_id,
+        verdict: p.verdict,
+        decidedAt: p.decided_at,
+        sealedPrice: p.entry_price,
+        sealedAsOf: p.entry_price_as_of,
+        ...(fx ? { correction: { correctionId: fx.entry_id, entryPrice: fx.entry_price,
+                                 entryPriceAsOf: fx.entry_price_as_of } } : {}),
+        voidId: v.entry_id,
+        ruledOn: v.ruled_on,
+        reason: v.reason,
+        mark: v.void_mark || null,
+        origin: p.origin || "screen",
+        sleeve: p.sleeve || "overshoot",
+      };
+    })
+    // newest first, as `entries` is — a per-ticker `find` then returns the latest voided call
+    .sort((a, b) => String(b.decidedAt).localeCompare(String(a.decidedAt)));
   // THE REALIZED RETURN IS THE MONITOR DAY'S, READ BY ITS CLOSE (STATE row 40, 2026-11-02). It was
   // derived here as `exit_price / entry_price − 1`, the formula `vinci.monitor.pair_closes`
   // dropped on 2026-10-29: the sealed entry sits on the ENTRY date's split basis, so a split
@@ -259,18 +302,30 @@ async function _loadLedger() {
   const realizedBy = {};
   for (const r of (monitor && monitor.realized) || []) realizedBy[r.close_id] = r;
   const entries = payloads
-    .filter((p) => !p.event)                                   // decision rows only
+    .filter((p) => !p.event && !voidBy[p.entry_id])            // live decision rows only
     .map((p) => {
-      const horizonDate = _addDays(p.entry_price_as_of, p.horizon_days);
+      const fx = fixBy[p.entry_id];
+      const entryPrice = fx ? fx.entry_price : p.entry_price;
+      const entryPriceAsOf = fx ? fx.entry_price_as_of : p.entry_price_as_of;
+      const horizonDate = _addDays(entryPriceAsOf, p.horizon_days);
       const daysToHorizon = horizonDate ? _diffDays(today, horizonDate) : null;
       const cl = closeBy[p.entry_id];
       return {
         ticker: p.ticker,
         entryId: p.entry_id,
         verdict: p.verdict,
-        entryPrice: p.entry_price,
-        entryPriceAsOf: p.entry_price_as_of,
+        entryPrice,
+        entryPriceAsOf,
         horizonDays: p.horizon_days,
+        // the SEALED entry and the row that corrects it; absent when the decision is uncorrected
+        ...(fx ? {
+          correction: {
+            correctionId: fx.entry_id,
+            sealedPrice: p.entry_price,
+            sealedAsOf: p.entry_price_as_of,
+            reason: fx.reason,
+          },
+        } : {}),
         horizonDate,
         confidence: p.confidence,
         benchmark: p.benchmark,
@@ -334,6 +389,7 @@ async function _loadLedger() {
     },
     otherBooks,
     entries,
+    voided,
   };
 }
 

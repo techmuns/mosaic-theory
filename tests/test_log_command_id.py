@@ -162,9 +162,10 @@ def test_both_log_command_call_sites_pass_the_follow_map() -> None:
     # recordAndReproduce → loggedVerdict (the e2e pin above enters at renderDossier)
     assert re.search(r"Promise\.all\(\[getDossierIndex\(\), getLedger\(\), getFollowed\(\)\]\)",
                      src), "render() no longer fetches the follow map"
-    assert "renderDossier(d, verdict, card, mark, followed)" in src
-    assert "appendixTier(d, verdict, m, card, followed)" in src
-    assert "recordAndReproduce(d, verdict, card, followed)" in src
+    # (2026-11-11) each hop also carries the voided call after the follow map
+    assert "renderDossier(d, verdict, card, mark, followed, voidedCall)" in src
+    assert "appendixTier(d, verdict, m, card, followed, voidedCall)" in src
+    assert "recordAndReproduce(d, verdict, card, followed, voidedCall)" in src
     calls = re.findall(r"\$\{loggedVerdict\((.*?)\}\)\}", src, re.S)
     assert len(calls) == 2, f"expected the dossier and underwrite call sites, found {len(calls)}"
     for call in calls:
