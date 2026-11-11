@@ -54,6 +54,15 @@ WERN_2021: dict[str, Any] = {
     "verdict": {"status": "watch", "reunderwrite_triggers": ["spot pulls to ~28-30"]}}
 
 
+def _blank_newest_10q_date(doc: str) -> str:
+    """IT's committed document with its newest 10-Q's `filingDate` blank: the blank recent-page
+    date #878's review round 2 named. A row of a form the window asks for, inside the window."""
+    d = json.loads(doc)
+    recent = d["filings"]["recent"]
+    recent["filingDate"][recent["form"].index("10-Q")] = ""
+    return json.dumps(d)
+
+
 class _Sec:
     """The SEC as a transport for IT: its document as ``doc`` says, its page -001 as ``page``
     says (``ok`` = the committed page). Counts what reached the wire."""
@@ -65,6 +74,8 @@ class _Sec:
     def _answer(self, how: str, body: str) -> httpx.Response:
         if how == "404":
             return httpx.Response(404, text="not served")
+        if how == "blank-date":
+            return httpx.Response(200, text=_blank_newest_10q_date(body))
         return httpx.Response(200, text=INTERSTITIAL if how == "interstitial" else body)
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
@@ -167,6 +178,21 @@ def test_an_unreadable_submissions_document_drops_its_row_not_the_day(
     assert rows["WERN"].last_evidence_date == committed["WERN"].last_evidence_date
     [note] = _unread_notes(snap, "IT")
     assert "since 2024-08-23" in note
+
+
+def test_a_blank_date_on_the_recent_page_drops_its_row_not_the_day(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """WHY THE CATCH IS `ValueError`, NOT ONLY `json.JSONDecodeError` (coordinator review of #1020,
+    LOW: DISMISSED with this pin). `_page_filings` reads the RECENT page's SEC-supplied
+    `filingDate` with `date.fromisoformat`, unwrapped. The older pages' same read is wrapped into
+    an `HttpError` ("could not be read") in `_older_filings`. So a blank date on a recent row is
+    unreadable SEC data that reaches the monitor as a bare `ValueError`. Narrowed to
+    `(HttpError, json.JSONDecodeError)`, this day aborts again. ⊖ IT has no row; ⊕ WERN keeps
+    its row; ⊕ the day names IT and the `ValueError`."""
+    snap = _recut(tmp_path, monkeypatch, "2026-09-22", [IT_REC, WERN_REC], _Sec(doc="blank-date"))
+    assert set(_rows(snap)) == {"WERN"}
+    [note] = _unread_notes(snap, "IT")
+    assert "(ValueError: Invalid isoformat string: ''" in note
 
 
 def test_negative_an_sec_refusal_still_stops_the_day(

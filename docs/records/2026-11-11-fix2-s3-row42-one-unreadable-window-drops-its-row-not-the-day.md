@@ -102,6 +102,28 @@ only the rows a day has, and returns None when no prior day carries the row at a
   - a wholly degraded EDGAR costs one retry storm per name (below);
   - `ValueError` is caught across the whole read, as the CLI's other handler catches it. Each
     parse error inside the reader is a failure to read the window.
+- **PR round 1 (the in-session `/code-review high`, run because Codex's review failed on its usage
+  limit), **with the coordinator's independent review of `35ed5238` folded in:** 5 findings, none
+  fixed (3 DEFER, 2 DISMISS).
+  - The three deferrals are under WHAT IT COSTS.
+  - Dismissed: this test file imports the ref-date harness's private helpers. Other test files in
+    the suite already import helpers from one another, and nothing fails on it.
+  - **Dismissed, with a pin (the coordinator, LOW):** the coordinator suggested catching
+    `json.JSONDecodeError` instead of `ValueError`, so that a code defect stops the run. But
+    `ValueError` is also how unreadable SEC data reaches the monitor:
+    - `_page_filings` reads the recent page's SEC-supplied `filingDate` and `reportDate` with
+      `date.fromisoformat`, unwrapped;
+    - the older pages' same read is wrapped into an `HttpError` ("could not be read") in
+      `_older_filings`;
+    - so a blank date on a recent row (#878's review round 2 named the shape) raises a bare
+      `ValueError`.
+    - Pinned by `test_a_blank_date_on_the_recent_page_drops_its_row_not_the_day`. It blanks the
+      newest 10-Q's `filingDate` in IT's committed document. On head, the day is written, IT is
+      named and WERN keeps its row. With the narrowing, it fails: `client.py:472: ValueError:
+      Invalid isoformat string: ''`, an aborted day. The other 6 tests pass either way.
+    - The narrower catch becomes right once the reader wraps that read into `HttpError` as it
+      wraps the older pages'. That change is in `vinci/edgar/client.py` and outside this PR.
+    - The test file now holds 7 tests.
 
 **BOUNDARY.**
 - "760-day window": `known_through - timedelta(days=760)`, where `known_through` is the run's
@@ -133,6 +155,22 @@ only the rows a day has, and returns None when no prior day carries the row at a
   named in a note. Before, the day aborted at the first. Each name now pays its own 5xx retry
   storm (5 attempts, about 15.6 s), so 7 names cost about 110 s and 35 requests. A re-run of the same day replaces it, because re-running
   the front of the book is routine (`write_snapshot`). An SEC refusal still stops the run.
+
+- **DEFERRED (PR round 1): on the web the name vanishes with no word.**
+  - The web's freshness panel (`frontend/views/shared/decision-log.js`, `freshnessPanel`) renders
+    only `mon.freshness`, and no web view renders a monitor day's `notes`. So the `FILINGS` note
+    reaches the CLI printout and the committed day's JSON only. The unreadable-record note this
+    follows, and every other day note, is in the same position.
+  - The fix is a render change to the panel, which the PREVIEW RULE gates on a preview and
+    approval.
+  - Falsifier: a deployed panel showing the day's names with no mention of one that was dropped.
+- **DEFERRED (PR round 1): which names went unread is carried only in prose.** No typed field on
+  the day records it, so any later consumer must parse `FILINGS <T>:` from free text, or use the
+  typed state above, which is not built.
+- **DEFERRED (PR round 1): a cut response body is printed with no mark that it was cut.** The
+  note prints the error as raised. A non-retryable `HttpError` carries the response body cut at
+  200 characters (`vinci/netcache.py`, `resp.text[:200]`), against "A TRUNCATED OUTPUT PRINTS ITS
+  OWN TRUNCATION". The fix is in netcache's messages, which every caller prints.
 
 **ROW 42 STAYS OPEN, NARROWED.** Both of row 42's edges are fixed. #878's record lists one more
 open item that no other row tracks.
