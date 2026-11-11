@@ -82,6 +82,8 @@ REFACTOR = "refactor"
 #: Modules in the classified packages that cannot change what a dossier carries, each with why.
 NOT_EXTRACTION: dict[str, str] = {
     "vinci/dossier/__init__.py": "the package's docstring",
+    "vinci/dossier/confirmation.py": "the vote rule's ten-draw confirmation at log-verdict "
+                                     "(C(iv)): seals a ledger row, never writes a page",
     "vinci/dossier/driver_evidence.py": "writes a page's transcript evidence to the operator's "
                                         "private spool, never a page field",
     "vinci/dossier/extraction_version.py": "the version table and the stamp it derives — a bump is "

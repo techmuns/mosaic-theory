@@ -19,7 +19,7 @@ table's rows, the only ones ``_mark_material`` marks).
 
     python vinci/evals/capture_child.py --page P.json [--transcript T.txt] --out R.json \
         [--model M] [--max-tokens N] [--draws 5] [--expect-root DIR] [--transform NAME ...] \
-        [--comps WORKBOOK]
+        [--comps WORKBOOK] [--ciq FOLDER]
 
 ``--comps`` is the page's own CIQ comps export, which the transforms that need the comps sheet
 read through the ref's own CIQ reader (`variants.own_comps` proves it is the page's own).
@@ -117,6 +117,7 @@ def capture_calls(
     max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
     transform: Callable[[MechanicalLayer], MechanicalLayer] | None = None,
     unmark_material: bool = False, transforms: Sequence[str] = (), comps: Path | None = None,
+    ciq: Path | None = None,
 ) -> list[dict[str, Any]]:
     """Every request ``synthesize`` would send for ``page``, recorded at $0.
 
@@ -133,7 +134,10 @@ def capture_calls(
         from vinci.dossier.ciq import CiqBundle
         variants = load_variants()
         ctx = variants.Context(page=page, comps=(
-            CiqBundle.from_files(str(page["ticker"]), [comps]) if comps is not None else None))
+            CiqBundle.from_files(str(page["ticker"]), [comps]) if comps is not None else None),
+            ciq=(CiqBundle.from_files(str(page["ticker"]), sorted(
+                f for f in ciq.iterdir() if f.is_file() and not f.name.startswith(".")))
+                 if ciq is not None else None))
         for t in named:
             mech = t(mech, ctx)
     if transform is not None:
@@ -178,6 +182,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--transform", action="append", default=[],
                     help="a variants.py name or module:function, applied in order")
     ap.add_argument("--comps", type=Path, help="the page's own CIQ comps export")
+    ap.add_argument("--ciq", type=Path, help="the page's own CIQ folder (read only)")
     ap.add_argument("--expect-root", type=Path,
                     help="refuse unless the imported vinci package lives under this folder")
     a = ap.parse_args(argv)
@@ -191,7 +196,7 @@ def main(argv: list[str] | None = None) -> int:
     tx = a.transcript.read_text(encoding="utf-8") if a.transcript else None
     calls = capture_calls(page, tx, model=a.model, max_tokens=a.max_tokens, draws=a.draws,
                           unmark_material=a.unmark_material, transforms=a.transform,
-                          comps=a.comps)
+                          comps=a.comps, ciq=a.ciq)
     a.out.write_text(json.dumps({"calls": [jsonable(c) for c in calls]}), encoding="utf-8")
     return 0
 
