@@ -7,6 +7,7 @@ test is checked against brute-force enumeration and Fisher's exact against #920'
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from fractions import Fraction
 from itertools import combinations, product
@@ -106,7 +107,21 @@ def test_a_page_with_no_draws_in_a_condition_is_refused() -> None:
 
 
 def test_nothing_on_the_decision_path_imports_the_harness() -> None:
-    hits = subprocess.run(["git", "-C", str(ROOT), "grep", "--untracked", "-l", "-E",
-                           r"(from|import) vinci\.evals", "--", "vinci"],
-                          capture_output=True, text=True).stdout.split()
-    assert all(h.startswith("vinci/evals/") for h in hits), hits
+    """The harness, and the impact check that replays its frozen panel (`vinci/impact/`, a
+    PR-verification tool, 2026-11-11), may import `vinci.evals`; nothing else may. And the decision
+    path reaches the impact check only through its comparator, `vinci.impact.values`, which
+    imports neither package — so the harness stays off the decision path through it too."""
+    def grep(pattern: str, *paths: str) -> list[str]:
+        done = subprocess.run(["git", "-C", str(ROOT), "grep", "--untracked", "-l", "-E",
+                               pattern, "--", *paths], capture_output=True, text=True)
+        return done.stdout.split()
+    hits = grep(r"(from|import) vinci\.evals", "vinci")
+    assert all(h.startswith(("vinci/evals/", "vinci/impact/")) for h in hits), hits
+    users = [h for h in grep(r"(from|import) vinci\.impact", "vinci")
+             if not h.startswith(("vinci/impact/", "vinci/evals/"))]
+    for h in users:
+        lines = [ln.strip() for ln in (ROOT / h).read_text().splitlines()
+                 if re.search(r"(from|import) vinci\.impact\b", ln)]
+        assert lines and all(ln.startswith("from vinci.impact.values import ") for ln in lines), \
+            (h, lines)
+    assert not grep(r"(from|import) vinci\.(evals|impact)", "vinci/impact/values.py")

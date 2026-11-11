@@ -1,0 +1,440 @@
+{
+ "_source": "data/dossiers/UBER/dossier.json at 7120a4cd^ (the committed page the 2026-11-09 precheck read) and at 7120a4cd (the paid rebuild, #949): the anchor and valuation_basis blocks only, copied as committed",
+ "committed": {
+  "anchor": {
+   "anchor_base_value_per_share": null,
+   "anchor_ev_ebit": null,
+   "applicable": false,
+   "ciq_scale_check": "agree",
+   "computed_at": "2026-10-26T16:24:12.320641Z",
+   "d_and_a": {
+    "basis": "consolidated latest FY",
+    "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025)",
+    "unit": "$M",
+    "value": 719.0
+   },
+   "data_quality": null,
+   "data_quality_detail": [],
+   "diluted_shares": {
+    "basis": "diluted weighted-average (latest 10-Q)",
+    "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding",
+    "unit": "shares",
+    "value": 2050225000.0
+   },
+   "dilutive_increment": {
+    "basis": "diluted less basic weighted average over the latest 10-Q quarter \u2014 the dilution test",
+    "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding 2,050,225,000 \u2212 WeightedAverageNumberOfSharesOutstandingBasic 2,036,458,000 (2026-04-01..2026-06-30)",
+    "unit": "shares",
+    "value": 13767000.0
+   },
+   "ltm_fcf": {
+    "basis": "latest FY2025 (not LTM)",
+    "source": "EDGAR companyfacts operating_cash_flow \u2212 capex (FY2025, same period)",
+    "unit": "$M",
+    "value": 9763.0
+   },
+   "ltm_revenue": {
+    "basis": "LTM revenue",
+    "source": "committed financial_summary.annual (LTM)",
+    "unit": "$M",
+    "value": 55227.0
+   },
+   "machine_recipe_hint": "R4_forward_ev_ebit",
+   "margin": null,
+   "multiple": null,
+   "multiple_basis": "EV/EBITDA",
+   "net_debt": {
+    "basis": "lease-inclusive net debt (latest 10-Q)",
+    "source": "EDGAR: total debt 12,723 + finance leases 222 + operating leases 2,008 \u2212 cash 4,870 \u2212 short-term investments 521 (MarketableSecuritiesCurrent, 2026-06-30) ($M)",
+    "unit": "$M",
+    "value": 9562.0
+   },
+   "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+   "operator_decision": {
+    "decided_by": "operator",
+    "decided_on": "2026-10-09",
+    "machine_recipe_at_decision": "R4_forward_ev_ebit",
+    "reason": "OPERATOR RE-TAG 2026-10-09. R2_NEEDED -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 15.4x); R1 cannot anchor - its anchor declines (no positive operating margin over available history) and the EBITDA basis is divergent (consensus-implied D&A 4.01x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. R2 (pre-profit, survival-gated) does not fit a name at 15.4x forward EBIT. The bridge is CIQ's TEV claims less market cap (ev_bridge), including $1,083M of minority interest. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
+    "recipe": "R4_forward_ev_ebit",
+    "source_ref": "docs/records/2026-10-09-amzn-uber-re-tagged-r4.md (#698)"
+   },
+   "overall_confidence": null,
+   "reason": "EV/NTM EBIT (R4) \u2014 all three ratified conditions hold: NTM EBIT > 0: CIQ NTM TEV/EBIT 15.6x \u00b7 R1 cannot anchor: R1's anchor declines (applicable=False); EBITDA basis divergent: consensus-implied D&A 4.08\u00d7 the actuals \u00b7 R3 cannot price it cleanly: CIQ's FY P/E struck on gaap EPS; 3 of the trailing 4 quarters carry material non-operating income (\u22652 ruled). R1's own arithmetic is left in this block.",
+   "recipe_hint": "R4_forward_ev_ebit",
+   "scenario_eligibility": {
+    "eligible_for_scenario_valuation": false,
+    "fields": [
+     "multiple_basis",
+     "margin",
+     "multiple",
+     "d_and_a",
+     "net_debt",
+     "diluted_shares",
+     "shares_outstanding",
+     "dilutive_increment",
+     "ltm_revenue",
+     "ltm_fcf",
+     "anchor_base_value_per_share",
+     "anchor_base_value_per_share_diluted",
+     "midcycle_gap",
+     "anchor_ev_ebit"
+    ],
+    "reason": "the active recipe is R4_forward_ev_ebit; these are R1's screen arithmetic, kept for audit and never an input to a R4_forward_ev_ebit valuation \u2014 the active basis is `valuation_basis`"
+   },
+   "shares_outstanding": {
+    "basis": "point-in-time shares outstanding \u2014 the per-share denominator (item 24)",
+    "source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding); 0.3% above the filer's basic weighted average 2,036,458,000 (2026-04-01..2026-06-30)",
+    "unit": "shares",
+    "value": 2042560121.0
+   }
+  },
+  "valuation_basis": {
+   "anchor_fields_eligible": false,
+   "conflicts": [],
+   "current_multiple": {
+    "as_of": "\u22652026-10-08",
+    "days_price_after_snapshot": 14,
+    "metric": "TEV/EBIT",
+    "page_price": 66.7,
+    "page_price_as_of": "2026-10-23",
+    "period": "NTM",
+    "snapshot_as_of": "2026-10-09",
+    "snapshot_market_cap": 146063.5,
+    "snapshot_reconciles": true,
+    "snapshot_tev": 151890.5,
+    "source": "forward_consensus.current_multiples (CIQ Estimates\u2192Multiples)",
+    "value": 15.5876298225135,
+    "value_at_page_price": 14.579374,
+    "value_at_page_price_basis": "(page price \u00d7 point-in-time shares outstanding + CIQ claims) \u00f7 (snapshot TEV \u00f7 the multiple) \u2014 the entry multiple an R4 record at the page's price carries"
+   },
+   "earnings_basis": "NTM EBIT",
+   "ev_bridge": {
+    "balance_sheet_date": "2026-06-30",
+    "ciq_tev_less_market_cap": 5827.0,
+    "components": [
+     {
+      "label": "Total Debt",
+      "sign": 1,
+      "value": 14731.0
+     },
+     {
+      "label": "Total Cash & ST Investments",
+      "sign": -1,
+      "value": 5391.0
+     },
+     {
+      "label": "Netted in CIQ Net Debt beyond cash (long-term marketable securities, if disclosed)",
+      "sign": -1,
+      "value": 4596.0
+     },
+     {
+      "label": "Total Pref. Equity",
+      "sign": 1,
+      "value": 0.0
+     },
+     {
+      "label": "Total Minority Interest",
+      "sign": 1,
+      "value": 1083.0
+     }
+    ],
+    "cross_check": {
+     "basis": "EDGAR lease-inclusive net debt (the anchor's)",
+     "eligible_for_primary_bridge": false,
+     "reason": "a different capital-structure and asset-classification basis from the vendor TEV the EV/NTM EBIT multiple is struck on \u2014 a cross-check, never substituted into the bridge",
+     "source": "EDGAR: total debt 12,723 + finance leases 222 + operating leases 2,008 \u2212 cash 4,870 \u2212 short-term investments 521 (MarketableSecuritiesCurrent, 2026-06-30) ($M)",
+     "value": 9562.0
+    },
+    "current_claims": 5827.0,
+    "current_claims_source": "ev_bridge.claims \u2014 CIQ Net Debt + preferred + minority interest at the 2026-06-30 balance sheet (Uber Technologies Inc NYSE UBER Financials_Quarterly.xls, sha a55c4821ce)",
+    "primary_basis": "CIQ TEV-compatible",
+    "reconciles_to_ciq_tev": true
+   },
+   "ev_bridge_basis": "CIQ TEV-compatible",
+   "exit_claims": {
+    "by_year": [
+     {
+      "fiscal_year": "FY 2026",
+      "forecast_status": "assumption",
+      "method": "HOLD_CURRENT_SAME_BASIS",
+      "value": 5827.0
+     },
+     {
+      "fiscal_year": "FY 2027",
+      "forecast_status": "assumption",
+      "method": "HOLD_CURRENT_SAME_BASIS",
+      "value": 5827.0
+     },
+     {
+      "fiscal_year": "FY 2028",
+      "forecast_status": "assumption",
+      "method": "HOLD_CURRENT_SAME_BASIS",
+      "value": 5827.0
+     }
+    ],
+    "current_claims": 5827.0,
+    "fcf_rollforward_used": false,
+    "forecast_status": "assumption",
+    "method": "HOLD_CURRENT_SAME_BASIS",
+    "reason": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years \u2014 today's claims held",
+    "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held \u2014 never current \u2212 FCF"
+   },
+   "exit_share_count": {
+    "count_basis": "BASIC shares outstanding at the EDGAR cover date (point-in-time) \u2014 it EXCLUDES the dilutive increment (options, RSUs, convertibles)",
+    "current_source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding)",
+    "current_value": 2042560121.0,
+    "default_method": "HOLD_CURRENT_SHARES_OUTSTANDING",
+    "diluted_weighted_average": {
+     "eligible_as_point_in_time_denominator": false,
+     "source": "anchor.diluted_shares (diluted weighted-average (latest 10-Q); EDGAR WeightedAverageNumberOfDilutedSharesOutstanding)",
+     "unit": "shares",
+     "value": 2050225000.0
+    },
+    "forecast_status": "assumption",
+    "includes_dilutive_increment": false,
+    "override_allowed": true,
+    "override_rule": "replace with the point-in-time DILUTED count \u2014 this basic count plus the dilutive increment stated from the filing (options and RSUs by the treasury-stock method, convertibles if-converted) \u2014 or with a reliable, explicit forward share-count forecast on that basis; never the diluted weighted average, which is a period average",
+    "unit": "shares"
+   },
+   "formula_steps": [
+    "EV = NTM EBIT at exit \u00d7 EV/NTM EBIT multiple",
+    "equity = EV \u2212 net debt at exit (CIQ basis)",
+    "value/share = equity \u00f7 diluted shares"
+   ],
+   "history_series": "forward_multiple_history.series[metric='EV/NTM EBIT']",
+   "multiple_basis": "EV/NTM EBIT",
+   "non_operating_assets": {
+    "adjusted_operating_ev_allowed": true,
+    "adjustment_condition": "only if BOTH the current and the historical valuation series are rebuilt consistently on the adjusted operating-EV basis \u2014 a separate, consistently rebased framework, never a carve-out in the bridge alone",
+    "carve_out": false,
+    "primary_treatment": "included_in_vendor_tev",
+    "reason": "the primary current and historical EV multiple series use the vendor's TEV definition, which carries non-operating investments inside enterprise value; carving them out of the bridge alone would value a different enterprise than the one the multiple was struck on"
+   },
+   "per_share_formula": "exit_equity_value / exit_share_count",
+   "priceable": true,
+   "recipe": "R4_forward_ev_ebit",
+   "scenario_formula": "(exit_ntm_ebit * exit_ev_ntm_ebit) - exit_tev_claims",
+   "status_reason": "R4: priced as NTM EBIT \u00d7 EV/NTM EBIT, bridged on CIQ's TEV basis"
+  }
+ },
+ "paid": {
+  "anchor": {
+   "anchor_base_value_per_share": null,
+   "anchor_ev_ebit": null,
+   "applicable": false,
+   "ciq_scale_check": "agree",
+   "computed_at": "2026-11-09T19:42:45.597593Z",
+   "d_and_a": {
+    "basis": "consolidated trailing twelve months to 2026-09-30 (EDGAR: fiscal year + year-to-date \u2212 prior year-to-date)",
+    "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (fiscal year + year-to-date \u2212 prior year-to-date, to 2026-09-30)",
+    "unit": "$M",
+    "value": 769.0
+   },
+   "data_quality": null,
+   "data_quality_detail": [],
+   "diluted_shares": {
+    "basis": "diluted weighted-average (latest 10-Q)",
+    "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding",
+    "unit": "shares",
+    "value": 2050324000.0
+   },
+   "dilutive_increment": {
+    "basis": "diluted less basic weighted average over the latest 10-Q quarter \u2014 the dilution test",
+    "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding 2,050,324,000 \u2212 WeightedAverageNumberOfSharesOutstandingBasic 2,038,364,000 (2026-07-01..2026-09-30)",
+    "unit": "shares",
+    "value": 11960000.0
+   },
+   "ltm_fcf": {
+    "basis": "latest FY2025 (not LTM)",
+    "source": "EDGAR companyfacts operating_cash_flow \u2212 capex (FY2025, same period)",
+    "unit": "$M",
+    "value": 9763.0
+   },
+   "ltm_revenue": {
+    "basis": "LTM revenue",
+    "source": "committed financial_summary.annual (LTM)",
+    "unit": "$M",
+    "value": 56526.0
+   },
+   "machine_recipe_hint": "R4_forward_ev_ebit",
+   "margin": null,
+   "multiple": null,
+   "multiple_basis": "EV/EBITDA",
+   "net_debt": {
+    "basis": "net debt excluding operating leases (latest 10-Q)",
+    "source": "EDGAR: total debt 15,664 + finance leases 222 \u2212 cash 9,558 \u2212 short-term investments 510 (MarketableSecuritiesCurrent, 2026-09-30) ($M); operating leases 2,073 EXCLUDED \u2014 the multiple is struck on TEV less operating leases",
+    "unit": "$M",
+    "value": 5818.0
+   },
+   "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+   "operator_decision": {
+    "decided_by": "operator",
+    "decided_on": "2026-10-09",
+    "machine_recipe_at_decision": "R4_forward_ev_ebit",
+    "reason": "OPERATOR RE-TAG 2026-10-09. R2_NEEDED -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 15.4x); R1 cannot anchor - its anchor declines (no positive operating margin over available history) and the EBITDA basis is divergent (consensus-implied D&A 4.01x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. R2 (pre-profit, survival-gated) does not fit a name at 15.4x forward EBIT. The bridge is CIQ's TEV claims less market cap (ev_bridge), including $1,083M of minority interest. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
+    "recipe": "R4_forward_ev_ebit",
+    "source_ref": "docs/records/2026-10-09-amzn-uber-re-tagged-r4.md (#698)"
+   },
+   "overall_confidence": null,
+   "reason": "EV/NTM EBIT (R4) \u2014 all three ratified conditions hold: NTM EBIT > 0: CIQ NTM TEV/EBIT 14.7x \u00b7 R1 cannot anchor: R1's anchor declines (applicable=False); EBITDA basis divergent: consensus-implied D&A 4.09\u00d7 the actuals \u00b7 R3 cannot price it cleanly: CIQ's FY P/E struck on gaap EPS; 3 of the trailing 4 quarters carry material non-operating income (\u22652 ruled). R1's own arithmetic is left in this block.",
+   "recipe_hint": "R4_forward_ev_ebit",
+   "scenario_eligibility": {
+    "eligible_for_scenario_valuation": false,
+    "fields": [
+     "multiple_basis",
+     "margin",
+     "multiple",
+     "d_and_a",
+     "net_debt",
+     "diluted_shares",
+     "shares_outstanding",
+     "dilutive_increment",
+     "ltm_revenue",
+     "ltm_fcf",
+     "anchor_base_value_per_share",
+     "anchor_base_value_per_share_diluted",
+     "midcycle_gap",
+     "anchor_ev_ebit"
+    ],
+    "reason": "the active recipe is R4_forward_ev_ebit; these are R1's screen arithmetic, kept for audit and never an input to a R4_forward_ev_ebit valuation \u2014 the active basis is `valuation_basis`"
+   },
+   "shares_outstanding": {
+    "basis": "point-in-time shares outstanding \u2014 the per-share denominator (item 24)",
+    "source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding); 0.2% above the filer's basic weighted average 2,038,364,000 (2026-07-01..2026-09-30)",
+    "unit": "shares",
+    "value": 2041898070.0
+   }
+  },
+  "valuation_basis": {
+   "anchor_fields_eligible": false,
+   "conflicts": [
+    "the bridge (5356.0) disagrees with CIQ's TEV less market cap (8973.0) by more than 0.5 ($M)"
+   ],
+   "current_multiple": {
+    "as_of": "\u22652026-11-04",
+    "days_price_after_snapshot": 2,
+    "metric": "TEV/EBIT",
+    "page_price": 68.59,
+    "page_price_as_of": "2026-11-06",
+    "period": "NTM",
+    "snapshot_as_of": "2026-11-04",
+    "snapshot_market_cap": 142713.7,
+    "snapshot_reconciles": true,
+    "snapshot_tev": 151686.7,
+    "source": "forward_consensus.current_multiples (CIQ Estimates\u2192Multiples)",
+    "value": 14.693689924388,
+    "value_at_page_price": 14.436028,
+    "value_at_page_price_basis": "(page price \u00d7 point-in-time shares outstanding + CIQ claims) \u00f7 (snapshot TEV \u00f7 the multiple) \u2014 the entry multiple an R4 record at the page's price carries"
+   },
+   "earnings_basis": "NTM EBIT",
+   "ev_bridge": {
+    "balance_sheet_date": "2026-09-30",
+    "ciq_tev_less_market_cap": 8973.0,
+    "components": [
+     {
+      "label": "Total Debt",
+      "sign": 1,
+      "value": 17737.0
+     },
+     {
+      "label": "Total Cash & ST Investments",
+      "sign": -1,
+      "value": 10068.0
+     },
+     {
+      "label": "Netted in CIQ Net Debt beyond cash (long-term marketable securities, if disclosed)",
+      "sign": -1,
+      "value": 3617.0
+     },
+     {
+      "label": "Total Pref. Equity",
+      "sign": 1,
+      "unread": "'Total Pref. Equity' reads '-' at [Q3 Sep-30-2026]",
+      "value": null
+     },
+     {
+      "label": "Total Minority Interest",
+      "sign": 1,
+      "value": 1304.0
+     }
+    ],
+    "cross_check": {
+     "basis": "EDGAR lease-inclusive net debt (the anchor's bridge before its operating leases are taken out)",
+     "eligible_for_primary_bridge": false,
+     "reason": "a different capital-structure and asset-classification basis from the vendor TEV the EV/NTM EBIT multiple is struck on \u2014 a cross-check, never substituted into the bridge",
+     "source": "EDGAR: total debt 15,664 + finance leases 222 + operating leases 2,073 \u2212 cash 9,558 \u2212 short-term investments 510 (MarketableSecuritiesCurrent, 2026-09-30) ($M)",
+     "value": 7891.0
+    },
+    "current_claims": 5356.0,
+    "current_claims_source": "ev_bridge.claims \u2014 CIQ Net Debt + preferred + minority interest at the 2026-09-30 balance sheet (Uber Technologies Inc NYSE UBER Financials_Quarterly.xls, sha c4b233215f)",
+    "primary_basis": "CIQ TEV-compatible",
+    "reconciles_to_ciq_tev": false
+   },
+   "ev_bridge_basis": "CIQ TEV-compatible",
+   "exit_claims": {
+    "by_year": [
+     {
+      "fiscal_year": "FY 2026",
+      "forecast_status": "assumption",
+      "method": "HOLD_CURRENT_SAME_BASIS",
+      "value": 5356.0
+     },
+     {
+      "fiscal_year": "FY 2027",
+      "forecast_status": "assumption",
+      "method": "HOLD_CURRENT_SAME_BASIS",
+      "value": 5356.0
+     },
+     {
+      "fiscal_year": "FY 2028",
+      "forecast_status": "assumption",
+      "method": "HOLD_CURRENT_SAME_BASIS",
+      "value": 5356.0
+     }
+    ],
+    "current_claims": 5356.0,
+    "fcf_rollforward_used": false,
+    "forecast_status": "assumption",
+    "method": "HOLD_CURRENT_SAME_BASIS",
+    "reason": "the consensus net-debt line does not match the balance sheet in each of its last 3 reported years \u2014 today's claims held; DISAGREES with CIQ's current TEV less market cap ($8,973.0M) by $-3,617.0M \u2014 the Financials and comps exports sit on different balance sheets; re-pull before an R4 record reads this",
+    "rule": "claims = CIQ Net Debt + preferred + minority interest, all at the latest balance-sheet column (CIQ's current TEV less market cap); exit default: a same-basis consensus net debt (within 0.5% in each of its last 3 reported years, the latest of them the latest completed year) with preferred and minority held, else today's claims held \u2014 never current \u2212 FCF"
+   },
+   "exit_share_count": {
+    "count_basis": "BASIC shares outstanding at the EDGAR cover date (point-in-time) \u2014 it EXCLUDES the dilutive increment (options, RSUs, convertibles)",
+    "current_source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding)",
+    "current_value": 2041898070.0,
+    "default_method": "HOLD_CURRENT_SHARES_OUTSTANDING",
+    "diluted_weighted_average": {
+     "eligible_as_point_in_time_denominator": false,
+     "source": "anchor.diluted_shares (diluted weighted-average (latest 10-Q); EDGAR WeightedAverageNumberOfDilutedSharesOutstanding)",
+     "unit": "shares",
+     "value": 2050324000.0
+    },
+    "forecast_status": "assumption",
+    "includes_dilutive_increment": false,
+    "override_allowed": true,
+    "override_rule": "replace with the point-in-time DILUTED count \u2014 this basic count plus the dilutive increment stated from the filing (options and RSUs by the treasury-stock method, convertibles if-converted) \u2014 or with a reliable, explicit forward share-count forecast on that basis; never the diluted weighted average, which is a period average",
+    "unit": "shares"
+   },
+   "formula_steps": [
+    "EV = NTM EBIT at exit \u00d7 EV/NTM EBIT multiple",
+    "equity = EV \u2212 net debt at exit (CIQ basis)",
+    "value/share = equity \u00f7 diluted shares"
+   ],
+   "history_series": "forward_multiple_history.series[metric='EV/NTM EBIT']",
+   "multiple_basis": "EV/NTM EBIT",
+   "non_operating_assets": {
+    "adjusted_operating_ev_allowed": true,
+    "adjustment_condition": "only if BOTH the current and the historical valuation series are rebuilt consistently on the adjusted operating-EV basis \u2014 a separate, consistently rebased framework, never a carve-out in the bridge alone",
+    "carve_out": false,
+    "primary_treatment": "included_in_vendor_tev",
+    "reason": "the primary current and historical EV multiple series use the vendor's TEV definition, which carries non-operating investments inside enterprise value; carving them out of the bridge alone would value a different enterprise than the one the multiple was struck on"
+   },
+   "per_share_formula": "exit_equity_value / exit_share_count",
+   "priceable": false,
+   "recipe": "R4_forward_ev_ebit",
+   "scenario_formula": "(exit_ntm_ebit * exit_ev_ntm_ebit) - exit_tev_claims",
+   "status_reason": "R4: priced as NTM EBIT \u00d7 EV/NTM EBIT, bridged on CIQ's TEV basis \u2014 1 conflict(s), see `conflicts`"
+  }
+ }
+}
