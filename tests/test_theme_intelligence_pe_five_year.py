@@ -9,7 +9,8 @@ history"), and the per-share basis it must not be measured across.
 - A range that runs through a change of per-share basis is refused, by the fund's rule AND by
   `basis_breaks`, which catches what the fund's rule missed on NVIDIA's real filings (2024's
   10-for-1: two restatements ×10.24 and ×10.03 fail its 2% agreement test on cents rounding).
-- Five years where they hold; else the two Polygon serves, saying why.
+- Five years where they hold; else not held, saying why — never the two Polygon serves
+  (operator, 2026-11-11: "5y for all as standard").
 
 Price rows are HYPOTHETICAL (labelled) on the real types; NVIDIA's EPS and share counts are its own
 SEC filings, frozen.
@@ -33,7 +34,7 @@ from vinci.theme_intelligence.market import (
     basis_breaks,
     deep_history,
     pe_against_history,
-    pe_five_or_two,
+    pe_five_year,
     split_adjusted,
     tiingo_deep,
 )
@@ -228,17 +229,30 @@ def _flat_eps(value: float = 5.0) -> list[ConceptPoint]:
                          accession=f"0000000000-{y}-000001") for y in range(2019, 2026)]
 
 
-def test_five_years_when_they_hold_else_two_and_why() -> None:
+def test_five_years_or_not_held_never_two() -> None:
+    """THE DESK'S ONE WINDOW (operator, 2026-11-11: "why cant we have 5y for all as standard?"):
+    the percentile is five years or not held, with why — never the two years Polygon serves in its
+    place. On 2026-11-10, 47 of the 104 percentiles shown were two-year figures in the same column
+    as 57 five-year ones (R-20261110T153023Z-market). Today's P/E needs no window and stays held."""
     recent = _recent()
-    pe, pct = pe_five_or_two(recent, _flat_eps(), AS_OF, "X", _deep())
+    pe, pct = pe_five_year(recent, _flat_eps(), AS_OF, "X", _deep())
     assert pct.value is not None and pct.basis.startswith("share of its daily P/Es from 2021-10-15")
-    assert "Tiingo split-adjusted closes" in pct.basis and "five years not" not in pct.basis
-    assert pct.detail == "5y"
-    _pe, pct = pe_five_or_two(recent, _flat_eps(), AS_OF, "X", lambda s, a, b: None)
-    assert pct.value is not None and "the prices held" in pct.basis and pct.detail == "2y"
-    assert "five years not held — not fetched this run" in pct.basis
-    _pe, pct = pe_five_or_two(recent, _flat_eps(), AS_OF, "X", None)
-    assert "no Tiingo key configured" in pct.basis
+    assert "Tiingo split-adjusted closes" in pct.basis and pct.detail == "5y"
+    for deep, why in ((lambda s, a, b: None, "five years not held — not fetched this run"),
+                      (None, "five years not held — no Tiingo key configured")):
+        pe2, pct = pe_five_year(recent, _flat_eps(), AS_OF, "X", deep)
+        assert pct.value is None and pct.detail == "" and pct.why.startswith(why)
+        assert "2y" not in pct.basis and pe2.value == pe.value is not None
+
+
+def test_with_no_tiingo_key_prices_that_already_cover_five_years_are_still_measured() -> None:
+    """Review of the five-year standard: the key is missed only when Tiingo would be asked. A
+    price source that already holds five years (an injected one, or a Polygon plan that serves
+    them) is measured on five years without a key — never "not held — no Tiingo key"."""
+    five_years = _recent(start=date(2021, 10, 14))
+    _pe, pct = pe_five_year(five_years, _flat_eps(), AS_OF, "X", None)
+    assert pct.value is not None and pct.detail == "5y"
+    assert "the recent prices already cover five years" in pct.basis
 
 
 def test_the_market_step_carries_five_years_into_the_stored_rows(tmp_path: Path) -> None:
@@ -285,8 +299,8 @@ def test_a_failed_tiingo_request_is_said_as_that_never_as_a_missing_key() -> Non
         raise RuntimeError("HTTP 429")
 
     errors: list[str] = []
-    _pe, pct = pe_five_or_two(_recent(), _flat_eps(), AS_OF, "X", failing, errors)
-    assert pct.detail == "2y" and "the Tiingo request failed (RuntimeError)" in pct.basis
+    _pe, pct = pe_five_year(_recent(), _flat_eps(), AS_OF, "X", failing, errors)
+    assert pct.value is None and "the Tiingo request failed (RuntimeError)" in pct.basis
     assert "no Tiingo key" not in pct.basis
     assert errors and "X: Tiingo history failed" in errors[0]
 
@@ -297,3 +311,24 @@ def test_the_weekly_actions_run_hands_the_market_step_its_tiingo_key() -> None:
           / "theme-intelligence-weekly.yml").read_text()
     step = wf.split("- name: Market context", 1)[1].split("- name:", 1)[0]
     assert "TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}" in step
+
+
+def test_the_weekly_actions_run_keeps_its_tiingo_histories_between_runs() -> None:
+    """A run fetches at most TIINGO_PER_RUN new five-year histories and its rows promised "a later
+    run fetches it" — but the runner's cache died with it, so every weekly run fetched the same
+    first 45 again and the rest never got five years (2026-11-09 and -10: the same 21 tickers on
+    five years, 21 on two). The histories are restored before the market step and saved after it,
+    whatever its outcome, under a key per run and attempt (the LLM cache's pattern, U31f)."""
+    wf = (Path(__file__).resolve().parents[1] / ".github" / "workflows"
+          / "theme-intelligence-weekly.yml").read_text()
+    steps = wf.split("\n      - ")
+    names = [x.split("\n", 1)[0] for x in steps]
+    path = "path: data/theme_intelligence/http_cache/tiingo"
+    restore = next(i for i, x in enumerate(steps) if "actions/cache/restore" in x and path in x)
+    save = next(i for i, x in enumerate(steps) if "actions/cache/save" in x and path in x)
+    market = next(i for i, n in enumerate(names) if "Market context" in n)
+    assert restore < market < save
+    assert "always()" in steps[save] and "steps.market.outcome != 'skipped'" in steps[save]
+    key = "theme-intelligence-tiingo-${{ github.run_id }}-${{ github.run_attempt }}"
+    assert all(key in steps[i] for i in (restore, save))
+    assert "restore-keys: theme-intelligence-tiingo-" in steps[restore]

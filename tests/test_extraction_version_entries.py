@@ -10,10 +10,10 @@ WHAT CANNOT MOVE. Every id a committed page carries stays byte-identical, and so
 `stamp_label` / `stamp_detail` print for it — pinned here on the frozen table's digest, and on the
 27 committed pages by the PR's own verify run.
 
-WHY ANCESTRY AND NOT A SORT. Replayed in real merge order, 45 of the frozen table's 76 appends
-would have left a date-sorted "current" where it stood, the stamp standing still while the code
-moved. So a vintage names what it `follows`, current is the heads, and two vintages merged in
-parallel stamp as their join — each pinned below, positive and negative.
+WHY ANCESTRY AND NOT A SORT. Replayed in real merge order, 47 of the frozen table's 78 appends
+(at main `173b4818`) would have left a date-sorted "current" where it stood, the stamp standing
+still while the code moved. So a vintage names what it `follows`, current is the heads, and two
+vintages merged in parallel stamp as their join — each pinned below, positive and negative.
 """
 from __future__ import annotations
 
@@ -54,12 +54,14 @@ def _use(monkeypatch: pytest.MonkeyPatch, d: Path, *, with_tree: bool = False) -
 # --- the frozen rows -----------------------------------------------------------------------------
 
 def test_the_frozen_rows_never_change() -> None:
-    """VALUE PIN ON A FROZEN LITERAL. The 77 rows a committed page may name were frozen at
-    `2026-11-11.guides-as-stated`; this digest is theirs at the commit that froze them, so an edit
-    to any row — id or words — reds here, where the old table relied on review alone."""
+    """VALUE PIN ON A FROZEN LITERAL. The rows a committed page may name are every row merged
+    under the old one-tuple table — 79 at main `173b4818`, the last `2026-11-10.kind-by-exact-name`
+    — frozen when this change merges; this digest is theirs, so an edit to any row (id or words)
+    reds here, where the old table relied on review alone. A row main gains before this change
+    merges joins them in the re-sync, and the pin moves with it then — never after."""
     digest = hashlib.sha256(json.dumps(ev.LEGACY_VERSIONS).encode()).hexdigest()[:16]
-    assert (len(ev.LEGACY_VERSIONS), P, digest) == (77, "2026-11-11.guides-as-stated",
-                                                    "6bda33aa663b55ac")
+    assert (len(ev.LEGACY_VERSIONS), P, digest) == (79, "2026-11-10.kind-by-exact-name",
+                                                    "7760aef425c2bf7c")
 
 
 def test_the_frozen_rows_alone_are_the_table_as_it_was() -> None:

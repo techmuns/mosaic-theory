@@ -55,10 +55,10 @@ row follows the row above it. CURRENT is the set of HEADS — vintages nothing f
 the stamp (its id, exactly as before); two or more — PRs cut from the same main and merged in either
 order — stamp as their ids joined by ``+`` in id order, a DECLARED stamp whose detail names every
 part. The next vintage, written on that main, follows every head and the join closes. Sorting was
-measured and refused: replayed in real merge order, 45 of the table's 76 appends would have left a
-date-sorted "current" where it stood — the stamp standing still while the code moved, the defect
-this module exists to end. Ancestry also needs no knowledge of merge order, which is what lets two
-entry files merge in either order with no textual conflict.
+measured and refused: replayed in real merge order, 47 of the table's 78 appends (at main
+`173b4818`) would have left a date-sorted "current" where it stood — the stamp standing still
+while the code moved, the defect this module exists to end. Ancestry also needs no knowledge of
+merge order, which is what lets two entry files merge in either order with no textual conflict.
 
     python -m vinci.dossier.extraction_version new <slug> --names "<what it names>"
 """
@@ -821,6 +821,28 @@ LEGACY_VERSIONS: tuple[tuple[str, str], ...] = (
         "are read; a single-point guide a forward verb governs is refused with a note; and a "
         "guide filed under the next-fy default carries a machine-tier flag saying no period was "
         "read"
+    ),
+    (
+        "2026-11-10.covenant-value-figures",
+        "a covenant term's value states only figures its own quote states, in every class, not "
+        "years and currency figures alone (TeamNostra fix request 2, RE2-D16 with E2-D19's "
+        "residual): a whole date compares day, month and year; a ratio against one compares in "
+        "any form (4.50x is 4.50 to 1.00, and a conformed copy's struck ratio is read); a percent "
+        "compares with basis points, and 0% with 'zero'; an unmarked amount compares with any "
+        "amount the quote states. A rate component's own clause, when it is a span of the exhibit, "
+        "states figures for the value too. On the 27 committed pages 24 more PRESENT terms on 13 "
+        "pages are withheld at their next re-assembly (23 a percent or bps figure, 1 a date); none "
+        "moves until then"
+    ),
+    (
+        "2026-11-10.kind-by-exact-name",
+        "fix request 2, order 5 (RA-D10 = A-D15 = RBC-D2, RA-D17): a CIQ export's kind is its "
+        "name's exact rule, the stem's end after the listing (the comps book's start, a call's "
+        "dated tail), never a keyword anywhere in the name, so an issuer named 'Financial', "
+        "'Income', 'Customers' or 'Consensus' reads as its own pack; the Customers and Suppliers "
+        "files are told apart by their end; a PDF tearsheet is decoded as a PDF and its industry "
+        "read, the value on its label's line or the next. No page moves: all 382 files on "
+        "disk keep their kind, and every tearsheet on disk is RTF",
     ),
 )
 

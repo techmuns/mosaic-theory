@@ -14,7 +14,8 @@ superseded-by:
   `frontend/views/shared/dossier.js`, and re-pinned a shared block in
   `tests/test_extraction_version_drift.py` (`WATCHED`, `PINNED_TABLE`, `PINNED_AT`). Every other
   open PR then went DIRTY on those lines, and each re-sync cost a 30–80 minute re-gate.
-- **The table.** The 77 rows are frozen as `LEGACY_VERSIONS`, unchanged byte for byte. Each new
+- **The table.** Every row merged under the one-tuple table (79 at main `173b4818`) is frozen as
+  `LEGACY_VERSIONS`, unchanged byte for byte. Each new
   vintage is one file, `vinci/dossier/extraction_versions/<YYYY-MM-DD>.<slug>.json`, holding `id`,
   `follows` and `names`. `python -m vinci.dossier.extraction_version new <slug> --names "…"`
   writes it. A counter slug (`.1`) is refused: two PRs pick the same next number.
@@ -42,9 +43,11 @@ superseded-by:
 **WHY.**
 - *Why not sort by date.* The frozen table was replayed in its real merge order. For each append,
   the check was whether a "current" chosen by sorting ids would have moved. It would not have on
-  **45 of 76 appends** (e.g. `2026-11-09.driver-facts` merged after `2026-11-10.point-guide`). The
-  stamp would have stood still while the code moved, which is the defect A-D14 recorded.
-  Ancestry needs no knowledge of merge order.
+  **47 of 78 appends** (e.g. `2026-11-09.driver-facts` merged after `2026-11-10.point-guide`). The
+  stamp would have stood still while the code moved, which is the defect A-D14 recorded. It is
+  live on main as this is written: #961 and #970 merged `2026-11-10.*` rows after
+  `2026-11-11.guides-as-stated`, so a sorted current would still name the latter. Ancestry needs
+  no knowledge of merge order.
 - *Why the strict pins can now hold.* The old global digest could never match a merge of two
   re-pinned branches. That is why the rule had to be loose. Per-module files carry no shared
   line. Two PRs that move different modules merge clean, and each pin matches the merged tree. Two
@@ -84,8 +87,8 @@ superseded-by:
     stale copy of the pins (exit 1) and a current copy (exit 0).
 
 **BOUNDARY.**
-- "45 of 76": the frozen table's 77 rows in file order (their merge order), each append from the
-  2nd to the 77th, ids compared as strings. Measured at `2b9b766c`.
+- "47 of 78": the frozen table's 79 rows in file order (their merge order), each append from the
+  2nd to the 79th, ids compared as strings. Measured at main `173b4818` (45 of 76 at `2b9b766c`).
 - "27 pages": every `data/dossiers/*/dossier.json` at `2b9b766c`.
 - "55 files": `frontend/dossiers/` after `python frontend/build.py`, 27 JSON, 27 md and
   `index.json`.
