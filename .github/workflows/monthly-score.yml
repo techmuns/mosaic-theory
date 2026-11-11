@@ -25,7 +25,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # the pre-push gate below is this commit's only gate — see weekly-screen.yml
+          # the pre-push gate below is this commit's only gate — see tests/test_scheduled_workflows.py
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -55,8 +56,9 @@ jobs:
       - name: Rebuild the derived frontend mirror
         run: python frontend/build.py
 
-      # SAME GATE, SAME REASON AS `weekly-screen.yml` — read the long note there, including why
-      # this is the ONLY gate the commit below gets. This job commits `scoring_report.md`, the
+      # SAME GATE, SAME REASON AS `weekly-screen.yml` — read the long note there; why this is the
+      # ONLY gate the commit below gets (a GITHUB_TOKEN push starts no `gate` run) is in
+      # tests/test_scheduled_workflows.py's docstring. This job commits `scoring_report.md`, the
       # surface the BUY−AVOID spread is READ from, so a pass that breaks a pin must fail here
       # rather than on the next unrelated PR.
       - name: Gate the refreshed artifacts before they can reach main

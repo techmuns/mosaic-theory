@@ -11,7 +11,9 @@ TWO SEPARATE FACTS, and conflating them is what made the outage invisible:
     queue — the screen you are least likely to open during an outage, because it looks unchanged.
   * RUN OUTCOME — whether the last attempt worked. NOT derivable from committed data at all. It
     needs the job to report, which is why `weekly-screen.yml` gained an `if: always()` step that
-    writes `run_status.json` past its own gate, deliberately and by name.
+    wrote `run_status.json` past its own gate, deliberately and by name. Since 2026-11-11 the job
+    lands nothing (fix request 2, RH-D10: `main` refuses its push), so the step reports in the
+    run's summary and the committed file stands at 2026-08-25 until a local run writes it.
 
 ABSENT IS UNKNOWN, NEVER PASS. A missing status is precisely the state the outage was in, so it
 must never render as health.
@@ -173,20 +175,17 @@ def test_the_manifest_carries_run_status_only_when_present() -> None:
         "the built manifest and the presence of run_status.json disagree — the mirror is stale")
 
 
-def test_the_reporting_step_stages_only_the_status_file() -> None:
-    """THE GATE EXCEPTION IS NARROW, AND THAT IS WHAT MAKES IT ALLOWABLE. The step runs
-    `if: always()`, so on a RED run it executes after the gate refused — it must therefore be
-    incapable of carrying anything else out with it. It stages `run_status.json` by name; a
-    `git add data/snapshots` here would let a failed run push the half-built snapshots its own
-    gate had just rejected."""
+def test_the_reporting_step_reports_in_the_run_and_carries_nothing_out() -> None:
+    """THE STEP STILL RUNS ON A RED RUN, AND NOW CARRIES NOTHING OUT (RH-D10, 2026-11-11). It ran
+    `if: always()` and staged `run_status.json` by name, so a red run could not push the
+    half-built snapshots its gate refused. The job now lands nothing at all: the outcome goes to
+    the run's summary, and the step stages, commits and pushes nothing."""
     wf = (ROOT / ".github" / "workflows" / "weekly-screen.yml").read_text()
     step = wf.split("Report the run's outcome", 1)[1]
     assert "if: always()" in step
-    assert "git add data/snapshots/run_status.json" in step
-    for forbidden in ("git add data/snapshots\n", "git add -A", "git add ."):
-        assert forbidden not in step, (
-            f"the reporting step stages more than the status file ({forbidden!r}) — a red run "
-            f"could push artifacts the gate refused")
+    assert "GITHUB_STEP_SUMMARY" in step
+    for forbidden in ("git add", "git commit", "git push"):
+        assert forbidden not in step, f"the reporting step runs {forbidden!r} again"
 
 
 def test_a_cancelled_run_is_not_reported_as_a_failure() -> None:
