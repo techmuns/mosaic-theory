@@ -120,22 +120,32 @@ def pages_lines(r: dict[str, Any], k: int) -> list[str]:
                 "changes no committed input (`data/`, `scenarios/`), the capture child or a "
                 "dynamically loaded package. `--no-shortcut` builds them anyway."]
     res = r["pages"]["results"]
-    compared = [p for p in res if p["status"] != "not compared"]
+    compared = [p for p in res if p["status"] not in ("not compared", "noise")]
     moving = [p for p in compared if p["status"] == "moves"]
     moves = [(p["ticker"], m) for p in moving for m in p["moves"]]
-    lines = [f"### 2. Pages — {len(moving)} of {len(compared)} pages move "
-             f"({len(moves)} field change(s))", "",
+    lines = [f"### 2. Pages — built {len(compared)} of {len(res)}; {len(moving)} of "
+             f"{len(compared)} move ({len(moves)} field change(s))", "",
              f"Each committed page built at $0 (`prespend.mechanical_build`, no LLM phase) with "
              f"base's code and with head's, from the same inputs; {r['pages']['workers']} "
              f"workers, {r['pages']['seconds']} s. Compared leaf by leaf, list members matched by "
              "identity (`vinci.impact.values`); the build's clock (`assembled_at`, "
              "`computed_at`) and the input record are not compared."]
+    noise = [p for p in res if p["status"] == "noise"]
+    again = [p["ticker"] for p in res if p.get("retried")]
+    if again:
+        lines += ["", f"Re-built once after a transcript failed to convert on ONE side (the "
+                      f"machine, not the code): {_names(again)}; still one-sided, so set "
+                      f"apart as run noise and not counted: {_names([p['ticker'] for p in noise])}"]
     refused = [p for p in res if p["status"] == "not compared"]
     if refused:
-        lines += ["", f"**Not compared ({len(refused)}):**"]
+        lines += ["", f"**Not built at a side, so not compared ({len(refused)}) — a "
+                      f"\"0 move\" says nothing about these:**"]
         for p in refused:
             errs = "; ".join(f"{side}: {e.get('build')}" for side, e in p["errors"].items()
                              if e.get("build"))
+            if "no price history in the store" in errs:
+                errs += (" — `python -m vinci.impact store` prices every page from the cache "
+                         "at $0")
             lines.append(f"- {p['ticker']} — {_cut(errs, 400)}")
     differ = [p for p in res if p.get("inputs_differ")]
     live = sorted({u for p in res for side in ("base", "head") for u in p["live"][side]})
@@ -206,6 +216,12 @@ def requests_lines(r: dict[str, Any]) -> list[str]:
                      f"system {'same' if q.get('system_equal') else 'DIFFERS'}; tool schema "
                      f"{'same' if q.get('tools_equal') else 'DIFFERS'}; USER −{u.get('removed')} "
                      f"+{u.get('added')} line(s)")
+    moved = {p["ticker"] for p in res if p["status"] == "moves"}
+    unreached = sorted(t for t, q in compared if t in moved and q["identical"])
+    if moved:
+        lines.append(f"- Pages whose fields move while their request stays byte-identical — "
+                     f"their moves reach no synthesis request: {len(unreached)} of "
+                     f"{len(moved)} — {_names(unreached)}")
     nc = [(t, q) for t, q in reqs if q.get("status") != "compared"]
     if nc:
         lines.append(f"- not compared ({len(nc)}): {_names([t for t, _ in nc])}")

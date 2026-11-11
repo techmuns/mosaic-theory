@@ -121,6 +121,27 @@ was taken:
 - Across the eight real pairs, a block leaf losing its value happens on every one (1–14 leaves),
   so only the three decision leaves stop.
 
+**ADDED THE SAME DAY, on the coordinator's requirements and Codex's round 1 (#1000):**
+- **Coverage leads.** Part 2 opens with "built N of M" and names every page not built, with why.
+  A hand-built section of #970 built 17 of 27 pages: the other ten refused for want of bars, four
+  of them panel pages.
+- **The store gap is closed at $0.** The primary's `data/vinci.db` is stale by design, because
+  every build refreshes a COPY. It priced 18 of the 27 pages and none of BURL, GOOGL, LLY, MCK,
+  NFLX, ROST, TGT, TJX, UBER, V, MDY or SPY. `python -m vinci.impact store` copies it and fills
+  every page's ticker and the benchmarks from the HTTP cache, with every socket refused, through
+  production's `vinci refresh --aggs`. It priced 30 of 30 in 3.9 s. The cached bars came from one
+  `refresh --aggs` of these 30 symbols at 09:31 that day, into a scratch copy, before the
+  coordinator's rule against Polygon pulls without asking.
+- **One-sided run noise.** A transcript that fails to convert on ONE side, on one input, is the
+  machine. That side is re-built once, and set apart as noise if the failure persists. Each child
+  already had a LibreOffice profile of its own, so this catches what that cannot.
+- **Moves that reach no request.** Part 3 names the pages whose fields move while their request
+  stays byte-identical. On #976 that is 7 of 7, with BURL's 1 and SMPL's 13 default-period flags
+  among them, all in `primary_source`, which is NOT_SENT.
+- **`--resume` keeps a side only while its inputs are unchanged** (Codex P1): every response it
+  read must re-hash the same, and its page's CIQ exports must match the ones saved beside it.
+- **#970** (base `2b9b766c`, head `03e6d660`, on the filled store): **built 27 of 27**, 0 of 27 move, 0 of 27 requests differ, 0 re-built for one-sided noise, 0 renders differ; fail first: 21 of 58 nodes fail at base and pass at head (762.1 s, 0 live fetches). The hand-built section had built 17 of 27.
+
 **BOUNDARY.**
 - **Pages:** the 27 `data/dossiers/*` at each run's head.
 - **Inputs:**

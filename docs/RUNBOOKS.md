@@ -742,10 +742,14 @@ before being merged with main"*. One command writes the PR body's `## Cross-setu
 inputs, at $0 (no model call). Code: `vinci/impact/`; record:
 `docs/records/2026-11-11-impact-check-cross-setup-validation.md`.
 
-1. **A store that prices every page.** The primary's `data/vinci.db` may not (on 2026-11-11 it held
-   no MCK bar). Refresh a COPY per §i step 2 — never the primary file — for every committed page
-   and IWM, MDY, SPY, and pass it as `--store`. The run snapshots it (`.backup`) and every page
-   reads that snapshot; reuse one store across PRs and the cache stays warm.
+1. **A store that prices every page, at $0.** The primary's `data/vinci.db` is a stale copy by
+   design (every build refreshes a COPY, §i step 2): on 2026-11-11 it priced 18 of 27 pages and
+   no MCK. `python -m vinci.impact store --out <a folder outside the repo>` copies it and fills
+   every committed page's ticker and IWM, MDY, SPY from the HTTP cache with every socket
+   refused, through production's own `vinci refresh --aggs`; a name the cache lacks is NAMED
+   (a Polygon pull is the operator's call), never fetched. Pass the result as `--store`. The run
+   snapshots it (`.backup`); reuse one store across PRs and the cache stays warm. The section's
+   part 2 leads with "built N of M" and names every page it could not build, and why.
 2. **Run it, through the heavy-run wrapper, after `/code-review high --fix`:**
 
    ```

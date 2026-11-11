@@ -44,6 +44,15 @@ def main(argv: list[str] | None = None) -> int:
                    help="build every page even when base and head carry the same code, and "
                         "reuse no kept build (the control: its moves are the comparison's noise "
                         "floor)")
+    f = sub.add_parser("store", help="a price store copy that prices every committed page, "
+                       "filled at $0 from the HTTP cache (no network)")
+    f.add_argument("--out", required=True, type=Path, help="a folder OUTSIDE the repo")
+    f.add_argument("--from", dest="source", type=Path,
+                   help="the store to copy (default: the primary's data/vinci.db)")
+    f.add_argument("--repo", type=Path, default=Path.cwd())
+    f.add_argument("--cache-root", type=Path)
+    f.add_argument("--start", default="2021-07-01", help="the windows' start (RUNBOOKS §i)")
+    f.add_argument("--env-file", type=Path)
     v = sub.add_parser("verify", help="is a stamped report still valid for base..head?")
     v.add_argument("--report", required=True, type=Path)
     v.add_argument("--base", default="origin/main")
@@ -65,6 +74,23 @@ def main(argv: list[str] | None = None) -> int:
 
     repo = a.repo.resolve()
     primary = _primary(repo)
+    if a.cmd == "store":
+        import datetime as dt
+
+        from vinci.impact import store as sto
+        try:
+            src = (a.source or primary / "data" / "vinci.db").resolve()
+            filled = sto.fill(repo=repo, source=src,
+                           out=a.out.resolve(),
+                           cache_root=(a.cache_root or primary / "data" / "cache").resolve(),
+                           start=dt.date.fromisoformat(a.start), today=dt.date.today(),
+                           env_file=a.env_file or (primary / ".env"))
+        except rn.ImpactError as exc:
+            print(f"impact store REFUSED: {exc}", file=sys.stderr)
+            return 2
+        (a.out / "store.json").write_text(sto.to_json(filled), encoding="utf-8")
+        print("\n".join(sto.lines(filled)))
+        return 0 if not filled["unpriced"] else 1
     s = rn.Settings(
         repo=repo, base=a.base, head=a.head, out=a.out.resolve(),
         ciq_root=(a.ciq_root or primary / "data" / "manual" / "ciq").resolve(),

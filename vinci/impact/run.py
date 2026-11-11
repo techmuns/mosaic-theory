@@ -401,7 +401,7 @@ BUILD_CACHE = Path.home() / ".cache" / "vinci" / "impact-builds"
 #: The files of a page side the cache keeps. The request is among them and can carry licensed
 #: transcript text, so the cache folder sits outside every repository, as the run folder does.
 _KEPT = ("built.json", "built.md", "committed.md", "request.json", "reads.json", "timing.json",
-         "store_written.json",
+         "store_written.json", "ciq.json",
          "build.error.json", "render.error.json", "request.error.json",
          "committed_render.error.json")
 
@@ -446,7 +446,12 @@ def run_child(s: Settings, lay: Layout, side: str, ticker: str,
     or ``resumed``."""
     out = s.out / "pages" / side
     if s.resume and (out / ticker / "timing.json").exists():
-        return "resumed"
+        # KEPT ONLY WHILE ITS INPUTS ARE (Codex P1, #1000): every response it read re-hashes the
+        # same, and the page's CIQ exports are the ones it was built from — else rebuilt
+        if _reusable(s, out / ticker) and _read(out / ticker / "ciq.json") == ciq_identity(
+                s.ciq_root, [ticker])[ticker]:
+            return "resumed"
+        shutil.rmtree(out / ticker)
     kept = BUILD_CACHE / key if key else None
     if kept is not None and _reusable(s, kept):
         (out / ticker).mkdir(parents=True, exist_ok=True)
@@ -455,6 +460,8 @@ def run_child(s: Settings, lay: Layout, side: str, ticker: str,
                 shutil.copy2(kept / name, out / ticker / name)
         return "kept"
     _run_child(s, lay, side, ticker)
+    if (out / ticker).is_dir():   # what this side was built from, for a later --resume
+        _write_side(out / ticker / "ciq.json", ciq_identity(s.ciq_root, [ticker])[ticker])
     # A FAILED STEP IS NEVER KEPT: a failure can be the machine's, not the code's (three page
     # sides of the first 27-page run hit "database is locked" and were kept, then reused)
     failed = any((out / ticker).glob("*.error.json"))
@@ -572,6 +579,20 @@ def compare_page(s: Settings, ticker: str) -> dict[str, Any]:
             out[f"{kind}_md"] = text_diff(md["base"].read_text(), md["head"].read_text(),
                                           versions if kind == "built" else ())
     return out
+
+
+#: A page flag naming a transcript the build could not convert (`ciq_sheets.unparsed_transcript_
+#: flag`). On ONE side only, on one input, it is the machine (LibreOffice under load), not the code.
+NOISE_FLAGS = ("transcripts on file but unparseable",)
+
+
+def one_sided_noise(s: Settings, ticker: str) -> str | None:
+    """The side whose build alone carries a `NOISE_FLAGS` flag, or None."""
+    def noisy(side: str) -> bool:
+        page = _read(s.out / "pages" / side / ticker / "built.json") or {}
+        return any(f.startswith(NOISE_FLAGS) for f in page.get("qa_flags") or [])
+    b, h = noisy("base"), noisy("head")
+    return None if b == h else ("base" if b else "head")
 
 
 def compare_unbuilt_renders(s: Settings, ticker: str, out: dict[str, Any]) -> None:
@@ -937,6 +958,11 @@ def _same_code(s: Settings, shas: dict[str, str]) -> bool:
                                                                         "frontend/build.py"))
 
 
+def _write_side(path: Path, obj: Any) -> None:
+    """A page side's own bookkeeping beside its build (its CIQ inputs) — never a page."""
+    path.write_text(json.dumps(obj, sort_keys=True), encoding="utf-8")
+
+
 def _write_marker(path: Path, run_id: dict[str, str]) -> None:
     """The run folder's own identity (``--resume`` reads it) — never a page."""
     path.write_text(json.dumps(run_id), encoding="utf-8")
@@ -1011,10 +1037,22 @@ def run(s: Settings) -> dict[str, Any]:
         if build_pages:
             with cf.ThreadPoolExecutor(max_workers=s.workers) as pool:
                 list(pool.map(page_task, tickers))
+        retried: dict[str, Any] = {}
+        for t in (tickers if build_pages else []):
+            side = one_sided_noise(s, t)
+            if side is not None:   # a conversion failed on ONE side: the machine's, try once more
+                shutil.rmtree(s.out / "pages" / side / t)
+                _run_child(s, lay, side, t)
+                retried[t] = {"side": side, "still": one_sided_noise(s, t) is not None}
+                s.log(f"  {t}: {side} re-built after a one-sided transcript failure")
         pages_seconds = round(time.monotonic() - t0, 1)
         pages = []
         for t in (tickers if build_pages else []):
             res = compare_page(s, t)
+            if t in retried:
+                res["retried"] = retried[t]
+                if retried[t]["still"]:
+                    res["status"] = "noise"
             compare_unbuilt_renders(s, t, res)
             res["committed_md_matches"] = stale_at_head(lay, t, s)
             pages.append(res)

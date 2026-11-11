@@ -6,6 +6,8 @@ import hashlib
 import json
 import pathlib
 
+import pytest
+
 from vinci.impact import run as rn
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -139,3 +141,66 @@ def test_the_frontend_build_runs_beside_its_own_sides_vinci(tmp_path: pathlib.Pa
     assert (outs["base"] / "out.txt").read_text() == "V = 'base'\n"
     assert (outs["head"] / "out.txt").read_text() == "V = 'head'\n"
     assert rn.tree_diff(outs["base"], outs["head"])["differ"] == ["out.txt"]
+
+
+
+def test_a_transcript_that_failed_on_one_side_only_is_named_as_noise(
+        tmp_path: pathlib.Path) -> None:
+    """#970's hand-built section (2026-11-11): 12 of 17 pages differed only by "transcripts on file
+    but unparseable", LibreOffice failing on a different call on each side under load. One input,
+    one side failing, is the machine: the run rebuilds that side once and names what stays."""
+    import json
+
+    s = rn.Settings(repo=ROOT, base="b", head="h", out=tmp_path, ciq_root=tmp_path,
+                    cache_root=tmp_path, store=tmp_path, env_file=None)
+    flag = "transcripts on file but unparseable — 1 of 2 call(s) on file are missing"
+    for side, flags in (("base", ["x"]), ("head", ["x", flag])):
+        (tmp_path / "pages" / side / "NFLX").mkdir(parents=True)
+        (tmp_path / "pages" / side / "NFLX" / "built.json").write_text(
+            json.dumps({"qa_flags": flags}))
+    assert rn.one_sided_noise(s, "NFLX") == "head"
+    (tmp_path / "pages" / "base" / "NFLX" / "built.json").write_text(
+        json.dumps({"qa_flags": ["x", flag]}))
+    assert rn.one_sided_noise(s, "NFLX") is None   # both sides: the input, not the machine
+
+
+def _resume_setup(tmp_path: pathlib.Path) -> tuple[rn.Settings, pathlib.Path, list[str]]:
+    import json
+
+    cache, ciq = tmp_path / "cache", tmp_path / "ciq"
+    _entry(cache, "sec/a.json", "https://x/a", "A")
+    (ciq / "MCK").mkdir(parents=True)
+    (ciq / "MCK" / "MCK Financials.xls").write_bytes(b"export one")
+    s = rn.Settings(repo=ROOT, base="b", head="h", out=tmp_path / "out", ciq_root=ciq,
+                    cache_root=cache, store=tmp_path, env_file=None, resume=True)
+    side = s.out / "pages" / "base" / "MCK"
+    side.mkdir(parents=True)
+    (side / "timing.json").write_text("{}")
+    (side / "reads.json").write_text(json.dumps({"https://x/a": {
+        "sha256": hashlib.sha256(b"A").hexdigest(), "live": False, "file": "sec/a.json"}}))
+    (side / "ciq.json").write_text(json.dumps(rn.ciq_identity(ciq, ["MCK"])["MCK"]))
+    built: list[str] = []
+    return s, side, built
+
+
+def test_resume_keeps_a_side_only_while_its_inputs_are_unchanged(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Codex P1 on #1000 (round 1): `--resume` reused a built page side on its timing file alone,
+    so a report could stamp today's CIQ hashes beside a page built from yesterday's export, or
+    from a cache entry another checkout rewrote since."""
+    s, side, built = _resume_setup(tmp_path)
+    monkeypatch.setattr(rn, "_run_child", lambda s, lay, sd, t: built.append(f"{sd}/{t}"))
+    lay = rn.Layout(s.out, {}, {}, {}, s.out)
+    assert rn.run_child(s, lay, "base", "MCK") == "resumed" and built == []
+    # a cached response the side read was rewritten: rebuilt
+    _entry(s.cache_root, "sec/a.json", "https://x/a", "A, refetched by another checkout")
+    assert rn.run_child(s, lay, "base", "MCK") == "built" and built == ["base/MCK"]
+
+
+def test_resume_rebuilds_a_side_whose_ciq_export_changed(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    s, side, built = _resume_setup(tmp_path)
+    monkeypatch.setattr(rn, "_run_child", lambda s, lay, sd, t: built.append(f"{sd}/{t}"))
+    lay = rn.Layout(s.out, {}, {}, {}, s.out)
+    (s.ciq_root / "MCK" / "MCK Financials.xls").write_bytes(b"export two, re-exported")
+    assert rn.run_child(s, lay, "base", "MCK") == "built" and built == ["base/MCK"]

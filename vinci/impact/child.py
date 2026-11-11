@@ -96,6 +96,18 @@ def own_soffice_profile(profile: Path) -> None:
     subprocess.run = run
 
 
+def block_sockets() -> None:
+    """No socket from this process can connect: a store filled "from the cache only" must fail
+    loud on a response the cache does not hold, never fetch it (`vinci.impact.store`)."""
+    import socket
+
+    def refuse(*_a: Any, **_k: Any) -> Any:
+        raise RuntimeError("network is blocked in this impact child (cache only)")
+    socket.socket.connect = refuse  # type: ignore[method-assign]
+    socket.socket.connect_ex = refuse  # type: ignore[method-assign]
+    socket.create_connection = refuse
+
+
 def _capture_module(path: Path) -> Any:
     spec = importlib.util.spec_from_file_location("_impact_capture_child", path)
     if spec is None or spec.loader is None:
@@ -186,6 +198,8 @@ def main(argv: list[str] | None = None) -> int:
                     help="instead of pages: run `python -m MODULE ARGS…` with this ref's code "
                          "(a downstream consumer), the cache frozen when asked")
     ap.add_argument("--frozen-cache", action="store_true")
+    ap.add_argument("--no-network", action="store_true",
+                    help="refuse every socket: a response the cache lacks fails loud")
     ap.add_argument("--seed", action="append", default=[],
                     help="a committed snapshot table to load into the store first")
     ap.add_argument("--soffice-profile", type=Path,
@@ -201,6 +215,8 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     if a.frozen_cache:
         freeze_cache()
+    if a.no_network:
+        block_sockets()
     if a.soffice_profile is not None:
         own_soffice_profile(a.soffice_profile)
     if a.seed:

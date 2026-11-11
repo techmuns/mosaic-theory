@@ -55,7 +55,7 @@ def test_976_lifts_its_refusal_notes_to_nflx_vitl_and_wern() -> None:
     assert all(m["head"].startswith("Guidance stated but not attributable")
                for p in r["pages"]["results"] for m in p["moves"] if m["path"] == "caveats[+]")
     md = markdown(r, json_name="report.json")
-    assert "### 2. Pages — 7 of 27 pages move (38 field change(s))" in md
+    assert "### 2. Pages — built 27 of 27; 7 of 27 move (38 field change(s))" in md
     assert "- **The $0 build's page rendered** by each side's code: 3 of 27 differ — NFLX, VITL, " \
            "WERN" in md
 
@@ -171,3 +171,33 @@ def test_953_owes_the_panel_when_the_frozen_replay_did_not_run() -> None:
     assert "**ASK THE OPERATOR**" not in md
     assert ("Row-53 panel check: **OWED** — the request moves on panel page(s) "
             "BURL, CNXC, MCK, ROST, SMPL") in md
+
+
+def test_976s_burl_and_smpl_flags_are_reported_and_reach_no_request() -> None:
+    """The parser stream's requirement (coordinator, 2026-11-11): a parser fix must be read from
+    each ref's FRESH build, never a replay of the committed layer (where #976's `compare` refused,
+    "reaches no page's request"), and the section must say whether its moves reach a request.
+    BURL's 1 and SMPL's 13 default-period flags sit in `primary_source`, which is NOT_SENT."""
+    r = _load("pr976.json")
+    for t, n in (("BURL", 1), ("SMPL", 13)):
+        flags = [m for m in _pages(r)[t]["moves"]
+                 if m["path"].startswith("mechanical.primary_source.releases[")
+                 and str(m["head"]).startswith("Guidance period not read")]
+        assert len(flags) == n, t
+        assert _pages(r)[t]["request"]["identical"] is True
+    md = markdown(r, json_name="report.json")
+    assert ("- Pages whose fields move while their request stays byte-identical — their moves "
+            "reach no synthesis request: 7 of 7 — BURL, EPAM, NFLX, SMPL, VITL, VRRM, WERN") in md
+
+
+def test_a_page_not_built_at_a_side_is_named_and_out_of_the_count() -> None:
+    """Coordinator, 2026-11-11 (#970's hand-built section built 17 of 27): the coverage leads, and
+    every page not built is named with why — a "0 move" says nothing about it."""
+    r = _load("pr976.json")
+    vitl = _pages(r)["VITL"]
+    vitl["status"] = "not compared"
+    vitl["errors"]["base"]["build"] = ("DossierAssemblyError: VITL: no price history in the "
+                                       "store")
+    md = markdown(r, json_name="report.json")
+    assert "### 2. Pages — built 26 of 27; 6 of 26 move" in md
+    assert "- VITL — base: DossierAssemblyError: VITL: no price history in the store" in md
