@@ -40,6 +40,13 @@ FIX 3B rewrites two fields; `FIX_3B` names their transforms:
 RG-D8 (fix request 2), `RG_D8`'s ``driver_facts``: the transcript driver rows' fact check,
 re-run on each committed row's own metric, value and quote (`driver_extract.check_fact`).
 
+RA-D2 (fix request 2, split from #967), `RA_D2`'s ``dividend_level``: the Ratios table's
+dividend row and `key_ratios`' dividend status, read from the Income Statement with CIQ's 'NA' as
+not stated (the operator's ruling, 2026-11-11) and MCK's LTM note, re-read from the page's OWN CIQ
+folder (`Context.ciq`) by the ref's code. The identity at a ref without the change. A field is
+written only where the re-read, with the change's own additions taken out, equals the committed
+field — the proof that the export and the code are the page's — and is otherwise left as committed.
+
 RA-D4 (fix request 2, split from #967), `RA_D4`'s ``same_day_guides``: the guidance bridge and
 its rows (every period guided on the latest date), re-read from the page's OWN CIQ folder
 (`Context.ciq`) by the ref's code. The identity at a ref without the change. A field is written
@@ -610,6 +617,63 @@ def fenced_covenant_rows(rows: list[Any]) -> list[Any]:
     return out
 
 
+# --------------------------------------------------- RA-D2: the dividend level, and 'NA' unstated
+
+_DPS_LABEL = "Dividend/sh"
+_DPS_REF = " + Income Statement 'Dividends per Share' (the Dividend/sh row)"
+_KR_REF = " + Income Statement 'Dividends per Share'"
+#: Every dividend status the key ratios may carry, at either ref: "none", and (the 'NA' ruling)
+#: "not stated (the Income Statement reads 'NA')".
+_KR_DIVIDEND = re.compile(r"(; )?dividend: (?:none|not stated \([^)]*\))")
+
+
+def _without_dividend(f: Sourced[Any] | None) -> Any:
+    """`return_ratios` with the change's own parts taken out: the dividend row, its citation and
+    the note. What is left must equal the committed field's own, so no other part moved."""
+    if f is None:
+        return None
+    d = f.model_dump(mode="json")
+    if isinstance(d.get("value"), dict):   # a PRESENT table: its note is the change's own
+        d["value"]["rows"] = [r for r in d["value"]["rows"] if r.get("label") != _DPS_LABEL]
+        d["value"]["note"] = ""   # the dividend notes sit on the table (review round 0)
+        # an UNKNOWN's note is not the change's, so it is compared as it stands
+    d["source_ref"] = (d.get("source_ref") or "").replace(_DPS_REF, "")
+    return d
+
+
+def _kr_without_dividend(f: Sourced[str] | None) -> Any:
+    if f is None:
+        return None
+    d = f.model_dump(mode="json")
+    d["value"] = _KR_DIVIDEND.sub("", d.get("value") or "")
+    d["source_ref"] = (d.get("source_ref") or "").replace(_KR_REF, "")
+    return d
+
+
+def dividend_level(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
+    """(RA-D2, with the operator's 'NA' ruling) The two fields RA-D2 changes, re-read from the
+    page's own CIQ folder by THIS ref's code: `return_ratios` (the Dividend/sh row from the Income
+    Statement, its citation, the 'NA' and LTM notes) and `key_ratios` (the dividend status and its
+    citation). The identity at a ref without the change (no `ciq_sheets._dividend_per_share`). Each
+    field is written only where the re-read, with the change's own additions taken out, equals the
+    committed field; otherwise it is left exactly as committed. Refuses (`TransformError`) only
+    when no CIQ folder was given."""
+    if getattr(ciq_sheets, "_dividend_per_share", None) is None:
+        return mech
+    b = ctx.ciq
+    if b is None:
+        raise TransformError(f"{ctx.page.get('ticker')}: this transform re-reads the page's own "
+                             "CIQ exports (`--ciq`), and no folder was given")
+    out: dict[str, Any] = {}
+    rr = ciq_sheets.return_ratios(b)
+    if _without_dividend(rr) == _without_dividend(mech.return_ratios):
+        out["return_ratios"] = rr
+    kr = ciq_sheets.key_ratios(b)
+    if _kr_without_dividend(kr) == _kr_without_dividend(mech.key_ratios):
+        out["key_ratios"] = kr
+    return mech.model_copy(update=out) if out else mech
+
+
 # ------------------------------------------- RA-D4: every period guided on the latest date
 
 #: The change's addition to a bridge segment: up to the segment's next clause ("; …"), or, on the
@@ -687,6 +751,7 @@ TRANSFORMS: dict[str, Transform] = {
     "asof_cut": asof_cut,
     "driver_facts": driver_facts,
     "covenant_value_figures": covenant_value_figures,
+    "dividend_level": dividend_level,
     "same_day_guides": same_day_guides,
 }
 
@@ -712,5 +777,7 @@ RG_D8: tuple[str, ...] = ("driver_facts",)
 
 #: RE2-D16 (fix request 2, #961): the covenant fence's value check, re-run on the committed rows.
 RE2_D16: tuple[str, ...] = ("covenant_value_figures",)
+#: RA-D2's one transform (split from #967): the dividend row and status. RA-D4 is measured apart.
+RA_D2: tuple[str, ...] = ("dividend_level",)
 #: RA-D4's one transform (split from #967; RA-D2 is measured on its own): the same-day guides.
 RA_D4: tuple[str, ...] = ("same_day_guides",)

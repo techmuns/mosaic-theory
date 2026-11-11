@@ -1,7 +1,7 @@
 ---
 status: open
 date: 2026-11-11
-prs: []
+prs: [983]
 supersedes:
 superseded-by:
 ---
@@ -32,8 +32,14 @@ when "F12 keeps every period guided on the date, each labelled".
 - **Fail first.** `tests/test_same_day_guides.py` has 8 cases (5 tests). 7 fail on `origin/main`'s
   `vinci/` (`ed2c5f8f`). The one that passes is the unread-guide twin in the column order whose
   leftmost period is already the first in time; its reversed twin fails.
-- **$0 compare.** COMPARE_LINE
-- **The panel.** PANEL_LINE
+- **$0 compare.** `--base 173b4818 --cand a27072ec --transform same_day_guides` on the panel:
+  CNXC +1,735, ROST +1,194 and SMPL +1,179 characters, in `user.facts` only. BURL, LLY and MCK are
+  identical. The same at `2b9b766c` → `dd301e30`.
+- **The panel.** Registration `5bc72d2b9c16a660`, no-worsening only, drawn once ($27.32 of $35)
+  and scored at $0. No class metric worsens. The lean moved on MCK, whose request is
+  byte-identical in both arms, and on SMPL; no proposal moved.
+  `docs/records/2026-11-11-ra-d4-measured-on-the-panel.md` records it. The operator, 2026-11-11:
+  "Merge, moves are explained".
 
 **BOUNDARY.** The exports under the primary checkout's `data/manual/ciq/` on 2026-11-11: 36
 folders. The panel is the frozen six (BURL, CNXC, LLY, MCK, ROST, SMPL). BURL's committed guidance
