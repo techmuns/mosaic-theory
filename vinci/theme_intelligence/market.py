@@ -9,10 +9,11 @@ the names the count takes) — where each price stands AS OF a date:
 - RETURN AGAINST THE BENCHMARK (SPY) over 3 and 12 months — the fund's
   `vinci.eod.features.relative_return`: both legs end on their common last bar;
 - P/E AGAINST ITS OWN HISTORY — the fund's `vinci.screens.assemble.pe_current_and_percentile`: only
-  annual diluted EPS filed on or before each day. FIVE YEARS where it can be built: Tiingo's raw
-  closes and split factors before Polygon's two years (`deep_history`), rebased onto Polygon's
-  prices over their overlap and refused when the two disagree; else the two years Polygon serves.
-  The window is stated beside every value;
+  annual diluted EPS filed on or before each day. FIVE YEARS, the desk's one window (operator,
+  2026-11-11: "5y for all as standard"): Tiingo's raw closes and split factors before Polygon's
+  two years (`deep_history`), rebased onto Polygon's prices over their overlap and refused when
+  the two disagree. When five years cannot be built or the fund's rule refuses the range, the
+  percentile is not held and says why — never a shorter window in its place;
 - CONSENSUS REVISIONS — the next fiscal year's EPS consensus over 3 months, and how many analysts
   revised up and down, from the fund's committed dossiers (`data/dossiers/<TICKER>/dossier.json`,
   its CIQ Estimates export: the fund's dossier names only). Point in time: only when the export
@@ -378,33 +379,41 @@ def against(name: Closes, bench: Closes, as_of: date, days: int, ticker: str) ->
     return MarketFigure(value=df.value, basis=df.note or "")
 
 
-def pe_five_or_two(closes: Closes, eps: list[ConceptPoint], as_of: date, ticker: str,
-                   deep: DeepSource | None,
-                   errors: list[str] | None = None) -> tuple[MarketFigure, MarketFigure]:
-    """The P/E and its percentile over FIVE years when they can be joined and the fund's rule
-    accepts the range (it refuses one a share-basis change runs through); else over the two years
-    Polygon serves — and the percentile says which, and why five were not used. A failed Tiingo
-    request is said as that (and added to `errors`), never as a missing key."""
-    if deep is None:
-        why = "five years not held — no Tiingo key configured"
-    else:
-        try:
-            five, how = deep_history(ticker, closes, as_of, deep)
-        except Exception as exc:  # noqa: BLE001 — a failed request is said, never filled
-            if errors is not None:
-                errors.append(f"{ticker}: Tiingo history failed — {type(exc).__name__}: "
-                              f"{str(exc)[:120]}")
-            five, how = None, f"the Tiingo request failed ({type(exc).__name__})"
-        if five is not None:
-            pe5, pct5 = pe_against_history(five, eps, as_of, ticker, joined=how)
-            if pct5.value is not None:
-                return pe5, pct5.model_copy(update={"detail": "5y"})
-            why = f"five years not used — {pct5.why}"
-        else:
-            why = f"five years not held — {how}"
-    pe, pct = pe_against_history(closes, eps, as_of, ticker)
-    return pe, pct.model_copy(update={"basis": f"{pct.basis}; {why}",
-                                      "detail": "2y" if pct.value is not None else ""})
+def pe_five_year(closes: Closes, eps: list[ConceptPoint], as_of: date, ticker: str,
+                 deep: DeepSource | None,
+                 errors: list[str] | None = None) -> tuple[MarketFigure, MarketFigure]:
+    """(today's P/E, its percentile among its own daily P/Es over FIVE years). Five years are the
+    desk's one window, so names are compared on one standard: when they cannot be joined
+    (`deep_history`) or the fund's rule refuses the range (a share-basis change inside it), the
+    percentile is NOT HELD and says why — never the two years Polygon serves in its place (on
+    2026-11-10, 47 of the desk's 104 percentiles were two-year figures beside 57 five-year ones,
+    in one column). Today's P/E needs no window. A failed Tiingo request is said as that (and
+    added to `errors`), never as a missing key. With no Tiingo key, prices that already cover
+    five years are still measured — the key is missed only when Tiingo would have been asked."""
+    asked_without_key: list[str] = []
+
+    def no_key(symbol: str, _start: date, _end: date) -> list[DeepRow] | None:
+        asked_without_key.append(symbol)
+        return None
+
+    def today() -> MarketFigure:
+        return pe_against_history(closes, eps, as_of, ticker)[0]
+
+    try:
+        five, how = deep_history(ticker, closes, as_of, deep if deep is not None else no_key)
+    except Exception as exc:  # noqa: BLE001 — a failed request is said, never filled
+        if errors is not None:
+            errors.append(f"{ticker}: Tiingo history failed — {type(exc).__name__}: "
+                          f"{str(exc)[:120]}")
+        return today(), _not_held(f"five years not held — the Tiingo request failed "
+                                  f"({type(exc).__name__})")
+    if five is None:
+        why = "no Tiingo key configured" if asked_without_key else how
+        return today(), _not_held(f"five years not held — {why}")
+    pe5, pct5 = pe_against_history(five, eps, as_of, ticker, joined=how)
+    if pct5.value is None:
+        return today(), _not_held(f"five years not measurable — {pct5.why or pct5.basis}")
+    return pe5, pct5.model_copy(update={"detail": "5y"})
 
 
 def pe_against_history(closes: Closes, eps: list[ConceptPoint], as_of: date,
@@ -574,7 +583,7 @@ def _row(name: str, ticker: str | None, kind: Kind, cik: str | None, *, as_of: d
                           f"{str(exc)[:120]}")
             pe = pct = _not_held("SEC companyfacts could not be read")
         else:
-            pe, pct = pe_five_or_two(closes, points, as_of, ticker, deep, errors)
+            pe, pct = pe_five_year(closes, points, as_of, ticker, deep, errors)
     return ExposureMarket(
         name=name, ticker=ticker, kind=kind,
         last_close=last[1] if last else None, last_bar=last[0] if last else None,

@@ -531,6 +531,84 @@ def driver_facts(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
     return mech.model_copy(update={"operating_drivers": od.model_copy(update={"rows": rows})})
 
 
+def covenant_value_figures(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
+    """(RE2-D16, fix request 2) The covenant fence re-run on each committed PRESENT term: the ref's
+    own `covenant_extract.unstated_in_quote` on the term's stored value against its stored quote —
+    and, where the ref's extractor reads them (`_quoted_clauses`), the clauses of the components
+    the term KEPT (`component_quotes`) — so each row is what that ref's extractor writes for the
+    model answer the page stored; a refused term becomes the extractor's refused row (the value
+    withheld with its note, no components).
+
+    WHAT REACHES THE REQUEST is the `covenant_terms` digest: the assembly builds it from the term
+    rows BEFORE the synthesis and attaches the rows after (`assemble`), so the layer synthesis
+    receives carries no rows (`capture_child.pre_synthesis_mech`). The rows are read from the
+    committed page (`ctx.page`), and where a row moved the digest is rebuilt by the assembly's own
+    composition (`governing_terms` → `covenant_fail_reason` → `covenant_digest`); the rows are
+    never attached.
+
+    NOT THE IDENTITY AT MAIN, and deliberately: main's own fence (years and currency figures,
+    #873) also refuses terms committed before it, so the base request is main's builder and the
+    candidate's is the branch's — their difference is this change alone. Where a page predates
+    today's `governing_terms` (BURL, assembled 2026-10-26), both refs rebuild the same
+    pre-existing difference in the digest."""
+    from vinci.dossier import assemble, covenant_extract
+    from vinci.dossier.schemas import CapitalStructure
+
+    raw = (ctx.page.get("mechanical") or {}).get("capital_structure")
+    cs = mech.capital_structure
+    if cs is None or not isinstance(raw, dict):
+        return mech
+    stored = CapitalStructure.model_validate(raw).covenant_term_rows
+    if stored is None or stored.status is not PRESENT or not stored.value:
+        return mech
+    terms = cs.covenant_terms
+    if terms is None:
+        raise TransformError(f"{ctx.page.get('ticker')}: covenant term rows with no digest")
+    ptrs = cs.covenant_pointer_rows
+    rows = list(stored.value)
+    out = fenced_covenant_rows(rows)
+    if out == rows:
+        return mech
+    gov = (covenant_extract.governing_terms(out, ptrs.value)
+           if ptrs is not None and ptrs.value else [])
+    mat = cs.maturity_event
+    fail = assemble.covenant_fail_reason(
+        ptrs, gov_present=any(g.value.status is PRESENT for g in gov),
+        mat_present=mat is not None and mat.status is PRESENT)
+    digest = covenant_extract.covenant_digest(gov, mat, fail_reason=fail)
+    moved = {"covenant_terms": terms.model_copy(update={"value": digest})}
+    return mech.model_copy(update={"capital_structure": cs.model_copy(update=moved)})
+
+
+def fenced_covenant_rows(rows: list[Any]) -> list[Any]:
+    """Each committed covenant term row as the ref's extractor writes it for the model answer the
+    row stores — a PRESENT term its fence refuses becomes the extractor's refused row."""
+    from vinci.dossier import covenant_extract
+
+    clauses = getattr(covenant_extract, "_quoted_clauses", None)
+    lead = "verbatim: \u201c"
+    out: list[Any] = []
+    for r in rows:
+        note = r.value.note or ""
+        if (r.value.status is not PRESENT or not note.startswith(lead)
+                or not note.endswith("\u201d")):
+            out.append(r)
+            continue
+        quote = note[len(lead):-1]
+        text = clauses(quote, dict(r.component_quotes or {})) if clauses else quote
+        unstated = covenant_extract.unstated_in_quote(str(r.value.value), text)
+        if not unstated:
+            out.append(r)
+            continue
+        shown = ", ".join(unstated)
+        why = (f"{covenant_extract.VALUE_REFUSED_NOTE_PREFIX} {shown}, which the model's quote "
+               f"does not — {r.value.source_ref}")
+        refused: Sourced[str] = Sourced.unknown(note=why)
+        out.append(type(r)(name=r.name, value=refused, agreement_title=r.agreement_title,
+                           agreement_is_amendment=r.agreement_is_amendment))
+    return out
+
+
 # --------------------------------------------------- RA-D2: the dividend level, and 'NA' unstated
 
 _DPS_LABEL = "Dividend/sh"
@@ -600,6 +678,7 @@ TRANSFORMS: dict[str, Transform] = {
     "current_buybacks": current_buybacks,
     "asof_cut": asof_cut,
     "driver_facts": driver_facts,
+    "covenant_value_figures": covenant_value_figures,
     "dividend_level": dividend_level,
 }
 
@@ -623,5 +702,7 @@ ASOF_CUT: tuple[str, ...] = ("asof_cut",)
 #: unverified row's value.
 RG_D8: tuple[str, ...] = ("driver_facts",)
 
+#: RE2-D16 (fix request 2, #961): the covenant fence's value check, re-run on the committed rows.
+RE2_D16: tuple[str, ...] = ("covenant_value_figures",)
 #: RA-D2's one transform (split from #967): the dividend row and status. RA-D4 is measured apart.
 RA_D2: tuple[str, ...] = ("dividend_level",)

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 import statistics
+import subprocess
 from collections import Counter
 from collections.abc import Callable
 from datetime import date, datetime
@@ -26,6 +27,7 @@ from vinci.dossier.ciq import (
     CiqParseError,
     CiqPreliminaryError,
     CiqUnavailableError,
+    _customers_role,
     clean_num,
     excel_date,
     is_empty_view,
@@ -5086,7 +5088,7 @@ def customer_roster(bundle: CiqBundle) -> tuple[Sourced[str], int | None]:
     # luck, not a rule. That accident was harmless only while the .xls route failed loud for SMPL;
     # routing it correctly would otherwise have made supplier rows render as customer concentration.
     cands = bundle.all_workbooks("customers")
-    wb = next((w for w in cands if "customer" in w.path.name.lower()), None)
+    wb = next((w for w in cands if _customers_role(w.path.name) == "customers"), None)
     if wb is None:
         return Sourced.missing(
             note=(f"no Customers export for {bundle.ticker} — pull it and re-run"
@@ -5824,15 +5826,28 @@ def gics_industry(bundle: CiqBundle) -> Sourced[str]:
     prof = bundle.workbook("profile")
     if prof is None:
         return Sourced.unknown(note="no CIQ Public Company Profile — SIC-sector fallback")
+    # DECODED BY ITS OWN FORMAT (audit RA-D17, 2026-11-10): the tearsheet was read with
+    # `rtf_to_text` whatever its bytes were, so a PDF tearsheet — which the contract allows —
+    # gave "no Primary Industry Classification" though `read_text` finds it. A PDF's layout
+    # text can hold the value on the label's own line, so the rest of that line is read first.
+    # A PDF or OLE tearsheet runs `pdftotext` / LibreOffice, whose failure (a corrupt or encrypted
+    # file) is a `SubprocessError` — read as an unreadable profile, never a crash of the assembly.
+    # Its text holds the command's absolute path, so the note names the file alone.
     try:
-        from striprtf.striprtf import rtf_to_text
-        text = rtf_to_text(prof.path.read_text(errors="ignore"))  # type: ignore[no-untyped-call]
-    except (OSError, ValueError) as exc:
+        text = read_text(prof.path, prof.fmt)
+    except (OSError, ValueError, CiqParseError) as exc:
         return Sourced.unknown(note=f"CIQ profile unreadable ({exc}) — SIC-sector fallback")
+    except subprocess.SubprocessError as exc:
+        return Sourced.unknown(
+            note=f"CIQ profile unreadable ({prof.path.name}: its {prof.fmt.value} converter "
+                 f"failed, {type(exc).__name__}) — SIC-sector fallback")
+    label = "Primary Industry Classification"
     lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
-    for i, ln in enumerate(lines[:25]):
-        if ln.startswith("Primary Industry Classification") and i + 1 < len(lines):
-            val = lines[i + 1].rstrip("|").strip()
+    for i, ln in enumerate(lines[:60]):
+        if ln.startswith(label):
+            # layout text sets columns apart by a run of spaces: the value is the first column
+            rest = re.split(r"\s{2,}|\t", ln[len(label):].strip(" |:\t"))[0].strip(" |")
+            val = rest or (lines[i + 1].rstrip("|").strip() if i + 1 < len(lines) else "")
             if val:
                 return Sourced.present(
                     val, source_ref="CIQ Public Company Profile→Primary Industry Classification")

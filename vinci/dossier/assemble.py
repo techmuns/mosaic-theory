@@ -1171,7 +1171,7 @@ def assemble_one(
     if bundle.unrecognised:
         flags.append(f"CIQ export(s) not recognised and NOT READ for {ticker}: "
                      f"{'; '.join(bundle.unrecognised)} — no workbook kind matches the file name; "
-                     f"register it in ciq._WORKBOOK_KEYWORDS or remove it")
+                     f"add its name rule to ciq._KIND_NAME_RULES or remove it")
     with Store(cfg.db_path) as store:
         # RESOLVE THE COMPS PANEL'S REAL DATA DATE, ONCE, BEFORE ANY EXTRACTOR READS IT.
         # CIQ's `As-Of Date:` header is the EXPORT stamp; the data is an earlier trading close, so

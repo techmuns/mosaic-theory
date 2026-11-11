@@ -40,7 +40,33 @@ def test_it_pushes_only_to_the_state_branch_after_the_gate() -> None:
     assert pushes == ["git push origin HEAD:theme-intelligence-state"]  # never main
     assert lines.index(next(ln for ln in lines if ln.startswith("python -m pytest"))) < \
         lines.index(pushes[0])
-    assert not any("data/theme_intelligence/http_cache" in ln for ln in lines)  # no page text
+    assert not _page_text_leaves(lines)
+
+
+def _page_text_leaves(lines: list[str]) -> list[str]:
+    """Workflow lines that would carry the fetcher's cache off the runner. The publisher pages it
+    caches live under http_cache/ and never leave the runner that fetched them; only Tiingo's
+    price histories (http_cache/tiingo — prices, publishable under the licence ruling of
+    2026-11-04) are kept between runs, so a row's five-year history is not refetched every week."""
+    tiingo = "data/theme_intelligence/http_cache/tiingo"
+    return [ln for ln in lines if "data/theme_intelligence/http_cache" in ln.replace(tiingo, "")]
+
+
+def test_only_the_price_histories_leave_the_runner_never_the_page_cache() -> None:
+    """The positive and the negative pin of the guard above: the workflow keeps http_cache/tiingo,
+    and the same workflow keeping the whole http_cache (where publisher pages are cached) is
+    refused."""
+    text = WF.read_text()
+    assert "path: data/theme_intelligence/http_cache/tiingo" in text
+    assert not _page_text_leaves(_code_lines(text))
+    leaked = text.replace("data/theme_intelligence/http_cache/tiingo",
+                          "data/theme_intelligence/http_cache")
+    assert _page_text_leaves(_code_lines(leaked))
+    # a line naming the price histories does not carry the whole cache past the guard beside them
+    both = text.replace("path: data/theme_intelligence/http_cache/tiingo",
+                        "path: data/theme_intelligence/http_cache/tiingo "
+                        "data/theme_intelligence/http_cache")
+    assert _page_text_leaves(_code_lines(both))
 
 
 def test_a_failed_scan_is_still_recorded_and_still_fails_the_job() -> None:
