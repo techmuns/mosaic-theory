@@ -183,8 +183,9 @@ class HeaderPeriod(NamedTuple):
 _FISCAL_QUARTER = re.compile(r"(?<![A-Za-z])F?Q([1-4])(?![0-9])")
 
 #: The duration CIQ heads a Financials period column with: '3 months', '12 months' — and, for a
-#: filer reporting year to date, '6 months' or '9 months' (audit V1-O2).
-_DURATION = re.compile(r"(?<![0-9])([0-9]{1,2}) months\b", re.IGNORECASE)
+#: filer reporting year to date, '6 months' or '9 months' (audit V1-O2). The singular '1 month'
+#: too (Codex round 1, #972): a one-month stub states its duration, never reads as its quarter.
+_DURATION = re.compile(r"(?<![0-9])([0-9]{1,2}) months?\b", re.IGNORECASE)
 
 
 def stated_months(cell: Any) -> int | None:

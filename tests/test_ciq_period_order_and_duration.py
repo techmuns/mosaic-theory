@@ -163,6 +163,16 @@ def test_v1_o2_twin_a_stub_through_a_quarter_is_year_to_date_never_a_fiscal_year
     assert cs.header_period(cell).kind == "YTD" and cs._fin_short(cell) == "4M-25"
 
 
+def test_v1_o2_twin_a_one_month_stub_states_its_month() -> None:
+    """(+) Codex round 1 (P2): '1 month', the singular, stated no duration, so a one-month stub
+    read as its quarter and joined quarter-on-quarter and same-quarter comparisons. SYNTHETIC: no
+    export on disk carries it (72 Financials workbooks, 2026-11-11: only '3 months' and
+    '12 months'). The shape is the stated-duration rule's own, in the singular."""
+    cell = "1 month\nFQ1\nJan-31-2026"
+    assert cs.stated_months(cell) == 1
+    assert cs.header_period(cell).kind == "YTD"
+
+
 def test_ra_d5_twin_estimates_years_are_read_by_the_year_they_state() -> None:
     head = ["", "FY 2028", "FY 2027", "FY 2026", "FQ2 2027", "FQ1 2027"]
     assert head[cs._first_fy_col(head) or 0] == "FY 2026"
