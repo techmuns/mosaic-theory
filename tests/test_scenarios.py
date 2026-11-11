@@ -1132,7 +1132,6 @@ def test_the_committed_records_round_trip_byte_identical(tmp_path: Path) -> None
         "version-scoping is untested against any real record and needs a new source of one")
 
 
-@pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
 def _cards_without_void(out: Path) -> Path:
     """Every committed underwrite record, carded by the REAL `frontend/build.py` over the committed
     ledger WITHOUT its VOID rows, written to ``out`` as ``<key>.json`` — the committed cards'
@@ -1159,6 +1158,7 @@ def _cards_without_void(out: Path) -> Path:
     return cards
 
 
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
 def test_a_reissue_names_the_row_its_predecessor_owns_instead_of_denying_it(
         tmp_path: Path) -> None:
     """A record reissued AFTER the decision it inherits owns no ledger row, and must SAY WHERE the
