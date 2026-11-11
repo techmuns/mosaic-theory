@@ -4791,6 +4791,25 @@ def consensus_stats(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[s
 #: carries only the first; one that is not carries both, and its older rows sit under the second.
 _REL_SECTION = re.compile(r"^(Recently|Prior and Not Recently) Disclosed (?:Customers|Suppliers)$")
 
+#: The line every Business-Relationships export ENDS with: the last non-blank line of all 72 RTF
+#: exports on disk (36 Customers, 36 Suppliers, 2026-11-11). A view without it was cut short
+#: (audit RBC-D3). Checked on the RTF route only: no spreadsheet export is on disk to show whether
+#: that form carries the line.
+_REL_CLOSING = "*denotes proprietary relationship"
+
+#: What a view says when CIQ returned no table for it (audit RBC-D5): its no-data sentinel, and the
+#: contract's word for a view the account is not entitled to. Neither is on disk (2026-11-11).
+_REL_NO_TABLE: tuple[tuple[str, str], ...] = (
+    (CIQ_NO_DATA, "CIQ returned no rows for this view"),
+    ("Entitlement Needed", "the CIQ account is not entitled to this view"),
+)
+
+
+def _is_rel_header(line: str) -> bool:
+    """Is this line a Business-Relationships table's header? The ONE test, read by the table
+    reader and by :func:`_unread_view`, so the two never disagree on where a table starts."""
+    return "Customer Name" in line and "Relationship Type" in line
+
 
 class _Relationships(NamedTuple):
     recent: list[str]
@@ -4833,10 +4852,7 @@ def _relationship_table(rows: list[list[str]]) -> _Relationships | None:
     Customers export is on disk on 2026-11-10 (all 36 are RTF), so this is latent; the RTF reads of
     all 36 are unchanged by it."""
     lines = ["|".join(r) for r in rows]
-    hdr = next(
-        (i for i, ln in enumerate(lines) if "Customer Name" in ln and "Relationship Type" in ln),
-        None,
-    )
+    hdr = next((i for i, ln in enumerate(lines) if _is_rel_header(ln)), None)
     if hdr is None:
         return None
     # COLUMNS BY HEADER TEXT, never by position (item 33). The export ships TWO layouts and the
@@ -4872,8 +4888,15 @@ def _relationship_table(rows: list[list[str]]) -> _Relationships | None:
             continue
         parts = rows[k]                  # NOT filtered — a blank cell is a position, not nothing
         customer, rtype = cell(parts, ci), cell(parts, ti)
-        if not customer or not rtype or ln == lines[hdr]:  # a section repeating the header
+        if not customer or ln == lines[hdr]:  # a section repeating the header
             continue
+        if not rtype:
+            # A ROW WITH ITS TYPE BLANK IS A ROW (audit V1-O3, 2026-11-10): a party named beside a
+            # stated industry, source or supplier was dropped with no word. A line naming nothing
+            # else is prose, not a row — the closing line, a sentence (none on disk, 72 exports).
+            if not any(cell(parts, i) for i in (si, ii, xi)):
+                continue
+            rtype = "type not stated"
         supplier = cell(parts, si)
         # In the 5-column view BOTH parties are named and the focal company occupies one of them.
         # Render the pair as stated rather than guessing which is the counterparty — the direction
@@ -4916,7 +4939,8 @@ def customer_roster(bundle: CiqBundle) -> tuple[Sourced[str], int | None]:
     RETURNED WITH ITS COUNT (2026-11-09, audit RBC-D1): how many recently disclosed rows parsed,
     taken from the parsed list BEFORE :func:`_roster` caps it at 30. The roster is a display string,
     and the renderers counted its ";" pieces, so every list over 30 printed "31". The count is None
-    wherever the roster is not PRESENT.
+    wherever the roster is not PRESENT, and on a PRESENT roster whose RTF view may be cut short
+    (no closing line, audit RBC-D3): a cut list's length is not the company's count.
 
     ROUTED BY FORMAT (item 21). The export ships as .rtf for most names and as a .xls SPREADSHEET
     for others (SMPL today, WERN next). ``read_text`` refuses a spreadsheet by design — and this
@@ -4936,6 +4960,7 @@ def customer_roster(bundle: CiqBundle) -> tuple[Sourced[str], int | None]:
                   if cands else
                   f"no Customers & Suppliers export for {bundle.ticker} — pull it and re-run")
         ), None
+    cite = f"CIQ Customers&Suppliers {wb.path.name}"
     parsed: list[str] | None
     prior: list[str] = []
     rel: _Relationships | None
@@ -4953,10 +4978,21 @@ def customer_roster(bundle: CiqBundle) -> tuple[Sourced[str], int | None]:
         try:
             raw = read_text(wb.path, wb.fmt)
         except CiqParseError as exc:
-            return Sourced.unknown(note=str(exc)), None
+            # RBC-D5: an empty view is a real RTF of tens of KB with a handful of words (every
+            # export on disk is >= 70 KB), so the thin-RTF guard refuses it before its shape can
+            # be read. Name the shape when the view shows one; the guard's word stands otherwise.
+            named = (_unread_view(read_text(wb.path, wb.fmt, thin_ok=True), wb.path.name,
+                                  closing_known=True)
+                     if wb.fmt is CiqFormat.RTF_TEXT else None)
+            if named is None:
+                return Sourced.unknown(note=str(exc)), None
+            return Sourced.unknown(note=named, source_ref=cite), None
         rel = _relationships(raw)
     # both routes: one reading of what the view says
     parsed, prior = (rel.recent, rel.prior) if rel is not None else (None, [])
+    # RBC-D3: checked on the RTF route only — no spreadsheet export is on disk to show its last line
+    closing_known = wb.fmt is CiqFormat.RTF_TEXT
+    cut = closing_known and not _ends_with_closing_line(raw)
     # the recent section's own statement once rows parse; the whole view's when none did
     if not parsed and (rel.recent_states_none if rel is not None else is_empty_view(raw)):
         # NOT a parse failure — CIQ affirmatively states it has nothing to list, and saying
@@ -4970,19 +5006,74 @@ def customer_roster(bundle: CiqBundle) -> tuple[Sourced[str], int | None]:
                 f"CIQ's own statement, not unparsed" if rel is None else
                 f"CIQ discloses no recently disclosed customers for {bundle.ticker} — the "
                 f"recent section says so in CIQ's own words, not unparsed")
-        return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
-                               source_ref=f"CIQ Customers&Suppliers {wb.path.name}"), None
+        # a prior list read from a file cut short is said to be so, like the recent one (RBC-D3)
+        cut_prior = _cut_note(wb.path.name, len(prior)) if cut and prior else ""
+        return Sourced.unknown(
+            note="; ".join(filter(None, (said, cut_prior, _prior_note(prior)))),
+            source_ref=cite), None
     if not parsed:
         # rows parsed only under the prior head: the table was read, so never "could not parse"
+        named = (None if prior else _unread_view(raw, wb.path.name, closing_known=closing_known))
         said = (f"{wb.path.name}'s recent section lists no customer and does not say it has none"
-                if prior else
+                if prior else named or
                 f"could not parse the Business-Relationships table in {wb.path.name}")
-        # a note naming the file's prior rows makes a claim about the file: cite it (round 2)
-        return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
-                               source_ref=(f"CIQ Customers&Suppliers {wb.path.name}" if prior
-                                           else None)), None
-    return (Sourced.present(_roster(parsed), source_ref=f"CIQ Customers&Suppliers {wb.path.name}",
+        # a file cut before its table reads nothing, and is said to be cut like one cut after it
+        # (RBC-D3); a named shape already says what its end shows
+        cut_said = (_cut_note(wb.path.name, len(prior)) if cut and (prior or not named) else "")
+        # a note naming what the file shows makes a claim about the file: cite it (round 2)
+        return Sourced.unknown(
+            note="; ".join(filter(None, (said, cut_said, _prior_note(prior)))),
+            source_ref=cite if prior or named or cut_said else None), None
+    if cut:
+        # A LIST CUT SHORT IS SAID, AND ITS LENGTH IS NOT A COUNT (audit RBC-D3, 2026-11-10): a file
+        # cut to 40% of its bytes read 96 of ORCL's 252 rows as the whole list, PRESENT, no note
+        return (Sourced.present(
+            _roster(parsed), source_ref=cite,
+            note="; ".join(filter(None, (_cut_note(wb.path.name, len(parsed)),
+                                         _prior_note(prior))))), None)
+    return (Sourced.present(_roster(parsed), source_ref=cite,
                             note=_prior_note(prior) or None), len(parsed))
+
+
+def _ends_with_closing_line(raw: str) -> bool:
+    """Does the view's text end with CIQ's closing line (:data:`_REL_CLOSING`)?"""
+    last = next((ln.strip().rstrip("|").strip() for ln in reversed(raw.splitlines())
+                 if ln.strip().rstrip("|").strip()), "")
+    return last == _REL_CLOSING
+
+
+def _cut_note(name: str, n: int) -> str:
+    return (f"{name} does not end with CIQ's closing line ('{_REL_CLOSING}'), so the list may be "
+            f"cut short: {n} row(s) read — re-export it")
+
+
+def _unread_view(raw: str, name: str, *, closing_known: bool) -> str | None:
+    """Why a view gave no rows and no 'there are no …' sentence, in what the view shows (audit
+    RBC-D5, 2026-11-10). Every such view read "could not parse", which blamed this reader for CIQ's
+    own empty answer: a header with no rows, a "No Data Available" body, an "Entitlement Needed"
+    one. None for a file showing none of them — the caller's "could not parse" stands.
+
+    HEADER-ONLY MEANS NOTHING BUT STRUCTURE FOLLOWS THE HEADER: a line after it that is not a
+    section head, a repeated header or the closing line is content this reader did not read, and
+    calling that view empty would hide a parse failure. Where the closing line is known (RTF) and
+    absent, the view may be cut short after its header, and is said to be."""
+    for marker, meaning in _REL_NO_TABLE:
+        if marker in raw:
+            return f"{name} reads '{marker}' — {meaning}, not a parse failure; re-export it"
+    lines = [ln.strip().rstrip("|").strip() for ln in raw.splitlines()]
+    hdr = next((i for i, ln in enumerate(lines) if _is_rel_header(ln)), None)
+    if hdr is None:
+        return None
+    rest = [ln for ln in lines[hdr + 1:]
+            if ln and ln != lines[hdr] and not _REL_SECTION.match(ln)]
+    if rest == [_REL_CLOSING] or (not rest and not closing_known):
+        return (f"the Business-Relationships table in {name} has its header and no rows, and "
+                "does not say it has none")
+    if not rest:
+        return (f"the Business-Relationships table in {name} has its header and no rows, and "
+                f"does not end with CIQ's closing line ('{_REL_CLOSING}'), so it may be cut short "
+                "— re-export it")
+    return None
 
 
 def _roster(rows: list[str]) -> str:

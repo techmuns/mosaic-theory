@@ -462,10 +462,15 @@ def _rtf_table_row(cells: list[str]) -> str:
     return _RTF_ROW.format("\\cell ".join(cells))
 
 
+#: CIQ's closing line, the last row of every Business-Relationships view.
+CLOSING_ROW = _rtf_table_row(["*denotes proprietary relationship"])
+
+
 def customers_rtf() -> str:
     """The Customers view: a pipe-rendered table under its 'Customer Name | Relationship Type'
-    header, with one 'Business Description:' row the parser must skip. Every counterparty is
-    invented."""
+    header, with one 'Business Description:' row the parser must skip, ending with CIQ's closing
+    line as every real export on disk does (72 of 72, 2026-11-11; audit RBC-D3 reads a view
+    without it as possibly cut short). Every counterparty is invented."""
     return (_RTF_HEAD
             + _rtf_par(f"{ISSUER} ({EXCHANGE}:{TICKER}) > Business Relationships > Customers")
             + _rtf_par("Synthetic fixture: every company named below is invented.")
@@ -477,6 +482,7 @@ def customers_rtf() -> str:
                               "Press Release"])
             + _rtf_table_row(["Tamsworth Kettle Works", "Customer", "Industrial Machinery",
                               "Company Filing"])
+            + CLOSING_ROW
             + "}\n")
 
 

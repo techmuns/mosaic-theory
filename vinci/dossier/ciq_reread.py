@@ -78,7 +78,11 @@ def _customers(doc: dict[str, Any], bundle: CiqBundle) -> tuple[str, str, int | 
             "the Customers export on disk is not the one this page was built from: the roster "
             "re-read from it differs from the stored one — re-assemble the name instead"), None
     if listed is None:
-        raise RuntimeError(f"{doc['ticker']}: a PRESENT roster came back with no count")
+        # A PRESENT roster withholds its count when its RTF view may be cut short (audit RBC-D3):
+        # a cut list's length is not the company's count, so there is none to write. Refused, not
+        # raised, so one cut export does not stop a sweep of every page; the note says why.
+        return ("refused", "the roster re-read from disk carries no count — "
+                f"{fresh.note or 'no reason given'}", None)
     if conc.get("customers_listed") == listed:
         return "unchanged", f"already carries customers_listed={listed}", None
     return "write", f"customers_listed={listed} (the stored roster re-read byte for byte)", listed

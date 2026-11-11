@@ -80,8 +80,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "a7d76d9e355c"
-PINNED_AT = "2026-11-10.loud-with-the-right-cause"
+PINNED_TABLE = "89aa371b51a1"
+PINNED_AT = "2026-11-10.relationship-view-edges"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -90,10 +90,10 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/assemble.py": "7aa870cc9eaf",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "059ec4f12b76",
-    "vinci/dossier/ciq.py": "b2a8dbc119f5",
+    "vinci/dossier/ciq.py": "9f7e31e4a048",
     "vinci/dossier/ciq_balance.py": "dfecb79caca4",
-    "vinci/dossier/ciq_reread.py": "4ebcadca0987",
-    "vinci/dossier/ciq_sheets.py": "d15ec1330476",
+    "vinci/dossier/ciq_reread.py": "eed0a6fb4773",
+    "vinci/dossier/ciq_sheets.py": "a216c3ce09d1",
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "7873fe4db242",
