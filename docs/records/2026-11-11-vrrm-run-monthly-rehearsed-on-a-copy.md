@@ -13,6 +13,16 @@ superseded-by:
   2026-11-11) ran once, from 13:00:44Z to 13:26:18Z, in a detached worktree of `main` at
   `2637e91b` (#1008, the GOOGL void). It exited 0 and printed `spread=None pending=4`. Step 4
   (`frontend/build.py`) then exited 0 and changed nothing under `frontend/`.
+- **It ran 46 seconds after a hold it had not seen. It is a first rehearsal, not the one row 38
+  asks for.**
+  - Coordinator A asked on #1004 at 12:59:58Z to hold the rehearsal until a monitor PR merges.
+    That PR makes `vinci monitor` apply a void by the session a day is filed under.
+  - This session had last read #1004 at about 12:50Z, and the run started at 13:00:44Z.
+  - Scoring keys a void on the run's `as_of` (`schemas.ledger.voids_by_decision`), and
+    `run_monthly` reads no monitor day (only `data/monitor/benchmark_assignments.json`). So this
+    run's book was the ledger as of 2026-11-11, with GOOGL out from its ruling date.
+  - The rehearsal is run again after A posts on #1004 that the void-keying PR and the 2026-11-11
+    monitor day have merged. Its record follows this one.
 - **What it ran on: copies only.**
   - The store is an APFS clone (`cp -c`) of `/Users/work/Documents/GitHub/mosaic-theory/data/vinci.db`,
     taken at 12:59:20Z. It was sha256 `78e2239147045795a10ca27f48cd0057f54e2d624eddb20b599420622f77c4a1`,
