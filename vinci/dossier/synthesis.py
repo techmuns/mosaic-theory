@@ -942,13 +942,14 @@ _STORAGE: dict[tuple[str, str], tuple[float, ...]] = {
     ("duration", "duration"): (1.0,), ("duration", "unknown"): (1.0,),
     ("duration", "plain"): (1.0,), ("duration", "count"): (1.0,),
 }
-#: approximation words before a figure — it may then sit 5% from the cell
+#: approximation words before a figure — it may sit as far as its rounding says (`_hedged_half`)
 _APPROX_BEFORE = re.compile(r"(?:~|≈|\babout|\broughly|\bnearly|\bnear|\bapproximately|\baround"
                             r"|\balmost|\bclose\s+to|\bsome)\s*\$?$", re.IGNORECASE)
-APPROX_WIDTH = 0.05
 #: how far past a BOUND the value it restates may lie: "more than $58B" is a $58.x fact, never any
 #: larger number the fact happens to state
 BOUND_WIDTH = 0.10
+#: the widest a money amount written with a scale word may sit from its cell (`_magnitude_meets`)
+MONEY_WIDTH = 0.05
 #: how many times more precise than the fact's own text a claim's figure may be: one digit
 PRECISION_GAIN = 10.0
 _AT_LEAST_BEFORE = re.compile(r"(?:\bover|\bmore\s+than|\babove|\bexceeding|\bin\s+excess\s+of"
@@ -1489,16 +1490,17 @@ def _cells(o: Any, name: str = "", *, row: str | None = None,
 # --- the match ---------------------------------------------------------------------------------
 
 def _hedged_half(f: _ClaimFigure) -> float:
-    """How far a HEDGED figure ("about", "~") may sit from its cell. A hedge widens only a figure
-    written ROUND: "nearly 30%" or "roughly $40M" (a whole number ending in 0 or 5) by 5%, "about
-    $1.4B" (a decimal) by one digit coarser, at most 5%. "~44%" is written to the unit — its hedge
-    adds nothing, or it would trace to any 43 its fact states (UBER's peer-gap point, measured on
-    the freeze pages)."""
-    a = abs(f.w.value)
+    """How far a HEDGED figure ("about", "~") may sit from its cell: as far as its trailing ZEROS
+    say it was rounded. "nearly 30%" is a tens figure (±5), "~$1,500M" a hundreds one (±50).
+    A figure written to its last digit — "~44%", "~$550M", "~9.5-year", "about $1.4B" — is
+    rounded there already, so its hedge adds nothing: measured on the stored panel draws, a wider
+    hedge traced UBER's "~44%" to an unrelated 43, CNXC's "~$550M" to a $575.0M and a "~9.5-year"
+    span to a 9.2."""
     digits = f"{abs(f.n):.10g}"
-    if "." in digits:
-        return min(APPROX_WIDTH * a, 10 * f.w.half)
-    return APPROX_WIDTH * a if digits[-1] in "05" else f.w.half
+    if "." in digits or "e" in digits:
+        return f.w.half
+    zeros = len(digits) - len(digits.rstrip("0"))
+    return f.w.half * 10.0 ** zeros
 
 
 def _magnitude_meets(f: _ClaimFigure, c: _Cell, *, gain: float = 0.0) -> bool:
@@ -1508,12 +1510,26 @@ def _magnitude_meets(f: _ClaimFigure, c: _Cell, *, gain: float = 0.0) -> bool:
     gain = gain or PRECISION_GAIN
     if f.unit == "rank" and c.kind == "fraction":
         return False   # a rank meets a stored percentile only as its rank (`_trace`), never face
+    if (f.unit == "plain" and not f.scaled and float(f.n).is_integer() and abs(f.n) < 10
+            and (c.kind in ("x", "pct", "pct_like", "fraction")
+                 or not float(c.value).is_integer())):
+        # a bare single digit is a count or a score ("4/4/4/4"), so it meets only a whole number,
+        # never a multiple, a percent or a 3.4 (measured: SMPL's and BURL's credit scores met
+        # their leverage multiples at ±0.5)
+        return False
+    if c.kind != _kind_of_written(f):
+        gain = 1.0     # a more precise figure than its text cell only in the text's own unit
     # an ordinal that is no percentile rank ("its 2nd-largest customer") is read as a count
     factors = _STORAGE.get(("plain" if f.unit == "rank" else f.unit, c.kind), ())
     a = abs(f.w.value)
     half = f.w.half
     if f.approx:
         half = max(half, _hedged_half(f))
+    if f.unit == "money" and f.scaled:
+        # a ONE-DIGIT amount of millions or billions ("$5B", "~$50 billion") is ±10% at its own
+        # precision, wide enough to meet an unrelated cell of a large page: measured on the stored
+        # panel draws, MCK's "$5B" met a $4.63B and LLY's "~$50 billion" a $46.5B. Held to 5%.
+        half = min(half, MONEY_WIDTH * a)
     lo, hi = a - half, a + half
     if f.bound == "at_least":
         hi = a + max(half, BOUND_WIDTH * a)
