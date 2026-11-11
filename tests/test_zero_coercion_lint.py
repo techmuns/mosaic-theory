@@ -56,6 +56,8 @@ ALLOWED: tuple[tuple[str, str, str, str], ...] = (
     ("vinci/dossier/ciq_sheets.py", "peer_grid", "r.market_cap or 0.0", SORT_KEY),
     ("vinci/dossier/ciq_sheets.py", "_consensus_net_debt_check", "td or 0.0", SCALE),
     ("vinci/dossier/ciq_sheets.py", "pe_eps_basis", "eps.get(k, {}).get(p) or 0", GATE),
+    ("vinci/dossier/ciq_sheets.py", "_est_period_key", "m.group(1) or 0",
+     SORT_KEY + " — an 'FY' label has no quarter group, and 0 orders a year by itself"),
     ("vinci/dossier/ebitda_recon.py", "reconcile", "r.filing_ebitda or 0.0", NARROWED),
     ("vinci/dossier/lease_basis.py", "observations",
      "_near(fin_edgar, d, _FINANCE_NEAR_DAYS) or 0.0",
