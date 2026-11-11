@@ -190,8 +190,9 @@ def test_every_reader_that_ranks_a_pe_reads_eps_in_the_filers_own_currency(
     on today's filings, a read at an earlier date takes a translation for a dollar figure."""
     fn = next(n for n in ast.walk(ast.parse((ROOT / path).read_text()))
               if isinstance(n, ast.FunctionDef) and n.name == function)
+    # `served_series` is the same read, day by day (TeamNostra fix request 2, RE1-D10)
     reads = [c for c in ast.walk(fn) if isinstance(c, ast.Call)
-             and getattr(c.func, "id", None) == "extract_points"
+             and getattr(c.func, "id", None) in ("extract_points", "served_series")
              and any(isinstance(a, ast.Constant) and a.value == "eps_diluted" for a in c.args)]
     assert reads, f"{function} no longer reads eps_diluted"
     for c in reads:

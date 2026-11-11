@@ -14,8 +14,9 @@ from __future__ import annotations
 import enum
 from collections.abc import Iterable, Mapping
 from datetime import date, datetime
+from typing import Any
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_serializer, model_validator
 
 # The non-decision events a ledger row may record, each an APPENDED row, never an edit: a close,
 # and a correction of a decision's entry (RF-D7, operator ruling 2026-11-09).
@@ -218,6 +219,12 @@ class LedgerEntry(BaseModel, frozen=True):
     machine_proposal: Verdict | None = None
     machine_lean: str | None = None  # the lean label the proposal derived from (None: no read)
     proposal_assembled_at: datetime | None = None  # WHICH dossier artifact proposed (its stamp)
+    # THE SPLIT THE SEALED PROPOSAL STANDS ON (the vote rule's R4, 2026-11-11): the page's own
+    # build's tally (`page`) and the ten-draw confirmation `log-verdict` draws before this row is
+    # written (`confirmation`, C(iv)), each as counts with R1's bar and state — never a rate. None
+    # == a row logged before the rule, which is every committed row; omitted from the JSON while
+    # None, so those rows re-serialize byte for byte.
+    machine_tally: dict[str, Any] | None = None
     disposition: Disposition | None = None  # confirm/override/no-proposal; None == pre-pivot
     # Anti-anchoring provenance (2026-07-13): the brief HIDES the proposal so the human decides
     # blind; this records whether the human peeked at it (via ``--show-proposal``) BEFORE logging.
@@ -254,6 +261,15 @@ class LedgerEntry(BaseModel, frozen=True):
     # its sealed price forever; every reader of returns reads the corrected one (`corrected`), and
     # the horizon runs from the corrected date. Like a close, it is not a position.
     corrects_entry_id: str | None = None     # CORRECTION only — the decision's entry_id
+
+    @model_serializer(mode="wrap")
+    def _omit_unset_tally(self, handler: Any) -> dict[str, Any]:
+        """``machine_tally`` is written only when set, so a row logged before the vote rule
+        re-serializes byte for byte (the store re-validates every row it appends)."""
+        data: dict[str, Any] = handler(self)
+        if data.get("machine_tally") is None:
+            data.pop("machine_tally", None)
+        return data
 
     @field_validator("origin")
     @classmethod

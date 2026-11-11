@@ -240,7 +240,7 @@ def test_a_reaction_filed_as_margins_is_refiled_and_cannot_carry_transmission(
                blocks=[("paragraph", "Shares of chip suppliers fell 18% in February.")])
     x = extraction(
         [claim("c1", "b001", "Shares of chip suppliers fell 18% in February", "Chip shares -18%",
-               value=18, value_text="18%", unit="%", period="February 2026")],
+               value=-18, value_text="18%", unit="%", period="February 2026")],  # RG-D21: -18
         [hyp("h1", "Chip suppliers sold off", node="ai_infrastructure.compute_semis",
              mechanism="valuation_dislocation", supporting=["c1"], dislocation=["c1"],
              step_list=[{"step": "margins", "text": "Shares of chip suppliers fell 18%",

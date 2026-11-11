@@ -292,3 +292,105 @@ def test_a_row_read_back_spools_to_the_passage_it_came_from(tmp_path: Path) -> N
         "operating_drivers": wod.model_copy(update={"rows": back})})})
     _, second = de.spool_dossier(again, spool)
     assert second.written == 0 and second.already == first.written + first.already
+
+
+# --- the vote rule's confirmation reads the words back (operator, 2026-11-11) ---------------------
+# "Read them back from the store (Recommended)": C(iv)'s ten draws (`confirmation.confirm`, inside
+# `log-verdict`) are drawn on the committed page, which no longer holds a filed row's words.
+
+class _Capturing:
+    """Records every request the synthesis sends and answers each with a scripted draw, so no call
+    is made and none is paid."""
+
+    model = "capturing-model"
+
+    def __init__(self) -> None:
+        self.requests: list[str] = []
+
+    def extract(self, *, system: str, user: str, tool: dict[str, Any],
+                cache: bool = False) -> dict[str, Any]:
+        self.requests.append(json.dumps({"system": system, "user": user, "tool": tool},
+                                        sort_keys=True, default=str))
+        return {"evidence_balance": "mixed — two-sided and unresolved.",
+                "bull_points": [{"claim": "c", "source_ref": "r"}],
+                "bear_points": [{"claim": "c", "source_ref": "r"}], "twin_reference_cases": [],
+                "decisive_question": {"question": "q?", "evidence_for": [],
+                                      "evidence_against": []},
+                "key_unknowns": ["u"]}
+
+
+def _confirmable(tmp_path: Path) -> tuple[dict[str, Any], dict[str, Any], Path]:
+    """TECX's committed page holding the invented transcript rows. Its BUILD record lists no
+    transcript, so on an empty CIQ folder the confirmation verifies its inputs. Returned: the page
+    as the pass holds it just before the words come off (facts and locators given, words kept),
+    the page the pass wrote, and the spool it filed the words in."""
+    jp = _page_file(tmp_path, "TECX")
+    ciq = tmp_path / "ciq"
+    ciq.mkdir()
+    held, _ = dp.prepare(ds.Dossier.model_validate_json(jp.read_text()), ciq)
+    spool_dir = tmp_path / "spool"
+    spool_dir.mkdir()
+    assert dp.run(jp, ciq, spool=de.EvidenceSpool(spool_dir), dry_run=False).status == "written"
+    after = json.loads(jp.read_text())
+    assert _tx_rows(after) and not any(r.get("verbatim") for r in _tx_rows(after))
+    before = {**after, "mechanical": json.loads(held.mechanical.model_dump_json())}
+    assert all(r.get("verbatim") for r in _tx_rows(before))
+    return before, after, spool_dir
+
+
+def test_the_confirmation_reads_the_words_back_and_sends_the_request_it_sent_before(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """(+) On the stripped page, with the store configured, every one of the ten requests is
+    byte-identical to the confirmation's request on the same page before its words came off, and
+    the two readers agree on the re-filled layer. (−) Drawn on the page as it stands, without the
+    read-back, the request differs: it would hold the rows' figures, not their words."""
+    from vinci.dossier import confirmation as cf
+    from vinci.evals.capture_child import pre_synthesis_mech
+
+    before, after, spool_dir = _confirmable(tmp_path)
+    ciq = tmp_path / "ciq"
+    monkeypatch.delenv(de.SPOOL_ENV, raising=False)
+    words = _Capturing()
+    cf.confirm(before, llm=words, ciq_root=ciq, record=tmp_path / "before.jsonl")
+    monkeypatch.setenv(de.SPOOL_ENV, str(spool_dir))
+    refilled = _Capturing()
+    cf.confirm(after, llm=refilled, ciq_root=ciq, record=tmp_path / "after.jsonl")
+    assert len(words.requests) == len(refilled.requests) == cf.CONFIRM_DRAWS
+    assert refilled.requests == words.requests
+    layer = cf.with_words(cf.layer_as_synthesized(after), "TECX")
+    refilled_page = {**after, "mechanical": json.loads(layer.model_dump_json())}
+    assert layer.model_dump_json() == pre_synthesis_mech(refilled_page).model_dump_json()
+    # the rows read back are the rows before the words came off, but for the hash of the stated
+    # value that filing the claim adds to each locator
+    def unfiled(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        return [{**r, "locator": {**r["locator"], "value_sha256": None}} if r.get("locator")
+                else r for r in rows]
+    assert unfiled(_tx_rows(refilled_page)) == _tx_rows(before)
+    # the same page drawn without the read-back
+    monkeypatch.setattr(cf, "with_words", lambda mech, ticker, get=None: mech)
+    bare = _Capturing()
+    cf.confirm(after, llm=bare, ciq_root=ciq, record=tmp_path / "bare.jsonl")
+    assert bare.requests[0] != words.requests[0]
+
+
+def test_a_stripped_page_is_not_confirmed_without_its_words(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """(−) No store configured, or a store missing a row's records: refused before any draw and
+    not recorded, so the page's one confirmation is not used up. (+) A page that holds its words
+    needs no store."""
+    from vinci.dossier import confirmation as cf
+
+    before, after, _ = _confirmable(tmp_path)
+    ciq, record = tmp_path / "ciq", tmp_path / "c.jsonl"
+    monkeypatch.delenv(de.SPOOL_ENV, raising=False)
+    for spool in (None, tmp_path / "empty-spool"):
+        if spool is not None:
+            spool.mkdir()
+            monkeypatch.setenv(de.SPOOL_ENV, str(spool))
+        llm = _Capturing()
+        with pytest.raises(cf.ConfirmationError, match="VINCI_EVIDENCE_SPOOL"):
+            cf.confirm(after, llm=llm, ciq_root=ciq, record=record)
+        assert llm.requests == [] and not record.exists()
+    monkeypatch.delenv(de.SPOOL_ENV)
+    assert cf.with_words(cf.layer_as_synthesized(before), "TECX") == \
+        cf.layer_as_synthesized(before)

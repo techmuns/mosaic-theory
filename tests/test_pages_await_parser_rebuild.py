@@ -56,8 +56,10 @@ def _awaits(defect: str) -> pytest.MarkDecorator:
         f"{defect} — fixed in code; the committed page waits for the combined artifact rebuild"))
 
 
-@_awaits("audit E2-D5: FUBO's Q1 2026 adjusted EBITDA is the trailing-twelve-month $77.9M")
 def test_fubo_q1_2026_adjusted_ebitda_is_the_quarters_own() -> None:
+    """Audit E2-D5 — landed on FUBO's page, its releases re-read at $0 on 2026-11-11
+    (`refresh.release_figures_transform`; no re-export needed). It had read the
+    trailing-twelve-month $77.9M as the quarter's."""
     rows = _rows(_release("FUBO", "0001493152-26-004826"))
     assert ("adjusted ebitda", "Q1 2026", 41.4) in rows
     assert not any(v == 77.9 for _m, _p, v in rows)

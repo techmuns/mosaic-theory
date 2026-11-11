@@ -550,7 +550,12 @@
           "events": [
             "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On May 6, 2026, FuboTV Inc. announced its financial results for the quarter ended March 31, 2026. The full text of the shareholder letter and press release issued in connection with the announcement are attached as Exhibits 99.1 and 99.2, respectively, to this Current Report on Form 8-K. The information in this"
           ],
-          "drivers": null,
+          "drivers": {
+            "value": "adj EBITDA Q2 2026 $37.7M (vs $1.4M Q2 2025)",
+            "source_ref": "8-K 0001493152-26-021406 EX-99.1",
+            "status": "present",
+            "note": null
+          },
           "explanatory": true
         },
         {
@@ -570,7 +575,12 @@
           "events": [
             "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On August 5, 2026, FuboTV Inc. announced its financial results for the quarter ended June 30, 2026. The full text of the shareholder letter and press release issued in connection with the announcement are attached as Exhibits 99.1 and 99.2, respectively, to this Current Report on Form 8-K. The information in this"
           ],
-          "drivers": null,
+          "drivers": {
+            "value": "adj EBITDA Q3 2026 $19.1M (vs $31.0M Q3 2025)",
+            "source_ref": "8-K 0001493152-26-036098 EX-99.1",
+            "status": "present",
+            "note": null
+          },
           "explanatory": true
         }
       ],
@@ -5388,6 +5398,22 @@
           "guidance": [],
           "reconciliation": [
             {
+              "metric": "adjusted ebitda",
+              "period": "Q3 2026",
+              "value": 19.1,
+              "change": null,
+              "verbatim": "Adjusted EBITDA 2 of $19.1 million",
+              "source_ref": "8-K 0001493152-26-036098 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "Q3 2025",
+              "value": 31.0,
+              "change": null,
+              "verbatim": "Adjusted EBITDA 2 of $31.0 million",
+              "source_ref": "8-K 0001493152-26-036098 EX-99.1"
+            },
+            {
               "metric": "revenue",
               "period": "Q3 2026",
               "value": 1482.0,
@@ -5410,6 +5436,22 @@
           "guidance": [],
           "reconciliation": [
             {
+              "metric": "adjusted ebitda",
+              "period": "Q2 2026",
+              "value": 37.7,
+              "change": null,
+              "verbatim": "From a profitability standpoint, we delivered a Net Loss of $6.2 million and Adjusted EBITDA 1 of $37.7 million",
+              "source_ref": "8-K 0001493152-26-021406 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "Q2 2025",
+              "value": 1.4,
+              "change": null,
+              "verbatim": "Adjusted EBITDA 1 of $1.4 million",
+              "source_ref": "8-K 0001493152-26-021406 EX-99.1"
+            },
+            {
               "metric": "revenue",
               "period": "Q2 2026",
               "value": 1574.0,
@@ -5422,6 +5464,7 @@
           "event_impacts": [],
           "qa_flags": [
             "no anchored pattern matched — guidance/outlook: 8-K 0001493152-26-021406 EX-99.1",
+            "Reconciliation figure refused — joined by 'and' to a compared amount — its period is not stated: “Adjusted EBITDA 1 of $1.4 million” (8-K 0001493152-26-021406 EX-99.1)",
             "Reconciliation figure refused — revenue qualified by 'america' — a sub-line, not the company's total: “We delivered North America revenue of $1.57 billion” (8-K 0001493152-26-021406 EX-99.1)",
             "Reconciliation figure refused — revenue qualified by 'forma' — a sub-line, not the company's total: “Revenue of $1.564 billion” (8-K 0001493152-26-021406 EX-99.1)",
             "Reconciliation figure refused — revenue qualified by 'advertising' — a sub-line, not the company's total: “revenue of $101.6 million” (8-K 0001493152-26-021406 EX-99.1)"
@@ -5467,9 +5510,9 @@
             {
               "metric": "adjusted ebitda",
               "period": "Q1 2026",
-              "value": 77.9,
+              "value": 41.4,
               "change": null,
-              "verbatim": "Adjusted EBITDA of $77.9 million",
+              "verbatim": "Adjusted EBITDA 2 of $41.4 million",
               "source_ref": "8-K 0001493152-26-004826 EX-99.1"
             },
             {
@@ -5485,7 +5528,9 @@
           "event_impacts": [],
           "qa_flags": [
             "no anchored pattern matched — guidance/outlook: 8-K 0001493152-26-004826 EX-99.1",
+            "Reconciliation figure refused — an adjusted ebitda figure skipped — the release does not place it in one period: “Adjusted EBITDA of $77.9 million” (8-K 0001493152-26-004826 EX-99.1)",
             "Reconciliation figure refused — revenue qualified by 'forma' — a sub-line, not the company's total: “Revenue of $1.683 billion” (8-K 0001493152-26-004826 EX-99.1)",
+            "Reconciliation figure refused — a revenue figure skipped — the release does not place it in one period: “● Over the trailing twelve months: ○ Reported Revenue of $4.9 billion” (8-K 0001493152-26-004826 EX-99.1)",
             "Reconciliation figure refused — revenue qualified by 'forma' — a sub-line, not the company's total: “Revenue of $6.2 billion” (8-K 0001493152-26-004826 EX-99.1)"
           ]
         }
@@ -9999,7 +10044,16 @@
       ]
     },
     {
-      "date": "2026-11-10",
+      "date": "2026-11-11",
+      "extraction_version": "2026-11-11.guides-as-stated",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.drawdown_cause",
+        "mechanical.primary_source"
+      ]
+    },
+    {
+      "date": "2026-11-11",
       "extraction_version": "2026-11-10.driver-text-filed",
       "writer": "driver-facts-pass",
       "layers": [

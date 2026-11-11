@@ -45,7 +45,7 @@ from vinci.dossier.schemas import (
     Synthesis,
     TwinCase,
 )
-from vinci.dossier.verdict import split_lean
+from vinci.dossier.verdict import COMMITTED_LEANS, GATE_RULE, draw_gate, lean_key, split_lean
 from vinci.graph.llm import LlmClient, LlmError
 from vinci.sleeves import BY_KEY, DEFAULT_SLEEVE, Sleeve, require_sleeve
 from vinci.verbatim import comparison_key
@@ -1897,7 +1897,8 @@ def synthesize(
             continue
         decoded = cast(dict[str, Any], _decode_escapes(raw))
         parts = split_lean(str(decoded.get("evidence_balance") or ""))
-        usable.append(((parts[0].strip().lower() if parts else ""), decoded))
+        # ONE KEY with the mapping (`verdict.lean_key`): two spellings of one lean are one lean
+        usable.append(((lean_key(parts[0]) if parts else ""), decoded))
     misses = _cache_misses(sends) if attempted > 1 else []
     if misses:
         log_parts += ["", "=== PROMPT CACHE MISSED ===", *misses]
@@ -1924,8 +1925,14 @@ def synthesize(
     # single-draw build would hand the gate a measured-looking pass that was never measured, which
     # is the exact false reassurance this whole mechanism exists to remove. Below two draws the
     # field stays None and the page prints nothing.
+    # THE VOTE RULE (R1, R3, C(iii); `verdict.draw_gate`) over the draws ATTEMPTED: a failed draw
+    # is dissent, so 1 of 5 completed is 1 of 5 — `unanimous` still records that the completed
+    # draws agreed, and is what a page written before the rule decides by.
+    gate = draw_gate([label for label, _ in usable], attempted)
     agreement = (DrawAgreement(attempted=attempted, completed=len(usable), labels=dict(tally),
-                               unanimous=len(tally) == 1) if attempted > 1 else None)
+                               unanimous=len(tally) == 1, modal_count=gate.count,
+                               required=gate.required, passes=gate.passes, rule=GATE_RULE)
+                 if attempted > 1 else None)
     if agreement is not None:
         log_parts += ["", "=== DRAW AGREEMENT ===",
                       json.dumps(agreement.model_dump(), indent=2, sort_keys=True)]
@@ -1934,13 +1941,22 @@ def synthesize(
     flags += parse_notes
     if synth is not None and agreement is not None:
         synth = synth.model_copy(update={"draw_agreement": agreement})
-        if not agreement.unanimous:
+        if not agreement.unanimous and not gate.passes:
             # SAID OUT LOUD ON THE PAGE, not only in the log: the reader is entitled to know the
             # read was not reproduced, because the proposal it would have carried is withheld.
             flags.append(
                 f"synthesis draws DISAGREED — {agreement.completed} draw(s) of {attempted} gave "
                 f"{dict(tally)}; the machine proposal is withheld and the kept read is the first "
                 f"draw carrying the modal label (a tally of this build, never a rate)")
+        elif (not gate.passes and gate.lean in COMMITTED_LEANS
+              and agreement.completed < attempted):
+            # the completed draws agreed, but R1 reads the draws ATTEMPTED (R3): a failed draw is
+            # dissent, never a vote the build did not take
+            flags.append(
+                f"synthesis draws: only {gate.count} of {attempted} draws carry {gate.lean!r} "
+                f"({attempted - agreement.completed} failed, counted as dissent) — under the "
+                f"{gate.required}-of-{attempted} rule the machine proposal is withheld (a tally "
+                f"of this build, never a rate)")
     return synth, flags, "\n".join(log_parts)
 
 
