@@ -34,13 +34,44 @@ changed. Bumping the version without saying what it names is not expressible.
 WHAT THIS DOES NOT DO. Nothing here notices that extraction behaviour changed — a version is
 declared by hand. Queue item 26b does the noticing, as a TEST (2026-10-29, audit A-D14):
 `tests/test_extraction_version_drift.py` hashes each declared extraction module and reds when one
-moved while its pin did not — the PR that moves it says, in that file, whether output changed
-(append a row here) or not. Without it the stamp stood still across 45 commits.
+moved while its pin did not — the PR that moves it says, in its pin, whether output changed (the
+entry it added) or not (`refactor`). Without it the stamp stood still across 45 commits.
+
+ONE FILE PER VINTAGE, AND CURRENT IS THE HEAD — NEVER THE LAST LINE (2026-11-11, fix request 2).
+Until then every vintage was a row appended to the END of one tuple here and of its hand-kept web
+twin, so every open PR that changed output went DIRTY on the same lines the moment another merged,
+and each re-sync cost a 30–80 minute re-gate. The rows below are now FROZEN (`LEGACY_VERSIONS`,
+never appended to again); each new vintage is ONE FILE, ``extraction_versions/<id>.json``:
+
+  * ``id`` — ``<YYYY-MM-DD>.<slug>``: the day it was written and a lowercase kebab slug holding a
+    letter. Unique WITHOUT a counter — a ``.N`` suffix collides when two PRs pick the same next
+    number, so a counter slug is refused. Two PRs that pick the same id write the same file, which
+    git refuses to merge — a collision is a conflict, never a silent duplicate.
+  * ``follows`` — the vintage(s) current on the main the PR was cut from (``new`` fills it in).
+  * ``names`` — what the vintage names, exactly as a row did.
+
+ORDER IS ANCESTRY, NOT SORT. A vintage INCLUDES every vintage it follows, transitively; each legacy
+row follows the row above it. CURRENT is the set of HEADS — vintages nothing follows: one head is
+the stamp (its id, exactly as before); two or more — PRs cut from the same main and merged in either
+order — stamp as their ids joined by ``+`` in id order, a DECLARED stamp whose detail names every
+part. The next vintage, written on that main, follows every head and the join closes. Sorting was
+measured and refused: replayed in real merge order, 47 of the table's 78 appends (at main
+`173b4818`) would have left a date-sorted "current" where it stood — the stamp standing still
+while the code moved, the defect this module exists to end. Ancestry also needs no knowledge of
+merge order, which is what lets two entry files merge in either order with no textual conflict.
+
+    python -m vinci.dossier.extraction_version new <slug> --names "<what it names>"
 """
 
 from __future__ import annotations
 
+import argparse
+import json
+import re
+import sys
 from collections.abc import Sequence
+from datetime import date
+from pathlib import Path
 from typing import Any
 
 # APPEND-ONLY — with ONE recorded exception, 2026-08-17. The `2026-08-16.1` row was AMENDED, not
@@ -55,7 +86,11 @@ from typing import Any
 # APPEND-ONLY. One row per extraction vintage: (version, what this version NAMES). The LAST row is
 # current. A new row is written when extraction OUTPUT changes — not when the code is merely
 # refactored — and writing one forces you to say what changed, which is the point of the pairing.
-EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
+# FROZEN 2026-11-11: no row is added here again — a new vintage is a file in extraction_versions/
+# (the module docstring). Each row below follows the one above it; the last is followed by the
+# first entry file. `frontend/build.py` reads this literal with `ast` (it may not import vinci), so
+# it stays ONE plain tuple of string pairs.
+LEGACY_VERSIONS: tuple[tuple[str, str], ...] = (
     (
         "2026-07-28.1",
         "unusual-items surfacing in the financial summary (#238) · multiples read from the "
@@ -677,7 +712,7 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "'$X million due within the next 12 months' form passes the same debt and lease filters as "
         "the widened ones, and the tranche and commitment readers read billions. On the 27 "
         "committed pages no filing field moves; outside them, Helmerich & Payne's term-loan $6.9M "
-        "and Archer's lease $19.1M, both read as walls, now read not_stated"
+        "and Archer's lease $19.1M, both read as walls, now read not_stated",
     ),
     (
         "2026-11-10.release-actuals-never-silent",
@@ -705,24 +740,289 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "move, both from doubt to none, both alleviated"
     ),
     (
-        "2026-11-10.period-order-and-duration",
-        "period columns are read in time order, and a column's stated duration is read "
-        "(TeamNostra fix request 2, RA-D5, V1-O2): a Financials header's period columns come in"
-        " time order within each fiscal calendar, the calendars by their latest end "
-        "(`ciq_sheets.period_columns`), so growth, the estimate base and a trajectory no longer"
-        " follow the sheet's column order; the Estimates current and forward years and the next"
-        " quarters are read by the year and quarter each label states, and the listing's "
-        "'Current' column by its header; a '6 months' or '9 months' column is a year-to-date "
-        "period ('6M-26'), never a quarter, and no QoQ, YoY or growth spans it. On the 36 "
-        "export folders on disk no read moves",
+        "2026-11-10.marker-residuals",
+        "a CIQ marker is a stated gap, never an older value or a dropped row (fix request 2, "
+        "order 3: RA-D3, RA-D8, RA-D13, RBC-D6, RA-D11): a dated Guidance cell that does not "
+        "read is the latest guide, read as unread with its cell named, and no older guide is "
+        "served or checked in its place; a Segments block whose rows no longer sum to their "
+        "total within 0.5% because a row is marked states no mix and no segment count, naming "
+        "the row; an empty `consensus_levels` says why (`consensus_levels_note`, not sent to "
+        "the synthesis); the spreadsheet Customers export is read by the RTF route's reader, "
+        "so its prior section, a repeated header, a Supplier Name column and CIQ's own "
+        "'there are no' are read as they are there; a non-zero LibreOffice exit is a call "
+        "that did not read, left out and named. No figure moves: no export on disk on "
+        "2026-11-10 holds any of these shapes; ORKA's and TECX's pages, which carry no "
+        "consensus levels, gain the note",
+    ),
+    (
+        "2026-11-10.maturity-subject-and-unread-body",
+        "a maturity date belongs to its sentence's subject, an option to extend is not a "
+        "maturity, a past 'matured' is not current, and an unread 8-K body is not a clean scan "
+        "(TeamNostra fix request 2, RE2-D11, D12, D14): `debt_maturities` skips a noun inside a "
+        "comma-set aside ('which was entered into alongside the Term Loan') when it pairs a date "
+        "with the nearest instrument; a modal or a stated option or right governing 'extend' reads "
+        "no date, unless the option was exercised; 'matured' is the past tense; and "
+        "`rank.structural` marks a filing whose body fetch failed, so a scan that finds no flag "
+        "on it does not count the name covered and its prior flag stands; and (RE2-D15) "
+        "`segments` reads a figure with a footnote mark after it ('$ 1,229 [1]') as its figure"
+    ),
+    (
+        "2026-11-10.bridge-total-and-band",
+        "three of document 11's partly fixed items finished (fix request 2, order 3): the EV "
+        "bridge's note says what its claims total leaves out (A-D2) — each unread preferred or "
+        "minority leg named with its reason, and whether CIQ's current TEV less market cap, "
+        "which counts every claim, checks the total (no comps export: nothing does); the "
+        "mid-cycle multiple band is the own-history band's population (D-D3), every dated close "
+        "before the latest, so an export-day close the quarter has not completed is no longer "
+        "history, and an undated sheet builds no band; an anchor-bridge figure one unit step "
+        "(1,000x or 1,000,000x) from its own parts' re-read is refused, not scored agree "
+        "(BC-D10). 13 of the 26 committed bridges carry an unread leg and gain the note when "
+        "refreshed; no committed page carries a mid-cycle band",
+    ),
+    (
+        "2026-11-10.unit-and-headers",
+        "fix request 2, order 4, two CIQ-reader defects (RA-D9, RA-D14): a Financials money sheet "
+        "stating a unit other than Millions is refused before assembly and on the anchor's path "
+        "(`ciq_sheets.require_millions`, `require_usd`'s twin), so no page prints thousands as "
+        "$M; Consensus's target-price and LT-growth stats and every Recent Changes column are "
+        "read by their headers, and a missing header leaves the read unread, never positional. "
+        "No page moves: all 720 money sheets on disk state Millions, and every export's headers "
+        "sit where the positional reads assumed (2026-11-10)",
+    ),
+    (
+        "2026-11-10.loud-with-the-right-cause",
+        "fix request 2, order 6, two loud failures that named the wrong cause (RA-D16, RA-D15): "
+        "the LTM-against-its-quarters flag quotes a quarter's own cell ('NA', 'NM', blank, "
+        "absent) instead of '-' for every marker; an empty `.xlsx` cell states no currency, so "
+        "an all-USD `.xlsx` export is no longer refused as foreign (H-D3's strict xfail lifted). "
+        "No figure moves: the flag is QA text, and five committed pages (EPAM, MCK, VITL, VRRM, "
+        "WLK) print a '-' quarter as '-' (quoted) once re-assembled; every export on disk is "
+        "BIFF",
+    ),
+    (
+        "2026-11-10.relationship-view-edges",
+        "the Customers view's edges are said (TeamNostra fix request 2, RBC-D3, V1-O3, RBC-D5):"
+        " an RTF view that does not end with CIQ's closing line ('*denotes proprietary "
+        "relationship', the last line of all 72 exports on disk) says the list may be cut short"
+        " and gives no count; a row naming a party with its relationship type blank is kept as "
+        "'type not stated' when it states another column; a header with no rows, a 'No Data "
+        "Available' body and an 'Entitlement Needed' body are named as such, never 'could not "
+        "parse'; and a thin RTF is no longer called an OLE Word doc. On the 36 export folders "
+        "on disk no read moves",
+    ),
+    (
+        "2026-11-11.guides-as-stated",
+        "a guide is read only where the release states one, for the period it states, and a "
+        "guide the reader cannot read is said aloud (TeamNostra fix request 2, RE2-D1, D3, D4, "
+        "D5, D7, D19, D20): two figures joined by 'and' outside 'between' are no range; a range "
+        "the release withdraws, or one stated for a calendar period, is refused with a note; a "
+        "period phrase naming a deal ('the 2025 acquisition') is not the guide's period; a "
+        "qualifier before the low side, 'is expected to increase', and 'guidance to $X to $Y' "
+        "are read; a single-point guide a forward verb governs is refused with a note; and a "
+        "guide filed under the next-fy default carries a machine-tier flag saying no period was "
+        "read"
+    ),
+    (
+        "2026-11-10.covenant-value-figures",
+        "a covenant term's value states only figures its own quote states, in every class, not "
+        "years and currency figures alone (TeamNostra fix request 2, RE2-D16 with E2-D19's "
+        "residual): a whole date compares day, month and year; a ratio against one compares in "
+        "any form (4.50x is 4.50 to 1.00, and a conformed copy's struck ratio is read); a percent "
+        "compares with basis points, and 0% with 'zero'; an unmarked amount compares with any "
+        "amount the quote states. A rate component's own clause, when it is a span of the exhibit, "
+        "states figures for the value too. On the 27 committed pages 24 more PRESENT terms on 13 "
+        "pages are withheld at their next re-assembly (23 a percent or bps figure, 1 a date); none "
+        "moves until then"
+    ),
+    (
+        "2026-11-10.kind-by-exact-name",
+        "fix request 2, order 5 (RA-D10 = A-D15 = RBC-D2, RA-D17): a CIQ export's kind is its "
+        "name's exact rule, the stem's end after the listing (the comps book's start, a call's "
+        "dated tail), never a keyword anywhere in the name, so an issuer named 'Financial', "
+        "'Income', 'Customers' or 'Consensus' reads as its own pack; the Customers and Suppliers "
+        "files are told apart by their end; a PDF tearsheet is decoded as a PDF and its industry "
+        "read, the value on its label's line or the next. No page moves: all 382 files on "
+        "disk keep their kind, and every tearsheet on disk is RTF",
     ),
 )
 
-#: The version stamped on every dossier assembled by this code.
-EXTRACTION_VERSION: str = EXTRACTION_VERSIONS[-1][0]
+#: Where every vintage after the frozen table lives — one JSON file per vintage (module docstring).
+ENTRIES_DIR = Path(__file__).with_name("extraction_versions")
+
+#: Joins the heads of a parallel merge into one stamp. No id can contain it.
+JOIN = "+"
+
+#: A new vintage's id: the day it was written, then a lowercase kebab slug holding a letter — so a
+#: counter (`.1`, `.2`), the shape two PRs pick alike, is refused. Lowercase also keeps two ids from
+#: colliding on a case-blind filesystem (this repo's primary checkout is one).
+_NEW_ID = re.compile(r"\d{4}-\d{2}-\d{2}\.(?=[a-z0-9-]*[a-z])[a-z0-9]+(?:-[a-z0-9]+)*")
+_REQUIRED = frozenset({"id", "follows", "names"})
+_OPTIONAL = frozenset({"note"})
+
+
+def read_entries(directory: Path = ENTRIES_DIR,
+                 legacy: Sequence[tuple[str, str]] = LEGACY_VERSIONS,
+                 ) -> list[tuple[str, tuple[str, ...], str]]:
+    """Every vintage file in ``directory`` as ``(id, follows, names)``, each validated on its own.
+
+    Raises naming the file and the fault. A malformed entry stops every import of this module —
+    and so every build — rather than stamping a page with a vintage the table cannot place. A file
+    that is not ``*.json`` (the README) is not an entry; one that is, under any other name (an
+    editor's or a sync client's copy, ``<id> 2.json``), is refused, never skipped."""
+    if not directory.is_dir():
+        raise RuntimeError(
+            f"{directory} is missing — without it this code cannot say which extraction vintage "
+            "it is, and a stamp read off the frozen table alone would name older code")
+    legacy_ids = {v for v, _ in legacy}
+    out: list[tuple[str, tuple[str, ...], str]] = []
+    for path in sorted(directory.glob("*.json")):
+        def bad(why: str, path: Path = path) -> ValueError:
+            return ValueError(f"extraction version {path.name}: {why}")
+        try:
+            raw = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as e:
+            raise bad(f"not JSON ({e})") from e
+        if not isinstance(raw, dict):
+            raise bad("not a JSON object")
+        keys = set(raw)
+        if not keys >= _REQUIRED or keys - _REQUIRED - _OPTIONAL:
+            raise bad(f"keys {sorted(keys)} — an entry holds exactly id, follows and names, and "
+                      "may hold a note")
+        vid, follows, names = raw["id"], raw["follows"], raw["names"]
+        if not isinstance(vid, str) or not _NEW_ID.fullmatch(vid):
+            raise bad(f"id {vid!r} is not <YYYY-MM-DD>.<lowercase-kebab-slug holding a letter>")
+        try:
+            date.fromisoformat(vid[:10])
+        except ValueError as e:
+            raise bad(f"id {vid!r} does not open with a real date") from e
+        if path.name != f"{vid}.json":
+            raise bad(f"the file must be named {vid}.json, after its id")
+        if vid in legacy_ids:
+            raise bad(f"id {vid!r} is already a row of the frozen table")
+        if (not isinstance(follows, list) or not follows
+                or not all(isinstance(f, str) and f for f in follows)
+                or len(set(follows)) != len(follows)):
+            raise bad("follows must list, once each, the vintage(s) current where it was written")
+        if not isinstance(names, str) or not names.strip():
+            raise bad("names must say what this vintage names")
+        if not isinstance(raw.get("note", ""), str):
+            raise bad("a note is text")
+        out.append((vid, tuple(follows), names))
+    return out
+
+
+def build_table(legacy: Sequence[tuple[str, str]],
+                entries: Sequence[tuple[str, tuple[str, ...], str]],
+                ) -> tuple[tuple[tuple[str, str], ...], dict[str, tuple[str, ...]]]:
+    """The whole table in a stable order, and each vintage's parents.
+
+    Each legacy row's parent is the row above it; an entry's parents are its ``follows``. ORDER:
+    the legacy rows as listed, then the entries topologically, ties by id. That order is for a
+    reader and for tests; precedence is ANCESTRY (:func:`includes`), never a position."""
+    parents: dict[str, tuple[str, ...]] = {}
+    names: dict[str, str] = {}
+    prev: str | None = None
+    for v, n in legacy:
+        parents[v], names[v], prev = ((prev,) if prev else ()), n, v
+    for v, f, n in entries:
+        parents[v], names[v] = f, n
+    for v, f, _ in entries:
+        unknown = [p for p in f if p not in names]
+        if unknown:
+            raise ValueError(f"extraction version {v}.json follows {unknown}, which no vintage "
+                             "declares")
+    order = list(legacy)
+    placed = {v for v, _ in legacy}
+    pending = sorted(v for v, _, _ in entries)
+    while pending:
+        ready = [v for v in pending if all(p in placed for p in parents[v])]
+        if not ready:
+            raise ValueError(f"extraction versions {pending} follow each other in a cycle")
+        order.append((ready[0], names[ready[0]]))
+        placed.add(ready[0])
+        pending.remove(ready[0])
+    return tuple(order), parents
+
+
+def heads_of(parents: dict[str, tuple[str, ...]]) -> tuple[str, ...]:
+    """The vintages nothing follows, in id order — together, what the code at hand is."""
+    followed = {p for ps in parents.values() for p in ps}
+    heads = tuple(sorted(v for v in parents if v not in followed))
+    if not heads:
+        raise ValueError("the extraction-version table declares no vintage")
+    return heads
+
+
+#: Every declared vintage, ``(version, what it NAMES)``: the frozen rows, then each entry file.
+EXTRACTION_VERSIONS: tuple[tuple[str, str], ...]
+_PARENTS: dict[str, tuple[str, ...]]
+EXTRACTION_VERSIONS, _PARENTS = build_table(LEGACY_VERSIONS, read_entries())
+_NAMES: dict[str, str] = dict(EXTRACTION_VERSIONS)
+
+#: The vintages nothing follows. One, except between two parallel merges and the next entry.
+HEADS: tuple[str, ...] = heads_of(_PARENTS)
+
+#: The version stamped on every dossier assembled by this code: the one head, or every head
+#: joined by ``+`` — two vintages merged in parallel, each of which this code holds.
+EXTRACTION_VERSION: str = JOIN.join(HEADS)
+
+
+def _lineage(version: str) -> set[str]:
+    """A vintage and every vintage it follows, transitively — what code stamped with it holds."""
+    seen: set[str] = set()
+    stack = [version]
+    while stack:
+        v = stack.pop()
+        if v not in seen:
+            seen.add(v)
+            stack.extend(_PARENTS[v])
+    return seen
+
+
+def _parts(version: str) -> list[str] | None:
+    """The declared vintages a stamp names — itself, or each head of a parallel merge — or None
+    when it is not a stamp this code can produce. A join lists its parts once each, in id order,
+    none following another: ``A+B`` where B follows A was never a set of heads (B alone was)."""
+    parts = version.split(JOIN)
+    if not all(p in _NAMES for p in parts):
+        return None
+    if len(parts) > 1 and (parts != sorted(set(parts))
+                           or any(a in _lineage(b) for a in parts for b in parts if a != b)):
+        return None
+    return parts
+
+
+def names_of(version: str | None) -> str | None:
+    """What a declared stamp names, or None. A joined stamp names each of its parts, bracketed."""
+    v = (version or "").strip()
+    parts = _parts(v) if v else None
+    if parts is None:
+        return None
+    if len(parts) == 1:
+        return _NAMES[parts[0]]
+    return ("vintages merged in parallel, none following another: "
+            + " ".join(f"[{p}] {_NAMES[p]}" for p in parts))
+
+
+def declares(version: str | None) -> bool:
+    """Is ``version`` a stamp this code declares — a vintage, or a join of vintages?"""
+    return names_of(version) is not None
+
+
+def includes(version: str | None, ref: str) -> bool | None:
+    """Was a page stamped ``version`` built by code holding ``ref``'s change? None when the stamp
+    is not one this code declares (unstamped, or another extractor's): unknown, never "no"."""
+    if ref not in _NAMES:
+        raise ValueError(f"{ref!r} is not a declared extraction vintage")
+    v = (version or "").strip()
+    parts = _parts(v) if v else None
+    if parts is None:
+        return None
+    return any(ref in _lineage(p) for p in parts)
+
 
 #: What that version names — the reader-facing description of this extraction vintage.
-EXTRACTION_VERSION_NAMES: str = EXTRACTION_VERSIONS[-1][1]
+EXTRACTION_VERSION_NAMES: str = names_of(EXTRACTION_VERSION) or ""
 
 #: Rendered where a stamped dossier would show its version, for dossiers assembled BEFORE 26a. An
 #: absent stamp must be VISIBLE, never silent: "unstamped" and "I did not look" are different
@@ -773,7 +1073,58 @@ def stamp_detail(version: str | None) -> str:
     v = _declared(version)
     if v is None:
         return f"{UNSTAMPED} — assembled before extraction versions were declared; vintage unknown"
-    for ver, names in EXTRACTION_VERSIONS:
-        if ver == v:
-            return f"{v} — {names}"
+    named = names_of(v)
+    if named is not None:
+        return f"{v} — {named}"
     return f"{v} — not a version this code declares; built by a different extractor"
+
+
+def new_entry(slug: str, names: str, *, on: date | None = None,
+              directory: Path = ENTRIES_DIR) -> Path:
+    """Write the file for a new vintage, following every head of this tree, and return its path.
+
+    The one step a PR that changes extraction output takes here. It refuses an id the table holds
+    or a file already on disk — a vintage is written once and never rewritten under a page."""
+    vid = f"{(on or date.today()).isoformat()}.{slug}"
+    if not _NEW_ID.fullmatch(vid):
+        raise ValueError(f"{vid!r}: the slug must be lowercase kebab-case holding a letter")
+    if vid in _NAMES:
+        raise ValueError(f"{vid!r} is already a declared vintage")
+    if len(names.strip()) <= 20:  # the suite's own floor (test_extraction_version.py)
+        raise ValueError("a vintage must say what it names, in more than twenty characters")
+    path = directory / f"{vid}.json"
+    if path.exists():
+        raise FileExistsError(path)
+    body = {"id": vid, "follows": list(HEADS), "names": names}
+    path.write_text(json.dumps(body, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    try:
+        read_entries(directory)  # the file just written must read back, or nothing lands
+    except Exception:
+        path.unlink()
+        raise
+    return path
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(
+        prog="python -m vinci.dossier.extraction_version",
+        description="Declare a new extraction vintage, or print the current stamp.")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    new = sub.add_parser("new", help="write extraction_versions/<today>.<slug>.json")
+    new.add_argument("slug", help="lowercase kebab-case, holding a letter")
+    new.add_argument("--names", required=True, help="what this vintage names")
+    sub.add_parser("current", help="print the stamp this code puts on a page")
+    args = ap.parse_args(argv)
+    if args.cmd == "new":
+        try:
+            path = new_entry(args.slug, args.names)
+        except (ValueError, FileExistsError) as e:
+            ap.error(str(e))
+        sys.stdout.write(f"wrote {path.name}, following {', '.join(HEADS)}\n")
+    else:
+        sys.stdout.write(f"{EXTRACTION_VERSION}\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

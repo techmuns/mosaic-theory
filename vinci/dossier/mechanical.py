@@ -2765,13 +2765,15 @@ def _consensus(bundle: CiqBundle) -> ConsensusContext:
     # (A1) STRUCTURED forward-year levels ride the same block the prose fields come from. Wired
     # HERE as well as in the refresh transform, through ONE builder: without it the first name
     # underwritten after A1 would carry no consensus data and A2 would render nothing for it.
+    read, why = ciq_sheets.consensus_levels_read(bundle)
     levels = {m: [ConsensusLevel(fy=c.fy, median=c.median, high=c.high, low=c.low,
                                  std_dev=c.std_dev, estimates=c.estimates,
                                  source_ref=ciq_sheets.consensus_level_ref(m, c.fy))
                   for c in cells]
-              for m, cells in ciq_sheets.consensus_levels(bundle).items()}
+              for m, cells in read.items()}
     return ConsensusContext(
         consensus_levels=levels or None,
+        consensus_levels_note=why,   # RA-D13: an empty field says why it is empty
         eps_trend=ciq_sheets.eps_revisions(bundle),
         revenue_trend=ciq_sheets.revenue_revisions(bundle),
         revision_history=ciq_sheets.consensus_view(bundle),
@@ -6454,6 +6456,9 @@ def assemble_mechanical(
     # column, which a page would print under the same 'LTM' as a filed one
     # (`ciq_sheets.require_filed_income_statement`)
     ciq_sheets.require_filed_income_statement(bundle, record.identity.ticker)
+    # (2026-11-10, audit RA-D9) and the UNIT each Financials money sheet states: one in thousands
+    # is refused here too, so no page prints it as $M (`ciq_sheets.require_millions`)
+    ciq_sheets.require_millions(bundle, record.identity.ticker)
     # every "at the current price" reading below — P/E, its percentile, the adjusted and forward
     # multiples, the conflict caveat — reads the latest stored close, the one the price box shows
     record = _at_latest_close(record, store, edgar)

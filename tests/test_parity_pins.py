@@ -477,11 +477,12 @@ def test_every_assembled_field_reaches_both_dossier_renderers() -> None:
 #: Assembled fields one dossier renderer legitimately need not carry — key → the reason, so an
 #: exemption is an argument made in a diff rather than a hole nobody noticed. Each reason is EARNED
 #: by a test of it below, which goes red the day the field is rendered.
-TWIN_EXEMPT: dict[str, str] = {
-    "disclosure_gaps": ("neither renderer draws it: a synthesis input (the gap test, #927); the "
-                        "web names it only inside its extraction-version changelog, which the "
-                        "bare-token match finds; the JSON tier carries it"),
-}
+#: EMPTY SINCE 2026-11-11. Its one entry, `disclosure_gaps` (#927's gap test, a synthesis input
+#: neither renderer draws), was named on the web only inside dossier.js's hand-kept copy of the
+#: extraction-version changelog. That copy left (the web now reads the table build.py writes), so
+#: neither renderer names the field and the exemption — as its own earning test required — is
+#: dropped. A renderer that draws it now meets the parity pin above.
+TWIN_EXEMPT: dict[str, str] = {}
 
 
 def _named(src: str, key: str) -> bool:
@@ -494,61 +495,6 @@ def _one_sided(keys: set[str], exempt: dict[str, str] = TWIN_EXEMPT) -> list[str
     return sorted(
         f"{k} (md={'Y' if _named(py, k) else '-'} web={'Y' if _named(js, k) else '-'})"
         for k in keys - set(exempt) if _named(py, k) != _named(js, k))
-
-
-def test_the_gap_tests_field_is_exempt_from_twin_parity() -> None:
-    """(F, 2026-11-09) EPAM's and WLK's 2026-11-09 rebuilds are the first committed pages to carry
-    #927's `mechanical.disclosure_gaps`. Neither renderer draws it, but the web's extraction-version
-    changelog names it, which the bare-token match reads as the web rendering it."""
-    assert _one_sided({"disclosure_gaps"}, exempt={}) == ["disclosure_gaps (md=- web=Y)"]
-    assert _one_sided({"disclosure_gaps"}) == []
-
-
-_GAP_TEST_ENTRY = '["2026-11-07.gap-test",'
-
-
-def _gap_exemption_unearned(py: str, js: str) -> list[str]:
-    """Why `disclosure_gaps`'s exemption no longer holds — [] while render.py never names it and
-    every dossier.js mention sits inside the `2026-11-07.gap-test` changelog entry."""
-    out = []
-    if n := len(re.findall(r"\bdisclosure_gaps\b", py)):
-        out.append(f"render.py names it {n} time(s)")
-    entry = re.search(rf'{re.escape(_GAP_TEST_ENTRY)}(?:\s*"[^"]*"\s*\+?)+\s*\]', js)
-    if entry is None:
-        return [*out, "dossier.js has no 2026-11-07.gap-test changelog entry"]
-    start, end = entry.span()
-    hits = [m.start() for m in re.finditer(r"\bdisclosure_gaps\b", js)]
-    if not hits:
-        out.append("dossier.js names it nowhere — no exemption is needed")
-    if outside := [h for h in hits if not start <= h < end]:
-        out.append(f"dossier.js names it outside the changelog entry at offset(s) {outside}")
-    return out
-
-
-def test_the_gap_tests_exemption_holds_only_while_neither_renderer_draws_it() -> None:
-    """EARNED: the exemption's reason, tested. The day someone renders the field on either side
-    this goes red; with the exemption dropped, the parity pin then asks for the other twin."""
-    py, js = _src("vinci/dossier/render.py"), _src("frontend/views/shared/dossier.js")
-    unearned = _gap_exemption_unearned(py, js)
-    assert unearned == [], (
-        f"TWIN_EXEMPT's reason for disclosure_gaps no longer holds: {unearned}. Drop the "
-        "exemption; the parity pin then asks for the twin the field is missing from.")
-    assert _gap_exemption_unearned(py, re.sub(r"\bdisclosure_gaps\b", "gap_list", js)) == [
-        "dossier.js names it nowhere — no exemption is needed"]
-    drawn = "\nconst gaps = m.disclosure_gaps || [];\n"
-    assert _gap_exemption_unearned(py + "\nfor g in m.disclosure_gaps or []:\n", js) == [
-        "render.py names it 1 time(s)"]
-    assert _gap_exemption_unearned(py, js + drawn)[0].startswith(
-        "dossier.js names it outside the changelog entry at offset(s) ")
-    assert _gap_exemption_unearned(py, js.replace(_GAP_TEST_ENTRY, '["2026-11-07.x",')) == [
-        "dossier.js has no 2026-11-07.gap-test changelog entry"]
-    # the entry ends where ITS bracket closes, however it is wrapped — never at a later entry's
-    reflowed = re.sub(r'(\["2026-11-07\.gap-test",(?:\s*"[^"]*"\s*\+?)+)\]', r"\1\n  ]", js)
-    assert reflowed != js
-    nxt = '["2026-11-09.asof-cut",'
-    later = reflowed.replace(nxt, f'{nxt} "disclosure_gaps",')
-    assert _gap_exemption_unearned(py, later)[0].startswith(
-        "dossier.js names it outside the changelog entry at offset(s) ")
 
 
 def test_methodology_references_cite_by_endnote_on_both_twins() -> None:
@@ -788,30 +734,31 @@ def test_brief_core_rows_py_js_parity() -> None:
 
 
 def test_extraction_version_changelog_py_js_parity() -> None:
-    """(26a) The extraction-version changelog is maintained in TWO languages and must not drift.
+    """(26a) The extraction-version changelog reaches the web, and must say what the python says.
 
-    The stamp answers "are these two dossiers comparable?". If the python bumps a vintage and the JS
-    copy does not, the web page describes an artifact with the WRONG set of changes while the
-    markdown twin describes it correctly — a disagreement about provenance, which is worse than
-    either surface simply omitting it. The two copies cannot share an import (py↔JS), which is the
-    leftover this module exists for.
+    The stamp answers "are these two dossiers comparable?". If the python declares a vintage the
+    web describes differently, the web page tells a reader the wrong set of changes while the
+    markdown twin tells the right one — a disagreement about provenance, worse than either surface
+    simply omitting it.
 
-    Binds BOTH columns: the version identifiers AND what each one names. A version pair that agreed
-    on the id but disagreed on the description would still tell a reader two different stories."""
-    from vinci.dossier.extraction_version import EXTRACTION_VERSIONS
+    THE WEB HOLDS NO COPY ANY MORE (2026-11-11, fix request 2). dossier.js carried a hand-kept twin
+    of the table, appended to by every output-changing PR on the same lines as every other, so each
+    merge sent the rest DIRTY. The web now reads what `frontend/build.py` writes on every deploy, so
+    the pin binds THAT — both columns, and each vintage's parents (what tells a joined stamp from
+    two ids that never were heads together) — and pins that no hand copy came back."""
+    from vinci.dossier.extraction_version import _PARENTS, EXTRACTION_VERSIONS
 
+    emitted = _load_build()._extraction_versions()
+    assert emitted["versions"] == dict(EXTRACTION_VERSIONS), (
+        "the extraction-version table build.py writes for the web differs from "
+        "vinci/dossier/extraction_version.py — the two surfaces would describe the same artifact "
+        "differently")
+    assert emitted["follows"] == {v: list(p) for v, p in _PARENTS.items()}, (
+        "build.py's parents differ from python's — a joined stamp would be judged differently")
     js = _src("frontend/views/shared/dossier.js")
-    m = re.search(r"const EXTRACTION_VERSIONS = \[(.*?)\n\];", js, re.S)
-    assert m, "dossier.js EXTRACTION_VERSIONS table not found — the web twin lost its copy"
-
-    # rows are ["<version>", "<names>"] with the names possibly split across a JS "+" concat
-    rows = re.findall(r'\["([^"]+)",\s*((?:"[^"]*"\s*\+?\s*)+)\]', m.group(1))
-    js_table = [(v, re.sub(r'"\s*\+\s*"', "", names.strip()).strip('"')) for v, names in rows]
-
-    assert js_table == list(EXTRACTION_VERSIONS), (
-        "the extraction-version changelog diverges between vinci/dossier/extraction_version.py and "
-        f"dossier.js — the two surfaces would describe the same artifact differently.\n"
-        f"  py={list(EXTRACTION_VERSIONS)}\n  js={js_table}")
+    assert "const EXTRACTION_VERSIONS" not in js, (
+        "dossier.js holds its own copy of the table again — the hand-kept twin every "
+        "output-changing PR had to edit; read getExtractionVersions() instead")
 
     # and BOTH twins must render the stamp where the assembly date is stated, not only in the audit
     # tier — a stamp confined to Record & reproduce is 17b's failure repeated (the record complete,

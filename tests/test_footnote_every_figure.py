@@ -32,7 +32,7 @@ from pydantic import BaseModel, ValidationError
 from vinci.dossier import flags as dflags
 from vinci.dossier import schemas as ds
 from vinci.dossier import synthesis as syn
-from vinci.dossier.extraction_version import EXTRACTION_VERSIONS
+from vinci.dossier.extraction_version import includes
 
 ROOT = Path(__file__).resolve().parents[1]
 _FROZEN_SMPL = ROOT / "tests/fixtures/frozen_pages/2026-08-18/SMPL/dossier.json"
@@ -325,6 +325,8 @@ NOT_A_FACT: dict[str, str] = {
     "CatalystCalendar.qa_flags": "machine QA",
     "Concentration.customers_listed": ("the structured twin of `concentration.customers` — the "
                                        "count of the roster it cites (audit RBC-D1)"),
+    "ConsensusContext.consensus_levels_note": ("machine QA — why `consensus_levels` is absent "
+                                               "(audit RA-D13); never sent to the synthesis"),
     "DilutionPipeline.window_days": "a parameter of the read",
     "DrawdownCause.gap_threshold": "a parameter of the read",
     "DrawdownCause.gap_window_days": "a parameter of the read",
@@ -411,9 +413,9 @@ _NOW_REFFED = ("ConsensusLevel", "PeerCapitalRow", "PeerCapitalIntensity", "Matu
 
 
 def _before_this_version(raw: dict[str, Any]) -> bool:
-    order = [v for v, _ in EXTRACTION_VERSIONS]
-    v = raw.get("extraction_version")
-    return v not in order or order.index(v) < order.index(_THIS_VERSION)
+    # ANCESTRY, not a row position (2026-11-11): a vintage after the frozen table is a file, and
+    # what a page's code holds is what its stamp follows. An undeclared stamp is legacy, as before.
+    return includes(raw.get("extraction_version"), _THIS_VERSION) is not True
 
 
 def _uncitable(raw: dict[str, Any]) -> set[str]:
@@ -634,6 +636,8 @@ def test_both_consensus_level_builders_name_a_row_alike(monkeypatch: pytest.Monk
     cell = cs.ConsensusCell(fy="2027", median=10.0, high=12.0, low=8.0, std_dev=1.0,
                             estimates="9/10", is_forward=True)
     monkeypatch.setattr(cs, "consensus_levels", lambda _b: {"EBITDA": [cell]})
+    # assembly reads the levels with their absence reason (RA-D13); the same builder underneath
+    monkeypatch.setattr(cs, "consensus_levels_read", lambda _b: ({"EBITDA": [cell]}, None))
     for name in ("eps_revisions", "revenue_revisions", "consensus_view", "surprise_history"):
         monkeypatch.setattr(cs, name, lambda _b: ds.Sourced[str].unknown(note="stub"))
     cc = dm._consensus(typing.cast(Any, None))

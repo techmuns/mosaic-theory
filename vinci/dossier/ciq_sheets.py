@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 import statistics
+import subprocess
 from collections import Counter
 from collections.abc import Callable
 from datetime import date, datetime
@@ -26,6 +27,7 @@ from vinci.dossier.ciq import (
     CiqParseError,
     CiqPreliminaryError,
     CiqUnavailableError,
+    _customers_role,
     clean_num,
     excel_date,
     is_empty_view,
@@ -33,6 +35,7 @@ from vinci.dossier.ciq import (
     read_cell,
     read_sheets,
     read_text,
+    stated_unit,
 )
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
 from vinci.dossier.schemas import (
@@ -1749,6 +1752,7 @@ def _segment_roster(rows: list[list[Any]], hdr: int | None) -> list[tuple[str, f
     if not tot:
         return None
     out: list[tuple[str, float]] = []
+    read = 0.0
     for i in range(start + 1, total):
         # BOUNDS-CHECKED, unlike the sibling loop in `_segment_section`. That one runs on the
         # SUCCESS path, where the block is known good; this runs on the FAILURE path, so an
@@ -1760,7 +1764,42 @@ def _segment_roster(rows: list[list[Any]], hdr: int | None) -> list[tuple[str, f
         v = clean_num(rows[i][col]) if col < len(rows[i]) else None
         if seg and v is not None:
             out.append((seg, v / tot))
+            read += v
+    if _mix_gap(rows, start, total, col, tot, read, latest.label) is not None:
+        return None   # RA-D8: a segment hidden by a marker leaves no roster to count
     return out or None
+
+
+#: How far the segment rows that read may fall short of their total and still be the whole mix
+#: (audit RA-D8) — the `lean` collapse's 99.5%. Measured 2026-11-10 on the 69 Segments blocks of
+#: the 36 Financials exports on disk (business revenue and EBITDA, geographic revenue): the rows
+#: that read sum to their total within 0.0051% on every one, 28 of them beside a row CIQ marks
+#: '-' at the latest column — a segment that period does not report (EPAM's Russia, UBER's ALL
+#: Other). A marked row is only a hidden segment when the rest no longer adds up.
+_SEGMENT_RECONCILE_TOL = 0.005
+
+
+def _mix_gap(rows: Rows, start: int, total: int, col: int, tot: float, read: float,
+             label: str) -> str | None:
+    """Why a Segments block's mix is not stated, or None (audit RA-D8, 2026-11-10).
+
+    A ROW WHOSE LATEST CELL IS A MARKER LEFT THE MIX WITH NOTHING SAID, and the segment count fell
+    with it: on UBER's export (on disk 2026-11-10), Delivery's latest cell set to 'NA' printed
+    "Mobility 57%; Freight 10%" and a count of 2, and the gap test then read two segments. CIQ also
+    marks a segment the period does not report, so a marked row is a gap only when the rows that
+    read no longer sum to the total (`_SEGMENT_RECONCILE_TOL`); then each named row with no number
+    at the latest column is named, and neither the mix nor the count is stated."""
+    if not tot or abs(tot - read) <= _SEGMENT_RECONCILE_TOL * abs(tot):
+        return None
+    unread = [f"'{str(rows[i][0]).strip()}' reads "
+              f"{_cell_words(rows[i][col] if col < len(rows[i]) else '')}"
+              for i in range(start + 1, total)
+              if rows[i] and str(rows[i][0]).strip()
+              and clean_num(rows[i][col] if col < len(rows[i]) else "") is None]
+    if not unread:
+        return None
+    return (f"Segments {'; '.join(unread)} at the latest column [{label}], and the rows that read "
+            f"sum to {read / tot:.1%} of the total — the mix is not stated without a segment")
 
 
 def _absence_reason(
@@ -1848,6 +1887,9 @@ def _segment_section(
         v = clean_num(rows[i][col]) if col < len(rows[i]) else None
         if seg and v is not None and tot:
             items.append((seg, v, v / tot))
+    if (gap := _mix_gap(rows, start, total, col, tot, sum(v for _n, v, _s in items),
+                        latest.label)) is not None:
+        return Sourced.unknown(note=gap)   # RA-D8: a segment a marker hides is named, never dropped
     if not items:
         return Sourced.unknown(note=f"no {section} segment rows with values")
     label = f"{after_label} → {section}" if after_label else section
@@ -2286,14 +2328,21 @@ def consensus_view(bundle: CiqBundle) -> Sourced[str]:
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "estimates", exc)
     parts: list[str] = []
+    # MEAN AND MEDIAN BY THEIR HEADER, never by position (audit RA-D14): `_stat_columns`
     tp = _find_row_prefix(rows, "Target Price")
-    if tp is not None and len(rows[tp]) > 2:
-        mean, med = clean_num(rows[tp][1]), clean_num(rows[tp][2])
+    if tp is not None and (cols := _stat_columns(rows, tp)) is None:
+        parts.append("Target price: unread (no Mean/Median header above the row)")
+    elif tp is not None and cols is not None:
+        mean = clean_num(_stat_at(rows, tp, cols, "Mean"))
+        med = clean_num(_stat_at(rows, tp, cols, "Median"))
         if mean is not None or med is not None:
             parts.append(f"Target price: mean {_usd(mean)} / median {_usd(med)}")
     lg = _find_row_prefix(rows, "LT Growth")
-    if lg is not None and len(rows[lg]) > 2:
-        mean, med = clean_num(rows[lg][1]), clean_num(rows[lg][2])
+    if lg is not None and (lcols := _stat_columns(rows, lg)) is None:
+        parts.append("LT growth: unread (no Mean/Median header above the row)")
+    elif lg is not None and lcols is not None:
+        mean = clean_num(_stat_at(rows, lg, lcols, "Mean"))
+        med = clean_num(_stat_at(rows, lg, lcols, "Median"))
         if mean is not None or med is not None:
             parts.append(f"LT growth: mean {_pct1(mean)} / median {_pct1(med)}")
     # THE LISTING'S OWN RECOMMENDATION (audit A-D10, 2026-10-29). This read Consensus's "Industry
@@ -2494,6 +2543,41 @@ def _recent_changes_rows(rows: Rows) -> tuple[int, Rows] | None:
     return hi, [r for r in rows[hi + 1:] if r and str(r[0]).strip()]
 
 
+#: Recent Changes' columns, by CIQ's own header text (audit RA-D14, 2026-11-10). The log was read
+#: by index (`c[0]` … `c[9]`), so two columns swapped — header included — swapped the values with
+#: nothing said: SMPL's 'Broker Value Prior' and 'Current' traded places and its Interest Expense
+#: revision printed current -20.0, prior -19.8. All 36 exports on disk carry the same ten headers
+#: in this order — these nine and 'Analyst', which no field reads — so no read moves.
+_RC_COLUMNS = ("Change Type", "Date", "Broker", "Data Point", "Period", "Broker Value Current",
+               "Broker Value Prior", "Consensus After", "Consensus Before")
+
+
+def _rc_columns(rows: Rows, hi: int) -> tuple[dict[str, int], list[str]]:
+    """({header: column} for `_RC_COLUMNS`, the headers absent) on the 'Change Type' row ``hi``."""
+    cells = [str(c).strip() for c in rows[hi]]
+    found = {h: cells.index(h) for h in _RC_COLUMNS if h in cells}
+    return found, [h for h in _RC_COLUMNS if h not in found]
+
+
+def _stat_columns(rows: Rows, ri: int) -> dict[str, int] | None:
+    """{stat header: column} for a Consensus stats row (Target Price, LT Growth) — read off the
+    nearest header above it carrying 'Mean' and 'Median', its labels without CIQ's trailing dot
+    ('No. of Estimates.'). None when no such header is within five rows: a stat is then unread,
+    never taken by position (audit RA-D14 — a Mean/Median swap printed SMPL's target as mean $14.00
+    / median $14.88). On all 36 exports on disk the header is the row right above Target Price,
+    and two above LT Growth (across the Target Price row)."""
+    for k in range(ri - 1, max(ri - 6, -1), -1):
+        cells = [str(c).strip() for c in rows[k]]
+        if "Mean" in cells and "Median" in cells:
+            return {c.rstrip("."): j for j, c in enumerate(cells) if c}
+    return None
+
+
+def _stat_at(rows: Rows, ri: int, cols: dict[str, int], stat: str) -> Any:
+    j = cols.get(stat)
+    return rows[ri][j] if j is not None and j < len(rows[ri]) else ""
+
+
 def _metric_block_header(rows: Rows, bi: int) -> list[Any] | None:
     """The period-column header row for a Trends/Revisions metric block at ``bi`` — the nearby row
     carrying FQ…/FY… period labels (the 'NasdaqCM:…'/'Company Level' row)."""
@@ -2630,11 +2714,15 @@ def estimates_as_of(bundle: CiqBundle) -> Sourced[str]:
         return _miss_or_unknown(bundle, "estimates", exc)
     rc = _recent_changes_rows(rows)
     latest: date | None = None
-    if rc is not None:
+    dcol = _rc_columns(rows, rc[0])[0].get("Date") if rc is not None else None   # RA-D14
+    if rc is not None and dcol is not None:
         for r in rc[1]:
-            d = excel_date(r[1]) if len(r) > 1 else None
+            d = excel_date(r[dcol]) if dcol < len(r) else None
             if d is not None and (latest is None or d > latest):
                 latest = d
+    if latest is None and rc is not None and dcol is None:
+        return Sourced.unknown(note="no As-Of header, and Estimates→Recent Changes carries no "
+                                    "'Date' column header — the log is not read by position")
     if latest is None:
         return Sourced.unknown(note="no As-Of header and no dated events in Estimates")
     return Sourced.present(
@@ -2750,19 +2838,33 @@ def _market_summary_current_year(rows: Rows, metric: str) -> float | None:
     committed names carry the header (measured), so the refusal costs nothing today and states
     itself the day an export shape moves it.
     """
+    return _market_summary_read(rows, metric)[0]
+
+
+def _market_summary_read(rows: Rows, metric: str) -> tuple[float | None, str | None]:
+    """:func:`_market_summary_current_year` with WHY it vouches for no figure (audit RA-D13) —
+    ONE walk, so the reason names the very cell the value was read from, never a re-scan's."""
     start = next((i for i, r in enumerate(rows[:200])
                   if r and str(r[0]).strip() == "Market Summary"), None)
     if start is None:
-        return None
-    for r in rows[start:start + 60]:
-        cells = [str(c).strip() for c in r]
+        return None, ("Estimates→Consensus has no 'Market Summary' in its first 200 rows, so no "
+                      "Current Year figure identifies the consensus block")
+    for i in range(start, min(start + 60, len(rows))):
+        cells = [str(c).strip() for c in rows[i]]
         if metric in cells:
             k = cells.index(metric)
             for c in cells[k + 1:]:
                 v = _stat_num(c)
                 if v is not None:
-                    return _stat_num(cells[k + 2]) if k + 2 < len(cells) else v
-    return None
+                    if k + 2 >= len(cells):
+                        return v, None
+                    cy = _stat_num(cells[k + 2])
+                    return cy, (None if cy is not None else (
+                        f"the Market Summary's '{metric}' Current Year reads "
+                        f"{_cell_words(cells[k + 2])} (Estimates→Consensus, row {i + 1}, column "
+                        f"{k + 3}), so no figure identifies the consensus block"))
+    return None, (f"the Market Summary carries no '{metric}' row with a figure, so no Current "
+                  "Year figure identifies the consensus block")
 
 
 def _consensus_fy_header(rows: Rows, title_row: int) -> tuple[int, list[str]] | None:
@@ -2829,35 +2931,57 @@ def consensus_block(bundle: CiqBundle) -> ConsensusBlock | None:
     Revenue's — and EBITDA returned nothing on all eleven names as a result. The block holds
     Revenue at one row and EBITDA eleven rows later; it is one block either way.
     """
+    return _consensus_block_read(bundle)[0]
+
+
+def _consensus_block_read(bundle: CiqBundle) -> tuple[ConsensusBlock | None, str | None]:
+    """:func:`consensus_block` with WHY it identified none (audit RA-D13, 2026-11-10) — the
+    reason in words, None when a block is identified. One marker in the probe cell, the Market
+    Summary's or a block's, left `consensus_levels` empty with nothing said; this names the cell."""
     try:
         rows = bundle.sheet("estimates", "Consensus")
-    except CiqUnavailableError:
-        return None
+    except CiqUnavailableError as exc:
+        return None, str(exc)
     current_fy = _declared_current_fy(rows)
     if current_fy is None:
-        return None
-    want = _market_summary_current_year(rows, _BLOCK_PROBE_METRIC)
+        return None, ("Estimates→Consensus states no 'Current Fiscal Year End' in its first 40 "
+                      "rows, so no fiscal year can be called forward")
+    want, no_probe = _market_summary_read(rows, _BLOCK_PROBE_METRIC)
     if want is None:
-        return None
+        return None, no_probe
     # EVERY matching title, never the first — taking the first pattern match makes document
     # layout load-bearing exactly as `[0]` makes sequence order load-bearing.
     titles = [i for i, r in enumerate(rows)
               if r and str(r[0]).strip() == _BLOCK_PROBE_METRIC
               and str(r[0]) == str(r[0]).lstrip()]
+    seen: list[str] = []
     for cand in titles:
         hdr = _consensus_fy_header(rows, cand)
         if hdr is None:
+            seen.append(f"row {cand + 1} has no fiscal-year header above it")
             continue
         _, cells = hdr
         col = next((k for k, c in enumerate(cells)
                     if str(c).strip().replace(".0", "") == str(current_fy)), None)
         if col is None:
+            seen.append(f"row {cand + 1} has no FY{current_fy} column")
             continue
-        probe = _stat_num(rows[cand][col] if col < len(rows[cand]) else "")
+        cell = rows[cand][col] if col < len(rows[cand]) else ""
+        probe = _stat_num(cell)
         if probe is None or abs(probe - want) >= 0.01:
+            # a numeric zero is no figure to `_stat_num` (ORKA's, TECX's pre-revenue blocks), so
+            # the reason says so rather than quoting a 0.0 beside a Current Year of 0
+            zero = probe is None and isinstance(cell, (int, float)) and not cell
+            seen.append(f"row {cand + 1} reads "
+                        + ("0.0" if zero else _cell_words(cell) if probe is None
+                           else f"{probe:g}")
+                        + f" at FY{current_fy}"
+                        + (", which this reader does not count as a figure" if zero else ""))
             continue
-        return ConsensusBlock(header_cells=cells, start=cand, current_fy=current_fy)
-    return None
+        return ConsensusBlock(header_cells=cells, start=cand, current_fy=current_fy), None
+    return None, (f"no unindented '{_BLOCK_PROBE_METRIC}' block of Estimates→Consensus reads the "
+                  f"Market Summary's Current Year ({want:g}) at FY{current_fy}, so none is "
+                  f"identified as the consensus: {'; '.join(seen) or 'no such block'}")
 
 
 
@@ -2940,14 +3064,27 @@ def consensus_levels(bundle: CiqBundle) -> dict[str, list[ConsensusCell]]:
     never written as `[]` — absent means "not extracted", empty would mean "the street has no
     view", and those are different claims.
     """
-    if consensus_block(bundle) is None:
-        return {}
+    return consensus_levels_read(bundle)[0]
+
+
+def consensus_levels_read(
+    bundle: CiqBundle,
+) -> tuple[dict[str, list[ConsensusCell]], str | None]:
+    """(:func:`consensus_levels`, why they are absent) — the reason None whenever a level is read
+    (audit RA-D13): assembly writes it beside the field (`ConsensusContext.consensus_levels_note`),
+    so an empty `consensus_levels` says why it is empty."""
+    blk, why = _consensus_block_read(bundle)
+    if blk is None:
+        return {}, why
     out: dict[str, list[ConsensusCell]] = {}
     for metric in CONSENSUS_METRICS:
         cells = consensus_rows(bundle, metric=metric)     # range refusal propagates
         if cells:
             out[metric] = cells
-    return out
+    if not out:
+        return out, (f"the consensus block (Estimates→Consensus, row {blk.start + 1}) states no "
+                     f"forward median, high and low for {' or '.join(CONSENSUS_METRICS)}")
+    return out, None
 
 
 def consensus_level_ref(metric: str, fy: str) -> str:
@@ -3638,6 +3775,26 @@ def _ciq_tev_claims(bundle: CiqBundle) -> tuple[float, str] | None:
                                  "Value' − 'Market Capitalization'")
 
 
+def claims_left_out_note(unread: list[str | None], ciq_tev_claims: float | None,
+                         claims: float) -> str | None:
+    """What an EV bridge's claims total leaves out, said at bridge level — None when every leg
+    is stated (audit A-D2's remainder, 2026-11-10). Each unread leg was named on its own line, but
+    `claims` summed the stated legs with nothing said beside the total: ORCL's quarterly total read
+    136,086 with 'Total Pref. Equity' at '-' (141,040 with the cell read), and a reader of the total
+    alone took it for every claim. Whether anything checks the total is said with it: CIQ's TEV less
+    market cap counts every claim; without a comps export nothing does. One function, so the frozen
+    bridge cases are re-derived by the code that writes the note."""
+    legs = [why for why in unread if why]
+    if not legs:
+        return None
+    checked = ("nothing checks the total (no comps export)" if ciq_tev_claims is None
+               else "CIQ's current TEV less market cap, which counts every claim, agrees with "
+               "the total" if abs(ciq_tev_claims - claims) <= EV_BRIDGE_CIQ_TOL
+               else "CIQ's current TEV less market cap disagrees with the total (above)")
+    return ("the claims total sums the legs CIQ states and leaves out what it does not — "
+            f"{'; '.join(legs)} — each unread, never 0; {checked}")
+
+
 def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float | None = None,
               edgar_source: str | None = None) -> EvBridge | EvBridgeUnbuilt:
     """(EV bridge) THE ONE BUILDER for `Dossier.ev_bridge` — assembly and `ev_bridge_transform` both
@@ -3717,6 +3874,9 @@ def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float
         notes.append(f"DISAGREES with CIQ's current TEV less market cap (${ciq[0]:,.1f}M) by "
                      f"${claims - ciq[0]:,.1f}M — the Financials and comps exports sit on "
                      "different balance sheets; re-pull before an R4 record reads this")
+    if (left_out := claims_left_out_note([pref_unread, minority_unread],
+                                          ciq[0] if ciq else None, claims)) is not None:
+        notes.append(left_out)
     est = bundle.workbook("estimates")
     return EvBridge(
         balance_sheet_date=as_of, lines=lines, claims=round(claims, 3), net_debt=round(nd, 3),
@@ -4209,6 +4369,14 @@ class _GuidanceRead(NamedTuple):
     at_guide_n: int  # point-guide periods refused as undecidable (within ±0.5% of the point)
     recent_period: str | None  # the most-recent RESOLVED period (adjudicated OR at-guide)
     recent_verdict: str | None  # "met" / "missed" / "at_guide" — formatters phrase the display
+    #: Why the latest guide does not read, when CIQ's newest-dated Guidance cell is a marker
+    #: (audit RA-D3): the cell named, in words. ``guide`` is then "unread", ``guide_num`` and
+    #: ``guide_range`` None, ``period`` and ``dated`` that cell's. None when the latest guide reads.
+    unread: str | None = None
+
+
+#: The display a guide carries when its cell does not read (`_GuidanceRead.unread`).
+GUIDE_UNREAD = "unread"
 
 
 def _guidance_reads(
@@ -4236,7 +4404,19 @@ def _guidance_reads(
     appended to ``after``, so the caller states it rather than losing it. A cell whose date does
     not parse cannot be placed after the cut and is read as before (an undated guide is never the
     latest, and counts in the record) — none on the 25 Guidance sheets the frozen pages have on
-    disk (0 of 3,782 resolved periods). ``cut`` None reads every cell."""
+    disk (0 of 3,782 resolved periods). ``cut`` None reads every cell.
+
+    A DATED GUIDE WHOSE CELL DOES NOT READ IS THE LATEST, UNREAD (audit RA-D3, 2026-11-10). The
+    walk skipped a column whose Guidance cell is a CIQ marker before reading its date, so the next
+    older dated guide was served as "latest" and handed to the guide check: SMPL's export (on disk
+    2026-11-10) guides revenue for FQ1 2027 and FY 2027 on 2026-10-27, and with both cells 'NA'
+    the read was FQ4 2026's 322.00–332.00 of 2026-07-09. Now the newest date CIQ gives a guide is
+    the latest whatever its cell holds; when no cell at that date reads, the read says so
+    (`_GuidanceRead.unread`) and no older guide stands in. Such a cell dated after ``cut`` is a
+    guide CIQ dated after the price date, like any other. The delivery record is unchanged: an
+    unread guide has no bound to judge an actual against. Census of the 36 Guidance sheets on
+    disk, 2026-11-10: 0 of the 5,417 columns that carry a date or a guide hold a date over a cell
+    that does not read, so no page moves."""
     reads: list[_GuidanceRead] = []
     seen: set[str] = set()
     for idx, bi in enumerate(starts):
@@ -4251,6 +4431,7 @@ def _guidance_reads(
         if gdate is None or guide is None or header is None:
             continue
         latest: tuple[date, str, str, bool] | None = None  # date, period, range, cost_like
+        unread: tuple[date, str, str] | None = None  # date, period, why — the newest unread guide
         recent: tuple[date, str, str] | None = None  # date, period, verdict — most-recent resolved
         resolved = met_n = at_guide_n = 0
         # DIRECTION BY METRIC, NEVER BY SIGN (#437) — see `_GUIDANCE_HIGHER_IS_DELIVERY`. A metric
@@ -4258,14 +4439,27 @@ def _guidance_reads(
         # NO met/missed outcome; guessing one is worse than withholding it.
         higher_is_delivery = _GUIDANCE_HIGHER_IS_DELIVERY.get(metric)
         for j in range(1, len(header)):
-            rng = _parse_range(rows[guide][j]) if j < len(rows[guide]) else None
+            cell = rows[guide][j] if j < len(rows[guide]) else ""
+            rng = _parse_range(cell)
+            gd = excel_date(rows[gdate][j]) if j < len(rows[gdate]) else None
+            per_j = str(header[j]).strip()
             if rng is None:
+                # RA-D3: a dated cell that does not read is still a guide CIQ gave on that date
+                if gd is None:
+                    continue
+                if not within_cut(gd, cut):
+                    if after is not None:
+                        after.append(GuideAfterPriceDate(
+                            metric=metric, period=per_j, read="guide",
+                            value=str(cell if cell is not None else "").strip(),
+                            dated=gd.isoformat(), source_ref=_guidance_cell_ref(guide, j)))
+                elif unread is None or gd > unread[0]:
+                    unread = (gd, per_j, f"its Guidance cell reads {_cell_words(cell)} "
+                                         f"({_guidance_cell_ref(guide, j)})")
                 continue
             # `cost_like` now only chooses the sentence a reader is shown ("spend ≤ guided ceiling"
             # vs "actual ≥ guided floor"); the OUTCOME is decided by the map above.
             cost_like = higher_is_delivery is False or rng[1] < 0
-            gd = excel_date(rows[gdate][j]) if j < len(rows[gdate]) else None
-            per_j = str(header[j]).strip()
             if gd is not None and not within_cut(gd, cut):
                 if after is not None:
                     after.append(GuideAfterPriceDate(
@@ -4308,6 +4502,15 @@ def _guidance_reads(
                 met_n += int(met)
                 if gd is not None and (recent is None or gd > recent[0]):
                     recent = (gd, per_j, "met" if met else "missed")
+        rp, rv = (recent[1], recent[2]) if recent is not None else (None, None)
+        if unread is not None and (latest is None or unread[0] > latest[0]):
+            ud, uper, why = unread
+            ustale = ((reference_date - ud).days if reference_date is not None
+                      and (reference_date - ud).days > stale_after_days else None)
+            reads.append(_GuidanceRead(
+                metric, GUIDE_UNREAD, None, None, uper, ud, ustale, higher_is_delivery is False,
+                resolved, met_n, at_guide_n, rp, rv, unread=why))
+            continue
         if latest is None:
             continue
         gd, per, rng_s, cost_like = latest
@@ -4376,6 +4579,8 @@ def guidance_bridge(
     lines: list[str] = []
     for r in reads:
         seg = f"{r.metric}: latest guide {r.guide} for {r.period} (dated {r.dated.isoformat()})"
+        if r.unread is not None:  # RA-D3: named, and no older guide stands in
+            seg += f" — {r.unread}; an older guide is never read in its place"
         if r.stale_days is not None:
             seg += f" (stale — {r.stale_days}d old)"  # R3: age once, no date repeat
         if r.resolved or r.at_guide_n:
@@ -4491,7 +4696,9 @@ def guidance_bridge_rows(
         recent = (f"{r.recent_period} {word[r.recent_verdict or 'met']}"
                   if r.recent_period is not None else "—")
         out.append(GuidanceRow(
-            metric=r.metric, latest_guide=r.guide, period=r.period, dated=r.dated.isoformat(),
+            metric=r.metric,
+            latest_guide=r.guide if r.unread is None else f"{r.guide} — {r.unread}",
+            period=r.period, dated=r.dated.isoformat(),
             age=age, record=record, most_recent=recent))
     return Sourced.present(
         out, source_ref=GUIDANCE_BASIS_REF)
@@ -4522,18 +4729,29 @@ def revision_events(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[l
     rc = _recent_changes_rows(rows)
     if rc is None:
         return Sourced.unknown(note="no 'Change Type' header in Estimates→Recent Changes")
+    # EVERY COLUMN BY ITS HEADER (audit RA-D14): one missing header leaves the log unread, never
+    # read by position
+    col, absent = _rc_columns(rows, rc[0])
+    if absent:
+        missing = ", ".join(map(repr, absent))
+        return Sourced.unknown(note=f"Estimates→Recent Changes carries no {missing} column "
+                                    "header — the log is not read by position")
     out: list[RevisionEvent] = []
     for r in rc[1]:
-        c = [str(x).strip() for x in r] + [""] * 10
-        d = excel_date(r[1]) if len(r) > 1 else None
+        def c(h: str, r: list[Any] = r) -> str:
+            j = col[h]
+            return str(r[j]).strip() if j < len(r) else ""
+        d = excel_date(r[col["Date"]]) if col["Date"] < len(r) else None
+        broker = c("Broker")
         out.append(
             RevisionEvent(
-                date=d.isoformat() if d is not None else c[1],
+                date=d.isoformat() if d is not None else c("Date"),
                 # R2: an 'Entitlement Needed' broker is a placeholder — group as undisclosed
-                change_type=c[0], broker=("broker undisclosed" if _is_entitlement(c[2]) else c[2]),
-                metric=c[4], period=c[5],
-                broker_prior=c[7], broker_current=c[6],
-                consensus_before=c[9], consensus_after=c[8],
+                change_type=c("Change Type"),
+                broker=("broker undisclosed" if _is_entitlement(broker) else broker),
+                metric=c("Data Point"), period=c("Period"),
+                broker_prior=c("Broker Value Prior"), broker_current=c("Broker Value Current"),
+                consensus_before=c("Consensus Before"), consensus_after=c("Consensus After"),
             )
         )
     if not out:
@@ -4625,12 +4843,14 @@ def consensus_stats(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[s
         return _miss_or_unknown(bundle, "estimates", exc)
     parts: list[str] = []
     tp = _find_row_prefix(rows, "Target Price")
-    if tp is not None:
-        r = rows[tp]
-        mean = clean_num(r[1]) if len(r) > 1 else None
-        med = clean_num(r[2]) if len(r) > 2 else None
-        hilo = str(r[3]).strip() if len(r) > 3 else ""
-        n = str(r[5]).strip() if len(r) > 5 else ""
+    tcols = _stat_columns(rows, tp) if tp is not None else None
+    if tp is not None and tcols is None:   # RA-D14: never by position
+        parts.append("Target price: unread (no Mean/Median header above the row)")
+    if tp is not None and tcols is not None:
+        mean = clean_num(_stat_at(rows, tp, tcols, "Mean"))
+        med = clean_num(_stat_at(rows, tp, tcols, "Median"))
+        hilo = str(_stat_at(rows, tp, tcols, "High/Low")).strip()
+        n = str(_stat_at(rows, tp, tcols, "No. of Estimates")).strip()
         seg: list[str] = []
         if mean is not None:
             seg.append(f"mean {_usd(mean)}")
@@ -4656,6 +4876,25 @@ def consensus_stats(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[s
 #: CIQ's section heads in a Business-Relationships view. A view filtered to the last two years
 #: carries only the first; one that is not carries both, and its older rows sit under the second.
 _REL_SECTION = re.compile(r"^(Recently|Prior and Not Recently) Disclosed (?:Customers|Suppliers)$")
+
+#: The line every Business-Relationships export ENDS with: the last non-blank line of all 72 RTF
+#: exports on disk (36 Customers, 36 Suppliers, 2026-11-11). A view without it was cut short
+#: (audit RBC-D3). Checked on the RTF route only: no spreadsheet export is on disk to show whether
+#: that form carries the line.
+_REL_CLOSING = "*denotes proprietary relationship"
+
+#: What a view says when CIQ returned no table for it (audit RBC-D5): its no-data sentinel, and the
+#: contract's word for a view the account is not entitled to. Neither is on disk (2026-11-11).
+_REL_NO_TABLE: tuple[tuple[str, str], ...] = (
+    (CIQ_NO_DATA, "CIQ returned no rows for this view"),
+    ("Entitlement Needed", "the CIQ account is not entitled to this view"),
+)
+
+
+def _is_rel_header(line: str) -> bool:
+    """Is this line a Business-Relationships table's header? The ONE test, read by the table
+    reader and by :func:`_unread_view`, so the two never disagree on where a table starts."""
+    return "Customer Name" in line and "Relationship Type" in line
 
 
 class _Relationships(NamedTuple):
@@ -4683,11 +4922,23 @@ def _relationships(raw: str) -> _Relationships | None:
     "2 mapped client relationship(s)" for two of AVROBIO's 2023 counterparties under a section
     stating none. Of the 52 non-held Customers exports on file (2026-11-01, current and archived),
     TECX's and HLF's carry the prior section, and both state the recent one empty."""
-    lines = [ln.strip() for ln in raw.splitlines()]
-    hdr = next(
-        (i for i, ln in enumerate(lines) if "Customer Name" in ln and "Relationship Type" in ln),
-        None,
-    )
+    return _relationship_table([ln.strip().split("|") for ln in raw.splitlines()])
+
+
+def _relationship_table(rows: list[list[str]]) -> _Relationships | None:
+    """THE ONE READER OF A BUSINESS-RELATIONSHIPS TABLE, whichever format carried it (audit
+    RBC-D6, 2026-11-10): each row as its cells, an RTF line split on its pipes or a spreadsheet
+    row as read. Every rule of :func:`_relationships` is applied to the row's text, the cells
+    joined back with pipes, which for an RTF line is the line itself.
+
+    THE SPREADSHEET ROUTE HAD ITS OWN READER, AND IT MISSED THE RTF ROUTE'S FIXES: rows under
+    'Prior and Not Recently Disclosed Customers' and a section repeating the header were read as
+    current customers, a 'Supplier Name' column was not read (the focal company printed as its own
+    customer), and the recent section's own "there are no …" sentence went unread. No spreadsheet
+    Customers export is on disk on 2026-11-10 (all 36 are RTF), so this is latent; the RTF reads of
+    all 36 are unchanged by it."""
+    lines = ["|".join(r) for r in rows]
+    hdr = next((i for i, ln in enumerate(lines) if _is_rel_header(ln)), None)
     if hdr is None:
         return None
     # COLUMNS BY HEADER TEXT, never by position (item 33). The export ships TWO layouts and the
@@ -4700,7 +4951,7 @@ def _relationships(raw: str) -> _Relationships | None:
     # relationship as the industry. 40 rows across AORT, CNXC, EPAM, FUBO and IT — exactly the
     # five names carrying the 5-column header, and the five 4-col names are byte-unchanged by
     # this fix (verified, not inferred). Same class as the `.xls` route in item 21, same fix.
-    cols = [c.strip() for c in lines[hdr].split("|")]
+    cols = [c.strip() for c in rows[hdr]]
     idx = {name: i for i, name in enumerate(cols) if name}
     ci, si = idx.get("Customer Name"), idx.get("Supplier Name")
     ti, ii, xi = (idx.get("Relationship Type"), idx.get("Primary Industry"), idx.get("Source"))
@@ -4721,10 +4972,17 @@ def _relationships(raw: str) -> _Relationships | None:
             states_none = True
         if k <= hdr or not ln or ln.startswith("Business Description"):
             continue
-        parts = ln.split("|")            # NOT filtered — a blank cell is a position, not nothing
+        parts = rows[k]                  # NOT filtered — a blank cell is a position, not nothing
         customer, rtype = cell(parts, ci), cell(parts, ti)
-        if not customer or not rtype or ln == lines[hdr]:  # a section repeating the header
+        if not customer or ln == lines[hdr]:  # a section repeating the header
             continue
+        if not rtype:
+            # A ROW WITH ITS TYPE BLANK IS A ROW (audit V1-O3, 2026-11-10): a party named beside a
+            # stated industry, source or supplier was dropped with no word. A line naming nothing
+            # else is prose, not a row — the closing line, a sentence (none on disk, 72 exports).
+            if not any(cell(parts, i) for i in (si, ii, xi)):
+                continue
+            rtype = "type not stated"
         supplier = cell(parts, si)
         # In the 5-column view BOTH parties are named and the focal company occupies one of them.
         # Render the pair as stated rather than guessing which is the counterparty — the direction
@@ -4739,44 +4997,20 @@ def _relationships(raw: str) -> _Relationships | None:
     return _Relationships(recent, prior, states_none) if recent or prior else None
 
 
-_REL_COLUMNS = ("Customer Name", "Relationship Type", "Primary Industry", "Source")
+def _sheet_cells(rows: list[list[Any]]) -> list[list[str]]:
+    """A spreadsheet's rows as the text cells :func:`_relationship_table` reads."""
+    return [[("" if c is None else str(c)).strip() for c in r] for r in rows]
 
 
 def _parse_relationship_sheet(rows: list[list[Any]]) -> list[str] | None:
     """The SPREADSHEET form of the Business-Relationships export → the same lines the .rtf form
-    produces. Columns are located BY HEADER TEXT, never by position: the .xls lays out
-    ``Customer Name | Exchange:Ticker Symbol | Relationship Type | Primary Industry | …``, so the
-    .rtf parser's ``cells[0], cells[1], cells[2]`` would read the TICKER as the relationship type
-    and silently produce 'Amazon.com, Inc. — NasdaqGS:AMZN · Distributor'. A right-looking line
-    off the wrong columns is worse than the loud parse error this route replaces."""
-    hdr = next(
-        (i for i, r in enumerate(rows)
-         if r and all(any(str(c).strip() == want for c in r) for want in _REL_COLUMNS[:2])),
-        None,
-    )
-    if hdr is None:
-        return None
-    col = {want: next((j for j, c in enumerate(rows[hdr]) if str(c).strip() == want), None)
-           for want in _REL_COLUMNS}
-    if col["Customer Name"] is None or col["Relationship Type"] is None:
-        return None
-
-    def cell(row: list[Any], want: str) -> str:
-        j = col[want]
-        return str(row[j]).strip() if j is not None and j < len(row) and row[j] is not None else ""
-
-    out: list[str] = []
-    for row in rows[hdr + 1:]:
-        name, rtype = cell(row, "Customer Name"), cell(row, "Relationship Type")
-        if not name or not rtype or name.startswith("*denotes"):
-            continue
-        line = f"{name} — {rtype}"
-        if industry := cell(row, "Primary Industry"):
-            line += f" · {industry}"
-        if src := cell(row, "Source"):
-            line += f" · src: {src}"
-        out.append(line)
-    return out or None
+    produces, by the same reader (:func:`_relationship_table`, audit RBC-D6). Columns are located
+    BY HEADER TEXT, never by position: the .xls lays out
+    ``Customer Name | Exchange:Ticker Symbol | Relationship Type | Primary Industry | …``, so a
+    positional read would take the TICKER as the relationship type and silently produce
+    'Amazon.com, Inc. — NasdaqGS:AMZN · Distributor'. The CURRENT rows; None when it lists none."""
+    rel = _relationship_table(_sheet_cells(rows))
+    return (rel.recent or None) if rel is not None else None
 
 
 def customers(bundle: CiqBundle) -> Sourced[str]:
@@ -4791,7 +5025,8 @@ def customer_roster(bundle: CiqBundle) -> tuple[Sourced[str], int | None]:
     RETURNED WITH ITS COUNT (2026-11-09, audit RBC-D1): how many recently disclosed rows parsed,
     taken from the parsed list BEFORE :func:`_roster` caps it at 30. The roster is a display string,
     and the renderers counted its ";" pieces, so every list over 30 printed "31". The count is None
-    wherever the roster is not PRESENT.
+    wherever the roster is not PRESENT, and on a PRESENT roster whose RTF view may be cut short
+    (no closing line, audit RBC-D3): a cut list's length is not the company's count.
 
     ROUTED BY FORMAT (item 21). The export ships as .rtf for most names and as a .xls SPREADSHEET
     for others (SMPL today, WERN next). ``read_text`` refuses a spreadsheet by design — and this
@@ -4804,56 +5039,127 @@ def customer_roster(bundle: CiqBundle) -> tuple[Sourced[str], int | None]:
     # luck, not a rule. That accident was harmless only while the .xls route failed loud for SMPL;
     # routing it correctly would otherwise have made supplier rows render as customer concentration.
     cands = bundle.all_workbooks("customers")
-    wb = next((w for w in cands if "customer" in w.path.name.lower()), None)
+    wb = next((w for w in cands if _customers_role(w.path.name) == "customers"), None)
     if wb is None:
         return Sourced.missing(
             note=(f"no Customers export for {bundle.ticker} — pull it and re-run"
                   if cands else
                   f"no Customers & Suppliers export for {bundle.ticker} — pull it and re-run")
         ), None
+    cite = f"CIQ Customers&Suppliers {wb.path.name}"
     parsed: list[str] | None
     prior: list[str] = []
+    rel: _Relationships | None
     if wb.fmt in (CiqFormat.BIFF_XLS, CiqFormat.OOXML):
         try:
             sheets = read_sheets(wb.path, wb.fmt)
         except CiqParseError as exc:
             return Sourced.unknown(note=str(exc)), None
-        parsed = next(
-            (p for rows in sheets.values() if (p := _parse_relationship_sheet(rows))), None
-        )
+        # RBC-D6: the RTF route's reader, so its sections, header guard, supplier column and
+        # stated-none sentence hold here too; the first sheet holding a table is the view
+        tables = [_sheet_cells(rows) for rows in sheets.values()]
+        rel = next((r for t in tables if (r := _relationship_table(t)) is not None), None)
+        raw = "\n".join("|".join(r) for t in tables for r in t)
     else:
         try:
             raw = read_text(wb.path, wb.fmt)
         except CiqParseError as exc:
-            return Sourced.unknown(note=str(exc)), None
+            # RBC-D5: an empty view is a real RTF of tens of KB with a handful of words (every
+            # export on disk is >= 70 KB), so the thin-RTF guard refuses it before its shape can
+            # be read. Name the shape when the view shows one; the guard's word stands otherwise.
+            named = (_unread_view(read_text(wb.path, wb.fmt, thin_ok=True), wb.path.name,
+                                  closing_known=True)
+                     if wb.fmt is CiqFormat.RTF_TEXT else None)
+            if named is None:
+                return Sourced.unknown(note=str(exc)), None
+            return Sourced.unknown(note=named, source_ref=cite), None
         rel = _relationships(raw)
-        parsed, prior = (rel.recent, rel.prior) if rel is not None else (None, [])
-        # the recent section's own statement once rows parse; the whole view's when none did
-        if not parsed and (rel.recent_states_none if rel is not None else is_empty_view(raw)):
-            # NOT a parse failure — CIQ affirmatively states it has nothing to list, and saying
-            # "could not parse" below would blame our reader for the source's own answer. The
-            # status stays UNKNOWN (no rows ⇒ no value ⇒ nothing to impute); only the NOTE changes,
-            # from a false claim about this code to what the export actually says. BURL is the
-            # case: 0 customer rows beside 33 supplier rows in the same bundle. Swept 2026-09-28
-            # over the 26 ticker folders in data/manual/ciq/, it is the ONLY empty view — ROST and
-            # TGT parse rows — so this is one name's economics, not a retail-sector rule.
-            said = (f"CIQ discloses no customers for {bundle.ticker} — the export is empty by "
-                    f"CIQ's own statement, not unparsed" if rel is None else
-                    f"CIQ discloses no recently disclosed customers for {bundle.ticker} — the "
-                    f"recent section says so in CIQ's own words, not unparsed")
-            return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
-                                   source_ref=f"CIQ Customers&Suppliers {wb.path.name}"), None
+    # both routes: one reading of what the view says
+    parsed, prior = (rel.recent, rel.prior) if rel is not None else (None, [])
+    # RBC-D3: checked on the RTF route only — no spreadsheet export is on disk to show its last line
+    closing_known = wb.fmt is CiqFormat.RTF_TEXT
+    cut = closing_known and not _ends_with_closing_line(raw)
+    # the recent section's own statement once rows parse; the whole view's when none did
+    if not parsed and (rel.recent_states_none if rel is not None else is_empty_view(raw)):
+        # NOT a parse failure — CIQ affirmatively states it has nothing to list, and saying
+        # "could not parse" below would blame our reader for the source's own answer. The
+        # status stays UNKNOWN (no rows ⇒ no value ⇒ nothing to impute); only the NOTE changes,
+        # from a false claim about this code to what the export actually says. BURL is the
+        # case: 0 customer rows beside 33 supplier rows in the same bundle. Swept 2026-09-28
+        # over the 26 ticker folders in data/manual/ciq/, it is the ONLY empty view — ROST and
+        # TGT parse rows — so this is one name's economics, not a retail-sector rule.
+        said = (f"CIQ discloses no customers for {bundle.ticker} — the export is empty by "
+                f"CIQ's own statement, not unparsed" if rel is None else
+                f"CIQ discloses no recently disclosed customers for {bundle.ticker} — the "
+                f"recent section says so in CIQ's own words, not unparsed")
+        # a prior list read from a file cut short is said to be so, like the recent one (RBC-D3)
+        cut_prior = _cut_note(wb.path.name, len(prior)) if cut and prior else ""
+        return Sourced.unknown(
+            note="; ".join(filter(None, (said, cut_prior, _prior_note(prior)))),
+            source_ref=cite), None
     if not parsed:
         # rows parsed only under the prior head: the table was read, so never "could not parse"
+        named = (None if prior else _unread_view(raw, wb.path.name, closing_known=closing_known))
         said = (f"{wb.path.name}'s recent section lists no customer and does not say it has none"
-                if prior else
+                if prior else named or
                 f"could not parse the Business-Relationships table in {wb.path.name}")
-        # a note naming the file's prior rows makes a claim about the file: cite it (round 2)
-        return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
-                               source_ref=(f"CIQ Customers&Suppliers {wb.path.name}" if prior
-                                           else None)), None
-    return (Sourced.present(_roster(parsed), source_ref=f"CIQ Customers&Suppliers {wb.path.name}",
+        # a file cut before its table reads nothing, and is said to be cut like one cut after it
+        # (RBC-D3); a named shape already says what its end shows
+        cut_said = (_cut_note(wb.path.name, len(prior)) if cut and (prior or not named) else "")
+        # a note naming what the file shows makes a claim about the file: cite it (round 2)
+        return Sourced.unknown(
+            note="; ".join(filter(None, (said, cut_said, _prior_note(prior)))),
+            source_ref=cite if prior or named or cut_said else None), None
+    if cut:
+        # A LIST CUT SHORT IS SAID, AND ITS LENGTH IS NOT A COUNT (audit RBC-D3, 2026-11-10): a file
+        # cut to 40% of its bytes read 96 of ORCL's 252 rows as the whole list, PRESENT, no note
+        return (Sourced.present(
+            _roster(parsed), source_ref=cite,
+            note="; ".join(filter(None, (_cut_note(wb.path.name, len(parsed)),
+                                         _prior_note(prior))))), None)
+    return (Sourced.present(_roster(parsed), source_ref=cite,
                             note=_prior_note(prior) or None), len(parsed))
+
+
+def _ends_with_closing_line(raw: str) -> bool:
+    """Does the view's text end with CIQ's closing line (:data:`_REL_CLOSING`)?"""
+    last = next((ln.strip().rstrip("|").strip() for ln in reversed(raw.splitlines())
+                 if ln.strip().rstrip("|").strip()), "")
+    return last == _REL_CLOSING
+
+
+def _cut_note(name: str, n: int) -> str:
+    return (f"{name} does not end with CIQ's closing line ('{_REL_CLOSING}'), so the list may be "
+            f"cut short: {n} row(s) read — re-export it")
+
+
+def _unread_view(raw: str, name: str, *, closing_known: bool) -> str | None:
+    """Why a view gave no rows and no 'there are no …' sentence, in what the view shows (audit
+    RBC-D5, 2026-11-10). Every such view read "could not parse", which blamed this reader for CIQ's
+    own empty answer: a header with no rows, a "No Data Available" body, an "Entitlement Needed"
+    one. None for a file showing none of them — the caller's "could not parse" stands.
+
+    HEADER-ONLY MEANS NOTHING BUT STRUCTURE FOLLOWS THE HEADER: a line after it that is not a
+    section head, a repeated header or the closing line is content this reader did not read, and
+    calling that view empty would hide a parse failure. Where the closing line is known (RTF) and
+    absent, the view may be cut short after its header, and is said to be."""
+    for marker, meaning in _REL_NO_TABLE:
+        if marker in raw:
+            return f"{name} reads '{marker}' — {meaning}, not a parse failure; re-export it"
+    lines = [ln.strip().rstrip("|").strip() for ln in raw.splitlines()]
+    hdr = next((i for i, ln in enumerate(lines) if _is_rel_header(ln)), None)
+    if hdr is None:
+        return None
+    rest = [ln for ln in lines[hdr + 1:]
+            if ln and ln != lines[hdr] and not _REL_SECTION.match(ln)]
+    if rest == [_REL_CLOSING] or (not rest and not closing_known):
+        return (f"the Business-Relationships table in {name} has its header and no rows, and "
+                "does not say it has none")
+    if not rest:
+        return (f"the Business-Relationships table in {name} has its header and no rows, and "
+                f"does not end with CIQ's closing line ('{_REL_CLOSING}'), so it may be cut short "
+                "— re-export it")
+    return None
 
 
 def _roster(rows: list[str]) -> str:
@@ -5471,15 +5777,28 @@ def gics_industry(bundle: CiqBundle) -> Sourced[str]:
     prof = bundle.workbook("profile")
     if prof is None:
         return Sourced.unknown(note="no CIQ Public Company Profile — SIC-sector fallback")
+    # DECODED BY ITS OWN FORMAT (audit RA-D17, 2026-11-10): the tearsheet was read with
+    # `rtf_to_text` whatever its bytes were, so a PDF tearsheet — which the contract allows —
+    # gave "no Primary Industry Classification" though `read_text` finds it. A PDF's layout
+    # text can hold the value on the label's own line, so the rest of that line is read first.
+    # A PDF or OLE tearsheet runs `pdftotext` / LibreOffice, whose failure (a corrupt or encrypted
+    # file) is a `SubprocessError` — read as an unreadable profile, never a crash of the assembly.
+    # Its text holds the command's absolute path, so the note names the file alone.
     try:
-        from striprtf.striprtf import rtf_to_text
-        text = rtf_to_text(prof.path.read_text(errors="ignore"))  # type: ignore[no-untyped-call]
-    except (OSError, ValueError) as exc:
+        text = read_text(prof.path, prof.fmt)
+    except (OSError, ValueError, CiqParseError) as exc:
         return Sourced.unknown(note=f"CIQ profile unreadable ({exc}) — SIC-sector fallback")
+    except subprocess.SubprocessError as exc:
+        return Sourced.unknown(
+            note=f"CIQ profile unreadable ({prof.path.name}: its {prof.fmt.value} converter "
+                 f"failed, {type(exc).__name__}) — SIC-sector fallback")
+    label = "Primary Industry Classification"
     lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
-    for i, ln in enumerate(lines[:25]):
-        if ln.startswith("Primary Industry Classification") and i + 1 < len(lines):
-            val = lines[i + 1].rstrip("|").strip()
+    for i, ln in enumerate(lines[:60]):
+        if ln.startswith(label):
+            # layout text sets columns apart by a run of spaces: the value is the first column
+            rest = re.split(r"\s{2,}|\t", ln[len(label):].strip(" |:\t"))[0].strip(" |")
+            val = rest or (lines[i + 1].rstrip("|").strip() if i + 1 < len(lines) else "")
             if val:
                 return Sourced.present(
                     val, source_ref="CIQ Public Company Profile→Primary Industry Classification")
@@ -6989,8 +7308,10 @@ def _first_seen(cells: list[str]) -> list[str]:
 
 def _currency_rows(rows: Rows) -> list[str]:
     """Every code in every Financials 'Currency' row — one cell per period column."""
+    # AN EMPTY CELL STATES NOTHING (audit RA-D15, H-D3's case): openpyxl hands one back as None, and
+    # `str(None)` made an all-USD `.xlsx` export state the currency "None", refused as foreign
     return _first_seen([str(c).strip() for r in rows if r and str(r[0]).strip() == "Currency"
-                        for c in r[1:]])
+                        for c in r[1:] if c is not None])
 
 
 def _principal_due(rows: Rows) -> list[str]:
@@ -7022,7 +7343,8 @@ def _comps_label(rows: Rows) -> list[str]:
     """The comps book's 'Currency:' label — the cell beside it, verbatim."""
     for r in rows[:20]:
         if r and str(r[0]).strip() == "Currency:":
-            return _first_seen([str(r[1]).strip()] if len(r) > 1 else [])
+            # an empty .xlsx cell is None (audit RA-D15): it states nothing, as BIFF's '' does
+            return _first_seen([str(r[1]).strip()] if len(r) > 1 and r[1] is not None else [])
     return []
 
 
@@ -7137,6 +7459,59 @@ def require_usd(currency: CiqCurrency | None, ticker: str) -> None:
         + "; ".join(f"{p.panel}: {', '.join(p.stated)}" for p in bad)
         + ". Every CIQ figure on a page is read as USD ($M); refusing rather than print these as "
         "dollars. Reading a foreign-currency workbook is STATE §5.0 row 4's FPI5.")
+
+
+class CiqUnitError(ValueError):
+    """A CIQ Financials money sheet STATES a unit other than Millions. Every CIQ money figure on a
+    page is read as $M, so a page built from it would print thousands as millions — refused before
+    assembly spends anything (audit RA-D9)."""
+
+
+#: Capital Structure Details states its unit as 'Principal Due in Millions of the reported
+#: currency.', which `ciq.stated_unit`'s 'In … of' line never matches (review of order 4).
+_PRINCIPAL_UNIT = re.compile(r"^Principal Due in (Units|Thousands|Millions|Billions) of ",
+                             re.IGNORECASE)
+
+
+def _principal_unit(rows: Rows) -> str | None:
+    for row in rows[:14]:
+        for cell in row:
+            if isinstance(cell, str) and (m := _PRINCIPAL_UNIT.match(cell.strip())):
+                return m.group(1).capitalize()
+    return None
+
+
+def require_millions(bundle: CiqBundle, ticker: str) -> None:
+    """Raise :class:`CiqUnitError` when a Financials money panel (`_MONEY_PANELS`) states a unit
+    other than Millions on its own unit line (`ciq.stated_unit`; Capital Structure Details'
+    'Principal Due in … of' line, `_principal_unit`).
+
+    ONLY THE BRIDGE READ THE UNIT (audit RA-D9, 2026-11-10). #863 taught the anchor bridge to read
+    each statement's 'In Millions of …' line and refuse another unit (BC-D10), but the readers that
+    print the page — the financial summary's "Revenue ($M)", `ltm_ebitda`, the balance-sheet
+    lines — assume $M, so an export in thousands printed 67,357,000 as "Revenue ($M)". This is
+    `require_usd`'s twin, at the same two places: assembly, before any fetch, and the anchor's
+    CIQ path. A panel stating NO unit is not refused (the bridge's magnitude and re-read checks
+    still screen it). Census of the 36 exports on disk, 2026-11-10: all 720 Income Statement,
+    Balance Sheet, Cash Flow, Segments, Capital Structure Summary and Historical Capitalization
+    sheets state Millions, and all 72 Capital Structure Details sheets 'Principal Due in Millions
+    of', so no page is refused."""
+    wrong: list[str] = []
+    for panel, how, read in _MONEY_PANELS:
+        if not panel.startswith("Financials") or how not in ("row", "principal"):
+            continue
+        try:
+            rows = read(bundle)
+        except CiqUnavailableError:
+            continue
+        unit = stated_unit(rows) if how == "row" else _principal_unit(rows)
+        if unit is not None and unit != "Millions":
+            wrong.append(f"{panel}: {unit}")
+    if wrong:
+        raise CiqUnitError(
+            f"{ticker}: {len(wrong)} CIQ Financials money sheet(s) state a unit other than "
+            f"Millions — {'; '.join(wrong)}. Every CIQ money figure on a page is read as $M; "
+            "refusing rather than print these as millions. Re-export in Millions.")
 
 
 def currency_flag(currency: CiqCurrency | None) -> str | None:

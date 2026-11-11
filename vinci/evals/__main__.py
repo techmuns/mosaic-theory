@@ -29,6 +29,9 @@ registration written before the first draw.
         [--ciq-root DIR] [--transform NAME ...] [--cap USD] --paid
                                               PAID: one build of one page, under its registration;
                                               without --paid, every check at $0 and no draw
+    score-run --registration FILE --budget-ledger FILE --draws-out FILE
+                                              $0: the independence measurement's registered rule
+                                              on its complete run (`independence`)
 
 Requests, saved logs, ledgers, registrations and raw draws hold licensed transcript text or
 spend records: they stay OUTSIDE the repository, and every command here refuses a path inside it.
@@ -179,6 +182,10 @@ def main(argv: list[str] | None = None) -> int:
                          "(default: the assembler's copy)")
     rr.add_argument("--note")
     rr.add_argument("--out", required=True, type=Path)
+    sr = sub.add_parser("score-run")
+    sr.add_argument("--registration", required=True, type=Path)
+    sr.add_argument("--budget-ledger", required=True, type=Path)
+    sr.add_argument("--draws-out", required=True, type=Path)
     r = sub.add_parser("run")
     r.add_argument("--registration", type=Path,
                    help="a `register-run` registration; required (no paid draw is unregistered)")
@@ -275,6 +282,14 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "run":
         return _run(a)
+    if a.cmd == "score-run":
+        from vinci.evals import builds as bd
+        from vinci.evals import independence as ind
+        breg = bd.RunRegistration.from_json(a.registration.read_text(encoding="utf-8"))
+        res = ind.score(breg, rp.Budget.load(a.budget_ledger), a.draws_out)
+        print(ind.score_text(res))
+        # every STOP exits 1, NOT TESTABLE included (Codex round 1, #978), so no gate reads past it
+        return 1 if (res.falsified or res.stop_dissent or not res.testable) else 0
     if a.cmd == "score":
         from vinci.evals import compare as cm
         reg = cm.Registration.from_json(a.registration.read_text(encoding="utf-8"))

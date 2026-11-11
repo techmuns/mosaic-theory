@@ -6634,8 +6634,10 @@ def test_entitlement_renders_undisclosed(monkeypatch: typing.Any) -> None:
     'Entitlement Needed' groups as 'broker undisclosed'."""
     assert cs._undisclosed_name("Entitlement Needed") == "undisclosed (CIQ entitlement)"
     assert cs._undisclosed_name("H.C. Wainwright") == "H.C. Wainwright"
+    # CIQ's own ten headers (all 36 exports on disk, 2026-11-10): the log is read by them (RA-D14)
     rows = [["", ""], ["Change Type", "Date", "Broker", "Analyst", "Data Point", "Period",
-                       "Cur", "Pri", "After", "Before"],
+                       "Broker Value Current", "Broker Value Prior", "Consensus After",
+                       "Consensus Before"],
             ["Downward Revision", 46100.0, "Entitlement Needed", "-", "EBITDA", "FY 2026",
              1.0, 2.0, 1.0, 2.0]]
     ev = cs.revision_events(_est_bundle({"Recent Changes": rows}))
