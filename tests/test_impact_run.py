@@ -204,3 +204,36 @@ def test_resume_rebuilds_a_side_whose_ciq_export_changed(
     lay = rn.Layout(s.out, {}, {}, {}, s.out)
     (s.ciq_root / "MCK" / "MCK Financials.xls").write_bytes(b"export two, re-exported")
     assert rn.run_child(s, lay, "base", "MCK") == "built" and built == ["base/MCK"]
+
+
+def test_a_frontend_source_change_is_code_and_never_the_same_by_construction(
+        tmp_path: pathlib.Path) -> None:
+    """Codex P1 on #1000 (round 2): a PR that changes only `frontend/views/shared/dossier.js` (the
+    proposal and verdict presentation) took the shortcut "nothing moves … changes no code". A
+    published artifact under `frontend/dossiers/` is not source and keeps the shortcut."""
+    import subprocess
+
+    def git(*a: str) -> str:
+        return subprocess.run(["git", "-C", str(repo), *a], capture_output=True, text=True,
+                              check=True).stdout.strip()
+
+    def commit(files: dict[str, str]) -> str:
+        for rel, text in files.items():
+            (repo / rel).parent.mkdir(parents=True, exist_ok=True)
+            (repo / rel).write_text(text)
+        git("add", "-A")
+        git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "c")
+        return git("rev-parse", "HEAD")
+
+    repo = tmp_path / "r"
+    repo.mkdir()
+    git("init", "-q", "-b", "main")
+    base = commit({"vinci/m.py": "X = 1\n", "frontend/build.py": "pass\n",
+                   "frontend/views/shared/dossier.js": "let a = 1;\n",
+                   "frontend/dossiers/MCK.md": "page\n"})
+    page_only = commit({"frontend/dossiers/MCK.md": "page, re-rendered\n"})
+    js = commit({"frontend/views/shared/dossier.js": "let a = 2;\n"})
+    s = rn.Settings(repo=repo, base=base, head=js, out=tmp_path / "o", ciq_root=tmp_path,
+                    cache_root=tmp_path, store=tmp_path, env_file=None)
+    assert rn._same_code(s, {"base": base, "head": page_only}) is True
+    assert rn._same_code(s, {"base": page_only, "head": js}) is False

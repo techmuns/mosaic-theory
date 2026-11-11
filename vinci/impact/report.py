@@ -80,7 +80,8 @@ def fail_first_lines(ff: dict[str, Any], k: int, code_changed: bool = True) -> l
         return ["### 1. Fail first — the PR changes no test file", "",
                 ("No test to run. A CODE fix without a test that fails first is not done "
                  "(CLAUDE.md)." if code_changed else
-                 "No test to run, and the PR changes no code (`vinci/`, `frontend/build.py`).")]
+                 "No test to run, and the PR changes no code (`vinci/`, or browser-run source "
+                 "under `frontend/`).")]
     first = [c for c in cases if c["base"]["outcome"] in ("failed", "error", "absent")
              and c["head"]["outcome"] == "passed"]
     both = [c for c in cases if c["base"]["outcome"] == "passed"
@@ -288,6 +289,12 @@ def rendered_lines(r: dict[str, Any], k: int) -> list[str]:
              f"({fe['files']} files): differ {_names(fe['differ'])}; only at base "
              f"{_names(fe['only_base'])}; only at head {_names(fe['only_head'])}",
              f"- Frontend files the PR edits itself: {_names(fe['pr_edits'])}"]
+    src = fe.get("source_edits") or []
+    if src:
+        lines.append(f"- **Browser-run source the PR changes ({len(src)}): {_names(src)}.** This "
+                     "check runs no JavaScript, so what these change on the served page is NOT "
+                     "measured here: a browser preview of the committed pages at both refs is "
+                     "owed (CLAUDE.md, PREVIEW RULE)")
     stale = [p["ticker"] for p in res if (p.get("committed_md_matches") or {}).get("head")
              is False]
     caused = [p["ticker"] for p in res if (p.get("committed_md_matches") or {}).get("head")

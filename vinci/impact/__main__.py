@@ -90,7 +90,10 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         (a.out / "store.json").write_text(sto.to_json(filled), encoding="utf-8")
         print("\n".join(sto.lines(filled)))
-        return 0 if not filled["unpriced"] else 1
+        # a refresh that FAILED is a failed fill, even over names older bars still price (Codex
+        # P1 on #1000, round 2)
+        failed = [r for r in filled["runs"] if r["exit"] != 0]
+        return 0 if not filled["unpriced"] and not failed else 1
     s = rn.Settings(
         repo=repo, base=a.base, head=a.head, out=a.out.resolve(),
         ciq_root=(a.ciq_root or primary / "data" / "manual" / "ciq").resolve(),

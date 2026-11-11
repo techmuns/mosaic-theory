@@ -951,11 +951,24 @@ def page_reach(lay: Layout, paths: Sequence[str]) -> list[str]:
 
 # --------------------------------------------------------------------------------------- the run
 
+#: Published files under `frontend/` — mirrors and artifacts the build or a pass writes. Every
+#: other path there is SOURCE the browser runs (`app.js`, `lib/`, `views/` — proposal and verdict
+#: presentation among it), and a change to it is a code change (Codex P1 on #1000, round 2).
+FRONTEND_ARTIFACTS = ("frontend/dossiers/", "frontend/scenarios/", "frontend/monitor/",
+                      "frontend/theme-intelligence/", "frontend/snapshots/")
+
+
+def frontend_source_changes(s: Settings, shas: dict[str, str]) -> list[str]:
+    out = st.git(s.repo, "diff", "--name-only", "--no-renames", shas["base"], shas["head"],
+                 "--", "frontend")
+    return sorted(p for p in out.splitlines() if p and not p.startswith(FRONTEND_ARTIFACTS))
+
+
 def _same_code(s: Settings, shas: dict[str, str]) -> bool:
     def tree(ref: str, path: str) -> str:
         return st.git(s.repo, "rev-parse", f"{ref}:{path}").strip()
-    return all(tree(shas["base"], p) == tree(shas["head"], p) for p in ("vinci",
-                                                                        "frontend/build.py"))
+    return (tree(shas["base"], "vinci") == tree(shas["head"], "vinci")
+            and not frontend_source_changes(s, shas))
 
 
 def _write_side(path: Path, obj: Any) -> None:
@@ -998,8 +1011,8 @@ def run(s: Settings) -> dict[str, Any]:
     report["census"] = list(s.census)
     if same and s.shortcut:
         s.log("base and head carry the same vinci/ and frontend/build.py: nothing to run")
-        report["shortcut"] = ("base and head carry byte-identical `vinci/` and "
-                              "`frontend/build.py` trees, so every page, request, render and "
+        report["shortcut"] = ("base and head carry byte-identical `vinci/` trees and no "
+                              "frontend source change, so every page, request, render and "
                               "consumer is the same by construction")
         report["fail_first"] = fail_first(s, shas)
         report["wall_seconds"] = round(time.monotonic() - t_start, 1)
@@ -1062,6 +1075,7 @@ def run(s: Settings) -> dict[str, Any]:
         report["frontend"] = tree_diff(fe["base"], fe["head"])
         report["frontend"]["pr_edits"] = sorted(p for p in ident["all_paths"]
                                                 if p.startswith("frontend/"))
+        report["frontend"]["source_edits"] = frontend_source_changes(s, shas)
         report["downstream"] = downstream(s, lay, shas, ident["paths"], frontier)
         report["panel_requests"] = (panel.result() if panel is not None else
                                     {"status": "not reached"})

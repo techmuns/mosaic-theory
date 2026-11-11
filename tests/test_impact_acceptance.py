@@ -143,7 +143,7 @@ def test_977_a_docs_only_pr_moves_nothing() -> None:
     assert r["same_code"] is True and "pages" not in r
     md = markdown(r, json_name="report.json")
     assert "**Nothing moves:** base and head carry byte-identical `vinci/`" in md
-    assert "the PR changes no code (`vinci/`, `frontend/build.py`)" in md
+    assert "the PR changes no code (`vinci/`, or browser-run source under `frontend/`)" in md
     assert "### 2–5. Pages, requests, rendered surface, downstream readers — the same by " \
            "construction" in md
 

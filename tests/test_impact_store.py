@@ -45,3 +45,21 @@ def test_the_fill_can_reach_no_network(monkeypatch: pytest.MonkeyPatch) -> None:
     child.block_sockets()
     with pytest.raises(RuntimeError, match="network is blocked"):
         socket.create_connection(("api.polygon.io", 443), timeout=1)
+
+
+def test_a_refresh_that_failed_fails_the_store_command(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Codex P1 on #1000 (round 2): a refresh that exits non-zero over names the copied store
+    already prices (older bars) left nothing "unpriced", and the command exited 0 on a store that
+    was never filled to its cached window."""
+    from vinci.impact import __main__ as cli
+
+    res = {"store": "s", "source": "p", "start": "2021-07-01", "symbols": ["MCK"],
+           "before": {"MCK": "2026-08-11"}, "after": {"MCK": "2026-08-11"}, "uncached": [],
+           "unpriced": [], "runs": [{"end": "2026-11-10", "symbols": ["MCK"], "exit": 1,
+                                     "tail": "SomeError"}]}
+    monkeypatch.setattr(sto, "fill", lambda **kw: res)
+    (tmp_path / "out").mkdir()
+    assert cli.main(["store", "--out", str(tmp_path / "out")]) == 1
+    res["runs"][0]["exit"] = 0
+    assert cli.main(["store", "--out", str(tmp_path / "out")]) == 0
