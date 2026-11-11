@@ -29,12 +29,12 @@ edit a file A has in flight. Row 42 now names that blocker.
 **WHY.** #878's record deferred this edge (review round 1): "The fix is to validate a JSON body
 before caching it in `vinci/netcache.py`."
 
-**HOW VERIFIED.** `tests/test_netcache_json_body.py`, 5 tests. They run on Gartner's (IT)
+**HOW VERIFIED.** `tests/test_netcache_json_body.py`, 8 tests. They run on Gartner's (IT)
 committed submissions document and older page -001 (`tests/fixtures/submissions_pages/`, #878's
 fixtures), served by a mock transport behind a real `CachedHttp` and a real `EdgarClient`. That is
 the path the monitor and every windowed caller read through.
 - **Fail first, on main's `vinci/netcache.py`:** the two positive pins fail, and the two negative
-  pins pass. All 5 pass on this branch.
+  pins pass. All 8 pass on this branch.
   - An interstitial, then the real page: on main the second client was served the cached
     interstitial from disk with no request, and raised again. Now the second read reaches SEC and
     returns the page's 8-Ks since 2021-06-01.
@@ -49,6 +49,20 @@ the path the monitor and every windowed caller read through.
     limit): the refused copy is now removed from disk as well, because `fetched_at` falls back
     to the disk entry and still stated the refused copy's time. Pinned by the same test, now
     asserting `fetched_at(url) is None`, red on `cc7a7fff`.
+  - PR round 2 (the coordinator's independent review, at `2a39c9c4`) REVERSED round 1's disk
+    removal and pinned the headline change:
+    - **The headline change was unpinned.** A write moved above the parse survived all 5 tests,
+      because the next read refused the written copy and refetched. It is now pinned on the disk
+      itself by `test_a_refused_body_is_never_written_fresh_or_over_an_expired_copy`: a refused
+      first fetch leaves no entry, and an expired valid copy survives a refused refetch byte for
+      byte. That mutant now fails it.
+    - **Round 1's unlink deleted the refused copy from caches that are only read.** These are
+      the cache-only scripts and the impact check's frozen cache shared by both sides, so a
+      second reader met a miss. A refused copy is now a miss in memory only, recorded in
+      `_refused` so `fetched_at` states no time for it. Its file stays, and the next good write
+      replaces it. Pinned by `test_a_cache_only_reader_never_deletes_the_copy_it_refuses`, red
+      on `2a39c9c4`, and by `test_a_good_write_after_a_refusal_states_its_own_fetch_time` (the
+      negative). Dropping the marker fails 2 tests.
 - **The callers' suites pass**, `-m "not network"`: netcache, older pages, EDGAR, SEC pacing,
   budget and refusals, and amended filings.
 
@@ -67,3 +81,21 @@ the path the monitor and every windowed caller read through.
 - **DEFERRED (PR round 1): `post_json` still caches a 200 body before it parses it.** That is the
   same class on FINRA's short-interest query path (`finra.py`), outside row 42's submissions reads.
   The fix would route `post_json` through the same body check.
+- **DEFERRED (PR round 2): the submissions failure memo does not remember a non-JSON body.**
+  `EdgarClient._submissions` and `_older_page` remember only `HttpError`, and a non-JSON body
+  raises `ValueError`. So one client serving five reads of a filer whose page is an
+  interstitial sends 5 requests where main sent 1 (main's disk copy acted as the memo, for the
+  day the page was wrong).
+  - The memo exists to stop a retry STORM: about 15.6 s of retries per read on a degraded feed.
+    A non-JSON 200 is one paced request with no retry.
+  - Remembering it would also keep an assembly reading the failure after SEC recovered.
+  - This is `vinci/edgar/client.py`, outside this PR. The cost stands at one request per read.
+- **DEFERRED (PR round 2): `fetched_at`, before any read, still counts a non-JSON copy as held.**
+  It reads the disk entry without parsing it, and it serves `get_text`'s copies too.
+  `theme_intelligence/market.py` gates its Tiingo budget on it, so such a copy makes one request
+  that is not counted against the budget, where main raised with none. Fixing it means parsing in
+  `fetched_at`, which is the text path's API as well.
+- **OPEN, not caused by this PR** (review, 2026-11-11):
+  - `json.loads(get_text(...))` callers still cache an interstitial:
+    `scripts/audit_verbatim_corpus.py:130` and `vinci/quality/sources/release.py:563`;
+  - `_write_cache` is a plain, non-atomic `write_text`.

@@ -128,3 +128,70 @@ def test_a_rejected_copy_whose_refetch_fails_states_no_fetch_time(tmp_path: Path
     assert url not in http._fetched                 # noqa: SLF001
     # PR round 1: the PUBLIC answer, which falls back to the disk entry, states no time either
     assert http.fetched_at(url) is None
+
+
+# --- PR #1016 round 2 (the coordinator's independent review) -----------------------------------
+
+_PAGE_URL = "https://data.sec.gov/submissions/CIK0000749251-submissions-001.json"
+
+
+def _entry(http: CachedHttp, url: str) -> dict[str, Any] | None:
+    p = http._cache_path(url)                       # noqa: SLF001
+    return json.loads(p.read_text()) if p.exists() else None
+
+
+def test_a_refused_body_is_never_written_fresh_or_over_an_expired_copy(tmp_path: Path) -> None:
+    """THE HEADLINE CHANGE, PINNED (review finding 1): a write placed before the parse survived
+    every other test here, because the next read refused the written copy and refetched. Pinned
+    on the disk itself: (a) a first fetch answered with an interstitial leaves no entry; (b) an
+    EXPIRED valid copy whose refetch is an interstitial is still on disk, byte for byte — never
+    overwritten by the body that was refused."""
+    sec = _Sec(bad=99)                              # page -001 is an interstitial every time
+    http = _http(tmp_path, sec)
+    with pytest.raises(ValueError):
+        http.get_json(_PAGE_URL, ttl_seconds=86_400)
+    assert _entry(http, _PAGE_URL) is None                                  # (a)
+    http._write_cache(_PAGE_URL, PAGE1)             # noqa: SLF001 — a valid copy …
+    held = _entry(http, _PAGE_URL)
+    assert held is not None
+    held["fetched_at"] -= 2 * 86_400                # … two days old: expired at a one-day TTL
+    http._cache_path(_PAGE_URL).write_text(json.dumps(held))  # noqa: SLF001
+    with pytest.raises(ValueError):
+        http.get_json(_PAGE_URL, ttl_seconds=86_400)
+    assert _entry(http, _PAGE_URL) == held                                  # (b)
+
+
+class _CacheOnly(CachedHttp):
+    """The cache-only readers' shape (`scripts/debt_maturity_moves.py`,
+    `scripts/ads_ratio_moves.py`, the impact check's frozen cache): nothing is fetched, a miss
+    raises."""
+
+    def _fetch_with_retries(self, url: str, **kw: Any) -> str:
+        raise HttpError(f"not in the cache: {url}")
+
+
+def test_a_cache_only_reader_never_deletes_the_copy_it_refuses(tmp_path: Path) -> None:
+    """Review finding 2: round 1 unlinked a refused copy, which DELETED it from a cache that a
+    cache-only reader (or the impact check's shared frozen cache) only reads — so a second reader
+    saw a miss where the first saw the copy. A refused copy is a miss in MEMORY only: the file
+    stays, and the next successful write replaces it."""
+    http = _CacheOnly(cache_dir=tmp_path, user_agent="cache-only", min_interval_sec=0.0,
+                      namespace="sec")
+    http._write_cache(_PAGE_URL, INTERSTITIAL)      # noqa: SLF001
+    before = _entry(http, _PAGE_URL)
+    with pytest.raises(HttpError):
+        http.get_json(_PAGE_URL, ttl_seconds=86_400)
+    assert _entry(http, _PAGE_URL) == before        # still there, unchanged
+    assert http.fetched_at(_PAGE_URL) is None       # … but stated as no held copy (finding 4a)
+
+
+def test_a_good_write_after_a_refusal_states_its_own_fetch_time(tmp_path: Path) -> None:
+    """(−) The refusal is forgotten once SEC serves the page: the JSON replaces the refused copy,
+    and `fetched_at` states the new copy's time."""
+    sec = _Sec(bad=0)
+    http = _http(tmp_path, sec)
+    http._write_cache(_PAGE_URL, INTERSTITIAL)      # noqa: SLF001
+    http._fetched.clear()                           # noqa: SLF001 — a fresh process
+    assert http.get_json(_PAGE_URL, ttl_seconds=86_400) == json.loads(PAGE1)
+    assert json.loads(_entry(http, _PAGE_URL)["text"]) == json.loads(PAGE1)  # type: ignore[index]
+    assert http.fetched_at(_PAGE_URL) == _entry(http, _PAGE_URL)["fetched_at"]  # type: ignore[index]
