@@ -26,16 +26,21 @@ superseded-by:
   first on each"). A name that also held bars AFTER `end` kept them on the basis they were pulled
   on, so a split since left the same step at `end`'s next session. This happened on the aggregates
   path and on the grouped one; a screen replay at an earlier reference date is a grouped case.
-  - Each name this run wrote that holds bars after `end` is set beside the source at its FIRST and
-    LAST held sessions after `end`.
-  - Only one restatement read at both ends restates: every held bar after `end` is then put on the
-    current basis.
+  - **Aggregates path:** still one call per name, now reaching through the name's last held bar.
+    EVERY held bar after `end` is set beside the served one.
+  - **Grouped path:** every name this run wrote that holds bars after `end` is read at its FIRST
+    held session after `end`, which is where a splice at `end`'s next session shows. Only a name
+    that reads a restatement there is read at its LAST held session too. That costs one
+    whole-market call per distinct date.
+  - Only one restatement across everything read restates: every held bar after `end` is then put
+    on the current basis.
   - Two bases there restate nothing. That is a pull made after the split, whose ex-date and later
     bars the split leaves as they were, so one factor over all of them would make a step rather
     than remove one. An end the source did not serve also restates nothing. Both are named
     `unanchored`.
-  - Aggregates path: still one call per name, now reaching through the last held bar. Grouped
-    path: one call per distinct date, mostly two.
+  - **A name whose window writes nothing has neither edge restated.** Its held window keeps its
+    basis, so restating the bars either side of it would make the two steps the anchors exist to
+    remove (code review 0b, finding 3).
   - A refresh ending on the latest session holds nothing after `end` and costs nothing. That is
     the routine weekly and monthly refresh.
   - Only `[start, end]` is written; the anchors either side are read.
@@ -79,13 +84,18 @@ RF-D11 and RF-D12, all latent per the audit (group F notes, F-D5 and F-D10 to F-
 edge is this build's own finding 1, counted in scope by the coordinator.
 
 **HOW VERIFIED.** See the PR's "Cross-setup validation (deterministic)".
-- **Fail first.** `tests/test_prices_order5.py` has 17 tests.
-  - First 10: 8 fail on `2b9b766c`; the 2 negative pins pass there, as they should.
-  - The review's 2 (a day not yet closed in ET; an anchor the source did not serve): each fails
+- **Fail first.** `tests/test_prices_order5.py` has 22 tests.
+  - The first 10: 8 fail on `2b9b766c`, and the 2 negative pins pass there, as they should.
+  - Review 0a's 2 (a day not yet closed in ET; an anchor the source did not serve): each fails
     with its fix reverted.
-  - The right edge's 5: 4 fail on the left-edge-only code (`ba5c6707`), one positive pin per path
-    and the two-bases negative pin on each path. The routine-refresh pin passes there, as it should.
-  - All 17 pass on head.
+  - The right edge's 5: 4 fail on the left-edge-only code (`ba5c6707`), being one positive pin per
+    path and the two-bases negative pin on each path. The routine-refresh pin passes there, as it
+    should.
+  - Review 0b's 5: 3 fail on `8d7040bc` with that review's two applied refactors only. They are a current
+    bar between two stale ones, a window that writes nothing, and a grouped replay with no split
+    reading only the first session. The other 2 pin shipped behaviour: an unserved grouped right
+    edge, and a price-only move after `end`.
+  - All 22 pass on head.
 - **The real data in those tests:**
   - IESC's real 2026-08-05 restatement pair, from the primary store and Polygon;
   - GOOGL's committed Polygon bars;
@@ -94,14 +104,18 @@ edge is this build's own finding 1, counted in scope by the coordinator.
   - GOOGL's real 2022-07 Tiingo rows;
   - Polygon's real 403 text.
 - **Both edges, live, on a `.backup` of the primary's store** (a scratch script, not committed;
-  12 Polygon requests in all, no Tiingo). The ledger names the store holds were VRRM, SMPL and IT.
-  - Per-symbol over 2026-06-01..06-12: 3 calls, each reaching through the name's last held bar
-    (07-02, 08-11, 07-02).
-  - Grouped over 2026-06-08..06-12: 9 calls, being 5 window days, the left check at 06-05, and the
-    right edge at 06-15, 07-02 and 08-11.
+  no Tiingo). The ledger names the store holds were VRRM, SMPL and IT.
+  - Final code, 10 Polygon requests:
+    - Per-symbol over 2026-06-01..06-12: 3 calls, each reaching through the name's last held bar
+      (07-02, 08-11, 07-02).
+    - Grouped over 2026-06-08..06-12: 7 calls, being 5 window days, the left check at 06-05, and
+      the right edge's first session 06-15. No name read a restatement there, so no last session
+      was read.
   - Neither path restated anything, and 0 of the 66 held bars after `end` changed. No split fell
     in the window, so no false restatement was made on real data.
-  - The primary's sha256 (`b237f3a0…`) was the same before and after.
+  - The same run before review 0b's fixes made 12 requests; its grouped path also read 07-02 and
+    08-11, with the same result.
+  - The primary's sha256 (`b237f3a0…`) was the same before and after both runs.
 - **RF-D10 on the screen's committed inputs.** The screen's own `build_price_record` was run on the
   24 names with committed real bars:
   - as the weekly `2026-10-16-01` ran it (bars cut at its reference date): 0 of 24 names and 0
@@ -110,13 +124,18 @@ edge is this build's own finding 1, counted in scope by the coordinator.
     2026-10-16 bars).
   - 0 of the 4,456 dated price fields in the 343 committed candidate records is dated after
     2026-10-16.
-- PAGES_PLACEHOLDER
+- **Pages.** The $0 build of every committed page, on base and head from one store copy, is in the PR's part 2, with the frontend render diff (part 4) and the six-page request compare (part 3: 6 of 6 identical, no paid check owed).
 
 **FOUND, NOT FIXED** (reported, not built: scope freeze, rule C).
-- **`scripts/build_price_fixture.py` drops `ingest_prices_per_symbol`'s summary** (finding 2).
-  This is the coordinator's instruction: record it, do not fix it. The weekly job runs the script
-  unattended, and its call (line 140) discards the return value. So a name the refresh restated,
-  or found `price_only` or `unanchored`, is never printed by that job.
+- **The unattended paths discard the ingest summary.** This is finding 2, which the coordinator
+  directed be recorded and not fixed. Review 0b found the same at two more callers.
+  - `scripts/build_price_fixture.py:140` (run by the weekly job) discards
+    `ingest_prices_per_symbol`'s summary.
+  - `vinci/screens/run.py:119,123` and `vinci/orchestrator.py:456,466` discard `ingest_prices`'
+    summary.
+  - So a name a refresh restated, or found `price_only` or `unanchored`, is never shown there. A
+    screen replay's right edge, the case this build adds, is one of them. Only `vinci refresh`
+    prints it.
 - **The grouped path's left edge skips a held name the source did not serve, unnamed.**
   `restate_held` `continue`s when a boundary session has no fresh bar for the name. That name's
   older bars go unchecked and appear in no summary list. The right edge here names the same case
@@ -133,6 +152,9 @@ edge is this build's own finding 1, counted in scope by the coordinator.
   a fresh response cache. Names: VRRM, SMPL and IT, the ledger names the store holds.
   "Held after `end`" counts each name's bars dated after its run's `end`: 13 + 40 + 13 = 66 for
   each path.
+- Replay cost: a read-only query of the same backup, per `end` above, over the names with a bar
+  in the 30 days before it (the grouped path's restatement window, which it rewrites). That is
+  2,332, 2,313 and 2,272 names, of which 2,328, 2,313 and 2,272 hold bars after `end`.
 - Screen inputs: `tests/fixtures/prices/*.jsonl`, 24 names plus IWM, real Polygon bars through
   2026-10-16. The candidate scan covers all 343 rows of `data/snapshots/candidate_records.jsonl`
   at `2b9b766c`.
@@ -143,10 +165,19 @@ edge is this build's own finding 1, counted in scope by the coordinator.
   served the same week.
 - **An anchor beyond the plan window cannot be checked.** It is named in the summary as
   `unanchored`, never assumed.
-- **The right edge reads two sessions, not every one.** The held bars between the first and last
-  are taken to share their pull, the rule `restate_held` already states for the left. A store
-  already spliced between those two sessions (by a refresh before this fix) is not repaired here;
-  `vinci restate-prices` and the scorecard's split-step check are what catch it. Falsifier: a
-  whole-number step between two held bars after a refresh's `end`, on a name that refresh restated.
-- **A screen replay at an earlier reference date now costs one or two grouped calls more**
-  (about 12–24 s at 5 a minute).
+- **The grouped right edge reads two sessions, not every one.** The aggregates path reads every
+  held bar after `end`, because its one call already carries them. The grouped path reads the
+  first and last, and the bars between are taken to share their pull, the rule `restate_held`
+  already states for the left edge.
+  - So a store already spliced between those two sessions, by a refresh before this fix, can have
+    its current-basis middle rescaled a second time (code review 0b, finding 2).
+  - `vinci restate-prices` and the scorecard's split-step check are what catch that.
+  - Falsifier: a whole-number step between two held bars after a grouped refresh's `end`, on a
+    name that refresh restated.
+- **A screen replay at an earlier reference date now costs more whole-market calls.** It pays one
+  per distinct first held date after `end`, plus one per distinct last date among the names that
+  read a restatement.
+  - On the backed-up primary store, replays at 2026-05-29, 2026-03-31 and 2025-12-31 have 4, 6 and
+    6 distinct first dates, so they cost about a minute or more at 5 a minute.
+  - Reading every name's last date as well would have cost 18, 23 and 24 calls.
+  - The ~4,600 lookups that find those dates (~2,300 names) took 147–236 ms.
