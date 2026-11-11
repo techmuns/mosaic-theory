@@ -91,10 +91,11 @@ def test_a_percentile_traces_as_its_rank_on_the_frozen_page() -> None:
 
 
 def test_only_the_rank_itself_is_admitted_and_only_to_its_own_fact() -> None:
-    """The negative half. Of every rank 0..100 cited to the percentile fact, the ones that trace
-    are its own rank (2) and the three that traced before through its other numbers — 0 (any value
-    x1e-2 is within the 0.05 floor of 0), 5 (its ref's "~5y") and 18 (0.0183 x1e3) — so the rule
-    admits ONE number per percentile. The same 0.0183
+    """The negative half. Of every rank 0..100 cited to the percentile fact, only its own rank (2)
+    traces — ONE number per percentile. Three more traced before through its other numbers, each
+    a defect TeamNostra named (fix request 2): 0 (any value x1e-2 within the 0.05 floor, RG-D4),
+    5 (its ref's "~5y", a window) and 18 (0.0183 x1e3, a fraction rescaled to a count, RG-D2).
+    A rank meets a stored percentile only as its rank, never at face. The same 0.0183
     stored in a field that is not a percentile admits no rank, and the rank cited to another fact
     stays flagged."""
     mech = _frozen()
@@ -103,7 +104,7 @@ def test_only_the_rank_itself_is_admitted_and_only_to_its_own_fact() -> None:
     assert fact.source_ref
     traced = {n for n in range(101)
               if not _flagged(mech, f"it sits at the {_ordinal(n)} percentile", fact.source_ref)}
-    assert traced == {0, 2, 5, 18}
+    assert traced == {2}
     other = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
     assert other
     assert _flagged(mech, "it sits at the 2nd percentile", other) == ["2"]
@@ -219,12 +220,13 @@ def test_every_percentile_field_of_the_page_schema_is_in_the_closed_set() -> Non
     "impairment-free over the 5-year window",
     "the stock is near its 52-week low",
     "shares roughly flat over ~2y",
-    "the band spans ~9y",
     "a 180-day return",
 ])
 def test_a_hyphenated_or_abbreviated_duration_is_no_figure(claim: str) -> None:
     """FAILED on 9e996d7f for each: the spaced form ("5 years") was skipped, these were flagged.
-    Whole numbers only (cross-review of #890)."""
+    Whole numbers only (cross-review of #890). "the band spans ~9y" left this list in fix request
+    2 (RG-D5, STATE row 45): a span is a LENGTH a fact states (`window_span_years`), so it is a
+    figure — `test_a_duration_a_fact_could_state_is_a_figure`."""
     mech = _frozen()
     ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
     assert ref
@@ -250,10 +252,43 @@ def test_a_decimal_duration_is_a_figure(claim: str, figure: str) -> None:
     assert _flagged(mech, claim, ref) == [figure]
 
 
+@pytest.mark.parametrize(("claim", "figure"), [
+    ("the band spans ~9y", "9"),
+    ("cash runway is 47 months at the current burn", "47"),
+    ("days sales outstanding rose to 95 days", "95"),
+    ("an 83-day DSO", "83"),
+    ("a payback of 7 years", "7"),
+])
+def test_a_duration_a_fact_could_state_is_a_figure(claim: str, figure: str) -> None:
+    """FAILED on main 2637e91b for each (fix request 2, RG-D5; STATE row 45): a duration was skipped
+    however it was written, so a made-up runway, DSO, payback or span passed unread. It is a figure
+    now, traced like any other, and flagged when the cited fact does not state it."""
+    mech = _frozen()
+    ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
+    assert ref
+    assert _flagged(mech, claim, ref) == [figure]
+
+
+@pytest.mark.parametrize("claim", [
+    "over the past 12 months the multiple fell",
+    "in 2 years the notes mature",
+    "180 days ago the price was higher",
+    "the percentile of ~5 years of closes",
+])
+def test_a_duration_that_names_a_window_is_still_no_figure(claim: str) -> None:
+    """The negative half: a window a claim measures over is a label, as before."""
+    mech = _frozen()
+    ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
+    assert ref
+    assert _flagged(mech, claim, ref) == []
+
+
 @pytest.mark.parametrize(("claim", "figures"), [
     ("a 5-year CAGR of 345.6%", ["345.6"]),
     ("$5-billion of new capacity", ["5"]),
-    ("growth of 5-10% a year", ["5", "-10"]),
+    # the range's dash is no sign (fix request 2, RG-D1: a sign is now compared, so a dash read
+    # as one would flag a true range); both ends are still traced
+    ("growth of 5-10% a year", ["5", "10"]),
     ("a 7-yard gain", ["7"]),
 ])
 def test_a_figure_beside_a_duration_or_a_hyphen_is_still_a_figure(
@@ -268,17 +303,19 @@ def test_a_figure_beside_a_duration_or_a_hyphen_is_still_a_figure(
 
 # --- the G-D6 draw is unmoved --------------------------------------------------------------------
 
-def test_the_gd6_draw_flags_the_same_195_of_199() -> None:
+def test_the_gd6_draw_flags_all_199() -> None:
     """`test_model_input_checks`'s made-up-figure draw (seed 20261029, 199 figures in [100, 1000)
-    at 1 dp, cited to the relative return) flagged 195 of 199 on 9e996d7f and flags the same 195
-    here: neither change can reach a 1-dp figure above 25."""
+    at 1 dp, cited to the relative return) flagged 195 of 199 on 9e996d7f, and #890's two changes
+    could not reach a 1-dp figure above 25. Since fix request 2 (RG-D2–D4) it flags ALL 199: the 4
+    that passed were the 2% tolerance at a rescaled unit, a made-up "the figure is 1xx.x" matched
+    to the fact's fraction x1e3 — no unit a percent is written in."""
     mech = _frozen()
     ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
     assert ref
     random.seed(20261029)
     figs = sorted({round(random.uniform(100, 1000), 1) for _ in range(200)})
     assert len(figs) == 199
-    assert sum(bool(_flagged(mech, f"the figure is {f:,.1f}", ref)) for f in figs) == 195
+    assert sum(bool(_flagged(mech, f"the figure is {f:,.1f}", ref)) for f in figs) == 199
 
 
 # --- the committed corpus: phrasing-free invariants ----------------------------------------------

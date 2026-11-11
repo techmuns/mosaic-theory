@@ -81,7 +81,15 @@ _WHERE_HUMAN: dict[str, str] = {
     "bear_point": "a bear point",
     "decisive.for": "a decisive-for point",
     "decisive.against": "a decisive-against point",
+    # (fix request 2, RG-D6) the fields no source_ref binds, whose figures are now traced too
+    "decisive.question": "the decisive question",
+    "key_unknowns": "a key unknown",
+    "evidence_balance": "the evidence balance",
 }
+_UNSOURCED = frozenset({"decisive.question", "key_unknowns", "evidence_balance"})
+#: how the trace's reason opens (`synthesis._trace`, `synthesis._validate`)
+_WHY_LEADS = ("the cited fact ", "a fact of the page ", "no fact of the page ",
+              "no checked driver figure ")
 # token → plain lead, for the caveats emitted as `TOKEN {where}: '<claim>' — <explanation>`. The
 # post-`—` explanation is already human-readable, so re-voicing only swaps the ALL-CAPS token +
 # humanises the field name; the useful explanation is kept.
@@ -115,11 +123,22 @@ def revoice(flag: str) -> str:
     if m:
         n, where, ref, rest = m.groups()
         human = _WHERE_HUMAN.get(where, where)
+        # (fix request 2, RG-D1–D7) the validator says WHY after the claim — "' — <why>", where
+        # <why> opens with one of the trace's own leads, so a claim's own "' — " never splits it
+        cut = rest.rfind("' — ")
+        why = rest[cut + 4:] if cut >= 0 else ""
+        if not why.startswith(_WHY_LEADS):
+            cut, why = -1, ""
+        claim = rest[:cut + 1] if cut >= 0 else rest
+        tail = f" ({why})" if why else ""
         if ref is not None:   # (item 29) the figure carried its own footnote, to this fact
             return (f"Untraceable figure {n} ({human}) — footnoted to {ref}, which does not "
-                    f"contain it; verify the source before relying on it: {rest}")
+                    f"contain it{tail}; verify the source before relying on it: {claim}")
+        if where in _UNSOURCED:   # (RG-D6) a field no ref binds: traced against the whole page
+            return (f"Untraceable figure {n} ({human}) — {why or 'no fact of the page states it'}"
+                    f"; verify it before relying on it: {claim}")
         return (f"Untraceable figure {n} ({human}) — cited to structured data that does not "
-                f"contain it; verify the source before relying on it: {rest}")
+                f"contain it{tail}; verify the source before relying on it: {claim}")
     # (item 29) a COMPUTED figure whose inputs or arithmetic do not hold — the reason is the
     # validator's own, kept whole after the claim
     m = re.match(r"UNDERIVED figure '([^']*)' in (\S+?): ('.*') — (.*)", flag, re.DOTALL)

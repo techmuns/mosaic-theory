@@ -221,8 +221,9 @@ def test_a_malformed_footnote_from_the_model_is_dropped_and_named() -> None:
 
 def test_the_gd6_draw_is_caught_the_same_with_each_figure_footnoted() -> None:
     """The made-up-figure draw G-D6 pins (seed 20261029, 199 figures in [100, 1000) at 1 dp, cited
-    to the relative return): 195 of 199 flagged with no footnote, and the same 195 with each figure
-    footnoted to that fact — a footnote names the universe; it never widens it."""
+    to the relative return): 199 of 199 flagged with no footnote, and the same 199 with each figure
+    footnoted to that fact — a footnote names the universe; it never widens it. (195 until fix
+    request 2: the 4 that passed matched the fact's fraction rescaled x1e3 within 2%, RG-D2/D4.)"""
     mech = _frozen()
     _, _, rel = _refs()
     random.seed(20261029)
@@ -230,7 +231,7 @@ def test_the_gd6_draw_is_caught_the_same_with_each_figure_footnoted() -> None:
     bare = {f for f in figs if _flagged(mech, _point(f"the figure is {f:,.1f}", rel))}
     noted = {f for f in figs if _flagged(mech, _point(
         f"the figure is {f:,.1f}", rel, [{"figure": f"{f:,.1f}", "source_ref": rel}]))}
-    assert len(figs) == 199 and len(bare) == 195 and noted == bare
+    assert len(figs) == 199 and len(bare) == 199 and noted == bare
 
 
 def test_a_made_up_computed_figure_from_real_inputs_is_flagged() -> None:
@@ -763,13 +764,17 @@ def test_a_footnote_to_a_transcript_ref_the_page_does_not_carry_is_a_caveat_not_
 
 def test_a_footnote_covers_its_own_figure_never_another_of_the_same_magnitude() -> None:
     """Entries were keyed by magnitude and re-used once exhausted, so a footnoted "$16M" also
-    passed the un-footnoted "16%" beside it — which then escaped the point-ref trace."""
+    passed the un-footnoted "16%" beside it — which then escaped the point-ref trace. Mirrored in
+    fix request 2: the footnote is now on the "16%", because "$16M" never traces to a 16% return
+    (RG-D2 — a percent is not dollars); the "$16M" it must not cover is the one still flagged."""
     mech = _frozen()
     _, market, rel = _refs()
     claim = "SMPL fell -29% while the benchmark rose 16%, on $16M of volume"
     assert _flagged(mech, _point(claim, rel)) == ["-29", "16", "16"]
-    assert _flagged(mech, _point(claim, rel, [{"figure": "$16M", "source_ref": market}])) == [
-        "-29", "16"]
+    flags = _flags(mech, _point(claim, rel, [{"figure": "16%", "source_ref": market}]))
+    hard = [f for f in flags if f.startswith(("UNTRACEABLE", "UNDERIVED"))]
+    assert [f.split("'")[1] for f in hard] == ["-29", "16"]
+    assert "[cited to" not in hard[1]   # the $16M fell to the point's own ref, uncovered
     # a figure the claim writes twice is covered twice by its one footnote
     twice = "the benchmark rose +16% and, again, +16%"
     assert _flagged(mech, _point(twice, rel, [{"figure": "+16%", "source_ref": market}])) == []
@@ -780,17 +785,20 @@ def test_a_footnote_is_matched_to_the_occurrence_it_names_not_the_first_of_its_m
     """(Codex P2, round 1) Entries were bucketed by magnitude, so a "$16M" footnote was spent on an
     earlier "-16%" and the "$16M" itself fell back to the point's ref: the caveat named "-16" as
     footnoted to the volume's fact. Matched by where its literal is written, the footnote checks
-    its own figure and the "-16%" is traced to the point's ref (which states the 16)."""
+    its own figure and the other is traced to the point's ref (which states the 16).
+
+    Restated in fix request 2 with two percents the benchmark's fact states: "SMPL fell -16%"
+    cited to a fact stating +16% is now refused for its sign (RG-D1), and "$16M" is never a 16%
+    return (RG-D2), so the old claim no longer isolates which figure a footnote covers."""
     mech = _frozen()
     name, market, _ = _refs()
-    claim = "SMPL fell -16% while volume ran to $16M"
-    flags = _flags(mech, _point(claim, market, [{"figure": "$16M", "source_ref": name}]))
-    hard = [f for f in flags if f.startswith("UNTRACEABLE")]
-    assert [f.split("'")[1] for f in hard] == ["16"]
-    assert f"[cited to {name}]" in hard[0]
-    # the same footnote on the "-16%" instead: that figure is the one checked against `name`
-    flags = _flags(mech, _point(claim, market, [{"figure": "-16%", "source_ref": name}]))
-    assert [f.split("'")[1] for f in flags if f.startswith("UNTRACEABLE")] == ["-16"]
+    claim = "the benchmark rose 16%, or 16.0% to one decimal"
+    for noted in ("16.0%", "16%"):
+        flags = _flags(mech, _point(claim, market, [{"figure": noted, "source_ref": name}]))
+        hard = [f for f in flags if f.startswith("UNTRACEABLE")]
+        # only the footnoted literal is checked against `name`; the other traces to the point's ref
+        assert [f.split("'")[1] for f in hard] == ["16"], (noted, hard)
+        assert f"[cited to {name}]" in hard[0]
 
 
 def test_a_signed_computed_figure_must_carry_the_sign_its_operation_gives() -> None:
