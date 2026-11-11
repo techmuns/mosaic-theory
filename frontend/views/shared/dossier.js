@@ -371,9 +371,9 @@ export async function render(root, params, { item, frame }) {
 // made and sealed — so the verdict OF RECORD gets the colour it earns (the same buy/avoid pill the
 // Brief uses). Only the still-undecided names show the machine's lean, and only in neutral ink.
 // That split is the point: colour on this shelf means A HUMAN DECIDED, never that a model leaned.
-function cardTag(ticker, reads, verdictBy) {
+function cardTag(ticker, reads, verdictBy, voidedBy = {}) {
   const v = verdictBy[ticker];
-  return v ? verdictTag(v) : leanTag(reads[ticker]);
+  return v ? verdictTag(v) : leanTag(reads[ticker], voidedBy[ticker]);
 }
 
 // WHICH BOOK the name is judged under, on the shelf card. Shown ONLY for a non-default book: a
@@ -404,11 +404,16 @@ function verdictTag(v) {
     verdictWord(v.verdict)}${cl ? " · closed" : ""}</span>`;
 }
 
-function leanTag(eb) {
+function leanTag(eb, voided = null) {
   const p = splitLean(eb);
   if (!p) return "";
   const cased = p[0].charAt(0).toUpperCase() + p[0].slice(1).replace(/-/g, " ");
-  return `<span class="ds-lean ds-card-tag" title="machine evidence lean — no verdict logged yet; its rationale is on the dossier, and the proposal stays sealed until you log one">${escapeHtml(cased)}</span>`;
+  // a VOIDED call (operator ruling 2026-11-11) leaves no live verdict, but one WAS logged — said
+  // without its word, which belongs to a logged verdict and never to this neutral tag
+  const why = voided
+    ? `the verdict logged on this name was voided ${voided.ruledOn || ""}, so none is live`
+    : "no verdict logged yet";
+  return `<span class="ds-lean ds-card-tag" title="${escapeHtml(`machine evidence lean — ${why}; its rationale is on the dossier, and the proposal stays sealed until you log one`)}">${escapeHtml(cased)}</span>`;
 }
 async function renderIndex(root, item, frame) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading dossiers…</div>` });
@@ -417,6 +422,9 @@ async function renderIndex(root, item, frame) {
   // the human's logged verdicts, by ticker — the shelf's tag precedence resolves against these
   const verdictBy = {};
   for (const e of (led && led.entries) || []) if (e && e.ticker) verdictBy[e.ticker] = e;
+  // newest first, so the first voided call kept per ticker is its latest
+  const voidedBy = {};
+  for (const v of (led && led.voided) || []) if (v && v.ticker && !voidedBy[v.ticker]) voidedBy[v.ticker] = v;
   const uwOnly = scenTickers.filter((t) => !tickers.includes(t));
 
   // Repetition-reduced: identity lives ONCE per typed panel (not on every card), the search
@@ -443,7 +451,7 @@ async function renderIndex(root, item, frame) {
   const dossierGrid = tickers.length
     ? `<div class="grid cols-3">${tickers.map((t) => `
         <a class="ds-index-card" href="#/dossier/${escapeHtml(t)}">
-          <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}${cardTag(t, reads, verdictBy)}${sleeveTag(sleeves[t])}</div>
+          <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}${cardTag(t, reads, verdictBy, voidedBy)}${sleeveTag(sleeves[t])}</div>
         </a>`).join("")}</div>`
     : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">python -m vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
   const dossierPanel = `

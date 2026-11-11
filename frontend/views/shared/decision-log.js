@@ -50,12 +50,26 @@ export async function render(root, _params, { item, frame }) {
       outcomes. Logging happens via the <span class="mono">log-verdict</span> CLI; this dashboard only displays it.
     </div>`;
 
-  const spread = spreadCard(mon) + freshnessPanel(mon);
+  const spread = spreadCard(mon) + freshnessPanel(mon, voidedBefore(led, mon));
   const entries = led.entries.length
     ? led.entries.map((e) => entryCard(e, marks[String(e.ticker).toUpperCase()])).join("")
     : `<div class="notice">No verdicts logged yet.</div>`;
 
-  root.innerHTML = frame(item, { bodyHtml: counts + banner + spread + entries + voidedTier(led.voided) });
+  root.innerHTML = frame(item, {
+    bodyHtml: counts + banner + spread + entries + voidedTier(led.voided, mon) });
+}
+
+// THE MONITOR DAY MAY PREDATE A VOID (operator, 2026-11-11: a void is in effect from its ruling
+// date). The day's freshness labels are `live_verdicts` AS OF that day, so a day cut before the
+// ruling still names the voided call's verdict. The tickers here — a voided call ruled after the
+// day, and no open live decision now — print "verdict voided" instead of that stale word.
+function voidedBefore(led, mon) {
+  const asOf = String((mon && mon.as_of) || "");
+  const open = new Set((led.entries || []).filter((e) => !e.closed)
+    .map((e) => String(e.ticker).toUpperCase()));
+  return new Set((led.voided || [])
+    .filter((v) => asOf && String(v.ruledOn || "") > asOf && !open.has(String(v.ticker).toUpperCase()))
+    .map((v) => String(v.ticker).toUpperCase()));
 }
 
 // THE VOIDED CALLS, ONCE (operator ruling 2026-11-11, GOOGL). A voided decision is out of the live
@@ -63,13 +77,19 @@ export async function render(root, _params, { item, frame }) {
 // seen and never reads as a hidden loser: the sealed entry, its correction, the ruling and its
 // reason, and the result to date the void itself sealed. Collapsed on the web — audit detail, never
 // a decision value — and force-opened in print with every other <details>. Exported for the node pin.
-export function voidedTier(voided) {
+export function voidedTier(voided, mon = null) {
   if (!voided || !voided.length) return "";
+  // the spread and marks above are the monitor day's; one cut before a ruling still carries that
+  // call, so the tier says so rather than claiming a removal the day above does not show yet
+  const asOf = String((mon && mon.as_of) || "");
+  const early = asOf && voided.some((v) => String(v.ruledOn || "") > asOf)
+    ? ` The monitor day above is marked ${fmtDate(asOf)}, before a ruling here: its spread and marks
+        are that day's, cut while the call was still live.` : "";
   const rows = voided.map((v) => {
     const m = v.mark;
     const result = m
       ? `${pct(m.position_return)} vs ${escapeHtml(m.benchmark)} ${pct(m.benchmark_return)}, excess
-         ${m.excess * 100 >= 0 ? "+" : "−"}${Math.abs(m.excess * 100).toFixed(2)} pts
+         ${m.excess * 100 >= 0 ? "+" : ""}${(m.excess * 100).toFixed(2)} pts
          (${escapeHtml(m.return_basis)} return, entry ${fmtPrice(m.entry_price)} on ${fmtDate(m.entry_date)},
          marked ${fmtPrice(m.price)} on ${fmtDate(m.as_of)})`
       : DASH;
@@ -93,7 +113,7 @@ export function voidedTier(voided) {
     <details class="ds-voided card" style="margin-top:18px;">
       <summary class="muted">Voided — ${fmtInt(voided.length)} call${voided.length === 1 ? "" : "s"} ruled out of the record, shown here once</summary>
       <div class="muted" style="font-size:12px; margin-top:6px;">Out of the live book, the counts and the
-        spread. The rows stay in the append-only ledger as audit history.</div>
+        spread. The rows stay in the append-only ledger as audit history.${early}</div>
       ${rows}
     </details>`;
 }
@@ -131,7 +151,7 @@ export function spreadCard(mon) {
 
 // FRESHNESS / TRIGGERS — the machine FLAGS (a filing newer than the record's evidence), it never
 // adjudicates a trigger as fired. Triggers print verbatim so the human reads the actual wording.
-function freshnessPanel(mon) {
+function freshnessPanel(mon, voidedNames = new Set()) {
   const rows = (mon && mon.freshness) || [];
   if (!rows.length) return "";
   const card = (f) => {
@@ -174,7 +194,7 @@ function freshnessPanel(mon) {
       <div class="card" style="margin-bottom:10px;">
         <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;">
           <span class="mono" style="font-weight:650;">${escapeHtml(f.ticker)}</span>
-          <span class="muted" style="font-size:12px;">${escapeHtml(f.verdict || "")}</span>
+          <span class="muted" style="font-size:12px;">${escapeHtml(voidedNames.has(String(f.ticker).toUpperCase()) ? "verdict voided" : (f.verdict || ""))}</span>
           ${flag}
           <span class="muted" style="font-size:12px; margin-left:auto;">evidence ${fmtDate(f.last_evidence_date)}${f.last_evidence_source ? ` · ${escapeHtml(f.last_evidence_source)}` : ""}</span>
         </div>

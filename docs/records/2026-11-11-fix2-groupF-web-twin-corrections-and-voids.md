@@ -79,6 +79,28 @@ collapsed and force-open, was approved with the banner added.
   import's line position and two call-site strings in `tests/test_record_legibility.py` and
   `tests/test_log_command_id.py`. They are brought to the new signatures, and they still check
   what they checked.
+- **Code review, second pass (the cut onto `a3fc8e1b`).**
+  - The one conflict, main's `useExtractionVersions` beside V3's voided-call lookup, kept both.
+    V3's changed lines in all five frontend files match the pre-cut version line for line.
+  - With GOOGL's void committed, three existing pins went red, so V2 could not have been
+    artifact-only.
+    - `tests/test_scenarios.py`'s two pins use GOOGL's card as the corpus's only exemplar of a
+      reissue inheriting its predecessor's row, and of a record owning a row with an empty
+      verdict block. They now feed the real renderer cards built by the real `frontend/build.py`
+      from the committed records over the ledger without its VOID rows
+      (`_cards_without_void`). Until the void is committed these are the committed cards; after
+      it, GOOGL as it was carded before the void.
+    - The twin test's committed case no longer assumes no void is committed.
+  - The freshness panel labelled GOOGL "BUY" from the latest monitor day, cut before the ruling.
+    A name whose void was ruled after that day, and that holds no open live decision, now reads
+    "verdict voided". The audit tier adds one sentence when the monitor day predates a ruling.
+    Both are pinned; the pin refuses to pass if no voided name is on the day.
+  - The dossier shelf's tooltip no longer says "no verdict logged yet" for a voided name.
+    Pinned: `test_the_dossier_shelf_never_says_a_voided_name_logged_no_verdict`.
+  - The excess sign in the tier uses the same ASCII minus as the returns.
+- **A simulation of V2** (this branch, GOOGL's dry-run void appended to the committed ledger, the
+  frontend rebuilt): every scenario, twin, shelf, legibility, log-command, join, sleeve and parity
+  suite passes. The full offline suite on it is in the PR.
 - **Preview** (the frontend built over the voided ledger, served locally).
   - GOOGL's dossier, collapsed: the banner appears once, above the sealed thesis, and no BUY pill
     is on the page.

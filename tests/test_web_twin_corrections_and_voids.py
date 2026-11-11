@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -100,7 +101,10 @@ def test_the_build_twin_reads_the_book_the_monitor_reads(
                                         str(fx.get("entryPriceAsOf", e["entry_price_as_of"])))
     assert live == want_live
     assert voided == want_voided
-    assert bool(want_voided) == (which == "voided")      # the case is the one it names
+    # the voided case voids something; the committed one holds a void only once V2 appends it —
+    # asserting it holds NONE turned V2's artifact-only commit red (both cases then coincide)
+    if which == "voided":
+        assert want_voided
 
 
 def _node(script: str) -> Any:
@@ -180,6 +184,41 @@ console.log(JSON.stringify(root.innerHTML));
     for decision in live:
         if decision in fixes:
             assert fixes[decision] in book               # a live correction still shows
+    # THE FRESHNESS PANEL'S LABEL IS THE LATEST MONITOR DAY'S (review of the V3 re-cut). A day cut
+    # before the ruling still names the voided call's verdict (`live_verdicts` kept it then), and
+    # the live book printed "GOOGL BUY" above the tier that says it was ruled out.
+    day = json.loads((_FE / "monitor" / "index.json").read_text())["latest"]
+    fresh = {str(f["ticker"]) for f in
+             json.loads((_FE / "monitor" / f"{day}.json").read_text()).get("freshness", [])}
+    names = {str(mon.entry_of(r)["ticker"]) for r in raw
+             if str(mon.entry_of(r).get("entry_id")) in voided}
+    assert names & fresh, "the committed monitor day carries no voided name — the pin is vacuous"
+    for t in names & fresh:
+        label = re.search(rf'font-weight:650;">{re.escape(t)}</span>\s*'
+                          r'<span class="muted" style="font-size:12px;">([^<]*)</span>', book)
+        assert label is not None, f"{t}'s freshness card is missing"
+        assert not label.group(1).upper().startswith("BUY"), (
+            f"{t}'s freshness card still labels the voided call: {label.group(1)!r}")
+
+
+def test_the_dossier_shelf_never_says_a_voided_name_logged_no_verdict(tmp_path: Path) -> None:
+    """The shelf shows a voided name's machine lean (no verdict is live), but its tooltip read
+    "no verdict logged yet" — false: one was logged and ruled out."""
+    raw = _voided()
+    _live, voided = _readers(raw)
+    names = {str(mon.entry_of(r)["ticker"]) for r in raw
+             if str(mon.entry_of(r).get("entry_id")) in voided}
+    led = _write(raw, tmp_path / "decision_ledger.jsonl")
+    html = str(_node(_driver({"snapshots/decision_ledger.jsonl": led}, """
+const v = await import(FE + "/views/shared/dossier.js");
+await v.render(root, [], { item: { title: "Dossier", blurb: "" }, frame: (i, o) => o.bodyHtml });
+console.log(JSON.stringify(root.innerHTML));
+""")))
+    for t in names:
+        card = re.search(rf'href="#/dossier/{re.escape(t)}">(.*?)</a>', html, re.S)
+        assert card is not None, f"{t} has no shelf card"
+        assert "no verdict logged yet" not in card.group(1)
+        assert "voided" in card.group(1)
 
 
 def _googl_card(raw: list[dict[str, Any]], tmp_path: Path,
