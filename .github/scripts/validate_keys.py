@@ -3,13 +3,15 @@
 
 Pings each external service with a tiny request. Prints PASS/FAIL per key — NEVER the key
 value. Exits non-zero if a REQUIRED key (Polygon, Anthropic, the four R2 values) is missing or
-rejected, or an OPTIONAL key that is set (Tiingo) is rejected, so the `validate-keys` workflow goes
-red. Run via workflow_dispatch. Cheap: ~1 trivial call each.
+rejected, or an OPTIONAL value that is set (Tiingo, SEC_USER_AGENT) is rejected, so the
+`validate-keys` workflow goes red. Run via workflow_dispatch. Cheap: ~1 trivial call each, and
+none to SEC (`check_sec`).
 """
 from __future__ import annotations
 
 import importlib.util
 import os
+import re
 import sys
 from pathlib import Path
 from types import ModuleType
@@ -59,12 +61,21 @@ def check_anthropic() -> bool:
             return True
         print(f"ANTHROPIC_API_KEY: FAIL — HTTP {e.status_code} {why}")
         return False
-    except Exception as e:
+    except anthropic.APIConnectionError as e:  # its timeout is one too
         print(
             f"ANTHROPIC_API_KEY: WARN — {type(e).__name__}: {str(e)[:110]} "
             "(runner→api.anthropic.com connectivity, NOT a key problem)"
         )
         return True
+    except Exception as e:
+        # ANYTHING ELSE IS NOT CONNECTIVITY (fix request 2, RH-D8). This branch printed
+        # "connectivity, NOT a key problem" and passed for every exception, so an SDK change (a
+        # TypeError on a renamed argument) or a bug here read as a valid key. The check did not
+        # run: that fails.
+        print(f"ANTHROPIC_API_KEY: FAIL — {type(e).__name__}: "
+              f"{str(e).replace(key, '<key>')[:110]} (an unexpected error: the check did not run, "
+              "so the key is not shown valid)")
+        return False
     print(f"ANTHROPIC_API_KEY: PASS — authenticated; {PIPELINE_MODEL} answered")
     return True
 
@@ -191,23 +202,34 @@ def check_r2() -> bool:
     return False
 
 
+#: `vinci.config.sec_user_agent`'s rule, which this script cannot import (the workflow installs only
+#: anthropic and httpx). A test pins the two equal.
+SEC_UA_PLACEHOLDER_EMAIL = "your@email.com"
+SEC_UA_EMAIL = re.compile(r"[^@\s]+@[^@\s]+\.[A-Za-z]{2,}")
+
+
 def check_sec() -> bool:
-    # SEC_USER_AGENT is OPTIONAL (EDGAR works with a default UA), so this never fails the run;
-    # it just reports whether the secret is set and EDGAR is reachable.
-    secret = os.environ.get("SEC_USER_AGENT")
-    ua = secret or "vinci-research validate-keys"
-    try:
-        r = httpx.get(
-            "https://data.sec.gov/submissions/CIK0000320193.json",  # Apple — a stable public doc
-            headers={"User-Agent": ua},
-            timeout=30,
-        )
-    except Exception as e:
-        print(f"SEC_USER_AGENT: WARN — {type(e).__name__}: {str(e)[:160]}")
+    """SEC_USER_AGENT is a declared identity, not a key — EDGAR authenticates nothing — so this
+    checks it as `vinci.config.sec_user_agent` does before every SEC request, and SENDS NOTHING.
+
+    It used to GET a submissions document with "vinci-research validate-keys" as the agent when the
+    secret was unset: a request with no declared contact, outside the machine's one shared SEC
+    budget (`vinci.netcache.sec_pace`), proving only that EDGAR was up (fix request 2, RE1-D17).
+    Unset is fine — the pipelines then send vinci's own default, which declares a contact. Set and
+    refused by that rule fails the run: the pipelines would refuse it at their first SEC call."""
+    ua = (os.environ.get("SEC_USER_AGENT") or "").strip()
+    if not ua:
+        print("SEC_USER_AGENT: PASS — not set; the pipelines send vinci's default, which declares "
+              "a contact (no request sent)")
         return True
-    tag = "secret set" if secret else "secret unset → default UA (fine; it's optional)"
-    status = "PASS" if r.status_code == 200 else "WARN"
-    print(f"SEC_USER_AGENT: {status} — EDGAR HTTP {r.status_code} ({tag})")
+    if SEC_UA_PLACEHOLDER_EMAIL in ua.lower():
+        print("SEC_USER_AGENT: FAIL — still the .env.example placeholder; set a name and an email "
+              "SEC can reach")
+        return False
+    if not SEC_UA_EMAIL.search(ua):
+        print("SEC_USER_AGENT: FAIL — carries no contact email; SEC fair-access requires one")
+        return False
+    print("SEC_USER_AGENT: PASS — declares a contact (no request sent)")
     return True
 
 
@@ -217,8 +239,8 @@ def main() -> int:
     polygon_ok = check_polygon()
     tiingo_ok = check_tiingo()  # optional — fails the run only when set and refused
     r2_ok = check_r2()
-    check_sec()  # optional — informational, never fails the run
-    ok = anthropic_ok and polygon_ok and tiingo_ok and r2_ok
+    sec_ok = check_sec()  # optional — fails the run only when set and refused
+    ok = anthropic_ok and polygon_ok and tiingo_ok and r2_ok and sec_ok
     print(f"\n=== {'ALL KEYS VALID' if ok else 'A KEY FAILED'} ===")
     return 0 if ok else 1
 
