@@ -6,8 +6,10 @@ field for a conclusion, so it cannot render one. Its output is then validated, n
 
 - every bull/bear point must cite a ``source_ref`` that IS one in the input — the same text, never a
   fragment of one, never empty (uncited → flagged);
-- every number must trace to the FACT ITS POINT CITES (untraceable → flagged), unless cited to the
-  earnings-call transcript, where a prose figure earns a soft 'verify against the call' note;
+- every number must trace to ONE CELL of the fact its point cites — its magnitude to its written
+  precision, its unit, its sign, its period and its table row (untraceable → flagged); a figure
+  cited to an earnings call traces only to a checked driver figure of that call; a figure in the
+  decisive question, a key unknown or the evidence balance, to some fact of the page;
 - twin analogues must be source-bound or tagged ``[LLM-suggested, unverified]``, and never numeric;
 - the whole output is linted for directional/recommendation language and flagged for human review.
 
@@ -119,9 +121,10 @@ _ID_KEYS = frozenset({"accession", "url", "cik", "id", "locator", "unknown_reaso
 # (`ForwardHistoryBand.percentile` sits on the Dossier, outside the layer this trace reads.)
 _PERCENTILE_FIELDS = frozenset({"percentile", "pe_percentile_5y", "ev_ebitda_percentile_5y"})
 # A point's source_ref pointing at the earnings-call TRANSCRIPT (verbatim prose) rather than a
-# structured CIQ cell. A figure cited to the transcript is NOT in the mechanical layer's number
-# universe, so it earns a soft 'verify-against-the-call' note — NOT a hard UNTRACEABLE, which
-# means a number cited to STRUCTURED data that lacks it (a real misbinding/fabrication).
+# structured CIQ cell. A figure cited to it traces only to a CHECKED driver figure of that call
+# (`_validate.pool_for`, fix request 2, RG-D7) and is otherwise UNTRACEABLE, as a figure cited to
+# structured data that lacks it is — until RG-D7 it earned a soft 'verify against the call' note
+# hidden from the page, while the prompt forbade taking numbers from the call.
 # The canonical ref is `CIQ transcript(s): <names>` (ciq_sheets.management_commentary).
 _TRANSCRIPT_REF = re.compile(r"transcript", re.IGNORECASE)
 # recommendation / verdict language — flagged for human review (the dossier frames, never concludes)
@@ -2576,7 +2579,11 @@ def synthesize(
 ) -> tuple[Synthesis | None, list[str], str]:
     """Run the fenced synthesis → (synthesis|None, flags, log). Fail-loud, never fabricates. The
     ``transcript`` (every call on file, whole — NOT embedded in the dossier) is QUALITATIVE
-    context only; no numbers are derived from it and points still bind to the mechanical facts.
+    context: the prompt asks for no numbers from it, and points still bind to the mechanical facts.
+    A figure the model cites to a call anyway is KEPT, not refused, and traced like any other: it
+    traces only to a checked driver figure of that call, and otherwise earns an UNTRACEABLE caveat
+    the reader sees (fix request 2, RG-D7; until then it earned a TRANSCRIPT-FIGURE flag hidden
+    from the page as QA, which RG-D20 d recorded).
 
     ``draws`` (default ONE, so every existing caller and artifact is unmoved) asks the model that
     many times on the IDENTICAL prompt and keeps the FIRST draw carrying the modal lean label —

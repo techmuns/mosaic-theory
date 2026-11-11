@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-09
 prs: []
 supersedes:
@@ -141,3 +141,6 @@ superseded-by:
 - This narrows one acceptance in `docs/records/2026-10-29-sec-one-budget-per-machine.md`: "The
   2-a-second margin under SEC's 10 is the only allowance for them". Machines are now allowed for
   by the declared share, and the 2 a second is left for a browser or a notebook.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `02ed3d29` (#939) on 2026-11-10. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

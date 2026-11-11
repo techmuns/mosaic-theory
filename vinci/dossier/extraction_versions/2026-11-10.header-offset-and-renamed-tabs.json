@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-10.header-offset-and-renamed-tabs",
+  "follows": [
+    "2026-11-10.kind-by-exact-name"
+  ],
+  "names": "a sheet's settings block is read from its first filled row, and a missing tab is said (TeamNostra fix request 2, RA-D12, RA-D7): the unit line, the 'Period Type:' cell, the Capital Structure Source note, the comps As-Of Date, the Estimates banner, the Market Summary and the currency headers are each searched in a fixed span from the sheet's first non-blank row (`ciq.sheet_top`), never from row 0, so blank rows above the company line move nothing; a missing 'Cash Flow' or 'Trends' sheet is named in the annual summary's note and dropped from its source, in the recommendation and rating lines, and as the reason for the bridge's operating cash flow and capex. On the 36 export folders on disk no read moves"
+}

@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -77,3 +77,29 @@ folders. The panel is the frozen six (BURL, CNXC, LLY, MCK, ROST, SMPL).
     `docs/records/2026-11-11-ra-d2-measured-on-the-panel.md` records it. The operator ruled the
     moves noise ("Merge, moves are noise"), and the change merged as `62d682c6`.
   - The PR that carried this record is #981.
+- **2026-11-11.** #981's PR checked its pages with a $0 build of every committed page, which built 17
+  of 27: the primary checkout's store had no price bars for BURL, GOOGL, LLY, MCK, NFLX, ROST, TGT, TJX, UBER and V. Those 10 have now been built on
+  the full store, at the same pair as that check, base `2b9b766c` → head `9ae02bac`.
+  - **Built 10 of 10 on both sides. 10 of 10 move,** in `return_ratios` and `key_ratios` only, and
+    each move is a kind the PR stated:
+    - the Dividend/sh row's growth rates become the Income Statement's levels;
+    - on a non-payer, "none" becomes "—" with the 'NA' note, and the key ratios' "dividend: none"
+      becomes "not stated";
+    - MCK's LTM note.
+
+    | Page | Dividend/sh cells (base → head) | Table note | Key ratios' dividend |
+    |---|---|---|---|
+    | BURL | 11 none→— | 'NA' in 11 of 11 column(s) | dividend: none → dividend: not stated (the Income Statement reads 'NA') |
+    | GOOGL | 7 none→—; none→0.60, 0.38→0.83, 0.05→0.86 | 'NA' in 7 of 10 column(s) | unchanged |
+    | LLY | 0.02→2.08, 0.08→2.25, 0.15→2.58, 0.15→2.96, 0.15→3.40, 0.15→3.92, 0.15→4.52, 0.15→5.20, 0.15→6.00, 0.15→6.69 | — | unchanged |
+    | MCK | 0.04→1.12, 0.16→1.30, 0.16→1.51, 0.07→1.62, 0.03→1.67, 0.10→1.83, 0.14→2.09, 0.15→2.40, 0.15→2.75, 0.15→3.17, -0.44→1.64 | Dividend/sh LTM to 2026-09-30 (1.64) is CIQ's own LTM figure, printed as stated; of the four quarters ending then, the quarterly export's 'Dividends per Share' reads 'NA' for the quarter to 2026-09-30, and the 3 it states sum 2.46 | unchanged |
+    | NFLX | 10 none→— | 'NA' in 10 of 10 column(s) | dividend: none → dividend: not stated (the Income Statement reads 'NA') |
+    | ROST | 0.16→0.57, 0.25→0.71, 0.32→0.93, 0.13→1.05, -0.73→0.29, 3.00→1.14, 0.09→1.24, 0.08→1.34, 0.10→1.47, 0.10→1.62, 0.10→1.70 | — | unchanged |
+    | TGT | 0.07→2.32, 0.05→2.44, 0.03→2.52, 0.03→2.60, 0.03→2.68, 0.18→3.16, 0.25→3.96, 0.10→4.36, 0.02→4.44, 0.02→4.52, 0.02→4.56 | — | unchanged |
+    | TJX | 0.24→0.52, 0.20→0.63, 0.25→0.78, 0.18→0.92, -0.72→0.26, 3.00→1.04, 0.13→1.18, 0.13→1.33, 0.13→1.50, 0.13→1.70, 0.13→1.81 | — | unchanged |
+    | UBER | 11 none→— | 'NA' in 11 of 11 column(s) | dividend: none → dividend: not stated (the Income Statement reads 'NA') |
+    | V | 0.18→0.69, 0.28→0.88, 0.19→1.05, 0.16→1.22, 0.09→1.34, 0.18→1.58, 0.19→1.87, 0.15→2.15, 0.13→2.44, 0.14→2.79 | — | unchanged |
+
+  - The price store is a read-only master copy of the full store, sha256 `4e77757f5cb370050ab9b43c450053379e8d20c0f605d4d4213b9e152e6a8e9d`, with bars through 2026-11-09. Every single-page build started from its own fresh APFS clone of it, because a build writes to its store. The other inputs are the primary checkout's.
+  - Every row is shown (no rows left out). "unchanged" in the last column: that page's key ratios
+    carry no dividend change.

@@ -69,7 +69,7 @@ Glossy Annual Report book (mailed with proxy in any jurisdiction): cover art, sh
 
 3. **Forward-fill sparse-attribution columns.** Insider Trading file groups multi-transaction entries under a single holder name on the first row, then blanks the holder name on subsequent rows. Always `df['Holder Name'].ffill()` before any per-holder analysis.
 
-4. **Header position is not fixed.** Charting exports vary header row by chart type. Scan column 0 for "Pricing Date" or "Date" string; header is that row, data starts at header+1. Do not hardcode positions.
+4. **Header position is not fixed.** Charting exports vary header row by chart type. Scan column 0 for "Pricing Date" or "Date" string; header is that row, data starts at header+1. Do not hardcode positions. **Every row number quoted below — "row 7", "row 14", "row 38", "rows 0-12", "header row ~13", "row 32", "row 17" — is where the exports seen put it, for orientation only:** find each row by its label, never by the number (fix request 2, RG-D20 i).
 
 5. **CIQ tier gating.** "Entitlement Needed" string in any field means PM's CIQ subscription does not include that specific data point. Count the underlying event (e.g., a revision exists in the database) but mark the detail as UNAVAILABLE.
 
