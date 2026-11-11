@@ -67,8 +67,8 @@ folders. The panel is the frozen six (BURL, CNXC, LLY, MCK, ROST, SMPL).
 - **Extraction version** `2026-11-11.dividend-level-na-unstated`; the drift pins are re-pinned.
 ## Amendments
 
-- **2026-11-11.** Two lines under HOW VERIFIED merged as template placeholders and were never filled
-  ("COMPARE_LINE", "PANEL_LINE"), and `prs:` stayed empty. What they were to say:
+- **2026-11-11.** The "$0 compare" and "The panel" lines under HOW VERIFIED merged as unfilled
+  template placeholders, and `prs:` stayed empty. What they were to say:
   - **$0 compare:** `--base 2b9b766c --cand 9ae02bac --transform dividend_level`. All six panel
     pages differ, in `user.facts` only: BURL +305, CNXC +209, LLY +63, MCK +292, ROST +62 and SMPL
     +309 characters.
