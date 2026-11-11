@@ -18,6 +18,9 @@ own panel check at a $35 cap, merge what passes and stop what fails.
   there too, outside the repository. The requests carry licensed transcript text and never enter
   git.
 - #981 was frozen at `9ae02bac` for the measurement. The cap was not raised.
+- Codex round 1 then added `ac5cb8d7` to #981. It changes `vinci/evals/builds.py` and its test
+  only: the build path, which this run did not use. The run was captured through `compare`, which
+  already handed each page its CIQ folder.
 
 **THE RESULT.**
 - **No class metric worsens beyond noise.** The rule is design record §6.1, no-worsening only: no
