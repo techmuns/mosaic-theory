@@ -1,7 +1,7 @@
 ---
 status: open
 date: 2026-11-10
-prs: [941, 951]
+prs: [941, 951, 1006]
 supersedes:
 superseded-by:
 ---
@@ -217,11 +217,30 @@ merge's resolution).
   - The builds test passes on the tree before the pass and after it (16 of 16).
   - The independence test passes on the passed tree (32 of 32 across the two files).
   - Production reads every panel page at its `freeze_ref`, so it is unaffected.
+- **The confirmation's requests, on every committed page** ($0, 2026-11-11, head `e7cc0b2a`
+  against base `65758333`; PR #1006 Section D part 6). `confirm` was run with a capturing client
+  that records each of its ten requests and answers with a scripted draw. CIQ was read in place,
+  and every store access was a read: the operator's spool held 2,266 files before and after.
+  - The re-filled page's requests are byte-identical to those on the same page before its words
+    came off (base's page through `driver_pass.prepare`) on **27 of 27** pages. V was measured
+    on a re-run alone, after its Q4 2026 call did not read on four tries while another session's
+    conversion ran.
+  - Without the read-back, the request differs on **25 of 25** pages with transcript rows. ORKA
+    and TECX hold none.
+  - The identity check was verified on 9 pages. On the other 18 it was bypassed, and labelled
+    so: their input record is a backfill, so `confirm` refuses them before any draw ("cannot
+    identify the transcripts"), with or without this PR.
+- **Section D part 2 at the new base** (2026-11-11, 11:02–11:21Z): `prespend.mechanical_build`
+  ran at base `65758333` and head `e7cc0b2a`. Both read one read-only copy of a store holding bars
+  for every page (sha256 `4e77757f5cb3…`), each build on a fresh clone of it. **27 of 27** pages
+  built on both sides, and only `extraction_version` moves.
 - **The gate** (`bin/commit`: ruff, `mypy --strict`, `pytest -m "not network" -rs`) was green
   at every commit of this PR except the mechanical re-sync `76c21609` (rule A). That one was
   checked as its commit message lists, and the `bin/commit` after it ran the full suite on top of
   it. The re-sync onto #986 (`cb8f8a7f`) resolved a semantic conflict (WHAT item 9), so it went
   through `bin/commit` itself.
+  The last commit only adds this PR's number and the two results above to this record. It was
+  committed plainly after the records and shared-file tests ran green, since it changes no code.
 
 **THE SCHEMA EDIT, DISCLOSED.** `vinci/dossier/schemas.py` is a decision-line file. Its hook
 (`.claude/hooks/decision_path_guard.py`) asks the operator before an Edit or a Write, once per
