@@ -78,14 +78,17 @@ def approval_id(ledger: Path) -> str:
 
 
 def record_registered(sha: str, *, kind: str, refs: dict[str, str], pages: list[str],
-                      draws: int, root: Path = ROOT) -> dict[str, Any]:
+                      draws: int, approval: str, root: Path = ROOT) -> dict[str, Any]:
     """The registration's row, appended to this checkout's index; it is drawn only once the row
     is on main (`require_on_main`)."""
     if any(r.get("event") == "registered" and r.get("registration") == sha
            for r in working_rows(root)):
         raise ReplayError(f"registration {sha[:12]} is already in the index")
+    # BOUND TO ITS APPROVAL (B's check of order 8, gap 6): the row is on main before any draw,
+    # so every checkout reads which approval may draw it — a second approval elsewhere cannot
     return _append({"event": "registered", "registration": sha, "kind": kind, "refs": refs,
-                    "pages": pages, "draws": draws, "registered_at": _now()}, root)
+                    "pages": pages, "draws": draws, "approval": approval,
+                    "registered_at": _now()}, root)
 
 
 def require_on_main(sha: str, *, root: Path = ROOT, ref: str = MAIN_REF) -> None:
@@ -114,8 +117,8 @@ def claim_draw(sha: str, *, approval: str, unit: str | None = None,
     """Record a paid draw under registration ``sha`` BEFORE it is made, refusing a second one
     (RG-D9). ``unit`` is a `register-run` build ("TICKER:k"): each build once, and every build of
     a registration under the approval that drew its first. A `register` comparison is one unit."""
-    drawn = [r for r in _rows_everywhere(root)
-             if r.get("event") == "drawn" and r.get("registration") == sha]
+    rows = _rows_everywhere(root)
+    drawn = [r for r in rows if r.get("event") == "drawn" and r.get("registration") == sha]
     if unit is None and drawn:
         raise ReplayError(f"registration {sha[:12]} was already drawn (at "
                           f"{drawn[0].get('drawn_at')}): a registration is drawn once across "
@@ -129,6 +132,12 @@ def claim_draw(sha: str, *, approval: str, unit: str | None = None,
             raise ReplayError(f"registration {sha[:12]}'s builds were drawn under another "
                               "approval: a registration's builds are drawn under one approval, "
                               "the one whose ledger scores them (RG-D9)")
+    bound = {r.get("approval") for r in rows
+             if r.get("event") == "registered" and r.get("registration") == sha}
+    if bound != {approval}:
+        raise ReplayError(f"registration {sha[:12]} is bound to approval "
+                          f"{sorted(map(str, bound)) or 'none'}, not {approval[:12]}: it is drawn "
+                          "only under the approval its registered row names (gap 6)")
     return _append({"event": "drawn", "registration": sha, "approval": approval, "unit": unit,
                     "drawn_at": _now()}, root)
 

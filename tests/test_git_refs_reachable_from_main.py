@@ -32,7 +32,8 @@ REF_KEYWORDS = frozenset({"ref", "code_ref", "base_ref", "cand_ref", "page_ref",
 #: Functions whose positional arguments include a ref they hand to git.
 REF_FUNCTIONS = frozenset({"capture_at", "layer_at", "page_at", "compare_requests", "register",
                            "change_names", "in_flight_names", "refuse_unless_scored_by_base",
-                           "scorer_fingerprint_at", "_scorer_files_at", "git_show"})
+                           "scorer_fingerprint_at", "_scorer_files_at", "git_show",
+                           "fixed_scorer", "_is_ancestor"})
 SCANNED = ("tests", "vinci/evals")
 
 

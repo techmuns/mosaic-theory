@@ -341,7 +341,8 @@ def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = N
     for t, (claims, req) in todo.items():
         if t not in have:
             raw = rp.run_request(req, draws=1, budget=budget, label=f"judge:{half}:{t}",
-                                 draws_out=out_dir / "calls.jsonl", sdk=sdk)[0]
+                                 draws_out=out_dir / "calls.jsonl", sdk=sdk,
+                                 registration=f"judge:{half}")[0]
             have[t] = {"page": t, **stamp(t), "raw": raw}
             with done.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(have[t]) + "\n")

@@ -78,6 +78,12 @@ def verify_gold(folder: Path, manifest: dict[str, Any]) -> None:
                                  "gold was edited; nothing is loaded")
 
 
+def verify_committed_gold(folder: Path = GOLD_DIR) -> None:
+    """`verify_gold` on the committed gold: run before ANY paid draw (RG-D11's "before any paid
+    draw", B's check of order 8, gap 4), not only where the gold is loaded."""
+    verify_gold(folder, json.loads((folder / "MANIFEST.json").read_text(encoding="utf-8")))
+
+
 def load_gold(folder: Path = GOLD_DIR) -> list[GoldClaim]:
     manifest = json.loads((folder / "MANIFEST.json").read_text(encoding="utf-8"))
     verify_gold(folder, manifest)

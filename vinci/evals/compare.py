@@ -41,6 +41,7 @@ from typing import Any
 from vinci.dossier.schemas import MechanicalLayer
 from vinci.dossier.synthesis import SYNTHESIS_TOOL, _decode_escapes
 from vinci.dossier.verdict import derive_proposal, split_lean
+from vinci.evals import gold as gd
 from vinci.evals import metrics as mt
 from vinci.evals import replay as rp
 from vinci.evals import stats as sx
@@ -125,6 +126,87 @@ def page_diff(ticker: str, base: rp.Request, cand: rp.Request) -> PageDiff:
                     mt.prompt_size(base), mt.prompt_size(cand))
 
 
+#: An impact run's export (`vinci.impact`; `impact-captures-format.md`): the side folders.
+IMPACT_SIDES = {"BASE": "base", "CAND": "head"}
+
+
+#: What the manifest records per page and arm: each file's sha256, and the export's proof that
+#: re-capturing from `layer.json` at the arm's code gives its request byte for byte.
+IMPACT_ARM_KEYS = ("built_sha256", "layer_sha256", "request_wire_sha256", "recapture_equal")
+
+
+def _impact_arm_files(export: Path, ticker: str, cond: str,
+                      want: dict[str, Any]) -> tuple[dict[str, Any], str, dict[str, Any]]:
+    """One arm of one page of an impact export — its $0 page, its layer's JSON and its request's
+    kwargs — each checked against the sha256 the export's manifest records, or refused. An arm
+    whose layer the export did not prove is the one its request carried (`recapture_equal`) is
+    refused: it would be scored against a layer the request may not have sent."""
+    d = export / IMPACT_SIDES[cond] / ticker
+    if missing := [k for k in IMPACT_ARM_KEYS if k not in want]:
+        raise rp.ReplayError(f"{export / 'manifest.json'}: {ticker}:{cond} records no {missing} "
+                             "— the arm cannot be checked, so nothing is registered, drawn or "
+                             "scored from it")
+    if want["recapture_equal"] is not True:
+        raise rp.ReplayError(f"{ticker}:{cond}: the export does not prove its layer.json is the "
+                             "layer its request carried (recapture_equal is "
+                             f"{want['recapture_equal']!r}) — it is not scored against it")
+    raw: dict[str, bytes] = {}
+    for name, key in (("built.json", "built_sha256"), ("layer.json", "layer_sha256")):
+        raw[name] = (d / name).read_bytes()
+        if (got := hashlib.sha256(raw[name]).hexdigest()) != want[key]:
+            raise rp.ReplayError(f"{d / name}: sha256 {got[:12]} is not the manifest's "
+                                 f"{want[key][:12]} — the export moved after its run, so nothing "
+                                 "is registered, drawn or scored from it")
+    kwargs: dict[str, Any] = json.loads((d / "request.json").read_text(encoding="utf-8"))
+    if (got := hashlib.sha256(rp.wire(kwargs).encode()).hexdigest()) != want[
+            "request_wire_sha256"]:
+        raise rp.ReplayError(f"{d / 'request.json'}: wire sha256 {got[:12]} is not the "
+                             f"manifest's {want['request_wire_sha256'][:12]} — the export moved")
+    built: dict[str, Any] = json.loads(raw["built.json"])
+    return built, raw["layer.json"].decode("utf-8"), kwargs
+
+
+def captured_from_impact(export: Path, *, panel: dict[str, Any] | None = None) -> Captured:
+    """THE COMPARISON AN IMPACT RUN CAPTURED (`register --from-impact`; the #953 retrospective,
+    coordinator 2026-11-11). Every request in the export was built FRESH, by each arm's own code
+    from a $0 build on the same inputs — never a replay of the frozen page — so it is read as it
+    was captured: the two commits, each page's two requests (in the panel's order), each file
+    checked against the manifest's sha256. Its identity — the folder, the manifest's sha256 and
+    every page's hashes — is recorded as the registration's `inputs["impact"]`."""
+    export = Path(export).resolve()
+    raw = (export / "manifest.json").read_bytes()
+    m = json.loads(raw)
+    p = panel or rp.load_panel_file()
+    pages = list(m["pages"])
+    order = [t for t in p["panel"] if t in pages] + [t for t in pages if t not in p["panel"]]
+    out = Captured(str(m["base"]["sha"]), str(m["cand"]["sha"]), ())
+    for t in order:
+        reqs = {cond: rp.Request(_impact_arm_files(export, t, cond,
+                                                      m["pages"][t].get(cond) or {})[2])
+                for cond in CONDITIONS}
+        out.requests[(t, "BASE")], out.requests[(t, "CAND")] = reqs["BASE"], reqs["CAND"]
+        out.diffs.append(page_diff(t, reqs["BASE"], reqs["CAND"]))
+    out.inputs = {"impact": {"dir": str(export), "manifest_sha256": hashlib.sha256(
+        raw).hexdigest(), "pages": m["pages"], "inputs": m.get("inputs", {})}}
+    return out
+
+
+def impact_arm(reg: Registration, ticker: str, cond: str) -> tuple[dict[str, Any],
+                                                                   MechanicalLayer, str | None]:
+    """An impact registration's arm, as its own request carried it: its $0 page, its layer and
+    the transcripts its request sent (the USER's transcripts section), each file checked against
+    the hashes the registration recorded (STATE row 53 item 6, for fresh builds)."""
+    imp = reg.inputs["impact"]
+    built, layer, kwargs = _impact_arm_files(Path(imp["dir"]), ticker, cond,
+                                             imp["pages"][ticker][cond])
+    sec = mt.user_sections(rp.Request(kwargs).user).get("transcripts")
+    # the transcripts AS SENT, without the section's header: the header is instruction text, and
+    # M-ABSENT would read a quote of it as "transcript-only" (the frozen path's is the raw text)
+    head = mt._HEADER.match(sec) if sec is not None else None
+    tx = sec[head.end():] if sec is not None and head is not None else sec
+    return built, MechanicalLayer.model_validate_json(layer), tx
+
+
 def refuse_if_unreached(c: Captured) -> None:
     if not c.reaches:
         raise rp.ReplayError(
@@ -164,9 +246,19 @@ def scorer_fingerprint(root: Path = rp.ROOT) -> str:
     return _fingerprint({f: (root / f).read_bytes() for f in SCORER_FILES})
 
 
-def _scorer_files_at(ref: str, root: Path) -> dict[str, bytes]:
+#: The PRODUCTION files the metrics borrow their definitions from (B's check of order 8, gap 1):
+#: what a candidate edits, so they are BASE's bytes, always — prospective or retrospective.
+PRODUCTION_SCORER_FILES = ("vinci/dossier/synthesis.py", "vinci/dossier/mechanical.py",
+                           "vinci/dossier/verdict.py", "vinci/dossier/schemas.py")
+#: The harness's OWN scorer files: a reviewed harness, origin/main's at registration
+#: (`scorer_ref`), re-checked at the draw and the score.
+HARNESS_SCORER_FILES = tuple(f for f in SCORER_FILES if f not in PRODUCTION_SCORER_FILES)
+
+
+def _scorer_files_at(ref: str, root: Path,
+                     files: Sequence[str] = SCORER_FILES) -> dict[str, bytes]:
     out: dict[str, bytes] = {}
-    for f in SCORER_FILES:
+    for f in files:
         done = subprocess.run(["git", "-C", str(root), "show", f"{ref}:{f}"], capture_output=True)
         if done.returncode != 0:
             raise rp.ReplayError(f"{f} cannot be read at {ref} (git show exited "
@@ -176,27 +268,79 @@ def _scorer_files_at(ref: str, root: Path) -> dict[str, bytes]:
     return out
 
 
+def _is_ancestor(ref: str, of: str, root: Path) -> bool:
+    rc = subprocess.run(["git", "-C", str(root), "merge-base", "--is-ancestor", ref, of],
+                        capture_output=True).returncode
+    if rc not in (0, 1):
+        raise rp.ReplayError(f"cannot place {ref} against {of} (git exited {rc}): fetch {of}; "
+                             "the fixed scorer is not guessed")
+    return rc == 0
+
+
+def _refuse_unless_files_at(files: Sequence[str], ref: str, root: Path, what: str) -> None:
+    here = {f: (root / f).read_bytes() for f in files}
+    there = _scorer_files_at(ref, root, files)
+    if differ := [f for f in files if here[f] != there[f]]:
+        raise rp.ReplayError(f"the scorer here is not {what} at {ref}: {differ} differ — a "
+                             "candidate never scores itself (RG-D12)")
+
+
 def refuse_unless_scored_by_base(base_ref: str, *, root: Path = rp.ROOT) -> str:
-    """THE SCORER IS BASE'S, NEVER THE CANDIDATE'S (fix request 2, RG-D12). The scorer was
-    whichever checkout ran `register`, and the metrics read production's own parsers from the
-    scorer files (`synthesis.py` among them), so a candidate that edited them edited the scorer of
-    its own measurement: fix 4a was registered by its own files (`755044b4…`), not its parent's
-    (`03e384a3…`). Registering, drawing and scoring each refuse a checkout whose scorer files are
-    not BASE's at ``base_ref``, naming the files; BASE's fingerprint is returned."""
-    here = {f: (root / f).read_bytes() for f in SCORER_FILES}
-    base = _scorer_files_at(base_ref, root)
-    if differ := [f for f in SCORER_FILES if here[f] != base[f]]:
-        raise rp.ReplayError(f"the scorer here is not BASE's at {base_ref}: {differ} differ — a "
-                             "candidate never scores itself; register, draw and score from a "
-                             f"checkout of {base_ref}")
-    return _fingerprint(base)
+    """THE PRODUCTION FILES THE METRICS BORROW ARE BASE'S (fix request 2, RG-D12; B's scope,
+    operator 2026-11-11). The metrics read production's own parsers and definitions
+    (`PRODUCTION_SCORER_FILES`), so a candidate that edited them edited the scorer of its own
+    measurement: fix 4a was registered by its own files (`755044b4…`), not its parent's
+    (`03e384a3…`). This checkout must hold BASE's bytes for those four, naming any that differ.
+    The harness's own files are NOT compared with BASE's — a BASE older than the harness (any
+    retrospective) would be refused from every checkout that has the harness's rules — they are
+    pinned to the registered fingerprint instead. This checkout's fingerprint is returned."""
+    _refuse_unless_files_at(PRODUCTION_SCORER_FILES, base_ref, root, "BASE's production files")
+    return scorer_fingerprint(root)
+
+
+def fixed_scorer(base_ref: str, *, root: Path = rp.ROOT,
+                 main_ref: str = "origin/main") -> tuple[str, str]:
+    """THE FIXED SCORER, and the commit its harness is (RG-D12, merged with B's scope): BASE's
+    production files (`refuse_unless_scored_by_base`) and ``main_ref``'s harness at registration,
+    recorded as the registration's `scorer_ref` — a reviewed harness, never one a candidate
+    brings. One rule for a prospective change and a retrospective (#953) alike; a retrospective
+    whose production files moved on main since BASE is registered from a checkout holding BASE's
+    production files under main's harness. The fingerprint and the harness commit return."""
+    fp = refuse_unless_scored_by_base(base_ref, root=root)
+    from vinci.evals.builds import _resolve
+    main = _resolve(main_ref, repo=root)
+    _refuse_unless_files_at(HARNESS_SCORER_FILES, main, root, f"{main_ref}'s harness")
+    return fp, main
+
+
+def refuse_unless_registered_scorer(reg: Registration, *, root: Path = rp.ROOT,
+                                    main_ref: str = "origin/main") -> None:
+    """At a draw or a score (RG-D12): the scorer here is the registered one; its production files
+    are BASE's; its harness is the one at `scorer_ref`, a commit on ``main_ref``. A registration
+    written before `scorer_ref` existed must be BASE's scorer whole."""
+    if (here := scorer_fingerprint(root)) != reg.scorer:
+        raise rp.ReplayError(f"the scorer here ({here[:12]}) is not the registered scorer "
+                             f"({reg.scorer[:12]}): draw and score from the checkout it was "
+                             "registered from")
+    _refuse_unless_files_at(PRODUCTION_SCORER_FILES, reg.base_ref, root, "BASE's production files")
+    if reg.scorer_ref is None:
+        if _fingerprint(_scorer_files_at(reg.base_ref, root)) != reg.scorer:
+            raise rp.ReplayError(f"registration {reg.sha[:12]} records the scorer "
+                                 f"{reg.scorer[:12]}, which is not BASE's: a candidate never "
+                                 "scores itself")
+        return
+    if not _is_ancestor(reg.scorer_ref, main_ref, root):
+        raise rp.ReplayError(f"registration {reg.sha[:12]} records its harness at "
+                             f"{reg.scorer_ref[:12]}, which is not on {main_ref}: a harness is a "
+                             "reviewed one, never a candidate's")
+    _refuse_unless_files_at(HARNESS_SCORER_FILES, reg.scorer_ref, root, "the registered harness")
 
 
 #: Fields added after PR 2's first registrations were written: serialised only when set, so a
 #: registration written before them keeps the sha256 its ledger records.
 _LATER_FIELDS: dict[str, Any] = {"no_worsening": False, "requests": {}, "ship_alpha": None,
                                  "replicates": None, "inputs": {}, "note": None,
-                                 "no_worsening_families": {}}
+                                 "no_worsening_families": {}, "scorer_ref": None}
 
 #: The fields that make two registrations THE SAME COMPARISON: what is drawn, how often, what must
 #: improve and by what rule and scorer. Everything else — the words (`note`), the record of what
@@ -287,6 +431,9 @@ class Registration:
     #: ruling for #927: M-LABEL gated on bleed, trailing-only and pe-percentile-blocked; its
     #: gap-statement families reported, not gated). The whole metric is still reported.
     no_worsening_families: dict[str, list[str]] = field(default_factory=dict)
+    #: The commit whose scorer files are the registration's fixed scorer (`fixed_scorer`): BASE
+    #: for a prospective comparison, origin/main at registration for a retrospective one.
+    scorer_ref: str | None = None
 
     def __post_init__(self) -> None:
         if self.ship_alpha is not None and not 0 < self.ship_alpha < self.alpha:
@@ -403,6 +550,7 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
     if barred := [t for t in targets if t in BARRED_TARGETS]:
         raise rp.ReplayError(f"{barred} cannot be a target — {BARRED_TARGETS[barred[0]]}; it is "
                              "still scored and reported beside the targets")
+    scorer = refuse_unless_scored_by_base(base_ref)   # RG-D12, in the library (B's check, gap 1)
     p = panel or rp.load_panel_file()
     chosen = registered_pages(pages, p)
     for t in targets:
@@ -431,7 +579,7 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
     reg = Registration(base_ref=base_ref, cand_ref=cand_ref, transforms=tuple(transforms),
                        pages=chosen, draws=draws, targets=tuple(targets),
                        held_out=tuple(t for t in chosen if t not in named),
-                       scorer=scorer_fingerprint(), no_worsening=no_worsening,
+                       scorer=scorer, no_worsening=no_worsening,
                        requests=pins, rule=rule, ship_alpha=ship_alpha, inputs=inputs,
                        note=note, no_worsening_families=nwf)
     if replicates is None:
@@ -493,7 +641,11 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
     once, and only the request bytes it pins — and records its sha256 in the budget ledger
     before the first draw. ``claim`` (the index's `registry.claim_draw`) is called after every
     $0 refusal and before the first write, so a refused run never consumes its registration."""
+    gd.verify_committed_gold()   # RG-D11: the gold's hashes, before any paid draw (gap 4)
     refuse_if_unreached(c)
+    if (here := scorer_fingerprint()) != registration.scorer:   # RG-D12, in the library (gap 1)
+        raise rp.ReplayError(f"the scorer here ({here[:12]}) is not the registered scorer "
+                             f"({registration.scorer[:12]}): nothing is drawn")
     reg = registration
     pages = tuple(dict.fromkeys(t for t, _ in c.requests))
     if (c.base_ref, c.cand_ref, c.transforms, pages) != (reg.base_ref, reg.cand_ref,
@@ -545,7 +697,8 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
     for t in dict.fromkeys(t for t, _ in c.requests):
         for cond in CONDITIONS:
             rp.run_request(c.requests[(t, cond)], draws=draws, budget=budget,
-                           label=f"{t}:{cond}", draws_out=out_dir / "draws.jsonl", sdk=sdk)
+                           label=f"{t}:{cond}", draws_out=out_dir / "draws.jsonl", sdk=sdk,
+                           registration=reg.sha)
 
 
 # ------------------------------------------------------------------------------------- scoring
@@ -754,6 +907,11 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
     indexes: dict[tuple[str, str], mt.EchoIndex] = {}
     for row in rows:
         t, cond = row["label"].split(":")
+        if reg.inputs.get("impact") and (t, cond) not in ctxs:
+            # A FRESH BUILD'S ARM: its own page, layer and transcripts, never the frozen page
+            page, mech, tx = impact_arm(reg, t, cond)
+            loaded.setdefault(t, (page, tx))
+            ctxs[(t, cond)] = mt.PageContext(page=page, mech=mech, transcript=tx, blob=None)
         if t not in loaded:
             if pages is not None:
                 loaded[t] = pages[t], (transcripts or {}).get(t)

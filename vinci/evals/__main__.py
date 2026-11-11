@@ -115,8 +115,9 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--approval", required=True)
     for name in ("compare", "register"):
         c = sub.add_parser(name)
-        c.add_argument("--base", required=True)
-        c.add_argument("--cand", required=True)
+        # register --from-impact reads its two commits from the export (both may be omitted)
+        c.add_argument("--base", required=name == "compare")
+        c.add_argument("--cand", required=name == "compare")
         c.add_argument("--transform", action="append", default=[])
         c.add_argument("--ciq-root", type=Path,
                        help="the CIQ folders transcripts and comps exports are read from "
@@ -143,6 +144,9 @@ def main(argv: list[str] | None = None) -> int:
                            help="with --replicates: the approval's ledger, which records the "
                                 "first run and its ledger-backed score")
             c.add_argument("--draws", type=int, default=5)
+            c.add_argument("--from-impact", type=Path, metavar="EXPORT",
+                           help="register an impact run's captured requests and layers (fresh "
+                                "builds at each arm's code), never a replay of the frozen page")
             c.add_argument("--out", required=True, type=Path)
     rc = sub.add_parser("run-compare")
     rc.add_argument("--registration", required=True, type=Path)
@@ -187,6 +191,8 @@ def main(argv: list[str] | None = None) -> int:
                     help="the CIQ folders transcripts and comps exports are read from "
                          "(default: the assembler's copy)")
     rr.add_argument("--note")
+    rr.add_argument("--budget-ledger", required=True, type=Path,
+                    help="the approval that may draw this registration (bound in the index)")
     rr.add_argument("--out", required=True, type=Path)
     sr = sub.add_parser("score-run")
     sr.add_argument("--registration", required=True, type=Path)
@@ -223,13 +229,33 @@ def main(argv: list[str] | None = None) -> int:
         if a.out.exists():
             raise rp.ReplayError(f"{a.out} exists: a registration is written once")
         from vinci.evals.builds import _resolve
-        # PINNED TO COMMITS (review round 0): RG-D14's own merge moves main between registering
-        # and drawing, so a ref recorded as given ("origin/main") would be read at a moved main
-        a.base, a.cand = _resolve(a.base), _resolve(a.cand)
-        cm.refuse_unless_scored_by_base(a.base)   # RG-D12: the scorer is BASE's
-        pages = cm.registered_pages(a.ticker)
-        cap = cm.compare_requests(a.base, a.cand, tickers=pages, transforms=a.transform,
-                                  ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
+        if a.from_impact is not None:   # the impact run's fresh captures, read as captured
+            if a.transform:
+                raise rp.ReplayError("--transform: an impact export's requests were built by "
+                                     "each arm's own code; there is nothing to transform")
+            if a.ticker:
+                raise rp.ReplayError("--ticker: an impact export is registered with the pages "
+                                     "it captured; none is chosen or dropped")
+            cap = cm.captured_from_impact(a.from_impact)
+            for given, got in ((a.base, cap.base_ref), (a.cand, cap.cand_ref)):
+                if given is not None and _resolve(given) != got:
+                    raise rp.ReplayError(f"{given}: the export's commits are {cap.base_ref[:12]}"
+                                         f" and {cap.cand_ref[:12]}")
+            a.base, a.cand = cap.base_ref, cap.cand_ref
+            p = rp.load_panel_file()
+            pages_of = [t for t, cond in cap.requests if cond == "BASE"]
+            a.ticker = None if set(pages_of) == set(p["panel"]) else pages_of
+        elif a.base is None or a.cand is None:
+            raise rp.ReplayError("register needs --base and --cand, or --from-impact")
+        else:
+            # PINNED TO COMMITS (review round 0): RG-D14's own merge moves main between
+            # registering and drawing, so a ref recorded as given would be read at a moved main
+            a.base, a.cand = _resolve(a.base), _resolve(a.cand)
+        scorer, scorer_ref = cm.fixed_scorer(a.base)   # RG-D12: BASE production, main harness
+        if a.from_impact is None:
+            pages = cm.registered_pages(a.ticker)
+            cap = cm.compare_requests(a.base, a.cand, tickers=pages, transforms=a.transform,
+                                      ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
         cm.refuse_if_unreached(cap)
         first = (cm.Registration.from_json(a.replicates.read_text(encoding="utf-8"))
                  if a.replicates else None)
@@ -240,10 +266,19 @@ def main(argv: list[str] | None = None) -> int:
                           no_worsening_families={
                               m: f.split(",") for m, _, f in
                               (x.partition("=") for x in a.no_worsening_families)})
+        if reg.scorer != scorer:
+            raise rp.ReplayError(f"the scorer registered ({reg.scorer[:12]}) is not the fixed "
+                                 f"scorer ({scorer[:12]}) at {scorer_ref[:12]}")
+        import dataclasses
+        reg = dataclasses.replace(reg, scorer_ref=scorer_ref)
         cm.write_registration(reg, a.out)
         from vinci.evals import registry
+        if a.budget_ledger is None:
+            raise rp.ReplayError("register needs --budget-ledger: a registration is bound to the "
+                                 "approval that may draw it (open it first: budget-open)")
         registry.record_registered(reg.sha, kind="compare", refs={"base": a.base, "cand": a.cand},
-                                   pages=list(reg.pages), draws=reg.draws)
+                                   pages=list(reg.pages), draws=reg.draws,
+                                   approval=registry.approval_id(a.budget_ledger))
         print(f"indexed in {registry.INDEX}: merge that row to main in a docs-only PR before "
               "any draw (RG-D14)")
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
@@ -261,8 +296,15 @@ def main(argv: list[str] | None = None) -> int:
             budget = rp.Budget.load(a.budget_ledger, cap_usd=a.cap)
         else:
             base, cand, transforms, tickers = a.base, a.cand, tuple(a.transform), a.ticker
-        cap = cm.compare_requests(base, cand, tickers=tickers, transforms=transforms,
-                                  ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
+        imp = run.inputs.get("impact") if run is not None else None
+        if imp:   # an impact registration: the exported bytes, checked, never a replay
+            cap = cm.captured_from_impact(Path(imp["dir"]))
+            if cap.inputs["impact"]["manifest_sha256"] != imp["manifest_sha256"]:
+                raise rp.ReplayError(f"the export at {imp['dir']} is not the one registered "
+                                     "(its manifest's sha256 moved)")
+        else:
+            cap = cm.compare_requests(base, cand, tickers=tickers, transforms=transforms,
+                                      ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
         for d in cap.diffs:
             delta = {k: d.cand_sizes.get(k, 0) - v for k, v in d.base_sizes.items()
                      if d.cand_sizes.get(k, 0) != v}
@@ -276,9 +318,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if not _paid(a):
             return 2
-        if cm.refuse_unless_scored_by_base(run.base_ref) != run.scorer:   # RG-D12
-            raise rp.ReplayError(f"registration {run.sha[:12]} records the scorer "
-                                 f"{run.scorer[:12]}, not BASE's: a candidate never scores itself")
+        cm.refuse_unless_registered_scorer(run)   # RG-D12: the fixed scorer, never the candidate's
         from vinci.evals import registry
         registry.require_on_main(run.sha)   # RG-D14: drawn only once main holds the registration
         approval = registry.approval_id(a.budget_ledger)
@@ -303,7 +343,8 @@ def main(argv: list[str] | None = None) -> int:
         bd.write_registration(breg, a.out)
         from vinci.evals import registry
         registry.record_registered(breg.sha, kind="run", refs={"code": breg.code_ref},
-                                   pages=list(breg.pages), draws=breg.draws)
+                                   pages=list(breg.pages), draws=breg.draws,
+                                   approval=registry.approval_id(a.budget_ledger))
         print(f"indexed in {registry.INDEX}: merge that row to main in a docs-only PR before "
               "any draw (RG-D14)")
         print(f"registered {breg.sha[:16]}: pages {list(breg.pages)}, {breg.builds} builds of "
@@ -325,10 +366,7 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "score":
         from vinci.evals import compare as cm
         reg = cm.Registration.from_json(a.registration.read_text(encoding="utf-8"))
-        if cm.refuse_unless_scored_by_base(reg.base_ref) != reg.scorer:   # RG-D12
-            raise rp.ReplayError(f"registration {reg.sha[:12]} records the scorer "
-                                 f"{reg.scorer[:12]}, not BASE's at {reg.base_ref}: it was "
-                                 "registered by a candidate's scorer and is not scored")
+        cm.refuse_unless_registered_scorer(reg)   # RG-D12: the fixed scorer, never the candidate's
         from vinci.evals import registry
         registry.require_on_main(reg.sha)   # RG-D14: scored only as main holds it registered
         print(cm.score_text(cm.score_run(a.out_dir, reg, ledger=a.budget_ledger)))

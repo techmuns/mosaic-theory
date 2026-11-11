@@ -146,11 +146,13 @@ def test_register_draw_and_score_each_refuse_a_candidate_scorer() -> None:
     """STRUCTURAL: the CLI calls the check before it registers, before it draws, and before it
     scores (a registration written before this rule, by a candidate's scorer, is refused too)."""
     src = (ROOT / "vinci" / "evals" / "__main__.py").read_text()
-    for cmd, before in (('a.cmd == "register"', "cm.register("),
-                        ('a.cmd in ("compare", "run-compare")', "cm.run_compare("),
-                        ('a.cmd == "score"', "cm.score_run(")):
+    for cmd, check, before in (
+            ('a.cmd == "register"', "cm.fixed_scorer(", "cm.register("),
+            ('a.cmd in ("compare", "run-compare")', "refuse_unless_registered_scorer(",
+             "cm.run_compare("),
+            ('a.cmd == "score"', "refuse_unless_registered_scorer(", "cm.score_run(")):
         body = src[src.index(cmd):]
-        assert "refuse_unless_scored_by_base(" in body[:body.index(before)], cmd
+        assert check in body[:body.index(before)], cmd
 
 
 # ------------------------------------------- row 53 item 6: each arm scored against its own layer
@@ -270,7 +272,8 @@ def test_a_registration_is_drawn_once_across_approvals(tmp_path: Path) -> None:
     again under a second approval. The index records each draw; a second approval is refused."""
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
-    repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64}])
+    repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64,
+                                         "approval": "approval-1"}])
     registry.claim_draw("a" * 64, approval="approval-1", root=repo)
     with pytest.raises(ReplayError, match="drawn once"):
         registry.claim_draw("a" * 64, approval="approval-2", root=repo)
@@ -284,7 +287,8 @@ def test_a_build_is_drawn_once_and_a_registration_s_builds_share_one_approval(
     build under the approval that drew its first."""
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
-    repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64}])
+    repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64,
+                                         "approval": "ap-1"}])
     registry.claim_draw("a" * 64, approval="ap-1", unit="NFLX:1", root=repo)
     registry.claim_draw("a" * 64, approval="ap-1", unit="NFLX:2", root=repo)   # (+) next build
     with pytest.raises(ReplayError, match="drawn once"):
@@ -341,13 +345,18 @@ def test_the_index_carries_no_path_and_no_text() -> None:
 def test_the_held_out_pages_are_six_by_the_fixed_rule() -> None:
     """(−) Fix request 2, order 8: no page was held out from the fixes. Six are now held out, by a
     rule fixed before any result: the committed pages outside the panel and outside the gold's
-    DEV half (the pages metrics were built on), ordered by sha256 of the ticker; the first six.
-    The pool is frozen in the file, so a page added later moves nothing."""
+    DEV half (the pages metrics were built on), ordered by sha256 of the ticker; the first six a
+    replay can draw — a page with no CIQ transcript (the panel file's own exclusion: TECX, ORKA)
+    is passed over and the rule's next pick takes its place (B's check, gap 5). The pool is frozen
+    in the file, so a page added later moves nothing."""
     import hashlib
     h = json.loads((ROOT / "vinci" / "evals" / "held_out_pages.json").read_text())
-    pool = h["pool"]
-    assert h["pages"] == sorted(pool, key=lambda t: hashlib.sha256(t.encode()).hexdigest())[:6]
-    assert h["pages"] == ["NKE", "VITL", "PARR", "WLK", "TJX", "TECX"]
+    rows = {r["ticker"]: r for r in json.loads(
+        (ROOT / "vinci" / "evals" / "synthesis_panel.json").read_text())["rows"]}
+    order = sorted(h["pool"], key=lambda t: hashlib.sha256(t.encode()).hexdigest())
+    assert h["pages"] == [t for t in order if rows[t]["transcripts"] >= 1][:6]
+    assert h["pages"] == ["NKE", "VITL", "PARR", "WLK", "TJX", "TGT"]
+    assert sorted(h["passed_over"]) == ["ORKA", "TECX"]
 
 
 def test_no_held_out_page_built_a_metric() -> None:
@@ -511,7 +520,7 @@ def test_register_pins_its_refs_to_commits(monkeypatch: pytest.MonkeyPatch,
     from vinci.evals import compare as cm
     from vinci.evals import registry
     seen: dict[str, object] = {}
-    monkeypatch.setattr(cm, "refuse_unless_scored_by_base", lambda ref, **k: "f" * 64)
+    monkeypatch.setattr(cm, "fixed_scorer", lambda ref, **k: ("f" * 64, "0" * 40))
     monkeypatch.setattr(cm, "compare_requests", lambda base, cand, **k: seen.setdefault(
         "cap", cm.Captured(base, cand, ())))
     monkeypatch.setattr(cm, "refuse_if_unreached", lambda c: None)
@@ -522,8 +531,10 @@ def test_register_pins_its_refs_to_commits(monkeypatch: pytest.MonkeyPatch,
                                              held_out=(), scorer="f" * 64))
     monkeypatch.setattr(cm, "write_registration", lambda reg, out: None)
     monkeypatch.setattr(registry, "record_registered", lambda *a, **k: {})
+    ledger = tmp_path / "ledger.jsonl"
+    ledger.write_text(json.dumps({"approval": {"cap_usd": 1.0, "approved": "test"}}) + "\n")
     cli.main(["register", "--base", "HEAD", "--cand", "HEAD", "--target", "M-LABEL",
-              "--out", str(tmp_path / "r.json")])
+              "--budget-ledger", str(ledger), "--out", str(tmp_path / "r.json")])
     import subprocess
     head = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"], capture_output=True,
                           text=True, check=True).stdout.strip()
@@ -540,3 +551,318 @@ def test_a_barred_target_keeps_its_place_in_the_registered_correction() -> None:
     assert fam == {"M-LABEL": 0.04, "M-GAP": 1.0}
     assert cm.holm(fam, 0.05) == {"M-LABEL": False, "M-GAP": False}   # 0.04 > 0.05 / 2
     assert cm.holm(cm.target_family(("M-LABEL",), {"M-LABEL": 0.04}), 0.05)["M-LABEL"]
+
+
+# --------------------------------- --from-impact: a registration from an impact run's captures
+
+BASE_953 = "586fdcfdcbf724a7c020a02fd165496bce4c665e"   # #953's parent, on main
+CAND_953 = "7ec84833a60fbdc14580a5a8871585f4f8a1e0a8"   # #953's squash, on main
+
+
+def _impact_export(tmp_path: Path, transcript: str | None = None
+                   ) -> tuple[Path, dict[str, object]]:
+    """An export in impact-check's format (`impact-captures-format.md`): per arm and page a $0
+    build (`built.json`), the layer its synthesis received (`layer.json`) and the request it sent
+    (`request.json`, one call), each hashed in `manifest.json`. CAND's layer carries a phrase
+    BASE's does not, as #953's fresh builds carried a peer block the frozen page does not."""
+    import hashlib
+
+    from vinci.evals import replay as rp
+    from vinci.evals.capture_child import pre_synthesis_mech
+    page = _page("NFLX")
+    base_layer = pre_synthesis_mech(page)
+    mc = base_layer.management_commentary
+    assert mc is not None
+    cand_layer = base_layer.model_copy(update={"management_commentary": mc.model_copy(
+        update={"value": f"{mc.value} Management: {_PHRASE}."})})
+    out = tmp_path / "export"
+    pages: dict[str, dict[str, object]] = {"NFLX": {"request_differs": True}}
+    for arm, side, layer in (("BASE", "base", base_layer), ("CAND", "head", cand_layer)):
+        d = out / side / "NFLX"
+        d.mkdir(parents=True)
+        built = {**page, "mechanical": json.loads(layer.model_dump_json())}
+        (d / "built.json").write_text(json.dumps(built))
+        (d / "layer.json").write_text(layer.model_dump_json())
+        kwargs = rp.capture(built, transcript, draws=1).kwargs
+        (d / "request.json").write_text(json.dumps(kwargs))
+        sha = lambda b: hashlib.sha256(b).hexdigest()  # noqa: E731
+        pages["NFLX"][arm] = {"built_sha256": sha((d / "built.json").read_bytes()),
+                              "layer_sha256": sha((d / "layer.json").read_bytes()),
+                              "request_wire_sha256": sha(rp.wire(kwargs).encode()),
+                              "recapture_equal": True}
+    (out / "manifest.json").write_text(json.dumps({
+        "base": {"sha": BASE_953}, "cand": {"sha": CAND_953}, "pages": pages,
+        "inputs": {"data_ref": CAND_953}}))
+    return out, page
+
+
+def test_a_registration_is_built_from_an_impact_export(tmp_path: Path) -> None:
+    """(+) `captured_from_impact` reads the export as the comparison: its two commits, each
+    page's two requests (pinned by the manifest's wire sha256), and the export's identity."""
+    from vinci.evals import compare as cm
+    out, _ = _impact_export(tmp_path)
+    cap = cm.captured_from_impact(out)
+    m = json.loads((out / "manifest.json").read_text())
+    assert (cap.base_ref, cap.cand_ref) == (BASE_953, CAND_953) and cap.reaches
+    assert cm.request_pins(cap) == {f"NFLX:{a}": m["pages"]["NFLX"][a]["request_wire_sha256"]
+                                    for a in ("BASE", "CAND")}
+    assert cap.inputs["impact"]["pages"] == m["pages"]
+
+
+def test_an_impact_export_whose_file_moved_is_refused(tmp_path: Path) -> None:
+    """(−) Every file is checked against the manifest's sha256: a layer edited after the run is
+    refused, never scored."""
+    from vinci.evals import compare as cm
+    from vinci.evals.replay import ReplayError
+    out, _ = _impact_export(tmp_path)
+    p = out / "head" / "NFLX" / "layer.json"
+    p.write_text(p.read_text().replace(_PHRASE, "something else entirely here"))
+    with pytest.raises(ReplayError, match="layer.json.*sha256"):
+        cm.captured_from_impact(out)
+
+
+def test_an_impact_arm_is_scored_against_its_own_fresh_layer(tmp_path: Path) -> None:
+    """(−) The #953 retrospective's blocker (coordinator, 2026-11-11): `score_run` scored every
+    draw against the FROZEN panel page, but an impact run's requests were built fresh on today's
+    inputs and carried another layer. An impact registration's arms are scored against their own
+    `layer.json` and `built.json`, never the frozen page (NFLX is no panel page: the frozen read
+    fails outright)."""
+    from vinci.evals import compare as cm
+    out, page = _impact_export(tmp_path)
+    cap = cm.captured_from_impact(out)
+    reg = cm.Registration(base_ref=BASE_953, cand_ref=CAND_953, transforms=(), pages=("NFLX",),
+                          draws=5, targets=(), held_out=(), scorer=cm.scorer_fingerprint(),
+                          no_worsening=True, requests=cm.request_pins(cap), inputs=cap.inputs)
+    raw = page["synthesis"]
+    assert isinstance(raw, dict)
+    cand = {**raw, "key_unknowns": [*raw["key_unknowns"], f"Management said '{_PHRASE}'."]}
+    run = _arm_run(tmp_path, reg, raw, cand, "run")
+    s = cm.score_run(run, reg)
+    assert s.metrics["M-ABSENT"].cand_total == s.metrics["M-ABSENT"].base_total
+
+
+def test_register_and_run_compare_read_an_impact_export_not_a_replay() -> None:
+    """STRUCTURAL: `register --from-impact` builds the comparison from the export (no
+    `compare_requests` replay), and `run-compare` of an impact registration rebuilds it from the
+    same export, so the bytes drawn are the bytes the impact run captured."""
+    src = (ROOT / "vinci" / "evals" / "__main__.py").read_text()
+    assert '"--from-impact"' in src
+    body = src[src.index('a.cmd == "register"'):]
+    body = body[:body.index("return 0")]
+    assert "cm.captured_from_impact(" in body
+    rc = src[src.index('a.cmd in ("compare", "run-compare")'):]
+    assert "cm.captured_from_impact(" in rc[:rc.index("cm.run_compare(")]
+
+
+# ------------------- RG-D12 for a retrospective: a merged candidate is scored by main's scorer
+
+
+def _scorer_history(tmp_path: Path) -> tuple[Path, str, str]:
+    """A repository holding the scorer files: BASE, then CAND editing `synthesis.py`."""
+    import subprocess
+    repo = _scorer_repo(tmp_path)
+
+    def git(*a: str) -> str:
+        return subprocess.run(["git", "-C", str(repo), *a], check=True, capture_output=True,
+                              text=True).stdout.strip()
+    base = git("rev-parse", "HEAD")
+    f = repo / "vinci/dossier/synthesis.py"
+    f.write_text(f.read_text() + "\n# the candidate's edit\n")
+    git("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qam", "cand")
+    return repo, base, git("rev-parse", "HEAD")
+
+
+def _composite(tmp_path: Path) -> tuple[Path, str, str]:
+    """BASE, then MAIN moving both a production file (`synthesis.py`) and the harness
+    (`compare.py`) — #953's case, where main moved after BASE — with origin/main at MAIN, and the
+    checkout holding BASE's production file under MAIN's harness: the composite #953 needs."""
+    import subprocess
+    repo, base, _ = _scorer_history(tmp_path)          # CAND's commit edits synthesis.py
+
+    def git(*a: str) -> str:
+        return subprocess.run(["git", "-C", str(repo), *a], check=True, capture_output=True,
+                              text=True).stdout.strip()
+    h = repo / "vinci/evals/compare.py"
+    h.write_text(h.read_text() + "\n# main's newer harness\n")
+    git("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qam", "main")
+    main = git("rev-parse", "HEAD")
+    git("update-ref", "refs/remotes/origin/main", main)
+    git("checkout", "-q", base, "--", "vinci/dossier/synthesis.py")
+    return repo, base, main
+
+
+def test_the_fixed_scorer_is_base_s_production_under_main_s_harness(tmp_path: Path) -> None:
+    """(+) RG-D12, merged with B's scope (operator, 2026-11-11): BASE's production files, and
+    origin/main's harness at registration, recorded as `scorer_ref`. One rule for a prospective
+    change and a retrospective (#953) alike."""
+    from vinci.evals import compare as cm
+    repo, base, main = _composite(tmp_path)
+    assert cm.fixed_scorer(base, root=repo) == (cm.scorer_fingerprint(repo), main)
+
+
+def test_a_harness_main_does_not_hold_is_refused(tmp_path: Path) -> None:
+    """(−) A candidate cannot bring its own harness either: a checkout whose harness files are not
+    origin/main's is refused, naming them."""
+    from vinci.evals import compare as cm
+    from vinci.evals.replay import ReplayError
+    repo, base, _ = _composite(tmp_path)
+    h = repo / "vinci/evals/compare.py"
+    h.write_text(h.read_text() + "\n# a candidate's harness edit\n")
+    with pytest.raises(ReplayError, match=r"vinci/evals/compare\.py"):
+        cm.fixed_scorer(base, root=repo)
+
+
+def test_the_impact_child_names_only_what_the_capture_module_has() -> None:
+    """(−) `vinci/impact/child.py` loads this checkout's `capture_child.py` by path and read
+    `capture.DEFAULT_MODEL`, which RG-D15 removes: an AttributeError the day the fallback ran."""
+    import re
+
+    from vinci.evals import capture_child
+    src = (ROOT / "vinci" / "impact" / "child.py").read_text()
+    for name in sorted(set(re.findall(r"\bcapture\.([A-Za-z_]\w*)", src))):
+        assert hasattr(capture_child, name), name
+
+
+# ------------------------------------------------- review round 0 (code-review high, 2026-11-11)
+
+
+def _rewrite_manifest(out: Path, edit: object) -> None:
+    m = json.loads((out / "manifest.json").read_text())
+    edit(m)  # type: ignore[operator]
+    (out / "manifest.json").write_text(json.dumps(m))
+
+
+def test_an_impact_arm_the_export_did_not_prove_is_refused(tmp_path: Path) -> None:
+    """(−) The manifest records per arm whether re-capturing from its `layer.json` gave its
+    request byte for byte (`recapture_equal`). An arm it did not prove, or that records no proof,
+    is refused: it would be scored against a layer its request may not have carried."""
+    from vinci.evals import compare as cm
+    from vinci.evals.replay import ReplayError
+    out, _ = _impact_export(tmp_path)
+    _rewrite_manifest(out, lambda m: m["pages"]["NFLX"]["CAND"].update(recapture_equal=False))
+    with pytest.raises(ReplayError, match="recapture_equal"):
+        cm.captured_from_impact(out)
+    _rewrite_manifest(out, lambda m: m["pages"]["NFLX"]["CAND"].pop("recapture_equal"))
+    with pytest.raises(ReplayError, match="records no"):
+        cm.captured_from_impact(out)
+    _rewrite_manifest(out, lambda m: m["pages"]["NFLX"].pop("CAND"))
+    with pytest.raises(ReplayError, match="NFLX:CAND records no"):
+        cm.captured_from_impact(out)
+
+
+def test_an_impact_arm_s_transcript_is_the_text_sent_not_its_section_header(
+        tmp_path: Path) -> None:
+    """(−) The transcripts section opens with an instruction header ("Derive NO numbers FROM THIS
+    TEXT ..."). Read as the transcript, M-ABSENT would call a quote of those instruction words
+    "transcript-only" where the frozen path, holding the raw text, calls it "nowhere"."""
+    from vinci.evals import compare as cm
+    text = "--- Q3 call ---\nManagement: the quarter was fine."
+    out, _ = _impact_export(tmp_path, transcript=text)
+    cap = cm.captured_from_impact(out)
+    reg = cm.Registration(base_ref=BASE_953, cand_ref=CAND_953, transforms=(), pages=("NFLX",),
+                          draws=5, targets=(), held_out=(), scorer=cm.scorer_fingerprint(),
+                          no_worsening=True, requests=cm.request_pins(cap), inputs=cap.inputs)
+    for cond in ("BASE", "CAND"):
+        tx = cm.impact_arm(reg, "NFLX", cond)[2]
+        assert tx is not None and tx.startswith("--- Q3 call ---") and text in tx
+        assert "Derive NO numbers" not in tx
+
+
+def test_register_from_impact_refuses_a_chosen_page(tmp_path: Path) -> None:
+    """(−) `--ticker` beside `--from-impact` was silently replaced by the export's pages, so a
+    registration the operator limited to one page was written over all of them."""
+    from vinci.evals import __main__ as cli
+    from vinci.evals.replay import ReplayError
+    out, _ = _impact_export(tmp_path)
+    with pytest.raises(ReplayError, match="--ticker"):
+        cli.main(["register", "--from-impact", str(out), "--ticker", "NFLX", "--no-worsening",
+                  "--out", str(tmp_path / "r.json")])
+
+
+def test_a_registered_scorer_ref_that_is_an_unmerged_candidate_is_refused(
+        tmp_path: Path) -> None:
+    """(−) RG-D12 at the draw and the score: a `scorer_ref` (the registered harness) that is not a
+    commit on origin/main — a candidate's own — is refused even from a checkout holding exactly
+    that scorer; (+) a harness on origin/main passes."""
+    import subprocess
+
+    from vinci.evals import compare as cm
+    from vinci.evals.replay import ReplayError
+    repo, base, main = _composite(tmp_path)
+    reg = cm.Registration(base_ref=base, cand_ref=main, transforms=(), pages=("NFLX",), draws=5,
+                          targets=(), held_out=(), scorer=cm.scorer_fingerprint(repo),
+                          no_worsening=True, scorer_ref=main)
+    subprocess.run(["git", "-C", str(repo), "update-ref", "refs/remotes/origin/main", base],
+                   check=True)
+    with pytest.raises(ReplayError, match="not on origin/main"):
+        cm.refuse_unless_registered_scorer(reg, root=repo)
+    subprocess.run(["git", "-C", str(repo), "update-ref", "refs/remotes/origin/main", main],
+                   check=True)
+    cm.refuse_unless_registered_scorer(reg, root=repo)
+
+def test_the_gold_report_never_scores_a_held_out_page(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(−) B's check, gap 5: `python -m vinci.evals gold` — the command a metric change re-runs
+    (RUNBOOKS §n step 7) — scored the held-out pages' TEST claims. It scores without them, and
+    says how many it left out."""
+    from vinci.evals import gold as gd
+    from vinci.evals import report
+    held = set(json.loads((ROOT / "vinci" / "evals" / "held_out_pages.json").read_text())["pages"])
+    seen: list[set[str]] = []
+    real = gd.precision_recall
+
+    def spy(metric: str, cls: str, gold: list[gd.GoldClaim], fired: set[str], half: str) -> object:
+        seen.append({g.page for g in gold})
+        return real(metric, cls, gold, fired, half)
+    monkeypatch.setattr(gd, "precision_recall", spy)
+    text = report.gold_report()
+    assert seen and all(not (pages & held) for pages in seen)
+    assert "held out" in text
+
+
+# ------------------------------------------------ B's check, gaps 3 and 6: the index's approvals
+
+
+def test_pr2_s_test_read_is_on_record_so_a_second_is_refused(tmp_path: Path) -> None:
+    """(−) B's check, gap 3: the index shipped empty, so `claim_judge_test` admitted a first TEST
+    read from any approval — though PR 2 already read the 644-claim gold's TEST half on
+    2026-11-06. That read is in the committed index, marked as recorded after the fact, and a
+    TEST read under any approval is refused."""
+    import subprocess
+
+    from vinci.evals import registry
+    from vinci.evals.replay import ReplayError
+    rows = [json.loads(x) for x in (ROOT / registry.INDEX).read_text().splitlines() if x.strip()]
+    (pr2,) = [r for r in rows if r["event"] == "judge_test_read"]
+    assert pr2["read_at"].startswith("2026-11-06") and pr2["recorded_after_the_fact"] is True
+    repo = _repo_with_index(tmp_path, rows)
+    subprocess.run(["git", "-C", str(repo), "status"], check=True, capture_output=True)
+    with pytest.raises(ReplayError, match="TEST half"):
+        registry.claim_judge_test(approval="a-new-approval", root=repo)
+
+
+def test_a_registration_is_drawn_only_under_the_approval_it_is_bound_to(tmp_path: Path) -> None:
+    """(−) B's check, gap 6: "drawn once across approvals" saw only the draws in this checkout or
+    on origin/main, so a second approval in another checkout could draw before the first's rows
+    merged. The registered row, which must be on main before any draw, names its approval's
+    sha256; a draw under any other approval is refused wherever it runs."""
+    from vinci.evals import registry
+    from vinci.evals.replay import ReplayError
+    repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64,
+                                         "approval": "ap-1"}])
+    with pytest.raises(ReplayError, match="bound to approval"):
+        registry.claim_draw("a" * 64, approval="ap-2", root=repo)
+    registry.claim_draw("a" * 64, approval="ap-1", root=repo)        # (+) its own approval
+
+
+def test_a_registration_names_its_approval() -> None:
+    """(−) Gap 6: `register` and `register-run` bind the row to the approval (`--budget-ledger`),
+    so the approval is opened before the registration, as RUNBOOKS §n step 4 orders."""
+    import inspect
+
+    from vinci.evals import registry
+    assert "approval" in inspect.signature(registry.record_registered).parameters
+    src = (ROOT / "vinci" / "evals" / "__main__.py").read_text()
+    calls = [i for i in range(len(src)) if src.startswith("registry.record_registered(", i)]
+    assert len(calls) == 2
+    for i in calls:
+        assert "approval=registry.approval_id(a.budget_ledger)" in src[i:i + 300]

@@ -127,7 +127,8 @@ def test_one_guarded_create_is_one_http_attempt(tmp_path: Path, nflx: dict[str, 
     ledger = tmp_path / "ledger.jsonl"
     rp.Budget.open(ledger, cap_usd=5.0, approval="operator: test")
     raws = rp.run_request(rp.capture(nflx, None, draws=1), draws=1, budget=rp.Budget.load(ledger),
-                          label="r", draws_out=tmp_path / "d.jsonl", sdk=sdk)
+                          label="r", draws_out=tmp_path / "d.jsonl", sdk=sdk,
+                          registration="a-test-registration")   # a real client: RG-D10 asks one
     assert len(attempts) == 1 and raws == [None]
     row = json.loads((tmp_path / "d.jsonl").read_text().splitlines()[0])
     assert row["raw"] is None and "529" in row["error"]

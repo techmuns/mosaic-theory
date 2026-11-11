@@ -239,6 +239,8 @@ def run_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.Budge
     end row is written even when the build stops, so the next build's gap is measured from it.
     ``claim`` (the index's `registry.claim_draw`) is called under the lock once every $0 refusal
     has passed, so a refused build never consumes its unit."""
+    from vinci.evals import gold as gd
+    gd.verify_committed_gold()   # RG-D11: the gold's hashes, before any paid draw (gap 4)
     with _claim(budget.ledger):   # the check and the claim (the start row) are one step
         pb = prepare_build(reg, ticker, build, budget=budget, ciq_root=ciq_root, clock=clock)
         if claim is not None:
@@ -253,7 +255,7 @@ def run_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.Budge
     stopped = True
     try:
         raws = rp.run_request(pb.request, draws=reg.draws, budget=budget, label=pb.label,
-                              draws_out=draws_out, sdk=sdk)
+                              draws_out=draws_out, sdk=sdk, registration=reg.sha)
         stopped = False
     finally:
         drawn = [r for r in budget.rows() if r.get("label") == pb.label and "usage" in r]

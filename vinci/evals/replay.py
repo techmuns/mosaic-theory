@@ -534,8 +534,18 @@ class GuardedSdk:
         return msg
 
 
+def _a_real_client(sdk: Any) -> bool:
+    """Whether an injected ``sdk`` is the real Anthropic SDK client — a paid draw like none."""
+    try:
+        import anthropic
+    except ImportError:   # pragma: no cover - the SDK is a dependency
+        return False
+    return isinstance(sdk, anthropic.Anthropic)
+
+
 def run_request(req: Request, *, draws: int, budget: Budget, label: str, draws_out: Path,
-                sdk: Any | None = None) -> list[dict[str, Any] | None]:
+                sdk: Any | None = None,
+                registration: str | None = None) -> list[dict[str, Any] | None]:
     """``draws`` PAID draws of ONE request captured at $0, sent sequentially (the build's own
     loop: the first writes the prompt cache, the rest read it) through production's
     ``AnthropicLlmClient.extract``, each behind ``GuardedSdk``. Returns each draw's raw tool
@@ -543,6 +553,11 @@ def run_request(req: Request, *, draws: int, budget: Budget, label: str, draws_o
     it). The request may have been built at any code ref (`capture_at`), so main and a branch are
     drawn by one process under one cap. ``sdk`` replaces the real SDK object (tests); without it
     the client reads ``ANTHROPIC_API_KEY`` and the call costs money."""
+    if registration is None and (sdk is None or _a_real_client(sdk)):
+        # RG-D10, IN THE LIBRARY (B's check of order 8, gap 2): G-D10's own reproduction called
+        # this function with no registration; the CLI refused, the library did not
+        raise ReplayError(f"{label}: a paid draw needs the registration it is drawn under "
+                          "(RG-D10) — every paid draw goes through run-compare, run or the judge")
     tools = req.kwargs.get("tools") or []
     if len(tools) != 1:
         raise ReplayError(f"{label}: a synthesis request carries one tool, this one {len(tools)}")

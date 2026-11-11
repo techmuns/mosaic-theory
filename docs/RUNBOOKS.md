@@ -687,11 +687,14 @@ first"** — no prompt change or paid rebuild ships unmeasured.
 
 1. **Declare the TARGET in the PR before any draw** — one deterministic metric (`M-LABEL`; a
    material-direction change targets `M-SIGN` on NFLX, the page where it fires), or a judged class
-   once a judge passes its bar (record §9). The record's R2 named `M-LABEL` on the panel; `M-GAP`
-   joined it after meeting its pre-registered bar on fresh gold (step 7;
-   `docs/records/2026-11-09-m-gap-gold-and-metric.md`), and #927's registration targeted it
-   (`docs/records/2026-11-09-fix4a-measured-on-the-panel.md`). The LLM judge FAILED its bar on
-   TEST (PR 2: kappa 0.23), so no judged class can be a target or a gate.
+   once a judge passes its bar (record §9). The record's R2 names `M-LABEL` on the panel. `M-GAP`
+   met its pre-registered bar on fresh gold (step 7; `docs/records/2026-11-09-m-gap-gold-and-
+   metric.md`) and #927's registration targeted it, but it is **barred as a target since fix
+   request 2, order 8 (RG-D13, operator 2026-11-11: "Bar it now")**: its truth is the gap types the
+   candidate's own code wrote, so it measures compliance, not fidelity. It is scored and printed,
+   and no decision reads it, until an independent coding of the gap types exists
+   (`docs/records/2026-11-11-fix2-order8-the-evaluation-harness.md`). The LLM judge FAILED its bar
+   on TEST (PR 2: kappa 0.23), so no judged class can be a target or a gate.
 2. **$0 first.** `python -m vinci.evals panel` (the rule still yields the frozen six), then
    `python -m vinci.evals compare --base origin/main --cand <branch> [--transform NAME]` (its
    capture child holds no key and no network): every
@@ -721,8 +724,14 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    differ from the registered ones. A stopped run is reported as stopped; drawing again needs a
    NEW registration, said so in the record. The cap is the approval's, never one run's.
    **Since fix request 2, order 8 (2026-11-11):**
-   - **Register from a checkout of BASE.** `register`, `run-compare` and `score` refuse a checkout
-     whose scorer files are not BASE's (RG-D12): a candidate never scores itself.
+   - **Register from a checkout of the FIXED SCORER** (RG-D12): BASE for a prospective change;
+     `origin/main` at registration for a retrospective one (CAND already merged), recorded as
+     `scorer_ref`. `register`, `run-compare` and `score` refuse any other scorer: a candidate never
+     scores itself.
+   - **A retrospective of a merged change** (fresh builds, not the frozen page): `register
+     --from-impact <an impact export>` reads the export's two commits, each page's two requests
+     and the layers they carried, every file checked against its manifest's sha256; `run-compare`
+     draws those bytes, and `score` scores each arm against its own layer.
    - **The registration's row goes to main first.** `register` / `register-run` append a row to
      `docs/evals/registrations.jsonl`. Merge it in a docs-only PR; `run-compare`, `run`, `score`
      and `score-run` refuse a registration `origin/main` does not hold (fetch after the merge), so

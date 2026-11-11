@@ -12,6 +12,16 @@ import pytest
 from vinci.evals import compare as cm
 from vinci.evals import replay as rp
 
+
+@pytest.fixture(autouse=True)
+def _production_files_are_bases(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests pin registration's OTHER rules on old commits (`dc5b8787` → `b109e26c`). Since
+    order 8, `cm.register` refuses a checkout whose production files are not BASE's (RG-D12, B's
+    check, gap 1), which today's checkout never is for an old BASE; that rule has its own pins
+    (`tests/test_evals_order8_gaps.py`), so here it is stubbed to this checkout's fingerprint."""
+    monkeypatch.setattr(cm, "refuse_unless_scored_by_base",
+                        lambda base_ref, **k: cm.scorer_fingerprint())
+
 ROOT = Path(__file__).resolve().parents[1]
 
 

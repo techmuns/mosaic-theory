@@ -1,6 +1,6 @@
 {
  "what": "The harness's held-out pages (fix request 2, order 8; operator 2026-11-11: \"6 chosen by a fixed rule\"). They are never used to build or tune a metric, and are kept for an evaluation no fix has seen.",
- "rule": "the pool's tickers ordered by the sha256 of the ticker (UTF-8), the first six",
+ "rule": "the pool's tickers ordered by the sha256 of the ticker (UTF-8); the first six a replay can draw. A pool page with no CIQ transcript for the replay to read (synthesis_panel.json rows: transcripts 0, the panel's own exclusion) is passed over, and the rule's next pick takes its place",
  "pool_rule": "the committed pages (data/dossiers/*) outside the panel (synthesis_panel.json) and outside the gold's DEV half (tests/fixtures/synthesis_gold/MANIFEST.json split.dev), the pages metrics were built on",
  "frozen": "2026-11-11",
  "pool": [
@@ -23,6 +23,10 @@
   "PARR",
   "WLK",
   "TJX",
-  "TECX"
- ]
+  "TGT"
+ ],
+ "passed_over": {
+  "TECX": "no CIQ transcript for the replay to read",
+  "ORKA": "no CIQ transcript for the replay to read"
+ }
 }

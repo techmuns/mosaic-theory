@@ -28,14 +28,19 @@ The operator's rulings, 2026-11-11, verbatim, relayed by the coordinator:
   - The judge's read of the gold's TEST half is a `judge_test_read` row, and a second read is refused whichever approval asks. That closes RG-D9, where both rules had held per approval ledger only.
   - The rows hold shas, refs, pages, counts, an approval's sha256 and dates: no path, no text.
 - **RG-D11: the gold is the gold its manifest hashed** (`gold.verify_gold`). `load_gold` checks the five files against `MANIFEST.source_sha256`. Each coder file is checked as its two recorded halves, split at the DEV half's 330 claims; all five match today. An edited label is refused before any metric reads it.
-- **RG-D12: the scorer is BASE's** (`compare.refuse_unless_scored_by_base`). `register`, `run-compare` and `score` refuse a checkout whose scorer files differ from `base_ref`'s, naming the files. `run-compare` and `score` also refuse a registration whose recorded scorer is not BASE's.
+- **RG-D12: a fixed scorer, never the candidate's** (`compare.refuse_unless_scored_by_base`, `fixed_scorer`, `refuse_unless_registered_scorer`). The final rule, merging B's scope (operator 2026-11-11: "Yes, take B's tests and close all six") with the retrospective refinement the coordinator accepted:
+  - **The production files the metrics borrow** (`synthesis.py`, `mechanical.py`, `verdict.py`, `schemas.py`) must be BASE's bytes, always, for a prospective change and a retrospective alike. A candidate edits these, so a candidate never scores itself through them.
+  - **The harness's own files** must be origin/main's at registration, a reviewed harness, recorded as `scorer_ref`. They are never compared with BASE's: a BASE older than the harness, which is any retrospective, would otherwise be refused from every checkout with these rules (B's check, gap 1).
+  - **Enforced in the library, not only the CLI** (gap 1). `cm.register` refuses a checkout whose production files are not BASE's, and `run_compare` and `score_run` refuse a scorer that is not the registered one. The CLI's `refuse_unless_registered_scorer` also re-checks the production files against BASE and the harness against `scorer_ref`, which must be a commit on origin/main.
+  - **Twelve existing tests** registered old commits (`dc5b8787` → `b109e26c`) from today's checkout, which is the defect itself. They now stub only the production check, with a docstring pointing at its own pins: `test_evals_pr2.py`, `test_evals_pr2_round2.py`, `test_evals_pr926_round2.py` and `test_evals_replication_rule.py`.
+  - **#953 is registered from a composite checkout:** `586fdcfd`'s production files under main's harness. #953 changed `synthesis.py` and `schemas.py` itself, and main's production files have moved since. The composite was proved at $0: this branch's harness imports cleanly against `586fdcfd`'s `vinci/`, and all 12 arms of the impact export load and score there. The PR gives the exact steps.
 - **RG-D13: M-GAP is barred as a target** (`compare.BARRED_TARGETS`).
   - `register` refuses it, naming RG-D13.
   - `score` still scores and prints it (`Score.barred`, in `score_text`), and no ship or does-not-ship decision reads it.
   - A registration written before the bar decides on its other targets alone. With no other target, it does not ship.
   - This lasts until an independent coding of the gap types exists.
 - **RG-D15: the model is production's** (`capture_child.production_model`). The capture reads `graph_llm_model` from the configuration of the code under test. In `capture_at`'s child, that is the code ref's own configuration. The constant `DEFAULT_MODEL`, a fifth copy of the model ID that no test pinned, is gone. The one model ID left in `vinci/evals` is the judge's own, `judge.JUDGE_MODEL`, pinned: the judge is an instrument calibrated against the gold, and it must not follow production (review round 0).
-- **Held-out pages** (`vinci/evals/held_out_pages.json`): NKE, VITL, PARR, WLK, TJX and TECX.
+- **Held-out pages** (`vinci/evals/held_out_pages.json`): NKE, VITL, PARR, WLK, TJX and TGT. TECX and ORKA have no CIQ transcript a replay can read (the panel file's own exclusion), so each is passed over and the rule's next pick takes its place (B's check, gap 5). `python -m vinci.evals gold`, the command a metric change re-runs, scores without them: 136 TEST claims are left out, and it says so.
   - **The rule:** the committed pages outside the panel and outside the gold's DEV half, ordered by the sha256 of the ticker; the first six. The pool of 12 is frozen in the file, so a page added later moves nothing.
   - **A deviation from the coordinator's example rule, on purpose.** The example took the first six of all 21 non-panel pages. That gives NCNO and BRBR, which are gold DEV pages, the half the metrics were built on, and would break "never used to build or tune a metric".
   - A test pins the rule, the set, and their separation from the panel, the gold DEV half and M-GAP's frozen pages.
@@ -43,13 +48,24 @@ The operator's rulings, 2026-11-11, verbatim, relayed by the coordinator:
   - **Before:** both arms were captured with the registered transforms run by their own code, but scored against the committed layer, untransformed, for both. That tilted M-ABSENT's "quote: nowhere" and M-ECHO against CAND.
   - **Now, with transforms:** each arm's layer is rebuilt by its own ref in the same child capture uses, from the inputs the registration recorded, checked by sha256.
   - **Now, without transforms:** both arms keep the committed layer, as before.
+- **`register --from-impact <export>`: the #953 retrospective's path** (coordinator, 2026-11-11; the format from impact-check, `impact-captures-format.md`). An impact export holds, per page and arm, a FRESH $0 build at that arm's own code: `built.json`, the `layer.json` its synthesis received, and the `request.json` it sent, each hashed in `manifest.json`.
+  - `compare.captured_from_impact` reads it as the comparison: the two commits, and each page's two requests in the panel's order. Every file is checked against its manifest sha256, or refused.
+  - `register` records the export's identity (its folder, its manifest's sha256 and every page's hashes) as `inputs["impact"]`.
+  - `run-compare` rebuilds the comparison from the same export and checks its manifest's sha256, so the bytes drawn are the bytes captured.
+  - `score_run` scores each arm against its own `layer.json`, its own `built.json` page and the transcripts its own request carried (`compare.impact_arm`). This is STATE row 53 item 6 for fresh builds: the frozen page is never read.
+- **`vinci/impact/child.py`:** its model fallback read `capture.DEFAULT_MODEL`, which RG-D15 removes. It now reads `capture.production_model()`. A test pins that the child names only attributes the capture module has.
 - **Row 56: the git-ref lint** (`tests/test_git_refs_reachable_from_main.py`). Every hex literal a test or the harness hands to git must be a commit `origin/main` reaches. "Handed to git" means three things:
   - a `<sha>:<path>` string;
   - a hex literal in a `["git", …]` argument list;
   - a ref keyword or a ref-taking function's argument.
 
   Docstrings and comments are provenance and are not checked.
-- **RG-D10 was already closed by #958** (`54fa825b`): `run` refuses without `--registration`, pinned by `tests/test_evals_run_builds.py::test_a_paid_run_needs_a_registration`. Nothing changed for it here.
+- **RG-D10:** the `run` command was already closed by #958 (`54fa825b`), pinned by `tests/test_evals_run_builds.py::test_a_paid_run_needs_a_registration`. **The library is closed here** (B's check, gap 2). `replay.run_request`, which every paid draw goes through and which G-D10's own reproduction called, refuses with no registration before any client exists, a real `anthropic` client injected included. Callers pass the registration's sha; the judge passes its claimed half.
+- **RG-D11 before ANY paid draw** (gap 4): `run_compare` and `run_build` check the gold's hashes (`gold.verify_committed_gold`) before anything else, not only where the gold is loaded.
+- **The index's approvals** (gaps 3 and 6):
+  - PR 2's 2026-11-06 read of the gold's TEST half is a committed `judge_test_read` row, marked `recorded_after_the_fact`. Its approval sha256 (`3e7cc4be…`) is B's measurement of PR 2's ledger, which lies outside this session's reach and was not re-hashed here.
+  - Every `registered` row names its approval's sha256 (`register` and `register-run` need `--budget-ledger`). A draw under any other approval is refused wherever it runs, because the row is on main before any draw.
+- **B's tests** (`tests/test_evals_order8_gaps.py`, 11; branch `claude/s1-order8-gap-tests` at `daeba680`) are taken in unchanged. On `7d1761b4`, 10 fail for their gap's own reason and 1 passes by design (the production-edit guard). On this PR, all 11 pass.
 - **RUNBOOKS §n** states the new rules.
 
 ## How verified
@@ -68,6 +84,14 @@ The failing lines include:
 - **The gold's five files** equal their manifest hashes; the two coder files split 330/314.
 - **The lint, over `tests/` and `vinci/evals/`,** finds 29 refs to 4 commits in 8 files (`a9c59287`, `b109e26c`, `c112f25`, `dc5b8787`), all reachable from origin/main. On `tests/test_evals_round2.py` as merged at `a9c59287`, it finds `4449189d` handed to `in_flight_names` and refuses it: no clone holds that commit.
 - **The held-out rule's pool** is 12 of 27 committed pages, measured 2026-11-11 at main `3d55bc31`. None of the six held-out pages is named as a harness target page in any record.
+
+**THE #953 EXPORT, READ BY THIS CODE ($0, read-only, nothing registered).** `captured_from_impact` on impact-check's export (`~/.cache/vinci/impact-captures/pr953-586fdcfd-7ec84833/`, outside every repo):
+- The refs are `586fdcfd` → `7ec84833`, the pages are the panel's six, and it reaches.
+- The 12 request pins equal the manifest's wire sha256s. LLY's two requests are identical; the other five differ.
+- All 36 file hashes match the manifest.
+- All 12 arms' layers parse under today's `MechanicalLayer` with NOTHING lost or changed. Today's schema adds only two fields, both `None`: `consensus_context.consensus_levels_note` on all 12, and `capital_allocation.impairment_headroom` on the 6 BASE arms. So scoring an arm under today's schema reads what its request carried.
+- Each arm's request carried a transcripts section of the same length at both arms: 60,095 to 123,471 characters with its header. M-ABSENT's transcript split is scored on that section with its header stripped, 59,419 to 122,795 characters (review round 0b).
+- `fixed_scorer` takes the retrospective branch, since `7ec84833` is on origin/main. From this branch it refuses, naming the scorer files this PR changes. Registered from main after this PR merges, it passes.
 
 **THE SYNTHESIS REQUESTS DO NOT MOVE ($0).** Each of the six panel pages' requests was built in-process by main's harness and by this branch's, from the same pages and transcripts, read once and shared. All six are byte-identical by sha256: BURL, CNXC, LLY, MCK, ROST and SMPL, model `claude-opus-4-8`, two calls each.
 
@@ -99,7 +123,10 @@ Its registration and record stay as written, as history. The merged code stays m
 - by RG-D14: its row is not in the index;
 - if it were scored anyway, by RG-D13: with M-GAP barred it has no deciding target, so it does not ship.
 
-**#927's measured benefit is therefore unproven,** until an independent coding of the gap types exists and M-GAP is re-measured against it.
+**What stands and what does not.** The ship decision did not rest on M-GAP alone in evidence (impact-check and B's note, verified against `docs/records/2026-11-09-fix4a-measured-on-the-panel.md`, PR #931).
+- **M-LABEL's gated families** (bleed, trailing-only, pe-percentile-blocked) fell **10 → 1, p_lower 0.005**. M-LABEL is a metric whose truth is the gold, not the candidate's output. The fall was measured as a no-worsening check, reported beside the decision rather than registered as a target.
+- **Fix 4a's item (c)** reads through the gated trailing-only family, so its improvement has gold-validated evidence.
+- **The gap framing (items a–b) was read by M-GAP alone.** That part is unproven until an independent coding of the gap types exists and M-GAP is re-measured against it.
 
 ## Found, not fixed / follow-ups
 
@@ -118,5 +145,5 @@ Its registration and record stay as written, as history. The merged code stays m
 - **Every registration made before this PR can no longer be drawn or scored by this code.** None is in the index, and some were registered by a candidate's scorer. Their results stand as their records state them.
 - **A paid run now needs a docs-only PR merged before its first draw.** That costs a gate run's wait.
 - **A `drawn` row is written after every $0 refusal and before the first paid call** (review round 0). A run that then stops mid-draw (a budget stop, an outage) has drawn, so its registration cannot be drawn again: a new registration is needed. The falsifier: a `drawn` row with no draws in its run folder.
-- **"Drawn once across approvals" sees only what this checkout holds or origin/main holds.** A draw made in another checkout and not yet committed is invisible until its `drawn` row merges.
-- **The held-out rule departs from the example rule** given with the ruling, for the reason above. The departure is stated in the file and in this record.
+- **"Drawn once across approvals" across checkouts** is now closed by the approval binding (gap 6). A second draw under the SAME approval in another checkout, not yet committed, is still possible, as it was within one ledger before. That checkout holds the same approval's ledger.
+- **The held-out rule departs from the example rule** given with the ruling, for the reason above, and passes over the two pages a replay cannot draw. Both are stated in the file and in this record. **The `gold` command's TEST figures now cover 178 of the 314 TEST claims.** The historical TEST figures (for example M-LABEL's 22/32 and 22/27) stand as recorded and were measured on all 314.

@@ -171,7 +171,7 @@ def page(ticker: str, out: Path, *, capture: Any, requests: bool, committed: boo
             doc = json.loads(dossier_json(built))
             doc["mechanical"] = json.loads(
                 assemble._mark_material(built.mechanical).model_dump_json())
-            model = getattr(cfg, "graph_llm_model", None) or capture.DEFAULT_MODEL
+            model = getattr(cfg, "graph_llm_model", None) or capture.production_model()
             from vinci.dossier.synthesis import SYNTHESIS_DRAWS
 
             calls = capture.capture_calls(doc, transcript_for_synthesis(bundle), model=model,
