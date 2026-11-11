@@ -47,8 +47,9 @@ def test_the_model_call_carries_no_sampling_parameter() -> None:
     Not style — availability. The API removed them on this model family and answers a 400, and
     EVERY LLM phase in the package (dossier synthesis, graph extraction, theme drafting) goes
     through this client, so one parameter added to its call fails all of them at once. This pins
-    the client's own call only; the theme client's cached-article path and the eval replay call
-    the API themselves, so a parameter added there is not caught here (fix request 2, RG-D20 a)."""
+    the client's own call only. The eval replay forwards that call's arguments unchanged, so it is
+    covered; the theme client's cached-article path builds its own call, so a parameter added
+    there is not caught here (fix request 2, RG-D20 a)."""
     client, seen = _spy_client()
     client.extract(system="s", user="u", tool={"name": "t"})
     assert len(seen) == 1

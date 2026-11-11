@@ -15,12 +15,12 @@ for both, and its tests (`tests/test_ciq_notes_follow_the_code.py`) pin them.
 
 | # | where | was | now |
 |---|---|---|---|
-| a | `vinci/graph/llm.py`; `tests/test_llm_sampling.py`'s docstring; record `2026-09-24-sampling-parameters-are-unavailable.md` | "every LLM phase runs through this one call site" | Every phase goes through this client, but the theme client's cached-article path and the eval replay call `messages.create` too, with no sampling parameter. The record gets an appended amendment; its body is unchanged |
+| a | `vinci/graph/llm.py`; `tests/test_llm_sampling.py`'s docstring; record `2026-09-24-sampling-parameters-are-unavailable.md` | "every LLM phase runs through this one call site" | Every phase goes through this client, but the theme client's cached-article path builds its own `messages.create`, with no sampling parameter; the eval replay's `messages.create` only forwards the shared call's arguments, so the guard covers it. The record gets an appended amendment; its body is unchanged |
 | b | `docs/engineering.md` | "pin what you can (low/0 temperature…)" | **by #998 (G-D15)**: pass no sampling parameter; the lean label is handled by the draw gate |
 | c | `vinci/dossier/synthesis.py` (number trace) | "Direction is the directional-lint's job" | The lint reads recommendation words, never a sign. `_recompute` and `material_direction_flags` compare a sign; any other figure is traced by magnitude |
 | d | `synthesis.synthesize` docstring | "no numbers are derived from [the transcript]" | The prompt asks for none. A figure cited to a call anyway is KEPT, with a TRANSCRIPT-FIGURE flag that is machine-tier QA, hidden from the page |
 | e | `CLAUDE.md` header | RUNBOOKS holds "monthly sweep, group-review recording, survivor checks, theme-advance … calendar" | the loops RUNBOOKS holds today; §a–d and §h retired 2026-11-04 |
-| f | `AGENTS.md` | "this file is a POINTER" | names its one deliberate exception: the Code Review Rules, repeated in `.gemini/styleguide.md` because each reviewer reads only its own file, pinned equal by `test_review_process` |
+| f | `AGENTS.md` | "this file is a POINTER" | names its two deliberate exceptions: the three rules, paraphrased from CLAUDE.md; and the Code Review Rules, repeated in `.gemini/styleguide.md` because each reviewer reads only its own file, pinned equal by `test_review_process` (neither is pinned to CLAUDE.md) |
 | g | `.gemini/config.yaml` | "a COMMENT-ONLY second reviewer" | inert: Gemini is not installed (operator decision 2026-10-23) |
 | h | `docs/RUNBOOKS.md` §n step 1 | "today only `M-LABEL`" can be a target | `M-GAP` joined it after meeting its bar on fresh gold; #927's registration targeted it |
 | i | `docs/ciq_extraction_notes.md` rule 4 | "Do not hardcode positions", beside "row 7", "row 14", "rows 0-12", "row 17" | those numbers are where the exports seen put them, for orientation; find each row by its label |

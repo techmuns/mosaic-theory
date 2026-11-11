@@ -8,9 +8,9 @@ competitive-position claim — as :class:`OperatingDriver` rows, each verbatim-b
 It is the covenant-extraction pattern (``covenant_extract.py``) with a **code-level verbatim +
 digit-trace validator**. When this was written that was the UPGRADE — covenant extraction trusted
 the model to quote verbatim (prompt-only). Covenants now check containment too, through the shared
-`vinci.verbatim`, so what is this module's own is the digit trace below; its containment check
-does not use that helper, and its own `_norm` folds whitespace and case only (fix request 2,
-RG-D20 k). Transcripts are messier and these rows feed a decision block, so here every row is
+`vinci.verbatim`, and withhold a rate component their quote does not state
+(`covenant_extract.rate_components`); this module's containment check does not use that helper,
+and its own `_norm` folds whitespace and case only (fix request 2, RG-D20 k). Here every row is
 VALIDATED before it is kept:
 
 - **Quote containment.** The model's ``quote`` must appear (whitespace-normalized) in the slice —
