@@ -633,10 +633,10 @@ def test_stated_currency_finds_a_panel_stating_another_currency(tmp_path: Path) 
         cs.require_usd(cur, gen.TICKER)
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
-    "H-D3, found by this suite: openpyxl hands an empty cell back as None, `_currency_rows` "
-    "reads it with str(), and a two-column 'Currency' row then states the currency 'None'"))
 def test_stated_currency_agrees_on_the_xlsx_export() -> None:
+    """H-D3's case, FIXED 2026-11-10 (audit RA-D15; was a strict xfail): openpyxl hands an empty
+    cell back as None, and `_currency_rows` read it with str(), so a two-column 'Currency' row
+    stated the currency 'None' and an all-USD `.xlsx` export was refused."""
     cur = cs.stated_currency(_bundle(XLSX))
     assert cur is not None
     assert cur.check == CHECK_AGREE, [(p.panel, p.stated) for p in cur.panels]
