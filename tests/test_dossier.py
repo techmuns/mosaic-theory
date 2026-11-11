@@ -3941,7 +3941,14 @@ def test_return_ratios_fintable_structured_and_fail_honest() -> None:
         ["Current Ratio", 1.05, 1.30, 0.96],
         ["Dividend per Share", "NA", "NA", "NA"],
     ]
-    s = cs.return_ratios(_fin_bundle({"Ratios": rat}, "annual"))
+    # the dividend LEVEL is the Income Statement's (RA-D2): a non-payer's reads 'NA' there, as
+    # AMZN's export does in every column
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2023", "12 months Dec-31-2024",
+         "LTM 12 months Mar-31-2025"],
+        ["Dividends per Share", "NA", "NA", "NA"],
+    ]
+    s = cs.return_ratios(_fin_bundle({"Ratios": rat, "Income Statement": inc}, "annual"))
     assert s.status is ds.SourceStatus.PRESENT and s.value is not None
     t = s.value
     assert t.columns == ["FY23", "FY24", "LTM"]
@@ -3951,10 +3958,11 @@ def test_return_ratios_fintable_structured_and_fail_honest() -> None:
     assert rows["RoE %"].values == [-0.18, -0.41, -0.09]
     assert rows["RoE %"].cells == ["-18.0%", "-41.0%", "-9.0%"]
     assert rows["RoCE %"].values[-1] == 0.015 and rows["RoA %"].values[-1] == 0.012
-    # x-ratios: display-only (NOT charted) → cells but empty `values`; dividend NA → "none"
+    # x-ratios: display-only (NOT charted) → cells but empty `values`; dividend 'NA' → "—": 'NA' is
+    # not stated, never no dividend (the operator's ruling on #967's Codex P1, 2026-11-11)
     assert rows["Total debt/equity"].cells == ["0.36x", "0.85x", "0.70x"]
     assert rows["Total debt/equity"].values == []
-    assert rows["Dividend/sh"].cells == ["none", "none", "none"]
+    assert rows["Dividend/sh"].cells == ["—", "—", "—"]
     unk = ds.SourceStatus.UNKNOWN
     no_hdr: list[list[typing.Any]] = [["Return on Equity %", -0.1, -0.2]]
     assert cs.return_ratios(_fin_bundle({"Ratios": no_hdr}, "annual")).status is unk  # no header

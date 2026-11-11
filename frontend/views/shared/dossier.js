@@ -563,6 +563,15 @@ const EXTRACTION_VERSIONS = [
     "Available' body and an 'Entitlement Needed' body are named as such, never 'could not " +
     "parse'; and a thin RTF is no longer called an OLE Word doc. On the 36 export folders " +
     "on disk no read moves"],
+  ["2026-11-11.dividend-level-na-unstated",
+    "the dividend per share is the dividend, and CIQ's 'NA' is not stated (TeamNostra fix " +
+    "request 2, RA-D2, split from #967; the operator's ruling of 2026-11-11 on #967's Codex" +
+    " P1): the Ratios table's Dividend/sh row and key_ratios' dividend status read the " +
+    "Income Statement's 'Dividends per Share' level for the same period (matched by period " +
+    "kind and end), never the Ratios sheet's growth rate; a cell CIQ marks 'NA' reads '—' " +
+    "with a note and 'dividend: not stated', never 'none', which only a stated 0 or a dash " +
+    "gives; an LTM figure over a marked quarter carries a note (MCK). Both cite the Income " +
+    "Statement"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
