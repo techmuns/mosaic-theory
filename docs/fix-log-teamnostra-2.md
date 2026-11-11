@@ -24,6 +24,12 @@ pack 2 (2026-11-09), held by the operator; none is committed. STATE.md §5.0 row
    - the test that failed before the fix and passes after, as a node id
      (`tests/test_x.py::test_y`);
    - the committed pages the fix changed and rebuilt.
+
+   **The guidance exception** (operator 2026-11-11, verbatim: "Allow the narrow exception (Recommended)"; recorded on issue #1004). It applies
+   only to pure guidance text with no code counterpart. Such an item may read `fixed` with a
+   document-level test, either doc to doc or the document's own consistency, that fails before the
+   fix and passes after; its row cites this ruling. Every other item still needs a test against
+   the code that fails first.
 4. **Status is one of exactly five:**
    - `open`;
    - `in progress (#N)`;
@@ -193,7 +199,7 @@ Order 2 is in code but for RG-D19: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, R
 | RG-D14 | 8 | open | — | — | — |
 | RG-D15 | 8 | open | — | — | — |
 | RG-D18 | 8 | fixed | 7edbfa36 (#996): the hooks protect the grader (`vinci/evals/`, the gold sets); the review gate counts the grader as code | `tests/test_claude_hooks.py::test_guard_protects_the_gates_configuration_and_the_grader` | none |
-| RG-D20 | 9 | in progress (#1009) | d8147e97 (#1009): the 13 contradictions (G-D20 a–m) are corrected in comments, docstrings and docs; batch 4 adds the pin, one case per item, 11 of which fail on #1009's parent `d6001465` ((b) and (j) were corrected first by #998, as G-D15 and G-D14). Not `fixed` (coordinator, #1004): (i), the CIQ notes' rule 4 (row numbers are orientation; find each row by its label), is guidance with no code counterpart, pinned only against the notes' own row numbers; a narrow rule-3 exception for pure guidance text is with the operator | `tests/test_rg_d20_instructions_match_the_code.py::test_rg_d20_each_instruction_says_what_the_code_does` | none (prose only; no page or request moves) |
+| RG-D20 | 9 | fixed | d8147e97 (#1009): the 13 contradictions (G-D20 a–m) are corrected in comments, docstrings and docs; batch 4 adds the pin, one case per item, and each case fails before the commit that fixed its item: 11 on #1009's parent `d6001465`, and (b) and (j) on #998's parent `7edbfa36`, because #998 corrected those first as G-D15 and G-D14. Items (e) and (i) have no code counterpart and are pinned doc to doc: (e) against RUNBOOKS; (i), the CIQ notes' rule 4, against the row numbers the notes quote. They read `fixed` under rule 3's guidance exception (operator 2026-11-11: "Allow the narrow exception (Recommended)") | `tests/test_rg_d20_instructions_match_the_code.py::test_rg_d20_each_instruction_says_what_the_code_does` | none (prose only; no page or request moves) |
 | G-D8 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d8_the_notes_say_the_surprise_sheet_has_quarters_and_company_level_blocks` | none (docs) |
 | G-D9 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d9_no_code_reads_a_holders_export_and_the_notes_mark_its_rules_superseded` | none (docs) |
 | G-D10 | 9 | fixed | 8c5e7345 (#998): docs/ciq_extraction_notes.md corrected against the code | `tests/test_ciq_notes_follow_the_code.py::test_g_d10_the_roster_filters_no_relationship_type_and_the_notes_say_so` | none (docs) |

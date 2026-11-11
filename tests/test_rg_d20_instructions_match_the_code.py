@@ -9,12 +9,13 @@ strings pinned are written by code and docs, never by an LLM, so exact pins are 
 
 THE FAIL-FIRST. Eleven cases fail on #1009's parent `d6001465` and pass on `d8147e97`. The other
 two, (b) and (j), pass on both, because #998 corrected them first as G-D15 and G-D14, which
-#1009's record says.
+#1009's record says; those two fail on #998's parent `7edbfa36`.
 
 TWO ARE PINNED DOC AGAINST DOC. (e) holds CLAUDE.md's loop list against RUNBOOKS's live
 sections; RUNBOOKS is the authority for those loops. (i) holds the CIQ notes' rule 4 against
-the row numbers the notes quote. Rule 4 is guidance with no code counterpart, so RG-D20 stays
-`in progress` in the fix log on (i) alone, until the operator rules on a rule-3 exception.
+the row numbers the notes quote. Neither has a code counterpart, and the fix log's rule 3 lets
+such pure guidance read `fixed` on a document-level test (operator 2026-11-11, verbatim: "Allow
+the narrow exception (Recommended)").
 
 THE ITEMS are #1009's record's table, a to m
 (`docs/records/2026-11-11-fix2-rg-d20-instructions-say-what-the-code-does.md`).
@@ -184,6 +185,7 @@ def i_every_quoted_row_number_is_marked_orientation() -> None:
     at = next(i for i, x in enumerate(lines) if x.startswith(rule4_head))
     rule4 = lines[at]
     assert "Do not hardcode positions." in rule4 and "for orientation only" in rule4
+    assert "find each row by its label, never by the number" in rule4
     listed = set(re.findall(r'"((?:header )?rows? ~?\d+(?:-\d+)?)"', rule4))
     quoted = {r for i, x in enumerate(lines) if i != at for r in _ROW.findall(x)}
     assert quoted and quoted == listed, f"quoted but not marked: {sorted(quoted - listed)}"
