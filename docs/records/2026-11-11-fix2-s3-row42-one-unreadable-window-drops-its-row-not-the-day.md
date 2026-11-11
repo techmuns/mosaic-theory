@@ -19,7 +19,7 @@ A read fails in one of three ways:
   page.
 - `HttpError` again: the submissions document itself could not be read.
 - `ValueError`: the document came back as a 200 whose body is not JSON (an interstitial). The
-  CLI's other submissions read (`_cmd_reconcile_identity`'s `filings`) catches the same pair.
+  CLI's other submissions read (`_cmd_reattribute_prices`'s `filings`) catches the same pair.
 
 An SEC refusal still stops the run. `SecRateLimitedError` is deliberately not an `HttpError`
 (`vinci/netcache.py`): it means SEC is blocking this process, and a run that moved on to the next
@@ -75,6 +75,33 @@ only the rows a day has, and returns None when no prior day carries the row at a
   - catching `Exception` fails 1 (the SEC refusal);
   - writing the row with no filings in place of `continue` fails 4.
 - The harness's existing monitor tests (`tests/test_monitor_ref_date_bound.py`, 15) still pass.
+- **A real run of the monitor, on the machine's cached responses, $0, nothing sent.**
+  - The setup: `vinci monitor --ref 2026-08-05 --out <scratch>`, run on main's code (`1df0dc18`)
+    and on this branch's, over main's committed inputs. Every response came from the
+    newest-fetched cached copy of its URL across the primary's and every worktree's `data/cache`
+    (10 roots), whatever its age. A miss raised, and nothing was written to any cache. 2026-08-05
+    is the impact check's price-store frontier, the one recent day whose every read is cached:
+    36 reads, 26 distinct URLs.
+  - **The control, no failure.** Main and this branch write the same day, field for field: the
+    book (IT, SMPL ×2, VRRM), five freshness rows (IT, MVST, NCNO, SMPL, WERN) and 9 notes.
+  - **IT's submissions document failing,** with the `HttpError` a 5xx retry storm ends in
+    (`Exhausted retries for https://data.sec.gov/submissions/CIK0000749251.json`).
+    - Main raised it and wrote no day. MVST, NCNO, SMPL and WERN, sorted after IT, were never
+      read.
+    - This branch wrote the day. IT's freshness row is absent, and the other four rows, the book,
+      the spread and the realized view equal the control's exactly. One note is added and none is
+      removed: `FILINGS IT: its EDGAR filings window since 2024-07-06 could not be read
+      (HttpError: Exhausted retries for https://data.sec.gov/submissions/CIK0000749251.json) ·
+      its freshness row is NOT written`.
+- **Review round 0 (`/code-review high --fix`):** this record named the CLI's other
+  `(HttpError, ValueError)` handler after the wrong function (now `_cmd_reattribute_prices`), and
+  the first commit message stated a count without its boundary (amended). Three findings were
+  kept as built:
+  - the note carries the error's own text, up to 200 characters of a non-retryable answer's body,
+    as the unreadable-record note does;
+  - a wholly degraded EDGAR costs one retry storm per name (below);
+  - `ValueError` is caught across the whole read, as the CLI's other handler catches it. Each
+    parse error inside the reader is a failure to read the window.
 
 **BOUNDARY.**
 - "760-day window": `known_through - timedelta(days=760)`, where `known_through` is the run's
@@ -103,7 +130,8 @@ only the rows a day has, and returns None when no prior day carries the row at a
   - Falsifier: a day on which a name's passed deadline or kill criterion was hidden behind an
     unreadable window.
 - **If EDGAR fails for every name, the day is written with no freshness rows,** and every name is
-  named in a note. Before, the day aborted. A re-run of the same day replaces it, because re-running
+  named in a note. Before, the day aborted at the first. Each name now pays its own 5xx retry
+  storm (5 attempts, about 15.6 s), so 7 names cost about 110 s and 35 requests. A re-run of the same day replaces it, because re-running
   the front of the book is routine (`write_snapshot`). An SEC refusal still stops the run.
 
 **ROW 42 STAYS OPEN, NARROWED.** Both of row 42's edges are fixed. #878's record lists one more
