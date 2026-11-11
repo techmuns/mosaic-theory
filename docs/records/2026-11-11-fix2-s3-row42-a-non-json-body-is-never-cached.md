@@ -29,7 +29,7 @@ edit a file A has in flight. Row 42 now names that blocker.
 **WHY.** #878's record deferred this edge (review round 1): "The fix is to validate a JSON body
 before caching it in `vinci/netcache.py`."
 
-**HOW VERIFIED.** `tests/test_netcache_json_body.py`, 4 tests. They run on Gartner's (IT)
+**HOW VERIFIED.** `tests/test_netcache_json_body.py`, 5 tests. They run on Gartner's (IT)
 committed submissions document and older page -001 (`tests/fixtures/submissions_pages/`, #878's
 fixtures), served by a mock transport behind a real `CachedHttp` and a real `EdgarClient`. That is
 the path the monitor and every windowed caller read through.
@@ -41,6 +41,10 @@ the path the monitor and every windowed caller read through.
   - A non-JSON copy already on disk is refetched once, and the JSON is cached in its place.
   - (−) A JSON page is cached and read back with no second request.
   - (−) `get_text` still caches any 200 body.
+  - Review round 0 (`/code-review high --fix`): `get_text` and `get_json` now share one read
+    path (`_get`), and a refused cached copy's fetch time is forgotten, so `fetched_at` never
+    states a read that failed. Pinned by `test_a_rejected_copy_whose_refetch_fails_states_no_fetch_time`,
+    red on `fa40c5d0`.
 - **The callers' suites pass**, `-m "not network"`: netcache, older pages, EDGAR, SEC pacing,
   budget and refusals, and amended filings.
 
