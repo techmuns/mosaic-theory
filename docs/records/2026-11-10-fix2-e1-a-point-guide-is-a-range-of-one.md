@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-10
 prs: []
 supersedes:
@@ -58,3 +58,6 @@ superseded-by:
   Whether a point inside a range should count as corroboration is a different rule, and it is not
   made here. *Falsifier:* a page whose guide check reads MISMATCH where both sources state the same
   guide in different shapes.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `1d0c374c` (#945) on 2026-11-10. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

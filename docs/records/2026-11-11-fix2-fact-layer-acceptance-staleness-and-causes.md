@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -162,3 +162,6 @@ its real cause".
   467,887 rows. On a screen replay it is 28M, read once each.
 - **Not in this PR.** FL-D11 (a swap after the first read is served; `verify=False`) is a note no
   ID asks for. Switching any reader to the store is 2b's, with the operator's approval.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `31ff7b87` (#992) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-10-26
 prs: []
 supersedes:
@@ -128,3 +128,6 @@ the AFTER count is in memory over those pages. Live comparison: 8 names,
    old read took anything ≤100 days). Every ≤100-day fact the old read took on the 27 pages is
    88–91 days, so no page moves on this.
 5. **The assembly call site's cite is pinned only live** (the mutation survivor above).
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `5f4bf269` (#806) on 2026-10-26. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.
