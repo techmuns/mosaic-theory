@@ -319,7 +319,9 @@ def test_the_backfill_refuses_without_an_export_and_never_overwrites() -> None:
 
 def test_the_backfill_reads_the_facts_as_assembly_did() -> None:
     doc = _tjx_doc()
-    doc["assembled_at"] = "2026-08-27T09:00:00Z"     # the day before TJX's Q2 10-Q
+    # the day before TJX's Q2 10-Q. The page's cut (its reference date, 2026-10-16) is LATER, so
+    # this pins the `filed_by` bound; the price-date cut is pinned in test_refresh_price_date_cut
+    doc["assembled_at"] = "2026-08-27T09:00:00Z"
     out, _r = _run(doc, lambda _t: _tjx_figures())
     rows = out["financial_summary"]["statement_reconciliation"]["rows"]
     assert rows[0]["filing"] == 60372.0 and rows[1]["filing"] is None
@@ -420,7 +422,8 @@ def _page_figures(page: dict[str, Any]) -> list[sr.CiqFigure]:
 def test_every_committed_page_carries_the_block_and_it_reproduces_from_the_filings() -> None:
     """PIN THE ARTIFACT: every committed page carries the block, and it is exactly what the
     back-fill builds from the page's own table figures, the period ends the block states, and the
-    COMMITTED companyfacts as filed by the page's assembly date — so what the scorecard scores
+    COMMITTED companyfacts cut at the page's price date and stated as filed by its assembly date
+    (`refresh.statement_recon_transform`, as assembly reads them) — so what the scorecard scores
     follows from the page and the public filings, nothing else. Its proof runs too: a block missing
     a figure the table shows would be refused here."""
     for t, page in _COMMITTED.items():

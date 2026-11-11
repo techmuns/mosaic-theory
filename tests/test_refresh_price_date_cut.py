@@ -61,18 +61,15 @@ def _edgar_serves(monkeypatch: pytest.MonkeyPatch, t: str) -> None:
         lambda *_a, **_k: SimpleNamespace(companyfacts=lambda _cik: _fixture(t))))
 
 
-def test_the_lease_basis_refresh_reads_edgar_as_filed_by_the_pages_price_date(
-        monkeypatch: pytest.MonkeyPatch) -> None:
-    """THE DEFECT: the lease basis was built from today's companyfacts, so NCNO's back-fill read
-    the 2026-08-25 10-Q into a page priced 2026-08-17. The export is the page's own (its bands'
-    stamp), stood in here; what `lease_basis` is handed is what is pinned."""
+def _lease_handed(monkeypatch: pytest.MonkeyPatch, mech: dict[str, Any]
+                  ) -> tuple[list[dict[str, Any] | None], dict[str, Any]]:
+    """`lease_basis_transform` on NCNO, its own export stood in; what `lease_basis` is handed."""
     import vinci.dossier.ciq as ciq
     import vinci.dossier.ciq_sheets as cs
     import vinci.dossier.lease_basis as lb
     import vinci.dossier.manual_store as ms
     from vinci.dossier import refresh as rf
 
-    mech = _ncno_mech()
     (stamp,) = {b["source_sha256"] for b in mech["valuation"]["own_history"]["value"]}
     _edgar_serves(monkeypatch, "NCNO")
     monkeypatch.setattr(ms.LocalFolderStore, "from_config", staticmethod(
@@ -83,21 +80,14 @@ def test_the_lease_basis_refresh_reads_edgar_as_filed_by_the_pages_price_date(
     monkeypatch.setattr(cs, "file_provenance", lambda _p: (stamp, None))
     handed: list[dict[str, Any] | None] = []
     monkeypatch.setattr(lb, "lease_basis", lambda _b, facts: handed.append(facts))
-
-    rf.lease_basis_transform("NCNO", "0001902733")(json.loads(json.dumps(mech)))
-
-    assert len(handed) == 1
-    filed = _filed(handed[0])
-    assert max(filed) <= NCNO_PRICE.isoformat(), sorted(filed)[-3:]
-    # (−) the cut is a cut, not an emptying: every filing on or before the close is still read
-    assert filed == {d for d in _filed(_fixture("NCNO")) if d <= NCNO_PRICE.isoformat()}
+    out = rf.lease_basis_transform("NCNO", "0001902733")(json.loads(json.dumps(mech)))
+    return handed, out
 
 
-def test_the_valuation_bases_refresh_reads_edgar_as_filed_by_the_pages_price_date(
-        monkeypatch: pytest.MonkeyPatch) -> None:
-    """THE SAME DEFECT in the three basis blocks: `with_valuation_bases` — the builder assembly and
-    the back-fill share — was handed today's companyfacts. It is now handed what assembly hands it,
-    EDGAR as filed by the page's price date."""
+def _valuation_handed(monkeypatch: pytest.MonkeyPatch, mech: dict[str, Any]
+                      ) -> tuple[list[dict[str, Any] | None], dict[str, Any]]:
+    """`valuation_bases_transform` on NCNO with no CIQ folder; what `with_valuation_bases` is
+    handed."""
     import vinci.dossier.manual_store as ms
     import vinci.sec as sec
     from vinci.dossier import mechanical as dm
@@ -114,19 +104,65 @@ def test_the_valuation_bases_refresh_reads_edgar_as_filed_by_the_pages_price_dat
     real = dm.with_valuation_bases
     handed: list[dict[str, Any] | None] = []
 
-    def spy(mech: Any, facts: dict[str, Any] | None, *a: Any, **k: Any) -> Any:
+    def spy(m: Any, facts: dict[str, Any] | None, *a: Any, **k: Any) -> Any:
         handed.append(facts)
-        return real(mech, facts, *a, **k)
+        return real(m, facts, *a, **k)
 
     monkeypatch.setattr(dm, "with_valuation_bases", spy)
-    out = rf.valuation_bases_transform("NCNO", "0001902733")(_ncno_mech())
+    out = rf.valuation_bases_transform("NCNO", "0001902733")(json.loads(json.dumps(mech)))
+    return handed, out
 
+
+def test_the_lease_basis_refresh_reads_edgar_as_filed_by_the_pages_price_date(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE DEFECT: the lease basis was built from today's companyfacts, so NCNO's back-fill read
+    the 2026-08-25 10-Q into a page priced 2026-08-17. The export is the page's own (its bands'
+    stamp), stood in here; what `lease_basis` is handed is what is pinned."""
+    handed, _out = _lease_handed(monkeypatch, _ncno_mech())
+    assert len(handed) == 1
+    filed = _filed(handed[0])
+    assert max(filed) <= NCNO_PRICE.isoformat(), sorted(filed)[-3:]
+    # (−) the cut is a cut, not an emptying: every filing on or before the close is still read
+    assert filed == {d for d in _filed(_fixture("NCNO")) if d <= NCNO_PRICE.isoformat()}
+
+
+def test_the_valuation_bases_refresh_reads_edgar_as_filed_by_the_pages_price_date(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE SAME DEFECT in the three basis blocks: `with_valuation_bases` — the builder assembly and
+    the back-fill share — was handed today's companyfacts. It is now handed what assembly hands it,
+    EDGAR as filed by the page's price date."""
+    handed, out = _valuation_handed(monkeypatch, _ncno_mech())
     assert len(handed) == 1
     filed = _filed(handed[0])
     assert max(filed) <= NCNO_PRICE.isoformat(), sorted(filed)[-3:]
     assert filed == {d for d in _filed(_fixture("NCNO")) if d <= NCNO_PRICE.isoformat()}
     # the blocks still land: the cut changes what is read, never whether the block is written
     assert out["valuation"]["ev_ebitda_basis"] is not None
+
+
+@pytest.mark.parametrize("run", [_lease_handed, _valuation_handed])
+def test_a_filing_on_the_price_date_itself_is_read(monkeypatch: pytest.MonkeyPatch,
+                                                    run: Any) -> None:
+    """THE BOUNDARY (PR #1014 round 2): the cut is INCLUSIVE, as assembly's is (`asof.within_cut`).
+    NCNO's page re-priced on 2026-08-25, the day its 10-Q was filed, reads that 10-Q. A cut a day
+    early survived the tests above, because NCNO files nothing between 2026-07-01 and 08-24."""
+    mech = _ncno_mech()
+    mech["stock_info"]["as_of"] = "2026-08-25"
+    handed, _out = run(monkeypatch, mech)
+    assert len(handed) == 1 and max(_filed(handed[0])) == "2026-08-25"
+
+
+@pytest.mark.parametrize("run", [_lease_handed, _valuation_handed])
+def test_a_page_with_no_close_gets_no_block_and_reads_no_edgar(monkeypatch: pytest.MonkeyPatch,
+                                                               run: Any) -> None:
+    """NO PRICE DATE, NO BLOCK (the `capital_allocation_transform` rule in the same file): the two
+    transforms receive the mechanical layer only, which holds no reference date to fall back to,
+    so a page stating no close is left as it is — never cut at today or read uncut."""
+    mech = _ncno_mech()
+    mech["stock_info"]["as_of"] = None
+    handed, out = run(monkeypatch, mech)
+    assert handed == []
+    assert out == mech
 
 
 def _tjx_doc(*, price: str | None, reference: str | None = "2026-08-14") -> dict[str, Any]:

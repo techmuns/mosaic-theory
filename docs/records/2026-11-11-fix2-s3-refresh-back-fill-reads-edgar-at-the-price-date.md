@@ -43,6 +43,25 @@ uncut facts.
 - **Fail first, on real data:** `tests/test_refresh_price_date_cut.py`, 8 tests. On main
   `2637e91b`, 5 fail and 3 pass (two premise pins and the negative pin). On this branch, all 8
   pass.
+- **PR round 2 (the coordinator's independent review, at `4b340484`).** It found no correctness
+  bug in the three cuts: each cuts where assembly does, and reverting any one is caught. It found
+  three things, all now fixed:
+  - **The extraction vintage.** The first draft re-pinned `refresh.py` as `refactor`, which the
+    drift test defines as "no output change". But the same inputs now give a different block
+    (TJX's LTM filing 62,363 → none), and a refresh stamps the page with the current
+    `EXTRACTION_VERSION` (`layer_refresh`), so a cut back-fill and an uncut one carried one
+    vintage. The vintage `2026-11-11.refresh-backfill-price-date-cut` is declared, and
+    `refresh.py`'s pin names it. The precedents are `2026-11-02.net-debt-as-of` ("the bridge
+    refresh alike") and `2026-11-03.ex-lease-share-cut` ("the valuation-bases refresh"). "0 of
+    27 pages move" describes today's corpus, not the code.
+  - **The boundary was unpinned.** A cut a day early survived, because NCNO files nothing
+    between 2026-07-01 and 2026-08-24. `test_a_filing_on_the_price_date_itself_is_read` now
+    prices NCNO's page on 2026-08-25, its 10-Q's filing day, for both transforms.
+  - **The no-close branch was unpinned.** A fallback to today survived.
+    `test_a_page_with_no_close_gets_no_block_and_reads_no_edgar` now pins "no price date, no
+    block" for both transforms.
+  - Each of the reviewer's mutants M7, M8, M10 and M11 now fails exactly one test. 12 tests, all
+    pass.
   - NCNO's committed page is priced 2026-08-17. Its committed companyfacts
     (`tests/fixtures/companyfacts/NCNO.json`) carry its 10-Q filed 2026-08-25, which holds 481
     facts. On main, `lease_basis` and `with_valuation_bases` were each handed facts whose newest
@@ -104,6 +123,13 @@ uncut facts.
   filed_by=datetime.now(UTC).date())`). The block's own date therefore says a day or more later
   than the cut it was read at. This is `mechanical.py`, which is in flight on
   `claude/fixreq2-e2-remainder`. The back-fill matches assembly here, so the two cannot disagree.
+  DEFERRED (PR round 2): this is also a false statement on a row. A row with no filing reads
+  "no revenue fact for this period on any alias tag, as filed by <assembly date>". When a filing
+  made after the price date but before the assembly date was cut away, its real cause is the
+  price-date cut: on `_tjx_doc(price="2026-08-27")` the facts hold the 10-Q filed 2026-08-28,
+  before 2026-10-21. `test_refresh_price_date_cut.py` pins `as_filed_by` = the assembly date
+  because assembly writes it. Correcting it is a change to `statement_recon` and to assembly
+  together, outside this PR.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **A page with no stored close gets no lease-basis or valuation-basis back-fill.** The two
