@@ -1,7 +1,7 @@
 ---
 status: shipped
 date: 2026-11-11
-prs: []
+prs: [1016]
 supersedes:
 superseded-by:
 ---
@@ -34,7 +34,7 @@ committed submissions document and older page -001 (`tests/fixtures/submissions_
 fixtures), served by a mock transport behind a real `CachedHttp` and a real `EdgarClient`. That is
 the path the monitor and every windowed caller read through.
 - **Fail first, on main's `vinci/netcache.py`:** the two positive pins fail, and the two negative
-  pins pass. All 4 pass on this branch.
+  pins pass. All 5 pass on this branch.
   - An interstitial, then the real page: on main the second client was served the cached
     interstitial from disk with no request, and raised again. Now the second read reaches SEC and
     returns the page's 8-Ks since 2021-06-01.
