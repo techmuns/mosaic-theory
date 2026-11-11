@@ -461,11 +461,30 @@ def excel_date(cell: Any) -> date | None:
 _STATED_UNIT = re.compile(r"^In (Units|Thousands|Millions|Billions) of ", re.IGNORECASE)
 
 
+def sheet_top(rows: list[list[Any]]) -> int:
+    """The index of a sheet's first non-blank row, where its settings block starts.
+
+    EVERY HEADER WINDOW IS MEASURED FROM HERE, NEVER FROM ROW 0 (audit RA-D12, 2026-11-10). The
+    unit line, the "Period Type:" cell, the Capital Structure `Source` note, the comps "As-Of
+    Date:", the Estimates banner and the Market Summary were each searched in a fixed span from
+    the sheet's first row (`rows[:14]`, `[:12]`, `[:40]`, …). With blank rows inserted above the
+    company line, each span read only blanks:
+    - the bridge said "unit: unstated on every statement read" of sheets that state Millions;
+    - the Capital Structure source read "()";
+    - `consensus_levels` read empty, with no reason.
+
+    The blank rows above the first filled one hold nothing, so a span from here contains every
+    cell the old span did. A span keeps its length, so it still cannot reach into a sheet's body."""
+    return next((i for i, r in enumerate(rows)
+                 if any(c is not None and str(c).strip() for c in r)), len(rows))
+
+
 def stated_unit(rows: list[list[Any]]) -> str | None:
     """The unit a statement sheet states for its money figures ('Millions', 'Thousands', …), read
     off CIQ's own unit line in the sheet's settings block — None when the sheet states none (audit
     BC-D10: the scale check measured magnitude only, so an export wholly in another unit passed)."""
-    for row in rows[:14]:
+    top = sheet_top(rows)
+    for row in rows[top:top + 14]:
         for cell in row:
             if isinstance(cell, str) and (m := _STATED_UNIT.match(cell.strip())):
                 return m.group(1).capitalize()
@@ -475,7 +494,8 @@ def stated_unit(rows: list[list[Any]]) -> str | None:
 def period_type(income_rows: list[list[Any]]) -> str | None:
     """Verbatim Period-Type read: scan for the "Period Type:" label cell, return the next cell
     (notes lines 136-138 — ground frequency on this cell, NEVER on column-count/shape inference)."""
-    for row in income_rows[:14]:
+    top = sheet_top(income_rows)
+    for row in income_rows[top:top + 14]:
         for j, cell in enumerate(row):
             if isinstance(cell, str) and cell.strip() == "Period Type:" and j + 1 < len(row):
                 # an empty cell is None from openpyxl, '' from xlrd — never the text "none"

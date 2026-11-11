@@ -476,7 +476,9 @@ def test_close_rows_are_not_positions_in_the_js_ledger_loader() -> None:
     src = (ROOT / "frontend" / "lib" / "snapshots.js").read_text()
     body = src[src.index("async function _loadLedger"):]
     body = body[:body.index("\n}")]
-    assert '.filter((p) => !p.event)' in body, "close rows must be filtered out of entries"
+    # (2026-11-11) the filter also leaves out a VOIDED decision — still a decision rows-only filter
+    assert '.filter((p) => !p.event && !voidBy[p.entry_id])' in body, (
+        "close rows must be filtered out of entries")
     assert "closes_entry_id" in body and "closeBy" in body, "closes must be paired to their row"
     assert "realizedReturn" in body, (
         "the realized return is the monitor day's row, never derived here")

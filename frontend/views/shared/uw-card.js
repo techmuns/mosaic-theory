@@ -93,7 +93,12 @@ function verdictPills(c) {
   const v = c.verdict || {};
   const led = c.ledger;
   const out = [];
-  if (led && led.verdict) {
+  if (c.voided) {
+    // A VOIDED VERDICT (operator ruling 2026-11-11): the card states the fact, never the word BUY
+    // and never the record's own "confirmed" — the call was ruled out of the record
+    out.push(`<span class="pill unresolved" title="ruled out of the record on ${
+      escapeHtml(c.voided.ruledOn || "")} — see the decision log">verdict voided</span>`);
+  } else if (led && led.verdict) {
     const buy = isBuyVerdict(led.verdict);
     // the BOOK, when it is not the default — a verdict word alone cannot tell a quality PASS
     // ("not at this price") from an overshoot AVOID_TERMINAL ("this is dying").
@@ -245,6 +250,12 @@ function headlineCell(c) {
 // Entry — the frozen anchor the forward spread is measured FROM. A verdict that opened no position
 // says so plainly rather than rendering an empty slot.
 function entryCell(c) {
+  // A VOIDED VERDICT HOLDS NO POSITION (operator ruling 2026-11-11): the record's own frozen entry
+  // is not shown as one — the decision log's audit tier carries the voided call, once
+  if (c.voided) {
+    return statCell("Entry", "— voided", `ruled out ${escapeHtml(c.voided.ruledOn || "")}`,
+      { txt: true });
+  }
   const v = c.verdict || {};
   // THE LEDGER ROW IS AN ENTRY TOO (2026-09-01). A record can OWN a logged position while its own
   // verdict block is empty — an archived record superseded before its verdict was typed, which is
@@ -351,7 +362,10 @@ function mastheadFoot(c) {
   // cannot headline a verdict it never made. Saying "no ledger verdict logged" on such a card is
   // true of the RECORD and false to the READER: the name holds a logged position, stated in this
   // page's own appendix. The predecessor that does own the row is named instead.
-  if (!(c.ledger && c.ledger.entryId) && v.status && v.status !== "pending_analyst") {
+  if (c.voided) {
+    bits.push(`the logged verdict was voided by the operator's ruling of ${
+      escapeHtml(c.voided.ruledOn || "")} — see the decision log's audit tier`);
+  } else if (!(c.ledger && c.ledger.entryId) && v.status && v.status !== "pending_analyst") {
     const sl = c.supersededLedger;
     // CLOSE-AWARE, like the verdict chip (external-honesty pass 2026-07-27). The word "BUY" never
     // renders without the fact that the position was closed, and this line is a place it renders:
@@ -368,6 +382,21 @@ function mastheadFoot(c) {
       } against the superseded ${escapeHtml(sl.recordKey)}${closeNote
       } — this record supersedes it`
       : "no ledger verdict logged");
+  }
+  // THE LEDGER READS THIS DECISION AT ITS CORRECTION (RF-D7). The card's Entry cell is the
+  // underwrite record's own frozen entry — the price its ratio was computed at — and stays so; the
+  // entry every return is measured from is the appended correction's, and the card says which.
+  // A BORROWED row's correction speaks for "this entry" only when the borrowed row IS the entry on
+  // screen — the same identity the Entry cell requires before it borrows the row's date.
+  const sl = c.supersededLedger;
+  const slIsThisEntry = sl && (num(v.entryPrice) === null || num(v.entryPrice) === num(sl.entryPrice));
+  const fxLed = (c.ledger && c.ledger.correction) ? c.ledger
+    : (sl && sl.correction && slIsThisEntry) ? sl : null;
+  if (fxLed) {
+    const fx = fxLed.correction;
+    bits.push(`the ledger reads this entry at ${money(num(fx.entryPrice))} on ${
+      escapeHtml(fx.entryPriceAsOf || "")} (${mono(fx.correctionId)}, the last close completed at the decision; sealed ${
+      money(num(fxLed.entryPrice))} on ${escapeHtml(fxLed.entryPriceAsOf || "")})`);
   }
   if (v.avoidPriced) {
     bits.push(`⚠ avoid-priced${v.avoidPricedNote ? ` — ${escapeHtml(v.avoidPricedNote)}` : ""}`);

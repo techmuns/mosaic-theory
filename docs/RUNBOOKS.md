@@ -275,6 +275,14 @@ is the 3.9 system one).
      the day the check runs. *(Source: MNST, 2026-11-02: run `373c8ffc` paid $3.33 for seven LLM
      calls before `_freshness_check` refused a share basis its 2-for-1 split had moved —
      `docs/records/2026-11-04-pre-spend-check-runs-post-spend-refusals.md`.)*
+   - **List members, values and block leaves are compared too** (TeamNostra RD-D4, 2026-11-11):
+     a list member both pages hold whose field reads worse is a regression and exits 1, and so is
+     a lost decision leaf (`anchor.applicable`, `anchor.anchor_base_value_per_share`,
+     `valuation_basis.priceable` — VITL's and UBER's 2026-11-09 losses, unseen then); a member
+     that left its list, a field PRESENT on both whose value, source or note moved, and every
+     other block leaf that moved are LISTED (`LEFT THEIR LIST`, `CHANGED`, `CHANGED IN A BLOCK`,
+     25 a block with the cut said; `--changes-json <path>` writes every row), not a stop — read
+     them before spending. The last line counts them; it never says nothing was lost.
    - It writes nothing to `data/dossiers/` and no `assembly_runs` line. A first assembly (no
      committed page) has no field to compare, but its post-spend refusals still run, and any one
      that fires exits 1.
@@ -679,9 +687,11 @@ first"** — no prompt change or paid rebuild ships unmeasured.
 
 1. **Declare the TARGET in the PR before any draw** — one deterministic metric (`M-LABEL`; a
    material-direction change targets `M-SIGN` on NFLX, the page where it fires), or a judged class
-   once a judge passes its bar (record §9). The record's R2 says which metrics can be a target:
-   today only `M-LABEL` on the panel. The LLM judge FAILED its bar on TEST (PR 2: kappa 0.23), so
-   no judged class can be a target or a gate.
+   once a judge passes its bar (record §9). The record's R2 named `M-LABEL` on the panel; `M-GAP`
+   joined it after meeting its pre-registered bar on fresh gold (step 7;
+   `docs/records/2026-11-09-m-gap-gold-and-metric.md`), and #927's registration targeted it
+   (`docs/records/2026-11-09-fix4a-measured-on-the-panel.md`). The LLM judge FAILED its bar on
+   TEST (PR 2: kappa 0.23), so no judged class can be a target or a gate.
 2. **$0 first.** `python -m vinci.evals panel` (the rule still yields the frozen six), then
    `python -m vinci.evals compare --base origin/main --cand <branch> [--transform NAME]` (its
    capture child holds no key and no network): every
@@ -736,6 +746,75 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    (`docs/records/2026-11-09-m-gap-gold-and-metric.md`). **A change to a metric** re-scores the gold (`python -m vinci.evals gold`), moves
    `tests/fixtures/synthesis_gold/metric_hits.json` deliberately, and states DEV vs TEST again —
    TEST was scored once at `a677d1a1`; a metric tuned after that reads TEST in-sample, and says so.
+
+## o. CROSS-SETUP VALIDATION — every fix PR, before the operator merges (2026-11-11)
+
+**Applies to** every PR that changes code. Operator, 2026-11-11: *"we need to make sure the system
+verifies & validates fixes based on data deterministically and its implication across the setup
+before being merged with main"*. One command writes the PR body's `## Cross-setup validation
+(deterministic)` section from real committed data, base code against head code on ONE set of
+inputs, at $0 (no model call). Code: `vinci/impact/`; record:
+`docs/records/2026-11-11-impact-check-cross-setup-validation.md`.
+
+1. **A store that prices every page, at $0.** The primary's `data/vinci.db` is a stale copy by
+   design (every build refreshes a COPY, §i step 2): on 2026-11-11 it priced 18 of 27 pages and
+   no MCK. `python -m vinci.impact store --out <a folder outside the repo>` copies it and fills
+   every committed page's ticker and IWM, MDY, SPY from the HTTP cache with every socket
+   refused, through production's own `vinci refresh --aggs`; a name the cache lacks is NAMED
+   (a Polygon pull is the operator's call), never fetched. Pass the result as `--store`. The run
+   snapshots it (`.backup`); reuse one store across PRs and the cache stays warm. The section's
+   part 2 leads with "built N of M" and names every page it could not build, and why.
+2. **Run it, through the heavy-run wrapper, after `/code-review high --fix`:**
+
+   ```
+   PYTHONPATH=$PWD $VENV/python -m vinci.impact run --base origin/main --head HEAD \
+       --out <an empty folder OUTSIDE the repo> --store <the store copy>
+   ```
+
+   CIQ exports, the SEC/Polygon cache and `.env` default to the primary checkout's (Anthropic
+   credentials are never passed to a child). The cache is served FROZEN: every cached response
+   whatever its age, a miss fetched once and named in the report. **A cold cache is
+   network-bound** — the machine's 8/3-a-second share of SEC's budget — and a warm one is not
+   (the record gives both wall times). A page side built before with the same code, inputs and
+   store is reused from `~/.cache/vinci/impact-builds/` once every response it read is checked
+   unchanged, so main's side is built once per main commit. `--resume` continues a run of the
+   same base, head and store; `--theme-data <a theme-intelligence data dir>` lets the theme desk
+   consumer run; `--run-screen` lets the screen run (slow).
+   **Base is the MERGE BASE** of `--base` and head, never main's tip: a tip the branch has not
+   merged would show main's newer commits, reversed, as the PR's effect.
+3. **Paste `report.md` into the PR body.** Keep `report.json` OUTSIDE the repo and never commit
+   it: it holds request text, which can carry licensed transcript text. The section prints every
+   list in full or says `showing k of n`.
+4. **Read it, part by part:**
+   1. **Fail first** — head's changed tests on base's `vinci/` and on head's. A fix needs ≥ 1 node
+      that fails at base; ANY failure at head is a red PR. A name the tests import that base lacks
+      is stood in by a placeholder, so each node fails at the line that uses it.
+   2. **Pages** — every committed page built at $0 (`prespend.mechanical_build`) at both refs:
+      "N of M pages move" and every moved field with its `source_ref`. The moves must be the ones
+      the PR claims; a page whose inputs differ between the sides is named (not a code effect).
+      When no changed path is in the page builder's static import closure and no committed input
+      changed, the pages are not built and the section says so (`--no-shortcut` builds them).
+   3. **Synthesis requests** — each side's request from its own build, and the six frozen panel
+      pages from their frozen inputs. A panel page whose prompt text, tool schema or a digest
+      differs means the STATE row-53 panel check is OWED (§n). A move confined to the FACTS
+      section (the values the layer writes; the frozen replay identical) prints ASK THE
+      OPERATOR: §n names prompt text and the layer's words, and whether a change of values
+      needs the panel is a ruling. A request that moves off the panel is named.
+   4. **Rendered surface** — the committed JSON re-rendered, the $0 page rendered, and
+      `frontend/build.py` run, by each side's code; the pages whose committed `dossier.md` head's
+      code would re-render are the re-render the PR owes.
+   5. **Downstream readers** — the changed modules' importers (static), and each consumer the
+      diff reaches (ledger, `run-monthly`'s scoring report, monitor, theme desk with
+      `--theme-data`, frontend build; the screen with `--run-screen`) run at both refs, outputs
+      diffed, each with what it produced. A consumer the diff does not reach is not run, and
+      says so.
+5. **A re-sync keeps the section** while
+   `python -m vinci.impact verify --report <report.json> --base origin/main --head HEAD` says
+   VALID: the PR's diff identity (`git patch-id --stable` over every path but docs/, planning/
+   and the root `.md` files) is unchanged, and main touched none of the PR's own paths since the
+   stamped base. INVALID → run again.
+6. **The control.** On a docs-only PR, `--no-shortcut` builds every page anyway: whatever moves
+   there is the comparison's noise floor, and it must be 0.
 
 ## KNOWN GAP
 

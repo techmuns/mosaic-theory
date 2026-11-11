@@ -1,4 +1,9 @@
 {
+ "voided": {
+  "entryId": "V-GOOGL",
+  "voidId": "X-GOOGL",
+  "ruledOn": "2026-11-11"
+ },
  "ticker": "GOOGL",
  "recipeId": "R3_forward_pe",
  "recipeDesc": "R3_forward_pe",
@@ -104,13 +109,5 @@
   "reunderwriteTriggers": [],
   "avoidPriced": false,
   "avoidPricedNote": null
- },
- "ledger": {
-  "verdict": "BUY",
-  "entryId": "V-GOOGL",
-  "entryPrice": 345.9,
-  "entryPriceAsOf": "2026-08-14",
-  "decidedAt": "2026-08-28T11:24:47.926278",
-  "sleeve": "quality"
  }
 }

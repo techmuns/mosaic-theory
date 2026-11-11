@@ -29,7 +29,7 @@ def test_lean_tag_is_label_only_and_never_directional() -> None:
 
     js = (Path(__file__).resolve().parents[1] / "frontend" / "views" / "shared" / "dossier.js"
           ).read_text()
-    m = re.search(r"function leanTag\(eb\) \{(.*?)\n\}", js, re.S)
+    m = re.search(r"function leanTag\(eb(?:, voided = null)?\) \{(.*?)\n\}", js, re.S)
     assert m, "leanTag() is gone — the index cards' lean tag lost its guarded implementation"
     body = m.group(1)
     assert "splitLean(" in body, "leanTag must use the ONE shared lean parser, not its own regex"
@@ -56,7 +56,8 @@ def test_shelf_tag_prefers_the_logged_human_verdict() -> None:
 
     js = (Path(__file__).resolve().parents[1] / "frontend" / "views" / "shared" / "dossier.js"
           ).read_text()
-    m = re.search(r"function cardTag\(ticker, reads, verdictBy\) \{(.*?)\n\}", js, re.S)
+    m = re.search(r"function cardTag\(ticker, reads, verdictBy(?:, voidedBy = \{\})?\) \{(.*?)\n\}",
+                  js, re.S)
     assert m, "cardTag() is gone — the shelf lost its tag-precedence dispatcher"
     assert re.search(r"return\s+v\s*\?\s*verdictTag\(v\)\s*:\s*leanTag\(", m.group(1)), (
         "cardTag must prefer the LOGGED verdict over the machine lean — inverted, an undecided "

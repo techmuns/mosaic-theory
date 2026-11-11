@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import shutil
 from pathlib import Path
+from typing import Any
 
 import pydantic
 import pytest
@@ -1131,8 +1132,35 @@ def test_the_committed_records_round_trip_byte_identical(tmp_path: Path) -> None
         "version-scoping is untested against any real record and needs a new source of one")
 
 
+def _cards_without_void(out: Path) -> Path:
+    """Every committed underwrite record, carded by the REAL `frontend/build.py` over the committed
+    ledger WITHOUT its VOID rows, written to ``out`` as ``<key>.json`` — the committed cards'
+    shape. GOOGL is this corpus's only exemplar of a reissue inheriting its predecessor's row and
+    of a record owning a row with an empty verdict block; its void (operator ruling 2026-11-11)
+    takes both off the committed cards, so the pins that need the mechanism read GOOGL as it was
+    carded before the void — identical to the committed cards until the void is committed."""
+    import importlib.util
+    root = Path(__file__).resolve().parents[1]
+    spec = importlib.util.spec_from_file_location("_cards_build", root / "frontend" / "build.py")
+    assert spec and spec.loader
+    build: Any = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(build)
+    snap = out / "snap"
+    snap.mkdir(parents=True)
+    (snap / "decision_ledger.jsonl").write_text("".join(
+        ln + "\n" for ln in (root / "data/snapshots/decision_ledger.jsonl").read_text().splitlines()
+        if ln.strip() and json.loads(json.loads(ln)["payload"]).get("event") != "VOID"))
+    build.SNAP = snap
+    cards = out / "scenarios"
+    cards.mkdir()
+    for key, card in build._scenario_cards().items():
+        (cards / f"{key}.json").write_text(json.dumps(card))
+    return cards
+
+
 @pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
-def test_a_reissue_names_the_row_its_predecessor_owns_instead_of_denying_it() -> None:
+def test_a_reissue_names_the_row_its_predecessor_owns_instead_of_denying_it(
+        tmp_path: Path) -> None:
     """A record reissued AFTER the decision it inherits owns no ledger row, and must SAY WHERE the
     row lives rather than "no ledger verdict logged".
 
@@ -1142,12 +1170,15 @@ def test_a_reissue_names_the_row_its_predecessor_owns_instead_of_denying_it() ->
     logged BUY, contradicting its own appendix, and sub-labelled the entry with the record's own
     date instead of the day the position opened.
 
-    END-TO-END through the REAL renderer on the REAL committed cards, because the defect was
-    invisible to every unit: the build emits, the card reads, and only their combination lied.
+    END-TO-END through the REAL renderer on the REAL build's cards of the committed records,
+    because the defect was invisible to every unit: the build emits, the card reads, and only their
+    combination lied. The cards are built over the ledger without its VOID rows
+    (`_cards_without_void`): GOOGL's void would otherwise remove the exemplar this pin needs.
     """
     import subprocess
 
     root = Path(__file__).resolve().parents[1]
+    cards = _cards_without_void(tmp_path)
     uw = (root / "frontend" / "views" / "shared" / "uw-card.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -1156,9 +1187,9 @@ for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub
 import {{ readFileSync, readdirSync }} from "node:fs";
 const {{ uwCard }} = await import("{uw}");
 const out = {{}};
-for (const f of readdirSync("frontend/scenarios")) {{
+for (const f of readdirSync({json.dumps(str(cards))})) {{
   if (!f.endsWith(".json") || f === "index.json") continue;
-  const c = JSON.parse(readFileSync("frontend/scenarios/" + f));
+  const c = JSON.parse(readFileSync({json.dumps(str(cards))} + "/" + f));
   const h = uwCard(c, {{ ticker: true, mark: null }});
   const t = (typeof h === "string" ? h : (h.main||"") + (h.detail||""))
     .replace(/<[^>]+>/g, " ").replace(/\\s+/g, " ");
@@ -1207,7 +1238,7 @@ console.log(JSON.stringify(out));
     for name, r in res.items():
         if r["names"]:
             key = r["supersededKey"]
-            src = root / "frontend" / "scenarios" / f"{key}.json"
+            src = cards / f"{key}.json"
             assert src.is_file(), f"{name}: names {key}, which is not a committed card"
             truth = (json.loads(src.read_text()).get("ledger") or {}).get("decidedAt") or ""
             assert truth, f"{name}: names {key}, which owns no ledger row at all"
@@ -1228,17 +1259,20 @@ console.log(JSON.stringify(out));
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node not available")
-def test_a_card_owning_a_ledger_row_shows_its_entry_even_with_an_empty_verdict_block() -> None:
+def test_a_card_owning_a_ledger_row_shows_its_entry_even_with_an_empty_verdict_block(
+        tmp_path: Path) -> None:
     """A record can OWN a logged position while its own `verdict` block is empty.
 
     GOOGL-2026-08-17 is exactly that: the BUY was decided against it, then it was superseded before
     a verdict was typed, so the confirm lives on the reissue. Reading only the verdict block printed
     "— no position" beside that same card's BUY pill — two claims about one name, contradicting each
     other on one card. The ledger is the verdict OF RECORD, so it answers when the block does not.
+    Carded over the ledger without its VOID rows (`_cards_without_void`), as the pin above is.
     """
     import subprocess
 
     root = Path(__file__).resolve().parents[1]
+    cards = _cards_without_void(tmp_path)
     uw = (root / "frontend" / "views" / "shared" / "uw-card.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -1246,7 +1280,7 @@ const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
 import {{ readFileSync }} from "node:fs";
 const {{ uwCard }} = await import("{uw}");
-const c = JSON.parse(readFileSync("frontend/scenarios/GOOGL-2026-08-17.json"));
+const c = JSON.parse(readFileSync({json.dumps(str(cards / "GOOGL-2026-08-17.json"))}));
 const h = uwCard(c, {{ ticker: true, mark: null }});
 const t = (typeof h === "string" ? h : (h.main||"") + (h.detail||""))
   .replace(/<[^>]+>/g, " ").replace(/\\s+/g, " ");

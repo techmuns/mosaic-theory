@@ -205,6 +205,56 @@ def test_fast_gate_lets_a_clean_change_finish(tmp_path: pathlib.Path) -> None:
     assert out.returncode == 0 and out.stderr == ""
 
 
+def _venv_without(tmp_path: pathlib.Path, stderr: str) -> str:
+    """A stand-in venv interpreter whose `-m ruff` prints `stderr` and exits 1, the way Python
+    itself answers, and which runs everything else on this interpreter."""
+    stand_in = tmp_path / "bare-venv" / "python"
+    stand_in.parent.mkdir(parents=True)
+    stand_in.write_text(f'#!/bin/sh\nif [ "$1" = "-m" ] && [ "$2" = "ruff" ]; then\n'
+                        f"  cat >&2 <<'EOF'\n{stderr}\nEOF\n  exit 1\nfi\n"
+                        f'exec "{sys.executable}" "$@"\n')
+    stand_in.chmod(0o755)
+    return str(stand_in)
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "RH-D2: the operator approved the fix on 2026-11-11, but this session's permission check "
+    "refused the edit to .claude/hooks/fast_gate.py; the patch is in the PR body. Applying it "
+    "turns this into an XPASS, which fails until this marker is removed."))
+def test_fast_gate_warns_and_lets_a_clean_change_finish_when_a_tool_is_missing(
+        tmp_path: pathlib.Path) -> None:
+    """RH-D2 (= H-D1; operator ruling 2026-11-11, "Approve the fix"). The hook's own rule is that
+    missing tooling is a WARNING, never a block — but a venv without ruff answered exit 1 and the
+    hook blocked a clean change for up to three turns. The tool's OWN `No module named <tool>` is
+    an INCOMPLETE warning."""
+    repo = _scratch_checkout(tmp_path, "VALUE = 1\n")
+    out = _run("fast_gate.py", {"session_id": _session(), "cwd": str(repo),
+                                "stop_hook_active": False},
+               cwd=repo, env={"VENV": _venv_without(
+                   tmp_path, f"{tmp_path}/bare-venv/python: No module named ruff")})
+    assert out.returncode == 0, out.stderr
+    message = json.loads(out.stdout)["systemMessage"]
+    assert "INCOMPLETE" in message and "ruff is not installed" in message
+
+
+def test_fast_gate_still_blocks_when_a_tool_fails_importing_something_else(
+        tmp_path: pathlib.Path) -> None:
+    """NEGATIVE PIN: only the tool's own absence may become a warning. A tool that is there but
+    fails importing another module is broken, not missing, and still blocks the turn. The shape
+    is Python's own for that case — a traceback ending in `ModuleNotFoundError`, the module name
+    quoted — not the one-line `<python>: No module named <tool>` of a tool that is absent."""
+    repo = _scratch_checkout(tmp_path, "VALUE = 1\n")
+    traceback = ('Traceback (most recent call last):\n'
+                 '  File "<frozen runpy>", line 198, in _run_module_as_main\n'
+                 '  File "ruff/__main__.py", line 4, in <module>\n'
+                 "ModuleNotFoundError: No module named 'tomli'")
+    out = _run("fast_gate.py", {"session_id": _session(), "cwd": str(repo),
+                                "stop_hook_active": False},
+               cwd=repo, env={"VENV": _venv_without(tmp_path, traceback)})
+    assert out.returncode == 2
+    assert "FAST GATE FAILED" in out.stderr and "No module named 'tomli'" in out.stderr
+
+
 def test_fast_gate_gives_up_blocking_after_its_cap(tmp_path: pathlib.Path) -> None:
     """Claude Code's own 8-block cap resets on every tool call; an unfixable failure needs this."""
     repo = _scratch_checkout(tmp_path, "import os\n")

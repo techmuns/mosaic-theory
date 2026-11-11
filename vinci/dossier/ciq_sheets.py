@@ -35,6 +35,7 @@ from vinci.dossier.ciq import (
     read_cell,
     read_sheets,
     read_text,
+    sheet_top,
     stated_unit,
 )
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
@@ -1354,8 +1355,10 @@ _CS_COLS = (  # Details-panel columns, located by header LABEL (order not contra
 
 def _cs_detail_asof(rows: Rows) -> str:
     """The Details panel's own filing note ('A 2025 filed Mar-16-2026') — the DETAIL is panel-dated,
-    so this is the detail-as-of (distinct from the latest-quarter total debt for reconciliation)."""
-    for r in rows[:12]:
+    so this is the detail-as-of (distinct from the latest-quarter total debt for reconciliation).
+    The span starts at the sheet's first filled row (`sheet_top`, audit RA-D12)."""
+    top = sheet_top(rows)
+    for r in rows[top:top + 12]:
         for j, c in enumerate(r):
             if str(c).strip().rstrip(":") == "Source" and j + 1 < len(r):
                 v = str(r[j + 1]).strip()
@@ -2633,8 +2636,10 @@ def _net_change(first: float, last: float) -> str:
 
 def _scan_asof_header(rows: Rows) -> date | None:
     """A decoded date from an explicit 'As-Of Date:' cell in a sheet's metadata rows (the sibling
-    comps book carries one on every sheet). Matched by LABEL, never positionally. None if absent."""
-    for r in rows[:14]:
+    comps book carries one on every sheet). Matched by LABEL, never positionally, in a span from the
+    sheet's first filled row (`sheet_top`, audit RA-D12). None if absent."""
+    top = sheet_top(rows)
+    for r in rows[top:top + 14]:
         for j, c in enumerate(r):
             if isinstance(c, str) and c.strip().rstrip(":").strip().lower() == "as-of date":
                 d = excel_date(r[j + 1]) if j + 1 < len(r) else None
@@ -2978,11 +2983,12 @@ def _market_summary_current_year(rows: Rows, metric: str) -> float | None:
 def _market_summary_read(rows: Rows, metric: str) -> tuple[float | None, str | None]:
     """:func:`_market_summary_current_year` with WHY it vouches for no figure (audit RA-D13) —
     ONE walk, so the reason names the very cell the value was read from, never a re-scan's."""
-    start = next((i for i, r in enumerate(rows[:200])
+    top = sheet_top(rows)   # the span starts at the first filled row, never row 0 (audit RA-D12)
+    start = next((i for i, r in enumerate(rows[top:top + 200], top)
                   if r and str(r[0]).strip() == "Market Summary"), None)
     if start is None:
-        return None, ("Estimates→Consensus has no 'Market Summary' in its first 200 rows, so no "
-                      "Current Year figure identifies the consensus block")
+        return None, ("Estimates→Consensus has no 'Market Summary' in the 200 rows from its first "
+                      "filled row, so no Current Year figure identifies the consensus block")
     for i in range(start, min(start + 60, len(rows))):
         cells = [str(c).strip() for c in rows[i]]
         if metric in cells:
@@ -3027,8 +3033,10 @@ def _declared_current_fy(rows: Rows) -> int | None:
     """The current fiscal year, READ FROM THE SHEET's own banner rather than derived.
 
     `Current Fiscal Year End: Aug-31-2026` states it. The first cut inferred forward-ness from
-    whether the title row carried an actual — sound, but a stated fact beats a derived one."""
-    for r in rows[:40]:
+    whether the title row carried an actual — sound, but a stated fact beats a derived one. The
+    span starts at the sheet's first filled row (`sheet_top`, audit RA-D12)."""
+    top = sheet_top(rows)
+    for r in rows[top:top + 40]:
         m = _CURRENT_FY.search(str(r[0]) if r else "")
         if m:
             return int(m.group(1))
@@ -3325,7 +3333,8 @@ def _market_summary(rows: Rows) -> dict[str, float]:
     Years'. Bounded on purpose: `_market_summary_current_year` scans 60 rows past the block, so a
     label the summary does not carry is answered from the annual section below it (BRBR's 'EPS
     (GAAP)' read 3.12, a historical column, while its summary carries only 'EPS Normalized')."""
-    start = next((i for i, r in enumerate(rows[:200])
+    top = sheet_top(rows)   # the span starts at the first filled row, never row 0 (audit RA-D12)
+    start = next((i for i, r in enumerate(rows[top:top + 200], top)
                   if r and str(r[0]).strip() == "Market Summary"), None)
     if start is None:
         return {}
@@ -3819,7 +3828,9 @@ def _consensus_net_debt_check(bundle: CiqBundle) -> ConsensusNetDebtCheck | None
         tr = bundle.sheet("estimates", "Trends")
     except CiqUnavailableError:
         return None
-    banner = next((m for r in co[:40] if r and (m := _FYE_BANNER.search(str(r[0])))), None)
+    top = sheet_top(co)   # the banner's span starts at the first filled row (audit RA-D12)
+    banner = next((m for r in co[top:top + 40] if r and (m := _FYE_BANNER.search(str(r[0])))),
+                  None)
     cur_fy = _declared_current_fy(co)
     sec = _fiscal_company_section(su)
     if banner is None or cur_fy is None or sec is None:
@@ -4971,11 +4982,15 @@ def _listing_rating(bundle: CiqBundle) -> tuple[str | None, str | None, str | No
     'Recommendation' with its counts and then an 'Ind. Recommendation' with ITS counts. The
     distribution read every category row on the sheet, so the industry counts were appended to
     the listing's unlabelled on the same 20 pages. The counts here run from the listing's own
-    'Recommendation' row to the first row that is not a category."""
+    'Recommendation' row to the first row that is not a category.
+
+    A MISSING 'Trends' SHEET IS SAID TOO (audit RA-D7, 2026-11-10). With the tab renamed, the
+    recommendation and the counts both dropped from the page with no word. The note names the
+    sheet the export lacks."""
     try:
         rows = bundle.sheet("estimates", "Trends")
-    except CiqUnavailableError:
-        return None
+    except CiqUnavailableError as exc:
+        return None, None, f"not read — {exc}"
     sec = next((i for i, r in enumerate(rows)
                 if r and str(r[0]).strip() == "Non-Periodic Trends"), None)
     if sec is None:
@@ -7130,10 +7145,14 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     segs = [cal[c] for c in act_cols]
     columns = ([s + (" (R)" if r else "") for _c, s, _l, r in disp]
                + [display for _t, display in est_pairs])
+    # A SHEET THAT IS NOT THERE IS SAID, NEVER LEFT TO A SHORTER TABLE (audit RA-D7, 2026-11-10).
+    # With 'Trends' or 'Cash Flow' renamed, the table lost its estimate columns or its cash-flow
+    # rows and stayed PRESENT, with a note and a source naming the sheet it had not read.
+    tr_why: str | None = None
     try:
         tr: Rows | None = bundle.sheet("estimates", "Trends")
-    except CiqUnavailableError:
-        tr = None
+    except CiqUnavailableError as exc:
+        tr, tr_why = None, str(exc)
 
     def series(is_label: str, est_metric: str | None) -> list[float | None]:
         ri = _find_row(inc, is_label)
@@ -7232,8 +7251,12 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     # case: MVST FY22/FY23). A genuine duplicate column (same (short, is_ltm) twice — a restated AND
     # an as-reported copy) is ambiguous, so it drops to "—" (fail loud) rather than silently keeping
     # whichever landed last in the lookup dict.
+    cf_why: str | None = None
     try:
         cf = bundle.sheet("financials", "Cash Flow", freq="annual")
+    except CiqUnavailableError as exc:
+        cf_why = str(exc)
+    else:
         cf_hdr = _period_header(cf)
         cf_map: dict[tuple[str, bool], int] = {}
         cf_dupe: set[tuple[str, bool]] = set()
@@ -7272,26 +7295,29 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
                 # produced the number; the old cell helper formatted it and threw it away.
                 rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells, values=series_vals))
 
-        # CONSENSUS WITHOUT AN ESTABLISHED ACTUALS BASIS — its own row, actual columns blank. A
-        # mostly-"—" row is the honest shape here: the vendor has a forward view, and we decline to
-        # claim it continues the history beside it. Emitted only when a figure exists, so no name
-        # gains an empty row — that is the very defect PR-C removed from the estimate columns.
-        for disp_lbl, est_metric in _C1_CF_CONSENSUS_ONLY:
-            est_only: list[float | None] = [_est_fy_current(tr, est_metric, fy) for fy in est_fys]
-            if not any(v is not None for v in est_only):
-                continue
-            blank: list[float | None] = [None] * len(act_cols)
-            cons_vals: list[float | None] = blank + est_only
-            rows.append(FinRow(label=disp_lbl + " ($M)",
-                               cells=[_fmt_m(v) for v in cons_vals], values=cons_vals))
-    except CiqUnavailableError:
-        pass
+    # CONSENSUS WITHOUT AN ESTABLISHED ACTUALS BASIS — its own row, actual columns blank. A
+    # mostly-"—" row is the honest shape here: the vendor has a forward view, and we decline to
+    # claim it continues the history beside it. Emitted only when a figure exists, so no name
+    # gains an empty row — that is the very defect PR-C removed from the estimate columns. These
+    # read Trends alone, so a missing Cash Flow sheet no longer takes them with it (RA-D7).
+    for disp_lbl, est_metric in _C1_CF_CONSENSUS_ONLY:
+        est_only: list[float | None] = [_est_fy_current(tr, est_metric, fy) for fy in est_fys]
+        if not any(v is not None for v in est_only):
+            continue
+        blank: list[float | None] = [None] * len(act_cols)
+        cons_vals: list[float | None] = blank + est_only
+        rows.append(FinRow(label=disp_lbl + " ($M)",
+                           cells=[_fmt_m(v) for v in cons_vals], values=cons_vals))
     est = as_of or "?"
-    note = f"E = consensus (Estimates→Trends 'Current'), as-of {est}; (R) = Reclassified basis"
+    note = (f"E = consensus (Estimates→Trends 'Current'), as-of {est}" if tr_why is None
+            else f"no estimate columns: {tr_why}") + "; (R) = Reclassified basis"
+    if cf_why is not None:
+        note += f"; no CFO or Capex rows, and no FCF or D&A actuals: {cf_why}"
     return Sourced.present(
         FinTable(columns=columns, rows=rows, note=note,
                  is_estimate=[b == "est" for b in bases]),  # (P3) structural consensus-E flag
-        source_ref="CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+        source_ref=("CIQ Financials→Income Statement" + (" + Cash Flow" if cf_why is None else "")
+                    + " (annual)" + (" + Estimates→Trends (FY E)" if tr_why is None else "")),
     )
 
 
@@ -7527,8 +7553,10 @@ def _section_codes(rows: Rows, ticker: str, *, company_only: bool = False) -> li
 
 
 def _sheet_mode(rows: Rows) -> str | None:
-    """An Estimates sheet's own 'Currency: …' header — 'Reported Currency' on every export read."""
-    for r in rows[:15]:
+    """An Estimates sheet's own 'Currency: …' header — 'Reported Currency' on every export read,
+    searched from the sheet's first filled row (`sheet_top`, audit RA-D12)."""
+    top = sheet_top(rows)
+    for r in rows[top:top + 15]:
         cell = str(r[0]).strip() if r else ""
         if cell.startswith("Currency:"):
             return cell[len("Currency:"):].strip() or None
@@ -7536,8 +7564,10 @@ def _sheet_mode(rows: Rows) -> str | None:
 
 
 def _comps_label(rows: Rows) -> list[str]:
-    """The comps book's 'Currency:' label — the cell beside it, verbatim."""
-    for r in rows[:20]:
+    """The comps book's 'Currency:' label — the cell beside it, verbatim, searched from the sheet's
+    first filled row (`sheet_top`, audit RA-D12)."""
+    top = sheet_top(rows)
+    for r in rows[top:top + 20]:
         if r and str(r[0]).strip() == "Currency:":
             # an empty .xlsx cell is None (audit RA-D15): it states nothing, as BIFF's '' does
             return _first_seen([str(r[1]).strip()] if len(r) > 1 and r[1] is not None else [])

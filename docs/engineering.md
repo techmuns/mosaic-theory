@@ -107,9 +107,11 @@ Five record-only PRs is **the review cadence, not a requirement**. Three rules:
 ## Conventions (light — expand as needed)
 
 - **Quality gate:** ruff + `mypy --strict` clean before commit. **State its SCOPE when you report
-  it** *(2026-07-28)*: strict comes from `pyproject.toml` and the gate runs over **`vinci` only —
-  111 source files; `tests/` is excluded and carries 308 strict errors.** Written as
-  `mypy --strict clean (vinci, 111 files; tests/ excluded, 308 known errors)`. Unqualified, the
+  it** *(2026-07-28)*: strict comes from `pyproject.toml` and the gate runs over **`vinci` only;
+  `tests/` is excluded.** State the count `mypy` prints, never a remembered one: 111 source files
+  and 308 strict errors in `tests/` when this was written; 206 files at `6d9907d7` (2026-11-11),
+  the `tests/` count not re-measured. Written as `mypy --strict clean (vinci, <N> files; tests/
+  excluded)`. Unqualified, the
   line reads as *the codebase type-checks* and means *production type-checks* — the
   assertion-integrity class applied to our own gate, and it matters here because **the tests are
   the safety layer**: every guard in the audit remediation is a test. Whether to clear `tests/` is
@@ -128,6 +130,14 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Impact check / cross-setup validation / diff identity** (2026-11-11, operator: "verifies &
+  validates fixes based on data deterministically and its implication across the setup"). Plain
+  words: *one command that runs a PR's changed tests on main's code and on the PR's, builds every
+  committed page at $0 with both codes from the same inputs, compares the pages field by field
+  (list members too), the synthesis requests byte by byte, the rendered pages and the frontend
+  build, and runs the downstream readers the change reaches — then stamps the result with the PR's
+  own diff (`git patch-id`), so a re-sync that only merges main keeps it*. `vinci/impact/`,
+  RUNBOOKS §o, `docs/records/2026-11-11-impact-check-cross-setup-validation.md`.
 - **Gap test / `disclosure_gaps` / our gap · does not apply · company's normal practice · change
   or deviation · type not determined** (2026-11-07, fix 4a, operator ruling "Yes, use the test").
   Plain words: *before the synthesis may treat a missing fact as a risk, the code sorts WHY it is
