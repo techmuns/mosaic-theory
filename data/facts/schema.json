@@ -115,6 +115,38 @@
       "type": "string"
     }
   ],
+  "filing_columns": [
+    {
+      "doc": "SEC CIK, zero-padded to 10 digits.",
+      "name": "entity",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "The filing's accession number, as its data rows carry it.",
+      "name": "accession",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "The form SEC's submissions document lists for the filing.",
+      "name": "form",
+      "nullable": true,
+      "type": "string"
+    },
+    {
+      "doc": "SEC's filing date, which the filing's data rows carry as filed_date.",
+      "name": "filing_date",
+      "nullable": false,
+      "type": "date32"
+    },
+    {
+      "doc": "When SEC accepted the filing (acceptanceDateTime), in UTC with no zone stored: the moment the cut reads.",
+      "name": "accepted_at",
+      "nullable": false,
+      "type": "timestamp_utc"
+    }
+  ],
   "order_columns": [
     {
       "doc": "The row's position in the source response, so a replay reproduces the filer's order.",
@@ -135,5 +167,5 @@
       "type": "int32"
     }
   ],
-  "schema_version": 2
+  "schema_version": 3
 }

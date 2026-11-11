@@ -2047,17 +2047,150 @@ def return_ratios(bundle: CiqBundle) -> Sourced[FinTable]:
         else:  # leverage/liquidity — table-only display (no chart series)
             xcells = [f"{v:.2f}x" if v is not None else "—" for v in vals]
             rows.append(FinRow(label=disp, cells=xcells))
-    dvi = _find_row(rat, "Dividend per Share")
-    if dvi is not None:  # NA across ⇒ "none"; a figure ⇒ the per-share dividend. Table-only.
-        dvals = [clean_num(rat[dvi][c]) if c < len(rat[dvi]) else None for c in cols]
-        cells = [f"{v:.2f}" if v is not None else "none" for v in dvals]
+    dps = _dividend_per_share(bundle, rat[hdr], cols)
+    if dps is not None:  # a figure ⇒ the per-share dividend; "none" ONLY where CIQ states none
+        # 'NA' is NOT STATED, never no dividend (operator ruling 2026-11-11 on #967's Codex P1): a
+        # cell CIQ marks, a column the Income Statement does not state, read "—"
+        cells = [f"{d.value:.2f}" if d.value else "none" if d.no_dividend else "—" for d in dps]
         rows.append(FinRow(label="Dividend/sh", cells=cells))
     if not any(r.values for r in rows):  # no charted return-ratio row survived → not an exhibit
         return Sourced.unknown(note="Ratios: no return-ratio (RoE/RoCE/RoA) row with values")
     return Sourced.present(
-        FinTable(columns=columns, rows=rows, is_estimate=[False] * len(columns)),
-        source_ref="CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)",
+        # THE NOTES ARE THE TABLE'S OWN (review round 0): the renderers print `FinTable.note` under
+        # the table and never the field's, so a row of "—" with its reason on the field read as an
+        # unexplained row on every non-payer's page
+        FinTable(columns=columns, rows=rows, is_estimate=[False] * len(columns),
+                 note="; ".join(filter(None, (_dps_not_stated_note(dps),
+                                              _ltm_dividend_note(bundle, rat[hdr], cols, dps))))
+                 if dps is not None else ""),
+        source_ref="CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)"
+        + (" + Income Statement 'Dividends per Share' (the Dividend/sh row)" if dps is not None
+           else ""),   # RA-D2: the dividend row cites the sheet it is read from
     )
+
+
+def _dps_not_stated_note(dps: list[_Dps]) -> str | None:
+    """Which dividend cells CIQ marks rather than states — they print "—", and this says why."""
+    marked = [d.cell for d in dps if d.placed and d.value is None and not d.no_dividend]
+    unplaced = sum(1 for d in dps if not d.placed)
+    notes: list[str] = []
+    if marked:
+        words = sorted({_cell_words(c) for c in marked})
+        notes.append(f"Dividend/sh: the Income Statement's 'Dividends per Share' reads "
+                     f"{', '.join(words)} in {len(marked)} of {len(dps)} column(s) — not stated, "
+                     "and never read as no dividend")
+    if unplaced:   # its "—" is no read, and says so: no column, or two, state that period
+        notes.append(f"Dividend/sh: {unplaced} of {len(dps)} column(s) read no figure — no single "
+                     "Income Statement column states that period")
+    return "; ".join(notes) or None
+
+
+def _ltm_dividend_note(bundle: CiqBundle, ratio_header: list[Any], cols: list[int],
+                       dps: list[_Dps]) -> str | None:
+    """Why a Ratios LTM column's dividend may not be four quarters' — None when it is, or cannot be
+    told (operator ruling 2026-11-10, #967: print CIQ's figure as stated, and say so).
+
+    MCK's (exports on disk 2026-11-10) reads 1.64 beside FY26's 3.17, no cut: of the four quarters
+    to 2026-09-30, the quarterly export reads 0.82, 0.82, 0.82 and 'NA', and CIQ's LTM equals two
+    of them. The figure is CIQ's and is printed as it states it; the note names each quarter that
+    carries no figure and the sum of those that do, never what CIQ summed."""
+    from vinci.dossier.ltm_quarters import _four_quarters
+
+    try:
+        q = bundle.sheet("financials", "Income Statement", freq="quarterly")
+    except CiqUnavailableError:
+        return None
+    qhdr, qi = _period_header(q), _find_row(q, "Dividends per Share")
+    if qhdr is None or qi is None:
+        return None
+    notes: list[str] = []
+    for c, d in zip(cols, dps, strict=True):
+        v = d.value
+        p = header_period(ratio_header[c]) if c < len(ratio_header) else None
+        if v is None or p is None or p.kind != "LTM" or p.end is None:
+            continue
+        four, _why = _four_quarters(q, qhdr, p.end)
+        if four is None:
+            continue
+        cells = [(qp, q[qi][j] if j < len(q[qi]) else "") for j, qp in four]
+        # a dash STATES no dividend (`_NO_DIVIDEND_CELLS`): a quarter of 0, never a missing one
+        read = [(qp, cell, 0.0 if str(cell if cell is not None else "").strip()
+                 in _NO_DIVIDEND_CELLS else clean_num(cell)) for qp, cell in cells]
+        missing = [(qp, cell) for qp, cell, x in read if x is None]
+        stated = [x for _qp, _cell, x in read if x is not None]
+        if missing:   # the cells and their sum, as stated: what CIQ summed is not inferred
+            notes.append(
+                f"Dividend/sh LTM to {p.end.isoformat()} ({v:.2f}) is CIQ's own LTM figure, "
+                "printed as stated; of the four quarters ending then, the quarterly export's "
+                "'Dividends per Share' reads "
+                + ", ".join(f"{_cell_words(cell)} for the quarter to "
+                            f"{qp.end.isoformat() if qp.end else '?'}" for qp, cell in missing)
+                + (f", and the {len(stated)} it states sum {sum(stated):.2f}" if stated else ""))
+    return "; ".join(notes) or None
+
+
+#: CIQ's own statement of no dividend in a 'Dividends per Share' cell: a dash. (A 0 states it too.)
+_NO_DIVIDEND_CELLS = frozenset({"-", "–", "—"})
+
+
+class _Dps(NamedTuple):
+    """One Ratios column's dividend LEVEL, read from the Income Statement
+    (:func:`_dividend_per_share`)."""
+
+    placed: bool              # exactly one Income Statement column states this period
+    value: float | None       # the per-share dividend, or None when the cell states no figure
+    no_dividend: bool         # CIQ STATES none: a 0, or a dash — never 'NA', which states nothing
+    cell: Any = None          # the cell as CIQ wrote it, for a note
+
+
+def _dividend_per_share(bundle: CiqBundle, ratio_header: list[Any],
+                        cols: list[int]) -> list[_Dps] | None:
+    """The per-share dividend LEVEL at each Ratios column (:class:`_Dps`) — the Income
+    Statement's 'Dividends per Share' row at the column whose header states the same period (audit
+    RA-D2, 2026-11-10). None when the Income Statement carries no such row. ``placed`` is False
+    when no single Income Statement column states that period (none, or two — a restated copy
+    beside an as-reported one, as :func:`latest_cell` refuses): the value is then None and says
+    nothing about whether the company pays, so no caller may print it as "none".
+
+    THE RATIOS SHEET HAS NO DIVIDEND LEVEL. Its four 'Dividend per Share' rows are growth rates,
+    one under each of 'Growth Over Prior Year' and the two-, three- and five-year CAGR heads, and
+    the first was printed as "Dividend/sh": V's page read 0.19, 0.15, 0.13, 0.14 for a dividend of
+    1.87, 2.15, 2.44, 2.79; GOOGL's 0.38 and 0.05 beside 0.83 and 0.86. And a growth cell at a
+    marker printed "dividend: none" for a payer. The Income Statement states the level, for the
+    same periods (both sheets of one annual export), matched by period kind and end; a Ratios
+    column with no Income Statement column for its period reads no value, never a neighbour's."""
+    try:
+        inc = bundle.sheet("financials", "Income Statement", freq="annual")
+    except CiqUnavailableError:
+        return None
+    ihdr, di = _period_header(inc), _find_row(inc, "Dividends per Share")
+    if ihdr is None or di is None:
+        return None
+    def period(cell: Any) -> tuple[str, date] | None:
+        p = header_period(cell)
+        return (p.kind, p.end) if p.kind is not None and p.end is not None else None
+
+    # BY PERIOD (kind and end), never by text: GOOGL's Income Statement heads FY24 'Reclassified
+    # 12 months Dec-31-2024' where its Ratios sheet heads it '12 months Dec-31-2024'
+    by_period: dict[tuple[str, date], list[int]] = {}
+    for j, c in enumerate(inc[ihdr]):
+        if j and (key := period(c)) is not None:
+            by_period.setdefault(key, []).append(j)
+
+    def at(c: int) -> _Dps:
+        key = period(ratio_header[c]) if c < len(ratio_header) else None
+        js = by_period.get(key, []) if key is not None else []
+        if len(js) != 1:  # no column states the period, or two do: no column is chosen by position
+            return _Dps(False, None, False)
+        cell = inc[di][js[0]] if js[0] < len(inc[di]) else ""
+        v = clean_num(cell)
+        # 'NA' IS NOT STATED (operator ruling 2026-11-11): only a 0 or a dash states no dividend.
+        # On disk (2026-11-11) CIQ writes neither: every non-payer's cell, and 6 payers' quarters
+        # (MCK's to 2026-09-30 among them), read 'NA'
+        none = v == 0 or str(cell if cell is not None else "").strip() in _NO_DIVIDEND_CELLS
+        return _Dps(True, v if v else None, none, cell)
+
+    return [at(c) for c in cols]
 
 
 def multi_year_trajectory(bundle: CiqBundle) -> Sourced[str]:
@@ -5758,7 +5891,7 @@ def key_ratios(bundle: CiqBundle) -> Sourced[str]:
     hdr = _period_header(rs)
     rows_by_label = {
         lbl: next((i for i, r in enumerate(rs) if r and str(r[0]).strip() == lbl), None)
-        for lbl, _n, _p in (*_KEY_RATIO_ROWS, ("Dividend per Share", "", False))
+        for lbl, _n, _p in _KEY_RATIO_ROWS
     }
     # THE PINNED COLUMN is the sheet's latest; a panel no key ratio reports there is UNKNOWN
     reads = [latest_cell(rs, ri, hdr) for lbl, _n, _p in _KEY_RATIO_ROWS
@@ -5788,9 +5921,18 @@ def key_ratios(bundle: CiqBundle) -> Sourced[str]:
             parts.append(f"{name} {v * 100:.1f}%" if is_pct else f"{name} {v:.2f}")
         elif ri is not None:
             missing.append(name)
-    if rows_by_label["Dividend per Share"] is not None and (
-            _cell_at(rs, rows_by_label["Dividend per Share"], col) is None):
-        parts.append("dividend: none")
+    # the dividend LEVEL at the pinned column, from the Income Statement (audit RA-D2): the Ratios
+    # sheet's 'Dividend per Share' rows are growth rates, so a payer whose growth read 'NM' printed
+    # "dividend: none"
+    dps = _dividend_per_share(bundle, rs[hdr], [col]) if hdr is not None else None
+    said = None   # an unplaced column says nothing of a payer
+    if dps is not None and dps[0].no_dividend:
+        said = "dividend: none"
+    elif dps is not None and dps[0].placed and dps[0].value is None:
+        # 'NA' is not stated, never no dividend (operator ruling 2026-11-11): it is said as such
+        said = f"dividend: not stated (the Income Statement reads {_cell_words(dps[0].cell)})"
+    if said:
+        parts.append(said)
     if missing:
         parts.append(f"not reported this period: {', '.join(missing)}")
     if not parts:
@@ -5801,7 +5943,9 @@ def key_ratios(bundle: CiqBundle) -> Sourced[str]:
         period = d.isoformat() if d else _cs_col_label(rs[hdr][col])
     return Sourced.present(
         "; ".join(parts) + (f" [{period}]" if period else ""),
-        source_ref=("CIQ Financials→Ratios" + (f" [{period}]" if period else "")))
+        source_ref=("CIQ Financials→Ratios" + (f" [{period}]" if period else "")
+                    + (" + Income Statement 'Dividends per Share'" if said else "")))
+    # RA-D2: the dividend line cites the sheet it is read from
 
 
 def book_value_per_share(bundle: CiqBundle) -> Sourced[float]:

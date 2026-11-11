@@ -305,13 +305,27 @@ def test_an_empty_ledger_needs_no_assignments(tmp_path: Path) -> None:
         read_assignments_file(tmp_path / "absent.json", required=True)
 
 
-def _committed_ledger_store(path: Path) -> Store:
+def snapshots_without_void(out: Path) -> Path:
+    """The committed snapshots a scoring store is rebuilt from, minus any VOID row: a test whose
+    subject is not the void reads the ledger as it was before GOOGL's (operator ruling
+    2026-11-11), whether or not that void is committed yet."""
+    out.mkdir(parents=True)
+    src = ROOT / "data" / "snapshots"
+    for name in ("issuers.jsonl", "securities.jsonl"):
+        shutil.copy(src / name, out / name)
+    (out / "decision_ledger.jsonl").write_text("".join(
+        ln + "\n" for ln in (src / "decision_ledger.jsonl").read_text().splitlines()
+        if ln.strip() and json.loads(json.loads(ln)["payload"]).get("event") != "VOID"))
+    return out
+
+
+def _committed_ledger_store(path: Path, snapshots: Path | None = None) -> Store:
     """The committed ledger and securities, with flat synthetic bars — each name at the price its
     decision is read at (the sealed entry, or its committed correction's, RF-D7), stepping at
     SMPL's re-entry — for every name and IWM, MDY and SPY through 2027-03-19, so every row with a
     horizon by then resolves (GOOGL's corrected one is 2027-03-14)."""
     store = Store(path)
-    store.rebuild_from_snapshots(ROOT / "data" / "snapshots",
+    store.rebuild_from_snapshots(snapshots or ROOT / "data" / "snapshots",
                                  tables=["issuers", "securities", "decision_ledger"])
     days = _weekdays(date(2026, 6, 1), date(2027, 3, 19))
     ledger = list(store.iter_ledger())
@@ -337,7 +351,8 @@ def test_the_report_names_each_resolved_rows_benchmark(tmp_path: Path) -> None:
     with its own benchmark, so the report names which: on the head they blended IWM, MDY and SPY
     pairs under one unnamed label."""
     asg = read_assignments_file(ROOT / "data" / "monitor" / "benchmark_assignments.json")
-    with _committed_ledger_store(tmp_path / "c.db") as store:
+    snaps = snapshots_without_void(tmp_path / "snaps")   # SPY's only row is GOOGL's
+    with _committed_ledger_store(tmp_path / "c.db", snaps) as store:
         scores, report = score_ledger(store, as_of=date(2027, 3, 19), dividends=no_dividends,
                                       splits=no_splits, assignments=asg)
     resolved = {s.entry_id: s.benchmark for s in scores if s.resolved}

@@ -12,13 +12,14 @@ import os
 import re
 import sqlite3
 import sys
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
 from vinci.config import Config, get_config, load_local_env
-from vinci.dossier.verdict import derive_proposal
+from vinci.dossier.verdict import DrawGate, derive_proposal
 from vinci.edgar import EdgarClient
 from vinci.edge_basis import EDGE_BASES, EdgeBasisError, require_edge_basis
 from vinci.eod import (
@@ -40,6 +41,7 @@ from vinci.eod.splits import (
 )
 from vinci.eod.tiingo import TIINGO_LEAD
 from vinci.ledger import LedgerError, log_verdict
+from vinci.ledger.workflow import next_decision_id
 from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
 from vinci.monitor import read_assignments_file as mon_assignments
 from vinci.orchestrator import (
@@ -63,14 +65,18 @@ from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
     EVENT_CORRECTION,
+    EVENT_VOID,
     ORIGIN_FOLLOWED,
     ORIGIN_SCREEN,
     Confidence,
     LedgerEntry,
     Verdict,
+    VoidMark,
+    corrected,
     corrections_by_decision,
     origin_of,
     sleeve_of,
+    voids_by_decision,
 )
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
@@ -1497,9 +1503,14 @@ def _sealed_proposal(
         # proposal into the ledger that a re-assembly would not reproduce; `None` (a single-draw
         # artifact) means not measured and keeps the pre-2026-09-26 behaviour.
         _agree = (synth.get("draw_agreement") or {}).get("unanimous")
+        # THE VOTE RULE'S GATE (R1) where the page's build recorded it; a page written before the
+        # rule has none and decides by `unanimous`, as it always did (C7)
+        _da = synth.get("draw_agreement")
+        _gate = DrawGate.from_record(_da) if _da else None
         prop = derive_proposal(synth.get("evidence_balance"),
                                sleeve=str(doc.get("sleeve") or DEFAULT_SLEEVE),
-                               draws_unanimous=_agree if isinstance(_agree, bool) else None)
+                               draws_unanimous=_agree if isinstance(_agree, bool) else None,
+                               gate=_gate)
         stamp = doc.get("assembled_at")
         assembled = datetime.fromisoformat(stamp) if stamp else None
     except (ValueError, OSError) as exc:  # corrupt/unreadable artifact → loud, actionable
@@ -1507,6 +1518,87 @@ def _sealed_proposal(
     if prop.action is None:
         print(f"machine proposal for {ticker}: none — {prop.note}")
     return prop.action, prop.lean, assembled
+
+
+@dataclass(frozen=True)
+class _Seal:
+    """What `log-verdict` seals beside the human's verdict: the proposal C(iv)'s confirmation
+    decided (or the page's, where there is nothing to confirm), and the split it stands on."""
+
+    action: Verdict | None
+    lean: str | None
+    assembled: datetime | None
+    tally: dict[str, Any] | None
+    revealed: bool
+    lines: tuple[str, ...]
+
+
+def _pre_rule_split(da: Mapping[str, Any]) -> str:
+    """A tally recorded BEFORE the vote rule, as the human reads it: its labels, and the rule that
+    page still decides by (unanimity, C7) — never R1's bar, which it was not built under. Every
+    committed page is in this state, so this is the line printed at every log until re-assembly."""
+    labels = sorted((da.get("labels") or {}).items(), key=lambda kv: (-int(kv[1]), str(kv[0])))
+    parts = ", ".join(f"{int(n)}x {k}" for k, n in labels) or "no completed draw"
+    attempted, completed = da.get("attempted"), da.get("completed")
+    failed = (f", {int(attempted) - int(completed)}x failed"
+              if isinstance(attempted, int) and isinstance(completed, int) and attempted > completed
+              else "")
+    verdict = "unanimous" if da.get("unanimous") else "not unanimous"
+    return (f"{parts}{failed} of {attempted} draws (recorded before the vote rule; that page "
+            f"decides by unanimity: {verdict})")
+
+
+def _confirmation_record(cfg: Config) -> Path:
+    """THE ONE record of C(iv)'s confirmations — never a flag: a log that could name a fresh record
+    could re-draw a page version until it agreed (review round 0)."""
+    from vinci.dossier.confirmation import RECORD_NAME
+    return cfg.snapshots_dir / RECORD_NAME
+
+
+def _confirm_seal(cfg: Config, args: argparse.Namespace, ticker: str) -> _Seal:
+    """C(iv), the vote rule's confirmation at decision time
+    (`docs/records/2026-11-10-the-proposal-vote-rule-design.md` §9): before the ledger row is
+    written, the committed page's synthesis is drawn TEN times (`vinci.dossier.confirmation`) and
+    R1 at ten (9 of 10) decides the sealed proposal; the page's own five-draw tally is sealed beside
+    it. One confirmation per page version, recorded and reused, so it is never re-drawn until it
+    agrees. A page with no machine read has nothing to confirm. PAID when it draws (~$3–4)."""
+    action, lean, assembled = _sealed_proposal(cfg, ticker)
+    path = cfg.data_dir / "dossiers" / ticker / "dossier.json"
+    page = json.loads(path.read_text()) if path.exists() else None
+    synth = (page or {}).get("synthesis") or {}
+    if page is None or not synth.get("evidence_balance"):
+        return _Seal(action, lean, assembled, None, False, ())
+    from vinci.dossier.confirmation import ConfirmationError, confirm
+    from vinci.graph.llm import AnthropicLlmClient
+    record = _confirmation_record(cfg)
+    ciq_root = Path(args.ciq_root) if args.ciq_root else cfg.data_dir / "manual" / "ciq"
+    try:
+        conf = confirm(page, llm=AnthropicLlmClient.from_config(cfg), ciq_root=ciq_root,
+                       record=record, dry_run=bool(args.dry_run))
+    except (ConfirmationError, RuntimeError, ValueError, OSError) as exc:
+        raise LedgerError(f"C(iv): the ten-draw confirmation could not be drawn ({exc}) — the "
+                          "proposal is sealed only from a confirmation; nothing was logged"
+                          ) from exc
+    p = conf.proposal
+    page_da = synth.get("draw_agreement")
+    page_gate = DrawGate.from_record(page_da) if page_da else None
+    page_split = page_gate.split if page_gate is not None else (
+        _pre_rule_split(page_da) if isinstance(page_da, Mapping) else "a single draw (no tally)")
+    tally = {"sealed_from": "confirmation", "page": synth.get("draw_agreement"),
+             "confirmation": conf.tally()}
+    word = p.action_word or ("none (borderline)" if p.state == "borderline" else "none")
+    lines = (f"machine proposal (C(iv), R1 at {conf.gate.attempted}): {word} — {conf.gate.split}",
+             f"  the page's own build: {page_split}",
+             f"  the confirmation: {'reused, recorded' if conf.reused else 'drawn'} "
+             f"{conf.drawn_at}, model {conf.model}, request sha256 "
+             f"{(conf.request_sha256 or '—')[:16]}; recorded in {record}",
+             "  its transcripts: " + ("equal the page's input record" if conf.transcripts_verified
+                                      else "UNVERIFIED — the page's input record cannot say which "
+                                           "it read (a backfill lists no transcript, or there is "
+                                           "no record), so today's files were read"))
+    # A REUSED confirmation was printed by an earlier command — a dry run, or a real log that a
+    # later gate refused after printing it — so the human has seen it before this verdict
+    return _Seal(p.action, p.lean, assembled, tally, conf.reused, lines)
 
 
 def _committed_limit(ticker: str) -> Any:
@@ -1601,6 +1693,13 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
     resolver = EntityResolver.from_config(cfg)  # sources the name's EDGAR SIC → sector at log time
     with Store(cfg.db_path) as store:
         try:
+            # A CANDIDATE WITH AN OPEN DECISION IS REFUSED FIRST (#984 × #982). `log_verdict` takes
+            # its id from `next_decision_id`, which refuses while an earlier decision is open; the
+            # vote rule's confirmation below draws ten paid syntheses BEFORE that write, so asking
+            # it here keeps a log that can never land from spending anything. The entry is a close
+            # on or before ``ref``, so a ``ref`` before the earlier decision left the book is
+            # refused here too (the exact entry date is checked again at the write).
+            next_decision_id(store, args.candidate_id, entering_on=ref)
             cand = store.get_candidate(args.candidate_id)
             if cand is not None and (
                 clash := _screen_id_book_conflict(cfg, cand.data_record.identity.ticker)
@@ -1632,7 +1731,15 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 getattr(args, "edge_basis", None),
                 ev_gap=_committed_ev_gap(cfg, ticker),
                 note=getattr(args, "edge_note", None))
-            mp, ml, stamp = _sealed_proposal(cfg, ticker)
+            seal = _confirm_seal(cfg, args, ticker)
+            for line in seal.lines:
+                print(line)
+            if getattr(args, "dry_run", False):
+                # the seal shown, NOTHING written to the ledger; the ledger's own gates (the entry
+                # price, its staleness, a stated limit) run only on a real log
+                print(f"dry run: nothing written to the ledger for {ticker}; this reveals the "
+                      "confirmation's proposal, so a later log of this page seals it as revealed")
+                return 0
             entry = log_verdict(
                 store, resolver=resolver, candidate_id=args.candidate_id,
                 identity=identity, origin=origin, sleeve=sleeve,
@@ -1649,8 +1756,9 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 # reach for a file. A name with no record, or a record with no limit, passes None
                 # and is unenforced, which is every name today.
                 stated_limit=_committed_limit(ticker),
-                machine_proposal=mp, machine_lean=ml, proposal_assembled_at=stamp,
-                revealed_pre_verdict=getattr(args, "saw_proposal", False),
+                machine_proposal=seal.action, machine_lean=seal.lean,
+                proposal_assembled_at=seal.assembled, machine_tally=seal.tally,
+                revealed_pre_verdict=getattr(args, "saw_proposal", False) or seal.revealed,
             )
         except EdgeBasisError as exc:
             print(f"REFUSED — no verdict without a stated edge basis:\n{exc}")
@@ -1837,6 +1945,11 @@ def _cmd_correct_entry(args: argparse.Namespace) -> int:
     if decision is None:
         print(f"REFUSED: no decision row {args.entry_id!r} in {path}.")
         return 1
+    # VOIDED → refused before any fetch: a voided decision is out of the record
+    if (gone := voids_by_decision(committed).get(decision.entry_id)) is not None:
+        print(f"REFUSED: {decision.entry_id} is VOIDED by {gone.entry_id} (ruled "
+              f"{gone.ruled_on}) — nothing is corrected on a voided decision.")
+        return 1
     # ALREADY CORRECTED → said before any fetch, so a dry run never prints a correction as pending
     if (done := corrections_by_decision(committed).get(decision.entry_id)) is not None:
         print(f"REFUSED: {decision.entry_id} is already corrected by {done.entry_id} "
@@ -1888,6 +2001,107 @@ def _cmd_correct_entry(args: argparse.Namespace) -> int:
     print(f"  appended {row.entry_id}, correcting {row.corrects_entry_id}; the decision row keeps "
           f"its sealed price, and every reader of returns reads this one.")
     _export_ledger(cfg, "correct-entry")
+    return 0
+
+
+def _void_mark(decision: LedgerEntry) -> VoidMark:
+    """The decision's result to date as THE MONITOR marks it: `vinci monitor` run into a scratch
+    root at the latest close (nothing is written into ``data/monitor/``), and the decision's own
+    row read back — the same marking code every monitor day uses, never a second computation. The
+    row is the one at the entry the decision is read at (its correction's, when corrected)."""
+    import contextlib
+    import io
+    import tempfile
+
+    with tempfile.TemporaryDirectory(prefix="vinci-void-mark-") as scratch:
+        try:
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = _cmd_monitor(argparse.Namespace(ref=None, out=scratch))
+        except RuntimeError as exc:     # the monitor's own refusal to mark a leg (a missing bar,
+            # UNKNOWN dividends or splits) — said as this command's refusal, never a traceback
+            raise LedgerError(f"the monitor could not mark the book, so {decision.entry_id} has "
+                              f"no result to seal: {exc}") from exc
+        days = sorted((Path(scratch) / "data" / "monitor").glob("2*.json"))
+        if rc != 0 or not days:
+            raise LedgerError(f"the monitor could not mark {decision.entry_id} (exit {rc}) — a "
+                              f"void seals the result to date, and none could be read")
+        day = json.loads(days[-1].read_text())
+    rows = [r for r in day["rows"] if r["ticker"] == decision.ticker
+            and r["entry_date"] == decision.entry_price_as_of.isoformat()]
+    if len(rows) != 1:
+        raise LedgerError(f"the monitor's day {days[-1].name} holds {len(rows)} rows for "
+                          f"{decision.ticker} entered {decision.entry_price_as_of} — expected one")
+    r = rows[0]
+    return VoidMark(entry_price=r["entry_price"], entry_date=date.fromisoformat(r["entry_date"]),
+                    as_of=date.fromisoformat(r["current_date"]), price=r["current_price"],
+                    position_return=r["position_return"], benchmark=r["benchmark"],
+                    benchmark_return=r["benchmark_return"], excess=r["excess"],
+                    return_basis=str(day.get("return_basis") or "unstated"))
+
+
+def _cmd_void_decision(args: argparse.Namespace) -> int:
+    """Append the VOID row for one decision, on an operator's ruling (2026-11-11, GOOGL).
+
+    The decision, its correction and its void stay as audit history; every reader of positions and
+    returns leaves it out (`ledger.correction.void_decision`). The void seals the decision's result
+    to date AS THE MONITOR MARKS IT (`_void_mark`), so the removal is seen. ``--ruled-on`` dates
+    the ruling and ``--reason`` states it; ``--dry-run`` prints the void and writes nothing.
+
+    WHAT IS WRITTEN, beyond the one row: the working store's ledger table is first re-seeded from
+    the committed snapshot (additive), as `correct-entry` does, because the export after the append
+    writes the store's whole ledger over the committed file."""
+    from vinci.ledger.correction import void_decision
+
+    cfg = get_config()
+    reason = (args.reason or "").strip()
+    if not reason:
+        print("REFUSED: --reason is required — a decision is voided only on stated grounds.")
+        return 1
+    ruled_on = date.fromisoformat(args.ruled_on)
+    path = cfg.snapshots_dir / "decision_ledger.jsonl"
+    committed = [LedgerEntry.model_validate(json.loads(json.loads(ln)["payload"]))
+                 for ln in path.read_text().splitlines() if ln.strip()]
+    decision = next((e for e in committed if e.entry_id == args.entry_id and e.event is None),
+                    None)
+    if decision is None:
+        print(f"REFUSED: no decision row {args.entry_id!r} in {path}.")
+        return 1
+    if (gone := voids_by_decision(committed).get(decision.entry_id)) is not None:
+        print(f"REFUSED: {decision.entry_id} is already voided by {gone.entry_id}.")
+        return 1
+    if any(e.event == EVENT_CLOSE and e.closes_entry_id == decision.entry_id for e in committed):
+        print(f"REFUSED: {decision.entry_id} is closed — a closed position's outcome is realized, "
+              f"and a void does not undo it.")
+        return 1
+    read = corrected(decision, corrections_by_decision(committed).get(decision.entry_id))
+    try:
+        mark = _void_mark(read)
+    except LedgerError as exc:
+        print(f"REFUSED: {exc}")
+        return 1
+    print(f"{decision.entry_id} ({decision.ticker} {decision.verdict.value}, decided "
+          f"{decision.decided_at:%Y-%m-%d}): sealed {decision.entry_price:g} on "
+          f"{decision.entry_price_as_of}, read at {read.entry_price:g} on {read.entry_price_as_of}")
+    print(f"  the result to date the void seals: {mark.position_return:+.2%} vs {mark.benchmark} "
+          f"{mark.benchmark_return:+.2%}, excess {mark.excess * 100:+.2f} pts "
+          f"({mark.return_basis}, marked {mark.price:g} on {mark.as_of})")
+    print(f"  ruled {ruled_on}: {reason}")
+    if args.dry_run:
+        print("  DRY RUN: nothing written.")
+        return 0
+    try:
+        with Store(cfg.db_path) as store:
+            store.rebuild_from_snapshots(cfg.snapshots_dir, tables=["decision_ledger"])
+            # stamped as a close is (naive UTC, as `close-position`): an event's time
+            row = void_decision(store, entry_id=decision.entry_id, reason=reason,
+                                ruled_on=ruled_on, mark=mark,
+                                voided_at=datetime.now(UTC).replace(tzinfo=None))
+    except LedgerError as exc:
+        print(f"could not void: {exc}")
+        return 1
+    print(f"  appended {row.entry_id}, voiding {row.voids_entry_id}; its rows stay as audit "
+          f"history, and every reader of positions and returns leaves it out.")
+    _export_ledger(cfg, "void-decision")
     return 0
 
 
@@ -2625,7 +2839,9 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     ledger_all = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
     # A DECISION SEALED ON A STALE CLOSE IS MARKED FROM ITS CORRECTION (RF-D7): every reader below
     # sees the corrected entry; the day's notes name the sealed one beside it
-    ledger_all, correction_notes = mon.apply_corrections(ledger_all)
+    # A VOID IS IN EFFECT FROM ITS RULING DATE (operator, 2026-11-11): a day before the ruling keeps
+    # the decision in its book, so a past day re-cut reproduces the day as it was committed
+    ledger_all, correction_notes = mon.apply_corrections(ledger_all, as_of=ref)
     if not ledger_all:
         print("decision ledger is empty — nothing to monitor")
         return 0
@@ -3126,6 +3342,8 @@ def _cmd_ledger(args: argparse.Namespace) -> int:
             if e.event == EVENT_CLOSE and e.exit_price is not None
             else f"  ← CORRECTS {e.corrects_entry_id}: the entry is read here (RF-D7)"
             if e.event == EVENT_CORRECTION
+            else f"  ← VOIDS {e.voids_entry_id} (ruled {e.ruled_on}): out of the record"
+            if e.event == EVENT_VOID
             else ""
         )
         print(
@@ -3135,10 +3353,12 @@ def _cmd_ledger(args: argparse.Namespace) -> int:
         )
     n_close = sum(1 for e in entries if e.event == EVENT_CLOSE)
     n_fix = sum(1 for e in entries if e.event == EVENT_CORRECTION)
-    if n_close or n_fix:
-        print(f"\n{len(entries) - n_close - n_fix} decision(s) · {n_close} close(s) · {n_fix} "
-              f"correction(s) — neither a close nor a correction is a second verdict; the spread "
-              f"counts decisions only, each read at its correction where it has one.")
+    n_void = sum(1 for e in entries if e.event == EVENT_VOID)
+    if n_close or n_fix or n_void:
+        print(f"\n{len(entries) - n_close - n_fix - n_void} decision(s) · {n_close} close(s) · "
+              f"{n_fix} correction(s) · {n_void} void(s) — none of them is a second verdict; the "
+              f"spread counts decisions only, each read at its correction where it has one, and "
+              f"never a voided one.")
     return 0
 
 
@@ -3625,6 +3845,17 @@ def build_parser() -> argparse.ArgumentParser:
                        help="print the correction the rule reads, and write nothing")
     p_fix.set_defaults(func=_cmd_correct_entry)
 
+    p_void = sub.add_parser(
+        "void-decision",
+        help="append the VOID row for a decision an operator's ruling removes from the record")
+    p_void.add_argument("entry_id", help="the decision's entry id, e.g. V-GOOGL")
+    p_void.add_argument("--reason", required=True, help="the ruling's grounds, sealed into the row")
+    p_void.add_argument("--ruled-on", dest="ruled_on", required=True,
+                        help="the ruling's date, YYYY-MM-DD")
+    p_void.add_argument("--dry-run", dest="dry_run", action="store_true",
+                        help="print the void and the result it seals, and write nothing")
+    p_void.set_defaults(func=_cmd_void_decision)
+
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `vinci screen`")
     p_log.add_argument("--verdict", required=True, choices=[v.value for v in Verdict])
@@ -3660,6 +3891,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="self-report: you peeked at the machine proposal (dossier --show-proposal) BEFORE "
         "deciding. Stamps revealed_pre_verdict=True so the anchored disposition is down-weighted.",
     )
+    p_log.add_argument(
+        "--dry-run", action="store_true",
+        help="draw (or reuse) the ten-draw confirmation and print what would be sealed; write "
+             "nothing to the ledger. It reveals the proposal, and a later log seals it as revealed")
+    p_log.add_argument("--ciq-root", help="the CIQ folders the page's transcripts are read from "
+                                          "(default: data/manual/ciq)")
     p_log.set_defaults(func=_cmd_log_verdict)
 
     p_mon = sub.add_parser("monitor", help="mark the book to market vs benchmarks (manual)")

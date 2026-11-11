@@ -40,10 +40,13 @@ from vinci.labels import resolve_label
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
     EVENT_CORRECTION,
+    EVENT_VOID,
     ORIGIN_SCREEN,
     LedgerEntry,
     correction_note,
     corrections_by_decision,
+    void_note,
+    voids_by_decision,
 )
 from vinci.sleeves import DEFAULT_SLEEVE
 
@@ -389,7 +392,8 @@ def entry_of(row: dict[str, Any]) -> dict[str, Any]:
     return row
 
 
-def decision_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def decision_rows(raw: list[dict[str, Any]], *, as_of: date | None = None
+                  ) -> list[dict[str, Any]]:
     """The rows that are POSITIONS — every raw ledger row whose ``event`` is not a close.
 
     THE LANDMINE THIS DEFUSES: ``compute_spread`` partitions by verdict alone, and a close row
@@ -400,29 +404,52 @@ def decision_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
     Legacy rows have no ``event`` key at all and are decision rows by definition, so this is a
     no-op on everything committed before 2026-07-22. A CORRECTION row (RF-D7) is no position
     either: only a row with no ``event`` is a decision.
+
+    NOR IS A VOIDED DECISION (operator ruling 2026-11-11, GOOGL): a decision a VOID row in
+    ``raw`` names is out of the record, so every reader built on this — the book, the spread,
+    `live_verdicts`, the supersede guard — leaves it out. ``raw`` must be the whole ledger for
+    that: a void row filtered out upstream would leave its decision in. With ``as_of``, only a void
+    RULED by then counts (`voids_by_decision`: a void is in effect from its ruling date).
     """
-    return [r for r in raw if entry_of(r).get("event") is None]
+    voided = {str(e.get("voids_entry_id")) for e in map(entry_of, raw)
+              if e.get("event") == EVENT_VOID
+              and (as_of is None or date.fromisoformat(str(e.get("ruled_on"))) <= as_of)}
+    return [r for r in raw
+            if entry_of(r).get("event") is None and str(r.get("entry_id")) not in voided]
 
 
-def apply_corrections(raw: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[str]]:
+def apply_corrections(raw: list[dict[str, Any]], *, as_of: date | None = None
+                      ) -> tuple[list[dict[str, Any]], list[str]]:
     """The raw ledger as the monitor reads it (RF-D7): every decision a CORRECTION row names
     carries the corrected entry price and date — at the row's top level and in its payload, the
     two places a reader looks — the correction rows themselves dropped, and one note per
     corrected decision naming the sealed and the corrected entry. The committed rows are read,
     never rewritten; a decision corrected twice, or a correction naming no decision, raises
-    (`corrections_by_decision`)."""
+    (`corrections_by_decision`).
+
+    A VOIDED DECISION LEAVES WITH ITS ROWS (operator ruling 2026-11-11, GOOGL): the decision, its
+    correction and its void are all dropped — no reader below marks, pairs or counts it — and the
+    void is named ONCE in the notes, with the result to date it sealed. A void naming no decision,
+    or a decision voided twice, raises (`voids_by_decision`). With ``as_of`` (the report's date), a
+    void ruled AFTER it is not yet in effect: its decision is kept, as it was live that day, and
+    only the void row is dropped (operator, 2026-11-11: "From 2026-11-11 on")."""
     entries = [entry_of(r) for r in raw]
-    fixes = corrections_by_decision(LedgerEntry.model_validate(e) for e in entries)
+    parsed = [LedgerEntry.model_validate(e) for e in entries]
+    fixes = corrections_by_decision(parsed)
+    voids = voids_by_decision(parsed, as_of=as_of)
     out: list[dict[str, Any]] = []
     notes: list[str] = []
-    for r, e in zip(raw, entries, strict=True):
-        if e.get("event") == EVENT_CORRECTION:
+    for r, e, pe in zip(raw, entries, parsed, strict=True):
+        if e.get("event") in (EVENT_CORRECTION, EVENT_VOID):
+            continue
+        if e.get("event") is None and (v := voids.get(str(e.get("entry_id")))) is not None:
+            notes.append(void_note(pe, v))
             continue
         fix = fixes.get(str(e.get("entry_id"))) if e.get("event") is None else None
         if fix is None:
             out.append(r)
             continue
-        notes.append(correction_note(LedgerEntry.model_validate(e), fix))
+        notes.append(correction_note(pe, fix))
         upd = {"entry_price": fix.entry_price,
                "entry_price_as_of": fix.entry_price_as_of.isoformat()}
         row = {**r, **upd}
@@ -541,7 +568,7 @@ def decisions_as_of(raw: list[dict[str, Any]], *, as_of: date) -> list[dict[str,
     ``days_elapsed: -15``, a position that did not exist yet. Lives here rather than inline at the
     call site so the rule is exercised against the real ledger — the CLI's copy could only ever be
     checked by a static artifact, which cannot catch a change to the code that writes it."""
-    return [r for r in decision_rows(raw)
+    return [r for r in decision_rows(raw, as_of=as_of)
             if date.fromisoformat(str(entry_of(r)["entry_price_as_of"])) <= as_of]
 
 

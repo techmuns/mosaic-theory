@@ -11,7 +11,8 @@ own record, never re-derived.
 Both sides run the SCREEN'S OWN CODE on the same name, the same cut and the same close:
 - REFERENCE: the cached companyfacts response, handed over whole as ``EdgarClient`` hands it (the
   screen cuts it itself);
-- STORE: ``FactStore.companyfacts_as_of(entity, cut)``.
+- STORE: ``FactStore.companyfacts_as_of(entity, cut, basis="filed")``, the screen's own
+  day-level cut.
 
 Compared, field by field, as each side's model dumps them: every field of the record's
 ``Fundamentals`` (P/E and its percentile, both signs, both leverages, the share-count change, the
@@ -45,7 +46,7 @@ from vinci.edgar.client import EdgarClient, FundamentalSnapshot, compute_fundame
 from vinci.edgar.concepts import REPORTING, extract_points, facts_as_of
 from vinci.facts.edgar_ingest import NotInCacheError, pad_cik, read_cached_companyfacts
 from vinci.facts.parity import compare_rows, filing_eve
-from vinci.facts.reader import FactStore, FactUnknownError
+from vinci.facts.reader import FILED, FactNotHeldError, FactStore, FactUnknownError
 from vinci.facts.scope import ScreenPopulation, screen_population
 from vinci.schemas.data_record import Identity
 from vinci.schemas.market import PriceBar
@@ -197,8 +198,9 @@ def replay_name(pop: ScreenPopulation, row: Any, store: FactStore, cache_dir: Pa
             n.unread = f"nothing filed by {price_date}: no filing eve"
             continue
         try:
-            stored = store.companyfacts_as_of(entity, cut)
-        except FactUnknownError as exc:
+            # the screen's own cut is by day, and both sides read the same copy (RFL-D1, RFL-D2)
+            stored = store.companyfacts_as_of(entity, cut, basis=FILED, stale_ok=True)
+        except (FactUnknownError, FactNotHeldError) as exc:
             n.unread = str(exc)
             continue
         rows = compare_rows(facts_as_of(full, cut), stored, n.examples)
