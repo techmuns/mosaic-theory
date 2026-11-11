@@ -172,9 +172,16 @@ class _Model:
         return self.answer
 
 
-def _extract(**own: str) -> tuple[list[CovenantTerm], list[str]]:
+#: The committed row's value names no figure of its own once its grid levels are cut — the shape a
+#: value takes when only its COMPONENTS state percents its quote does not (RE2-D16 refuses a value
+#: that states them itself, before any component is read).
+_AMZN_VALUE_NO_FIGURES = ("Eurocurrency Rate Loans: LIBO Rate plus the Applicable Rate; Base Rate "
+                          "Loans: Base Rate plus the Applicable Rate")
+
+
+def _extract(value: str | None = None, **own: str) -> tuple[list[CovenantTerm], list[str]]:
     row = _amzn_2020()
-    term = {"name": row["name"], "present": True, "value": row["value"]["value"],
+    term = {"name": row["name"], "present": True, "value": value or row["value"]["value"],
             "quote": _quote(row), "base_rate_label": row["base_rate_label"],
             **_model_output(row, **own)}
     rows, flags, _ = ce._extract_from_exhibit(
@@ -192,7 +199,14 @@ def _lead(rows: list[CovenantTerm]) -> str:
 def test_the_extractor_withholds_and_the_page_prints_no_unquoted_floor() -> None:
     """The printed artifact: AMZN.md led its interest line "LIBO Rate + 0.50% (Floor 0.00%)",
     neither figure in the quote the row stored."""
+    # the committed value itself states the grid's 0.00% and 0.50%, so it is refused whole now
+    # (TeamNostra fix request 2, RE2-D16) — before a component is read, as a quote refusal is
     rows, flags = _extract()
+    assert rows[0].value.status.value == "unknown" and rows[0].margin_pct is None
+    assert (rows[0].value.note or "").startswith(ce.VALUE_REFUSED_NOTE_PREFIX)
+    assert "0.50%" in (rows[0].value.note or "") and _lead(rows) == ""
+    # a value naming no figure keeps its line, and its unquoted components are withheld as before
+    rows, flags = _extract(_AMZN_VALUE_NO_FIGURES)
     assert rows[0].margin_pct is None and rows[0].floor_pct is None
     assert flags == [f"(E5) rate component not shown — {why}: Interest / coupon rate · {AMZN_2020}"
                      for why in rows[0].withheld_components.values()] and len(flags) == 2
@@ -234,7 +248,7 @@ def test_the_scorecard_reads_the_clause_a_component_was_kept_by() -> None:
 
 def test_the_scorecard_counts_a_withheld_component_as_excluded() -> None:
     assert _scored([_amzn_2020()]) == ({"differs_unexplained": 2}, 0)        # as committed
-    withheld, _ = _extract()
+    withheld, _ = _extract(_AMZN_VALUE_NO_FIGURES)
     assert _scored([withheld[0].model_dump(mode="json")]) == ({}, 2)
 
 
