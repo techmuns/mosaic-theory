@@ -8,6 +8,7 @@ cheap-gates-gate-the-expensive-ones discipline made operational.
 
 from __future__ import annotations
 
+import sys
 from collections.abc import Callable, Mapping
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -15,6 +16,7 @@ from typing import Any
 
 from vinci.edgar import EdgarClient
 from vinci.eod import EodClient, ingest_prices
+from vinci.eod.client import basis_lines
 from vinci.eod.features import YEAR_DAYS, window_facts
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.schemas.candidate import CandidateRecord, GateResult, RoutingPolicy
@@ -116,11 +118,15 @@ def screen_universe(
         universe = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
     start = reference_date - timedelta(days=lookback_days)
 
-    ingest_prices(eod, store, universe, start=start, end=reference_date, progress=progress,
-                  first_sessions=first_sessions)
+    named = basis_lines(ingest_prices(eod, store, universe, start=start, end=reference_date,
+                                      progress=progress, first_sessions=first_sessions))
     bench = benchmark_identity(benchmark)
     store.upsert_security(bench)
-    ingest_prices(eod, store, [bench], start=start, end=reference_date)
+    named += basis_lines(ingest_prices(eod, store, [bench], start=start, end=reference_date))
+    # SAID ON THE RUN, NEVER DISCARDED (RF-D5's remainder): a name the refresh restated, found
+    # moved in price alone, or could not anchor is printed where the weekly's log shows it
+    for line in named:
+        print(line, file=sys.stderr)
     bench_bars = _bars_to(store, bench.internal_id, reference_date)
 
     run_at = datetime.combine(reference_date, datetime.min.time())

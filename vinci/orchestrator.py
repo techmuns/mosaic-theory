@@ -22,7 +22,7 @@ from vinci.cohort import cohort_reads, sic_by_ticker
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, ingest_prices
-from vinci.eod.client import store_calendar
+from vinci.eod.client import basis_lines, store_calendar
 from vinci.eod.dividends import default_dividends
 from vinci.eod.splits import default_splits
 from vinci.evidence import evidence_strip
@@ -453,8 +453,9 @@ def run_monthly(
         if universe:
             # THE TWO XPRO IDS BOTH LIVE HERE (every security): each day's bar goes to the id that
             # held the symbol that day, never to whichever the old dict kept last
-            ingest_prices(client, store, universe, start=start, end=as_of, progress=progress,
-                          first_sessions=load_first_sessions(cfg.snapshots_dir))
+            named = basis_lines(ingest_prices(
+                client, store, universe, start=start, end=as_of, progress=progress,
+                first_sessions=load_first_sessions(cfg.snapshots_dir)))
             # EVERY BENCHMARK A ROW IS MEASURED AGAINST, beside the calendar: it used to be the
             # calendar alone, so GOOGL's SPY and IT's MDY were never refreshed here (the primary's
             # SPY ended 2026-07-22, its MDY 2026-08-05)
@@ -463,7 +464,10 @@ def run_monthly(
                                for e in store.iter_ledger() if e.event is None})]
             for b in benches:
                 store.upsert_security(b)
-            ingest_prices(client, store, benches, start=start, end=as_of)
+            named += basis_lines(ingest_prices(client, store, benches, start=start, end=as_of))
+            # SAID ON THE RUN (RF-D5's remainder): the names the refresh could not leave silent
+            for line in named:
+                print(line, file=sys.stderr)
         # ONE SPAN AND ONE CALENDAR for the dividends and the split confirmation: Tiingo's
         # rows are shared only while the two ask for the same span
         span_start = min((e.entry_price_as_of for e in store.iter_ledger()), default=as_of)

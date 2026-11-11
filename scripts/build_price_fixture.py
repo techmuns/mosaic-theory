@@ -48,6 +48,7 @@ from datetime import date
 
 from vinci.config import get_config, load_local_env
 from vinci.eod import PolygonEodClient, ingest_prices_per_symbol, last_completed_session
+from vinci.eod.client import basis_lines
 from vinci.monitor import BENCHMARK_SMALL
 from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
@@ -137,8 +138,12 @@ def main(argv: list[str]) -> int:
         end = last_completed_session(PolygonEodClient.from_config(cfg), today=date.today())
         print(f"  refreshing {len(identities)} names {_WINDOW_START}..{end} via per-symbol aggs")
         with Store(cfg.db_path) as store:
-            ingest_prices_per_symbol(PolygonEodClient.from_config(cfg), store, identities,
-                                     start=date.fromisoformat(_WINDOW_START), end=end)
+            summary = ingest_prices_per_symbol(PolygonEodClient.from_config(cfg), store,
+                                               identities, start=date.fromisoformat(_WINDOW_START),
+                                               end=end)
+        # SAID, NEVER DISCARDED (RF-D5's remainder): the weekly job runs this unattended
+        for line in basis_lines(summary):
+            print(f"  {line}", file=sys.stderr)
 
     # ALL-OR-NOTHING: BUILD EVERY SERIES FIRST, WRITE ONLY IF EVERY ONE SUCCEEDED.
     #

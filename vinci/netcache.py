@@ -303,7 +303,26 @@ class CachedHttp:
         ttl_seconds: float | None = None,
         params: dict[str, Any] | None = None,
     ) -> Any:
-        return json.loads(self.get_text(url, ttl_seconds=ttl_seconds, params=params))
+        """GET ``url`` and return its parsed JSON, caching as `get_text` does — but A BODY THAT IS
+        NOT JSON IS NEVER CACHED (STATE §5.0 row 42 (2)). `get_text` wrote any 200 body before
+        this parsed it, so an interstitial served once for a submissions document or an older page
+        was the cached page for its whole TTL, and every windowed read of that filer read "could
+        not be read" until it expired. Now the parse comes first: a non-JSON body raises the same
+        ``ValueError`` it did, with nothing written, and a non-JSON copy already on disk is a miss,
+        fetched again."""
+        full_url = self._with_params(url, params)
+        cached = self._read_cache(full_url, ttl_seconds)
+        if cached is not None:
+            try:
+                value = json.loads(cached)
+            except ValueError:
+                cached = None                 # cached before bodies were checked: refetch it
+        if cached is None:
+            cached = self._fetch_with_retries(full_url)
+            value = json.loads(cached)        # raises BEFORE the write: nothing is cached
+            self._write_cache(full_url, cached)
+        provenance.note_http(self._namespace, full_url, cached, self._fetched.get(full_url))
+        return value
 
     def fetched_at(self, url: str, *, params: dict[str, Any] | None = None) -> float | None:
         """When the cached copy of ``url`` was fetched (epoch seconds), or None when no readable

@@ -268,6 +268,7 @@ def restatement_factor(held: PriceBar, fresh: RawBar) -> float | None:
 def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
                  boundaries: Sequence[date], sym_to_id: Mapping[str, str], *,
                  price_only: dict[str, list[tuple[date, float]]] | None = None,
+                 unserved: set[str] | None = None,
                  ) -> dict[str, list[tuple[date, float]]]:
     """Put held bars back on the source's CURRENT split basis, one pull at a time.
 
@@ -282,7 +283,11 @@ def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
     fetched again. The factor is the source's own, read off a bar it serves today. Returns
     ``{internal_id: [(boundary, factor), ...]}`` for each name restated; a name whose prices moved
     by one factor while its volume did not confirm it (`price_factor` without
-    `restatement_factor`) is restated nothing and, when ``price_only`` is given, listed there."""
+    `restatement_factor`) is restated nothing and, when ``price_only`` is given, listed there.
+
+    A held name the source did not serve on a boundary was set beside nothing, so its older bars
+    are UNCHECKED: when ``unserved`` is given it is added there (by internal id), for the caller
+    to name — never counted as checked (TeamNostra fix request 2, RF-D5's remainder)."""
     bounds = sorted(set(boundaries))
     id_to_sym = {iid: sym for sym, iid in sym_to_id.items()}
     found: dict[str, dict[date, float]] = {}
@@ -291,6 +296,8 @@ def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
         for iid, held in store.bars_on(b, list(id_to_sym)).items():
             bar = fresh.get(id_to_sym[iid])
             if bar is None:
+                if unserved is not None:
+                    unserved.add(iid)
                 continue
             if (r := restatement_factor(held, bar)) is not None:
                 found.setdefault(iid, {})[b] = r
@@ -303,6 +310,26 @@ def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
                 store.restate_bars(iid, by_bound[b], through=b, after=prev)
             prev = b
     return {iid: sorted(v.items()) for iid, v in found.items()}
+
+
+def basis_lines(summary: Mapping[str, Any]) -> list[str]:
+    """The names an ingest summary NAMES — restated, moved in price alone, or left unanchored —
+    one line each, for the callers that run UNATTENDED (TeamNostra fix request 2, RF-D5's
+    remainder). `vinci refresh` prints the whole summary; the weekly screen, `run-monthly` and
+    the price-fixture build discarded it, so a name a refresh could not put on one split basis was
+    shown nowhere on the paths no one watches. Empty when the summary names nothing."""
+    def fs(v: Any) -> str:
+        return ", ".join(f"{float(f):g}" for f in v)
+
+    out = [f"PRICE BASIS: {sym} restated ×{fs(v)} — its held bars were put on the source's "
+           "current split basis" for sym, v in sorted((summary.get("restated") or {}).items())]
+    out += [f"PRICE BASIS: {sym} moved ×{fs(v)} in price alone, its volume not confirming a split "
+            "— nothing was restated; the price scorecard's split-step check flags a real one"
+            for sym, v in sorted((summary.get("price_only") or {}).items())]
+    out += [f"PRICE BASIS: {sym} UNANCHORED — held bars this refresh could not set beside the "
+            "source, so their split basis is unchecked (`vinci restate-prices` repairs one)"
+            for sym in summary.get("unanchored") or []]
+    return out
 
 
 def restate_after(store: Any, iid: str, edge: Sequence[tuple[Any, RawBar | None]], *,
@@ -477,12 +504,14 @@ def ingest_prices(
     price_only: dict[str, list[tuple[date, float]]] = {}
     anchor_bars: dict[str, RawBar] = {}
     on_anchor: set[str] = set()
+    # held names a left-edge check found the source not serving: unchecked, named if written below
+    left_unserved: set[str] = set()
     if anchor is not None:
         days_fetched += 1
         anchor_bars = client.grouped_daily(anchor)
         on_anchor = set(store.bars_on(anchor, all_ids))
         restated = restate_held(store, lambda _d: anchor_bars, [anchor], on(anchor),
-                                price_only=price_only)
+                                price_only=price_only, unserved=left_unserved)
     written: set[str] = set()
     for day in days:
         days_seen += 1
@@ -538,7 +567,7 @@ def ingest_prices(
         for (last, _slot), group in sorted(late.items()):
             days_fetched += 1
             restated.update(restate_held(store, client.grouped_daily, [last], group,
-                                         price_only=price_only))
+                                         price_only=price_only, unserved=left_unserved))
     # THE RIGHT EDGE (RF-D5): a name this run wrote that also holds bars AFTER ``end`` is set beside
     # the source at its FIRST such session — where a splice at ``end``'s next session shows — and,
     # only where that reads a restatement, at its LAST too (`restate_after`). One whole-market call
@@ -547,7 +576,10 @@ def ingest_prices(
     # cost 18 to 24 calls (review of order 5, finding 4); splits are rare, so now it costs the
     # first dates plus the last dates of the names that split. A refresh ending on the latest
     # session, the routine one, holds nothing after ``end`` and costs nothing here.
-    unanchored: list[str] = []
+    # THE LEFT EDGE'S UNSERVED NAMES (RF-D5's remainder, #991's record): a name this run wrote new
+    # bars for, whose held bars before them the source did not serve at the check, sits on an
+    # unchecked basis under the new bars — named, as the right edge names the same case
+    unanchored: list[str] = [id_to_sym[iid] for iid in sorted(left_unserved & written)]
     after = getattr(store, "first_bar_after", None)
     if callable(after) and callable(getattr(store, "bars_on", None)):
         firsts: dict[str, date] = {}

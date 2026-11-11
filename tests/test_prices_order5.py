@@ -488,3 +488,55 @@ def test_an_anchor_the_source_did_not_serve_is_named_unanchored(tmp_path: Path) 
                                            end=date(2026, 8, 7), today=date(2026, 11, 11))
     assert client.calls == [("IESC", _ANCHOR, date(2026, 8, 7))]
     assert summary["unanchored"] == ["IESC"] and summary["restated"] == {}
+
+
+# --- RF-D5's remainder: the grouped LEFT edge names a name it could not check (#991's record) ----
+
+class _GroupedAfterSplit:
+    """Whole-market bars after IESC's 2-for-1, on the current basis, for ``served`` sessions."""
+
+    def __init__(self, served: tuple[date, ...]) -> None:
+        self.served = served
+        self.grouped: list[date] = []
+
+    def grouped_daily(self, day: date) -> dict[str, RawBar]:
+        self.grouped.append(day)
+        return {"IESC": RawBar(ticker="IESC", **_IESC["fresh"])} if day in self.served else {}
+
+
+def test_a_grouped_left_edge_the_source_did_not_serve_is_named_unanchored(tmp_path: Path) -> None:
+    """THE REMAINDER: refreshed over 08-06..08-07, the held bars through 08-05 are checked at their
+    last held session (08-05). The source served IESC on 08-06 and 08-07 but not on 08-05, so the
+    check had nothing to set beside the held bar — `restate_held` skipped the name, and it appeared
+    in no list while its pre-split bars sat under new-basis ones. Now it is named ``unanchored``,
+    as the right edge names the same case."""
+    client = _GroupedAfterSplit((date(2026, 8, 6), date(2026, 8, 7)))
+    with _store_with_old_basis(tmp_path / "s.db") as store:
+        summary = ingest_prices(client, store, [_IDENT], start=date(2026, 8, 6),  # type: ignore[arg-type]
+                                end=date(2026, 8, 7))
+    assert _ANCHOR in client.grouped                      # the left edge was read, and was empty
+    assert summary["unanchored"] == ["IESC"] and summary["restated"] == {}
+
+
+def test_negative_a_grouped_left_edge_the_source_served_is_restated_not_named(
+        tmp_path: Path) -> None:
+    """(−) Served on 08-05, the same refresh restates the held bars and names nothing unanchored."""
+    client = _GroupedAfterSplit((_ANCHOR, date(2026, 8, 6), date(2026, 8, 7)))
+    with _store_with_old_basis(tmp_path / "s.db") as store:
+        summary = ingest_prices(client, store, [_IDENT], start=date(2026, 8, 6),  # type: ignore[arg-type]
+                                end=date(2026, 8, 7))
+        steps = [b.close for b in store.get_price_history(_IDENT.internal_id)]
+    assert summary["unanchored"] == []
+    assert summary["restated"] == {"IESC": [pytest.approx(_IESC["factor"], rel=1e-6)]}
+    assert all(b / a == pytest.approx(1.0, rel=1e-6)
+               for a, b in zip(steps, steps[1:], strict=False))
+
+
+def test_a_name_the_left_edge_skips_but_this_run_never_wrote_is_not_named(tmp_path: Path) -> None:
+    """(−) A held name the source served on no session of the window got no new bars, so there is
+    no splice to warn of: it is not named (the rule for names with no new bars)."""
+    client = _GroupedAfterSplit(())
+    with _store_with_old_basis(tmp_path / "s.db") as store:
+        summary = ingest_prices(client, store, [_IDENT], start=date(2026, 8, 6),  # type: ignore[arg-type]
+                                end=date(2026, 8, 7))
+    assert summary["unanchored"] == [] and summary["bars_written"] == 0
