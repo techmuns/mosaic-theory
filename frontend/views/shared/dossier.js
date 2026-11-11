@@ -1099,9 +1099,60 @@ function briefTier(d, verdict, m, card, mark) {
 // A COUNT, NEVER A RATE: five draws cannot support a percentage (3-of-5 is a 95% CI of roughly
 // [23%, 88%]), so this prints what happened. An ABSENT tally prints nothing at all — a page built
 // before the gate was never measured, and silence must not read as agreement.
+// THE VOTE RULE'S SPLIT (R4) — the twin of verdict.DrawGate.split: the labels by count then name,
+// the failed draws named, and R1's bar. A count, never a rate.
+// The modal lean and C(iii)'s state, DERIVED as verdict.DrawGate.from_record derives them: the
+// page stores counts and a boolean, never a direction.
+function drawGateLean(a) {
+  const entries = Object.entries(a.labels || {});
+  const top = entries.reduce((m, [, n]) => Math.max(m, n), 0);
+  const hit = entries.find(([, n]) => n === top);
+  return hit ? hit[0] : "";
+}
+
+function drawGateState(a) {
+  if (a.passes) return "proposed";
+  const lean = drawGateLean(a);
+  const committed = lean === "strongly-bullish" || lean === "strongly-bearish";
+  return committed && 2 * a.modal_count > a.attempted ? "borderline" : "none";
+}
+
+function drawGateSplit(a) {
+  const rule = `the ${a.required}-of-${a.attempted} rule`;
+  const labels = Object.entries(a.labels || {})
+    .sort((x, y) => y[1] - x[1] || (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0));
+  if (labels.length === 1 && a.modal_count === a.attempted) {
+    return `${a.modal_count} of ${a.attempted} draws ${drawGateLean(a)} (${rule})`;
+  }
+  const parts = labels.map(([lab, n]) => `${n}x ${lab || "unparsed"}`);
+  const drawn = labels.reduce((t, [, n]) => t + n, 0);
+  if (drawn < a.attempted) parts.push(`${a.attempted - drawn}x failed`);
+  return `${parts.join(", ")} of ${a.attempted} draws (${rule})`;
+}
+
 function drawAgreementHtml(s) {
   const a = s && s.draw_agreement;
   if (!a || !a.attempted || a.attempted < 2) return "";
+  // R1's record (the vote rule, verdict.draw_gate); a page written before it has no `passes` and
+  // reads below exactly as it always did
+  if (a.passes !== undefined && a.passes !== null) {
+    const split = escapeHtml(drawGateSplit(a));
+    if (a.passes) {
+      return `<div style="margin-top:4px; font-size:12px; opacity:.72;">Reproducibility: ${split}
+        — the rule is met.</div>`;
+    }
+    if (drawGateState(a) === "borderline") {
+      return `<div style="margin-top:4px; font-size:12px; font-weight:600;">Reproducibility:
+        BORDERLINE — ${split}. The rule is not met, so no machine proposal is made; the read is the
+        first draw carrying the majority lean. A tally of this build, not a rate.</div>`;
+    }
+    const lean = drawGateLean(a);
+    if (a.unanimous && (lean === "strongly-bullish" || lean === "strongly-bearish")) {
+      return `<div style="margin-top:4px; font-size:12px; font-weight:600;">Reproducibility:
+        ${split} — a failed draw counts as dissent, so no machine proposal is made. A tally of this
+        build, not a rate.</div>`;
+    }
+  }
   if (a.unanimous) {
     return `<div style="margin-top:4px; font-size:12px; opacity:.72;">Reproducibility: all
       ${a.completed} of ${a.attempted} draws on this build returned the same lean.</div>`;
