@@ -13,6 +13,7 @@ import pytest
 
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle
+from vinci.evals import builds as bd
 from vinci.evals import replay as rp
 from vinci.evals import variants as v
 from vinci.evals.capture_child import pre_synthesis_mech
@@ -78,3 +79,19 @@ def test_an_unknown_fields_note_is_compared_never_stripped() -> None:
     assert v._without_dividend(p) == v._without_dividend(q)
     r = Sourced[FinTable].present(t, source_ref="CIQ Financials→Ratios", note="not the change's")
     assert v._without_dividend(p) != v._without_dividend(r)
+
+
+def test_a_build_registration_hands_the_child_the_pages_ciq_folder(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """(Codex round 1, #981) `register-run` / `run-build` captured without the page's CIQ folder, so
+    this transform refused every page on the build path (`run-compare` passed it). (−) With no
+    transform, no folder is handed over."""
+    (tmp_path / "SMPL").mkdir()
+    seen: dict[str, object] = {}
+    monkeypatch.setattr(rp, "panel_inputs", lambda t, **k: ({}, None))
+    monkeypatch.setattr(rp, "comps_export", lambda t, **k: None)
+    monkeypatch.setattr(rp, "capture_at", lambda *a, **k: seen.update(k))
+    bd.capture_request("HEAD", "SMPL", transforms=["dividend_level"], draws=1, ciq_root=tmp_path)
+    assert seen.get("ciq") == tmp_path / "SMPL"
+    bd.capture_request("HEAD", "SMPL", transforms=[], draws=1, ciq_root=tmp_path)
+    assert seen.get("ciq") is None
