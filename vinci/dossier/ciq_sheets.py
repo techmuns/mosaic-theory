@@ -10,6 +10,7 @@ with an absent/garbled sheet → UNKNOWN with the reason — never a fabricated 
 
 from __future__ import annotations
 
+import math
 import re
 import statistics
 import subprocess
@@ -2349,6 +2350,64 @@ def _surprise_eps_block(rows: Rows, heads: list[int], ticker: str, *,
                      passed_over=first if first != listing else None)
 
 
+def signed_pct(pct: float) -> str:
+    """A signed percent CHANGE as a page prints it, from its structured value (fix request 2,
+    prompt-fix 2): whole percents, and under half a percent the first significant decimal, so a
+    change is never printed "+0%" or "-0%"; an exact zero is "0%", with no sign, because nothing
+    moved. Every signed change this module writes goes through it."""
+    if pct == 0:
+        return "0%"
+    if f"{abs(pct):.0f}" != "0":   # judged on the printed whole: -0.5 rounds to even, to "-0"
+        return f"{pct:+.0f}%"
+    places = max(1, -math.floor(math.log10(abs(pct))))
+    text = f"{pct:+.{places}f}"
+    return (text.rstrip("0").rstrip(".") if "." in text else text) + "%"
+
+
+#: CIQ's 0.0 surprise beside an "Actual" and an "Estimate" of its own that differ — NFLX's GAAP EPS
+#: FY2004–FY2013 (sub-cent split-adjusted EPS: its "Difference" row reads 0.0 too, so the 0% comes
+#: from a difference rounded to the cent) and PARR's FY2014–FY2016. Each printed "+0%", a met
+#: estimate the rows contradict; the page states what the rows show instead, and computes nothing.
+NO_SURPRISE = "n/a"
+NO_SURPRISE_NOTE = "n/a: CIQ states 0% beside an actual and an estimate that differ"
+
+
+def _surprise_basis_rows(rows: Rows, ri: int) -> list[tuple[str, int]]:
+    """Where CIQ prints the ``Actual`` and ``Estimate`` rows under the surprise row ``ri``: within
+    the four rows after it, past its ``Difference`` row, before the next labelled row. Each as
+    (label, row index), in sheet order; empty where it prints none. The surprise fixture's builder
+    cuts by it (`scripts/build_surprise_listings_fixture.py`), so the two never drift."""
+    out: list[tuple[str, int]] = []
+    for i in range(ri + 1, min(ri + 5, len(rows))):
+        label = str(rows[i][0]).strip() if rows[i] and rows[i][0] is not None else ""
+        if label in ("Actual", "Estimate"):
+            out.append((label, i))
+        elif label and label != "Difference":
+            break
+    return out
+
+
+def _surprise_basis(rows: Rows, ri: int) -> tuple[dict[int, float], dict[int, float]]:
+    """The ``Actual`` and ``Estimate`` rows CIQ prints under the surprise row ``ri``
+    (`_surprise_basis_rows`), by column — or empty where it prints none."""
+    act: dict[int, float] = {}
+    est: dict[int, float] = {}
+    for label, i in _surprise_basis_rows(rows, ri):
+        target = act if label == "Actual" else est
+        for j in range(1, len(rows[i])):
+            if (n := clean_num(rows[i][j])) is not None:
+                target[j] = n
+    return act, est
+
+
+def _surprise_cell(v: float, actual: float | None, estimate: float | None) -> str:
+    """One year's surprise as stated: CIQ's fraction as a signed percent (`signed_pct`), or
+    `NO_SURPRISE` where CIQ's 0.0 sits beside an actual and an estimate that differ."""
+    if v == 0 and actual is not None and estimate is not None and actual != estimate:
+        return NO_SURPRISE
+    return signed_pct(v * 100)
+
+
 def surprise_history(bundle: CiqBundle) -> Sourced[str]:
     """Estimate beat/miss history from Estimates→Surprise — the pre-catalyst 'cracks' (EPS & revenue
     actual-vs-consensus). The sheet is by FISCAL YEAR (no quarterly view) — annual surprise;
@@ -2370,15 +2429,21 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
     cal = next((i for i in range(yhdr + 1, len(rows))
                 if any(str(c).strip() == "Calendar Years" for c in rows[i][:3])), len(rows))
 
+    placeholders: list[int] = []   # the years printed NO_SURPRISE, read from the cells, not text
+
     def series(ri: int | None, hdr: int) -> str | None:
         if ri is None:
             return None
-        out = [
-            f"FY{int(yr)} {v:+.0%}"
-            for j in range(1, len(rows[ri]))
-            if (v := clean_num(rows[ri][j])) is not None
-            and j < len(rows[hdr]) and (yr := clean_num(rows[hdr][j])) is not None
-        ]
+        act, est = _surprise_basis(rows, ri)
+        out = []
+        for j in range(1, len(rows[ri])):
+            if ((v := clean_num(rows[ri][j])) is None or j >= len(rows[hdr])
+                    or (yr := clean_num(rows[hdr][j])) is None):
+                continue
+            cell = _surprise_cell(v, act.get(j), est.get(j))
+            if cell == NO_SURPRISE:
+                placeholders.append(int(yr))
+            out.append(f"FY{int(yr)} {cell}")
         return ", ".join(out) if out else None  # full series; the render windows it
 
     fiscal = [i for i in heads if i < cal]
@@ -2406,8 +2471,13 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
            if not isinstance(block, _EpsBlock) or block.passed_over is None or eps is None else
            f"CIQ Estimates→Surprise (annual; GAAP EPS from the {block.listing} block — the "
            f"sheet's first, {block.passed_over}, is another listing's)")
+    # the n/a cells are explained ONCE, inside the line's one trailing note — the web parses the
+    # last parenthetical as the note and each ", " point's last token as its value (dossier.js
+    # `parseSeries`), so an explanation anywhere else would be read as a year's value
+    na = bool(placeholders)
     return Sourced.present(
-        "; ".join(parts) + " (GAAP-EPS basis; +beat / −miss)",
+        "; ".join(parts) + " (GAAP-EPS basis; +beat / −miss"
+        + (f"; {NO_SURPRISE_NOTE}" if na else "") + ")",
         source_ref=ref, note=refused,
     )
 
@@ -2620,7 +2690,7 @@ def _net_change(first: float, last: float) -> str:
     negative or zero-crossing series → DIRECTION words, never a bare signed % (which misreads a
     shrinking expense −13.7→−4.9 as a −64% 'decline' when it is an improvement)."""
     if first > 0 and last > 0:
-        return f"net {(last / first - 1) * 100:+.0f}%"
+        return f"net {signed_pct((last / first - 1) * 100)}"
     if first < 0 and last < 0:
         if abs(last) < abs(first):
             return "improving (magnitude toward zero)"
@@ -7181,7 +7251,7 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
                 if v is None or base is None or not base or j is None:
                     out.append("—")
                     continue
-                pct = f"{(v / base - 1) * 100:+.0f}%"
+                pct = signed_pct((v / base - 1) * 100)
                 out.append(pct if bases[j] == "est" else f"{pct} (vs {columns[j].split()[0]})")
                 continue
             v, prev = s[i], s[i - 1]
@@ -7192,7 +7262,7 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
                 # which may cover another number of months ('6M' → '9M')
                 out.append("— (basis)")
             else:
-                out.append(f"{(v / prev - 1) * 100:+.0f}%")
+                out.append(signed_pct((v / prev - 1) * 100))
         return out
 
     def margin(num: list[float | None], den: list[float | None]) -> list[str]:
@@ -7386,7 +7456,7 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
               or not kinds[i] == kinds[i - 1] == "Q"):
             qoq.append("— (basis)")
         else:
-            qoq.append(f"{(v / prev - 1) * 100:+.0f}%")
+            qoq.append(signed_pct((v / prev - 1) * 100))
     yoy: list[str] = []
     for i in range(len(rev)):
         cur = rev[i]
@@ -7402,7 +7472,7 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
         elif recl[i] != recl[i - 4] or segs[i] != segs[i - 4]:
             yoy.append("— (basis)")
         else:
-            yoy.append(f"{(cur / prior - 1) * 100:+.0f}%")
+            yoy.append(signed_pct((cur / prior - 1) * 100))
     frows += [FinRow(label="Revenue QoQ", cells=qoq), FinRow(label="Revenue YoY", cells=yoy)]
     return Sourced.present(
         FinTable(columns=columns, rows=frows,

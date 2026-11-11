@@ -8,6 +8,13 @@ decode path and cut as follows:
 - the rows `ciq_sheets.surprise_history` reads keep their cells: each fiscal-year header row (a
   listing's or "Company Level"'s), the "Fiscal Years" / "Calendar Years" dividers, each
   "EPS (GAAP)" row and the "Revenue" row;
+- the "Actual" and "Estimate" rows `surprise_history` itself reads (a 0.0 surprise beside an
+  actual and an estimate that differ is CIQ's placeholder — fix request 2, prompt-fix 2), found
+  by running it and recording each surprise row whose basis it reads, then cut by the reader's
+  own walk (`ciq_sheets._surprise_basis_rows`). Only the selected listing's fiscal-year block is
+  read, so no other listing's, Company Level's or Calendar Years' rows are kept; within a kept
+  row, only the columns where its surprise row states a number keep their cells, and the others
+  are blanked to null in place (review round 2: the first cut kept 46 rows, 12 of them read);
 - every other row is blanked to an empty list, and the sheet ends at the last row kept.
 The rows are the operator's licensed exports, each named in `_about` with its sha256.
 
@@ -23,7 +30,9 @@ import json
 import pathlib
 import sys
 from typing import Any
+from unittest import mock
 
+from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -38,6 +47,26 @@ def _kept(row: list[Any]) -> bool:
     years = sum(1 for c in row[1:10] if (n := clean_num(c)) is not None and 2000 < n < 2100)
     divider = any(str(c).strip() in ("Fiscal Years", "Calendar Years") for c in row[:3])
     return years >= 3 or divider or label.startswith("EPS (GAAP)") or label == "Revenue"
+
+
+def _basis_cells(bundle: CiqBundle, rows: list[list[Any]]) -> dict[int, set[int]]:
+    """The "Actual" / "Estimate" rows `ciq_sheets.surprise_history` reads in ``rows``, each with
+    the columns where its surprise row states a number — the cells `_surprise_cell` compares."""
+    read: list[int] = []
+    real = cs._surprise_basis
+
+    def spy(r: Any, ri: int) -> tuple[dict[int, float], dict[int, float]]:
+        read.append(ri)
+        return real(r, ri)
+
+    with mock.patch.object(cs, "_surprise_basis", spy):
+        cs.surprise_history(bundle)
+    out: dict[int, set[int]] = {}
+    for ri in read:
+        cols = {j for j in range(1, len(rows[ri])) if clean_num(rows[ri][j]) is not None}
+        for _label, i in cs._surprise_basis_rows(rows, ri):
+            out.setdefault(i, set()).update(cols)
+    return out
 
 
 def _cell(c: Any) -> Any:
@@ -55,8 +84,13 @@ def cut(folder: pathlib.Path) -> dict[str, Any]:
         bundle = CiqBundle.from_files(t, files)
         wb = bundle.workbook("estimates")
         rows = bundle.sheet("estimates", "Surprise")
-        last = max(i for i, r in enumerate(rows) if _kept(r))
-        cut_rows = [[_cell(c) for c in r] if _kept(r) else [] for r in rows[: last + 1]]
+        basis = _basis_cells(bundle, rows)
+        keep = {i for i, r in enumerate(rows) if _kept(r)}
+        last = max(keep | set(basis))
+        cut_rows = [
+            [_cell(c) if j == 0 or j in basis[i] else None for j, c in enumerate(r)]
+            if i in basis else [_cell(c) for c in r] if i in keep else []
+            for i, r in enumerate(rows[: last + 1])]
         out["names"][t] = {"sheet": "Surprise", "rows": cut_rows}
         out["_about"]["exports"][t] = {
             "file": wb.path.name, "sha256": hashlib.sha256(wb.path.read_bytes()).hexdigest()}
