@@ -29,7 +29,7 @@ from typing import Any
 from vinci.evals import gold as gd
 from vinci.evals import replay as rp
 from vinci.evals import report
-from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, DEFAULT_MODEL, Recorder, jsonable
+from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, Recorder, jsonable
 from vinci.graph.llm import AnthropicLlmClient, LlmError
 
 VERDICTS: tuple[str, ...] = ("OK", *gd.CLASSES)
@@ -42,6 +42,10 @@ NOT_FACTS = ("synthesis", "inputs", "price_store")
 #: gold's 46.1% (kappa 0.19) while writing ~1,200 output tokens for ~23 claims — it did not look
 #: the figures up. v2 makes the lookup the first field of every verdict.
 JUDGE_VERSION = 2
+#: THE JUDGE'S OWN MODEL, pinned: the judge is the harness's measuring instrument, calibrated
+#: against the gold, so it must not follow production's `graph_llm_model` (review round 0 of fix
+#: request 2, order 8). The one model ID the harness names.
+JUDGE_MODEL = "claude-opus-4-8"
 
 JUDGE_TOOL: dict[str, Any] = {
     "name": "record_fidelity_verdicts",
@@ -110,10 +114,10 @@ def judge_user(page: dict[str, Any], claims: Sequence[tuple[str, str]]) -> str:
 
 
 def judge_request(page: dict[str, Any], claims: Sequence[tuple[str, str]], *,
-                  model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS) -> rp.Request:
+                  model: str | None = None, max_tokens: int = DEFAULT_MAX_TOKENS) -> rp.Request:
     """The judge's request for one page, built by production's client at $0 (only its SDK object
     replaced by a recorder), exactly as `run_request` will send it."""
-    client = AnthropicLlmClient(model=model, max_tokens=max_tokens,
+    client = AnthropicLlmClient(model=model or JUDGE_MODEL, max_tokens=max_tokens,
                                 api_key="capture-only-not-a-key")
     rec = Recorder()
     client._client = rec  # type: ignore[assignment]

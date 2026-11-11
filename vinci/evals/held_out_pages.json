@@ -1,0 +1,28 @@
+{
+ "what": "The harness's held-out pages (fix request 2, order 8; operator 2026-11-11: \"6 chosen by a fixed rule\"). They are never used to build or tune a metric, and are kept for an evaluation no fix has seen.",
+ "rule": "the pool's tickers ordered by the sha256 of the ticker (UTF-8), the first six",
+ "pool_rule": "the committed pages (data/dossiers/*) outside the panel (synthesis_panel.json) and outside the gold's DEV half (tests/fixtures/synthesis_gold/MANIFEST.json split.dev), the pages metrics were built on",
+ "frozen": "2026-11-11",
+ "pool": [
+  "NKE",
+  "ORKA",
+  "PARR",
+  "TECX",
+  "TGT",
+  "TJX",
+  "UBER",
+  "V",
+  "VITL",
+  "VRRM",
+  "WERN",
+  "WLK"
+ ],
+ "pages": [
+  "NKE",
+  "VITL",
+  "PARR",
+  "WLK",
+  "TJX",
+  "TECX"
+ ]
+}

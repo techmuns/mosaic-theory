@@ -88,8 +88,14 @@ def _run(a: argparse.Namespace) -> int:
         _paid(a)     # prints the refusal to spend
         return 2
     _paid(a)         # loads the key from the local env
+    from vinci.evals import registry
+    registry.require_on_main(reg.sha)   # RG-D14: drawn only once main holds the registration
+    approval = registry.approval_id(a.budget_ledger)
+
+    def claim() -> object:   # RG-D9: called by run_build after its $0 checks, under its lock
+        return registry.claim_draw(reg.sha, approval=approval, unit=f"{a.ticker}:{a.build}")
     raws = bd.run_build(reg, a.ticker, a.build, budget=budget, draws_out=a.draws_out,
-                        ciq_root=ciq_root)
+                        ciq_root=ciq_root, claim=claim)
     start, end = (bd.build_row(budget, reg, k, a.ticker, a.build)
                   for k in ("build_start", "build_end"))
     gap = "first build" if start["gap_s"] is None else f"{start['gap_s']:.0f}s after the last"
@@ -216,6 +222,11 @@ def main(argv: list[str] | None = None) -> int:
         rp.refuse_inside_repo(a.out, "the registration")
         if a.out.exists():
             raise rp.ReplayError(f"{a.out} exists: a registration is written once")
+        from vinci.evals.builds import _resolve
+        # PINNED TO COMMITS (review round 0): RG-D14's own merge moves main between registering
+        # and drawing, so a ref recorded as given ("origin/main") would be read at a moved main
+        a.base, a.cand = _resolve(a.base), _resolve(a.cand)
+        cm.refuse_unless_scored_by_base(a.base)   # RG-D12: the scorer is BASE's
         pages = cm.registered_pages(a.ticker)
         cap = cm.compare_requests(a.base, a.cand, tickers=pages, transforms=a.transform,
                                   ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
@@ -230,6 +241,11 @@ def main(argv: list[str] | None = None) -> int:
                               m: f.split(",") for m, _, f in
                               (x.partition("=") for x in a.no_worsening_families)})
         cm.write_registration(reg, a.out)
+        from vinci.evals import registry
+        registry.record_registered(reg.sha, kind="compare", refs={"base": a.base, "cand": a.cand},
+                                   pages=list(reg.pages), draws=reg.draws)
+        print(f"indexed in {registry.INDEX}: merge that row to main in a docs-only PR before "
+              "any draw (RG-D14)")
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
               f"condition, targets {list(reg.targets)}, held out from this change "
               f"{list(reg.held_out) or 'none'} -> {a.out}")
@@ -260,7 +276,16 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if not _paid(a):
             return 2
-        cm.run_compare(cap, budget=budget, out_dir=a.out_dir, registration=run)
+        if cm.refuse_unless_scored_by_base(run.base_ref) != run.scorer:   # RG-D12
+            raise rp.ReplayError(f"registration {run.sha[:12]} records the scorer "
+                                 f"{run.scorer[:12]}, not BASE's: a candidate never scores itself")
+        from vinci.evals import registry
+        registry.require_on_main(run.sha)   # RG-D14: drawn only once main holds the registration
+        approval = registry.approval_id(a.budget_ledger)
+
+        def claim() -> object:   # RG-D9: called by run_compare after its $0 refusals
+            return registry.claim_draw(run.sha, approval=approval)
+        cm.run_compare(cap, budget=budget, out_dir=a.out_dir, registration=run, claim=claim)
         print(f"drawn; the approval's spend is now ${budget.spent():.4f} of "
               f"${budget.cap_usd:.2f}; score with `python -m vinci.evals score --out-dir "
               f"{a.out_dir} --registration {a.registration} --budget-ledger {a.budget_ledger}`")
@@ -276,6 +301,11 @@ def main(argv: list[str] | None = None) -> int:
                                min_gap_s=a.min_gap_s, ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT,
                                note=a.note)
         bd.write_registration(breg, a.out)
+        from vinci.evals import registry
+        registry.record_registered(breg.sha, kind="run", refs={"code": breg.code_ref},
+                                   pages=list(breg.pages), draws=breg.draws)
+        print(f"indexed in {registry.INDEX}: merge that row to main in a docs-only PR before "
+              "any draw (RG-D14)")
         print(f"registered {breg.sha[:16]}: pages {list(breg.pages)}, {breg.builds} builds of "
               f"{breg.draws} draws a page, at least {breg.min_gap_s:.0f}s between a page's "
               f"builds, code {breg.code_ref[:12]}, transforms {list(breg.transforms)} -> {a.out}")
@@ -286,6 +316,8 @@ def main(argv: list[str] | None = None) -> int:
         from vinci.evals import builds as bd
         from vinci.evals import independence as ind
         breg = bd.RunRegistration.from_json(a.registration.read_text(encoding="utf-8"))
+        from vinci.evals import registry
+        registry.require_on_main(breg.sha)   # RG-D14: scored only as main holds it registered
         res = ind.score(breg, rp.Budget.load(a.budget_ledger), a.draws_out)
         print(ind.score_text(res))
         # every STOP exits 1, NOT TESTABLE included (Codex round 1, #978), so no gate reads past it
@@ -293,6 +325,12 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "score":
         from vinci.evals import compare as cm
         reg = cm.Registration.from_json(a.registration.read_text(encoding="utf-8"))
+        if cm.refuse_unless_scored_by_base(reg.base_ref) != reg.scorer:   # RG-D12
+            raise rp.ReplayError(f"registration {reg.sha[:12]} records the scorer "
+                                 f"{reg.scorer[:12]}, not BASE's at {reg.base_ref}: it was "
+                                 "registered by a candidate's scorer and is not scored")
+        from vinci.evals import registry
+        registry.require_on_main(reg.sha)   # RG-D14: scored only as main holds it registered
         print(cm.score_text(cm.score_run(a.out_dir, reg, ledger=a.budget_ledger)))
         return 0
     if a.cmd in ("capture", "prove"):
@@ -327,6 +365,9 @@ def main(argv: list[str] | None = None) -> int:
         if not _paid(a):
             return 2
         gold = gd.load_gold()
+        if a.half == "test":   # RG-D9: the TEST half is read once, across approvals
+            from vinci.evals import registry
+            registry.claim_judge_test(approval=registry.approval_id(a.budget_ledger))
         judged = jg.run_half(a.half, budget=budget, out_dir=a.out_dir, gold=gold,
                              tickers=a.ticker)
         print(jg.calibration_text(jg.calibrate(judged, gold, a.half, tickers=a.ticker)))

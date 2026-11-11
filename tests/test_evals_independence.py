@@ -245,10 +245,14 @@ def test_uncached_first_draws_are_compared_exactly(tmp_path: Path, inputs: None)
 
 
 def test_score_run_prints_the_decision_and_exits_on_it(
-        tmp_path: Path, inputs: None, capsys: pytest.CaptureFixture[str]) -> None:
+        tmp_path: Path, inputs: None, capsys: pytest.CaptureFixture[str],
+        monkeypatch: pytest.MonkeyPatch) -> None:
     """(+/−) `score-run` reads the registration, ledger and draws it is given, prints the
     registered decision, and exits 1 on a STOP so a script cannot read past it."""
     from vinci.evals import __main__ as cli
+    from vinci.evals import registry
+    # these tests read the exit code; RG-D14's on-main check has its own pins (test_evals_order8)
+    monkeypatch.setattr(registry, "require_on_main", lambda sha, **k: None)
     from vinci.evals import builds as bd
     reg, _, out = _drawn(tmp_path, [_build(10), _build(2), _build(10), _build(2)])
     bd.write_registration(reg, tmp_path / "registration.json")
@@ -296,10 +300,14 @@ def test_a_run_with_no_degree_of_freedom_is_not_testable(tmp_path: Path, inputs:
 
 
 def test_score_run_exits_1_on_a_run_that_is_not_testable(
-        tmp_path: Path, inputs: None, capsys: pytest.CaptureFixture[str]) -> None:
+        tmp_path: Path, inputs: None, capsys: pytest.CaptureFixture[str],
+        monkeypatch: pytest.MonkeyPatch) -> None:
     """(−) Codex round 1 (#978): a NOT TESTABLE run is a STOP, so `score-run` exits 1 on it as on
     a falsification or a dissent STOP; a script gating on the exit code cannot read past it."""
     from vinci.evals import __main__ as cli
+    from vinci.evals import registry
+    # these tests read the exit code; RG-D14's on-main check has its own pins (test_evals_order8)
+    monkeypatch.setattr(registry, "require_on_main", lambda sha, **k: None)
     from vinci.evals import builds as bd
     reg, _, out = _drawn(tmp_path, [[M] * 10] * 4)
     bd.write_registration(reg, tmp_path / "registration.json")

@@ -33,11 +33,12 @@ import re
 import subprocess
 import time
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from vinci.dossier.schemas import MechanicalLayer
 from vinci.dossier.synthesis import SYNTHESIS_TOOL, _decode_escapes
 from vinci.dossier.verdict import derive_proposal, split_lean
 from vinci.evals import metrics as mt
@@ -89,21 +90,28 @@ def compare_requests(base_ref: str, cand_ref: str, *, tickers: Sequence[str] | N
     out.inputs = {"ciq_root": str(Path(ciq_root).resolve()), "pages": {}}
     for t in tickers or p["panel"]:
         page, tx = rp.panel_inputs(t, panel=p, ciq_root=ciq_root)
-        comps = rp.comps_export(t, ciq_root=ciq_root) if transforms else None
-        # the page's own CIQ folder, for a transform re-reading its exports (`variants.Context.ciq`)
-        ciq = (Path(ciq_root) / t) if transforms and (Path(ciq_root) / t).is_dir() else None
+        comps, ciq, recorded = _transform_inputs(t, Path(ciq_root), transforms)
         base = rp.capture_at(base_ref, page, tx, transforms=transforms, comps=comps, ciq=ciq)
         cand = rp.capture_at(cand_ref, page, tx, transforms=transforms, comps=comps, ciq=ciq)
         out.requests[(t, "BASE")], out.requests[(t, "CAND")] = base, cand
         out.diffs.append(page_diff(t, base, cand))
-        out.inputs["pages"][t] = {
-            "comps": ({"file": comps.name, "sha256": hashlib.sha256(comps.read_bytes()).hexdigest()}
-                      if comps is not None else None),
-            "ciq": ({f.name: hashlib.sha256(f.read_bytes()).hexdigest()
-                     for f in sorted(ciq.iterdir()) if f.is_file() and not f.name.startswith(".")}
-                    if ciq is not None else None),
-            "transcripts": p["pages"][t]["transcripts"]}
+        out.inputs["pages"][t] = {**recorded, "transcripts": p["pages"][t]["transcripts"]}
     return out
+
+
+def _transform_inputs(ticker: str, ciq_root: Path, transforms: Sequence[str]
+                      ) -> tuple[Path | None, Path | None, dict[str, Any]]:
+    """The CIQ inputs a page's transforms read — its comps export and its own CIQ folder (for a
+    transform re-reading its exports, `variants.Context.ciq`) — and their sha256 record, as a
+    registration records them (`compare_requests`) and a score checks them (`arm_layer`)."""
+    comps = rp.comps_export(ticker, ciq_root=ciq_root) if transforms else None
+    ciq = (ciq_root / ticker) if transforms and (ciq_root / ticker).is_dir() else None
+    return comps, ciq, {
+        "comps": ({"file": comps.name, "sha256": hashlib.sha256(comps.read_bytes()).hexdigest()}
+                  if comps is not None else None),
+        "ciq": ({f.name: hashlib.sha256(f.read_bytes()).hexdigest()
+                 for f in sorted(ciq.iterdir()) if f.is_file() and not f.name.startswith(".")}
+                if ciq is not None else None)}
 
 
 def page_diff(ticker: str, base: rp.Request, cand: rp.Request) -> PageDiff:
@@ -145,11 +153,43 @@ SCORER_FILES = ("vinci/evals/metrics.py", "vinci/evals/units.py", "vinci/evals/c
                 "vinci/evals/synthesis_gap_types.json")
 
 
-def scorer_fingerprint(root: Path = rp.ROOT) -> str:
+def _fingerprint(files: dict[str, bytes]) -> str:
     h = hashlib.sha256()
     for f in SCORER_FILES:
-        h.update(f.encode() + b"\0" + (root / f).read_bytes() + b"\0")
+        h.update(f.encode() + b"\0" + files[f] + b"\0")
     return h.hexdigest()
+
+
+def scorer_fingerprint(root: Path = rp.ROOT) -> str:
+    return _fingerprint({f: (root / f).read_bytes() for f in SCORER_FILES})
+
+
+def _scorer_files_at(ref: str, root: Path) -> dict[str, bytes]:
+    out: dict[str, bytes] = {}
+    for f in SCORER_FILES:
+        done = subprocess.run(["git", "-C", str(root), "show", f"{ref}:{f}"], capture_output=True)
+        if done.returncode != 0:
+            raise rp.ReplayError(f"{f} cannot be read at {ref} (git show exited "
+                                 f"{done.returncode}): BASE's scorer is not known, so nothing is "
+                                 "registered, drawn or scored")
+        out[f] = done.stdout
+    return out
+
+
+def refuse_unless_scored_by_base(base_ref: str, *, root: Path = rp.ROOT) -> str:
+    """THE SCORER IS BASE'S, NEVER THE CANDIDATE'S (fix request 2, RG-D12). The scorer was
+    whichever checkout ran `register`, and the metrics read production's own parsers from the
+    scorer files (`synthesis.py` among them), so a candidate that edited them edited the scorer of
+    its own measurement: fix 4a was registered by its own files (`755044b4…`), not its parent's
+    (`03e384a3…`). Registering, drawing and scoring each refuse a checkout whose scorer files are
+    not BASE's at ``base_ref``, naming the files; BASE's fingerprint is returned."""
+    here = {f: (root / f).read_bytes() for f in SCORER_FILES}
+    base = _scorer_files_at(base_ref, root)
+    if differ := [f for f in SCORER_FILES if here[f] != base[f]]:
+        raise rp.ReplayError(f"the scorer here is not BASE's at {base_ref}: {differ} differ — a "
+                             "candidate never scores itself; register, draw and score from a "
+                             f"checkout of {base_ref}")
+    return _fingerprint(base)
 
 
 #: Fields added after PR 2's first registrations were written: serialised only when set, so a
@@ -330,6 +370,17 @@ def registered_pages(pages: Sequence[str] | None,
     return chosen
 
 
+#: Metrics that may not be a registration's target: they are scored and printed, and no decision
+#: reads them. M-GAP: its truth is the candidate's own classifier output — the gap types #927's
+#: code wrote — so "M-GAP 37 → 4" measured compliance with the new rule-8 wording, not fidelity
+#: to the page (fix request 2, RG-D13; operator 2026-11-11, "Bar it now"), until an independent
+#: coding of the gap types exists.
+BARRED_TARGETS: dict[str, str] = {
+    "M-GAP": "RG-D13: its truth is the candidate's own classifier output, so it measures "
+             "compliance, not fidelity; barred until an independent coding of the gap types "
+             "exists"}
+
+
 def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws: int = 5,
              transforms: Sequence[str] = (), panel: dict[str, Any] | None = None,
              pages: Sequence[str] | None = None, captured: Captured | None = None,
@@ -349,6 +400,9 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
     run the approval's ``ledger`` records, complete, whose own ledger-backed score decided
     "replication required" (`first_run_verdict`); a replication of any other outcome is
     result-shopping and is refused."""
+    if barred := [t for t in targets if t in BARRED_TARGETS]:
+        raise rp.ReplayError(f"{barred} cannot be a target — {BARRED_TARGETS[barred[0]]}; it is "
+                             "still scored and reported beside the targets")
     p = panel or rp.load_panel_file()
     chosen = registered_pages(pages, p)
     for t in targets:
@@ -433,11 +487,12 @@ def write_registration(reg: Registration, path: Path) -> None:
 
 
 def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: Registration,
-                sdk: Any | None = None) -> None:
+                sdk: Any | None = None, claim: Callable[[], object] | None = None) -> None:
     """Step 2, PAID. Page by page, BASE then CAND, so the hours between conditions are bounded by
     one page's ten draws (#920 could not bound them). Draws exactly what ``registration`` says —
     once, and only the request bytes it pins — and records its sha256 in the budget ledger
-    before the first draw."""
+    before the first draw. ``claim`` (the index's `registry.claim_draw`) is called after every
+    $0 refusal and before the first write, so a refused run never consumes its registration."""
     refuse_if_unreached(c)
     reg = registration
     pages = tuple(dict.fromkeys(t for t, _ in c.requests))
@@ -477,6 +532,8 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
     if (out_dir / "draws.jsonl").exists():
         raise rp.ReplayError(f"{out_dir} already holds draws: draws append, so a second run here "
                              "would be scored with the first — use a fresh folder")
+    if claim is not None:
+        claim()
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "registration.json").write_text(reg.to_json(), encoding="utf-8")
     budget.record({"registration": reg.sha, "out_dir": str(out_dir), "usd": 0.0})
@@ -518,6 +575,9 @@ class Score:
     #: The registered rule's outcome: "ships", "ships once the moves listed are explained",
     #: "replication required", "replicated: ships" or "does not ship".
     decision: str = ""
+    #: Targets the registration named that may not decide (`BARRED_TARGETS`): reported, never read
+    #: by the decision.
+    barred: tuple[str, ...] = ()
 
 
 def runs_under(ledger: Path, sha: str) -> tuple[tuple[str, int], ...]:
@@ -532,6 +592,14 @@ def runs_under(ledger: Path, sha: str) -> tuple[tuple[str, int], ...]:
                  if f.exists() else 0)
             out.append((str(d), n))
     return tuple(out)
+
+
+def target_family(targets: Sequence[str], p_lower: dict[str, float]) -> dict[str, float]:
+    """The registered targets' family for Holm's correction. A BARRED target (`BARRED_TARGETS`)
+    keeps its place at p = 1, its worst case: its value is never read, and the correction is never
+    looser than the one the registration was made under (review round 0)."""
+    return {t: 1.0 if t in BARRED_TARGETS else p_lower[t] for t in targets if t in p_lower
+            or t in BARRED_TARGETS}
 
 
 def holm(p_values: dict[str, float], alpha: float = ALPHA) -> dict[str, bool]:
@@ -605,10 +673,37 @@ def _check_run(out_dir: Path, reg: Registration, rows: list[dict[str, Any]]) -> 
                                      f"registered {reg.draws} draws per page per condition")
 
 
+def arm_layer(reg: Registration, ticker: str, cond: str, page: dict[str, Any]) -> MechanicalLayer:
+    """THE LAYER THIS ARM'S REQUEST CARRIED (STATE row 53 item 6, handed over on issue #1004).
+    Both arms were captured with the registered transforms run by their OWN code
+    (`compare_requests`), but every draw was scored against the committed layer, untransformed,
+    BASE's for both — which tilted M-ABSENT's "quote: nowhere" and M-ECHO against CAND, whose
+    request carried words its own transform wrote. With transforms, the arm's layer is rebuilt by
+    its own ref (`replay.layer_at`) from the inputs the registration recorded, each checked by
+    sha256; without, both arms carried the committed layer, as before."""
+    if not reg.transforms:
+        return pre_synthesis_mech(page)
+    root = reg.inputs.get("ciq_root")
+    rec = (reg.inputs.get("pages") or {}).get(ticker)
+    if root is None or rec is None:
+        raise rp.ReplayError(f"registration {reg.sha[:12]} records no inputs for {ticker}: the "
+                             "layer its transforms wrote cannot be rebuilt, so it is not scored")
+    comps, ciq, got = _transform_inputs(ticker, Path(root), reg.transforms)
+    if got["comps"] != rec.get("comps") or got["ciq"] != rec.get("ciq"):
+        raise rp.ReplayError(f"{ticker}: the CIQ inputs at {root} are not the ones the "
+                             "registration recorded: the layer its transforms wrote cannot be "
+                             "rebuilt as drawn, so it is not scored")
+    ref = reg.base_ref if cond == "BASE" else reg.cand_ref
+    return MechanicalLayer.model_validate(
+        rp.layer_at(ref, page, transforms=reg.transforms, comps=comps, ciq=ciq))
+
+
 def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any] | None = None,
               pages: dict[str, dict[str, Any]] | None = None,
               transcripts: dict[str, str | None] | None = None,
-              ledger: Path | None = None) -> Score:
+              ledger: Path | None = None,
+              layer_for: Callable[[Registration, str, str, dict[str, Any]],
+                                  MechanicalLayer] | None = None) -> Score:
     """Step 3, $0 — the registered rule, on the registered run, appended to its score log.
     ``pages``/``transcripts`` override the frozen panel inputs (tests); otherwise they are read
     and checked as the capture read them. With the approval's ``ledger`` (the CLI requires it),
@@ -654,18 +749,22 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
     leans: dict[str, dict[str, Counter[str]]] = {}
     failed: Counter[str] = Counter()
     echo: dict[str, dict[str, set[str]]] = {}
-    ctxs: dict[str, mt.PageContext] = {}
+    ctxs: dict[tuple[str, str], mt.PageContext] = {}   # one per page AND arm (row 53 item 6)
+    loaded: dict[str, tuple[dict[str, Any], str | None]] = {}
     indexes: dict[tuple[str, str], mt.EchoIndex] = {}
     for row in rows:
         t, cond = row["label"].split(":")
-        if t not in ctxs:
+        if t not in loaded:
             if pages is not None:
-                page, tx = pages[t], (transcripts or {}).get(t)
+                loaded[t] = pages[t], (transcripts or {}).get(t)
             else:
-                page, tx = rp.panel_inputs(t, panel=p)   # read BY the panel's blob, checked
-            ctxs[t] = mt.PageContext(page=page, mech=pre_synthesis_mech(page), transcript=tx,
-                                     blob=(p["pages"].get(t) or {}).get("dossier_blob"))
-        ctx = ctxs[t]
+                loaded[t] = rp.panel_inputs(t, panel=p)   # read BY the panel's blob, checked
+        if (t, cond) not in ctxs:
+            page, tx = loaded[t]
+            ctxs[(t, cond)] = mt.PageContext(
+                page=page, mech=(layer_for or arm_layer)(reg, t, cond, page), transcript=tx,
+                blob=(p["pages"].get(t) or {}).get("dossier_blob"))
+        ctx = ctxs[(t, cond)]
         if not usable(row):
             failed[row["label"]] += 1
             continue
@@ -703,14 +802,22 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
                                   float(r.p_upper), sum(sum(x.base) for x in ho),
                                   sum(sum(x.cand) for x in ho))
     hard = list(reasons)   # a page that cannot be compared, a class that worsens: never ships
-    target_p = {t: results[t].p_lower for t in reg.targets if t in results}
+    # A BARRED TARGET (RG-D13) is scored and printed, never read by the decision: a registration
+    # written before the bar (#927's) decides on its other targets alone
+    barred = tuple(t for t in reg.targets if t in BARRED_TARGETS)
+    deciding = tuple(t for t in reg.targets if t not in BARRED_TARGETS)
+    if barred and not deciding and not reg.no_worsening:
+        reasons.append(f"no target decides: {list(barred)} reported only (RG-D13)")
+    target_p = target_family(reg.targets, {t: results[t].p_lower for t in deciding
+                                           if t in results})
     at_alpha = holm(target_p, reg.alpha)
     first_run_rule = reg.ship_alpha is not None and reg.replicates is None
     at_ship = holm(target_p, reg.ship_alpha) if first_run_rule and reg.ship_alpha else at_alpha
-    band = ("ship" if all(at_ship.get(t) for t in reg.targets) else
-            "replicate" if first_run_rule and all(at_alpha.get(t) for t in reg.targets) else
+    band = ("fail" if barred and not deciding and not reg.no_worsening else
+            "ship" if all(at_ship.get(t) for t in deciding) else
+            "replicate" if first_run_rule and all(at_alpha.get(t) for t in deciding) else
             "fail")
-    for t in reg.targets:
+    for t in deciding:
         got = f"p_lower {results[t].p_lower:.3g}" if t in results else "not scored"
         if not at_alpha.get(t):
             reasons.append(f"target {t} does not improve beyond noise ({got}; Holm across "
@@ -730,7 +837,7 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
     explain_from = len(reasons)
     proposals: dict[str, dict[str, str | None]] = {}
     for t, by in leans.items():
-        sleeve = str(ctxs[t].page.get("sleeve"))
+        sleeve = str(loaded[t][0].get("sleeve"))
         proposals[t] = {c: _proposal(by[c], sleeve) for c in CONDITIONS}
         modal = {c: _modal_set(by[c]) for c in CONDITIONS}
         if modal["BASE"] != modal["CAND"] or proposals[t]["BASE"] != proposals[t]["CAND"]:
@@ -759,7 +866,8 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
                   proposals=proposals, failed_draws=dict(failed),
                   echo_new={"CAND only": [f"{ph} ({', '.join(ts)})"
                                           for ph, ts in new_echo.items()]},
-                  ships=not reasons, reasons=tuple(reasons), runs=runs, decision=decision)
+                  ships=not reasons, reasons=tuple(reasons), runs=runs, decision=decision,
+                  barred=barred)
     with (out_dir / "score_log.jsonl").open("a", encoding="utf-8") as f:
         f.write(json.dumps({"at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
                             "registration": reg.sha, "scorer": reg.scorer,
@@ -786,5 +894,6 @@ def score_text(s: Score) -> str:
     if s.failed_draws:
         lines.append(f"  draws with no usable output: {s.failed_draws}")
     lines += [f"  echo, CAND only: {x}" for x in s.echo_new["CAND only"]]
+    lines += [f"  {t}: reported, never decides — {BARRED_TARGETS[t]}" for t in s.barred]
     lines += [f"  BLOCKS: {r}" for r in s.reasons]
     return "\n".join(lines)

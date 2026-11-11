@@ -710,6 +710,20 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    drawn ONCE:** `run-compare` refuses a sha the ledger already records, and a capture whose bytes
    differ from the registered ones. A stopped run is reported as stopped; drawing again needs a
    NEW registration, said so in the record. The cap is the approval's, never one run's.
+   **Since fix request 2, order 8 (2026-11-11):**
+   - **Register from a checkout of BASE.** `register`, `run-compare` and `score` refuse a checkout
+     whose scorer files are not BASE's (RG-D12): a candidate never scores itself.
+   - **The registration's row goes to main first.** `register` / `register-run` append a row to
+     `docs/evals/registrations.jsonl`. Merge it in a docs-only PR; `run-compare`, `run`, `score`
+     and `score-run` refuse a registration `origin/main` does not hold (fetch after the merge), so
+     main's history shows it registered before its draws (RG-D14).
+   - **Drawn once across approvals.** Each paid draw, and the judge's TEST read, is a row of the
+     same index; a second approval cannot draw the registration again (RG-D9). Commit the `drawn`
+     rows with the run's record.
+   - **M-GAP is never a target** (RG-D13, until an independent coding of the gap types exists):
+     it is scored and printed, and no decision reads it.
+   - **Six pages are held out** (`vinci/evals/held_out_pages.json`, by a fixed rule): they are
+     never used to build or tune a metric.
    **The replication rule** (coordinator, 2026-11-07): `register --ship-alpha 0.01` — a first run
    ships at p_lower ≤ 0.01; in (0.01, 0.05] its score decides "replication required", and it
    counts only if `register --replicates <first> --budget-ledger <the same ledger>` (the same

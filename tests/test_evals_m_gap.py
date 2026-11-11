@@ -166,11 +166,13 @@ def test_m_gap_is_undefined_off_the_frozen_pages() -> None:
 
 
 def test_a_registration_refuses_m_gap_off_its_pages() -> None:
+    """M-GAP is barred as a target on every page since RG-D13 (operator 2026-11-11, "Bar it now"):
+    off its pages, and on the panel, which allowed it before the bar."""
     _history()
-    with pytest.raises(rp.ReplayError, match="defined only on the pages"):
+    with pytest.raises(rp.ReplayError, match="RG-D13"):
         cm.register("dc5b8787", "b109e26c", targets=["M-GAP"], pages=["NFLX"])
-    reg = cm.register("dc5b8787", "b109e26c", targets=["M-GAP"])          # the panel: allowed
-    assert reg.targets == ("M-GAP",)
+    with pytest.raises(rp.ReplayError, match="RG-D13"):
+        cm.register("dc5b8787", "b109e26c", targets=["M-GAP"])          # the panel too, now
 
 
 def test_the_gap_types_decide_a_score_so_the_scorer_pins_them() -> None:
@@ -283,8 +285,9 @@ def _moved_panel() -> dict[str, Any]:
 
 
 def test_a_registration_refuses_m_gap_on_a_refrozen_page() -> None:
+    """Refused first by the RG-D13 bar, which holds on every page."""
     _history()
-    with pytest.raises(rp.ReplayError, match=r"defined only on the pages.*\['MCK'\]"):
+    with pytest.raises(rp.ReplayError, match="RG-D13"):
         cm.register("dc5b8787", "b109e26c", targets=["M-GAP"], panel=_moved_panel())
 
 

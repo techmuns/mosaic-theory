@@ -34,7 +34,7 @@ import anthropic
 
 from vinci.config import LLM_PRICE_PER_MTOK
 from vinci.dossier.schemas import MechanicalLayer
-from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, DEFAULT_MODEL, capture_calls, jsonable
+from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, capture_calls, jsonable
 from vinci.graph.llm import AnthropicLlmClient, LlmError, cost_usd
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -206,7 +206,7 @@ def _one(calls: list[dict[str, Any]], draws: int) -> Request:
     return Request(first)
 
 
-def capture(page: dict[str, Any], transcript: str | None, *, model: str = DEFAULT_MODEL,
+def capture(page: dict[str, Any], transcript: str | None, *, model: str | None = None,
             max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
             transform: Callable[[MechanicalLayer], MechanicalLayer] | None = None,
             transforms: Sequence[str] = (), comps: Path | None = None) -> Request:
@@ -218,7 +218,7 @@ def capture(page: dict[str, Any], transcript: str | None, *, model: str = DEFAUL
 
 
 def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
-               model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
+               model: str | None = None, max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
                transforms: Sequence[str] = (), comps: Path | None = None,
                ciq: Path | None = None, repo: Path = ROOT) -> Request:
     """``capture`` with the code at ``code_ref``: its ``vinci/`` is extracted by ``git archive``
@@ -226,6 +226,29 @@ def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
     script's own folder is not put on the path), refusing to run against any other ``vinci``. A ref
     older than #865 clears the material marks its synthesis never read. ``ciq`` is the page's own
     CIQ folder, read only, for a transform that re-reads its exports (`variants.Context.ciq`)."""
+    out = _child_at(code_ref, page, transcript, model=model, max_tokens=max_tokens, draws=draws,
+                    transforms=transforms, comps=comps, ciq=ciq, repo=repo)
+    return _one(out["calls"], draws)
+
+
+def layer_at(code_ref: str, page: dict[str, Any], *, transforms: Sequence[str] = (),
+             comps: Path | None = None, ciq: Path | None = None,
+             repo: Path = ROOT) -> dict[str, Any]:
+    """THE LAYER A REQUEST AT ``code_ref`` CARRIED, as JSON: the committed layer as ``synthesize``
+    received it, with ``transforms`` run by the code at ``code_ref`` exactly as `capture_at` runs
+    them (the same child, the same inputs), and no request built. What an arm's draws are scored
+    against (STATE row 53 item 6): each condition's own layer, never BASE's for both."""
+    out: dict[str, Any] = _child_at(code_ref, page, None, model=None,
+                                    max_tokens=DEFAULT_MAX_TOKENS, draws=1, transforms=transforms,
+                                    comps=comps, ciq=ciq, repo=repo, layer_only=True)["layer"]
+    return out
+
+
+def _child_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
+              model: str | None, max_tokens: int, draws: int, transforms: Sequence[str],
+              comps: Path | None, ciq: Path | None, repo: Path,
+              layer_only: bool = False) -> dict[str, Any]:
+    """`capture_child.py` against the code at ``code_ref``, and its output."""
     rc = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor",
                          MATERIAL_MARKED_BEFORE_SYNTHESIS, code_ref],
                         capture_output=True).returncode
@@ -244,8 +267,12 @@ def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
         (root / "page.json").write_text(json.dumps(page), encoding="utf-8")
         args = [sys.executable, "-P", str(Path(__file__).with_name("capture_child.py")),
                 "--page", str(root / "page.json"), "--out", str(root / "out.json"),
-                "--model", model, "--max-tokens", str(max_tokens), "--draws", str(draws),
+                "--max-tokens", str(max_tokens), "--draws", str(draws),
                 "--expect-root", str(root / "code")] + (["--unmark-material"] if older else [])
+        if model is not None:   # unset: the model the code at `code_ref` configures (RG-D15)
+            args += ["--model", model]
+        if layer_only:
+            args += ["--layer-only"]
         for t in transforms:
             args += ["--transform", t]
         if comps is not None:
@@ -259,8 +286,8 @@ def capture_at(code_ref: str, page: dict[str, Any], transcript: str | None, *,
         done = subprocess.run(args, env=env, capture_output=True, text=True)
         if done.returncode != 0:
             raise ReplayError(f"capture at {code_ref} failed: {done.stderr.strip()[-2000:]}")
-        calls = json.loads((root / "out.json").read_text(encoding="utf-8"))["calls"]
-    return _one(calls, draws)
+        out: dict[str, Any] = json.loads((root / "out.json").read_text(encoding="utf-8"))
+    return out
 
 
 # --------------------------------------------------------------------------------- logged builds

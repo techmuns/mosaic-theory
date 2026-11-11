@@ -232,12 +232,17 @@ def _claim(ledger: Path) -> Iterator[None]:
 
 def run_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.Budget,
               draws_out: Path, ciq_root: Path, sdk: Any | None = None,
-              clock: Callable[[], float] = time.time) -> list[dict[str, Any] | None]:
+              clock: Callable[[], float] = time.time,
+              claim: Callable[[], object] | None = None) -> list[dict[str, Any] | None]:
     """PAID: build ``build`` of ``ticker`` — ``reg.draws`` draws of the pinned request through
     `replay.run_request`, every refusal (`prepare_build`) made before the first one is sent. The
-    end row is written even when the build stops, so the next build's gap is measured from it."""
+    end row is written even when the build stops, so the next build's gap is measured from it.
+    ``claim`` (the index's `registry.claim_draw`) is called under the lock once every $0 refusal
+    has passed, so a refused build never consumes its unit."""
     with _claim(budget.ledger):   # the check and the claim (the start row) are one step
         pb = prepare_build(reg, ticker, build, budget=budget, ciq_root=ciq_root, clock=clock)
+        if claim is not None:
+            claim()
         head = {"registration": reg.sha, "ticker": ticker, "build": build, "label": pb.label,
                 "request": reg.requests[ticker]}
         budget.record({"build_start": {**head, "t": pb.t, "gap_s": pb.gap_s,

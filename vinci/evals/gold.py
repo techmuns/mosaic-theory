@@ -10,6 +10,7 @@ THE SPLIT is the diagnosis's own, page-disjoint: DEV = the 14 pages AMZN … NFL
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 from collections import Counter
@@ -50,8 +51,36 @@ def _jsonl(p: Path) -> list[dict[str, Any]]:
     return [json.loads(x) for x in p.read_text(encoding="utf-8").splitlines() if x.strip()]
 
 
+def _sha256(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def verify_gold(folder: Path, manifest: dict[str, Any]) -> None:
+    """THE FROZEN GOLD IS THE GOLD ITS MANIFEST HASHED (fix request 2, RG-D11). Every file a
+    metric reads must equal the sha256 the manifest records, or nothing is loaded: a label edit
+    that keeps the pinned counts moved M-LABEL's and M-SIGN's precision and recall, and nothing
+    noticed. ``claims.jsonl``, ``adjudicated.jsonl`` and ``TAXONOMY.md`` are recorded as they are;
+    each coder file is its two halves concatenated (``MANIFEST.files``), split at the DEV half's
+    claim count."""
+    src = manifest["source_sha256"]
+    for name in ("claims.jsonl", "adjudicated.jsonl", "TAXONOMY.md"):
+        if (got := _sha256((folder / name).read_bytes())) != src[name]:
+            raise ValueError(f"{folder / name}: sha256 {got[:12]} is not the manifest's "
+                             f"{src[name][:12]} — the frozen gold was edited; nothing is loaded")
+    n = int(manifest["split"]["dev"]["claims"])
+    for coder, prefix in (("coder_a.jsonl", "A"), ("coder_b.jsonl", "B")):
+        lines = (folder / coder).read_bytes().splitlines(keepends=True)
+        for half, part in ((f"{prefix}_half1.jsonl", lines[:n]), (f"{prefix}_half2.jsonl",
+                                                                   lines[n:])):
+            if (got := _sha256(b"".join(part))) != src[half]:
+                raise ValueError(f"{folder / coder}: its part recorded as {half} has sha256 "
+                                 f"{got[:12]}, not the manifest's {src[half][:12]} — the frozen "
+                                 "gold was edited; nothing is loaded")
+
+
 def load_gold(folder: Path = GOLD_DIR) -> list[GoldClaim]:
     manifest = json.loads((folder / "MANIFEST.json").read_text(encoding="utf-8"))
+    verify_gold(folder, manifest)
     dev = set(manifest["split"]["dev"]["pages"])
     claims = _jsonl(folder / "claims.jsonl")
     a = {r["id"]: r for r in _jsonl(folder / "coder_a.jsonl")}
