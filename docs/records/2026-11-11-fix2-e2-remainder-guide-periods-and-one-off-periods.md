@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# Every guide filed under the next-fy default now reads the period its release states, and a one-off item carries its period (TeamNostra fix request 2: RE2-D20's remainder, RE2-D17) — 21 of 21 defaults read, 6 labels made specific, 19 of 19 one-offs dated; the synthesis request moves on three panel pages at re-assembly, so a panel check is owed
+# Every guide filed under the next-fy default now reads the period its release states, a one-off item carries its period, a component inside a figure is not its lead, and a filing read with no going-concern doubt is CHECKED-ABSENT (TeamNostra fix request 2: RE2-D20's remainder, RE2-D17, and the residuals of RE2-D6 and RE2-D10) — built 27 of 27 at $0, 27 of 27 pages and requests move at re-assembly, so a panel check is owed
 
 **WHAT.**
 - **RE2-D20, the rest** (`vinci/edgar/release_parse`). #976 flagged each guide filed under the
@@ -21,7 +21,7 @@ superseded-by:
     holds "The timing and amount of such relocation expenditures are still uncertain;".
   - **A header that says what its outlook rests on.** A year-to-date or relative phrase that
     reaches "results" through its own year is the reported basis (`_YEAR_RESULTS_AFTER`). A header
-    naming several periods is read at the clause its last forward VERB opens, cut at the first
+    naming several periods is read at the clause its ONE forward VERB opens (two give no answer), cut at the first
     comma (`_named_period`), with the header's one year added where that clause names none. This
     covers 5 VRRM guides and 1 EPAM guide. A clause naming a quarter gives the quarter, so a
     quarterly list never reads as annual.
@@ -40,6 +40,16 @@ superseded-by:
   - **The full-year impairment numerator** (`_fy_impairment`) passes over a quarter's or a
     year-to-date item.
 
+- **RE2-D6's residual** (`release_parse._lead`). An amount introduced as a component ("including
+  an SRE impact of $195.9 million") is not the clause's lead when a figure precedes it. So Par
+  Pacific's "Adjusted Net Loss of $(5.5) million in the third quarter of 2024" is read, signed, not
+  set aside silently by `_sub_unit`. A component with no figure before it is still the lead, so the
+  sub-unit and quarter-against-a-year refusals hold (review).
+- **RE2-D10's other half** (`filing_sections._going_concern`). A filing whose notes were read (a
+  notes-to-financial-statements heading) and that states no doubt returns the CHECKED-ABSENT state
+  (no doubt, no verbatim, bound to the filing), never None. Text with no notes heading still makes
+  no claim.
+
 **WHY.**
 - **RE2-D20.** A default that hides an absence is what the audit asked to stop. #976 shipped the
   flag, and these readings remove the absence itself where the text has the answer.
@@ -50,48 +60,64 @@ superseded-by:
   All were stored, and digested for the synthesis, exactly as the quarter's. `_fy_impairment` took
   LLY's prior-year Q1 charge and VRRM's six-month one as full-year numerators.
 
+- **RE2-D6.** #962 named it and left it: the SRE impact was taken for the current figure, so the
+  comparison read as a sub-unit's.
+- **RE2-D10.** A filing read in full with no doubt statement and a filing never read gave the same
+  None. So the digest's "none stated (checked, absent)" and the Brief's "not flagged" could never
+  print, and a reader that missed a real conclusion looked exactly like one that found none.
+
 **HOW VERIFIED.**
-- **Fail first, on base `c99974c2`:**
-  - 15 of `tests/test_fix2_e2_remainder.py`'s pins fail on base, every one on real EX-99.1 text
-    except the constructed negatives, and pass on head;
-  - the two moved existing pins: `test_guidance_fix2_e2.py::test_re2_d20_verra_mobility_header_period_is_read`
-    (was #976's partial-state pin) and
-    `test_guidance_opener_period.py::test_a_quarter_opener_never_labels_a_full_year_range`, now "FY"
-    and still never Q3;
-  - the negatives that pass on both: a glued heading without an outlook noun, a joined guide with
-    its own quarter, and every committed one-off round-tripping byte-identically.
-- **The $0 replay, through `replay_pages.py`:** every cited EX-99.1 on the 27 committed pages, read
-  from the local SEC caches with base and head code. 122 exhibits, 0 cache misses, 0 errors.
-  - **Guides:** 27 of 141 move, and only these:
-    - the 21 defaults, now read: BURL 1 (Fiscal 2026), EPAM 1 (2025), SMPL 13 (Fiscal 2025, 2026
-      or 2027, and one FY), VITL 1 (2026) and VRRM 5 (2026);
-    - 6 labels made specific in the same scope: EPAM's two "FY" → "2025" and "2026", and SMPL's
-      four bare-year net-sales guides → "Fiscal" of the same year, which their lists' headers state.
+- **Fail first** (the full $0 build's own run, head's tests on base code `7edbfa36` and head
+  `73619437`): **23 of 93 tests fail on base and pass on head**, and 0 fail at head. They cover
+  every RE2-D20 shape on real EX-99.1 text, every RE2-D17 reading, RE2-D6 on Par Pacific's real 8-K
+  and RE2-D10 on TECX's real 10-Q, the review's pins, and the two moved existing pins:
+  - `test_guidance_fix2_e2.py::test_re2_d20_verra_mobility_header_period_is_read` (#976's
+    partial-state pin);
+  - `test_guidance_opener_period.py::test_a_quarter_opener_never_labels_a_full_year_range`, now "FY"
+    and still never Q3.
+- **The full $0 build** (`python -m vinci.impact run --base 7edbfa36 --head 73619437`). Every
+  committed page was built with each side's code from the same inputs.
+  - **Store:** a read-only master, sha256 `4e77757f5cb370050ab9b43c450053379e8d20c0f605d4d4213b9e152e6a8e9d`,
+    snapshotted fresh per build. 0 responses fetched live.
+  - **Built 27 of 27; 27 of 27 pages move, with 115 field changes.** These are:
+    - the going-concern read on 26 pages (MVST keeps its doubt);
+    - 37 guide items on BURL, EPAM, SMPL, VITL and VRRM, with the default flags gone;
+    - 22 of 23 one-offs on 7 pages;
+    - BURL's `valuation.adjusted_eps` and `current_guide` lines, SMPL's and VITL's
+      `disclosure_gaps` basis, and MVST's driver line, each now printing the period.
+  - **Requests:** 27 of 27 differ. The system prompt and tool schema are unchanged, and the
+    frozen-panel replay differs on LLY and SMPL.
+  - **Readers:** the decision ledger, scoring report and monitor are identical at both refs. The
+    committed pages re-render identically, and only `snapshots/extraction_versions.json` differs in
+    `frontend/`.
+- **The cited-release replay** (`replay_pages.py`, the committed pages' 122 cited EX-99.1s and 27
+  10-Qs, base vs head, 0 misses):
+  - **Guides:** 27 of 141 move, being the 21 defaults read (BURL 1, EPAM 1, SMPL 13, VITL 1, VRRM 5)
+    and 6 labels made specific in scope.
   - **Default flags:** 21 → 0.
-  - **One-offs:** 19 of 19 gain a period, on BRBR 4, IT 1, LLY 1, MVST 1, SMPL 7, VRRM 4 and WLK 1.
-    Each was checked against its release; IT's against its own table, which shows "—" for the
-    quarter and 155 for the year.
-  - **Actuals and event impacts:** 0 move.
+  - **One-offs:** 19 of 19 dated. IT's was checked against its own table ("—" for the quarter, 155
+    for the year).
+  - **Actuals:** 1 added, PARR's Q3 2024 -5.5. PARR's $0 build today reads a newer release set, so
+    that row reaches no page now.
   - **`_fy_impairment`:** moves on LLY (35.0 → None) and VRRM (64.0 → None). Neither page prints
     the margin line it feeds.
 
 **BOUNDARY.**
-- **Pages:** the 27 committed pages at `c99974c2`.
-- **Exhibits:** their 122 cited EX-99.1s.
-- **Unit:** one guide item, one one-off item, or one `qa_flags` line.
+- **Pages:** the 27 committed pages at `7edbfa36`.
+- **Exhibits:** their 122 cited EX-99.1s and 27 cited 10-Qs (the replay); each page's own $0-build
+  inputs (the full build, 12,672 responses).
+- **Store:** the master named above.
+- **Unit:** one leaf field, one guide item, one one-off item, or one `qa_flags` line.
 - **Date:** 2026-11-11.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **No committed page moves in this PR.** The new readings reach a page at its next assembly or
   release refresh.
-- **The synthesis request moves then on 10 of the 27 pages, measured.** The measure is each page's
-  primary-source digest and its gap-driver lines, rebuilt from the replayed releases with base and
-  head code.
-  - **Every moved line differs only by its period label.**
-  - **On the panel:** BURL moves 1 digest line and 1 driver line; LLY 1 and 1; SMPL 16 and 6.
-    CNXC, MCK and ROST are unchanged.
-  - **Off it:** BRBR, EPAM, IT, MVST, VITL, VRRM and WLK.
-  - **A six-page panel check is owed before merge,** and is proposed, not run.
+- **The synthesis request moves then on 27 of 27 pages,** all six panel pages included. 26 gain the
+  checked-absent going-concern line, and the rest of the moved lines differ only by a period label.
+  **A six-page panel check is owed before merge,** and is proposed, not run.
+- **The Brief gains "Going concern: not flagged" on 26 pages at re-assembly.** That is a state the
+  renderer and `dossier.js` already print.
 - **`compare` replays the committed layer**, so it cannot see this change. The paid check needs a
   release re-read transform in `vinci/evals/variants.py`.
 - **The year-to-date one-off label is the release's words, not a code.** No consumer parses it,
