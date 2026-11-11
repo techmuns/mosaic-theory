@@ -594,14 +594,14 @@ const EXTRACTION_VERSIONS = [
   ["2026-11-11.same-day-filings-and-alias-by-day",
     "a same-day 10-K and 10-K/A resolve by a stated precedence, never by row order, and a " +
     "past bar reads the EPS alias of its own day (TeamNostra fix request 2, RE1-D7, " +
-    "RE1-D10, RE1-D15): two filings of one figure on one day go to `filing_precedence` (a " +
-    "periodic report over another form, an amendment over what it amends, then the greater " +
-    "accession) in `latest_annual`, `annual_by_period`, `latest_instant`, the P/E's EPS " +
-    "pick and net debt, and `superseded` names the same-day figure it restates; the P/E " +
-    "range reads each bar through the alias served on that bar's day (`served_series`) and " +
-    "says when it reads two, run by run; segment profit matches the us-gaap, srt and dei " +
-    "namespaces by their URI (2009-2010's xbrl.us ones too), whatever prefix the instance " +
-    "binds. On the 27 committed pages no value moves (13,986 compared)"],
+    "RE1-D10, RE1-D15): two filings of one figure on one day go to `served_filing` (a " +
+    "periodic report over another form, within one form its amendment over what it amends, " +
+    "then the greater accession) in `latest_annual`, `annual_by_period`, `latest_instant`, " +
+    "the P/E's EPS pick and net debt, and `superseded` names the same-day figure it " +
+    "restates; the P/E range reads each bar through the alias served on that bar's day " +
+    "(`served_series`) and says when it reads two, run by run; segment profit matches the " +
+    "us-gaap, srt and dei namespaces by their URI (2009-2010's xbrl.us ones too), whatever " +
+    "prefix the instance binds. On the 27 committed pages no value moves (13,986 compared)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

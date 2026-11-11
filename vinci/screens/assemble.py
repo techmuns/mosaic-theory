@@ -19,8 +19,8 @@ from vinci.edgar.concepts import (
     ServedSeries,
     currency_withheld,
     facts_as_of,
-    filing_precedence,
     refused_endpoint,
+    served_filing,
     served_series,
     share_count_change,
     unit_currency,
@@ -260,7 +260,8 @@ def annual_eps_point_as_of(points: list[ConceptPoint], d: date,
     if not cand:
         return None
     # a same-day 10-K and 10-K/A by the filing served, never by row order (RE1-D7)
-    return max(cand, key=lambda p: (p.period_end, filing_precedence(p)))
+    end = max(p.period_end for p in cand)
+    return served_filing(p for p in cand if p.period_end == end)
 
 
 def annual_eps_as_of(points: list[ConceptPoint], d: date,

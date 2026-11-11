@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 from bisect import bisect_right
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from datetime import date, timedelta
 from decimal import ROUND_HALF_EVEN, Decimal
 from typing import Any, NamedTuple
@@ -563,43 +563,74 @@ def _is_periodic(form: str | None) -> bool:
     return str(form or "").upper().startswith((*ANNUAL_REPORT_FORMS, "10-Q"))
 
 
-def filing_precedence(p: ConceptPoint) -> tuple[date, bool, bool, str]:
-    """Which of two filings of one figure is SERVED: the later day; on one day, a periodic report
-    over any other form, an amendment over the report it amends, then the greater accession.
+def _base_form(form: str | None) -> str:
+    """The form an amendment amends: ``10-K/A`` → ``10-K``."""
+    f = str(form or "").upper()
+    return f[:-2] if f.endswith("/A") else f
+
+
+def served_filing(points: Iterable[ConceptPoint]) -> ConceptPoint:
+    """Which filing of ONE figure (one period, tag and unit) is SERVED: the latest day; on it, a
+    periodic report over any other form; within ONE form, its amendment over the report it amends;
+    then, across forms, the greater accession.
 
     ONE DAY IS NOT ONE MOMENT (TeamNostra fix request 2, RE1-D7). companyfacts dates a filing to
     the day, so a 10-K and the 10-K/A correcting it, filed the same day, tied on ``filed``, and
     ``max`` served whichever row the response listed first: the same rows in reverse order served
     90,000,000 instead of 150,000,000, moved EBITDA by 60,000,000, and :func:`superseded` (strict
     ``<``) named no restatement either way. An amendment is filed after what it amends, so it is
-    served. A periodic report outranks a proxy or an 8-K stating its figure the same day, which is
-    the fact layer's rule too (`vinci.facts.reader.PERIODIC_FORMS`; NKE's 10-K and DEF 14A of
-    2026-07-15). The accession ranks last, only so the choice never depends on row order."""
-    form = str(p.form or "").upper()
-    return (p.filed, _is_periodic(form), form.endswith("/A"), p.accession or "")
+    served over it. A periodic report outranks a proxy or an 8-K stating its figure the same day,
+    which is the fact layer's rule too (`vinci.facts.reader.PERIODIC_FORMS`; NKE's 10-K and DEF 14A
+    of 2026-07-15).
+
+    AN AMENDMENT OUTRANKS ONLY THE FORM IT AMENDS (Codex, round 1 of #986). GPK filed its
+    2011-12-31 long-term debt twice on 2012-07-26: a 10-K/A (…-000042, 2,349,700,000) and a 10-Q
+    (…-000044, 2,358,500,000). The 10-K/A amends the 10-K, not the 10-Q, so the two are different
+    reports and the greater accession is served. It is chosen a GROUP at a time, because no
+    pairwise key can say this: a 10-K/A beats its 10-K, the 10-Q beats the 10-K/A, the 10-K beats
+    the 10-Q, and a key would cycle. The accession ranks last, so no choice depends on row order;
+    the value breaks the last tie (two figures under one accession) for the same reason."""
+    pts = list(points)
+    if not pts:
+        raise ValueError("served_filing takes at least one point")
+    day = max(p.filed for p in pts)
+    top = [p for p in pts if p.filed == day]
+    if any(_is_periodic(p.form) for p in top):
+        top = [p for p in top if _is_periodic(p.form)]
+    by_form: dict[str, ConceptPoint] = {}
+    for p in top:
+        cur = by_form.get(b := _base_form(p.form))
+        rank = (str(p.form or "").upper().endswith("/A"), p.accession or "", p.value)
+        if cur is None or rank > (str(cur.form or "").upper().endswith("/A"),
+                                  cur.accession or "", cur.value):
+            by_form[b] = p
+    return max(by_form.values(), key=lambda p: (p.accession or "", p.value))
+
+
+def _latest_period(points: Iterable[ConceptPoint]) -> ConceptPoint | None:
+    """The latest period's served filing (:func:`served_filing`), or None."""
+    pts = list(points)
+    if not pts:
+        return None
+    end = max(p.period_end for p in pts)
+    return served_filing(p for p in pts if p.period_end == end)
 
 
 def latest_annual(points: list[ConceptPoint]) -> ConceptPoint | None:
     """Latest full-year flow value (most recent period_end, then the filing served,
-    :func:`filing_precedence`)."""
-    annual = [p for p in points if p.is_annual]
-    if not annual:
-        return None
-    return max(annual, key=lambda p: (p.period_end, filing_precedence(p)))
+    :func:`served_filing`)."""
+    return _latest_period(p for p in points if p.is_annual)
 
 
 def annual_by_period(points: list[ConceptPoint]) -> dict[date, ConceptPoint]:
     """Latest-FILED annual point per fiscal ``period_end`` — collapses restatements to the most
     recent filing without mutating earlier rows (same rule as :func:`latest_annual`, a same-day tie
-    by :func:`filing_precedence`)."""
-    out: dict[date, ConceptPoint] = {}
+    by :func:`served_filing`)."""
+    groups: dict[date, list[ConceptPoint]] = {}
     for p in points:
-        if not p.is_annual:
-            continue
-        cur = out.get(p.period_end)
-        if cur is None or filing_precedence(p) > filing_precedence(cur):
-            out[p.period_end] = p
-    return out
+        if p.is_annual:
+            groups.setdefault(p.period_end, []).append(p)
+    return {end: served_filing(ps) for end, ps in groups.items()}
 
 
 #: An annual is NOT CURRENT once its own concept carries a period ending at least this long after
@@ -770,7 +801,7 @@ def _substitute_series(facts: dict[str, Any], concept: str, tags: tuple[str, ...
         legs = [m[end] for m in maps]
         if any(p.period_start != legs[0].period_start for p in legs):
             continue
-        last = max(legs, key=filing_precedence)
+        last = served_filing(legs)
         out[end] = last.model_copy(update={"tag": " + ".join(tags),
                                            "value": sum(p.value for p in legs)})
     return out
@@ -1056,12 +1087,19 @@ def superseded(facts: dict[str, Any], p: ConceptPoint) -> ConceptPoint | None:
     (filed 2024-07-30, after the steel spin-off) and was first filed as 5,242 (2022-08-01).
 
     EARLIER INCLUDES THE SAME DAY (RE1-D7): a filing that day which ``p`` outranks
-    (:func:`filing_precedence`) came before it — the 10-K a same-day 10-K/A corrects. The first
+    (:func:`served_filing`) came before it — the 10-K a same-day 10-K/A corrects. The first
     filing is the earliest day's, and on that day the original periodic report."""
-    rank = filing_precedence(p)
-    earlier = [q for q in points_for_tag(facts, p.tag, currency=EVERY)
-               if q.unit == p.unit and q.period_start == p.period_start
-               and q.period_end == p.period_end and filing_precedence(q) < rank]
+    same = [q for q in points_for_tag(facts, p.tag, currency=EVERY)
+            if q.unit == p.unit and q.period_start == p.period_start
+            and q.period_end == p.period_end]
+    def filing(q: ConceptPoint) -> tuple[str | None, str | None, float]:
+        # the filing itself, not the point's label: a caller's `concept` names it otherwise
+        return (q.accession, q.form, q.value)
+
+    day = [q for q in same if q.filed == p.filed]
+    served_that_day = bool(day) and filing(served_filing(day)) == filing(p)
+    earlier = [q for q in same if q.filed < p.filed
+               or (served_that_day and q.filed == p.filed and filing(q) != filing(p))]
     # the period's FIRST filing, whatever came between: a figure restated and restated back is
     # the figure first filed, not a restatement
     first = (min(earlier, key=lambda q: (q.filed, not _is_periodic(q.form),
@@ -1173,7 +1211,7 @@ def latest_instant(points: list[ConceptPoint]) -> ConceptPoint | None:
     instants = [p for p in points if p.is_instant]
     if not instants:
         return None
-    return max(instants, key=lambda p: (p.period_end, filing_precedence(p)))
+    return _latest_period(instants)
 
 
 # --- shares-outstanding trajectory (ONE implementation, two consumers) --------------------------

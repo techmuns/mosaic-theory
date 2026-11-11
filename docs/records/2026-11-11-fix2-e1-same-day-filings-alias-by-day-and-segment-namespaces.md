@@ -9,7 +9,7 @@ superseded-by:
 # Fix request 2, SEC client (RE1-D7 and RE1-D10, order 4; RE1-D15, order 5): a same-day 10-K and 10-K/A resolve by a stated precedence and name the figure they restate, a past bar reads the EPS alias of its own day, and segment profit reads namespaces by URI. No page moves
 
 **WHAT.**
-- **RE1-D7** (`concepts.filing_precedence`, used by `latest_annual`, `annual_by_period`,
+- **RE1-D7** (`concepts.served_filing`, used by `latest_annual`, `annual_by_period`,
   `latest_instant`, `superseded`, `annual_line`'s summed legs, the P/E's own EPS pick
   (`screens.assemble.annual_eps_point_as_of`, found in review round 0), and net debt's `_at`,
   `latest` and stale reading).
@@ -19,8 +19,13 @@ superseded-by:
     moved EBITDA from 185,000,000 to 125,000,000. `superseded` compared with a strict `<`, so it
     named no restatement either way.
   - **The fix.** On one day, a periodic report (10-K, 10-Q, 20-F, 40-F, or an amendment of one) is
-    served over any other form, an amendment over the report it amends, then the greater
-    accession. That is the fact layer's naming rule too. `superseded` counts a same-day filing the
+    served over any other form. Within one form, its amendment is served over the report it
+    amends. Across forms the greater accession is served. The choice is made a group at a time
+    (Codex, round 1): GPK's 10-K/A and 10-Q of 2012-07-26 state its 2011-12-31 long-term debt as
+    2,349,700,000 and 2,358,500,000, and the 10-K/A does not amend the 10-Q, so the 10-Q's
+    greater accession is served. A pairwise key ranking every amendment first served the 10-K/A,
+    and no pairwise key can state the rule without a cycle (10-K/A over 10-K, 10-Q over 10-K/A,
+    10-K over 10-Q). The periodic-over-proxy part is the fact layer's naming rule too. `superseded` counts a same-day filing the
     served one outranks as earlier, so the provenance line names the figure the amendment
     restates. Its "first filing" is the earliest day's, and on that day the original periodic
     report.
@@ -76,7 +81,9 @@ RE1-D10 and RE1-D15 are latent on the corpus.
   are the later-day negative pin, the plain `us-gaap` prefix case, the committed-instance prefix
   check, and one row order that happened to win. Review round 0 added 3, each failing before its
   fix: the P/E's EPS pick on a same-day amendment (in both row orders), a 2009 taxonomy, and an
-  alias left and returned to. 28 cases in all.
+  alias left and returned to. 28 cases in all. Codex's round 1 added 3 more (GPK in both row
+  orders, and three same-day filings of two forms in every order), each failing before the
+  fix: 31.
 - **The series is the walk on the cut blob, measured on all 31 committed companyfacts fixtures.**
   Every multi-alias concept, every day a row of its aliases was filed: 14,167 of 14,167 days
   agree, in every currency and in USD. The served alias moves 73 times over those fixtures'

@@ -156,6 +156,36 @@ def test_re1_d7_a_periodic_report_is_served_over_a_same_day_proxy() -> None:
         assert got is not None and (got.form, got.value) == ("10-K", 12.0)
 
 
+@pytest.mark.parametrize("order", ["as written", "reversed"])
+def test_re1_d7_an_amendment_outranks_only_the_form_it_amends(order: str) -> None:
+    """REAL (Codex, round 1): GPK's 2011-12-31 long-term debt was filed twice on 2012-07-26, by a
+    10-K/A (…-000042, 2,349,700,000) and a 10-Q (…-000044, 2,358,500,000). The 10-K/A amends
+    the 10-K, not the 10-Q, so the two are different reports and the greater accession is served."""
+    blob = json.loads((_FIX / "net_debt_shapes" / "GPK.json").read_text())
+    rows = blob["facts"]["us-gaap"]["LongTermDebt"]["units"]["USD"]
+    if order == "reversed":
+        rows.reverse()
+    cut = facts_as_of(blob, date(2012, 8, 1))
+    got = _at(cut, "LongTermDebt", date(2011, 12, 31))
+    assert got is not None and (got.form, got.value) == ("10-Q", 2_358_500_000)
+    served = latest_instant([p for p in points_for_tag(cut, "LongTermDebt")
+                             if p.period_end == date(2011, 12, 31)])
+    assert served is not None and served.accession == "0001408075-12-000044"
+
+
+def test_re1_d7_three_same_day_filings_of_two_forms_resolve_whatever_the_order() -> None:
+    """A 10-K, its 10-K/A and a 10-Q on one day: the 10-K/A wins its own form, then the greater
+    accession across forms (here the 10-Q's). No pairwise key can say this without a cycle."""
+    rows = [_row(None, "2024-12-31", 1.0, "0000999999-25-000005", "2025-02-20"),
+            _row(None, "2024-12-31", 2.0, "0000999999-25-000003", "2025-02-20", "10-K/A"),
+            _row(None, "2024-12-31", 3.0, "0000999999-25-000004", "2025-02-20", "10-Q")]
+    import itertools
+    for perm in itertools.permutations(rows):
+        blob = _blob("LongTermDebtNoncurrent", "USD", [dict(r) for r in perm])
+        got = _at(blob, "LongTermDebtNoncurrent", date(2024, 12, 31))
+        assert got is not None and (got.form, got.value) == ("10-Q", 3.0), perm
+
+
 # --- RE1-D10: one alias for every date -----------------------------------------------------------
 
 def _eps_row(end: str, val: float, accn: str, filed: str, fy: int | None = None) -> dict[str, Any]:
