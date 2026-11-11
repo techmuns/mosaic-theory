@@ -37,6 +37,27 @@ superseded-by:
   `SEC_USER_AGENT` rule (placeholder refused, contact email required; pinned equal), and fails
   the run only when a set value would be refused.
 
+- **The drift guard's reach (coordinator, 2026-11-11).** The theme session found `mechanical`
+  building every page's P/E pair from `vinci/screens/assemble.py`, which the drift guard did not
+  watch. `tests/test_page_build_modules_classified.py` now walks every `vinci` import, module-level
+  or inside a function, from every watched module and from `render.py`. Every module reached must
+  be watched, or be in `NOT_EXTRACTION` with the reason it cannot change a page value.
+  - Corpus first: on main it named 63 unclassified modules, `vinci/screens/assemble.py` among
+    them.
+  - 20 can change a page value given the same source data, so they are watched and pinned. Among
+    them: the P/E pair and listing basis (`screens/assemble.py`, `screens/run.py`), the candidate
+    record (`rank/ranker.py`), filing text (`graph/filings.py`), exposure (`graph/exposure.py`),
+    the LLM request (`graph/llm.py`), the benchmark (`monitor.py`, `universe.py`), labels
+    (`labels.py`, `sectors.py`, `sic_table.py`), books (`followed.py`, `sleeves.py`), the
+    underwrite (`scenarios.py`), `config.py`, the ADS basis (`resolver/resolver.py`, `ads_ratio.py`,
+    `instrument.py`, `schemas/listing.py`) and the `Verdict` words (`schemas/ledger.py`).
+  - The other 43 are excluded with a reason: transport, storage, types whose validators only
+    refuse, re-exports, and screen-time or offline-only code.
+  - The walk stops at an excluded module but passes through an excluded package `__init__.py`.
+    Review caught this: stopping there hid `rank/ranker.py` and `resolver/resolver.py`, which a
+    page reaches only as names their packages re-export. Unwatched, neither was named. Both are
+    now pinned, and every one of the 24 modules outside the two packages is named when unwatched.
+
 **STOPPED.**
 - **RH-D2.** The Stop hook blocks a clean change when ruff is missing.
   - The fix makes a tool's own "No module named <tool>" a warning, as the hook's docstring
