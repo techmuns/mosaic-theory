@@ -80,7 +80,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "749f1e1a59a9"
+PINNED_TABLE = "92db624ac94e"
 PINNED_AT = "2026-11-11.vote-rule"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
@@ -94,7 +94,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq_balance.py": "dfecb79caca4",
     "vinci/dossier/ciq_reread.py": "eed0a6fb4773",
     "vinci/dossier/ciq_sheets.py": "a216c3ce09d1",
-    "vinci/dossier/covenant_extract.py": "3e162b1951f9",
+    "vinci/dossier/covenant_extract.py": "06be3a189974",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "7873fe4db242",
     "vinci/dossier/ebitda_basis.py": "812d1852f461",
