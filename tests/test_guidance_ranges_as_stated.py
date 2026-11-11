@@ -347,7 +347,6 @@ def test_an_old_range_beside_a_new_one_after_a_semicolon() -> None:
     ("The Company expects fourth-quarter revenue of $250 million to $260 million.", "revenue"),
     ("The Company expects annual revenue of $1.2 billion to $1.3 billion for 2026.", "revenue"),
     ("The Company expects second-half net sales of $600 million to $650 million.", "net sales"),
-    ("The Company expects calendar 2026 revenue of $1.2 billion to $1.3 billion.", "revenue"),
     ("Acme Reports Third Quarter 2026 Results. Full Year 2026 Outlook Revenue of $1.2 billion to "
      "$1.3 billion.", "revenue"),
     ("Acme Reports Third Quarter 2026 Results. 2026 Guidance Revenue of $1.2 billion to $1.3 "
@@ -360,6 +359,17 @@ def test_period_heading_and_scale_words_are_not_sub_lines(text: str, metric: str
     statement, not the line. Main stores every one."""
     assert [g for g in _guides(text) if g[0] == metric], text
     assert not [n for n in _refusals(text) if "sub-line" in n], text
+
+
+def test_a_calendar_period_before_the_metric_is_no_sub_line_but_no_fiscal_guide() -> None:
+    """"calendar 2026" qualifies the statement, not the line — so no sub-line refusal — but a
+    calendar period is no fiscal one (TeamNostra fix request 2, RE2-D5's guide half): the range is
+    refused for its period. It was read as "2026" only at the text's first sentence, where the
+    calendar look-back did not reach (code review of the E2 guidance PR)."""
+    text = "The Company expects calendar 2026 revenue of $1.2 billion to $1.3 billion."
+    assert not [g for g in _guides(text) if g[0] == "revenue"], text
+    assert not [n for n in _refusals(text) if "sub-line" in n], text
+    assert [n for n in _refusals(text) if "calendar" in n], text
 
 
 def test_a_table_heading_states_the_scale_of_its_bare_ranges() -> None:
