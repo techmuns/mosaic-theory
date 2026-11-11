@@ -86,6 +86,30 @@ desk a five-year percentile on AMZN and GOOGL (11 rows on 2026-11-10).
   - CIM's unadjusted range (0.001) overstated how cheap it was. PATK's (0.678) overstated how
     dear.
 
+- **CROSS-SETUP, base vs head on identical inputs** (the coordinator's validation, written out in
+  the PR):
+  - **Pages:** 3 of 27 committed pages move, `mechanical.valuation.pe_percentile_5y` from refused
+    to AMZN 0.225, GOOGL 0.402 and NFLX 0.132. Each is at its own price frontier, with SEC EPS cut
+    at the frontier and Polygon + Tiingo prices. The P/E is unchanged.
+  - **Desk:** 6 of 89 companies move, from refused to AMZN 0.417, AVGO 0.640, GOOGL 0.431, MNST
+    0.711, NOW 0.030 and SMCI 0.002, as of 2026-11-10.
+  - **G3:** only the six names in the table above can change.
+  - **`vinci.evals compare`** (step 1, $0): all six panel pages identical, so no paid panel check
+    is owed.
+- **The page change is declared as a vintage,** `2026-11-11.split-adjusted-pe-range`
+  (`vinci/dossier/extraction_versions/`).
+  - **A gap found doing it:** `vinci/screens/assemble.py` was not on the drift test's watch list,
+    though `mechanical` builds every page's P/E pair from it. So the first `--repin` moved 0
+    modules, and no pin could notice a change to this rule.
+  - **Closed here, at the coordinator's direction:** one line in `EXTRA_WATCHED`
+    (`tests/test_extraction_version_drift.py`), then `--repin --entry
+    2026-11-11.split-adjusted-pe-range`, which pinned it.
+  - **Fails first:** on main, with the module watched and pinned at main's hash, this branch's
+    `assemble.py` reds `test_a_watched_module_never_moves_without_its_pin`.
+  - The sweep for other unwatched modules belongs to another session.
+- **The second code review** (on the re-synced branch) fixed one defect behind a failing pin: a
+  profit restated into a loss of the split's size was read as "explained" by it. It also
+  corrected a stale comment in `mechanical.py`.
 - **The suite:** see the PR.
 
 **BOUNDARY.**
@@ -112,5 +136,14 @@ desk a five-year percentile on AMZN and GOOGL (11 rows on 2026-11-10).
   - The desk works out the split itself rather than reading the factor the rule applied; a
     structured return is a wider change. Where the two disagree, the rule refuses, so it fails
     safe.
-  - A break is matched to the split by size, not date.
+  - A break is matched to the split by size, not date. MNST is the live case: its 2026-08-11
+    2-for-1, not yet restated, matches the 2023 split's ×1.99. Its percentile holds, because every
+    EPS in the range misses the same 2026 factor. Its P/E stays refused.
   - The split scan runs more than once per name.
+  - The factor is the average of the filer's restated ratios, so it carries their cents rounding
+    (about 1%): the filer's factor, as ruled, never an inferred round ratio.
+- **OPEN, the operator's call, predating this PR:** a split whose restating 10-K leaves only ONE
+  restated period inside the window is neither adjusted nor refused, at base and at head. The
+  detector needs two agreeing periods, so the range divides the older bars' prices by the as-filed
+  EPS (reproduced: PRESENT 0.200 where one basis gives 0.099). Reading the split from the full
+  known series would close it, but it changes the rule again.

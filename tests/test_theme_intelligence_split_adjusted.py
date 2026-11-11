@@ -65,3 +65,29 @@ def test_a_break_of_another_size_still_refuses() -> None:
                          fp="Q3", form="10-Q", accession="0000000000-25-000000")
     _pe, pct = pe_against_history(_flat(), [*_amzn(), extra], AS_OF, "AMZN")
     assert pct.value is None and "per-share basis changes inside the window" in pct.basis
+
+
+def _eps(end: date, filed: date, value: float) -> ConceptPoint:
+    return ConceptPoint(concept="eps_diluted", tag="EarningsPerShareDiluted", unit="USD/shares",
+                        value=value, period_start=end - timedelta(days=364), period_end=end,
+                        filed=filed, fy=end.year, fp="FY", form="10-K", accession="x")
+
+
+def test_a_restatement_across_zero_of_the_splits_size_is_not_explained_by_it() -> None:
+    """NEGATIVE (review): a 2:1 the filer restated (FY2021 4.00 → 2.00, FY2022 4.40 → 2.20), and
+    an accounting restatement turning FY2024's 0.60 profit into a 1.20 loss — ×2 in magnitude.
+    `split_restatement` skips a period that crosses zero, so the split stands; the desk must not
+    then read the ×2 loss as that split and drop it as explained."""
+    pts = [_eps(date(2021, 12, 31), date(2022, 2, 15), 4.00),
+           _eps(date(2022, 12, 31), date(2023, 2, 15), 4.40),
+           _eps(date(2021, 12, 31), date(2024, 2, 15), 2.00),
+           _eps(date(2022, 12, 31), date(2024, 2, 15), 2.20),
+           _eps(date(2023, 12, 31), date(2024, 2, 15), 2.40),
+           _eps(date(2024, 12, 31), date(2025, 2, 15), 0.60),
+           _eps(date(2024, 12, 31), date(2026, 2, 15), -1.20),
+           _eps(date(2025, 12, 31), date(2026, 2, 15), 1.00)]
+    stated = split_restatement(pts)
+    assert stated is not None and abs(stated.factor - 2) < 0.01
+    left = basis_breaks(pts, date(2021, 1, 1), date(2026, 8, 1), explained=stated.factor)
+    assert [w for _k, w in left] == [
+        "the year ending 2024-12-31: EPS 0.6 as first filed, 1.2 as filed 2026-02-15 (×2.0)"]

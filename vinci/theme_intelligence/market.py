@@ -282,7 +282,13 @@ def basis_breaks(points: Sequence[ConceptPoint], since: date, as_of: date, *,
             continue
         a = max(abs(p.value) for p in ps if p.filed == filed[0])
         b = max(abs(p.value) for p in ps if p.filed == filed[-1])
-        if a and b and max(a / b, b / a) >= BASIS_BREAK and not split(max(a / b, b / a)):
+        # A SPLIT NEVER CROSSES ZERO (`split_restatement` skips such a period): a profit restated
+        # into a loss of the split's size is an accounting change, never explained by the split
+        signed = [max((p.value for p in ps if p.filed == f), key=abs)
+                  for f in (filed[0], filed[-1])]
+        crosses = (signed[0] > 0) != (signed[1] > 0)
+        if a and b and max(a / b, b / a) >= BASIS_BREAK and (crosses
+                                                            or not split(max(a / b, b / a))):
             out.append(("eps", f"the year ending {end.isoformat()}: EPS {a:g} as first filed, "
                                f"{b:g} as filed {filed[-1].isoformat()} "
                                f"(×{max(a / b, b / a):.1f})"))

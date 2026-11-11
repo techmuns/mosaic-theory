@@ -102,7 +102,9 @@ NOT_EXTRACTION: dict[str, str] = {
 #: `vinci/provenance.py` (2026-11-05, review round 2): its hashing and redaction set values in every
 #: page's `inputs` block.
 EXTRA_WATCHED = ("vinci/verbatim.py", "vinci/finra.py", "vinci/eod/features.py",
-                 "vinci/provenance.py")
+                 "vinci/provenance.py",
+                 # `mechanical` builds every page's P/E pair from it (pe_current_and_percentile)
+                 "vinci/screens/assemble.py")
 CLASSIFIED_PACKAGES = ("vinci/dossier", "vinci/edgar")
 
 
