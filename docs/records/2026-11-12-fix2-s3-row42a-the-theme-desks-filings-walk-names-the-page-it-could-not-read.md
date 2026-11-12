@@ -2,7 +2,7 @@
 id: 2026-11-12-fix2-s3-row42a-theme-older-pages
 status: shipped
 date: 2026-11-12
-prs: [1022]
+prs: [1024]
 supersedes:
 superseded-by:
 ---
@@ -142,6 +142,12 @@ registrant, made from a page that was never read.
   - A failing page is asked for again by each walk: the periodic walk and then the annual walk
     for one date, and again for every other as-of date. Each ask pays the retry ladder. There is
     no failure memo like `sub_errors` for the document. Main did the same.
+  - **The impact check's theme-desk consumer fails its second side on a WAL registry.**
+    `vinci/impact/run.py`'s `snapshot_store` opens the source with `with sqlite3.connect(...)`,
+    which commits but never closes, so the source registry's `-wal`/`-shm` stay on disk. The
+    `{theme}` layout then symlinks them beside the other side's snapshot. Here, head's publish
+    exited 1 while base's passed. Head passes when run directly. With the registry in DELETE
+    journal mode both sides write the same 243 files, differing only in `published_at`.
 
 **ROW 42 STAYS OPEN, WITH ONE ITEM.** All of the older-page reads are fixed: (1) by #1020, (2) by
 #1016, (a) here. #878's record flips to `shipped`. Left is (b): a name the monitor drops is stated
