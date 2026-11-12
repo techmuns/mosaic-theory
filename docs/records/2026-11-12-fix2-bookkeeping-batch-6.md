@@ -16,7 +16,7 @@ superseded-by:
     - RG-D2, the unit;
     - RG-D3, the period and the row: a period the table lacks restricts nothing;
     - RG-D4, the width: a display cell's own whole-number precision is ignored (latent);
-    - RG-D5, a duration: one equal to any window the page names passes;
+    - RG-D5, a duration: one equal to any window the page names passes, and the windows are many — year counts 1–5 and month counts 1, 2, 3, 6, 9, 12, 36 and 60 pass on every page of SMPL, WERN and VRRM, from page-wide spans the code writes (180d, 52w, `_5y`), and URL digits give VRRM spans of 108–501 years (#1023's record); S2's false-flag PR takes it as item (e). Row 45's own asks ("7.3 years", "an 83-day DSO") are traced now;
     - RG-D6, the fields that cite nothing: weaker than its record's item 6 states (random key unknowns trace 64–100% on frozen SMPL; 3 of 412 free-field figures flagged on the corpus);
     - RG-D7, call figures.
   - Each row's pages cell says that flags move on 24 of the 27 committed pages at their next build (447 → 476). A committed page's stored flags change only when it is rebuilt.
@@ -54,7 +54,7 @@ superseded-by:
 - CLAUDE.md: closing an item means deleting its §5.0 row and striking its §5 entry, and a supersede must touch the snapshot.
 
 **HOW VERIFIED.** On main `4b2f0cb9`:
-- **RG-D1 to RG-D7 fail first.** Main's `tests/test_figure_trace_as_written.py` and `tests/test_untraceable_rank_and_duration.py` were run on #1023's parent `4dca5cce`. Every node the rows name fails there on an assertion about the old behaviour, never on a missing name:
+- **RG-D1 to RG-D7 fail first.** Main's `tests/test_figure_trace_as_written.py` and `tests/test_untraceable_rank_and_duration.py` were run on #1023's parent `4dca5cce`. Each row names at least one node that fails there on an assertion about the old behaviour, never on a missing name. The rows name 13 nodes, 24 cases with their parameters: 17 fail at the parent and 7 pass. The 7 are negative pins, correct claims that must still trace: 2 of `test_a_period_binds_the_figures_written_beside_it`'s 4 cases and 5 of `test_a_metric_binds_the_figure_written_beside_it`'s 7, each expecting no flag. *(Corrected in review round 1, from B's review: the first draft said every named node fails there.)* The failing cases are:
   - the audit's 11 constructed replies, each "not flagged";
   - the sign, percent, period and metric binds;
   - the duration, key-unknown and call-figure pins.
