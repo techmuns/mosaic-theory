@@ -1293,15 +1293,24 @@ def _self_referential_twin(tw: TwinCase, ticker: str, name: str) -> bool:
 
 # --- the 12-word rule at build (operator ruling 2026-11-11: "$0 guard + redaction now") ----------
 # CLAUDE.md: NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS. Its corpus test held
-# that only between quotation marks, and three committed claims copied 14 to 15 of a call's words
-# without them (LLY, VITL and WERN; Codex, round 2 of #1006). The build HAS the words — every call,
+# that only between quotation marks, and three committed claims copied 13 or 14 of a call's words
+# without them, counted as this guard counts words (LLY 14, VITL 13, WERN 14; #1006's review
+# found them, #1036 measured and cut them). The build HAS the words — every call,
 # whole, is the synthesis's `transcript` — so the guard reads each synthesis string against them,
 # and `assemble` refuses a page that carries such a run (`assemble._refuse_transcript_runs`).
 
 #: CLAUDE.md's number: the most consecutive words of a transcript any public field may quote
 MAX_TRANSCRIPT_RUN = 12
 #: a word's edge punctuation, read off before words are compared ("launch," is "launch")
-_RUN_EDGE = "\"'“”‘’()[]{}.,;:!?…—–-"
+_RUN_EDGE = "\"'“”‘’′″‵`()[]{}.,;:!?…—–-"
+#: A WORD ENDS at whitespace, at every dash form and at a slash (review round 2 of #1036): the
+#: calls write " -- " and the syntheses join words with "—", so "hotel—india", "hotel -- india"
+#: and "hotel india" are the same two words, and "year-over-year" is three. The conservative
+#: reading: a boundary the rule's whitespace count does not see must not hide a copied run.
+_RUN_WORD = re.compile(r"[^\s\-\u2010\u2011\u2012\u2013\u2014\u2015\u2212/]+")
+#: primes, typed for an apostrophe, folded to the one mark `comparison_key` folds every quote
+#: mark to (it leaves primes alone: they are feet and minutes there, not quotation)
+_RUN_PRIMES = str.maketrans(dict.fromkeys("′″‵ʹʼ", "'"))
 
 
 @dataclass(frozen=True)
@@ -1319,14 +1328,15 @@ class TranscriptRun:
 
 
 def _run_words(text: str) -> list[tuple[str, int, int]]:
-    """Each word of ``text`` as the 12-word rule counts them — split on whitespace — folded by the
-    verbatim check's key (`comparison_key`: case, quote marks, dashes) with its edge punctuation
-    read off, and the character span of the word itself in ``text``, its edge punctuation outside
-    it (so a cut after it keeps the sentence's own comma)."""
+    """Each word of ``text`` as the guard counts them — split at whitespace, at every dash form and
+    at a slash (`_RUN_WORD`) — folded by the verbatim check's key (`comparison_key`: case, quote
+    marks) and with primes taken as apostrophes, its edge punctuation read off, and the character
+    span of the word itself in ``text``, its edge punctuation outside it (so a cut after it keeps
+    the sentence's own comma)."""
     out: list[tuple[str, int, int]] = []
-    for m in re.finditer(r"\S+", text):
+    for m in _RUN_WORD.finditer(text):
         tok = m.group()
-        w = comparison_key(tok).strip(_RUN_EDGE)
+        w = comparison_key(tok).translate(_RUN_PRIMES).strip(_RUN_EDGE)
         if w:
             lead = len(tok) - len(tok.lstrip(_RUN_EDGE))
             trail = len(tok) - len(tok.rstrip(_RUN_EDGE))

@@ -2,8 +2,9 @@
 "$0 guard + redaction now"; CLAUDE.md's 12-word rule).
 
 NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS. Three committed synthesis claims
-did, without quotation marks (LLY `bull_points[5].claim`, 15 words; VITL `bull_points[2].claim`,
-14; WERN `bull_points[5].claim`, 14 — Codex, round 2 of #1006). The build now refuses such a page
+did, without quotation marks, counted as the guard counts words (LLY `bull_points[5].claim`, 14;
+VITL `bull_points[2].claim`, 13; WERN `bull_points[5].claim`, 14, which is 11 by whitespace
+alone — measured on #1036; #1006's review found them). The build now refuses such a page
 (`assemble._refuse_transcript_runs`); this pass brings the committed pages under the rule.
 
 For each committed page, with no model call, no network and no re-assembly:
@@ -33,7 +34,12 @@ from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.confirmation import ConfirmationError, page_transcripts
 from vinci.dossier.driver_extract import transcript_sha256s
 from vinci.dossier.schemas import Dossier, Synthesis, write_dossier
-from vinci.dossier.synthesis import MAX_TRANSCRIPT_RUN, TranscriptRun, transcript_runs
+from vinci.dossier.synthesis import (
+    MAX_TRANSCRIPT_RUN,
+    TranscriptRun,
+    _run_words,
+    transcript_runs,
+)
 
 WRITER = "transcript-run-cut"
 ELLIPSIS = "…"
@@ -57,9 +63,9 @@ def cut_text(text: str, runs: list[TranscriptRun]) -> str:
 
 
 def describe_cut(before: str, after: str) -> str:
-    """A cut as a log may carry it: word counts, the character span it removed from ``before``,
-    and each string's sha256 — never a word of it, because ``before`` holds the copied run, which
-    no log, fixture or PR body may carry (CLAUDE.md's 12-word rule)."""
+    """A cut as a log may carry it: word counts (as the guard counts them), the character span it
+    removed from ``before``, and each string's sha256 — never a word of it, because ``before``
+    holds the copied run, which no log, fixture or PR body may carry (CLAUDE.md's 12-word rule)."""
     head = 0
     while head < min(len(before), len(after)) and before[head] == after[head]:
         head += 1
@@ -67,7 +73,7 @@ def describe_cut(before: str, after: str) -> str:
     while (tail < min(len(before), len(after)) - head
            and before[len(before) - 1 - tail] == after[len(after) - 1 - tail]):
         tail += 1
-    return (f"{len(before.split())} → {len(after.split())} words; characters {head}–"
+    return (f"{len(_run_words(before))} → {len(_run_words(after))} words; characters {head}–"
             f"{len(before) - tail} of {len(before)} cut to {ELLIPSIS!r}; sha256 "
             f"{hashlib.sha256(before.encode()).hexdigest()[:16]} → "
             f"{hashlib.sha256(after.encode()).hexdigest()[:16]}")
