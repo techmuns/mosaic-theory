@@ -270,6 +270,23 @@ def test_a_period_binds_the_figures_written_beside_it(claim: str, flagged: list[
     assert _caveated(mech, claim, _refs(mech)["annual"]) == flagged
 
 
+@pytest.mark.parametrize(("claim", "flagged"), [
+    ("FY25 revenue was $262.3M and EBITDA was $1,450.9M.", ["262.3", "1450.9"]),   # swapped
+    ("FY25 revenue was $1,450.9M and EBITDA was $262.3M.", []),
+    ("$262.3M of FY25 EBITDA on revenue of $1,450.9M.", []),   # a metric written after it
+    ("FY25 EBITDA was $262.3M on $1,450.9M of revenue.", []),   # "$X of revenue" after it
+    ("FY25 EBITDA was $1,450.9M on $262.3M of revenue.", ["1450.9", "262.3"]),
+    ("FY25 revenue is $1,450.9M versus FY22 $1,168.7M, FY25 EBITDA $262.3M.", []),  # comma
+    ("FY25 EBITDA of $262M was 18% of revenue.", []),           # the named metric's rate row
+])
+def test_a_metric_binds_the_figure_written_beside_it(claim: str, flagged: list[str]) -> None:
+    """(Codex P1, round 1 of #1023) The rows a claim named bound every figure of it, so revenue's
+    and EBITDA's values written swapped both traced, each to the other's row. A figure now meets
+    the metric written nearest before it, or nearest after when none precedes it."""
+    mech = _frozen()
+    assert _caveated(mech, claim, _refs(mech)["annual"]) == flagged
+
+
 def test_a_fact_states_a_sign_only_where_it_prints_one() -> None:
     """A fact's prose prints "−0.9%" (a sign, read) or "a loss of 156" (its sign in words — not
     stated, so no claimed sign is checked against it); a range "18.6-34.3x" is two positives."""

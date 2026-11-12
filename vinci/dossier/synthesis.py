@@ -1016,11 +1016,51 @@ def _names_metric(tokens: list[str], phrase: str) -> bool:
                for i, tok in enumerate(tokens) if tok == want[0] or tok in want)
 
 
-def _claim_rows(text: str, metrics: set[str]) -> set[str]:
-    """The table metrics a claim names, from ``metrics`` (each `_row_metric`)."""
-    tokens = _words(text)
-    return {r for r in metrics
-            if any(_names_metric(tokens, w) for w in (r, *_ROW_SYNONYMS.get(r, ())))}
+#: what may stand between a figure and the metric written after it, for that metric to be its own
+_BESIDE = frozenset({"of", "in", "the", "a", "an", "its", "for"})
+#: a figure's own written scale word and unit, read off before what follows it
+_UNIT_TAIL = re.compile(r"^\s*(?:thousand|million|billion|trillion|mn|bn|tn|[kmbt](?![a-z]))?\s*"
+                        r"(?:%|percent|pts?\b|pp\b|bps?\b|x(?![a-z]))?")
+
+
+def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -> set[str]:
+    """The table metrics a claim names, from ``metrics`` (each `_row_metric`) — with ``fig``, the
+    one written BESIDE it (Codex, round 1 of #1023: a claim-wide union let revenue's and EBITDA's
+    values, written swapped, each meet the other's row):
+    - a metric written right AFTER it, with only its unit, "of", an article or a period between and
+      no comma, colon, semicolon, dash or full stop ("a $42.5M asset writedown", "$262.3M of FY25
+      EBITDA" — but not "FY25 $979, FY27E EBITDA $283"), is its own — but for a percent, "of
+      revenue" names the DENOMINATOR ("18% of revenue" is a margin), so it does not bind there;
+    - else the metric written nearest BEFORE it ("FY25 revenue was $262.3M");
+    - else the nearest after it."""
+    if fig is None or fig.start < 0:
+        tokens = _words(text)
+        return {r for r in metrics
+                if any(_names_metric(tokens, w) for w in (r, *_ROW_SYNONYMS.get(r, ())))}
+    spans = [(m.start(), m.group().rstrip(".")) for m in _WORD.finditer(text.lower())]
+    tokens = [w for _, w in spans]
+    mentions: list[tuple[int, str]] = []
+    for r in metrics:
+        for phrase in (r, *_ROW_SYNONYMS.get(r, ())):
+            want = [w for w in _words(phrase) if w not in _ROW_STOP]
+            if not want:
+                continue
+            span = len(want) + 2
+            mentions += [(spans[i][0], r) for i, tok in enumerate(tokens)
+                         if tok in want and set(want) <= set(tokens[i:i + span])]
+    before = [pos for pos, _ in mentions if pos < fig.start]
+    after = [pos for pos, _ in mentions if pos > fig.start]
+    at = None
+    if after:
+        between = _UNIT_TAIL.sub("", text[fig.end:min(after)].lower(), count=1)
+        words = re.findall(r"[^\s,()]+", between)
+        if not re.search(r"[,;:—–]|\.\s", between + " ") and all(
+                w in _BESIDE or _period_key(w) is not None for w in words) and not (
+                fig.unit in ("pct", "bps") and "of" in words):
+            at = min(after)
+    if at is None:
+        at = max(before) if before else min(after) if after else None
+    return {r for pos, r in mentions if pos == at} if at is not None else set()
 
 
 def _bound_cells(cells: list[_Cell], claim: str, fig: _ClaimFigure | None = None) -> list[_Cell]:
@@ -1038,7 +1078,7 @@ def _bound_cells(cells: list[_Cell], claim: str, fig: _ClaimFigure | None = None
         return []
     periods = _claim_periods(claim, fig) & {c.period for c in cells}
     metrics = {c.metric for c in cells}
-    rows = _claim_rows(claim, metrics)
+    rows = _claim_rows(claim, metrics, fig)
     # a named metric's own rate rows: "FY25 revenue grew 9%" names "revenue", and its 9% is the
     # "Revenue growth" row's — binding the amount row alone refused the fact as written
     rows |= {m for m in metrics if any(m.startswith(r + " ") for r in rows)}

@@ -36,6 +36,12 @@ should, and random dollar figures no longer trace against the annual table at an
    rows ("revenue" brings "Revenue growth"). A period binds only the figures written beside it,
    with no other figure between them: in "rose from $1,331M to $1,451M in FY25", FY25 binds the
    $1,451M and leaves FY24's $1,331M to every column. A period the table lacks restricts nothing.
+   A METRIC binds the figure written beside it too (Codex, round 1 of #1023): one written right
+   after it with only its unit, "of", an article or a period between and no comma, else the one
+   nearest before it, else the nearest after. So "FY25 revenue was $262.3M and EBITDA was
+   $1,450.9M", the two values swapped, is refused on both, and "a $42.5M asset writedown" is the
+   writedown's. For a percent, "of revenue" is the denominator ("18% of revenue" is a margin). On
+   the committed corpus this moves no flag.
 4. **RG-D4, the width.** A figure is matched within the SMALLER of half a unit of its last written
    digit and the old tolerance (2%, at least 0.05). So the change only removes passes: "$0.04" is
    no target of ~0; "$1,479.0M" is not $1,450.9M; a coarse "15%" keeps the old 2%.
