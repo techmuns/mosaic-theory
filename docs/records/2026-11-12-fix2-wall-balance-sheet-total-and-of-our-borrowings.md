@@ -20,6 +20,14 @@ superseded-by:
   balance-sheet read leaky. Codex's review of the opened PR FAILED: it replied at 16:57Z on
   2026-11-12 with a usage-limit message, so it reviewed nothing. Round 1's in-session
   `/code-review high --fix` stands in its place.
+- **Round 2 (the last allowed) is documentation only.** The operator ruled on 2026-11-13,
+  verbatim: "$0.0 + LSA stated (Recommended)". The option it answered would add a stated line
+  that "the $375.0M LSA terminates 2027-09-21, inside the window". The same 10-Q extends that
+  date to March 27, 2028 (WHY). So under the ruling's own rule, a facility terminating inside the
+  window, WERN gains no line. The coordinator chose to build no reader and to correct this record
+  instead. With the extension read, such a reader adds no line on WERN, the one page it was ruled
+  for, so building it would be speculative ("Don't build speculatively"). No reader was run over
+  the corpus.
 
 **WHAT.** `vinci/edgar/filing_sections`, the 10-Q's filing-basis maturity wall:
 - **The balance sheet's debt total** (`_balance_sheet_debt`). `_whole_debt`'s exception, one
@@ -69,6 +77,13 @@ superseded-by:
   the filing says "with no principal amount expected to be paid within 12 months". So the Credit
   Facilities are the whole debt and $0.0 is the company's wall. Code before #956 read it so. On
   Werner's Q2 (`0000793074-26-000140`) the prose total is unqualified, and main already reads $0.0.
+- **The same 10-Q corroborates the $0.0 (review round 2).** At the balance date its LSA "is
+  scheduled to terminate on September 21, 2027", inside the wall's window, and that sentence goes
+  on "unless extended". Its Notes 10 and 15 then report the refinancing: on October 5, 2026, after
+  the quarter, a new $1.1 billion facility maturing October 5, 2031 repaid the 2022 Credit
+  Agreement, and "the termination date of our LSA was extended to March 27, 2028". That date is
+  outside the window, which ends September 30, 2027. So "with no principal amount expected to be
+  paid within 12 months" stands as filed.
 - **Microvast, Q3 10-Q `0001628280-26-072316`: A's draft was wrong.** The filing states "our bank
   borrowings were $135.3 million, our bonds payable were $41.7 million and $120.8 million of our
   borrowings were due within the next 12 months". A's draft and round 0 read $120.8M as the whole
@@ -225,15 +240,14 @@ superseded-by:
   instrument's principal with the debt total, and its ≤12m principal with the current portion.
   So it confirms only debt the sheet carries at face — in practice a $0.0 wall, or a facility with
   no discount or issuance costs on the sheet. Debt carried net reads `not_stated`, the loud side.
-- **WERN's located $0.0 is the filing's own statement, and the page now says it DIVERGES from
-  CIQ.** The 10-Q says "with no principal amount expected to be paid within 12 months", and its
-  sheet lists no current portion of debt. But the same 10-Q says "The LSA is scheduled to
-  terminate on September 21, 2027", inside the 12 months from September 30, 2026, and the LSA
-  carried $375.0M then. The CIQ panel puts $752.0M in the same window, Werner's December 2025
-  total. The 2022 Credit Agreement matures December 20, 2027, outside the window. The page
-  states the conflict ("verify; neither silently preferred") and prefers neither. Whether the
-  wall is $0.0 is the operator's call on the values (ruling 1, "verify the values"): this PR
-  makes the filing's own figure readable and leaves the conflict on the page, not resolved.
+- **WERN's page will flag its located $0.0 as DIVERGING from CIQ, and the flag is explained, not a
+  defect.** The CIQ panel puts $752.0M in the same window. That is Werner's December 2025 total,
+  from before the October 5, 2026 refinancing that extended the LSA to March 27, 2028 and
+  replaced the 2022 Credit Agreement with a facility maturing in 2031 (10-Q
+  `0000793074-26-000172`, Notes 10 and 15). The page states the conflict ("verify; neither
+  silently preferred") as designed. The filing's $0.0 is corroborated by its own subsequent
+  event. *(Round 1 of this record called the $0.0 "contested" off the September 21, 2027
+  sentence alone. It missed the extension in Notes 10 and 15; round 2 corrects it.)*
 - **A 10-Q whose balance sheet names its debt under another label** ("Long-term borrowings",
   "Debt, net") is not read, and the exception then needs the prose total, as before.
 - **Microvast's Q3 page keeps main's plain note,** "no near-term wall stated in filing — composition
