@@ -128,7 +128,8 @@ a page that does not say so lets the count stand for a period it does not cover.
     - **MVST:** at that cut its Q2 10-Q (filed 2026-08-10) is not yet filed. The four end at 2026-03-31 and 3 are read; material goes 4 → 3. The window is ONE quarter behind, so it is not flagged.
     - **SMPL:** the four end at 2026-05-30 and 3 are read. It is one quarter behind, not flagged.
     - **ORKA:** flagged, 17 quarters before 2026-03-31, its latest quarter in the cache. Its `nonoperating:` QA flag reaches the page's caveats.
-    - R4's condition 3 holds or fails as in the 27-page run: MVST's 3 is still at the ≥2 bar.
+    - R4's condition 3 holds or fails as in the 27-page run: MVST's 3 is one above the ≥2 bar
+      here (it is exactly at the bar, 2, only at its page's own price date).
   - **Synthesis requests:** each of the 3 moved requests differs in its FACTS section only. System and tool schema are the same: USER −5 +5 (MVST), −4 +4 (SMPL) and −3 +3 (ORKA).
   - **The frozen panel replays identically:** 0 of 6. The report asks the operator about the row-53 panel check, because SMPL is a panel page. This is a facts-only request move, the same shape as #1034's, so no paid panel check is run (fix request 2, batch 3 item 2).
   - **Rendering:** no committed `dossier.md` re-renders differently. The one frontend file that differs is `snapshots/extraction_versions.json`, the new vintage. No consumer (screens, ledger, scoring, monitor, theme desk, frontend build) is reached.
@@ -150,8 +151,10 @@ frozen HTTP cache and the impact store (frontier 2026-08-05), both sides at 2026
 The units are quarters (calendar quarter ends, two ends within 7 days counted as one) and $M.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- **MVST's count halves (4 → 2) at its next rebuild.** It is exactly at R4's ≥2 bar. One more
-  unread quarter takes it under, and today its condition 3 is false on its EPS basis anyway.
+- **MVST's count reads 2 at its page's current price date (2026-09-16), where it read 4.** That is
+  exactly R4's ≥2 bar. A rebuild cuts at its own price date, so its count is that date's: at the
+  impact store's 2026-08-05 cut it reads 3, and a later 10-Q that tags pre-tax income would read
+  more. Today its condition 3 is false on its EPS basis anyway.
 - **SMPL's count reads 2 quarters, and its sentence says so.** Row 36 already waits on SMPL's
   Q1 FY27 10-Q.
 - **The flag is a FLAG.** A stale window still feeds R4. Promoting it to a refusal is a separate
