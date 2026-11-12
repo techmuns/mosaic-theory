@@ -98,6 +98,15 @@ class RunRegistration:
         return cls(**fields)
 
 
+def draw_key(reg: RunRegistration) -> str:
+    """A build registration's DESIGN, the index's drawn-once key (#1030 review round 1, item 1):
+    everything but its words (`note`) and its record of what was read (`inputs`, a path's
+    spelling included), so one design re-registered with new words is refused under a second
+    approval once its first has drawn."""
+    d = {k: v for k, v in json.loads(reg.to_json()).items() if k not in ("note", "inputs")}
+    return hashlib.sha256(json.dumps(d, sort_keys=True).encode()).hexdigest()
+
+
 def _resolve(code_ref: str, repo: Path = rp.ROOT) -> str:
     done = subprocess.run(["git", "-C", str(repo), "rev-parse", "--verify",
                            f"{code_ref}^{{commit}}"], capture_output=True, text=True)

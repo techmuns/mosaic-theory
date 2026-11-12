@@ -7,8 +7,10 @@ and RG-D9). One JSON row per event, appended, never edited:
   in a **docs-only PR before any paid draw**. `run-compare`, `run`, `score` and `score-run` refuse
   a registration whose row `origin/main` does not hold, so main's own history shows each
   registration before its draws.
-- `drawn`: written by `run-compare` / `run` before a paid draw. A registration is drawn once across
-  approvals, and a `register-run` registration's builds once each, under one approval. The rows are
+- `drawn`: written by `run-compare` / `run` before a paid draw. A DESIGN is drawn once across
+  approvals: each `registered` row carries its design key (`design`), and a registration whose
+  design another registration has drawn is refused, whatever its words (#1030's review round 1). A
+  `register-run` registration's builds are drawn once each, under one approval. The rows are
   committed with the run's record.
 - `judge_test_read`: written before the judge reads the gold's TEST half, which is read once.
 

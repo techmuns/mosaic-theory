@@ -81,16 +81,18 @@ def approval_id(ledger: Path) -> str:
 
 
 def record_registered(sha: str, *, kind: str, refs: dict[str, str], pages: list[str],
-                      draws: int, approval: str, root: Path = ROOT) -> dict[str, Any]:
+                      draws: int, approval: str, design: str,
+                      root: Path = ROOT) -> dict[str, Any]:
     """The registration's row, appended to this checkout's index; it is drawn only once the row
-    is on main (`require_on_main`)."""
+    is on main (`require_on_main`). ``design`` is its drawn-once key (`compare.draw_key`,
+    `builds.draw_key`): one design is drawn once across approvals, whatever its words."""
     if any(r.get("event") == "registered" and r.get("registration") == sha
            for r in working_rows(root)):
         raise ReplayError(f"registration {sha[:12]} is already in the index")
     # BOUND TO ITS APPROVAL (B's check of order 8, gap 6): the row is on main before any draw,
     # so every checkout reads which approval may draw it — a second approval elsewhere cannot
     return _append({"event": "registered", "registration": sha, "kind": kind, "refs": refs,
-                    "pages": pages, "draws": draws, "approval": approval,
+                    "pages": pages, "draws": draws, "approval": approval, "design": design,
                     "registered_at": _now()}, root)
 
 
@@ -135,6 +137,22 @@ def claim_draw(sha: str, *, approval: str, unit: str | None = None,
             raise ReplayError(f"registration {sha[:12]}'s builds were drawn under another "
                               "approval: a registration's builds are drawn under one approval, "
                               "the one whose ledger scores them (RG-D9)")
+    # ONE DESIGN IS DRAWN ONCE ACROSS APPROVALS (#1030 review round 1, item 1): a new `--note`
+    # gives one design a new sha, so keying on the sha let a second approval draw it again
+    designs = {r.get("design") for r in rows
+               if r.get("event") == "registered" and r.get("registration") == sha}
+    if None in designs:
+        raise ReplayError(f"registration {sha[:12]}'s indexed row records no design: it cannot "
+                          "be checked against the designs drawn under other registrations, so "
+                          "it is not drawn")
+    twins = {r.get("registration") for r in rows if r.get("event") == "registered"
+             and r.get("design") in designs and r.get("registration") != sha}
+    if prior := [r for r in rows if r.get("event") == "drawn" and r.get("registration") in twins]:
+        raise ReplayError(f"registration {sha[:12]}'s design was already drawn, as registration "
+                          f"{str(prior[0].get('registration'))[:12]} (at "
+                          f"{prior[0].get('drawn_at')}): a design is drawn once across approvals, "
+                          "whatever its words — a replication names the run it replicates "
+                          "(RG-D9)")
     bound = {r.get("approval") for r in rows
              if r.get("event") == "registered" and r.get("registration") == sha}
     if bound != {approval}:

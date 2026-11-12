@@ -225,9 +225,16 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "register":
         from vinci.evals import compare as cm
+        from vinci.evals import registry
         rp.refuse_inside_repo(a.out, "the registration")
         if a.out.exists():
             raise rp.ReplayError(f"{a.out} exists: a registration is written once")
+        # THE APPROVAL FIRST (#1030 review round 1, item 7): refused after the file was written,
+        # the file left behind blocked the retry
+        if a.budget_ledger is None:
+            raise rp.ReplayError("register needs --budget-ledger: a registration is bound to the "
+                                 "approval that may draw it (open it first: budget-open)")
+        approval = registry.approval_id(a.budget_ledger)
         from vinci.evals.builds import _resolve
         if a.from_impact is not None:   # the impact run's fresh captures, read as captured
             if a.transform:
@@ -272,13 +279,9 @@ def main(argv: list[str] | None = None) -> int:
         import dataclasses
         reg = dataclasses.replace(reg, scorer_ref=scorer_ref)
         cm.write_registration(reg, a.out)
-        from vinci.evals import registry
-        if a.budget_ledger is None:
-            raise rp.ReplayError("register needs --budget-ledger: a registration is bound to the "
-                                 "approval that may draw it (open it first: budget-open)")
         registry.record_registered(reg.sha, kind="compare", refs={"base": a.base, "cand": a.cand},
-                                   pages=list(reg.pages), draws=reg.draws,
-                                   approval=registry.approval_id(a.budget_ledger))
+                                   pages=list(reg.pages), draws=reg.draws, approval=approval,
+                                   design=cm.draw_key(reg))
         print(f"indexed in {registry.INDEX}: merge that row to main in a docs-only PR before "
               "any draw (RG-D14)")
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
@@ -298,10 +301,7 @@ def main(argv: list[str] | None = None) -> int:
             base, cand, transforms, tickers = a.base, a.cand, tuple(a.transform), a.ticker
         imp = run.inputs.get("impact") if run is not None else None
         if imp:   # an impact registration: the exported bytes, checked, never a replay
-            cap = cm.captured_from_impact(Path(imp["dir"]))
-            if cap.inputs["impact"]["manifest_sha256"] != imp["manifest_sha256"]:
-                raise rp.ReplayError(f"the export at {imp['dir']} is not the one registered "
-                                     "(its manifest's sha256 moved)")
+            cap = cm.captured_from_impact(Path(imp["dir"]))   # its manifest: run_compare's check
         else:
             cap = cm.compare_requests(base, cand, tickers=tickers, transforms=transforms,
                                       ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
@@ -336,15 +336,16 @@ def main(argv: list[str] | None = None) -> int:
         rp.refuse_inside_repo(a.out, "the registration")
         if a.out.exists():
             raise rp.ReplayError(f"{a.out} exists: a registration is written once")
+        from vinci.evals import registry
+        approval = registry.approval_id(a.budget_ledger)   # the approval first (round 1, item 7)
         breg = bd.register_run(code_ref=a.code_ref, pages=cm.registered_pages(a.ticker),
                                transforms=a.transform, draws=a.draws, builds=a.builds,
                                min_gap_s=a.min_gap_s, ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT,
                                note=a.note)
         bd.write_registration(breg, a.out)
-        from vinci.evals import registry
         registry.record_registered(breg.sha, kind="run", refs={"code": breg.code_ref},
-                                   pages=list(breg.pages), draws=breg.draws,
-                                   approval=registry.approval_id(a.budget_ledger))
+                                   pages=list(breg.pages), draws=breg.draws, approval=approval,
+                                   design=bd.draw_key(breg))
         print(f"indexed in {registry.INDEX}: merge that row to main in a docs-only PR before "
               "any draw (RG-D14)")
         print(f"registered {breg.sha[:16]}: pages {list(breg.pages)}, {breg.builds} builds of "

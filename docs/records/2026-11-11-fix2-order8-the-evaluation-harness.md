@@ -24,14 +24,14 @@ The operator's rulings, 2026-11-11, verbatim, relayed by the coordinator:
 - **RG-D14 and RG-D9: the registrations index** (`vinci/evals/registry.py`, `docs/evals/registrations.jsonl`).
   - `register` and `register-run` append the registration's row.
   - `run-compare`, `run`, `score` and `score-run` refuse a registration whose row `origin/main` does not hold. The row is merged in a docs-only PR first, so main's own history shows the registration before any draw. That closes RG-D14: the pre-registration commits had lived on branches that squash merges removed.
-  - Each paid draw is a `drawn` row, written before the draw. A comparison is drawn once across approvals. A `register-run` registration's builds are each drawn once, all under the approval that drew the first.
+  - Each paid draw is a `drawn` row, written before the draw. A comparison is drawn once across approvals. *(Corrected in review round 1, 2026-11-12: keyed on the registration's sha, "once" held per sha, and a new `--note` gives one design a new sha, so a second approval could draw the same design again. The index now keys it on the DESIGN, `compare.draw_key` and `builds.draw_key`; see "Review round 1".)* A `register-run` registration's builds are each drawn once, all under the approval that drew the first.
   - The judge's read of the gold's TEST half is a `judge_test_read` row, and a second read is refused whichever approval asks. That closes RG-D9, where both rules had held per approval ledger only.
   - The rows hold shas, refs, pages, counts, an approval's sha256 and dates: no path, no text.
 - **RG-D11: the gold is the gold its manifest hashed** (`gold.verify_gold`). `load_gold` checks the five files against `MANIFEST.source_sha256`. Each coder file is checked as its two recorded halves, split at the DEV half's 330 claims; all five match today. An edited label is refused before any metric reads it.
 - **RG-D12: a fixed scorer, never the candidate's** (`compare.refuse_unless_scored_by_base`, `fixed_scorer`, `refuse_unless_registered_scorer`). The final rule, merging B's scope (operator 2026-11-11: "Yes, take B's tests and close all six") with the retrospective refinement the coordinator accepted:
   - **The production files the metrics borrow** (`synthesis.py`, `mechanical.py`, `verdict.py`, `schemas.py`) must be BASE's bytes, always, for a prospective change and a retrospective alike. A candidate edits these, so a candidate never scores itself through them.
   - **The harness's own files** must be origin/main's at registration, a reviewed harness, recorded as `scorer_ref`. They are never compared with BASE's: a BASE older than the harness, which is any retrospective, would otherwise be refused from every checkout with these rules (B's check, gap 1).
-  - **Enforced in the library, not only the CLI** (gap 1). `cm.register` refuses a checkout whose production files are not BASE's, and `run_compare` refuses a scorer that is not the registered one. *(Corrected by B, 2026-11-12: `score_run` in the library does NOT check the scorer; only the CLI's `score` and `score-run` do, through `refuse_unless_registered_scorer`. See "Adopted by B" below.)* The CLI's `refuse_unless_registered_scorer` also re-checks the production files against BASE and the harness against `scorer_ref`, which must be a commit on origin/main.
+  - **Enforced in the library, not only the CLI** (gap 1). `cm.register` refuses a checkout whose production files are not BASE's, and `run_compare` refuses a scorer that is not the registered one. *(Corrected by B, 2026-11-12, and corrected again in review round 1: the library's `score_run` compared the fingerprint (`_check_run`) but not BASE's production files or the harness at `scorer_ref`, and `run_compare` likewise; since round 1 both run `refuse_unless_registered_scorer` whole.)* The CLI's `refuse_unless_registered_scorer` also re-checks the production files against BASE and the harness against `scorer_ref`, which must be a commit on origin/main.
   - **Twelve existing tests** registered old commits (`dc5b8787` → `b109e26c`) from today's checkout, which is the defect itself. They now stub only the production check, with a docstring pointing at its own pins: `test_evals_pr2.py`, `test_evals_pr2_round2.py`, `test_evals_pr926_round2.py` and `test_evals_replication_rule.py`.
   - **#953 is registered from a composite checkout:** `586fdcfd`'s production files under main's harness. #953 changed `synthesis.py` and `schemas.py` itself, and main's production files have moved since. The composite was proved at $0: this branch's harness imports cleanly against `586fdcfd`'s `vinci/`, and all 12 arms of the impact export load and score there. The PR gives the exact steps.
 - **RG-D13: M-GAP is barred as a target** (`compare.BARRED_TARGETS`).
@@ -91,7 +91,7 @@ The failing lines include:
 - All 36 file hashes match the manifest.
 - All 12 arms' layers parse under today's `MechanicalLayer` with NOTHING lost or changed. Today's schema adds only two fields, both `None`: `consensus_context.consensus_levels_note` on all 12, and `capital_allocation.impairment_headroom` on the 6 BASE arms. So scoring an arm under today's schema reads what its request carried.
 - Each arm's request carried a transcripts section of the same length at both arms: 60,095 to 123,471 characters with its header. M-ABSENT's transcript split is scored on that section with its header stripped, 59,419 to 122,795 characters (review round 0b).
-- `fixed_scorer` takes the retrospective branch, since `7ec84833` is on origin/main. From this branch it refuses, naming the scorer files this PR changes. Registered from main after this PR merges, it passes.
+- `fixed_scorer` takes the retrospective branch, since `7ec84833` is on origin/main. From this branch it refuses, naming the scorer files this PR changes. *(Corrected in review round 1, 2026-11-12: registered from a checkout of main it is refused TOO, because all of `586fdcfd`'s production files differ from main's. It registers from the COMPOSITE checkout, `586fdcfd` with main's `vinci/evals`, `docs/evals` and the gold, which is the path proved at $0 above and the steps in the PR.)*
 
 **THE SYNTHESIS REQUESTS DO NOT MOVE ($0).** Each of the six panel pages' requests was built in-process by main's harness and by this branch's, from the same pages and transcripts, read once and shared. All six are byte-identical by sha256: BURL, CNXC, LLY, MCK, ROST and SMPL, model `claude-opus-4-8`, two calls each.
 
@@ -135,6 +135,59 @@ A's usage ran out, and order 8 passed to B (#1004, 2026-11-12 10:52Z; this PR's 
     - `run_request`'s RG-D10 guard admits any registration string.
   - **NO CHANGE:** a `drawn` row reaches main only with a later PR. That is the accepted risk stated below.
 
+## Review round 1 (the coordinator's review at `7073ea09`, 2026-11-12)
+
+The coordinator's independent reviewer confirmed:
+- B's 15 gap tests;
+- the six held-out pages, and the 136 TEST claims the gold report leaves out;
+- that RG-D12 at score time was CLI-only, and that no non-CLI caller reaches the paid or score paths today;
+- 1,463 passing tests across the evals, RG-D20, git-ref, STATE and impact suites;
+- gap 1's composite for #953.
+
+It found eight items. One commit answers them. The tests are `tests/test_evals_order8_round1.py`: every FIX test fails on `7073ea09`, and every PIN names the mutant it kills.
+
+- **1. FIXED: a DESIGN is drawn once across approvals.**
+  - **Reproduced:** `shop.py`; `test_a_design_is_drawn_once_across_approvals_whatever_its_note`.
+  - **The defect.** The index keyed "drawn once" on the registration's sha, and a new `--note` gives one design a new sha. So a second approval could re-register a drawn design and draw it again: result shopping past the replication rule.
+  - **The fix.** Every `registered` row carries its design key, and `registry.claim_draw` refuses a registration whose design any other registration has drawn, reading the index in this checkout and on main.
+    - `compare.draw_key` is the `DESIGN_FIELDS` plus the replication link.
+    - `builds.draw_key` is everything but the note and the recorded inputs. A `RunRegistration` has a `note` too, so `register-run` had the same hole.
+  - **The replication rule's one other draw** names the run it replicates, so it is a design of its own, drawn once too (`test_a_replication_is_its_own_design_and_is_drawn_once_too`).
+  - **A row with no design** is refused at the claim, never read as a design of its own. None exists: nothing has been registered under order 8.
+  - **Corrected in this record,** in RUNBOOKS §n and in `docs/evals/README.md`.
+- **2. PINNED: mutant M1** (`require_on_main` reads the working copy). The real misuse is a draw straight after `register`, whose row is in this checkout's index and not yet on main (`test_a_draw_right_after_register_before_its_row_merges_is_refused`).
+- **3. PINNED: mutant M11** (`arm_layer` rebuilds both arms at BASE's ref). `arm_layer` itself runs, with the child stood in, and each arm is built at its own ref (`test_each_arm_s_layer_is_rebuilt_at_its_own_ref`).
+- **4. FIXED: RG-D12 whole, in the library (D1).**
+  - The library's `run_compare` and `score_run` compared only the fingerprint. They now run `refuse_unless_registered_scorer` themselves: the fingerprint, BASE's production files, and the harness at a `scorer_ref` on main. A registration whose fingerprint matches but whose BASE holds other production files is refused at the draw and at the score.
+  - `score_log.jsonl` records the scorer that ran (`scorer_fingerprint()`). That is equal to the registered one, because the check has just passed.
+  - **Mutant M10's line is gone.** `run_compare`'s fingerprint check is now the first step of the whole check, and is pinned by `test_library_run_compare_refuses_a_scorer_that_is_not_the_registered_one`.
+  - **The three other survivors:**
+    - M5's guard (the export's manifest sha256) moved from the CLI into the library's `run_compare` and is pinned. Its only other guards are the request pins and the per-arm hashes, so a rewritten manifest would otherwise be drawn.
+    - M7's guard (the request's wire sha256) is the only guard on `request.json`, which no file hash covers, and is pinned.
+    - M8's guard (`arm_layer`'s recorded CIQ inputs) is pinned.
+  - **Tests of other rules are stood in.** 44 existing tests register under placeholder refs ("A", "B") or old commits that no RG-D12 check can pass. They now stand in the fingerprint comparison they were written against (`tests/evals_scorer_stub.py`):
+    - autouse in the six modules holding 37 of them;
+    - a named fixture on the other seven, in the two order-8 modules. It is never autouse there, because those modules hold RG-D12's own pins.
+  - **Five more tests in `test_evals_order8.py` follow the code:**
+    - three index rows carry a design key;
+    - the `--ticker` refusal opens an approval first, since `register` now reads it before anything else;
+    - the structural approval pin reads `approval=approval` and the approval read before `write_registration`.
+- **5. CORRECTED: the retrospective's instructions.** RUNBOOKS §n step 4, `Registration.scorer_ref`'s docstring and this record's #953 line said a retrospective registers from `origin/main`. The code requires BASE's production files, which all differ between `586fdcfd` and main, so that is refused. All three now give the composite checkout.
+- **6. FIXED: what the scorer reads through.**
+  - `vinci/sleeves.py` (read by `derive_proposal`), `vinci/dossier/midcycle.py` and `vinci/schemas/ledger.py` join the fingerprint as PRODUCTION files. All three exist at every commit the suite and #953 read the scorer at.
+  - The scorer's whole static `vinci/` import closure is 99 files, 88 of them outside the fingerprint, measured at `7073ea09` by an `ast` walk from `SCORER_FILES`. `mechanical.py` imports the page builder: EDGAR, the price store, CIQ readers. A score's definitions do not read those, so they are not fingerprinted. The falsifier: a metric whose result changes with one of them.
+- **7. FIXED: `register` reads its approval before it writes anything.** `register` wrote the registration file and then refused for want of `--budget-ledger`, and the file left behind blocked the retry. `register-run` read the approval after writing too. Both now read it first (`test_register_with_no_budget_ledger_writes_no_registration`).
+- **8. DEFERRED: a CAND field that BASE's schema drops.** CAND's layer is parsed by BASE's `MechanicalLayer` (`impact_arm`, `arm_layer`), and pydantic drops a field CAND added (`extra_drop.py`). It is benign for #953, whose one such field is `impairment_headroom`, which is never sent. A future CAND would be tilted on M-ABSENT and M-ECHO. Making it loud means carrying a dropped-field list through `impact_arm`, `arm_layer`, `Score`, the score log and `score_text`: more than a few lines, so deferred, as the review allowed. The falsifier: an arm whose `layer.json` holds a key its parsed layer does not.
+
+**DEFERRED, as the review marked them:**
+- RG-D11 checks the gold only against the working copy's MANIFEST, so editing both passes. That is inherent without a pin held outside the repository.
+- `run_request` accepts any registration string (D2). Every paid path above it now needs its index claim and its RG-D12 check.
+- The git-ref lint cannot see a ref passed by name.
+
+**#953's order.** #1036 (open) edits `schemas.py` and `synthesis.py`, both production files. So #953 registers after #1036 merges, as well as after this PR, #1031 and #1023.
+
+**THE MUTANTS** (20; each applied alone, the evals, RG-D20 and git-ref suites run with `-x`, and the file restored byte for byte): **21 of 21 killed**. M6 survived the 20-mutant run and is now pinned by `test_an_approval_keeps_its_identity_as_its_ledger_grows`, which kills it: an approval's identity is its ledger's FIRST line, so under M6 every draw recorded would change it and a registration bound to it could not be drawn past its first row. Killed: M1 require_on_main reads the working copy, not main; M2 a barred target sits in Holm's family at p=0; M3 a barred-only registration's band is not forced to fail; M4 the BASE production re-check removed; M7 impact request.json wire sha256 not checked; M8 arm_layer skips the recorded CIQ-input check; M9 a build unit may be claimed twice; M11 arm_layer rebuilds BOTH arms at BASE's ref; M12 impact_arm reads BASE's arm for both; M13 fixed_scorer skips the harness-is-main check; M14 claim_judge_test lets any approval resume; M5' run_compare skips the export's manifest check (moved to the library); M10' run_compare's library RG-D12 check removed; D1 score_run's library RG-D12 check removed (no score-time check); R1a claim_draw keys on the sha again (design twins ignored); R1b the index stops recording the design; R1c a run's design includes its words; R1d a replication shares its first run's key; R6 the fingerprint drops vinci/sleeves.py; R7 register writes before it reads its approval; M6.
+
 ## What this means for #927's merged result
 
 **#927 (fix 4a) shipped on its only target, M-GAP**, at 37 → 4 units, p_lower 2.6 × 10⁻¹¹ (`docs/records/2026-11-09-fix4a-measured-on-the-panel.md`). M-GAP's truth is the gap types #927's own code wrote. So that result measured compliance with the new rule-8 wording, on pages where no gap may be raised. It does not measure fidelity to the page.
@@ -155,6 +208,8 @@ Its registration and record stay as written, as history. The merged code stays m
 - **`register` does not refuse a held-out page as a target page.** The ruling was "never used to build or tune a metric"; measuring a prompt change on a held-out page is neither, so it is left open. Whether held-out pages must also never be drawn is the operator's call.
 - **The library's `score_run` does not check the registered scorer** (B's review, deferred). The CLI's `score` and `score-run` do (`refuse_unless_registered_scorer`), and every documented step scores through the CLI. A library caller with an edited production file would score under it. The fix needs its own PR, because about 40 test call sites score with placeholder scorers.
 - **`run_request`'s RG-D10 guard checks only that a registration string is present** (B's review, deferred). The judge passes `judge:{half}` by design. Every paid path above it now also needs its index claim, so the guard is the last of three, not the only one.
+- **A CAND layer field BASE's schema drops is dropped silently** (round 1, item 8, deferred): see "Review round 1". The falsifier: an arm whose `layer.json` holds a key its parsed layer does not.
+- **RG-D11 checks the gold only against the working copy's MANIFEST** (round 1, deferred): an edit to both passes, which is inherent without a pin held outside the repository.
 - **The lint's rules are syntactic.** A ref handed to git through a wrapper it does not list is not seen. The falsifier is a `gate` red on an unreachable ref this lint passed.
 
 **BOUNDARY.**

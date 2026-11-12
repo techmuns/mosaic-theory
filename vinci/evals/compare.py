@@ -232,7 +232,11 @@ SCORER_FILES = ("vinci/evals/metrics.py", "vinci/evals/units.py", "vinci/evals/c
                 "vinci/evals/capture_child.py", "vinci/evals/replay.py",
                 "vinci/evals/synthesis_panel.json", "vinci/dossier/schemas.py",
                 # M-GAP reads each frozen page's gap types (fix 4a's gap test, frozen 2026-11-09)
-                "vinci/evals/synthesis_gap_types.json")
+                "vinci/evals/synthesis_gap_types.json",
+                # #1030 review round 1, item 6: what the scorer reads THROUGH — `derive_proposal`
+                # reads the sleeves; the layer's own imports read the mid-cycle anchor and the
+                # ledger's schemas (the closure's other modules build pages, never a score)
+                "vinci/sleeves.py", "vinci/dossier/midcycle.py", "vinci/schemas/ledger.py")
 
 
 def _fingerprint(files: dict[str, bytes]) -> str:
@@ -249,7 +253,9 @@ def scorer_fingerprint(root: Path = rp.ROOT) -> str:
 #: The PRODUCTION files the metrics borrow their definitions from (B's check of order 8, gap 1):
 #: what a candidate edits, so they are BASE's bytes, always — prospective or retrospective.
 PRODUCTION_SCORER_FILES = ("vinci/dossier/synthesis.py", "vinci/dossier/mechanical.py",
-                           "vinci/dossier/verdict.py", "vinci/dossier/schemas.py")
+                           "vinci/dossier/verdict.py", "vinci/dossier/schemas.py",
+                           "vinci/sleeves.py", "vinci/dossier/midcycle.py",
+                           "vinci/schemas/ledger.py")
 #: The harness's OWN scorer files: a reviewed harness, origin/main's at registration
 #: (`scorer_ref`), re-checked at the draw and the score.
 HARNESS_SCORER_FILES = tuple(f for f in SCORER_FILES if f not in PRODUCTION_SCORER_FILES)
@@ -368,6 +374,18 @@ def design_differs(a: Any, b: Any) -> list[str]:
     return [k for k in DESIGN_FIELDS if getattr(a, k) != getattr(b, k)]
 
 
+def draw_key(reg: Registration) -> str:
+    """THE DESIGN AS DRAWN, the index's drawn-once key (#1030 review round 1, item 1): the
+    `DESIGN_FIELDS` and the replication link. Two registrations of one design differ only in
+    words (`note`) or records (`inputs`), so they share it, and a design drawn under one approval
+    is refused under every other (`registry.claim_draw`); a replication names the run it
+    replicates, so it is a design of its own, drawn once too."""
+    d = json.loads(reg.to_json())
+    return hashlib.sha256(json.dumps(
+        {**{k: d.get(k) for k in DESIGN_FIELDS}, "replicates": reg.replicates},
+        sort_keys=True, default=list).encode()).hexdigest()
+
+
 def run_registration(out_dir: str | Path) -> Registration:
     """The registration a run folder was drawn under (its own ``registration.json``). A run the
     ledger records must be checkable: a missing file is refused, never skipped."""
@@ -431,8 +449,12 @@ class Registration:
     #: ruling for #927: M-LABEL gated on bleed, trailing-only and pe-percentile-blocked; its
     #: gap-statement families reported, not gated). The whole metric is still reported.
     no_worsening_families: dict[str, list[str]] = field(default_factory=dict)
-    #: The commit whose scorer files are the registration's fixed scorer (`fixed_scorer`): BASE
-    #: for a prospective comparison, origin/main at registration for a retrospective one.
+    #: The origin/main commit whose HARNESS files (`HARNESS_SCORER_FILES`) the fixed scorer
+    #: carries (`fixed_scorer`); its PRODUCTION files are BASE's, always. A prospective comparison
+    #: registers from a checkout of main (BASE is main); a retrospective one whose BASE's
+    #: production files differ from main's, from a COMPOSITE checkout — BASE, with main's
+    #: `vinci/evals`, `docs/evals` and the gold — never from a plain checkout of main, which is
+    #: refused (#1030 review round 1, item 5).
     scorer_ref: str | None = None
 
     def __post_init__(self) -> None:
@@ -643,15 +665,21 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
     $0 refusal and before the first write, so a refused run never consumes its registration."""
     gd.verify_committed_gold()   # RG-D11: the gold's hashes, before any paid draw (gap 4)
     refuse_if_unreached(c)
-    if (here := scorer_fingerprint()) != registration.scorer:   # RG-D12, in the library (gap 1)
-        raise rp.ReplayError(f"the scorer here ({here[:12]}) is not the registered scorer "
-                             f"({registration.scorer[:12]}): nothing is drawn")
+    # RG-D12 WHOLE, IN THE LIBRARY (#1030 review round 1, D1): the registered fingerprint, BASE's
+    # production files and the harness at `scorer_ref` — not the fingerprint alone, and not only
+    # when the CLI asks
+    refuse_unless_registered_scorer(registration)
     reg = registration
     pages = tuple(dict.fromkeys(t for t, _ in c.requests))
     if (c.base_ref, c.cand_ref, c.transforms, pages) != (reg.base_ref, reg.cand_ref,
                                                          reg.transforms, reg.pages):
         raise rp.ReplayError("the captured comparison is not the registered one (refs, "
                              "transforms or pages differ) — register it first")
+    if (imp := reg.inputs.get("impact")) and (c.inputs.get("impact") or {}).get(
+            "manifest_sha256") != imp["manifest_sha256"]:
+        # THE EXPORT REGISTERED, IN THE LIBRARY (round 1, mutant M5): the CLI's check, moved
+        raise rp.ReplayError(f"the export at {imp['dir']} is not the one registered (its "
+                             "manifest's sha256 moved): nothing is drawn from it")
     recorded = [r for r in budget.rows() if "registration" in r and "out_dir" in r]
     prior = [r["out_dir"] for r in recorded if r["registration"] == reg.sha]
     if prior:
@@ -817,9 +845,9 @@ def _check_run(out_dir: Path, reg: Registration, rows: list[dict[str, Any]]) -> 
     if not rec.exists() or Registration.from_json(rec.read_text(encoding="utf-8")).sha != reg.sha:
         raise rp.ReplayError(f"{reg.sha[:12]} is not the registration this run was drawn under "
                              f"({rec}); re-scoring under another needs a new registration and run")
-    if (fp := scorer_fingerprint()) != reg.scorer:
-        raise rp.ReplayError(f"the scorer here ({fp[:12]}) is not the registered scorer "
-                             f"({reg.scorer[:12]}): score from the registered code")
+    # RG-D12 WHOLE, IN THE LIBRARY (#1030 review round 1, D1): the fingerprint alone let a
+    # registration whose BASE holds other production files be scored here
+    refuse_unless_registered_scorer(reg)
     seen = Counter(r["label"] for r in rows)
     pages = {lab.split(":")[0] for lab in seen}
     if pages != set(reg.pages):
@@ -1034,7 +1062,8 @@ def score_run(out_dir: Path, registration: Registration, *, panel: dict[str, Any
                   barred=barred)
     with (out_dir / "score_log.jsonl").open("a", encoding="utf-8") as f:
         f.write(json.dumps({"at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-                            "registration": reg.sha, "scorer": reg.scorer,
+                            # the scorer that RAN (round 1), checked equal to the registered one
+                            "registration": reg.sha, "scorer": scorer_fingerprint(),
                             "runs_under_sha": [list(r) for r in runs],
                             "ledger": str(ledger.resolve()) if ledger is not None else None,
                             "ships": score.ships, "decision": score.decision,

@@ -381,3 +381,14 @@ def test_the_no_worsening_families_field_refuses_what_it_cannot_mean() -> None:
     assert cm.Registration.from_json(ok.to_json()) == ok
     plain = cm.Registration(**base)
     assert "no_worsening_families" not in json.loads(plain.to_json())        # old shas kept
+
+
+@pytest.fixture(autouse=True)
+def _scorer_is_the_fingerprint(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests pin the harness's other rules under placeholder refs or old commits. Since
+    #1030's review round 1 the library runs RG-D12 whole (BASE's production files, the harness
+    at `scorer_ref`), which no such ref holds; it is stood in by the fingerprint comparison
+    these tests were written against (`tests/evals_scorer_stub.py`). RG-D12's own pins are in
+    `tests/test_evals_order8.py` and `tests/test_evals_order8_round1.py`."""
+    from tests.evals_scorer_stub import fingerprint_only
+    monkeypatch.setattr(cm, "refuse_unless_registered_scorer", fingerprint_only)

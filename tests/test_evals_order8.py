@@ -183,7 +183,8 @@ def _arm_run(tmp_path: Path, reg: object, raw_base: dict[str, object],
     return out
 
 
-def test_each_arm_is_scored_against_the_layer_its_own_request_carried(tmp_path: Path) -> None:
+def test_each_arm_is_scored_against_the_layer_its_own_request_carried(tmp_path: Path,
+        scorer_is_the_fingerprint: None) -> None:
     """(−) STATE row 53 item 6 (handed over on #1004): both arms were scored against the committed
     layer, BASE's, though CAND's request carried words its own transform wrote — so a CAND draw
     quoting them read as "quote: nowhere", an M-ABSENT worsening that was not there. Reproduced
@@ -276,7 +277,7 @@ def test_a_registration_is_drawn_once_across_approvals(tmp_path: Path) -> None:
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
     repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64,
-                                         "approval": "approval-1"}])
+                                         "approval": "approval-1", "design": "d" * 64}])
     registry.claim_draw("a" * 64, approval="approval-1", root=repo)
     with pytest.raises(ReplayError, match="drawn once"):
         registry.claim_draw("a" * 64, approval="approval-2", root=repo)
@@ -291,7 +292,7 @@ def test_a_build_is_drawn_once_and_a_registration_s_builds_share_one_approval(
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
     repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64,
-                                         "approval": "ap-1"}])
+                                         "approval": "ap-1", "design": "d" * 64}])
     registry.claim_draw("a" * 64, approval="ap-1", unit="NFLX:1", root=repo)
     registry.claim_draw("a" * 64, approval="ap-1", unit="NFLX:2", root=repo)   # (+) next build
     with pytest.raises(ReplayError, match="drawn once"):
@@ -391,7 +392,8 @@ def test_m_gap_is_refused_as_a_target() -> None:
         cm.register("dc5b8787", "b109e26c", targets=["M-LABEL", "M-GAP"])
 
 
-def test_a_score_prints_m_gap_but_no_decision_reads_it(tmp_path: Path) -> None:
+def test_a_score_prints_m_gap_but_no_decision_reads_it(tmp_path: Path,
+        scorer_is_the_fingerprint: None) -> None:
     """(−) A registration from before the bar (as #927's is) that targets M-GAP beside M-LABEL:
     on BURL, a CAND that drops "bleed" improves M-LABEL and leaves M-GAP flat. The decision once
     failed on M-GAP; it now rests on M-LABEL alone, and M-GAP is still printed."""
@@ -419,7 +421,8 @@ def test_a_score_prints_m_gap_but_no_decision_reads_it(tmp_path: Path) -> None:
     assert s.barred == ("M-GAP",) and "RG-D13" in cm.score_text(s)
 
 
-def test_a_registration_whose_only_target_is_barred_decides_nothing(tmp_path: Path) -> None:
+def test_a_registration_whose_only_target_is_barred_decides_nothing(tmp_path: Path,
+        scorer_is_the_fingerprint: None) -> None:
     """(−) #927's shape: M-GAP its only target. It is scored and printed, and with no target left
     to decide, it does not ship — never "ships" on an empty set of targets."""
     from vinci.evals import compare as cm
@@ -443,7 +446,8 @@ def test_a_registration_whose_only_target_is_barred_decides_nothing(tmp_path: Pa
 # ------------------------- review round 0: a refused run never consumes its registration (RG-D9)
 
 
-def test_a_run_compare_refused_at_0_dollars_claims_nothing(tmp_path: Path) -> None:
+def test_a_run_compare_refused_at_0_dollars_claims_nothing(tmp_path: Path,
+        scorer_is_the_fingerprint: None) -> None:
     """(−) `run-compare` claimed the draw in the index BEFORE `run_compare`'s $0 refusals (a run
     folder already holding draws, moved request bytes, a design already drawn), so one refusal
     left a `drawn` row and the registration could never be drawn. The claim now runs after them;
@@ -624,7 +628,8 @@ def test_an_impact_export_whose_file_moved_is_refused(tmp_path: Path) -> None:
         cm.captured_from_impact(out)
 
 
-def test_an_impact_arm_is_scored_against_its_own_fresh_layer(tmp_path: Path) -> None:
+def test_an_impact_arm_is_scored_against_its_own_fresh_layer(tmp_path: Path,
+        scorer_is_the_fingerprint: None) -> None:
     """(−) The #953 retrospective's blocker (coordinator, 2026-11-11): `score_run` scored every
     draw against the FROZEN panel page, but an impact run's requests were built fresh on today's
     inputs and carried another layer. An impact registration's arms are scored against their own
@@ -775,11 +780,13 @@ def test_register_from_impact_refuses_a_chosen_page(tmp_path: Path) -> None:
     """(−) `--ticker` beside `--from-impact` was silently replaced by the export's pages, so a
     registration the operator limited to one page was written over all of them."""
     from vinci.evals import __main__ as cli
+    from vinci.evals import replay as rp
     from vinci.evals.replay import ReplayError
     out, _ = _impact_export(tmp_path)
+    ledger = rp.Budget.open(tmp_path / "ledger.jsonl", cap_usd=1.0, approval="test").ledger
     with pytest.raises(ReplayError, match="--ticker"):
         cli.main(["register", "--from-impact", str(out), "--ticker", "NFLX", "--no-worsening",
-                  "--out", str(tmp_path / "r.json")])
+                  "--budget-ledger", str(ledger), "--out", str(tmp_path / "r.json")])
 
 
 def test_a_registered_scorer_ref_that_is_an_unmerged_candidate_is_refused(
@@ -851,7 +858,7 @@ def test_a_registration_is_drawn_only_under_the_approval_it_is_bound_to(tmp_path
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
     repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64,
-                                         "approval": "ap-1"}])
+                                         "approval": "ap-1", "design": "d" * 64}])
     with pytest.raises(ReplayError, match="bound to approval"):
         registry.claim_draw("a" * 64, approval="ap-2", root=repo)
     registry.claim_draw("a" * 64, approval="ap-1", root=repo)        # (+) its own approval
@@ -868,4 +875,19 @@ def test_a_registration_names_its_approval() -> None:
     calls = [i for i in range(len(src)) if src.startswith("registry.record_registered(", i)]
     assert len(calls) == 2
     for i in calls:
-        assert "approval=registry.approval_id(a.budget_ledger)" in src[i:i + 300]
+        assert "approval=approval" in src[i:i + 300] and "design=" in src[i:i + 300]
+    for cmd in ('a.cmd == "register"', 'a.cmd == "register-run"'):
+        body = src[src.index(cmd):]
+        body = body[:body.index("return 0")]
+        assert body.index("registry.approval_id(a.budget_ledger)") < body.index(
+            "write_registration(")   # #1030 review round 1, item 7
+
+
+@pytest.fixture()
+def scorer_is_the_fingerprint(monkeypatch: pytest.MonkeyPatch) -> None:
+    """RG-D12 whole is stood in by the fingerprint comparison, for a test of ANOTHER rule under
+    a placeholder ref or #953's BASE (`tests/evals_scorer_stub.py`). Named, never autouse: this
+    module holds RG-D12's own pins."""
+    from tests.evals_scorer_stub import fingerprint_only
+    from vinci.evals import compare as cm
+    monkeypatch.setattr(cm, "refuse_unless_registered_scorer", fingerprint_only)

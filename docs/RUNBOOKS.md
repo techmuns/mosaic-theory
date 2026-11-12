@@ -724,10 +724,15 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    differ from the registered ones. A stopped run is reported as stopped; drawing again needs a
    NEW registration, said so in the record. The cap is the approval's, never one run's.
    **Since fix request 2, order 8 (2026-11-11):**
-   - **Register from a checkout of the FIXED SCORER** (RG-D12): BASE for a prospective change;
-     `origin/main` at registration for a retrospective one (CAND already merged), recorded as
-     `scorer_ref`. `register`, `run-compare` and `score` refuse any other scorer: a candidate never
-     scores itself.
+   - **Register from a checkout of the FIXED SCORER** (RG-D12): BASE's PRODUCTION files
+     (`compare.PRODUCTION_SCORER_FILES`) under `origin/main`'s HARNESS at registration
+     (`HARNESS_SCORER_FILES`), recorded as `scorer_ref`. For a prospective change BASE is main, so
+     that is a checkout of `origin/main`. For a retrospective one whose BASE's production files
+     differ from main's (#953's do, all of them), it is a COMPOSITE checkout: BASE checked out,
+     then `git checkout origin/main -- vinci/evals docs/evals tests/fixtures/synthesis_gold`;
+     a plain checkout of `origin/main` is refused. `register`, `run-compare` and `score` (and
+     the library's `run_compare` and `score_run`, since #1030's review round 1) refuse any other
+     scorer: a candidate never scores itself.
    - **A retrospective of a merged change** (fresh builds, not the frozen page): `register
      --from-impact <an impact export>` reads the export's two commits, each page's two requests
      and the layers they carried, every file checked against its manifest's sha256; `run-compare`
@@ -736,9 +741,12 @@ first"** — no prompt change or paid rebuild ships unmeasured.
      `docs/evals/registrations.jsonl`. Merge it in a docs-only PR; `run-compare`, `run`, `score`
      and `score-run` refuse a registration `origin/main` does not hold (fetch after the merge), so
      main's history shows it registered before its draws (RG-D14).
-   - **Drawn once across approvals.** Each paid draw, and the judge's TEST read, is a row of the
-     same index; a second approval cannot draw the registration again (RG-D9). Commit the `drawn`
-     rows with the run's record.
+   - **A DESIGN is drawn once across approvals** (RG-D9; since #1030's review round 1). Each paid
+     draw, and the judge's TEST read, is a row of the same index. Every `registered` row carries
+     its design key (`compare.draw_key`, `builds.draw_key`: the design fields, never the words or
+     a path's spelling), so the same design re-registered under a second approval with a new
+     `--note` is refused once the first has drawn. A replication names the run it replicates, so
+     it is a design of its own, drawn once too. Commit the `drawn` rows with the run's record.
    - **M-GAP is never a target** (RG-D13, until an independent coding of the gap types exists):
      it is scored and printed, and no decision reads it.
    - **Six pages are held out** (`vinci/evals/held_out_pages.json`, by a fixed rule): they are

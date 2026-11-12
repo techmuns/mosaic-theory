@@ -266,7 +266,7 @@ def test_every_held_out_page_has_a_transcript_the_replay_can_read() -> None:
 
 
 def test_a_paid_run_compare_with_no_index_claim_is_refused_before_any_client(
-        tmp_path: Path, spy: type[_Spy]) -> None:
+        tmp_path: Path, spy: type[_Spy], scorer_is_the_fingerprint: None) -> None:
     """(−) The library half of RG-D9 and RG-D14, as gap 2 was for RG-D10. `run_compare` took
     ``claim=None`` by default and then drew, so only the CLI wrote the index's `drawn` row and
     checked main first: a script calling the library drew a registration that nothing recorded,
@@ -281,7 +281,8 @@ def test_a_paid_run_compare_with_no_index_claim_is_refused_before_any_client(
 
 
 def test_a_run_compare_with_its_claim_still_reaches_the_draw(tmp_path: Path,
-                                                             spy: type[_Spy]) -> None:
+                                                             spy: type[_Spy],
+        scorer_is_the_fingerprint: None) -> None:
     """(+) The guard's other side: with its claim the same run is claimed and goes on to draw
     (the spied client is built, so the claim came first)."""
     from vinci.evals import compare as cm
@@ -326,3 +327,13 @@ def test_a_paid_build_needs_its_index_claim(tmp_path: Path, spy: type[_Spy],
         bd.run_build(reg, "NFLX", 1, budget=_budget(tmp_path, "b"),
                      draws_out=tmp_path / "b.jsonl", ciq_root=tmp_path, claim=lambda: None)
     assert spy.built == 1
+
+
+@pytest.fixture()
+def scorer_is_the_fingerprint(monkeypatch: pytest.MonkeyPatch) -> None:
+    """RG-D12 whole is stood in by the fingerprint comparison, for a test of ANOTHER rule under
+    a placeholder ref or #953's BASE (`tests/evals_scorer_stub.py`). Named, never autouse: this
+    module holds RG-D12's own pins."""
+    from tests.evals_scorer_stub import fingerprint_only
+    from vinci.evals import compare as cm
+    monkeypatch.setattr(cm, "refuse_unless_registered_scorer", fingerprint_only)
