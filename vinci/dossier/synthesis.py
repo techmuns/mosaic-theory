@@ -939,10 +939,11 @@ class _FactNumbers:
     #: prints with no sign ("a loss of $156M"), and a transcript figure with no ``change`` word.
     #: A claim's printed sign is never checked against these — only a sign the fact states
     unsigned: set[float] = field(default_factory=set)
-    #: (W05, e) the spans the CODE names for this fact — a window in its ref ("EOD SMPL 180d") or
-    #: in a field name (`pe_percentile_5y`, `high_52w`). They trace a duration in a point citing
-    #: this fact, never one traced against the whole page: page-wide, every page names some 30
-    #: such spans, and every year count 1 to 5 passed on every page
+    #: (W05, e) the spans the CODE names this fact by — a window in a field name
+    #: (`pe_percentile_5y`, `high_52w`): a label, not a statement (`pe_percentile_5y` sits over a
+    #: 9.5-year series on V's page). It traces a duration in a point citing this fact, never one
+    #: traced against the whole page. A ref's window ("EOD SMPL 180d", "… (9.5y)") is a span it
+    #: states, in ``windows``
     named_windows: set[float] = field(default_factory=set)
     #: (W05, b) half a unit of the last digit each value is PRINTED with in the fact's own text,
     #: by (value, the unit class it is printed in) — the largest where it is printed more than
@@ -1023,8 +1024,8 @@ def _fiscal_shift(mech: MechanicalLayer) -> int:
     company's "fiscal 2025" is CIQ's FY26; else 0, and 0 when the page states no such date."""
     fs = mech.financial_summary
     rec = fs.statement_reconciliation if fs is not None else None
-    months = [int(r.period_end[5:7]) for r in (rec.rows if rec is not None else [])
-              if not r.is_ltm and len(r.period_end) >= 7]
+    months = [int(m.group(1)) for r in (rec.rows if rec is not None else [])
+              if not r.is_ltm and (m := re.match(r"\d{4}-(\d{2})-", r.period_end))]
     return 1 if months and sum(m in (1, 2) for m in months) * 2 > len(months) else 0
 
 
@@ -1127,7 +1128,10 @@ def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -
             hits = [i for i, tok in enumerate(tokens)
                     if tok in want and set(want) <= set(tokens[i:i + span])]
             mentions += [(spans[i][0], r) for i in hits]
-            covered.update(j for i in hits for j in range(i, min(i + span, len(tokens))))
+            # the phrase's own words only, never the two extra its window allows: else "EBITDA
+            # and revenues" hid "revenues" (review round 0)
+            covered.update(j for i in hits for j in range(i, min(i + span, len(tokens)))
+                           if tokens[j] in want)
     for phrase in _OTHER_METRICS:
         want = phrase.split()
         mentions += [(spans[i][0], None) for i in range(len(tokens) - len(want) + 1)
@@ -1332,8 +1336,8 @@ def _values_by_ref(mech: MechanicalLayer) -> dict[str, _FactNumbers]:
                     if o.get(k)}
             if keys:
                 nums = _FactNumbers()
-                # its ref's window ("EOD SMPL 180d to …") is read as a named window there; an
-                # accession or a URL names none — "…/d123116d8k.htm" is no 123,116 days (W05, e)
+                # its ref's window ("EOD SMPL 180d to …") is read there, as a span it states; an
+                # accession or a URL states none — "…/d123116d8k.htm" is no 123,116 days (W05, e)
                 _stated_numbers(o, nums, name)
                 for k in keys:
                     out.setdefault(k, _FactNumbers()).merge(nums)
@@ -1564,9 +1568,10 @@ def _validate(
                 # with no scale word is the writer's dollars or the table's own unit (VRRM's
                 # "FY27E revenue is $873M versus FY25 $979")
                 stated.append((c.value, (c.amount / f.scale,) if f.scale != 1.0
-                               else (c.amount, 1.0), c.half))
+                               else (c.amount, 1.0), c.half if c.printed == "plain" else 0.0))
             elif f.unit == "plain":
-                stated.append((c.value, (1.0,), c.half))   # "revenue of 1,450.9": its own unit
+                # "revenue of 1,450.9": the table's own unit
+                stated.append((c.value, (1.0,), c.half if c.printed == "plain" else 0.0))
             # a %, an "x" or a bps figure is no amount
         for x, scales, xhalf in stated:
             if f.sign and a and x not in cited.unsigned and (x == 0 or (x > 0) != (f.sign > 0)):

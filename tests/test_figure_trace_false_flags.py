@@ -15,8 +15,8 @@ still refuse:
 - (e) a duration passed on any span the page's CODE names in an identifier — a field name
   (`pe_percentile_5y`, `high_52w`), an accession or a URL — wherever it sat on the page.
 
-Value pins sit on the FROZEN pages (`tests/fixtures/frozen_pages/2026-08-18/`); each failed before
-this change.
+Value pins sit on the FROZEN pages (`tests/fixtures/frozen_pages/2026-08-18/`). The positive half
+of each failed before this change; each (−) half passed before and still does.
 """
 
 from __future__ import annotations
@@ -48,6 +48,8 @@ _FROZEN_VRRM = ROOT / "tests/fixtures/frozen_pages/2026-08-18/VRRM/dossier.json"
     ("FY25 CFO was $178.5M and capital expenditures were $20.5M.", []),
     ("FY25 EBITDA was $262.3M and profit was $103.6M.", []),
     ("FY25 EBITDA was $262.3M after a $60.9M impairment.", []),
+    # (review round 0) a metric no row carries, written two words after a row's: still its own
+    ("FY25 EBITDA and revenues: $262.3M and $1,450.9M.", []),
     # (−) the fallback is the cited fact: a figure it does not state is still refused
     ("FY25 EBITDA was $262.3M while revenues were $1,999.9M.", ["1999.9"]),
     ("FY25 EBITDA was $262.3M and operating income was $262.9M.", ["262.9"]),
