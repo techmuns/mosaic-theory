@@ -21,7 +21,7 @@ import xml.etree.ElementTree as ET
 from collections import OrderedDict
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, replace
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, timedelta
 from typing import Any, NamedTuple, TypeVar, cast
 
 from vinci.config import get_config
@@ -1962,8 +1962,10 @@ def _pe_reconciliation(
     # is anomalous vs the recent median 7.00" — 2.53 is CORRECT, and the MEDIAN is the contaminated
     # figure, drawn across a 10:1 split the filer restated only two years of. A reader told to
     # "verify against normalized/forward EPS" is being sent after an earnings anomaly that does not
-    # exist. Silent here rather than re-worded: the percentile beside it already refuses WITH the
-    # split as its stated reason, and a second differently-worded split note is a claim that drifts.
+    # exist. Silent here rather than re-worded: the percentile beside it states the split — refused
+    # with it as the reason, or since 2026-11-11 built on EPS put on the current basis by the
+    # filer's factor, its note naming it — and a second differently-worded note is a claim that
+    # drifts.
     if share_basis_change(eps) is not None:
         return None
     latest, prior = eps[-1].value, [p.value for p in eps[:-1]][-4:]
@@ -6641,11 +6643,9 @@ def assemble_mechanical(
     mech = with_valuation_bases(
         mech, facts, bundle, text_for=release_text_fn(http, record.identity.cik))
     # (2026-10-26) the annual table's revenue and operating cash flow against the filings, per
-    # column, from the same export — what the data-quality scorecard's two checks read. Dated on
-    # UTC, the calendar `assembled_at` is stamped on (`assemble.built_at`), so the back-fill —
-    # which reads `assembled_at` — cuts the facts on the same day; local `today` runs a day ahead
-    # of it before 05:30 IST
-    mech = statement_recon.attach(mech, bundle, facts, filed_by=datetime.now(UTC).date())
+    # column, from the same export — what the data-quality scorecard's two checks read. As filed
+    # by the cut, never the build's day: that day reached the synthesis request (ruling 2)
+    mech = statement_recon.attach(mech, bundle, facts, filed_by=cut)
     # (catalyst calendar) dated events + what each tests — needs drawdown_cause (the guide) and
     # capital_structure (maturities), both on mech by now; its misses ride the QA channel.
     calendar = _catalyst_calendar(edgar, record.identity.cik, reference_date, mech)

@@ -168,7 +168,9 @@ def test_synthesis_surfaces_operating_drivers_digest_and_rule() -> None:
     digest = syn._operating_drivers_digest(od)
     assert "OPERATING DRIVERS" in digest
     # each row surfaced with its REAL source_ref (the thing the LLM copies to cite)
-    assert "[attribution] revenue: $55.9M, or 48.0% → 10-Q Z" in digest
+    # its period, and the structured value its verbatim one drops: a 48.0% FALL (prompt-fix 2)
+    assert ("[attribution] revenue (period not stated): $55.9M, or 48.0% [structured: -48%] → "
+            "10-Q Z") in digest
     assert "→ CIQ transcript: MVST Q1 2026 Call" in digest
     # the system rule instructs grounding operating points in a driver + its source_ref
     assert "MECHANISM" in syn._SYSTEM and "source_ref" in syn._SYSTEM
@@ -334,10 +336,12 @@ def test_synthesis_guardrails_flag_uncited_directional_and_numeric_twins() -> No
     assert "fake-model-1" in log and "RAW OUTPUT" in log
 
 
-def test_transcript_figure_soft_flagged_structured_misbinding_hard_flagged() -> None:
-    """Source-aware figure trace. A number cited to the earnings-call TRANSCRIPT (prose, not in the
-    structured layer) earns a soft TRANSCRIPT-FIGURE 'verify against the call' note, NOT a hard
-    UNTRACEABLE — so a high-value transcript-only point survives. A number cited to a STRUCTURED
+def test_a_call_figure_none_of_its_validated_figures_states_is_shown() -> None:
+    """(RG-D7, 2026-11-11) The instruction says no number is read from a call's text; the check
+    gave a figure cited to the call a soft TRANSCRIPT-FIGURE note, QA-only and hidden, so a number
+    read off the call's prose reached the page unmarked. A figure cited to a call of the page now
+    traces to that call's VALIDATED figures (its driver rows'), and one none of them states is an
+    UNTRACEABLE caveat naming the call — shown, the point kept. A number cited to a STRUCTURED
     source the facts don't contain still hard-flags UNTRACEABLE (a real source-misbinding)."""
     tref = "CIQ transcript(s): Acme, Inc., Q1 2026 Earnings Call.rtf"
     # management_commentary PRESENT so the transcript citation traces (the point is cited)
@@ -357,13 +361,23 @@ def test_transcript_figure_soft_flagged_structured_misbinding_hard_flagged() -> 
                               "evidence_against": []},
         "twin_reference_cases": [], "key_unknowns": [],
     }
-    _, flags, _ = syn.synthesize(mech, llm=_FakeLlm(payload), ticker="ACME", name="Acme")
-    # transcript-cited 48.2 -> soft 'verify' note, NOT untraceable (the point is preserved)
-    assert any("TRANSCRIPT-FIGURE '48.2'" in f and "verify against the call" in f for f in flags)
-    assert not any("UNTRACEABLE figure '48.2'" in f for f in flags)
-    # structured-cited 47.3 -> hard untraceable, NOT softened to a transcript note
-    assert any("UNTRACEABLE figure '47.3'" in f for f in flags)
-    assert not any("TRANSCRIPT-FIGURE '47.3'" in f for f in flags)
+    synth, flags, _ = syn.synthesize(mech, llm=_FakeLlm(payload), ticker="ACME", name="Acme")
+    # call-cited 48.2, which no validated figure of the call states -> a SHOWN caveat naming it
+    shown = [f for f in flags if f.startswith(f"UNTRACEABLE figure '48.2' in bear_point "
+                                              f"[from the call {tref}]")]
+    assert shown and not any(f.startswith("TRANSCRIPT-FIGURE") for f in flags)
+    caveats, _ = dflags.partition(shown)
+    assert caveats and "validated figures do not include it" in caveats[0]
+    assert synth.bear_points[0].cited   # the point is kept, and cites a real call
+    # structured-cited 47.3 -> hard untraceable, with no call named
+    assert any(f.startswith("UNTRACEABLE figure '47.3' in bear_point: ") for f in flags)
+    # the positive half: a driver row of the call STATES 48.2 -> the same claim traces
+    row = ds.OperatingDriver(kind=ds.DriverKind.LEADING_INDICATOR, metric="GAAP net profit",
+                             source_ref=tref, tier="llm-fenced", value_status="verified",
+                             figures=[ds.DriverFigure(value=48.2, currency="$", scale="e6")])
+    with_row = mech.model_copy(update={"operating_drivers": ds.OperatingDriversExtract(rows=[row])})
+    _, flags, _ = syn.synthesize(with_row, llm=_FakeLlm(payload), ticker="ACME", name="Acme")
+    assert not any("'48.2'" in f for f in flags)
 
 
 def test_directional_lint_exempts_analyst_rating_context() -> None:
@@ -597,8 +611,8 @@ def test_figure_trace_dedup_keys_on_signed_value_and_type() -> None:
     }
     _, f_sign, _ = syn.synthesize(mech, llm=_FakeLlm(sign), ticker="X", name="X")
     assert len([f for f in f_sign if "777" in f]) == 2  # +777 and 777bps both flag
-    # a soft TRANSCRIPT-FIGURE (bull, transcript ref) must NOT suppress a hard UNTRACEABLE on a
-    # decisive structured-cited figure of the same value
+    # a call-cited figure (bull) must NOT suppress a structured-cited one of the same value on a
+    # decisive point: each is keyed by the fact it cites
     xtype = {
         "bull_points": [{"claim": "the call cited 678 in savings", "source_ref": tref}],
         "bear_points": [],
@@ -609,8 +623,10 @@ def test_figure_trace_dedup_keys_on_signed_value_and_type() -> None:
         "twin_reference_cases": [], "key_unknowns": [],
     }
     _, f_xt, _ = syn.synthesize(mech, llm=_FakeLlm(xtype), ticker="X", name="X")
-    assert any("TRANSCRIPT-FIGURE '678'" in f for f in f_xt)  # soft note on the bull (transcript)
-    assert any("UNTRACEABLE figure '678'" in f for f in f_xt)  # hard flag on decisive — kept
+    assert any(f.startswith("UNTRACEABLE figure '678' in bull_point [from the call")
+               for f in f_xt)  # (RG-D7) the call's, shown
+    assert any(f.startswith("UNTRACEABLE figure '678' in decisive.against: ")
+               for f in f_xt)  # the structured one on the decisive point — kept
 
 
 def test_anchors_on_distorted_pe_flags_bull_case_leaning_on_the_multiple() -> None:
@@ -1947,7 +1963,8 @@ def test_rc1_primary_source_digest_shape_verbatims_excluded() -> None:
     dig = syn._primary_source_digest(_primary_source_fixture(doubt=False))
     assert "term → value → source_ref" in dig and "verbatims EXCLUDED" in dig
     assert "going-concern: none stated (checked, absent)" in dig  # the checked-absence state
-    assert "event impact: reduce revenue 135.0–145.0 (2026 annualized)" in dig
+    # its unit printed from the schema (prompt-fix 2, fix request 2): the range is $M
+    assert "event impact: reduce revenue 135.0–145.0 $M (2026 annualized)" in dig
     assert "→ 8-K x EX-99.1" in dig  # a source_ref terminates the line
     dig2 = syn._primary_source_digest(_primary_source_fixture(doubt=True))
     assert "going-concern: SUBSTANTIAL DOUBT stated" in dig2

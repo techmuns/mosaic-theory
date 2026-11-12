@@ -1,0 +1,9 @@
+{
+  "id": "2026-11-11.refresh-backfill-price-date-cut",
+  "follows": [
+    "2026-11-10.header-offset-and-renamed-tabs",
+    "2026-11-10.period-order-and-duration",
+    "2026-11-11.unpriced-count-names-its-horizon"
+  ],
+  "names": "the refresh back-fill's lease basis, three valuation bases and statement reconciliation read EDGAR companyfacts as filed by the page's price date, the cut assembly makes; they read today's facts, or the facts as filed by the assembly date (PR #1014)"
+}

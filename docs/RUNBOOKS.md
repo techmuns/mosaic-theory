@@ -799,8 +799,15 @@ inputs, at $0 (no model call). Code: `vinci/impact/`; record:
    whatever its age, a miss fetched once and named in the report. **A cold cache is
    network-bound** — the machine's 8/3-a-second share of SEC's budget — and a warm one is not
    (the record gives both wall times). A page side built before with the same code, inputs and
-   store is reused from `~/.cache/vinci/impact-builds/` once every response it read is checked
-   unchanged, so main's side is built once per main commit. `--resume` continues a run of the
+   store ON THE SAME UTC DAY is reused from `~/.cache/vinci/impact-builds/` once every response
+   it read is checked unchanged, so main's side is built once per main commit per day. **The day
+   is an input:** a build stamps today's UTC date on the page (`as_filed_by`), and it reaches the
+   synthesis request. A page whose two sides were not built within one UTC day has its off-day
+   side re-built once; if it still is not, it is set apart as run noise, never counted as a move
+   (#984's sweep run moved 5 pages on the date alone). `--allow-vendor-pulls` lets a Polygon or
+   Tiingo response the cache lacks be fetched; by default it is refused, since a vendor pull is
+   the operator's call. `--skip-fail-first` leaves part 1 out (a sweep of merged PRs), and the
+   section says so. `--resume` continues a run of the
    same base, head and store; `--theme-data <a theme-intelligence data dir>` lets the theme desk
    consumer run; `--run-screen` lets the screen run (slow).
    **Base is the MERGE BASE** of `--base` and head, never main's tip: a tip the branch has not

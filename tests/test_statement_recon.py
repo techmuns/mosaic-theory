@@ -266,8 +266,10 @@ def _tjx_doc(block: dict[str, Any] | None = None) -> dict[str, Any]:
         "rows": [{"label": "Revenue ($M)", "values": [60372.0, 62363.0, 64000.0]}]}}}
     if block is not None:
         fs["statement_reconciliation"] = block
+    # a page states the date its facts are cut at (`refresh.statement_recon_transform` refuses one
+    # that states none); with no stored close it is the reference date, as every committed page's
     return {"ticker": "TJX", "cik": "0000109198", "assembled_at": "2026-10-21T11:18:48Z",
-            "mechanical": {"financial_summary": fs}}
+            "reference_date": "2026-10-16", "mechanical": {"financial_summary": fs}}
 
 
 def _tjx_figures(nudge: float = 0.0) -> list[sr.CiqFigure]:
@@ -285,7 +287,9 @@ def test_the_backfill_writes_the_block_when_the_export_is_the_pages() -> None:
     out, refused = _run(_tjx_doc(), lambda _t: _tjx_figures())
     assert refused == []
     blk = out["financial_summary"]["statement_reconciliation"]
-    assert blk["as_filed_by"] == "2026-10-21"
+    # dated by the filings the rows read (the Q2 10-Q, filed 2026-08-28), not the 2026-10-21
+    # assembly date (ruling 2, 2026-11-12)
+    assert blk["as_filed_by"] == "2026-08-28"
     assert [(r["column"], r["filing"], r["different"]) for r in blk["rows"]] == [
         ("FY26", 60372.0, False), ("LTM", 62363.0, False)]
     # idempotent: the block it wrote is the block it rebuilds
@@ -316,12 +320,21 @@ def test_the_backfill_refuses_without_an_export_and_never_overwrites() -> None:
 
 
 def test_the_backfill_reads_the_facts_as_assembly_did() -> None:
+    """As filed by the page's cut, as assembly reads them, and by nothing else (ruling 2,
+    2026-11-12): an assembly date the day before TJX's Q2 10-Q no longer bounds the read, which the
+    page's cut (its reference date, 2026-10-16) does; the price-date cut itself is pinned in
+    test_refresh_price_date_cut."""
     doc = _tjx_doc()
-    doc["assembled_at"] = "2026-08-27T09:00:00Z"     # the day before TJX's Q2 10-Q
+    doc["assembled_at"] = "2026-08-27T09:00:00Z"
+    out, _r = _run(doc, lambda _t: _tjx_figures())
+    rows = out["financial_summary"]["statement_reconciliation"]["rows"]
+    assert rows[0]["filing"] == 60372.0 and rows[1]["filing"] == 62363.0
+    doc = _tjx_doc()
+    doc["reference_date"] = "2026-08-27"
     out, _r = _run(doc, lambda _t: _tjx_figures())
     rows = out["financial_summary"]["statement_reconciliation"]["rows"]
     assert rows[0]["filing"] == 60372.0 and rows[1]["filing"] is None
-    with pytest.raises(Exception, match="assembled_at"):
+    with pytest.raises(Exception, match="price date"):
         statement_recon_transform({"ticker": "X"}, edgar=_Edgar("TJX"), refused=[])
 
 
@@ -348,7 +361,8 @@ def test_attach_builds_the_block_from_the_export_and_leaves_it_absent_without_on
     out = sr.attach(mech, _Bundle(_sheets()), facts,  # type: ignore[arg-type]
                     filed_by=date(2026, 3, 1))
     rec = out.financial_summary.statement_reconciliation if out.financial_summary else None
-    assert rec is not None and rec.as_filed_by == "2026-03-01"
+    # the one filing read was filed 2026-02-20; the 2026-03-01 cut is not the block's date
+    assert rec is not None and rec.as_filed_by == "2026-02-20"
     assert {(r.column, r.different) for r in rec.rows if r.filing is not None} == {
         ("FY25 (R)", False)}
     for bundle, f in ((None, facts), (_Bundle(_sheets()), None), (_Bundle({}), facts)):
@@ -366,11 +380,10 @@ def test_the_assembler_attaches_the_block_from_its_own_export_and_facts() -> Non
 
     body = inspect.getsource(dm.assemble_mechanical)
     facts = body.index("facts = _companyfacts_or_none(edgar, record.identity.cik)")
-    at = body.index("statement_recon.attach(mech, bundle, facts, "
-                    "filed_by=datetime.now(UTC).date())")
+    at = body.index("statement_recon.attach(mech, bundle, facts, filed_by=cut)")
     assert facts < at < body.index("return mech, flags")
-    # dated on `assembled_at`'s calendar (UTC), never the local day the back-fill cannot see
-    assert "filed_by=today" not in body
+    # as filed by the page's cut, never a day the build reads off a clock (ruling 2, 2026-11-12)
+    assert "filed_by=today" not in body and "datetime.now" not in body
 
 
 def test_the_backfill_refuses_an_ambiguous_or_unparseable_folder_by_name() -> None:
@@ -414,13 +427,38 @@ def _page_figures(page: dict[str, Any]) -> list[sr.CiqFigure]:
             for r in fs["statement_reconciliation"]["rows"]]
 
 
+#: the vintage that dates the block by its filings (ruling 2, 2026-11-12)
+_DATED_BY_FILINGS = "2026-11-12.reconciliation-dated-by-its-filings"
+
+
+def _page_cut(page: dict[str, Any]) -> date:
+    """The page's price date, as `refresh.statement_recon_transform` reads it."""
+    from vinci.dossier.anchor import price_as_of
+    from vinci.edgar.asof import page_price_date
+
+    return page_price_date(price_as_of(page["mechanical"]),
+                           date.fromisoformat(str(page["reference_date"])[:10]))
+
+
 @pytest.mark.skipif(not _COMMITTED, reason="no committed dossiers")
 def test_every_committed_page_carries_the_block_and_it_reproduces_from_the_filings() -> None:
     """PIN THE ARTIFACT: every committed page carries the block, and it is exactly what the
     back-fill builds from the page's own table figures, the period ends the block states, and the
-    COMMITTED companyfacts as filed by the page's assembly date — so what the scorecard scores
-    follows from the page and the public filings, nothing else. Its proof runs too: a block missing
-    a figure the table shows would be refused here."""
+    COMMITTED companyfacts cut at the page's price date (`refresh.statement_recon_transform`, as
+    assembly reads them) — so what the scorecard scores follows from the page and the public
+    filings, nothing else. Its proof runs too: a block missing a figure the table shows would be
+    refused here.
+
+    TWO VINTAGES, and nothing between them (ruling 2, 2026-11-12). A page built since is the
+    back-fill's block exactly: dated by the latest filing its rows read. A page built before states
+    its ASSEMBLY date, as `as_filed_by` and in each row with no filing figure, and is otherwise
+    the same rows — exactly what `reconcile` builds when handed that date, so its figures still
+    reproduce. It moves at its next build (the back-fill never overwrites a block). At `53e5f26e`
+    all 27 committed pages are the old vintage. A page STAMPED with this vintage or a later one
+    must be the new one: the old branch is for pages built before it, never after."""
+    from vinci.dossier.extraction_version import includes
+    from vinci.edgar.concepts import facts_as_of
+
     for t, page in _COMMITTED.items():
         fs = page["mechanical"]["financial_summary"]
         stored = fs.get("statement_reconciliation")
@@ -435,5 +473,16 @@ def test_every_committed_page_carries_the_block_and_it_reproduces_from_the_filin
         out = statement_recon_transform(doc, edgar=_Edgar(t), refused=refused,
                                         figures_for=figures)(doc["mechanical"])
         assert refused == [], refused
-        assert out["financial_summary"]["statement_reconciliation"] == stored, t
-        assert stored["as_filed_by"] == page["assembled_at"][:10], t
+        new = out["financial_summary"]["statement_reconciliation"]
+        if stored == new:
+            continue
+        assert includes(page.get("extraction_version"), _DATED_BY_FILINGS) is not True, t
+        assembled = date.fromisoformat(page["assembled_at"][:10])
+        old = sr.reconcile(_page_figures(page), facts_as_of(_facts(t), _page_cut(page)),
+                           filed_by=assembled)
+        assert old is not None, t
+        assert stored["rows"] == json.loads(old.model_dump_json())["rows"], t
+        assert stored["as_filed_by"] == assembled.isoformat(), t
+        assert stored["source_ref"] == new["source_ref"], t
+        assert [{k: v for k, v in r.items() if k != "note"} for r in stored["rows"]] == [
+            {k: v for k, v in r.items() if k != "note"} for r in new["rows"]], t

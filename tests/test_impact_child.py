@@ -25,3 +25,33 @@ def test_every_libreoffice_conversion_runs_under_the_processs_own_profile(
     flag = f"-env:UserInstallation={(tmp_path / 'lo').resolve().as_uri()}"
     assert seen == [["/opt/homebrew/bin/soffice", flag, "--headless", "--convert-to", "txt",
                      "x.doc"], ["pdftotext", "-layout", "x.pdf", "-"]]
+
+
+def test_a_vendor_response_the_cache_lacks_is_refused_not_fetched(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """Coordinator, 2026-11-11: "No Polygon or Tiingo bulk pulls without asking me." A sweep of
+    old refs reads responses today's cache may lack (`run-monthly` re-ingests the universe's
+    grouped-daily bars); each is refused, loud, while an SEC miss is still fetched (paced)."""
+    from vinci import netcache
+
+    fetched: list[str] = []
+    monkeypatch.setattr(netcache.CachedHttp, "_fetch_with_retries",
+                        lambda self, url, **kw: fetched.append(url) or "body")
+    monkeypatch.setattr(netcache.CachedHttp, "_read_cache", lambda self, url, ttl: None)
+    monkeypatch.setenv(child.NO_VENDOR_PULLS, "1")
+    child.freeze_cache()
+
+    class _Http:
+        def _cache_path(self, url: str) -> pathlib.Path:
+            return pathlib.Path("polygon") / "x.json"
+
+    http = _Http()
+    with pytest.raises(RuntimeError, match="pull is the operator's call"):
+        netcache.CachedHttp._fetch_with_retries(  # type: ignore[arg-type]
+            http, "https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/2026-11-09")
+    with pytest.raises(RuntimeError, match="api.tiingo.com"):
+        netcache.CachedHttp._fetch_with_retries(  # type: ignore[arg-type]
+            http, "https://api.tiingo.com/tiingo/daily/MCK/prices")
+    assert netcache.CachedHttp._fetch_with_retries(  # type: ignore[arg-type]
+        http, "https://data.sec.gov/api/xbrl/companyfacts/CIK0000927653.json") == "body"
+    assert fetched == ["https://data.sec.gov/api/xbrl/companyfacts/CIK0000927653.json"]

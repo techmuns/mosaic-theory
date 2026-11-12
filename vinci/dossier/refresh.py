@@ -38,7 +38,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
-from vinci.dossier.anchor import check_decision_write, committed_anchor_block
+from vinci.dossier.anchor import check_decision_write, committed_anchor_block, price_as_of
 from vinci.dossier.schemas import DROP_WHEN_NONE, Dossier, EvBridge, dossier_json
 from vinci.dossier.synthesis import (
     MATERIAL_FIGURE_FLOOR_MUSD,
@@ -1329,7 +1329,12 @@ def lease_basis_transform(ticker: str, cik: str | None) -> Transform:
     NO CITED FIGURE MOVES: the block is a new key. The page's basis line reads the ANCHOR, so until
     `anchor-backfill` re-derives it the line says the anchor predates the page's lease basis, and
     the valuation-basis block lists that as a conflict — the half-done pass is visible, never a
-    page claiming a pricing its anchor does not do."""
+    page claiming a pricing its anchor does not do.
+
+    EDGAR AS FILED BY THE PAGE'S PRICE DATE, the cut assembly reads it at (`AsOfEdgar`; ruling C4,
+    2026-11-01). Read uncut, a 10-Q filed after the page's close reached its lease reconciliation
+    (NCNO: priced 2026-08-17, its 2026-08-25 10-Q read). No price date, no block — the
+    `capital_allocation_transform` rule."""
     from vinci.config import get_config
     from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
     from vinci.dossier.ciq_sheets import file_provenance
@@ -1340,7 +1345,8 @@ def lease_basis_transform(ticker: str, cik: str | None) -> Transform:
     def _apply(mech: dict[str, Any]) -> dict[str, Any]:
         out: dict[str, Any] = json.loads(json.dumps(mech))
         val = out.get("valuation")
-        if not isinstance(val, dict) or not cik:
+        cut = price_as_of(out)
+        if not isinstance(val, dict) or not cik or cut is None:
             return out
         bands = (val.get("own_history") or {}).get("value") or []
         stamps = {b.get("source_sha256") for b in bands if isinstance(b, dict)}
@@ -1354,7 +1360,7 @@ def lease_basis_transform(ticker: str, cik: str | None) -> Transform:
         wb = bundle.workbook("financials", freq="quarterly")
         if wb is None or file_provenance(wb.path)[0] not in stamps:
             return out              # the export on disk is not the page's: re-assemble instead
-        built = lease_basis(bundle, EdgarClient.from_config(cfg).companyfacts(cik))
+        built = lease_basis(bundle, _facts_at(cik, cut, EdgarClient.from_config(cfg)))
         if built is not None:
             val["lease_basis"] = json.loads(built.model_dump_json())
         return out
@@ -1372,7 +1378,10 @@ def valuation_bases_transform(ticker: str, cik: str | None) -> Transform:
 
     NEW KEYS AND A RELABEL; NO STORED FIGURE MOVES. The reconciliation reads the quarterly CIQ
     export, so it is written only when that export is the one the page's bands were built from (the
-    `lease_basis_transform` rule) — otherwise the other two still land and it stays absent."""
+    `lease_basis_transform` rule) — otherwise the other two still land and it stays absent.
+
+    EDGAR AS FILED BY THE PAGE'S PRICE DATE, as assembly hands the same builder its facts
+    (`AsOfEdgar`; ruling C4). No price date, no blocks."""
     from vinci.config import get_config
     from vinci.dossier import mechanical as dm
     from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
@@ -1385,10 +1394,11 @@ def valuation_bases_transform(ticker: str, cik: str | None) -> Transform:
 
     def _apply(mech: dict[str, Any]) -> dict[str, Any]:
         out: dict[str, Any] = json.loads(json.dumps(mech))
-        if not isinstance(out.get("valuation"), dict) or not cik:
+        cut = price_as_of(out)
+        if not isinstance(out.get("valuation"), dict) or not cik or cut is None:
             return out
         cfg = get_config()
-        facts = EdgarClient.from_config(cfg).companyfacts(cik)
+        facts = _facts_at(cik, cut, EdgarClient.from_config(cfg))
         bundle: CiqBundle | None = None
         bands = ((out["valuation"].get("own_history") or {}).get("value")) or []
         stamps = {b.get("source_sha256") for b in bands if isinstance(b, dict)}
@@ -1644,19 +1654,27 @@ def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[
     header; a column label names only a year). Its figures are PROVED the page's own first —
     every Revenue and CFO figure the export gives must equal the page's stored value in the same
     column, and none may be missing (`statement_recon.table_figures`) — so the block is built on the
-    page's numbers, never a later pull's. EDGAR's facts are read as FILED BY the page's assembly
-    date. A page that does not reproduce, has no export, or already holds a different block is
-    left as it is and named in ``refused``."""
+    page's numbers, never a later pull's. EDGAR's facts are read AS ASSEMBLY READS THEM: as filed by
+    the page's price date (`AsOfEdgar`; ruling C4 — they were read as filed by the assembly date,
+    after the price), and the block is dated by the filings its rows read, as assembly dates it
+    (ruling 2, 2026-11-12 — it stated the assembly date). A page that does not reproduce, has no
+    export, or already holds a different block is left as it is and named in ``refused``."""
     from vinci.dossier import mechanical as dm
     from vinci.dossier import statement_recon as sr
     from vinci.dossier.ciq import CiqAmbiguousError, CiqParseError, CiqUnavailableError
+    from vinci.edgar.asof import page_price_date
+    from vinci.edgar.concepts import facts_as_of
 
     ticker = str(doc.get("ticker"))
     cik = doc.get("cik")
-    if not doc.get("assembled_at"):
-        raise RefreshRefusedError(f"{ticker}: no assembled_at — the facts cannot be read as "
-                                  "assembly read them")
-    assembled = date.fromisoformat(str(doc["assembled_at"])[:10])
+    price, ref = price_as_of(doc.get("mechanical") or {}), doc.get("reference_date")
+    if ref:
+        cut = page_price_date(price, date.fromisoformat(str(ref)[:10]))
+    elif price is not None:
+        cut = price
+    else:
+        raise RefreshRefusedError(f"{ticker}: no price date and no reference date — the facts "
+                                  "cannot be cut where assembly cuts them")
 
     def _apply(mech: dict[str, Any]) -> dict[str, Any]:
         out: dict[str, Any] = json.loads(json.dumps(mech))
@@ -1677,7 +1695,9 @@ def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[
             refused.append(f"{ticker}: the export does not reproduce the page's annual table at "
                            f"{len(off)} figure(s), first {off[0]} — not the page's own export")
             return out
-        rec = sr.reconcile(figures, dm._companyfacts_or_none(edgar, cik), filed_by=assembled)
+        facts = dm._companyfacts_or_none(edgar, cik)
+        rec = sr.reconcile(figures, facts_as_of(facts, cut) if facts is not None else None,
+                           filed_by=cut)
         if rec is None:
             refused.append(f"{ticker}: no EDGAR facts, or no CIQ figure — nothing to set side by "
                            "side")
