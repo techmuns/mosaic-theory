@@ -7,9 +7,11 @@ did, without quotation marks (LLY `bull_points[5].claim`, 15 words; VITL `bull_p
 (`assemble._refuse_transcript_runs`); this pass brings the committed pages under the rule.
 
 For each committed page, with no model call, no network and no re-assembly:
-1. Its calls are read from disk, read only (`driver_pass._calls_on_disk`). A page whose cited call
-   is on disk and does not read is REFUSED, unwritten: LibreOffice fails a conversion while
-   another runs, and a failed read would hide a run.
+1. Its calls are read from disk, read only, as the build fed them to the synthesis
+   (`confirmation.page_transcripts`). A page is REFUSED, unwritten, when a call on disk does not
+   read (LibreOffice fails a conversion while another runs, and a failed read would hide a run),
+   when the calls on disk differ from the page's input record, or when its driver rows cite a
+   call that is not on disk.
 2. Every synthesis string is read against them (`synthesis.transcript_runs`), as the guard reads it.
 3. Each run is CUT: its first 12 words are kept and the rest of the run becomes "…". Nothing is
    reworded, nothing is added and no LLM is asked; the text after the run is kept as it was. The
@@ -27,7 +29,9 @@ from pathlib import Path
 from typing import Any
 
 from vinci.dossier import layer_refresh
-from vinci.dossier.driver_pass import _calls_on_disk
+from vinci.dossier.ciq import CiqBundle
+from vinci.dossier.confirmation import ConfirmationError, page_transcripts
+from vinci.dossier.driver_extract import transcript_sha256s
 from vinci.dossier.schemas import Dossier, Synthesis, write_dossier
 from vinci.dossier.synthesis import MAX_TRANSCRIPT_RUN, TranscriptRun, transcript_runs
 
@@ -88,12 +92,35 @@ def _set(o: Any, path: list[str | int], value: str) -> None:
     o[path[-1]] = value
 
 
-def page_transcript(ticker: str, ciq_root: Path) -> tuple[str | None, list[str]]:
-    """(the text of every call of ``ticker`` on disk, the calls on disk that did not read)."""
-    bodies, shas = _calls_on_disk(ticker, ciq_root)
-    unread = sorted(set(shas) - set(bodies))
-    text = "\n\n".join(bodies[k] for k in sorted(bodies)) if bodies else None
-    return text, unread
+def cited_calls(page: dict[str, Any]) -> set[str]:
+    """The sha256 of every call the page's transcript driver rows cite (each row's locator)."""
+    rows = ((page.get("mechanical") or {}).get("operating_drivers") or {}).get("rows") or []
+    return {str(sha) for r in rows if r.get("tier") == "llm-fenced"
+            if (sha := (r.get("locator") or {}).get("transcript_sha256"))}
+
+
+def page_transcript(page: dict[str, Any], ciq_root: Path) -> tuple[str | None, list[str]]:
+    """(the text the build fed the page's synthesis, what stops the read), read as the vote-rule
+    confirmation reads it (`confirmation.page_transcripts`, review round 0): production's reader,
+    refused where the calls on disk differ from the page's input record or one does not read.
+    A call the page's driver rows cite (`cited_calls`, by sha256) that is not on disk stops it too,
+    for a page whose input record names no transcript: read against the calls that ARE there, it
+    would be called clean against text it was not built from."""
+    ticker = str(page.get("ticker"))
+    try:
+        text, _verified = page_transcripts(ticker, ciq_root=ciq_root, page=page)
+    except ConfirmationError as exc:
+        return None, [str(exc)]
+    missing = sorted(cited_calls(page) - _on_disk_shas(ticker, ciq_root))
+    return text, [f"cited call {s[:12]} is not on disk" for s in missing]
+
+
+def _on_disk_shas(ticker: str, ciq_root: Path) -> set[str]:
+    """The sha256 of every call of ``ticker`` on disk (no file is converted)."""
+    folder = ciq_root / ticker
+    files = sorted(p for p in folder.iterdir() if p.is_file()) if folder.is_dir() else []
+    return set(transcript_sha256s(
+        w.path for w in CiqBundle.from_files(ticker, files).all_workbooks("transcript")).values())
 
 
 def prepare(page: dict[str, Any],
@@ -127,11 +154,11 @@ def run(jp: Path, ciq_root: Path, *, dry_run: bool, record: bool = True) -> CutO
     ticker = str(page.get("ticker") or jp.parent.name)
     if not page.get("synthesis"):
         return CutOutcome(ticker, "unchanged", "no synthesis")
-    transcript, unread = page_transcript(ticker, ciq_root)
-    if unread:
-        return CutOutcome(ticker, "refused", f"{len(unread)} call(s) on disk did not read "
-                          f"({'; '.join(unread)}): LibreOffice fails a conversion while another "
-                          "runs, so re-run alone")
+    transcript, problems = page_transcript(page, ciq_root)
+    if problems:
+        return CutOutcome(ticker, "refused", f"the page's calls cannot all be read: "
+                          f"{'; '.join(problems)} (LibreOffice fails a conversion while another "
+                          "runs, so re-run alone; a cited call not on disk needs its export)")
     if not transcript:
         return CutOutcome(ticker, "unchanged", "no call on disk")
     cut, cuts = prepare(page, transcript)

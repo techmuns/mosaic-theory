@@ -29,6 +29,7 @@ from vinci.dossier import assemble
 from vinci.dossier import schemas as ds
 from vinci.dossier import synthesis as syn
 from vinci.dossier import transcript_run_pass as trp
+from vinci.dossier.confirmation import ConfirmationError
 
 ROOT = Path(__file__).resolve().parents[1]
 _FROZEN_SMPL = ROOT / "tests/fixtures/frozen_pages/2026-08-18/SMPL/dossier.json"
@@ -69,7 +70,8 @@ def test_a_string_sharing_13_words_with_its_calls_is_refused_at_build() -> None:
     mech = ds.MechanicalLayer.model_validate(page["mechanical"])
     _, flags = syn._validate(synth, mech, ticker="SMPL", name="Simply Good Foods",
                              transcript=call)
-    assert any(f.startswith(f"TRANSCRIPT-RUN {where}: shares 13 consecutive words") for f in flags)
+    assert any(f.startswith(f"TRANSCRIPT-RUN {where}: shares 13 consecutive words")
+               and f.endswith("assembly refuses such a page") for f in flags)
 
 
 @pytest.mark.parametrize("n", [11, 12])
@@ -146,10 +148,37 @@ def test_the_pass_refuses_a_page_whose_call_did_not_read(tmp_path: Path,
     jp = tmp_path / "SMPL" / "dossier.json"
     jp.parent.mkdir()
     jp.write_text(_FROZEN_SMPL.read_text())
-    monkeypatch.setattr(trp, "_calls_on_disk", lambda t, r: ({}, {"call.rtf": "0" * 64}))
+    def unread(t: str, *, ciq_root: Path, page: dict[str, Any]) -> tuple[str, bool]:
+        raise ConfirmationError(f"{t}: 1 of 1 call(s) on file did not read (call.rtf)")
+    monkeypatch.setattr(trp, "page_transcripts", unread)
     o = trp.run(jp, tmp_path, dry_run=False, record=False)
     assert o.status == "refused" and "did not read" in o.detail
     assert jp.read_text() == _FROZEN_SMPL.read_text()
+
+
+def test_the_pass_refuses_a_page_citing_a_call_not_on_disk(tmp_path: Path,
+                                                         monkeypatch: pytest.MonkeyPatch) -> None:
+    """(review round 0) A page whose driver rows cite a call that is not on disk is refused, never
+    read against the calls that are: it would be called clean against text it was not built from.
+    (−) The same page citing the call that IS on disk is read."""
+    page = _page()
+    _, claim = _claim(page)
+    rows = page["mechanical"]["operating_drivers"]["rows"]
+    row = next(r for r in rows if r.get("tier") == "llm-fenced")
+    row["locator"] = {"transcript_sha256": "b" * 64}
+    jp = tmp_path / "SMPL" / "dossier.json"
+    jp.parent.mkdir()
+    jp.write_text(json.dumps(page))
+    call = _call_holding(claim, 15)
+    monkeypatch.setattr(trp, "page_transcripts", lambda t, **_k: (call, False))
+    # every other call the page cites is on disk; the row's is not
+    on_disk = trp.cited_calls(page) - {"b" * 64}
+    monkeypatch.setattr(trp, "_on_disk_shas", lambda t, r: on_disk)
+    o = trp.run(jp, tmp_path, dry_run=True, record=False)
+    assert o.status == "refused" and o.detail.count("is not on disk") == 1
+    assert "cited call bbbbbbbbbbbb is not on disk" in o.detail
+    on_disk.add("b" * 64)
+    assert trp.run(jp, tmp_path, dry_run=True, record=False).status == "would write"
 
 
 def test_the_build_refuses_after_the_synthesis_and_before_the_write() -> None:
@@ -169,8 +198,8 @@ def test_no_committed_synthesis_copies_more_than_12_words_of_its_calls(path: Pat
     page = json.loads(path.read_text())
     if not page.get("synthesis"):
         pytest.skip("no synthesis on this page")
-    transcript, unread = trp.page_transcript(page["ticker"], root)
-    assert not unread, f"a call did not read (LibreOffice is busy): {unread}"
+    transcript, problems = trp.page_transcript(page, root)
+    assert not problems, f"the page's calls cannot all be read: {problems}"
     if transcript is None:
         pytest.skip("no call on disk for this page")
     runs = syn.transcript_runs(ds.Synthesis.model_validate(page["synthesis"]), transcript)

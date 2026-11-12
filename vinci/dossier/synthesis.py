@@ -1823,8 +1823,8 @@ def _validate(
     # refuses the page on the run itself (`transcript_runs`), never on this flag's wording
     for run in transcript_runs(validated, transcript):
         flags.append(f"TRANSCRIPT-RUN {run.where}: shares {run.words} consecutive words with "
-                     f"the build's own transcripts (at most {MAX_TRANSCRIPT_RUN}) — the page is "
-                     "refused")
+                     f"the build's own transcripts (at most {MAX_TRANSCRIPT_RUN}) — assembly "
+                     "refuses such a page")
     return validated, flags
 
 
