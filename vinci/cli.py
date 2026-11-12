@@ -2866,6 +2866,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     which SUPERSEDES the ledger row's own field; a leg with no assignment fails LOUD rather than
     being measured against a yardstick nobody chose."""
     from vinci import monitor as mon
+    from vinci.netcache import HttpError
 
     cfg = get_config()
     root = Path.cwd()
@@ -3116,9 +3117,23 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         cik = cik_by_ticker.get(name)
         filings: list[tuple[str, date, str]] = []
         if cik:
-            for f in edgar.recent_filings(cik, forms=("8-K", "10-Q", "10-K"),
-                                          since=known_through - timedelta(days=760)):
-                filings.append((f.form, f.filing_date, f.accession))
+            since = known_through - timedelta(days=760)
+            try:
+                for f in edgar.recent_filings(cik, forms=("8-K", "10-Q", "10-K"), since=since):
+                    filings.append((f.form, f.filing_date, f.accession))
+            except (HttpError, ValueError) as exc:  # ValueError: a 200 body that is not JSON
+                # ONE NAME'S UNREADABLE WINDOW MUST NOT TAKE THE BOOK DOWN (STATE §5.0 row 42 (1)).
+                # Since #878 a window reaching past the recent page reads each older page it
+                # overlaps and RAISES naming the one it cannot read; this was the one windowed
+                # caller with no handler, so one such name aborted the whole day after every price
+                # had been fetched. The row is not written — an empty list would read "no new
+                # filing", a fabricated no — and the day says so by name, as an unreadable record
+                # date does below. An SEC REFUSAL (`SecRateLimitedError`, not an HttpError) still
+                # stops the run: it is SEC blocking this process, not one name's page.
+                notes.append(f"FILINGS {name}: its EDGAR filings window since {since} could not "
+                             f"be read ({type(exc).__name__}: {exc}) · its freshness row is NOT "
+                             f"written")
+                continue
         v = record.get("verdict") or {}
         note = (f"WATCH (not a position) — avoid-priced: {v.get('avoid_priced_note')}"
                 if v.get("avoid_priced") else None)
