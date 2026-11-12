@@ -19,21 +19,22 @@ superseded-by:
 
 | Layer | What it is in this repo |
 |---|---|
-| **Raw data** | The licensed CIQ exports on the operator's Drive, the SEC and Polygon originals kept write-once by sha256 in R2, and the operator's private evidence spool. |
+| **Raw data** | The licensed CIQ exports on the operator's Drive; the SEC originals, kept write-once by sha256 in R2 (`ORIGINALS_OF = {EDGAR}`, `vinci/facts/remote.py`); the Polygon and Tiingo bars in the HTTP cache and the store; and the operator's private evidence spool. |
 | **Deterministic wiki** | Code-built facts, each with its `source_ref`: the fact layer (`vinci/facts`, point-in-time) and the code-built half of each page's `dossier.json`. |
 | **Intelligence** | The synthesis (an LLM), then the machine proposal (`vinci/dossier/verdict.py`, plain code), then the human verdict of record. |
 
 **The design, one layer at a time:**
 
 1. **Raw: the calls stay private.**
-   - The full transcripts stay in the CIQ folder and in the evidence spool, which the ingest Mac uploads to the private bucket.
+   - The full transcripts stay in the CIQ folder.
+   - The evidence spool keeps the quoted passages, not whole calls. It holds one record per passage (the quote and the paragraph after it, `vinci/dossier/driver_evidence.py`), and the ingest Mac uploads it to the private bucket.
    - A call is addressed by its file's sha256.
-   - A call's facts are knowable from the call's date, never from a period end, because CIQ is not point-in-time (CLAUDE.md, PUBLISHED DATA).
+   - **A call's facts are knowable from the CIQ export date.** That is the rule CLAUDE.md sets for every CIQ fact (PUBLISHED DATA: "knowable from the export date (or from the column's own stated filing date), never from its period end"). Whether a transcript's facts may date from the call itself is a ruling the build asks for. It is not assumed here.
 2. **Wiki: code only. No LLM output enters it.**
    - **(a) A Q&A index per call.** Each exchange holds:
      - the question's paragraphs and the answer's paragraphs, as paragraph ranges;
-     - the asker and the asker's firm, and the answerer and the answerer's title, all from CIQ's speaker blocks (`vinci/dossier/driver_extract.py::_speaker`);
-     - the figures and guidance numbers code reads from those paragraphs (`driver_extract.check_fact`, the same reader the driver rows use);
+     - the asker and the asker's firm, and the answerer and the answerer's title, all from CIQ's two-line speaker blocks. `vinci/dossier/driver_extract.py::_speaker` already recognises those blocks but returns only the name, so reading the title and the firm is a code change;
+     - the figures and guidance numbers in those paragraphs, read by a CODE-ONLY reader, which is new code. `driver_extract.check_fact` checks a model-proposed metric and value against a quote, so it cannot be the wiki's reader as it stands;
      - the hashes.
 
      The index publishes no transcript words.
@@ -42,7 +43,7 @@ superseded-by:
    - Each exchange gets a summary, and the call gets a list of its key items: guidance changes, new disclosures, and shifts in tone.
    - Each claim cites an exchange's locator.
    - Every figure in a claim is checked against the wiki by the figure trace (#1023; #1040 in review).
-   - The 12-word rule is held at build by #1036's guard. It catches a "summary" that is really a near-copy, which is the model's failure, not ours: LLY's and VITL's syntheses copied 14 and 13 words.
+   - The 12-word rule is held at build by #1036's guard. It catches a "summary" that is really a near-copy, which is the model's failure, not ours: LLY's and VITL's syntheses copied 14 and 13 words, and WERN's reads 14 when hyphens split (#1036).
    - Each summary records the model and the prompt that wrote it, so it can be rebuilt raw → wiki → intelligence.
    - A summary is never an input to the wiki.
 4. **Self-improving, inside the guardrails: measured evals only, never forward returns** (CLAUDE.md, "Never tune on forward returns"). The transcript layer gets deterministic rates, each stated with its boundary:
@@ -55,19 +56,19 @@ superseded-by:
 
 **WHY.**
 - **Why the wiki stays code-only.** An LLM summary written into the wiki would make the wiki non-deterministic, and every layer above would then build on unchecked text. Keeping the summary in the intelligence layer, cited and figure-checked, keeps the line CLAUDE.md draws: the machine assembles and cites, and the LLM never free-concludes.
-- **Why transcript facts belong in the fact layer.** It is the one point-in-time copy every page reads (STATE row 44). Facts held only in each page's JSON are copies that can drift.
+- **Why transcript facts belong in the fact layer.** The fact layer is meant to become the one point-in-time copy every page reads. Today it is shipped in shadow, and nothing reads it yet (STATE row 44). Facts held only in each page's JSON are copies that can drift.
 - **What expert tools do.** AlphaSense's Smart Summaries and FactSet's Transcript Assistant summarise each call (highlights, analyst questions, guidance, tone), and each summary links back to the passage, inside the licensed product: <https://help.alpha-sense.com/en/articles/7238834-get-instant-insights-and-save-time-with-smart-summaries>, <https://www.nasdaq.com/press-release/factset-releases-transcript-assistant-a-game-changing-ai-tool-for-earnings-call>.
-- **What the law says.** It sets no word count that is safe. Fair use is a four-factor test, and the vendor's licence can restrict copying regardless (*Swatch v. Bloomberg*, 2d Cir. 2014, <https://www.copyright.gov/fair-use/summaries/swatchgrp-bloomberg-2dcir2014.pdf>). So the cap is a rule this repo chose; the law does not supply the number.
+- **What the law says.** It sets no word count that is safe. Fair use is a four-factor test, weighed case by case (*Swatch v. Bloomberg*, 2d Cir. 2014, <https://www.copyright.gov/fair-use/summaries/swatchgrp-bloomberg-2dcir2014.pdf>). Separately, what a subscriber may copy is set by the vendor's licence, here CIQ's subscriber agreement. So the cap is a rule this repo chose; the law does not supply the number.
 - **The cap's origin, corrected for the record.** The 2026-11-04 licence ruling, verbatim, reads *"our licence covers publishing CIQ-derived facts and Polygon & Tiingo prices"*. The carve-out for transcript text was that record's own choice (`docs/records/2026-11-04-licence-covers-publishing-ciq-derived-facts-and-prices.md`, line 29). On 2026-11-13 the operator reviewed this design, which keeps the cap, and approved it.
 
 **HOW VERIFIED.** Nothing is built, so this section checks the current state the design starts from. All of it was measured at main `047f4c6b`:
 - **1,042 transcript driver rows on 25 of 27 pages.** These are rows with `tier == "llm-fenced"` in `data/dossiers/*/dossier.json`. Each carries `figures`, `value_num`, `value_status` and a `locator` naming its `call`, `paragraph`, `speaker`, `transcript_sha256`, `quote_sha256` and `value_sha256`, and none carries its words.
 - **No transcript reader in the fact layer.** `grep -i transcript` finds nothing under `vinci/facts/`, and 0 matches in the three committed manifests under `data/facts/manifests/`.
-- **Speaker blocks are already read.** `driver_extract._speaker` reads CIQ's two-line speaker blocks (a name, then a title).
+- **Speaker blocks are already recognised.** `driver_extract._speaker` recognises CIQ's two-line speaker blocks (a name, then a title), and returns only the name.
 
 **VERIFY-AT-BUILD:**
 - whether every committed call marks its Q&A section and the operator's turns well enough to pair its exchanges by code alone;
-- the 6 calls that were offloaded on Drive at the 2026-11-12 audit.
+- any call that is offloaded on Drive when the build runs. At the coordinator's 2026-11-12 audit, reported on issue #1004 (issuecomment-6831141544), 6 of the 68 call files in the CIQ folder could not be read.
 
 **BOUNDARY.** "1,042 rows on 25 of 27 pages":
 - **Population:** the committed pages, `data/dossiers/*/dossier.json`, at main `047f4c6b`.
