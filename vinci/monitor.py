@@ -249,6 +249,25 @@ class RealizedRow(BaseModel):
                 f"view; the {self.verdict} call stays in horizon calibration")
 
 
+class FreshnessDrop(BaseModel):
+    """A name in the day's freshness set whose row is NOT written, and why (STATE §5.0 row 42 (b)).
+
+    TYPED, so a reader states the drop without parsing English. The day said it only in
+    ``notes``, and the web's freshness panel reads ``freshness`` alone: it showed N−1 names with
+    no word of the missing one. ``cause`` is the closed reason the panel's main body prints;
+    ``detail`` is the whole of it, for the audit tier. :meth:`note` renders the day's note line,
+    so the note and the field are one definition."""
+
+    ticker: str
+    cause: Literal["filings_unread", "record_date_unreadable"]
+    detail: str
+
+    def note(self) -> str:
+        if self.cause == "filings_unread":
+            return f"FILINGS {self.ticker}: {self.detail} · its freshness row is NOT written"
+        return f"RECORD {self.detail} · its freshness row is NOT written"
+
+
 class MonitorSnapshot(BaseModel):
     """One dated run — the auditable book history. Committed per run."""
 
@@ -261,6 +280,9 @@ class MonitorSnapshot(BaseModel):
     rows: list[PositionRow] = Field(default_factory=list)
     spread: SpreadDiagnostic
     freshness: list[FreshnessRow] = Field(default_factory=list)
+    #: the names of the day's freshness set whose row is NOT written, typed (row 42 (b)); a day
+    #: committed before the field reads as none dropped, as every one of them did
+    freshness_dropped: list[FreshnessDrop] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
     # THE REALIZED BOOK, TYPED. It reached this artifact only as prose inside ``notes``, so the one
     # view that says what the fund actually EARNED could not be read by anything that was not
