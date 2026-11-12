@@ -489,6 +489,183 @@ def test_a_filer_without_the_pretax_tag_is_unknown_and_names_what_was_missing() 
     assert "pre-tax income" in (out.note or ""), out.note
 
 
+# ─── the window's end: the filer's latest filed quarter (row 51 (2), 2026-11-12) ──────────────
+#
+# The window ended at the newest quarter all three totals share, and nothing said when that was
+# years before the filer's latest: TJX's page read to 2019-02-02, ORKA's to 2021-12-31, MVST's to
+# 2025-12-31 and SMPL's to 2026-02-28. The four now end at the latest quarter a filing states as
+# its own, as filed by the page's price date, and an end MORE than one quarter before it is FLAGGED
+# — never refused. Each missing total named below was checked on the filer's FULL companyfacts
+# (SEC cache fetched 2026-10-27), not only on the cut-down copies these pins read. MVST's and
+# SMPL's copies are the tracking fixtures as committed at main `650057f3`.
+
+_MVST_REF, _MVST_PRICE = date(2026, 8, 24), date(2026, 9, 16)      # MVST's page: reference, price
+_SMPL_REF, _SMPL_PRICE = date(2026, 10, 16), date(2026, 11, 3)      # SMPL's
+_PRETAX = ("IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItems"
+           "NoncontrollingInterest")
+
+
+def test_the_four_end_at_the_latest_filed_quarter_and_a_stale_end_is_flagged() -> None:
+    """POSITIVE PIN — MVST, as filed by its page's price date, the case that MOVES. Its 2026 10-Qs
+    (filed 2026-05-11 and 2026-08-10) tag operating income and revenue but no pre-tax income under
+    any alias the chain reads. On main the window was the newest four carrying all three,
+    2025-03-31..2025-12-31, 4 of 4 material, ending two quarters before the filer's latest with no
+    word. The four now end at 2026-06-30: 2 are read, 2 of 2 material — R4's condition 3 (≥2) still
+    holds — and the end is FLAGGED in the count's cite and the prose alike, naming what the latest
+    quarter lacks."""
+    stub = _Stub(_frozen("MVST", _MVST_PRICE))
+    nq = _nonoperating_quarters(stub, "x", _MVST_REF)
+    assert nq is not None
+    assert (nq.material, nq.window, nq.window_end) == (2, 2, "2025-12-31"), nq
+    assert _quarters(nq.source_ref) == [date(2025, 9, 30), date(2025, 12, 31)], nq.source_ref
+    assert "2 of the trailing four quarters to 2026-06-30 are read" in nq.source_ref, nq.source_ref
+    stale = ("STALE: the window ends 2025-12-31, 2 quarters before the filer's latest filed "
+             "quarter 2026-06-30, which has no pre-tax income filed or derivable")
+    assert stale in nq.source_ref, nq.source_ref
+    prose = _nonoperating_earnings(stub, "x", _MVST_REF)
+    assert prose.value is not None and prose.source_ref == nq.source_ref
+    assert stale in prose.value, prose.value
+    assert "2 of the 2 available quarters of the trailing four to 2026-06-30" in prose.value
+    assert "2025-03-31" not in prose.value and "2025-06-30" not in prose.value, prose.value
+
+
+def test_a_window_none_of_whose_latest_four_can_be_read_stands_and_is_flagged() -> None:
+    """POSITIVE PIN, the fallback — ORKA, as filed by its page's price date. Its latest filed
+    quarter is 2025-06-30, and none of the four to it can be read (ORKA has tagged no revenue since
+    2024-06-30). NEVER A REFUSAL: the window stays the newest quarters that can be read — 3 of the
+    four to 2021-12-31, as on main — and now says it ends 14 quarters before the filer's latest,
+    which main did not."""
+    stub = _Stub(_frozen("ORKA", _ORKA_PRICE))
+    nq = _nonoperating_quarters(stub, "x", _ORKA_REF)
+    assert nq is not None and (nq.material, nq.window, nq.window_end) == (0, 3, "2021-12-31"), nq
+    stale = ("STALE: the window ends 2021-12-31, 14 quarters before the filer's latest filed "
+             "quarter 2025-06-30, which has no pre-tax income or revenue filed or derivable")
+    assert stale in nq.source_ref, nq.source_ref
+    prose = _nonoperating_earnings(stub, "x", _ORKA_REF).value
+    assert prose is not None and prose.startswith(
+        "no material non-operating item in the 3 available quarters of the trailing four to "
+        "2021-12-31 — in the latest, $0M against $-6M pre-tax"), prose
+    assert stale in prose, prose
+
+
+def test_a_stale_window_with_nothing_material_names_the_four_and_the_quarter_it_read() -> None:
+    """POSITIVE PIN — SMPL, as filed by its page's price date, the second case that MOVES, with
+    nothing material in it. Its latest filed quarter is 2026-08-29, its fiscal year's fourth, and
+    its two newest quarters carry no pre-tax income under any alias the chain reads. On main the
+    window was 2025-05-31..2026-02-28, four quarters ending two before the latest with no word. The
+    four now end at 2026-08-29 and 2 are read; the sentence names the four's end AND the quarter
+    "the latest" means — the latest READ."""
+    stub = _Stub(_frozen("SMPL", _SMPL_PRICE))
+    nq = _nonoperating_quarters(stub, "x", _SMPL_REF)
+    assert nq is not None and (nq.material, nq.window, nq.window_end) == (0, 2, "2026-02-28"), nq
+    prose = _nonoperating_earnings(stub, "x", _SMPL_REF).value
+    assert prose is not None and prose.startswith(
+        "no material non-operating item in the 2 available quarters of the trailing four to "
+        "2026-08-29 — in the latest read, 2026-02-28, $-5M against $-218M pre-tax"), prose
+    assert ("STALE: the window ends 2026-02-28, 2 quarters before the filer's latest filed quarter "
+            "2026-08-29, which has no pre-tax income filed or derivable.") in prose, prose
+
+
+def test_a_window_ending_on_the_latest_filed_quarter_carries_no_flag() -> None:
+    """NEGATIVE PIN — GOOGL, as filed by its page's price date: the four end at 2026-09-30, its
+    latest filed quarter, so nothing is flagged (its window and count are pinned above)."""
+    stub = _Stub(_frozen("GOOGL", _GOOGL_PRICE))
+    nq = _nonoperating_quarters(stub, "x", _GOOGL_REF)
+    assert nq is not None and nq.window_end == "2026-09-30", nq
+    prose = _nonoperating_earnings(stub, "x", _GOOGL_REF).value
+    assert "STALE" not in nq.source_ref, nq.source_ref
+    assert prose is not None and "STALE" not in prose, prose
+
+
+def test_a_window_one_quarter_behind_is_short_but_not_flagged() -> None:
+    """THE BOUNDARY, on MVST's shape one quarter deep: GOOGL's real facts without the pre-tax
+    income its latest 10-Q tags (0001652044-26-000084, filed 2026-10-29; its two rows). The four
+    end at 2026-09-30, the latest filed quarter: 3 are read, to 2026-06-30, ONE quarter before it,
+    and the flag is for MORE than one. On main the window reached a year back for a fourth:
+    2025-09-30..2026-06-30, 4 of 4."""
+    facts = _frozen("GOOGL", _GOOGL_PRICE)
+    rows = facts["facts"]["us-gaap"][_PRETAX]["units"]["USD"]
+    kept = [r for r in rows if r.get("end") != "2026-09-30"]
+    assert len(rows) - len(kept) == 2, "the latest 10-Q's pre-tax rows are not where expected"
+    assert {r["accn"] for r in rows if r not in kept} == {"0001652044-26-000084"}
+    facts["facts"]["us-gaap"][_PRETAX]["units"]["USD"] = kept
+    nq = _nonoperating_quarters(_Stub(facts), "x", _GOOGL_REF)
+    assert nq is not None and (nq.window, nq.window_end) == (3, "2026-06-30"), nq
+    assert _quarters(nq.source_ref)[0] == date(2025, 12, 31), nq.source_ref
+    assert ("3 of the trailing four quarters to 2026-09-30 are read — 2026-09-30 has no pre-tax "
+            "income filed or derivable") in nq.source_ref, nq.source_ref
+    assert "STALE" not in nq.source_ref, nq.source_ref
+    prose = _nonoperating_earnings(_Stub(facts), "x", _GOOGL_REF).value
+    assert prose is not None and "STALE" not in prose, prose
+
+
+def test_a_stale_end_is_counted_in_quarters_elapsed_not_in_quarters_some_filing_names() -> None:
+    """REVIEW (round 0). GOOGL's real facts without its Q1 and Q2 2026 10-Qs
+    (0001652044-26-000048, 0001652044-26-000071, every row each carries) and without the pre-tax
+    income its Q3 10-Q tags: no filing names 2026-03-31 or 2026-06-30, so the window reads only
+    2025-12-31 — 273 days, three quarters, before the latest filed quarter 2026-09-30. Counted in
+    the quarter ends between them it was ONE behind and went unflagged; it is three, and flagged."""
+    facts, q1 = _without(_frozen("GOOGL", _GOOGL_PRICE), "0001652044-26-000048")
+    facts, q2 = _without(facts, "0001652044-26-000071")
+    assert q1 >= 40 and q2 >= 40, f"the two 10-Qs carried {q1} and {q2} rows — not the filings"
+    rows = facts["facts"]["us-gaap"][_PRETAX]["units"]["USD"]
+    facts["facts"]["us-gaap"][_PRETAX]["units"]["USD"] = [
+        r for r in rows if r.get("end") != "2026-09-30"]
+    nq = _nonoperating_quarters(_Stub(facts), "x", _GOOGL_REF)
+    assert nq is not None and (nq.window, nq.window_end) == (1, "2025-12-31"), nq
+    assert ("STALE: the window ends 2025-12-31, 3 quarters before the filer's latest filed "
+            "quarter 2026-09-30, which has no pre-tax income filed or derivable") in nq.source_ref
+
+
+def test_a_single_material_quarter_says_it_is_the_latest_read_when_the_four_run_past_it() -> None:
+    """THE WHERE-CLAUSE, now that the four can end past the newest quarter read. UBER's real facts
+    as filed by 2026-04-30 — its latest filed quarter is FY2025's fourth — without the one row its
+    10-K tags pre-tax income on (0001543151-26-000015): 2025-12-31 cannot be read, so 3 are, to
+    2025-09-30, whose +$1,507M is the one material block. It is the latest quarter READ, not the
+    latest quarter, and the sentence says which. A window ending on its four's end keeps "This is
+    the latest quarter, so" exactly (the constructed case pinned above)."""
+    cut = date(2026, 4, 30)
+    facts = _frozen("UBER", cut)
+    tag = ("IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFrom"
+           "EquityMethodInvestments")
+    rows = facts["facts"]["us-gaap"][tag]["units"]["USD"]
+    kept = [r for r in rows if r.get("end") != "2025-12-31"]
+    assert [r["accn"] for r in rows if r not in kept] == ["0001543151-26-000015"]
+    facts["facts"]["us-gaap"][tag]["units"]["USD"] = kept
+    out = _nonoperating_earnings(_Stub(facts), "x", cut).value
+    assert out is not None and out.startswith("$1,507M of the quarter ended 2025-09-30"), out
+    assert "This is the latest quarter read, so" in out, out
+    assert "The window is short: 2025-12-31 has no pre-tax income filed or derivable." in out, out
+    assert "STALE" not in out, "one quarter behind is not flagged"
+    plain = _nonoperating_earnings(
+        _Stub(_facts(**{"2026_06_30": (100e6, 500e6, 1000e6)})), "x", REF).value
+    assert plain is not None and "This is the latest quarter, so" in plain, plain
+
+
+def test_the_assembly_raises_the_stale_flag_beside_the_page_and_only_for_a_stale_end() -> None:
+    """END TO END (TEST-LAYER RULE): the assembly's QA flags — the ones `dossier.json` stores —
+    carry `nonoperating: STALE …` for a stale window, saying what the page's own field says, and
+    none for a window ending on the latest filed quarter. NIKE's harness
+    (`tests/test_statement_recon_build_date.py`), its companyfacts swapped for a frozen copy, each
+    cut at the harness's price date (2026-10-16): MVST's (stale) and GOOGL's (not)."""
+    from tests.test_statement_recon_build_date import _assemble_nke
+
+    for ticker, stale in (("MVST", True), ("GOOGL", False)):
+        flags: list[str] = []
+        mech = _assemble_nke(flags_out=flags, companyfacts=json.loads(
+            (_NONOP_FROZEN / f"{ticker}.json").read_text()))
+        ours = [f for f in flags if f.startswith("nonoperating: ")]
+        field = mech.quality.nonoperating_earnings.value or ""
+        if stale:
+            assert ours == ["nonoperating: STALE: the window ends 2025-12-31, 2 quarters before "
+                            "the filer's latest filed quarter 2026-06-30, which has no pre-tax "
+                            "income filed or derivable"], flags
+            assert ours[0].removeprefix("nonoperating: ") in field, field
+        else:
+            assert not ours, ours
+            assert field and "STALE" not in field, field
+
+
 # ─── the fleet ────────────────────────────────────────────────────────────────────────────────
 
 @pytest.mark.skipif(not FIX.is_dir(), reason="no fixtures")
