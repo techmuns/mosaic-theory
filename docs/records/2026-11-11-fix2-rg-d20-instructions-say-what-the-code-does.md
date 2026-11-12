@@ -58,3 +58,4 @@ thirteen, each checked at the pin and again here against main `6d9907d7`.
 ## Amendments
 
 - **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `d8147e97` (#1009) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.
+- **2026-11-12 — items (c) and (d) are superseded by #1023** (`85152609`, RG-D1 and RG-D7; recorded by bookkeeping batch 6). (c) said a figure is traced by magnitude alone, and (d) that a call figure earns a hidden TRANSCRIPT-FIGURE note. Since #1023 a figure is read with its printed sign, and a call-cited figure traces to the call's validated figures, so neither statement holds. `_num_traces`' comment, `synthesize`'s docstring and `tests/test_rg_d20_instructions_match_the_code.py` were updated in #1023 to the new truth (`docs/records/2026-11-11-figure-trace-as-written.md`, item 8).
