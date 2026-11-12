@@ -31,7 +31,7 @@ The operator's rulings, 2026-11-11, verbatim, relayed by the coordinator:
 - **RG-D12: a fixed scorer, never the candidate's** (`compare.refuse_unless_scored_by_base`, `fixed_scorer`, `refuse_unless_registered_scorer`). The final rule, merging B's scope (operator 2026-11-11: "Yes, take B's tests and close all six") with the retrospective refinement the coordinator accepted:
   - **The production files the metrics borrow** (`synthesis.py`, `mechanical.py`, `verdict.py`, `schemas.py`) must be BASE's bytes, always, for a prospective change and a retrospective alike. A candidate edits these, so a candidate never scores itself through them.
   - **The harness's own files** must be origin/main's at registration, a reviewed harness, recorded as `scorer_ref`. They are never compared with BASE's: a BASE older than the harness, which is any retrospective, would otherwise be refused from every checkout with these rules (B's check, gap 1).
-  - **Enforced in the library, not only the CLI** (gap 1). `cm.register` refuses a checkout whose production files are not BASE's, and `run_compare` and `score_run` refuse a scorer that is not the registered one. The CLI's `refuse_unless_registered_scorer` also re-checks the production files against BASE and the harness against `scorer_ref`, which must be a commit on origin/main.
+  - **Enforced in the library, not only the CLI** (gap 1). `cm.register` refuses a checkout whose production files are not BASE's, and `run_compare` refuses a scorer that is not the registered one. *(Corrected by B, 2026-11-12: `score_run` in the library does NOT check the scorer; only the CLI's `score` and `score-run` do, through `refuse_unless_registered_scorer`. See "Adopted by B" below.)* The CLI's `refuse_unless_registered_scorer` also re-checks the production files against BASE and the harness against `scorer_ref`, which must be a commit on origin/main.
   - **Twelve existing tests** registered old commits (`dc5b8787` → `b109e26c`) from today's checkout, which is the defect itself. They now stub only the production check, with a docstring pointing at its own pins: `test_evals_pr2.py`, `test_evals_pr2_round2.py`, `test_evals_pr926_round2.py` and `test_evals_replication_rule.py`.
   - **#953 is registered from a composite checkout:** `586fdcfd`'s production files under main's harness. #953 changed `synthesis.py` and `schemas.py` itself, and main's production files have moved since. The composite was proved at $0: this branch's harness imports cleanly against `586fdcfd`'s `vinci/`, and all 12 arms of the impact export load and score there. The PR gives the exact steps.
 - **RG-D13: M-GAP is barred as a target** (`compare.BARRED_TARGETS`).
@@ -114,6 +114,27 @@ Ten findings: seven FIXED, two DEFERRED, one DISMISSED. Each is a row of the PR'
   - `register` does not refuse a held-out page as a target page. That is a follow-up below.
 - **DISMISSED:** `register`'s page-limited check cannot fire while M-GAP is barred. It stays as a guard for a future page-limited metric.
 
+## Adopted by B (2026-11-12)
+
+A's usage ran out, and order 8 passed to B (#1004, 2026-11-12 10:52Z; this PR's `## Handover to B`). What B did on top of A's head `2a970f06`:
+- **The six gaps are closed, shown by reversal.** B's 11 tests pass on `2a970f06`. Each gap's fix was then reverted on its own, in place, and restored byte for byte. All 13 reversals redden the test that pins them:
+  - gap 1: three reversals. `register` skips the BASE check; the BASE check compares the whole scorer; the BASE check compares only the harness.
+  - gap 2: two. The registration check is removed; an injected real client is not recognised.
+  - gap 3: PR 2's `judge_test_read` row is deleted (both tests).
+  - gap 4: two. `run_compare` skips the gold check; `run_build` skips it.
+  - gap 5: two. The gold report scores the held-out pages; TECX is held out.
+  - gap 6: a draw under another approval is not refused (A's `test_a_registration_is_drawn_only_under_the_approval_it_is_bound_to`).
+- **Main `4b2f0cb9` merged in** (`02b41584`), with no textual conflict. One semantic conflict was fixed (`9cd616ba`). RG-D20 case (h), from #1013, asked whether `register` takes M-GAP by constructing a `Registration`, but this PR refuses a barred target in `register` and keeps the constructor accepting it, so that #927's registration loads as history. (h) now reads `BARRED_TARGETS`, and also pins RUNBOOKS §n step 1's "barred as a target" sentence. It fails on `02b41584`, and both reversals are refused: M-GAP unbarred, and main's "joined it" wording with M-GAP barred.
+- **Review round 0 by B** (`/code-review high --fix`, five findings):
+  - **FIXED, behind tests failing on `306c5ff0`.**
+    - A library `run_compare` or `run_build` with no `claim` drew anyway, so only the CLI wrote the `drawn` row after checking main. That is the class of gaps 1 and 2. A paid draw (`replay.paid_draw`: no SDK, or the real client) is now refused unclaimed, after every other $0 refusal and before any folder or client exists.
+    - `registry.approval_id` died with an IndexError on an empty `--budget-ledger`, and with FileNotFoundError on a missing one. It now refuses, naming `budget-open`.
+    - Reverted, each fix reddens its pin.
+  - **DEFERRED**, both listed under the follow-ups below.
+    - The library `score_run` has no RG-D12 scorer check.
+    - `run_request`'s RG-D10 guard admits any registration string.
+  - **NO CHANGE:** a `drawn` row reaches main only with a later PR. That is the accepted risk stated below.
+
 ## What this means for #927's merged result
 
 **#927 (fix 4a) shipped on its only target, M-GAP**, at 37 → 4 units, p_lower 2.6 × 10⁻¹¹ (`docs/records/2026-11-09-fix4a-measured-on-the-panel.md`). M-GAP's truth is the gap types #927's own code wrote. So that result measured compliance with the new rule-8 wording, on pages where no gap may be raised. It does not measure fidelity to the page.
@@ -132,6 +153,8 @@ Its registration and record stay as written, as history. The merged code stays m
 
 - **The independent coding of M-GAP's gap types** (RG-D13's lasting fix) is new gold: coders, not code. It is the operator's to commission. Until then M-GAP is barred.
 - **`register` does not refuse a held-out page as a target page.** The ruling was "never used to build or tune a metric"; measuring a prompt change on a held-out page is neither, so it is left open. Whether held-out pages must also never be drawn is the operator's call.
+- **The library's `score_run` does not check the registered scorer** (B's review, deferred). The CLI's `score` and `score-run` do (`refuse_unless_registered_scorer`), and every documented step scores through the CLI. A library caller with an edited production file would score under it. The fix needs its own PR, because about 40 test call sites score with placeholder scorers.
+- **`run_request`'s RG-D10 guard checks only that a registration string is present** (B's review, deferred). The judge passes `judge:{half}` by design. Every paid path above it now also needs its index claim, so the guard is the last of three, not the only one.
 - **The lint's rules are syntactic.** A ref handed to git through a wrapper it does not list is not seen. The falsifier is a `gate` red on an unreachable ref this lint passed.
 
 **BOUNDARY.**
