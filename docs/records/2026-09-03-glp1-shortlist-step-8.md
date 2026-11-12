@@ -125,11 +125,34 @@ The non-filing `source_ref` warning applies to MCK as it does to the other three
 
 **2026-09-10 — WST's materiality is 10% of total company sales, not 18%.** The table above records
 *"GLP-1 is 18% of net sales (10% elastomer, 8% West Vantage)"*. The 10% half is sourced —
-`Q1 2026 Earnings Call, Apr 23, 2026`: *"HVP components GLP-1 revenues grew significantly and
+`Q1 2026 Earnings Call, Apr 23, 2026`: *"…GLP-1 revenues grew significantly and
 contributed 10% of total company sales."* **The 8% West Vantage half is not disclosed anywhere in
 the pull**; across 53 GLP-1 sentences in the two transcripts that one is the only figure. The 18%
-that IS in the corpus belongs to something else — *"West Vantage, the new brand name Contract
+that IS in the corpus belongs to something else — *"West Vantage,… Contract
 Manufacturing segment, which represents 18% of our business"* — the segment's total revenue share,
 GLP-1 and non-GLP-1 alike, and 17% by Q2. **WST still clears the materiality prong at 10%**; the
 figure it was ordered on was wrong, and it propagated into five later records and STATE.md.
 See `docs/records/2026-09-10-wat-glp1-base-sized.md`.
+
+**2026-11-13 — REDACTION: 2 spans cut to “…”**, under the operator's ruling of 2026-11-12, verbatim
+"Cut all 21 + guard (Recommended)", whose option read: "One $0 PR. Each run is cut to 12 words or
+fewer. Each record gets a dated redaction amendment naming count, position and hash only, as #1036
+did. A local-only test scans every tracked file against the transcripts on disk, and skips in CI
+where they are absent."
+
+CLAUDE.md's rule, since 2026-11-10: no public field quotes more than 12 consecutive transcript
+words, and this repo is public. This record was written before the rule, and 2 of its quotations
+shared more consecutive words with the call they cite. Each is cut in place to 12 words or fewer,
+keeping the words that carry the figure or the claim this record relies on; nothing else in it
+moved, and nothing was reworded. Each run is named below by its line in the record as merged, its
+length and the words kept, the call it shares them with and where it starts in that call, and the
+sha256 of its words: never by the words. A word is counted as the guard counts it
+(`tests/test_tracked_files_hold_no_transcript_run.py`): split at whitespace, every dash form and a
+slash, lower-cased, edge punctuation off, apostrophes folded. The hash is of those words joined by
+single spaces, its first 16 hex digits. Git history keeps the old text, as the operator accepted; no
+history is rewritten.
+
+| line | words → kept | call | starts at word | run sha256 |
+|---|---|---|---|---|
+| 128 | 14 → 12 | `West Pharmaceutical Services, Inc., Q1 2026 Earnings Call, Apr 23, 2026` | 763 | `36eadcd5c5218eb0` |
+| 131 | 15 → 11 | `West Pharmaceutical Services, Inc., Q1 2026 Earnings Call, Apr 23, 2026` | 1,425 | `a1940610db88e661` |

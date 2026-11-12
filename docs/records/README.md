@@ -60,6 +60,15 @@ down, as distinct from something that shipped.
    undone through P1, P2 and P3. The guard enforces the distinction mechanically: it strips
    `docs/…` paths from both versions and refuses the change if anything else moved.
 
+4. **A REDACTION** — the only change that edits a merged record's text. Added 2026-11-13 under the
+   operator's ruling of 2026-11-12 ("Cut all 21 + guard (Recommended)"): five records written
+   before CLAUDE.md's 12-word rule quoted earnings calls at length, this repo is public, and an
+   appended correction cannot un-publish words the body still carries. Spans are cut to "…" in
+   place and nothing else moves. A dated entry `**<date> — REDACTION: <n> spans cut to “…”**` is
+   appended last, naming each cut by line, word count, call and hash, never by its words. The
+   guard checks that the text is its merged self with exactly `<n>` spans replaced by "…". Git
+   history keeps the old text.
+
 Anything else — rewriting a sentence, deleting a paragraph, "tidying" — is refused by CI, which
 diffs each record against the merge base. If a record is wrong, **append the correction**; the
 wrong version staying visible is the point. That is Nygard's ADR rule, adapted to how this repo

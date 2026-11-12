@@ -20,24 +20,21 @@ Both quarters end **30 June 2026**, so this is one window, not two.
 
 `McKesson Corporation, Q4 2026 Earnings Call, May 07, 2026`, GLP-1 revenue **down** 4% sequentially:
 
-> *"Importantly, the impact of branded pricing declines and the sequential decline in GLP-1 volumes
+> *"…volumes
 > **had no impact on operating profit in the quarter**."*
 
 `Q1 2027 Earnings Call, Aug 05, 2026`, GLP-1 revenue **up** 24% year-over-year — and the segment's
 profit growth is attributed to everything else:
 
-> *"Segment operating profit increased 19% to $894 million, driven by growth in specialty
-> distribution, including health systems and strategic accounts and the timing of new product
-> launches."*
+> *"Segment operating profit increased 19%… specialty
+> distribution… health systems and strategic accounts…"*
 
 **GLP-1 is not among the drivers named.** Down 4% moves nothing; up 24% is credited elsewhere.
 Two quarters, opposite directions, same answer.
 
 **And the company gives the structural reason:**
 
-> *"revenues from branded pharmaceuticals reflect the WAC of those products and will be impacted by
-> changes in those prices. However, **our branded pharmaceutical contracts are structured such that
-> we are compensated for the fair value of the service we deliver**."*
+> *"revenues from branded pharmaceuticals reflect the WAC… **…compensated for the fair value…**."*
 
 Fee-for-service, not a share of price. A $15bn revenue line at a WAC that can move without the fee
 moving is exactly a figure that does not carry to earnings.
@@ -69,9 +66,9 @@ issuer's own statement puts the operating-profit sensitivity at nothing detectab
 GLP-1 sits **inside** HVP Components, and the mix shift toward that line is stated to be what raises
 company margin:
 
-> *"Total company gross margin was 37.7% in the quarter, up 200 basis points year-over-year… primarily
-> driven by better-than-expected sales and the associated **positive mix shift to HVP Components**."*
-> *"when we have HVP Components really driving the outperformance, **the incremental margins there are
+> *"…gross margin was 37.7% in the quarter, up 200 basis points…
+> driven by better-than-expected sales… **positive mix shift to HVP Components**."*
+> *"…HVP Components… **the incremental margins there are
 > just quite nice**."*
 
 If shifting mix toward HVP Components raises the 37.7% blend, HVP Components' margin **exceeds** the
@@ -119,3 +116,32 @@ quarter's sequential move**, not a general zero-sensitivity claim; it is corrobo
 attribution and by the 1.03% segment margin, and it is used here as directional evidence, not as a
 measured elasticity. **Falsifier: either company disclosing GLP-1 gross or operating profit**, at
 which point this ranking is replaced by arithmetic.
+
+## Amendments
+
+**2026-11-13 — REDACTION: 12 spans cut to “…”**, under the operator's ruling of 2026-11-12, verbatim
+"Cut all 21 + guard (Recommended)", whose option read: "One $0 PR. Each run is cut to 12 words or
+fewer. Each record gets a dated redaction amendment naming count, position and hash only, as #1036
+did. A local-only test scans every tracked file against the transcripts on disk, and skips in CI
+where they are absent."
+
+CLAUDE.md's rule, since 2026-11-10: no public field quotes more than 12 consecutive transcript
+words, and this repo is public. This record was written before the rule, and 6 of its quotations
+shared more consecutive words with the call they cite. Each is cut in place to 12 words or fewer,
+keeping the words that carry the figure or the claim this record relies on; nothing else in it
+moved, and nothing was reworded. Each run is named below by its line in the record as merged, its
+length and the words kept, the call it shares them with and where it starts in that call, and the
+sha256 of its words: never by the words. A word is counted as the guard counts it
+(`tests/test_tracked_files_hold_no_transcript_run.py`): split at whitespace, every dash form and a
+slash, lower-cased, edge punctuation off, apostrophes folded. The hash is of those words joined by
+single spaces, its first 16 hex digits. Git history keeps the old text, as the operator accepted; no
+history is rewritten.
+
+| line | words → kept | call | starts at word | run sha256 |
+|---|---|---|---|---|
+| 21 | 26 → 12 | `McKesson Corporation, Q4 2026 Earnings Call, May 07, 2026` | 3,105 | `a1a111ccaf919173` |
+| 29 | 27 → 12 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 3,156 | `948f5eb4141526d2` |
+| 38 | 40 → 12 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 3,041 | `9c6c385ee53f1c28` |
+| 72 | 16 → 11 | `West Pharmaceutical Services, Inc., Q2 2026 Earnings Call, Jul 23, 2026` | 1,977 | `66ae5b4b482af204` |
+| 72 | 16 → 12 | `West Pharmaceutical Services, Inc., Q2 2026 Earnings Call, Jul 23, 2026` | 1,999 | `8998e5cb6d798e99` |
+| 74 | 17 → 10 | `West Pharmaceutical Services, Inc., Q2 2026 Earnings Call, Jul 23, 2026` | 4,924 | `cc04553ccaf7ccfe` |

@@ -24,9 +24,8 @@ Recommendation: **gate WAT out; the shortlist is WST and MCK.** The judgement is
 contribution you saw from GLP-1s in the quarter?"*, explicitly about **Waters core instrumentation**.
 The CEO answers with the growth rate; **the CFO, Amol Chaubal, is the one who sizes it**:
 
-> *"I mean, look, broadly, we have said the idiosyncratic growth drivers will all add up to about
-> 200 basis points. And the GLP-1 contribution there was about 30 basis points. Clearly, GLP-1s are
-> running well ahead of that."*
+> *"…about
+> 200 basis points… GLP-1 contribution… about 30 basis points…"*
 
 Beside it, the same call:
 
@@ -87,8 +86,7 @@ Checking WAT against WST surfaced a defect in the number WST has been carried on
 
 **What the corpus says**, `West Pharmaceutical Services, Inc., Q1 2026 Earnings Call, Apr 23, 2026`:
 
-> *"HVP components GLP-1 revenues grew significantly and contributed **10% of total company sales**,
-> consistent with the previous quarter."*
+> *"…GLP-1 revenues grew significantly and contributed **10% of total company sales**…"*
 
 That is the **only** GLP-1 size in WST's entire pull — 53 GLP-1 sentences across the two transcripts,
 one with a number. `docs/records/2026-09-03-glp1-shortlist-step-8.md` records
@@ -97,7 +95,7 @@ half appears nowhere in the corpus** — no West Vantage GLP-1 split is disclose
 
 **And there IS an 18% in the corpus, attached to something else:**
 
-> Q1 2026: *"Turning now to West Vantage, the new brand name Contract Manufacturing segment, **which
+> Q1 2026: *"…West Vantage,… Contract Manufacturing segment, **which
 > represents 18% of our business**."*
 > Q2 2026: *"Turning to West Vantage segment, **which represents 17% of Q2 revenues**."*
 
@@ -171,3 +169,27 @@ materiality threshold, if the fund wants one, is the operator's act and is now a
 **The inversion table's row labels are wrong for the same reason.** Read the 152 bps and 758 bps
 as *"what it would take to reach the share WST discloses, and a fifth of it"* — arithmetic about a
 gap, not distance from a gate.
+
+**2026-11-13 — REDACTION: 8 spans cut to “…”**, under the operator's ruling of 2026-11-12, verbatim
+"Cut all 21 + guard (Recommended)", whose option read: "One $0 PR. Each run is cut to 12 words or
+fewer. Each record gets a dated redaction amendment naming count, position and hash only, as #1036
+did. A local-only test scans every tracked file against the transcripts on disk, and skips in CI
+where they are absent."
+
+CLAUDE.md's rule, since 2026-11-10: no public field quotes more than 12 consecutive transcript
+words, and this repo is public. This record was written before the rule, and 3 of its quotations
+shared more consecutive words with the call they cite. Each is cut in place to 12 words or fewer,
+keeping the words that carry the figure or the claim this record relies on; nothing else in it
+moved, and nothing was reworded. Each run is named below by its line in the record as merged, its
+length and the words kept, the call it shares them with and where it starts in that call, and the
+sha256 of its words: never by the words. A word is counted as the guard counts it
+(`tests/test_tracked_files_hold_no_transcript_run.py`): split at whitespace, every dash form and a
+slash, lower-cased, edge punctuation off, apostrophes folded. The hash is of those words joined by
+single spaces, its first 16 hex digits. Git history keeps the old text, as the operator accepted; no
+history is rewritten.
+
+| line | words → kept | call | starts at word | run sha256 |
+|---|---|---|---|---|
+| 27 | 40 → 11 | `Waters Corporation, Q2 2026 Earnings Call, Aug 04, 2026` | 7,643 | `f148002053124b59` |
+| 90 | 19 → 12 | `West Pharmaceutical Services, Inc., Q1 2026 Earnings Call, Apr 23, 2026` | 763 | `e71753e1fe3ee1be` |
+| 100 | 18 → 11 | `West Pharmaceutical Services, Inc., Q1 2026 Earnings Call, Apr 23, 2026` | 1,422 | `5b51dfa39e322139` |

@@ -22,17 +22,15 @@ pass on TIE, not a dig-deeper on MAGNITUDE.
 
 `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` — the CFO, on IRA and WAC:
 
-> *"WAC movements impact top line because our revenue is recognized on the drug selling price…
-> However, **GP and operating profit are less sensitive on these price changes**. And just so you
-> know, **more than 95% of our branded drugs are fee-for-service as we earn a fair value for what we
-> deliver**."*
+> *"WAC movements impact top line… recognized on the drug selling price…
+> …operating profit are less sensitive… **more than 95%…fee-for-service…**."*
 
 And on volume, from the prior call (`Q4 2026, May 07, 2026`), GLP-1 revenue **down** 4% sequentially:
 
-> *"the sequential decline in GLP-1 volumes **had no impact on operating profit in the quarter**."*
+> *"…GLP-1 volumes **had no impact on operating profit in the quarter**."*
 
 Volume **up** 24% YoY (Q1 FY27): segment profit *"driven by growth in specialty distribution,
-including health systems and strategic accounts and the timing of new product launches"* — GLP-1
+including health systems and strategic accounts…"* — GLP-1
 not among the drivers named.
 
 **Set against the card's own mechanism**, which is customer-side and whose signature is
@@ -53,8 +51,7 @@ STATE.md row 21 has carried *"distribution fees ride the base the Jan-2027 WAC r
 2026-09-03. **The evidence contradicts it for ≥95% of the branded book.** Fee-for-service is a fee
 per unit of service, not a share of price — and MCK has already run the experiment:
 
-> *"this past quarter… **we did see WAC pricing decreases**. And despite this dynamic, we were able
-> to achieve **GP growth, margin expansion and strong operating leverage**."* *(WAC decreases of
+> *"this past quarter… **…WAC pricing decreases**. And despite this dynamic,… **GP growth, margin expansion…**."* *(WAC decreases of
 > January 2026, named in the prepared remarks.)*
 
 So the Jan-2027 reset halves a **revenue** line and is not evidence of an earnings headwind.
@@ -132,3 +129,31 @@ but unverified against their own disclosures. **Falsifier for the MCK gate: McKe
 GLP-1 gross or operating profit figure, or attributing segment profit growth to GLP-1 volume** —
 either would restore the tie. **Falsifier for the one-name conclusion: A, CAH or COR disclosing a
 sized, volume-tied GLP-1 economic** at the standard WST meets.
+
+## Amendments
+
+**2026-11-13 — REDACTION: 10 spans cut to “…”**, under the operator's ruling of 2026-11-12, verbatim
+"Cut all 21 + guard (Recommended)", whose option read: "One $0 PR. Each run is cut to 12 words or
+fewer. Each record gets a dated redaction amendment naming count, position and hash only, as #1036
+did. A local-only test scans every tracked file against the transcripts on disk, and skips in CI
+where they are absent."
+
+CLAUDE.md's rule, since 2026-11-10: no public field quotes more than 12 consecutive transcript
+words, and this repo is public. This record was written before the rule, and 5 of its quotations
+shared more consecutive words with the call they cite. Each is cut in place to 12 words or fewer,
+keeping the words that carry the figure or the claim this record relies on; nothing else in it
+moved, and nothing was reworded. Each run is named below by its line in the record as merged, its
+length and the words kept, the call it shares them with and where it starts in that call, and the
+sha256 of its words: never by the words. A word is counted as the guard counts it
+(`tests/test_tracked_files_hold_no_transcript_run.py`): split at whitespace, every dash form and a
+slash, lower-cased, edge punctuation off, apostrophes folded. The hash is of those words joined by
+single spaces, its first 16 hex digits. Git history keeps the old text, as the operator accepted; no
+history is rewritten.
+
+| line | words → kept | call | starts at word | run sha256 |
+|---|---|---|---|---|
+| 25 | 15 → 11 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 6,631 | `e9b0ecb23886c232` |
+| 26 | 38 → 11 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 6,647 | `0e82ee0706e3af3b` |
+| 32 | 16 → 12 | `McKesson Corporation, Q4 2026 Earnings Call, May 07, 2026` | 3,115 | `61edb1e3095e8145` |
+| 34 | 19 → 12 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 3,164 | `9331f16fed7f42a0` |
+| 56 | 23 → 11 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 6,709 | `c8918b624a4ada6d` |
