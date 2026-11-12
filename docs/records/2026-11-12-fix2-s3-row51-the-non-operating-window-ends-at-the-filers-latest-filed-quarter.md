@@ -120,7 +120,18 @@ a page that does not say so lets the count stand for a period it does not cover.
   instead of the newest filed quarter, the where-clause either way, the no-material sentence's
   date, and the lag counted in named ends or floored.
 
-__IMPACT__
+- **The impact run, base `650057f3` against head `8c1880c6` on ONE UTC day (2026-11-12T15:13:34Z), $0.** The report reads `VALID` under `vinci.impact verify`.
+  - **Fail first:** 7 of the 42 tests in the two changed files fail on base code and pass on head; none fails on head.
+  - **Builds:** the $0 build ran on 17 of the 27 pages. The other 10 (BURL, GOOGL, LLY, MCK, NFLX, ROST, TGT, TJX, UBER, V) have no price history in the impact store, on either side.
+  - **3 of the 17 move: MVST, SMPL and ORKA.** No other field moves, and the extraction version moves on all 17.
+  - **Why its numbers differ from the 27-page run:** the impact build reads different inputs. It uses the frozen HTTP cache's companyfacts, which are newer than the committed fixtures, and it cuts at the impact store's price frontier, 2026-08-05, not each page's own price date.
+    - **MVST:** at that cut its Q2 10-Q (filed 2026-08-10) is not yet filed. The four end at 2026-03-31 and 3 are read; material goes 4 → 3. The window is ONE quarter behind, so it is not flagged.
+    - **SMPL:** the four end at 2026-05-30 and 3 are read. It is one quarter behind, not flagged.
+    - **ORKA:** flagged, 17 quarters before 2026-03-31, its latest quarter in the cache. Its `nonoperating:` QA flag reaches the page's caveats.
+    - R4's condition 3 holds or fails as in the 27-page run: MVST's 3 is still at the ≥2 bar.
+  - **Synthesis requests:** each of the 3 moved requests differs in its FACTS section only. System and tool schema are the same: USER −5 +5 (MVST), −4 +4 (SMPL) and −3 +3 (ORKA).
+  - **The frozen panel replays identically:** 0 of 6. The report asks the operator about the row-53 panel check, because SMPL is a panel page. This is a facts-only request move, the same shape as #1034's, so no paid panel check is run (fix request 2, batch 3 item 2).
+  - **Rendering:** no committed `dossier.md` re-renders differently. The one frontend file that differs is `snapshots/extraction_versions.json`, the new vintage. No consumer (screens, ledger, scoring, monitor, theme desk, frontend build) is reached.
 
 **ROUND 0** (`/code-review high --fix`, 3 findings):
 - **FIXED: the lag counted only quarter ends some filing names**, so a run of missing filings
@@ -134,8 +145,9 @@ __IMPACT__
 
 **BOUNDARY.** Every count above is over the 27 committed `data/dossiers/*/dossier.json` at main
 `650057f3`, each at its own reference date, on the committed companyfacts at that commit, cut at
-the page's price date. The units are quarters (calendar quarter ends, two ends within 7 days
-counted as one) and $M.
+the page's price date. The impact run's counts are over the 17 pages it could build, from the
+frozen HTTP cache and the impact store (frontier 2026-08-05), both sides at 2026-11-12T15:13:34Z.
+The units are quarters (calendar quarter ends, two ends within 7 days counted as one) and $M.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **MVST's count halves (4 → 2) at its next rebuild.** It is exactly at R4's ≥2 bar. One more
