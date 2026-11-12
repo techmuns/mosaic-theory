@@ -2,7 +2,7 @@
 id:
 status: shipped
 date: 2026-11-13
-prs: [958, 1030, 1034, 1035, 1036, 1037, 1038, 1041, 1042]
+prs: [958, 1030, 1034, 1035, 1036, 1037, 1038, 1041, 1042, 1044]
 supersedes:
 superseded-by:
 ---
@@ -24,6 +24,7 @@ superseded-by:
     - The three runs are cut at $0.
     - The row keeps #941, #951 and #1006, and its page cell adds #1036's cuts.
     - **Not booked:** A's cut of the 25 transcript runs in tracked files. Its spot audit found 21 in five records and two test files (issue #1004, 2026-11-12 17:36Z; operator: "Cut all 21 + guard (Recommended)"), and its local guard found 4 more (operator 2026-11-13: "Cut all 25, one PR (Recommended)"). It is open as #1046, opened 2026-11-12 20:52Z while this batch was being written, and is not on main at `98707f29`. RG-D19's row names it as pending.
+  - **E2-D11's MVST half → not fixing: name retired** (operator 2026-11-12, verbatim: "we want to drop/remove MVST altogether from our list for future as well"; the coordinator's addition to this batch, 2026-11-13). The MVST strict-xfail node leaves the row's test cell, and its Pages cell says MVST's page leaves the corpus with #1044, as AORT's rows read after its retirement. The row stays `fixed`: EPAM's node keeps it valid for `tests/test_fix_log.py`, and WERN's half is unchanged. #1044 keeps that node only as a skipped stub so the log's name check stays green, and deletes it once this merges.
   - **The log's header sentence on order 2** read "in code but for RG-D19 … PR 3 is to come". PR 3 merged in batch 5 (#1006), and RG-D19 is fixed now, so the sentence says so.
 - **STATE.md §5.0 row 60:**
   - the title recount, with its boundary;
@@ -33,16 +34,20 @@ superseded-by:
   - batch 5's clause keeps A's 15, 14 and 14, with the rule's 14, 13 and 14 beside them;
   - "order 2 is in code but for RG-D19" now reads in code;
   - #953's retrospective: order 8 has merged, so it is A's to register, and it has not run;
-  - the split sentence: fix 4b no longer waits, and A took back the four items B finished. Batch 7's hand-offs amendment, on batch 3's record, has the detail.
+  - the split sentence: fix 4b no longer waits, and A took back the four items B finished. Batch 7's hand-offs amendment, on batch 3's record, has the detail;
+  - the #956 clause: "MVST retired 2026-11-12: it has no next build", with its ruling, the edit #1044 drops from its own diff because fix-log rule 1 keeps row 60 out of fix PRs.
 - **No ID and no row**, each by its own body:
   - **#1034** (`650057f3`): the stock-info price note counts a stale close from the page's reference date. Its body: "Fix log: no row (not a fix-request ID)".
   - **#1035** (`3a6ce8fb`): the operator's three approvals of 2026-11-12 and the coordinator's nine defaults, recorded. It names RG-D20 only as a lint it ran, and as a weakness it found in that lint's case (e) and did not fix: a truncated loop name passes. RG-D20's row is unchanged.
   - **#1037** (`407dc809`): VRRM's second `run-monthly` rehearsal (row 38), docs only.
   - **#1038** (`43c2355f`): row 51 (2). It is coordinator default 9 under the operator's delegation, not an ID. Its body: "Fix log: no row; row 51 is not a fix-request ID".
   - **#1041** (`047f4c6b`): the rebuild prep (row 28). Its body: "None: no fix-log ID moves".
+  - **#1044** (MVST retired, operator 2026-11-12), **booked ahead**: it is open, and merges after this batch, which the coordinator ordered. It names no fix-log ID. Its one effect on the log is E2-D11's MVST half, booked above. If #1044 does not merge, that cell and the #956 clause overstate MVST's state.
   - **#1042** (`f2e31cea`): coordinator default 6. It closed STATE row 49 itself. It names RH-D3 only as #996's earlier fix of `bin/commit`, which RH-D3's `fixed` row already holds.
 - **STATE.md §5.0 row 59's title** read "SIX OF ITS SEVEN DEFECTS ARE IN CODE … RD-D1 IN #953 … RG-D19 WAITS FOR A RULING". #953 merged on 2026-11-10, RG-D19 was ruled on 2026-11-09, and this batch books it fixed, so all seven of order 2's rows read `fixed`. The title says so, and its unlock strikes "#953's merge". Its open items (1) and (3) to (5) are unchanged, so the row stays (review round 0).
-- **Amendment:** batch 3's record gains a third dated entry on the split's hand-offs.
+- **Amendments:**
+  - batch 3's record gains a third dated entry on the split's hand-offs;
+  - the fix-request record gains a dated entry on MVST's retirement, as it did for AORT's, because its §1 names MVST among order 1's pages.
 
 **WHY.**
 - Under batched bookkeeping (operator 2026-11-10), a fix PR edits neither the log nor row 60, and one writer applies each batch: S4, B's stream, for batches 4 to 6, after #1011 (batch 3, A's). B is paused until 2026-11-18, and its hand-back makes A, the coordinator, the log's only writer until B resumes. That hand-back (issue #1004, 2026-11-12 16:56Z) named batch 7: "RG-D19 to fixed (#1036: LLY 14, VITL 13, WERN 14 hyphen-split), RG-D9–D15 when order 8 merges, and the PRs above".
@@ -82,7 +87,7 @@ superseded-by:
 - **The full gate.** Its run is in the PR.
 
 **BOUNDARY.**
-- **The PRs:** every first-parent commit on `origin/main` from batch 6's base `4b2f0cb9` through `98707f29` that batch 6 did not book. These are #1035 and #1034, merged before batch 6 itself, and then #1036, #1038, #1037, #1041, #1042 and #1030. #958 (merged 2026-11-10) is added for RG-D10. They were read on 2026-11-13.
+- **The PRs:** every first-parent commit on `origin/main` from batch 6's base `4b2f0cb9` through `98707f29` that batch 6 did not book. These are #1035 and #1034, merged before batch 6 itself, and then #1036, #1038, #1037, #1041, #1042 and #1030. #958 (merged 2026-11-10) is added for RG-D10, and #1044, open, is booked ahead at the coordinator's request. They were read on 2026-11-13.
 - **The counts:** all 178 fix-log rows by their Status cell, and separately the 148 asked, which is every Order but `§4`. They are counted on this branch's log, cut from main `98707f29`, on 2026-11-13.
 - **The fail-first runs:** 18 #1030 nodes at `f2e31cea`, one #958 node at `a71b9f67`, and #1036's guard file at `68bd4b33`. All were run on 2026-11-13, in a throwaway worktree with this checkout's venv.
 - **The corpus check:** the 27 committed pages at `98707f29`, and `68bd4b33`'s LLY, VITL and WERN pages, against this Mac's Drive mirror of the licensed calls as it read on 2026-11-13.
