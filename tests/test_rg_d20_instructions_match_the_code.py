@@ -163,11 +163,11 @@ def g_the_gemini_config_is_inert() -> None:
 
 
 def _registers_as_a_target(metric: str) -> bool:
-    """Whether `register` takes `metric` as a target. Two refusals: `register` refuses a target
-    in `BARRED_TARGETS` before it builds anything (order 8, RG-D13), and `Registration` refuses
-    an unknown one with a ValueError; any other error means `Registration`'s shape moved, and
-    this helper must follow it. A barred target still CONSTRUCTS, so #927's registration loads as
-    history, which is why the constructor alone no longer answers the question."""
+    """Whether `register` takes `metric` as a target. A ValueError is the refusal; any other
+    error means `Registration`'s shape moved, and this helper must follow it. `register` refuses
+    a BARRED target first (`BARRED_TARGETS`, RG-D13: M-GAP, operator "Bar it now"); the bar is in
+    `register`, not `Registration`, so a merged registration that named one (#927's) still loads
+    as history."""
     if metric in BARRED_TARGETS:
         return False
     try:
