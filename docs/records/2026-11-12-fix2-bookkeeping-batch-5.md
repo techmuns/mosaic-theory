@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# Fix request 2 bookkeeping, batch 5 (S4): RG-D21 and RG-D19 to `fixed`, RG-D8 to `in progress (#1006)`, #1006's stream clause and #1015's void clause in row 60, operator item (10), seven merged PRs that name no fix-log ID recorded as such, the split's hand-offs amended on batch 3's record, and row 60 recounted (of 148 asked: 126 fixed, 15 open, 6 in progress, 1 disagreed)
+# Fix request 2 bookkeeping, batch 5 (S4): RG-D21 to `fixed`, RG-D19 and RG-D8 to `in progress (#1006)`, #1006's stream clause and #1015's void clause in row 60, operator item (10), seven merged PRs that name no fix-log ID recorded as such, the split's hand-offs amended on batch 3's record, and row 60 recounted (of 148 asked: 125 fixed, 15 open, 7 in progress, 1 disagreed)
 
 **WHAT.**
 - **The fix log**, `docs/fix-log-teamnostra-2.md`, changes three rows:
@@ -15,15 +15,19 @@ superseded-by:
     - Batch 3 kept the row `in progress` because a decline stated in percentage points or basis points still read positive. #1007 closes that residual.
     - The row names all four tests, two from each PR.
     - Its commit cell names the one shape #1007's record leaves as it reads, A's pin (#1007). With the bare number as the value text ("27", unit USD millions, quote "a 27 million decline"), +27 still passes. The registry holds 0 such claims.
-  - **RG-D19 → `fixed`** (#941 `d0563738`, #951 `586fdcfd`, #1006 `91817458`), as #1006's bookkeeping section asks.
-    - It is fixed behind a pin, not under rule 3's guidance exception: #1006's record claims a test, `tests/test_public_transcript_text.py`, that fired 6,284 times before the pass and 0 after.
-    - The row names that pin, `test_no_committed_page_publishes_transcript_text_beyond_the_rule`. It replaces the PR-1 locator test the row named while `in progress`, because the corpus pin is the one #1006's section names and the one shown failing first (below).
+  - **RG-D19 → `in progress (#1006)`** (#941 `d0563738`, #951 `586fdcfd`, #1006 `91817458`). #1006's section asked for `fixed`; B's review round 2 held it back (#1021).
+    - The rule RG-D19 holds is that no public field quotes more than 12 consecutive transcript words. #1006's pin, `tests/test_public_transcript_text.py`, fired 6,284 times before the pass and 0 after, and it fails first (below).
+    - **The residual:** three committed syntheses copy more than 12 consecutive transcript words without quotation marks (LLY 15, VITL 14, WERN 14; A on #1004, 2026-11-11 17:58Z, from #1006's Codex round 2). The pin reads a synthesis item only between quotation marks, so it passes over all three.
+    - The operator ruled "$0 guard + redaction now (Recommended)": A's `_validate` refusal of any synthesis string sharing more than 12 consecutive words with the build's own transcripts, plus a $0 cut of the three runs. That PR is not on main at `53e5f26e`.
+    - B did not re-verify the three, because the transcripts are private.
+    - The row keeps the pin named, `test_no_committed_page_publishes_transcript_text_beyond_the_rule`, in place of the PR-1 locator test it named before. It flips to `fixed` when A's PR lands.
+    - Batch 3 kept RG-D21 `in progress` for a residual with no live instance. This one has three.
   - **RG-D8 → `in progress (#1006)`**. Its clause-binding half is not built (strict xfail), so it stays in progress after #1006's merge, as that PR's record says.
 - **Owed since before batch 4, booked here** (B, #1004, 2026-11-12: "Put #1006's and #1015's owed bookkeeping into #1021 now, as one scope commit"). Both PRs merged before batch 4 did, but neither was in its scope.
   - **#1006** (`91817458`):
     - row 60's RG-D19 + RG-D8 stream clause is replaced with the clause from #1006's section, plus its merge commit;
-    - the clause keeps the design record, `docs/records/2026-11-10-driver-facts-not-quotes.md`, cited. That record stays `open`, because RG-D8's clause-binding half is unbuilt, and `tests/test_record_status_matches_open_now.py` requires an open row to cite it;
-    - row 60's "order 2 is in code but for RG-D19" now reads that order 2 is in code;
+    - the clause keeps the design record, `docs/records/2026-11-10-driver-facts-not-quotes.md`, cited. That record stays `open`, because RG-D19's residual and RG-D8's clause-binding half are open, and `tests/test_record_status_matches_open_now.py` requires an open row to cite it;
+    - the clause's "Still open" adds RG-D19's three-page residual, and row 60's "order 2 is in code but for RG-D19" stays as it reads;
     - **operator item (10)** is added as #1006's record states it: the ingest Mac uploads the spool's 2,266 files (PR 3's first real write) to the private bucket, owed after merge. It lives in **STATE §5.0 row 60**, in the Owner column's operator list after item (9).
   - **#1015** (`1df0dc18`): one clause in row 60's operator item (4), in its record's own words.
     - A monitor day keys a void on the SESSION it files, as it keys a close, never on the run's `--ref`.
@@ -76,7 +80,8 @@ superseded-by:
 - **RG-D19's fail-first.** Main's `tests/test_public_transcript_text.py` (new in #1006, absent at its parent) runs on #1006's parent, `c0d6d830`, the commit main held before #1006:
   - RG-D19's pin fails with 6,284 violations, the count #1006's record gives at `70fa224d`. It has 1 case; the file imports nothing from `vinci`, so the run reads only that commit's committed pages;
   - `test_every_committed_transcript_row_keeps_its_fact_and_its_locator` fails there too;
-  - on main, all 5 tests in the file pass, and so does RG-D8's named test.
+  - on main, all 5 tests in the file pass, and so does RG-D8's named test;
+  - passing on main does not make RG-D19 `fixed`: the three unquoted copies are outside what the pin reads (above).
 - **The ID scan.** Each PR body and its record were searched for every ID shape the log admits. The only IDs found are the ones listed above.
 - **Row 42's tests.** `tests/test_netcache_json_body.py` and `tests/test_monitor_unreadable_window.py` pass on main (15 tests).
 - **The lints.** These pass on this branch:
@@ -95,13 +100,13 @@ superseded-by:
 - **The counts.** All 178 fix-log rows by their Status cell, and separately the 148 asked (every Order but `§4`).
 
 **THE COUNT.**
-- Of the 178 rows: 126 fixed, 45 open, 6 in progress, 1 disagreed.
-- Of the 148 asked: 126 fixed, 15 open, 6 in progress, 1 disagreed.
+- Of the 178 rows: 125 fixed, 45 open, 7 in progress, 1 disagreed.
+- Of the 148 asked: 125 fixed, 15 open, 7 in progress, 1 disagreed.
 - Against batch 4:
-  - RG-D21 and RG-D19 moved from in progress to fixed;
-  - RG-D8 stays in progress, now `(#1006)`.
+  - RG-D21 moved from in progress to fixed;
+  - RG-D19 and RG-D8 stay in progress, now `(#1006)`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **RG-D21's scale-word shape is left as it reads.** It is A's pin, from #1007. Closing it means stepping over scale words, which changes the pinned shape's path. No claim on the registry has this shape.
-- **RG-D19's pin reads living committed pages.** A page rebuilt with a transcript row's words reds it, which is the point. It holds the rule over the tree, not over history: every byte committed before #1006 stays public.
-- **Found, not fixed (another row):** STATE row 59's title still reads "RG-D19 WAITS FOR A RULING". That has been stale since the ruling on 2026-11-09, and is so again now that RG-D19 is `fixed`. Row 59 is outside this batch, and is reported to B.
+- **RG-D19 waits on A's PR.** Until it lands, three committed syntheses break the 12-word rule, and no committed test sees them. The pin holds driver rows, and quoted synthesis runs, over the living tree, not over history: every byte committed before #1006 stays public.
+- **Found, not fixed (another row):** STATE row 59's title still reads "RG-D19 WAITS FOR A RULING". The ruling it waits for was made on 2026-11-09 (publish the fact, not the quote), so the title has been stale since then. Row 59 is outside this batch, and is reported to B.
