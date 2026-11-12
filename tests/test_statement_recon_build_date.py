@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import json
+import re
 import sys
 import time
 from collections.abc import Iterator
@@ -104,11 +105,12 @@ def _utc_day(at: _dt.datetime) -> Iterator[None]:
 
 
 def _assemble_nke(last_close: _dt.date = _dt.date(2026, 10, 16),
-                  reference: _dt.date | None = None) -> Any:
+                  reference: _dt.date | None = None, flags_out: list[str] | None = None) -> Any:
     """NIKE's mechanical layer, assembled on its real companyfacts and on its stored bars up to
     ``last_close`` (the page's price date), with the synthetic CIQ exports and no network: every
     other SEC request is refused, as `tests/test_asof_cut.py`'s harness refuses it. The page's
-    reference date is ``reference`` (default: the last close itself)."""
+    reference date is ``reference`` (default: the last close itself); the assembly's QA flags, the
+    ones `dossier.json` stores, are appended to ``flags_out`` when given."""
     ref = reference or last_close
     from tests.test_asof_cut import _iwm_bars, _Refused
     from vinci.dossier.ciq import CiqBundle
@@ -151,10 +153,12 @@ def _assemble_nke(last_close: _dt.date = _dt.date(2026, 10, 16),
     rec = enrich_with_fundamentals(rec, edgar=edgar, price_bars=bars, reference_date=ref)
     bundle = CiqBundle.from_files("NKE", sorted([*(gen.HERE / gen.TICKER).iterdir(),
                                                  gen.HERE / gen.ESTIMATES_XLS]))
-    mech, _flags = assemble_mechanical(
+    mech, flags = assemble_mechanical(
         rec, store=cast(Any, Store()), edgar=edgar, http=cast(CachedHttp, sec),
         finra=cast(Any, _Refused()), graph=ExposureGraph(), resolver=cast(Any, None),
         bundle=bundle, reference_date=ref)
+    if flags_out is not None:
+        flags_out.extend(flags)
     return mech
 
 
@@ -244,6 +248,26 @@ def test_a_stale_close_sends_the_same_request_on_any_day(_warm: Any) -> None:
     # the stale case is live in the request itself (its ASCII core: the request escapes the dash)
     assert "16 calendar days before the page's reference date 2026-10-16" in sent[0]
     assert sent[0] == sent[1]
+
+
+def test_a_stale_close_writes_the_same_qa_flags_on_any_day(_warm: Any) -> None:
+    """PR round 1 (the coordinator's surviving mutant): the note's QA twin, `stock-info: …`, is
+    written into `dossier.json`'s QA flags, and the impact check compares pages leaf by leaf. Put
+    back on today, nothing failed. The same stale case built on 2026-11-01 and on 2026-11-05 writes
+    the same flags, the twin counted from the reference date. The one wall-clock number among
+    them, the release fetch's `(+N.Ns fetch)` latency, is a run's timing, not a day: masked."""
+    close, ref = _dt.date(2026, 9, 30), _dt.date(2026, 10, 16)
+    runs: list[list[str]] = []
+    for day in (_dt.date(2026, 11, 1), _dt.date(2026, 11, 5)):
+        out: list[str] = []
+        with _utc_day(_dt.datetime(day.year, day.month, day.day, 12, 0, tzinfo=_dt.UTC)):
+            _assemble_nke(close, reference=ref, flags_out=out)
+        runs.append([re.sub(r"\(\+[\d.]+s fetch\)", "(+<s> fetch)", f) for f in out])
+    assert [f for f in runs[0] if f.startswith("stock-info: ")] == [
+        "stock-info: PRICE STALE AT THE REFERENCE DATE: last stored close 2026-09-30 is 16 "
+        "calendar days before the page's reference date 2026-10-16 — run `vinci refresh` and "
+        "re-assemble"]
+    assert runs[0] == runs[1]
 
 
 def test_negative_a_fresh_close_carries_no_note_however_late_the_build(

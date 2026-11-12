@@ -2,7 +2,7 @@
 id: 2026-11-12-fix2-s3-price-stale-note-reference-date
 status: shipped
 date: 2026-11-12
-prs: [1033]
+prs: [1034]
 supersedes:
 superseded-by:
 ---
@@ -49,7 +49,8 @@ the page.
 
 **HOW VERIFIED.**
 - **`tests/test_statement_recon_build_date.py`**, #1031's NIKE harness, extended with a reference
-  date that can trail the close. 3 tests fail on main `85152609`:
+  date that can trail the close. 3 tests fail on main `85152609` (a 4th, round 1's, fails on its
+  mutant):
   - **The two-day test, with the stale case live.** A close of 2026-09-30 on a page as of
     2026-10-16 is built on 2026-11-01 and on 2026-11-05. On main the note read "32" and then "36
     calendar days before assembly", and the requests differed. On head both read "16 calendar days
@@ -61,6 +62,13 @@ the page.
   - **The stderr pin.** #1031's "the faked day reaches a clock read" test is CHANGED
     DELIBERATELY: that clock read is the stderr WARNING now ("… 16 calendar days before today
     (2026-11-01)"), and the fresh page carries no note.
+- **PR round 1** (the coordinator's review of `1a6a5325`): 5 mutants, 4 killed. The survivor put
+  the QA twin (`stock-info: …`, stored in `dossier.json`'s QA flags) back on today, and nothing
+  failed, so a committed page would still have differed day to day.
+  `test_a_stale_close_writes_the_same_qa_flags_on_any_day` builds the stale case on two faked UTC
+  days and requires the same QA flags, with the twin counted from the reference date. The one
+  wall-clock number among the flags, the release fetch's latency, is masked. The test fails on
+  that mutant.
 - **`tests/test_dossier.py::test_price_stale_note_fires_only_past_the_cadence`** is CHANGED
   DELIBERATELY. It pins the reference-date count and its words, and that the stderr warning
   fires past the cadence and not inside it.
