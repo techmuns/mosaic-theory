@@ -153,3 +153,24 @@ def test_the_section_names_each_re_built_page_and_counts_none_still_on_two_days(
     assert len(said) == 1
     assert said[0].endswith(": BURL, CNXC; still on two days, so set apart as run noise and not "
                             "counted: CNXC")
+
+
+def test_a_side_with_a_clock_is_dated_by_its_clock_not_by_its_filing_date(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """RULING 2 (2026-11-12): `as_filed_by` is the latest filing the reconciliation read, no longer
+    the build's day, so it names no day the build ran on. BURL's two sides in that PR's own run,
+    both built on 2026-11-12 (`clock.json`): base stamps the day, head the 10-Q of 2026-08-27. Read
+    as a day, head "ran across" 2026-08-27 too, and 26 of 27 pages were set apart as noise. FAILED
+    at #1025 (`["head"]`). A side kept from before `clock.json` existed still falls back to the
+    page's dates, which #984's run pins above."""
+    monkeypatch.setattr(rn, "utc_today", lambda: "2026-11-12")
+    s = _settings(tmp_path)
+    for side, stamp in (("base", "2026-11-12"), ("head", "2026-08-27")):
+        folder = s.out / "pages" / side / "BURL"
+        _page(folder, "2026-11-12T11:00:30Z", stamp)
+        (folder / "clock.json").write_text(json.dumps({"utc_days": ["2026-11-12"]}))
+    assert rn.build_days(s.out / "pages" / "head" / "BURL") == ["2026-11-12"]
+    assert rn.off_day_sides(s, "BURL") == []
+    # (−) a side WITHOUT a clock still reads the page's dates, as #984's sides do
+    (s.out / "pages" / "head" / "BURL" / "clock.json").unlink()
+    assert rn.build_days(s.out / "pages" / "head" / "BURL") == ["2026-08-27", "2026-11-12"]

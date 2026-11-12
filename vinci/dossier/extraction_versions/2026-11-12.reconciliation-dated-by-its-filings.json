@@ -1,0 +1,10 @@
+{
+  "id": "2026-11-12.reconciliation-dated-by-its-filings",
+  "follows": [
+    "2026-11-10.driver-text-filed",
+    "2026-11-11.digest-figures-carry-unit-sign-period",
+    "2026-11-11.refresh-backfill-price-date-cut",
+    "2026-11-11.split-adjusted-pe-range"
+  ],
+  "names": "the statement reconciliation (financial_summary.statement_reconciliation) is read as filed by the page's price date and dated by what it read (operator ruling 2, 2026-11-12, 'Fix now, by B'): its as_filed_by is the latest filing date of the filings its rows read, and null when no row read one — never the build's own UTC day, which reached the synthesis request, so the same code on the same inputs sent a different request on another day; a row with no filing figure says 'as filed by <the page's price date>', not the build's day. The refresh back-fill builds the same block and no longer reads assembled_at. No committed page moves until it is re-assembled"
+}

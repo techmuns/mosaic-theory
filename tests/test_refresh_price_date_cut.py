@@ -204,19 +204,38 @@ def test_the_statement_reconciliation_reads_edgar_as_filed_by_the_pages_price_da
     """THE DEFECT: the reconciliation was bounded at the page's assembly date (2026-10-21), so a
     page priced 2026-08-27 read TJX's Q2 10-Q, filed the next day, into its LTM row. Now the facts
     are cut at the price date, as assembly cuts them, and the LTM row has no filing to set beside
-    it. The block still states the assembly date as its `as_filed_by`, as assembly writes it."""
+    it. (Ruling 2, 2026-11-12) The block is dated by the filing its rows read, the FY26 10-K filed
+    2026-03-31, as assembly dates it, and the LTM row's note names the price date it was read at.
+    Both stated the assembly date, 2026-10-21, which this pin held until then."""
     blk, refused = _rows(_tjx_doc(price="2026-08-27"))
     assert refused == []
     by_col = {r["column"]: r["filing"] for r in blk["rows"]}
     assert by_col == {"FY26": 60372.0, "LTM": None}
-    assert blk["as_filed_by"] == "2026-10-21"
+    assert blk["as_filed_by"] == "2026-03-31"
+    ltm = next(r for r in blk["rows"] if r["column"] == "LTM")
+    assert "as filed by 2026-08-27" in ltm["note"] and "2026-10-21" not in ltm["note"]
 
 
 def test_negative_a_page_priced_after_the_filing_still_reads_it() -> None:
-    """(−) Priced on the filing's own day, the cut is inclusive (`asof.within_cut`)."""
+    """(−) Priced on the filing's own day, the cut is inclusive (`asof.within_cut`), and the block
+    is dated by that 10-Q."""
     blk, refused = _rows(_tjx_doc(price="2026-08-28"))
     assert refused == []
     assert {r["column"]: r["filing"] for r in blk["rows"]} == {"FY26": 60372.0, "LTM": 62363.0}
+    assert blk["as_filed_by"] == "2026-08-28"
+
+
+def test_the_back_fill_reads_no_assembly_date() -> None:
+    """(Ruling 2) The block is built from the figures, the facts and the price date, so a page's
+    `assembled_at` cannot move it: one assembled on another day gets the same block, and one with
+    none is no longer refused for it. FAILED at main (the date was the block's, and its absence
+    raised `RefreshRefusedError`)."""
+    want, _ = _rows(_tjx_doc(price="2026-08-28"))
+    other = _tjx_doc(price="2026-08-28")
+    other["assembled_at"] = "2026-11-12T09:00:00Z"
+    assert _rows(other)[0] == want
+    del other["assembled_at"]
+    assert _rows(other) == (want, [])
 
 
 def test_a_page_with_no_close_is_cut_at_its_reference_date() -> None:

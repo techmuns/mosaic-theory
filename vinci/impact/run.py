@@ -442,9 +442,10 @@ def build_key(s: Settings, lay: Layout, side: str, ticker: str, shas: dict[str, 
     return hashlib.sha256(json.dumps(parts, sort_keys=True).encode()).hexdigest()
 
 
-# THE BUILD'S UTC DAY IS ONE OF ITS INPUTS (#984, 2026-11-12). A build stamps today's UTC date on
-# the page: `statement_reconciliation.as_filed_by` is ``datetime.now(UTC).date()``
-# (`mechanical.py`, `statement_recon.attach`), and it reaches the synthesis request's facts. The
+# THE BUILD'S UTC DAY IS ONE OF ITS INPUTS (#984, 2026-11-12). A build stamped today's UTC date on
+# the page: `statement_reconciliation.as_filed_by` was ``datetime.now(UTC).date()``
+# (`mechanical.py`, `statement_recon.attach`; ruling 2, 2026-11-12, dates it by its filings
+# since), and it reached the synthesis request's facts. The
 # sweep's #984 run compared base sides KEPT from 23:43Z on 2026-11-11 with head sides built after
 # 01:26Z on 2026-11-12: 5 of 27 pages "moved" on that date alone, the requests with them. AMZN's
 # base build STARTED at 23:43Z and stamped 2026-11-12, so a build's start time does not name its
@@ -455,15 +456,21 @@ def utc_today() -> str:
 
 def build_days(folder: Path) -> list[str]:
     """Every UTC day a page side's build ran across: the child's ``clock.json`` (its first and
-    last day) and the dates the page carries (``assembled_at``; ``as_filed_by``), for a side
-    built before ``clock.json`` existed. Empty when nothing names a day."""
-    days = set((_read(folder / "clock.json") or {}).get("utc_days") or [])
+    last day) and the page's ``assembled_at``; for a side built before ``clock.json`` existed, its
+    ``as_filed_by`` too. Empty when nothing names a day.
+
+    ``as_filed_by`` is read only WITHOUT a clock (ruling 2, 2026-11-12): since then it is the
+    latest filing the reconciliation read, which names no day a build ran on, and every build
+    since this module's clock writes ``clock.json``. A side kept from before it was built by code
+    that stamped the build's day there."""
+    clock = _read(folder / "clock.json")
+    days = set((clock or {}).get("utc_days") or [])
     page = _read(folder / "built.json") or {}
     if page.get("assembled_at"):
         days.add(str(page["assembled_at"])[:10])
     recon = ((page.get("mechanical") or {}).get("financial_summary") or {}).get(
         "statement_reconciliation") or {}
-    if recon.get("as_filed_by"):
+    if clock is None and recon.get("as_filed_by"):
         days.add(str(recon["as_filed_by"]))
     return sorted(days)
 

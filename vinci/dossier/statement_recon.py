@@ -15,7 +15,8 @@ from — and never off a column label: a 52/53-week filer can end two fiscal yea
 year, and a label carries only the year.
 
 THE FILING FIGURE IS THE PLAINEST THE TAGS ALLOW, on ONE tag (never spliced), USD facts only, as
-filed by a date (assembly's, so a later restatement never reads as CIQ's error):
+filed by the page's price date (the cut every page reader takes, so a later restatement never reads
+as CIQ's error):
 
 * a fiscal year — the filer's ~12-month fact ending on that date;
 * the LTM — a ~12-month fact ending on that date (a 10-K's year, or a 10-Q's own trailing column,
@@ -29,6 +30,11 @@ A DIFFERENCE THE FILINGS EXPLAIN IS NAMED, NEVER INFERRED: where CIQ differs fro
 equals another alias's for the same period, or an earlier filing's for the fiscal year (the filer
 has restated it since), the row names the tag or the accession. Evidence for the reader, not a
 correction this code makes.
+
+THE BLOCK IS DATED BY WHAT IT READ (operator ruling 2, 2026-11-12, "Fix now, by B"): its
+``as_filed_by`` is the latest filing date of the filings its rows name, and None when no row names
+one. It was the build's own UTC day, which reached the synthesis request, so the same code on the
+same inputs sent a different request on another day.
 """
 from __future__ import annotations
 
@@ -218,7 +224,8 @@ def _points(facts: dict[str, Any], concept: str, filed_by: date) -> dict[str, li
 
 
 def _row(fig: CiqFigure, by_tag: dict[str, list[ConceptPoint]], filed_by: date,
-         ) -> StatementReconRow:
+         ) -> tuple[StatementReconRow, date | None]:
+    """The row, and the filing date of the filing it names (None: it has no filing figure)."""
     concept = _BY_KEY[fig.line].concept
     base = {"line": fig.line, "column": fig.column, "period_end": fig.period_end.isoformat(),
             "ciq": fig.value, "is_ltm": fig.is_ltm}
@@ -228,7 +235,7 @@ def _row(fig: CiqFigure, by_tag: dict[str, list[ConceptPoint]], filed_by: date,
         return StatementReconRow(**base, note=(
             f"no {concept} fact for this period on any alias tag, as filed by {filed_by}"
             + (" (no twelve-month figure, and no fiscal year with both year-to-dates on one tag)"
-               if fig.is_ltm else "")))
+               if fig.is_ltm else ""))), None
     tag, (value, how, point) = built[0]
     filing = value / 1e6
     different = _differs(fig.value, filing)
@@ -243,7 +250,7 @@ def _row(fig: CiqFigure, by_tag: dict[str, list[ConceptPoint]], filed_by: date,
     return StatementReconRow(
         **base, filing=round(filing, 3), construction=how, tag=tag, accession=point.accession,
         gap=round(fig.value - filing, 3), different=different, other_tag=other,
-        earlier_accession=earlier)
+        earlier_accession=earlier), point.filed
 
 
 def twelve_months(facts: dict[str, Any], concept: str, end: date, *, is_ltm: bool,
@@ -263,20 +270,28 @@ def twelve_months(facts: dict[str, Any], concept: str, end: date, *, is_ltm: boo
 
 def reconcile(figures: list[CiqFigure], facts: dict[str, Any] | None, *,
               filed_by: date) -> StatementReconciliation | None:
-    """Each figure against the filings, as filed by ``filed_by``. None with no EDGAR facts or no
-    CIQ figure — nothing to set side by side, a different fact from a period the filings do not
-    carry (stated per row)."""
+    """Each figure against the filings, as filed by ``filed_by`` (the page's price date). None
+    with no EDGAR facts or no CIQ figure — nothing to set side by side, a different fact from a
+    period the filings do not carry (stated per row).
+
+    The block's ``as_filed_by`` is the latest filing date of the filings the rows name (each row's
+    ``accession``; a composed LTM names its year-to-date's), and None when no row read one — never
+    ``filed_by``, and never the day this runs (operator ruling 2, 2026-11-12)."""
     if facts is None or not figures:
         return None
     by_concept = {ln.key: _points(facts, ln.concept, filed_by) for ln in LINES}
-    return StatementReconciliation(rows=[_row(f, by_concept[f.line], filed_by) for f in figures],
-                                   as_filed_by=filed_by.isoformat(), source_ref=SOURCE_REF)
+    built = [_row(f, by_concept[f.line], filed_by) for f in figures]
+    read = [filed for _r, filed in built if filed is not None]
+    return StatementReconciliation(rows=[row for row, _filed in built],
+                                   as_filed_by=max(read).isoformat() if read else None,
+                                   source_ref=SOURCE_REF)
 
 
 def attach(mech: MechanicalLayer, bundle: CiqBundle | None, facts: dict[str, Any] | None, *,
            filed_by: date) -> MechanicalLayer:
     """`mech` with `financial_summary.statement_reconciliation` built from the same export the
-    table was — absent (never null) where the export or the facts are."""
+    table was, as filed by ``filed_by`` (the page's price date) — absent (never null) where the
+    export or the facts are."""
     fs = mech.financial_summary
     if fs is None or bundle is None:
         return mech
