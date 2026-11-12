@@ -216,8 +216,10 @@ def test_a_change_word_directly_before_the_next_figure_is_that_figures() -> None
     wern = "In the third quarter, we posted 24% revenue growth and 80 basis points of margin."
     (g,) = dx.check_fact("revenue growth", "24% revenue growth", wern).figures
     assert g.change == "up"
-    ebitda = "First quarter EBITDA of $36 million decreased by $9 million from the fourth quarter."
-    assert [g.change for g in dx.check_fact("EBITDA", "$36 million decreased by $9 million",
+    # WLK's shape, constructed (2026-11-13 ruling, "Cut all 25, one PR"): its call's sentence was
+    # 14 words of it
+    ebitda = "Segment EBITDA for the period of $48 million decreased by $7 million versus spring."
+    assert [g.change for g in dx.check_fact("EBITDA", "$48 million decreased by $7 million",
                                             ebitda).figures] == [None, "down"]
 
 

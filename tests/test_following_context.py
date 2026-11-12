@@ -1,11 +1,11 @@
 """A verbatim quote can be exact, cited and digit-traceable — and still argue against its source.
 
-THE CLASS (STATE §B1a). BRBR's driver row quoted *"In the third quarter, 70% of RTD shake category
-volumes were sold on price promotion."* Every guard we have passes it, because every guard takes the
-QUOTED TEXT as the check: quote-in-transcript, digit-trace, 19c's citation requirement. The sentence
-the extraction did not take says the figure is *"relatively in line with historical norms … while
-down sequentially from the heavier promoted second quarter."* The synthesis then built a bear point
-arguing an escalating promotion sequence its own source contradicts.
+THE CLASS (STATE §B1a). BRBR's driver row quoted its Q3 2026 call's sentence putting 70% of a
+category's volume on promotion. Every guard we have passes it, because every guard takes the QUOTED
+TEXT as the check: quote-in-transcript, digit-trace, 19c's citation requirement. The sentence the
+extraction did not take says the figure is seasonally normal and lower than the quarter before. The
+synthesis then built a bear point arguing an escalating promotion sequence its own source
+contradicts.
 
 WHY THERE IS NO CLASSIFIER, AND IT WAS MEASURED. Splitting the 13 severed rows by opener: 5 follow
 with a reversing connective, 10 with a continuing one — and **BRBR's reversal is in the continuing
@@ -24,17 +24,17 @@ from __future__ import annotations
 
 from vinci.dossier.driver_extract import _CONTEXT_MAX, _following_paragraph
 
-# The real BRBR passage — the quote that is already committed in `dossier.json`, plus the sentence
-# that reverses it. Corpus before synthetic: this is the text the defect was found in.
-BRBR_QUOTE = ("In the third quarter, 70% of RTD shake category volumes were sold on price "
-              "promotion.")
+# BRBR's passage, CONSTRUCTED to its shape (operator ruling 2026-11-13, "Cut all 25, one PR
+# (Recommended)"): the defect was found in BRBR's Q3 2026 call, whose words are licensed and this
+# repo is public, so the call's sentences are replaced and their shape is kept. A paragraph before;
+# then the quoted figure and, in the SAME paragraph, a sentence opening "This is" that reverses its
+# reading; then a blank line and the next section.
+BRBR_QUOTE = "In the second quarter, 64% of bottled tea volumes moved on a discount."
 BRBR_PARA = (
-    "Household penetration continues to grow for both the protein shake category and Premier "
-    "shakes.\n\n"
-    f"{BRBR_QUOTE} This is relatively in line with historical norms for this period after "
-    "adjusting for the shift of a major e-commerce promotion, while down sequentially from the "
-    "heavier promoted second quarter.\n\n"
-    "Turning to innovation.")
+    "Repeat buying keeps rising for the bottled tea aisle and for our own label.\n\n"
+    f"{BRBR_QUOTE} This is broadly the usual seasonal level once a large retailer event moved "
+    "between quarters, and below the discount-heavy first quarter.\n\n"
+    "Turning to new flavours.")
 
 
 def test_the_qualifier_that_reverses_the_reading_is_captured() -> None:
@@ -42,9 +42,9 @@ def test_the_qualifier_that_reverses_the_reading_is_captured() -> None:
     source says the figure is seasonally normal and DOWN sequentially."""
     ctx = _following_paragraph(BRBR_QUOTE, BRBR_PARA)
     assert ctx is not None
-    assert "in line with historical norms" in ctx
-    assert "down sequentially" in ctx
-    assert "Turning to innovation" not in ctx, "ran past the paragraph into the next section"
+    assert "the usual seasonal level" in ctx
+    assert "below the discount-heavy first quarter" in ctx
+    assert "Turning to new flavours" not in ctx, "ran past the paragraph into the next section"
 
 
 def test_a_benign_continuation_is_carried_too_because_nothing_classifies() -> None:
@@ -138,12 +138,12 @@ def test_the_synthesis_digest_puts_the_context_beside_the_fact() -> None:
     from vinci.dossier.synthesis import _operating_drivers_digest
 
     od = OperatingDriversExtract(rows=[OperatingDriver(
-        kind=DriverKind.LEADING_INDICATOR, metric="RTD shake volumes on promotion",
-        period="Q3 2026", value="70%", verbatim=BRBR_QUOTE,
-        following_context="This is relatively in line with historical norms for this period.",
-        source_ref="CIQ transcript: BellRing Q3 2026", tier="llm-fenced")])
+        kind=DriverKind.LEADING_INDICATOR, metric="bottled tea volumes on discount",
+        period="Q2 2026", value="64%", verbatim=BRBR_QUOTE,
+        following_context="This is broadly the usual seasonal level.",
+        source_ref="CIQ transcript: Acme Q2 2026", tier="llm-fenced")])
     digest = _operating_drivers_digest(od)
-    assert "…continues: This is relatively in line with historical norms" in digest
+    assert "…continues: This is broadly the usual seasonal level" in digest
     assert "read it before characterising the fact above it" in digest, (
         "the header must tell the model what a continues-line is for, or it reads as noise")
 

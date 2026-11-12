@@ -7,44 +7,69 @@ supersedes:
 superseded-by:
 ---
 
-# The 21 audited transcript runs are cut from five records and three tests, and every tracked file is now read against the calls on this disk — a local guard fails on any 13-word window a file shares with a call unless it finds that window, computed, in a cached SEC document or a Key Developments export
+# The 25 transcript runs in tracked files are cut: the audit's 21 and the 4 the new guard found, from six records, four tests and a comment. Every tracked file is now read against the calls on this disk: a local guard fails on any 13-word window a file shares with a call unless it finds that window, computed, in a cached SEC document or a Key Developments export
 
-**WHAT.** The operator's ruling of 2026-11-12, verbatim "Cut all 21 + guard (Recommended)". The
-option read: "One $0 PR. Each run is cut to 12 words or fewer. Each record gets a dated redaction
-amendment naming count, position and hash only, as #1036 did. A local-only test scans every
-tracked file against the transcripts on disk, and skips in CI where they are absent." CLAUDE.md:
-NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS, and this repo is public.
+**WHAT.** Two operator rulings.
+- 2026-11-12, verbatim "Cut all 21 + guard (Recommended)". The option read: "One $0 PR. Each run
+  is cut to 12 words or fewer. Each record gets a dated redaction amendment naming count, position
+  and hash only, as #1036 did. A local-only test scans every tracked file against the transcripts
+  on disk, and skips in CI where they are absent."
+- 2026-11-13, verbatim "Cut all 25, one PR (Recommended)". The option read: "Cut the 4 extra runs
+  the same way as the 21: a dated redaction on the record, made-up sentences in the tests, a
+  shorter docstring. One PR, landing before #953's paid run registers." The operator reconsidered
+  whether transcript text needs cutting at all, given the CIQ licence, and kept the 12-word cap
+  (#1043).
 
-1. **The 21 runs are cut.** A's audit of main `407dc809` found them, and this build re-found each
-   one at the same word count. GOOGL's reads 22 here, because this fold also splits "I/O" at its
-   slash. Line 72 of the earnings record holds two runs, so the 21 rows are 22 runs.
-   - **Five records**, cut in place: 19 runs, 35 spans cut to "…". Each record gets a dated
-     `## Amendments` REDACTION entry naming each run by its line as merged, its length and the
-     words kept, its call, its word offset in that call, and the sha256 of its words. No entry
-     names a word.
-     - `2026-09-03-glp1-shortlist-step-8.md`: lines 128 and 131. Both sit inside its second
-       amendments section.
-     - `2026-09-03-glp1-step10-references-and-bdx-gate.md`: lines 76, 78 and 99.
-     - `2026-09-10-glp1-earnings-vs-revenue-exposure.md`: lines 21, 29, 38, 72 (two runs) and 74.
-     - `2026-09-10-mck-gated-on-driver-tie.md`: lines 25, 26, 32, 34 and 56.
-     - `2026-09-10-wat-glp1-base-sized.md`: lines 27, 90 and 100.
+CLAUDE.md: NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS, and this repo is public.
+
+1. **The audit's 21.** A's audit of main `407dc809` found them, and this build re-found each at the
+   same word count. GOOGL's reads 22 here, because this fold also splits at a slash. Line 72 of the
+   earnings record holds two runs, so the 21 rows are 22 runs.
+2. **The 4 the guard found.** A's audit could not read their calls, which were offloaded when it
+   ran. Once the store was local again the guard read them, and found 4 runs at 8 sites:
+   - BRBR Q3 2026 call, 3 runs: the 2026-08-10 BRBR record :35 and :40;
+     `tests/test_following_context.py` :3, :29, :32, :34; the comment at
+     `vinci/dossier/schemas.py:2472`;
+   - WLK Q1 2026 call, 1 run: `tests/test_driver_facts.py:219`.
+   Neither a cached filing nor a KD export holds any of them. WLK's own Q1 release and 10-Q are in
+   the cache and were read.
+3. **How each is cut.**
+   - **Six records**, cut in place: 21 runs, 38 spans cut to "…". Each record gets a dated
+     `## Amendments` REDACTION entry naming the ruling. Each run is named by its line as merged,
+     its length and the words kept, its call, its word offset in that call and the sha256 of its
+     words; no entry names a word.
+     - `2026-09-03-glp1-shortlist-step-8.md`: lines 128 and 131, both inside its second amendments
+       section.
+     - `2026-09-03-glp1-step10-references-and-bdx-gate.md`: 76, 78 and 99.
+     - `2026-09-10-glp1-earnings-vs-revenue-exposure.md`: 21, 29, 38, 72 (two runs) and 74.
+     - `2026-09-10-mck-gated-on-driver-tie.md`: 25, 26, 32, 34 and 56.
+     - `2026-09-10-wat-glp1-base-sized.md`: 27, 90 and 100.
+     - `2026-08-10-b1-four-findings-from-bellring-s-stage-1-underwr.md`: 35 and 40, under the
+       ruling of 2026-11-13.
      Each run keeps at most 12 of its words, chosen to carry the figure or claim the record relies
      on. #1036 kept the first 12 words of a run, which here would have cut WST's percentage away
      from what it is a percentage of. Nothing is reworded.
-   - **Three tests**, each given a CONSTRUCTED sentence of the real one's shape, so each still runs
+   - **Four tests**, each given a CONSTRUCTED passage of the real one's shape, so each still runs
      in CI:
-     - `tests/test_dossier.py:9923` (SMPL, 39 words): a lead-in of over 100 characters, a comma,
-       then the clause with its action and month;
-     - `tests/test_dossier.py:10010` (GOOGL): a retrospective "since" governing a launch verb and a
-       month, then a figure;
-     - `tests/test_driver_facts.py:215` (WERN, 14 words): a growth figure, its change word after it,
-       then a second figure.
-2. **The ledger's fourth permitted change: a REDACTION** (`tests/test_records_ledger.py`
+     - `tests/test_dossier.py:9923` (SMPL): a lead-in of over 100 characters, a comma, then the
+       clause with its action and month;
+     - `tests/test_dossier.py:10010` (GOOGL): a retrospective "since" governing a launch verb and
+       a month;
+     - `tests/test_driver_facts.py:215` (WERN): a growth figure, its change word after it, then a
+       second figure;
+     - `tests/test_driver_facts.py:219` (WLK): a figure, "decreased by", a second figure;
+     - `tests/test_following_context.py` (BRBR): a quoted figure, then in the same paragraph a
+       sentence opening "This is" that reverses its reading, then a blank line and the next
+       section. The module docstring describes the passage by its shape.
+   - **One comment**, `vinci/dossier/schemas.py` (`OperatingDriver.following_context`'s `#:` lines),
+     is shortened to say the same thing without the call's words. The extraction pin hashes tokens
+     without comments, so it does not move.
+4. **The ledger's fourth permitted change: a REDACTION** (`tests/test_records_ledger.py`
    `_redaction_violations`, README item 4). A merged record's text may change only by spans
    replaced with "…", under an appended `**<date> — REDACTION: <n> spans cut to “…”**` entry whose
    `<n>` matches. The record must otherwise be its merged self: front matter included, existing
    amendments may be cut but not reworded, and nothing may be added before the entry.
-3. **The guard** (`tests/test_tracked_files_hold_no_transcript_run.py`, local only).
+5. **The guard** (`tests/test_tracked_files_hold_no_transcript_run.py`, local only).
    - It reads every tracked text file (raw, JSON-unescaped, HTML-unescaped) against every call in
      the store, its `ciq-archive/` and `VINCI_TRANSCRIPT_ROOTS`, read by production's
      `ciq.read_text`.
@@ -54,19 +79,75 @@ NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS, and this repo 
    - It skips in CI, saying so, and prints its boundary everywhere else.
    - It caches window hashes in `.pytest_cache`, never a word, and recomputes every excuse from its
      source on each run.
+   - It ships with NO allowlist.
 
 **WHY.** #1036's build guard reads a synthesis at build, and `test_public_transcript_text.py` reads
 the fields code knows are transcript text. Nothing read a record, a test, a fixture or a comment
-against the calls themselves, so 21 runs of 14 to 40 of a call's words sat in public files. Five
-records written before the rule held 18 of them, and three tests held the rest, one of whose
-docstrings called its sentence "the REAL Q3 transcript sentence". An appended correction cannot
-un-publish words the body still carries, so the records are cut in place, under the ruling.
+against the calls themselves, so 25 runs of 14 to 40 of a call's words sat in public files.
+- Records written before the rule held 21 of them.
+- Tests held the rest. One of their docstrings called its sentence "the REAL Q3 transcript
+  sentence".
+- A production comment held one.
+An appended correction cannot un-publish words the body still carries, so the records are cut in
+place, under the rulings.
 
 **HOW VERIFIED.** $0. No model, Polygon or Tiingo call. The calls were read in place, read only,
 from the Drive mirror.
-«VERIFIED»
+- **The cuts, mechanically.** Each record is its merged self with spans replaced by "…": the
+  ledger guard permits each with its entry and refuses each without. No record holds a run of 13+
+  words against the calls afterwards, and no run keeps more than 12 of its words.
+- **The tests still pin what they pinned.** Each was given a mutation of the code it guards. Every
+  mutation turns BOTH the old test (with the call's sentence) and the new one (constructed) red,
+  and neither is red unmutated:
+  - SMPL: the clause read from the sentence's start;
+  - GOOGL: the `since` check removed;
+  - WERN: a change word handed to the next figure;
+  - BRBR: the context run past its paragraph, and the digest's continues line dropped;
+  - WLK: a fall after "by" handed to the figure before.
+- **The guard bites.**
+  - Its pins, on a real call read at run time, catch 13 words in a comment, behind markdown marks,
+    JSON-escaped, and joined by bare dashes. They pass 12 words, and a run with its 7th word
+    changed.
+  - An excuse needs a source holding all 13 words, and a window both KD and SEC hold is the SEC
+    document's.
+  - Six mutants of the guard are each killed: a 14-word window, no unescaped view, no dash split, a
+    narrow edge set, KD not ceding to SEC, and no scan.
+  - CORPUS BEFORE SYNTHETIC: on #1036's parent `68bd4b33` it finds the LLY, VITL and WERN runs
+    #1036 cut, and at head nothing in those files.
+- **The guard on this Mac, at head** (its own boundary print):
+  - calls: 91 read, 19 duplicate files by sha256, 0 unreadable;
+  - tracked files: 3,084 scanned; skipped: 680 binary (a NUL byte), 1 not UTF-8;
+  - runs of 13+ words shared with a call: 114 (294 distinct windows);
+  - excused by an SEC document in the cache: 105;
+  - excused by a KD export: 9 (BRBR's driver row and BURL's two, on each page and its mirror, and
+    V's, on its page, its mirror and its 2026-10-26 frozen page);
+  - unexcused: 0.
+- **The audit's 98 other runs** (the 119 less the 21): each read from its file at `407dc809` at the
+  audit's own positions.
+  - **77** are confirmed, every window, in the source their file names: 66 SEC filings and 11 KD
+    exports. The three in `tests/fixtures/prespend/2026-11-04/MNST-mechanical.json` needed their
+    named MNST filings fetched first, at $0, through the repo's own paced SEC client (CIK 865752;
+    0001104659-26-092046, -26-020525, -26-057188, -25-107778).
+  - **21** are found, every window, in another cached SEC document. 20 are the same issuer's
+    release or 10-Q (TJX, FUBO, VRRM, MVST), where a test or comment names its source beyond the
+    5 lines the check read. The WERN release fixture's run is safe-harbour boilerplate found in
+    other issuers' 8-Ks.
+  - **0** are found in no source.
+  - The audit's "71 unconfirmable" were unconfirmable because the SEC cache was offloaded. All
+    18,757 cache files are local now (`brctl download`, 0 failed).
+«VERIFIED2»
 
-**BOUNDARY.** «BOUNDARY»
+**BOUNDARY.** 
+- **Words** are the guard's: split at whitespace, at every dash form and at a slash; edge marks
+  off; lower-cased; apostrophes folded. The audit counted A (whitespace) and B (hyphens split) and
+  agrees on all 21 counts but GOOGL's.
+- **Calls:** the store `data/manual/ciq` and its `ciq-archive/`, on this Mac, 2026-11-13. That is
+  110 call files, 91 distinct; one WERN Q1 2026 call left the Drive folder during the session.
+- **Tracked files:** `git ls-files` at this branch's head, 3,765 files, of which 3,084 are text.
+- **SEC cache:** `data/cache/sec`, 18,757 files, all local.
+- **KD:** 63 exports in the store and archive. One GOOGL `.xls` is read by its cells.
+- **The audit:** main `407dc809`, 3,080 text files, and the 361 call files it read from across the
+  Mac.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **Git history keeps the old text**, as the operator accepted. No history is rewritten, and
@@ -74,9 +155,14 @@ from the Drive mirror.
 - **The guard sees only the calls on its disk.** A store-only default would have missed the two MCK
   Q4 2026 runs: that call left the store on 2026-11-05 and sits only in `ciq-archive/`. So the
   archive is a default root. A call kept elsewhere is read only when its folder is named in
-  `VINCI_TRANSCRIPT_ROOTS`. 47 of the audit's 119 runs matched copies outside both, and 17 of those
-  matched calls this Mac holds nowhere else. Falsifier: a run the default roots miss, found by a
-  wider sweep.
+  `VINCI_TRANSCRIPT_ROOTS`. 17 of the audit's 119 runs matched only calls kept outside both, in
+  other folders on this Mac. All 17 are among the 98 found in a filing or KD export. Falsifier: a
+  run the default roots miss, found by a wider sweep.
+- **The scorer fingerprint moves.** `vinci/dossier/schemas.py` is in `compare.SCORER_FILES`, which
+  hashes raw bytes, so a comment-only edit moves `scorer_fingerprint()`. No registration exists
+  yet, so nothing recorded under the old fingerprint is orphaned. This PR lands before #953's paid
+  run registers, as the ruling says. The extraction pin does not move: it hashes tokens without
+  comments.
 - **A cut record reads less smoothly.** Each keeps the figure or claim it relies on, and the call is
   named so a reader can check the rest.
 - **An excuse is a computed coincidence, not provenance.** A window found in a filing is excused
