@@ -104,11 +104,22 @@ def classify(path: Path) -> CiqFormat:
 #: before each font switch bounds every scan at the next switch, since ``.`` does not cross a
 #: newline. RTF gives a newline no meaning outside binary data, and striprtf's token loop reads it
 #: as nothing, so the token stream is unchanged. striprtf's two other line-bound regexes do see the
-#: newline: its HYPERLINK rewrite loses the URL of a field whose ``\fldinst`` holds a ``\f<n>``, and
-#: a font-table entry with no ``\fcharset`` no longer borrows the next entry's charset. Neither
-#: shape is in the corpus (0 of 27 HYPERLINK exports; the text is equal on all 144 RTF exports on
-#: disk, the record). An escaped backslash (``\\``) is matched first, so a literal "\f1" in the
-#: text is never split.
+#: newline. The text is equal on all 144 RTF exports on disk (the record), and each regex changes
+#: text only off that corpus:
+#: - Its HYPERLINK rewrite, in three shapes: a field whose ``\fldinst`` holds a ``\f<n>`` loses its
+#:   URL; two fields on one line with a ``\f<n>`` between them each keep their own URL, where the
+#:   raw read dropped the first's; a ``\fldrslt`` holding two font runs loses its URL. On disk, 27
+#:   exports carry one link each, and 0 of 603 ``\fldinst`` groups hold a font switch.
+#: - Its font table: an entry with no ``\fcharset`` no longer borrows a later entry's charset and
+#:   name. That shape IS in the corpus: fonts 3, 4 and 5 of every one of the 144 exports (432
+#:   entries) have none, so the font table striprtf builds differs on every file. Raw, font 3 takes
+#:   font 6's charset and name and font 6 drops out; bounded, font 3 is absent and font 6 present.
+#:   The text is unchanged only because every ``\fcharset`` on disk is 0, no export declares
+#:   ``\ansicpg`` and no body switches to font 3 or 6. Off the corpus, a ``\fcharset128`` entry
+#:   reads ``\'82\'a0`` as U+3042 bounded and as U+201A U+00A0 raw: the bounded read is the more
+#:   correct one, but it is a text change.
+#: Counted 2026-11-12 over data/manual/ciq (count-only reads). An escaped backslash (``\\``) is
+#: matched first, so a literal "\f1" in the text is never split.
 _FONT_SWITCH = re.compile(r"\\\\|(?=\\f\d)")
 #: the ``\binN`` control word, never ``\binfsxn``/``\binsxn`` or an escaped "\\bin" in the text.
 _BINARY = re.compile(r"\\\\|\\bin\d")

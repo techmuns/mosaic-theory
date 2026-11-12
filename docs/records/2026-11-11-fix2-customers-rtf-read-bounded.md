@@ -82,12 +82,33 @@ reader.
   - The guard: `::test_the_bounded_scan_leaves_striprtfs_text_unchanged` compares the text with
     and without the step on a sample with hex, Unicode, bold and escaped-backslash shapes.
   - The time bound fails if the scan becomes slow again.
-- **Two latent shapes do move, none on disk.** striprtf's HYPERLINK rewrite and its font-table
-  regex both stop at a newline, so the text CAN differ off the corpus:
-  - a field whose `\fldinst` holds a `\f<n>` loses its `("url")` suffix (0 of the 27 HYPERLINK
-    exports have that shape; counted 2026-11-11 over the same 144 files);
-  - a font-table entry with no `\fcharset` no longer borrows the next entry's charset for its
-    hex escapes.
+- **Two regexes see the newline. The text is equal on all 144 exports, but one of them changes
+  what striprtf builds on every file.** striprtf's HYPERLINK rewrite and its font-table regex
+  both stop at a newline. *(Corrected before merge, 2026-11-12, from the coordinator's review of
+  #1026: this bullet first read "Two latent shapes do move, none on disk", and the font-table
+  shape is on disk.)*
+  - **The HYPERLINK rewrite** changes text only off the corpus, in three shapes, each shown with
+    striprtf 0.0.32:
+    - a field whose `\fldinst` holds a `\f<n>` loses its `("url")` suffix;
+    - two fields on one line with a `\f<n>` between them: raw `x l1y l2("…/2")`, bounded
+      `x l1("…/1")y l2("…/2")`, so the bounded read keeps both URLs;
+    - a link whose `\fldrslt` holds two font runs: raw `ab("…/1")`, bounded `ab`, so the URL
+      is lost.
+
+    On disk, 27 HYPERLINK exports carry one link each, and 0 of the 603 `\fldinst` groups hold
+    a font switch.
+  - **The font table differs on every file.** A font-table entry with no `\fcharset` no longer
+    borrows a later entry's charset and name.
+    - That shape is in the corpus: fonts 3, 4 and 5 of all 144 exports, 432 entries in all.
+    - Raw, font 3 takes font 6's charset and name, and font 6 drops out. Bounded, font 3 is
+      absent and font 6 present.
+    - The text is unchanged only because every `\fcharset` on disk is 0, no export declares
+      `\ansicpg`, and no body switches to font 3 or 6.
+    - Off the corpus, a `\fcharset128` entry reads `\'82\'a0` as U+201A U+00A0 raw and U+3042
+      (あ) bounded. The bounded read is the more correct one, but it is a text change.
+  - **The boundary:** count-only reads of the 144 RTF exports under the primary checkout's
+    `data/manual/ciq/`, 2026-11-12, by the `{\rtf` magic. The coordinator counted them first, and
+    S4 re-counted them on adopting the PR.
   - The guard's sample carries the corpus's HYPERLINK shape (`\f<n>` in the result), so a
     corpus-shaped link that stopped rewriting would fail it.
 - **Only `\binN` switches the step off.** `\binfsxn`, `\binsxn` and an escaped "\\bin" in the text
