@@ -44,3 +44,8 @@ superseded-by:
   with a regenerated scorecard, as an artifact commit.
 
 **Extraction version** `2026-11-10.loud-with-the-right-cause`; the drift pins are re-pinned.
+## Amendments
+
+- **2026-11-12 — what this PR's next build changes, from A's impact sweep** (operator ruling 3, 2026-11-12, verbatim: "Yes, as appended amendments (Recommended)"). The body above is unchanged. A re-ran this PR with `vinci.impact`: base code against head code on the same inputs, which shows what each page's NEXT build would change (A on #1004, 2026-11-12 09:51Z, 40 of 49 PRs covered: https://github.com/techmuns/mosaic-theory/issues/1004#issuecomment-6820345324).
+  - **#965:** "the flags reach 18, not 5", in A's words; the comment states no unit for the 18. The body's five are pages: "five pages' QA text does, once re-assembled" (EPAM, MCK, VITL, VRRM and WLK).
+  - The figure is A's, from that comment; S4 did not re-run the sweep. The sweep's own record, with all 49 rows (base, head, coverage, moves and each body's claim), follows.

@@ -183,3 +183,6 @@ At each page's next re-assembly:
 ## Amendments
 
 - **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `2b9b766c` (#976) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.
+- **2026-11-12 — what this PR's next build changes, from A's impact sweep** (operator ruling 3, 2026-11-12, verbatim: "Yes, as appended amendments (Recommended)"). The body above is unchanged. A re-ran this PR with `vinci.impact`: base code against head code on the same inputs, which shows what each page's NEXT build would change (A on #1004, 2026-11-12 09:51Z, 40 of 49 PRs covered: https://github.com/techmuns/mosaic-theory/issues/1004#issuecomment-6820345324).
+  - **#976:** its requests do not move. The body says they change "on **NFLX and VITL only**", by the refusal caveats.
+  - The figure is A's, from that comment; S4 did not re-run the sweep. The sweep's own record, with all 49 rows (base, head, coverage, moves and each body's claim), follows.

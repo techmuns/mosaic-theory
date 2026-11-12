@@ -132,3 +132,10 @@ superseded-by:
   - The synthesis digest prints a `not_stated` wall as "filing states no near-term maturity". For a
     figure the filing does state for part of its debt, "no wall for the whole debt" would be the
     exact phrasing. No committed page carries the case.
+## Amendments
+
+- **2026-11-12 — what this PR's next build changes, from A's impact sweep** (operator ruling 3, 2026-11-12, verbatim: "Yes, as appended amendments (Recommended)"). The body above is unchanged. A re-ran this PR with `vinci.impact`: base code against head code on the same inputs, which shows what each page's NEXT build would change (A on #1004, 2026-11-12 09:51Z, 40 of 49 PRs covered: https://github.com/techmuns/mosaic-theory/issues/1004#issuecomment-6820345324).
+  - **#956:** MVST's and WERN's maturity walls go from `located` to `not_stated`, a `primary_source` move off the panel. The body's title says "0 of 27 committed pages move".
+  - Operator ruling 1, the same day, verbatim: "Accept, verify the values (Recommended)". A's parser stream checks at $0 that MVST's and WERN's new values are correct; they stand as merged, without measurement, unless that check finds a regression.
+  - **The check found one.** A's handover on #1004 the same day (10:52Z, https://github.com/techmuns/mosaic-theory/issues/1004#issuecomment-6821598056) reports its result, verbatim: "WERN / MVST maturity walls: WERN is #956's regression (right value located $0.0), MVST a gap (located $120.8M)". The fix is in A's handed-over draft PR, which the handover lists as "draft PR coming" and "built"; its number is to come. S4 did not re-run the check.
+  - The figure is A's, from that comment; S4 did not re-run the sweep. The sweep's own record, with all 49 rows (base, head, coverage, moves and each body's claim), follows.

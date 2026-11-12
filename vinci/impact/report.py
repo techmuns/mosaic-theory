@@ -76,6 +76,9 @@ def stamp_lines(r: dict[str, Any], json_name: str) -> list[str]:
 
 def fail_first_lines(ff: dict[str, Any], k: int, code_changed: bool = True) -> list[str]:
     cases = ff.get("cases") or []
+    if ff.get("skipped"):
+        return ["### 1. Fail first — NOT RUN (`--skip-fail-first`)", "",
+                "This run asks what the PR moved, not whether its own tests fail first."]
     if not ff.get("tests"):
         return ["### 1. Fail first — the PR changes no test file", "",
                 ("No test to run. A CODE fix without a test that fails first is not done "
@@ -131,12 +134,19 @@ def pages_lines(r: dict[str, Any], k: int) -> list[str]:
              f"workers, {r['pages']['seconds']} s. Compared leaf by leaf, list members matched by "
              "identity (`vinci.impact.values`); the build's clock (`assembled_at`, "
              "`computed_at`) and the input record are not compared."]
-    noise = [p for p in res if p["status"] == "noise"]
     again = [p["ticker"] for p in res if p.get("retried")]
     if again:
+        still = [p["ticker"] for p in res if (p.get("retried") or {}).get("still")]
         lines += ["", f"Re-built once after a transcript failed to convert on ONE side (the "
                       f"machine, not the code): {_names(again)}; still one-sided, so set "
-                      f"apart as run noise and not counted: {_names([p['ticker'] for p in noise])}"]
+                      f"apart as run noise and not counted: {_names(still)}"]
+    days = [p for p in res if p.get("realigned")]
+    if days:
+        still = [p["ticker"] for p in days if p["realigned"]["still"]]
+        lines += ["", f"Re-built so both sides were built within one UTC day — a build can "
+                      f"stamp its day on the page and in its synthesis request: "
+                      f"{_names([p['ticker'] for p in days])}; still on two days, so set apart "
+                      f"as run noise and not counted: {_names(still)}"]
     refused = [p for p in res if p["status"] == "not compared"]
     if refused:
         lines += ["", f"**Not built at a side, so not compared ({len(refused)}) — a "

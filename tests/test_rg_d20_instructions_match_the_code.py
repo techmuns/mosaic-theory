@@ -83,13 +83,18 @@ def b_pass_no_sampling_parameter() -> None:
 
 def c_the_directional_lint_reads_words_never_a_sign() -> None:
     """(c) The number trace's comment names the readers that compare a sign, and the lint it
-    says reads words matches recommendation words and no signed figure."""
+    says reads words matches recommendation words and no signed figure. (Since fix request 2,
+    RG-D1, the trace itself compares a PRINTED sign; a sign in words is still only compared for a
+    material figure and a computed one, and the comment says so.)"""
     src = _read("vinci/dossier/synthesis.py")
-    marker = "# This only asks whether the figure EXISTS."
+    marker = "# Trace AS WRITTEN (RG-D1 to RG-D5"
     assert marker in src
     start = src.index(marker)
-    comment = "".join(re.findall(r"(?m)^\s*#(.*)$", src[start:start + 800])[:5])
-    names = set(re.findall(r"`(\w+)`", comment))
+    block = re.match(r"(?:[ \t]*#.*\n)+", src[src.rindex("\n", 0, start) + 1:])
+    assert block is not None
+    comment = "".join(re.findall(r"(?m)^\s*#(.*)$", block.group()))
+    assert "A printed sign must be the fact's (RG-D1)" in comment
+    names = set(re.findall(r"`(\w+)`", comment)) - {"_ClaimFigure"}
     assert names == {"_DIRECTIONAL", "_recompute", "material_direction_flags"}
     assert all(callable(getattr(synthesis, n, None)) for n in names - {"_DIRECTIONAL"})
     assert synthesis._DIRECTIONAL.search("we recommend a buy here")
@@ -98,15 +103,19 @@ def c_the_directional_lint_reads_words_never_a_sign() -> None:
 
 
 def d_a_transcript_figure_is_kept_and_flagged_machine_tier() -> None:
-    """(d) synthesize()'s docstring says a figure cited to a call is kept with a TRANSCRIPT-FIGURE
-    flag that is machine-tier, and the code writes that flag and hides it."""
+    """(d) synthesize()'s docstring says what the code does with a figure cited to a call. Since
+    fix request 2, RG-D7 (2026-11-11): it is KEPT, traced to the call's validated figures, and one
+    none of them states is a SHOWN UNTRACEABLE caveat naming the call — no longer a machine-tier
+    TRANSCRIPT-FIGURE note. The old note stays in the QA list, for the flags older pages store."""
     doc = _flat(synthesis.synthesize.__doc__ or "")
     assert "no numbers are derived from it" not in doc
-    assert "is KEPT, not refused: it earns a TRANSCRIPT-FIGURE flag" in doc
-    assert "`flags._QA_MARKERS`" in doc
+    assert "is KEPT, not refused, and traced to that call's VALIDATED figures" in doc
+    assert "UNTRACEABLE caveat naming the call, shown on the page" in doc
+    src = _read("vinci/dossier/synthesis.py")
+    assert "[from the call {ref}]" in src and "f\"TRANSCRIPT-FIGURE '" not in src
+    assert not flags.is_qa("UNTRACEABLE figure '12' in bull_point [from the call X]: 'x'")
     assert "TRANSCRIPT-FIGURE" in flags._QA_MARKERS
     assert flags.is_qa("TRANSCRIPT-FIGURE '12' in bull_points[0]: 'x' — from the cited call")
-    assert "f\"TRANSCRIPT-FIGURE '" in _read("vinci/dossier/synthesis.py")
 
 
 def _runbook_sections() -> dict[str, str]:
