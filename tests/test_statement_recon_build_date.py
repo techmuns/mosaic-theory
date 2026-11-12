@@ -43,12 +43,16 @@ NKE_10K = "0000320187-26-000088"        # FY26, to 2026-05-31, filed 2026-07-15
 # --- a faked UTC day ------------------------------------------------------------------------------
 
 
+#: the real class, held before any fake replaces the module's attribute
+_REAL_DATETIME = _dt.datetime
+
+
 class _DatetimeMeta(type):
     def __instancecheck__(cls, obj: Any) -> bool:
-        return isinstance(obj, _dt.datetime)
+        return isinstance(obj, _REAL_DATETIME)
 
     def __subclasscheck__(cls, sub: Any) -> bool:
-        return isinstance(sub, type) and issubclass(sub, _dt.datetime)
+        return isinstance(sub, type) and issubclass(sub, _REAL_DATETIME)
 
 
 _AT: list[_dt.datetime] = []
@@ -72,19 +76,22 @@ class _FrozenDatetime(_dt.datetime, metaclass=_DatetimeMeta):
 @contextmanager
 def _utc_day(at: _dt.datetime) -> Iterator[None]:
     """Every clock a page build reads, set to ``at``: ``date.today()`` (it reads `time.time`) and
-    ``datetime.now()`` (each loaded `vinci` module's own binding of the class). A module imported
-    for the first time inside the block binds the real class, so the caller builds once BEFORE
-    (`_warm`), which imports every module the build reaches. A read through the module object
-    (``datetime.datetime.now``) is not faked: no module on the page path makes one (grep of
-    `vinci/`, 2026-11-12: only `vinci/impact/run.py`'s report stamp)."""
+    ``datetime.now()``, three ways — each loaded `vinci` module's own binding of the class, and the
+    `datetime` module's attribute, which a function-local ``from datetime import datetime`` and a
+    ``datetime.datetime.now`` both read (review: a mutant importing the class inside
+    `assemble_mechanical` passed the first version of this fake). A module imported for the first
+    time inside the block reads the module's attribute, so it is faked too; the caller still
+    builds once BEFORE (`_warm`), so no import happens inside it."""
     _AT[:] = [at]
-    undo: list[tuple[Any, str, Any]] = [(time, "time", time.time)]
+    undo: list[tuple[Any, str, Any]] = [(time, "time", time.time),
+                                        (_dt, "datetime", _REAL_DATETIME)]
     time.time = lambda: at.timestamp()
+    _dt.datetime = _FrozenDatetime  # type: ignore[misc]
     try:
         for name, mod in list(sys.modules.items()):
             if mod is not None and (name == "vinci" or name.startswith("vinci.")):
                 for attr, val in list(vars(mod).items()):
-                    if val is _dt.datetime:
+                    if val is _REAL_DATETIME:
                         undo.append((mod, attr, val))
                         setattr(mod, attr, _FrozenDatetime)
         yield
@@ -174,19 +181,25 @@ def _recon(mech: Any) -> Any:
 # --- the request ----------------------------------------------------------------------------------
 
 
-def test_the_same_inputs_built_on_two_utc_days_send_byte_identical_requests(_warm: Any) -> None:
-    """FAILED at main: the request built on 2026-10-18 carried `"as_filed_by": "2026-10-18"` and
-    the one built on 2026-10-21 `"2026-10-21"`, the one line that differed. Both days are within the
-    7 days the price-staleness note allows (`mechanical._ASSEMBLY_PRICE_STALE_DAYS`) after the
-    2026-10-16 close, so the clock read assembly makes on purpose stays silent on both."""
+@pytest.mark.parametrize("last_close", [_dt.date(2026, 10, 16), _dt.date(2026, 9, 30)])
+def test_the_same_inputs_built_on_two_utc_days_send_byte_identical_requests(
+        _warm: Any, last_close: _dt.date) -> None:
+    """FAILED at main, at both price dates. Priced 2026-10-16, every row reads a filing and the one
+    line that differed was `"as_filed_by"` ("2026-10-18" against "2026-10-21"). Priced 2026-09-30,
+    before the 10-Q, the LTM rows have no figure, and their notes carried the build's day too: the
+    only place a clock read inside the block can still show (review: a mutant restoring
+    `filed_by=datetime.now(UTC).date()` passed the first price date alone). Both days fall within
+    the 7 days the price-staleness note allows (`mechanical._ASSEMBLY_PRICE_STALE_DAYS`) after
+    each close, so the clock read assembly makes on purpose stays silent on both."""
     assert _recon(_warm).rows, "the reconciliation must read NIKE's filings, or this proves nothing"
     sent = []
     # noon UTC: `date.today()` reads the LOCAL calendar, which is the UTC day from UTC-11 to +11
-    for at in (_dt.datetime(2026, 10, 18, 12, 0, tzinfo=_dt.UTC),
-               _dt.datetime(2026, 10, 21, 12, 0, tzinfo=_dt.UTC)):
+    for lag in (2, 5):
+        day = last_close + _dt.timedelta(days=lag)
+        at = _dt.datetime(day.year, day.month, day.day, 12, 0, tzinfo=_dt.UTC)
         with _utc_day(at):
-            assert _dt.date.today() == at.date()        # the fake reaches both clocks
-            sent.append(_request(_assemble_nke()))
+            assert _dt.date.today() == day                # the fake reaches both clocks
+            sent.append(_request(_assemble_nke(last_close)))
     assert sent[0] == sent[1]
 
 
