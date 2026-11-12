@@ -3273,7 +3273,8 @@ class PriceStoreStamp(BaseModel):
 #: The writers that change a committed page WITHOUT re-assembling it. Each one records itself in
 #: `Dossier.layer_refreshes`; a full assembly writes a fresh page and carries none forward.
 LAYER_REFRESH_WRITERS = ("refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
-                         "anchor-retag", "ciq-reread", "caveat-reword", "driver-facts-pass")
+                         "anchor-retag", "ciq-reread", "caveat-reword", "driver-facts-pass",
+                         "transcript-run-cut")
 
 
 class LayerRefresh(BaseModel):
@@ -3296,7 +3297,10 @@ class LayerRefresh(BaseModel):
     date: str                       # ISO date (UTC) the writer ran
     extraction_version: str         # the declared extraction version current when it ran
     writer: Literal["refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
-                    "anchor-retag", "ciq-reread", "caveat-reword", "driver-facts-pass"]
+                    "anchor-retag", "ciq-reread", "caveat-reword", "driver-facts-pass",
+                    # (2026-11-11) the $0 cut of a synthesis string's copied transcript run to 12
+                    # words and "…" (`transcript_run_pass`; operator: "$0 guard + redaction now")
+                    "transcript-run-cut"]
     layers: list[str]
 
     model_config = {"frozen": True}

@@ -12900,7 +12900,7 @@
         "cited": true
       },
       {
-        "claim": "Access expansion is a fresh demand channel: since the July 1 launch more than 0.5 million people have filled a prescription through the Medicare GLP-1 Bridge program, with about 80% of those treated being incretin-naive.",
+        "claim": "Access expansion is a fresh demand channel: since the July 1 launch more than 0.5 million people have filled… through the Medicare GLP-1 Bridge program, with about 80% of those treated being incretin-naive.",
         "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
         "cited": true
       },
@@ -18057,6 +18057,14 @@
       "writer": "driver-facts-pass",
       "layers": [
         "mechanical.operating_drivers"
+      ]
+    },
+    {
+      "date": "2026-11-12",
+      "extraction_version": "2026-11-12.transcript-runs-cut-to-twelve-words",
+      "writer": "transcript-run-cut",
+      "layers": [
+        "synthesis"
       ]
     }
   ],
