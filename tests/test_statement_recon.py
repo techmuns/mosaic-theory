@@ -427,6 +427,10 @@ def _page_figures(page: dict[str, Any]) -> list[sr.CiqFigure]:
             for r in fs["statement_reconciliation"]["rows"]]
 
 
+#: the vintage that dates the block by its filings (ruling 2, 2026-11-12)
+_DATED_BY_FILINGS = "2026-11-12.reconciliation-dated-by-its-filings"
+
+
 def _page_cut(page: dict[str, Any]) -> date:
     """The page's price date, as `refresh.statement_recon_transform` reads it."""
     from vinci.dossier.anchor import price_as_of
@@ -450,7 +454,9 @@ def test_every_committed_page_carries_the_block_and_it_reproduces_from_the_filin
     its ASSEMBLY date, as `as_filed_by` and in each row with no filing figure, and is otherwise
     the same rows — exactly what `reconcile` builds when handed that date, so its figures still
     reproduce. It moves at its next build (the back-fill never overwrites a block). At `53e5f26e`
-    all 27 committed pages are the old vintage."""
+    all 27 committed pages are the old vintage. A page STAMPED with this vintage or a later one
+    must be the new one: the old branch is for pages built before it, never after."""
+    from vinci.dossier.extraction_version import includes
     from vinci.edgar.concepts import facts_as_of
 
     for t, page in _COMMITTED.items():
@@ -470,6 +476,7 @@ def test_every_committed_page_carries_the_block_and_it_reproduces_from_the_filin
         new = out["financial_summary"]["statement_reconciliation"]
         if stored == new:
             continue
+        assert includes(page.get("extraction_version"), _DATED_BY_FILINGS) is not True, t
         assembled = date.fromisoformat(page["assembled_at"][:10])
         old = sr.reconcile(_page_figures(page), facts_as_of(_facts(t), _page_cut(page)),
                            filed_by=assembled)

@@ -32,7 +32,7 @@ has restated it since), the row names the tag or the accession. Evidence for the
 correction this code makes.
 
 THE BLOCK IS DATED BY WHAT IT READ (operator ruling 2, 2026-11-12, "Fix now, by B"): its
-``as_filed_by`` is the latest filing date of the filings its rows read, and None when no row read
+``as_filed_by`` is the latest filing date of the filings its rows name, and None when no row names
 one. It was the build's own UTC day, which reached the synthesis request, so the same code on the
 same inputs sent a different request on another day.
 """

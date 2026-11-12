@@ -59,7 +59,10 @@ class _FrozenDatetime(_dt.datetime, metaclass=_DatetimeMeta):
 
     @classmethod
     def now(cls, tz: _dt.tzinfo | None = None) -> _dt.datetime:  # type: ignore[override]
-        return _AT[0].astimezone(tz) if tz is not None else _AT[0].replace(tzinfo=None)
+        # naive `now()` is LOCAL wall time, as the real call's is
+        if tz is not None:
+            return _AT[0].astimezone(tz)
+        return _AT[0].astimezone().replace(tzinfo=None)
 
     @classmethod
     def utcnow(cls) -> _dt.datetime:  # type: ignore[override]
