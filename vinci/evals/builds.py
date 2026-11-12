@@ -243,6 +243,10 @@ def run_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.Budge
     gd.verify_committed_gold()   # RG-D11: the gold's hashes, before any paid draw (gap 4)
     with _claim(budget.ledger):   # the check and the claim (the start row) are one step
         pb = prepare_build(reg, ticker, build, budget=budget, ciq_root=ciq_root, clock=clock)
+        if claim is None and rp.paid_draw(sdk):   # RG-D9 in the library (B's review of #1030)
+            raise rp.ReplayError(f"{pb.label}: a paid build needs its index claim "
+                                 "(`registry.claim_draw`, after `registry.require_on_main`) — "
+                                 "unclaimed, it could be drawn twice, so nothing is drawn")
         if claim is not None:
             claim()
         head = {"registration": reg.sha, "ticker": ticker, "build": build, "label": pb.label,

@@ -73,8 +73,11 @@ def _now() -> str:
 def approval_id(ledger: Path) -> str:
     """An approval's identity: the sha256 of its ledger's first line, where the approval's words,
     cap and opening time are recorded (`replay.Budget.open`)."""
-    first = ledger.read_text(encoding="utf-8").splitlines()[0]
-    return hashlib.sha256(first.encode()).hexdigest()
+    lines = ledger.read_text(encoding="utf-8").splitlines() if ledger.is_file() else []
+    if not lines or not lines[0].strip():
+        raise ReplayError(f"{ledger} holds no opened approval (missing or empty): open it with "
+                          "`budget-open` first — an approval is its ledger's first line")
+    return hashlib.sha256(lines[0].encode()).hexdigest()
 
 
 def record_registered(sha: str, *, kind: str, refs: dict[str, str], pages: list[str],

@@ -684,6 +684,12 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
     if (out_dir / "draws.jsonl").exists():
         raise rp.ReplayError(f"{out_dir} already holds draws: draws append, so a second run here "
                              "would be scored with the first — use a fresh folder")
+    if claim is None and rp.paid_draw(sdk):
+        # RG-D9 AND RG-D14 IN THE LIBRARY (B's review of #1030), as gap 2 was for RG-D10: only
+        # the CLI claimed the registration in the index, so a library call drew unrecorded
+        raise rp.ReplayError(f"registration {reg.sha[:12]}: a paid draw needs its index claim "
+                             "(`registry.claim_draw`, after `registry.require_on_main`) — "
+                             "unclaimed, it could be drawn twice, so nothing is drawn")
     if claim is not None:
         claim()
     out_dir.mkdir(parents=True, exist_ok=True)

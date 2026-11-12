@@ -3,7 +3,9 @@
 close all six"). Tests for gaps 1–5; gap 6 (drawn-once sees only this checkout's and main's rows)
 is A's accepted risk and has no test here.
 
-Every test FAILS on 7d1761b4, for the gap's own reason (shown in B's message on #1004). $0: no key,
+Every test FAILS on 7d1761b4, for the gap's own reason (shown in B's message on #1004). The last
+section is B's review of #1030 (round 0): a paid `run_compare` or `run_build` needs its index
+claim, and an approval's identity needs its opened ledger; each fails on 306c5ff0. $0: no key,
 no network. A PAID path is the one with no SDK injected; it is run with the client class spied, so
 a refusal is shown to come before any client exists. Pages are the panel's frozen blobs.
 """
@@ -258,3 +260,69 @@ def test_every_held_out_page_has_a_transcript_the_replay_can_read() -> None:
     held = json.loads(HELD_OUT.read_text())["pages"]
     assert [t for t in held if rows[t]["transcripts"] < 1] == []
 
+
+
+# -------------------- B's review of #1030 (round 0): the index claim, in the library as well
+
+
+def test_a_paid_run_compare_with_no_index_claim_is_refused_before_any_client(
+        tmp_path: Path, spy: type[_Spy]) -> None:
+    """(−) The library half of RG-D9 and RG-D14, as gap 2 was for RG-D10. `run_compare` took
+    ``claim=None`` by default and then drew, so only the CLI wrote the index's `drawn` row and
+    checked main first: a script calling the library drew a registration that nothing recorded,
+    and could draw it again. A paid draw (no SDK injected, or the real client) now needs its claim;
+    a refused one leaves no run folder behind."""
+    from vinci.evals import compare as cm
+    from vinci.evals import replay as rp
+    c, reg = _captured_and_registration()
+    with pytest.raises(rp.ReplayError, match="claim"):
+        cm.run_compare(c, budget=_budget(tmp_path), out_dir=tmp_path / "run", registration=reg)
+    assert spy.built == 0 and not (tmp_path / "run").exists()
+
+
+def test_a_run_compare_with_its_claim_still_reaches_the_draw(tmp_path: Path,
+                                                             spy: type[_Spy]) -> None:
+    """(+) The guard's other side: with its claim the same run is claimed and goes on to draw
+    (the spied client is built, so the claim came first)."""
+    from vinci.evals import compare as cm
+    c, reg = _captured_and_registration()
+    claimed: list[str] = []
+    with pytest.raises(AssertionError, match="a paid client was built"):
+        cm.run_compare(c, budget=_budget(tmp_path), out_dir=tmp_path / "run", registration=reg,
+                       claim=lambda: claimed.append(reg.sha))
+    assert claimed == [reg.sha] and spy.built == 1
+
+
+def test_an_approval_s_identity_needs_its_opened_ledger(tmp_path: Path) -> None:
+    """(−) `registry.approval_id` read the ledger's first line with no check, so an empty or
+    missing `--budget-ledger` stopped the CLI with a bare IndexError or FileNotFoundError, not a
+    refusal naming the ledger."""
+    from vinci.evals import registry
+    from vinci.evals import replay as rp
+    empty = tmp_path / "empty.jsonl"
+    empty.write_text("")
+    for ledger in (empty, tmp_path / "missing.jsonl"):
+        with pytest.raises(rp.ReplayError, match="budget-open"):
+            registry.approval_id(ledger)
+    assert len(registry.approval_id(_budget(tmp_path).ledger)) == 64
+
+
+def test_a_paid_build_needs_its_index_claim(tmp_path: Path, spy: type[_Spy],
+                                            monkeypatch: pytest.MonkeyPatch) -> None:
+    """(−/+) `run`'s path (`builds.run_build`), the same rule: unclaimed, nothing is built; with
+    its claim the build goes on to the draw."""
+    from vinci.evals import builds as bd
+    from vinci.evals import replay as rp
+    req = rp.capture(_frozen("NFLX"), None, draws=2)
+    reg = bd.RunRegistration(code_ref="0" * 40, transforms=(), pages=("NFLX",), draws=2,
+                             builds=2, min_gap_s=300.0, requests={"NFLX": bd.request_sha(req)},
+                             inputs={"ciq_root": "/ciq"})
+    monkeypatch.setattr(bd, "capture_request", lambda *a, **k: req)
+    with pytest.raises(rp.ReplayError, match="claim"):
+        bd.run_build(reg, "NFLX", 1, budget=_budget(tmp_path, "a"),
+                     draws_out=tmp_path / "a.jsonl", ciq_root=tmp_path)
+    assert spy.built == 0
+    with pytest.raises(AssertionError, match="a paid client was built"):
+        bd.run_build(reg, "NFLX", 1, budget=_budget(tmp_path, "b"),
+                     draws_out=tmp_path / "b.jsonl", ciq_root=tmp_path, claim=lambda: None)
+    assert spy.built == 1

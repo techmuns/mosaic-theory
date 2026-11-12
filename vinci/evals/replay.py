@@ -543,6 +543,13 @@ def _a_real_client(sdk: Any) -> bool:
     return isinstance(sdk, anthropic.Anthropic)
 
 
+def paid_draw(sdk: Any | None) -> bool:
+    """Whether a draw through ``sdk`` costs money: no SDK injected (the client reads
+    ``ANTHROPIC_API_KEY``) or the real Anthropic client injected. Every guard on a paid draw asks
+    this one question."""
+    return sdk is None or _a_real_client(sdk)
+
+
 def run_request(req: Request, *, draws: int, budget: Budget, label: str, draws_out: Path,
                 sdk: Any | None = None,
                 registration: str | None = None) -> list[dict[str, Any] | None]:
@@ -553,7 +560,7 @@ def run_request(req: Request, *, draws: int, budget: Budget, label: str, draws_o
     it). The request may have been built at any code ref (`capture_at`), so main and a branch are
     drawn by one process under one cap. ``sdk`` replaces the real SDK object (tests); without it
     the client reads ``ANTHROPIC_API_KEY`` and the call costs money."""
-    if registration is None and (sdk is None or _a_real_client(sdk)):
+    if registration is None and paid_draw(sdk):
         # RG-D10, IN THE LIBRARY (B's check of order 8, gap 2): G-D10's own reproduction called
         # this function with no registration; the CLI refused, the library did not
         raise ReplayError(f"{label}: a paid draw needs the registration it is drawn under "
