@@ -10216,925 +10216,2332 @@
           "kind": "leading_indicator",
           "metric": "Cloud backlog",
           "period": null,
-          "value": "$514 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Cloud revenue grew 82% powered by strong demand for AI infrastructure and AI solutions and Cloud backlog grew to $514 billion.",
-          "following_context": "It's great to see the wide adoption of Gemini Enterprise with nearly 90% of Fortune 100 using it. Today, I'll expand on our AI progress, our global product footprint, led by Search and YouTube. Google Cloud's leadership and our long-term bets.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 514.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 2,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "31691abe5e34d68fde9e7c69d4d6a0845702ce4ca34ed060b7ad7ff38e981f9e",
+            "value_sha256": "b93a69777c27cd5ce98add18280738e19b8397f772c412c4d8732109a22ebdd3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "model API token processing rate",
           "period": null,
-          "value": "approximately 22 billion tokens per minute",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our model APIs are now processing approximately 22 billion tokens per minute. That's up from 16 billion just a quarter ago.",
-          "following_context": "Additionally, this quarter, we launched Omni. It allows users to create anything from any input starting with video. Since launching at I/O in May, there's been a 40% increase in daily active users, creating videos on the Gemini app. Our Gemma family of open models, small enough to run on local devices are hugely popular. These models have been downloaded over 900 million times, and our latest Gemma 4 models have been downloaded over 300 million times since launching in April.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 22.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 4,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "05a187a647729660db7553745d6022c4a0b2d8e22939e6f1d692627983c9e8ae",
+            "value_sha256": "47ebbdfb62bc8800c2ded2a81925b3bcc8034305492ac27a4562a4241fd85961"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "monthly developers building with models",
           "period": null,
-          "value": "More than 9 million developers",
           "value_num": null,
           "unit": null,
-          "verbatim": "More than 9 million developers are building each month with our models across our APIs and key developer products.",
-          "following_context": "Our model APIs are now processing approximately 22 billion tokens per minute. That's up from 16 billion just a quarter ago. Additionally, this quarter, we launched Omni. It allows users to create anything from any input starting with video. Since launching at I/O in May, there's been a 40% increase in daily active users, creating videos on the Gemini app. Our Gemma family of open models, small enough to run on local devices are hugely popular. These models have been downloaded over 900 million times, and our latest Gemma 4 models have been downloaded over 300 million times since launching in April.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 4,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "3cc9f95d63f88d73db13210ae18d36663e535c4894b98983f40ba11276ef1d10",
+            "value_sha256": "4bb66d81a7f8fb04ccc89d0f645d3762607b7630ed1811e75463d41168d2b2ae"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Omni daily active users creating videos",
           "period": "since launching at I/O in May",
-          "value": "40% increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "Since launching at I/O in May, there's been a 40% increase in daily active users, creating videos on the Gemini app.",
-          "following_context": "Our Gemma family of open models, small enough to run on local devices are hugely popular. These models have been downloaded over 900 million times, and our latest Gemma 4 models have been downloaded over 300 million times since launching in April.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 4,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "fae3d02bfc097a61ce56463df9a672f6c2e941a449c74ac10e1d838dc375c193",
+            "value_sha256": "dcba2125d97184fe597ee903ad437520e94dd75767c58dbc4cb78a5f3f5b75de"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Gemma open model downloads",
           "period": null,
-          "value": "over 900 million times",
           "value_num": null,
           "unit": null,
-          "verbatim": "These models have been downloaded over 900 million times, and our latest Gemma 4 models have been downloaded over 300 million times since launching in April.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 900.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": "x",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 4,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "cb82dfeab60b7db1dc9a261202721542b8eedcba81dc65788e2ad70911dcec1d",
+            "value_sha256": "c9b2dd1cf23e8983e43aca1eb4e9c4c975c67272abb6f7b791006058a03920cc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Antigravity weekly active users",
           "period": null,
-          "value": "more than 2.4 million weekly active users",
           "value_num": null,
           "unit": null,
-          "verbatim": "It has more than 2.4 million weekly active users.",
-          "following_context": "Antigravity is a powerful tool for users and enterprises and it's completely accelerated how we build internally. As just one example, a team in Chrome is now on track to accelerate delivery by 8 times compressing a 2-year time line into 3 months through model-driven refactoring.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.4,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 5,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "b3650e916f1903c7eeebd3c84474c955c4167fee59228adef83d4465fd054f21",
+            "value_sha256": "6339d7cb6945d303741016a0e5051ac870c63c0515d6b8a9939f91aa59556902"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI Mode monthly active users",
           "period": "since expanding AI Mode globally last October",
-          "value": "surpassed 1 billion monthly active users",
           "value_num": null,
           "unit": null,
-          "verbatim": "since expanding AI Mode globally last October, we have surpassed 1 billion monthly active users.",
-          "following_context": "And just like AI Overviews, AI mode is driving an incremental increase in search queries overall, and we are now sending billions of clicks to websites every week through AI features in Search. As we serve more of these queries, we have continued to drive efficiencies. Thanks to our engineering and hardware optimizations this quarter, we reduced the cost of AI mode responses to its lowest level since launch even as we have brought more advanced AI capabilities. Philipp will also talk more about how we are innovating the ads experience.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 7,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "5c0f40afce74e013a07b1e26da2ade7512a797a64637aa1a64899b8d75702c76",
+            "value_sha256": "300a3c1543839a8a042affa09c3b488fe41281a18e3792a7b04b6fa7c67a8229"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Gemini app monthly active users",
           "period": null,
-          "value": "950 million monthly active users",
           "value_num": null,
           "unit": null,
-          "verbatim": "Next, the Gemini app, which now has 950 million monthly active users with daily active users tripling in the last year.",
-          "following_context": "Users love new agent features like Daily Brief and our personalized agent, Gemini Spark, which is now available in the U.S. and internationally. We have been shipping helpful new features like this at an incredible clip. On to YouTube. Month after month, when a big event happens in the world, the world turns to YouTube. It's been incredible to see that over 1.7 billion unique viewers globally watched World Cup-related videos on YouTube during the FIFA World Cup 2026. We are also bringing the power of conversational AI directly into the YouTube experience. Ask YouTube uses our Gemini models to let people ask complex questions about individual videos, get quick takeaways and jump straight to moments in those videos. The early engagement is encouraging. More than 140 million users engaged with Ask YouTube on the watch page in June 2026. And we are bringing that Ask experience to the wider Search experience on YouTube.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 950.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 8,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "59e57b65f712af9708f86b9d7bfde1e7690a158d07bd30d90bc98475226b2f0e",
+            "value_sha256": "a46c6e283bef44e3e46abe34e40b77bd7cda7ec54da22a85fa8c0a5bef699df6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "World Cup unique viewers on YouTube",
           "period": "during the FIFA World Cup 2026",
-          "value": "over 1.7 billion unique viewers",
           "value_num": null,
           "unit": null,
-          "verbatim": "It's been incredible to see that over 1.7 billion unique viewers globally watched World Cup-related videos on YouTube during the FIFA World Cup 2026.",
-          "following_context": "We are also bringing the power of conversational AI directly into the YouTube experience. Ask YouTube uses our Gemini models to let people ask complex questions about individual videos, get quick takeaways and jump straight to moments in those videos. The early engagement is encouraging. More than 140 million users engaged with Ask YouTube on the watch page in June 2026. And we are bringing that Ask experience to the wider Search experience on YouTube.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.7,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 8,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "62fca102432dcc1a47b972a9e07c860d56f2c4f96e2b7fca98e3ea35d87b171a",
+            "value_sha256": "3b922b3e4d4583ba1b954eb422fca98c2f43def35eaa984b5735995c1daae5ce"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Ask YouTube users on watch page",
           "period": "June 2026",
-          "value": "More than 140 million users",
           "value_num": null,
           "unit": null,
-          "verbatim": "More than 140 million users engaged with Ask YouTube on the watch page in June 2026.",
-          "following_context": "And we are bringing that Ask experience to the wider Search experience on YouTube.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 140.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 8,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "bb501156ccde21f5bc35ff6b9e635efde557bc05e84c794dce70c505cfb01bdf",
+            "value_sha256": "b3b766e54c0b4605720ca557c6712bbe646fae8301d5bb262c99767418caabe5"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Fortune 100 using Gemini Enterprise",
           "period": null,
-          "value": "nearly 90%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As I said, nearly 90% of Fortune 100 are using Gemini Enterprise.",
-          "following_context": "We have customers like PepsiCo for AI and analytics solutions, Intel to streamline core processes, HSBC for wealth management, Bell Canada for customer engagement, Macy's for commerce experiences, and SIGNAL IDUNA for knowledge management.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 90.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 10,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "7bad913dc2ef0c4078b6d6fe490cd49e93e527cd30d94422770c5515c9833450",
+            "value_sha256": "c4d85852544d7858679f5012b9e3a65797453752f4b78b123f722c67af5de78c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new customer acquisition velocity (Cloud)",
           "period": "year-over-year",
-          "value": "more than doubling",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are winning new customers, more than doubling our acquisition velocity year-over-year.",
-          "following_context": "We are deepening our relationships with existing customers who are expanding their usage and exceeding their commitments by more than 50%, also an acceleration over last quarter.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 9,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "e1a40c3e3e0506db1ef24c5dd4984abe5f0d30e3f88cd165dd370e407420cd3d",
+            "value_sha256": "9734eeccd0026ac4ea1305557cb5cbcbea135b5c8a968a00a194bcd59091d4de"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "existing customers exceeding commitments",
           "period": null,
-          "value": "more than 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are deepening our relationships with existing customers who are expanding their usage and exceeding their commitments by more than 50%, also an acceleration over last quarter.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 9,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "e76316bd9e53775fa4f2e7b759d080543e9dbe35e6b64e009bf6e6a80732d64a",
+            "value_sha256": "380cf71478c110badd2e7093749ca9e1c8d0198ff34654883a4abe9a29a1dae1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Cloud Marketplace transactions",
           "period": "year-over-year",
-          "value": "over 7x",
           "value_num": null,
           "unit": null,
-          "verbatim": "We are driving growth with partners with transactions on Google Cloud Marketplace growing over 7x year-over-year.",
-          "following_context": "One of the strongest parts of our growth comes from the rapid adoption of our Gemini Enterprise platform. It's differentiated with easy-to-use tools to build agents and automate processes, connectivity to enterprise systems, cost management and governance tools. In Q2, agent development kit, our framework for building and deploying enterprise AI agents reached nearly 70 million total downloads. As I said, nearly 90% of Fortune 100 are using Gemini Enterprise. We have customers like PepsiCo for AI and analytics solutions, Intel to streamline core processes, HSBC for wealth management, Bell Canada for customer engagement, Macy's for commerce experiences, and SIGNAL IDUNA for knowledge management.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 10,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "ddc1f0976e7261da90bc39eaf1685211c42fdfc5c9e12f9dcedbcee88c16c44a",
+            "value_sha256": "983509283fda42289d17193667930c6f5d3c639e5648ca967920638771cc0014"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "agent development kit total downloads",
           "period": "In Q2",
-          "value": "nearly 70 million total downloads",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q2, agent development kit, our framework for building and deploying enterprise AI agents reached nearly 70 million total downloads.",
-          "following_context": "As I said, nearly 90% of Fortune 100 are using Gemini Enterprise. We have customers like PepsiCo for AI and analytics solutions, Intel to streamline core processes, HSBC for wealth management, Bell Canada for customer engagement, Macy's for commerce experiences, and SIGNAL IDUNA for knowledge management.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 10,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "6330c4cc362e833c5a99fc35dc2806daa7bfcb5a48b164770f8817a4bda05125",
+            "value_sha256": "780c581062e6d51be485dafd93e90ee928a71ad8dd8ea806cb3b9face4a2cd11"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cloud customers processing more than 1 trillion tokens",
           "period": "in the last year",
-          "value": "Nearly 500 cloud customers",
           "value_num": null,
           "unit": null,
-          "verbatim": "Nearly 500 cloud customers have each processed more than 1 trillion tokens in the last year and usage is so much deeper than that.",
-          "following_context": "Over the last 12 months, more than 2,000 enterprises consumed over 100 billion tokens. We are also seeing strong interest in our AI-powered security platform, which is differentiated because it integrates threat intelligence, cyber response prioritization with Wiz, AI-automated scanning, code remediation and monitoring.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 500.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 11,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "f519cd2d4ba994ee83e1a8b7d65916fc36d5380ffb88d4ddf25dd8f8f37a2450",
+            "value_sha256": "4226013109e41fcf8126d73c8a0767dd1137c2fc01bb560434eb1f2ebc9da8c9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "enterprises consuming over 100 billion tokens",
           "period": "Over the last 12 months",
-          "value": "more than 2,000 enterprises",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over the last 12 months, more than 2,000 enterprises consumed over 100 billion tokens.",
-          "following_context": "We are also seeing strong interest in our AI-powered security platform, which is differentiated because it integrates threat intelligence, cyber response prioritization with Wiz, AI-automated scanning, code remediation and monitoring.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 11,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "5db1f7873eca9e32f46e4245a21d9baa9adcf39b9c495226b29e080c49959c02",
+            "value_sha256": "0d4cac5ff48e513161d663ec530f9c04fd554a93af42a19ab6eaf59e431d8fb4"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Fortune 100 Google Cloud security users",
           "period": null,
-          "value": "90%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Today, 90% of Fortune 100 are Google Cloud security users.",
-          "following_context": "Nearly 90% of Wiz customers are using AI-powered security features. And we have seen a more than 45% quarter-over-quarter increase in the number of AI workloads scanned and protected by our security platform. Our security tools are being used to protect critical infrastructure including financial services organizations such as Morgan Stanley, telecommunication providers such as TELUS, health care organizations such as Texas Children's, software companies such as Atlassian and several government agencies. And with our new Google AI Threat Defense, we are really excited to bring our new cyber model and CodeMender to help our customers defend against AI threats. All of this is powered by our leading AI infrastructure.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 90.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 12,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "e978fe52b0977b91b5390f165a3e58dcb9774c048c5d549c8a9a7327f9ec9084",
+            "value_sha256": "883caeb7ca1165a22441d8487203cc8aa9284ad7c0f5664c704f98ecb10849b4"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Wiz customers using AI-powered security features",
           "period": null,
-          "value": "Nearly 90%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Nearly 90% of Wiz customers are using AI-powered security features.",
-          "following_context": "And we have seen a more than 45% quarter-over-quarter increase in the number of AI workloads scanned and protected by our security platform. Our security tools are being used to protect critical infrastructure including financial services organizations such as Morgan Stanley, telecommunication providers such as TELUS, health care organizations such as Texas Children's, software companies such as Atlassian and several government agencies. And with our new Google AI Threat Defense, we are really excited to bring our new cyber model and CodeMender to help our customers defend against AI threats. All of this is powered by our leading AI infrastructure.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 90.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 12,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "023ea29a9e21dfedaff808dc9cf516e3ad8a92db318e98b67bf7b8cb67e4b9f3",
+            "value_sha256": "289831e99afd26c619a56667a45c8f275ee0d4808a02adafd2a4129c0b684dcc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI workloads scanned and protected",
           "period": "quarter-over-quarter",
-          "value": "more than 45% quarter-over-quarter increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "And we have seen a more than 45% quarter-over-quarter increase in the number of AI workloads scanned and protected by our security platform.",
-          "following_context": "Our security tools are being used to protect critical infrastructure including financial services organizations such as Morgan Stanley, telecommunication providers such as TELUS, health care organizations such as Texas Children's, software companies such as Atlassian and several government agencies. And with our new Google AI Threat Defense, we are really excited to bring our new cyber model and CodeMender to help our customers defend against AI threats. All of this is powered by our leading AI infrastructure.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 45.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 12,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "f4f6b80c52c73f3f5222ad78525753f948e2f3647cce240a40453b36d4f2d692",
+            "value_sha256": "d7a80ec096ad6f2995dab0f5ef2e8435b4c0e2f6fab3d53512ed140b9962be68"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Axion CPU performance per dollar vs peers",
           "period": null,
-          "value": "30% better performance per dollar",
           "value_num": null,
           "unit": null,
-          "verbatim": "And third, our new agent-optimized Axion CPU, provides 30% better performance per dollar compared to peer offerings.",
-          "following_context": "We are seeing strong growth in demand for our AI infrastructure offerings from leading labs such as Ineffable Intelligence, next-generation AI builders, including Kakao, financial services like Deutsche Börse Group, pharmaceutical companies such as Pfizer and Roche and robotics and spatial intelligence companies such as World Labs.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 13,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "8a31a1339d00abe3733fa419efa13d959cd5788d07a7cb733196fbf402c6acc8",
+            "value_sha256": "a8cca2090e5bd602b809e722fd8d9b16e115a31d1357adaef805125569f633a3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Wing home deliveries",
           "period": null,
-          "value": "more than 1 million home deliveries",
           "value_num": null,
           "unit": null,
-          "verbatim": "Wing has safely completed more than 1 million home deliveries, and we continue to grow our presence through partnerships with Walmart, DoorDash and Papa Johns.",
-          "following_context": "In health and drug discovery, Isomorphic Labs raised over $2 billion to power its AI drug design engine, scale globally and advance its drug candidate pipeline. It's truly been an extraordinary first half of 2026 with much more to come, thanks to all of our employees and partners worldwide for their incredible work this quarter. With that, Philipp, over to you.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 14,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "4bd1448f64ffdb44a80ca15f9c8800dfe5180c8105db37b53b16b30356584ff2",
+            "value_sha256": "a912849942a889f341f35fac99facb21084b3ff7379be6d0bd501df2f10fe17d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Services revenues",
           "period": null,
-          "value": "$95 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Google Services revenues were $95 billion for the quarter, up 15% year-on-year, primarily driven by Search.",
-          "following_context": "Search and Other delivered 17% growth with retail and finance driving the largest contributions. YouTube advertising revenues grew 13%, driven by direct response and brand. Network advertising revenues were down 1% year-on-year. Strong performance in Search and YouTube underscores how our investments in AI translate into measurable value for our users and advertisers.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 95.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 16,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "39185732dca30c92fdf846c9e15676e19068442a5fdb503145c6273736d9cc11",
+            "value_sha256": "4d5b0ee9ed81b7b130da9bf66491a2786e038d5fd545994fe13b5254c3da17a2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Search and Other revenues",
           "period": null,
-          "value": "over $63 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Starting with Search and Other. Revenues reached over $63 billion for the quarter.",
-          "following_context": "Sundar highlighted the momentum we see in Search, which directly impacts our advertising business. We continue to accelerate the deployment of Gemini across our entire ads infrastructure to boost performance in 3 areas mentioned before: ads quality, advertiser tools and AI user experiences. First, ads quality. At Google Marketing Live, we showcased how Gemini improves query understanding, allowing us to find relevant ads for longer searches previously difficult to monetize. The core engine of our search ads relies on a dual prediction, delivering immediate utility for the user while maximizing measurable value for the advertiser.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 63.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 17,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "52934c4b76b877bde5a408632ea68e8b704344c2b67664b3b126d8756203d9eb",
+            "value_sha256": "7795f685082c702f42e6059abb2b1d7f56dd38496f50e821db82c14c638f46f9"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "shopping ads relevance improvement",
           "period": null,
-          "value": "20% improvement",
           "value_num": null,
           "unit": null,
-          "verbatim": "With shopping ads, for instance, we drove a 20% improvement in showing highly relevant ads, helping shoppers immediately find the best match.",
-          "following_context": "Second, advertiser tools, take AI Max. It has become the core building block for advertisers to fully participate in our new AI experiences. It's out of beta and 0.5 million advertisers have already adopted it. Those who adopt our AI-powered campaigns like AI Max or PMax see an average of 15% more conversions or value on search at a similar ROAS. AAA Auto Club Enterprises used AI Max to personalize creative assets and capture growth from increasingly detailed insurance searches. This led to a 17% improvement in conversion volume and an 11% decrease in cost per lead. We see strong adoption of our generative AI creative tools, which makes creative development easier, especially for SMBs.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 18,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "b3ef7e1acf91b98aacb6b6d000e21c20ff903814e29e26810d8fb06c7a880dfc",
+            "value_sha256": "6dd5d37cb1202003e3177f83d3ea942197ec46abffc6195430fae3b11f42c3a5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI Max advertiser adoption",
           "period": null,
-          "value": "0.5 million advertisers",
           "value_num": null,
           "unit": null,
-          "verbatim": "It's out of beta and 0.5 million advertisers have already adopted it.",
-          "following_context": "Those who adopt our AI-powered campaigns like AI Max or PMax see an average of 15% more conversions or value on search at a similar ROAS. AAA Auto Club Enterprises used AI Max to personalize creative assets and capture growth from increasingly detailed insurance searches. This led to a 17% improvement in conversion volume and an 11% decrease in cost per lead. We see strong adoption of our generative AI creative tools, which makes creative development easier, especially for SMBs.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.5,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 18,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "61942671a66d3025f5f33dac37f89d753b5d509a5727960e8a009068e4a9fa09",
+            "value_sha256": "8bfa15b349b337535f79cc4e6321e5bbe65ca3d2eb5d7e06ddb9aa83dabe24ae"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "conversions/value from AI-powered campaigns",
           "period": null,
-          "value": "average of 15% more conversions or value",
           "value_num": null,
           "unit": null,
-          "verbatim": "Those who adopt our AI-powered campaigns like AI Max or PMax see an average of 15% more conversions or value on search at a similar ROAS.",
-          "following_context": "AAA Auto Club Enterprises used AI Max to personalize creative assets and capture growth from increasingly detailed insurance searches. This led to a 17% improvement in conversion volume and an 11% decrease in cost per lead. We see strong adoption of our generative AI creative tools, which makes creative development easier, especially for SMBs.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 18,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "b9821e4c4b5a20ef00c9f7a2b8fa0a9530e78615b7b58e9913a9001c56e5d08e",
+            "value_sha256": "a17ac2231c56fdfd4661341c408f1fcd02da511a93f1b2af94d159dbca1bd8eb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "World Cup viewers on televisions",
           "period": null,
-          "value": "over 550 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "As Sundar mentioned, over 1.7 billion unique viewers watched World Cup-related videos and over 550 million watched them on their televisions.",
-          "following_context": "This made the FIFA World Cup 2026, the most viewed World Cup in YouTube history. Advertisers connected with fans through FIFA channel takeovers, Gemini-powered soccer theme sponsorships and game day mastheads and, of course, a huge congratulations to Spain for taking home the trophy. More broadly, on YouTube, we introduced an exclusive slate of creator shows making it easier for brands to tap into the fandom of creators.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 550.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 21,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "07d74d994b462ff5b974d10e9f5d6d6c874ed769e4fcd6f2f2c769530e637ec7",
+            "value_sha256": "9a608120206e933eecfa79152a5e11816b380527219ebb1f83ebdfc0ba20ac30"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Arc'teryx return on ad spend via demand gen",
           "period": null,
-          "value": "70% better return on their ad spend",
           "value_num": null,
           "unit": null,
-          "verbatim": "To attract high-value shoppers across North America and Europe, outdoor brand Arc'teryx used demand gen to achieve a 70% better return on their ad spend compared to other paid channels.",
-          "following_context": "Looking at monetization across YouTube, we're driving sustained growth across our key priorities. In the living room, we see continued momentum across both brand and direct response. With the launch of Buy with Google Pay, viewers can complete purchases directly on their CTV, turning the TV screen into a stronger performance surface. Shorts continue to deliver high-performing opportunities for social and video buyers alike. Beyond advertising, YouTube subscription business, which thrives across living room screens, is growing faster than ads, particularly driven by YouTube Music and Premium.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 23,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "1bac26fb76920b4cc6f6b12e8376510fc8b414ebe1026ea5f01c51d3807a607d",
+            "value_sha256": "b87cf67748058380666519d6c3303ba64de9cfbf2a751aa9b76be15553490783"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "sales team using Gemini-assisted tools weekly",
           "period": null,
-          "value": "83%",
           "value_num": null,
           "unit": null,
-          "verbatim": "83% of our sales team uses Gemini-assisted tools weekly driving up to a 20% higher win rate when using customized pitch narratives.",
-          "following_context": "Our ads customer support teams use Gemini-powered agentic solutions that now autonomously address 75% of support queries, freeing them to solve our customers' most complex challenges. Similarly, our new agentic solutions for SMBs have expanded our reach by hundreds of thousands of new customers year-to-date. As always, ending with partnerships. We're seeing more businesses benefit from the unified strength of Google's AI stack.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 83.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 24,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "cd7bbcb6c0c7202dc6181da2896c5e49f488f42ca2b0afe927a7baf3667dbb93",
+            "value_sha256": "29bdb54f41e32a4a1c67d8c174e760893cc5cd59ba8a3c1da40ebd081564d755"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "support queries autonomously addressed",
           "period": null,
-          "value": "75%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our ads customer support teams use Gemini-powered agentic solutions that now autonomously address 75% of support queries, freeing them to solve our customers' most complex challenges.",
-          "following_context": "Similarly, our new agentic solutions for SMBs have expanded our reach by hundreds of thousands of new customers year-to-date. As always, ending with partnerships. We're seeing more businesses benefit from the unified strength of Google's AI stack.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 75.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 24,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "5949e781ddd511539579959100e1eb79c23778d04f3f935687f18edfeb51a1a5",
+            "value_sha256": "10963ac2db22b5b879edcf195eaacd3866b19571110462807b83133c98182864"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Consolidated revenues",
           "period": null,
-          "value": "$119.8 billion, up 24%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Consolidated revenues were $119.8 billion, up 24% or 23% in constant currency.",
-          "following_context": "Total cost of revenues was $45.9 billion, up 18%. TAC was $16.2 billion, up 10%. Other cost of revenues was $29.8 billion, up 22%, driven by increases in depreciation, inventory costs, primarily from the sales of TPU systems to customers and content acquisition costs largely for YouTube.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 119.8,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 27,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "db452a954758a1c0dee8c45a648879f5414637c92fdcc514d0ab6f91f5183b53",
+            "value_sha256": "6f51d594d65464cc5f4b71ce451903f0082bcb401e596b93659297e14ccf991f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Search and other advertising revenues",
           "period": null,
-          "value": "$63.3 billion, increased by 17%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Google Search and other advertising revenues increased by 17% to $63.3 billion with retail and finance driving the largest contributions.",
-          "following_context": "YouTube advertising revenues increased 13% to $11.1 billion, driven by direct response advertising as well as brand with strength in the living room, as Philipp mentioned earlier. Network advertising revenues of $7.3 billion were down 1%. Subscription, Platforms and Devices revenues increased 15% this quarter to $12.9 billion due to strong growth in both YouTube subscriptions, particularly YouTube Music and Premium and Google One, which was driven by demand for AI plans.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 63.3,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 30,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "e8c90e7d972b7de54885bc4470b2abdca6b651227205b92d449377cbcf73f605",
+            "value_sha256": "bbf081367761acd69d9a74d0919d6198d5141d75e4db1560c75a34ae4fc47966"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "YouTube advertising revenues",
           "period": null,
-          "value": "$11.1 billion, increased 13%",
           "value_num": null,
           "unit": null,
-          "verbatim": "YouTube advertising revenues increased 13% to $11.1 billion, driven by direct response advertising as well as brand with strength in the living room, as Philipp mentioned earlier.",
-          "following_context": "Network advertising revenues of $7.3 billion were down 1%. Subscription, Platforms and Devices revenues increased 15% this quarter to $12.9 billion due to strong growth in both YouTube subscriptions, particularly YouTube Music and Premium and Google One, which was driven by demand for AI plans.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.1,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 30,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "4aed7a0e1225156133911dc0b65b31b0667c383eea54b5c2649af37258789bbf",
+            "value_sha256": "f1cca4745f187e42881f19f49fa77be6257f78564570e1d129368fedd0939210"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Network advertising revenues",
           "period": null,
-          "value": "$7.3 billion, down 1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Network advertising revenues of $7.3 billion were down 1%.",
-          "following_context": "Subscription, Platforms and Devices revenues increased 15% this quarter to $12.9 billion due to strong growth in both YouTube subscriptions, particularly YouTube Music and Premium and Google One, which was driven by demand for AI plans.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.3,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 30,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "aff210aac978b093d3d1dcd4a73be65c8284d46a90c5b26426d7f9790dd47a85",
+            "value_sha256": "c1032501c2cbb2b41d9dc1f20066a46e2554ff8e86d8daabfa0972dc6b8360c0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Cloud revenues",
           "period": null,
-          "value": "up 82% to $24.8 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Cloud revenues were up 82% to $24.8 billion driven primarily by GCP, which grew faster than Cloud overall, core GCP, AI solutions and AI infrastructure were all important drivers of growth.",
-          "following_context": "We also began to recognize revenues from TPU system sales, which we delivered to customer data centers for the first time in Q2. Cloud revenue growth accelerated meaningfully even after excluding the impact of TPU system sales. Cloud operating income was $8.8 billion, more than tripling year-over-year and operating margin increased from 20.7% in the second quarter last year to 35.6%.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 82.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 24.8,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 31,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "b960cc0ab358deb66e0b558247dd0f88069897971457b3891a6f0814f7eeaba7",
+            "value_sha256": "54d27c4a9a5c0c82f7dcb7b65b22adb3ad9336aa18ad8a031f87a89406cf28f2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Cloud backlog",
           "period": null,
-          "value": "reaching $514 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Google Cloud's backlog increased by more than $50 billion sequentially, reaching $514 billion in the second quarter.",
-          "following_context": "The increase was driven by strong demand for our Enterprise AI offerings. The majority of the backlog is related to typical GCP contracts for a broad mix of customers, and we expect to recognize just over 50% of the total backlog as revenue over the next 24 months. In Other Bets, revenues were $382 million, and operating loss was $1.8 billion as we continue to expand Waymo's business and invest in key other bets. And in Alphabet level activities, the operating loss was $5.8 billion, driven by shared AI R&D expenses.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 514.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+            "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+            "paragraph": 32,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "9b561d72def19ee6b961b9fc3eb183c26a52afb7b3686167520ab2b7960bd26d",
+            "value_sha256": "a22640a30f16e317135d1eca90637f72fac40536ada7570167ec515915b25ac4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Alphabet revenues",
           "period": null,
-          "value": "grew 25% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Alphabet revenues grew 25% year-over-year. We are now at $0.5 trillion annual run rate.",
-          "following_context": "That's remarkable growth. Search has strong momentum. Our AI investments are driving increased usage and overall query growth, including commercial queries. In fact, our year-over-year query growth rate is the highest it's been in the last 5 years.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 3,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "3207ad4d39ec0ff5da2c77cf692d97e472da6de24e3002f1bdc3208a148eca08",
+            "value_sha256": "9355e64a313f5ae3564f9d501231efb973831dc11e15417d538610dbfc6990dc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Cloud revenues",
           "period": null,
-          "value": "grew 103%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Google Cloud revenues grew 103%.",
-          "following_context": "Our AI infrastructure and solutions are the major drivers for Cloud growth and our customers see us as the leading provider here, so there's huge demand. We are working hard to bring more capacity online to meet this long-term demand. At the same time, we are seeing strong demand for our TPU systems across a wide range of customers, and we expect that to continue as we scale. I'm excited to welcome Thomas to the call, and he'll share more about Cloud's momentum.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 103.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 4,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "b3071249a1dec6bdb185fb270c8e84ee9fcbc652d10116695586f6df67e64594",
+            "value_sha256": "99135634b272ba0c0d05001e538e2d9a2aca2f8c7a967fd683b7184df8e001dd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "first-party model API token processing rate",
           "period": null,
-          "value": "nearly 32 billion tokens per minute, 40% more than last quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our first-party model APIs are now processing nearly 32 billion tokens per minute, 40% more than last quarter and more than 4x what we processed a year ago.",
-          "following_context": "And with Gemini 4 Argon and now Carbon, which we announced today, we are excited to be leading at the frontier. The Gemini app is now at 1 billion users and is the fastest-growing product in Google's history. Lastly, we have surpassed 150 million YouTube Music and Premium subscribers globally, including trials.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 32.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 5,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "8cf7b3a25284e56f0ad408ad9b2d9429f6ccecaa2a7cfa212967c97aba7e3eac",
+            "value_sha256": "4a03a0a4a200e953002c82a269a4c7fb129b004efcf618b1618fc3587abc08b1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Gemini app users",
           "period": null,
-          "value": "1 billion users",
           "value_num": null,
           "unit": null,
-          "verbatim": "The Gemini app is now at 1 billion users and is the fastest-growing product in Google's history.",
-          "following_context": "Lastly, we have surpassed 150 million YouTube Music and Premium subscribers globally, including trials.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 5,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "0f6ec161567b5ae62e5fe32008f2e734fa36600fdec46aec5c06e73d6e7e6a36",
+            "value_sha256": "d822a29b6d6b5c6937b63057596bd1744cd6c1f06a2e6174841a7c9d51224dfb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "YouTube Music and Premium subscribers",
           "period": null,
-          "value": "surpassed 150 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Lastly, we have surpassed 150 million YouTube Music and Premium subscribers globally, including trials.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 150.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 5,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "ba4586c261b3c0fb2275d76ba99d106687cacc22d173e626939b8d49c2452983",
+            "value_sha256": "1fc500cce4c8b747b3d0823f5a517bf03de6712cfce47b7aecdf63816004b353"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Argon developer platform usage ramp",
           "period": null,
-          "value": "3.5x faster than Gemini 3",
           "value_num": null,
           "unit": null,
-          "verbatim": "In fact, on our developer platforms, usage in the first week ramped up 3.5x faster than Gemini 3, even with capacity constraints.",
-          "following_context": "Argon is proving to do really well in areas like finance, legal, cybersecurity and science.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.5,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 7,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "0142d568d4d13fcae30d2f8dfe71fff1da150f6318bf9d0da17e14130f4ad61c",
+            "value_sha256": "66246a249fcb00e4c6ce8b6c20966cff407a1412cf4906717a68d3e838a10930"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Carbon Artificial Analysis Intelligence Index rank",
           "period": null,
-          "value": "#1 at 59",
           "value_num": null,
           "unit": null,
-          "verbatim": "It ranks #1 on the recently updated Artificial Analysis Intelligence Index at 59.",
-          "following_context": "Carbon outperforms Argon across almost every domain like full stack web development, multimodal understanding, complex knowledge work and scientific reasoning.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 59.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 9,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "91d4d98bf242e7502efedac54a36ba5f4320246b0e84d510f1e35fba2f50284f",
+            "value_sha256": "efa774bf8804dfea646baed129c29d2c08cdea3c0c0a296b40b030e48f3b8ea3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "code shipped with Argon internally",
           "period": "in the last few weeks",
-          "value": "35% more code with 30% fewer errors",
           "value_num": null,
           "unit": null,
-          "verbatim": "And at Google, just in the last few weeks, teams across Chrome, Ads and Search have used Argon to write and optimize code much faster, shipping 35% more code with 30% fewer errors.",
-          "following_context": "Argon is just the start of the Gemini 4 series.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 35.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 8,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "76038c50080f38f0d9f9aeb7a890da6bcd3b5e4e81fe12df54bfd73db2509bd1",
+            "value_sha256": "e6b515a7b7de34db493974140cb01def55b1939eb5d8fb916996f3af1be066aa"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI Mode query length vs traditional",
           "period": null,
-          "value": "3x longer",
           "value_num": null,
           "unit": null,
-          "verbatim": "Queries in AI Mode are on average 3x longer than traditional searches, and 1 in 5 AI Mode searches globally use voice, images or documents.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 12,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "79375f51d8c55ee8a93ac72f5051d6b8778c645eadd0cf85592cb5d142a41d86",
+            "value_sha256": "7772b17347909e188ef5b22feb3cb58a014e07e5cf0ea40e8e66d0c365dfbfd6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "visual searches per month",
           "period": null,
-          "value": "over 50 billion visual searches per month",
           "value_num": null,
           "unit": null,
-          "verbatim": "We have now crossed over 50 billion visual searches per month.",
-          "following_context": "One area I'm excited about is helping people get things done, be it booking reservations, filling in forms, scheduling appointments or making purchases. As AI becomes more personal and starts taking action for people and businesses, trust and security matter more than ever. People already put their trust in Google to get things done in their daily lives, and our leadership here remains an important differentiator. We focus first on getting these agentic experiences right with the Gemini agent for enterprise because the bar for security, safety and governance is extremely high.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 13,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "d1e5a60d1c1c3532b2531a02b33caaf56cc36b3e6f3b756e77e25e33a01772bb",
+            "value_sha256": "dd5454bea167819e26970962f22526d6eae308945e764c9f94ff7c5218764594"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Waymo fully autonomous miles",
           "period": null,
-          "value": "more than 300 million fully autonomous miles",
           "value_num": null,
           "unit": null,
-          "verbatim": "We have now driven more than 300 million fully autonomous miles.",
-          "following_context": "Waymo now operates in 15 major U.S. cities and just recently opened up service to the public in San Antonio, San Diego and Tampa with planned expansions into Canada, Germany, Singapore and Spain.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 300.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 16,
+            "speaker": "Sundar Pichai",
+            "quote_sha256": "cfd714754350c8aadca4c3857d6018f19ac477fb7d0dec8acb11409dff5627ba",
+            "value_sha256": "455b0423e3325d572a9ede2fd9ec9d33118bde55e1aa8b3bbb78fa07fc8896c6"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "product listing ads satisfaction increase",
           "period": null,
-          "value": "satisfaction increase by 19%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Already, we've seen satisfaction increase by 19% and dissatisfaction dropped more than half.",
-          "following_context": "We're also seeing AI models enable better prediction of clicks and conversions, stronger overall performance and deeper personalization of ads. For instance, through several innovations and personalization modeling, we delivered 18% incremental advertiser value and an 8% increase in user sentiment on Discover ads in 2026. Overall, AI is accelerating our ads development and drives the majority of our product launches.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 19.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 21,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "122cf1f70f7179ae25ee81fd49246d8f82995e2b71481ec28f9fa647718fba4c",
+            "value_sha256": "78f3e80dfd58b081c620b9c060a97249c4df42fd6c3010041b40a1be47a4221f"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "incremental advertiser value on Discover ads",
           "period": "in 2026",
-          "value": "18% incremental advertiser value and an 8% increase in user sentiment",
           "value_num": null,
           "unit": null,
-          "verbatim": "For instance, through several innovations and personalization modeling, we delivered 18% incremental advertiser value and an 8% increase in user sentiment on Discover ads in 2026.",
-          "following_context": "Overall, AI is accelerating our ads development and drives the majority of our product launches.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 18.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 21,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "3f6595da02124861360a71882c278841be944c5904cab21671a0a97cdb474930",
+            "value_sha256": "7066a725674df2f59ae4c26e0edaf0f075568ee73dce00d26f02f8cc64e4210b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Gemini-generated campaign assets",
           "period": null,
-          "value": "over 1.5 billion campaign assets, up over 7x year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q3 alone, Gemini models helped advertisers generate over 1.5 billion campaign assets, up over 7x year-over-year.",
-          "following_context": "For example, by using AI Max to capture long-form and multilingual queries, Telstra saw a 52% increase in conversions and a 36% reduction in cost per order, showing up in key moments however the customers search.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.5,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 22,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "0c7af838d35c8e5cfae6b6b95ae648c36fad7c4b9310c1ca1219b5c843e10952",
+            "value_sha256": "1ec1f0f2cc906c8e9f3f9bd50435e5efdf06a04abe1cb3468a6510d5aced9766"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Telstra conversions via AI Max",
           "period": null,
-          "value": "52% increase in conversions and a 36% reduction in cost per order",
           "value_num": null,
           "unit": null,
-          "verbatim": "For example, by using AI Max to capture long-form and multilingual queries, Telstra saw a 52% increase in conversions and a 36% reduction in cost per order, showing up in key moments however the customers search.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 52.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 36.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 22,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "319dbb6bfb56d294e329619946585485e577f4032938be8944e1a50f9816316c",
+            "value_sha256": "beb0527cebb8aca5a6dc75199ed2f0c267f5656a73f6df71f955f634ccb0db95"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "living room share of YouTube Ads revenues",
           "period": null,
-          "value": "over 1/3 of total YouTube Ads revenues",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q3, living room accounted for over 1/3 of total YouTube Ads revenues.",
-          "following_context": "Small and medium advertisers continue to adopt Demand Gen, driving direct response. On YouTube, Wayfair's Demand Gen campaigns drove a 2.3x higher return on ad spend compared with traditional video reach campaigns.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 31,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "2484b4baee334a5dd8240ccee26e41b7ac3aef390779bfef5bc3e7df7c9b390e",
+            "value_sha256": "ed27d3ec9683bdcd880014defac3407f782855de7a068c901a9a50c0c10d4a71"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Wayfair Demand Gen return on ad spend",
           "period": null,
-          "value": "2.3x higher return on ad spend",
           "value_num": null,
           "unit": null,
-          "verbatim": "On YouTube, Wayfair's Demand Gen campaigns drove a 2.3x higher return on ad spend compared with traditional video reach campaigns.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.3,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 31,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "2711284e17bb95ecd76df1d1b365e8f5f98d7472bb76d07ecefcafaeb7a30ab0",
+            "value_sha256": "90483d537cc6b4101ec09f377dacc82a795a818cfdeba944fc9decf4f6b0ccad"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "YouTube Creator Partnerships creators",
           "period": null,
-          "value": "over 3 million creators",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our YouTube Creator Partnerships program connects brands with over 3 million creators to drive highly effective campaigns.",
-          "following_context": "Brands like Lexus continue to partner with creators like Colin and Samir, driving 11% lift in brand consideration.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 32,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "75630224f827d2489006cfaf32fe5b267704ad1d0af3e588ada5fdcd290e7f65",
+            "value_sha256": "ceeef908d0c652029c2e03f64cc1cb39860eb4dfb97bf1f1f0ea64aec113956b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "channels enrolled in YouTube Shopping",
           "period": null,
-          "value": "More than 1.3 million channels",
           "value_num": null,
           "unit": null,
-          "verbatim": "More than 1.3 million channels are enrolled in YouTube Shopping globally.",
-          "following_context": "Building on this momentum, we recently announced that Amazon is joining YouTube Shopping. U.S. creators can now tag Amazon products directly in their videos, shorts and live streams, driving direct conversions.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.3,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 33,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "d424317e21114c6f47a2be1071a72ccc49cc78989d00e51f09e6e24badc08bee",
+            "value_sha256": "51994b0a22f4e76fcf3ecead1bb892822e95b299b81776e65ecd46415191982c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "YouTube Premium subscribers",
           "period": null,
-          "value": "more than 150 million subscribers",
           "value_num": null,
           "unit": null,
-          "verbatim": "YouTube Premium has more than 150 million subscribers.",
-          "following_context": "With Premium and Premium Lite, viewers have choice. As more people opt into premium experiences, it's a win for viewers, creators and our business. Subscriptions help fund the creator ecosystem and drive the platform forward.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 150.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 34,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "181db5b60378e56725f6a1d315a1b8d3d12a2b2c1f72334962594d72610042c7",
+            "value_sha256": "4d69519c927f8d1297af14c49cc6fe9c82a3f9c879290a64f8490d64125da486"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Cloud $1 billion+ product lines",
           "period": null,
-          "value": "18 product lines with more than $1 billion each",
           "value_num": null,
           "unit": null,
-          "verbatim": "Google Cloud now has 18 product lines with more than $1 billion each in annual revenue.",
-          "following_context": "And our growth this quarter was driven by strong growth in Google Cloud Platform with strength in both AI and core GCP. TPU system sales were also a meaningful contributor.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 18.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 39,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "6e02da7e7eb78eaaa76eabdd2aaf3de9eb71d21c2e91414c3a1d79d2521e8ea5",
+            "value_sha256": "ce3d83266978714a87c7ce4a38bc99894feeb8e825392770da0c0acd6672598d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "customers using at least 100 billion tokens",
           "period": "Over the past 12 months",
-          "value": "more than 2,600 customers",
           "value_num": null,
           "unit": null,
-          "verbatim": "Over the past 12 months, more than 2,600 customers have used at least 100 billion tokens and nearly 75 at least 10 trillion tokens on Gemini Enterprise.",
-          "following_context": "Nearly 90% of the Fortune 100 use Gemini Enterprise, and customers who use Gemini Enterprise in Q3 2025 more than quadrupled their spend with us year-over-year. One of the important ways in which customers are using Gemini is for knowledge work. Across all our AI services, we have sold more than 100 million seats for knowledge work. Gemini Enterprise now includes the Gemini agent that is deeply integrated across our entire cloud portfolio. It can research and answer questions, write and run code and automate process flows with one agent, one API and a single prompt window.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2600.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 40,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "d6c959ea7da4a126fbe54182e0f39d3f4b6deacdaa1cc418af0d4b9a8e41098e",
+            "value_sha256": "05b9136528abc8cd5d4b534a5dad09f5ae0316f849fb6ff58872e46afd0a2019"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Fortune 100 using Gemini Enterprise",
           "period": null,
-          "value": "Nearly 90%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Nearly 90% of the Fortune 100 use Gemini Enterprise, and customers who use Gemini Enterprise in Q3 2025 more than quadrupled their spend with us year-over-year.",
-          "following_context": "One of the important ways in which customers are using Gemini is for knowledge work. Across all our AI services, we have sold more than 100 million seats for knowledge work. Gemini Enterprise now includes the Gemini agent that is deeply integrated across our entire cloud portfolio. It can research and answer questions, write and run code and automate process flows with one agent, one API and a single prompt window.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 90.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 40,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "a6486b7cca7e19e9061b4d24cdaf8f619199e461d1f525c675354c3fd3b5e73e",
+            "value_sha256": "289831e99afd26c619a56667a45c8f275ee0d4808a02adafd2a4129c0b684dcc"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "knowledge work seats sold",
           "period": null,
-          "value": "more than 100 million seats",
           "value_num": null,
           "unit": null,
-          "verbatim": "Across all our AI services, we have sold more than 100 million seats for knowledge work.",
-          "following_context": "Gemini Enterprise now includes the Gemini agent that is deeply integrated across our entire cloud portfolio. It can research and answer questions, write and run code and automate process flows with one agent, one API and a single prompt window.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 40,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "bf43226249486d8617d4f2bff24c57d9507f34c73a1f77634c299069284b02b5",
+            "value_sha256": "5e8ec3da1599787cf4d10af5e40cf8d0a75329e2357828e290991436f04003be"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Ulta AI shopping assistant conversion rate",
           "period": null,
-          "value": "3x higher conversion rate",
           "value_num": null,
           "unit": null,
-          "verbatim": "Ulta Beauty, who built the Ulta AI shopping assistant, resulting in a 3x higher conversion rate than traditional browsing on their site.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 41,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "393d57a17fc0923b1ae9b29ce1373426e8586d444c8dc7bfe1334486bbfab683",
+            "value_sha256": "2581f5eaf75116d11dbed44fc8330d0cd8829e65fcb92c6e7aed70955886c302"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "BigQuery query speed improvement",
           "period": "year-over-year",
-          "value": "over 40% year-over-year while reducing query processing cost by over 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "To respond to agentic analysis, BigQuery improved query speed over 40% year-over-year while reducing query processing cost by over 50% year-over-year.",
-          "following_context": "Customers include Deutsche Telekom, which uses BigQuery, Cloud Storage and Knowledge Catalog to build a unified data lakehouse across 40-plus legacy on-premise systems. Etsy, which migrated 3 petabytes of data to unified lakehouse, by using BigQuery and Iceberg, they now perform critical data joins up to 60% faster.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 40.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 43,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "b4297eb583fe491d6d7a064bd5521a052ecd319306603b8d0bb58bacfc6b85d1",
+            "value_sha256": "f86b1e6e88c54db498b1479d053691509e1a7689fbf46e53bf1917258eae3b2b"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Gemini Flash cyber vulnerability patch reliability",
           "period": null,
-          "value": "2.6x more reliably than other models",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our Gemini Flash cyber models are frontier models that automate vulnerability discovery across 20 programming languages and patch 2.6x more reliably than other models.",
-          "following_context": "And there's even better performance to come as we roll out Argon and Carbon.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.6,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 44,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "1b3a7876d20462e61527018bbd4ba6425be5e3ecd574a3cb8d8968d5ab5d84b9",
+            "value_sha256": "634c76eea04963d2f6a6ba9ea3c32985b3bfc118cd3a5dea505c0324d4aef9a2"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Threat Intelligence event analysis accuracy",
           "period": null,
-          "value": "98% accuracy",
           "value_num": null,
           "unit": null,
-          "verbatim": "Gemini and Google Threat Intelligence autonomously analyzes millions of external events every day with 98% accuracy.",
-          "following_context": "And more than 95% of Wiz customers are adopting AI-powered features, and growth continues.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 98.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 45,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "8649c71c9ddd0211590f43a2a41627a95a0ebfbb8dc7f4202ce1d8ea7236f1ad",
+            "value_sha256": "cad0ff09b08178bbd978253e4ad33dcd2a3798d745a6d7d4a63a7bb528b1b165"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Wiz customers adopting AI-powered features",
           "period": null,
-          "value": "more than 95%",
           "value_num": null,
           "unit": null,
-          "verbatim": "And more than 95% of Wiz customers are adopting AI-powered features, and growth continues.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 95.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 45,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "dcb823b93e3e9f3e646e2b9ba32ea918dd0551ae4be45d1733e3e7cbc4ce9a57",
+            "value_sha256": "3d091914f28e87631742fea013869c8e8e25f1a4c6d8184b6833c3a9a024ec63"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "TPU 8t/8i performance vs previous generation",
           "period": null,
-          "value": "up to 2.7x better training performance and 80% better inference price performance",
           "value_num": null,
           "unit": null,
-          "verbatim": "TPU 8t and 8i offer up to 2.7x better training performance and 80% better inference price performance, respectively, versus our previous generation of TPUs.",
-          "following_context": "To make it easy for developers to port workloads to TPUs, we recently worked closely with Meta to deliver TorchTPU, which allows users to train, serve and deploy PyTorch models on TPUs, using the tools they're already familiar with and rely on.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.7,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": null,
+              "qualifier": "at_most"
+            },
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 47,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "9445ac3ec1d5e9d7b64fa531310d7b65b137e6cd4aec3fea0e794a5add22ebbb",
+            "value_sha256": "435832fa722b88bc7409c1db5c722362e1633a98682fa38f36c94a2e52aa59e1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "customers using TPUs",
           "period": null,
-          "value": "Nearly 100 customers",
           "value_num": null,
           "unit": null,
-          "verbatim": "Nearly 100 customers use TPUs today, and we're seeing strong and growing demand from many others.",
-          "following_context": "In addition to our work with Anthropic, both directly and via Broadcom and public reference customers like Apple, who are scaling pretraining of their foundation models on the latest generation of TPUs, we're also working with new frontier model companies, including Mirendil and Physical Intelligence; capital markets firms, including Citadel Securities and Jump Trading; universities like Caltech; and public sector service providers, including Cassava and Cirrascale. Given continued strong and accelerating demand, we've recently entered into partnerships to deliver TPU systems with both Crux AI and Oracle, with more in the works.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 48,
+            "speaker": "Thomas Kurian",
+            "quote_sha256": "a873699df2ef62690e6109faa0c7fb3adb17edf44121798e13465e5a5b6d53ee",
+            "value_sha256": "0e61ba770ab1caafb9e2063e5433de10991338767e5c600266a01e4c6354a491"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Consolidated revenues",
           "period": null,
-          "value": "$127.6 billion, up 25%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Consolidated revenues were $127.6 billion, up 25% in both reported and constant currency.",
-          "following_context": "Total cost of revenue was $51.4 billion, up 24%. TAC was $16.4 billion, up 10%. Other cost of revenues was $35.1 billion, up 32%, driven by hardware costs primarily related to the sales of TPU systems, increase in depreciation, content acquisition costs and technical infrastructure operations costs.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 127.6,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 52,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "8743b03a225cf17cd7acd267812482713cfd1c8a28c7064ce4e08a3c92ed0d0b",
+            "value_sha256": "e23b2cec1b7ed7529fc9a2c8308e6e9918ca16def3dcad4e7e3feb63bae2385e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Services revenues",
           "period": null,
-          "value": "increased 11% to $96.3 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Google Services revenues increased 11% to $96.3 billion, reflecting strong growth in Search and subscriptions.",
-          "following_context": "Total advertising revenues were up 11% with growth across all major verticals. As we stated in our outlook last quarter, FX was a slight headwind on year-over-year growth rates and had a more significant impact on sequential basis.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 96.3,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 60,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "2d3c15445b63522c6093b42bf174e2fa1c1632dc83211a599b5025b46f50937c",
+            "value_sha256": "cd3fe06dfe5fca667700b604b260ad606c0180aded8e0f1264c9e3772f9f5665"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Search and other advertising revenues",
           "period": null,
-          "value": "increased by 12% to $63.3 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Google Search and other advertising revenues increased by 12% to $63.3 billion, with retail driving the largest contribution followed by finance.",
-          "following_context": "YouTube advertising revenues increased 9% to $11.2 billion, with brand driving the largest contribution and notable strength in living room. Network advertising revenues of $7.5 billion were up 1%. Subscription, platforms and devices revenues increased 11% this quarter to $14.3 billion, driven by strong growth in YouTube subscriptions, particularly in YouTube Music and Premium and strong demand for AI plans in Google One. Google Services operating income increased 17% to $39.2 billion, and operating margin was 40.7%.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 12.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 63.3,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 61,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "dc9f42f23a78a1229a6975d8915d6adb2106ba07f5bc686144eb5cc392b322ab",
+            "value_sha256": "cb51db1375cc12b19be0c45c35e3e22a37205adf3939463f884616b333a92e82"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "YouTube advertising revenues",
           "period": null,
-          "value": "increased 9% to $11.2 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "YouTube advertising revenues increased 9% to $11.2 billion, with brand driving the largest contribution and notable strength in living room.",
-          "following_context": "Network advertising revenues of $7.5 billion were up 1%. Subscription, platforms and devices revenues increased 11% this quarter to $14.3 billion, driven by strong growth in YouTube subscriptions, particularly in YouTube Music and Premium and strong demand for AI plans in Google One. Google Services operating income increased 17% to $39.2 billion, and operating margin was 40.7%.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 11.2,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 61,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "bac2190ae20062f3fbb11fb0a8875a513c2c2ab45aa8b937d1068f876d318f7a",
+            "value_sha256": "717decf6a7fe84e663539f3a5afacc26240f2d6b923960dd264670b75381f087"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Network advertising revenues",
           "period": null,
-          "value": "$7.5 billion, up 1%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Network advertising revenues of $7.5 billion were up 1%.",
-          "following_context": "Subscription, platforms and devices revenues increased 11% this quarter to $14.3 billion, driven by strong growth in YouTube subscriptions, particularly in YouTube Music and Premium and strong demand for AI plans in Google One. Google Services operating income increased 17% to $39.2 billion, and operating margin was 40.7%.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.5,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 61,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "49eea3378c5e60fd67ae9daf6c0a26893a578d136e01ab572d2eadf4e6068272",
+            "value_sha256": "0af19d897eb2e511427beadc525d9254516086054204068f54917b23333b2fdb"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Subscription, platforms and devices revenues",
           "period": null,
-          "value": "increased 11% to $14.3 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Subscription, platforms and devices revenues increased 11% this quarter to $14.3 billion, driven by strong growth in YouTube subscriptions, particularly in YouTube Music and Premium and strong demand for AI plans in Google One.",
-          "following_context": "Google Services operating income increased 17% to $39.2 billion, and operating margin was 40.7%.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 14.3,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 61,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "a9b9d62f2ccb093b3e7ce53a53fe1f34ad487368700ecdce99c68967de742fa0",
+            "value_sha256": "09392e1622d06dc1eb45905887748c5ffa197450f500bf57bca120c4f36e1db1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Cloud revenues",
           "period": null,
-          "value": "up 103% to $30.7 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Cloud revenues were up 103% to $30.7 billion, driven by strong growth in GCP with strength in AI, including both AI infrastructure and AI solutions and core GCP.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 103.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 30.7,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 62,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "60f6e0ac04d61bda4c60ce9f63b30f20e2e2e9dd1ef7ecf1b1176ac481d4631e",
+            "value_sha256": "4ba1e4c0b6cfa5d33a7997f37ea7c8f69f4dcec238f522f0221a7af4de98e1d5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Google Cloud backlog",
           "period": null,
-          "value": "$561 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Google Cloud's backlog was $561 billion in the third quarter, with the majority of the backlog related to typical GCP contracts.",
-          "following_context": "We expect to recognize just over 55% of the total backlog as revenues over the next 24 months. In Other Bets, revenues were $372 million, and the operating loss was $2 billion as we continue to expand Waymo's business and invest in key Other Bets. In Alphabet-level activities, the operating loss was $7.7 billion, driven by shared AI R&D expenses.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 561.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 64,
+            "speaker": "Anat Ashkenazi",
+            "quote_sha256": "68fe2c348f090b72128a6aa0e1d1963c68260e93a4b1ceb4631f3f2c9aae2f1b",
+            "value_sha256": "f3eaa16934c9fa102f5183da2cae680fa76d68fc2193c67a307c763ef435f8b4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "videos uploaded daily to YouTube",
           "period": null,
-          "value": "more than 20 million videos",
           "value_num": null,
           "unit": null,
-          "verbatim": "First, creators. Every day, more than 20 million videos are being uploaded.",
-          "following_context": "We are making creation easier with new generative AI tools in YouTube Studio, plus a conversational editing assistant in Shorts and YouTube Create.",
           "source_ref": "CIQ transcript: Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Alphabet Inc., Q3 2026 Earnings Call, Oct 28, 2026.rtf",
+            "transcript_sha256": "ae41f0dd5f9aed3d368cced7bf775d2c9378ddd54d985c6a7ba2c622efe696b5",
+            "paragraph": 29,
+            "speaker": "Philipp Schindler",
+            "quote_sha256": "dc3cdca45305f3e6e3aa405b7b9628e0c948ba4158281478a7864beb3a10dbb1",
+            "value_sha256": "91273e60b79883b9ac3b6e0b4b49de0d064462c68b265dee817e856a5641e5f5"
+          }
         }
       ],
       "qa_flags": [
@@ -16246,6 +17653,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

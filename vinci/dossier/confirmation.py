@@ -17,6 +17,13 @@ It is THIS code's request on that layer: where the prompt changed since the page
 not the request the page's own draws used, and the record carries the request's sha256 so the two
 can be told apart.
 
+THE WORDS ARE READ BACK FROM THE STORE (RG-D19 PR 3; operator, 2026-11-11: "Read them back from
+the store (Recommended)"). A committed page no longer holds a filed transcript row's quote, context
+or stated value: they are in the operator's private store. Drawn on the page as it stands, the
+confirmation would read those rows' figures alone, which is less evidence than the build had. So
+`with_words` reads them back (`driver_evidence.rehydrate`) before the draws, and refuses when the
+store is not configured or a record is missing from it: the words are never guessed.
+
 ONE CONFIRMATION PER PAGE VERSION. Each is recorded (`record`) whether or not the verdict is then
 logged, keyed by ticker, the page's `assembled_at` AND the sha256 of what the synthesis receives
 (`inputs_sha256`: a layer refresh keeps the stamp and moves the layers — Codex round 1); a second
@@ -34,10 +41,12 @@ from __future__ import annotations
 import hashlib
 import json
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
+from vinci.dossier import driver_evidence
 from vinci.dossier.schemas import MechanicalLayer
 from vinci.dossier.verdict import GATE_RULE, DrawGate, MachineProposal, derive_proposal, draw_gate
 from vinci.graph.llm import LlmClient
@@ -121,6 +130,34 @@ def layer_as_synthesized(page: dict[str, Any]) -> MechanicalLayer:
         mech = mech.model_copy(update={
             "capital_structure": cs.model_copy(update={"covenant_term_rows": None})})
     return mech
+
+
+def with_words(mech: MechanicalLayer, ticker: str,
+               get: Callable[[str], driver_evidence.Record] | None = None) -> MechanicalLayer:
+    """The layer with each stripped transcript row's quote, context and stated value read back
+    from the operator's private store, as the build's synthesis received them (RG-D19 PR 3;
+    operator, 2026-11-11: "Read them back from the store (Recommended)").
+
+    A layer whose rows hold their words is returned as it is. Otherwise ``get`` defaults to the
+    read of ``$VINCI_EVIDENCE_SPOOL``. It REFUSES (``ConfirmationError``, before any draw) when
+    the store is not configured, when a record is missing from it, and when a row still holds no
+    words after the read: a confirmation is never drawn on fewer words than the build had."""
+    od = mech.operating_drivers
+    if od is None or not any(r.tier == "llm-fenced" and not r.verbatim for r in od.rows):
+        return mech
+    try:
+        read = driver_evidence.EvidenceSpool.from_env().get if get is None else get
+        rows = driver_evidence.rehydrate(od.rows, read)
+    except (driver_evidence.EvidenceError, OSError) as exc:
+        raise ConfirmationError(
+            f"{ticker}: the page's transcript rows carry no words, and they cannot be read back "
+            f"from the private store ({exc}); set ${driver_evidence.SPOOL_ENV} to the operator's "
+            "evidence folder. Nothing drawn, nothing recorded") from exc
+    if unread := [r.metric for r in rows if r.tier == "llm-fenced" and not r.verbatim]:
+        raise ConfirmationError(
+            f"{ticker}: {len(unread)} transcript row(s) hold no words and no locator to read them "
+            f"back by ({unread[0]!r}…). Nothing drawn, nothing recorded")
+    return mech.model_copy(update={"operating_drivers": od.model_copy(update={"rows": rows})})
 
 
 def inputs_sha256(page: dict[str, Any]) -> str:
@@ -233,7 +270,9 @@ def confirm(page: dict[str, Any], *, llm: LlmClient, ciq_root: Path, record: Pat
                                 "transcripts its build read (a backfilled record lists none), so "
                                 "today's files are not known to be its inputs — re-assemble the "
                                 "page, which records them; nothing drawn, nothing recorded")
-    mech = layer_as_synthesized(page)
+    # the reuse key above reads the committed layer, whose stripped rows carry their words' hashes
+    # (each locator's quote and value sha256), so a recorded confirmation is found without the store
+    mech = with_words(layer_as_synthesized(page), ticker)
     rec = _Recording(llm)
     synth, flags, _log = synthesize(mech, llm=rec, ticker=ticker, name=str(page["name"]),
                                     transcript=transcript, sleeve=sleeve, draws=draws)

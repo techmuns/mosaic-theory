@@ -1962,8 +1962,10 @@ def _pe_reconciliation(
     # is anomalous vs the recent median 7.00" — 2.53 is CORRECT, and the MEDIAN is the contaminated
     # figure, drawn across a 10:1 split the filer restated only two years of. A reader told to
     # "verify against normalized/forward EPS" is being sent after an earnings anomaly that does not
-    # exist. Silent here rather than re-worded: the percentile beside it already refuses WITH the
-    # split as its stated reason, and a second differently-worded split note is a claim that drifts.
+    # exist. Silent here rather than re-worded: the percentile beside it states the split — refused
+    # with it as the reason, or since 2026-11-11 built on EPS put on the current basis by the
+    # filer's factor, its note naming it — and a second differently-worded note is a claim that
+    # drifts.
     if share_basis_change(eps) is not None:
         return None
     latest, prior = eps[-1].value, [p.value for p in eps[:-1]][-4:]

@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -188,3 +188,6 @@ hand.
   VOID row (any `event` row), so nothing breaks; they just do not take the decision off the page.
   Because the void is appended only after V3 merges, no committed void ever meets that frontend. V3
   takes GOOGL off the live book and the card, and shows the voided call once in an audit tier.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `a3fc8e1b` (#984) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

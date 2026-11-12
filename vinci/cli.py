@@ -981,6 +981,60 @@ def _cmd_peerset_backfill(args: argparse.Namespace) -> int:
     return rc
 
 
+def _cmd_driver_facts_pass(args: argparse.Namespace) -> int:
+    """(RG-D19 PR 3) The $0 page pass (`vinci.dossier.driver_pass`): each committed page's
+    transcript driver rows become their fact and their locator, their words go to the private
+    spool FIRST, and the page is written without them. No model call, no network. Exit 1 when a
+    page is refused."""
+    from vinci.dossier import driver_evidence, driver_pass
+    from vinci.dossier.refresh import _rerender_only, mirror_to_frontend
+
+    cfg = get_config()
+    ciq_root = Path(args.ciq_root) if args.ciq_root else cfg.data_dir / "manual" / "ciq"
+    spool = None if args.dry_run else driver_evidence.EvidenceSpool.from_env()
+    outcomes = []
+    # explicit page files (the committed test fixtures that carry transcript words): the same pass,
+    # but no `dossier.md` is rendered for them and nothing is mirrored
+    for raw_path in (args.pages or "").split(","):
+        if not raw_path.strip():
+            continue
+        jp = Path(raw_path.strip())
+        o = driver_pass.run(jp, ciq_root, spool=spool, dry_run=args.dry_run, record=False)
+        outcomes.append(o)
+        print(f"{jp}: {o.status.upper()} — {o.detail}")
+    if args.pages and not args.tickers:
+        tickers: list[str] = []
+    elif args.tickers:
+        tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    else:
+        tickers = sorted(p.name for p in (cfg.data_dir / "dossiers").iterdir()
+                         if (p / "dossier.json").is_file())
+    # a refusal raised mid-run (a spool key holding other bytes) must not leave the pages already
+    # written with a stale frontend mirror: the mirror runs on the way out either way
+    try:
+        for t in tickers:
+            jp = cfg.data_dir / "dossiers" / t / "dossier.json"
+            if not jp.exists():
+                print(f"{t}: no committed dossier — skipped")
+                continue
+            o = driver_pass.run(jp, ciq_root, spool=spool, dry_run=args.dry_run)
+            if o.status == "written":
+                _rerender_only(jp)
+                o.mirrored = True
+            outcomes.append(o)
+            print(f"{o.ticker}: {o.status.upper()} — {o.detail}")
+    finally:
+        if any(o.mirrored for o in outcomes):
+            mirror_to_frontend()
+    by: dict[str, int] = {}
+    for o in outcomes:
+        by[o.status] = by.get(o.status, 0) + 1
+    print(f"\n=== driver-facts-pass: {len(outcomes)} page(s) · "
+          + " · ".join(f"{k} {v}" for k, v in sorted(by.items()))
+          + (" · DRY-RUN (nothing written, nothing spooled)" if args.dry_run else "") + " ===")
+    return 1 if by.get("refused") else 0
+
+
 def _cmd_ciq_reread(args: argparse.Namespace) -> int:
     """Re-read ONE CIQ field on committed pages from the export on disk ($0: no assembly, no LLM,
     no network), refusing any page whose export cannot be shown to be its own
@@ -2812,6 +2866,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     which SUPERSEDES the ledger row's own field; a leg with no assignment fails LOUD rather than
     being measured against a yardstick nobody chose."""
     from vinci import monitor as mon
+    from vinci.netcache import HttpError
 
     cfg = get_config()
     root = Path.cwd()
@@ -2838,22 +2893,22 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     if not ledger_path.exists():
         print(f"no committed ledger at {ledger_path}")
         return 1
-    ledger_all = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
+    raw_ledger = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
     # A DECISION SEALED ON A STALE CLOSE IS MARKED FROM ITS CORRECTION (RF-D7): every reader below
-    # sees the corrected entry; the day's notes name the sealed one beside it
-    # A VOID IS IN EFFECT FROM ITS RULING DATE (operator, 2026-11-11): a day before the ruling keeps
-    # the decision in its book, so a past day re-cut reproduces the day as it was committed
-    ledger_all, correction_notes = mon.apply_corrections(ledger_all, as_of=ref)
-    if not ledger_all:
+    # sees the corrected entry; the day's notes name the sealed one beside it. Read here with NO
+    # void in effect (``date.min``): the checks made before the session is known (the assignments)
+    # cover every decision any day could hold. The day's own read is below, once its session is.
+    # Named apart from the day's read below, so no reader between the two can take this one.
+    any_day_ledger, _notes = mon.apply_corrections(raw_ledger, as_of=date.min)
+    if not any_day_ledger:
         print("decision ledger is empty — nothing to monitor")
         return 0
     # POSITIONS ONLY. A close row carries the original verdict for provenance, so feeding the raw
     # ledger to the spread would count a closed name a SECOND time on its own original side.
     # `pair_closes` refuses loud on an unpairable or duplicated close, so a malformed realized book
     # stops the run rather than rendering wrong.
-    rows_raw = mon.decision_rows(ledger_all)
     assignments = mon.read_assignments(root)
-    missing = sorted({r["ticker"] for r in rows_raw} - set(assignments))
+    missing = sorted({r["ticker"] for r in mon.decision_rows(any_day_ledger)} - set(assignments))
     if missing:
         print(f"no benchmark assignment for {missing} — refusing to measure against an "
               f"unassigned yardstick (write data/monitor/benchmark_assignments.json first)")
@@ -2884,6 +2939,13 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         return mon.session_on_or_before(eod.grouped_daily, day, cache)
 
     now_date, now_bars = bars_on_or_before(ref)
+    # A VOID IS IN EFFECT FROM ITS RULING DATE, ON THE SESSION THE DAY IS FILED UNDER — as a close
+    # is (`closed_decision_ids(as_of=now_date)`), never on the run's ``--ref``. Keyed on ``ref``,
+    # the routine run of 2026-11-11 filed day 2026-11-10 without GOOGL, voided 2026-11-11, while a
+    # re-cut of 2026-11-10 keeps it: the committed day would not reproduce (operator, 2026-11-11:
+    # "From 2026-11-11 on"). The day's book, notes and every count below read this.
+    ledger_all, correction_notes = mon.apply_corrections(raw_ledger, as_of=now_date)
+    rows_raw = mon.decision_rows(ledger_all)
     # THE BOOK'S SPAN: every decision entered by the snapshot date, the closed ones included (their
     # realized view reads it too). Each source below reads it once per symbol.
     span_start = min((date.fromisoformat(r["entry_price_as_of"])
@@ -3055,9 +3117,23 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         cik = cik_by_ticker.get(name)
         filings: list[tuple[str, date, str]] = []
         if cik:
-            for f in edgar.recent_filings(cik, forms=("8-K", "10-Q", "10-K"),
-                                          since=known_through - timedelta(days=760)):
-                filings.append((f.form, f.filing_date, f.accession))
+            since = known_through - timedelta(days=760)
+            try:
+                for f in edgar.recent_filings(cik, forms=("8-K", "10-Q", "10-K"), since=since):
+                    filings.append((f.form, f.filing_date, f.accession))
+            except (HttpError, ValueError) as exc:  # ValueError: a 200 body that is not JSON
+                # ONE NAME'S UNREADABLE WINDOW MUST NOT TAKE THE BOOK DOWN (STATE §5.0 row 42 (1)).
+                # Since #878 a window reaching past the recent page reads each older page it
+                # overlaps and RAISES naming the one it cannot read; this was the one windowed
+                # caller with no handler, so one such name aborted the whole day after every price
+                # had been fetched. The row is not written — an empty list would read "no new
+                # filing", a fabricated no — and the day says so by name, as an unreadable record
+                # date does below. An SEC REFUSAL (`SecRateLimitedError`, not an HttpError) still
+                # stops the run: it is SEC blocking this process, not one name's page.
+                notes.append(f"FILINGS {name}: its EDGAR filings window since {since} could not "
+                             f"be read ({type(exc).__name__}: {exc}) · its freshness row is NOT "
+                             f"written")
+                continue
         v = record.get("verdict") or {}
         note = (f"WATCH (not a position) — avoid-priced: {v.get('avoid_priced_note')}"
                 if v.get("avoid_priced") else None)
@@ -3806,6 +3882,22 @@ def build_parser() -> argparse.ArgumentParser:
                            "(default: data/manual/ciq)")
     p_rr.add_argument("--dry-run", action="store_true", dest="dry_run")
     p_rr.set_defaults(func=_cmd_ciq_reread)
+
+    p_dfp = sub.add_parser(
+        "driver-facts-pass",
+        help="(RG-D19) take each committed page's transcript driver text off the page: the rows "
+        "keep their fact and locator, and the words go to $VINCI_EVIDENCE_SPOOL first ($0 — no "
+        "LLM, no network; reads the CIQ transcripts on disk, read only)")
+    p_dfp.add_argument("--tickers", help="comma-separated tickers (default: every committed page, "
+                       "unless --pages is given)")
+    p_dfp.add_argument("--pages", help="comma-separated dossier.json files outside data/dossiers "
+                       "(the committed test fixtures that carry transcript words)")
+    p_dfp.add_argument("--ciq-root", dest="ciq_root",
+                       help="the folder holding one CIQ folder per ticker, read in place "
+                            "(default: data/manual/ciq)")
+    p_dfp.add_argument("--dry-run", action="store_true", dest="dry_run",
+                       help="report what each page would become; write and spool nothing")
+    p_dfp.set_defaults(func=_cmd_driver_facts_pass)
 
     p_cr = sub.add_parser(
         "caveat-reword",

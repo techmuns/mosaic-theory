@@ -1360,8 +1360,11 @@ def _operating_drivers_digest(od: OperatingDriversExtract) -> str:
     """(PR-B §5) A salient term → value → source_ref digest of the operating-driver facts for the
     synthesis phase — the causal MECHANISM the atomized bull/bear otherwise misses. Already inside
     the facts JSON, but surfaced here so the LLM leans on it and copies the exact source_ref. One
-    literal example:
-      [leading_indicator] sales volume: approximately 274 megawatt hours → CIQ transcript: …Q1 2026…
+    literal example (each row's period as its source states it, an anchored row's signed
+    structured value after its verbatim one — prompt-fix 2):
+      [leading_indicator] sales volume (first quarter): approximately 274 megawatt hours → CIQ …
+      [attribution] general and administrative expenses (period not stated): $0.8 million, or
+      1.9% [structured: -1.9%] → 10-Q 0001702744-26-000023
     """
     out = ["=== OPERATING DRIVERS — validated, cited facts. GROUND any operating bull/bear point "
            "(volume · price · mix · capacity · client · guidance) in the relevant driver and copy "
@@ -1372,7 +1375,11 @@ def _operating_drivers_digest(od: OperatingDriversExtract) -> str:
     for r in od.rows:
         v = prompt_driver_value(r)
         val = v if len(v) <= 130 else v[:127].rstrip() + "…"
-        out.append(f"[{r.kind.value}] {r.metric}: {val} → {r.source_ref}")
+        # (prompt-fix 2) the PERIOD the row's source states, and an anchored row's STRUCTURED
+        # value beside its verbatim one: "general and administrative expenses: $0.8 million, or
+        # 1.9%" is a FALL (`value_num` -1.9), and the verbatim value carries no sign
+        out.append(f"[{r.kind.value}] {r.metric} ({r.period or 'period not stated'}): {val}"
+                   f"{_driver_structured(r)} → {r.source_ref}")
         # SURFACED HERE, not left to the facts dump. BRBR's quote — "70% of RTD shake category
         # volumes were sold on price promotion" — is exact and correctly cited, and the sentence
         # after it says the figure is "in line with historical norms … DOWN sequentially from the
@@ -1386,6 +1393,24 @@ def _operating_drivers_digest(od: OperatingDriversExtract) -> str:
                    else r.following_context[:397].rstrip() + "…")
             out.append(f"    …continues: {ctx}")
     return "\n".join(out)
+
+
+def _driver_structured(r: OperatingDriver) -> str:
+    """An anchored row's structured value in its unit — " [structured: -1.9%]" — or "" where the
+    row carries none (a transcript row's checked figures reach the prompt through its value,
+    `prompt_driver_value`). Only a PERCENT row is a signed change (a `filing_sections`
+    attribution row, a `release_parse` pricing row) and prints its sign; a KPI row is a LEVEL
+    ("produced 5,500 vehicles"), and a forced "+" would show a count as a rise (review round 1)."""
+    if r.value_num is None:
+        return ""
+    if r.unit == "%":
+        # a zero is "0%" with no sign, -0.0 included ("decreased …, or 0.0%" is stored -0.0):
+        # "+0%" and "-0%" are the output this fix removes (review round 2)
+        signed = "0" if r.value_num == 0 else f"{r.value_num:+.15g}"
+        return f" [structured: {signed}%]"
+    unit = r.unit or ""
+    unit = unit if unit in ("", "x") else f" {unit}"
+    return f" [structured: {r.value_num:.15g}{unit}]"
 
 
 def newest_guidance_date(ps: PrimarySource) -> Any:
@@ -1526,6 +1551,11 @@ SYNTHESIS_TOOL: dict[str, Any] = tool_for(DEFAULT_SLEEVE)
 _SYSTEM: str = system_for(DEFAULT_SLEEVE)
 
 
+def _range(low: float | None, high: float | None) -> str:
+    """A stated range, or its one value where the source states one ("None" never printed)."""
+    return f"{low}" if high is None else f"{low}–{high}"
+
+
 def _primary_source_digest(ps: PrimarySource) -> str:
     """(RC-1 C) A term → value → source_ref digest of the primary-source cross-checks for the LLM
     synthesis phase — VERBATIMS EXCLUDED (provenance is on-demand, never LLM input). Both
@@ -1633,19 +1663,26 @@ def _primary_source_digest(ps: PrimarySource) -> str:
             if g.qualitative:
                 v = "QUALITATIVE (no number stated)"
             elif getattr(g, "basis", "level") == "change":
-                v = f"CHANGE of {g.low}–{g.high} {g.unit} vs the prior period"
+                v = f"CHANGE of {_range(g.low, g.high)} {g.unit} vs the prior period"
             else:
-                v = f"{g.low}–{g.high}"
+                # ITS UNIT, from the structured field (prompt-fix 2): "10.97–11.09" was an EPS
+                # guide in $/share and "1206.0–1216.0" one in $M, printed alike
+                v = f"{_range(g.low, g.high)} {g.unit}"
             out.append(f"guidance ({g.metric} {g.period}): {v}{_v} → {g.source_ref}")
         # THE CONTENT WINDOW, unchanged at 4. A release pulled in only for its guide history does
         # not also widen the LTM-shaped blocks — that would be a bigger digest by accident rather
         # than the targeted one this fix intends.
         for rv in (r.reconciliation if r in recent else []):
-            out.append(f"reconciliation ({rv.metric} {rv.period}): {rv.value} → {rv.source_ref}")
+            # the CHANGE the release states beside the level, when it states one (prompt-fix 2:
+            # a level's direction is read from the structure, never left to the reader)
+            moved = f" ({rv.change})" if rv.change else ""
+            out.append(f"reconciliation ({rv.metric} {rv.period}): {rv.value}{moved} → "
+                       f"{rv.source_ref}")
         for oo in (r.one_offs if r in recent else []):
             out.append(f"one-off charge: ${oo.amount}M {oo.description[:44]} → {oo.source_ref}")
         for ei in (r.event_impacts if r in recent else []):
-            rng = f"{ei.low}–{ei.high}" if ei.low is not None else "unquantified"
+            # in $M, as the schema states (`EventImpact.low`) — printed, not left implied
+            rng = f"{_range(ei.low, ei.high)} $M" if ei.low is not None else "unquantified"
             out.append(f"event impact: {ei.effect} {ei.metric} {rng} ({ei.period}) "
                        f"→ {ei.source_ref}")
     return "\n".join(out)
@@ -1741,14 +1778,26 @@ NOT_SENT: dict[str, Any] = {"primary_source": True,
                                 "locator": True}}}}
 
 
-def driver_value_as_read(value: str, status: str | None, reason: str | None) -> str:
+#: (RG-D19 PR 3) What a COMMITTED transcript row's value reads as: its words are in the operator's
+#: private store, and nothing on the page stands in for them
+STRIPPED_VALUE = "not on this page — its words are filed in the operator's private store"
+
+
+def driver_value_as_read(value: str | None, status: str | None, reason: str | None) -> str:
     """A driver row's value as every READER is handed it — the synthesis and the scenario
     template alike. A transcript row whose value code could not verify against its quote
     (`driver_extract.check_fact`) is not handed over as a value — "up 7%" read off "down 7%" was,
-    under the header "validated, cited facts" (RG-D8). Every other row's value is unchanged."""
+    under the header "validated, cited facts" (RG-D8). Every other row's value is unchanged.
+
+    (RG-D19 PR 3) A COMMITTED transcript row carries no `value`: its words are in the private
+    store, and it reads as `STRIPPED_VALUE`. It is NEVER rebuilt from its checked figures (Codex,
+    round 1 of #1006): the figures are not the claim — TGT's "3/4" of sales read "approximately 3;
+    4", and a qualitative row lost its fact to "stated, with no figure". A reader that needs the
+    words reads them back from the store (`confirmation.with_words`); the figures stay in
+    ``dossier.json``."""
     if status == "unknown":
         return f"UNKNOWN — not verified against its quote: {reason}"
-    return value
+    return STRIPPED_VALUE if value is None else value
 
 
 def prompt_driver_value(r: OperatingDriver) -> str:

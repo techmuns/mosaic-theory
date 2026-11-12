@@ -1,6 +1,6 @@
 # Dossier — Simply Good Foods Co (Nasdaq: SMPL)
 
-_November 4, 2026 · extraction 2026-11-04.drawdown-window-at-price-date · layers refreshed to 2026-11-10.dated-headroom_
+_November 4, 2026 · extraction 2026-11-04.drawdown-window-at-price-date · layers refreshed to 2026-11-10.driver-text-filed_
 
 # Brief — first cut
 
@@ -698,6 +698,7 @@ _Source §: 8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm · amended by 0001
   - 2026-11-05 · mechanical.consensus_context — refresh at 2026-11-05.consensus-ref-names-its-sheet
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
 - **Price store:** `busy-goldstine-88c81c` · reaching 2026-11-03
 - **Panel age:** oldest panel 1d old — 2026-11-03 (valuation.implied_expectations.tev_as_of), against a 2026-11-04 build
 - **Consensus age:** consensus 6d old (2026-10-29, valuation.implied_expectations.multiples_as_of) — within the ceiling

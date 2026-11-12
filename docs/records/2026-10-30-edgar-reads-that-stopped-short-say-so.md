@@ -1,6 +1,6 @@
 ---
 id: 2026-10-30-cover-dated-shares
-status: open
+status: shipped
 date: 2026-10-30
 prs: []
 supersedes:
@@ -237,3 +237,6 @@ rank's dilution demote (`rank/structural._shares_for`), the universe's cross-fil
 (`client.shares_outstanding_with_provenance`) and the theme desk's per-share basis
 (`theme_intelligence/market.py`). AAL, JJSF, REPX and VRRM are candidates in the 2026-10-16 screen
 run, all FAIL, so no screen or rank decision moves today.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `8e6b12b1` (#871) on 2026-10-30. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

@@ -10074,517 +10074,1168 @@
           "kind": "leading_indicator",
           "metric": "view hours growth (first half)",
           "period": "first half of 2026",
-          "value": "grew 2% in the first half of 2026",
           "value_num": null,
           "unit": null,
-          "verbatim": "And then on quantity, view hours grew 2% in the first half of 2026.",
-          "following_context": "That's an incremental 1.5 billion hours relative to the same period last year. It's a slight acceleration compared to 1.5% growth in 2025. And just to be very clear, like all those other dimensions, we remain focused on continuing to grow that number.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 2026.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 24,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "c4c09850bea11bd976a50d0afeaef6d5d0356a3411d10e441fee8206faaaa01e",
+            "value_sha256": "9a3063cecdceb3159b165e7f4745ce20d13aed43238403a85c438ce1440f730c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "incremental view hours",
           "period": null,
-          "value": "an incremental 1.5 billion hours relative to the same period last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "That's an incremental 1.5 billion hours relative to the same period last year.",
-          "following_context": "It's a slight acceleration compared to 1.5% growth in 2025. And just to be very clear, like all those other dimensions, we remain focused on continuing to grow that number.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.5,
+              "currency": null,
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 24,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "2766aa682cd46f101d2ad355779915fa1d38adfa79d92bb7ed50b9841203c6a0",
+            "value_sha256": "97c4fc3bcb441db417edc4b79d72c7f00a2d639eea303532dafa49eab5ed366d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "view hours growth (prior year)",
           "period": "2025",
-          "value": "1.5% growth in 2025",
           "value_num": null,
           "unit": null,
-          "verbatim": "It's a slight acceleration compared to 1.5% growth in 2025.",
-          "following_context": "And just to be very clear, like all those other dimensions, we remain focused on continuing to grow that number.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its quote does not name the metric 'view hours growth (prior year)'",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 24,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "d2ba605dcba27f0410c8d6248f50c8f1a0b2374921e7dc403ae5d51f87c37d0a",
+            "value_sha256": "d902b288969ab2a6a392eaed9e89f57011c45735924d11be630bfc4f34863ce7"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "penetration of addressable households",
           "period": null,
-          "value": "under 45% penetrated into addressable households",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're under 45% penetrated into addressable households around the world.",
-          "following_context": "It's roughly 800 million addressable households. We're capturing, we think, just 7% of addressable revenue market. It's about $670 billion of addressable revenue in the countries and categories in which we operate today. And we estimate that we're only about 5% of TV view share globally. So we're delivering on our 2026 plan, and we believe we've got lots and lots of runway for solid growth ahead of us.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 45.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_most"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 17,
+            "speaker": "Spencer Adam Neumann",
+            "quote_sha256": "3ba98db3838a6bbfc40c63d6c8ad5ac537cd4bc4c7fe486a87d8c544ceb9b42d",
+            "value_sha256": "e3b1bcaf4e2fa1954d54e40a3f039c75ec3d0815bad47db3992e170e461b29f8"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "addressable households",
           "period": null,
-          "value": "roughly 800 million addressable households",
           "value_num": null,
           "unit": null,
-          "verbatim": "It's roughly 800 million addressable households.",
-          "following_context": "We're capturing, we think, just 7% of addressable revenue market. It's about $670 billion of addressable revenue in the countries and categories in which we operate today. And we estimate that we're only about 5% of TV view share globally. So we're delivering on our 2026 plan, and we believe we've got lots and lots of runway for solid growth ahead of us.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 800.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 17,
+            "speaker": "Spencer Adam Neumann",
+            "quote_sha256": "c712eed1e423597826c3ef5ea0ff04f3ab1c2eef91dcbade8733fe8a18458dc8",
+            "value_sha256": "b14bf492a5386e42d24dc99462689ef2d01900957e76e95ac4f95ee9361d1d21"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "addressable revenue market share",
           "period": null,
-          "value": "just 7% of addressable revenue market",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're capturing, we think, just 7% of addressable revenue market.",
-          "following_context": "It's about $670 billion of addressable revenue in the countries and categories in which we operate today. And we estimate that we're only about 5% of TV view share globally. So we're delivering on our 2026 plan, and we believe we've got lots and lots of runway for solid growth ahead of us.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 7.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 17,
+            "speaker": "Spencer Adam Neumann",
+            "quote_sha256": "8119a932fcd14fb90ccfc431de89f96b333a64deea9bb6edbd3aef0972fe7dbb",
+            "value_sha256": "1c8ab702f668a48a78c1cf459ef025ff56c55752324a3eda36042715c2749e7c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "addressable revenue market size",
           "period": null,
-          "value": "about $670 billion of addressable revenue",
           "value_num": null,
           "unit": null,
-          "verbatim": "It's about $670 billion of addressable revenue in the countries and categories in which we operate today.",
-          "following_context": "And we estimate that we're only about 5% of TV view share globally. So we're delivering on our 2026 plan, and we believe we've got lots and lots of runway for solid growth ahead of us.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 670.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 17,
+            "speaker": "Spencer Adam Neumann",
+            "quote_sha256": "e66113cbd060bd24d278db5c8e6061d7d7f0b85732174263b03d99f5acba3c69",
+            "value_sha256": "34185474281298313c14a9e442353fff68032602288c28b8c334a5dc1e84c27d"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "TV view share globally",
           "period": null,
-          "value": "only about 5% of TV view share globally",
           "value_num": null,
           "unit": null,
-          "verbatim": "And we estimate that we're only about 5% of TV view share globally.",
-          "following_context": "So we're delivering on our 2026 plan, and we believe we've got lots and lots of runway for solid growth ahead of us.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 17,
+            "speaker": "Spencer Adam Neumann",
+            "quote_sha256": "ed6e4ea991875ec36bd7b21801520d0573e1c9b5cb923bcda70191a786fad0d6",
+            "value_sha256": "7030987e8c641b36183509f440bf113df4f629319b301eb67f4d01718549de6e"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "live as share of content budget",
           "period": "this year",
-          "value": "5% of our content budget this year",
           "value_num": null,
           "unit": null,
-          "verbatim": "So live, we expect will be 5% of our content budget this year, but we think that will only be 1% of view hours.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 21,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "66f5b1db6f87c6884ae230fd31269fa7d59d6e492aac104d4d2e1396b6698dcf",
+            "value_sha256": "fb9ec6e60d4216119e208d152e22bba58610d13cd3f2f90f66efe586183ca36e"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "live as share of view hours",
           "period": null,
-          "value": "1% of view hours",
           "value_num": null,
           "unit": null,
-          "verbatim": "So live, we expect will be 5% of our content budget this year, but we think that will only be 1% of view hours.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 21,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "66f5b1db6f87c6884ae230fd31269fa7d59d6e492aac104d4d2e1396b6698dcf",
+            "value_sha256": "7808adfd2e57ac41523a5071bdc9f190f7040d531ffbfaace85814dd09aa6356"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "live events share of top new member sign-up days",
           "period": "past 5 years",
-          "value": "6 out of top 10 new member sign-up days over the past 5 years have come from live events",
           "value_num": null,
           "unit": null,
-          "verbatim": "Having said that, 6 out of top 10 new member sign-up days over the past 5 years have come from live events.",
-          "following_context": "And if you compare that to another content category, take animation series, kids family TV, it's also about 5% of our content spend, so the same amount of spend, but it's going to drive, we expect 8% of view hours. So same spend and 8x the Raw view hours. You can see the differences there, even though because as indicated by the amount that we're investing in both those categories being the same, we think they're doing the same value for the business.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 22,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "fe1e9c385877e7aea6dfc4bc324a4f8e8e99ba9f856e6f300a52ebfacf4738cb",
+            "value_sha256": "19bd741f1a543f00121ecafb8ee0319dd960c0a9890c1b07fc6706431dfd9ac2"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "animation/kids family TV share of content spend",
           "period": null,
-          "value": "about 5% of our content spend",
           "value_num": null,
           "unit": null,
-          "verbatim": "take animation series, kids family TV, it's also about 5% of our content spend, so the same amount of spend, but it's going to drive, we expect 8% of view hours.",
-          "following_context": "So same spend and 8x the Raw view hours. You can see the differences there, even though because as indicated by the amount that we're investing in both those categories being the same, we think they're doing the same value for the business.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 22,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "67ad12856b1fcdaff192e74034148f2a41a4dc2d771351f6f63b4ca4e85b478d",
+            "value_sha256": "8e5d639e463c11ec14de942cc4739e3fe005d9a6288bfbb62dfc3b21c166e7ab"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "animation/kids family TV share of view hours",
           "period": null,
-          "value": "8% of view hours",
           "value_num": null,
           "unit": null,
-          "verbatim": "take animation series, kids family TV, it's also about 5% of our content spend, so the same amount of spend, but it's going to drive, we expect 8% of view hours.",
-          "following_context": "So same spend and 8x the Raw view hours. You can see the differences there, even though because as indicated by the amount that we're investing in both those categories being the same, we think they're doing the same value for the business.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 22,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "67ad12856b1fcdaff192e74034148f2a41a4dc2d771351f6f63b4ca4e85b478d",
+            "value_sha256": "6a6333fb1fb9f75d1f170b2386f7b567811def798b76832a54e3d3d1ba0bad5f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "content expense growth",
           "period": "this year",
-          "value": "up about 10% this year",
           "value_num": null,
           "unit": null,
-          "verbatim": "So we're forecasting content expense up about 10% this year.",
-          "following_context": "It's a little higher than the 8% we averaged over the last 5 years and below the 14% that we averaged over the past decade.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 34,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "58d132fe0f8c4414fa183b9d93585fc5ed76b359faea7a75bfc83f1a586ee3fe",
+            "value_sha256": "27ae794f34bc1d326d49bf8cd9a1cace56d7358ebc640541feb2b0a457c78319"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "content expense growth (5-year average)",
           "period": "last 5 years",
-          "value": "8% we averaged over the last 5 years",
           "value_num": null,
           "unit": null,
-          "verbatim": "It's a little higher than the 8% we averaged over the last 5 years and below the 14% that we averaged over the past decade.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 34,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "27f50e66d87c1f3f173406de852dd90078f9378cc64b7eac34ce54d7f0bbc846",
+            "value_sha256": "009f86a9c69e62445cbfbcc3231978cf3c7cd3a2a5a053b808eac48c4f4ca258"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "content expense growth (decade average)",
           "period": "past decade",
-          "value": "14% that we averaged over the past decade",
           "value_num": null,
           "unit": null,
-          "verbatim": "It's a little higher than the 8% we averaged over the last 5 years and below the 14% that we averaged over the past decade.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 34,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "27f50e66d87c1f3f173406de852dd90078f9378cc64b7eac34ce54d7f0bbc846",
+            "value_sha256": "bc151b2affeaef89b7bf51822d1912d0d5e178308a94fce30fbb488059afa1db"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "The Polygamist views",
           "period": "5 weeks",
-          "value": "24 million views in 5 weeks",
           "value_num": null,
           "unit": null,
-          "verbatim": "that show has already had 24 million views in 5 weeks, and it's still charting.",
-          "following_context": "When we look across the entire portfolio, across all the regions, all the content categories, our Season 2 falloff is actually slightly improved this year relative to last year. Now of course, you can pick any 5 data points to tell any story you want. But I'm going to repeat this. Our Season 2 falloff is actually slightly improved this year relative to last year. So no changes in release strategies.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 46,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "eb12b93e645af9ea95f5f359ff8df95296b57ce1e97f5d1363d8f69500819d84",
+            "value_sha256": "8f6696b97e89515730d56593a596b026f9410a13ead237a6998f7dcd2461c333"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "cloud games monthly active players growth",
           "period": null,
-          "value": "monthly active players for cloud games have increased 11x",
           "value_num": null,
           "unit": null,
-          "verbatim": "Another big positive sign is that since last October, so 8 months ago, when we really sort of scaled up this cloud initiative, monthly active players for cloud games have increased 11x and adoption is significantly ahead of that curve that we had for mobile games with even higher retention value.",
-          "following_context": "So we're definitely excited about that and focused on scaling up cloud games.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 11.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 94,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "f2951e65d5978e026d1bef34f50d2ebffcdc9d75f60d54ba97de9ff98ba3714d",
+            "value_sha256": "fc5e4c8d8532e86887a7930e263be9dab851f6b5336f4529e3a1ef1b26481f1e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Netflix Playground daily players growth",
           "period": null,
-          "value": "3x growth in daily players since that launch",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've seen 3x growth in daily players since that launch.",
-          "following_context": "That's driven more engagement in kids mobile games, which is up 600% year-over-year. So that's super exciting to see as well.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "x",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 95,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "06595399af012b8b09502b6dc8c406553c62f790968fab1d41fce5e77bf2f37a",
+            "value_sha256": "bef7beee6fd8220e57ff609c1e7b94a59ea0745ff164c02eb4a444be2b4f3cda"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "kids mobile games engagement",
           "period": "year-over-year",
-          "value": "up 600% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "That's driven more engagement in kids mobile games, which is up 600% year-over-year.",
-          "following_context": "So that's super exciting to see as well.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 600.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 95,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "8027f7209342ec6dca7a41824197e1a84aac1d72e3047b476def2d0e73781db4",
+            "value_sha256": "be9712eaa91dd09b4616955f57ead55320ac3d539517faa3212841176af314a9"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "video games market opportunity",
           "period": null,
-          "value": "roughly $150 billion in consumer spend ex China, ex Russia",
           "value_num": null,
           "unit": null,
-          "verbatim": "This is roughly $150 billion in consumer spend ex China, ex Russia, doesn't include ads revenue.",
-          "following_context": "We've been building some solid foundations and now we're seeing exciting positive signals that help inform and give us increased conviction in our future growth and the nature of that growth here. So you mentioned the cloud-based strategy, those cloud-based TV games, we really see it working. FIFA and Unhinged became our 2 most successful cloud game debuts, really solid numbers that put it in the top tier of game performance for us.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "unknown",
+          "unknown_reason": "its quote does not name the metric 'video games market opportunity'",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 93,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "2a5d2ec3ea455f0e1d9a71035a64a1998355b3c1cbd2f10b0044916e140b95de",
+            "value_sha256": "9901283bb2b0312c1d72e878903a69be49d5117197a386e4c7f4d98540901a97"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "ads plan price (US)",
           "period": null,
-          "value": "$8.99 in the United States",
           "value_num": null,
           "unit": null,
-          "verbatim": "And our ads plan at $8.99 in the United States, we think, is an amazing entry point.",
-          "following_context": "It's an incredible value, highly accessible. If you think about all the entertainment you get for that, it's a pretty good deal.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.99,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 84,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "585e678203ee27c262c359162a9c0aefa03ffba20ed9f0133eada0519e477da2",
+            "value_sha256": "dcbeb0d75f4c3e209064c804c1f73f9efb0161c8e504f9cff3dc7e9d49172393"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "first half price changes",
           "period": null,
-          "value": "these are markets like U.S., Mexico, Spain. They've gone well",
           "value_num": null,
           "unit": null,
-          "verbatim": "Our first half price changes, these are markets like U.S., Mexico, Spain. They've gone well.",
-          "following_context": "The results are consistent with prior price changes. They're consistent with our expectations. So we aren't seeing any real changes in that performance. And then with regard to timing and magnitude, we really go back to that top-level macro question we've got of have we delivered sufficient value to our members? We're constantly looking at the signals that help us understand that question, of course, plan selection, plan movement. We've got retention, which is industry-leading.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 82,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "def81d7b1a245900dd0b28d485ba9213231df13dd33551c15a3c537c65ffc18c",
+            "value_sha256": "0d6545ca0021259e64e5197b4c83038d910f745a8f9bb631e53f609874239fa4"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "subscription households",
           "period": null,
-          "value": "approximately 330 million subscription households",
           "value_num": null,
           "unit": null,
-          "verbatim": "Given Netflix's global footprint of approximately 330 million subscription households, how do you think about leveraging that scale as a strategic asset?",
-          "following_context": "How does the currently consolidating media landscape impact these decisions?",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 330.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 98,
+            "speaker": "Spencer Wang",
+            "quote_sha256": "9e143a467d6c292ad029c888f3540b6811040990f0f3b30cd9799a3a426c5909",
+            "value_sha256": "d25c6028e70a427a2269dddf7e1ddeafccd263554b7de00d71c8208ab4401a5f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "gen AI usage in titles",
           "period": null,
-          "value": "used in roughly 300 of our titles",
           "value_num": null,
           "unit": null,
-          "verbatim": "So gen AI workflows now have been used in roughly 300 of our titles with the largest concentration to date is on post-production.",
-          "following_context": "But we're leveraging gen AI for really complicated shots and sequences. We called this out in the letter, but things like enhancing crowds or historical battle scenes, those kind of things.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 300.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 108,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "70c9a958cece8a3e772b63657bc3a5c0730aa7447a6097fde9bdfc53b4799e01",
+            "value_sha256": "7dcc0759e5ae4a31855ace8cd387d703c9d036455b6210b5263cfa9b958a9ec0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "American Experiment AI-enhanced footage",
           "period": null,
-          "value": "17 minutes of AI-enhanced footage",
           "value_num": null,
           "unit": null,
-          "verbatim": "So our documentary series we just released called American Experiment. That series features 17 minutes of AI-enhanced footage.",
-          "following_context": "It enabled us to expand the scope of the series in ways that just wouldn't have been feasible before. Those 17 minutes, Sean, they were produced twice as fast and at half the cost of previous options.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 17.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 110,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "a213fb97e185428766b2020276d8e7a8763519078f7abafdd848bea1606a30d2",
+            "value_sha256": "a0dee9bdf0cf7328c22510cb94177cc059dc300756add9cacda389e1a6870a44"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "AI production cost/speed (American Experiment)",
           "period": null,
-          "value": "produced twice as fast and at half the cost of previous options",
           "value_num": null,
           "unit": null,
-          "verbatim": "Those 17 minutes, Sean, they were produced twice as fast and at half the cost of previous options.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 110,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "4364fa9b4eff5185e69b53238bcc6f4cf429d8dc9f68289b4e7619f5898e46ff",
+            "value_sha256": "746e66e6e0cf7e5f9e1b80faf96d46b1ddb7ae2adf4f303da381e5b0f6cb7863"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Q2 share repurchase",
           "period": null,
-          "value": "repurchased $4.7 billion of shares this quarter",
           "value_num": null,
           "unit": null,
-          "verbatim": "In Q2, we repurchased $4.7 billion of shares this quarter.",
-          "following_context": "That's our largest quarter of share repurchase in our history. And we still have about $27 billion of capacity on our remaining authorization. So we feel really good about our growth path. As Ted said, we've got a really high bar, and we have no change in our capital allocation philosophy.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.7,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 119,
+            "speaker": "Spencer Adam Neumann",
+            "quote_sha256": "9f6ade8e5fa16dc0bea4c5f05fb33540ef3767df96df680cf770e8d5d1f60e35",
+            "value_sha256": "b6ad12b53bf250586a675d353df04c0df8bfdddc9db824ae07e7b79f32beb443"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "remaining buyback authorization",
           "period": null,
-          "value": "about $27 billion of capacity on our remaining authorization",
           "value_num": null,
           "unit": null,
-          "verbatim": "And we still have about $27 billion of capacity on our remaining authorization.",
-          "following_context": "So we feel really good about our growth path. As Ted said, we've got a really high bar, and we have no change in our capital allocation philosophy.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 27.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q2 2026 Earnings Call, Jul 16, 2026.rtf",
+            "transcript_sha256": "d43cfe18e388e8d4231fdf1b78e96743b4fd9a8d5531150bd205d62bf827279d",
+            "paragraph": 119,
+            "speaker": "Spencer Adam Neumann",
+            "quote_sha256": "65d8f183047857438db78327cbbb6747cdfccb9aa9e7ab00b25d5598b9c5c90b",
+            "value_sha256": "495ff0a3c485bac5a3b022c65300d695af3c5bd844ee6564a80ebc55aca2dff0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "India view hours growth (Q3)",
           "period": null,
-          "value": "view hours in Q3 in India grew 24% on an absolute basis",
           "value_num": null,
           "unit": null,
-          "verbatim": "And as a result, view hours in Q3 in India grew 24% on an absolute basis.",
-          "following_context": "They were also up on a per member basis, all of which drives membership. It drove membership and nearly 20% year-over-year revenue growth. So that's a great example of how the core model works. We deliver on member value, and we get the business outcomes that we are looking for.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 23,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "025ba4d9db4c50db456620f8f92bacd5919cccff41ff6ecfc9eff4199bab9fe7",
+            "value_sha256": "b053a757d2398092cd840c1c10b7a5cd747db81ca330623aed89191164f9ef45"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "India revenue growth",
           "period": "year-over-year",
-          "value": "nearly 20% year-over-year revenue growth",
           "value_num": null,
           "unit": null,
-          "verbatim": "It drove membership and nearly 20% year-over-year revenue growth.",
-          "following_context": "So that's a great example of how the core model works. We deliver on member value, and we get the business outcomes that we are looking for.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 23,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "ee4b8e4b4840a0e19705544155a32d69614a2e114d125c9ded5df54c6848266e",
+            "value_sha256": "79c08cc8cd30659637f62200656c2d8904a2762f81261434575169fe1338bee4"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "core share of spend and revenue",
           "period": null,
-          "value": "roughly 95% of our spend and nearly all of our revenue is focused on that core",
           "value_num": null,
           "unit": null,
-          "verbatim": "Now all that said, it's really important to remember, roughly 95% of our spend and nearly all of our revenue is focused on that core, where we see a long runway for future growth.",
-          "following_context": "Now other areas that you mentioned, these are early-stage initiatives meant to explore future programming expansions, and we keep our focus and our investment in those areas very tight because the core is the critical growth engine.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 95.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 17,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "1638575c5b062db04881c5cf5e2b58065332f45dda5c76ca90f8438d84f0b4f9",
+            "value_sha256": "381f931cedf36d05896ab5481ba089fcc33d04a7b13d9d7dfc29f20dc2329e2d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Q3 churn (global and US)",
           "period": null,
-          "value": "Q3 churn, both globally and in the United States, improved year-on-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Q3 churn, both globally and in the United States, improved year-on-year.",
-          "following_context": "It was better than forecast. It's already industry leading. And the ultimate determinant are -- of are we delivering that value is the reaction to price changes. And those recent price changes that we did, including in the United States, have gone well. We've seen results that are consistent with past changes and our expectations. And consistent with all that performance, we do plan on delivering our full year guidance.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 22,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "ac675e79cc85b39ecb2809a1bd5ada6ee69b7d4a844eef5b678f4ea8f350fa04",
+            "value_sha256": "0f930c5d16f35d8e8d5071b2e002f49003d7939b22a3bf37d5a4e09eb4344abf"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "recent price changes",
           "period": null,
-          "value": "recent price changes that we did, including in the United States, have gone well",
           "value_num": null,
           "unit": null,
-          "verbatim": "And those recent price changes that we did, including in the United States, have gone well.",
-          "following_context": "We've seen results that are consistent with past changes and our expectations. And consistent with all that performance, we do plan on delivering our full year guidance.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 22,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "a8c7c52422dfc78e6e15c07673dc2d40fff7c31dda5f887aed1a231caedd307d",
+            "value_sha256": "690f87cd922f7f29e8bd2bf6c697d36f621b16e75766d894fe05d66503076bea"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "films released theatrically",
           "period": "this year",
-          "value": "about 30 films theatrically this year",
           "value_num": null,
           "unit": null,
-          "verbatim": "And yes, we're going to release about 30 films theatrically this year, pretty much what we did last year.",
-          "following_context": "And each one of these have their own kind of bespoke release pattern.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 71,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "92741e230e08920d09bbed5072359bcfaf3fe73ddac4245eb47696f246ec10b2",
+            "value_sha256": "9d2657b6dae4bff6edac078f643e4b9fe8bb76e5325030dc8a4cdb7e2bc993c2"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "La Bola Negra theatrical window",
           "period": null,
-          "value": "47-day window platform theatrical release",
           "value_num": null,
           "unit": null,
-          "verbatim": "So for specialty releases, we're doing a 47-day window platform theatrical release for La Bola Negra right now.",
-          "following_context": "It's this fantastic Spanish language film. And then we also upcoming have a theatrical release for Mosquito Bowl, a bit shorter. And we're partnering with IMAX to release the David Fincher film, The Further Adventures -- Mis-Adventures of Cliff Booth, worth repeating over and over again because it's so exciting for us, too. And in that one, we've done a deal with IMAX to put them on the biggest screens for a couple of weeks, 4 weeks before the Netflix release.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 47.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 73,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "a5e8d4761a9a8cbd340a41b5dfca013db229ade3b680969b3e114f896367bd1d",
+            "value_sha256": "624ef6d4fe6664e3c5e46d9599bc731091da3db235a62215695c5f063a5f94ce"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "Cliff Booth IMAX window",
           "period": null,
-          "value": "4 weeks before the Netflix release",
           "value_num": null,
           "unit": null,
-          "verbatim": "And in that one, we've done a deal with IMAX to put them on the biggest screens for a couple of weeks, 4 weeks before the Netflix release.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 73,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "4d4b1f0c395dcf023e8be5d09a2b2999b45a111f8645df6dc0d192b942cad8a5",
+            "value_sha256": "38c717c16e54c257747a244add0dec35154ac163116d2055193e3e60937b7a25"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "Narnia / Charlie theatrical window",
           "period": null,
-          "value": "45-day window and a wide theatrical release",
           "value_num": null,
           "unit": null,
-          "verbatim": "Now for those big family movies I talked about, we've already announced we have a 45-day window and a wide theatrical release for Greta Gerwig's new movie, Narnia: The Magician's Nephew; and for our animated feature, Charlie vs. the Chocolate Factory.",
-          "following_context": "Both films have big global IP and big global fandom. So we're very excited about how that will play out next year. So our theatrical strategy has evolved. It's evolved to include a traditional 45-day window for a handful of films, but the other one that's been important to folks is that we are also now reporting box office grosses for those releases when we do it.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 45.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 74,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "95d9315631578b3197002a2ad289c96ec2aed9dd4976f7363e6605af066566d7",
+            "value_sha256": "44578c689b62545facab1ee97fdf4acb008d3312d66faa2de1b39605a3f34c2d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "La Bola Negra per-screen average",
           "period": null,
-          "value": "more than $69,000 per screen average",
           "value_num": null,
           "unit": null,
-          "verbatim": "It opened with more than $69,000 per screen average, which is the second highest per screen average ever for a non-English language film in the U.S., second only to Parasite, a film that went on to win the Oscar for Best Picture.",
-          "following_context": "So we're really excited about where we sit. Now of course, we have 1 week of public reporting of box office under our belt, and we're real happy about it, so let's check in again in about 6 months.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 69000.0,
+              "currency": "$",
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 75,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "5be3dacccf5dd8584404b85246257e2bc6621b0cf793a2b5977958b04e157308",
+            "value_sha256": "81edec05356ca6a45445d5e1e5e47ce27dda27995ca1860595585343545f595d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Ice Age films in top 10",
           "period": null,
-          "value": "All 5 of them hit our top 10",
           "value_num": null,
           "unit": null,
-          "verbatim": "and we already are seeing some of those benefits from the Ice Age movies. All 5 of them hit our top 10.",
-          "following_context": "That's really exciting. Now this benefits Disney because as they gear up to release their next Ice Age movie in the theaters in February, it's called Ice Age: The Boiling Point (sic) [ Ice Age: Boiling Point ], more people will be recent fans of the Ice Age franchise. And by the way, yes, Netflix just plugged a Disney movie on our earnings call. You're welcome, Josh.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 83,
+            "speaker": "Theodore A. Sarandos",
+            "quote_sha256": "77cd750f859baf3504e28fa68fe433a9b1c4a8f3e55a7ce76d5e1163f0c24354",
+            "value_sha256": "44283e149b10cd731e60e5ab782b318c16517e3f9a4b84877f880dd7bd390fa2"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ads business growth",
           "period": "this year",
-          "value": "growing our ads business over 80% this year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We're still growing our ads business over 80% this year.",
-          "following_context": "So excited about the rate that we're going on.",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 91,
+            "speaker": "Gregory K. Peters",
+            "quote_sha256": "6cff1764402c3e76b1bd639a3f830280993975352dd7021ef313201f365517e2",
+            "value_sha256": "a5ef0a91d0fa48208e424f53e8f328ab6578fb83c50214a6a8f5351bf8d41b68"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ads tier expansion",
           "period": "next year",
-          "value": "launching ad tiers in 15 new countries next year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Ahead of launching ad tiers in 15 new countries next year, any update on the gap in average revenue per membership between the ad tier and the standard non-ad tier in the U.S. and other existing international markets?",
-          "following_context": null,
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 96,
+            "speaker": "Spencer Wang",
+            "quote_sha256": "4895a18b3f1bae53463e6bf13f94543267ab673a2baff42668699020299c183c",
+            "value_sha256": "f58036d9d4f04ac76e2d1edbade3e988b7b70074cc41a54ad0b5d81f031b1004"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Q4 head count reduction cost",
           "period": null,
-          "value": "about 120 basis points of cost tied to the head count reductions",
           "value_num": null,
           "unit": null,
-          "verbatim": "The fourth quarter guidance includes about 120 basis points of cost tied to the head count reductions.",
-          "following_context": "What annual run rate savings do you expect? And how much of that should we assume is reinvested versus supporting operating margin expansion in 2027?",
           "source_ref": "CIQ transcript: Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 120.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Netflix, Inc., Q3 2026 Earnings Call, Oct 20, 2026.rtf",
+            "transcript_sha256": "832ec9a909d2536e570f7d157d9dc5320c52c09db30a8547215fa3f749f430e9",
+            "paragraph": 54,
+            "speaker": "Spencer Wang",
+            "quote_sha256": "59a8744793b407e326dc501fc57f5b62d90b0d29a70fd602b1b5b76551743f48",
+            "value_sha256": "214ec8fb784682d54dd0b3c26a1135af468386e769cb19f54c7e6590b063bc6d"
+          }
         }
       ],
       "qa_flags": [
@@ -16200,6 +16851,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

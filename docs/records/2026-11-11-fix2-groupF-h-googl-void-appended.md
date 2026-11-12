@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -91,3 +91,6 @@ superseded-by:
 - **A fresh GOOGL decision** is allowed from 2026-11-11 on (the operator's "After a close or a
   void"). It goes through the vote rule's confirmation, which refuses GOOGL's committed page,
   because it is a backfill, until that page is rebuilt.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `2637e91b` (#1008) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

@@ -575,16 +575,26 @@ def _whole_figure(vt_n: str) -> re.Pattern[str]:
     return re.compile(r"(?<!\d)(?<!\d[.,])" + re.escape(vt_n) + r"(?!\d)(?![.,]\d)")
 
 
-#: a percent unit between a figure and the decline word after it ("27% decline", "27 percent drop")
-_PCT_UNIT = re.compile(r"\s*(?:%|percent\b|per\s+cent\b|pct\b)?")
+#: the figure's unit between it and the decline word after it: a percent ("27% decline", "27
+#: percent drop") or a rate's points ("a 27 percentage point decline", "2.5pp", "40 bps", "a 40
+#: basis-point decline"). Only a percent was stepped over, so with the value text "27" and its
+#: unit stored apart ("percentage points"), "a 27 percentage point decline" read as +27 passed and
+#: −27 was refused (Codex on #987, the RG-D21 residual). The unit may be hyphenated onto the
+#: figure ("a 40-basis-point decline", "a 27-percent drop"), and bare points count ("2.5 pts", "a
+#: 300 point decline"). A scale word ("27 million decline") is not a unit here: the coordinator's
+#: pin keeps it as it reads.
+_RATE_UNIT = re.compile(r"(?:\s*-?\s*(?:%|percent\b|per\s+cent\b|pct\b|pp\b|ppts?\b|pts?\b|"
+                        r"points?\b|percentage[-\s]points?\b|bps?\b|basis[-\s]points?\b))?",
+                        re.I)
 
 
 def _decline_beside(text: str, start: int, end: int) -> bool:
-    """`text` states a decline in words directly before `start` or after `end` (past a % unit)."""
+    """`text` states a decline in words directly before `start` or after `end` (past its percent
+    or points unit)."""
     after = text[end:]
-    pct = _PCT_UNIT.match(after)
+    unit = _RATE_UNIT.match(after)
     return bool(_DECLINE_BEFORE.search(text[:start])
-                or _DECLINE_AFTER.match(after[pct.end() if pct else 0:]))
+                or _DECLINE_AFTER.match(after[unit.end() if unit else 0:]))
 
 
 def _states_decline(vt_n: str, quote: str, *, reads: list[re.Match[str]] | None = None,

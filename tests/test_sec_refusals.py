@@ -456,7 +456,7 @@ def test_a_refused_cohort_stops_at_the_first_name(
 
 
 def test_no_page_is_written_once_sec_has_refused_the_process(
-        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, evidence_spool: Path) -> None:
     """⊖ a page built across a refusal can carry blanks where a swallowed SEC read belonged — so the
     one write path refuses it; ⊕ and writes it once there is no refusal."""
     from vinci.dossier import assemble as asm

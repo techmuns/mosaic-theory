@@ -20,6 +20,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.stripped_pages import rows_with_words, synthetic_page
 from tests.test_facts_remote import FakeBucket, _client
 from vinci.dossier import assemble
 from vinci.dossier import driver_evidence as de
@@ -199,42 +200,53 @@ def _with_call_only_locators(page: dict[str, object]) -> ds.Dossier:
         "operating_drivers": od.model_copy(update={"rows": rows})})})
 
 
-def test_every_committed_pages_transcript_rows_spool_and_read_back_whole(tmp_path: Path) -> None:
+def test_a_pages_transcript_rows_spool_and_read_back_whole(tmp_path: Path) -> None:
+    """On a real page whose transcript rows are invented ones holding their words: every passage
+    and every claim lands, and each stripped row reads back as the row it was. ONE RECORD PER
+    PASSAGE, ONE PER CLAIM — three rows share one quote (as 63 committed passages did), so they
+    share its passage and keep three claims."""
     spool = de.EvidenceSpool(tmp_path)
-    total = 0
-    keys: set[str] = set()
-    for p in sorted((ROOT / "data/dossiers").glob("*/dossier.json")):
-        d = _with_call_only_locators(json.loads(p.read_text()))
-        tx = [r for r in (d.mechanical.operating_drivers.rows
-                          if d.mechanical.operating_drivers else []) if r.tier == "llm-fenced"]
-        rep = de.spool_dossier(d, spool)
-        assert rep.written + rep.already + rep.no_evidence == len(tx), p.parent.name
-        for r in tx:
-            assert r.locator is not None
-            got = spool.get(de.evidence_key(r.locator))
-            assert (got.verbatim, got.following_context) == \
-                (r.verbatim, r.following_context), p.parent.name
-            keys.add(de.evidence_key(r.locator))
-        total += len(tx)
+    d = _with_call_only_locators(synthetic_page())
+    tx = [r for r in (d.mechanical.operating_drivers.rows
+                      if d.mechanical.operating_drivers else []) if r.tier == "llm-fenced"]
+    written, rep = de.spool_dossier(d, spool)
+    assert rep.no_evidence == 0 and rep.written + rep.already == 2 * len(tx)
+    keys = {de.evidence_key(r.locator) for r in tx if r.locator is not None}
+    claims = {de.claim_key(r.locator.quote_sha256, de.value_key(r.value))
+              for r in tx if r.locator is not None and r.value is not None}
+    od = written.mechanical.operating_drivers
+    assert od is not None
+    stripped = [r.model_copy(update={"verbatim": None, "following_context": None,
+                                     "value": None}) if r.tier == "llm-fenced" else r
+                for r in od.rows]
+    back = de.rehydrate(stripped, spool.get)
+    assert [(r.verbatim, r.following_context, r.value) for r in back] == \
+        [(r.verbatim, r.following_context, r.value) for r in od.rows]
     held, other = spool.keys()
-    assert total > 500 and other == []
-    assert all(p.is_file() for p in tmp_path.iterdir())   # flat: not one folder was made
-    # ONE RECORD PER PASSAGE: rows sharing a quote on one call share its record, and every
-    # shared key held one passage (the spool refused none) — the model's values differ, the
-    # evidence does not
-    assert sorted(held) == sorted(keys) and len(keys) < total
+    assert other == [] and all(p.is_file() for p in tmp_path.iterdir())   # flat: no folder made
+    assert sorted(held) == sorted(keys | claims) and (len(keys), len(claims)) == (2, 4)
+
+
+def test_every_committed_rows_locator_finds_its_passage_on_disk() -> None:
+    """Each committed transcript row's locator finds its quote in its call on disk: the file by its
+    sha256, the paragraph by its index, the quote by its hash (`stripped_pages.passage` asserts
+    each). A row whose call is no longer on disk is counted, not checked; with no CIQ export at
+    all (CI) the test skips and says so."""
+    rows, skipped = rows_with_words()
+    assert len(rows) > 500, (len(rows), skipped)
 
 
 def test_the_assembly_spools_before_it_writes_the_page_and_a_bad_spool_stops_it(
-        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
-) -> None:
-    page = json.loads((ROOT / "data/dossiers/BRBR/dossier.json").read_text())
-    d = _with_call_only_locators(page)
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """(RG-D19 PR 3) The spool is REQUIRED: the page is written without its transcript words, so
+    the spool is their only copy outside the licensed call. Unset, the build stops before the
+    page; set and created, the words land first, and the page carries none of them."""
+    d = _with_call_only_locators(synthetic_page())
     spool, out = tmp_path / "spool", tmp_path / "out"
-    # unset: the page is written, with a loud notice
-    assemble._write(d, "", out / "a")
-    assert (out / "a" / "BRBR" / "dossier.json").exists()
-    assert "NOT spooled" in capsys.readouterr().err
+    # unset: the build stops BEFORE the page
+    with pytest.raises(de.SpoolNotConfiguredError, match="VINCI_EVIDENCE_SPOOL"):
+        assemble._write(d, "", out / "a")
+    assert not (out / "a" / "BRBR" / "dossier.json").exists()
     # set to a folder the operator has not created: the build stops BEFORE the page
     monkeypatch.setenv(de.SPOOL_ENV, str(spool))
     with pytest.raises(de.SpoolMissingError):
@@ -244,15 +256,39 @@ def test_the_assembly_spools_before_it_writes_the_page_and_a_bad_spool_stops_it(
     spool.mkdir()
     assemble._write(d, "", out / "c")
     held, _ = de.EvidenceSpool(spool).keys()
-    assert held and (out / "c" / "BRBR" / "dossier.json").exists()
-    # a transcript row with nothing to spool is said, never dropped silently
+    written = json.loads((out / "c" / "BRBR" / "dossier.json").read_text())
+    rows = [r for r in written["mechanical"]["operating_drivers"]["rows"]
+            if r["tier"] == "llm-fenced"]
+    assert held and rows and not any(k in r for r in rows for k in
+                                     ("verbatim", "following_context", "value"))
+    assert all(r["locator"]["value_sha256"] for r in rows)
     od = d.mechanical.operating_drivers
     assert od is not None
+
+    def _with(rows: list[ds.OperatingDriver]) -> ds.Dossier:
+        return d.model_copy(update={"mechanical": d.mechanical.model_copy(update={
+            "operating_drivers": od.model_copy(update={"rows": rows})})})
+
+    def _first(update: dict[str, object]) -> list[ds.OperatingDriver]:
+        first = next(i for i, r in enumerate(od.rows) if r.tier == "llm-fenced")
+        return [r.model_copy(update=update) if i == first else r for i, r in enumerate(od.rows)]
+
+    # a row that names its call but has no locator is filed CALL-ONLY: its words leave the page too
     bare = [r.model_copy(update={"locator": None}) if r.tier == "llm-fenced" else r
             for r in od.rows]
-    assemble._write(d.model_copy(update={"mechanical": d.mechanical.model_copy(update={
-        "operating_drivers": od.model_copy(update={"rows": bare})})}), "", out / "d")
-    assert "NO evidence was spooled" in capsys.readouterr().err
+    assemble._write(_with(bare), "", out / "d")
+    rows = [r for r in json.loads((out / "d" / "BRBR" / "dossier.json").read_text())[
+        "mechanical"]["operating_drivers"]["rows"] if r["tier"] == "llm-fenced"]
+    assert rows and all(r["locator"]["paragraph"] is None and r["locator"]["value_sha256"]
+                        and not any(k in r for k in ("verbatim", "following_context", "value"))
+                        for r in rows)
+    # a row citing NO call, or stating no value, has nowhere to be filed: the page is REFUSED,
+    # never written with its words on it (review of PR 3, round 0: the build used to write them)
+    for n, update in enumerate(({"locator": None, "source_ref": "CIQ transcript"},
+                                {"value": None})):
+        with pytest.raises(de.EvidenceError, match="page not written"):
+            assemble._write(_with(_first(update)), "", out / f"e{n}")
+        assert not (out / f"e{n}" / "BRBR" / "dossier.json").exists()
 
 
 def test_a_bad_spool_stops_the_build_before_any_paid_phase(
@@ -269,12 +305,11 @@ def test_a_bad_spool_stops_the_build_before_any_paid_phase(
 def test_two_listings_citing_one_call_share_its_record(tmp_path: Path) -> None:
     """The record is the passage, not the page (#PR2 review): a second share class citing the same
     call file meets the first one's record and writes nothing, never a refused build."""
-    page = json.loads((ROOT / "data/dossiers/BRBR/dossier.json").read_text())
-    d = _with_call_only_locators(page)
+    d = _with_call_only_locators(synthetic_page())
     twin = d.model_copy(update={"ticker": "BRBR.B"})
     spool = de.EvidenceSpool(tmp_path)
-    first = de.spool_dossier(d, spool)
-    second = de.spool_dossier(twin, spool)
+    _, first = de.spool_dossier(d, spool)
+    _, second = de.spool_dossier(twin, spool)
     assert first.written > 0 and second.written == 0 and second.already == first.written + \
         first.already
 

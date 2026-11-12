@@ -8122,265 +8122,656 @@
           "kind": "leading_indicator",
           "metric": "share of consumers that are new households (first-time buyers)",
           "period": "2024 and 2025",
-          "value": "more than 55%",
           "value_num": null,
           "unit": null,
-          "verbatim": "In 2024 and 2025, more than 55% of our consumers were households that had not bought us previously.",
-          "following_context": "That dropped to just 50% in the first quarter of 2026. This demonstrates our reduced ability to convert growing brand awareness into trial at these price gap levels. In contrast, our consumer data also shows that our existing consumers continue to be loyal and have generally resisted trading down to lower priced alternatives. Buy rates are holding up very well with units per retained household 2% higher in the first quarter than the average for the prior 8 quarters. In other words, the larger-than-expected price gaps have led to a slowdown in new consumer acquisition, which shows up in market data as a slowdown in velocity.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 55.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "d6fcb65f141be06e9301d008b15cf27b9f7e34dc68372d67825a407207d92ca6",
+            "value_sha256": "207fca7a11573301c714ece997ae46a3e2895af989c92ca536a7870ff82574a9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "share of consumers that are new households (first-time buyers)",
           "period": "first quarter of 2026",
-          "value": "just 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "That dropped to just 50% in the first quarter of 2026.",
-          "following_context": "This demonstrates our reduced ability to convert growing brand awareness into trial at these price gap levels. In contrast, our consumer data also shows that our existing consumers continue to be loyal and have generally resisted trading down to lower priced alternatives. Buy rates are holding up very well with units per retained household 2% higher in the first quarter than the average for the prior 8 quarters. In other words, the larger-than-expected price gaps have led to a slowdown in new consumer acquisition, which shows up in market data as a slowdown in velocity.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "910f1610dd0d3c1d91fc74df30d0a2b30cff2f28edfc07dcc949e422cfeb2698",
+            "value_sha256": "1f4ec7376ccd68f8c7a00743f240049f3fb2692994d452e1ee49e0200dc24671"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "units per retained household",
           "period": "first quarter",
-          "value": "2% higher",
           "value_num": null,
           "unit": null,
-          "verbatim": "Buy rates are holding up very well with units per retained household 2% higher in the first quarter than the average for the prior 8 quarters.",
-          "following_context": "In other words, the larger-than-expected price gaps have led to a slowdown in new consumer acquisition, which shows up in market data as a slowdown in velocity.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "afb56d9177699748c6476f84d30de66b950d5e8313b5292c52256ae562a218a8",
+            "value_sha256": "0da3eff68b3d67ff05f3c0ad7df78f3dafa291c0118d2af8cc9e78f792d1ff7e"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "price gap to competing premium branded outdoor access eggs at a top 10 customer",
           "period": null,
-          "value": "from about 35% above ... to about 25%",
           "value_num": null,
           "unit": null,
-          "verbatim": "we recently addressed price gaps at a top 10 customer, bringing them from about 35% above a group of competing premium branded outdoor access eggs to about 25% and volumes increased by 18% after just 2 weeks compared to the prior 4 weeks.",
-          "following_context": "Even with price reductions, we believe we still command a meaningful premium to our most direct competitors and can earn an attractive margin. It will take time to fully align the cost structure with these price levels, but we believe that we can generate the gross margins and EBITDA margins necessary to deliver strong shareholder value.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 35.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "089ce5bcb651739edc3f64a2817bf3b68bd2557e5d3d5e0f17f48cae046928a0",
+            "value_sha256": "189e0c4f51b3aa384bfdf61a90e55ab8a0cf8edfcf81f72684fb707e7f15cf30"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "volume change after price gap reduction at top 10 customer",
           "period": null,
-          "value": "increased by 18% after just 2 weeks compared to the prior 4 weeks",
           "value_num": null,
           "unit": null,
-          "verbatim": "we recently addressed price gaps at a top 10 customer, bringing them from about 35% above a group of competing premium branded outdoor access eggs to about 25% and volumes increased by 18% after just 2 weeks compared to the prior 4 weeks.",
-          "following_context": "Even with price reductions, we believe we still command a meaningful premium to our most direct competitors and can earn an attractive margin. It will take time to fully align the cost structure with these price levels, but we believe that we can generate the gross margins and EBITDA margins necessary to deliver strong shareholder value.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 18.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "089ce5bcb651739edc3f64a2817bf3b68bd2557e5d3d5e0f17f48cae046928a0",
+            "value_sha256": "bd5a10777ce3de4b7c6ae9e045e84e12e0e2963a29ea049fb49b7491172bdb96"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TDP increase secured with a top 3 customer",
           "period": null,
-          "value": "at least 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've secured an at least 50% TDP increase with a top 3 customer, negotiated direct distribution instead of going through a distributor with a top 10 customer and have been assigned the category captain role for eggs with a banner of another top 3 customer.",
-          "following_context": "This is in addition to several distribution wins with customers across all geographies. All-in, we anticipate that we will add 20 to 30 TDPs or 15% to 25% over the course of 2026, and we expect to produce our single best yearly gain in TDP since going public as measured in Circana MULO+ for Shell eggs. Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "8301271536a715f3f7f358d4b07745bbc837b466899ca91edbf80536de0d1c2f",
+            "value_sha256": "b185d4e7a33b9f9708eff721a2283d7164a975a14aa193c8725a9f993ef425b9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "TDPs added over 2026",
           "period": "over the course of 2026",
-          "value": "20 to 30 TDPs or 15% to 25%",
           "value_num": null,
           "unit": null,
-          "verbatim": "All-in, we anticipate that we will add 20 to 30 TDPs or 15% to 25% over the course of 2026, and we expect to produce our single best yearly gain in TDP since going public as measured in Circana MULO+ for Shell eggs.",
-          "following_context": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 20.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "5686b98f298eb4182286f01a106f60f8615b327e7906e55c090ac421c9a3b9d0",
+            "value_sha256": "7980d1cc667e20bb1369442a078d3549d8ccfc3bc80307d43d7b933f52670a93"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "quarterly average TDPs (PDPs)",
           "period": "end of first quarter 2026",
-          "value": "149.8 PDPs",
           "value_num": null,
           "unit": null,
-          "verbatim": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 149.8,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "f6ddbc0d8a9abd54415d96bbcfea867abcba78fc8d1c9ad19f7f3758cc377731",
+            "value_sha256": "c7f6f12d4e66e9f50d8c55b13b391d72c0aeb73eb2675d970f5dc535b3104057"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "quarterly average TDPs (PDPs)",
           "period": "fourth quarter 2025 average",
-          "value": "144.8",
           "value_num": null,
           "unit": null,
-          "verbatim": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 144.8,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "f6ddbc0d8a9abd54415d96bbcfea867abcba78fc8d1c9ad19f7f3758cc377731",
+            "value_sha256": "d7b7f8e9345edf46db831d901e50cdae501104d660e348ef4e3b404731d1c870"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "quarterly average TDPs (PDPs)",
           "period": "first quarter of 2025",
-          "value": "115.8",
           "value_num": null,
           "unit": null,
-          "verbatim": "Additionally, looking at the quarterly average, we've already ended the first quarter at 149.8 PDPs compared to a fourth quarter 2025 average of 144.8 and 115.8 in the first quarter of 2025 and expect the quarterly average could be between 170 to 175 in the fourth quarter of 2026, given the visibility we already have to commitments for new placements later in the year.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 115.8,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "f6ddbc0d8a9abd54415d96bbcfea867abcba78fc8d1c9ad19f7f3758cc377731",
+            "value_sha256": "2c6d86e8fd85126ca03db646b62f3ab20ae3679b6f97eeb9797fd37a018824fd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "ECS staffing cost reduction",
           "period": null,
-          "value": "approximately $4 million of costs for the year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We have adjusted our staffing plan at ECS to better match labor costs with processing volume and anticipate this to eliminate approximately $4 million of costs for the year.",
-          "following_context": "We're also working on COGS more broadly with feed costs being a promising target. Last year, feed accounted for roughly $125 million in COGS. Work is underway to lower our expenses, and we expect improvements to flow through our P&L in 2027.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "9f65d47a79c6edfda9a2dc319b0ccfe6a88f00f8c2a175a77f69be430b3aea19",
+            "value_sha256": "72587e5083d10114b77ff9990459455ed643fa7133b9626ee3ff03efd9df6c40"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "feed cost in COGS",
           "period": "last year",
-          "value": "roughly $125 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Last year, feed accounted for roughly $125 million in COGS.",
-          "following_context": "Work is underway to lower our expenses, and we expect improvements to flow through our P&L in 2027.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 125.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "622022c48fd08771c45b1e2b4ac032f6c833a9d40ba262af7dfcd990aaa2971a",
+            "value_sha256": "88d103d5510293848586506ddf13374f1fdc7e9a72009df9411c4da73d8d3e32"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "SG&A roles eliminated (remote/non-ECS head count)",
           "period": null,
-          "value": "approximately 10% of our remote or non-ECS head count",
           "value_num": null,
           "unit": null,
-          "verbatim": "This week, we eliminated roles representing approximately 10% of our remote or non-ECS head count.",
-          "following_context": "While these actions are never taken lightly, they are appropriate given the business reality and reflect an ability to capture savings from our ERP implementation and other innovations in our ways of working.",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "d9b9cd56574b5bb2a26af050175c54822b789e82c0b428e8d0f1f4c8bb99f763",
+            "value_sha256": "733dacce4b6116e09cfe4f5965662115942d70b0dc40d1c812e33f0b2fe8eef7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "projected 2026 CapEx reduction",
           "period": "2026",
-          "value": "approximately $75 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "These 2 actions allow us to reduce projected 2026 CapEx by approximately $75 million, while also maint",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 75.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "c04672a00a73bd0b3a6462a529631a410d0525ed0c00f6ab722ff0528d6e69ea",
+            "value_sha256": "5229833a37bd27ad050361aa5f1fdb9439717f91ac329926d1bc56ec04841ca2"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "revenue capacity from exit ECS",
           "period": null,
-          "value": "over $1 billion in revenue capacity",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a reminder, we have over $1 billion in revenue capacity from exit ECS.",
-          "following_context": "We've also paused the construction of our accelerator farms. We will continue to operate the 6 farms already built and maximize learnings from them. These 2 actions allow us to reduce projected 2026 CapEx by approximately $75 million, while also maint",
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "e933f941afc7e0fb46cd4e823cf28a9eb0c5d66eb4b862b41897ca530426b495",
+            "value_sha256": "9011784a1244fbe875780f22246d735c332fda3e60ffdd3a644ac44fd7430787"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "volume share gain within all outlets of MULO+ (Circana)",
           "period": "2025",
-          "value": "25 basis points of volume share",
           "value_num": null,
           "unit": null,
-          "verbatim": "In 2025, we gained 25 basis points of volume share within all outlets of MULO+ according to Circana, making us the top share gainer in premium shell egg brands.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 25.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "59efb63b7c3ac1bb36bb3396e1be40b35039013a790629a2781984b91d9268e2",
+            "value_sha256": "3a4a4c4a599e0cd4ab2f66aefbd6b1698b688cc34212b2ce35ae3ccb3c5c1659"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "volume share gain (Circana)",
           "period": "year-to-date through February 15",
-          "value": "35 basis points of volume share",
           "value_num": null,
           "unit": null,
-          "verbatim": "According to the same data source, year-to-date through February 15, we gained 35 basis points of volume share, again, positioning us as one of the top share gainers in premium shell egg brands.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 35.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "1a84a5cbfe4f302a6bb82a36457fa50b3ed90ada208bf0bad7273a42e4e362b0",
+            "value_sha256": "f1f34d550ca05ab89164ebf027a332ce7782f296eb51380e5335af05c6e02d40"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "farm network size",
           "period": null,
-          "value": "more than 600 small farms",
           "value_num": null,
           "unit": null,
-          "verbatim": "our farm network expanded to more than 600 small farms committed to our pasture-ais standards, where hands roam freely on open pastures with year-round outdoor access.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 600.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "47f35792881af65193708fdf5fdb2eb019b5b80767786726a1606ef88498c99b",
+            "value_sha256": "65f2d88ef700bd7024289b26cb0ea15fffaee96a933bd3b743413cd420c5834d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "farms added in a single year",
           "period": "in a single year",
-          "value": "approximately 175 farms",
           "value_num": null,
           "unit": null,
-          "verbatim": "Adding approximately 175 farms in a single year is a testament to the trust we built in the agricultural community around our unwavering commitment to humane animal care.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 175.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "c73c09e55642cb4b0b75b711cb7e79b8c0b8530816e5c8c4bf698e94b1483ceb",
+            "value_sha256": "fd6797c18a2f0e06f00d77a85174829265591f94c15f6b80ac1451f103a997f0"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "brand awareness",
           "period": "2025",
-          "value": "34%, an increase of 8 percentage points",
           "value_num": null,
           "unit": null,
-          "verbatim": "our recent marketing campaigns have driven brand awareness to 34%, an increase of 8 percentage points in 2025, widening the gap between our closest competitors and us.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 34.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "pp",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "69356a0320f20ba91916f235a4181ef29842be2175c09e0446c53bd4a80b3f89",
+            "value_sha256": "628a0ae2aba0c1b0c2da3e57d1b1d0bf58c92a861eb3fb533e6fd2da9cf404ff"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "households served / retail locations",
           "period": null,
-          "value": "nearly 16 million households through approximately 24,000 retail locations",
           "value_num": null,
           "unit": null,
-          "verbatim": "We serve nearly 16 million households through approximately 24,000 retail locations, but there's so much more opportunity ahead.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 24000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "40ae40b34c58778e9394d2cf05cb54e14a5596256b479e59884d19f89713f00b",
+            "value_sha256": "82e2fbf47d53cb1165eafd04ad14a89783bcc428c225f2237ae7f4ba328d75be"
+          }
         },
         {
           "kind": "pricing_action",
           "metric": "May price increase (benefit to full-year revenue growth)",
           "period": null,
-          "value": "May price increase",
           "value_num": null,
           "unit": null,
-          "verbatim": "Benefits from our May price increase and ongoing shift to the organic portfolio were partially offset by increased promotional activity to drive consumer trial.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "86e0b98597b1e6b3379e161814da3ac77f4d69d4451fc192269621a7f56cb90e",
+            "value_sha256": "66a69e0f63d641ba3a81ae04418bf3ca2a8fd3be563a596471a4c39463ccac12"
+          }
         }
       ],
       "qa_flags": [

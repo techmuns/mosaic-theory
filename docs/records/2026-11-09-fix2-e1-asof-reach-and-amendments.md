@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-09
 prs: []
 supersedes:
@@ -168,3 +168,6 @@ superseded-by:
 - **Not done here:** RE1-D7, RE1-D10, RE1-D11 and RE1-D16 (order 4). RE1-D14 is done here
   because it is the same reader. Whether real 10-Ks exceed the cap is not determined (no full
   10-K is committed); the reproduction is TeamNostra's constructed 600-sentence text.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `a9c60902` (#944) on 2026-11-10. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

@@ -397,6 +397,13 @@ def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[st
             if r.cik and (listings or foreign) and basis_model in BASIS_MODELS and all(
                     distinct_listings(listings, tw[1]) for tw in twins):
                 report, rwhy = resolver.annual_report(r.cik, as_of)
+            elif r.cik and basis_model in BASIS_MODELS and (
+                    stopped := resolver.filings_unread(r.cik, as_of)):
+                # NEVER "no verified US listing" FOR FILINGS THAT WERE NOT ALL READ (#1024 round
+                # 2): the walk stopped at a page it could not read, so the foreign-filer check and
+                # the point-in-time check were never completed — `foreign` above is False only
+                # because the check read None. The page is the reason; no annual report was asked
+                rwhy = stopped
         except HttpError as exc:  # the SEC could not be read: the name stays, unverified
             status, listings, registrant = ResolutionStatus.UNRESOLVED, (), None
             rnote = f"the SEC could not be read ({exc}) — not verified"

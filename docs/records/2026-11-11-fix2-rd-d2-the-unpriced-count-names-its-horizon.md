@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -43,3 +43,6 @@ That breaks EVERY COUNT STATES ITS BOUNDARY. #995 was merged at `5ccec3bb`, befo
   "since <date>" then over-claims for it. The gap is already in main's absence, last and largest
   clauses, and this change only reuses their wording.
 - *Falsifier:* a foreign issuer's page whose line counts a trade dated before its "since" date.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `3410860a` (#1003) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.
