@@ -199,6 +199,11 @@ def test_no_committed_synthesis_copies_more_than_12_words_of_its_calls(path: Pat
     if not page.get("synthesis"):
         pytest.skip("no synthesis on this page")
     transcript, problems = trp.page_transcript(page, root)
+    # a checkout whose calls are not the page's own (an older copy of the exports) cannot check
+    # it, and says so; a call that is the page's and does not read is a failure
+    if problems and all("is not on disk" in p or "input record" in p for p in problems):
+        pytest.skip(f"this checkout's calls are not the page's own ({problems[0]}): point "
+                    "VINCI_CIQ_ROOT at the Drive mirror")
     assert not problems, f"the page's calls cannot all be read: {problems}"
     if transcript is None:
         pytest.skip("no call on disk for this page")
