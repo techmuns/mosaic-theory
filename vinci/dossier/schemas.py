@@ -2033,7 +2033,9 @@ class StatementReconciliation(BaseModel, frozen=True):
     (2026-10-26) — what the data-quality scorecard's `revenue_vs_xbrl` and `ocf_vs_xbrl` read."""
 
     rows: list[StatementReconRow]
-    as_filed_by: str                          # ISO — the facts as filed by this date
+    #: ISO — the latest filing date of the filings the rows read; None when no row read one. Never
+    #: the build's own day (operator ruling 2, 2026-11-12: it reached the synthesis request)
+    as_filed_by: str | None
     source_ref: str
 
 
