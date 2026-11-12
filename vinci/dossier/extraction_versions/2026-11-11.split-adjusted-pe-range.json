@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-11.split-adjusted-pe-range",
+  "follows": [
+    "2026-11-11.vote-rule"
+  ],
+  "names": "the P/E range (pe_percentile_5y) is built across a stock split the filer states by restating its own annual comparatives — EPS filed before the restating 10-K is put on the current share basis by the filer's factor — where it was refused; two basis changes in one window, a split the filings known by the date do not yet state, and an EPS in use on the old basis are still refused"
+}

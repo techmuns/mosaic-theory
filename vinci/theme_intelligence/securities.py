@@ -65,7 +65,7 @@ import hashlib
 import html as htmllib
 import re
 from dataclasses import dataclass, field
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any, cast
 
@@ -86,7 +86,11 @@ from vinci.theme_intelligence.verify import norm_name
 TICKERS_EXCHANGE = "https://www.sec.gov/files/company_tickers_exchange.json"
 TICKERS_MF = "https://www.sec.gov/files/company_tickers_mf.json"
 SUBMISSIONS = "https://data.sec.gov/submissions/CIK{cik}.json"
+#: an older submissions page, named in the document's `filings.files`. NOT immutable: EDGAR re-cuts
+#: the pages from the newest end whenever the recent page's boundary moves, so a page is held no
+#: longer than the document that lists it (`_ONE_DAY`) and is checked against that listing
 SUBMISSIONS_PAGE = "https://data.sec.gov/submissions/{name}"
+_ONE_DAY = 86_400.0
 ARCHIVE_DOC = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
 _MAJOR = ("NYSE", "Nasdaq", "CBOE", "NYSE American", "NYSE Arca")
 PERIODIC_FORMS = frozenset({"10-K", "10-Q", "20-F", "40-F", "10-K/A", "10-Q/A", "20-F/A",
@@ -352,6 +356,11 @@ class PitCover:
         return f"{self.form} filed {self.filed.isoformat()} (accession {self.accession}) cover page"
 
 
+class _StalePageError(Exception):
+    """An older submissions page disagrees with the document's listing of it: the two are of
+    different vintages. Never an HttpError — `SecResolver._walk_filings` reads them again, fresh."""
+
+
 @dataclass
 class SecIndex:
     by_ticker: dict[str, tuple[str, str, str]]  # ticker -> (cik10, name, exchange)
@@ -375,7 +384,8 @@ class SecResolver:
         #: and never read as "no data": a partial name whose filings were not read is refused
         #: as unchecked (a cached None had switched the identity check off, 2026-10-14)
         self.sub_errors: dict[str, str] = {}
-        self._rows: dict[tuple[str, date], list[tuple[str, date, str, str]]] = {}
+        #: each walk's rows, and why it ended short ("" when it did not)
+        self._rows: dict[tuple[str, date], tuple[list[tuple[str, date, str, str]], str]] = {}
         self._covers: dict[tuple[str, date], tuple[PitCover | None, str]] = {}
         self._annual: dict[tuple[str, date], tuple[AnnualReport | None, str]] = {}
 
@@ -411,7 +421,7 @@ class SecResolver:
         if cik10 not in self._subs:
             try:
                 self._subs[cik10] = cast(dict[str, Any], self._http.get_json(
-                    SUBMISSIONS.format(cik=cik10), ttl_seconds=86_400.0))
+                    SUBMISSIONS.format(cik=cik10), ttl_seconds=_ONE_DAY))
             except HttpError as exc:
                 self.sub_errors[cik10] = str(exc)
                 return None
@@ -425,54 +435,108 @@ class SecResolver:
         Enbridge — a 40-F filer to 2017, a 10-K filer since 2018 — at every date.)"""
         if self.submissions(cik10) is None:
             return None
-        periodic = [(d, f) for f, d, _a, _p in self._filing_rows(cik10, as_of)
+        periodic = [(d, f) for f, d, _a, _p in self._filing_rows(cik10, as_of)[0]
                     if f in PERIODIC_FORMS and not f.endswith("/A") and d <= as_of]
         if not periodic:
             return None
         return max(periodic)[1] in _FOREIGN_FORMS
 
-    def _filing_rows(self, cik10: str, as_of: date) -> list[tuple[str, date, str, str]]:
+    def filings_unread(self, cik10: str, as_of: date) -> str:
+        """Why the registrant's filings walk to `as_of` ended short — the page it could not read,
+        named — or "" when it did not (#1024 round 2). The foreign-filer check reads None both
+        for "no periodic report by then" and for a walk that stopped at such a page; a reader
+        that would otherwise state the first states this instead."""
+        return self._filing_rows(cik10, as_of)[1]
+
+    def _filing_rows(self, cik10: str,
+                     as_of: date) -> tuple[list[tuple[str, date, str, str]], str]:
         """(form, filing date, accession, primary document) — recent first, then older pages
-        until one periodic filing on or before `as_of` is in hand. Walked once per registrant and
-        date: the foreign-filer check, the cover page and enrichment read the same rows."""
+        until one periodic filing on or before `as_of` is in hand — and why the walk ended short
+        ("" when it did not). Walked once per registrant and date: the foreign-filer check, the
+        cover page and enrichment read the same rows."""
         if (cik10, as_of) not in self._rows:
             self._rows[(cik10, as_of)] = self._walk_filings(cik10, as_of)
         return self._rows[(cik10, as_of)]
 
-    def _walk_filings(self, cik10: str, as_of: date,
-                      want: frozenset[str] = PERIODIC_FORMS) -> list[tuple[str, date, str, str]]:
-        """`want`: the forms whose first appearance on or before `as_of` ends the walk."""
+    def _walk_filings(self, cik10: str, as_of: date, want: frozenset[str] = PERIODIC_FORMS
+                      ) -> tuple[list[tuple[str, date, str, str]], str]:
+        """`want`: the forms whose first appearance on or before `as_of` ends the walk.
+
+        A PAGE THAT CANNOT BE READ IS NAMED, never a short list (STATE §5.0 row 42 (a)). The walk
+        ended at such a page with no word, and every consumer then read the short list as the
+        SEC's answer: "no periodic filing on or before …". Now the rows read so far come back with
+        why the walk stopped — the page, the registrant and what went wrong — and the consumers
+        state that instead. An answer that is not JSON (an interstitial's ValueError), not an
+        object, missing its arrays, or a page listed with no name or a span date that is not ISO,
+        are each such a page. An SEC refusal (`SecRateLimitedError`, not an HttpError) still
+        stops the run.
+
+        A PAGE OF ANOTHER VINTAGE IS READ AGAIN, never joined. A page is held no longer than its
+        document (`_ONE_DAY`; it was held 30 days beside a document held 1) and is checked
+        against the document's listing of it (`_page_mismatch`, the EDGAR client's #878 check).
+        On a disagreement the document and its pages are read fresh once; a second disagreement
+        is named as the reason the walk stopped."""
+        try:
+            return self._walk(cik10, as_of, want, fresh=False)
+        except _StalePageError as stale:
+            try:
+                again = self._http.get_json(SUBMISSIONS.format(cik=cik10), ttl_seconds=0.0)
+                if not isinstance(again, dict):
+                    raise TypeError(f"{type(again).__name__}, not a JSON object")
+            except (HttpError, ValueError, TypeError) as exc:
+                return [], (f"older submissions page {stale} for CIK{cik10} disagrees with the "
+                            f"document's listing of it, and the document could not be read "
+                            f"again: {type(exc).__name__}: {exc}")
+            self._subs[cik10] = again
+            return self._walk(cik10, as_of, want, fresh=True)
+
+    def _walk(self, cik10: str, as_of: date, want: frozenset[str], *,
+              fresh: bool) -> tuple[list[tuple[str, date, str, str]], str]:
+        """One walk of `_walk_filings`, its pages read through the cache (or past it: `fresh`)."""
         sub = self.submissions(cik10)
         if sub is None:
-            return []
+            return [], ""
         rows = _rows(sub.get("filings", {}).get("recent", {}))
         if any(f in want and d <= as_of for f, d, _a, _p in rows):
-            return rows
+            return rows, ""
+        why = f"so the filings on or before {as_of.isoformat()} were not all read"
         for page in sub.get("filings", {}).get("files", []):
-            frm = page.get("filingFrom")
-            if frm and date.fromisoformat(frm) > as_of:
-                continue
+            name = page.get("name")
             try:
-                older = cast(dict[str, Any], self._http.get_json(
-                    SUBMISSIONS_PAGE.format(name=page["name"]), ttl_seconds=30 * 86_400.0))
-            except (HttpError, KeyError):
-                break
+                frm = page.get("filingFrom")
+                if frm and date.fromisoformat(frm) > as_of:
+                    continue  # wholly after the as-of date: never read, so its name is not needed
+                if not name:
+                    raise KeyError("listed with no name")
+                older = self._http.get_json(SUBMISSIONS_PAGE.format(name=name),
+                                            ttl_seconds=0.0 if fresh else _ONE_DAY)
+                stale = _page_mismatch(page, older)  # a body not an object: its TypeError
+            except (HttpError, ValueError, KeyError, TypeError, IndexError) as exc:
+                return rows, (f"older submissions page {name or '(no name)'} for CIK{cik10} "
+                              f"could not be read, {why}: {type(exc).__name__}: {exc}")
+            if stale is not None:
+                if not fresh:
+                    raise _StalePageError(str(name))
+                return rows, (f"older submissions page {name} for CIK{cik10} disagrees with the "
+                              f"document's listing of it, read fresh ({stale}), {why}")
             rows += _rows(older)
             if any(f in want and d <= as_of for f, d, _a, _p in rows):
                 break
-        return rows
+        return rows, ""
 
     def pit_cover(self, cik10: str, as_of: date) -> tuple[PitCover | None, str]:
         """The cover page of the latest periodic filing on or before `as_of`, or (None, why)."""
         key = (cik10, as_of)
         if key in self._covers:
             return self._covers[key]
-        rows = self._filing_rows(cik10, as_of)
+        rows, unread = self._filing_rows(cik10, as_of)
         periodic = sorted(((f, d, a, p) for f, d, a, p in rows
                            if f in PERIODIC_FORMS and d <= as_of and p),
                           key=lambda r: r[1], reverse=True)
         result: tuple[PitCover | None, str]
-        if not rows:
+        if unread and not periodic:
+            result = (None, unread)  # never "no periodic filing": the walk did not finish
+        elif not rows:
             result = (None, "SEC submissions unavailable")
         elif not periodic:
             result = (None, f"no periodic filing on or before {as_of.isoformat()} in the SEC "
@@ -503,16 +567,18 @@ class SecResolver:
         key = (cik10, as_of)
         if key in self._annual:
             return self._annual[key]
-        rows = self._filing_rows(cik10, as_of)
+        rows, unread = self._filing_rows(cik10, as_of)
         if not any(f in ANNUAL_FORMS and d <= as_of for f, d, _a, _p in rows):
             # the shared walk stops at the first PERIODIC filing (a 10-Q will do for a cover
             # page): a heavy filer's last 10-K can sit on an older page — walked on for it
-            rows = self._walk_filings(cik10, as_of, ANNUAL_FORMS)
+            rows, unread = self._walk_filings(cik10, as_of, ANNUAL_FORMS)
         annual = sorted(((f, d, a, p) for f, d, a, p in rows
                          if f in ANNUAL_FORMS and d <= as_of and p),
                         key=lambda r: r[1], reverse=True)
         result: tuple[AnnualReport | None, str]
-        if not rows:
+        if unread and not annual:
+            result = (None, unread)  # never "no annual report": the walk did not finish
+        elif not rows:
             result = (None, "SEC submissions unavailable")
         elif not annual:
             result = (None, f"no annual report (10-K / 20-F / 40-F) on or before "
@@ -789,6 +855,27 @@ def _rows(block: dict[str, Any]) -> list[tuple[str, date, str, str]]:
         except ValueError:
             continue
     return out
+
+
+def _page_mismatch(listing: dict[str, Any], rows: dict[str, Any]) -> str | None:
+    """How an older page's rows disagree with the document's listing of it, or None.
+
+    The EDGAR client's check (`vinci.edgar.client._page_mismatch`, #878), restated because this
+    package may import only the shared plumbing (`tests/test_theme_intelligence_isolation.py`);
+    `tests/test_theme_intelligence_older_pages.py` holds the two to the same answers. Measured
+    there on 35 same-run document/page pairs: the row count is the listed `filingCount`, the
+    oldest row is `filingFrom`, and the newest is at most `filingTo` + 1 day. A page of another
+    vintage breaks one of the three — EDGAR re-cuts the pages from the newest end."""
+    n = len(rows["accessionNumber"])
+    dates = [d for d in rows["filingDate"] if d]
+    count, frm, to = listing.get("filingCount"), listing.get("filingFrom"), listing.get("filingTo")
+    if count is not None and n != count:
+        return f"{n} rows where it lists {count}"
+    if dates and frm and min(dates) != frm:
+        return f"its oldest row is {min(dates)} where it lists {frm}"
+    if dates and to and date.fromisoformat(max(dates)) > date.fromisoformat(to) + timedelta(days=1):
+        return f"its newest row is {max(dates)} where it lists {to}"
+    return None
 
 
 def _prefix_match(written: list[str], registrant: list[str]) -> bool:

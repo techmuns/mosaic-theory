@@ -38,6 +38,11 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--family", action="append", default=[],
                    help="census this list family (a path substring, e.g. `.guidance`) even when "
                         "nothing in it moves (repeatable)")
+    r.add_argument("--allow-vendor-pulls", action="store_true",
+                   help="let a Polygon or Tiingo response the cache lacks be fetched (refused by "
+                        "default: a vendor pull is the operator's call)")
+    r.add_argument("--skip-fail-first", action="store_true",
+                   help="leave part 1 out (a sweep of merged PRs); the section says so")
     r.add_argument("--resume", action="store_true",
                    help="continue a run of the same base, head and store in --out")
     r.add_argument("--no-shortcut", action="store_true",
@@ -102,7 +107,8 @@ def main(argv: list[str] | None = None) -> int:
         env_file=a.env_file or (primary / ".env"),
         workers=a.workers, tickers=tuple(t.upper() for t in a.ticker),
         theme_data=a.theme_data, run_screen=a.run_screen, shortcut=not a.no_shortcut,
-        resume=a.resume, census=tuple(a.family))
+        resume=a.resume, census=tuple(a.family), no_vendor_pulls=not a.allow_vendor_pulls,
+        skip_fail_first=a.skip_fail_first)
     try:
         report = rn.run(s)
     except (rn.ImpactError, st.StampError) as exc:

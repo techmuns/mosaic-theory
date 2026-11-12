@@ -24,6 +24,7 @@ import json
 import os
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC
 from pathlib import Path
@@ -272,6 +273,8 @@ class CachedHttp:
         self._client = httpx.Client(headers=headers, timeout=timeout_sec, follow_redirects=False)
         #: url -> when the copy this instance last read or wrote was fetched (`fetched_at`)
         self._fetched: dict[str, float] = {}
+        #: urls whose cached copy `get_json` refused as not JSON: no held copy, for `fetched_at`
+        self._refused: set[str] = set()
 
     # --- public API ---------------------------------------------------------------------------
     def get_text(
@@ -286,15 +289,7 @@ class CachedHttp:
         ``ttl_seconds=None`` means cache forever (use for immutable resources); a number means
         refetch once the cached copy is older than that.
         """
-        full_url = self._with_params(url, params)
-        cached = self._read_cache(full_url, ttl_seconds)
-        if cached is None:
-            cached = self._fetch_with_retries(full_url)
-            self._write_cache(full_url, cached)
-        # EVERY RESPONSE RETURNED IS AN INPUT, cached or fetched (`vinci.provenance`): recorded
-        # only while a build's recorder is open, and never changing what is returned
-        provenance.note_http(self._namespace, full_url, cached, self._fetched.get(full_url))
-        return cached
+        return self._get(url, ttl_seconds=ttl_seconds, params=params, check=None)[0]
 
     def get_json(
         self,
@@ -303,7 +298,45 @@ class CachedHttp:
         ttl_seconds: float | None = None,
         params: dict[str, Any] | None = None,
     ) -> Any:
-        return json.loads(self.get_text(url, ttl_seconds=ttl_seconds, params=params))
+        """GET ``url`` and return its parsed JSON, caching as `get_text` does — but A BODY THAT IS
+        NOT JSON IS NEVER CACHED (STATE §5.0 row 42 (2)). `get_text` wrote any 200 body before
+        this parsed it, so an interstitial served once for a submissions document or an older page
+        was the cached page for its whole TTL, and every windowed read of that filer read "could
+        not be read" until it expired. Now the parse comes first: a non-JSON body raises the same
+        ``ValueError`` it did, with nothing written, and a non-JSON copy already on disk is a miss,
+        fetched again."""
+        return self._get(url, ttl_seconds=ttl_seconds, params=params, check=json.loads)[1]
+
+    def _get(self, url: str, *, ttl_seconds: float | None, params: dict[str, Any] | None,
+             check: Callable[[str], Any] | None) -> tuple[str, Any]:
+        """The one read path of `get_text` and `get_json`: the on-disk copy when fresh, else a
+        fetch that is written. ``check`` (`get_json`'s parse) runs BEFORE the write, so a body it
+        refuses raises with nothing cached; a cached copy it refuses is a miss in memory, and
+        `fetched_at` states no time for it until a good write replaces it; its file is never
+        deleted. Returns (text, check(text) or None)."""
+        full_url = self._with_params(url, params)
+        cached = self._read_cache(full_url, ttl_seconds)
+        value: Any = None
+        if cached is not None and check is not None:
+            try:
+                value = check(cached)
+            except ValueError:
+                # cached before bodies were checked: NOT A HELD COPY. A miss IN MEMORY ONLY —
+                # the file is never deleted, because a cache-only reader (or the impact check's
+                # shared frozen cache) only reads it; the next good write replaces it
+                cached = None
+                self._fetched.pop(full_url, None)
+                self._refused.add(full_url)
+        if cached is None:
+            cached = self._fetch_with_retries(full_url)
+            if check is not None:
+                value = check(cached)             # raises BEFORE the write: nothing is cached
+            self._write_cache(full_url, cached)
+            self._refused.discard(full_url)
+        # EVERY RESPONSE RETURNED IS AN INPUT, cached or fetched (`vinci.provenance`): recorded
+        # only while a build's recorder is open, and never changing what is returned
+        provenance.note_http(self._namespace, full_url, cached, self._fetched.get(full_url))
+        return cached, value
 
     def fetched_at(self, url: str, *, params: dict[str, Any] | None = None) -> float | None:
         """When the cached copy of ``url`` was fetched (epoch seconds), or None when no readable
@@ -311,6 +344,8 @@ class CachedHttp:
         was read back. A copy this instance just read or wrote answers from memory (the entry can
         be megabytes; it is not parsed twice)."""
         full = self._with_params(url, params)
+        if full in self._refused:
+            return None           # its copy is not JSON: `get_json` holds none (PR #1016)
         if full in self._fetched:
             return self._fetched[full]
         path = self._cache_path(full)
