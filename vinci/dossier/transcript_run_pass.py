@@ -19,6 +19,7 @@ For each committed page, with no model call, no network and no re-assembly:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from dataclasses import dataclass, field
@@ -49,6 +50,23 @@ def cut_text(text: str, runs: list[TranscriptRun]) -> str:
     for r in sorted(runs, key=lambda r: r.start, reverse=True):
         text = text[:r.keep] + ELLIPSIS + text[r.end:]
     return text
+
+
+def describe_cut(before: str, after: str) -> str:
+    """A cut as a log may carry it: word counts, the character span it removed from ``before``,
+    and each string's sha256 — never a word of it, because ``before`` holds the copied run, which
+    no log, fixture or PR body may carry (CLAUDE.md's 12-word rule)."""
+    head = 0
+    while head < min(len(before), len(after)) and before[head] == after[head]:
+        head += 1
+    tail = 0
+    while (tail < min(len(before), len(after)) - head
+           and before[len(before) - 1 - tail] == after[len(after) - 1 - tail]):
+        tail += 1
+    return (f"{len(before.split())} → {len(after.split())} words; characters {head}–"
+            f"{len(before) - tail} of {len(before)} cut to {ELLIPSIS!r}; sha256 "
+            f"{hashlib.sha256(before.encode()).hexdigest()[:16]} → "
+            f"{hashlib.sha256(after.encode()).hexdigest()[:16]}")
 
 
 _STEP = re.compile(r"([^.\[\]]+)|\[(\d+)\]")

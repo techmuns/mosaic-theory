@@ -122,6 +122,25 @@ def test_the_cut_keeps_12_words_and_marks_the_rest() -> None:
     assert more == [] and again == out
 
 
+def test_a_cut_is_named_without_its_words() -> None:
+    """The string before a cut holds the copied run, which no log may carry: the pass names a cut
+    by its word counts, the span it removed and two hashes. No four consecutive words of the
+    string reach the line, and the CLI prints a cut through this alone."""
+    page = _page()
+    _, claim = _claim(page)
+    _, cuts = trp.prepare(page, _call_holding(claim, 15))
+    where, before, after = cuts[0]
+    line = trp.describe_cut(before, after)
+    words = before.split()
+    assert line.startswith(f"{len(words)} → {len(after.split())} words; characters ")
+    assert not any(" ".join(words[i:i + 4]) in line for i in range(len(words) - 3))
+    import inspect
+
+    from vinci import cli
+    body = inspect.getsource(cli._cmd_transcript_run_cut)
+    assert "trp.describe_cut(before, after)" in body and "before:" not in body
+
+
 def test_the_pass_refuses_a_page_whose_call_did_not_read(tmp_path: Path,
                                                          monkeypatch: pytest.MonkeyPatch) -> None:
     jp = tmp_path / "SMPL" / "dossier.json"

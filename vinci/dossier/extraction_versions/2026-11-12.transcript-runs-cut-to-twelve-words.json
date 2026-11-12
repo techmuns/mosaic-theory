@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-12.transcript-runs-cut-to-twelve-words",
+  "follows": [
+    "2026-11-11.figure-trace-as-written",
+    "2026-11-12.reconciliation-dated-by-its-filings"
+  ],
+  "names": "the 12-word rule at build (operator ruling 2026-11-11, '$0 guard + redaction now (Recommended)'): a synthesis string sharing more than 12 consecutive words with the build's own calls (words split on whitespace, as the rule counts them, folded for case, quote marks, dashes and edge punctuation) is flagged in _validate (TRANSCRIPT-RUN) and the page is refused by assemble; and a $0 recorded pass (writer transcript-run-cut) cuts each committed run to its first 12 words and '…', nothing reworded. Two committed pages carry such a run (LLY bull_points[5], 14 words; VITL bull_points[2], 13) and are cut; WERN's bull_points[5], named with them before, shares at most 11 and is not"
+}

@@ -1039,7 +1039,9 @@ def _cmd_transcript_run_cut(args: argparse.Namespace) -> int:
     """(The 12-word rule, operator ruling 2026-11-11: "$0 guard + redaction now") Cut each committed
     synthesis string's copied transcript run to its first 12 words and "…"
     (`vinci.dossier.transcript_run_pass`). No model call, no network; the calls are read from disk,
-    read only. Prints every cut, before and after. Exit 1 when a page is refused."""
+    read only. Names every cut by its field, word counts, the span it removed and the sha256 of
+    the string before and after it — never its words: the string before the cut holds the copied
+    run, which no log may carry. Exit 1 when a page is refused."""
     from vinci.dossier import transcript_run_pass as trp
     from vinci.dossier.refresh import _rerender_only, mirror_to_frontend
 
@@ -1061,7 +1063,7 @@ def _cmd_transcript_run_cut(args: argparse.Namespace) -> int:
             outcomes.append(o)
             print(f"{o.ticker}: {o.status.upper()} — {o.detail}")
             for where, before, after in o.cuts:
-                print(f"    {where}\n      before: {before}\n      after:  {after}")
+                print(f"    {where}: {trp.describe_cut(before, after)}")
     finally:
         if any(o.status == "written" for o in outcomes):
             mirror_to_frontend()
@@ -3954,7 +3956,7 @@ def build_parser() -> argparse.ArgumentParser:
                        help="the folder holding one CIQ folder per ticker, read in place "
                             "(default: data/manual/ciq)")
     p_trc.add_argument("--dry-run", action="store_true", dest="dry_run",
-                       help="print each cut; write nothing")
+                       help="name each cut; write nothing")
     p_trc.set_defaults(func=_cmd_transcript_run_cut)
 
     p_cr = sub.add_parser(
