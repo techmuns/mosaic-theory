@@ -168,7 +168,9 @@ def test_synthesis_surfaces_operating_drivers_digest_and_rule() -> None:
     digest = syn._operating_drivers_digest(od)
     assert "OPERATING DRIVERS" in digest
     # each row surfaced with its REAL source_ref (the thing the LLM copies to cite)
-    assert "[attribution] revenue: $55.9M, or 48.0% → 10-Q Z" in digest
+    # its period, and the structured value its verbatim one drops: a 48.0% FALL (prompt-fix 2)
+    assert ("[attribution] revenue (period not stated): $55.9M, or 48.0% [structured: -48%] → "
+            "10-Q Z") in digest
     assert "→ CIQ transcript: MVST Q1 2026 Call" in digest
     # the system rule instructs grounding operating points in a driver + its source_ref
     assert "MECHANISM" in syn._SYSTEM and "source_ref" in syn._SYSTEM
@@ -1947,7 +1949,8 @@ def test_rc1_primary_source_digest_shape_verbatims_excluded() -> None:
     dig = syn._primary_source_digest(_primary_source_fixture(doubt=False))
     assert "term → value → source_ref" in dig and "verbatims EXCLUDED" in dig
     assert "going-concern: none stated (checked, absent)" in dig  # the checked-absence state
-    assert "event impact: reduce revenue 135.0–145.0 (2026 annualized)" in dig
+    # its unit printed from the schema (prompt-fix 2, fix request 2): the range is $M
+    assert "event impact: reduce revenue 135.0–145.0 $M (2026 annualized)" in dig
     assert "→ 8-K x EX-99.1" in dig  # a source_ref terminates the line
     dig2 = syn._primary_source_digest(_primary_source_fixture(doubt=True))
     assert "going-concern: SUBSTANTIAL DOUBT stated" in dig2
@@ -3074,8 +3077,9 @@ def test_insider_activity_partitions_open_market_routine_and_other_codes() -> No
     assert got.value == (
         "Open-market buys 1 (1 insider, 1 with no price stated) · sells 1 (1 insider, 1 with no "
         "price stated) — in the last 182 days · last purchase insider, 2026-06-10 (~1mo ago) · "
-        "1 of 1 purchase with no price stated · last sale insider, 2026-06-12 (~1mo ago) · "
-        "1 of 1 sale with no price stated · grants 1 · last filing 2026-06-12 · other C×1")
+        "1 of 1 purchase in the 3y scanned with no price stated · last sale insider, 2026-06-12 "
+        "(~1mo ago) · 1 of 1 sale in the 3y scanned with no price stated · grants 1 · last filing "
+        "2026-06-12 · other C×1")
     assert "0000947871-26-000620" in (got.source_ref or "")
 
 

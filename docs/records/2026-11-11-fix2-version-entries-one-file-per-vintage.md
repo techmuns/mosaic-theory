@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -103,3 +103,6 @@ superseded-by:
 - A pin file's `why` is a single declared vintage or `refactor`. A joined stamp is refused there.
 - Falsifier for the design: two PRs that each add one vintage and move different modules, cut
   from one main, conflicting textually.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `fdf85180` (#988) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

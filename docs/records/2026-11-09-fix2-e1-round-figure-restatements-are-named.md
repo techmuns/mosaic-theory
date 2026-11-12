@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-09
 prs: []
 supersedes:
@@ -138,3 +138,6 @@ superseded-by:
   `filed_at`, the EDGAR fallback's notes, the SBC line and the tie-break's restatement date. Four
   of those five readers lie outside `concepts.py`. Reading XBRL `decimals` (above) removes the
   guess altogether. Both are proposed, not built.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `ecd95189` (#940) on 2026-11-10. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

@@ -3,9 +3,10 @@
 > This file is HOW to work in this repo. STATE.md is WHAT is true right now; `docs/records/`
 > is HOW IT GOT THAT WAY (one immutable file per entry). `AGENTS.md` points other tools here.
 > docs/engineering.md is the fuller engineering handbook (conventions, practices, workflow).
-> **The operating loops (monthly sweep, group-review recording, survivor checks, theme-advance,
-> verification, sacred files, UI rule, calendar) live in docs/RUNBOOKS.md — follow them before
-> improvising.**
+> **The operating loops (verification, sacred files, UI rule, followed-name intake, monitor day,
+> data quality, monthly scoring, underwrite, changing the synthesis prompt) live in
+> docs/RUNBOOKS.md — follow them before improvising.** (The theme loops §a–d and the calendar §h
+> retired 2026-11-04; their letters stay so citations resolve.)
 > Non-negotiable behavior and the fund guardrails live HERE; project state lives in STATE.md;
 > detailed practice lives in engineering.md. Never duplicate state into this file — they drift.
 > If this file conflicts with STATE.md on a matter of fact, STATE.md wins; this file governs behavior.
@@ -196,7 +197,15 @@ verdict placement.
   - it is **extracted, not copied**: the workbook FILE never enters git or the bucket.
 
   Still never published: credentials, `*.db`, PII, and an article's or transcript's text beyond
-  short verbatim quotes.
+  short verbatim quotes. **For a transcript, "short" is a number** *(operator ruling 2026-11-10,
+  RG-D19; `docs/records/2026-11-10-driver-facts-page-pass.md`)*: **NO PUBLIC FIELD QUOTES MORE
+  THAN 12 CONSECUTIVE TRANSCRIPT WORDS, AND A DRIVER ROW QUOTES NONE.** A transcript driver row
+  publishes its FACT (`figures`, `value_status`) and its LOCATOR (the call, its file's sha256, the
+  paragraph, and the hashes of its quote and its stated value). Its words are in the operator's
+  private evidence store (`vinci/dossier/driver_evidence.py`), filed before the page is written;
+  a build refuses a page whose words it cannot file. `tests/test_public_transcript_text.py` holds
+  the rule on every committed page, mirror and test fixture. CIQ Key Developments' text is CIQ's
+  own, not a transcript, and is a separate question.
 - **Execution is human-authorized and paper-gated** (when execution is built): nothing places a trade
   without an explicit, deliberate human action; default is paper; no code path reaches a live broker
   autonomously. State this in any execution code from its first line.
@@ -291,7 +300,9 @@ verdict placement.
      (`dossier.json` + the web). Provenance — quotes, accessions, agreement terms, amendment chains
      — is NOT bulk and still prints in full. Adding a `ds-bulk` is a decision to make the PDF
      incomplete for that block: take it deliberately, and record it here.
-  3. **JSON** — machine-complete, the full record behind every curated value.
+  3. **JSON** — machine-complete, the full record behind every curated value. ONE EXCEPTION: a
+     transcript row's words are in the private evidence store, not the JSON (the transcript rule,
+     Security & secrets). The JSON holds the row's fact and the locator that finds them.
   The **Financial-Summary appendix is decision data → it STAYS in print** (it is not provenance).
   Curating never deletes a fact — a moved fact is reachable in the expanded web on-demand tier, the
   printed PDF, or the JSON. (Discipline/methodology language lives in `source_ref`s + JSON.)
@@ -336,6 +347,10 @@ incomplete regardless of code state.
 - **COMPLETION CONTRACT.** Every PR description ends with a per-brief-item disposition table —
   **SHIPPED / PARTIAL / SKIPPED / STOPPED** (+ a one-line reason for anything not SHIPPED) — and the
   real-run verify outputs. A build without this table is incomplete regardless of code state.
+- **CROSS-SETUP VALIDATION (operator 2026-11-11).** Every fix PR body carries `## Cross-setup
+  validation (deterministic)`, written by `python -m vinci.impact run` (RUNBOOKS §o) from real
+  committed data, base code against head code, at $0, stamped with the PR's diff identity; a
+  re-sync keeps it only while `python -m vinci.impact verify` passes.
 - **TEST-LAYER RULE.** A behavior observed failing in the rendered artifact is regression-pinned
   **end-to-end** (real committed JSON → render → assertion). Unit pins may accompany, never
   substitute. A second production failure of a pinned behavior ⇒ the pin was at the wrong layer.

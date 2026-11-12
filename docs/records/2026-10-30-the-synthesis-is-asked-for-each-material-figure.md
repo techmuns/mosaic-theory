@@ -1,6 +1,6 @@
 ---
 id: 2026-10-30-the-synthesis-is-asked-for-each-material-figure
-status: open
+status: shipped
 date: 2026-10-30
 prs: []
 supersedes:
@@ -101,3 +101,6 @@ those run records. The operator chose "Prompt fix first", so those pages build o
   - (3) `refresh.material_figures` repeats the floor and estimate-column filter for its own
     every-cell selection.
   - (4) One NFLX draw echoed the house mark into prose ("flagged material").
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `a15a2abf` (#865) on 2026-10-29. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

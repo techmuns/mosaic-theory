@@ -7,6 +7,7 @@ test is checked against brute-force enumeration and Fisher's exact against #920'
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from fractions import Fraction
 from itertools import combinations, product
@@ -30,6 +31,13 @@ def test_the_rule_reproduces_the_frozen_panel() -> None:
     assert [list(t) for t in sel.tied] == FROZEN["search"]["tied_in_hash_order"]
 
 
+#: AORT's frozen fixture as the RG-D19 page pass wrote it (2026-11-10): its transcript rows' words
+#: off it, their fact and locator on it, nothing else moved. The pass moves no input of a panel
+#: row (measured on all 28 pages: `docs/records/2026-11-10-driver-facts-page-pass.md`), so this
+#: blob still yields the frozen row. Any other move takes the page out of the check.
+_AORT_PASSED_BLOB = "983a4b92eee87723dde2b254e6f83dd375dcbe73"
+
+
 def test_each_unmoved_page_still_yields_its_frozen_row() -> None:
     checked = 0
     for row in FROZEN["rows"]:
@@ -39,7 +47,9 @@ def test_each_unmoved_page_still_yields_its_frozen_row() -> None:
             path = ROOT / "tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json"
         blob = subprocess.run(["git", "hash-object", str(path)], capture_output=True, text=True,
                               check=True).stdout.strip()
-        if blob != FROZEN["pages"][t]["dossier_blob"]:
+        unmoved = {FROZEN["pages"][t]["dossier_blob"]} | ({_AORT_PASSED_BLOB} if t == "AORT"
+                                                           else set())
+        if blob not in unmoved:
             continue
         page = json.loads(path.read_text(encoding="utf-8"))
         got = pn.page_row(page, transcripts=row["transcripts"], motivated=row["motivated"])
@@ -106,7 +116,21 @@ def test_a_page_with_no_draws_in_a_condition_is_refused() -> None:
 
 
 def test_nothing_on_the_decision_path_imports_the_harness() -> None:
-    hits = subprocess.run(["git", "-C", str(ROOT), "grep", "--untracked", "-l", "-E",
-                           r"(from|import) vinci\.evals", "--", "vinci"],
-                          capture_output=True, text=True).stdout.split()
-    assert all(h.startswith("vinci/evals/") for h in hits), hits
+    """The harness, and the impact check that replays its frozen panel (`vinci/impact/`, a
+    PR-verification tool, 2026-11-11), may import `vinci.evals`; nothing else may. And the decision
+    path reaches the impact check only through its comparator, `vinci.impact.values`, which
+    imports neither package — so the harness stays off the decision path through it too."""
+    def grep(pattern: str, *paths: str) -> list[str]:
+        done = subprocess.run(["git", "-C", str(ROOT), "grep", "--untracked", "-l", "-E",
+                               pattern, "--", *paths], capture_output=True, text=True)
+        return done.stdout.split()
+    hits = grep(r"(from|import) vinci\.evals", "vinci")
+    assert all(h.startswith(("vinci/evals/", "vinci/impact/")) for h in hits), hits
+    users = [h for h in grep(r"(from|import) vinci\.impact", "vinci")
+             if not h.startswith(("vinci/impact/", "vinci/evals/"))]
+    for h in users:
+        lines = [ln.strip() for ln in (ROOT / h).read_text().splitlines()
+                 if re.search(r"(from|import) vinci\.impact\b", ln)]
+        assert lines and all(ln.startswith("from vinci.impact.values import ") for ln in lines), \
+            (h, lines)
+    assert not grep(r"(from|import) vinci\.(evals|impact)", "vinci/impact/values.py")

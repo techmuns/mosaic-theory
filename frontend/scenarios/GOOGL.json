@@ -1,4 +1,9 @@
 {
+ "voided": {
+  "entryId": "V-GOOGL",
+  "voidId": "X-GOOGL",
+  "ruledOn": "2026-11-11"
+ },
  "ticker": "GOOGL",
  "recipeId": "R3_forward_pe",
  "recipeDesc": "R3_forward_pe",
@@ -102,13 +107,6 @@
   "ceiling2to1": 342.77
  },
  "supersedes": "GOOGL-2026-08-17",
- "supersededLedger": {
-  "recordKey": "GOOGL-2026-08-17",
-  "verdict": "BUY",
-  "decidedAt": "2026-08-28T11:24:47.926278",
-  "entryPrice": 345.9,
-  "entryPriceAsOf": "2026-08-14"
- },
  "verdict": {
   "status": "confirmed",
   "recorded": "2026-09-01",

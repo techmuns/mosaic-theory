@@ -1,0 +1,4781 @@
+{
+ "_cut": "frozen from a real impact report: local paths scrubbed, request text and CIQ file names dropped, list families kept only where moved or named, and the per-page lists of live-fetched URLs emptied (4044 entries over pages and sides)",
+ "census": [
+  ".guidance"
+ ],
+ "downstream": {
+  "changed_modules": [
+   "vinci.dossier.extraction_version",
+   "vinci.edgar.release_parse"
+  ],
+  "consumers": [
+   {
+    "name": "screens / G3",
+    "reached_by": [],
+    "result": {
+     "status": "not reached"
+    }
+   },
+   {
+    "name": "decision ledger",
+    "reached_by": [],
+    "result": {
+     "status": "not reached"
+    }
+   },
+   {
+    "name": "scoring report",
+    "reached_by": [],
+    "result": {
+     "status": "not reached"
+    }
+   },
+   {
+    "name": "monitor",
+    "reached_by": [],
+    "result": {
+     "status": "not reached"
+    }
+   },
+   {
+    "name": "theme desk",
+    "reached_by": [],
+    "result": {
+     "status": "not reached"
+    }
+   },
+   {
+    "name": "frontend build",
+    "reached_by": [],
+    "result": {
+     "status": "not reached"
+    }
+   }
+  ],
+  "importers": {
+   "vinci.dossier.extraction_version": {
+    "direct": [
+     "vinci.dossier.assemble",
+     "vinci.dossier.inputs_backfill",
+     "vinci.dossier.layer_refresh",
+     "vinci.dossier.render",
+     "vinci.dossier.run_metrics"
+    ],
+    "transitive": [
+     "vinci.__main__",
+     "vinci.cli",
+     "vinci.dossier.assemble",
+     "vinci.dossier.ciq_reread",
+     "vinci.dossier.inputs_backfill",
+     "vinci.dossier.layer_refresh",
+     "vinci.dossier.prespend",
+     "vinci.dossier.refresh",
+     "vinci.dossier.render",
+     "vinci.dossier.run_metrics"
+    ]
+   },
+   "vinci.edgar.release_parse": {
+    "direct": [
+     "vinci.dossier.covenant_extract",
+     "vinci.dossier.mechanical",
+     "vinci.dossier.refresh",
+     "vinci.quality.sources.release"
+    ],
+    "transitive": [
+     "vinci.__main__",
+     "vinci.cli",
+     "vinci.dossier.assemble",
+     "vinci.dossier.ciq_reread",
+     "vinci.dossier.covenant_extract",
+     "vinci.dossier.mechanical",
+     "vinci.dossier.prespend",
+     "vinci.dossier.refresh",
+     "vinci.dossier.render",
+     "vinci.dossier.run_metrics",
+     "vinci.evals.__main__",
+     "vinci.evals.compare",
+     "vinci.evals.judge",
+     "vinci.evals.metrics",
+     "vinci.evals.report",
+     "vinci.evals.variants",
+     "vinci.quality.sources.ciq",
+     "vinci.quality.sources.release"
+    ]
+   }
+  }
+ },
+ "fail_first": {
+  "cases": [
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_a_move_is_refused_only_while_the_version_stands_still"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_a_watched_module_never_moves_while_the_version_stands_still"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_any_code_change_moves_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.25  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n    return x < LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_any_code_change_moves_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.25  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n    return x <= LIMIT or str(x) == \"nan\"\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_any_code_change_moves_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.30  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n    return x <= LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_prose_and_layout_never_move_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.25  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n\\n    return x  \\\\\\n        <=  LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_prose_and_layout_never_move_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.25  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x inside the band?\\n\\n    More words.\"\"\"\\n    return x <= LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_prose_and_layout_never_move_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.25  # a wider explanation of the tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n    return x <= LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_prose_and_layout_never_move_the_hash[\"\"\"Rewritten.\"\"\"\\n\\n\\nLIMIT = 0.25  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n    return x <= LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_repin_is_one_mechanical_step"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_stale_pins_are_said"
+   },
+   {
+    "base": {
+     "message": "Failed: DID NOT RAISE AssertionError",
+     "outcome": "failed",
+     "where": "tests/test_extraction_version_drift.py:266"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_the_failure_tells_a_merger_each_step"
+   },
+   {
+    "base": {
+     "message": "AssertionError: 2026-11-11.guides-as-stated",
+     "outcome": "failed",
+     "where": "tests/test_extraction_version_drift.py:293"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_the_pins_name_a_declared_version"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_the_stale_warning_fires_only_when_the_pins_are_stale"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_the_table_digest_ignores_merge_order"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [] == [('revenue', ...1150.0, '$M')]",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:260"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d19_a_prior_guidance_to_gives_way_to_a_current_one"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [('revenue', ...1050.0, '$M')] == [('revenue', ...1150.0, '$M')]",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:217"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d19_a_prior_range_gives_way_to_a_later_guidance_to"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [] == [('revenue', ...1150.0, '$M')]",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:177"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d19_a_raise_reads_the_new_range_not_the_prior"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d1_a_between_range_is_still_read"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [('revenue', ...1180.5, '$M')] == [('revenue', ...1050.0, '$M')]",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:242"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d1_two_actuals_are_no_current_guide_that_supersedes_a_prior_one"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [('revenue', ...1180.5, '$M')] == []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:52"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d1_two_actuals_joined_by_and_are_not_a_guide"
+   },
+   {
+    "base": {
+     "message": "TypeError: startswith first arg must be str or a tuple of str, not _Missing",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:45"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d20_a_defaulted_period_is_flagged"
+   },
+   {
+    "base": {
+     "message": "TypeError: startswith first arg must be str or a tuple of str, not _Missing",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:45"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d20_a_read_period_is_not_flagged"
+   },
+   {
+    "base": {
+     "message": "TypeError: startswith first arg must be str or a tuple of str, not _Missing",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:203"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d20_verra_mobility_header_period_unread_is_flagged"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d3_a_current_guide_beside_a_later_withdrawal_of_another_outlook_is_read"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d3_a_new_outlook_after_a_withdrawal_in_its_clause_is_read"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [('revenue', ...1050.0, '$M')] == []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:328"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d3_a_passive_withdrawal_refuses"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d3_a_prior_range_with_no_withdrawal_reads_as_before"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [('revenue', ...1050.0, '$M')] == []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:278"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d3_a_range_withdrawn_after_it_is_still_refused"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d3_a_withdrawal_of_another_horizon_leaves_a_prior_range_read"
+   },
+   {
+    "base": {
+     "message": "AssertionError: The Company withdrew its fiscal 2026 outlook.",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:321"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d3_a_withdrawal_of_this_horizon_still_refuses"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [('revenue', ...1050.0, '$M')] == []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:65"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d3_a_withdrawn_outlook_is_refused_aloud"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d4_a_deal_noun_before_the_guides_own_period_does_not_date_it"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [('revenue', ...1200.0, '$M')] == [('revenue', ...1200.0, '$M')]",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:335"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d4_a_deal_stated_before_its_period_is_not_the_guides_period"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d4_a_period_after_a_comma_from_a_deal_is_read"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d4_a_period_of_the_guide_is_still_read"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [('revenue', ...1200.0, '$M')] == [('revenue', ...1200.0, '$M')]",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:85"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d4_a_quarter_naming_an_acquisition_is_not_the_period"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert ['2025'] == ['next-fy']",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:80"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d4_a_year_naming_an_acquisition_is_not_the_period"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [('revenue', ...1300.0, '$M')] == []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:101"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d5_a_calendar_period_is_refused_aloud"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [('revenue', ...1300.0, '$M')] == []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:288"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d5_a_calendar_period_opening_a_long_sentence_is_refused"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d5_a_fiscal_period_is_read"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [] == [('revenue', ... 550.0, '$M')]",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:359"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7_to_be_a_range_is_read"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert ('revenue', 'fiscal 2026', 500.0, 550.0, '$M') in [('adjusted ebitda', 'fiscal 2026', 80.0, 90.0, '$M')]",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:118"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7a_a_qualifier_before_the_low_side_is_read"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert [] == [('fiscal 202...%', 'change')]",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:125"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7b_is_expected_to_increase_is_read_as_a_change"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7c_a_range_never_reads_as_a_point"
+   },
+   {
+    "base": {
+     "message": "AssertionError: []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:131"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7c_a_single_point_guide_is_refused_aloud"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7c_an_actual_single_figure_is_no_guide_and_no_note"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7c_as_expected_before_an_actual_is_no_forward_verb"
+   },
+   {
+    "base": {
+     "message": "AssertionError: []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:145"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7c_vital_farms_single_point_guides_are_refused_aloud"
+   },
+   {
+    "base": {
+     "message": "AssertionError: []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:380"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7d_a_guidance_to_range_with_no_period_read_is_refused_aloud"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7d_a_headline_guidance_to_never_displaces_the_outlook_section"
+   },
+   {
+    "base": {
+     "message": "AssertionError: []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:353"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7d_a_percent_range_under_dollar_guidance_to_is_refused_aloud"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert ('revenue', 'fiscal 2026', 1100.0, 1150.0, '$M') in [('adjusted ebitda', 'fiscal 2026', 80.0, 90.0, '$M')]",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:158"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7d_guidance_to_a_range_is_read"
+   },
+   {
+    "base": {
+     "message": "AssertionError: []",
+     "outcome": "failed",
+     "where": "tests/test_guidance_fix2_e2.py:254"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_fix2_e2.py::test_re2_d7d_guidance_to_shared_by_two_metrics_is_refused_aloud"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_bare_quarter_beside_its_range_is_its_own_period"
+   },
+   {
+    "base": {
+     "message": "AssertionError: The Company expects calendar 2026 revenue of $1.2 billion to $1.3 billion.",
+     "outcome": "failed",
+     "where": "tests/test_guidance_ranges_as_stated.py:370"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_calendar_period_before_the_metric_is_no_sub_line_but_no_fiscal_guide"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_comparison_after_the_second_range_keeps_both_periods"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_current_word_inside_the_prior_marker_does_not_make_it_current"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_dollar_guide_with_no_scale_word_is_refused_aloud"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_dollar_range_beside_a_percent_one_is_not_refused"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_gross_margin_stated_in_dollars_is_refused_not_stored_as_percent"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_gross_margin_stated_in_percent_stays"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_guide_stated_in_thousands_is_not_stored_as_millions"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_percent_range_after_a_dollar_range_is_not_that_metrics_level[The Company expects adjusted EBITDA of $40 million to $45 million in the third quarter and 20% to 22% for fiscal 2026.]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_percent_range_after_a_dollar_range_is_not_that_metrics_level[The Company expects revenue of $250 million to $260 million in the third quarter and 8% to 10% for fiscal 2026.]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_plural_scale_word_is_a_scale"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_prior_range_reaffirmed_or_followed_by_now_is_current"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_raised_updated_or_kept_prior_outlook_is_the_current_guide[As initially guided in February, revenue of $1.10 billion to $1.15 billion.]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_raised_updated_or_kept_prior_outlook_is_the_current_guide[Raises Prior Full-Year Guidance. Raising prior guidance for revenue of $1.10 billion to $1.15 billion.]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_raised_updated_or_kept_prior_outlook_is_the_current_guide[The Company increased its revenue outlook from its prior range; revenue of $1.10 billion to $1.15 billion is expected for fiscal 2026.]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_raised_updated_or_kept_prior_outlook_is_the_current_guide[The Company is raising its previously issued fiscal 2026 guidance for revenue to be in the range of $1.10 billion to $1.15 billion.]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_raised_updated_or_kept_prior_outlook_is_the_current_guide[The Company is updating its previously provided outlook for fiscal 2026 revenue to be in the range of $1.10 billion to $1.15 billion.]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_raised_updated_or_kept_prior_outlook_is_the_current_guide[The Company's original guidance for fiscal 2026 remains in place: revenue of $1.10 billion to $1.15 billion.]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_second_range_followed_by_another_measure_is_not_the_first_metric"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_second_range_in_a_scope_already_read_is_refused_aloud"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_second_range_whose_period_is_not_its_own_is_refused_aloud"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_second_range_with_its_own_period_is_read"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_stated_billion_and_million_still_scale"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_sub_line_or_superseded_growth_or_change_guide_is_not_revenue"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_sub_line_revenue_guide_is_refused_not_stored_as_revenue"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_table_heading_states_the_scale_of_its_bare_ranges"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_total_guide_led_by_an_allowed_word_stays"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_verb_that_states_the_guide_is_not_a_sub_line"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_a_yearless_quarter_takes_the_year_its_partner_states"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_an_old_range_beside_a_new_one_after_a_semicolon"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_an_unpaired_first_range_never_reads_its_partners_period"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_an_unrelated_maintaining_does_not_reaffirm_a_prior_range"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_artivion_keeps_its_current_range_beside_the_previously_articulated_one"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_bellring_shared_range_sentence_stays_one_refusal"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_maintenance_revenue_is_not_a_reaffirmation"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_ncino_list_keeps_the_total_and_only_the_total"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_ncino_subscription_bullet_alone_is_not_the_company_total"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_one_refusal_per_stated_guide"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_period_heading_and_scale_words_are_not_sub_lines[Acme Reports Third Quarter 2026 Results. 2026 Guidance Revenue of $1.2 billion to $1.3 billion.-revenue]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_period_heading_and_scale_words_are_not_sub_lines[Acme Reports Third Quarter 2026 Results. Full Year 2026 Outlook Revenue of $1.2 billion to $1.3 billion.-revenue]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_period_heading_and_scale_words_are_not_sub_lines[Fiscal 2026 Outlook (in millions) Revenue of $985 to $995 Adjusted EBITDA of $200 to $210-revenue]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_period_heading_and_scale_words_are_not_sub_lines[The Company expects FY2026 revenue to be in the range of $1.2 billion to $1.3 billion.-revenue]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_period_heading_and_scale_words_are_not_sub_lines[The Company expects FY26 revenue of $1.2 billion to $1.3 billion.-revenue]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_period_heading_and_scale_words_are_not_sub_lines[The Company expects annual revenue of $1.2 billion to $1.3 billion for 2026.-revenue]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_period_heading_and_scale_words_are_not_sub_lines[The Company expects fourth-quarter revenue of $250 million to $260 million.-revenue]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_period_heading_and_scale_words_are_not_sub_lines[The Company expects second-half net sales of $600 million to $650 million.-net sales]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_previously_provided_as_the_object_of_an_update_is_not_a_prior_range"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_simply_good_without_its_bullet_glyphs_keeps_both_guides"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_the_current_range_replaces_the_one_it_supersedes"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_the_first_range_never_takes_the_second_ranges_period"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_the_second_ranges_quote_carries_its_own_figures_after_a_long_lead_in"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_unchanged_elsewhere_in_the_clause_reaffirms_nothing"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_guidance_ranges_as_stated.py::test_vital_farms_previously_anticipated_after_its_range_is_still_current"
+   }
+  ],
+  "exit": {
+   "base": 1,
+   "head": 0
+  },
+  "missing_at_base": [
+   "vinci.edgar.release_parse.GUIDANCE_PERIOD_DEFAULT_PREFIX"
+  ],
+  "seconds": 32.8,
+  "tests": [
+   "tests/test_extraction_version_drift.py",
+   "tests/test_guidance_fix2_e2.py",
+   "tests/test_guidance_ranges_as_stated.py"
+  ]
+ },
+ "frontend": {
+  "differ": [],
+  "files": 349,
+  "only_base": [],
+  "only_head": [],
+  "pr_edits": [
+   "frontend/views/shared/dossier.js"
+  ]
+ },
+ "page_reach": [
+  "vinci/dossier/extraction_version.py",
+  "vinci/edgar/release_parse.py"
+ ],
+ "pages": {
+  "built": true,
+  "how": {
+   "AMZN": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "BRBR": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "BURL": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "CNXC": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "EPAM": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "FUBO": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "GOOGL": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "IT": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "LLY": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "MCK": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "MVST": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "NCNO": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "NFLX": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "NKE": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "ORKA": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "PARR": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "ROST": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "SMPL": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "TECX": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "TGT": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "TJX": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "UBER": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "V": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "VITL": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "VRRM": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "WERN": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "WLK": {
+    "base": "resumed",
+    "head": "resumed"
+   }
+  },
+  "results": [
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 5,
+      "head": 5,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 6,
+      "head": 6,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 561,
+     "head": 561
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "93126e19f2addf385ea6d9d911037b59b475b3b401fe2d3139cfe9288254806a",
+      "head": "93126e19f2addf385ea6d9d911037b59b475b3b401fe2d3139cfe9288254806a"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "AMZN",
+    "timing": {
+     "base": {
+      "build": 135.87,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.2
+     },
+     "head": {
+      "build": 221.9,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.21
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 5,
+      "head": 5,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 3,
+      "head": 3,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 396,
+     "head": 396
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "466cf0e9bda4e0351d0c6e4c4719cbf0a7544a988ad0d7d3a0fc209dda55184f",
+      "head": "466cf0e9bda4e0351d0c6e4c4719cbf0a7544a988ad0d7d3a0fc209dda55184f"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "BRBR",
+    "timing": {
+     "base": {
+      "build": 14.96,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 4.31
+     },
+     "head": {
+      "build": 42.86,
+      "committed_render": 0.03,
+      "render": 0.02,
+      "request": 5.21
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 9,
+      "head": 9,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[]": {
+      "base": 6,
+      "head": 6,
+      "moved": 1
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 10,
+      "head": 10,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].qa_flags[]": {
+      "base": 5,
+      "head": 6,
+      "moved": 1
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted eps guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EPS in the range of $11.77 to $11.97\" (8-K 0001193125-26-369502 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     }
+    ],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 375,
+     "head": 375
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "c373c982afff814a319eeb24cd6a9ad78f419fa9ab744b4e2b197228409b93f0",
+      "head": "c373c982afff814a319eeb24cd6a9ad78f419fa9ab744b4e2b197228409b93f0"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "BURL",
+    "timing": {
+     "base": {
+      "build": 26.07,
+      "committed_render": 0.03,
+      "render": 0.02,
+      "request": 4.36
+     },
+     "head": {
+      "build": 38.16,
+      "committed_render": 0.03,
+      "render": 0.05,
+      "request": 9.28
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 9,
+      "head": 9,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 18,
+      "head": 18,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 330,
+     "head": 330
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "d4ff8b45516c5fc30c905b080e52e82dc2d3b669a9b49988a065eae80e71176e",
+      "head": "d4ff8b45516c5fc30c905b080e52e82dc2d3b669a9b49988a065eae80e71176e"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "CNXC",
+    "timing": {
+     "base": {
+      "build": 38.82,
+      "committed_render": 0.04,
+      "render": 0.02,
+      "request": 4.35
+     },
+     "head": {
+      "build": 31.68,
+      "committed_render": 0.04,
+      "render": 0.01,
+      "request": 4.75
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 7,
+      "head": 7,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[]": {
+      "base": 5,
+      "head": 5,
+      "moved": 1
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 16,
+      "head": 16,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].qa_flags[]": {
+      "base": 19,
+      "head": 20,
+      "moved": 1
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this revenue guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Based on the strength of organic constant currency revenue growth and updates to our foreign exchange rate assumptions, the Company raises its expecte\" (8-K 0001352010-25-000053 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#4].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     }
+    ],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 304,
+     "head": 304
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "2b7e9f6c5bc703a13d2c555ccbdecb38d3c2086053d6012b307eccf848234c66",
+      "head": "2b7e9f6c5bc703a13d2c555ccbdecb38d3c2086053d6012b307eccf848234c66"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "EPAM",
+    "timing": {
+     "base": {
+      "build": 46.27,
+      "committed_render": 0.04,
+      "render": 0.02,
+      "request": 4.65
+     },
+     "head": {
+      "build": 51.17,
+      "committed_render": 0.04,
+      "render": 0.02,
+      "request": 4.98
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 2,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 1,
+      "head": 1,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 205,
+     "head": 205
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "4f48c9d6c118036596f31e676a031df32c3fa5315f15208e548efff546465cc4",
+      "head": "4f48c9d6c118036596f31e676a031df32c3fa5315f15208e548efff546465cc4"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "FUBO",
+    "timing": {
+     "base": {
+      "build": 16.73,
+      "committed_render": 0.03,
+      "render": 0.02,
+      "request": 4.66
+     },
+     "head": {
+      "build": 31.88,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 4.19
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 5,
+      "head": 5,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 1,
+     "head": 1
+    },
+    "reads": {
+     "base": 1076,
+     "head": 1076
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "0e9fff3af21b7f36285d2ecb5b61e6f71d4bd9bc65f218cefc6ff609bf4e10e6",
+      "head": "0e9fff3af21b7f36285d2ecb5b61e6f71d4bd9bc65f218cefc6ff609bf4e10e6"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "GOOGL",
+    "timing": {
+     "base": {
+      "build": 105.39,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.42
+     },
+     "head": {
+      "build": 1616.46,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 3.71
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 13,
+      "head": 13,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 1037,
+     "head": 1037
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "2a44d3810389077eb90e3311825bb1168a64c25e6ba8ff02e3aa58434e862235",
+      "head": "2a44d3810389077eb90e3311825bb1168a64c25e6ba8ff02e3aa58434e862235"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "IT",
+    "timing": {
+     "base": {
+      "build": 12.46,
+      "committed_render": 0.01,
+      "render": 0.01,
+      "request": 4.09
+     },
+     "head": {
+      "build": 133.31,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 4.38
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 1,
+      "head": 1,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 1,
+     "head": 1
+    },
+    "reads": {
+     "base": 856,
+     "head": 856
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "5329c3b8a9cc3051060285c1100f727b0e68243641dc6b825d71a0b9132b6e7e",
+      "head": "5329c3b8a9cc3051060285c1100f727b0e68243641dc6b825d71a0b9132b6e7e"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "LLY",
+    "timing": {
+     "base": {
+      "build": 16.86,
+      "committed_render": 0.02,
+      "render": 0.02,
+      "request": 4.24
+     },
+     "head": {
+      "build": 1365.65,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 4.49
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 13,
+      "head": 13,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 357,
+     "head": 357
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "9b4821f7c95e8c16e723dcf255d167c964a288abb699568e05e142801526401a",
+      "head": "9b4821f7c95e8c16e723dcf255d167c964a288abb699568e05e142801526401a"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "MCK",
+    "timing": {
+     "base": {
+      "build": 14.27,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 3.85
+     },
+     "head": {
+      "build": 13.57,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.92
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 3,
+      "head": 3,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 2,
+      "head": 2,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 155,
+     "head": 155
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "4a80993e02165bef9f14c8bbc3760a9ab000e16c92cde288892519064e216235",
+      "head": "4a80993e02165bef9f14c8bbc3760a9ab000e16c92cde288892519064e216235"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "MVST",
+    "timing": {
+     "base": {
+      "build": 10.34,
+      "committed_render": 0.01,
+      "render": 0.01,
+      "request": 3.05
+     },
+     "head": {
+      "build": 24.25,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 3.68
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 4,
+      "head": 4,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 27,
+      "head": 27,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 554,
+     "head": 554
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "816064c6d8099cbc2806653b1d568ec79d4de4809fc5d3323230605641879995",
+      "head": "816064c6d8099cbc2806653b1d568ec79d4de4809fc5d3323230605641879995"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "NCNO",
+    "timing": {
+     "base": {
+      "build": 11.54,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 5.12
+     },
+     "head": {
+      "build": 60.47,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 5.42
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 6,
+     "identical": false,
+     "lines": [
+      "+> \u26a0 **Verify before the verdict:** Guidance stated but not attributable \u2014 full caveats in Analysis.",
+      "+",
+      "-_2 to verify._",
+      "+_5 to verify._",
+      "+- Guidance stated but not attributable \u2014 a single-point revenue guide ($51.1B) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"\u25e6 For 2026, we expect revenue of $51.1B\" (8-K 0001065280-26-000290 EX-99.1)",
+      "+- Guidance stated but not attributable \u2014 a single-point revenue guide ($13.4 billion) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"In Q4, we expect revenue of $13.4 billion\" (8-K 0001065280-26-000290 EX-99.1)",
+      "+- Guidance stated but not attributable \u2014 a single-point free cash flow guide ($11B) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"For 2026, assuming no material swings in F/X, we expect to generate free cash flow of roughly $11B\" (8-K 0001065280-26-000033 EX-99.1)"
+     ],
+     "removed": 1,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "caveats[]": {
+      "base": 6,
+      "head": 9,
+      "moved": 1
+     },
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[]": {
+      "base": 4,
+      "head": 4,
+      "moved": 2
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 2,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].qa_flags[]": {
+      "base": 9,
+      "head": 11,
+      "moved": 3
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 a single-point revenue guide ($51.1B) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"\u25e6 For 2026, we expect revenue of $51.1B\" (8-K 0001065280-26-000290 EX-99.1)",
+      "kind": "added",
+      "path": "caveats[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 a single-point revenue guide ($13.4 billion) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"In Q4, we expect revenue of $13.4 billion\" (8-K 0001065280-26-000290 EX-99.1)",
+      "kind": "added",
+      "path": "caveats[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 a single-point free cash flow guide ($11B) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"For 2026, assuming no material swings in F/X, we expect to generate free cash flow of roughly $11B\" (8-K 0001065280-26-000033 EX-99.1)",
+      "kind": "added",
+      "path": "caveats[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "no anchored pattern matched \u2014 guidance/outlook: 8-K 0001065280-26-000290 EX-99.1",
+      "head": "ABSENT",
+      "kind": "removed",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[-]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 a single-point revenue guide ($51.1B) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"\u25e6 For 2026, we expect revenue of $51.1B\" (8-K 0001065280-26-000290 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 a single-point revenue guide ($13.4 billion) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"In Q4, we expect revenue of $13.4 billion\" (8-K 0001065280-26-000290 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 a single-point free cash flow guide ($11B) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"For 2026, assuming no material swings in F/X, we expect to generate free cash flow of roughly $11B\" (8-K 0001065280-26-000033 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#3].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     }
+    ],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 1322,
+     "head": 1322
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "ef4290d0603a52415bbe95432dbe26740a51cfb365f451bacfe5b645e67edb36",
+      "head": "ef4290d0603a52415bbe95432dbe26740a51cfb365f451bacfe5b645e67edb36"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "NFLX",
+    "timing": {
+     "base": {
+      "build": 12.63,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 3.76
+     },
+     "head": {
+      "build": 12.08,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.75
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 7,
+      "head": 7,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 1,
+      "head": 1,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 376,
+     "head": 376
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "5e2f805e0a2085116a6708af6ef8e19bafbc927f07e564e103a39ac8e48cdc3b",
+      "head": "5e2f805e0a2085116a6708af6ef8e19bafbc927f07e564e103a39ac8e48cdc3b"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "NKE",
+    "timing": {
+     "base": {
+      "build": 10.66,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.25
+     },
+     "head": {
+      "build": 150.36,
+      "committed_render": 0.04,
+      "render": 0.01,
+      "request": 3.71
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 237,
+     "head": 237
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "9a9f4a3812ed58ea8e0f485f6c7aad0941f85535efdd11947bff2929967822ed",
+      "head": "9a9f4a3812ed58ea8e0f485f6c7aad0941f85535efdd11947bff2929967822ed"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "ORKA",
+    "timing": {
+     "base": {
+      "build": 4.39,
+      "committed_render": 0.01,
+      "render": 0.01,
+      "request": 0.45
+     },
+     "head": {
+      "build": 82.19,
+      "committed_render": 0.01,
+      "render": 0.01,
+      "request": 0.46
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 9,
+      "head": 9,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 521,
+     "head": 521
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "5914e00a5f18f5be405ff648a75cba646ec3a81d46994c87483df118cedde894",
+      "head": "5914e00a5f18f5be405ff648a75cba646ec3a81d46994c87483df118cedde894"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "PARR",
+    "timing": {
+     "base": {
+      "build": 12.24,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.02
+     },
+     "head": {
+      "build": 128.76,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 2.97
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 10,
+      "head": 10,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 1,
+     "head": 1
+    },
+    "reads": {
+     "base": 307,
+     "head": 307
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "e804db39dc649fa06187ae798577428a0a73e0ae271831bbfa978a09280a5d63",
+      "head": "e804db39dc649fa06187ae798577428a0a73e0ae271831bbfa978a09280a5d63"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "ROST",
+    "timing": {
+     "base": {
+      "build": 14.67,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 5.09
+     },
+     "head": {
+      "build": 547.47,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 5.82
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 8,
+      "head": 8,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[]": {
+      "base": 6,
+      "head": 6,
+      "moved": 6
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 21,
+      "head": 21,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].qa_flags[]": {
+      "base": 8,
+      "head": 21,
+      "moved": 6
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this net sales guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Net sales expected to decline between 13% and 17%\" (8-K 0001702744-26-000028 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted ebitda guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EBITDA expected to decline between 9% and 14%\" (8-K 0001702744-26-000028 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted ebitda guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EBITDA expected to range between $220 and $225 million\" (8-K 0001702744-26-000021 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#1].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this gross margin guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Gross margins expected to decline approximately 375 basis points\" (8-K 0001702744-26-000021 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#1].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted ebitda guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EBITDA expected to range between $217 and $225 million\" (8-K 0001702744-26-000010 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#2].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this gross margin guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Gross margins expected to decline between 300 and 350 basis points\" (8-K 0001702744-26-000010 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#2].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted ebitda guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EBITDA expected to range between -4% and +1%\" (8-K 0001702744-26-000004 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#3].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this gross margin guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Gross margins expected to decline between 100 and 150 basis points\" (8-K 0001702744-26-000004 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#3].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this net sales guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Net sales expected to range between -2% and +2%\" (8-K 0001702744-25-000043 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#4].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted ebitda guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EBITDA expected to range between -4% and +1%\" (8-K 0001702744-25-000043 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#4].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this gross margin guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Gross margins expected to decline between 100 and 150 basis points\" (8-K 0001702744-25-000043 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#4].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted ebitda guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EBITDA expected to increase 4% to 5%\" (8-K 0001702744-25-000035 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#5].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this gross margin guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"In addition, the Company is maintaining its outlook for full year gross margin to decline by approximately 200 basis points\" (8-K 0001702744-25-000035 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#5].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     }
+    ],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 266,
+     "head": 266
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "9f81aadcc281d7d3e8c4283afe00ca145005f519e5bc3739c2589facedd70994",
+      "head": "9f81aadcc281d7d3e8c4283afe00ca145005f519e5bc3739c2589facedd70994"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "SMPL",
+    "timing": {
+     "base": {
+      "build": 11.7,
+      "committed_render": 0.03,
+      "render": 0.02,
+      "request": 3.78
+     },
+     "head": {
+      "build": 11.1,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.32
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 247,
+     "head": 247
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "2bdcd1dedcfbb31e731fdc48c7b86710722572b9b347c0b04d49aa9a12943638",
+      "head": "2bdcd1dedcfbb31e731fdc48c7b86710722572b9b347c0b04d49aa9a12943638"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "TECX",
+    "timing": {
+     "base": {
+      "build": 5.06,
+      "committed_render": 0.01,
+      "render": 0.01,
+      "request": 0.63
+     },
+     "head": {
+      "build": 62.49,
+      "committed_render": 0.01,
+      "render": 0.01,
+      "request": 0.55
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 12,
+      "head": 12,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 1,
+      "head": 1,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 1,
+     "head": 1
+    },
+    "reads": {
+     "base": 331,
+     "head": 331
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "476789c5c1a426c14190edcd2995efb414b5a9d4a817721a950d1cafddeca526",
+      "head": "476789c5c1a426c14190edcd2995efb414b5a9d4a817721a950d1cafddeca526"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "TGT",
+    "timing": {
+     "base": {
+      "build": 12.9,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 4.17
+     },
+     "head": {
+      "build": 688.73,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.76
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 14,
+      "head": 14,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 1,
+     "head": 1
+    },
+    "reads": {
+     "base": 309,
+     "head": 309
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "27f20c346f1debf47f8daa2763e3cbd60192dca30fa55be72d64fb6a46cd2a4c",
+      "head": "27f20c346f1debf47f8daa2763e3cbd60192dca30fa55be72d64fb6a46cd2a4c"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "TJX",
+    "timing": {
+     "base": {
+      "build": 12.49,
+      "committed_render": 0.02,
+      "render": 0.02,
+      "request": 4.24
+     },
+     "head": {
+      "build": 603.24,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 4.15
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 7,
+      "head": 7,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 8,
+      "head": 8,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 1,
+     "head": 1
+    },
+    "reads": {
+     "base": 777,
+     "head": 777
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "ffedfa53afc78372d57c6d131d8fe142370f8e697c9669dec6590bb8dbea064e",
+      "head": "ffedfa53afc78372d57c6d131d8fe142370f8e697c9669dec6590bb8dbea064e"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "UBER",
+    "timing": {
+     "base": {
+      "build": 12.33,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.55
+     },
+     "head": {
+      "build": 1112.95,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.44
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 10,
+      "head": 10,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 1,
+     "head": 1
+    },
+    "reads": {
+     "base": 38,
+     "head": 38
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "a56c2251da902381ad05eea5dfc1018c8406ac0dc7b2c6bd7b680151faa351b2",
+      "head": "a56c2251da902381ad05eea5dfc1018c8406ac0dc7b2c6bd7b680151faa351b2"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "V",
+    "timing": {
+     "base": {
+      "build": 20.71,
+      "committed_render": 0.04,
+      "render": 0.01,
+      "request": 3.76
+     },
+     "head": {
+      "build": 63.53,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.51
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 4,
+     "identical": false,
+     "lines": [
+      "-_3 to verify._",
+      "-",
+      "+_5 to verify._",
+      "+",
+      "+- Guidance stated but not attributable \u2014 a single-point revenue guide ($730 Million) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"Revenue Outlook to around $730 Million\" (8-K 0001193125-26-444348 EX-99.1)",
+      "+- Guidance stated but not attributable \u2014 a single-point adjusted ebitda guide ($(15) million) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"Adjusted EBITDA loss of around $(15) million\" (8-K 0001193125-26-444348 EX-99.1)"
+     ],
+     "removed": 2,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "caveats[]": {
+      "base": 4,
+      "head": 6,
+      "moved": 1
+     },
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 8,
+      "head": 8,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[]": {
+      "base": 6,
+      "head": 6,
+      "moved": 2
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 7,
+      "head": 7,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].qa_flags[]": {
+      "base": 10,
+      "head": 12,
+      "moved": 3
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 a single-point revenue guide ($730 Million) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"Revenue Outlook to around $730 Million\" (8-K 0001193125-26-444348 EX-99.1)",
+      "kind": "added",
+      "path": "caveats[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 a single-point adjusted ebitda guide ($(15) million) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"Adjusted EBITDA loss of around $(15) million\" (8-K 0001193125-26-444348 EX-99.1)",
+      "kind": "added",
+      "path": "caveats[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "no anchored pattern matched \u2014 guidance/outlook: 8-K 0001193125-26-444348 EX-99.1",
+      "head": "ABSENT",
+      "kind": "removed",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[-]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 a single-point revenue guide ($730 Million) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"Revenue Outlook to around $730 Million\" (8-K 0001193125-26-444348 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 a single-point adjusted ebitda guide ($(15) million) is stated; a guide is read only as a range, so it is not read; verify against the filing: \"Adjusted EBITDA loss of around $(15) million\" (8-K 0001193125-26-444348 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted ebitda guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EBITDA Outlook of $0 Million to $10 Million\" (8-K 0001193125-26-336692 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#1].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     }
+    ],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 547,
+     "head": 547
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "a6c1d5dba47d6bc940c90bb1fd44ca4aac0771370efe4e54a918c6ed08954976",
+      "head": "a6c1d5dba47d6bc940c90bb1fd44ca4aac0771370efe4e54a918c6ed08954976"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "VITL",
+    "timing": {
+     "base": {
+      "build": 11.24,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.32
+     },
+     "head": {
+      "build": 12.68,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.51
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 9,
+      "head": 9,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[]": {
+      "base": 2,
+      "head": 2,
+      "moved": 2
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 8,
+      "head": 8,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].qa_flags[]": {
+      "base": 6,
+      "head": 11,
+      "moved": 2
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this revenue guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Total Revenue of $945 million to $965 million\" (8-K 0001628280-26-068453 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted ebitda guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EBITDA of $360 million to $370 million\" (8-K 0001628280-26-068453 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted eps guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EPS of $1.11 to $1.17\" (8-K 0001628280-26-068453 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#0].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted ebitda guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EBITDA of $360 million to $370 million\" (8-K 0001193125-26-335111 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#1].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance period not read \u2014 no period was read for this adjusted eps guide in its own sentence, its list header or its outlook opener, so it is filed under the next-fy default, which reads as annual; verify the period against the filing: \"Adjusted EPS of $1.11 to $1.17\" (8-K 0001193125-26-335111 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#1].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     }
+    ],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 233,
+     "head": 233
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "c9963b9c628dd1010d94fa8d58fd9f5e5aae2b011c881fb62f395e7153ec28fd",
+      "head": "c9963b9c628dd1010d94fa8d58fd9f5e5aae2b011c881fb62f395e7153ec28fd"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "VRRM",
+    "timing": {
+     "base": {
+      "build": 10.67,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 3.15
+     },
+     "head": {
+      "build": 11.41,
+      "committed_render": 0.06,
+      "render": 0.01,
+      "request": 3.26
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 4,
+     "identical": false,
+     "lines": [
+      "-> \u26a0 **Verify before the verdict:** Net debt/EBITDA (2.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis \u2014 full caveats in Analysis.",
+      "+> \u26a0 **Verify before the verdict:** Guidance stated but not attributable; Net debt/EBITDA (2.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis \u2014 full caveats in Analysis.",
+      "-_4 to verify._",
+      "+_6 to verify._",
+      "+- Guidance stated but not attributable \u2014 revenue qualified by 'preliminary' is a sub-line, not the company's total; verify against the filing: \"The Company expects preliminary total revenues to be approximately $946 million to $951 million\" (8-K 0000793074-26-000162 EX-99.1)",
+      "+- Guidance stated but not attributable \u2014 one range is shared by 2 metrics (gaap diluted eps, revenue), so which it governs cannot be read from the sentence; verify against the filing: \"The Company expects preliminary total revenues to be approximately $946 million to $951 million, GAAP diluted earnings per share to be approximately $\" (8-K 0000793074-26-000162 EX-99.1)"
+     ],
+     "removed": 2,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "caveats[]": {
+      "base": 5,
+      "head": 7,
+      "moved": 1
+     },
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 7,
+      "head": 7,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[]": {
+      "base": 3,
+      "head": 3,
+      "moved": 1
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].qa_flags[]": {
+      "base": 6,
+      "head": 7,
+      "moved": 2
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 revenue qualified by 'preliminary' is a sub-line, not the company's total; verify against the filing: \"The Company expects preliminary total revenues to be approximately $946 million to $951 million\" (8-K 0000793074-26-000162 EX-99.1)",
+      "kind": "added",
+      "path": "caveats[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 one range is shared by 2 metrics (gaap diluted eps, revenue), so which it governs cannot be read from the sentence; verify against the filing: \"The Company expects preliminary total revenues to be approximately $946 million to $951 million, GAAP diluted earnings per share to be approximately $\" (8-K 0000793074-26-000162 EX-99.1)",
+      "kind": "added",
+      "path": "caveats[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "no anchored pattern matched \u2014 guidance/outlook: 8-K 0000793074-26-000162 EX-99.1",
+      "head": "ABSENT",
+      "kind": "removed",
+      "path": "mechanical.primary_source.releases[#1].qa_flags[-]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 revenue qualified by 'preliminary' is a sub-line, not the company's total; verify against the filing: \"The Company expects preliminary total revenues to be approximately $946 million to $951 million\" (8-K 0000793074-26-000162 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#1].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": "ABSENT",
+      "head": "Guidance stated but not attributable \u2014 one range is shared by 2 metrics (gaap diluted eps, revenue), so which it governs cannot be read from the sentence; verify against the filing: \"The Company expects preliminary total revenues to be approximately $946 million to $951 million, GAAP diluted earnings per share to be approximately $\" (8-K 0000793074-26-000162 EX-99.1)",
+      "kind": "added",
+      "path": "mechanical.primary_source.releases[#1].qa_flags[+]",
+      "source_ref": null,
+      "sourced": null
+     }
+    ],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 329,
+     "head": 329
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "af773ea67fdbd03571b47896af88039413ec0f748d1290835eaf5cdc5fe389f0",
+      "head": "af773ea67fdbd03571b47896af88039413ec0f748d1290835eaf5cdc5fe389f0"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "WERN",
+    "timing": {
+     "base": {
+      "build": 11.69,
+      "committed_render": 0.02,
+      "render": 0.02,
+      "request": 4.98
+     },
+     "head": {
+      "build": 52.74,
+      "committed_render": 0.03,
+      "render": 0.02,
+      "request": 4.22
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 0,
+     "identical": true,
+     "lines": [],
+     "removed": 0,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": true,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.catalyst_path.guidance_after_price_date[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     },
+     "mechanical.catalyst_path.guidance_bridge_rows.value[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 0
+     },
+     "mechanical.primary_source.releases[].guidance[]": {
+      "base": 0,
+      "head": 0,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 315,
+     "head": 315
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "b3b094a86a278edf2403e36baa93bef4fa9ee9d0b81798815db808fab84ac010",
+      "head": "b3b094a86a278edf2403e36baa93bef4fa9ee9d0b81798815db808fab84ac010"
+     },
+     "status": "compared"
+    },
+    "status": "same",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "WLK",
+    "timing": {
+     "base": {
+      "build": 13.24,
+      "committed_render": 0.03,
+      "render": 0.02,
+      "request": 4.66
+     },
+     "head": {
+      "build": 94.53,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 4.28
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-10.relationship-view-edges",
+      "head": "2026-11-11.guides-as-stated",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   }
+  ],
+  "seconds": 0.8,
+  "workers": 6
+ },
+ "panel_requests": {
+  "pages": {
+   "BURL": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   },
+   "CNXC": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   },
+   "LLY": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   },
+   "MCK": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   },
+   "ROST": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   },
+   "SMPL": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   }
+  },
+  "status": "compared"
+ },
+ "same_code": false,
+ "schema": 1,
+ "stamp": {
+  "base": {
+   "ref": "c2a4d743",
+   "sha": "c2a4d743fd981d00d136916fb0faf93e08188396",
+   "tip": "c2a4d743fd981d00d136916fb0faf93e08188396"
+  },
+  "date": "2026-11-11T05:57:52Z",
+  "diff_identity": {
+   "all_paths": [
+    "docs/records/2026-11-11-fix2-e2-a-guide-is-read-as-stated-or-said-aloud.md",
+    "frontend/views/shared/dossier.js",
+    "tests/test_extraction_version_drift.py",
+    "tests/test_guidance_fix2_e2.py",
+    "tests/test_guidance_ranges_as_stated.py",
+    "vinci/dossier/extraction_version.py",
+    "vinci/edgar/release_parse.py"
+   ],
+   "excluded": [
+    "docs/",
+    "planning/",
+    "STATE.md",
+    "CLAUDE.md",
+    "AGENTS.md",
+    "README.md"
+   ],
+   "merge_base": "c2a4d743fd981d00d136916fb0faf93e08188396",
+   "patch_id": "d68a8d978194223d0aa36e95e81070f51f649aab",
+   "paths": [
+    "frontend/views/shared/dossier.js",
+    "tests/test_extraction_version_drift.py",
+    "tests/test_guidance_fix2_e2.py",
+    "tests/test_guidance_ranges_as_stated.py",
+    "vinci/dossier/extraction_version.py",
+    "vinci/edgar/release_parse.py"
+   ]
+  },
+  "head": {
+   "ref": "2b9b766c",
+   "sha": "2b9b766c71b7be9ea52c7e986df40d1ab8e41349"
+  },
+  "inputs": {
+   "cache_root": "cache",
+   "ciq": {
+    "AMZN": {
+     "files": 11
+    },
+    "BRBR": {
+     "files": 11
+    },
+    "BURL": {
+     "files": 11
+    },
+    "CNXC": {
+     "files": 11
+    },
+    "EPAM": {
+     "files": 11
+    },
+    "FUBO": {
+     "files": 10
+    },
+    "GOOGL": {
+     "files": 11
+    },
+    "IT": {
+     "files": 10
+    },
+    "LLY": {
+     "files": 11
+    },
+    "MCK": {
+     "files": 11
+    },
+    "MVST": {
+     "files": 10
+    },
+    "NCNO": {
+     "files": 11
+    },
+    "NFLX": {
+     "files": 11
+    },
+    "NKE": {
+     "files": 11
+    },
+    "ORKA": {
+     "files": 8
+    },
+    "PARR": {
+     "files": 10
+    },
+    "ROST": {
+     "files": 11
+    },
+    "SMPL": {
+     "files": 11
+    },
+    "TECX": {
+     "files": 8
+    },
+    "TGT": {
+     "files": 11
+    },
+    "TJX": {
+     "files": 10
+    },
+    "UBER": {
+     "files": 11
+    },
+    "V": {
+     "files": 10
+    },
+    "VITL": {
+     "files": 11
+    },
+    "VRRM": {
+     "files": 11
+    },
+    "WERN": {
+     "files": 11
+    },
+    "WLK": {
+     "files": 11
+    }
+   },
+   "ciq_moved_during_run": [],
+   "ciq_root": "ciq",
+   "data_ref": "2b9b766c71b7be9ea52c7e986df40d1ab8e41349",
+   "pages": [
+    "AMZN",
+    "BRBR",
+    "BURL",
+    "CNXC",
+    "EPAM",
+    "FUBO",
+    "GOOGL",
+    "IT",
+    "LLY",
+    "MCK",
+    "MVST",
+    "NCNO",
+    "NFLX",
+    "NKE",
+    "ORKA",
+    "PARR",
+    "ROST",
+    "SMPL",
+    "TECX",
+    "TGT",
+    "TJX",
+    "UBER",
+    "V",
+    "VITL",
+    "VRRM",
+    "WERN",
+    "WLK"
+   ],
+   "store": {
+    "content": {
+     "content_sha256": "abeee0e75c67014ed51611bd1d2381e3d130fbb82064f5ec6aa233db9632ca43",
+     "rows": 2543455
+    },
+    "file_sha256": "e33d420f9f5de2d3cd63c3d91bf1f13cc3152d3dbe5487c2c0a35721d3234ff4",
+    "frontier": "2026-11-09",
+    "priced_ids": 2349,
+    "source": "scratchpad",
+    "written_by": []
+   }
+  }
+ },
+ "tool": "vinci.impact",
+ "wall_seconds": 77.0
+}

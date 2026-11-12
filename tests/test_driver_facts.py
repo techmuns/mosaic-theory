@@ -315,9 +315,12 @@ def test_an_unknown_rows_value_reaches_the_synthesis_as_unknown_in_the_facts_and
     good, _ = _one(_DOWN_7, "down 7%")
     od = ds.OperatingDriversExtract(rows=[bad, good])
     digest = syn._operating_drivers_digest(od)
-    assert "widget shipments: up 7%" not in digest
-    assert "widget shipments: UNKNOWN — not verified against its quote" in digest
-    assert "widget shipments: down 7%" in digest
+    # each row now names its period (prompt-fix 2, fix request 2): the three move together, so the
+    # negative half still bites on the line's real shape
+    assert "widget shipments (period not stated): up 7%" not in digest
+    assert ("widget shipments (period not stated): UNKNOWN — not verified against its quote"
+            in digest)
+    assert "widget shipments (period not stated): down 7%" in digest
     dumped = _layer_with(bad, good).model_dump(exclude=syn.NOT_SENT)
     syn._mark_unverified_drivers(dumped, od)
     values = [r["value"] for r in dumped["operating_drivers"]["rows"]]
@@ -333,69 +336,63 @@ def test_the_prompt_keeps_every_driver_rows_shape() -> None:
                          "following_context", "source_ref", "tier"]
 
 
-def _committed() -> list[tuple[str, dict[str, typing.Any]]]:
-    return [(p.parent.name, json.loads(p.read_text()))
-            for p in sorted((ROOT / "data/dossiers").glob("*/dossier.json"))]
+def _synthetic_layer() -> tuple[dict[str, typing.Any], ds.MechanicalLayer]:
+    from tests.stripped_pages import synthetic_page
+    page = synthetic_page()
+    return page, ds.MechanicalLayer.model_validate(page["mechanical"])
 
 
-def test_on_every_committed_page_the_check_moves_only_unverified_rows_values() -> None:
-    """END TO END, on the real committed JSON: the layer, the transform the panel measures with
-    (`variants.driver_facts`), and the facts dump the synthesis is sent. The only bytes that move
-    are the values of the rows the check marks unknown, each now reading UNKNOWN. Which rows those
-    are is not pinned — that is a classifier on model-written values (TEST-LAYER RULE)."""
-    moved = pages = 0
-    for ticker, page in _committed():
-        mech = ds.MechanicalLayer.model_validate(page["mechanical"])
-        after = variants.driver_facts(mech, variants.Context(page=page))
-        base = mech.model_dump(exclude=syn.NOT_SENT)
-        cand = after.model_dump(exclude=syn.NOT_SENT)
-        syn._mark_unverified_drivers(base, mech.operating_drivers)
-        syn._mark_unverified_drivers(cand, after.operating_drivers)
-        assert {k: v for k, v in base.items() if k != "operating_drivers"} == \
-            {k: v for k, v in cand.items() if k != "operating_drivers"}, ticker
-        b_rows = (base.get("operating_drivers") or {}).get("rows") or []
-        c_rows = (cand.get("operating_drivers") or {}).get("rows") or []
-        assert len(b_rows) == len(c_rows), ticker
-        unknown = [r for r in (after.operating_drivers.rows if after.operating_drivers else [])
-                   if r.value_status == "unknown"]
-        diff = [(b, c) for b, c in zip(b_rows, c_rows, strict=True) if b != c]
-        assert len(diff) == len(unknown), ticker
-        for b, c in diff:
-            assert {k for k in b if b[k] != c[k]} == {"value"}, ticker
-            assert c["value"].startswith("UNKNOWN — "), ticker
-        moved += len(diff)
-        pages += bool(b_rows)
-    assert pages >= 20 and moved >= 1, (pages, moved)
+def test_on_a_real_page_the_check_moves_only_unverified_rows_values() -> None:
+    """END TO END, on a real committed page whose transcript rows are invented ones holding their
+    words (`stripped_pages.synthetic_page`; the committed rows' words are off the page): the
+    layer, the transform the panel measures with (`variants.driver_facts`), and the facts dump the
+    synthesis is sent. The only bytes that move are the values of the rows the check marks
+    unknown, each now reading UNKNOWN. On the committed corpus before the pass, the same
+    comparison moved 6 rows on 3 panel pages (record 2026-11-10-driver-facts-not-quotes.md §7)."""
+    page, mech = _synthetic_layer()
+    after = variants.driver_facts(mech, variants.Context(page=page))
+    base = mech.model_dump(exclude=syn.NOT_SENT)
+    cand = after.model_dump(exclude=syn.NOT_SENT)
+    syn._mark_unverified_drivers(base, mech.operating_drivers)
+    syn._mark_unverified_drivers(cand, after.operating_drivers)
+    assert {k: v for k, v in base.items() if k != "operating_drivers"} == \
+        {k: v for k, v in cand.items() if k != "operating_drivers"}
+    b_rows = base["operating_drivers"]["rows"]
+    c_rows = cand["operating_drivers"]["rows"]
+    unknown = [r for r in (after.operating_drivers.rows if after.operating_drivers else [])
+               if r.value_status == "unknown"]
+    diff = [(b, c) for b, c in zip(b_rows, c_rows, strict=True) if b != c]
+    assert len(diff) == len(unknown) == 1
+    for b, c in diff:
+        assert {k for k in b if b[k] != c[k]} == {"value"}
+        assert c["value"].startswith("UNKNOWN — ")
 
 
 # --- the transform the panel measures with --------------------------------------------------------
 
 def test_the_transform_writes_what_the_extractor_writes_and_only_the_fact() -> None:
     """RUNBOOKS §n step 2: the transform's fields equal what the candidate's extractor writes for
-    the same row — here, every committed transcript row re-extracted from a call holding just its
-    own quote (in memory: the text is the committed row's, never written anywhere)."""
+    the same row: each invented row re-extracted from a call holding just its own quote."""
+    page, mech = _synthetic_layer()
+    after = variants.driver_facts(mech, variants.Context(page=page))
     checked = 0
-    for ticker, page in _committed():
-        mech = ds.MechanicalLayer.model_validate(page["mechanical"])
-        after = variants.driver_facts(mech, variants.Context(page=page))
-        for r0, r1 in zip(mech.operating_drivers.rows if mech.operating_drivers else [],
-                          after.operating_drivers.rows if after.operating_drivers else [],
-                          strict=True):
-            if r0.tier != "llm-fenced":
-                assert r1 == r0, ticker
-                continue
-            assert r1.model_dump(exclude={"figures", "value_status", "unknown_reason"}) == \
-                r0.model_dump(exclude={"figures", "value_status", "unknown_reason"}), ticker
-            if checked % 9 == 0:   # one in nine, all fields, through the real extractor
-                rows, _, _ = dx.extract_transcript_drivers(
-                    f"--- {_Q3} ---\n{r0.verbatim}", ticker=ticker, name=ticker,
-                    llm=_Drivers({"kind": r0.kind.value, "metric": r0.metric, "period": "",
-                                  "value": r0.value, "quote": r0.verbatim}))
-                (x,) = rows
-                assert (x.figures, x.value_status, x.unknown_reason) == \
-                    (r1.figures, r1.value_status, r1.unknown_reason), (ticker, r0.metric)
-            checked += 1
-    assert checked > 500
+    for r0, r1 in zip(mech.operating_drivers.rows if mech.operating_drivers else [],
+                      after.operating_drivers.rows if after.operating_drivers else [],
+                      strict=True):
+        if r0.tier != "llm-fenced":
+            assert r1 == r0
+            continue
+        assert r1.model_dump(exclude={"figures", "value_status", "unknown_reason"}) == \
+            r0.model_dump(exclude={"figures", "value_status", "unknown_reason"})
+        rows, _, _ = dx.extract_transcript_drivers(
+            f"--- {_Q3} ---\n{r0.verbatim}", ticker="ACME", name="Acme",
+            llm=_Drivers({"kind": r0.kind.value, "metric": r0.metric, "period": "",
+                          "value": r0.value or "", "quote": r0.verbatim or ""}))
+        (x,) = rows
+        assert (x.figures, x.value_status, x.unknown_reason) == \
+            (r1.figures, r1.value_status, r1.unknown_reason), r0.metric
+        checked += 1
+    assert checked == 4
 
 
 def test_the_transform_is_the_identity_without_the_check_and_refuses_a_fact_it_does_not_make(
@@ -414,11 +411,16 @@ def test_the_transform_is_the_identity_without_the_check_and_refuses_a_fact_it_d
 
 
 # --- CORPUS BEFORE SYNTHETIC: the direction check bites on the committed quotes -------------------
+#
+# Each needs a row's own QUOTE, a licensed sentence: its own before the page pass, its call's on
+# disk after it (`stripped_pages.passage`, by the locator and both hashes). In CI, where no CIQ
+# export is, they SKIP and say so, as every licensed-CIQ test does.
 
-def _committed_transcript_rows() -> list[dict[str, typing.Any]]:
-    return [r for _, page in _committed()
-            for r in (page["mechanical"].get("operating_drivers") or {}).get("rows", [])
-            if r.get("tier") == "llm-fenced"]
+def _fact_of(r: dict[str, typing.Any], quote: str) -> tuple[dx.DriverFigure, ...]:
+    """The row's figures: the committed fact after the pass, the check's own reading before it."""
+    if r.get("value_status") is not None:
+        return tuple(ds.DriverFigure.model_validate(g) for g in r.get("figures") or [])
+    return dx.check_fact(r["metric"], r["value"], quote).figures
 
 
 def test_every_committed_figure_with_a_change_refuses_the_opposite_claim() -> None:
@@ -427,30 +429,32 @@ def test_every_committed_figure_with_a_change_refuses_the_opposite_claim() -> No
     prints a change beside a figure, TeamNostra's shape — the opposite word and that figure, as
     the quote prints it — read against the REAL quote is UNKNOWN. What varies is the quote, which
     is transcript text, not a model's wording."""
-    rows = _committed_transcript_rows()
-    assert len(rows) > 500, "the committed corpus no longer carries transcript rows"
+    from tests.stripped_pages import rows_with_words
+    rows, _skipped = rows_with_words()
     bitten = 0
-    for r in rows:
-        fact = dx.check_fact(r["metric"], r["value"], r["verbatim"])
-        figs = dx._figures(r["verbatim"])
-        for g in fact.figures:
+    for _ticker, r, quote in rows:
+        figs = dx._figures(quote)
+        for g in _fact_of(r, quote):
             if g.change is None:
                 continue
             q = next(x for x in figs if (x.value, x.scale, x.unit) == (g.value, g.scale, g.unit))
             claim = ("down " if g.change == "up" else "up ") + (g.currency or "") + \
-                r["verbatim"][q.start:q.end]
-            assert dx.check_fact(r["metric"], claim, r["verbatim"]).status == "unknown", claim
+                quote[q.start:q.end]
+            assert dx.check_fact(r["metric"], claim, quote).status == "unknown", claim
             bitten += 1
             break
-    assert bitten > 200
+    assert bitten > 200, (bitten, len(rows))
 
 
 def test_every_committed_rows_figures_are_its_quotes() -> None:
     """By construction, checked on the corpus: each figure a row carries is a figure its quote
     prints, with the quote's own axes — the value is never the source of a figure."""
-    for r in _committed_transcript_rows():
-        quote_figs = {(f.value, f.currency, f.scale, f.unit) for f in dx._figures(r["verbatim"])}
-        for g in dx.check_fact(r["metric"], r["value"], r["verbatim"]).figures:
+    from tests.stripped_pages import rows_with_words
+    rows, _skipped = rows_with_words()
+    assert len(rows) > 500, len(rows)
+    for _ticker, r, quote in rows:
+        quote_figs = {(f.value, f.currency, f.scale, f.unit) for f in dx._figures(quote)}
+        for g in _fact_of(r, quote):
             assert (g.value, g.currency, g.scale, g.unit) in quote_figs, r["metric"]
 
 

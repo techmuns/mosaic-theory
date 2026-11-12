@@ -10,7 +10,7 @@ to P/E. Negative/absent EPS → the percentile defers to UNKNOWN (depth's job).
 from __future__ import annotations
 
 from datetime import date, timedelta
-from typing import Any
+from typing import Any, NamedTuple
 
 from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import (
@@ -166,6 +166,27 @@ def share_basis_change(points: list[ConceptPoint]) -> float | None:
     (The raw concept also carries several EPS measures tagged on one filing day — total versus
     continuing operations — but those do not survive the ``is_annual`` filter above, so no
     same-filing pair ever reaches the ratio.)"""
+    group = _latest_agreeing_group(_restatement_factors(points))
+    return sum(g.ratio for g in group) / len(group) if group else None
+
+
+class _Factor(NamedTuple):
+    """One annual period a later filing restated: its end, the magnitude ratio of its first-filed
+    to its last-filed figure (larger over smaller), the range the reported precision allows (None:
+    too coarse to state one), whether the figure was restated DOWN (a forward split), the first
+    filing that states it on the new basis, and the filing that first stated it (on the old)."""
+
+    end: date
+    ratio: float
+    range: tuple[float, float] | None
+    forward: bool
+    restated_on: date
+    first_filed: date
+
+
+def _restatement_factors(points: list[ConceptPoint]) -> list[_Factor]:
+    """Every annual period a later filing rescaled by `_SPLIT_MIN_FACTOR` or more — the reading
+    `share_basis_change` documents."""
     # ANNUAL ONLY, FILTERED HERE rather than trusted from the caller. Fed the raw concept this
     # returns 1.75x for NFLX instead of 10x — quarterly facts share period_ends with annual ones
     # and pair the wrong values. Both current callers already filter, so this changes nothing
@@ -176,8 +197,7 @@ def share_basis_change(points: list[ConceptPoint]) -> float | None:
             continue
         by_period.setdefault(p.period_end, []).append(p)
 
-    #: (period end, factor, the factor range its figures allow — None when too coarse to state)
-    factors: list[tuple[date, float, tuple[float, float] | None]] = []
+    factors: list[_Factor] = []
     for end, ps in by_period.items():
         filings = {p.filed for p in ps}
         if len(filings) < 2:
@@ -202,27 +222,90 @@ def share_basis_change(points: list[ConceptPoint]) -> float | None:
         a, b = max(old), max(new)          # the LARGEST per filing: a multi-concept day cannot
         ratio = max(a / b, b / a)          # pair the wrong two
         if ratio >= _SPLIT_MIN_FACTOR:
-            factors.append((end, ratio, _factor_range(a, b)))
+            # the FIRST filing carrying the new figure — a period can be restated by one 10-K and
+            # repeated by the next, and the basis changed at the earlier of the two
+            # — read as the first filing whose figure sits nearer the new one than the old, so a
+            # later small revision of the comparative (review) cannot date the basis change late
+            on = min(f for f in filings if _nearer_new(
+                max(abs(p.value) for p in ps if p.filed == f), a, b))
+            factors.append(_Factor(end, ratio, _factor_range(a, b), a > b, on, first))
+    return factors
 
+
+def _nearer_new(v: float, old: float, new: float) -> bool:
+    """Whether a figure `v` sits nearer, as a ratio, the restated figure `new` than the first-filed
+    `old` — i.e. it is stated on the new basis."""
+    return v > 0 and max(v / new, new / v) < max(v / old, old / v)
+
+
+def _agree(f: _Factor, g: _Factor) -> bool:
     # THE PRECISION GATE GUARDS ONLY THE NEW PATH: a factor too coarse to state a range never
     # widens agreement, but it still agrees within `_SPLIT_TOL` as it always did (review: gating
     # both dropped an exact ×2.0 restated from 0.10 to 0.05 and missed a split the old rule read)
-    def agree(f: tuple[date, float, tuple[float, float] | None],
-              g: tuple[date, float, tuple[float, float] | None]) -> bool:
-        if abs(g[1] - f[1]) / f[1] <= _SPLIT_TOL:
-            return True
-        return f[2] is not None and g[2] is not None and (f[2][0] <= g[2][1]
-                                                          and g[2][0] <= f[2][1])
+    if abs(g.ratio - f.ratio) / f.ratio <= _SPLIT_TOL:
+        return True
+    return f.range is not None and g.range is not None and (f.range[0] <= g.range[1]
+                                                            and g.range[0] <= f.range[1])
 
+
+def _latest_agreeing_group(factors: list[_Factor]) -> list[_Factor]:
+    """The periods that state the LATEST basis change, or [] when none does."""
     # THE LATEST BASIS CHANGE FIRST: a series can carry two splits (NFLX's 2015 7-for-1 and its
     # 2025 10-for-1), and the current figures sit on the latest one — the factor a caller locating
     # the break in a recent share series needs. (Before the precision fix the older split went
     # unread on rounding, so first-found and latest happened to coincide.)
     for f in sorted(factors, reverse=True):
-        agreeing = [g[1] for g in factors if agree(f, g)]
+        agreeing = [g for g in factors if _agree(f, g)]
         if len(agreeing) >= _SPLIT_MIN_PERIODS:
-            return sum(agreeing) / len(agreeing)
-    return None
+            return agreeing
+    return []
+
+
+class SplitRestatement(NamedTuple):
+    """A share split the FILER stated, by restating its own annual comparatives: the magnitude
+    `share_basis_change` reads, the multiplier that puts a figure filed on the old basis onto the
+    new one, and the first filing on the new basis."""
+
+    factor: float
+    scale: float
+    restated_from: date
+
+
+def split_restatement(points: list[ConceptPoint]) -> SplitRestatement | None:
+    """The ONE share split these filings state, ready to put older EPS on the current basis — or
+    None: no basis change, or more than one (two splits in one window are refused, never chained).
+
+    THE FACTOR IS THE FILER'S, NEVER INFERRED (operator, 2026-11-11: "Split-adjust EPS, fund
+    rule"). It is `share_basis_change`'s reading — two or more restated periods agreeing on one
+    factor, never a magnitude alone and never a restatement that crosses zero — plus its direction
+    and the filing it starts from. Pass only filings known by the date being valued."""
+    factors = _restatement_factors(points)
+    group = _latest_agreeing_group(factors)
+    if not group or len({g.forward for g in group}) != 1:
+        return None
+    # ONE SPLIT IS RESTATED BY ONE FILING (the first 10-K after it restates its two or three
+    # comparatives together). Agreement on the factor alone cannot tell two splits of the same size
+    # apart: HLF's 2011 and 2018 2-for-1s both read ×2.0, and as one group they would rescale from
+    # 2012. Restating filings more than a year apart are two splits — refused, never chained.
+    if (max(g.restated_on for g in group) - min(g.restated_on for g in group)).days > 366:
+        return None
+    # ...AND THAT FILING IS AFTER EVERY OLD-BASIS FIGURE (review): two 10-for-1s restated by
+    # consecutive 10-Ks sit 365 days apart and pass the year above, but the first restating 10-K
+    # itself states the next period on the old basis — one factor from it would leave that figure
+    # unscaled for a year of bars. A period first filed on or after the restating filing is a
+    # second split.
+    if max(g.first_filed for g in group) >= min(g.restated_on for g in group):
+        return None
+    # ANY OTHER RESTATEMENT IN THE WINDOW REFUSES, not only a second AGREEING group (review): an
+    # older split with ONE comparative inside the window is a lone factor, never a group, and the
+    # EPS filed before it sits on a basis this one factor does not reach. NVDA's frozen filings at
+    # 2026-10-14: the ×10.13 group plus FY2021's ×3.99 (its 2021 4-for-1) — scaled by 1/10.13
+    # alone, five months of the range read FY2021's 6.90 as 0.681 where the current basis is 0.1725.
+    if len(group) != len(factors):
+        return None                       # a second basis change: not chained, refused
+    factor = sum(g.ratio for g in group) / len(group)
+    return SplitRestatement(factor=factor, scale=1 / factor if group[0].forward else factor,
+                            restated_from=min(g.restated_on for g in group))
 
 
 #: How far past its period end an annual EPS may be and still describe the CURRENT business.
@@ -388,9 +471,13 @@ def _pe_pair_per_reported_share(
     # THE RANGE, NOT THE RATIO. `cur_pe` above is sound — its price and its EPS are both on the
     # current basis. The trailing range is not, whenever the filer rescaled per-share figures
     # inside the window: the price series is retroactively adjusted and the older EPS is not, so
-    # those observations divide one basis by the other. Refused with its cause rather than
-    # rescaled, because the periods the filer never restated have no published current-basis
-    # figure and deriving one would be fabrication.
+    # those observations divide one basis by the other. SPLIT-ADJUSTED, NOT REFUSED (operator,
+    # 2026-11-11: "Split-adjust EPS, fund rule"; until then this refused, holding that a figure
+    # the filer never restated has no published current basis): every EPS filed before the
+    # restating filing is put on the current basis by the FILER'S OWN factor — two restated
+    # periods agreeing on it, read from filings known by the date (`split_restatement`), never
+    # inferred from a magnitude. Still refused: two basis changes in one window, a split the
+    # filings known by the date do not yet state, and an EPS in use that is still on the old basis.
     # WINDOWED, because the sentence above says "inside the window" and the call did not enforce it
     # (review of #488). `share_basis_change` scans every annual point it is given, so an
     # unrestricted call refuses on a rescaling that predates the trailing range and cannot touch a
@@ -416,17 +503,68 @@ def _pe_pair_per_reported_share(
     # EVERY ALIAS THE RANGE CAN READ, each on its own (RE1-D10): a bar before a re-tag reads the
     # alias served then, and a split inside that alias's series divides across bases the same way.
     # One alias at a time, because two aliases' figures for one period are two measures (total
-    # versus continuing operations), not a restatement of one.
+    # versus continuing operations), not a restatement of one. A split the filer states in an
+    # alias's series is ADJUSTED, not refused (operator, 2026-11-11).
     current = {p.tag for p in annual_eps}
     series = [annual_eps, *(pts for tag, pts in (history.by_tag() if history else {}).items()
                             if tag not in current)]
+    stated: list[SplitRestatement] = []
+    unsplit: list[list[ConceptPoint]] = []   # the aliases stating no split of their own
     for pts in series:
         _in_window = [p for p in pts if p.period_end >= _split_start]
         if (factor := share_basis_change(_in_window)) is not None:
-            return pe_df, DataField.unknown(
-                source="EDGAR", tier=SourceTier.DERIVED,
-                note=f"{G3_SPLIT_BASIS} (filer restated its own comparatives by ~{factor:.4g}x)",
-            )
+            split = split_restatement([p for p in _in_window if p.filed <= reference_date])
+            if split is None:
+                return pe_df, DataField.unknown(
+                    source="EDGAR", tier=SourceTier.DERIVED,
+                    note=f"{G3_SPLIT_BASIS} (filer restated its own comparatives by "
+                         f"~{factor:.4g}x)",
+                )
+            if split not in stated:
+                stated.append(split)
+        else:
+            unsplit.append([p for p in _in_window if p.filed <= reference_date])
+    # THE SPLIT IS THE ISSUER'S, NOT ONE ALIAS'S (Codex on #997): a filer that re-tags and then
+    # splits restates its comparatives under the NEW tag only, and a bar before the re-tag reads
+    # the RETIRED one — kept per tag, that tag never carried the split and its old-basis EPS was
+    # divided into split-adjusted prices, the range PRESENT on the mix. So the one split stated
+    # reaches every alias's EPS filed before the restating filing. Two stated across aliases are
+    # two basis changes in one window — refused, never chained, as within one alias (an EPS filed
+    # before both would need both factors, and one per alias gives it one).
+    if len(stated) > 1:
+        return pe_df, DataField.unknown(
+            source="EDGAR", tier=SourceTier.DERIVED,
+            note=f"{G3_SPLIT_BASIS} (the filer's EPS aliases state two restatements: "
+                 + ", ".join(f"~{s.factor:.4g}x from {s.restated_from.isoformat()}"
+                             for s in stated) + ")",
+        )
+    split = stated[0] if stated else None
+    # ...AND IT EXPLAINS EVERY RESTATEMENT THE OTHER ALIASES CARRY (Codex on #997, round 2): a
+    # retired tag that restated ONE comparative for an older split holds a lone factor, never a
+    # split of its own, so the scan above passes it — and its EPS filed before that older split
+    # needs both factors, where the issuer-wide split gives it one. Within one alias
+    # `split_restatement` refuses any factor outside its group; across aliases, the same rule.
+    # (With NO split stated, a lone factor is the one-restated-period gap the operator holds open.)
+    if split is not None:
+        for f in (f for pts in unsplit for f in _restatement_factors(pts)):
+            if f.forward != (split.scale < 1) or not (
+                    abs(f.ratio - split.factor) / split.factor <= _SPLIT_TOL
+                    or (f.range is not None and f.range[0] <= split.factor <= f.range[1])):
+                return pe_df, DataField.unknown(
+                    source="EDGAR", tier=SourceTier.DERIVED,
+                    note=f"{G3_SPLIT_BASIS} (an EPS alias restated FY{f.end.year} by "
+                         f"~{f.ratio:.4g}x, which the ~{split.factor:.4g}x split from "
+                         f"{split.restated_from.isoformat()} does not explain)",
+                )
+    if split is not None and cur_pt.filed < split.restated_from:  # the EPS in use: old basis
+        return pe_df, DataField.unknown(
+            source="EDGAR", tier=SourceTier.DERIVED,
+            note=f"{G3_SPLIT_BASIS} (filer restated its own comparatives by ~{split.factor:.4g}x)",
+        )
+    adjusted = ("" if split is None else
+                f"; EPS filed before {split.restated_from.isoformat()} put on the current share "
+                f"basis by the filer's own ~{split.factor:.4g}x restatement (a "
+                f"{'forward' if split.scale < 1 else 'reverse'} split)")
 
     start = reference_date - timedelta(days=_PE_WINDOW_DAYS)
     hist: list[float] = []
@@ -438,7 +576,9 @@ def _pe_pair_per_reported_share(
             pt = annual_eps_point_as_of(history.on(b.bar_date) if history is not None
                                         else annual_eps, b.bar_date)
             if pt is not None:
-                hist.append(b.close / pt.value)
+                hist.append(b.close / (pt.value * split.scale
+                                       if split is not None and pt.filed < split.restated_from
+                                       else pt.value))
                 if read_under and read_under[-1][0] == pt.tag:
                     read_under[-1] = (pt.tag, read_under[-1][1], b.bar_date)
                 else:
@@ -458,7 +598,7 @@ def _pe_pair_per_reported_share(
         f"{tag} ({a.isoformat()}..{z.isoformat()})" for tag, a, z in read_under))
     pctile_df = DataField.present(
         pctile, as_of=cur_pt.period_end, source="EDGAR", tier=SourceTier.DERIVED,
-        note=(f"{len(hist)} P/E observations over {_PE_WINDOW_DAYS}d; {basis}{tags}"),
+        note=(f"{len(hist)} P/E observations over {_PE_WINDOW_DAYS}d; {basis}{adjusted}{tags}"),
     )
     return pe_df, pctile_df
 

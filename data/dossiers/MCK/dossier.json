@@ -10209,301 +10209,795 @@
           "kind": "leading_indicator",
           "metric": "GLP-1 medications distribution revenue",
           "period": null,
-          "value": "$15 billion in the quarter, an increase of approximately $3 billion or 24% versus the prior year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenues from GLP-1 medications distribution were $15 billion in the quarter, an increase of approximately $3 billion or 24% versus the prior year.",
-          "following_context": "Sequentially, GLP-1 revenues increased 13%.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": "up",
+              "qualifier": "approximately"
+            },
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 38,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "a04a865a6fb48906cef53ea740618f8d2e111d0a54ff82cae27589d15b897c55",
+            "value_sha256": "b3d72ffaca80ebe4d211a56c644d61db2c4030b5c28b1d4d0a7bb5833326d0c9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "GLP-1 revenue sequential growth",
           "period": null,
-          "value": "increased 13%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sequentially, GLP-1 revenues increased 13%.",
-          "following_context": null,
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 13.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 38,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "e80ecf5aad9a60f6bcef0d39ee1e578167abed56e973cbf6e9318037a4603b4f",
+            "value_sha256": "dd6b537042bb6829e6da4eccaf34dc3f5cdea03d674eded663c9727c25a6a875"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "providers served across community-based specialties",
           "period": null,
-          "value": "more than 14,000 providers",
           "value_num": null,
           "unit": null,
-          "verbatim": "Today, we serve more than 14,000 providers across a broad range of community-based specialties.",
-          "following_context": "Through Unity and Onmark, we help providers achieve meaningful savings on drug purchases, improving the health of their practices. Biologics supports commercialization and access for more than 200 cancer and other rare disease therapies. And through InspiroGene, we're expanding our advanced therapy capabilities by forming new manufacturer partnerships and bringing complex cell and gene treatments to more patients. Together, this demonstrates the breadth of our specialty distribution capabilities as we continue to enable high-quality community-based care.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 14000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 14,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "7524fc071d1e0c09c90a122fae578ae6920a64d9acbc2723ed8d6bf5f405a812",
+            "value_sha256": "42cb06a3dc5fcde98b07683479ffc195ff44d738a63aaa299440cd44c9b4f9bb"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "US Oncology Network providers",
           "period": null,
-          "value": "approximately 3,400 providers and treats more than 2 million patients annually",
           "value_num": null,
           "unit": null,
-          "verbatim": "The US Oncology Network grew to approximately 3,400 providers and treats more than 2 million patients annually.",
-          "following_context": "It's a leading force in expanding access to care and accelerating innovation in community-based oncology care.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3400.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 15,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "57634ef2b23fe5e50d0bdda469b76d87e26d5becfe1cbc08f783d67184c0cda8",
+            "value_sha256": "7b1e7a4deca8596cb0be45a33d0e2250cbd3d010bbb2aad2353a25abef69d33c"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "PRISM Vision providers and locations",
           "period": null,
-          "value": "over 200 providers in 97 locations",
           "value_num": null,
           "unit": null,
-          "verbatim": "PRISM Vision brings together over 200 providers in 97 locations, helping expand access to high-quality retina and ophthalmology care, again, in the community setting.",
-          "following_context": "As we expand relationships with these community-based providers, we create additional opportunities to build off distribution and GPO services. It allows us to expand patient participation in clinical trials, generating more data and more insights.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 97.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 16,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "b61660549f502c1f271a5c519ac3fa79af663c1ac653c54029086d3e97252cd3",
+            "value_sha256": "4410c04b591fdbc408b8e951e0c647dacc8068f629263359681aead4fb2f8c39"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Biologics cancer and rare disease therapies supported",
           "period": null,
-          "value": "more than 200 cancer and other rare disease therapies",
           "value_num": null,
           "unit": null,
-          "verbatim": "Biologics supports commercialization and access for more than 200 cancer and other rare disease therapies.",
-          "following_context": "And through InspiroGene, we're expanding our advanced therapy capabilities by forming new manufacturer partnerships and bringing complex cell and gene treatments to more patients. Together, this demonstrates the breadth of our specialty distribution capabilities as we continue to enable high-quality community-based care.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 14,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "79d8f023c3fe9db762c52981bfb61c1cee25bbf45ff1bae629d061415deb1658",
+            "value_sha256": "52ee1c2884d8c2cec271efcc963bb9fc5cf0cb2ffe4657df5b6950ada968eb98"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "SCRI contribution to FDA-approved oncology drugs",
           "period": "2025",
-          "value": "43 of the 52 adult oncology drugs approved by the FDA in 2025",
           "value_num": null,
           "unit": null,
-          "verbatim": "SCRI participated in research that contributed to 43 of the 52 adult oncology drugs approved by the FDA in 2025.",
-          "following_context": "Recently, SCRI announced a strategic oncology research collaboration with Pfizer to help accelerate clinical trials. Through this collaboration, SCRI and Pfizer will leverage a next-generation clinical trial delivery model designed to streamline trial operations, enhance site efficiency and reduce administrative burden for investigators and care teams alike.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 43.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 52.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 2025.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 17,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "d948c426d5145a8742ffb572583b6a46c4ebb171c599b955cb1b08149e9cb4c2",
+            "value_sha256": "7fe90008d98f69ad73083c43f7dd80edc758068129b5196ee08483cc2e4b8fd3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "prior authorization determination speed (CMS GLP-1 Bridge)",
           "period": null,
-          "value": "95% of them receive a determination within 30 minutes",
           "value_num": null,
           "unit": null,
-          "verbatim": "Once a prior authorization request is submitted to the payer, 95% of them receive a determination within 30 minutes.",
-          "following_context": "This reflects the power of our scaled network and the important role our technology plays in helping providers, pharmacies, payers and biopharma partners move information more efficiently so patients can get therapy faster.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 95.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 30.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 18,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "4734c901707370a10c2abe3ef1c1f80dc977a39551feda6f4adc4ca74d544d84",
+            "value_sha256": "88be48d80528892b37fd15c660486c80cd8e99f9cea7c93d6ee5ea4d6ce72fa5"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "new Moore, Oklahoma distribution center throughput increase",
           "period": null,
-          "value": "increase throughput by 75% compared to the prior facility",
           "value_num": null,
           "unit": null,
-          "verbatim": "The new facility will increase throughput by 75% compared to the prior facility, supported by advanced automation, digitally enabled logistics and expanded cold chain capabilities.",
-          "following_context": "This investment strengthens the foundation of our supply chain and positions us to serve our customers with greater scale, resilience and accuracy.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 75.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 23,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "25f124046803365e8e67d822bc093c25ab778901898ec53da3bdf23930db4f6f",
+            "value_sha256": "ab36581a6081c8d9b4a6a12f3c5cbc89d9141820e5dde5588d3f79fef50b13e8"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North American Pharmaceutical operating profit growth",
           "period": null,
-          "value": "increased 19% to $894 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Segment operating profit increased 19% to $894 million, driven by growth in specialty distribution, including health systems and strategic accounts and the timing of new product launches.",
-          "following_context": "Fundamentals in the business remain strong, supported by stable utilization trends, specialty growth and the strength of our generic sourcing program. Our scaled distribution capabilities include McKesson Plasma and Biologics, position us well to support growth in specialty distribution volumes. ClarusONE, our generic sourcing program, continues to deliver meaningful value to customers while supporting stability of supply.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 19.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 894.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 39,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "8c7ffd6f5c2bf4d2c2857df0d52697f558d2b2790da7c6bfd64b91f89c70d3f0",
+            "value_sha256": "67dc9f43bdb45586b572bc8da119f193b521c36445362c9d084cbc44bcfa4c97"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Oncology & Multispecialty revenue growth",
           "period": null,
-          "value": "increased 33% to $14.2 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenues increased 33% to $14.2 billion, driven by growth across our platform, including organic and new business growth in provider solutions.",
-          "following_context": "First quarter results also reflected contributions from the Core Ventures acquisition, which was completed on June 2, 2025. Excluding contributions from Core Ventures, revenues grew approximately 24%. Operating profit increased 41% to $405 million. Excluding contributions from Core Ventures, operating profit grew approximately 15%, driven by higher specialty distribution volumes, organic and new growth in provider solutions, and business growth across differentiated offerings. We continue to see growth supported by solid utilization trends in the community setting and stable same-store patient visit growth across the provider network.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 33.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 14.2,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 40,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "afc23267fa5505ea561cce6810604e6ee26c0c05379fce5e60ebfab74794a921",
+            "value_sha256": "82382effe9e7d20ac4c250b510ff88d673efd6ed19561953899cf8e224a3c0c1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Oncology & Multispecialty revenue growth excluding Core Ventures",
           "period": null,
-          "value": "grew approximately 24%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding contributions from Core Ventures, revenues grew approximately 24%.",
-          "following_context": "Operating profit increased 41% to $405 million. Excluding contributions from Core Ventures, operating profit grew approximately 15%, driven by higher specialty distribution volumes, organic and new growth in provider solutions, and business growth across differentiated offerings. We continue to see growth supported by solid utilization trends in the community setting and stable same-store patient visit growth across the provider network.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 40,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "66e897a5c0223e012c0fae36b8b55c2a86a35ed52e7cb37c40e19ac58be22203",
+            "value_sha256": "5725158959567b2a0e5fcbd83e0a6fe39dbd49867f3ee9b0c034cf915e02aa90"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "branded pharmaceutical contract structure (fee-for-service)",
           "period": null,
-          "value": "more than 95% of our branded drugs are fee-for-service",
           "value_num": null,
           "unit": null,
-          "verbatim": "And just so you know, more than 95% of our branded drugs are fee-for-service as we earn a fair value for what we deliver.",
-          "following_context": null,
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 95.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 98,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "709dc7712dbf125f318a8f0c55d7f775669f00e6c624c5fe9ddc14629a19f242",
+            "value_sha256": "6099b3ca2a1f1884ca5f29454373e4ed5841151416d98ec12a0930d68b251e2c"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "branded pharmaceutical revenue recognition on WAC",
           "period": null,
-          "value": "revenues from branded pharmaceuticals reflect the WAC of those products",
           "value_num": null,
           "unit": null,
-          "verbatim": "As a reminder, revenues from branded pharmaceuticals reflect the WAC of those products and will be impacted by changes in those prices. However, our branded pharmaceutical contracts are structured such that we are compensated for the fair value of the service we deliver.",
-          "following_context": null,
           "source_ref": "CIQ transcript: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf",
+            "transcript_sha256": "1dc52d3954c07117d17750f01f07f76847eae354f71376601499b41340147c74",
+            "paragraph": 37,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "95fc53b0d399fc99b8878b56b396c34c38fe140290d638d6dc278bdabdf5e185",
+            "value_sha256": "49bad983037ca93a3171c9660dd2e61246cdb713b970aba11d06eb993f99f6de"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "GLP-1 medications distribution revenue",
           "period": null,
-          "value": "$16 billion in the quarter, an increase of approximately $3 billion or 26% versus the prior year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenues from GLP-1 medication distribution were $16 billion in the quarter, an increase of approximately $3 billion or 26% versus the prior year.",
-          "following_context": "Sequentially, GLP-1 revenues increased 8%. Demand and volumes across the category remain strong, with quarter-to-quarter variability based on payer dynamics and patient utilization.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 16.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": "up",
+              "qualifier": "approximately"
+            },
+            {
+              "value": 26.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 39,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "75a443ddba5873bc329ef8444791c964176a2e05d02134f15572e6465ca8208f",
+            "value_sha256": "a711f8c7582a39e580c3d8ef20fdd6b79c8b72b6474d0b966624925956b17d4a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "GLP-1 revenue sequential growth",
           "period": null,
-          "value": "increased 8%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Sequentially, GLP-1 revenues increased 8%.",
-          "following_context": "Demand and volumes across the category remain strong, with quarter-to-quarter variability based on payer dynamics and patient utilization.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 39,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "c2453c1ca9aedae3976220f37a205d850debdcdc98f3c8ecdccb83ae0864e99c",
+            "value_sha256": "0df3637b8394d87bfe8c18435b6bb4696761681fbaab89f463680c44d9ef516d"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "impact of WAC decreases on NAP revenue growth",
           "period": null,
-          "value": "reduced year-over-year revenue growth by approximately 4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Lower branded pharmaceutical pricing as a result of wholesale acquisition cost decreases in January 2026 reduced year-over-year revenue growth by approximately 4%.",
-          "following_context": null,
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 38,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "32f4ba4fc7950085f75a33ecf9db7f80356c000a31961596e99cb63e40d77048",
+            "value_sha256": "98b57bd3f5ce8b5083332b54c5738dd228d3e7878078f947b6d05775ad95afdd"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "North American Pharmaceutical operating profit growth",
           "period": null,
-          "value": "increased 22% to $1 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Operating profit increased 22% to $1 billion. Growth was driven by specialty distribution, including health system and strategic accounts.",
-          "following_context": "Our distribution platforms support a broad evolving portfolio of products, including increasingly complex therapies. Our reach and expertise allows us to effectively support these products as demand continues to grow.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 22.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 40,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "891c98852725b743ed4ae08854e2156a36ad5b492f45749f8784c457dd94e270",
+            "value_sha256": "5ceb0b977ea13bea0aab40eded64641a3eed076dfe007271cf994eeeb7a09fe4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Oncology & Multispecialty revenue growth",
           "period": null,
-          "value": "increased 24%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenues were $15 billion, an increase of 24%, driven by growth from specialty product distribution and higher volumes across our provider platforms.",
-          "following_context": "We saw strong utilization within provider solutions, including distribution of Oncology & Multispecialty products. Operating profit increased 8% to $427 million. As a reminder, the prior year period included net gains of $51 million within the US Oncology Network. Excluding the net gains, operating profit increased by 23%.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 24.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 41,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "462f72509778ccf990f72c4980d11c2549990111af89aa2928a3635bd94d20d9",
+            "value_sha256": "849934188a1f670b31a258a6f7665d6828c3d1ff41a864e6f13ecab8ee367c5a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "biopharma services new programs and brands added",
           "period": null,
-          "value": "67 new programs across 58 unique brands",
           "value_num": null,
           "unit": null,
-          "verbatim": "During the quarter, we added 67 new programs across 58 unique brands, representing a diversified portfolio of therapeutic areas in both access and affordability.",
-          "following_context": "We expanded connectivity with providers, with more of them exploring our automated solutions, including our recently introduced medical prior authorization capabilities. We also saw growth in services that provide dedicated reimbursement specialists to help providers navigate insurance coverage and reimbursement challenges, reinforcing the value of hands-on expertise alongside our automated solutions.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 67.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 58.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 21,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "093e8a98259fb91e034312428a550479434e1bf6e956ba731f81f5178ff2e7d4",
+            "value_sha256": "535305f426888089f4b3e5e794fd1600a7fa3768de66690e46a23b10502711e0"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "payer network share of U.S. prescription volume",
           "period": null,
-          "value": "payers that represent 96% of U.S. prescription volume",
           "value_num": null,
           "unit": null,
-          "verbatim": "We continue to expand our payer network, which now includes payers that represent 96% of U.S. prescription volume.",
-          "following_context": "This connectivity enables us to simplify administrative processes and address financial barriers at scale, helping patients start and stay on therapy while supporting biopharma partners across their product life cycles.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 96.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 20,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "509baa12f3216b82ca4053b6f8e2bf2f4c6592a024de7dabc365de72d5699e05",
+            "value_sha256": "94b52a4d560391a73e6d54527a0292b174d4607bfe0a882085e7bed7465124d1"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "US Oncology Network providers supported",
           "period": null,
-          "value": "over 3,400 providers",
           "value_num": null,
           "unit": null,
-          "verbatim": "For over 25 years, we have supported the US Oncology Network and over 3,400 providers in delivering connected high-quality care in the community.",
-          "following_context": null,
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3400.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 14,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "863b482ddf5a49309033b1393f026145995142315edfb58c2e45c75898c3a547",
+            "value_sha256": "2e00125a3052ea7b79b6286be925f3da3a6dfc3136238d19757b9db1407057af"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "Spectrum Vision Partners providers added to PRISM",
           "period": null,
-          "value": "over 150 providers",
           "value_num": null,
           "unit": null,
-          "verbatim": "Within our retina and ophthalmology platform, we welcome Spectrum Vision Partners and its over 150 providers to the PRISM Vision Group, further expanding its footprint.",
-          "following_context": "This is another meaningful addition to our platform. We're encouraged by its continued strong performance, which demonstrates its compelling value proposition to providers and their patients. Across oncology and other specialty areas, our distribution capabilities, data-enabled insights, clinical expertise and experience supporting providers allow us to create value for customers and improve patient access to care.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 150.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 18,
+            "speaker": "Brian S. Tyler",
+            "quote_sha256": "5aef958bb2a88ea46e935e89921baf17db03f40701c33bb517db780481b43198",
+            "value_sha256": "2b6c2723ab3ae0960653d21b55d50ea427249a359f16fa8d15117a9d52b0a07d"
+          }
         },
         {
           "kind": "pass_through_structure",
           "metric": "branded pricing impact on operating profit",
           "period": null,
-          "value": "did not have a meaningful impact on the segment operating profit",
           "value_num": null,
           "unit": null,
-          "verbatim": "Consistent with prior periods, these pricing changes did not have a meaningful impact on the segment operating profit.",
-          "following_context": "Revenues from GLP-1 medication distribution were $16 billion in the quarter, an increase of approximately $3 billion or 26% versus the prior year. Sequentially, GLP-1 revenues increased 8%. Demand and volumes across the category remain strong, with quarter-to-quarter variability based on payer dynamics and patient utilization.",
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 39,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "82409ab143905ff053386c4b446e0137fdc4b8fda789352a55f5c0f3628fbf90",
+            "value_sha256": "75a8ddee0947ef1befaf56b873881b99baf206de2cfeec90ba3af0cfec0895c0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Prescription Technology Solutions operating profit growth",
           "period": null,
-          "value": "increased 18% to $307 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Operating profit increased 18% to $307 million, driven by higher demand across our access solutions, including prior authorization services.",
-          "following_context": null,
           "source_ref": "CIQ transcript: McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 18.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 307.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf",
+            "transcript_sha256": "e4ca4d9a3bd60e9bbbe7ef09a660a59ac5ce3d4c59b369b028ab3431e5d04955",
+            "paragraph": 43,
+            "speaker": "Kenny K. Cheung",
+            "quote_sha256": "b3bfcbad66cc39ffeb1bbc1bfdaecb0f7a730d912e7c93a26c65ed520e5dde8d",
+            "value_sha256": "569467700736c9217eeb0087ce57b6bc131d67c7d618ff5a8ab53ad81a154c1d"
+          }
         }
       ],
       "qa_flags": [
@@ -16047,6 +16541,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.peer_capital_intensity"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

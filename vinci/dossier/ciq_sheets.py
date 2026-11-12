@@ -10,6 +10,7 @@ with an absent/garbled sheet → UNKNOWN with the reason — never a fabricated 
 
 from __future__ import annotations
 
+import math
 import re
 import statistics
 import subprocess
@@ -35,6 +36,7 @@ from vinci.dossier.ciq import (
     read_cell,
     read_sheets,
     read_text,
+    sheet_top,
     stated_unit,
 )
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
@@ -162,10 +164,12 @@ _COLUMN_STATUS_WORDS: tuple[tuple[str, ColumnStatus], ...] = (
 class HeaderPeriod(NamedTuple):
     """One Financials period-header cell, read once (:func:`header_period`)."""
 
-    kind: Literal["LTM", "FY", "Q"] | None  # None: a bare balance-sheet date, or a shape unread
+    #: None: a bare balance-sheet date, or a shape unread. "YTD": a 6- or 9-month column, the
+    #: fiscal year to date through a quarter (audit V1-O2) — never a quarter.
+    kind: Literal["LTM", "FY", "Q", "YTD"] | None
     quarter: int | None  # the FISCAL quarter, 1-4 (kind "Q" only)
     end: date | None  # the period's last day, as the header states it
-    fiscal_year: int | None  # the fiscal year the column belongs to (kinds "FY" and "Q")
+    fiscal_year: int | None  # the fiscal year the column belongs to (kinds "FY", "Q" and "YTD")
     #: (2026-10-30) the column's STATUS. "press_release" is CIQ's column built from the earnings
     #: release before it has processed the 10-Q/10-K: the release carries fewer lines than the
     #: filing, so a line it omits carries the last fiscal year into an LTM cell and a line it
@@ -179,6 +183,18 @@ class HeaderPeriod(NamedTuple):
 #: 'Q2' CIQ prints when the two numbers agree → 2. Census of the 34 non-test folders' Financials
 #: headers (2026-10-29): those two shapes, behind 'Reclassified' / 'Restated' / 'Press Release'.
 _FISCAL_QUARTER = re.compile(r"(?<![A-Za-z])F?Q([1-4])(?![0-9])")
+
+#: The duration CIQ heads a Financials period column with: '3 months', '12 months' — and, for a
+#: filer reporting year to date, '6 months' or '9 months' (audit V1-O2). The singular '1 month'
+#: too (Codex round 1, #972): a one-month stub states its duration, never reads as its quarter.
+_DURATION = re.compile(r"(?<![0-9])([0-9]{1,2}) months?\b", re.IGNORECASE)
+
+
+def stated_months(cell: Any) -> int | None:
+    """The number of months a period-header cell says its column covers, or None when it says
+    none."""
+    m = _DURATION.search(str(cell if cell is not None else "").replace("\n", " "))
+    return int(m.group(1)) if m else None
 
 
 def _nominal_month(d: date) -> int:
@@ -207,12 +223,21 @@ def header_period(cell: Any) -> HeaderPeriod:
     counted from the month the quarter is named for (:func:`_nominal_month`)."""
     text = str(cell if cell is not None else "").replace("\n", " ").strip()
     end = _column_date(cell)
-    kind: Literal["LTM", "FY", "Q"] | None = None
+    months = stated_months(text)
+    kind: Literal["LTM", "FY", "Q", "YTD"] | None = None
     quarter: int | None = None
+    through: int | None = None   # the fiscal quarter a year-to-date column runs through
     if _is_ltm(text):
         kind = "LTM"
-    elif (m := _FISCAL_QUARTER.search(text)) is not None:
+    elif (m := _FISCAL_QUARTER.search(text)) is not None and months in (None, 3):
         kind, quarter = "Q", int(m.group(1))
+    elif m is not None and months != 12:
+        # THE DURATION IS READ, NOT ONLY THE QUARTER TOKEN (audit V1-O2, 2026-11-10): '6 months
+        # FQ2/CQ4 Nov-30-2025' is the half year to FQ2, and labelled 'Q2-26' it was a quarter to
+        # every same-quarter match and LTM sum. Every FQ header on disk states '3 months' (11,132
+        # header cells of the 72 Financials exports, 2026-11-10). Any other duration through a
+        # quarter (a 4-month stub) is year to date too, never a fiscal year.
+        kind, through = "YTD", int(m.group(1))
     elif "12 months" in text:
         kind = "FY"
     fiscal_year: int | None = None
@@ -221,8 +246,8 @@ def header_period(cell: Any) -> HeaderPeriod:
         # 53-week year ending Jan-01 stays the year it ends in (the twin rule in `statement_recon`
         # drops two years that share a label); the nominal month only places a QUARTER
         fiscal_year = end.year
-    elif end is not None and quarter is not None:
-        fiscal_year = (_nominal_month(end) + 3 * (4 - quarter)) // 12
+    elif end is not None and (q := quarter or through) is not None:
+        fiscal_year = (_nominal_month(end) + 3 * (4 - q)) // 12
     # a substring read, as every status consumer read the label before this field existed
     status: ColumnStatus = next((st for word, st in _COLUMN_STATUS_WORDS if word in text), "filed")
     return HeaderPeriod(kind, quarter, end, fiscal_year, status)
@@ -285,6 +310,42 @@ def calendar_segments(header: list[Any]) -> list[int]:
         seg += is_period_marker(cell)
         out.append(seg)
     return out
+
+
+def period_columns(header: list[Any]) -> list[int]:
+    """The period columns of a Financials header, IN TIME ORDER, whatever order the sheet holds.
+
+    SHEET ORDER WAS READ AS TIME ORDER (audit RA-D5, 2026-11-10). Growth was taken between
+    neighbouring columns, the estimate base was the last fiscal-year column, and a trajectory ran
+    left to right. With the period columns reversed, SMPL's FY23 revenue growth read -7% against a
+    true +6%, and its trajectory ran from 2026 back to 2015. Every Financials sheet on disk states
+    "Order: Latest on Right" (864 sheets), and its dated columns already ascend within each fiscal
+    calendar, so this order is the sheet's own on every export read.
+
+    WITHIN A FISCAL CALENDAR, BY THE END EACH HEADER STATES. A fiscal year ends before an LTM that
+    ends the same day, and equal ends otherwise keep the sheet's order. A calendar holding a
+    column with no stated end keeps the sheet's order, since that column cannot be placed.
+
+    THE CALENDARS THEMSELVES BY THEIR LATEST END. SMPL's old December calendar (one column,
+    Dec-31-2016) sits before the August one that runs to 2026, as CIQ prints it
+    (:func:`calendar_segments`). Registered markers and empty cells are no columns."""
+    cal = calendar_segments(header)
+    groups: dict[int, list[int]] = {}
+    for j, c in enumerate(header[1:], 1):
+        if str(c).strip() and not is_period_marker(c):
+            groups.setdefault(cal[j], []).append(j)
+    ordered: list[tuple[date, list[int]]] = []
+    for js in groups.values():
+        hp = [header_period(header[j]) for j in js]
+        if all(p.end is not None for p in hp):
+            js = [j for _end, _rank, j in sorted(
+                (p.end, p.kind == "LTM", j) for p, j in zip(hp, js, strict=True)
+                if p.end is not None)]
+        ordered.append((max((p.end for p in hp if p.end is not None), default=date.min), js))
+    if any(not any(header_period(header[j]).end for j in js) for _l, js in ordered):
+        # a calendar with no dated column cannot be placed among the others: the sheet's order
+        return [j for _latest, js in ordered for j in js]
+    return [j for _latest, js in sorted(ordered, key=lambda g: g[0]) for j in js]
 
 
 #: What :func:`latest_cell` found: a number; a marker (or a blank) in the latest column; or no
@@ -1162,12 +1223,12 @@ def margin_trend(bundle: CiqBundle) -> Sourced[str]:
         if ri is None:
             return None
         parts: list[str] = []
-        for j in range(1, len(rows[ri])):
-            v = clean_num(rows[ri][j])
+        # in time order, as the absolute series it is paired with (audit RA-D5)
+        for j in period_columns(rows[hdr]):
+            v = clean_num(rows[ri][j]) if j < len(rows[ri]) else None
             rv = clean_num(rows[rev_i][j]) if j < len(rows[rev_i]) else None
             if v is not None and rv:
-                lab = _period_label(rows[hdr][j]) if j < len(rows[hdr]) else f"c{j}"
-                parts.append(f"{lab} {v / rv:.0%}")
+                parts.append(f"{_period_label(rows[hdr][j])} {v / rv:.0%}")
         return " → ".join(parts) if len(parts) >= 2 else None
 
     eb_i = _find_row(rows, "EBITDA")
@@ -1295,8 +1356,10 @@ _CS_COLS = (  # Details-panel columns, located by header LABEL (order not contra
 
 def _cs_detail_asof(rows: Rows) -> str:
     """The Details panel's own filing note ('A 2025 filed Mar-16-2026') — the DETAIL is panel-dated,
-    so this is the detail-as-of (distinct from the latest-quarter total debt for reconciliation)."""
-    for r in rows[:12]:
+    so this is the detail-as-of (distinct from the latest-quarter total debt for reconciliation).
+    The span starts at the sheet's first filled row (`sheet_top`, audit RA-D12)."""
+    top = sheet_top(rows)
+    for r in rows[top:top + 12]:
         for j, c in enumerate(r):
             if str(c).strip().rstrip(":") == "Source" and j + 1 < len(r):
                 v = str(r[j + 1]).strip()
@@ -1962,9 +2025,9 @@ def _trajectory_series(rows: Rows, ri: int | None, hdr: int | None) -> list[tupl
     if ri is None or hdr is None:
         return []
     pairs = [
-        (_period_label(rows[hdr][j]) if j < len(rows[hdr]) else f"c{j}", v)
-        for j in range(1, len(rows[ri]))
-        if (v := clean_num(rows[ri][j])) is not None
+        (_period_label(rows[hdr][j]), v)
+        for j in period_columns(rows[hdr])   # in time order, never the sheet's (audit RA-D5)
+        if j < len(rows[ri]) and (v := clean_num(rows[ri][j])) is not None
     ]
     return pairs if len(pairs) >= 2 else []
 
@@ -2287,6 +2350,64 @@ def _surprise_eps_block(rows: Rows, heads: list[int], ticker: str, *,
                      passed_over=first if first != listing else None)
 
 
+def signed_pct(pct: float) -> str:
+    """A signed percent CHANGE as a page prints it, from its structured value (fix request 2,
+    prompt-fix 2): whole percents, and under half a percent the first significant decimal, so a
+    change is never printed "+0%" or "-0%"; an exact zero is "0%", with no sign, because nothing
+    moved. Every signed change this module writes goes through it."""
+    if pct == 0:
+        return "0%"
+    if f"{abs(pct):.0f}" != "0":   # judged on the printed whole: -0.5 rounds to even, to "-0"
+        return f"{pct:+.0f}%"
+    places = max(1, -math.floor(math.log10(abs(pct))))
+    text = f"{pct:+.{places}f}"
+    return (text.rstrip("0").rstrip(".") if "." in text else text) + "%"
+
+
+#: CIQ's 0.0 surprise beside an "Actual" and an "Estimate" of its own that differ — NFLX's GAAP EPS
+#: FY2004–FY2013 (sub-cent split-adjusted EPS: its "Difference" row reads 0.0 too, so the 0% comes
+#: from a difference rounded to the cent) and PARR's FY2014–FY2016. Each printed "+0%", a met
+#: estimate the rows contradict; the page states what the rows show instead, and computes nothing.
+NO_SURPRISE = "n/a"
+NO_SURPRISE_NOTE = "n/a: CIQ states 0% beside an actual and an estimate that differ"
+
+
+def _surprise_basis_rows(rows: Rows, ri: int) -> list[tuple[str, int]]:
+    """Where CIQ prints the ``Actual`` and ``Estimate`` rows under the surprise row ``ri``: within
+    the four rows after it, past its ``Difference`` row, before the next labelled row. Each as
+    (label, row index), in sheet order; empty where it prints none. The surprise fixture's builder
+    cuts by it (`scripts/build_surprise_listings_fixture.py`), so the two never drift."""
+    out: list[tuple[str, int]] = []
+    for i in range(ri + 1, min(ri + 5, len(rows))):
+        label = str(rows[i][0]).strip() if rows[i] and rows[i][0] is not None else ""
+        if label in ("Actual", "Estimate"):
+            out.append((label, i))
+        elif label and label != "Difference":
+            break
+    return out
+
+
+def _surprise_basis(rows: Rows, ri: int) -> tuple[dict[int, float], dict[int, float]]:
+    """The ``Actual`` and ``Estimate`` rows CIQ prints under the surprise row ``ri``
+    (`_surprise_basis_rows`), by column — or empty where it prints none."""
+    act: dict[int, float] = {}
+    est: dict[int, float] = {}
+    for label, i in _surprise_basis_rows(rows, ri):
+        target = act if label == "Actual" else est
+        for j in range(1, len(rows[i])):
+            if (n := clean_num(rows[i][j])) is not None:
+                target[j] = n
+    return act, est
+
+
+def _surprise_cell(v: float, actual: float | None, estimate: float | None) -> str:
+    """One year's surprise as stated: CIQ's fraction as a signed percent (`signed_pct`), or
+    `NO_SURPRISE` where CIQ's 0.0 sits beside an actual and an estimate that differ."""
+    if v == 0 and actual is not None and estimate is not None and actual != estimate:
+        return NO_SURPRISE
+    return signed_pct(v * 100)
+
+
 def surprise_history(bundle: CiqBundle) -> Sourced[str]:
     """Estimate beat/miss history from Estimates→Surprise — the pre-catalyst 'cracks' (EPS & revenue
     actual-vs-consensus). The sheet is by FISCAL YEAR (no quarterly view) — annual surprise;
@@ -2308,15 +2429,21 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
     cal = next((i for i in range(yhdr + 1, len(rows))
                 if any(str(c).strip() == "Calendar Years" for c in rows[i][:3])), len(rows))
 
+    placeholders: list[int] = []   # the years printed NO_SURPRISE, read from the cells, not text
+
     def series(ri: int | None, hdr: int) -> str | None:
         if ri is None:
             return None
-        out = [
-            f"FY{int(yr)} {v:+.0%}"
-            for j in range(1, len(rows[ri]))
-            if (v := clean_num(rows[ri][j])) is not None
-            and j < len(rows[hdr]) and (yr := clean_num(rows[hdr][j])) is not None
-        ]
+        act, est = _surprise_basis(rows, ri)
+        out = []
+        for j in range(1, len(rows[ri])):
+            if ((v := clean_num(rows[ri][j])) is None or j >= len(rows[hdr])
+                    or (yr := clean_num(rows[hdr][j])) is None):
+                continue
+            cell = _surprise_cell(v, act.get(j), est.get(j))
+            if cell == NO_SURPRISE:
+                placeholders.append(int(yr))
+            out.append(f"FY{int(yr)} {cell}")
         return ", ".join(out) if out else None  # full series; the render windows it
 
     fiscal = [i for i in heads if i < cal]
@@ -2344,8 +2471,13 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
            if not isinstance(block, _EpsBlock) or block.passed_over is None or eps is None else
            f"CIQ Estimates→Surprise (annual; GAAP EPS from the {block.listing} block — the "
            f"sheet's first, {block.passed_over}, is another listing's)")
+    # the n/a cells are explained ONCE, inside the line's one trailing note — the web parses the
+    # last parenthetical as the note and each ", " point's last token as its value (dossier.js
+    # `parseSeries`), so an explanation anywhere else would be read as a year's value
+    na = bool(placeholders)
     return Sourced.present(
-        "; ".join(parts) + " (GAAP-EPS basis; +beat / −miss)",
+        "; ".join(parts) + " (GAAP-EPS basis; +beat / −miss"
+        + (f"; {NO_SURPRISE_NOTE}" if na else "") + ")",
         source_ref=ref, note=refused,
     )
 
@@ -2365,9 +2497,7 @@ def _revision_breadth(rows: Rows, metric_block: str) -> str | None:
     if bi is None or bi + 1 >= len(rows):
         return None
     header = rows[bi + 1]
-    fy_col = next(
-        (j for j, c in enumerate(header) if isinstance(c, str) and c.strip().startswith("FY")), None
-    )
+    fy_col = _first_fy_col(header)   # the earliest year stated, never the first by position
     rng = range(bi, min(bi + 10, len(rows)))
     up = next((i for i in rng if rows[i] and str(rows[i][0]).strip() == "Upward"), None)
     dn = next((i for i in rng if rows[i] and str(rows[i][0]).strip() == "Downward"), None)
@@ -2560,7 +2690,7 @@ def _net_change(first: float, last: float) -> str:
     negative or zero-crossing series → DIRECTION words, never a bare signed % (which misreads a
     shrinking expense −13.7→−4.9 as a −64% 'decline' when it is an improvement)."""
     if first > 0 and last > 0:
-        return f"net {(last / first - 1) * 100:+.0f}%"
+        return f"net {signed_pct((last / first - 1) * 100)}"
     if first < 0 and last < 0:
         if abs(last) < abs(first):
             return "improving (magnitude toward zero)"
@@ -2576,8 +2706,10 @@ def _net_change(first: float, last: float) -> str:
 
 def _scan_asof_header(rows: Rows) -> date | None:
     """A decoded date from an explicit 'As-Of Date:' cell in a sheet's metadata rows (the sibling
-    comps book carries one on every sheet). Matched by LABEL, never positionally. None if absent."""
-    for r in rows[:14]:
+    comps book carries one on every sheet). Matched by LABEL, never positionally, in a span from the
+    sheet's first filled row (`sheet_top`, audit RA-D12). None if absent."""
+    top = sheet_top(rows)
+    for r in rows[top:top + 14]:
         for j, c in enumerate(r):
             if isinstance(c, str) and c.strip().rstrip(":").strip().lower() == "as-of date":
                 d = excel_date(r[j + 1]) if j + 1 < len(r) else None
@@ -2664,17 +2796,43 @@ def _metric_block_header(rows: Rows, bi: int) -> list[Any] | None:
     return None
 
 
+#: An Estimates period label: 'FY 2027' or 'FQ3 2027' (the fiscal year, and the quarter).
+_EST_PERIOD = re.compile(r"^F(?:Y|Q([1-4]))\s*((?:19|20)\d{2})\b")
+
+
+def _est_period_key(label: Any) -> tuple[int, int] | None:
+    """(fiscal year, quarter or 0) an Estimates period label states, or None when it states none."""
+    m = _EST_PERIOD.match(label.strip()) if isinstance(label, str) else None
+    return (int(m.group(2)), int(m.group(1) or 0)) if m else None
+
+
+def _labels_in_time_order(labels: list[str]) -> list[str]:
+    """Estimates period labels in the order of the periods they state — the sheet's order when one
+    states no period (audit RA-D5: the FIRST fiscal year or quarter was read off its position)."""
+    keys = [_est_period_key(lbl) for lbl in labels]
+    if any(k is None for k in keys):
+        return labels
+    return [lbl for _k, _i, lbl in sorted(
+        (k, i, lbl) for i, (k, lbl) in enumerate(zip(keys, labels, strict=True)) if k is not None)]
+
+
+def _est_cols(header: list[Any], prefix: str) -> list[int]:
+    """The header's `prefix` ('FY' / 'FQ') columns, in the order of the periods they state."""
+    cols = [j for j, c in enumerate(header) if isinstance(c, str) and c.strip().startswith(prefix)]
+    keyed = [(k, j) for j in cols if (k := _est_period_key(header[j])) is not None]
+    return cols if len(keyed) < len(cols) else [j for _k, j in sorted(keyed)]
+
+
 def _first_fy_col(header: list[Any]) -> int | None:
-    """The current-fiscal-year column — the FIRST 'FY …' period in the header."""
-    return next(
-        (j for j, c in enumerate(header) if isinstance(c, str) and c.strip().startswith("FY")), None
-    )
+    """The current-fiscal-year column — the EARLIEST fiscal year the header states, wherever it sits
+    (audit RA-D5: it was the first 'FY …' column by position)."""
+    return next(iter(_est_cols(header, "FY")), None)
 
 
 def _first_fq_cols(header: list[Any], n: int = 2) -> list[int]:
-    """The next-N fiscal-quarter columns — the FIRST n 'FQ …' periods (the 180d verdict window)."""
-    fq = [j for j, c in enumerate(header) if isinstance(c, str) and c.strip().startswith("FQ")]
-    return fq[:n]
+    """The next-N fiscal-quarter columns — the n EARLIEST quarters the header states (the 180d
+    verdict window), wherever they sit (audit RA-D5)."""
+    return _est_cols(header, "FQ")[:n]
 
 
 def _nearest_period_header(rows: Rows, bi: int) -> list[Any] | None:
@@ -2895,11 +3053,12 @@ def _market_summary_current_year(rows: Rows, metric: str) -> float | None:
 def _market_summary_read(rows: Rows, metric: str) -> tuple[float | None, str | None]:
     """:func:`_market_summary_current_year` with WHY it vouches for no figure (audit RA-D13) —
     ONE walk, so the reason names the very cell the value was read from, never a re-scan's."""
-    start = next((i for i, r in enumerate(rows[:200])
+    top = sheet_top(rows)   # the span starts at the first filled row, never row 0 (audit RA-D12)
+    start = next((i for i, r in enumerate(rows[top:top + 200], top)
                   if r and str(r[0]).strip() == "Market Summary"), None)
     if start is None:
-        return None, ("Estimates→Consensus has no 'Market Summary' in its first 200 rows, so no "
-                      "Current Year figure identifies the consensus block")
+        return None, ("Estimates→Consensus has no 'Market Summary' in the 200 rows from its first "
+                      "filled row, so no Current Year figure identifies the consensus block")
     for i in range(start, min(start + 60, len(rows))):
         cells = [str(c).strip() for c in rows[i]]
         if metric in cells:
@@ -2944,8 +3103,10 @@ def _declared_current_fy(rows: Rows) -> int | None:
     """The current fiscal year, READ FROM THE SHEET's own banner rather than derived.
 
     `Current Fiscal Year End: Aug-31-2026` states it. The first cut inferred forward-ness from
-    whether the title row carried an actual — sound, but a stated fact beats a derived one."""
-    for r in rows[:40]:
+    whether the title row carried an actual — sound, but a stated fact beats a derived one. The
+    span starts at the sheet's first filled row (`sheet_top`, audit RA-D12)."""
+    top = sheet_top(rows)
+    for r in rows[top:top + 40]:
         m = _CURRENT_FY.search(str(r[0]) if r else "")
         if m:
             return int(m.group(1))
@@ -3200,10 +3361,9 @@ _PER_SHARE = ("EPS (GAAP)", "EPS Normalized")
 
 
 def _forward_cols(header: list[Any]) -> list[tuple[int, str]]:
-    """The first `_FORWARD_YEARS` fiscal-year columns of a Trends/Revisions block, by label."""
-    fy = [(j, str(c).strip()) for j, c in enumerate(header)
-          if isinstance(c, str) and c.strip().startswith("FY")]
-    return fy[:_FORWARD_YEARS]
+    """The first `_FORWARD_YEARS` fiscal-year columns of a Trends/Revisions block, by label — the
+    earliest years the header states, wherever they sit (audit RA-D5)."""
+    return [(j, str(header[j]).strip()) for j in _est_cols(header, "FY")][:_FORWARD_YEARS]
 
 
 def _block_starts(rows: Rows) -> list[int]:
@@ -3243,7 +3403,8 @@ def _market_summary(rows: Rows) -> dict[str, float]:
     Years'. Bounded on purpose: `_market_summary_current_year` scans 60 rows past the block, so a
     label the summary does not carry is answered from the annual section below it (BRBR's 'EPS
     (GAAP)' read 3.12, a historical column, while its summary carries only 'EPS Normalized')."""
-    start = next((i for i, r in enumerate(rows[:200])
+    top = sheet_top(rows)   # the span starts at the first filled row, never row 0 (audit RA-D12)
+    start = next((i for i, r in enumerate(rows[top:top + 200], top)
                   if r and str(r[0]).strip() == "Market Summary"), None)
     if start is None:
         return {}
@@ -3737,7 +3898,9 @@ def _consensus_net_debt_check(bundle: CiqBundle) -> ConsensusNetDebtCheck | None
         tr = bundle.sheet("estimates", "Trends")
     except CiqUnavailableError:
         return None
-    banner = next((m for r in co[:40] if r and (m := _FYE_BANNER.search(str(r[0])))), None)
+    top = sheet_top(co)   # the banner's span starts at the first filled row (audit RA-D12)
+    banner = next((m for r in co[top:top + 40] if r and (m := _FYE_BANNER.search(str(r[0])))),
+                  None)
     cur_fy = _declared_current_fy(co)
     sec = _fiscal_company_section(su)
     if banner is None or cur_fy is None or sec is None:
@@ -4228,7 +4391,7 @@ def pe_eps_basis(pe: dict[str, float], eps: dict[str, dict[str, float]], *,
 
     ``pe`` is {ladder row: Price/Earnings} ('NTM', 'FY 2027', …); ``eps`` is {schema line name:
     {period: Current consensus}}; ``fy_periods`` the FY rows to test (the page's FY+0..FY+2);
-    ``quarters`` the next four quarters in sheet order. None ONLY when the ladder carries no FY P/E
+    ``quarters`` the next four quarters in time order. None ONLY when the ladder carries no FY P/E
     at all — anything with a P/E to test returns an outcome, `undetermined` with its reason when it
     cannot be tested.
 
@@ -4311,7 +4474,7 @@ def _pe_eps_basis(cm: list[CurrentMultiple] | None, trends: Rows, paths: list[Co
         eps[k] = {p.period: p.points[-1].value for p in paths
                   if p.metric == title and p.points and p.points[-1].months_ago == 0}
         labels, current = _trends_current(trends, title)
-        block_q = [lbl for lbl in labels if lbl.startswith("FQ")][:4]
+        block_q = _labels_in_time_order([lbl for lbl in labels if lbl.startswith("FQ")])[:4]
         quarters = quarters or block_q
         eps[k].update({q: current[q] for q in block_q if q in current})
     return pe_eps_basis(pe, eps, fy_periods=[p for p in periods if p.startswith("FY")],
@@ -4889,17 +5052,23 @@ def _listing_rating(bundle: CiqBundle) -> tuple[str | None, str | None, str | No
     'Recommendation' with its counts and then an 'Ind. Recommendation' with ITS counts. The
     distribution read every category row on the sheet, so the industry counts were appended to
     the listing's unlabelled on the same 20 pages. The counts here run from the listing's own
-    'Recommendation' row to the first row that is not a category."""
+    'Recommendation' row to the first row that is not a category.
+
+    A MISSING 'Trends' SHEET IS SAID TOO (audit RA-D7, 2026-11-10). With the tab renamed, the
+    recommendation and the counts both dropped from the page with no word. The note names the
+    sheet the export lacks."""
     try:
         rows = bundle.sheet("estimates", "Trends")
-    except CiqUnavailableError:
-        return None
+    except CiqUnavailableError as exc:
+        return None, None, f"not read — {exc}"
     sec = next((i for i, r in enumerate(rows)
                 if r and str(r[0]).strip() == "Non-Periodic Trends"), None)
     if sec is None:
         return None
+    # A block's 'Current' column is found by its header, never assumed to be column 1 (audit
+    # RA-D5: with the columns reordered, every block read as absent, "blocks: none")
     heads = [i for i in range(sec + 1, len(rows)) if len(rows[i]) > 1
-             and str(rows[i][1]).strip() == "Current" and ":" in str(rows[i][0])]
+             and "Current" in (str(c).strip() for c in rows[i][1:]) and ":" in str(rows[i][0])]
     own = next((i for i in heads
                 if _share_symbol(str(rows[i][0]).strip().rsplit(":", 1)[1])
                 == _share_symbol(bundle.ticker)),
@@ -4909,17 +5078,18 @@ def _listing_rating(bundle: CiqBundle) -> tuple[str | None, str | None, str | No
         return None, None, (f"not read — no Trends block headed with {bundle.ticker} "
                             f"(blocks: {held})")
     end = next((i for i in heads if i > own), len(rows))
+    cur = [str(c).strip() for c in rows[own]].index("Current")
     rec_i = next((i for i in range(own + 1, end)
                   if rows[i] and str(rows[i][0]).strip() == "Recommendation"), None)
     if rec_i is None:
         return None
-    rec = str(rows[rec_i][1]).strip() if len(rows[rec_i]) > 1 else ""
+    rec = str(rows[rec_i][cur]).strip() if len(rows[rec_i]) > cur else ""
     counts: list[str] = []
     for r in rows[rec_i + 1:end]:
         cat = _rating_category(r[0]) if r else None
         if cat is None:
             break
-        if (v := clean_num(r[1]) if len(r) > 1 else None) is not None:
+        if (v := clean_num(r[cur]) if len(r) > cur else None) is not None:
             counts.append(f"{cat} {int(v)}")
     return (None if rec in _UNAVAILABLE_CELLS else rec), (", ".join(counts) or None), None
 
@@ -6776,6 +6946,8 @@ def _fin_short(cell: Any) -> str:
         return "LTM"
     if p.kind == "Q":
         return f"Q{p.quarter}-" + (f"{p.fiscal_year % 100:02d}" if p.fiscal_year else "?")
+    if p.kind == "YTD":   # '6M-26': the months it covers, never a quarter's label (audit V1-O2)
+        return f"{stated_months(c)}M-" + (f"{p.fiscal_year % 100:02d}" if p.fiscal_year else "?")
     if p.kind == "FY" and p.fiscal_year is not None:
         return f"FY{p.fiscal_year % 100:02d}"
     ym = re.search(r"(\d{4})", c)
@@ -6794,9 +6966,9 @@ def _fin_periods(hdr: list[Any]) -> list[tuple[int, str, bool, bool]]:
     Change' printed as a column labelled 'Fiscal Y' in both summary tables and the Ratios panel.
     Its break is kept by the callers that compare columns (:func:`calendar_segments`)."""
     return [
-        (j, _fin_short(c), p.kind == "LTM", p.status == "reclassified")
-        for j, c in enumerate(hdr[1:], 1) if str(c).strip() and not is_period_marker(c)
-        for p in (header_period(c),)
+        (j, _fin_short(hdr[j]), p.kind == "LTM", p.status == "reclassified")
+        for j in period_columns(hdr)   # in time order, never the sheet's (audit RA-D5)
+        for p in (header_period(hdr[j]),)
     ]
 
 
@@ -7032,7 +7204,9 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     n_est = len(est_pairs)   # every row pads to THIS, so the table can never go ragged
     # LTM is its own basis (a ttm, not a fiscal year), so growth never spans the FY↔LTM boundary
     # (overlapping, non-successor) — it reads "— (basis)"; the estimate boundary names its base.
-    bases = ([("ltm" if lt else ("recl" if r else "act")) for _c, _s, lt, r in disp]
+    # a year-to-date column (audit V1-O2) is its own basis: no growth spans it, and it is no base
+    bases = ([("ltm" if lt else "ytd" if header_period(inc[hdr][c]).kind == "YTD"
+               else ("recl" if r else "act")) for c, _s, lt, r in disp]
              + ["est"] * len(est_pairs))
     # the fiscal calendar of each actual column: growth never spans a fiscal-year change, as it did
     # not while the marker sat between the two calendars as a column of its own (an estimate is
@@ -7041,10 +7215,14 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     segs = [cal[c] for c in act_cols]
     columns = ([s + (" (R)" if r else "") for _c, s, _l, r in disp]
                + [display for _t, display in est_pairs])
+    # A SHEET THAT IS NOT THERE IS SAID, NEVER LEFT TO A SHORTER TABLE (audit RA-D7, 2026-11-10).
+    # With 'Trends' or 'Cash Flow' renamed, the table lost its estimate columns or its cash-flow
+    # rows and stayed PRESENT, with a note and a source naming the sheet it had not read.
+    tr_why: str | None = None
     try:
         tr: Rows | None = bundle.sheet("estimates", "Trends")
-    except CiqUnavailableError:
-        tr = None
+    except CiqUnavailableError as exc:
+        tr, tr_why = None, str(exc)
 
     def series(is_label: str, est_metric: str | None) -> list[float | None]:
         ri = _find_row(inc, is_label)
@@ -7073,16 +7251,18 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
                 if v is None or base is None or not base or j is None:
                     out.append("—")
                     continue
-                pct = f"{(v / base - 1) * 100:+.0f}%"
+                pct = signed_pct((v / base - 1) * 100)
                 out.append(pct if bases[j] == "est" else f"{pct} (vs {columns[j].split()[0]})")
                 continue
             v, prev = s[i], s[i - 1]
             if v is None or prev is None or not prev:
                 out.append("—")
-            elif bases[i] != bases[i - 1] or segs[i] != segs[i - 1]:
+            elif bases[i] != bases[i - 1] or segs[i] != segs[i - 1] or bases[i] == "ytd":
+                # a year-to-date column is compared with nothing — not even the one beside it,
+                # which may cover another number of months ('6M' → '9M')
                 out.append("— (basis)")
             else:
-                out.append(f"{(v / prev - 1) * 100:+.0f}%")
+                out.append(signed_pct((v / prev - 1) * 100))
         return out
 
     def margin(num: list[float | None], den: list[float | None]) -> list[str]:
@@ -7141,8 +7321,12 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     # case: MVST FY22/FY23). A genuine duplicate column (same (short, is_ltm) twice — a restated AND
     # an as-reported copy) is ambiguous, so it drops to "—" (fail loud) rather than silently keeping
     # whichever landed last in the lookup dict.
+    cf_why: str | None = None
     try:
         cf = bundle.sheet("financials", "Cash Flow", freq="annual")
+    except CiqUnavailableError as exc:
+        cf_why = str(exc)
+    else:
         cf_hdr = _period_header(cf)
         cf_map: dict[tuple[str, bool], int] = {}
         cf_dupe: set[tuple[str, bool]] = set()
@@ -7181,26 +7365,29 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
                 # produced the number; the old cell helper formatted it and threw it away.
                 rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells, values=series_vals))
 
-        # CONSENSUS WITHOUT AN ESTABLISHED ACTUALS BASIS — its own row, actual columns blank. A
-        # mostly-"—" row is the honest shape here: the vendor has a forward view, and we decline to
-        # claim it continues the history beside it. Emitted only when a figure exists, so no name
-        # gains an empty row — that is the very defect PR-C removed from the estimate columns.
-        for disp_lbl, est_metric in _C1_CF_CONSENSUS_ONLY:
-            est_only: list[float | None] = [_est_fy_current(tr, est_metric, fy) for fy in est_fys]
-            if not any(v is not None for v in est_only):
-                continue
-            blank: list[float | None] = [None] * len(act_cols)
-            cons_vals: list[float | None] = blank + est_only
-            rows.append(FinRow(label=disp_lbl + " ($M)",
-                               cells=[_fmt_m(v) for v in cons_vals], values=cons_vals))
-    except CiqUnavailableError:
-        pass
+    # CONSENSUS WITHOUT AN ESTABLISHED ACTUALS BASIS — its own row, actual columns blank. A
+    # mostly-"—" row is the honest shape here: the vendor has a forward view, and we decline to
+    # claim it continues the history beside it. Emitted only when a figure exists, so no name
+    # gains an empty row — that is the very defect PR-C removed from the estimate columns. These
+    # read Trends alone, so a missing Cash Flow sheet no longer takes them with it (RA-D7).
+    for disp_lbl, est_metric in _C1_CF_CONSENSUS_ONLY:
+        est_only: list[float | None] = [_est_fy_current(tr, est_metric, fy) for fy in est_fys]
+        if not any(v is not None for v in est_only):
+            continue
+        blank: list[float | None] = [None] * len(act_cols)
+        cons_vals: list[float | None] = blank + est_only
+        rows.append(FinRow(label=disp_lbl + " ($M)",
+                           cells=[_fmt_m(v) for v in cons_vals], values=cons_vals))
     est = as_of or "?"
-    note = f"E = consensus (Estimates→Trends 'Current'), as-of {est}; (R) = Reclassified basis"
+    note = (f"E = consensus (Estimates→Trends 'Current'), as-of {est}" if tr_why is None
+            else f"no estimate columns: {tr_why}") + "; (R) = Reclassified basis"
+    if cf_why is not None:
+        note += f"; no CFO or Capex rows, and no FCF or D&A actuals: {cf_why}"
     return Sourced.present(
         FinTable(columns=columns, rows=rows, note=note,
                  is_estimate=[b == "est" for b in bases]),  # (P3) structural consensus-E flag
-        source_ref="CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+        source_ref=("CIQ Financials→Income Statement" + (" + Cash Flow" if cf_why is None else "")
+                    + " (annual)" + (" + Estimates→Trends (FY E)" if tr_why is None else "")),
     )
 
 
@@ -7230,6 +7417,8 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
         return Sourced.unknown(note="Income Statement (quarterly): fewer than 2 quarters")
     cols = [c for c, _s, _l, _r in periods]
     recl = [r for _c, _s, _l, r in periods]
+    # QoQ compares two QUARTERS only — a year-to-date column is no quarter (audit V1-O2)
+    kinds = [header_period(rows[hdr][c]).kind for c in cols]
     # the fiscal calendar of each column: QoQ and YoY never span a fiscal-year change, as they did
     # not while the marker sat between the two calendars as a column of its own
     cal = calendar_segments(rows[hdr])
@@ -7263,10 +7452,11 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
         v, prev = rev[i], rev[i - 1]
         if v is None or prev is None or not prev:
             qoq.append("—")
-        elif recl[i] != recl[i - 1] or segs[i] != segs[i - 1]:
+        elif (recl[i] != recl[i - 1] or segs[i] != segs[i - 1]
+              or not kinds[i] == kinds[i - 1] == "Q"):
             qoq.append("— (basis)")
         else:
-            qoq.append(f"{(v / prev - 1) * 100:+.0f}%")
+            qoq.append(signed_pct((v / prev - 1) * 100))
     yoy: list[str] = []
     for i in range(len(rev)):
         cur = rev[i]
@@ -7282,7 +7472,7 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
         elif recl[i] != recl[i - 4] or segs[i] != segs[i - 4]:
             yoy.append("— (basis)")
         else:
-            yoy.append(f"{(cur / prior - 1) * 100:+.0f}%")
+            yoy.append(signed_pct((cur / prior - 1) * 100))
     frows += [FinRow(label="Revenue QoQ", cells=qoq), FinRow(label="Revenue YoY", cells=yoy)]
     return Sourced.present(
         FinTable(columns=columns, rows=frows,
@@ -7433,8 +7623,10 @@ def _section_codes(rows: Rows, ticker: str, *, company_only: bool = False) -> li
 
 
 def _sheet_mode(rows: Rows) -> str | None:
-    """An Estimates sheet's own 'Currency: …' header — 'Reported Currency' on every export read."""
-    for r in rows[:15]:
+    """An Estimates sheet's own 'Currency: …' header — 'Reported Currency' on every export read,
+    searched from the sheet's first filled row (`sheet_top`, audit RA-D12)."""
+    top = sheet_top(rows)
+    for r in rows[top:top + 15]:
         cell = str(r[0]).strip() if r else ""
         if cell.startswith("Currency:"):
             return cell[len("Currency:"):].strip() or None
@@ -7442,8 +7634,10 @@ def _sheet_mode(rows: Rows) -> str | None:
 
 
 def _comps_label(rows: Rows) -> list[str]:
-    """The comps book's 'Currency:' label — the cell beside it, verbatim."""
-    for r in rows[:20]:
+    """The comps book's 'Currency:' label — the cell beside it, verbatim, searched from the sheet's
+    first filled row (`sheet_top`, audit RA-D12)."""
+    top = sheet_top(rows)
+    for r in rows[top:top + 20]:
         if r and str(r[0]).strip() == "Currency:":
             # an empty .xlsx cell is None (audit RA-D15): it states nothing, as BIFF's '' does
             return _first_seen([str(r[1]).strip()] if len(r) > 1 and r[1] is not None else [])

@@ -15,6 +15,7 @@ from typing import Any
 
 import pytest
 
+from tests.stripped_pages import replayable_text
 from vinci.evals import compare as cm
 from vinci.evals import gold as gd
 from vinci.evals import judge as jg
@@ -26,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @pytest.fixture(scope="module")
 def nflx() -> dict[str, Any]:
-    page: dict[str, Any] = json.loads((ROOT / "data/dossiers/NFLX/dossier.json").read_text())
+    page: dict[str, Any] = json.loads(replayable_text("NFLX"))
     return page
 
 

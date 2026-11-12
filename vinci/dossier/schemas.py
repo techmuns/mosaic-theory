@@ -2435,6 +2435,11 @@ class TranscriptLocator(BaseModel):
     paragraph: int | None = None
     speaker: str | None = None  # the name on the nearest speaker block before it; None = none
     quote_sha256: str
+    #: (RG-D19 PR 3) sha256 of the row's stated value, exact bytes — set when the row's evidence
+    #: is spooled (`driver_evidence.spool_dossier`), keying the model's CLAIM in the private
+    #: store as ``quote_sha256`` keys its passage. One passage can back several rows; a claim is
+    #: one row's. None on a row whose evidence was not spooled.
+    value_sha256: str | None = None
 
     model_config = {"frozen": True}
 
@@ -2462,10 +2467,15 @@ class OperatingDriver(BaseModel):
     kind: DriverKind
     metric: str  # e.g. "revenue", "average selling price", a KD Type
     period: str | None = None  # as its quote STATES it ("Q1 2026", "FY26"); None when unstated
-    value: str  # the VERBATIM stated value ("$32.0 million, or 43.6%", "536 MWh")
+    #: the VERBATIM stated value ("$32.0 million, or 43.6%", "536 MWh"). (RG-D19 PR 3) None on
+    #: a committed TRANSCRIPT row: the model's words stay in the private store (`locator`)
+    value: str | None = None
     value_num: float | None = None  # STRUCTURED numeric — anchored rows only; consumers read THIS
     unit: str | None = None  # the value_num's unit ("%", "MWh", "$M"); None on verbatim-only rows
-    verbatim: str  # the exact sentence/row read from — the human greps for it
+    #: the exact sentence/row read from — the human greps for it. (RG-D19 PR 3) None on a
+    #: committed TRANSCRIPT row: the quote is licensed text, kept in the private store, and the
+    #: row's `locator` finds it in the call
+    verbatim: str | None = None
     #: THE REST OF THE SPEAKER'S PARAGRAPH after `verbatim`, unclassified (STATE §B1a).
     #:
     #: WHY THE QUOTE ALONE IS NOT ENOUGH. BRBR's row quoted *"In the third quarter, 70% of RTD
@@ -3272,7 +3282,7 @@ class PriceStoreStamp(BaseModel):
 #: The writers that change a committed page WITHOUT re-assembling it. Each one records itself in
 #: `Dossier.layer_refreshes`; a full assembly writes a fresh page and carries none forward.
 LAYER_REFRESH_WRITERS = ("refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
-                         "anchor-retag", "ciq-reread", "caveat-reword")
+                         "anchor-retag", "ciq-reread", "caveat-reword", "driver-facts-pass")
 
 
 class LayerRefresh(BaseModel):
@@ -3295,7 +3305,7 @@ class LayerRefresh(BaseModel):
     date: str                       # ISO date (UTC) the writer ran
     extraction_version: str         # the declared extraction version current when it ran
     writer: Literal["refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
-                    "anchor-retag", "ciq-reread", "caveat-reword"]
+                    "anchor-retag", "ciq-reread", "caveat-reword", "driver-facts-pass"]
     layers: list[str]
 
     model_config = {"frozen": True}
@@ -3491,6 +3501,22 @@ TOP_DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("forward_multiple_history", "history_through"),
 )
 
+#: (RG-D19 PR 3) A transcript driver row's fields that never reach a committed page once its words
+#: are FILED. This repo is public; the quote, the paragraph after it and the model's stated value
+#: are licensed transcript text, kept in the operator's private store. The page carries the row's
+#: fact and its locator (CLAUDE.md: no public field quotes more than 12 consecutive transcript
+#: words, and a driver row quotes none; `tests/test_public_transcript_text.py`).
+PRIVATE_TRANSCRIPT_FIELDS: frozenset[str] = frozenset({"value", "verbatim", "following_context"})
+
+
+def _filed(r: OperatingDriver) -> bool:
+    """The row's words are in the private store: its locator carries the claim's hash, which only
+    `driver_evidence.spool_dossier` sets, after it wrote the passage and the claim. So the one
+    serializer drops words that are filed, and no others: a row it cannot file keeps them, and
+    the corpus test refuses the page loud rather than the words vanishing."""
+    return r.tier == "llm-fenced" and r.locator is not None and r.locator.value_sha256 is not None
+
+
 #: The same rule for the keys added later on EACH `OperatingDriver` row (RG-D8/RG-D19, 2026-11-09).
 DRIVER_ROW_DROP_WHEN_NONE: tuple[str, ...] = ("figures", "value_status", "unknown_reason",
                                               "locator")
@@ -3536,7 +3562,8 @@ def dossier_json(doc: Dossier) -> str:
     # never carries them and a page built before the check has none, so neither writes `null`
     if mech.operating_drivers is not None:
         rows = {i: unset for i, r in enumerate(mech.operating_drivers.rows)
-                if (unset := {k for k in DRIVER_ROW_DROP_WHEN_NONE if getattr(r, k) is None})}
+                if (unset := {k for k in DRIVER_ROW_DROP_WHEN_NONE if getattr(r, k) is None}
+                    | (PRIVATE_TRANSCRIPT_FIELDS if _filed(r) else set()))}
         if rows:
             root.setdefault("operating_drivers", {})["rows"] = rows
     excl: dict[str, Any] = {"mechanical": root} if root else {}

@@ -1,6 +1,6 @@
 # Dossier — WERNER ENTERPRISES INC (Nasdaq: WERN)
 
-_September 17, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-10.dated-headroom_
+_September 17, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-10.driver-text-filed_
 
 # Brief — first cut
 
@@ -699,6 +699,7 @@ _Source §: 8-K 0000793074-25-000019 · wern-2025327ex101.htm_
   - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
+  - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
 - **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
 - **Panel age:** oldest panel 30d old — 2026-08-18 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
 - **Consensus age:** consensus 35d old (2026-08-13, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-11
 prs: []
 supersedes:
@@ -59,3 +59,6 @@ superseded-by:
   never rewritten.
 - The guard reads parenthesised `module.function` names only. A reason naming retired code in
   other words is not caught.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `ed2c5f8f` (#974) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

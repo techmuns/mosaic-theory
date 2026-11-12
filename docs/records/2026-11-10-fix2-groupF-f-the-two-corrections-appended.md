@@ -1,5 +1,5 @@
 ---
-status: open
+status: shipped
 date: 2026-11-10
 prs: []
 supersedes:
@@ -77,3 +77,6 @@ committed rows:
 - **The web still reads the sealed entry** until its own PR lands (previewed first, for the
   operator's approval): the ledger page and the card join skip a CORRECTION row but do not apply
   it.
+## Amendments
+
+- **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `946943ec` (#980) on 2026-11-11. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.

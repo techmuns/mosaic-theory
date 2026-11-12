@@ -1,8 +1,8 @@
 # CIQ Extraction Reference
 
-Critical rules for LLM extracting from CIQ files. Empirically validated against real CIQ exports. Generic to any name.
+Critical rules for LLM extracting from CIQ files. Empirically validated against real CIQ exports. Generic to any name. **Superseded where it differs from the code** (`vinci/dossier/ciq.py`, `vinci/dossier/ciq_sheets.py`) or the CIQ field contract: see *2026-11-11 corrections* at the end of this file.
 
-This file is consult-as-needed. The most important rules are duplicated in Session B PM PROVIDES in checklist.md — this file exists for the cases where LLM hits an edge case the inline rules don't cover.
+This file is consult-as-needed. It once pointed to "Session B PM PROVIDES in checklist.md" for the most important rules. **`checklist.md` is not in this repository** (`git ls-files` finds none, and no commit on any branch or on `origin/main` ever added one, 2026-11-11); it belongs to the session framework these notes came from. The Session A/B/C, B1/B3 and checklist-item references below are that framework's, not this repo's (G-D14).
 
 ---
 
@@ -13,7 +13,7 @@ CIQ extensions mislead about actual format. Always verify with `file` command be
 | Extension | Actual format | Parser to use |
 |---|---|---|
 | `.xls` | Legacy BIFF (Excel 97-2003 binary) | `xlrd` library only. openpyxl fails with explicit error. |
-| `.rtf` (Key Developments) | Real RTF text | `striprtf` library |
+| `.rtf` (Key Developments) | Real RTF text (36 of 36 on disk, 2026-11-11). CIQ has also sent Key Developments as a spreadsheet, which the reader refuses (see *Key Developments* below) | `striprtf` library |
 | `.rtf` (Transcripts, some Annual Reports) | OLE Composite Document (MS Word .doc renamed) | LibreOffice CLI (`libreoffice --headless --convert-to txt`) or MS Word required. NO RTF library will parse this. striprtf silently returns ~12 words of garbage. |
 | `.doc` (formal regulatory filings from CIQ: 10-Q, 10-K, 20-F, Yuho, Annual Report, Half-year, etc.) | MIME-wrapped quoted-printable HTML | Three-step pipeline: (1) decode quoted-printable via `quopri.decodestring`, (2) parse with `BeautifulSoup`, (3) `html.unescape` the extracted text. The file starts with MIME headers (X-Sender, boundary, Content-Type) — skip past these. python-docx fails (not a real .doc). |
 | `.pdf` (Annual Report book vs 10-K) | Either glossy shareholder report OR the formal 10-K — must distinguish (see SEC filings section below) | `pdftotext -layout` for text PDFs; `pdfinfo` for page count (do not trust `file` command's PDF page count — it's frequently wrong) |
@@ -58,7 +58,7 @@ Glossy Annual Report book (mailed with proxy in any jurisdiction): cover art, sh
 
 ## Universal data-handling rules (apply to all CIQ files)
 
-1. **Missing data:** Empty cells, `'-'` (hyphen), and `"Entitlement Needed"` all mean UNAVAILABLE. Never fabricate, estimate, or interpolate. Surface to PM with options: re-export with different settings, source externally per data_sources.md, or proceed with the gap noted.
+1. **Missing data:** a cell carrying no number is one of eight markers, the code's set `ciq._UNAVAILABLE_CELLS`: blank, `-`, `—`, `NM`, `NA`, `N/A`, `Entitlement Needed`, `No Data Available` (G-D11; this line listed three). `ciq.read_cell` returns no value and the marker as written, so a caller can say why there is no number; `clean_num` returns None for every marker and never 0. Text that is neither a number nor a marker is unparseable, and `read_cell` says so by returning neither. On the 170 spreadsheets on disk (36 folders, 2026-11-11; blanks not counted): `-` 958,269 cells in 170 workbooks, `NA` 43,655 in 97, `NM` 33,734 in 125, `Entitlement Needed` 16,515 in 36, `No Data Available` 69 in 54, `N/A` 18 in 13, `—` 0. `NM` says the metric cannot be computed (a negative or near-zero base), which is a different statement from `-`; see *`NM`* under the comps section. Never fabricate, estimate, or interpolate. Surface to PM with options: re-export with different settings, source externally per data_sources.md, or proceed with the gap noted.
 
 2. **Date format varies across sheets in the SAME file family, and even WITHIN the same file:**
    - String dates (`'12 months\nJan-31-2024'`, `'Jun-30-2025'`): Income Statement, Balance Sheet, Cash Flow, Holders columns
@@ -69,7 +69,7 @@ Glossy Annual Report book (mailed with proxy in any jurisdiction): cover art, sh
 
 3. **Forward-fill sparse-attribution columns.** Insider Trading file groups multi-transaction entries under a single holder name on the first row, then blanks the holder name on subsequent rows. Always `df['Holder Name'].ffill()` before any per-holder analysis.
 
-4. **Header position is not fixed.** Charting exports vary header row by chart type. Scan column 0 for "Pricing Date" or "Date" string; header is that row, data starts at header+1. Do not hardcode positions.
+4. **Header position is not fixed.** Charting exports vary header row by chart type. Scan column 0 for "Pricing Date" or "Date" string; header is that row, data starts at header+1. Do not hardcode positions. **Every row number quoted below — "row 7", "row 14", "row 38", "rows 0-12", "header row ~13", "row 32", "row 17" — is where the exports seen put it, for orientation only:** find each row by its label, never by the number (fix request 2, RG-D20 i).
 
 5. **CIQ tier gating.** "Entitlement Needed" string in any field means PM's CIQ subscription does not include that specific data point. Count the underlying event (e.g., a revision exists in the database) but mark the detail as UNAVAILABLE.
 
@@ -128,8 +128,8 @@ Subsheet inventory (13 subsheets — verified on US large-cap export; CIQ uses u
 | Capital Structure Summary | Current + 2-3 prior periods (typically includes the latest quarter even in annual export) | Same content as annual; the quarterly export does not materially change this subsheet | Annual file sufficient — quarterly export is redundant for this subsheet |
 | Capital Structure Details | Per-instrument forward-looking detail (maturity ladder, coupon, seniority, covenants, undrawn revolver capacity) | Identical content (frequency toggle does not apply to forward-looking instrument list) | Snapshot subsheet; either file sufficient |
 | Ratios | 5y CIQ-computed ratios | 8Q CIQ-computed ratios | LOW priority — framework should compute its own ratios from primary statements (CIQ ratio conventions may differ from market-standard denominator definitions) |
-| Supplemental | 5y annual industry-specific KPIs (where available) | 8Q quarterly industry-specific KPIs (where available) | LOAD-BEARING when A2 confirming metric is industry-specific (SaaS NDR/ARR/cRPO, banks NIM/NCO/loan growth, REITs FFO/AFFO/occupancy, energy production volumes, retailers same-store sales). **Frequently empty for tech/software** because tech companies report these metrics inline in Income Statement commentary or earnings call disclosures rather than the structured Supplemental subsheet — when empty, the metrics are still load-bearing but must be extracted from transcripts/IR releases, NOT skipped. |
-| Industry Specific | Same as Supplemental | Same as Supplemental | Conditional on sector. **Frequently empty across all sectors** — CIQ stores industry KPIs in Supplemental for some sectors and Industry Specific for others. Check both; use whichever has data. Empty in both = "No Data Available" message, not a missing file. |
+| Supplemental | 5y annual industry-specific KPIs (where available) | 8Q quarterly industry-specific KPIs (where available) | LOAD-BEARING when A2 confirming metric is industry-specific (SaaS NDR/ARR/cRPO, banks NIM/NCO/loan growth, REITs FFO/AFFO/occupancy, energy production volumes, retailers same-store sales). ~~Frequently empty for tech/software~~ (G-D11): it is a "No Data Available" shell in 1 of the 72 Financials workbooks on disk (FUBO's Annual; 36 folders, 2026-11-11) and has rows in the other 71. No extractor reads it (`Supplemental` matches nothing under `vinci/`, 2026-11-11). When empty, the metrics are still load-bearing but must be extracted from transcripts/IR releases, NOT skipped. |
+| Industry Specific | Same as Supplemental | Same as Supplemental | Conditional on sector. **Frequently empty across all sectors** — a "No Data Available" shell in 47 of the 72 Financials workbooks on disk (2026-11-11). CIQ stores industry KPIs in Supplemental for some sectors and Industry Specific for others. Check both; use whichever has data. Empty in both = "No Data Available" message, not a missing file. No extractor reads it. |
 | Pension OPEB | Current + 2-3 prior years of defined-benefit pension obligation, funded status, assumed discount rate and return rate | Annual file sufficient (Pension OPEB is reported annually in financial statements regardless of quarterly toggle) | **Conditional on industry — load-bearing for defined-benefit-heavy industries** (industrials, autos, airlines, banks, legacy manufacturers); **immaterial for most tech/software/SaaS** (DC plans only; subsheet shows "No Data Available"). Empty subsheet for tech/software is correct, not a gap. |
 | Segments | 5y annual revenue mix by segment, segment-level growth differentiation, geographic concentration, segment margin (where reported) | 8Q quarterly segment data; catches segment inflection earlier than annual lag | LOAD-BEARING annual (for B3 item h); quarterly is preferred when CIQ has it but not strictly required. |
 
@@ -137,9 +137,9 @@ Subsheet inventory (13 subsheets — verified on US large-cap export; CIQ uses u
 
 Any judgment the LLM forms about a file's frequency, coverage, or adequacy MUST be grounded in a VERBATIM read of these specific cells — read and quote `Income Statement` row 7 Period Type cell, plus the first and last row-14 period headers — NOT inferred from the data's shape, column count, or any other proxy. Shape inference ("this file has many columns, so it must be quarterly") is the failure surface that produced wrong frequency/staleness flags in practice: the same LLM that misread frequency-by-shape read the Multiples date columns correctly when it read the actual cells. Forced verbatim cell reads are reliable; shape inference is not.
 
-If the verbatim read shows a mismatch between the file's actual Period Type and what the framework's B1/B3 step expects for that slot — OR shows the latest period is older than the most recent reported print the thesis relies on — this is a **data-integrity trigger**, not a thing to silently work around. It is governed by the **Session B Part 0 Data-Integrity Gate** (`checklist.md`, opening of the B1 file-read prompt): the LLM STOPS, quotes the verbatim read, names the mitigation it would otherwise apply, and asks PM to choose (re-upload / correct-my-read / proceed-with-mitigation-knowingly). The LLM does NOT aggregate, derive, or substitute a non-CIQ source on its own authority. See the Part 0 gate spec for trigger set (T1-T4), non-triggers, and resolution handling.
+If the verbatim read shows a mismatch between the file's actual Period Type and what the framework's B1/B3 step expects for that slot — OR shows the latest period is older than the most recent reported print the thesis relies on — this is a **data-integrity trigger**, not a thing to silently work around. It is governed by the **Session B Part 0 Data-Integrity Gate** (`checklist.md`, opening of the B1 file-read prompt; that file is not in this repository, G-D14): the LLM STOPS, quotes the verbatim read, names the mitigation it would otherwise apply, and asks PM to choose (re-upload / correct-my-read / proceed-with-mitigation-knowingly). The LLM does NOT aggregate, derive, or substitute a non-CIQ source on its own authority. See the Part 0 gate spec for trigger set (T1-T4), non-triggers, and resolution handling.
 
-**Industry Specific / Pension OPEB / Supplemental empty-subsheet rule:** when these subsheets contain "No Data Available", this is expected behavior for sectors where the industry-specific KPIs aren't aggregated to structured CIQ data. Do NOT treat empty as a missing file. The framework still needs the equivalent metrics from other sources (transcripts, IR releases, formal annual filing); the gap is just that CIQ hasn't aggregated them for this sector.
+**Industry Specific / Pension OPEB / Supplemental empty-subsheet rule:** when these subsheets contain "No Data Available", this is expected behavior for sectors where the industry-specific KPIs aren't aggregated to structured CIQ data. Do NOT treat empty as a missing file. The framework still needs the equivalent metrics from other sources (transcripts, IR releases, formal annual filing); the gap is just that CIQ hasn't aggregated them for this sector. *This rule is for these three unread subsheets only (G-D11). On a subsheet the code does read, a "No Data Available" shell is reported as a bad or partial export to re-export (`ciq.is_no_data_shell`, `ciq_sheets._no_data_note`): AORT's 2026-07 export held one while CIQ had the data. In a single cell, "No Data Available" is one of the markers in rule 1.*
 
 ## Dossier extractor semantics (code-matched spec — `vinci/dossier/ciq_sheets.py`, `mechanical.py`)
 
@@ -205,9 +205,24 @@ figures actually present in the 99.1 are used; if absent, the GAAP caveat stays 
 fabricate the adjusted side). The leverage field is labelled `(fwd-adj)` because it uses forward, not
 trailing, EBITDA.
 
-**Surprise basis** (`surprise_history()`). Estimates→Surprise is by FISCAL YEAR (no quarterly view), so
-the surfaced surprise is annual; the EPS row is GAAP-EPS basis (distinct from the 99.1 adjusted guide)
-and is labelled as such; `+beat / −miss`.
+**Surprise basis** (`surprise_history()`). ~~Estimates→Surprise is by FISCAL YEAR (no quarterly
+view)~~ (G-D8): the sheet has a quarterly view. On the 36 Estimates exports on disk (2026-11-11),
+every Surprise sheet has a 'Fiscal Quarters' section, 35 a 'Fiscal Years' section (FUBO's has
+quarters only) and 10 a 'Calendar Years' section too. `surprise_history()` reads the FISCAL-YEAR
+table only, so the surfaced surprise is annual: the GAAP-EPS row of the company's OWN listing's block
+(`_surprise_eps_block`, never the sheet's first listing) and the Revenue row, each against its own
+block's year header. The 'Calendar Years' repeat is never read as FY. That is the code's cut,
+and its only one: `surprise_history` stops at 'Calendar Years' and not at 'Fiscal Quarters', so
+on the 26 sheets with no 'Calendar Years' section its window runs through the quarterly section
+too. It reads the fiscal-year rows there because they come first: the year headers it keys on
+are the fiscal-year ones, and the first 'Revenue' row is the fiscal-year block's, on every
+export on disk (2026-11-11). An export ordering the sections otherwise is not guarded. No extractor reads the
+quarterly section's values: searched 2026-11-11 for `Fiscal Quarters` and `Calendar Quarters` (each
+is matched only as a section end, by `_SURPRISE_BANNER`) and read every `sheet("estimates", "Surprise")`
+call, all of which read the fiscal-year section or check the sheet is there.
+FUBO and ORKA have no fiscal-year header of three or more years, so their surprise reads UNKNOWN.
+The EPS row is GAAP-EPS basis (distinct from the 99.1 adjusted guide) and is labelled as such;
+`+beat / −miss`.
 
 **Transcript: POINTED-TO in the dossier, WHOLE for the synthesis — never embedded, never
 curated.** Two separate paths, by design:
@@ -223,17 +238,41 @@ curated.** Two separate paths, by design:
   (100,000 characters, a safety bound) ends in a cut marker and a QA flag, and a call on file that
   does not read is named in a QA flag (`unparsed_transcript_flag`). Not a topic/relevance
   selection — no name-specific topics are hardcoded; it works for any ticker. (Until 2026-10-29
-  each call was cut at a fixed 12,000-character budget with no marker.) The slice is passed to
-  the synthesis as qualitative context (no numbers derived; points still bind to the mechanical
-  facts' source_refs), and is NOT part of the mechanical-layer dump, so it does not enlarge the
-  number-trace haystack.
+  each call was cut at a fixed 12,000-character budget with no marker.) The one slice has two
+  readers, and only one of them derives no numbers (G-D13; this said "no numbers derived" of both):
+  - the DRIVER STEP (`driver_extract.extract_transcript_drivers`, run before the synthesis) DOES
+    read figures from it. Each row's quote must be in the slice, every number in its `value` must
+    equal a number of that quote in the quote's unit, and `check_fact` sets the row's `figures` and
+    `value_status`. The rows enter the mechanical layer as `operating_drivers`;
+  - the SYNTHESIS takes the slice as qualitative context only. Its prompt says to derive no numbers
+    from the text and to cite the `operating_drivers` fact instead (`synthesize`); points still bind
+    to the mechanical facts' source_refs.
 
-**Synthesis truncation is fail-loud, not silently-blank** (`llm.extract` + `synthesize`). The forced
-tool marks all five synthesis fields required. If the model is cut at `max_tokens` mid-tool-call,
-`extract` raises `LlmError` (it checks `stop_reason`), and `synthesize` independently rejects any raw
-output missing a required field — marking the whole synthesis UNAVAILABLE with a loud flag rather than
-defaulting the missing trailing fields to blank (which is indistinguishable from a genuine empty
-field). The output cap is 8192 tokens.
+  The slice itself is NOT part of the mechanical-layer dump, so it does not enlarge the
+  number-trace haystack; the driver rows read from it are.
+
+**Synthesis truncation is fail-loud, not silently-blank** (`llm.extract` + `synthesize`). Corrected
+2026-11-11 (G-D13) to what the code does:
+- The forced tool marks SIX fields required (`synthesis._TOOL_TEMPLATE`): `bull_points`,
+  `bear_points`, `twin_reference_cases`, `decisive_question`, `key_unknowns`, `evidence_balance`.
+- If the model is cut at `max_tokens` mid-tool-call, `AnthropicLlmClient.extract` raises
+  `LlmError` (it checks `stop_reason`).
+- `synthesize` rejects a draw missing any of the first FIVE (the structural fields). With several
+  draws, that draw is skipped and the build goes on, but it still counts as attempted: under the
+  vote rule it is dissent, so at five draws (5 of 5 attempted to propose, `verdict.draw_gate`) the
+  build carries no machine proposal. The whole synthesis is UNAVAILABLE, with a loud flag, only when
+  no draw is usable, and then the dossier command, whose client is configured, writes no page:
+  `assemble._require_synthesis` refuses the build ("Re-run when the model is answering"). Missing
+  trailing fields are never defaulted to blank, which
+  would be indistinguishable from a genuine empty field.
+- A draw missing `evidence_balance` is NOT refused; the code chooses this on purpose (`synthesize`:
+  "flag, don't drop"). Its lean counts as unparsed, a bucket of its own in the draws' vote, so it
+  never joins another draw's lean. If the kept draw is the one missing it, the page is flagged ("evidence_balance
+  MISSING", the G.2 check in `synthesis._validate`) and carries no machine proposal
+  (`verdict.derive_proposal`: "no machine read on this dossier").
+- ~~The output cap is 8192 tokens.~~ The output cap is **16,384 tokens**: the default `max_tokens`
+  of `vinci/graph/llm.py:AnthropicLlmClient`, which the dossier command builds through
+  `from_config` without overriding it.
 
 ## Sparse-data fallback for Multiples percentile-quartile classification
 
@@ -310,11 +349,23 @@ When the three agree, report a single direction with high confidence. When they 
 
 **Note PT (Target Price) revisions are NOT in this Revisions sheet** — they're in Recent Changes (per-broker events) and in Consensus (aggregated PT statistics). Framework's "PT/EPS revision direction" wording lumps two different sheets together.
 
-**Estimates Report → Surprise sheet — limited to per-share metrics + consensus-not-guidance:** metric blocks are EPS Normalized, EPS GAAP, EPS Excl Excep+GW, DPS, BVPS, NAV/share, CFPS. **NO Revenue surprise**, **NO EBITDA surprise**. If B3 needs Revenue beat/miss history, compute from Consensus sheet (expected) + Income Statement quarterly actuals (actual). Also note: Surprise measures actual-vs-CONSENSUS-estimate, NOT actual-vs-MANAGEMENT-GUIDANCE — these can diverge (a name can beat consensus while missing its own prior guide). Framework's B3 item o "guidance hit rate" requires the Guidance sheet + quarterly actuals composition, not the Surprise sheet alone.
+**Estimates Report → Surprise sheet — per-share AND company-level metrics, consensus-not-guidance** (G-D8; this said "limited to per-share metrics … NO Revenue surprise, NO EBITDA surprise", which the exports contradict). Census of the 36 Estimates exports on disk (2026-11-11), blocks by label:
+- **Per listing** (headed `<exchange>:<symbol> (<currency>)`): EPS Normalized 36, EPS (GAAP) 36, DPS 34, Book Value / Share 33, CFPS 32, Net Asset Value Per Share 28, EPS (Excl. Excep, GW) 6.
+- **Company Level** (headed `Company Level (<currency>)`, 36 of 36): Revenue, EBITDA, EBIT, EBT (Excl. Excep), EBT (GAAP), Net Income (Excl. Excep), Net Income (GAAP), Net Debt and Capital Expenditure, each on all 36; EBT and Net Income (Excl. Excep, GW) on 3 and 6.
+- Each block carries Difference / Actual / Estimate / Announced Date / Acctg. Standard rows, and on 33 of 36 sheets some blocks also carry Guidance Low / Guidance / Guidance High rows. The blocks repeat per section (Fiscal Years, Fiscal Quarters, and on 10 sheets Calendar Years; see *Surprise basis* above).
+
+What the code reads, all from the Fiscal Years section: Revenue beside GAAP EPS (`surprise_history`); Revenue, EBITDA, EBIT and Capital Expenditure, actual against the final consensus (`historical_forecast_error`); Net Debt, against the balance sheet (`_consensus_net_debt_check`). A quarterly Revenue beat/miss is on the sheet but read by no extractor. Also note: Surprise measures actual-vs-CONSENSUS-estimate, NOT actual-vs-MANAGEMENT-GUIDANCE — these can diverge (a name can beat consensus while missing its own prior guide). Framework's B3 item o "guidance hit rate" requires the Guidance sheet + quarterly actuals composition, not the Surprise sheet alone.
 
 **Estimates Report → Consensus sheet — multi-listing column risk:** large-cap names often have multiple listing columns side-by-side: e.g., a primary listing (USD on US exchange) next to a GDR/ADR equivalent on a foreign exchange in local currency, or multi-class share variants. LLM picking "first non-blank consensus PT" could pick the foreign-currency-denominated equivalent and produce a number in wrong currency. **Always read column header to confirm primary listing and verify currency before extracting any price/PT/multiple value.**
 
-**Holders file — comprehensive rules.** Header at row 17. Columns: `Holder | [Date1] Common Stock Equivalent Held | [Date2] ... | Latest Common Stock Equivalent Held`. The file lists ~4,000-5,000+ holders for large-cap names; only a fraction are material.
+**Holders file — SUPERSEDED (G-D9, 2026-11-11). No code reads a holders export, so the rules below describe no extraction in this repo.**
+- No kind's name rule (`ciq._KIND_NAME_RULES`, read by `ciq.workbook_kind`; the registry `ciq._WORKBOOK_KEYWORDS` holds the same kinds) is an ownership kind, so a holders or Public Ownership export is an unrecognised file. Assembly names it in a caveat as "not recognised and NOT READ" (`assemble.py`).
+- `requirements.CIQ_MODULES` lists no ownership module.
+- The page's ownership facts come from EDGAR: Schedule 13D/G filings (`mechanical._ownership_events`) and Form 4 (`mechanical._insider_activity`; `requirements.EDGAR_FREE_INPUTS`). Short interest comes from FINRA (`requirements.FREE_FEED_INPUTS`).
+- None of the 36 folders holds a holders, Public Ownership or Insider Trading export (2026-11-11).
+- If a CIQ holder field is built, the field contract's F26 governs: the largest holder and the % **as CIQ shows it**. Shares alone give no % (UNAVAILABLE), and insiders CIQ lists as holders are kept. Two rules below contradict it and do not carry over: dividing shares by shares outstanding to make a %, and setting insiders aside before the holders are ranked.
+
+The original rules, kept as history: **Holders file — comprehensive rules.** Header at row 17. Columns: `Holder | [Date1] Common Stock Equivalent Held | [Date2] ... | Latest Common Stock Equivalent Held`. The file lists ~4,000-5,000+ holders for large-cap names; only a fraction are material.
 
 *Data is shares, not percentages.* To convert to % held, divide by shares outstanding from Financials → Balance Sheet (Total Common Shares Outstanding or equivalent). Do NOT use training-data shares-outstanding values — they may be stale, especially after buybacks or splits.
 
@@ -363,7 +414,11 @@ Framework's "institutional flow direction" output must be labeled as **long equi
 
 **Charting file:** header position varies (commonly row 32); columns are `Pricing Date | [Metric Name]`. Date in Excel serial. Percentages stored as fractions (0.0305 = 3.05%). **Beta is NOT in the Charting export** — PM-verified empirically. Beta data is shown on the CIQ company tearsheet web page (5y monthly beta as a number), not exported in any XLSX module. Framework treats beta as a PM-declared input at Session C, not LLM-extracted from any file. PM reads the tearsheet number and declares; LLM does not search Charting (or any other XLSX) for a "Beta" column.
 
-**Key Developments (real RTF):** pipe-delimited table with `Date | Type | Headline | Other Parties`, followed by "Situation:" paragraph per entry. Date as string ("May-11-2026"). Filter Type for category needed.
+**Key Developments** (corrected 2026-11-11, G-D12; this was headed "real RTF" and gave one fixed header). The reader is `ciq_sheets.key_developments`.
+- **Format.** All 36 exports on disk are real RTF (2026-11-11), read with `striprtf`. CIQ has also sent one as a spreadsheet (GOOGL's of 2026-09-22, since replaced). The reader refuses a spreadsheet and says so in a QA flag; it never reads one quietly (audit A-D9).
+- **Header.** The table is pipe-delimited and its columns are found by header label (`_kd_columns`), never by position. 29 of the 36 carry `Date | Company | Type | Headline | Other Parties` and 7 carry `Date | Type | Headline | Other Parties`. An export with no `Date | Type | Headline` header is flagged as not read, unless the view says in CIQ's words that it has nothing to list.
+- **Rows.** Each entry is followed by a "Situation:" paragraph (all 36 exports). The date is a string ("May-11-2026").
+- **Filter.** Types pass an INCLUDE list (`_KD_KEEP`). A corporate-event type must be the subject's own event (`_KD_CORPORATE`, `_kd_subject_row`): Company-column match, or the headline's actor where there is no Company column, and always the headline's actor for a Private Placement.
 
 ---
 
@@ -377,9 +432,18 @@ When computing rolling drawdowns from CIQ Charting price history:
 
 ---
 
-## Business Relationships export (Customers & Suppliers) — supply-chain graph source
+## Business Relationships export (Customers & Suppliers) — the customer roster (a graph source until #905)
 
-Empirically validated against 32 exports (16 names, both views each), 2026-06.
+**STATUS, 2026-11-11 (G-D10).** This section was written for `vinci/ciq/relationships.py`, which turned both views into graph edges. That parser had no production caller after #905 and was removed in #964 (`docs/records/2026-11-10-fix2-vinci-ciq-removed.md`; its code: `git show 9da0d096:vinci/ciq/relationships.py`). From *Layout* down, this section is the removed parser's, kept as history. What the code does now:
+- **One reader, the Customers file only.** `ciq_sheets.customer_roster` (F27) picks the Customers file by name. No code reads the Suppliers file for a page. RTF and spreadsheet exports go through the same table reader (`_relationship_table`). On disk (36 folders, 2026-11-11) all 36 Customers and all 36 Suppliers files are real RTF.
+- **No relationship-type filter.** Every row is kept with its type printed beside it. A row whose type is blank is kept as "type not stated" when it names anything else (V1-O3). On the 35 Customers files with a table, the 2,289 recent rows read: Customer 978, Client Services 921, Distributor 241, Licensee 126, Lessee 12, Borrower 6, Franchisee 3, Tenant 2. BURL's file has no table and says it has none.
+- **The five supply-chain types now live in `vinci/graph/extract.py:SUPPLY_CHAIN_TYPES`.** They are the allowed relationship values of the 10-K extraction tool (`EXTRACT_TOOL`), which reads EDGAR 10-K text, never a CIQ export.
+- **Columns by header text, never position.** Customers files: 23 carry `Customer Name | Supplier Name | Relationship Type | Primary Industry | Source` and 12 carry `Customer Name | Relationship Type | Primary Industry | Source`. In the five-column view the row prints both parties as stated (`customer ← supplier`); which one is the focal company is not inferred. Suppliers files: 32 five-column, 4 four-column.
+- **Not current-only.** All 36 Customers files carry a 'Recently Disclosed Customers' section, and 3 also carry 'Prior and Not Recently Disclosed Customers'. Prior rows are noted beside the value, never counted as current (`_prior_note`).
+- **Every view ends with CIQ's closing line** '*denotes proprietary relationship' (72 of 72 files). An RTF view without it may be cut short. The reader says so and gives no count (`_ends_with_closing_line`, RBC-D3).
+- **No counterparty is resolved.** The roster prints each row as CIQ states it.
+
+History (the removed parser's, 2026-06): Empirically validated against 32 exports (16 names, both views each), 2026-06.
 
 **File format:** real `.rtf` → `striprtf` (same as Key Developments; NOT the OLE-disguised `.doc` variant — always `file`-check first). After `striprtf` the table is **pipe-delimited** (one `|` per cell, trailing `|`).
 
@@ -394,7 +458,7 @@ So **col0 is always the counterparty, col1 always the focal** — identify the f
 
 **Direction:** Customers view → focal **→** counterparty (downstream); Suppliers view → counterparty **→** focal (upstream).
 
-**Relationship-type filter (keep supply-chain only).** Observed types by frequency: Supplier (1475), Customer (631), Distributor (324), **Client Services (187)**, Creditor (166), Landlord (154), Licensor (85), Licensee (83), Borrower (65), Lessee (26), Lessor (16), Vendor (15), Tenant (11), Transfer Agent (6), Franchisee (4), Franchisor (1). **Keep:** Supplier, Customer, Distributor, Vendor, Manufacturer. **Drop:** the financial/legal/real-estate types (Creditor, Landlord, Licensor/ee, Borrower, Lessee/or, Tenant, Transfer Agent, Franchisee/or). **Client Services is excluded** by judgment (a softer client relationship, not a goods/services dependency) — revisit if a customer-graph wants it.
+~~**Relationship-type filter (keep supply-chain only).**~~ *Superseded (G-D10): the live reader filters no type; see STATUS above.* The removed parser's 2026-06 observed types by frequency: Supplier (1475), Customer (631), Distributor (324), **Client Services (187)**, Creditor (166), Landlord (154), Licensor (85), Licensee (83), Borrower (65), Lessee (26), Lessor (16), Vendor (15), Tenant (11), Transfer Agent (6), Franchisee (4), Franchisor (1). **Keep:** Supplier, Customer, Distributor, Vendor, Manufacturer. **Drop:** the financial/legal/real-estate types (Creditor, Landlord, Licensor/ee, Borrower, Lessee/or, Tenant, Transfer Agent, Franchisee/or). **Client Services is excluded** by judgment (a softer client relationship, not a goods/services dependency) — revisit if a customer-graph wants it.
 
 **Counterparty resolution:** resolve **US-listed** counterparties by ticker (exchange prefix Nasdaq/NYSE/OTC/BATS/Cboe/AMEX); **non-US** (e.g. TSE, LSE, BSE, KASE) and **private** (no ticker) counterparties are out of the US graph's scope — record them with a reason, never silently drop. A US ticker that fails to resolve (delisted/renamed) is flagged `unresolved_us`, not crashed. Empirically across the 16-name set: 3,257 rows → 812 dropped (non-supply-chain) → 2,445 supply-chain edges → **688 US-resolved**, 1,183 non-US, 522 private, 52 unresolved-US.
 
@@ -419,7 +483,7 @@ So **col0 is always the counterparty, col1 always the focal** — identify the f
 | **Implied Valuation** | peer multiples → target implied value/upside + High/Low/Mean/Median | **SKIPPED** — see below |
 | **Valuation Chart** | empty (chart object; ~11 metadata cells, no tabular rows) | **SKIPPED** — not an omission; a CIQ-UI chart container with no data |
 
-**`NM` is a REAL value, not missing.** `NM` (Not Meaningful) means a multiple isn't computable — a peer with negative tangible book → P/TangBV `NM`, or negative EBITDA → TEV/EBITDA `NM` (FUBO's own EBITDA multiple is `NM`). It is INFORMATIVE (it signals peer-set heterogeneity), so the comps extractor PRESERVES it as the literal `NM`, NOT via `clean_num` (which lumps `NM` into `_UNAVAILABLE_CELLS` → None). `-` is true-missing (a target-row gap) → drop from numerics. The two states are distinct; never conflate.
+**`NM` is a stated marker with no number** (G-D11; this read "`NM` is a REAL value, not missing"). `NM` (Not Meaningful) means a multiple isn't computable — a peer with negative tangible book → P/TangBV `NM`, or negative EBITDA → TEV/EBITDA `NM` (FUBO's own EBITDA multiple is `NM`). In the code it is one of the eight markers (`ciq._UNAVAILABLE_CELLS`): `read_cell` gives no value and the marker `NM`, and `clean_num` gives None, as for `-`. What the code keeps is the STATEMENT: the comps extractor PRESERVES the literal `NM` in its cell (`ciq_sheets._comps_cell`), because it is informative (it signals peer-set heterogeneity), and the Multiples readers say "NM at the latest Close" and refuse a percentile or band rather than reach back to an older close (`ev_ebitda_percentile`, `range_position`, `_own_history_band`, `ev_ebitda_current`, `pe_ltm_current`). `-` is true-missing (a target-row gap) → drop from numerics. Neither carries a number; the two say different things, so never conflate them.
 
 **Implied Valuation — DELIBERATELY SKIPPED (decision, 2026-06).** This sheet applies peer multiples to the target's metrics to derive an implied value/upside — the single most CONSENSUS artifact in the file. We surface NO implied-value/upside number: it is peer-median × target-metric (zero information beyond the peer multiples + target absolutes already captured), and even framed it becomes the anchor the edge exists to resist (the dead-signal/consensus trap). The edge-worthy substitute — the peer-multiple GAP carried WITH composition + deltas — lets the human form the divergent view without a consensus number. Recorded so the skip reads as deliberate.
 
@@ -430,3 +494,34 @@ So **col0 is always the counterparty, col1 always the focal** — identify the f
 Not a CIQ user manual. Not exhaustive of every CIQ module. If PM uploads a CIQ file type not described above and LLM can't determine structure from inspection, LLM surfaces to PM and asks for the first 20 rows pasted as text so PM can confirm format before LLM extracts.
 
 For tool inventory and source-to-question mapping, see `data_sources.md`. This file is purely about extraction mechanics.
+
+---
+
+## 2026-11-11 corrections
+
+**Reference notes, not the spec.** These notes were written for a chat-session LLM reading CIQ files
+by hand (the Sessions A–C framework), and came into this repo on 2026-06-18 (`5a1469b2`). Here code
+reads the exports. Where this file differs from the code (`vinci/dossier/ciq.py`,
+`vinci/dossier/ciq_sheets.py`) or from the CIQ field contract (TeamNostra's; held by the operator,
+not committed), the code and the contract are right.
+
+Corrected 2026-11-11 (fix request 2, order 9). Each correction was checked against the code and the
+36 ticker folders under `data/manual/ciq/` on that date. Every line that code or tests cite by number
+(61, 63-66, 74, 116, 126, 136-138, 197, 204) keeps its number; corrections above line 205 are
+made in place on the same line.
+- **G-D8.** The Surprise sheet has fiscal-quarter and company-level (Revenue, EBITDA …) blocks; the
+  code reads its fiscal-year table only. *Surprise basis*; *Estimates Report → Surprise sheet*.
+- **G-D9.** No code reads a holders export; the holder rules are marked superseded. *Holders file*.
+- **G-D10.** The live relationships reader keeps every relationship type; the supply-chain filter
+  was the removed `vinci/ciq/` parser's. *Business Relationships export*.
+- **G-D11.** The missing-data markers are the code's set, and `NM` is a marker with no number.
+  Universal rule 1; the *Supplemental* / *Industry Specific* rows and the empty-subsheet rule;
+  *`NM`* under comps.
+- **G-D12.** Key Developments: RTF on disk, but a spreadsheet export has occurred and is refused,
+  and the header varies. The file-format table; *Key Developments*.
+- **G-D13.** The driver step reads figures from the transcripts; the output cap is 16,384 tokens; a
+  missing `evidence_balance` is flagged, not refused. *Transcript*; *Synthesis truncation*.
+- **G-D14.** `checklist.md` is not in this repository. Line 5; the Part 0 gate paragraph under
+  *Financials export*.
+- **G-D15.** Nothing here: the temperature and re-roll statements are corrected in
+  `docs/engineering.md` and `docs/RUNBOOKS.md`.

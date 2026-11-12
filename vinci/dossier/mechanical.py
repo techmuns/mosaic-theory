@@ -1964,8 +1964,10 @@ def _pe_reconciliation(
     # is anomalous vs the recent median 7.00" — 2.53 is CORRECT, and the MEDIAN is the contaminated
     # figure, drawn across a 10:1 split the filer restated only two years of. A reader told to
     # "verify against normalized/forward EPS" is being sent after an earnings anomaly that does not
-    # exist. Silent here rather than re-worded: the percentile beside it already refuses WITH the
-    # split as its stated reason, and a second differently-worded split note is a claim that drifts.
+    # exist. Silent here rather than re-worded: the percentile beside it states the split — refused
+    # with it as the reason, or since 2026-11-11 built on EPS put on the current basis by the
+    # filer's factor, its note naming it — and a second differently-worded note is a claim that
+    # drifts.
     if share_basis_change(eps) is not None:
         return None
     latest, prior = eps[-1].value, [p.value for p in eps[:-1]][-4:]
@@ -3996,6 +3998,8 @@ def compose_insider_line(
         win_start = since
         window = f"in the last {(reference_date - since).days} days, since {since}"
     win = [ln for ln in lines if ln.on is not None and ln.on >= win_start]
+    # THE SCAN'S HORIZON, ONE STRING: the absence clause and the unpriced count both state it
+    scan = f"since {since}" if since is not None else f"in the {_INSIDER_SCAN_DAYS // 365}y scanned"
 
     def side(code: str) -> str:
         """One side of the window, NEVER netted against the other. $1.1M of buying against $12.4M
@@ -4040,9 +4044,7 @@ def compose_insider_line(
         the visible-absence rule broken by the fix written to honour it."""
         rows = [ln for ln in lines if ln.code == code and ln.on is not None]
         if not rows:
-            if since is not None:
-                return f"no {label} since {since}"
-            return f"no {label} in the {_INSIDER_SCAN_DAYS // 365}y scanned"
+            return f"no {label} {scan}"
         latest = max(rows, key=lambda r: r.on or date.min)
         out = _event(latest, f"last {label}")
         # ONLY A PRICED LINE IS RANKED (audit RD-D2). Ranking a line with no price as $0 meant a
@@ -4058,10 +4060,12 @@ def compose_insider_line(
             out += (f" · largest {'priced ' if gap else ''}{label} "
                     + _event(biggest, "").lstrip())
         # "1 OF 2", so the clause counts the set and never reads as one more sale; "not ranked"
-        # only where a largest was named for it to be left out of
+        # only where a largest was named for it to be left out of. ITS HORIZON IS STATED (Codex,
+        # #995 round 1): the set is the whole scan, not the window the count before it states, so
+        # it names the scan exactly as the absence clause does
         if gap:
-            out += (f" · {gap} of {len(rows)} {label}{'s' if len(rows) != 1 else ''} with no "
-                    f"price stated" + (", not ranked" if priced else ""))
+            out += (f" · {gap} of {len(rows)} {label}{'s' if len(rows) != 1 else ''} {scan} "
+                    f"with no price stated" + (", not ranked" if priced else ""))
         return out
 
     counts: dict[str, int] = {}

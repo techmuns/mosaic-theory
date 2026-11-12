@@ -8586,553 +8586,1325 @@
           "kind": "leading_indicator",
           "metric": "number of high-impact documents",
           "period": "Q1 2026",
-          "value": "increased ... by 22%",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've increased the number of high-impact documents by 22%.",
-          "following_context": "The second dimension is volume. The number of documents in our insights library is up 19%. The third dimension is timeliness. With the accelerating rate of change in the world, we've introduced insights that are published the same day important events occur. The number of these documents has more than doubled. A recent example includes recommendations for heads of software engineering in response to dramatic change in the security landscape posed by Anthropic's Mythos.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 22.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 10,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "b4c23ca426ee4a92f6e53906cc902d3324908a007fc205d124886d4662442c27",
+            "value_sha256": "7fa42714812281f150498f78a22f8fb1947c033fdf3d98cecace886d99e66f24"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "number of documents in insights library",
           "period": "Q1 2026",
-          "value": "up 19%",
           "value_num": null,
           "unit": null,
-          "verbatim": "The number of documents in our insights library is up 19%.",
-          "following_context": "The third dimension is timeliness. With the accelerating rate of change in the world, we've introduced insights that are published the same day important events occur. The number of these documents has more than doubled. A recent example includes recommendations for heads of software engineering in response to dramatic change in the security landscape posed by Anthropic's Mythos.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 19.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 10,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "ef76b835c3b540d6bc7321c92caafadd43e3ba956ba8ee8ff6d02dac1befaf46",
+            "value_sha256": "062d8fd8cab9c58200e9e07e181a6a139a23767f0b85f24e6e3b2780cd6955a8"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "number of same-day timeliness documents",
           "period": "Q1 2026",
-          "value": "more than doubled",
           "value_num": null,
           "unit": null,
-          "verbatim": "The number of these documents has more than doubled.",
-          "following_context": "A recent example includes recommendations for heads of software engineering in response to dramatic change in the security landscape posed by Anthropic's Mythos.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 10,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "ea1058dd1ebb39d62248dc5b279c26ba4780899472f7e3688393884faca13765",
+            "value_sha256": "87fa2161c98eca952cc6be6b1d1942621f74d0e956bd9a46c262179b361880f7"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "two-way conversations with executives (annual)",
           "period": null,
-          "value": "more than 0.5 million 2-way conversations with more than 80,000 executives",
           "value_num": null,
           "unit": null,
-          "verbatim": "Every year, we hold more than 0.5 million 2-way conversations with more than 80,000 executives across every major function and in every industry.",
-          "following_context": "We conduct more than 27,000 briefings with executives from technology providers. We also leverage data from proprietary surveys, tools, models, benchmarks and more. This gives us a deep understanding of what executives care about most, what's working and what isn't.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 0.5,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            },
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 80000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 5,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "2e154d8691ac2877e4a2054ff7ce3a60223d6c2828f8b827763a459fdf72db79",
+            "value_sha256": "f5d3415ae7f7d6c2a9da882389e6ce3534531e9698ba2f5573313de46eb05594"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "briefings with technology provider executives (annual)",
           "period": null,
-          "value": "more than 27,000 briefings",
           "value_num": null,
           "unit": null,
-          "verbatim": "We conduct more than 27,000 briefings with executives from technology providers.",
-          "following_context": "We also leverage data from proprietary surveys, tools, models, benchmarks and more. This gives us a deep understanding of what executives care about most, what's working and what isn't.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 27000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 5,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "c37687cfb7b9b6743ca3ddca28efb028886171c2a1bfbc0d1183e944908f61b3",
+            "value_sha256": "031425586e4d728b66318b7eb9e5cc6708a2f047aad21359b449e2d52c32d7f3"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Gartner Peer Community executives",
           "period": null,
-          "value": "more than 100,000 executives",
           "value_num": null,
           "unit": null,
-          "verbatim": "They can validate decisions through the Gartner Peer Community, which has more than 100,000 executives from nearly every enterprise function.",
-          "following_context": "And of course, they can use AskGartner to go even deeper into specific topics. No one else does what we do at our scope and scale.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 100000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 8,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "7a599c674d5be25f98780a579761ebf0ad3398fbc370361c1b02b8aa04610110",
+            "value_sha256": "a80439fbd9a2a25396aced7db38812784bd8a2b0e74f1499f4fbbab2d52f78d6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "contract value (CV) growth year-over-year",
           "period": "Q1 2026",
-          "value": "grew 1% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "First quarter contract value, or CV, grew 1% year-over-year.",
-          "following_context": "This was an acceleration from the fourth quarter. Insights revenue, EBITDA, adjusted EPS and free cash flow in the first quarter were better than expected. We are increasing our EBITDA, adjusted EPS and free cash flow guidance for the full year. In the first quarter, we reduced our share count by about 4%, buying back $535 million of stock. And we expect to generate significant free cash flow and have fewer shares outstanding over the course of the next several years.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 17,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "3bc88aca66f6c07ca9922b417aae847eac173b12380b06ad1762b184144e2be4",
+            "value_sha256": "eb3c77bd26bb2bb1f9242355f85c693fea149e8f67d4bf1925acd86683a2d990"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "share count reduction",
           "period": "Q1 2026",
-          "value": "reduced our share count by about 4%, buying back $535 million of stock",
           "value_num": null,
           "unit": null,
-          "verbatim": "In the first quarter, we reduced our share count by about 4%, buying back $535 million of stock.",
-          "following_context": "And we expect to generate significant free cash flow and have fewer shares outstanding over the course of the next several years.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "approximately"
+            },
+            {
+              "value": 535.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 17,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "2da0c870943b1bbc87a7cc5ec157e57290dbff14f17875c4fbfbd6cc453ec263",
+            "value_sha256": "838b60227f38bfb088df58baf23903da03956886b5cc2d9abab0a678448bbc15"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "insights revenue growth year-over-year",
           "period": "Q1 2026",
-          "value": "grew 3% year-over-year as reported and was about flat FX neutral",
           "value_num": null,
           "unit": null,
-          "verbatim": "Insights revenue in the quarter grew 3% year-over-year as reported and was about flat FX neutral.",
-          "following_context": "First quarter insights contribution margin was 78%, up about 120 basis points versus last year. Contract value was $5.3 billion at the end of the first quarter, up 1% versus the prior year and an acceleration from year-end. Excluding the U.S. federal government, CV growth was 3.5%. At March 31, we had approximately $114 million of U.S. federal CV. Q1 is normally a higher-than-average renewal quarter and our seasonally lowest new business quarter. The second quarter is a smaller renewal quarter and a larger new business quarter than Q1.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 19,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "0ce9f0a489ddabc9586e3acd488838819b31d4e78d9856d07dec2b3bd53be5a4",
+            "value_sha256": "ca47382975a6f6dab1f99fbbb57db127f0f2333175a4c7ec5504692bc63a4529"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "contract value at quarter end",
           "period": "end of Q1 2026",
-          "value": "$5.3 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Contract value was $5.3 billion at the end of the first quarter, up 1% versus the prior year and an acceleration from year-end.",
-          "following_context": "Excluding the U.S. federal government, CV growth was 3.5%. At March 31, we had approximately $114 million of U.S. federal CV. Q1 is normally a higher-than-average renewal quarter and our seasonally lowest new business quarter. The second quarter is a smaller renewal quarter and a larger new business quarter than Q1.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.3,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 19,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "68efb29a46b17602bc8cf332c62a01916ec65747354ef3dfe53ea4f78287cc73",
+            "value_sha256": "0e4e7a71996e91a84ba76c1570ef0b0c354e422c8f901de9f202aedd01a0ec76"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "CV growth excluding U.S. federal government",
           "period": "Q1 2026",
-          "value": "3.5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Excluding the U.S. federal government, CV growth was 3.5%.",
-          "following_context": "At March 31, we had approximately $114 million of U.S. federal CV. Q1 is normally a higher-than-average renewal quarter and our seasonally lowest new business quarter. The second quarter is a smaller renewal quarter and a larger new business quarter than Q1.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.5,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 19,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "f8ddd92dbb80c1bc312fa4ff14c7ebef6c2e105dce70bafbd8f2c50ee5babe8e",
+            "value_sha256": "912eff5becb7d03dd3cf217fe9215a44554e1d4e0cfc569a759ce9e5b2e738c9"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. federal CV",
           "period": "March 31, 2026",
-          "value": "approximately $114 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "At March 31, we had approximately $114 million of U.S. federal CV.",
-          "following_context": "Q1 is normally a higher-than-average renewal quarter and our seasonally lowest new business quarter. The second quarter is a smaller renewal quarter and a larger new business quarter than Q1.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 114.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 19,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "1732dc8372061426eba01c0d395d29f007c68a6c42cf4835de4375041314ae48",
+            "value_sha256": "1efbf2871dd7063da28f3d3b03c6d9e2042c5c3f426b52dd59128e03a95befb0"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "new business",
           "period": "Q1 2026",
-          "value": "more than $200 million in new business",
           "value_num": null,
           "unit": null,
-          "verbatim": "We had more than $200 million in new business in the first quarter as there continues to be considerable interest in Gartner's proprietary unbiased insights.",
-          "following_context": "As you recall, new business dollars increase each quarter as we move through the year. Driving engagement is critically important to retention. As Gene discussed, through both digital and human interactions, we understand our clients' mission-critical priorities and we are proactive in helping them to address those priorities. This ongoing engagement helps drive client success and strong retention.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 20,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "a6b1381206922a340a43302dc597b6abaa9c519b93f7fd9dd9f7bfa7f4a73861",
+            "value_sha256": "cb7a5f0a16764d4153dd2912bb05df0ce3eae5e7cf933a64cff87903883050c6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "overall client engagement (monthly active users)",
           "period": "Q1 2026 vs prior year quarter",
-          "value": "up over 170 basis points",
           "value_num": null,
           "unit": null,
-          "verbatim": "Derived from analyzing monthly active users, overall engagement in Q1 was up over 170 basis points compared to the prior year quarter.",
-          "following_context": "Digital engagement improved by more than 160 basis points year-over-year. Human interactions increased more than 80 basis points year-over-year through improvements in the usage of analyst inquiries.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 170.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 21,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "bdbff8c5a94102f62bb682671e961277ba4a2eb6cce23c20a4de58534013ecb5",
+            "value_sha256": "e6f4583624dbff30b374d5d1c8a39735700afd5db817d0d9022a0e5a7a49f1ac"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "digital engagement",
           "period": "Q1 2026",
-          "value": "improved by more than 160 basis points year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Digital engagement improved by more than 160 basis points year-over-year.",
-          "following_context": "Human interactions increased more than 80 basis points year-over-year through improvements in the usage of analyst inquiries.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 160.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 21,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "0f414729d24c58161e567abc6d5e5d3f98db4ac705aa4de09dd13e4030249c29",
+            "value_sha256": "e98f18a8d464506bf73cc325fad8611ef53e458102729e1005bf3ba6e04eedbf"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "human interactions engagement",
           "period": "Q1 2026",
-          "value": "increased more than 80 basis points year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Human interactions increased more than 80 basis points year-over-year through improvements in the usage of analyst inquiries.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 80.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 21,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "ecd1df38ccd36463dd63a2ae0fbb3bd94b301976234129c16b723856016c06fc",
+            "value_sha256": "0ab2effdfcb95364b3bcedb670de1377808fb8c9de47c5e8c5833c80a991201a"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Global Technology Sales CV",
           "period": "end of Q1 2026",
-          "value": "$4 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Global Technology Sales contract value was $4 billion at the end of the first quarter, up versus the prior year.",
-          "following_context": "GTS CV for both enterprise leaders and tech vendors increased by more than 3% year-over-year ex-Fed. Wallet retention for GTS was 97% for the quarter. Ex-Fed wallet retention was 99%. GTS new business was down 4% compared to last year and down about 3% ex-Fed. As Gene noted, new business was tracking ahead of the prior year through February and was affected a bit in March due to the geopolitical environment.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 22,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "6a532246393bd6df6902a5990a063a5c28a1e539f495ff8747579da3c8c9b138",
+            "value_sha256": "bfff5affd853767715ebcfc4956568c182b10b4ba50110618114a0d7d673eaa8"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "GTS CV growth ex-Fed (enterprise leaders and tech vendors)",
           "period": "Q1 2026",
-          "value": "increased by more than 3% year-over-year ex-Fed",
           "value_num": null,
           "unit": null,
-          "verbatim": "GTS CV for both enterprise leaders and tech vendors increased by more than 3% year-over-year ex-Fed.",
-          "following_context": "Wallet retention for GTS was 97% for the quarter. Ex-Fed wallet retention was 99%. GTS new business was down 4% compared to last year and down about 3% ex-Fed. As Gene noted, new business was tracking ahead of the prior year through February and was affected a bit in March due to the geopolitical environment.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 22,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "5e7d0f3583e1a27972113bd3920c7b8c25d9a8619bdac63923f17cc90944ab5a",
+            "value_sha256": "0af6d7d0d685ae37c55a655023144fb8889664f40ba77d4120998693336c7ff1"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "GTS wallet retention",
           "period": "Q1 2026",
-          "value": "97%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Wallet retention for GTS was 97% for the quarter.",
-          "following_context": "Ex-Fed wallet retention was 99%. GTS new business was down 4% compared to last year and down about 3% ex-Fed. As Gene noted, new business was tracking ahead of the prior year through February and was affected a bit in March due to the geopolitical environment.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 97.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 22,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "26fc642cf7eebae8233b617cbc36ca724836d95cb3c00783bd3dc1b3377a24bb",
+            "value_sha256": "f2bff73ed60136ab9ad85a89f83ee10f7101dbcee6415991f3a9d9731d17779d"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "GTS wallet retention ex-Fed",
           "period": "Q1 2026",
-          "value": "99%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Ex-Fed wallet retention was 99%.",
-          "following_context": "GTS new business was down 4% compared to last year and down about 3% ex-Fed. As Gene noted, new business was tracking ahead of the prior year through February and was affected a bit in March due to the geopolitical environment.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 99.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 22,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "68bc92be2411e3334f2ce1ae15724844e56fb57576fd95586549c4d2b3e54059",
+            "value_sha256": "73952e0680a8f44b1b8e001b4f608dc891b6b11bd9905f0d32a6a65de1645a8e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "GTS new business change",
           "period": "Q1 2026",
-          "value": "down 4% compared to last year and down about 3% ex-Fed",
           "value_num": null,
           "unit": null,
-          "verbatim": "GTS new business was down 4% compared to last year and down about 3% ex-Fed.",
-          "following_context": "As Gene noted, new business was tracking ahead of the prior year through February and was affected a bit in March due to the geopolitical environment.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 22,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "d1f2e0b0667c6418dd1cf369c54ce3d1c016f060f1e9c716594c1e8c0824c875",
+            "value_sha256": "1fde0ab5ae40bdb842a8ea4b4b5b92cd1505b26ba71bf026e284188beb44457b"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Global Business Sales CV",
           "period": "end of Q1 2026",
-          "value": "$1.3 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Global Business Sales contract value was $1.3 billion at the end of the first quarter, up 3% year-over-year.",
-          "following_context": "Ex-Fed, GBS CV grew 5%. Growth was led by the sales, supply chain and legal practices. Wallet retention for GBS was 98% for the quarter. GBS new business was down 2% compared to last year. Again, as Gene noted, new business was tracking very favorably through February with some client decision-making slowing down in March.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.3,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 23,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "4d12baf04b716bc24ba903defc4da1385820b585eb046fcfc960308507ac9129",
+            "value_sha256": "e0b4f67d4573d97101af001553a38fd3d60d4db0e8fa97b188d911f83fa49c7e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "GBS CV growth ex-Fed",
           "period": "Q1 2026",
-          "value": "grew 5%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Ex-Fed, GBS CV grew 5%.",
-          "following_context": "Growth was led by the sales, supply chain and legal practices. Wallet retention for GBS was 98% for the quarter. GBS new business was down 2% compared to last year. Again, as Gene noted, new business was tracking very favorably through February with some client decision-making slowing down in March.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 23,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "3b4734ee5cb37d892abe5ec95c36269bfeb432aa4e1299125e869a89f6037293",
+            "value_sha256": "13bd0ec10dc47b2bd19338bc5a38982c15595140785da7c65c1cd86e2435e9f5"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "GBS wallet retention",
           "period": "Q1 2026",
-          "value": "98%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Wallet retention for GBS was 98% for the quarter.",
-          "following_context": "GBS new business was down 2% compared to last year. Again, as Gene noted, new business was tracking very favorably through February with some client decision-making slowing down in March.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 98.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 23,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "5ece4654bc5b754b320db58e906a87cc6fbd7b55399101eaf7b84c732caa464a",
+            "value_sha256": "caea6c32d945d4fc7f4687630b6dd4baf3d65b8dc4267fe7dde157173f12f95f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "GBS new business change",
           "period": "Q1 2026",
-          "value": "down 2% compared to last year",
           "value_num": null,
           "unit": null,
-          "verbatim": "GBS new business was down 2% compared to last year.",
-          "following_context": "Again, as Gene noted, new business was tracking very favorably through February with some client decision-making slowing down in March.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 2.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 23,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "aa4d1084b5bf33cd53cc5d4a4eac3870c800c7dcdfec78dd761ce044d2a4d56b",
+            "value_sha256": "b734889550f255c8b29c4cafb2bcb451e82fe365a448f33a5c843f0b4ee40b3c"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "conferences same-conference revenue growth",
           "period": "Q1 2026",
-          "value": "around 9% FX neutral",
           "value_num": null,
           "unit": null,
-          "verbatim": "On a same conference basis, revenue growth was around 9% FX neutral.",
-          "following_context": "Contribution margin was 39%. We held 10 destination conferences in the first quarter as planned. Q1 consulting revenue was $119 million compared with $140 million in the year ago period. Consulting contribution margin was 31% in Q1. Labor-based revenue was $90 million. Backlog at March 31 was $201 million.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 9.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 24,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "13e1753f5d82aa7d5098be320f820765747e430110db848576f0870bd10f4a3d",
+            "value_sha256": "ae77749aeb9ff743c158bc648d274af9229644f1f1b8da583402430801c54669"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "destination conferences held",
           "period": "Q1 2026",
-          "value": "10 destination conferences",
           "value_num": null,
           "unit": null,
-          "verbatim": "We held 10 destination conferences in the first quarter as planned.",
-          "following_context": "Q1 consulting revenue was $119 million compared with $140 million in the year ago period. Consulting contribution margin was 31% in Q1. Labor-based revenue was $90 million. Backlog at March 31 was $201 million.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 24,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "c70d8ec27a6045c0e2ef00c8c54a2e7acff7c25c7aae56f9fba77624a30c11bb",
+            "value_sha256": "00e9a44956c1f859b7d56874b6df17ef6ac42dd0127bcdf0367b60b8deff455f"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "consulting backlog",
           "period": "March 31, 2026",
-          "value": "$201 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Backlog at March 31 was $201 million.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 201.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 24,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "e01a9bc8994e026b7beb32db4571e306ec29af560bd33da7567ab042577a08c6",
+            "value_sha256": "1ee4c5a10eb3d5b02bd0fa92b6b4a1664a3d4b04afd967aded23413b9c29d083"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "contract optimization revenue 2-year CAGR",
           "period": "Q1 2026 LTM",
-          "value": "up about 15%",
           "value_num": null,
           "unit": null,
-          "verbatim": "On a 2-year CAGR basis, revenue was up about 15%.",
-          "following_context": "As you know, our contract optimization revenue is highly variable.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 15.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 25,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "dced420e030edc98b9ef18ed5bd228917f456624b01cf284d43206a3fb408685",
+            "value_sha256": "6ab7f88b27b85e9ef6dd222235af09b0e9c4f85955840bc7d96ac821f6e0d58e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "shares outstanding",
           "period": "Q1 2026",
-          "value": "70 million shares outstanding ... improvement of about 8 million shares or approximately 10% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We had 70 million shares outstanding in the first quarter. This is an improvement of about 8 million shares or approximately 10% year-over-y",
-          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 70.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            },
+            {
+              "value": 8.0,
+              "currency": null,
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": "approximately"
+            },
+            {
+              "value": 10.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": null,
+            "paragraph": null,
+            "speaker": null,
+            "quote_sha256": "24ca8dc058304a2756c12c952ea43d7f3adee656b53c28d2618fac6e98ecabd4",
+            "value_sha256": "309a7cda49ce3ffe386ae93d3a8320c9de3e005b393d6e6611dd6af7666f09dc"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "differentiation / trusted source claim",
           "period": null,
-          "value": "the best, most trusted source",
           "value_num": null,
           "unit": null,
-          "verbatim": "Gartner is the best, most trusted source for the help executives need to achieve success.",
-          "following_context": "We proactively deliver insights that guide smarter decisions and stronger outcomes on mission-critical priorities.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 4,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "183244e9b6a9dcf7b1c2968cac63398f7da7e0c941922a318d950d3323d268cd",
+            "value_sha256": "7274b36c08850f461fdca325302aeeade4720f7ed7cbee06ac762df875d6c65b"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "exclusivity / scope and scale claim",
           "period": null,
-          "value": "No one else does what we do at our scope and scale",
           "value_num": null,
           "unit": null,
-          "verbatim": "No one else does what we do at our scope and scale.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
+            "transcript_sha256": "6bead6bc7c65daef70a24bf1d3029a226458c5d11c9439efc8d6cb4a676a4a2e",
+            "paragraph": 8,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "f6f671e44e73213a43e5325c8fa1511b1b8b41f785c57b4a0b26204fe7be4d48",
+            "value_sha256": "700fe8cbbfcf481233d23cc4e6f69d1c2326d6aee81a42c2f05119c2106f03c4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI-related documents in library",
           "period": "2025",
-          "value": "more than 6,000 AI-related documents",
           "value_num": null,
           "unit": null,
-          "verbatim": "We have more than 6,000 AI-related documents in our library.",
-          "following_context": "We've documented more than 1,000 unique use cases. In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 6000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 8,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "263f4d5c7cc03a65de20bbef1ee9af3671821bf8dda191a5d35730c018fca09a",
+            "value_sha256": "239766f489561a56185fef496b4d3a4a111ebcaabca666da22a61536f8cd3d54"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "unique AI use cases documented",
           "period": "2025",
-          "value": "more than 1,000 unique use cases",
           "value_num": null,
           "unit": null,
-          "verbatim": "We've documented more than 1,000 unique use cases.",
-          "following_context": "In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 8,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "f80a00941b981f6138dba066549ce2a2c5d44a4cb757c98c43d87a11dea9f826",
+            "value_sha256": "af975f388dd8703fa3c09c5c99f42674016d1aba52e7b55497340d93a6682d2e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "in-depth AI client conversations",
           "period": "2025",
-          "value": "more than 200,000 in-depth client conversations on AI",
           "value_num": null,
           "unit": null,
-          "verbatim": "In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 200000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 8,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "4f0e6f0bf142fb914043f1b64339d6ed03819a39c63cd0ddd5351abf3f3741d1",
+            "value_sha256": "85130bb285fe2262e9d8432370ce5f30379d3c99f81e6ebaa011f74a404eae96"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "AI-related questions answered through AskGartner",
           "period": "2025",
-          "value": "more than 500,000 AI-related questions",
           "value_num": null,
           "unit": null,
-          "verbatim": "In 2025, we conducted more than 200,000 in-depth client conversations on AI, and we answered more than 500,000 AI-related questions through AskGartner.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 500000.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": "at_least"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 8,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "4f0e6f0bf142fb914043f1b64339d6ed03819a39c63cd0ddd5351abf3f3741d1",
+            "value_sha256": "ffeab52599d9c7c438f6563de03de74246d25b8fb9e4984deed78230fb96a37e"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "active insights library growth",
           "period": "end of 2025",
-          "value": "grown by approximately 50%",
           "value_num": null,
           "unit": null,
-          "verbatim": "As of the end of 2025, our active insights library has grown by approximately 50%.",
-          "following_context": "By increasing volume, we can better accommodate the full range of our clients' mission-critical priorities.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 50.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 11,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "e734daae6ed17a01b94e3c9be27e79fbd237b278f774074e2ed9d57a0c0a8878",
+            "value_sha256": "56b01151c65bc088a2bcad49d51b43d9660aa9b922be2f146621ed0cc9a85d56"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "average Magic Quadrant insight creation time",
           "period": "2025",
-          "value": "reduced ... by 75% compared to 2024",
           "value_num": null,
           "unit": null,
-          "verbatim": "Second, for insight types that are highly valued by our clients, such as Magic Quadrants, we reduced our average insight creation time by 75% compared to 2024.",
-          "following_context": "So we'll continue to ensure our insights keep pace with the ever accelerating pace of the world.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 75.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "down",
+              "qualifier": null
+            },
+            {
+              "value": 2024.0,
+              "currency": null,
+              "scale": null,
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 13,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "d3418f0cf0ed1758f4f8aef6ee0c47bcecde9a2bd70388b92b3c1a9ba9fe9c20",
+            "value_sha256": "41941639ccdf880714acfc4e9b196fa23e4d218a3f8cf79f3963e8c1fca5f850"
+          }
         },
         {
           "kind": "competitive_position",
           "metric": "AskGartner user renewal rates",
           "period": null,
-          "value": "substantially higher renewal rates",
           "value_num": null,
           "unit": null,
-          "verbatim": "Licensed users who used AskGartner had substantially higher renewal rates than those who did not even with the same levels of engagement.",
-          "following_context": "We'll continuously improve and innovate AskGartner's capabilities. Separately, we're identifying role-specific insights each week that are particularly valuable and broadly applicable. Our goal is to ensure clients have every opportunity to engage with these uniquely valuable insights.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [],
+          "value_status": "qualitative",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 16,
+            "speaker": "Eugene A. Hall",
+            "quote_sha256": "292d4b45d58d6ef356a52870e2d14a6ccf37272bcf1be2f3956886b5b5d361f4",
+            "value_sha256": "6e69022b91197cc8c0250261f9e919e524d97ebf0dd2da516d2aa65d5ed0f1e6"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Contract Value growth year-over-year",
           "period": "Q4 2025",
-          "value": "grew 1% year-over-year",
           "value_num": null,
           "unit": null,
-          "verbatim": "Fourth quarter revenue was $1.8 billion, up 2% year-over-year as reported and unchanged FX neutral. For the full year, revenue was $6.5 billion, up 4% as reported and 3% FX neutral. Fourth quarter Contract Value or CV grew 1% year-over-year.",
-          "following_context": "Outside the U.S. federal government, CV grew 4%. In the quarter, total contribution margin was 67%, up 85 basis points from last year.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 28,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "fa5a154ae73458d4cd7306e14339d164d100aa96c05eb7f8ee1fff94024b59c1",
+            "value_sha256": "eb3c77bd26bb2bb1f9242355f85c693fea149e8f67d4bf1925acd86683a2d990"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "CV growth outside U.S. federal government",
           "period": "Q4 2025",
-          "value": "grew 4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Outside the U.S. federal government, CV grew 4%.",
-          "following_context": "In the quarter, total contribution margin was 67%, up 85 basis points from last year.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 28,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "ef0a2e0fe0a6888ed4cb1c77c3929b7cbba88bebdee8b8608137a1ec488fc1d5",
+            "value_sha256": "71c389ea2c12b1e9495b8a226c2885344aacfc3df70796a72d6b6b20c322f1f4"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Insights revenue growth year-over-year",
           "period": "Q4 2025",
-          "value": "grew 3% year-over-year as reported and 1% FX neutral",
           "value_num": null,
           "unit": null,
-          "verbatim": "Insights revenue in the quarter grew 3% year-over-year as reported and 1% FX neutral.",
-          "following_context": "Fourth quarter Insights contribution margin was 77%, up 59 basis points versus last year. Full year Insights revenue increased 5% as reported and 4% FX neutral. For 2025, Insights' contribution margin was 77%, up 14 basis points from 2024.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 3.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": "up",
+              "qualifier": null
+            },
+            {
+              "value": 1.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 30,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "9475efa60970a8b8fd348d401a879bdad8199ee0eea6d37ea3b5d3475cef74ce",
+            "value_sha256": "c660c88eb116c9b486e58cdad4c34947c55911d4d2511cc6300b7a9a7e4531bf"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Contract Value at quarter end",
           "period": "end of Q4 2025",
-          "value": "$5.2 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Contract Value was $5.2 billion at the end of the fourth quarter, up 1% versus the prior year.",
-          "following_context": "Outside the U.S. federal government, CV growth was about 330 basis points faster at around 4%. Global NCVI in the quarter outside the U.S. federal government was positive $147 million. The vast majority of our U.S. federal contracts came up for renewal during 2025. At December 31, we had $126 million of U.S. federal CV.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 5.2,
+              "currency": "$",
+              "scale": "e9",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 31,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "35976bf96b26cd5ff1633dfce8310ff22f7ca1c32f8cf8ae87bc4e3f1ff33ddd",
+            "value_sha256": "c1303ae3d509f7cec7cb0468ad77d29863b7b4c9c8b2a9ccf832773112952cec"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "CV growth outside U.S. federal government",
           "period": "Q4 2025",
-          "value": "about 330 basis points faster at around 4%",
           "value_num": null,
           "unit": null,
-          "verbatim": "Outside the U.S. federal government, CV growth was about 330 basis points faster at around 4%.",
-          "following_context": "Global NCVI in the quarter outside the U.S. federal government was positive $147 million. The vast majority of our U.S. federal contracts came up for renewal during 2025. At December 31, we had $126 million of U.S. federal CV.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 330.0,
+              "currency": null,
+              "scale": null,
+              "unit": "bp",
+              "change": "up",
+              "qualifier": "approximately"
+            },
+            {
+              "value": 4.0,
+              "currency": null,
+              "scale": null,
+              "unit": "%",
+              "change": null,
+              "qualifier": "approximately"
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 31,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "1fb0a946fd5ffc85124e4fcc72ff876ec9672ff2bd433c8caba03617b873c083",
+            "value_sha256": "4f92bc035e55d6530b149e42e6ae5d3abe2f43dc13f7b8677331b29f673f2a93"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "Global NCVI outside U.S. federal government",
           "period": "Q4 2025",
-          "value": "positive $147 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "Global NCVI in the quarter outside the U.S. federal government was positive $147 million.",
-          "following_context": "The vast majority of our U.S. federal contracts came up for renewal during 2025. At December 31, we had $126 million of U.S. federal CV.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 147.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 31,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "98ba9b0605e4d079595996d9826185a7a11123e3e6edbd734a239be34f511ce5",
+            "value_sha256": "190f7a72e162bf5c945aac2311e00d9db03633938e24c976cd804fa927c023b8"
+          }
         },
         {
           "kind": "leading_indicator",
           "metric": "U.S. federal CV",
           "period": "December 31, 2025",
-          "value": "$126 million",
           "value_num": null,
           "unit": null,
-          "verbatim": "At December 31, we had $126 million of U.S. federal CV.",
-          "following_context": null,
           "source_ref": "CIQ transcript: Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
+          "tier": "llm-fenced",
+          "figures": [
+            {
+              "value": 126.0,
+              "currency": "$",
+              "scale": "e6",
+              "unit": null,
+              "change": null,
+              "qualifier": null
+            }
+          ],
+          "value_status": "verified",
+          "locator": {
+            "call": "Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+            "transcript_sha256": "e08c487c2cdd119b3800f545609522277bb31dbd1fd42e9f5445cb3136dd7d5e",
+            "paragraph": 31,
+            "speaker": "Craig W. Safian",
+            "quote_sha256": "fe6160ad0d71ed1d3560c113db9f7c88d638f67617f34f579b87b52533747f2c",
+            "value_sha256": "1c214cab78afb6cb8716d1ab5e0329c68ec7539d4ea2715983545c9d66eb95a1"
+          }
         }
       ],
       "qa_flags": [
@@ -14254,6 +15026,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_allocation"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "extraction_version": "2026-11-10.driver-text-filed",
+      "writer": "driver-facts-pass",
+      "layers": [
+        "mechanical.operating_drivers"
       ]
     }
   ],

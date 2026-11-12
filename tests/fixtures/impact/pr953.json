@@ -1,0 +1,4894 @@
+{
+ "_cut": "frozen from a real impact report: local paths scrubbed, request text and CIQ file names dropped, list families kept only where moved or named, and the per-page lists of live-fetched URLs emptied (0 entries over pages and sides)",
+ "census": [
+  "capital_allocation",
+  "peer_capital_intensity"
+ ],
+ "downstream": {
+  "changed_modules": [
+   "vinci.dossier.capital_allocation",
+   "vinci.dossier.extraction_version",
+   "vinci.dossier.refresh",
+   "vinci.dossier.render",
+   "vinci.dossier.schemas",
+   "vinci.dossier.synthesis"
+  ],
+  "consumers": [
+   {
+    "name": "screens / G3",
+    "reached_by": [
+     "vinci.dossier.schemas",
+     "vinci.dossier.synthesis"
+    ],
+    "result": {
+     "status": "not run",
+     "why": "the screen re-ingests five years of grouped-daily bars and reads EDGAR for every survivor: pass --run-screen"
+    }
+   },
+   {
+    "name": "decision ledger",
+    "reached_by": [
+     "vinci.dossier.schemas",
+     "vinci.dossier.synthesis"
+    ],
+    "result": {
+     "exit": {
+      "base": 0,
+      "head": 0
+     },
+     "files": {},
+     "identical": true,
+     "produced": {
+      "base": {
+       "bytes": 0,
+       "files": 0,
+       "stdout_lines": 10
+      },
+      "head": {
+       "bytes": 0,
+       "files": 0,
+       "stdout_lines": 10
+      }
+     },
+     "status": "compared",
+     "stdout": {
+      "added": 0,
+      "identical": true,
+      "lines": [],
+      "removed": 0,
+      "version_lines": 0
+     }
+    }
+   },
+   {
+    "name": "scoring report",
+    "reached_by": [
+     "vinci.dossier.schemas",
+     "vinci.dossier.synthesis"
+    ],
+    "result": {
+     "exit": {
+      "base": 0,
+      "head": 0
+     },
+     "files": {},
+     "identical": true,
+     "produced": {
+      "base": {
+       "bytes": 2601,
+       "files": 1,
+       "stdout_lines": 1
+      },
+      "head": {
+       "bytes": 2601,
+       "files": 1,
+       "stdout_lines": 1
+      }
+     },
+     "status": "compared",
+     "stdout": {
+      "added": 0,
+      "identical": true,
+      "lines": [],
+      "removed": 0,
+      "version_lines": 0
+     }
+    }
+   },
+   {
+    "name": "monitor",
+    "reached_by": [
+     "vinci.dossier.schemas",
+     "vinci.dossier.synthesis"
+    ],
+    "result": {
+     "exit": {
+      "base": 0,
+      "head": 0
+     },
+     "files": {},
+     "identical": true,
+     "produced": {
+      "base": {
+       "bytes": 19546,
+       "files": 1,
+       "stdout_lines": 101
+      },
+      "head": {
+       "bytes": 19546,
+       "files": 1,
+       "stdout_lines": 101
+      }
+     },
+     "status": "compared",
+     "stdout": {
+      "added": 0,
+      "identical": true,
+      "lines": [],
+      "removed": 0,
+      "version_lines": 0
+     }
+    }
+   },
+   {
+    "name": "theme desk",
+    "reached_by": [
+     "vinci.dossier.schemas",
+     "vinci.dossier.synthesis"
+    ],
+    "result": {
+     "status": "not run",
+     "why": "no theme registry given (--theme-data)"
+    }
+   },
+   {
+    "name": "frontend build",
+    "reached_by": [
+     "data/dossiers/AMZN/dossier.json",
+     "data/dossiers/AMZN/dossier.md",
+     "data/dossiers/BRBR/dossier.json",
+     "data/dossiers/BRBR/dossier.md",
+     "data/dossiers/BURL/dossier.json",
+     "data/dossiers/BURL/dossier.md",
+     "data/dossiers/CNXC/dossier.json",
+     "data/dossiers/CNXC/dossier.md",
+     "data/dossiers/EPAM/dossier.json",
+     "data/dossiers/EPAM/dossier.md",
+     "data/dossiers/FUBO/dossier.json",
+     "data/dossiers/FUBO/dossier.md",
+     "data/dossiers/GOOGL/dossier.json",
+     "data/dossiers/GOOGL/dossier.md",
+     "data/dossiers/IT/dossier.json",
+     "data/dossiers/IT/dossier.md",
+     "data/dossiers/LLY/dossier.json",
+     "data/dossiers/LLY/dossier.md",
+     "data/dossiers/MCK/dossier.json",
+     "data/dossiers/MCK/dossier.md",
+     "data/dossiers/MVST/dossier.json",
+     "data/dossiers/MVST/dossier.md",
+     "data/dossiers/NCNO/dossier.json",
+     "data/dossiers/NCNO/dossier.md",
+     "data/dossiers/NFLX/dossier.json",
+     "data/dossiers/NFLX/dossier.md",
+     "data/dossiers/NKE/dossier.json",
+     "data/dossiers/NKE/dossier.md",
+     "data/dossiers/ORKA/dossier.json",
+     "data/dossiers/ORKA/dossier.md",
+     "data/dossiers/PARR/dossier.json",
+     "data/dossiers/PARR/dossier.md",
+     "data/dossiers/ROST/dossier.json",
+     "data/dossiers/ROST/dossier.md",
+     "data/dossiers/SMPL/dossier.json",
+     "data/dossiers/SMPL/dossier.md",
+     "data/dossiers/TECX/dossier.json",
+     "data/dossiers/TECX/dossier.md",
+     "data/dossiers/TGT/dossier.json",
+     "data/dossiers/TGT/dossier.md",
+     "data/dossiers/TJX/dossier.json",
+     "data/dossiers/TJX/dossier.md",
+     "data/dossiers/UBER/dossier.json",
+     "data/dossiers/UBER/dossier.md",
+     "data/dossiers/V/dossier.json",
+     "data/dossiers/V/dossier.md",
+     "data/dossiers/VITL/dossier.json",
+     "data/dossiers/VITL/dossier.md",
+     "data/dossiers/VRRM/dossier.json",
+     "data/dossiers/VRRM/dossier.md",
+     "data/dossiers/WERN/dossier.json",
+     "data/dossiers/WERN/dossier.md",
+     "data/dossiers/WLK/dossier.json",
+     "data/dossiers/WLK/dossier.md"
+    ],
+    "result": {
+     "status": "see part 4"
+    }
+   }
+  ],
+  "importers": {
+   "vinci.dossier.capital_allocation": {
+    "direct": [
+     "vinci.dossier.mechanical",
+     "vinci.dossier.refresh",
+     "vinci.evals.variants"
+    ],
+    "transitive": [
+     "vinci.__main__",
+     "vinci.cli",
+     "vinci.dossier.assemble",
+     "vinci.dossier.ciq_reread",
+     "vinci.dossier.covenant_extract",
+     "vinci.dossier.mechanical",
+     "vinci.dossier.prespend",
+     "vinci.dossier.refresh",
+     "vinci.dossier.render",
+     "vinci.dossier.run_metrics",
+     "vinci.evals.__main__",
+     "vinci.evals.compare",
+     "vinci.evals.judge",
+     "vinci.evals.metrics",
+     "vinci.evals.report",
+     "vinci.evals.variants",
+     "vinci.quality.sources.ciq",
+     "vinci.quality.sources.release"
+    ]
+   },
+   "vinci.dossier.extraction_version": {
+    "direct": [
+     "vinci.dossier.assemble",
+     "vinci.dossier.inputs_backfill",
+     "vinci.dossier.layer_refresh",
+     "vinci.dossier.render",
+     "vinci.dossier.run_metrics"
+    ],
+    "transitive": [
+     "vinci.__main__",
+     "vinci.cli",
+     "vinci.dossier.assemble",
+     "vinci.dossier.ciq_reread",
+     "vinci.dossier.inputs_backfill",
+     "vinci.dossier.layer_refresh",
+     "vinci.dossier.prespend",
+     "vinci.dossier.refresh",
+     "vinci.dossier.render",
+     "vinci.dossier.run_metrics"
+    ]
+   },
+   "vinci.dossier.refresh": {
+    "direct": [
+     "vinci.cli",
+     "vinci.dossier.assemble",
+     "vinci.dossier.ciq_reread"
+    ],
+    "transitive": [
+     "vinci.__main__",
+     "vinci.cli",
+     "vinci.dossier.assemble",
+     "vinci.dossier.ciq_reread",
+     "vinci.dossier.prespend",
+     "vinci.dossier.refresh",
+     "vinci.dossier.run_metrics"
+    ]
+   },
+   "vinci.dossier.render": {
+    "direct": [
+     "vinci.cli",
+     "vinci.dossier.assemble",
+     "vinci.dossier.refresh"
+    ],
+    "transitive": [
+     "vinci.__main__",
+     "vinci.cli",
+     "vinci.dossier.assemble",
+     "vinci.dossier.ciq_reread",
+     "vinci.dossier.prespend",
+     "vinci.dossier.refresh",
+     "vinci.dossier.run_metrics"
+    ]
+   },
+   "vinci.dossier.schemas": {
+    "direct": [
+     "vinci.cli",
+     "vinci.dossier",
+     "vinci.dossier.assemble",
+     "vinci.dossier.capital_allocation",
+     "vinci.dossier.ciq_balance",
+     "vinci.dossier.ciq_reread",
+     "vinci.dossier.ciq_sheets",
+     "vinci.dossier.covenant_extract",
+     "vinci.dossier.driver_evidence",
+     "vinci.dossier.driver_extract",
+     "vinci.dossier.ebitda_basis",
+     "vinci.dossier.ebitda_recon",
+     "vinci.dossier.edgar_fundamentals",
+     "vinci.dossier.ev_ebitda_basis",
+     "vinci.dossier.filed_tiebreak",
+     "vinci.dossier.gaps",
+     "vinci.dossier.inputs_backfill",
+     "vinci.dossier.layer_refresh",
+     "vinci.dossier.lease_basis",
+     "vinci.dossier.ltm_quarters",
+     "vinci.dossier.mechanical",
+     "vinci.dossier.prespend",
+     "vinci.dossier.propose",
+     "vinci.dossier.refresh",
+     "vinci.dossier.render",
+     "vinci.dossier.run_metrics",
+     "vinci.dossier.statement_recon",
+     "vinci.dossier.synthesis",
+     "vinci.dossier.valuation_basis",
+     "vinci.edgar.debt_maturities",
+     "vinci.edgar.filing_sections",
+     "vinci.edgar.primary_source",
+     "vinci.edgar.release_parse",
+     "vinci.evals.capture_child",
+     "vinci.evals.metrics",
+     "vinci.evals.replay",
+     "vinci.evals.report",
+     "vinci.evals.variants",
+     "vinci.quality.sources.ciq",
+     "vinci.theme_intelligence.market"
+    ],
+    "transitive": [
+     "vinci.__main__",
+     "vinci.audit_r1",
+     "vinci.cli",
+     "vinci.dossier",
+     "vinci.dossier.anchor",
+     "vinci.dossier.assemble",
+     "vinci.dossier.capital_allocation",
+     "vinci.dossier.ciq_balance",
+     "vinci.dossier.ciq_reread",
+     "vinci.dossier.ciq_sheets",
+     "vinci.dossier.covenant_extract",
+     "vinci.dossier.dilution",
+     "vinci.dossier.driver_evidence",
+     "vinci.dossier.driver_extract",
+     "vinci.dossier.ebitda_basis",
+     "vinci.dossier.ebitda_recon",
+     "vinci.dossier.edgar_fundamentals",
+     "vinci.dossier.ev_ebitda_basis",
+     "vinci.dossier.filed_tiebreak",
+     "vinci.dossier.gaps",
+     "vinci.dossier.inputs",
+     "vinci.dossier.inputs_backfill",
+     "vinci.dossier.layer_refresh",
+     "vinci.dossier.lease_basis",
+     "vinci.dossier.ltm_quarters",
+     "vinci.dossier.mechanical",
+     "vinci.dossier.midcycle",
+     "vinci.dossier.prespend",
+     "vinci.dossier.propose",
+     "vinci.dossier.recipe_proposal",
+     "vinci.dossier.refresh",
+     "vinci.dossier.render",
+     "vinci.dossier.requirements",
+     "vinci.dossier.run_metrics",
+     "vinci.dossier.schemas",
+     "vinci.dossier.statement_recon",
+     "vinci.dossier.synthesis",
+     "vinci.dossier.tagger",
+     "vinci.dossier.terminal_margin",
+     "vinci.dossier.valuation_basis",
+     "vinci.edgar.debt_maturities",
+     "vinci.edgar.filing_sections",
+     "vinci.edgar.primary_source",
+     "vinci.edgar.release_parse",
+     "vinci.eod.dividends",
+     "vinci.evals.__main__",
+     "vinci.evals.capture_child",
+     "vinci.evals.compare",
+     "vinci.evals.gold",
+     "vinci.evals.judge",
+     "vinci.evals.metrics",
+     "vinci.evals.replay",
+     "vinci.evals.report",
+     "vinci.evals.units",
+     "vinci.evals.variants",
+     "vinci.facts.__main__",
+     "vinci.facts.parity",
+     "vinci.facts.screen_replay",
+     "vinci.ledger",
+     "vinci.ledger.correction",
+     "vinci.ledger.workflow",
+     "vinci.monitor",
+     "vinci.orchestrator",
+     "vinci.quality.sources.ciq",
+     "vinci.quality.sources.prices",
+     "vinci.quality.sources.release",
+     "vinci.scenarios",
+     "vinci.scoring",
+     "vinci.scoring.baseline",
+     "vinci.scoring.harness",
+     "vinci.theme_intelligence.__main__",
+     "vinci.theme_intelligence.attribution",
+     "vinci.theme_intelligence.ingest",
+     "vinci.theme_intelligence.market",
+     "vinci.theme_intelligence.pipeline",
+     "vinci.theme_intelligence.qa",
+     "vinci.theme_intelligence.resolve",
+     "vinci.theme_intelligence.state",
+     "vinci.theme_intelligence.upload",
+     "vinci.triggers"
+    ]
+   },
+   "vinci.dossier.synthesis": {
+    "direct": [
+     "vinci.dossier.assemble",
+     "vinci.dossier.driver_extract",
+     "vinci.dossier.mechanical",
+     "vinci.dossier.propose",
+     "vinci.dossier.refresh",
+     "vinci.evals.capture_child",
+     "vinci.evals.compare",
+     "vinci.evals.metrics",
+     "vinci.evals.units"
+    ],
+    "transitive": [
+     "vinci.__main__",
+     "vinci.audit_r1",
+     "vinci.cli",
+     "vinci.dossier",
+     "vinci.dossier.anchor",
+     "vinci.dossier.assemble",
+     "vinci.dossier.capital_allocation",
+     "vinci.dossier.ciq_balance",
+     "vinci.dossier.ciq_reread",
+     "vinci.dossier.ciq_sheets",
+     "vinci.dossier.covenant_extract",
+     "vinci.dossier.dilution",
+     "vinci.dossier.driver_evidence",
+     "vinci.dossier.driver_extract",
+     "vinci.dossier.ebitda_basis",
+     "vinci.dossier.ebitda_recon",
+     "vinci.dossier.edgar_fundamentals",
+     "vinci.dossier.ev_ebitda_basis",
+     "vinci.dossier.filed_tiebreak",
+     "vinci.dossier.gaps",
+     "vinci.dossier.inputs",
+     "vinci.dossier.inputs_backfill",
+     "vinci.dossier.layer_refresh",
+     "vinci.dossier.lease_basis",
+     "vinci.dossier.ltm_quarters",
+     "vinci.dossier.mechanical",
+     "vinci.dossier.midcycle",
+     "vinci.dossier.prespend",
+     "vinci.dossier.propose",
+     "vinci.dossier.recipe_proposal",
+     "vinci.dossier.refresh",
+     "vinci.dossier.render",
+     "vinci.dossier.requirements",
+     "vinci.dossier.run_metrics",
+     "vinci.dossier.schemas",
+     "vinci.dossier.statement_recon",
+     "vinci.dossier.synthesis",
+     "vinci.dossier.tagger",
+     "vinci.dossier.terminal_margin",
+     "vinci.dossier.valuation_basis",
+     "vinci.edgar.debt_maturities",
+     "vinci.edgar.filing_sections",
+     "vinci.edgar.primary_source",
+     "vinci.edgar.release_parse",
+     "vinci.eod.dividends",
+     "vinci.evals.__main__",
+     "vinci.evals.capture_child",
+     "vinci.evals.compare",
+     "vinci.evals.gold",
+     "vinci.evals.judge",
+     "vinci.evals.metrics",
+     "vinci.evals.replay",
+     "vinci.evals.report",
+     "vinci.evals.units",
+     "vinci.evals.variants",
+     "vinci.facts.__main__",
+     "vinci.facts.parity",
+     "vinci.facts.screen_replay",
+     "vinci.ledger",
+     "vinci.ledger.correction",
+     "vinci.ledger.workflow",
+     "vinci.monitor",
+     "vinci.orchestrator",
+     "vinci.quality.sources.ciq",
+     "vinci.quality.sources.prices",
+     "vinci.quality.sources.release",
+     "vinci.scenarios",
+     "vinci.scoring",
+     "vinci.scoring.baseline",
+     "vinci.scoring.harness",
+     "vinci.theme_intelligence.__main__",
+     "vinci.theme_intelligence.attribution",
+     "vinci.theme_intelligence.ingest",
+     "vinci.theme_intelligence.market",
+     "vinci.theme_intelligence.pipeline",
+     "vinci.theme_intelligence.qa",
+     "vinci.theme_intelligence.resolve",
+     "vinci.theme_intelligence.state",
+     "vinci.theme_intelligence.upload",
+     "vinci.triggers"
+    ]
+   }
+  }
+ },
+ "fail_first": {
+  "cases": [
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_a_move_is_refused_only_while_the_version_stands_still"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_a_watched_module_never_moves_while_the_version_stands_still"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_any_code_change_moves_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.25  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n    return x < LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_any_code_change_moves_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.25  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n    return x <= LIMIT or str(x) == \"nan\"\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_any_code_change_moves_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.30  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n    return x <= LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_prose_and_layout_never_move_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.25  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n\\n    return x  \\\\\\n        <=  LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_prose_and_layout_never_move_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.25  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x inside the band?\\n\\n    More words.\"\"\"\\n    return x <= LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_prose_and_layout_never_move_the_hash[\"\"\"A module docstring.\"\"\"\\nLIMIT = 0.25  # a wider explanation of the tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n    return x <= LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_prose_and_layout_never_move_the_hash[\"\"\"Rewritten.\"\"\"\\n\\n\\nLIMIT = 0.25  # a tolerance\\n\\n\\ndef check(x: float) -> bool:\\n    \"\"\"Is x in range?\"\"\"\\n    return x <= LIMIT\\n]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_repin_is_one_mechanical_step"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_stale_pins_are_said"
+   },
+   {
+    "base": {
+     "message": "Failed: DID NOT RAISE AssertionError",
+     "outcome": "failed",
+     "where": "tests/test_extraction_version_drift.py:266"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_the_failure_tells_a_merger_each_step"
+   },
+   {
+    "base": {
+     "message": "AssertionError: 2026-11-10.one-family-peers",
+     "outcome": "failed",
+     "where": "tests/test_extraction_version_drift.py:293"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_the_pins_name_a_declared_version"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_the_stale_warning_fires_only_when_the_pins_are_stale"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_extraction_version_drift.py::test_the_table_digest_ignores_merge_order"
+   },
+   {
+    "base": {
+     "message": "AttributeError: 'CapitalAllocation' object has no attribute 'impairment_headroom'",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:163"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_a_current_total_beats_a_newer_partial_leg"
+   },
+   {
+    "base": {
+     "message": "AttributeError: 'CapitalAllocation' object has no attribute 'impairment_headroom'",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:79"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_a_leg_reported_less_often_dates_the_headroom_at_their_last_shared_balance"
+   },
+   {
+    "base": {
+     "message": "assert 1678.0 == 3942.0",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:59"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_a_newer_alias_wins_over_a_stale_first_tag"
+   },
+   {
+    "base": {
+     "message": "assert (600.0, 9000.0) == (600.0, 2000.0, None)",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:136"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_a_peer_row_never_reads_a_missing_leg_as_zero"
+   },
+   {
+    "base": {
+     "message": "AttributeError: 'CapitalAllocation' object has no attribute 'impairment_headroom'",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:94"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_legs_sharing_no_current_date_give_no_headroom[BURL-dates1]"
+   },
+   {
+    "base": {
+     "message": "AttributeError: 'CapitalAllocation' object has no attribute 'impairment_headroom'",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:94"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_legs_sharing_no_current_date_give_no_headroom[TGT-dates0]"
+   },
+   {
+    "base": {
+     "message": "AttributeError: 'CapitalAllocation' object has no attribute 'impairment_headroom'",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:67"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_mcks_headroom_is_both_legs_at_one_date"
+   },
+   {
+    "base": {
+     "message": "AttributeError: 'CapitalAllocation' object has no attribute 'impairment_headroom'",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:119"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_one_leg_alone_is_its_own_headroom_while_current"
+   },
+   {
+    "base": {
+     "message": "assert 300.0 == 100.0",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:108"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_the_audits_constructed_input"
+   },
+   {
+    "base": {
+     "message": "AssertionError: (PosixPath('<local>'), '- **Impairment headroom \u2014 goodwill + intangibles remaining:** $32,940.0M [14]')",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:190"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_the_committed_pages_print_the_dated_headroom_or_say_it_is_not_recorded"
+   },
+   {
+    "base": {
+     "message": "AttributeError: module 'vinci.dossier.refresh' has no attribute 'impairment_headroom_transform'",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:223"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_the_refresh_reads_edgar_as_filed_by_the_pages_price_date_and_moves_its_fields"
+   },
+   {
+    "base": {
+     "message": "AttributeError: module 'vinci.dossier.refresh' has no attribute 'impairment_headroom_transform'",
+     "outcome": "failed",
+     "where": "tests/test_impairment_headroom.py:243"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_impairment_headroom.py::test_the_refresh_writes_nothing_without_a_price_date_or_a_block"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert None == 'goodwill only \u2014 the filer tags no intangible balance'",
+     "outcome": "failed",
+     "where": "tests/test_peer_median_one_family.py:80"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_peer_median_one_family.py::test_a_one_family_peer_is_shown_but_left_out_of_the_medians"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert (3.0 is None)",
+     "outcome": "failed",
+     "where": "tests/test_peer_median_one_family.py:129"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_peer_median_one_family.py::test_a_row_with_no_total_names_its_case_and_keeps_its_assets"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert (450.0 is None)",
+     "outcome": "failed",
+     "where": "tests/test_peer_median_one_family.py:98"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_peer_median_one_family.py::test_the_base_rate_counts_every_peer_measured_over_a_current_window"
+   },
+   {
+    "base": {
+     "message": "AssertionError: (PosixPath('<local>'), 'median of 8 of 10 peers')",
+     "outcome": "failed",
+     "where": "tests/test_peer_median_one_family.py:170"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_peer_median_one_family.py::test_the_committed_pages_state_each_medians_count_and_its_population"
+   },
+   {
+    "base": {
+     "message": "AssertionError: assert (PeerImpairment(state='none-in-window', state_label='no annual obs.', window_start=datetime.date(2010, 1, 31), window_e...is window \u2014 the last annual observation under GoodwillImpairmentLoss ends 2026-03-31. Not evidence of a clean 5 years') is not None and 'none-in-window' ==",
+     "outcome": "failed",
+     "where": "tests/test_peer_median_one_family.py:112"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_peer_median_one_family.py::test_the_window_ends_at_the_filers_latest_balance_never_a_stale_one"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_a_band_written_with_current_still_reads"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_a_bridge_off_ciqs_tev_is_a_conflict_on_both_sides_of_the_tolerance"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_a_conflict_reaches_qa_flags_once_and_leaves_when_resolved"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_a_multiple_off_its_snapshot_is_not_carried_to_the_page_price"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_a_spliced_anchor_is_written_with_blocks_that_describe_it"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_an_r4_page_states_r4s_basis_from_its_own_layers[AMZN]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_an_r4_page_states_r4s_basis_from_its_own_layers[UBER]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_each_missing_r4_input_is_a_named_conflict[<lambda>-no CIQ Estimates NTM TEV/EBIT]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_each_missing_r4_input_is_a_named_conflict[<lambda>-no exit claims]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_each_missing_r4_input_is_a_named_conflict[<lambda>-stock_info.shares_out is absent]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_each_missing_r4_input_is_a_named_conflict[<lambda>-two Estimates pulls]"
+   },
+   {
+    "base": {
+     "message": "AssertionError: AMZN: the stored valuation_basis/date_semantics/flags are stale \u2014 run a no-op refresh_dossier on the page",
+     "outcome": "failed",
+     "where": "tests/test_valuation_basis.py:61"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_every_committed_page_carries_blocks_derived_from_itself"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_every_dossier_writer_saves_through_the_one_write"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_every_page_names_its_dates_from_its_layers"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_every_page_says_what_it_can_price"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_held_and_consensus_exits_are_named_for_what_they_are"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_no_bridge_is_a_conflict_and_edgar_is_not_substituted"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_no_forward_band_calls_its_latest_close_current"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_anchors_r1_fields_are_tagged_by_the_scenario_gates_own_rule"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_gate_applies_the_templates_own_share_guard"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_ids_and_formulas_are_the_engines"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_r4_components_carry_an_unread_lines_reason[AMZN]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_r4_components_carry_an_unread_lines_reason[UBER]"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_r4_template_names_the_history_close_as_an_observation"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_r4_template_reads_no_r1_field_from_the_anchor"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_serializer_re_derives_on_every_write"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_share_count_says_it_is_the_basic_count"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_tag_is_computed_so_a_hand_re_tag_cannot_leave_it_wrong"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_the_valuation_snapshot_date_is_named_beside_the_price"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_valuation_basis.py::test_todays_multiple_names_its_snapshot_and_its_value_at_the_page_price"
+   },
+   {
+    "base": {
+     "message": "AssertionError: `x or 0` turns a None \u2014 a CIQ marker, an absent row, a missing filing tag \u2014 into a stated zero. Say why there is no value instead (`ciq.read_cell`: None plus a reason), or, if this states no figure, add it to ALLOWED with the reason:",
+     "outcome": "failed",
+     "where": "tests/test_zero_coercion_lint.py:150"
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_zero_coercion_lint.py::test_every_zero_coercion_in_vinci_is_reviewed"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_zero_coercion_lint.py::test_no_allowed_entry_outlives_its_site"
+   },
+   {
+    "base": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "head": {
+     "message": "",
+     "outcome": "passed",
+     "where": null
+    },
+    "node": "tests/test_zero_coercion_lint.py::test_the_lint_can_fire"
+   }
+  ],
+  "exit": {
+   "base": 1,
+   "head": 0
+  },
+  "missing_at_base": [],
+  "seconds": 34.4,
+  "tests": [
+   "tests/test_capital_allocation.py",
+   "tests/test_extraction_version_drift.py",
+   "tests/test_impairment_headroom.py",
+   "tests/test_peer_capital_intensity.py",
+   "tests/test_peer_median_one_family.py",
+   "tests/test_valuation_basis.py",
+   "tests/test_zero_coercion_lint.py"
+  ]
+ },
+ "frontend": {
+  "differ": [
+   "dossiers/AMZN.md",
+   "dossiers/BRBR.md",
+   "dossiers/BURL.md",
+   "dossiers/CNXC.md",
+   "dossiers/EPAM.md",
+   "dossiers/FUBO.md",
+   "dossiers/GOOGL.md",
+   "dossiers/IT.md",
+   "dossiers/LLY.md",
+   "dossiers/MCK.md",
+   "dossiers/MVST.md",
+   "dossiers/NCNO.md",
+   "dossiers/NFLX.md",
+   "dossiers/NKE.md",
+   "dossiers/ORKA.md",
+   "dossiers/PARR.md",
+   "dossiers/ROST.md",
+   "dossiers/SMPL.md",
+   "dossiers/TECX.md",
+   "dossiers/TGT.md",
+   "dossiers/TJX.md",
+   "dossiers/UBER.md",
+   "dossiers/V.md",
+   "dossiers/VITL.md",
+   "dossiers/VRRM.md",
+   "dossiers/WERN.md",
+   "dossiers/WLK.md"
+  ],
+  "files": 279,
+  "only_base": [],
+  "only_head": [],
+  "pr_edits": [
+   "frontend/dossiers/AMZN.json",
+   "frontend/dossiers/AMZN.md",
+   "frontend/dossiers/BRBR.json",
+   "frontend/dossiers/BRBR.md",
+   "frontend/dossiers/BURL.json",
+   "frontend/dossiers/BURL.md",
+   "frontend/dossiers/CNXC.json",
+   "frontend/dossiers/CNXC.md",
+   "frontend/dossiers/EPAM.json",
+   "frontend/dossiers/EPAM.md",
+   "frontend/dossiers/FUBO.json",
+   "frontend/dossiers/FUBO.md",
+   "frontend/dossiers/GOOGL.json",
+   "frontend/dossiers/GOOGL.md",
+   "frontend/dossiers/IT.json",
+   "frontend/dossiers/IT.md",
+   "frontend/dossiers/LLY.json",
+   "frontend/dossiers/LLY.md",
+   "frontend/dossiers/MCK.json",
+   "frontend/dossiers/MCK.md",
+   "frontend/dossiers/MVST.json",
+   "frontend/dossiers/MVST.md",
+   "frontend/dossiers/NCNO.json",
+   "frontend/dossiers/NCNO.md",
+   "frontend/dossiers/NFLX.json",
+   "frontend/dossiers/NFLX.md",
+   "frontend/dossiers/NKE.json",
+   "frontend/dossiers/NKE.md",
+   "frontend/dossiers/ORKA.json",
+   "frontend/dossiers/ORKA.md",
+   "frontend/dossiers/PARR.json",
+   "frontend/dossiers/PARR.md",
+   "frontend/dossiers/ROST.json",
+   "frontend/dossiers/ROST.md",
+   "frontend/dossiers/SMPL.json",
+   "frontend/dossiers/SMPL.md",
+   "frontend/dossiers/TECX.json",
+   "frontend/dossiers/TECX.md",
+   "frontend/dossiers/TGT.json",
+   "frontend/dossiers/TGT.md",
+   "frontend/dossiers/TJX.json",
+   "frontend/dossiers/TJX.md",
+   "frontend/dossiers/UBER.json",
+   "frontend/dossiers/UBER.md",
+   "frontend/dossiers/V.json",
+   "frontend/dossiers/V.md",
+   "frontend/dossiers/VITL.json",
+   "frontend/dossiers/VITL.md",
+   "frontend/dossiers/VRRM.json",
+   "frontend/dossiers/VRRM.md",
+   "frontend/dossiers/WERN.json",
+   "frontend/dossiers/WERN.md",
+   "frontend/dossiers/WLK.json",
+   "frontend/dossiers/WLK.md",
+   "frontend/views/shared/dossier.js"
+  ]
+ },
+ "page_reach": [
+  "data/dossiers/AMZN/dossier.json",
+  "data/dossiers/AMZN/dossier.md",
+  "data/dossiers/BRBR/dossier.json",
+  "data/dossiers/BRBR/dossier.md",
+  "data/dossiers/BURL/dossier.json",
+  "data/dossiers/BURL/dossier.md",
+  "data/dossiers/CNXC/dossier.json",
+  "data/dossiers/CNXC/dossier.md",
+  "data/dossiers/EPAM/dossier.json",
+  "data/dossiers/EPAM/dossier.md",
+  "data/dossiers/FUBO/dossier.json",
+  "data/dossiers/FUBO/dossier.md",
+  "data/dossiers/GOOGL/dossier.json",
+  "data/dossiers/GOOGL/dossier.md",
+  "data/dossiers/IT/dossier.json",
+  "data/dossiers/IT/dossier.md",
+  "data/dossiers/LLY/dossier.json",
+  "data/dossiers/LLY/dossier.md",
+  "data/dossiers/MCK/dossier.json",
+  "data/dossiers/MCK/dossier.md",
+  "data/dossiers/MVST/dossier.json",
+  "data/dossiers/MVST/dossier.md",
+  "data/dossiers/NCNO/dossier.json",
+  "data/dossiers/NCNO/dossier.md",
+  "data/dossiers/NFLX/dossier.json",
+  "data/dossiers/NFLX/dossier.md",
+  "data/dossiers/NKE/dossier.json",
+  "data/dossiers/NKE/dossier.md",
+  "data/dossiers/ORKA/dossier.json",
+  "data/dossiers/ORKA/dossier.md",
+  "data/dossiers/PARR/dossier.json",
+  "data/dossiers/PARR/dossier.md",
+  "data/dossiers/ROST/dossier.json",
+  "data/dossiers/ROST/dossier.md",
+  "data/dossiers/SMPL/dossier.json",
+  "data/dossiers/SMPL/dossier.md",
+  "data/dossiers/TECX/dossier.json",
+  "data/dossiers/TECX/dossier.md",
+  "data/dossiers/TGT/dossier.json",
+  "data/dossiers/TGT/dossier.md",
+  "data/dossiers/TJX/dossier.json",
+  "data/dossiers/TJX/dossier.md",
+  "data/dossiers/UBER/dossier.json",
+  "data/dossiers/UBER/dossier.md",
+  "data/dossiers/V/dossier.json",
+  "data/dossiers/V/dossier.md",
+  "data/dossiers/VITL/dossier.json",
+  "data/dossiers/VITL/dossier.md",
+  "data/dossiers/VRRM/dossier.json",
+  "data/dossiers/VRRM/dossier.md",
+  "data/dossiers/WERN/dossier.json",
+  "data/dossiers/WERN/dossier.md",
+  "data/dossiers/WLK/dossier.json",
+  "data/dossiers/WLK/dossier.md",
+  "vinci/dossier/capital_allocation.py",
+  "vinci/dossier/extraction_version.py",
+  "vinci/dossier/refresh.py",
+  "vinci/dossier/render.py",
+  "vinci/dossier/schemas.py",
+  "vinci/dossier/synthesis.py"
+ ],
+ "pages": {
+  "built": true,
+  "how": {
+   "AMZN": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "BRBR": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "BURL": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "CNXC": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "EPAM": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "FUBO": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "GOOGL": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "IT": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "LLY": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "MCK": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "MVST": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "NCNO": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "NFLX": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "NKE": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "ORKA": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "PARR": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "ROST": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "SMPL": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "TECX": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "TGT": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "TJX": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "UBER": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "V": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "VITL": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "VRRM": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "WERN": {
+    "base": "resumed",
+    "head": "resumed"
+   },
+   "WLK": {
+    "base": "resumed",
+    "head": "resumed"
+   }
+  },
+  "results": [
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 7
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 561,
+     "head": 561
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "b8d5f72aa4c1ff9910367bc673fa9cf3dd86565a59e45af99e652685f888b545",
+      "head": "93126e19f2addf385ea6d9d911037b59b475b3b401fe2d3139cfe9288254806a"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "AMZN",
+    "timing": {
+     "base": {
+      "build": 327.55,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.35
+     },
+     "head": {
+      "build": 287.73,
+      "committed_render": 0.07,
+      "render": 0.03,
+      "request": 4.14
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 1
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 396,
+     "head": 396
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "422a7f87353426f3da67454f14ba171d535787df5d0950afac92809d9735a793",
+      "head": "466cf0e9bda4e0351d0c6e4c4719cbf0a7544a988ad0d7d3a0fc209dda55184f"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "BRBR",
+    "timing": {
+     "base": {
+      "build": 21.83,
+      "committed_render": 0.06,
+      "render": 0.14,
+      "request": 9.38
+     },
+     "head": {
+      "build": 23.4,
+      "committed_render": 0.04,
+      "render": 0.12,
+      "request": 6.98
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 10,
+      "head": 10,
+      "moved": 8
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 375,
+     "head": 375
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "fe91b97114299b3f67cc1e628bb2398301625e7e814ae1a31f8902ebc12e4fdd",
+      "head": "c373c982afff814a319eeb24cd6a9ad78f419fa9ab744b4e2b197228409b93f0"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "BURL",
+    "timing": {
+     "base": {
+      "build": 31.0,
+      "committed_render": 0.04,
+      "render": 0.04,
+      "request": 5.02
+     },
+     "head": {
+      "build": 29.35,
+      "committed_render": 0.04,
+      "render": 0.07,
+      "request": 5.32
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 2
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 330,
+     "head": 330
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "b870224afbbbf21b0c46975d01e94531272844e518f13d366c2b53f9210b9081",
+      "head": "d4ff8b45516c5fc30c905b080e52e82dc2d3b669a9b49988a065eae80e71176e"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "CNXC",
+    "timing": {
+     "base": {
+      "build": 24.28,
+      "committed_render": 0.06,
+      "render": 0.23,
+      "request": 7.88
+     },
+     "head": {
+      "build": 27.33,
+      "committed_render": 0.03,
+      "render": 0.03,
+      "request": 5.09
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 304,
+     "head": 304
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "2b7e9f6c5bc703a13d2c555ccbdecb38d3c2086053d6012b307eccf848234c66",
+      "head": "2b7e9f6c5bc703a13d2c555ccbdecb38d3c2086053d6012b307eccf848234c66"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "EPAM",
+    "timing": {
+     "base": {
+      "build": 44.18,
+      "committed_render": 0.03,
+      "render": 0.02,
+      "request": 4.83
+     },
+     "head": {
+      "build": 40.03,
+      "committed_render": 0.05,
+      "render": 0.01,
+      "request": 4.68
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 2
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 205,
+     "head": 205
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "71b91c3297dd8e9886dcf640271aecbfa04f4b105cd046582bbcc1544d3fde80",
+      "head": "4f48c9d6c118036596f31e676a031df32c3fa5315f15208e548efff546465cc4"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "FUBO",
+    "timing": {
+     "base": {
+      "build": 22.0,
+      "committed_render": 0.1,
+      "render": 0.03,
+      "request": 9.26
+     },
+     "head": {
+      "build": 21.85,
+      "committed_render": 0.04,
+      "render": 0.03,
+      "request": 6.05
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 4
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 1076,
+     "head": 1076
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "47d1f65b36c18f68e3f7a4eb88ea2843201838152270a45b8bd3b925a924630a",
+      "head": "0e9fff3af21b7f36285d2ecb5b61e6f71d4bd9bc65f218cefc6ff609bf4e10e6"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "GOOGL",
+    "timing": {
+     "base": {
+      "build": 255.99,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 3.64
+     },
+     "head": {
+      "build": 230.08,
+      "committed_render": 0.06,
+      "render": 0.02,
+      "request": 5.92
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 1037,
+     "head": 1037
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "2a44d3810389077eb90e3311825bb1168a64c25e6ba8ff02e3aa58434e862235",
+      "head": "2a44d3810389077eb90e3311825bb1168a64c25e6ba8ff02e3aa58434e862235"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "IT",
+    "timing": {
+     "base": {
+      "build": 21.13,
+      "committed_render": 0.03,
+      "render": 0.03,
+      "request": 5.38
+     },
+     "head": {
+      "build": 19.59,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 5.57
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 856,
+     "head": 856
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "5329c3b8a9cc3051060285c1100f727b0e68243641dc6b825d71a0b9132b6e7e",
+      "head": "5329c3b8a9cc3051060285c1100f727b0e68243641dc6b825d71a0b9132b6e7e"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "LLY",
+    "timing": {
+     "base": {
+      "build": 23.43,
+      "committed_render": 0.04,
+      "render": 0.02,
+      "request": 5.29
+     },
+     "head": {
+      "build": 22.46,
+      "committed_render": 0.05,
+      "render": 0.04,
+      "request": 4.87
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "built_md": {
+     "added": 125,
+     "identical": false,
+     "lines": [
+      "-- **Impairment headroom \u2014 goodwill + intangibles remaining:** $12,950.0M [12]",
+      "-- **Goodwill:** $11,272.0M [12]",
+      "-- **Intangibles (net):** $1,678.0M [13]",
+      "+- **Impairment headroom \u2014 goodwill + intangibles remaining, as at 2026-09-30:** $15,214.0M [12]",
+      "+- **Goodwill:** $11,272.0M [13]",
+      "+- **Intangibles (net):** $3,942.0M [14]",
+      "-- **Buyback \u2014 cash:** $3,424.0M [14]",
+      "+- **Buyback \u2014 cash:** $3,424.0M [15]",
+      "-- **Acquisition consideration:** $4,634.0M [15]",
+      "-- **Registered offering pipeline (equity/debt not distinguished):** shelf registrations 1 (S-3ASR, last 2026-02-05); prospectus supplements 4 (424B3/424B5, last 2025-05-22) \u2014 3y window to 2026-10-16 [16]",
+      "-- **Schedule 13D/G filing activity:** no 13D on file \u00b7 Schedule 13G filings 5 (SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-04-30) \u2014 3y window to 2026-10-16 [17]",
+      "-- **Stock-based compensation:** stock-based compensation $69.0M = 0.0% of revenue ($208,357.0M, FY 2017-04-01\u21922018-03-31) [18]",
+      "+- **Acquisition consideration:** $4,634.0M [16]",
+      "+- **Registered offering pipeline (equity/debt not distinguished):** shelf registrations 1 (S-3ASR, last 2026-02-05); prospectus supplements 4 (424B3/424B5, last 2025-05-22) \u2014 3y window to 2026-10-16 [17]",
+      "+- **Schedule 13D/G filing activity:** no 13D on file \u00b7 Schedule 13G filings 5 (SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-04-30) \u2014 3y window to 2026-10-16 [18]",
+      "+- **Stock-based compensation:** stock-based compensation $69.0M = 0.0% of revenue ($208,357.0M, FY 2017-04-01\u21922018-03-31) [19]",
+      "-- **Peer acquired-asset intensity \u2014 goodwill + intangibles** \u2014 [19]  <!-- ds-table -->",
+      "+- **Peer acquired-asset intensity \u2014 goodwill + intangibles** \u2014 [20]  <!-- ds-table -->",
+      "-| **MCK** | **124,686** | **12,950** | **92,323** | **14%** | **10%** | **\u2014** |",
+      "+| **MCK** | **124,686** | **15,214** | **92,323** | **16%** | **12%** | **\u2014** |",
+      "-| BHIC | 64 | 0 | 2 | 5% | 0% | \u2014 |",
+      "+| BHIC | 64 | 0 | 2 | 5% | 0% | intangibles only |",
+      "-- **Median \u2014 all peers (n=7):** 45% of assets \u00b7 53% of market cap",
+      "-- **Median \u2014 peers \u2265 $1,000M market cap (n=3):** 27% of assets \u00b7 33% of market cap",
+      "+- **Median \u2014 all peers:** 49% of assets \u00b7 139% of market cap (median of 6 of 9 peers)",
+      "+- **Median \u2014 peers \u2265 $1,000M market cap:** 27% of assets \u00b7 33% of market cap (median of 3 of 4 peers)",
+      "-- **Peer write-down history \u2014 did they MARK DOWN what they carry? (trailing 5 fiscal years)** \u2014 [20]  <!-- ds-table -->",
+      "+- **Peer write-down history \u2014 did they MARK DOWN what they carry? (trailing 5 fiscal years)** \u2014 [21]  <!-- ds-table -->",
+      "-- **Base rate \u2014 3 of 3 large peers ASSESSED over the window took a charge**, median 5% of acquired assets among those that did. The denominator counts only peers with an annual observation in the window \u2014 a name with none was not measured, and is not a clean year.",
+      "+- **Base rate \u2014 3 of 3 large peers ASSESSED over the window took a charge**, median 5% of acquired assets among those that did (median of 3 of 3 peers). The denominator counts only peers with an annual observation in the window \u2014 a name with none was not measured, and is not a clean year.",
+      "-- **vs own trading history:** EV/EBITDA (TEV/LTM) 17.3x as-of 2026-11-04 \u2014 trailing range 7.3\u201317.2x (median 10.2x) over 39 closes \u2192 100%ile \u2192 near-ceiling; P/LTM EPS 28.5x [21]",
+      "-- **vs peers:** EV/EBITDA 16.2x vs peer median 9.3x (+74%); P/E 27.4x vs peer median 21.9x (+25%) [22]",
+      "-- **Forward multiples:** P/FY27E (normalized) 23.7x (EPS $44.66); P/FY27E (GAAP) 27.1x (EPS $39.09); P/FY28E (normalized) 20.9x (EPS $50.63); P/FY28E (GAAP) 21.6x (EPS $49.02) \u2014 at $1,059.37 as-of 2026-11-09 [23]",
+      "-- **Multiple basis \u2014 read before the level:** rent is 7.9% of EBITDA (FY ending 2026-03-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 1.9% EBITDA margin against 1.8% reported. R1's earnings are reported EBITDA, after rent; on that basis \u2014 TEV less operating leases over reported EBITDA \u2014 the median is 10.5x over 38 quarters (current 17.3x at the 2026-11-04 filing; 92% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [24]",
+      "+- **vs own trading history:** EV/EBITDA (TEV/LTM) 17.3x as-of 2026-11-04 \u2014 trailing range 7.3\u201317.2x (median 10.2x) over 39 closes \u2192 100%ile \u2192 near-ceiling; P/LTM EPS 28.5x [22]",
+      "+- **vs peers:** EV/EBITDA 16.2x vs peer median 9.3x (+74%); P/E 27.4x vs peer median 21.9x (+25%) [23]",
+      "+- **Forward multiples:** P/FY27E (normalized) 23.7x (EPS $44.66); P/FY27E (GAAP) 27.1x (EPS $39.09); P/FY28E (normalized) 20.9x (EPS $50.63); P/FY28E (GAAP) 21.6x (EPS $49.02) \u2014 at $1,059.37 as-of 2026-11-09 [24]",
+      "+- **Multiple basis \u2014 read before the level:** rent is 7.9% of EBITDA (FY ending 2026-03-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 1.9% EBITDA margin against 1.8% reported. R1's earnings are reported EBITDA, after rent; on that basis \u2014 TEV less operating leases over reported EBITDA \u2014 the median is 10.5x over 38 quarters (current 17.3x at the 2026-11-04 filing; 92% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [25]",
+      "-- **Comparability:** market caps span $5M\u2013$67.6B (14685x); the name is $124.7B \u2192 HETEROGENEOUS \u2014 low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [25]",
+      "-- **The street, for contrast (target \u00b7 ratings):** Target price: mean $1,026.07, median $1,018.50, high/low 1,207.00/845.00, N 14/14; Ratings: Buy 10, Outperform 3, Hold 3, Underperform 0, Sell 0, No Opinion 0  [data \u2265 2026-11-04 \u00b7 export date unverified] [26]",
+      "+- **Comparability:** market caps span $5M\u2013$67.6B (14685x); the name is $124.7B \u2192 HETEROGENEOUS \u2014 low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [26]",
+      "+- **The street, for contrast (target \u00b7 ratings):** Target price: mean $1,026.07, median $1,018.50, high/low 1,207.00/845.00, N 14/14; Ratings: Buy 10, Outperform 3, Hold 3, Underperform 0, Sell 0, No Opinion 0  [data \u2265 2026-11-04 \u00b7 export date unverified] [27]",
+      "-- **Customers:** 8 mapped client relationship(s) \u2014 roster in JSON; concentration %, when disclosed, is the 10-Q read above [27]",
+      "+- **Customers:** 8 mapped client relationship(s) \u2014 roster in JSON; concentration %, when disclosed, is the 10-Q read above [28]",
+      "-- **1.625% Euro Notes - EUR $578.0M matures** \u2014 ~2026-10-30 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [28]",
+      "-- **Next results print** \u2014 ~2027-02-03 `[cadence-estimate]` \u2014 the next reported quarter against the committed trajectory [29]",
+      "-- **7.65% Debentures Due March 1, 2027 $150.0M matures** \u2014 ~2027-03-01 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [28]",
+      "-- **3.95% Notes Due February 16, 2028 $343.0M matures** \u2014 ~2028-02-16 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [28]",
+      "-- **4.90% Notes Due July 15, 2028 $400.0M matures** \u2014 ~2028-07-15 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [28]",
+      "+- **1.625% Euro Notes - EUR $578.0M matures** \u2014 ~2026-10-30 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [29]",
+      "+- **Next results print** \u2014 ~2027-02-03 `[cadence-estimate]` \u2014 the next reported quarter against the committed trajectory [30]",
+      "+- **7.65% Debentures Due March 1, 2027 $150.0M matures** \u2014 ~2027-03-01 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [29]",
+      "+- **3.95% Notes Due February 16, 2028 $343.0M matures** \u2014 ~2028-02-16 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [29]",
+      "+- **4.90% Notes Due July 15, 2028 $400.0M matures** \u2014 ~2028-07-15 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [29]",
+      "-- **Cross-sectional (vs peers \u2014 the edge):** EV/EBITDA 16.2x vs peer median 9.3x (+74%); P/E 27.4x vs peer median 21.9x (+25%) [22]",
+      "+- **Cross-sectional (vs peers \u2014 the edge):** EV/EBITDA 16.2x vs peer median 9.3x (+74%); P/E 27.4x vs peer median 21.9x (+25%) [23]",
+      "-- **Price-implied levels (at each stated multiple)** \u2014 [30]  <!-- ds-table -->",
+      "+- **Price-implied levels (at each stated multiple)** \u2014 [31]  <!-- ds-table -->",
+      "-- **Own-history range position:** EV/EBITDA (TEV/LTM) 17.3x as-of 2026-11-04 \u2014 trailing range 7.3\u201317.2x (median 10.2x) over 39 closes \u2192 100%ile \u2192 near-ceiling; P/LTM EPS 28.5x [21]",
+      "+- **Own-history range position:** EV/EBITDA (TEV/LTM) 17.3x as-of 2026-11-04 \u2014 trailing range 7.3\u201317.2x (median 10.2x) over 39 closes \u2192 100%ile \u2192 near-ceiling; P/LTM EPS 28.5x [22]",
+      "-- **Peer set (roster \u00b7 caps \u00b7 business)** \u2014 [31]  <!-- ds-table -->",
+      "+- **Peer set (roster \u00b7 caps \u00b7 business)** \u2014 [32]  <!-- ds-table -->",
+      "-- **Comparability (confidence gate):** market caps span $5M\u2013$67.6B (14685x); the name is $124.7B \u2192 HETEROGENEOUS \u2014 low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [25]",
+      "-- **Forward multiples (name vs peer Low/Median/Mean/High \u00b7 NTM)** \u2014 [32]  <!-- ds-table -->",
+      "+- **Comparability (confidence gate):** market caps span $5M\u2013$67.6B (14685x); the name is $124.7B \u2192 HETEROGENEOUS \u2014 low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [26]",
+      "+- **Forward multiples (name vs peer Low/Median/Mean/High \u00b7 NTM)** \u2014 [33]  <!-- ds-table -->",
+      "-- **Per-peer grid (cap \u00b7 valuation \u00b7 margin \u00b7 growth \u00b7 leverage \u2014 name vs peers)** \u2014 [33]  <!-- ds-table -->",
+      "+- **Per-peer grid (cap \u00b7 valuation \u00b7 margin \u00b7 growth \u00b7 leverage \u2014 name vs peers)** \u2014 [34]  <!-- ds-table -->",
+      "-- **Trajectory ($M \u00b7 % \u2014 per period)** \u2014 [34]  <!-- ds-table -->",
+      "+- **Trajectory ($M \u00b7 % \u2014 per period)** \u2014 [35]  <!-- ds-table -->",
+      "-- **Share-count trend:** buying back (trailing ~1.7y): 125,326,376 (2025-01-31) \u2192 115,456,664 (2026-10-30), -7.9% [35]",
+      "-- **Non-operating earnings:** no material non-operating item in the four quarters to 2026-09-30 \u2014 in the latest, $-42M against $1,562M pre-tax [36]",
+      "-- **Return ratios \u2014 per fiscal period** \u2014 [37]  <!-- ds-table -->",
+      "+- **Share-count trend:** buying back (trailing ~1.7y): 125,326,376 (2025-01-31) \u2192 115,456,664 (2026-10-30), -7.9% [36]",
+      "+- **Non-operating earnings:** no material non-operating item in the four quarters to 2026-09-30 \u2014 in the latest, $-42M against $1,562M pre-tax [37]",
+      "+- **Return ratios \u2014 per fiscal period** \u2014 [38]  <!-- ds-table -->",
+      "-- **Horizon read (FQ \u2014 next-2Q revision breadth)** \u2014 [38]:",
+      "+- **Horizon read (FQ \u2014 next-2Q revision breadth)** \u2014 [39]:",
+      "-- **Acceleration read (monthly consensus path):** FY 2027 EPS Normalized: 43.4 (12m) \u2192 44.0 (9m) \u2192 44.1 (6m) \u2192 44.3 (3m) \u2192 44.6 (2m) \u2192 44.6 (1m) \u2192 44.7 (latest); net +3% (12m\u2192latest) | FY 2027 EPS (GAAP): 40.8 (12m) \u2192 40.7 (9m) \u2192 40.7 (6m) \u2192 42.3 (3m) \u2192 39.1 (2m) \u2192 39.0 (1m) \u2192 39.1 (latest); net -4% (12m\u2192latest) | FY 2027 Revenue: 442,666.0 (12m) \u2192 442,638.8 (9m) \u2192 442,173.9 (6m) \u2192 431,192.6 (3m) \u2192 431,909.9 (2m) \u2192 431,838.5 (1m) \u2192 431,854.3 (latest); net -2% (12m\u2192latest) | FY 2027 EBITDA: 7,305.9 (12m) \u2192 7,361.1 (9m) \u2192 7,382.8 (6m) \u2192 7,510.5 (3m) \u2192 7,538.8 (2m) \u2192 7,520.2 (1m) \u2192 7,495.5 (latest); net +3% (12m\u2192latest) | FY 2027 EBIT: 6,824.4 (12m) \u2192 6,882.9 (9m) \u2192 6,851.3 (6m) \u2192 7,038.5 (3m) \u2192 7,063.2 (2m) \u2192 7,049.9 (1m) \u2192 6,989.2 (latest); net +2% (12m\u2192latest) | FY 2027 Interest Expense: -255.3 (12m) \u2192 -229.6 (9m) \u2192 -217.0 (6m) \u2192 -402.2 (3m) \u2192 -395.7 (2m) \u2192 -395.7 (1m) \u2192 -395.2 (latest); worsening (magnitude away from zero) (12m\u2192latest) | FY 2027 EBT (GAAP): 6,251.0 (12m) \u2192 6,623.0 (9m) \u2192 6,849.0 (3m) \u2192 7,061.0 (2m) \u2192 7,061.0 (1m) \u2192 7,061.0 (latest); net +13% (12m\u2192latest) [6m n/a] | FY 2027 Net Income (Excl. Excep): 5,231.7 (12m) \u2192 5,306.4 (9m) \u2192 5,323.6 (6m) \u2192 5,218.3 (3m) \u2192 5,240.7 (2m) \u2192 5,242.3 (1m) \u2192 5,251.7 (latest); net +0% (12m\u2192latest) | FY 2027 Net Income (GAAP): 4,839.2 (12m) \u2192 4,883.5 (9m) \u2192 4,892.4 (6m) \u2192 4,990.5 (3m) \u2192 4,690.5 (2m) \u2192 4,690.5 (1m) \u2192 4,867.8 (latest); net +1% (12m\u2192latest)  [data \u2265 2026-11-04 \u00b7 export date unverified] [39]",
+      "-- **Cross-name anchor (NTM forward-multiple ladder)** \u2014 [40]:",
+      "+- **Acceleration read (monthly consensus path):** FY 2027 EPS Normalized: 43.4 (12m) \u2192 44.0 (9m) \u2192 44.1 (6m) \u2192 44.3 (3m) \u2192 44.6 (2m) \u2192 44.6 (1m) \u2192 44.7 (latest); net +3% (12m\u2192latest) | FY 2027 EPS (GAAP): 40.8 (12m) \u2192 40.7 (9m) \u2192 40.7 (6m) \u2192 42.3 (3m) \u2192 39.1 (2m) \u2192 39.0 (1m) \u2192 39.1 (latest); net -4% (12m\u2192latest) | FY 2027 Revenue: 442,666.0 (12m) \u2192 442,638.8 (9m) \u2192 442,173.9 (6m) \u2192 431,192.6 (3m) \u2192 431,909.9 (2m) \u2192 431,838.5 (1m) \u2192 431,854.3 (latest); net -2% (12m\u2192latest) | FY 2027 EBITDA: 7,305.9 (12m) \u2192 7,361.1 (9m) \u2192 7,382.8 (6m) \u2192 7,510.5 (3m) \u2192 7,538.8 (2m) \u2192 7,520.2 (1m) \u2192 7,495.5 (latest); net +3% (12m\u2192latest) | FY 2027 EBIT: 6,824.4 (12m) \u2192 6,882.9 (9m) \u2192 6,851.3 (6m) \u2192 7,038.5 (3m) \u2192 7,063.2 (2m) \u2192 7,049.9 (1m) \u2192 6,989.2 (latest); net +2% (12m\u2192latest) | FY 2027 Interest Expense: -255.3 (12m) \u2192 -229.6 (9m) \u2192 -217.0 (6m) \u2192 -402.2 (3m) \u2192 -395.7 (2m) \u2192 -395.7 (1m) \u2192 -395.2 (latest); worsening (magnitude away from zero) (12m\u2192latest) | FY 2027 EBT (GAAP): 6,251.0 (12m) \u2192 6,623.0 (9m) \u2192 6,849.0 (3m) \u2192 7,061.0 (2m) \u2192 7,061.0 (1m) \u2192 7,061.0 (latest); net +13% (12m\u2192latest) [6m n/a] | FY 2027 Net Income (Excl. Excep): 5,231.7 (12m) \u2192 5,306.4 (9m) \u2192 5,323.6 (6m) \u2192 5,218.3 (3m) \u2192 5,240.7 (2m) \u2192 5,242.3 (1m) \u2192 5,251.7 (latest); net +0% (12m\u2192latest) | FY 2027 Net Income (GAAP): 4,839.2 (12m) \u2192 4,883.5 (9m) \u2192 4,892.4 (6m) \u2192 4,990.5 (3m) \u2192 4,690.5 (2m) \u2192 4,690.5 (1m) \u2192 4,867.8 (latest); net +1% (12m\u2192latest)  [data \u2265 2026-11-04 \u00b7 export date unverified] [40]",
+      "+- **Cross-name anchor (NTM forward-multiple ladder)** \u2014 [41]:",
+      "-- **Guidance bridge (latest guide + sign-aware delivery track-record)** \u2014 [41]  <!-- ds-table -->",
+      "+- **Guidance bridge (latest guide + sign-aware delivery track-record)** \u2014 [42]  <!-- ds-table -->",
+      "-- **Consensus stats (target + ratings):** Target price: mean $1,026.07, median $1,018.50, high/low 1,207.00/845.00, N 14/14; Ratings: Buy 10, Outperform 3, Hold 3, Underperform 0, Sell 0, No Opinion 0  [data \u2265 2026-11-04 \u00b7 export date unverified] [26]",
+      "-- **Revision-event log (250 events \u00b7 22 broker-days)** \u2014 [42]  <!-- ds-table -->",
+      "+- **Consensus stats (target + ratings):** Target price: mean $1,026.07, median $1,018.50, high/low 1,207.00/845.00, N 14/14; Ratings: Buy 10, Outperform 3, Hold 3, Underperform 0, Sell 0, No Opinion 0  [data \u2265 2026-11-04 \u00b7 export date unverified] [27]",
+      "+- **Revision-event log (250 events \u00b7 22 broker-days)** \u2014 [43]  <!-- ds-table -->",
+      "-- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2005 +0%, FY2006 -1%, FY2007 +1%, FY2008 +1%, FY2009 -5%, FY2010 +5%, FY2011 -5%, FY2012 +0%, FY2013 -17%, FY2014 -8%, FY2015 -21%, FY2016 -4%, FY2017 +7%, FY2018 -94%, FY2019 -98%, FY2020 +89%, FY2021 +0%, FY2022 -18%, FY2023 -1%, FY2024 +2%, FY2025 +3%, FY2026 +9%; Revenue surprise: FY2000 -2%, FY2001 +0%, FY2002 +0%, FY2003 +0%, FY2004 +0%, FY2005 -4%, FY2006 +0%, FY2007 +2%, FY2008 -1%, FY2009 +8%, FY2010 -1%, FY2011 +0%, FY2012 +1%, FY2013 -1%, FY2014 +2%, FY2015 -1%, FY2016 +0%, FY2017 -0%, FY2018 +0%, FY2019 -1%, FY2020 +1%, FY2021 -1%, FY2022 +1%, FY2023 +0%, FY2024 -1%, FY2025 -1%, FY2026 -1% (GAAP-EPS basis; +beat / \u2212miss) [43]",
+      "+- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2005 +0%, FY2006 -1%, FY2007 +1%, FY2008 +1%, FY2009 -5%, FY2010 +5%, FY2011 -5%, FY2012 +0%, FY2013 -17%, FY2014 -8%, FY2015 -21%, FY2016 -4%, FY2017 +7%, FY2018 -94%, FY2019 -98%, FY2020 +89%, FY2021 +0%, FY2022 -18%, FY2023 -1%, FY2024 +2%, FY2025 +3%, FY2026 +9%; Revenue surprise: FY2000 -2%, FY2001 +0%, FY2002 +0%, FY2003 +0%, FY2004 +0%, FY2005 -4%, FY2006 +0%, FY2007 +2%, FY2008 -1%, FY2009 +8%, FY2010 -1%, FY2011 +0%, FY2012 +1%, FY2013 -1%, FY2014 +2%, FY2015 -1%, FY2016 +0%, FY2017 -0%, FY2018 +0%, FY2019 -1%, FY2020 +1%, FY2021 -1%, FY2022 +1%, FY2023 +0%, FY2024 -1%, FY2025 -1%, FY2026 -1% (GAAP-EPS basis; +beat / \u2212miss) [44]",
+      "-- **Total debt / EBITDA vs peers:** name 1.4x vs peer median 3.2x (comps TOTAL-debt/EBITDA basis) [44]",
+      "-- **Net debt / OCF:** 0.6x [45]",
+      "-- **Interest coverage:** 24.0x [46]",
+      "-- **Self-funding:** self-funding: YES \u2014 latest-Q OCF > 0 AND LTM FCF > 0 [47]",
+      "-- **Credit health \u2014 relative to each peer group** \u2014 [48]  <!-- ds-table -->",
+      "+- **Total debt / EBITDA vs peers:** name 1.4x vs peer median 3.2x (comps TOTAL-debt/EBITDA basis) [45]",
+      "+- **Net debt / OCF:** 0.6x [46]",
+      "+- **Interest coverage:** 24.0x [47]",
+      "+- **Self-funding:** self-funding: YES \u2014 latest-Q OCF > 0 AND LTM FCF > 0 [48]",
+      "+- **Credit health \u2014 relative to each peer group** \u2014 [49]  <!-- ds-table -->",
+      "-- **Free cash flow ($M):** 7455.6 \u2014 basis: CIQ 'Levered Free Cash Flow' \u2014 on the same sheet and period [LTM 12 months Sep-30-2026], CFO $7,503.0M \u2212 capex $396.0M = $7,107.0M, so the two land within 5% here. They are still different measures and diverge on 13 of 14 committed names. [49]",
+      "-- **Debt schedule vintage:** the debt schedule is 161d old (source filed 2026-05-08); no Item 1.02 (termination of a material agreement) has been filed since [50]",
+      "-- **Live instruments \u2014 near-dated (\u226412m + 2027) \u2014 panel A 2026 filed May-08-2026** \u2014 [51]  <!-- ds-table -->",
+      "+- **Free cash flow ($M):** 7455.6 \u2014 basis: CIQ 'Levered Free Cash Flow' \u2014 on the same sheet and period [LTM 12 months Sep-30-2026], CFO $7,503.0M \u2212 capex $396.0M = $7,107.0M, so the two land within 5% here. They are still different measures and diverge on 13 of 14 committed names. [50]",
+      "+- **Debt schedule vintage:** the debt schedule is 161d old (source filed 2026-05-08); no Item 1.02 (termination of a material agreement) has been filed since [51]",
+      "+- **Live instruments \u2014 near-dated (\u226412m + 2027) \u2014 panel A 2026 filed May-08-2026** \u2014 [52]  <!-- ds-table -->",
+      "-- **Going-concern language:** none in latest 10-Q \u2014 checked, absent [52]",
+      "-- **EBITDA-basis triangulation (each leverage basis-labeled):** [53]",
+      "+- **Going-concern language:** none in latest 10-Q \u2014 checked, absent [53]",
+      "+- **EBITDA-basis triangulation (each leverage basis-labeled):** [54]",
+      "-- **Quarterly financials** \u2014 [54]  <!-- ds-table -->",
+      "+- **Quarterly financials** \u2014 [55]  <!-- ds-table -->",
+      "-- **Posture:** as of Q2-27 ($M): cash & ST inv 6,528; total debt 11,161; net debt 4,633; equity -3,954; net working capital -7,711; net-debt/EBITDA \u2192 see the Leverage & survival block (not recomputed) [55]",
+      "-- **Coherence \u2014 BS vs implied-valuation bridge:** cash BS $6,528M / bridge $6,528M; debt BS $11,161M / bridge $11,161M \u2014 reconcile with the implied-valuation bridge. [56]",
+      "+- **Posture:** as of Q2-27 ($M): cash & ST inv 6,528; total debt 11,161; net debt 4,633; equity -3,954; net working capital -7,711; net-debt/EBITDA \u2192 see the Leverage & survival block (not recomputed) [56]",
+      "+- **Coherence \u2014 BS vs implied-valuation bridge:** cash BS $6,528M / bridge $6,528M; debt BS $11,161M / bridge $11,161M \u2014 reconcile with the implied-valuation bridge. [57]",
+      "-- **Capital structure \u2014 full instrument panel A 2026 filed May-08-2026** \u2014 [51]  <!-- ds-table -->",
+      "+- **Capital structure \u2014 full instrument panel A 2026 filed May-08-2026** \u2014 [52]  <!-- ds-table -->",
+      "-- **8-Ks at instrument maturities:** 8-K at maturity 2026-04-24: filed 2026-04-28 [0000927653-26-000053] 1.01 Entry into a Material Definitive Agreement, 1.02 Termination of a Material Definitive Agreement, 2.03 Item 2.03, 9.01 Financial Statements and Exhibits \u2014 read for resolution; 8-K at maturity 2026-08-15: filed 2026-08-05 [0000927653-26-000232] 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits \u2014 read for resolution [57]",
+      "-- **Covenant / contract pointers (CIK-verified execution filings)** \u2014 [58]  <!-- ds-table -->",
+      "+- **8-Ks at instrument maturities:** 8-K at maturity 2026-04-24: filed 2026-04-28 [0000927653-26-000053] 1.01 Entry into a Material Definitive Agreement, 1.02 Termination of a Material Definitive Agreement, 2.03 Item 2.03, 9.01 Financial Statements and Exhibits \u2014 read for resolution; 8-K at maturity 2026-08-15: filed 2026-08-05 [0000927653-26-000232] 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits \u2014 read for resolution [58]",
+      "+- **Covenant / contract pointers (CIK-verified execution filings)** \u2014 [59]  <!-- ds-table -->",
+      "-- **Name market cap ($M) \u2014 the ADJACENT fact to compare against:** 124686.4 [59]",
+      "-- **Bridge (TEV \u2192 equity):** TEV\u2192equity bridge: + cash $6,528.00M, \u2212 total debt $11,161.00M [60]",
+      "-- **Implied equity at peer-median ($M, CIQ)** \u2014 [61]  <!-- ds-table -->",
+      "+- **Name market cap ($M) \u2014 the ADJACENT fact to compare against:** 124686.4 [60]",
+      "+- **Bridge (TEV \u2192 equity):** TEV\u2192equity bridge: + cash $6,528.00M, \u2212 total debt $11,161.00M [61]",
+      "+- **Implied equity at peer-median ($M, CIQ)** \u2014 [62]  <!-- ds-table -->",
+      "-- **Earnings call (transcript pointer \u2014 read the file):** 2 earnings-call transcript(s) on file \u2014 read in full for management posture: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf; McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [62]",
+      "+- **Earnings call (transcript pointer \u2014 read the file):** 2 earnings-call transcript(s) on file \u2014 read in full for management posture: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf; McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [63]",
+      "-- **Insider activity (Form 4):** Open-market buys 0 \u00b7 sells 11 (6 insiders, $23.96M) \u2014 in the last 182 days \u00b7 no purchase in the 3y scanned \u00b7 last sale $0.10M, SVP, Controller & CAO, 2026-09-08 (~1mo ago) \u00b7 largest sale $13.72M, Chief Executive Officer, 2025-07-11 (~15mo ago) \u00b7 grants 27 \u00b7 last filing 2026-09-10 \u00b7 other filings 147 [63]",
+      "-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-10-15): 2.3M \u2192 2.3M sh (+0.5%, rising) \u00b7 2.0% of shares out (EDGAR XBRL) \u00b7 DTC 2.6d \u00b7 recent: 2026-10-15 2.3M \u00b7 2026-09-30 2.3M \u00b7 2026-09-15 2.9M \u00b7 2026-08-31 2.8M [64]",
+      "+- **Insider activity (Form 4):** Open-market buys 0 \u00b7 sells 11 (6 insiders, $23.96M) \u2014 in the last 182 days \u00b7 no purchase in the 3y scanned \u00b7 last sale $0.10M, SVP, Controller & CAO, 2026-09-08 (~1mo ago) \u00b7 largest sale $13.72M, Chief Executive Officer, 2025-07-11 (~15mo ago) \u00b7 grants 27 \u00b7 last filing 2026-09-10 \u00b7 other filings 147 [64]",
+      "+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-10-15): 2.3M \u2192 2.3M sh (+0.5%, rising) \u00b7 2.0% of shares out (EDGAR XBRL) \u00b7 DTC 2.6d \u00b7 recent: 2026-10-15 2.3M \u00b7 2026-09-30 2.3M \u00b7 2026-09-15 2.9M \u00b7 2026-08-31 2.8M [65]",
+      "-- **Wall coherence \u2014 filing \u226412m vs CIQ panel (same window):** wall coherence: UNKNOWN \u2014 filing states no \u226412m figure [65]",
+      "-- **Guide verification \u2014 CIQ guide vs release:** revenue: CIQ 423601.5\u2013439738.7 vs release NO NUMERIC OUTLOOK \u2192 not cross-checked [66]",
+      "+- **Wall coherence \u2014 filing \u226412m vs CIQ panel (same window):** wall coherence: UNKNOWN \u2014 filing states no \u226412m figure [66]",
+      "+- **Guide verification \u2014 CIQ guide vs release:** revenue: CIQ 423601.5\u2013439738.7 vs release NO NUMERIC OUTLOOK \u2192 not cross-checked [67]",
+      "-[12] `EDGAR companyfacts Goodwill (as at 2026-09-30)`",
+      "-[13] `EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2012-06-30)`",
+      "-[14] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-04-01\u21922026-09-30, 182d)`",
+      "-[15] `EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2013-04-01\u21922014-03-31, 364d)`",
+      "-[16] `EDGAR filing index (S-3/F-3 \u00b7 424B \u00b7 S-1/F-1 \u00b7 S-4 \u00b7 S-8), window 2023-10-17\u21922026-10-16 \u00b7 latest 0001628280-26-005516`",
+      "-[17] `EDGAR filing index (SC 13D/G + SCHEDULE 13D/G \u2014 both vocabularies), window 2023-10-17\u21922026-10-16 \u00b7 latest 0002100119-26-000832`",
+      "-[18] `EDGAR XBRL ShareBasedCompensation (10-K, 2017-04-01\u21922018-03-31)`",
+      "-[19] `EDGAR companyfacts (Goodwill, intangibles, Assets) \u00b7 peer set + market caps from the CIQ comps grid`",
+      "-[20] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) \u00b7 each row's window ends at that filer's own balance date`",
+      "-[21] `CIQ Financials\u2192Multiples (Close; last col = current, excluded from history)`",
+      "-[22] `CIQ Comparable Analysis\u2192Trading Multiples (name vs peer Median)`",
+      "-[23] `price \u00f7 CIQ consensus EPS, per estimate column of the Financials annual summary`",
+      "-[24] `CIQ Financials (Quarterly)\u2192Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)\u2192Income Statement 'Net Rental Exp.' / 'EBITDA'`",
+      "-[25] `CIQ Comparable Analysis\u2192Financial Data (market-cap dispersion) + Business Description`",
+      "-[26] `CIQ Estimates\u2192Consensus (target stats) + Trends Non-Periodic (ratings)`",
+      "-[27] `CIQ Customers&Suppliers McKesson Corporation NYSE MCK Customers.rtf`",
+      "-[28] `CIQ capital-structure panel (maturity_date)`",
+      "-[29] `cadence: EDGAR submissions (median 91d gap over 43 results 8-Ks; last print 2026-11-04)`",
+      "-[30] `TEV = mcap 124686.4 + net debt 4633.0 (CIQ Comparable Analysis\u2192Financial Data, Latest, data 2026-11-04, exported 2026-11-05) \u2014 simple-TEV basis`",
+      "-[31] `CIQ Comparable Analysis\u2192Financial Data + Business Description (roster + caps + business)`",
+      "-[32] `CIQ Comparable Analysis\u2192Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`",
+      "-[33] `CIQ Comparable Analysis\u2192Financial Data + Operating Statistics (per-peer grid) \u00b7 as-of 2026-11-04`",
+      "-[34] `CIQ Financials\u2192Income Statement (margin % + absolute EBITDA reconciler)`",
+      "-[35] `EDGAR XBRL shares, trailing 2025-01-31..2026-10-30`",
+      "-[36] `EDGAR XBRL pre-tax \u2212 operating, quarters 2025-12-31..2026-09-30; the quarter to 2026-03-31 is DERIVED, the longer period less the shorter on one tag: operating income OperatingIncomeLoss 2025-04-01..2026-03-31 (10-K 0000927653-26-000069, filed 2026-05-08) \u2212 OperatingIncomeLoss 2025-04-01..2025-12-31 (10-Q 0000927653-26-000017, filed 2026-02-04) \u00b7 pre-tax income IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest 2025-04-01..2026-03-31 (10-K 0000927653-26-000069, filed 2026-05-08) \u2212 IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest 2025-04-01..2025-12-31 (10-Q 0000927653-26-000017, filed 2026-02-04) \u00b7 revenue RevenueFromContractWithCustomerExcludingAssessedTax 2025-04-01..2026-03-31 (10-K 0000927653-26-000069, filed 2026-05-08) \u2212 RevenueFromContractWithCustomerExcludingAssessedTax 2025-04-01..2025-12-31 (10-Q 0000927653-26-000017, filed 2026-02-04)`",
+      "-[37] `CIQ Financials\u2192Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`",
+      "-[38] `CIQ Estimates\u2192Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`",
+      "-[39] `CIQ Estimates\u2192Trends (current-FY consensus path; ragged, absent lookbacks n/a)`",
+      "-[40] `CIQ Estimates\u2192Multiples (forward-multiple ladder: NTM + FY26\u2192FY33)`",
+      "-[41] `CIQ Estimates\u2192Guidance (latest guide + sign-aware delivery track-record) \u2014 CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`",
+      "-[42] `CIQ Estimates\u2192Recent Changes (250 broker revision events)  [data \u2265 2026-11-04 \u00b7 export date unverified]`",
+      "-[43] `CIQ Estimates\u2192Surprise (annual)`",
+      "-[44] `CIQ Comparable Analysis\u2192Operating Statistics (LTM Total Debt/EBITDA) \u00b7 as-of 2026-11-04`",
+      "-[45] `CIQ Net Debt $4,633M [FQ2/CQ3 Sep-30-2026] \u00f7 CIQ OCF $7,503M [LTM 12 months Sep-30-2026]`",
+      "-[46] `CIQ Financials\u2192Income Statement EBITDA \u00f7 Interest Expense [LTM 12 months Sep-30-2026]`",
+      "-[47] `EDGAR OCF sign, quarter to 2026-09-30 + CIQ LTM FCF sign`",
+      "-[48] `CIQ Credit Health Panel export\u2192Summary (industry peers; export date not stamped) \u00b7 CIQ Comparable Analysis\u2192Credit Health Panel \u00b7 as-of 2026-11-04`",
+      "-[49] `CIQ Financials\u2192Cash Flow 'Levered Free Cash Flow' [LTM 12 months Sep-30-2026]`",
+      "-[50] `CIQ Capital Structure Details \u2014 A 2026 filed May-08-2026`",
+      "-[51] `CIQ Financials\u2192Capital Structure Details (A 2026 filed May-08-2026)`",
+      "-[52] `10-Q 0000927653-26-000281`",
+      "-[53] `CIQ leverage bases + release LTM adj-EBITDA/margins`",
+      "-[54] `CIQ Financials\u2192Income Statement (quarterly, full exported history)`",
+      "-[55] `CIQ Financials\u2192Balance Sheet (quarterly, Q2-27)`",
+      "-[56] `CIQ Financials\u2192Balance Sheet vs Comparable Analysis\u2192Implied Valuation`",
+      "-[57] `EDGAR 8-K submissions (\u00b110d of instrument maturities)`",
+      "-[58] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`",
+      "-[59] `CIQ Comparable Analysis\u2192Financial Data (name Market Capitalization Latest) \u00b7 as-of 2026-11-04`",
+      "-[60] `CIQ Comparable Analysis\u2192Implied Valuation (cash/debt bridge) \u00b7 as-of 2026-11-04`",
+      "-[61] `CIQ Comparable Analysis\u2192Implied Valuation (= Implied Equity Value, basis \u00d7 Low/Median/Mean/High) \u00b7 as-of 2026-11-04`",
+      "-[62] `CIQ transcript(s): McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf; McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf`",
+      "-[63] `EDGAR Form 4 (latest 0000927653-26-000249; 154 filings in the 1095d scanned; counts over 182d)`",
+      "-[64] `FINRA consolidated short interest (settle 2026-10-15); DTC = 2,298,518 short \u00f7 897,141 screen 90d ADV`",
+      "-[65] `10-Q maturity wall vs CIQ capital panel (same window)`",
+      "-[66] `CIQ revenue guide vs release actual/outlook`",
+      "+[12] `EDGAR companyfacts Goodwill + FiniteLivedIntangibleAssetsNet (as at 2026-09-30)`",
+      "+[13] `EDGAR companyfacts Goodwill (as at 2026-09-30)`",
+      "+[14] `EDGAR companyfacts FiniteLivedIntangibleAssetsNet (as at 2026-09-30)`",
+      "+[15] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-04-01\u21922026-09-30, 182d)`",
+      "+[16] `EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2013-04-01\u21922014-03-31, 364d)`",
+      "+[17] `EDGAR filing index (S-3/F-3 \u00b7 424B \u00b7 S-1/F-1 \u00b7 S-4 \u00b7 S-8), window 2023-10-17\u21922026-10-16 \u00b7 latest 0001628280-26-005516`",
+      "+[18] `EDGAR filing index (SC 13D/G + SCHEDULE 13D/G \u2014 both vocabularies), window 2023-10-17\u21922026-10-16 \u00b7 latest 0002100119-26-000832`",
+      "+[19] `EDGAR XBRL ShareBasedCompensation (10-K, 2017-04-01\u21922018-03-31)`",
+      "+[20] `EDGAR companyfacts (Goodwill, intangibles, Assets) \u00b7 peer set + market caps from the CIQ comps grid`",
+      "+[21] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) \u00b7 each row's window ends at that filer's own balance date`",
+      "+[22] `CIQ Financials\u2192Multiples (Close; last col = current, excluded from history)`",
+      "+[23] `CIQ Comparable Analysis\u2192Trading Multiples (name vs peer Median)`",
+      "+[24] `price \u00f7 CIQ consensus EPS, per estimate column of the Financials annual summary`",
+      "+[25] `CIQ Financials (Quarterly)\u2192Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)\u2192Income Statement 'Net Rental Exp.' / 'EBITDA'`",
+      "+[26] `CIQ Comparable Analysis\u2192Financial Data (market-cap dispersion) + Business Description`",
+      "+[27] `CIQ Estimates\u2192Consensus (target stats) + Trends Non-Periodic (ratings)`",
+      "+[28] `CIQ Customers&Suppliers McKesson Corporation NYSE MCK Customers.rtf`",
+      "+[29] `CIQ capital-structure panel (maturity_date)`",
+      "+[30] `cadence: EDGAR submissions (median 91d gap over 43 results 8-Ks; last print 2026-11-04)`",
+      "+[31] `TEV = mcap 124686.4 + net debt 4633.0 (CIQ Comparable Analysis\u2192Financial Data, Latest, data 2026-11-04, exported 2026-11-05) \u2014 simple-TEV basis`",
+      "+[32] `CIQ Comparable Analysis\u2192Financial Data + Business Description (roster + caps + business)`",
+      "+[33] `CIQ Comparable Analysis\u2192Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`",
+      "+[34] `CIQ Comparable Analysis\u2192Financial Data + Operating Statistics (per-peer grid) \u00b7 as-of 2026-11-04`",
+      "+[35] `CIQ Financials\u2192Income Statement (margin % + absolute EBITDA reconciler)`",
+      "+[36] `EDGAR XBRL shares, trailing 2025-01-31..2026-10-30`",
+      "+[37] `EDGAR XBRL pre-tax \u2212 operating, quarters 2025-12-31..2026-09-30; the quarter to 2026-03-31 is DERIVED, the longer period less the shorter on one tag: operating income OperatingIncomeLoss 2025-04-01..2026-03-31 (10-K 0000927653-26-000069, filed 2026-05-08) \u2212 OperatingIncomeLoss 2025-04-01..2025-12-31 (10-Q 0000927653-26-000017, filed 2026-02-04) \u00b7 pre-tax income IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest 2025-04-01..2026-03-31 (10-K 0000927653-26-000069, filed 2026-05-08) \u2212 IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest 2025-04-01..2025-12-31 (10-Q 0000927653-26-000017, filed 2026-02-04) \u00b7 revenue RevenueFromContractWithCustomerExcludingAssessedTax 2025-04-01..2026-03-31 (10-K 0000927653-26-000069, filed 2026-05-08) \u2212 RevenueFromContractWithCustomerExcludingAssessedTax 2025-04-01..2025-12-31 (10-Q 0000927653-26-000017, filed 2026-02-04)`",
+      "+[38] `CIQ Financials\u2192Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`",
+      "+[39] `CIQ Estimates\u2192Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`",
+      "+[40] `CIQ Estimates\u2192Trends (current-FY consensus path; ragged, absent lookbacks n/a)`",
+      "+[41] `CIQ Estimates\u2192Multiples (forward-multiple ladder: NTM + FY26\u2192FY33)`",
+      "+[42] `CIQ Estimates\u2192Guidance (latest guide + sign-aware delivery track-record) \u2014 CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`",
+      "+[43] `CIQ Estimates\u2192Recent Changes (250 broker revision events)  [data \u2265 2026-11-04 \u00b7 export date unverified]`",
+      "+[44] `CIQ Estimates\u2192Surprise (annual)`",
+      "+[45] `CIQ Comparable Analysis\u2192Operating Statistics (LTM Total Debt/EBITDA) \u00b7 as-of 2026-11-04`",
+      "+[46] `CIQ Net Debt $4,633M [FQ2/CQ3 Sep-30-2026] \u00f7 CIQ OCF $7,503M [LTM 12 months Sep-30-2026]`",
+      "+[47] `CIQ Financials\u2192Income Statement EBITDA \u00f7 Interest Expense [LTM 12 months Sep-30-2026]`",
+      "+[48] `EDGAR OCF sign, quarter to 2026-09-30 + CIQ LTM FCF sign`",
+      "+[49] `CIQ Credit Health Panel export\u2192Summary (industry peers; export date not stamped) \u00b7 CIQ Comparable Analysis\u2192Credit Health Panel \u00b7 as-of 2026-11-04`",
+      "+[50] `CIQ Financials\u2192Cash Flow 'Levered Free Cash Flow' [LTM 12 months Sep-30-2026]`",
+      "+[51] `CIQ Capital Structure Details \u2014 A 2026 filed May-08-2026`",
+      "+[52] `CIQ Financials\u2192Capital Structure Details (A 2026 filed May-08-2026)`",
+      "+[53] `10-Q 0000927653-26-000281`",
+      "+[54] `CIQ leverage bases + release LTM adj-EBITDA/margins`",
+      "+[55] `CIQ Financials\u2192Income Statement (quarterly, full exported history)`",
+      "+[56] `CIQ Financials\u2192Balance Sheet (quarterly, Q2-27)`",
+      "+[57] `CIQ Financials\u2192Balance Sheet vs Comparable Analysis\u2192Implied Valuation`",
+      "+[58] `EDGAR 8-K submissions (\u00b110d of instrument maturities)`",
+      "+[59] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`",
+      "+[60] `CIQ Comparable Analysis\u2192Financial Data (name Market Capitalization Latest) \u00b7 as-of 2026-11-04`",
+      "+[61] `CIQ Comparable Analysis\u2192Implied Valuation (cash/debt bridge) \u00b7 as-of 2026-11-04`",
+      "+[62] `CIQ Comparable Analysis\u2192Implied Valuation (= Implied Equity Value, basis \u00d7 Low/Median/Mean/High) \u00b7 as-of 2026-11-04`",
+      "+[63] `CIQ transcript(s): McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf; McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf`",
+      "+[64] `EDGAR Form 4 (latest 0000927653-26-000249; 154 filings in the 1095d scanned; counts over 182d)`",
+      "+[65] `FINRA consolidated short interest (settle 2026-10-15); DTC = 2,298,518 short \u00f7 897,141 screen 90d ADV`",
+      "+[66] `10-Q maturity wall vs CIQ capital panel (same window)`",
+      "+[67] `CIQ revenue guide vs release actual/outlook`"
+     ],
+     "removed": 124,
+     "version_lines": 4
+    },
+    "committed_md": {
+     "added": 141,
+     "identical": false,
+     "lines": [
+      "-- **Impairment headroom \u2014 goodwill + intangibles remaining:** $15,214.0M [19]",
+      "-- **Goodwill:** $11,272.0M [19]",
+      "-- **Intangibles (net):** $3,942.0M [20]",
+      "+- **Impairment headroom \u2014 goodwill + intangibles remaining, as at 2026-09-30:** $15,214.0M [19]",
+      "+- **Goodwill:** $11,272.0M [20]",
+      "+- **Intangibles (net):** $3,942.0M [21]",
+      "-- **Buyback \u2014 cash:** $3,424.0M [21]",
+      "-- **Buyback \u2014 shares repurchased:** 13,900,000 [22]",
+      "+- **Buyback \u2014 cash:** $3,424.0M [22]",
+      "+- **Buyback \u2014 shares repurchased:** 13,900,000 [23]",
+      "-- **Buyback \u2014 average cost/share:** $151.23 \u2014 **fiscal-period average over 2020-07-01\u21922020-09-30, 91d; NOT a purchase price** and not evidence of when they bought [23]",
+      "+- **Buyback \u2014 average cost/share:** $151.23 \u2014 **fiscal-period average over 2020-07-01\u21922020-09-30, 91d; NOT a purchase price** and not evidence of when they bought [24]",
+      "-- **Acquisition consideration:** $4,634.0M [24]",
+      "-- **Registered offering pipeline (equity/debt not distinguished):** shelf registrations 1 (S-3ASR, last 2026-02-05); prospectus supplements 4 (424B3/424B5, last 2025-05-22) \u2014 3y window to 2026-10-16 [25]",
+      "-- **Schedule 13D/G filing activity:** no 13D on file \u00b7 Schedule 13G filings 5 (SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-04-30) \u2014 3y window to 2026-10-16 [26]",
+      "-- **Stock-based compensation:** stock-based compensation $69.0M = 0.0% of revenue ($208,357.0M, FY 2017-04-01\u21922018-03-31) [27]",
+      "+- **Acquisition consideration:** $4,634.0M [25]",
+      "+- **Registered offering pipeline (equity/debt not distinguished):** shelf registrations 1 (S-3ASR, last 2026-02-05); prospectus supplements 4 (424B3/424B5, last 2025-05-22) \u2014 3y window to 2026-10-16 [26]",
+      "+- **Schedule 13D/G filing activity:** no 13D on file \u00b7 Schedule 13G filings 5 (SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-04-30) \u2014 3y window to 2026-10-16 [27]",
+      "+- **Stock-based compensation:** stock-based compensation $69.0M = 0.0% of revenue ($208,357.0M, FY 2017-04-01\u21922018-03-31) [28]",
+      "-- **Peer acquired-asset intensity \u2014 goodwill + intangibles** \u2014 [28]  <!-- ds-table -->",
+      "+- **Peer acquired-asset intensity \u2014 goodwill + intangibles** \u2014 [29]  <!-- ds-table -->",
+      "-- **Median \u2014 all peers (n=6):** 49% of assets \u00b7 139% of market cap",
+      "-- **Median \u2014 peers \u2265 $1,000M market cap (n=3):** 27% of assets \u00b7 33% of market cap",
+      "+- **Median \u2014 all peers:** 49% of assets \u00b7 139% of market cap (median of 6 of 9 peers)",
+      "+- **Median \u2014 peers \u2265 $1,000M market cap:** 27% of assets \u00b7 33% of market cap (median of 3 of 4 peers)",
+      "-- **Peer write-down history \u2014 did they MARK DOWN what they carry? (trailing 5 fiscal years)** \u2014 [29]  <!-- ds-table -->",
+      "+- **Peer write-down history \u2014 did they MARK DOWN what they carry? (trailing 5 fiscal years)** \u2014 [30]  <!-- ds-table -->",
+      "-- **Base rate \u2014 3 of 3 large peers ASSESSED over the window took a charge**, median 5% of acquired assets among those that did. The denominator counts only peers with an annual observation in the window \u2014 a name with none was not measured, and is not a clean year.",
+      "+- **Base rate \u2014 3 of 3 large peers ASSESSED over the window took a charge**, median 5% of acquired assets among those that did (median of 3 of 3 peers). The denominator counts only peers with an annual observation in the window \u2014 a name with none was not measured, and is not a clean year.",
+      "-- **vs own trading history:** EV/EBITDA (TEV/LTM) 17.3x as-of 2026-11-04 \u2014 trailing range 7.3\u201317.2x (median 10.2x) over 39 closes \u2192 100%ile \u2192 near-ceiling; P/LTM EPS 28.5x [30]",
+      "+- **vs own trading history:** EV/EBITDA (TEV/LTM) 17.3x as-of 2026-11-04 \u2014 trailing range 7.3\u201317.2x (median 10.2x) over 39 closes \u2192 100%ile \u2192 near-ceiling; P/LTM EPS 28.5x [31]",
+      "-- **Forward multiples:** P/FY27E (normalized) 23.9x (EPS $44.66); P/FY27E (GAAP) 27.4x (EPS $39.09); P/FY28E (normalized) 21.1x (EPS $50.63); P/FY28E (GAAP) 21.8x (EPS $49.02) \u2014 at $1,069.44 as-of 2026-11-04 [31]",
+      "-- **Multiple basis \u2014 read before the level:** rent is 7.9% of EBITDA (FY ending 2026-03-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 1.9% EBITDA margin against 1.8% reported. R1's earnings are reported EBITDA, after rent; on that basis \u2014 TEV less operating leases over reported EBITDA \u2014 the median is 10.5x over 38 quarters (current 17.3x at the 2026-11-04 filing; 92% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [32]",
+      "+- **Forward multiples:** P/FY27E (normalized) 23.9x (EPS $44.66); P/FY27E (GAAP) 27.4x (EPS $39.09); P/FY28E (normalized) 21.1x (EPS $50.63); P/FY28E (GAAP) 21.8x (EPS $49.02) \u2014 at $1,069.44 as-of 2026-11-04 [32]",
+      "+- **Multiple basis \u2014 read before the level:** rent is 7.9% of EBITDA (FY ending 2026-03-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 1.9% EBITDA margin against 1.8% reported. R1's earnings are reported EBITDA, after rent; on that basis \u2014 TEV less operating leases over reported EBITDA \u2014 the median is 10.5x over 38 quarters (current 17.3x at the 2026-11-04 filing; 92% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [33]",
+      "-- **Comparability:** market caps span $5M\u2013$67.6B (14685x); the name is $124.7B \u2192 HETEROGENEOUS \u2014 low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [33]",
+      "-- **The street, for contrast (target \u00b7 ratings):** Target price: mean $1,026.07, median $1,018.50, high/low 1,207.00/845.00, N 14/14; Ratings: Buy 10, Outperform 3, Hold 3, Underperform 0, Sell 0, No Opinion 0  [data \u2265 2026-11-04 \u00b7 export date unverified] [34]",
+      "+- **Comparability:** market caps span $5M\u2013$67.6B (14685x); the name is $124.7B \u2192 HETEROGENEOUS \u2014 low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [34]",
+      "+- **The street, for contrast (target \u00b7 ratings):** Target price: mean $1,026.07, median $1,018.50, high/low 1,207.00/845.00, N 14/14; Ratings: Buy 10, Outperform 3, Hold 3, Underperform 0, Sell 0, No Opinion 0  [data \u2265 2026-11-04 \u00b7 export date unverified] [35]",
+      "-- **Customers:** 8 mapped client relationship(s) \u2014 roster in JSON; concentration %, when disclosed, is the 10-Q read above [35]",
+      "+- **Customers:** 8 mapped client relationship(s) \u2014 roster in JSON; concentration %, when disclosed, is the 10-Q read above [36]",
+      "-- Management raised FY27 adjusted-EPS guidance twice this year, latest to $45.60\u2013$46.40[36] (dated 2026-11-04), with a strong delivery record (actual \u2265 floor 24/26[36]) \u2014 a consensus path that is being beaten, not defended. \u26a0 uncited [36]",
+      "-  - How each figure is sourced: $45.60\u2013$46.40 [36] \u00b7 24/26 [36]",
+      "-- The balance sheet is self-funding with ample reinvestment headroom: net-debt/EBITDA 0.6x[9] and interest coverage 24.0x[16], with LTM Levered FCF of $7,455.6M[37], leaving capacity for the Precision Medicine ($2.25B) and Option Care ($1.4B) deals funded with cash. [9]",
+      "-  - How each figure is sourced: 0.6x [9] \u00b7 24.0x [16] \u00b7 $7,455.6M [37]",
+      "-- Returns on capital are exceptional and rising on a multi-year basis: RoCE climbed from 11.0%[38] (FY17) to 57.4%[38] (FY26), consistent with a capital-light distributor reinvesting at high incremental returns. [38]",
+      "-  - How each figure is sourced: 11.0% [38] \u00b7 57.4% [38]",
+      "-- The share count is shrinking against this rising earnings base: shares outstanding fell 7.9%[39] over the trailing ~1.7y to 115,456,664[39] (2026-10-30), with ~$5B of FY27 repurchases planned, amplifying per-share compounding. [39]",
+      "-  - How each figure is sourced: 7.9% [39] \u00b7 115,456,664 [39]",
+      "+- Management raised FY27 adjusted-EPS guidance twice this year, latest to $45.60\u2013$46.40[37] (dated 2026-11-04), with a strong delivery record (actual \u2265 floor 24/26[37]) \u2014 a consensus path that is being beaten, not defended. \u26a0 uncited [37]",
+      "+  - How each figure is sourced: $45.60\u2013$46.40 [37] \u00b7 24/26 [37]",
+      "+- The balance sheet is self-funding with ample reinvestment headroom: net-debt/EBITDA 0.6x[9] and interest coverage 24.0x[16], with LTM Levered FCF of $7,455.6M[38], leaving capacity for the Precision Medicine ($2.25B) and Option Care ($1.4B) deals funded with cash. [9]",
+      "+  - How each figure is sourced: 0.6x [9] \u00b7 24.0x [16] \u00b7 $7,455.6M [38]",
+      "+- Returns on capital are exceptional and rising on a multi-year basis: RoCE climbed from 11.0%[39] (FY17) to 57.4%[39] (FY26), consistent with a capital-light distributor reinvesting at high incremental returns. [39]",
+      "+  - How each figure is sourced: 11.0% [39] \u00b7 57.4% [39]",
+      "+- The share count is shrinking against this rising earnings base: shares outstanding fell 7.9%[40] over the trailing ~1.7y to 115,456,664[40] (2026-10-30), with ~$5B of FY27 repurchases planned, amplifying per-share compounding. [40]",
+      "+  - How each figure is sourced: 7.9% [40] \u00b7 115,456,664 [40]",
+      "-- The own-history multiple is at its ceiling: TEV/LTM EBITDA 17.3x[40] stands at the 100th percentile[41] of 39 quarterly closes (range 7.3\u201317.2x[30], median 10.2x[30] over 9.5y) \u2014 a genuine stretch, though it is trailing-only with no forward basis, so a depressed-level vs permanently-rerated read cannot be struck here and the fundamental question is the human's. [41]",
+      "-  - How each figure is sourced: 17.3x [40] \u00b7 100th percentile [41] \u00b7 7.3\u201317.2x [30] \u00b7 10.2x [30]",
+      "+- The own-history multiple is at its ceiling: TEV/LTM EBITDA 17.3x[41] stands at the 100th percentile[42] of 39 quarterly closes (range 7.3\u201317.2x[31], median 10.2x[31] over 9.5y) \u2014 a genuine stretch, though it is trailing-only with no forward basis, so a depressed-level vs permanently-rerated read cannot be struck here and the fundamental question is the human's. [42]",
+      "+  - How each figure is sourced: 17.3x [41] \u00b7 100th percentile [42] \u00b7 7.3\u201317.2x [31] \u00b7 10.2x [31]",
+      "-- Consensus EBITDA steps up from FY27E $7,495.5M[42] to FY28E $8,186.4M[42], a continued-growth path the market is being asked to fund. [42]",
+      "-  - How each figure is sourced: $7,495.5M [42] \u00b7 $8,186.4M [42]",
+      "+- Consensus EBITDA steps up from FY27E $7,495.5M[43] to FY28E $8,186.4M[43], a continued-growth path the market is being asked to fund. [43]",
+      "+  - How each figure is sourced: $7,495.5M [43] \u00b7 $8,186.4M [43]",
+      "-- TEV/LTM EBITDA 17.3x[40] is at the 100th percentile[41] of 39 closes over 9.5 years, so the price already extrapolates the recent momentum \u2014 leaving little cushion if growth normalises. [41]",
+      "-  - How each figure is sourced: 17.3x [40] \u00b7 100th percentile [41]",
+      "+- TEV/LTM EBITDA 17.3x[41] is at the 100th percentile[42] of 39 closes over 9.5 years, so the price already extrapolates the recent momentum \u2014 leaving little cushion if growth normalises. [42]",
+      "+  - How each figure is sourced: 17.3x [41] \u00b7 100th percentile [42]",
+      "-- **1.625% Euro Notes - EUR $578.0M matures** \u2014 ~2026-10-30 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [43]",
+      "-- **Next results print** \u2014 ~2027-02-03 `[cadence-estimate]` \u2014 the next reported quarter against the committed trajectory [44]",
+      "-- **7.65% Debentures Due March 1, 2027 $150.0M matures** \u2014 ~2027-03-01 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [43]",
+      "-- **3.95% Notes Due February 16, 2028 $343.0M matures** \u2014 ~2028-02-16 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [43]",
+      "-- **4.90% Notes Due July 15, 2028 $400.0M matures** \u2014 ~2028-07-15 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [43]",
+      "+- **1.625% Euro Notes - EUR $578.0M matures** \u2014 ~2026-10-30 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [44]",
+      "+- **Next results print** \u2014 ~2027-02-03 `[cadence-estimate]` \u2014 the next reported quarter against the committed trajectory [45]",
+      "+- **7.65% Debentures Due March 1, 2027 $150.0M matures** \u2014 ~2027-03-01 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [44]",
+      "+- **3.95% Notes Due February 16, 2028 $343.0M matures** \u2014 ~2028-02-16 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [44]",
+      "+- **4.90% Notes Due July 15, 2028 $400.0M matures** \u2014 ~2028-07-15 `[stated]` \u2014 refinance / repay / convert before the wall \u2014 the survival read [44]",
+      "-- **Price-implied levels (at each stated multiple)** \u2014 [45]  <!-- ds-table -->",
+      "+- **Price-implied levels (at each stated multiple)** \u2014 [46]  <!-- ds-table -->",
+      "-- **Own-history range position:** EV/EBITDA (TEV/LTM) 17.3x as-of 2026-11-04 \u2014 trailing range 7.3\u201317.2x (median 10.2x) over 39 closes \u2192 100%ile \u2192 near-ceiling; P/LTM EPS 28.5x [30]",
+      "+- **Own-history range position:** EV/EBITDA (TEV/LTM) 17.3x as-of 2026-11-04 \u2014 trailing range 7.3\u201317.2x (median 10.2x) over 39 closes \u2192 100%ile \u2192 near-ceiling; P/LTM EPS 28.5x [31]",
+      "-- **Comparability (confidence gate):** market caps span $5M\u2013$67.6B (14685x); the name is $124.7B \u2192 HETEROGENEOUS \u2014 low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [33]",
+      "-- **Forward multiples (name vs peer Low/Median/Mean/High \u00b7 NTM)** \u2014 [46]  <!-- ds-table -->",
+      "+- **Comparability (confidence gate):** market caps span $5M\u2013$67.6B (14685x); the name is $124.7B \u2192 HETEROGENEOUS \u2014 low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [34]",
+      "+- **Forward multiples (name vs peer Low/Median/Mean/High \u00b7 NTM)** \u2014 [47]  <!-- ds-table -->",
+      "-- **Per-peer grid (cap \u00b7 valuation \u00b7 margin \u00b7 growth \u00b7 leverage \u2014 name vs peers)** \u2014 [47]  <!-- ds-table -->",
+      "+- **Per-peer grid (cap \u00b7 valuation \u00b7 margin \u00b7 growth \u00b7 leverage \u2014 name vs peers)** \u2014 [48]  <!-- ds-table -->",
+      "-- **Share-count trend:** buying back (trailing ~1.7y): 125,326,376 (2025-01-31) \u2192 115,456,664 (2026-10-30), -7.9% [39]",
+      "-- **Non-operating earnings:** no material non-operating item in the four quarters to 2026-09-30 \u2014 in the latest, $-42M against $1,562M pre-tax [48]",
+      "-- **Return ratios \u2014 per fiscal period** \u2014 [49]  <!-- ds-table -->",
+      "+- **Share-count trend:** buying back (trailing ~1.7y): 125,326,376 (2025-01-31) \u2192 115,456,664 (2026-10-30), -7.9% [40]",
+      "+- **Non-operating earnings:** no material non-operating item in the four quarters to 2026-09-30 \u2014 in the latest, $-42M against $1,562M pre-tax [49]",
+      "+- **Return ratios \u2014 per fiscal period** \u2014 [50]  <!-- ds-table -->",
+      "-- **Horizon read (FQ \u2014 next-2Q revision breadth)** \u2014 [50]:",
+      "+- **Horizon read (FQ \u2014 next-2Q revision breadth)** \u2014 [51]:",
+      "-- **Acceleration read (monthly consensus path):** FY 2027 EPS Normalized: 43.4 (12m) \u2192 44.0 (9m) \u2192 44.1 (6m) \u2192 44.3 (3m) \u2192 44.6 (2m) \u2192 44.6 (1m) \u2192 44.7 (latest); net +3% (12m\u2192latest) | FY 2027 EPS (GAAP): 40.8 (12m) \u2192 40.7 (9m) \u2192 40.7 (6m) \u2192 42.3 (3m) \u2192 39.1 (2m) \u2192 39.0 (1m) \u2192 39.1 (latest); net -4% (12m\u2192latest) | FY 2027 Revenue: 442,666.0 (12m) \u2192 442,638.8 (9m) \u2192 442,173.9 (6m) \u2192 431,192.6 (3m) \u2192 431,909.9 (2m) \u2192 431,838.5 (1m) \u2192 431,854.3 (latest); net -2% (12m\u2192latest) | FY 2027 EBITDA: 7,305.9 (12m) \u2192 7,361.1 (9m) \u2192 7,382.8 (6m) \u2192 7,510.5 (3m) \u2192 7,538.8 (2m) \u2192 7,520.2 (1m) \u2192 7,495.5 (latest); net +3% (12m\u2192latest) | FY 2027 EBIT: 6,824.4 (12m) \u2192 6,882.9 (9m) \u2192 6,851.3 (6m) \u2192 7,038.5 (3m) \u2192 7,063.2 (2m) \u2192 7,049.9 (1m) \u2192 6,989.2 (latest); net +2% (12m\u2192latest) | FY 2027 Interest Expense: -255.3 (12m) \u2192 -229.6 (9m) \u2192 -217.0 (6m) \u2192 -402.2 (3m) \u2192 -395.7 (2m) \u2192 -395.7 (1m) \u2192 -395.2 (latest); worsening (magnitude away from zero) (12m\u2192latest) | FY 2027 EBT (GAAP): 6,251.0 (12m) \u2192 6,623.0 (9m) \u2192 6,849.0 (3m) \u2192 7,061.0 (2m) \u2192 7,061.0 (1m) \u2192 7,061.0 (latest); net +13% (12m\u2192latest) [6m n/a] | FY 2027 Net Income (Excl. Excep): 5,231.7 (12m) \u2192 5,306.4 (9m) \u2192 5,323.6 (6m) \u2192 5,218.3 (3m) \u2192 5,240.7 (2m) \u2192 5,242.3 (1m) \u2192 5,251.7 (latest); net +0% (12m\u2192latest) | FY 2027 Net Income (GAAP): 4,839.2 (12m) \u2192 4,883.5 (9m) \u2192 4,892.4 (6m) \u2192 4,990.5 (3m) \u2192 4,690.5 (2m) \u2192 4,690.5 (1m) \u2192 4,867.8 (latest); net +1% (12m\u2192latest)  [data \u2265 2026-11-04 \u00b7 export date unverified] [51]",
+      "-- **Cross-name anchor (NTM forward-multiple ladder)** \u2014 [52]:",
+      "+- **Acceleration read (monthly consensus path):** FY 2027 EPS Normalized: 43.4 (12m) \u2192 44.0 (9m) \u2192 44.1 (6m) \u2192 44.3 (3m) \u2192 44.6 (2m) \u2192 44.6 (1m) \u2192 44.7 (latest); net +3% (12m\u2192latest) | FY 2027 EPS (GAAP): 40.8 (12m) \u2192 40.7 (9m) \u2192 40.7 (6m) \u2192 42.3 (3m) \u2192 39.1 (2m) \u2192 39.0 (1m) \u2192 39.1 (latest); net -4% (12m\u2192latest) | FY 2027 Revenue: 442,666.0 (12m) \u2192 442,638.8 (9m) \u2192 442,173.9 (6m) \u2192 431,192.6 (3m) \u2192 431,909.9 (2m) \u2192 431,838.5 (1m) \u2192 431,854.3 (latest); net -2% (12m\u2192latest) | FY 2027 EBITDA: 7,305.9 (12m) \u2192 7,361.1 (9m) \u2192 7,382.8 (6m) \u2192 7,510.5 (3m) \u2192 7,538.8 (2m) \u2192 7,520.2 (1m) \u2192 7,495.5 (latest); net +3% (12m\u2192latest) | FY 2027 EBIT: 6,824.4 (12m) \u2192 6,882.9 (9m) \u2192 6,851.3 (6m) \u2192 7,038.5 (3m) \u2192 7,063.2 (2m) \u2192 7,049.9 (1m) \u2192 6,989.2 (latest); net +2% (12m\u2192latest) | FY 2027 Interest Expense: -255.3 (12m) \u2192 -229.6 (9m) \u2192 -217.0 (6m) \u2192 -402.2 (3m) \u2192 -395.7 (2m) \u2192 -395.7 (1m) \u2192 -395.2 (latest); worsening (magnitude away from zero) (12m\u2192latest) | FY 2027 EBT (GAAP): 6,251.0 (12m) \u2192 6,623.0 (9m) \u2192 6,849.0 (3m) \u2192 7,061.0 (2m) \u2192 7,061.0 (1m) \u2192 7,061.0 (latest); net +13% (12m\u2192latest) [6m n/a] | FY 2027 Net Income (Excl. Excep): 5,231.7 (12m) \u2192 5,306.4 (9m) \u2192 5,323.6 (6m) \u2192 5,218.3 (3m) \u2192 5,240.7 (2m) \u2192 5,242.3 (1m) \u2192 5,251.7 (latest); net +0% (12m\u2192latest) | FY 2027 Net Income (GAAP): 4,839.2 (12m) \u2192 4,883.5 (9m) \u2192 4,892.4 (6m) \u2192 4,990.5 (3m) \u2192 4,690.5 (2m) \u2192 4,690.5 (1m) \u2192 4,867.8 (latest); net +1% (12m\u2192latest)  [data \u2265 2026-11-04 \u00b7 export date unverified] [52]",
+      "+- **Cross-name anchor (NTM forward-multiple ladder)** \u2014 [53]:",
+      "-- **Guidance bridge (latest guide + sign-aware delivery track-record)** \u2014 [53]  <!-- ds-table -->",
+      "+- **Guidance bridge (latest guide + sign-aware delivery track-record)** \u2014 [54]  <!-- ds-table -->",
+      "-- **Consensus stats (target + ratings):** Target price: mean $1,026.07, median $1,018.50, high/low 1,207.00/845.00, N 14/14; Ratings: Buy 10, Outperform 3, Hold 3, Underperform 0, Sell 0, No Opinion 0  [data \u2265 2026-11-04 \u00b7 export date unverified] [34]",
+      "-- **Revision-event log (250 events \u00b7 22 broker-days)** \u2014 [54]  <!-- ds-table -->",
+      "+- **Consensus stats (target + ratings):** Target price: mean $1,026.07, median $1,018.50, high/low 1,207.00/845.00, N 14/14; Ratings: Buy 10, Outperform 3, Hold 3, Underperform 0, Sell 0, No Opinion 0  [data \u2265 2026-11-04 \u00b7 export date unverified] [35]",
+      "+- **Revision-event log (250 events \u00b7 22 broker-days)** \u2014 [55]  <!-- ds-table -->",
+      "-- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2005 +0%, FY2006 -1%, FY2007 +1%, FY2008 +1%, FY2009 -5%, FY2010 +5%, FY2011 -5%, FY2012 +0%, FY2013 -17%, FY2014 -8%, FY2015 -21%, FY2016 -4%, FY2017 +7%, FY2018 -94%, FY2019 -98%, FY2020 +89%, FY2021 +0%, FY2022 -18%, FY2023 -1%, FY2024 +2%, FY2025 +3%, FY2026 +9%; Revenue surprise: FY2000 -2%, FY2001 +0%, FY2002 +0%, FY2003 +0%, FY2004 +0%, FY2005 -4%, FY2006 +0%, FY2007 +2%, FY2008 -1%, FY2009 +8%, FY2010 -1%, FY2011 +0%, FY2012 +1%, FY2013 -1%, FY2014 +2%, FY2015 -1%, FY2016 +0%, FY2017 -0%, FY2018 +0%, FY2019 -1%, FY2020 +1%, FY2021 -1%, FY2022 +1%, FY2023 +0%, FY2024 -1%, FY2025 -1%, FY2026 -1% (GAAP-EPS basis; +beat / \u2212miss) [55]",
+      "+- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2005 +0%, FY2006 -1%, FY2007 +1%, FY2008 +1%, FY2009 -5%, FY2010 +5%, FY2011 -5%, FY2012 +0%, FY2013 -17%, FY2014 -8%, FY2015 -21%, FY2016 -4%, FY2017 +7%, FY2018 -94%, FY2019 -98%, FY2020 +89%, FY2021 +0%, FY2022 -18%, FY2023 -1%, FY2024 +2%, FY2025 +3%, FY2026 +9%; Revenue surprise: FY2000 -2%, FY2001 +0%, FY2002 +0%, FY2003 +0%, FY2004 +0%, FY2005 -4%, FY2006 +0%, FY2007 +2%, FY2008 -1%, FY2009 +8%, FY2010 -1%, FY2011 +0%, FY2012 +1%, FY2013 -1%, FY2014 +2%, FY2015 -1%, FY2016 +0%, FY2017 -0%, FY2018 +0%, FY2019 -1%, FY2020 +1%, FY2021 -1%, FY2022 +1%, FY2023 +0%, FY2024 -1%, FY2025 -1%, FY2026 -1% (GAAP-EPS basis; +beat / \u2212miss) [56]",
+      "-- **Total debt / EBITDA vs peers:** name 1.4x vs peer median 3.2x (comps TOTAL-debt/EBITDA basis) [56]",
+      "-- **Net debt / OCF:** 0.6x [57]",
+      "+- **Total debt / EBITDA vs peers:** name 1.4x vs peer median 3.2x (comps TOTAL-debt/EBITDA basis) [57]",
+      "+- **Net debt / OCF:** 0.6x [58]",
+      "-- **Self-funding:** self-funding: YES \u2014 latest-Q OCF > 0 AND LTM FCF > 0 [58]",
+      "-- **Credit health \u2014 relative to each peer group** \u2014 [59]  <!-- ds-table -->",
+      "+- **Self-funding:** self-funding: YES \u2014 latest-Q OCF > 0 AND LTM FCF > 0 [59]",
+      "+- **Credit health \u2014 relative to each peer group** \u2014 [60]  <!-- ds-table -->",
+      "-- **Free cash flow ($M):** 7455.6 \u2014 basis: CIQ 'Levered Free Cash Flow' \u2014 on the same sheet and period [LTM 12 months Sep-30-2026], CFO $7,503.0M \u2212 capex $396.0M = $7,107.0M, so the two land within 5% here. They are still different measures and diverge on 13 of 14 committed names. [37]",
+      "-- **Debt schedule vintage:** the debt schedule is 161d old (source filed 2026-05-08); no Item 1.02 (termination of a material agreement) has been filed since [60]",
+      "-- **Live instruments \u2014 near-dated (\u226412m + 2027) \u2014 panel A 2026 filed May-08-2026** \u2014 [61]  <!-- ds-table -->",
+      "+- **Free cash flow ($M):** 7455.6 \u2014 basis: CIQ 'Levered Free Cash Flow' \u2014 on the same sheet and period [LTM 12 months Sep-30-2026], CFO $7,503.0M \u2212 capex $396.0M = $7,107.0M, so the two land within 5% here. They are still different measures and diverge on 13 of 14 committed names. [38]",
+      "+- **Debt schedule vintage:** the debt schedule is 161d old (source filed 2026-05-08); no Item 1.02 (termination of a material agreement) has been filed since [61]",
+      "+- **Live instruments \u2014 near-dated (\u226412m + 2027) \u2014 panel A 2026 filed May-08-2026** \u2014 [62]  <!-- ds-table -->",
+      "-- **Maturity resolution (8-K verbatim):** The New Revolving Credit Facility replaces the Company\u2019s existing $1.0 billion 364-day senior unsecured revolving credit facility, dated as of May 8, 2025... The Existing 364-Day Credit Facility was scheduled to mature in May 2026... There were no borrowings outstanding under the Existing Credit Facilities at the time of termination. [62]",
+      "+- **Maturity resolution (8-K verbatim):** The New Revolving Credit Facility replaces the Company\u2019s existing $1.0 billion 364-day senior unsecured revolving credit facility, dated as of May 8, 2025... The Existing 364-Day Credit Facility was scheduled to mature in May 2026... There were no borrowings outstanding under the Existing Credit Facilities at the time of termination. [63]",
+      "-- **Going-concern language:** none in latest 10-Q \u2014 checked, absent [63]",
+      "-- **EBITDA-basis triangulation (each leverage basis-labeled):** [64]",
+      "+- **Going-concern language:** none in latest 10-Q \u2014 checked, absent [64]",
+      "+- **EBITDA-basis triangulation (each leverage basis-labeled):** [65]",
+      "-- **Quarterly financials** \u2014 [65]  <!-- ds-table -->",
+      "+- **Quarterly financials** \u2014 [66]  <!-- ds-table -->",
+      "-- **Posture:** as of Q2-27 ($M): cash & ST inv 6,528; total debt 11,161; net debt 4,633; equity -3,954; net working capital -7,711; net-debt/EBITDA \u2192 see the Leverage & survival block (not recomputed) [66]",
+      "-- **Coherence \u2014 BS vs implied-valuation bridge:** cash BS $6,528M / bridge $6,528M; debt BS $11,161M / bridge $11,161M \u2014 reconcile with the implied-valuation bridge. [67]",
+      "+- **Posture:** as of Q2-27 ($M): cash & ST inv 6,528; total debt 11,161; net debt 4,633; equity -3,954; net working capital -7,711; net-debt/EBITDA \u2192 see the Leverage & survival block (not recomputed) [67]",
+      "+- **Coherence \u2014 BS vs implied-valuation bridge:** cash BS $6,528M / bridge $6,528M; debt BS $11,161M / bridge $11,161M \u2014 reconcile with the implied-valuation bridge. [68]",
+      "-- **Capital structure \u2014 full instrument panel A 2026 filed May-08-2026** \u2014 [61]  <!-- ds-table -->",
+      "+- **Capital structure \u2014 full instrument panel A 2026 filed May-08-2026** \u2014 [62]  <!-- ds-table -->",
+      "-- **8-Ks at instrument maturities:** 8-K at maturity 2026-04-24: filed 2026-04-28 [0000927653-26-000053] 1.01 Entry into a Material Definitive Agreement, 1.02 Termination of a Material Definitive Agreement, 2.03 Item 2.03, 9.01 Financial Statements and Exhibits \u2014 read for resolution; 8-K at maturity 2026-08-15: filed 2026-08-05 [0000927653-26-000232] 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits \u2014 read for resolution [68]",
+      "-- **Covenant / contract pointers (CIK-verified execution filings)** \u2014 [69]  <!-- ds-table -->",
+      "+- **8-Ks at instrument maturities:** 8-K at maturity 2026-04-24: filed 2026-04-28 [0000927653-26-000053] 1.01 Entry into a Material Definitive Agreement, 1.02 Termination of a Material Definitive Agreement, 2.03 Item 2.03, 9.01 Financial Statements and Exhibits \u2014 read for resolution; 8-K at maturity 2026-08-15: filed 2026-08-05 [0000927653-26-000232] 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits \u2014 read for resolution [69]",
+      "+- **Covenant / contract pointers (CIK-verified execution filings)** \u2014 [70]  <!-- ds-table -->",
+      "-- **Covenant terms \u2014 CREDIT AGREEMENT (governing agreement)** \u2014 [70]  <!-- ds-table -->",
+      "+- **Covenant terms \u2014 CREDIT AGREEMENT (governing agreement)** \u2014 [71]  <!-- ds-table -->",
+      "-- **Name market cap ($M) \u2014 the ADJACENT fact to compare against:** 124686.4 [71]",
+      "-- **Bridge (TEV \u2192 equity):** TEV\u2192equity bridge: + cash $6,528.00M, \u2212 total debt $11,161.00M [72]",
+      "-- **Implied equity at peer-median ($M, CIQ)** \u2014 [73]  <!-- ds-table -->",
+      "+- **Name market cap ($M) \u2014 the ADJACENT fact to compare against:** 124686.4 [72]",
+      "+- **Bridge (TEV \u2192 equity):** TEV\u2192equity bridge: + cash $6,528.00M, \u2212 total debt $11,161.00M [73]",
+      "+- **Implied equity at peer-median ($M, CIQ)** \u2014 [74]  <!-- ds-table -->",
+      "-- **Earnings call (transcript pointer \u2014 read the file):** 2 earnings-call transcript(s) on file \u2014 read in full for management posture: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf; McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [74]",
+      "+- **Earnings call (transcript pointer \u2014 read the file):** 2 earnings-call transcript(s) on file \u2014 read in full for management posture: McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf; McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [75]",
+      "-- **Insider activity (Form 4):** Open-market buys 0 \u00b7 sells 11 (6 insiders, $23.96M) \u2014 in the last 182 days \u00b7 no purchase in the 3y scanned \u00b7 last sale $0.10M, SVP, Controller & CAO, 2026-09-08 (~1mo ago) \u00b7 largest sale $13.72M, Chief Executive Officer, 2025-07-11 (~15mo ago) \u00b7 grants 27 \u00b7 last filing 2026-09-10 \u00b7 other filings 147 [75]",
+      "-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-10-15): 2.3M \u2192 2.3M sh (+0.5%, rising) \u00b7 2.0% of shares out (EDGAR XBRL) \u00b7 DTC 2.6d \u00b7 recent: 2026-10-15 2.3M \u00b7 2026-09-30 2.3M \u00b7 2026-09-15 2.9M \u00b7 2026-08-31 2.8M [76]",
+      "+- **Insider activity (Form 4):** Open-market buys 0 \u00b7 sells 11 (6 insiders, $23.96M) \u2014 in the last 182 days \u00b7 no purchase in the 3y scanned \u00b7 last sale $0.10M, SVP, Controller & CAO, 2026-09-08 (~1mo ago) \u00b7 largest sale $13.72M, Chief Executive Officer, 2025-07-11 (~15mo ago) \u00b7 grants 27 \u00b7 last filing 2026-09-10 \u00b7 other filings 147 [76]",
+      "+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-10-15): 2.3M \u2192 2.3M sh (+0.5%, rising) \u00b7 2.0% of shares out (EDGAR XBRL) \u00b7 DTC 2.6d \u00b7 recent: 2026-10-15 2.3M \u00b7 2026-09-30 2.3M \u00b7 2026-09-15 2.9M \u00b7 2026-08-31 2.8M [77]",
+      "-- **Wall coherence \u2014 filing \u226412m vs CIQ panel (same window):** wall coherence: UNKNOWN \u2014 filing states no \u226412m figure [77]",
+      "-- **Guide verification \u2014 CIQ guide vs release:** revenue: CIQ 423601.5\u2013439738.7 vs release NO NUMERIC OUTLOOK \u2192 not cross-checked [78]",
+      "+- **Wall coherence \u2014 filing \u226412m vs CIQ panel (same window):** wall coherence: UNKNOWN \u2014 filing states no \u226412m figure [78]",
+      "+- **Guide verification \u2014 CIQ guide vs release:** revenue: CIQ 423601.5\u2013439738.7 vs release NO NUMERIC OUTLOOK \u2192 not cross-checked [79]",
+      "-[19] `EDGAR companyfacts Goodwill (as at 2026-09-30)`",
+      "-[20] `EDGAR companyfacts FiniteLivedIntangibleAssetsNet (as at 2026-09-30)`",
+      "-[21] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-04-01\u21922026-09-30, 182d)`",
+      "-[22] `EDGAR companyfacts TreasuryStockSharesAcquired (2019-04-01\u21922020-03-31, 365d)`",
+      "-[23] `EDGAR companyfacts TreasuryStockAcquiredAverageCostPerShare (2020-07-01\u21922020-09-30, 91d)`",
+      "-[24] `EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2013-04-01\u21922014-03-31, 364d)`",
+      "-[25] `EDGAR filing index (S-3/F-3 \u00b7 424B \u00b7 S-1/F-1 \u00b7 S-4 \u00b7 S-8), window 2023-10-17\u21922026-10-16 \u00b7 latest 0001628280-26-005516`",
+      "-[26] `EDGAR filing index (SC 13D/G + SCHEDULE 13D/G \u2014 both vocabularies), window 2023-10-17\u21922026-10-16 \u00b7 latest 0002100119-26-000832`",
+      "-[27] `EDGAR XBRL ShareBasedCompensation (10-K, 2017-04-01\u21922018-03-31)`",
+      "-[28] `EDGAR companyfacts (Goodwill, intangibles, Assets) \u00b7 peer set + market caps from the CIQ comps grid`",
+      "-[29] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) \u00b7 each row's window ends at that filer's own balance date`",
+      "-[30] `CIQ Financials\u2192Multiples (Close; last col = current, excluded from history)`",
+      "-[31] `price \u00f7 CIQ consensus EPS, per estimate column of the Financials annual summary`",
+      "-[32] `CIQ Financials (Quarterly)\u2192Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)\u2192Income Statement 'Net Rental Exp.' / 'EBITDA'`",
+      "-[33] `CIQ Comparable Analysis\u2192Financial Data (market-cap dispersion) + Business Description`",
+      "-[34] `CIQ Estimates\u2192Consensus (target stats) + Trends Non-Periodic (ratings)`",
+      "-[35] `CIQ Customers&Suppliers McKesson Corporation NYSE MCK Customers.rtf`",
+      "-[36] `CIQ Estimates\u2192Guidance (latest guide + sign-aware delivery track-record)`",
+      "-[37] `CIQ Financials\u2192Cash Flow 'Levered Free Cash Flow' [LTM 12 months Sep-30-2026]`",
+      "-[38] `CIQ Financials\u2192Ratios (Return on Capital %, multi-year columns)`",
+      "-[39] `EDGAR XBRL shares, trailing 2025-01-31..2026-10-30`",
+      "-[40] `CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close (latest) \u2014 current multiple`",
+      "-[41] `CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close \u2014 39 quarters spanning 2017-03-31..2026-09-30 (9.5y) (partial last column excluded from the distribution)`",
+      "-[42] `CIQ Estimates\u2192Trends (FY27E/FY28E consensus EBITDA, latest snapshot)`",
+      "-[43] `CIQ capital-structure panel (maturity_date)`",
+      "-[44] `cadence: EDGAR submissions (median 91d gap over 43 results 8-Ks; last print 2026-11-04)`",
+      "-[45] `TEV = mcap 124686.4 + net debt 4633.0 (CIQ Comparable Analysis\u2192Financial Data, Latest, data 2026-11-04, exported 2026-11-05) \u2014 simple-TEV basis`",
+      "-[46] `CIQ Comparable Analysis\u2192Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`",
+      "-[47] `CIQ Comparable Analysis\u2192Financial Data + Operating Statistics (per-peer grid) \u00b7 as-of 2026-11-04`",
+      "-[48] `EDGAR XBRL pre-tax \u2212 operating, quarters 2025-09-30..2026-09-30`",
+      "-[49] `CIQ Financials\u2192Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`",
+      "-[50] `CIQ Estimates\u2192Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`",
+      "-[51] `CIQ Estimates\u2192Trends (current-FY consensus path; ragged, absent lookbacks n/a)`",
+      "-[52] `CIQ Estimates\u2192Multiples (forward-multiple ladder: NTM + FY26\u2192FY33)`",
+      "-[53] `CIQ Estimates\u2192Guidance (latest guide + sign-aware delivery track-record) \u2014 CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`",
+      "-[54] `CIQ Estimates\u2192Recent Changes (250 broker revision events)  [data \u2265 2026-11-04 \u00b7 export date unverified]`",
+      "-[55] `CIQ Estimates\u2192Surprise (annual)`",
+      "-[56] `CIQ Comparable Analysis\u2192Operating Statistics (LTM Total Debt/EBITDA) \u00b7 as-of 2026-11-04`",
+      "-[57] `CIQ Net Debt $4,633M [FQ2/CQ3 Sep-30-2026] \u00f7 CIQ OCF $7,503M [LTM 12 months Sep-30-2026]`",
+      "-[58] `EDGAR OCF sign, quarter to 2026-09-30 + CIQ LTM FCF sign`",
+      "-[59] `CIQ Credit Health Panel export\u2192Summary (industry peers; export date not stamped) \u00b7 CIQ Comparable Analysis\u2192Credit Health Panel \u00b7 as-of 2026-11-04`",
+      "-[60] `CIQ Capital Structure Details \u2014 A 2026 filed May-08-2026`",
+      "-[61] `CIQ Financials\u2192Capital Structure Details (A 2026 filed May-08-2026)`",
+      "-[62] `8-K 0000927653-26-000053 (2026-04-28)`",
+      "-[63] `10-Q 0000927653-26-000281`",
+      "-[64] `CIQ leverage bases + release LTM adj-EBITDA/margins`",
+      "-[65] `CIQ Financials\u2192Income Statement (quarterly, full exported history)`",
+      "-[66] `CIQ Financials\u2192Balance Sheet (quarterly, Q2-27)`",
+      "-[67] `CIQ Financials\u2192Balance Sheet vs Comparable Analysis\u2192Implied Valuation`",
+      "-[68] `EDGAR 8-K submissions (\u00b110d of instrument maturities)`",
+      "-[69] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`",
+      "-[70] `fenced Tier-2 extraction (verbatim, source-bound)`",
+      "-[71] `CIQ Comparable Analysis\u2192Financial Data (name Market Capitalization Latest) \u00b7 as-of 2026-11-04`",
+      "-[72] `CIQ Comparable Analysis\u2192Implied Valuation (cash/debt bridge) \u00b7 as-of 2026-11-04`",
+      "-[73] `CIQ Comparable Analysis\u2192Implied Valuation (= Implied Equity Value, basis \u00d7 Low/Median/Mean/High) \u00b7 as-of 2026-11-04`",
+      "-[74] `CIQ transcript(s): McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf; McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf`",
+      "-[75] `EDGAR Form 4 (latest 0000927653-26-000249; 154 filings in the 1095d scanned; counts over 182d)`",
+      "-[76] `FINRA consolidated short interest (settle 2026-10-15); DTC = 2,298,518 short \u00f7 897,141 screen 90d ADV`",
+      "-[77] `10-Q maturity wall vs CIQ capital panel (same window)`",
+      "-[78] `CIQ revenue guide vs release actual/outlook`",
+      "+[19] `EDGAR companyfacts Goodwill + FiniteLivedIntangibleAssetsNet (as at 2026-09-30)`",
+      "+[20] `EDGAR companyfacts Goodwill (as at 2026-09-30)`",
+      "+[21] `EDGAR companyfacts FiniteLivedIntangibleAssetsNet (as at 2026-09-30)`",
+      "+[22] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-04-01\u21922026-09-30, 182d)`",
+      "+[23] `EDGAR companyfacts TreasuryStockSharesAcquired (2019-04-01\u21922020-03-31, 365d)`",
+      "+[24] `EDGAR companyfacts TreasuryStockAcquiredAverageCostPerShare (2020-07-01\u21922020-09-30, 91d)`",
+      "+[25] `EDGAR companyfacts PaymentsToAcquireBusinessesNetOfCashAcquired (2013-04-01\u21922014-03-31, 364d)`",
+      "+[26] `EDGAR filing index (S-3/F-3 \u00b7 424B \u00b7 S-1/F-1 \u00b7 S-4 \u00b7 S-8), window 2023-10-17\u21922026-10-16 \u00b7 latest 0001628280-26-005516`",
+      "+[27] `EDGAR filing index (SC 13D/G + SCHEDULE 13D/G \u2014 both vocabularies), window 2023-10-17\u21922026-10-16 \u00b7 latest 0002100119-26-000832`",
+      "+[28] `EDGAR XBRL ShareBasedCompensation (10-K, 2017-04-01\u21922018-03-31)`",
+      "+[29] `EDGAR companyfacts (Goodwill, intangibles, Assets) \u00b7 peer set + market caps from the CIQ comps grid`",
+      "+[30] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) \u00b7 each row's window ends at that filer's own balance date`",
+      "+[31] `CIQ Financials\u2192Multiples (Close; last col = current, excluded from history)`",
+      "+[32] `price \u00f7 CIQ consensus EPS, per estimate column of the Financials annual summary`",
+      "+[33] `CIQ Financials (Quarterly)\u2192Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)\u2192Income Statement 'Net Rental Exp.' / 'EBITDA'`",
+      "+[34] `CIQ Comparable Analysis\u2192Financial Data (market-cap dispersion) + Business Description`",
+      "+[35] `CIQ Estimates\u2192Consensus (target stats) + Trends Non-Periodic (ratings)`",
+      "+[36] `CIQ Customers&Suppliers McKesson Corporation NYSE MCK Customers.rtf`",
+      "+[37] `CIQ Estimates\u2192Guidance (latest guide + sign-aware delivery track-record)`",
+      "+[38] `CIQ Financials\u2192Cash Flow 'Levered Free Cash Flow' [LTM 12 months Sep-30-2026]`",
+      "+[39] `CIQ Financials\u2192Ratios (Return on Capital %, multi-year columns)`",
+      "+[40] `EDGAR XBRL shares, trailing 2025-01-31..2026-10-30`",
+      "+[41] `CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close (latest) \u2014 current multiple`",
+      "+[42] `CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close \u2014 39 quarters spanning 2017-03-31..2026-09-30 (9.5y) (partial last column excluded from the distribution)`",
+      "+[43] `CIQ Estimates\u2192Trends (FY27E/FY28E consensus EBITDA, latest snapshot)`",
+      "+[44] `CIQ capital-structure panel (maturity_date)`",
+      "+[45] `cadence: EDGAR submissions (median 91d gap over 43 results 8-Ks; last print 2026-11-04)`",
+      "+[46] `TEV = mcap 124686.4 + net debt 4633.0 (CIQ Comparable Analysis\u2192Financial Data, Latest, data 2026-11-04, exported 2026-11-05) \u2014 simple-TEV basis`",
+      "+[47] `CIQ Comparable Analysis\u2192Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`",
+      "+[48] `CIQ Comparable Analysis\u2192Financial Data + Operating Statistics (per-peer grid) \u00b7 as-of 2026-11-04`",
+      "+[49] `EDGAR XBRL pre-tax \u2212 operating, quarters 2025-09-30..2026-09-30`",
+      "+[50] `CIQ Financials\u2192Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`",
+      "+[51] `CIQ Estimates\u2192Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`",
+      "+[52] `CIQ Estimates\u2192Trends (current-FY consensus path; ragged, absent lookbacks n/a)`",
+      "+[53] `CIQ Estimates\u2192Multiples (forward-multiple ladder: NTM + FY26\u2192FY33)`",
+      "+[54] `CIQ Estimates\u2192Guidance (latest guide + sign-aware delivery track-record) \u2014 CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`",
+      "+[55] `CIQ Estimates\u2192Recent Changes (250 broker revision events)  [data \u2265 2026-11-04 \u00b7 export date unverified]`",
+      "+[56] `CIQ Estimates\u2192Surprise (annual)`",
+      "+[57] `CIQ Comparable Analysis\u2192Operating Statistics (LTM Total Debt/EBITDA) \u00b7 as-of 2026-11-04`",
+      "+[58] `CIQ Net Debt $4,633M [FQ2/CQ3 Sep-30-2026] \u00f7 CIQ OCF $7,503M [LTM 12 months Sep-30-2026]`",
+      "+[59] `EDGAR OCF sign, quarter to 2026-09-30 + CIQ LTM FCF sign`",
+      "+[60] `CIQ Credit Health Panel export\u2192Summary (industry peers; export date not stamped) \u00b7 CIQ Comparable Analysis\u2192Credit Health Panel \u00b7 as-of 2026-11-04`",
+      "+[61] `CIQ Capital Structure Details \u2014 A 2026 filed May-08-2026`",
+      "+[62] `CIQ Financials\u2192Capital Structure Details (A 2026 filed May-08-2026)`",
+      "+[63] `8-K 0000927653-26-000053 (2026-04-28)`",
+      "+[64] `10-Q 0000927653-26-000281`",
+      "+[65] `CIQ leverage bases + release LTM adj-EBITDA/margins`",
+      "+[66] `CIQ Financials\u2192Income Statement (quarterly, full exported history)`",
+      "+[67] `CIQ Financials\u2192Balance Sheet (quarterly, Q2-27)`",
+      "+[68] `CIQ Financials\u2192Balance Sheet vs Comparable Analysis\u2192Implied Valuation`",
+      "+[69] `EDGAR 8-K submissions (\u00b110d of instrument maturities)`",
+      "+[70] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`",
+      "+[71] `fenced Tier-2 extraction (verbatim, source-bound)`",
+      "+[72] `CIQ Comparable Analysis\u2192Financial Data (name Market Capitalization Latest) \u00b7 as-of 2026-11-04`",
+      "+[73] `CIQ Comparable Analysis\u2192Implied Valuation (cash/debt bridge) \u00b7 as-of 2026-11-04`",
+      "+[74] `CIQ Comparable Analysis\u2192Implied Valuation (= Implied Equity Value, basis \u00d7 Low/Median/Mean/High) \u00b7 as-of 2026-11-04`",
+      "+[75] `CIQ transcript(s): McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026.rtf; McKesson Corporation, Q2 2027 Earnings Call, Nov 04, 2026.rtf`",
+      "+[76] `EDGAR Form 4 (latest 0000927653-26-000249; 154 filings in the 1095d scanned; counts over 182d)`",
+      "+[77] `FINRA consolidated short interest (settle 2026-10-15); DTC = 2,298,518 short \u00f7 897,141 screen 90d ADV`",
+      "+[78] `10-Q maturity wall vs CIQ capital panel (same window)`",
+      "+[79] `CIQ revenue guide vs release actual/outlook`"
+     ],
+     "removed": 140,
+     "version_lines": 0
+    },
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 10,
+      "head": 10,
+      "moved": 3
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [
+     {
+      "base": "ABSENT",
+      "head": {
+       "note": null,
+       "source_ref": "EDGAR companyfacts Goodwill + FiniteLivedIntangibleAssetsNet (as at 2026-09-30)",
+       "status": "present",
+       "value": {
+        "as_at": "2026-09-30",
+        "legs": [
+         "goodwill",
+         "intangibles"
+        ],
+        "value": 15214.0
+       }
+      },
+      "kind": "added",
+      "path": "mechanical.capital_allocation.impairment_headroom",
+      "source_ref": "EDGAR companyfacts Goodwill + FiniteLivedIntangibleAssetsNet (as at 2026-09-30)",
+      "sourced": "mechanical.capital_allocation.impairment_headroom"
+     },
+     {
+      "base": "EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2012-06-30)",
+      "head": "EDGAR companyfacts FiniteLivedIntangibleAssetsNet (as at 2026-09-30)",
+      "kind": "changed",
+      "path": "mechanical.capital_allocation.intangibles.source_ref",
+      "source_ref": "EDGAR companyfacts FiniteLivedIntangibleAssetsNet (as at 2026-09-30)",
+      "sourced": "mechanical.capital_allocation.intangibles"
+     },
+     {
+      "base": 1678.0,
+      "head": 3942.0,
+      "kind": "changed",
+      "path": "mechanical.capital_allocation.intangibles.value",
+      "source_ref": "EDGAR companyfacts FiniteLivedIntangibleAssetsNet (as at 2026-09-30)",
+      "sourced": "mechanical.capital_allocation.intangibles"
+     },
+     {
+      "base": 0.45099913119026935,
+      "head": 0.48595738354919915,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.median_all_assets",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 0.5321973774592728,
+      "head": 1.3865364767480697,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.median_all_market_cap",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 7,
+      "head": 6,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.n_all",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 12950.0,
+      "head": 15214.0,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=MCK].acquired",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 0.14026840548942301,
+      "head": 0.16479100549158932,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=MCK].pct_assets",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 0.1038605653864415,
+      "head": 0.12201811905709044,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=MCK].pct_market_cap",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 0.109845,
+      "head": 0.11,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=BHIC].acquired",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": null,
+      "head": "intangibles only \u2014 the filer tags no goodwill balance",
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=BHIC].note",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 0.05142195070570886,
+      "head": 0.05149451115324298,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=BHIC].pct_assets",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 0.0017030232558139535,
+      "head": 0.0017054263565891472,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=BHIC].pct_market_cap",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 16.898564,
+      "head": 16.899,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=MEDS].acquired",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 0.7439648126314165,
+      "head": 0.7439456180839102,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=MEDS].impairment.pct_acquired",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 0.5608980973981078,
+      "head": 0.5609125691349055,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=MEDS].pct_assets",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 3.6736008695652176,
+      "head": 3.6736956521739135,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.rows[ticker=MEDS].pct_market_cap",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 0.14026840548942301,
+      "head": 0.16479100549158932,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.subject_pct_assets",
+      "source_ref": null,
+      "sourced": null
+     },
+     {
+      "base": 0.1038605653864415,
+      "head": 0.12201811905709044,
+      "kind": "changed",
+      "path": "mechanical.peer_capital_intensity.subject_pct_market_cap",
+      "source_ref": null,
+      "sourced": null
+     }
+    ],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 357,
+     "head": 357
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "2144ca79c9f8c4ea7d996fd3949854e34f0c045cc20bf63fe87054a80f1c0cdc",
+      "head": "9b4821f7c95e8c16e723dcf255d167c964a288abb699568e05e142801526401a"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "MCK",
+    "timing": {
+     "base": {
+      "build": 20.07,
+      "committed_render": 0.03,
+      "render": 0.02,
+      "request": 5.42
+     },
+     "head": {
+      "build": 17.23,
+      "committed_render": 0.04,
+      "render": 0.02,
+      "request": 5.59
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 1,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 9,
+      "head": 9,
+      "moved": 1
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 155,
+     "head": 155
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "7ab5c1dca8d5a3000ad541f36d984990509580270367f2119d83fc0e81fdfead",
+      "head": "c62f0865bec479b14b40c17b0bab496e50cf7bea32d41cf5994ff5d33a831b72"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "MVST",
+    "timing": {
+     "base": {
+      "build": 15.3,
+      "committed_render": 0.02,
+      "render": 0.01,
+      "request": 3.39
+     },
+     "head": {
+      "build": 21.76,
+      "committed_render": 0.02,
+      "render": 0.02,
+      "request": 4.02
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 1
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 554,
+     "head": 554
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "7b52d954e57ae28f4cb8c4dd9ca1ba2d3726036cca474de65562dd8fa97d0f4a",
+      "head": "816064c6d8099cbc2806653b1d568ec79d4de4809fc5d3323230605641879995"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "NCNO",
+    "timing": {
+     "base": {
+      "build": 39.53,
+      "committed_render": 0.12,
+      "render": 0.03,
+      "request": 6.94
+     },
+     "head": {
+      "build": 21.68,
+      "committed_render": 0.07,
+      "render": 0.05,
+      "request": 8.1
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 1,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 9,
+      "head": 9,
+      "moved": 4
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 1322,
+     "head": 1322
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "945b4680cc6e28a64ed9b203360086f0e68d73b68e67029577fb8418dd1b7bd9",
+      "head": "ef4290d0603a52415bbe95432dbe26740a51cfb365f451bacfe5b645e67edb36"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "NFLX",
+    "timing": {
+     "base": {
+      "build": 40.06,
+      "committed_render": 0.04,
+      "render": 0.03,
+      "request": 5.61
+     },
+     "head": {
+      "build": 24.28,
+      "committed_render": 0.04,
+      "render": 0.03,
+      "request": 5.96
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 1
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 376,
+     "head": 376
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "7a5f1e1da9ec18dfecefb7d51864c0447e4b7590b088dba914d66a60af57eef2",
+      "head": "5e2f805e0a2085116a6708af6ef8e19bafbc927f07e564e103a39ac8e48cdc3b"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "NKE",
+    "timing": {
+     "base": {
+      "build": 38.48,
+      "committed_render": 0.05,
+      "render": 0.02,
+      "request": 5.18
+     },
+     "head": {
+      "build": 22.98,
+      "committed_render": 0.16,
+      "render": 0.04,
+      "request": 6.02
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 10,
+      "head": 10,
+      "moved": 2
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 237,
+     "head": 237
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "1115ae946a9fe3e8c9327e51b91cd115816594a709715a6aa3afcd4594ad5f22",
+      "head": "9a9f4a3812ed58ea8e0f485f6c7aad0941f85535efdd11947bff2929967822ed"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "ORKA",
+    "timing": {
+     "base": {
+      "build": 10.85,
+      "committed_render": 0.02,
+      "render": 0.02,
+      "request": 1.43
+     },
+     "head": {
+      "build": 13.03,
+      "committed_render": 0.04,
+      "render": 0.1,
+      "request": 1.49
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 5
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 521,
+     "head": 521
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "ca53de85bacc8093b7fa78d9a9e150c947eca4355114cc9ba1e3b7dcf3331638",
+      "head": "5914e00a5f18f5be405ff648a75cba646ec3a81d46994c87483df118cedde894"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "PARR",
+    "timing": {
+     "base": {
+      "build": 33.35,
+      "committed_render": 0.07,
+      "render": 0.06,
+      "request": 4.8
+     },
+     "head": {
+      "build": 29.98,
+      "committed_render": 0.03,
+      "render": 0.05,
+      "request": 7.39
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 10,
+      "head": 10,
+      "moved": 8
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 307,
+     "head": 307
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "40a7b2936260cf7560b7da316a10b606525d35f678f7a67adeaa35a6439f781d",
+      "head": "e804db39dc649fa06187ae798577428a0a73e0ae271831bbfa978a09280a5d63"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "ROST",
+    "timing": {
+     "base": {
+      "build": 28.33,
+      "committed_render": 0.09,
+      "render": 0.04,
+      "request": 5.59
+     },
+     "head": {
+      "build": 26.72,
+      "committed_render": 0.04,
+      "render": 0.02,
+      "request": 8.52
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 2
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 266,
+     "head": 266
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "c78413b7a5adfc6c70b201b28b59bd22ee5e72f80d4e13d00f5d32f791ca2f45",
+      "head": "9f81aadcc281d7d3e8c4283afe00ca145005f519e5bc3739c2589facedd70994"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "SMPL",
+    "timing": {
+     "base": {
+      "build": 29.38,
+      "committed_render": 0.08,
+      "render": 0.09,
+      "request": 4.55
+     },
+     "head": {
+      "build": 27.4,
+      "committed_render": 0.06,
+      "render": 0.05,
+      "request": 8.02
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 3
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 247,
+     "head": 247
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "86cbe8e6d9f221ff0c89aef77ecbd05f6899d895900f9efaa3eb0f9738dfe9f8",
+      "head": "2bdcd1dedcfbb31e731fdc48c7b86710722572b9b347c0b04d49aa9a12943638"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "TECX",
+    "timing": {
+     "base": {
+      "build": 12.37,
+      "committed_render": 0.04,
+      "render": 0.01,
+      "request": 1.12
+     },
+     "head": {
+      "build": 12.0,
+      "committed_render": 0.03,
+      "render": 0.01,
+      "request": 0.77
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 6
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 331,
+     "head": 331
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "1762a26edb636ad15939e6260964d5d4b349e5cf2828ac8e17f5f7917d3e61dc",
+      "head": "476789c5c1a426c14190edcd2995efb414b5a9d4a817721a950d1cafddeca526"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "TGT",
+    "timing": {
+     "base": {
+      "build": 25.57,
+      "committed_render": 0.05,
+      "render": 0.03,
+      "request": 4.83
+     },
+     "head": {
+      "build": 29.95,
+      "committed_render": 0.07,
+      "render": 0.12,
+      "request": 5.8
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 1,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 8
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 309,
+     "head": 309
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "6e5e36f1955887e0c6caee136e062d6858521b31c65c0153170e84149532f0ad",
+      "head": "27f20c346f1debf47f8daa2763e3cbd60192dca30fa55be72d64fb6a46cd2a4c"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "TJX",
+    "timing": {
+     "base": {
+      "build": 23.37,
+      "committed_render": 0.05,
+      "render": 0.03,
+      "request": 5.01
+     },
+     "head": {
+      "build": 30.78,
+      "committed_render": 0.05,
+      "render": 0.05,
+      "request": 6.2
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 777,
+     "head": 777
+    },
+    "request": {
+     "identical": true,
+     "sha256": {
+      "base": "ffedfa53afc78372d57c6d131d8fe142370f8e697c9669dec6590bb8dbea064e",
+      "head": "ffedfa53afc78372d57c6d131d8fe142370f8e697c9669dec6590bb8dbea064e"
+     },
+     "status": "compared"
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "UBER",
+    "timing": {
+     "base": {
+      "build": 22.97,
+      "committed_render": 0.06,
+      "render": 0.07,
+      "request": 4.33
+     },
+     "head": {
+      "build": 26.53,
+      "committed_render": 0.11,
+      "render": 0.02,
+      "request": 5.45
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 2
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 38,
+     "head": 38
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "00cda35502fac2033e104c45a6b49b5cb29f3a59c19b33a290c4202f083bc7e6",
+      "head": "a56c2251da902381ad05eea5dfc1018c8406ac0dc7b2c6bd7b680151faa351b2"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "V",
+    "timing": {
+     "base": {
+      "build": 51.08,
+      "committed_render": 0.04,
+      "render": 0.06,
+      "request": 4.71
+     },
+     "head": {
+      "build": 53.97,
+      "committed_render": 0.12,
+      "render": 0.01,
+      "request": 5.57
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 1,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 2
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 547,
+     "head": 547
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "81068ea60f70c79f0f531b9803a80c034a476cd66b093180840e4c851234e924",
+      "head": "a6c1d5dba47d6bc940c90bb1fd44ca4aac0771370efe4e54a918c6ed08954976"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "VITL",
+    "timing": {
+     "base": {
+      "build": 21.13,
+      "committed_render": 0.06,
+      "render": 0.01,
+      "request": 5.13
+     },
+     "head": {
+      "build": 19.08,
+      "committed_render": 0.07,
+      "render": 0.02,
+      "request": 5.16
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 8,
+      "head": 8,
+      "moved": 2
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 233,
+     "head": 233
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "4aa2389298c9cd3cb65beb932f1a38109cc9829bc03cea75c75cf452e1f728fb",
+      "head": "c9963b9c628dd1010d94fa8d58fd9f5e5aae2b011c881fb62f395e7153ec28fd"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "VRRM",
+    "timing": {
+     "base": {
+      "build": 21.57,
+      "committed_render": 0.18,
+      "render": 0.02,
+      "request": 4.74
+     },
+     "head": {
+      "build": 19.49,
+      "committed_render": 0.05,
+      "render": 0.02,
+      "request": 5.47
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 4
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 329,
+     "head": 329
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "ea77c70c5643f1676f0bece4bffb3ee6fdf1742efed8aae6001a6cf47b73423d",
+      "head": "7a406f59f7c27f7680f95ee5c9ff72f4d6536eb97205787ba5ad55ea9fc93343"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "WERN",
+    "timing": {
+     "base": {
+      "build": 20.94,
+      "committed_render": 0.08,
+      "render": 0.01,
+      "request": 5.4
+     },
+     "head": {
+      "build": 19.6,
+      "committed_render": 0.02,
+      "render": 0.03,
+      "request": 5.52
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   },
+   {
+    "committed_md_matches": {
+     "base": false,
+     "head": true
+    },
+    "errors": {
+     "base": {},
+     "head": {}
+    },
+    "families": {
+     "mechanical.capital_allocation.impairment_headroom.value.legs[]": {
+      "base": 0,
+      "head": 2,
+      "moved": 0
+     },
+     "mechanical.peer_capital_intensity.rows[]": {
+      "base": 11,
+      "head": 11,
+      "moved": 1
+     }
+    },
+    "inputs_differ": [],
+    "live": {
+     "base": [],
+     "head": []
+    },
+    "moves": [],
+    "one_side_reads": {
+     "base": 0,
+     "head": 0
+    },
+    "reads": {
+     "base": 315,
+     "head": 315
+    },
+    "request": {
+     "identical": false,
+     "other_kwargs": [],
+     "sections": [
+      "facts"
+     ],
+     "sha256": {
+      "base": "f641c138ee5dfcdac1416952b1d0f3fd2bcf294ec5aee36ea91f40771e7b94ab",
+      "head": "b3b094a86a278edf2403e36baa93bef4fa9ee9d0b81798815db808fab84ac010"
+     },
+     "status": "compared",
+     "system_equal": true,
+     "tools_equal": true
+    },
+    "status": "moves",
+    "store_written": {
+     "base": {},
+     "head": {}
+    },
+    "ticker": "WLK",
+    "timing": {
+     "base": {
+      "build": 14.23,
+      "committed_render": 0.06,
+      "render": 0.02,
+      "request": 4.22
+     },
+     "head": {
+      "build": 21.72,
+      "committed_render": 0.11,
+      "render": 0.03,
+      "request": 5.47
+     }
+    },
+    "version_moves": [
+     {
+      "base": "2026-11-09.driver-facts",
+      "head": "2026-11-10.one-family-peers",
+      "kind": "changed",
+      "path": "extraction_version",
+      "source_ref": null,
+      "sourced": null
+     }
+    ]
+   }
+  ],
+  "seconds": 0.7,
+  "workers": 6
+ },
+ "panel_requests": {
+  "pages": {
+   "BURL": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   },
+   "CNXC": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   },
+   "LLY": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   },
+   "MCK": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   },
+   "ROST": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   },
+   "SMPL": {
+    "identical": true,
+    "system_equal": true,
+    "user_diff_lines": 0
+   }
+  },
+  "status": "compared"
+ },
+ "same_code": false,
+ "schema": 1,
+ "stamp": {
+  "base": {
+   "ref": "586fdcfd",
+   "sha": "586fdcfdcbf724a7c020a02fd165496bce4c665e",
+   "tip": "586fdcfdcbf724a7c020a02fd165496bce4c665e"
+  },
+  "date": "2026-11-11T06:04:23Z",
+  "diff_identity": {
+   "all_paths": [
+    "STATE.md",
+    "data/dossiers/AMZN/dossier.json",
+    "data/dossiers/AMZN/dossier.md",
+    "data/dossiers/BRBR/dossier.json",
+    "data/dossiers/BRBR/dossier.md",
+    "data/dossiers/BURL/dossier.json",
+    "data/dossiers/BURL/dossier.md",
+    "data/dossiers/CNXC/dossier.json",
+    "data/dossiers/CNXC/dossier.md",
+    "data/dossiers/EPAM/dossier.json",
+    "data/dossiers/EPAM/dossier.md",
+    "data/dossiers/FUBO/dossier.json",
+    "data/dossiers/FUBO/dossier.md",
+    "data/dossiers/GOOGL/dossier.json",
+    "data/dossiers/GOOGL/dossier.md",
+    "data/dossiers/IT/dossier.json",
+    "data/dossiers/IT/dossier.md",
+    "data/dossiers/LLY/dossier.json",
+    "data/dossiers/LLY/dossier.md",
+    "data/dossiers/MCK/dossier.json",
+    "data/dossiers/MCK/dossier.md",
+    "data/dossiers/MVST/dossier.json",
+    "data/dossiers/MVST/dossier.md",
+    "data/dossiers/NCNO/dossier.json",
+    "data/dossiers/NCNO/dossier.md",
+    "data/dossiers/NFLX/dossier.json",
+    "data/dossiers/NFLX/dossier.md",
+    "data/dossiers/NKE/dossier.json",
+    "data/dossiers/NKE/dossier.md",
+    "data/dossiers/ORKA/dossier.json",
+    "data/dossiers/ORKA/dossier.md",
+    "data/dossiers/PARR/dossier.json",
+    "data/dossiers/PARR/dossier.md",
+    "data/dossiers/ROST/dossier.json",
+    "data/dossiers/ROST/dossier.md",
+    "data/dossiers/SMPL/dossier.json",
+    "data/dossiers/SMPL/dossier.md",
+    "data/dossiers/TECX/dossier.json",
+    "data/dossiers/TECX/dossier.md",
+    "data/dossiers/TGT/dossier.json",
+    "data/dossiers/TGT/dossier.md",
+    "data/dossiers/TJX/dossier.json",
+    "data/dossiers/TJX/dossier.md",
+    "data/dossiers/UBER/dossier.json",
+    "data/dossiers/UBER/dossier.md",
+    "data/dossiers/V/dossier.json",
+    "data/dossiers/V/dossier.md",
+    "data/dossiers/VITL/dossier.json",
+    "data/dossiers/VITL/dossier.md",
+    "data/dossiers/VRRM/dossier.json",
+    "data/dossiers/VRRM/dossier.md",
+    "data/dossiers/WERN/dossier.json",
+    "data/dossiers/WERN/dossier.md",
+    "data/dossiers/WLK/dossier.json",
+    "data/dossiers/WLK/dossier.md",
+    "docs/fix-log-teamnostra-2.md",
+    "docs/records/2026-11-10-fix2-rd-d1-dated-impairment-headroom.md",
+    "frontend/dossiers/AMZN.json",
+    "frontend/dossiers/AMZN.md",
+    "frontend/dossiers/BRBR.json",
+    "frontend/dossiers/BRBR.md",
+    "frontend/dossiers/BURL.json",
+    "frontend/dossiers/BURL.md",
+    "frontend/dossiers/CNXC.json",
+    "frontend/dossiers/CNXC.md",
+    "frontend/dossiers/EPAM.json",
+    "frontend/dossiers/EPAM.md",
+    "frontend/dossiers/FUBO.json",
+    "frontend/dossiers/FUBO.md",
+    "frontend/dossiers/GOOGL.json",
+    "frontend/dossiers/GOOGL.md",
+    "frontend/dossiers/IT.json",
+    "frontend/dossiers/IT.md",
+    "frontend/dossiers/LLY.json",
+    "frontend/dossiers/LLY.md",
+    "frontend/dossiers/MCK.json",
+    "frontend/dossiers/MCK.md",
+    "frontend/dossiers/MVST.json",
+    "frontend/dossiers/MVST.md",
+    "frontend/dossiers/NCNO.json",
+    "frontend/dossiers/NCNO.md",
+    "frontend/dossiers/NFLX.json",
+    "frontend/dossiers/NFLX.md",
+    "frontend/dossiers/NKE.json",
+    "frontend/dossiers/NKE.md",
+    "frontend/dossiers/ORKA.json",
+    "frontend/dossiers/ORKA.md",
+    "frontend/dossiers/PARR.json",
+    "frontend/dossiers/PARR.md",
+    "frontend/dossiers/ROST.json",
+    "frontend/dossiers/ROST.md",
+    "frontend/dossiers/SMPL.json",
+    "frontend/dossiers/SMPL.md",
+    "frontend/dossiers/TECX.json",
+    "frontend/dossiers/TECX.md",
+    "frontend/dossiers/TGT.json",
+    "frontend/dossiers/TGT.md",
+    "frontend/dossiers/TJX.json",
+    "frontend/dossiers/TJX.md",
+    "frontend/dossiers/UBER.json",
+    "frontend/dossiers/UBER.md",
+    "frontend/dossiers/V.json",
+    "frontend/dossiers/V.md",
+    "frontend/dossiers/VITL.json",
+    "frontend/dossiers/VITL.md",
+    "frontend/dossiers/VRRM.json",
+    "frontend/dossiers/VRRM.md",
+    "frontend/dossiers/WERN.json",
+    "frontend/dossiers/WERN.md",
+    "frontend/dossiers/WLK.json",
+    "frontend/dossiers/WLK.md",
+    "frontend/views/shared/dossier.js",
+    "scripts/build_balance_fixture.py",
+    "tests/fixtures/capital_allocation_balances.json",
+    "tests/test_capital_allocation.py",
+    "tests/test_extraction_version_drift.py",
+    "tests/test_impairment_headroom.py",
+    "tests/test_peer_capital_intensity.py",
+    "tests/test_peer_median_one_family.py",
+    "tests/test_valuation_basis.py",
+    "tests/test_zero_coercion_lint.py",
+    "vinci/dossier/capital_allocation.py",
+    "vinci/dossier/extraction_version.py",
+    "vinci/dossier/refresh.py",
+    "vinci/dossier/render.py",
+    "vinci/dossier/schemas.py",
+    "vinci/dossier/synthesis.py"
+   ],
+   "excluded": [
+    "docs/",
+    "planning/",
+    "STATE.md",
+    "CLAUDE.md",
+    "AGENTS.md",
+    "README.md"
+   ],
+   "merge_base": "586fdcfdcbf724a7c020a02fd165496bce4c665e",
+   "patch_id": "c041229dcdd3cdf0c9ffaecc758ed9856431aca9",
+   "paths": [
+    "data/dossiers/AMZN/dossier.json",
+    "data/dossiers/AMZN/dossier.md",
+    "data/dossiers/BRBR/dossier.json",
+    "data/dossiers/BRBR/dossier.md",
+    "data/dossiers/BURL/dossier.json",
+    "data/dossiers/BURL/dossier.md",
+    "data/dossiers/CNXC/dossier.json",
+    "data/dossiers/CNXC/dossier.md",
+    "data/dossiers/EPAM/dossier.json",
+    "data/dossiers/EPAM/dossier.md",
+    "data/dossiers/FUBO/dossier.json",
+    "data/dossiers/FUBO/dossier.md",
+    "data/dossiers/GOOGL/dossier.json",
+    "data/dossiers/GOOGL/dossier.md",
+    "data/dossiers/IT/dossier.json",
+    "data/dossiers/IT/dossier.md",
+    "data/dossiers/LLY/dossier.json",
+    "data/dossiers/LLY/dossier.md",
+    "data/dossiers/MCK/dossier.json",
+    "data/dossiers/MCK/dossier.md",
+    "data/dossiers/MVST/dossier.json",
+    "data/dossiers/MVST/dossier.md",
+    "data/dossiers/NCNO/dossier.json",
+    "data/dossiers/NCNO/dossier.md",
+    "data/dossiers/NFLX/dossier.json",
+    "data/dossiers/NFLX/dossier.md",
+    "data/dossiers/NKE/dossier.json",
+    "data/dossiers/NKE/dossier.md",
+    "data/dossiers/ORKA/dossier.json",
+    "data/dossiers/ORKA/dossier.md",
+    "data/dossiers/PARR/dossier.json",
+    "data/dossiers/PARR/dossier.md",
+    "data/dossiers/ROST/dossier.json",
+    "data/dossiers/ROST/dossier.md",
+    "data/dossiers/SMPL/dossier.json",
+    "data/dossiers/SMPL/dossier.md",
+    "data/dossiers/TECX/dossier.json",
+    "data/dossiers/TECX/dossier.md",
+    "data/dossiers/TGT/dossier.json",
+    "data/dossiers/TGT/dossier.md",
+    "data/dossiers/TJX/dossier.json",
+    "data/dossiers/TJX/dossier.md",
+    "data/dossiers/UBER/dossier.json",
+    "data/dossiers/UBER/dossier.md",
+    "data/dossiers/V/dossier.json",
+    "data/dossiers/V/dossier.md",
+    "data/dossiers/VITL/dossier.json",
+    "data/dossiers/VITL/dossier.md",
+    "data/dossiers/VRRM/dossier.json",
+    "data/dossiers/VRRM/dossier.md",
+    "data/dossiers/WERN/dossier.json",
+    "data/dossiers/WERN/dossier.md",
+    "data/dossiers/WLK/dossier.json",
+    "data/dossiers/WLK/dossier.md",
+    "frontend/dossiers/AMZN.json",
+    "frontend/dossiers/AMZN.md",
+    "frontend/dossiers/BRBR.json",
+    "frontend/dossiers/BRBR.md",
+    "frontend/dossiers/BURL.json",
+    "frontend/dossiers/BURL.md",
+    "frontend/dossiers/CNXC.json",
+    "frontend/dossiers/CNXC.md",
+    "frontend/dossiers/EPAM.json",
+    "frontend/dossiers/EPAM.md",
+    "frontend/dossiers/FUBO.json",
+    "frontend/dossiers/FUBO.md",
+    "frontend/dossiers/GOOGL.json",
+    "frontend/dossiers/GOOGL.md",
+    "frontend/dossiers/IT.json",
+    "frontend/dossiers/IT.md",
+    "frontend/dossiers/LLY.json",
+    "frontend/dossiers/LLY.md",
+    "frontend/dossiers/MCK.json",
+    "frontend/dossiers/MCK.md",
+    "frontend/dossiers/MVST.json",
+    "frontend/dossiers/MVST.md",
+    "frontend/dossiers/NCNO.json",
+    "frontend/dossiers/NCNO.md",
+    "frontend/dossiers/NFLX.json",
+    "frontend/dossiers/NFLX.md",
+    "frontend/dossiers/NKE.json",
+    "frontend/dossiers/NKE.md",
+    "frontend/dossiers/ORKA.json",
+    "frontend/dossiers/ORKA.md",
+    "frontend/dossiers/PARR.json",
+    "frontend/dossiers/PARR.md",
+    "frontend/dossiers/ROST.json",
+    "frontend/dossiers/ROST.md",
+    "frontend/dossiers/SMPL.json",
+    "frontend/dossiers/SMPL.md",
+    "frontend/dossiers/TECX.json",
+    "frontend/dossiers/TECX.md",
+    "frontend/dossiers/TGT.json",
+    "frontend/dossiers/TGT.md",
+    "frontend/dossiers/TJX.json",
+    "frontend/dossiers/TJX.md",
+    "frontend/dossiers/UBER.json",
+    "frontend/dossiers/UBER.md",
+    "frontend/dossiers/V.json",
+    "frontend/dossiers/V.md",
+    "frontend/dossiers/VITL.json",
+    "frontend/dossiers/VITL.md",
+    "frontend/dossiers/VRRM.json",
+    "frontend/dossiers/VRRM.md",
+    "frontend/dossiers/WERN.json",
+    "frontend/dossiers/WERN.md",
+    "frontend/dossiers/WLK.json",
+    "frontend/dossiers/WLK.md",
+    "frontend/views/shared/dossier.js",
+    "scripts/build_balance_fixture.py",
+    "tests/fixtures/capital_allocation_balances.json",
+    "tests/test_capital_allocation.py",
+    "tests/test_extraction_version_drift.py",
+    "tests/test_impairment_headroom.py",
+    "tests/test_peer_capital_intensity.py",
+    "tests/test_peer_median_one_family.py",
+    "tests/test_valuation_basis.py",
+    "tests/test_zero_coercion_lint.py",
+    "vinci/dossier/capital_allocation.py",
+    "vinci/dossier/extraction_version.py",
+    "vinci/dossier/refresh.py",
+    "vinci/dossier/render.py",
+    "vinci/dossier/schemas.py",
+    "vinci/dossier/synthesis.py"
+   ]
+  },
+  "head": {
+   "ref": "7ec84833",
+   "sha": "7ec84833a60fbdc14580a5a8871585f4f8a1e0a8"
+  },
+  "inputs": {
+   "cache_root": "cache",
+   "ciq": {
+    "AMZN": {
+     "files": 11
+    },
+    "BRBR": {
+     "files": 11
+    },
+    "BURL": {
+     "files": 11
+    },
+    "CNXC": {
+     "files": 11
+    },
+    "EPAM": {
+     "files": 11
+    },
+    "FUBO": {
+     "files": 10
+    },
+    "GOOGL": {
+     "files": 11
+    },
+    "IT": {
+     "files": 10
+    },
+    "LLY": {
+     "files": 11
+    },
+    "MCK": {
+     "files": 11
+    },
+    "MVST": {
+     "files": 10
+    },
+    "NCNO": {
+     "files": 11
+    },
+    "NFLX": {
+     "files": 11
+    },
+    "NKE": {
+     "files": 11
+    },
+    "ORKA": {
+     "files": 8
+    },
+    "PARR": {
+     "files": 10
+    },
+    "ROST": {
+     "files": 11
+    },
+    "SMPL": {
+     "files": 11
+    },
+    "TECX": {
+     "files": 8
+    },
+    "TGT": {
+     "files": 11
+    },
+    "TJX": {
+     "files": 10
+    },
+    "UBER": {
+     "files": 11
+    },
+    "V": {
+     "files": 10
+    },
+    "VITL": {
+     "files": 11
+    },
+    "VRRM": {
+     "files": 11
+    },
+    "WERN": {
+     "files": 11
+    },
+    "WLK": {
+     "files": 11
+    }
+   },
+   "ciq_moved_during_run": [],
+   "ciq_root": "ciq",
+   "data_ref": "7ec84833a60fbdc14580a5a8871585f4f8a1e0a8",
+   "pages": [
+    "AMZN",
+    "BRBR",
+    "BURL",
+    "CNXC",
+    "EPAM",
+    "FUBO",
+    "GOOGL",
+    "IT",
+    "LLY",
+    "MCK",
+    "MVST",
+    "NCNO",
+    "NFLX",
+    "NKE",
+    "ORKA",
+    "PARR",
+    "ROST",
+    "SMPL",
+    "TECX",
+    "TGT",
+    "TJX",
+    "UBER",
+    "V",
+    "VITL",
+    "VRRM",
+    "WERN",
+    "WLK"
+   ],
+   "store": {
+    "content": {
+     "content_sha256": "abeee0e75c67014ed51611bd1d2381e3d130fbb82064f5ec6aa233db9632ca43",
+     "rows": 2543455
+    },
+    "file_sha256": "e33d420f9f5de2d3cd63c3d91bf1f13cc3152d3dbe5487c2c0a35721d3234ff4",
+    "frontier": "2026-11-09",
+    "priced_ids": 2349,
+    "source": "scratchpad",
+    "written_by": []
+   }
+  }
+ },
+ "tool": "vinci.impact",
+ "wall_seconds": 108.6
+}
