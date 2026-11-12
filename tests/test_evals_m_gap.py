@@ -167,11 +167,13 @@ def test_m_gap_is_undefined_off_the_frozen_pages() -> None:
 
 
 def test_a_registration_refuses_m_gap_off_its_pages() -> None:
+    """M-GAP is barred as a target on every page since RG-D13 (operator 2026-11-11, "Bar it now"):
+    off its pages, and on the panel, which allowed it before the bar."""
     _history()
-    with pytest.raises(rp.ReplayError, match="defined only on the pages"):
+    with pytest.raises(rp.ReplayError, match="RG-D13"):
         cm.register("dc5b8787", "b109e26c", targets=["M-GAP"], pages=["NFLX"])
-    reg = cm.register("dc5b8787", "b109e26c", targets=["M-GAP"])          # the panel: allowed
-    assert reg.targets == ("M-GAP",)
+    with pytest.raises(rp.ReplayError, match="RG-D13"):
+        cm.register("dc5b8787", "b109e26c", targets=["M-GAP"])          # the panel too, now
 
 
 def test_the_gap_types_decide_a_score_so_the_scorer_pins_them() -> None:
@@ -284,8 +286,9 @@ def _moved_panel() -> dict[str, Any]:
 
 
 def test_a_registration_refuses_m_gap_on_a_refrozen_page() -> None:
+    """Refused first by the RG-D13 bar, which holds on every page."""
     _history()
-    with pytest.raises(rp.ReplayError, match=r"defined only on the pages.*\['MCK'\]"):
+    with pytest.raises(rp.ReplayError, match="RG-D13"):
         cm.register("dc5b8787", "b109e26c", targets=["M-GAP"], panel=_moved_panel())
 
 
@@ -378,3 +381,14 @@ def test_the_no_worsening_families_field_refuses_what_it_cannot_mean() -> None:
     assert cm.Registration.from_json(ok.to_json()) == ok
     plain = cm.Registration(**base)
     assert "no_worsening_families" not in json.loads(plain.to_json())        # old shas kept
+
+
+@pytest.fixture(autouse=True)
+def _scorer_is_the_fingerprint(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests pin the harness's other rules under placeholder refs or old commits. Since
+    #1030's review round 1 the library runs RG-D12 whole (BASE's production files, the harness
+    at `scorer_ref`), which no such ref holds; it is stood in by the fingerprint comparison
+    these tests were written against (`tests/evals_scorer_stub.py`). RG-D12's own pins are in
+    `tests/test_evals_order8.py` and `tests/test_evals_order8_round1.py`."""
+    from tests.evals_scorer_stub import fingerprint_only
+    monkeypatch.setattr(cm, "refuse_unless_registered_scorer", fingerprint_only)

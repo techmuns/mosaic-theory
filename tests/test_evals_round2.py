@@ -128,7 +128,8 @@ def test_one_guarded_create_is_one_http_attempt(tmp_path: Path, nflx: dict[str, 
     ledger = tmp_path / "ledger.jsonl"
     rp.Budget.open(ledger, cap_usd=5.0, approval="operator: test")
     raws = rp.run_request(rp.capture(nflx, None, draws=1), draws=1, budget=rp.Budget.load(ledger),
-                          label="r", draws_out=tmp_path / "d.jsonl", sdk=sdk)
+                          label="r", draws_out=tmp_path / "d.jsonl", sdk=sdk,
+                          registration="a-test-registration")   # a real client: RG-D10 asks one
     assert len(attempts) == 1 and raws == [None]
     row = json.loads((tmp_path / "d.jsonl").read_text().splitlines()[0])
     assert row["raw"] is None and "529" in row["error"]
@@ -351,3 +352,14 @@ def test_capture_refuses_an_out_file_inside_the_repository() -> None:
 def test_the_gold_split_still_holds(tmp_path: Path) -> None:
     g = gd.load_gold()
     assert sum(x.half == "test" for x in g) == 314
+
+
+@pytest.fixture(autouse=True)
+def _scorer_is_the_fingerprint(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests pin the harness's other rules under placeholder refs or old commits. Since
+    #1030's review round 1 the library runs RG-D12 whole (BASE's production files, the harness
+    at `scorer_ref`), which no such ref holds; it is stood in by the fingerprint comparison
+    these tests were written against (`tests/evals_scorer_stub.py`). RG-D12's own pins are in
+    `tests/test_evals_order8.py` and `tests/test_evals_order8_round1.py`."""
+    from tests.evals_scorer_stub import fingerprint_only
+    monkeypatch.setattr(cm, "refuse_unless_registered_scorer", fingerprint_only)
