@@ -473,12 +473,14 @@ class SecResolver:
             return self._walk(cik10, as_of, want, fresh=False)
         except _StalePageError as stale:
             try:
-                self._subs[cik10] = cast(dict[str, Any], self._http.get_json(
-                    SUBMISSIONS.format(cik=cik10), ttl_seconds=0.0))
-            except (HttpError, ValueError) as exc:
+                again = self._http.get_json(SUBMISSIONS.format(cik=cik10), ttl_seconds=0.0)
+                if not isinstance(again, dict):
+                    raise TypeError(f"{type(again).__name__}, not a JSON object")
+            except (HttpError, ValueError, TypeError) as exc:
                 return [], (f"older submissions page {stale} for CIK{cik10} disagrees with the "
                             f"document's listing of it, and the document could not be read "
                             f"again: {type(exc).__name__}: {exc}")
+            self._subs[cik10] = again
             return self._walk(cik10, as_of, want, fresh=True)
 
     def _walk(self, cik10: str, as_of: date, want: frozenset[str], *,
@@ -494,11 +496,11 @@ class SecResolver:
         for page in sub.get("filings", {}).get("files", []):
             name = page.get("name")
             try:
-                if not name:
-                    raise KeyError("listed with no name")
                 frm = page.get("filingFrom")
                 if frm and date.fromisoformat(frm) > as_of:
-                    continue  # wholly after the as-of date
+                    continue  # wholly after the as-of date: never read, so its name is not needed
+                if not name:
+                    raise KeyError("listed with no name")
                 older = self._http.get_json(SUBMISSIONS_PAGE.format(name=name),
                                             ttl_seconds=0.0 if fresh else _ONE_DAY)
                 stale = _page_mismatch(page, older)  # a body not an object: its TypeError

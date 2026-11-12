@@ -103,8 +103,9 @@ class _Sec:
     page -001 as ``page`` says (``ok`` = the committed page), and a cover for every 10-Q / 10-K.
     Counts the requests that reached the wire."""
 
-    def __init__(self, *, page: str = "ok", doc: dict[str, Any] | None = None) -> None:
-        self.page, self.doc = page, doc or DOC
+    def __init__(self, *, page: str = "ok", doc: dict[str, Any] | None = None,
+                 doc_again: str | None = None) -> None:
+        self.page, self.doc, self.doc_again = page, doc or DOC, doc_again
         self.requests: Counter[str] = Counter()
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
@@ -114,8 +115,9 @@ class _Sec:
             return httpx.Response(200, text=json.dumps(EXCHANGE))
         if url == TICKERS_MF:
             return httpx.Response(200, text=json.dumps(FUNDS))
-        if url == DOC_URL:
-            return httpx.Response(200, text=json.dumps(self.doc))
+        if url == DOC_URL:  # ``doc_again``: the body of every read after the first
+            return httpx.Response(200, text=self.doc_again if self.doc_again is not None
+                                  and self.requests[url] > 1 else json.dumps(self.doc))
         if url == PAGE1_URL:
             body = {"ok": json.dumps(PAGE1), "interstitial": INTERSTITIAL,
                     "not-an-object": json.dumps([PAGE1]),
@@ -191,6 +193,17 @@ def test_a_page_listed_with_no_name_is_named(tmp_path: Path) -> None:
             and "no periodic filing" not in r.note)
 
 
+def test_an_unnamed_listing_after_the_as_of_date_is_skipped_not_named(tmp_path: Path) -> None:
+    """Review round 0: the name was checked before the span, so a listing wholly after the as-of
+    date — a page the walk never reads — ended it as unreadable. Its negative is the test above:
+    an unnamed listing the walk needs is still named."""
+    doc = json.loads(json.dumps(DOC))
+    doc["filings"]["files"].insert(0, {"filingCount": 1, "filingFrom": "2021-12-01",
+                                       "filingTo": "2021-12-01"})
+    r = _resolve(tmp_path, _Sec(doc=doc))
+    assert _verified_from(r, AUG_10Q), (r.note, r.listings)
+
+
 def test_negative_a_readable_older_page_gives_the_cover_it_holds(tmp_path: Path) -> None:
     """The committed page read: the listing is verified on the August 10-Q's cover, found on
     page -001 — the walk's ordinary result, unchanged."""
@@ -246,6 +259,18 @@ def test_a_page_that_still_disagrees_when_read_fresh_is_named(tmp_path: Path) ->
     n = len(_earlier_vintage(PAGE1)["accessionNumber"])
     assert (f"older submissions page {PAGE1_NAME} for CIK{IT_CIK} disagrees with the document's "
             f"listing of it, read fresh ({n} rows where it lists 114)") in r.note
+
+
+def test_a_document_read_again_as_something_not_an_object_is_named(tmp_path: Path) -> None:
+    """Review round 0: after a stale page, the document read again was kept unchecked — a JSON
+    list raised AttributeError out of the resolver. Now it is the stated reason."""
+    sec = _Sec(doc_again="[]")
+    http = _http(tmp_path, sec)
+    _hold(http, PAGE1_URL, _earlier_vintage(PAGE1), age_sec=3600.0)
+    r = _resolve(tmp_path, sec, http=http)
+    assert r.listings == ()
+    assert (f"older submissions page {PAGE1_NAME} for CIK{IT_CIK} disagrees with the document's "
+            f"listing of it, and the document could not be read again: TypeError") in r.note
 
 
 def test_a_page_held_longer_than_its_document_is_read_again(tmp_path: Path) -> None:

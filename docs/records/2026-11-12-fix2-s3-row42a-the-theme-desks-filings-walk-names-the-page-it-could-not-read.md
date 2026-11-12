@@ -52,8 +52,10 @@ registrant, made from a page that was never read.
 - **(1) Tests on Gartner's committed document and page -001** (#878's fixtures), through a real
   `CachedHttp` served by a mock transport. The document's recent page begins 2021-12-02, so as of
   2021-09-01 the walk must read -001.
-  - `tests/test_theme_intelligence_older_pages.py` has 13 tests. 9 fail on main `53e5f26e`; the
-    other 4 are negative pins and pass on both.
+  - `tests/test_theme_intelligence_older_pages.py` has 15 tests, 2 of them added in review
+    round 0. 11 fail on main `53e5f26e`, one of them the parity test, whose function main does
+    not have. The other 4 pass on both: three negative pins, and the round-0 pin on the order of
+    the name check, which main had right.
   - On main a 404 on -001 read: "listing NOT point-in-time verified as of 2021-09-01: no periodic
     filing on or before 2021-09-01 in the SEC submissions index". Gartner had filed a 10-Q on
     2021-08-03, on that page.
@@ -86,6 +88,17 @@ registrant, made from a page that was never read.
   catch, and no oldest-row test. The survivor removed a type check on the page body. It showed
   the check was redundant, since a JSON list already fails inside the listing check with a
   `TypeError` that names the page, so the check was removed.
+- **Review round 0** (`/code-review high --fix`, 4 findings, 2 fixed behind a test that failed
+  first):
+  - FIXED: a listing with no name was checked before its span, so an unnamed listing wholly
+    after the as-of date, a page the walk never reads, ended the walk as unreadable.
+  - FIXED: the document read again after a stale page was kept unchecked, so a JSON list raised
+    `AttributeError` out of the resolver. It is now the stated reason.
+  - NO CHANGE: the listing check is restated, not imported. The isolation boundary forbids the
+    import, and the parity test holds the two together.
+  - NO CHANGE: the fresh walk reads every page fresh, including those that agreed. A re-cut
+    moves rows from the newest end, so the newer pages are exactly the ones a fresh document
+    re-cuts.
 - **Two existing tests changed their fixtures.** Each served a page whose listed `filingFrom`
   was not its oldest row: 2024-01-01 for a page from 2025-02-26, and 2010-01-01 for one from
   2019-02-27. EDGAR does not serve that shape: #878 measured 35 of 35 same-run pairs listing the
