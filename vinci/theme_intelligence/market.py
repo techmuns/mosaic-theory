@@ -45,6 +45,7 @@ from vinci.screens.assemble import (
     MAX_EPS_AGE_DAYS,
     annual_eps_point_as_of,
     pe_current_and_percentile,
+    split_restatement,
 )
 from vinci.theme_intelligence.cards import exposure_instruments, listed_exposures
 from vinci.theme_intelligence.schemas import (
@@ -249,17 +250,26 @@ _SHARES = ("shares", SHARES_FILED, SHARES_REFUSED)
 #: periods to agree within 2%, and NVDA's 10-for-1 (FY2023 1.74 → 0.17 is ×10.24, FY2024 11.93 →
 #: 1.19 is ×10.03) missed it by 0.05% (2026-10-16)
 BASIS_BREAK = 1.5
+#: a break this close to the filer's own split factor IS that split (the fund's rule puts the
+#: EPS before it on the current basis — `split_restatement`): restated EPS carry cents rounding
+#: (NVDA's ×10.24 for a 10-for-1) and a share count drifts with buybacks between two cover pages,
+#: both far inside 5%; a break of another size is another event and still refuses
+EXPLAINED_TOL = 0.05
 
 
 BreakKind = Literal["eps", "shares"]
 
 
-def basis_breaks(points: Sequence[ConceptPoint], since: date,
-                 as_of: date) -> list[tuple[BreakKind, str]]:
+def basis_breaks(points: Sequence[ConceptPoint], since: date, as_of: date, *,
+                 explained: float | None = None) -> list[tuple[BreakKind, str]]:
     """Every change of per-share basis the filings known by `as_of` show after `since`, as (kind,
     words): an annual EPS period a later filing restated by `BASIS_BREAK` or more ("eps"), and a
-    share count that moved by it between consecutive cover pages ("shares"). Callers branch on the
-    KIND, never on the words."""
+    share count that moved by it between consecutive cover pages ("shares") — except a break of
+    the size `explained`, the filer's own split factor, which the fund's rule already put on the
+    current basis. Callers branch on the KIND, never on the words."""
+
+    def split(ratio: float) -> bool:
+        return explained is not None and abs(ratio / explained - 1) <= EXPLAINED_TOL
     known = [p for p in points if p.filed <= as_of]
     out: list[tuple[BreakKind, str]] = []
     by: dict[date, list[ConceptPoint]] = {}
@@ -272,7 +282,13 @@ def basis_breaks(points: Sequence[ConceptPoint], since: date,
             continue
         a = max(abs(p.value) for p in ps if p.filed == filed[0])
         b = max(abs(p.value) for p in ps if p.filed == filed[-1])
-        if a and b and max(a / b, b / a) >= BASIS_BREAK:
+        # A SPLIT NEVER CROSSES ZERO (`split_restatement` skips such a period): a profit restated
+        # into a loss of the split's size is an accounting change, never explained by the split
+        signed = [max((p.value for p in ps if p.filed == f), key=abs)
+                  for f in (filed[0], filed[-1])]
+        crosses = (signed[0] > 0) != (signed[1] > 0)
+        if a and b and max(a / b, b / a) >= BASIS_BREAK and (crosses
+                                                            or not split(max(a / b, b / a))):
             out.append(("eps", f"the year ending {end.isoformat()}: EPS {a:g} as first filed, "
                                f"{b:g} as filed {filed[-1].isoformat()} "
                                f"(×{max(a / b, b / a):.1f})"))
@@ -293,7 +309,7 @@ def basis_breaks(points: Sequence[ConceptPoint], since: date,
                                       f"across it"))
         if SHARES_REFUSED in (c0, c1):
             continue
-        if max(v1 / v0, v0 / v1) >= BASIS_BREAK:
+        if max(v1 / v0, v0 / v1) >= BASIS_BREAK and not split(max(v1 / v0, v0 / v1)):
             out.append(("shares", f"shares outstanding {v0:,.0f} {_on(d0, c0)}, "
                                   f"{v1:,.0f} {_on(d1, c1)} "
                                   f"(×{max(v1 / v0, v0 / v1):.1f})"))
@@ -448,15 +464,25 @@ def pe_against_history(closes: Closes, eps: list[ConceptPoint], as_of: date,
             pe_f = _not_held(f"the share count moved after the EPS in use was filed "
                              f"({latest.filed.isoformat()}) — {moved[0]}: its per-share basis "
                              f"may predate the move")
-    breaks = basis_breaks(eps, consumed, as_of)
+    # A SPLIT THE FUND'S RULE PUT ON THE CURRENT BASIS is not a break the range still runs through
+    # (operator, 2026-11-11: "Split-adjust EPS, fund rule") — read from the same filings, known by
+    # the date; any other break still refuses
+    stated = split_restatement([p for p in annual if p.period_end >= consumed and p.filed <= as_of])
+    breaks = basis_breaks(eps, consumed, as_of,
+                          explained=stated.factor if stated is not None else None)
     if pct.value is not None and breaks:
         return pe_f, _not_held(f"the per-share basis changes inside the window — {breaks[0][1]}"
                                + (f" (and {len(breaks) - 1} more)" if len(breaks) > 1 else ""))
     first = max(held[0][0], as_of - timedelta(days=HISTORY_DAYS))
+    # SAID WHERE IT IS SHOWN (review): a range built on split-adjusted EPS names the adjustment and
+    # its factor, read from the structured restatement — never parsed out of the rule's note
+    adjusted = (f"; EPS filed before {stated.restated_from.isoformat()} put on the current share "
+                f"basis by the filer's own ~{stated.factor:.4g}x restatement"
+                if stated is not None else "")
     pct_f = (MarketFigure(value=pct.value,
                           basis=f"share of its daily P/Es from {first.isoformat()} to "
                                 f"{as_of.isoformat()} at or below today's ("
-                                + (joined or "the prices held") + ")")
+                                + (joined or "the prices held") + ")" + adjusted)
              if pct.value is not None else _not_held(pct.note or "no P/E history"))
     return pe_f, pct_f
 

@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 from datetime import date, timedelta
 
 import pytest
@@ -37,6 +38,7 @@ from vinci.screens.assemble import (
     _half_unit,
     pe_current_and_percentile,
     share_basis_change,
+    split_restatement,
 )
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -76,16 +78,42 @@ def test_the_two_factors_really_differ_by_more_than_the_old_tolerance() -> None:
         assert abs(g - f) / max(f, g) > _SPLIT_TOL
 
 
-def test_the_percentile_g3_reads_is_refused_for_pega() -> None:
+def test_the_percentile_g3_reads_is_split_adjusted_for_pega() -> None:
     """THE ARTIFACT LAYER: the field the G3 gate and the ranker's multiple axis read — on the
-    2026-09-22 run a PRESENT 11th percentile; now refused with the split as its stated cause."""
+    2026-09-22 run a PRESENT 11th percentile on two bases; then refused with the split as its
+    cause; since 2026-11-11 (operator: "Split-adjust EPS, fund rule") built on ONE basis, the
+    older EPS put on the current one by the filer's own ~2x."""
     ref = date(2026, 9, 22)
     bars = [PriceBar(internal_id="SEC-PEGA", bar_date=ref - timedelta(days=n), open=40.0,
                      high=41.0, low=39.0, close=40.0, volume=1e6, source="t")
             for n in range(0, 1825, 1)]
     pe, pctile = pe_current_and_percentile(bars, _points("PEGA"), reference_date=ref)
     assert pe.coverage_status is CoverageStatus.PRESENT
-    assert pctile.coverage_status is CoverageStatus.UNKNOWN
+    assert pctile.coverage_status is CoverageStatus.PRESENT, pctile.note
+    assert G3_SPLIT_BASIS not in (pctile.note or "")
+    got = re.search(r"put on the current share basis by the filer's own ~([\d.]+)x restatement "
+                    r"\(a forward split\)", pctile.note or "")
+    assert got and float(got.group(1)) == pytest.approx(2.0, rel=0.01), pctile.note
+
+
+def test_nvda_a_lone_older_split_in_the_window_refuses_rather_than_scaling_by_one_factor() -> None:
+    """NEGATIVE, real filings (review of the split-adjust rule): NVDA's window at 2026-10-14 holds
+    the 10-for-1 group (×10.24, ×10.03, restated 2025-02-26) AND one comparative of its 2021
+    4-for-1 (FY2021 6.90 → 1.73, ×3.99, restated 2022-03-18) — a lone factor, never a group.
+    Scaled by 1/10.13 alone, the bars to 2022-03-17 read 6.90 as 0.681 where the current basis is
+    0.1725; the range is two bases, so it is refused, never adjusted by one factor.
+
+    MUTATION: restore the agreeing-group-only check for a second basis change and this reddens
+    with a PRESENT 0.127."""
+    ref = date(2026, 10, 14)
+    pts = _points("NVDA")
+    assert split_restatement(_window(pts, ref)) is None
+    bars = [PriceBar(internal_id="SEC-NVDA", bar_date=ref - timedelta(days=n), open=100.0,
+                     high=100.0, low=100.0, close=100.0, volume=1e6, source="t")
+            for n in range(0, 1826)]
+    pe, pctile = pe_current_and_percentile(bars, pts, reference_date=ref)
+    assert pe.coverage_status is CoverageStatus.PRESENT
+    assert pctile.coverage_status is CoverageStatus.UNKNOWN, (pctile.value, pctile.note)
     assert G3_SPLIT_BASIS in (pctile.note or "")
 
 

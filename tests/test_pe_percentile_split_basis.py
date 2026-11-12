@@ -22,14 +22,16 @@ from datetime import date, timedelta
 
 import pytest
 
-from vinci.edgar.concepts import extract_points
+from vinci.edgar.concepts import ConceptPoint, extract_points
 from vinci.schemas.envelope import CoverageStatus
+from vinci.schemas.market import PriceBar
 from vinci.screens.assemble import (
     G3_REASONS,
     G3_SPLIT_BASIS,
     MAX_EPS_AGE_DAYS,
     pe_current_and_percentile,
     share_basis_change,
+    split_restatement,
 )
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -163,10 +165,13 @@ def test_a_period_merely_repeated_across_filings_is_not_a_restatement() -> None:
         "them")
 
 
-def test_the_percentile_is_refused_and_the_pe_itself_survives() -> None:
-    """THE BEHAVIOUR THAT MATTERS. Refusing the whole block would delete a sound P/E; publishing
-    the range would keep a number that says the opposite of the truth. Exactly one of the two is
-    withdrawn, and it says why."""
+def test_the_percentile_is_split_adjusted_and_reads_where_a_consistent_basis_puts_it() -> None:
+    """THE BEHAVIOUR THAT MATTERS, AS RULED 2026-11-11 (operator: "Split-adjust EPS, fund rule").
+    Until then the range was refused, because publishing it unadjusted kept the 0.909 that told a
+    reader NFLX sat at the top of its 5-year range. Now every EPS filed before the filer's own
+    restating 10-K (2026-01-23) is put on the current basis by the filer's ~10.02x, and the range
+    reads where a consistent basis puts it — near the bottom, as this pin's docstring once
+    predicted. The P/E itself is unchanged."""
     from vinci.schemas.market import PriceBar
 
     ref = date(2026, 8, 7)
@@ -180,11 +185,13 @@ def test_the_percentile_is_refused_and_the_pe_itself_survives() -> None:
     assert pe.coverage_status is CoverageStatus.PRESENT, (
         "the P/E itself was withdrawn — it was never wrong")
     assert pe.value == pytest.approx(74.14 / 2.53, rel=0.01)
-    assert pctile.coverage_status is not CoverageStatus.PRESENT, (
-        f"the percentile survived a share-basis change: {pctile.value} — this is the 0.909 that "
-        f"told a reader NFLX sat at the top of its 5-year range")
-    assert G3_SPLIT_BASIS in (pctile.note or ""), f"refused without its cause: {pctile.note!r}"
-    assert "10" in (pctile.note or ""), "the refusal does not state the factor it found"
+    assert pctile.coverage_status is CoverageStatus.PRESENT and pctile.value is not None
+    assert pctile.value < 0.2, (
+        f"{pctile.value}: a split-adjusted range must not read near the top — that was the "
+        f"0.909 an unadjusted range published")
+    note = pctile.note or ""
+    assert "put on the current share basis by the filer's own ~10.02x restatement" in note
+    assert "EPS filed before 2026-01-23" in note and "(a forward split)" in note
 
 
 def test_the_new_reason_is_in_the_taxonomy() -> None:
@@ -252,9 +259,9 @@ def test_a_split_outside_the_window_does_not_withdraw_the_percentile() -> None:
         "the trailing range")
 
 
-def test_a_split_at_the_window_edge_still_withdraws_the_percentile() -> None:
+def test_a_split_at_the_window_edge_is_adjusted_through_the_reach_back() -> None:
     """THE NEGATIVE HALF OF THE WINDOWING, and the boundary the first cut left open (review of
-    #490).
+    #490) — adjusted since 2026-11-11 where it was refused.
 
     Windowing the split check on the RANGE alone is too narrow, because the range does not read
     EPS points dated inside it: each bar reads `annual_eps_as_of(bar_date)`, which reaches back up
@@ -267,8 +274,8 @@ def test_a_split_at_the_window_edge_still_withdraws_the_percentile() -> None:
     first eighteen months divide split-adjusted prices by as-filed EPS (4.40, not 2.20). The
     reach-back window keeps FY2020 too, both factors agree at 2.0, and the refusal fires.
 
-    MUTATION: drop `+ MAX_EPS_AGE_DAYS` from `_split_start` and this reddens with a PRESENT
-    percentile, while every other pin in this file stays green."""
+    MUTATION: drop `+ MAX_EPS_AGE_DAYS` from `_split_start` and the split goes unread, so the range
+    divides by the as-filed 4.00 and 4.40 and this reddens on the value."""
     from vinci.edgar.concepts import ConceptPoint
     from vinci.schemas.market import PriceBar
 
@@ -298,6 +305,120 @@ def test_a_split_at_the_window_edge_still_withdraws_the_percentile() -> None:
                      high=51.0, low=49.0, close=50.0, volume=1e6, source="t")
             for n in range((ref - window_start).days + 1)]
     _pe, pctile = pe_current_and_percentile(bars, pts, reference_date=ref)
-    assert pctile.coverage_status is CoverageStatus.UNKNOWN, (
-        f"a split whose restated comparatives feed the range was not refused: {pctile.value!r}")
+    # ON ONE BASIS the price is flat and EPS rises every year, so today's P/E (50 / 3.00) is the
+    # lowest in the range: only the bars since FY2025's EPS was filed are at or below it. Divided by
+    # the as-filed 4.00 and 4.40 instead, the first eighteen months would read 12.5 and 11.4 — below
+    # today's — and the percentile would more than triple.
+    in_range = [b for b in bars if ref - timedelta(days=1825) <= b.bar_date <= ref]
+    expected = sum(1 for b in in_range if b.bar_date >= date(2026, 2, 15)) / len(in_range)
+    assert pctile.coverage_status is CoverageStatus.PRESENT, pctile.note
+    assert pctile.value == pytest.approx(expected), (pctile.value, expected)
+    assert "EPS filed before 2023-02-15 put on the current share basis" in (pctile.note or "")
+
+
+def _split_pt(pe: date, filed: date, val: float) -> ConceptPoint:
+    return ConceptPoint(
+        concept="eps_diluted", tag="EarningsPerShareDiluted", unit="USD/shares", value=val,
+        period_start=pe - timedelta(days=364), period_end=pe, filed=filed,
+        fy=pe.year, fp="FY", form="10-K", accession="x")
+
+
+def _flat_bars(ref: date) -> list[PriceBar]:
+    return [PriceBar(internal_id="SEC-X", bar_date=ref - timedelta(days=n), open=50.0, high=51.0,
+                     low=49.0, close=50.0, volume=1e6, source="t") for n in range(0, 1826)]
+
+
+#: a 2:1 split restated by the 10-K filed 2023-02-15 (FY2020 4.00 → 2.00, FY2021 4.40 → 2.20)
+_ONE_SPLIT = [
+    _split_pt(date(2020, 12, 31), date(2021, 2, 15), 4.00),
+    _split_pt(date(2021, 12, 31), date(2022, 2, 15), 4.40),
+    _split_pt(date(2020, 12, 31), date(2023, 2, 15), 2.00),
+    _split_pt(date(2021, 12, 31), date(2023, 2, 15), 2.20),
+    _split_pt(date(2022, 12, 31), date(2023, 2, 15), 2.40),
+    _split_pt(date(2023, 12, 31), date(2024, 2, 15), 2.60),
+]
+
+
+def test_a_split_the_filings_known_by_the_date_do_not_state_is_still_refused() -> None:
+    """NEGATIVE, POINT IN TIME: valued on 2023-01-31, before the restating 10-K was filed, the
+    split cannot be read from what was known — and the old rule's check scans every filing it is
+    handed — so the range is refused, never adjusted with a factor from the future."""
+    ref = date(2023, 1, 31)
+    pts = [*_ONE_SPLIT[:2], _split_pt(date(2022, 12, 31), date(2023, 2, 15), 2.40),
+           _split_pt(date(2020, 12, 31), date(2023, 2, 15), 2.00),
+           _split_pt(date(2021, 12, 31), date(2023, 2, 15), 2.20)]
+    assert split_restatement([p for p in pts if p.filed <= ref]) is None
+    _pe, pctile = pe_current_and_percentile(_flat_bars(ref), pts, reference_date=ref)
+    assert pctile.coverage_status is CoverageStatus.UNKNOWN
     assert G3_SPLIT_BASIS in (pctile.note or ""), pctile.note
+
+
+def test_two_splits_in_one_window_are_refused_never_chained() -> None:
+    """NEGATIVE: a 2:1 restated in 2023 and a 3:1 restated in 2025 inside one window — two basis
+    changes, refused rather than chained."""
+    ref = date(2026, 8, 14)
+    pts = [*_ONE_SPLIT,
+           _split_pt(date(2022, 12, 31), date(2025, 2, 15), 0.80),   # 2.40 → 0.80, ×3
+           _split_pt(date(2023, 12, 31), date(2025, 2, 15), 0.8667),  # 2.60 → 0.8667, ×3
+           _split_pt(date(2024, 12, 31), date(2025, 2, 15), 0.93),
+           _split_pt(date(2025, 12, 31), date(2026, 2, 15), 1.00)]
+    assert split_restatement([p for p in pts if p.filed <= ref]) is None
+    _pe, pctile = pe_current_and_percentile(_flat_bars(ref), pts, reference_date=ref)
+    assert pctile.coverage_status is CoverageStatus.UNKNOWN
+    assert G3_SPLIT_BASIS in (pctile.note or ""), pctile.note
+
+
+def test_two_splits_of_the_same_size_are_two_not_one() -> None:
+    """NEGATIVE, HLF's shape: two 2:1 splits agree on the factor, so agreement alone groups them
+    and would rescale from the earlier restating filing. Restating filings more than a year apart
+    are two splits — refused."""
+    pts = [_split_pt(date(2009, 12, 31), date(2010, 2, 15), 4.0),
+           _split_pt(date(2010, 12, 31), date(2011, 2, 15), 4.4),
+           _split_pt(date(2009, 12, 31), date(2012, 2, 15), 2.0),
+           _split_pt(date(2010, 12, 31), date(2012, 2, 15), 2.2),
+           _split_pt(date(2016, 12, 31), date(2017, 2, 15), 6.0),
+           _split_pt(date(2017, 12, 31), date(2018, 2, 15), 6.6),
+           _split_pt(date(2016, 12, 31), date(2019, 2, 15), 3.0),
+           _split_pt(date(2017, 12, 31), date(2019, 2, 15), 3.3)]
+    assert share_basis_change(pts) == pytest.approx(2.0, rel=0.01)
+    assert split_restatement(pts) is None
+    one = [p for p in pts if p.period_end >= date(2016, 1, 1)]
+    got = split_restatement(one)
+    assert got is not None and got.restated_from == date(2019, 2, 15)
+    assert got.scale == pytest.approx(0.5, rel=0.01)
+
+
+def test_a_later_revision_of_a_comparative_does_not_date_the_split_late() -> None:
+    """The restating filing is the FIRST on the new basis (review): the 2:1 is restated by the
+    10-K filed 2023-02-15, and the next 10-K revises the comparatives a few percent (2.00 → 2.10,
+    2.20 → 2.31). Dated by agreement with the LAST figure, the split would start 2024-02-15 and
+    the 2023-02-15 10-K's own new-basis FY2022 2.40 would be halved again."""
+    pts = [*_ONE_SPLIT,
+           _split_pt(date(2020, 12, 31), date(2024, 2, 15), 2.10),
+           _split_pt(date(2021, 12, 31), date(2024, 2, 15), 2.31)]
+    got = split_restatement(pts)
+    assert got is not None and got.restated_from == date(2023, 2, 15)
+
+
+def test_two_splits_restated_by_consecutive_10ks_are_two_not_one() -> None:
+    """NEGATIVE (review): FY2023 40 → 4 restated by the 10-K filed 2025-02-01, which itself first
+    states FY2024 at 50; the next 10-K restates FY2024 50 → 5. Both ×10, restating filings 365 days
+    apart — inside the year a single split allows — but the first restating 10-K states a period on
+    the old basis, so these are two splits. One factor from 2025-02-01 would leave FY2024's 50
+    unscaled for a year of bars against a current basis of 5. Refused."""
+    pts = [_split_pt(date(2023, 12, 31), date(2024, 2, 1), 40.0),
+           _split_pt(date(2023, 12, 31), date(2025, 2, 1), 4.0),
+           _split_pt(date(2024, 12, 31), date(2025, 2, 1), 50.0),
+           _split_pt(date(2024, 12, 31), date(2026, 2, 1), 5.0)]
+    assert split_restatement(pts) is None
+
+
+def test_a_reverse_split_scales_older_eps_up() -> None:
+    """A REVERSE split restates EPS UP (1:5: 0.20 → 1.00); older EPS is multiplied, not divided."""
+    pts = [_split_pt(date(2021, 12, 31), date(2022, 2, 15), 0.20),
+           _split_pt(date(2022, 12, 31), date(2023, 2, 15), 0.30),
+           _split_pt(date(2021, 12, 31), date(2024, 2, 15), 1.00),
+           _split_pt(date(2022, 12, 31), date(2024, 2, 15), 1.50)]
+    got = split_restatement(pts)
+    assert got is not None and got.scale == pytest.approx(5.0, rel=0.01)
+    assert got.restated_from == date(2024, 2, 15)
