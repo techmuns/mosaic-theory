@@ -97,10 +97,12 @@ def test_wern_revenues_of_releases_carry_their_headline_revenue() -> None:
     assert not missing, f"WERN: no headline revenue row: {missing}"
 
 
-@_awaits("audit E2-D11: 'Revenues of' was not read — MVST carries no headline revenue")
+@pytest.mark.skip(reason=(
+    "MVST retired 2026-11-12 (docs/records/2026-11-13-mvst-retired.md): its page will never be "
+    "rebuilt, so this pin could never pass. Kept, skipped, only because fix-log row E2-D11 names "
+    "this node and a fix PR does not edit the log; delete it with the coordinator's bookkeeping"))
 def test_mvst_revenues_of_releases_carry_their_headline_revenue() -> None:
-    missing = _no_headline_revenue("MVST", {"0001628280-26-055471": ("Q2 2026", 87.3)})
-    assert not missing, f"MVST: no headline revenue row: {missing}"
+    """MVST's E2-D11 half, retired with the name. It asserts nothing: the page it read is gone."""
 
 
 def test_nflx_stated_twelve_month_wall_is_located() -> None:

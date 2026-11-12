@@ -314,7 +314,7 @@ def test_every_committed_page_round_trips_with_no_new_drawdown_key() -> None:
     exactly what is on disk, so a page with no anchor gains no null key. Not "no page carries an
     anchor" — the artifact pass re-assembles anchored names, and that would red on the first."""
     pages = sorted(Path("data/dossiers").glob("*/dossier.json"))
-    assert len(pages) >= 27
+    assert len(pages) >= 26  # 27 until MVST was retired (2026-11-12)
     for p in pages:
         raw = json.loads(p.read_text())["mechanical"]["drawdown_cause"]
         assert json.loads(DrawdownCause.model_validate(raw).model_dump_json()) == raw, p

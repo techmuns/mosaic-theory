@@ -260,6 +260,8 @@ def test_current_state_carries_the_decision_numbers_and_both_dates() -> None:
 #: other reason still fails, and so does a "retired" one that names a successor or a live record.
 RETIRED_ARCHIVES: dict[str, str] = {
     "AORT-2026-07-22": "docs/records/2026-11-09-aort-retired.md",  # "retire AORT fully"
+    # "we want to drop/remove MVST altogether from our list for future as well"
+    "MVST-2026-07-22": "docs/records/2026-11-13-mvst-retired.md",
 }
 
 
@@ -340,6 +342,31 @@ def test_an_archive_with_no_successor_passes_only_as_a_named_retirement(case: st
         want = "is not archived"
     problems = _archive_pointer_problems(live, archived, retired, paged)
     assert any(want in p for p in problems), problems
+
+
+def test_a_retired_name_leaves_the_monitors_freshness_set(tmp_path: Path) -> None:
+    """THE MONITOR'S FRESHNESS SET HOLDS NO RETIRED NAME (2026-11-12, MVST). A monitor day writes
+    a freshness row for each live ledger decision and each `watch` / `pending_analyst` record, and
+    both doors need `scenarios/<T>.json`: `_watch_tickers` globs the live records, and the day
+    skips a name with none. Archiving a retired name's record is what takes it out, so the set is
+    pinned on the committed book. NEGATIVE: the same check on a scratch copy of the book with
+    MVST's archived record put back live sees MVST. The sealed archive is only read."""
+    from vinci.cli import _watch_tickers
+
+    archived = sc.all_archived(root=ROOT)
+    retired = {archived[key].ticker.upper(): key for key in RETIRED_ARCHIVES}
+    assert {"AORT", "MVST"} <= set(retired)
+    book = _watch_tickers(ROOT)
+    assert book, "the committed book carries a watch name, so the check is not vacuous"
+    assert book & set(retired) == set(), sorted(book & set(retired))
+    scratch = tmp_path / "scenarios"
+    scratch.mkdir()
+    for p in (ROOT / "scenarios").glob("*.json"):
+        if not p.name.startswith("_"):
+            (scratch / p.name).write_bytes(p.read_bytes())
+    restored = ROOT / "scenarios" / "archive" / f"{retired['MVST']}.json"
+    (scratch / "MVST.json").write_bytes(restored.read_bytes())
+    assert _watch_tickers(tmp_path) & set(retired) == {"MVST"}
 
 
 def test_supersession_links_both_ways_and_never_edits_the_archived_rationale() -> None:

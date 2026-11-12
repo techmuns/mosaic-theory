@@ -132,3 +132,28 @@ superseded-by:
 - **The precheck compares presence and some values, never the synthesis.** A paid build can still differ from it where the paid draw decides, such as the 19c guard or `capital_structure.maturity_event`.
 - **The expected cost is a measured growth applied to measured costs**, not a fit. Five of the 27 are priced at a median, because no build is recorded for them.
 - **The table is today's.** Exports and filings move: TJX's panel ages out on 12-01, and the Q3 10-Qs for BURL, TGT and ROST are due late November to mid-December.
+## Amendments
+
+### 2026-11-13: MVST leaves the rebuild, so group 3 is IT, ORKA, PARR and WERN
+
+- **The ruling.** The operator, 2026-11-12, verbatim: *"we want to drop/remove MVST altogether
+  from our list for future as well"*. MVST's page left the corpus with it
+  (`docs/records/2026-11-13-mvst-retired.md`), so the rebuild covers 26 pages, not 27. The body
+  above is as measured on 27.
+- **Group 3 is IT, ORKA, PARR and WERN**, four pages, each owing a full set now. MVST's row
+  ("full set, with the Q3 2026 call") is no longer owed.
+- **The cost, by this record's own rule** (last cost × 1.255, then +20%):
+  - MVST had no recorded build and was priced at the $4.44 median. That median is of the 7 builds
+    since 2026-11-09, none of them MVST's, so it is unchanged for FUBO, IT, NCNO and WERN.
+  - Group 3 at last cost is $4.44 (IT) + $1.25 (ORKA) + $2.71 (PARR) + $4.44 (WERN) = $12.84.
+
+  | Batch | Pages | At last cost | Expected (× 1.255) | Cap (+20%) |
+  |---|---|---|---|---|
+  | Groups 1 + 2 | 17 | $76.93 | $96.55 | $116, unchanged |
+  | Group 3, after its re-export | 4 | $12.84 | $16.11 | **$19** (was $26) |
+  | Group 4, after its filing and re-export | 5 | $18.07 | $22.68 | $27, unchanged |
+  | **All 26** | 26 | $107.84 | **$135.34** | $162.41 (was $169.09 on 27, proposed as $170) |
+
+- **No approval changes here.** The $170 cap was approved in batches of $116, $26 and $27 (as
+  relayed in this amendment's build brief). By the rule, group 3's batch needs $19 of its $26, and
+  the three batches sum to $162. Whether to lower a cap is the operator's call.

@@ -203,7 +203,7 @@ def test_a_record_stating_no_measured_trigger_carries_no_key_for_one() -> None:
             assert isinstance(got, list) and got, f"{f.name} dropped a STATED measured trigger"
         else:
             assert got == "ABSENT", f"{f.name} gained an empty measured_triggers key"
-    assert seen >= 8, f"walked only {seen} committed records"
+    assert seen >= 7, f"walked only {seen} committed records"  # 8 until MVST was archived
 
 
 def test_a_record_that_states_one_keeps_it() -> None:

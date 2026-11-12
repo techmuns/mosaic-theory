@@ -39,6 +39,8 @@ PAGES = sorted(p.parent.name for p in DOSS.glob("*/dossier.json"))
 #: AORT's page as committed on 2026-10-26, frozen when the name was retired from coverage
 #: (operator, 2026-11-09). It is in no living loop (PAGES); only its named case reads it.
 FROZEN_AORT = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "AORT" / "dossier.json"
+#: MVST's page as committed on 2026-09-17, frozen when it was retired the same way (2026-11-12).
+FROZEN_MVST = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-17" / "MVST" / "dossier.json"
 
 
 class _Stub:
@@ -50,8 +52,8 @@ class _Stub:
 
 
 def _page(t: str) -> dict[str, Any]:
-    doc: dict[str, Any] = json.loads(
-        (FROZEN_AORT if t == "AORT" else DOSS / t / "dossier.json").read_text())
+    frozen = {"AORT": FROZEN_AORT, "MVST": FROZEN_MVST}
+    doc: dict[str, Any] = json.loads(frozen.get(t, DOSS / t / "dossier.json").read_text())
     return doc
 
 

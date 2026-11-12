@@ -238,6 +238,8 @@ def test_every_underwritten_name_is_legacy_today(name: str) -> None:
     p = ROOT / "scenarios" / f"{name}.json"
     if name == "AORT":  # retired 2026-11-09: its record is archived intact, still committed
         p = ROOT / "scenarios" / "archive" / "AORT-2026-07-22.json"
+    if name == "MVST":  # retired 2026-11-12, the same way
+        p = ROOT / "scenarios" / "archive" / "MVST-2026-07-22.json"
     if not p.exists():
         pytest.skip(f"no committed record for {name}")
     facts = json.loads(p.read_text()).get("facts") or {}

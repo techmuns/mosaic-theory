@@ -1020,8 +1020,9 @@ def test_no_committed_record_is_silently_in_violation_of_the_vintage_rule(tmp_pa
             f"{sc.VINTAGE_REQUIRED_FROM} its references must each carry a vintage; "
             f"{unstamped(rec)} carry none")
     # EXACT, not a floor: adding a record must force a conscious look at this rule rather than
-    # sliding past it. Nine as of GOOGL, 2026-09-01; eight since AORT was archived, 2026-11-09.
-    assert seen == 8, f"expected the 8 committed records, walked {seen}"
+    # sliding past it. Nine as of GOOGL, 2026-09-01; eight since AORT was archived, 2026-11-09;
+    # seven since MVST was, 2026-11-12.
+    assert seen == 7, f"expected the 7 committed records, walked {seen}"
 
 
 def _ref_keys(payload: dict[str, object], axis: str = "revenue") -> set[str]:
@@ -1104,7 +1105,8 @@ def test_the_committed_records_round_trip_byte_identical(tmp_path: Path) -> None
             f"{f.name} does not round-trip — re-writing it changes the committed record, so the "
             "next real diff is unreadable. If a field was just added, declare it in "
             "REF_FIELDS_INTRODUCED_IN or AXIS_FIELDS_INTRODUCED_IN.")
-    assert seen == 8, f"expected the 8 committed records, walked {seen}"  # AORT archived 2026-11-09
+    # AORT archived 2026-11-09, MVST 2026-11-12
+    assert seen == 7, f"expected the 7 committed records, walked {seen}"
 
     # THE ARCHIVE IS THE ONLY RECORD BELOW 1.3, and therefore the only one that exercises
     # version-scoping AT ALL: seven records that share a version cannot fail a version check.
