@@ -655,8 +655,10 @@ def test_the_gate_layer_carries_the_material_marks_a_zero_build_lacks() -> None:
 def test_the_post_spend_set_is_every_helper_assemble_one_calls_after_its_synthesis() -> None:
     """THE MIRROR'S SET, pinned against its source. Inside `assemble_one`'s `llm is not None`
     branch, every private helper called after `synthesize` is either in `POST_SPEND` or one the
-    synthesis decides (`_require_synthesis`), and every `POST_SPEND` check is among them. Pins the
-    SET, not each check's rules. A new PRIVATE helper there fails this until it is classified; a
+    synthesis decides (`_require_synthesis`, and the 12-word guard `_refuse_transcript_runs`,
+    which reads the synthesis against its calls), and every `POST_SPEND` check is among them.
+    Pins the SET, not each check's rules. A new PRIVATE helper there fails this until it is
+    classified; a
     public one, or an inline `raise` (the uncited-material-figure guard is one), does not."""
     tree = ast.parse((ROOT / "vinci" / "dossier" / "assemble.py").read_text())
     fn = next(n for n in ast.walk(tree)
@@ -669,7 +671,7 @@ def test_the_post_spend_set_is_every_helper_assemble_one_calls_after_its_synthes
                  and n.func.id == "synthesize")
     after = {n.func.id for n in calls if isinstance(n.func, ast.Name)
              and n.func.id.startswith("_") and n.lineno > synth}
-    assert after == {*POST_SPEND, "_require_synthesis"}
+    assert after == {*POST_SPEND, "_require_synthesis", "_refuse_transcript_runs"}
 
 
 # --- the refusal `_write` makes after every LLM phase --------------------------------------------

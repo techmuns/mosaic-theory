@@ -67,12 +67,36 @@
   "B_half2.jsonl": "3384e6abfa7bed19f26725723c564d900788ff24f6bfcf577828a81951693b54",
   "TAXONOMY.md": "943622b65e1a4c22e58c006f748f325b2a3edfc0814cd9d6b91bd32bc951a735",
   "adjudicated.jsonl": "5b8e82e76cbc2dbdd7e375d378b61c8642411189e2cdfc138ddbb1a026dd72cd",
-  "claims.jsonl": "dfba058400a0fda9fa834d3160bc3bc4f6ee8a5c7b2ca18b7010780243dc7192",
+  "claims.jsonl": "ee4e1fbee7614c5652f048e78ab6330fa756053088b2832f371795ea6f3c0ad9",
   "disagreements.jsonl": "d4300e7e15d293a26499bc90125e5e723867847aff7d7ccab9d118e6ecadb225"
  },
  "not_copied": {
   "disagreements.jsonl": "each disagreement's claim text and both codings \u2014 derivable from claims + coder_a + coder_b",
   "agree.py / full.py": "the diagnosis's scripts; vinci/evals/gold.py reproduces their counts"
  },
- "durable_copy": "the session family's git-ignored data/session-notes/fidelity-gold-2026-11-06/ (in the ai-agent-team-practices worktree): its 8 source files byte-equal source_sha256 (checked 2026-11-06), and its final.py gives the same 283/644 errors and 117/644 material"
+ "durable_copy": "the session family's git-ignored data/session-notes/fidelity-gold-2026-11-06/ (in the ai-agent-team-practices worktree): its 8 source files byte-equal source_sha256 (checked 2026-11-06), and its final.py gives the same 283/644 errors and 117/644 material",
+ "amendments": [
+  {
+   "date": "2026-11-12",
+   "file": "claims.jsonl",
+   "claim": "LLY:bull_points:5 (line 220 of 644)",
+   "change": "its text cut to its first 12 copied transcript words and “…”, byte-equal to its committed page's cut (vinci/dossier/transcript_run_pass.py): 35 → 33 words; the claim's sha256 9d75574cd14c7774 → b919c6918c13249e",
+   "why": "CLAUDE.md's rule: no public field quotes more than 12 consecutive transcript words. The claim shared 14 with LLY's calls, without quotation marks, and this repo is public",
+   "ruling": "operator, 2026-11-12, relayed by the coordinator, verbatim: “Cut it, same PR (Recommended)” — “Cut to 12 words + '…', add a dated MANIFEST note, and merge only if the metric hits and every evals test come out identical”",
+   "source_sha256_was": "dfba058400a0fda9fa834d3160bc3bc4f6ee8a5c7b2ca18b7010780243dc7192",
+   "labels": "unchanged: no coder or adjudicated record moves, and the claim's verdict, materiality and class are its own as coded",
+   "durable_copy": "holds the claim as coded; its sha256 is source_sha256_was"
+  },
+  {
+   "date": "2026-11-12",
+   "file": "claims.jsonl",
+   "claim": "WERN:bull_points:5 (line 604 of 644, the TEST half)",
+   "change": "its text cut to its first 12 copied transcript words and “…”, byte-equal to its committed page's cut (vinci/dossier/transcript_run_pass.py): 34 → 32 words as the guard counts them; the claim's sha256 30cdced31d1a3d6b → dcf2500bbb32b92f",
+   "why": "CLAUDE.md's rule: no public field quotes more than 12 consecutive transcript words. The claim shared 14 with WERN's calls once words are split at a dash, as the guard has counted them since review round 2 of #1036 (11 by whitespace alone), and this repo is public",
+   "ruling": "operator, 2026-11-12, relayed by the coordinator, verbatim: “Cut it, same condition (Recommended)” — “12 words + '…' and a second dated MANIFEST note; merge only if the metric results, the gold summary and every evals test come out identical. Removes the last copy from the public repo.”",
+   "source_sha256_was": "071fb70c09d825a601d9b1a1e309df7ac8955a40d80ce123c654212d88ef7e83",
+   "labels": "unchanged: no coder or adjudicated record moves, and the claim's verdict, materiality and class are its own as coded",
+   "durable_copy": "holds the claim as coded; its sha256 is the first amendment's source_sha256_was"
+  }
+ ]
 }

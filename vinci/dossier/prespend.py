@@ -75,7 +75,8 @@ paid build's checks read (`gate_layer`), and exits 1 on each refusal that needs 
   scratch folder and never meets the committed page, so it is run here against the committed one.
 
 These run on a first assembly too: a page that does not exist yet costs the same to refuse. The
-synthesis-dependent refusals (``_require_synthesis``, the uncited-material-figure guard) cannot be
+synthesis-dependent refusals (``_require_synthesis``, the uncited-material-figure guard, and the
+12-word guard ``_refuse_transcript_runs``, which reads the synthesis against its calls) cannot be
 decided here.
 
 WHAT IT READ (2026-11-05, `vinci.dossier.inputs`). The check records every input its $0 build

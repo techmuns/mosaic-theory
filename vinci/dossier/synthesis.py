@@ -1291,8 +1291,115 @@ def _self_referential_twin(tw: TwinCase, ticker: str, name: str) -> bool:
     return not re.search(r"\b(?:19|20)\d\d\b|\bFY\s?\d\d\b", tw.name, re.IGNORECASE)  # (K6) FY\d\d
 
 
+# --- the 12-word rule at build (operator ruling 2026-11-11: "$0 guard + redaction now") ----------
+# CLAUDE.md: NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS. Its corpus test held
+# that only between quotation marks, and three committed claims copied 13 or 14 of a call's words
+# without them, counted as this guard counts words (LLY 14, VITL 13, WERN 14; #1006's review
+# found them, #1036 measured and cut them). The build HAS the words — every call,
+# whole, is the synthesis's `transcript` — so the guard reads each synthesis string against them,
+# and `assemble` refuses a page that carries such a run (`assemble._refuse_transcript_runs`).
+
+#: CLAUDE.md's number: the most consecutive words of a transcript any public field may quote
+MAX_TRANSCRIPT_RUN = 12
+#: a word's edge punctuation, read off before words are compared ("launch," is "launch")
+_RUN_EDGE = "\"'“”‘’′″‵`()[]{}.,;:!?…—–-"
+#: A WORD ENDS at whitespace, at every dash form and at a slash (review round 2 of #1036): the
+#: calls write " -- " and the syntheses join words with "—", so "hotel—india", "hotel -- india"
+#: and "hotel india" are the same two words, and "year-over-year" is three. The conservative
+#: reading: a boundary the rule's whitespace count does not see must not hide a copied run.
+_RUN_WORD = re.compile(r"[^\s\-\u2010\u2011\u2012\u2013\u2014\u2015\u2212/]+")
+#: primes, typed for an apostrophe, folded to the one mark `comparison_key` folds every quote
+#: mark to (it leaves primes alone: they are feet and minutes there, not quotation)
+_RUN_PRIMES = str.maketrans(dict.fromkeys("′″‵ʹʼ", "'"))
+
+
+@dataclass(frozen=True)
+class TranscriptRun:
+    """A synthesis string sharing more than `MAX_TRANSCRIPT_RUN` consecutive words with the build's
+    own transcripts: where it is (`bull_points[5].claim`), how many words the shared run holds,
+    and, as character offsets in the string, where the run starts, where its first
+    `MAX_TRANSCRIPT_RUN` words end, and where it ends."""
+
+    where: str
+    words: int
+    start: int
+    keep: int
+    end: int
+
+
+def _run_words(text: str) -> list[tuple[str, int, int]]:
+    """Each word of ``text`` as the guard counts them — split at whitespace, at every dash form and
+    at a slash (`_RUN_WORD`) — folded by the verbatim check's key (`comparison_key`: case, quote
+    marks) and with primes taken as apostrophes, its edge punctuation read off, and the character
+    span of the word itself in ``text``, its edge punctuation outside it (so a cut after it keeps
+    the sentence's own comma)."""
+    out: list[tuple[str, int, int]] = []
+    for m in _RUN_WORD.finditer(text):
+        tok = m.group()
+        w = comparison_key(tok).translate(_RUN_PRIMES).strip(_RUN_EDGE)
+        if w:
+            lead = len(tok) - len(tok.lstrip(_RUN_EDGE))
+            trail = len(tok) - len(tok.rstrip(_RUN_EDGE))
+            out.append((w, m.start() + lead, m.end() - trail))
+    return out
+
+
+def _runs_in(text: str, where: str, joined: str,
+             grams: set[tuple[str, ...]]) -> list[TranscriptRun]:
+    """The runs of ``text`` longer than `MAX_TRANSCRIPT_RUN` words that the transcript holds."""
+    toks = _run_words(text)
+    words = [w for w, _, _ in toks]
+    n = MAX_TRANSCRIPT_RUN + 1
+    out: list[TranscriptRun] = []
+    i = 0
+    while i <= len(words) - n:
+        if tuple(words[i:i + n]) not in grams:
+            i += 1
+            continue
+        j = i + n
+        while j < len(words) and f" {' '.join(words[i:j + 1])} " in joined:
+            j += 1
+        out.append(TranscriptRun(where, j - i, toks[i][1], toks[i + MAX_TRANSCRIPT_RUN - 1][2],
+                                 toks[j - 1][2]))
+        i = j
+    return out
+
+
+def synthesis_strings(synth: Synthesis) -> list[tuple[str, str]]:
+    """Every string of a synthesis that the page publishes as prose, with its path
+    (`bull_points[5].claim`). A citation (`source_ref`, a twin's `source`) is no prose."""
+    out: list[tuple[str, str]] = []
+
+    def walk(o: Any, where: str) -> None:
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if k not in ("source_ref", "source"):
+                    walk(v, f"{where}.{k}" if where else str(k))
+        elif isinstance(o, list):
+            for i, v in enumerate(o):
+                walk(v, f"{where}[{i}]")
+        elif isinstance(o, str):
+            out.append((where, o))
+    walk(synth.model_dump(mode="json"), "")
+    return out
+
+
+def transcript_runs(synth: Synthesis | None, transcript: str | None) -> list[TranscriptRun]:
+    """Every run of more than `MAX_TRANSCRIPT_RUN` consecutive words that a synthesis string shares
+    with ``transcript`` (the build's calls, whole), in reading order. None or no text: none."""
+    if synth is None or not transcript:
+        return []
+    words = [w for w, _, _ in _run_words(transcript)]
+    n = MAX_TRANSCRIPT_RUN + 1
+    grams = {tuple(words[i:i + n]) for i in range(len(words) - n + 1)}
+    joined = f" {' '.join(words)} "
+    return [r for where, text in synthesis_strings(synth)
+            for r in _runs_in(text, where, joined, grams)]
+
+
 def _validate(
-    synth: Synthesis, mech: MechanicalLayer, ticker: str = "", name: str = ""
+    synth: Synthesis, mech: MechanicalLayer, ticker: str = "", name: str = "",
+    transcript: str | None = None,
 ) -> tuple[Synthesis, list[str]]:
     """Apply the guardrails: cite-check, number-trace, twin checks, directional lint → flags."""
     flags: list[str] = []
@@ -1721,6 +1828,13 @@ def _validate(
             "twin_reference_cases": kept_twins,
         }
     )
+    # THE 12-WORD RULE (operator ruling 2026-11-11): a string sharing more than 12 consecutive
+    # words with the build's own calls is flagged here, field and run length named, and `assemble`
+    # refuses the page on the run itself (`transcript_runs`), never on this flag's wording
+    for run in transcript_runs(validated, transcript):
+        flags.append(f"TRANSCRIPT-RUN {run.where}: shares {run.words} consecutive words with "
+                     f"the build's own transcripts (at most {MAX_TRANSCRIPT_RUN}) — assembly "
+                     "refuses such a page")
     return validated, flags
 
 
@@ -2418,7 +2532,8 @@ def synthesize(
         log_parts += ["", "=== DRAW AGREEMENT ===",
                       json.dumps(agreement.model_dump(), indent=2, sort_keys=True)]
     parse_notes: list[str] = []
-    synth, flags = _validate(_parse(chosen, parse_notes), mech, ticker=ticker, name=name)
+    synth, flags = _validate(_parse(chosen, parse_notes), mech, ticker=ticker, name=name,
+                             transcript=transcript)
     flags += parse_notes
     if synth is not None and agreement is not None:
         synth = synth.model_copy(update={"draw_agreement": agreement})

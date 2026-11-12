@@ -1035,6 +1035,47 @@ def _cmd_driver_facts_pass(args: argparse.Namespace) -> int:
     return 1 if by.get("refused") else 0
 
 
+def _cmd_transcript_run_cut(args: argparse.Namespace) -> int:
+    """(The 12-word rule, operator ruling 2026-11-11: "$0 guard + redaction now") Cut each committed
+    synthesis string's copied transcript run to its first 12 words and "…"
+    (`vinci.dossier.transcript_run_pass`). No model call, no network; the calls are read from disk,
+    read only. Names every cut by its field, word counts, the span it removed and the sha256 of
+    the string before and after it — never its words: the string before the cut holds the copied
+    run, which no log may carry. Exit 1 when a page is refused."""
+    from vinci.dossier import transcript_run_pass as trp
+    from vinci.dossier.refresh import _rerender_only, mirror_to_frontend
+
+    cfg = get_config()
+    ciq_root = Path(args.ciq_root) if args.ciq_root else cfg.data_dir / "manual" / "ciq"
+    tickers = ([t.strip().upper() for t in args.tickers.split(",") if t.strip()] if args.tickers
+               else sorted(p.name for p in (cfg.data_dir / "dossiers").iterdir()
+                           if (p / "dossier.json").is_file()))
+    outcomes = []
+    try:
+        for t in tickers:
+            jp = cfg.data_dir / "dossiers" / t / "dossier.json"
+            if not jp.exists():
+                print(f"{t}: no committed dossier — skipped")
+                continue
+            o = trp.run(jp, ciq_root, dry_run=args.dry_run)
+            if o.status == "written":
+                _rerender_only(jp)
+            outcomes.append(o)
+            print(f"{o.ticker}: {o.status.upper()} — {o.detail}")
+            for where, before, after in o.cuts:
+                print(f"    {where}: {trp.describe_cut(before, after)}")
+    finally:
+        if any(o.status == "written" for o in outcomes):
+            mirror_to_frontend()
+    by: dict[str, int] = {}
+    for o in outcomes:
+        by[o.status] = by.get(o.status, 0) + 1
+    print(f"\n=== transcript-run-cut: {len(outcomes)} page(s) · "
+          + " · ".join(f"{k} {v}" for k, v in sorted(by.items()))
+          + (" · DRY-RUN (nothing written)" if args.dry_run else "") + " ===")
+    return 1 if by.get("refused") else 0
+
+
 def _cmd_ciq_reread(args: argparse.Namespace) -> int:
     """Re-read ONE CIQ field on committed pages from the export on disk ($0: no assembly, no LLM,
     no network), refusing any page whose export cannot be shown to be its own
@@ -3904,6 +3945,19 @@ def build_parser() -> argparse.ArgumentParser:
     p_dfp.add_argument("--dry-run", action="store_true", dest="dry_run",
                        help="report what each page would become; write and spool nothing")
     p_dfp.set_defaults(func=_cmd_driver_facts_pass)
+
+    p_trc = sub.add_parser(
+        "transcript-run-cut",
+        help="(the 12-word rule) cut each committed synthesis string's copied transcript run to "
+        "its first 12 words and '…' ($0 — no LLM, no network; reads the CIQ transcripts on disk, "
+        "read only)")
+    p_trc.add_argument("--tickers", help="comma-separated tickers (default: every committed page)")
+    p_trc.add_argument("--ciq-root", dest="ciq_root",
+                       help="the folder holding one CIQ folder per ticker, read in place "
+                            "(default: data/manual/ciq)")
+    p_trc.add_argument("--dry-run", action="store_true", dest="dry_run",
+                       help="name each cut; write nothing")
+    p_trc.set_defaults(func=_cmd_transcript_run_cut)
 
     p_cr = sub.add_parser(
         "caveat-reword",

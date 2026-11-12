@@ -1,5 +1,5 @@
 {
- "_about": "Frozen copies for the material-figure direction pins (2026-11-05): each page's annual financial summary (`mechanical.financial_summary.annual`, rows as committed, material marks included) and its whole `synthesis`, copied verbatim from the committed dossier.json at the commit named. NFLX is PR #918's re-assembly (its branch head); the other five are main. The syntheses are LLM-written and frozen here so a classifier pin on them never rots with a re-assembly (CLAUDE.md TEST-LAYER RULE).",
+ "_about": "Frozen copies for the material-figure direction pins (2026-11-05): each page's annual financial summary (`mechanical.financial_summary.annual`, rows as committed, material marks included) and its whole `synthesis`, copied verbatim from the committed dossier.json at the commit named. NFLX is PR #918's re-assembly (its branch head); the other five are main. The syntheses are LLM-written and frozen here so a classifier pin on them never rots with a re-assembly (CLAUDE.md TEST-LAYER RULE). (2026-11-12) One string differs from its page at the commit named: LLY's `bull_points[5].claim` is cut to its first 12 copied transcript words and \"…\", as the page was (CLAUDE.md's 12-word rule; `vinci/dossier/transcript_run_pass.py`).",
  "pages": {
   "NFLX": {
    "commit": "0dbe8f97c62748d2dcbd55237331840162d2b871",
@@ -3723,7 +3723,7 @@
       "cited": true
      },
      {
-      "claim": "Access expansion is a fresh demand channel: since the July 1 launch more than 0.5 million people have filled a prescription through the Medicare GLP-1 Bridge program, with about 80% of those treated being incretin-naive.",
+      "claim": "Access expansion is a fresh demand channel: since the July 1 launch more than 0.5 million people have filled… through the Medicare GLP-1 Bridge program, with about 80% of those treated being incretin-naive.",
       "source_ref": "CIQ transcript: Eli Lilly and Company, Q3 2026 Earnings Call, Oct 29, 2026.rtf",
       "cited": true
      },
