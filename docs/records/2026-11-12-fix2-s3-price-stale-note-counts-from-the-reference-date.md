@@ -65,7 +65,7 @@ the page.
   DELIBERATELY. It pins the reference-date count and its words, and that the stderr warning
   fires past the cadence and not inside it.
 - **`tests/test_cap_vintage_label.py`** drops the `today=` argument `_stock_info` no longer takes.
-- **The impact run, base `85152609` against head on ONE UTC day (2026-11-12), $0.**
+- **The impact run, base `4b2f0cb9` (main after #1026) against head on ONE UTC day (2026-11-12), $0.**
   - It built 17 of the 27 committed pages at $0 with each side's code; the other 10 have no
     price history in the impact store, at either ref.
   - **The note moves on all 17:** AMZN, BRBR, CNXC, EPAM, FUBO, IT, MVST, NCNO, NKE, ORKA,
@@ -82,7 +82,7 @@ the page.
   - The one frontend file that differs is `snapshots/extraction_versions.json`, the new
     vintage.
 
-**BOUNDARY.** The committed pages are the 27 `data/dossiers/*/dossier.json` at main `85152609`.
+**BOUNDARY.** The committed pages are the 27 `data/dossiers/*/dossier.json` at main `4b2f0cb9`.
 The impact run builds them with base and head code on ONE UTC day (2026-11-12), against the
 impact store (store frontier 2026-08-05).
 

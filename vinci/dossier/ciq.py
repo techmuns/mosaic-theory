@@ -96,6 +96,45 @@ def classify(path: Path) -> CiqFormat:
     return CiqFormat.UNKNOWN
 
 
+#: striprtf 0.0.32 finds its font table with ``\\f(\d+).*?\\fcharset(\d+).*?([^;]+);`` over the
+#: WHOLE file. ``\fcharset`` occurs only in the font table, so every ``\f<n>`` font switch in the
+#: body starts a lazy scan that runs to the end of its line and fails, and CIQ's exports put
+#: megabytes on a line: AMZN's 2.9 MB Customers export did not finish in 90 s, GOOGL's 2.6 MB took
+#: 83.5 s and V's 1.6 MB 10.3 s, all of it in that one ``findall`` (measured 2026-11-11). A newline
+#: before each font switch bounds every scan at the next switch, since ``.`` does not cross a
+#: newline. RTF gives a newline no meaning outside binary data, and striprtf's token loop reads it
+#: as nothing, so the token stream is unchanged. striprtf's two other line-bound regexes do see the
+#: newline. The text is equal on all 144 RTF exports on disk (the record), and each regex changes
+#: text only off that corpus:
+#: - Its HYPERLINK rewrite, in three shapes: a field whose ``\fldinst`` holds a ``\f<n>`` loses its
+#:   URL; two fields on one line with a ``\f<n>`` between them each keep their own URL, where the
+#:   raw read dropped the first's; a ``\fldrslt`` holding two font runs loses its URL. On disk, 27
+#:   exports carry one link each, and 0 of 603 ``\fldinst`` groups hold a font switch.
+#: - Its font table: an entry with no ``\fcharset`` no longer borrows a later entry's charset and
+#:   name. That shape IS in the corpus: fonts 3, 4 and 5 of every one of the 144 exports (432
+#:   entries) have none, so the font table striprtf builds differs on every file. Raw, font 3 takes
+#:   font 6's charset and name and font 6 drops out; bounded, font 3 is absent and font 6 present.
+#:   The text is unchanged only because every ``\fcharset`` on disk is 0, no export declares
+#:   ``\ansicpg`` and no body switches to font 3 or 6. Off the corpus, a ``\fcharset128`` entry
+#:   reads ``\'82\'a0`` as U+3042 bounded and as U+201A U+00A0 raw: the bounded read is the more
+#:   correct one, but it is a text change.
+#: Counted 2026-11-12 over data/manual/ciq (count-only reads). An escaped backslash (``\\``) is
+#: matched first, so a literal "\f1" in the text is never split.
+_FONT_SWITCH = re.compile(r"\\\\|(?=\\f\d)")
+#: the ``\binN`` control word, never ``\binfsxn``/``\binsxn`` or an escaped "\\bin" in the text.
+_BINARY = re.compile(r"\\\\|\\bin\d")
+
+
+def _bounded_font_scan(raw: str) -> str:
+    r"""``raw`` with a newline before every ``\f<n>`` control word, so striprtf's font-table scan
+    is bounded by the distance to the next switch rather than the end of a megabyte line. A file
+    holding binary data (``\binN``) is returned as it stands: a newline there would change the
+    bytes the binary group's length counts."""
+    if any(m.group(0) != "\\\\" for m in _BINARY.finditer(raw)):
+        return raw
+    return _FONT_SWITCH.sub(lambda m: m.group(0) or "\n", raw)
+
+
 def read_text(path: Path, fmt: CiqFormat | None = None, *, thin_ok: bool = False) -> str:
     """Decode a text-bearing CIQ file to clean prose. Fail loud if a needed tool is absent.
 
@@ -107,7 +146,7 @@ def read_text(path: Path, fmt: CiqFormat | None = None, *, thin_ok: bool = False
     if fmt is CiqFormat.RTF_TEXT:
         from striprtf.striprtf import rtf_to_text
 
-        raw_text = path.read_text(encoding="utf-8", errors="replace")
+        raw_text = _bounded_font_scan(path.read_text(encoding="utf-8", errors="replace"))
         text = rtf_to_text(raw_text)  # type: ignore[no-untyped-call]
         if (not thin_ok and path.stat().st_size > 4096 and len(text.split()) < _MIN_RTF_WORDS
                 and not is_empty_view(text)):
