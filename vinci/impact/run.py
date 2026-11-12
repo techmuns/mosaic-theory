@@ -38,6 +38,7 @@ from typing import Any
 
 from vinci.impact import graph as ig
 from vinci.impact import stamp as st
+from vinci.impact.child import NO_VENDOR_PULLS
 from vinci.impact.values import (
     VOLATILE,
     Change,
@@ -91,6 +92,10 @@ class Settings:
     resume: bool = False
     #: list families the report censuses even when nothing in them moves (substrings)
     census: tuple[str, ...] = ()
+    #: refuse a Polygon or Tiingo response the cache lacks (`NO_VENDOR_PULLS`)
+    no_vendor_pulls: bool = True
+    #: leave part 1 out (a sweep of merged PRs asks what moved, not their pins); the section says so
+    skip_fail_first: bool = False
     python: str = sys.executable
     log: Callable[[str], None] = field(default=lambda m: print(m, file=sys.stderr, flush=True))
 
@@ -203,6 +208,14 @@ def child_env(code: Path, env_file: Path | None, strip: Sequence[str] = SECRET_E
         env.pop(k, None)
     env["PYTHONPATH"] = str(code)
     env["PYTHONDONTWRITEBYTECODE"] = "1"
+    return env
+
+
+def page_env(s: Settings, code: Path) -> dict[str, str]:
+    """A page or consumer child's environment: `child_env`, plus the vendor-pull refusal."""
+    env = child_env(code, s.env_file)
+    if s.no_vendor_pulls:
+        env[NO_VENDOR_PULLS] = "1"
     return env
 
 
@@ -394,6 +407,13 @@ def fail_first(s: Settings, shas: dict[str, str]) -> dict[str, Any]:
             "seconds": round(time.monotonic() - t0, 1)}
 
 
+def part_one(s: Settings, shas: dict[str, str]) -> dict[str, Any]:
+    """`fail_first`, or its NOT RUN record under ``--skip-fail-first`` — on every path."""
+    if s.skip_fail_first:
+        return {"tests": [], "cases": [], "skipped": True}
+    return fail_first(s, shas)
+
+
 # ----------------------------------------------------------------------------------- 2–4. pages
 
 #: Where page builds are kept across runs, keyed by everything they read (`build_key`).
@@ -401,24 +421,68 @@ BUILD_CACHE = Path.home() / ".cache" / "vinci" / "impact-builds"
 #: The files of a page side the cache keeps. The request is among them and can carry licensed
 #: transcript text, so the cache folder sits outside every repository, as the run folder does.
 _KEPT = ("built.json", "built.md", "committed.md", "request.json", "reads.json", "timing.json",
-         "store_written.json", "ciq.json",
+         "store_written.json", "ciq.json", "clock.json",
          "build.error.json", "render.error.json", "request.error.json",
          "committed_render.error.json")
 
 
 def build_key(s: Settings, lay: Layout, side: str, ticker: str, shas: dict[str, str],
-              inputs: dict[str, Any]) -> str:
+              inputs: dict[str, Any], day: str) -> str:
     """Everything a page side's build reads, hashed: the side's ``vinci/`` tree, the check's own
     child and capture code, the data ref's committed trees, the store snapshot, the page's CIQ
-    exports and the cache root. The HTTP responses it read are checked on reuse (`_reusable`)."""
+    exports, the cache root and the UTC DAY it was built on (`build_days`). The HTTP responses it
+    read are checked on reuse (`_reusable`)."""
     def tree(ref: str, path: str) -> str:
         return st.git(s.repo, "rev-parse", f"{ref}:{path}").strip()
     parts = {"vinci": tree(shas[side], "vinci"), "child": file_sha256(CHILD),
              "capture": file_sha256(CAPTURE_CHILD), "data": tree(shas["head"], "data"),
              "scenarios": tree(shas["head"], "scenarios"),
              "store": inputs["store"]["file_sha256"], "ciq": inputs["ciq"].get(ticker),
-             "cache": str(s.cache_root), "ticker": ticker}
+             "cache": str(s.cache_root), "ticker": ticker, "day": day}
     return hashlib.sha256(json.dumps(parts, sort_keys=True).encode()).hexdigest()
+
+
+# THE BUILD'S UTC DAY IS ONE OF ITS INPUTS (#984, 2026-11-12). A build stamps today's UTC date on
+# the page: `statement_reconciliation.as_filed_by` is ``datetime.now(UTC).date()``
+# (`mechanical.py`, `statement_recon.attach`), and it reaches the synthesis request's facts. The
+# sweep's #984 run compared base sides KEPT from 23:43Z on 2026-11-11 with head sides built after
+# 01:26Z on 2026-11-12: 5 of 27 pages "moved" on that date alone, the requests with them. AMZN's
+# base build STARTED at 23:43Z and stamped 2026-11-12, so a build's start time does not name its
+# day: the child records every UTC day a build ran across (``clock.json``).
+def utc_today() -> str:
+    return dt.datetime.now(dt.UTC).date().isoformat()
+
+
+def build_days(folder: Path) -> list[str]:
+    """Every UTC day a page side's build ran across: the child's ``clock.json`` (its first and
+    last day) and the dates the page carries (``assembled_at``; ``as_filed_by``), for a side
+    built before ``clock.json`` existed. Empty when nothing names a day."""
+    days = set((_read(folder / "clock.json") or {}).get("utc_days") or [])
+    page = _read(folder / "built.json") or {}
+    if page.get("assembled_at"):
+        days.add(str(page["assembled_at"])[:10])
+    recon = ((page.get("mechanical") or {}).get("financial_summary") or {}).get(
+        "statement_reconciliation") or {}
+    if recon.get("as_filed_by"):
+        days.add(str(recon["as_filed_by"]))
+    return sorted(days)
+
+
+def off_day_sides(s: Settings, ticker: str) -> list[str]:
+    """The sides to re-build so that both were built within ONE and the same UTC day: the side(s)
+    whose days are not exactly the day a re-build lands on — today, or the latest day either side
+    ran on if later. Two sides built within one past day agree and are left alone. A side not
+    built is left to the comparison, which names it."""
+    folders = {side: s.out / "pages" / side / ticker for side in SIDES}
+    if not all((f / "built.json").exists() for f in folders.values()):
+        return []
+    days = {side: build_days(f) for side, f in folders.items()}
+    if days["base"] == days["head"] and len(days["base"]) == 1:
+        return []
+    # NOT the latest day the sides carry: two sides KEPT by --resume from two past days would
+    # re-build the earlier one TODAY, a third day, and set the page apart as noise for nothing
+    target = max([utc_today(), *(d for ds in days.values() for d in ds)])
+    return [side for side in SIDES if days[side] != [target]]
 
 
 def _reusable(s: Settings, folder: Path) -> bool:
@@ -441,9 +505,10 @@ def _reusable(s: Settings, folder: Path) -> bool:
 
 
 def run_child(s: Settings, lay: Layout, side: str, ticker: str,
-              key: str | None = None) -> str:
+              key: Callable[[str], str] | None = None) -> str:
     """Build one page side; returns how: ``built``, ``kept`` (an earlier run of the same key)
-    or ``resumed``."""
+    or ``resumed``. ``key`` maps a UTC day to the side's `build_key`: a kept build is looked up
+    under today's, and kept under the one day it was built on — never when it ran across two."""
     out = s.out / "pages" / side
     if s.resume and (out / ticker / "timing.json").exists():
         # KEPT ONLY WHILE ITS INPUTS ARE (Codex P1, #1000): every response it read re-hashes the
@@ -452,7 +517,7 @@ def run_child(s: Settings, lay: Layout, side: str, ticker: str,
                 s.ciq_root, [ticker])[ticker]:
             return "resumed"
         shutil.rmtree(out / ticker)
-    kept = BUILD_CACHE / key if key else None
+    kept = BUILD_CACHE / key(utc_today()) if key else None
     if kept is not None and _reusable(s, kept):
         (out / ticker).mkdir(parents=True, exist_ok=True)
         for name in _KEPT:
@@ -465,6 +530,8 @@ def run_child(s: Settings, lay: Layout, side: str, ticker: str,
     # A FAILED STEP IS NEVER KEPT: a failure can be the machine's, not the code's (three page
     # sides of the first 27-page run hit "database is locked" and were kept, then reused)
     failed = any((out / ticker).glob("*.error.json"))
+    days = build_days(out / ticker)
+    kept = BUILD_CACHE / key(days[0]) if key and len(days) == 1 else None
     if kept is not None and not failed and (out / ticker / "timing.json").exists():
         tmp = kept.with_name(kept.name + f".{os.getpid()}.tmp")
         tmp.mkdir(parents=True, exist_ok=True)
@@ -494,7 +561,7 @@ def _run_child(s: Settings, lay: Layout, side: str, ticker: str) -> None:
     schema stamp `Store` writes at every open ("database is locked", three pages of the first
     27-page run), and a build that wrote its store would have moved the next build's inputs."""
     out = s.out / "pages" / side
-    env = child_env(lay.code[side], s.env_file)
+    env = page_env(s, lay.code[side])
     log = (out / ticker).with_suffix(".log")
     log.parent.mkdir(parents=True, exist_ok=True)
     box = s.out / "sandboxes" / side / ticker
@@ -818,7 +885,7 @@ def run_consumer(s: Settings, lay: Layout, c: Consumer, side: str, ref: str) -> 
                                "--frozen-cache", "--out", str(root / "reads.json"),
                                "--soffice-profile", str(root / "soffice"), *seed,
                                "--run-module", *argv],
-                              cwd=tree, env=child_env(lay.code[side], s.env_file),
+                              cwd=tree, env=page_env(s, lay.code[side]),
                               capture_output=True, text=True, timeout=3600)
     except subprocess.TimeoutExpired:
         return {"status": "not run", "why": f"timed out after 3600 s at {side}"}
@@ -1014,7 +1081,7 @@ def run(s: Settings) -> dict[str, Any]:
         report["shortcut"] = ("base and head carry byte-identical `vinci/` trees and no "
                               "frontend source change, so every page, request, render and "
                               "consumer is the same by construction")
-        report["fail_first"] = fail_first(s, shas)
+        report["fail_first"] = part_one(s, shas)
         report["wall_seconds"] = round(time.monotonic() - t_start, 1)
         return report
     s.log("laying out code, inputs and the store …")
@@ -1033,19 +1100,28 @@ def run(s: Settings) -> dict[str, Any]:
     report["page_reach"] = reach
     build_pages = bool(reach) or not s.shortcut
     with cf.ThreadPoolExecutor(max_workers=3) as side_pool:
-        ff = side_pool.submit(fail_first, s, shas)
+        ff = side_pool.submit(part_one, s, shas)
         panel = (side_pool.submit(panel_requests, s, shas) if build_pages else None)
         t0 = time.monotonic()
 
         how: dict[str, dict[str, str]] = {}
 
+        def key_for(side: str, t: str) -> Callable[[str], str] | None:
+            # NO CACHE ON THE CONTROL: with one `vinci/` tree both sides share a key, so a
+            # kept build would compare one build with itself and measure no noise at all
+            if not s.shortcut:
+                return None
+            memo: dict[str, str] = {}   # one key per day: each costs four `git rev-parse`
+
+            def key(day: str) -> str:
+                if day not in memo:
+                    memo[day] = build_key(s, lay, side, t, shas, report["stamp"]["inputs"], day)
+                return memo[day]
+            return key
+
         def page_task(t: str) -> None:
             for side in ("head", "base"):   # head first: base reads any response head fetched
-                # NO CACHE ON THE CONTROL: with one `vinci/` tree both sides share a key, so a
-                # kept build would compare one build with itself and measure no noise at all
-                key = (build_key(s, lay, side, t, shas, report["stamp"]["inputs"])
-                       if s.shortcut else None)
-                how.setdefault(t, {})[side] = run_child(s, lay, side, t, key)
+                how.setdefault(t, {})[side] = run_child(s, lay, side, t, key_for(side, t))
             s.log(f"  {t}: head {how[t]['head']}, base {how[t]['base']}")
         if build_pages:
             with cf.ThreadPoolExecutor(max_workers=s.workers) as pool:
@@ -1058,6 +1134,25 @@ def run(s: Settings) -> dict[str, Any]:
                 _run_child(s, lay, side, t)
                 retried[t] = {"side": side, "still": one_sided_noise(s, t) is not None}
                 s.log(f"  {t}: {side} re-built after a one-sided transcript failure")
+        realigned: dict[str, Any] = {}
+
+        def realign(t: str) -> None:
+            """Both sides built within one UTC day (`build_days`), or the off-day side once more."""
+            sides = off_day_sides(s, t)
+            if not sides:
+                return
+            was = {side: build_days(s.out / "pages" / side / t) for side in SIDES}
+            for side in (x for x in ("head", "base") if x in sides):   # head first, as above
+                shutil.rmtree(s.out / "pages" / side / t)
+                how[t][side] = run_child(s, lay, side, t, key_for(side, t))
+            realigned[t] = {"sides": sides, "days": was, "still": bool(off_day_sides(s, t))}
+            if t in retried:   # the re-build replaced the side the transcript retry judged
+                retried[t]["still"] = one_sided_noise(s, t) is not None
+            s.log(f"  {t}: {', '.join(sides)} re-built — the sides were built on "
+                  f"{was['base']} and {was['head']} (UTC)")
+        if build_pages:
+            with cf.ThreadPoolExecutor(max_workers=s.workers) as pool:
+                list(pool.map(realign, tickers))
         pages_seconds = round(time.monotonic() - t0, 1)
         pages = []
         for t in (tickers if build_pages else []):
@@ -1065,6 +1160,10 @@ def run(s: Settings) -> dict[str, Any]:
             if t in retried:
                 res["retried"] = retried[t]
                 if retried[t]["still"]:
+                    res["status"] = "noise"
+            if t in realigned:
+                res["realigned"] = realigned[t]
+                if realigned[t]["still"]:
                     res["status"] = "noise"
             compare_unbuilt_renders(s, t, res)
             res["committed_md_matches"] = stale_at_head(lay, t, s)

@@ -1,0 +1,282 @@
+{
+ "moved_in_that_run": [
+  "BRBR",
+  "BURL",
+  "CNXC",
+  "EPAM",
+  "FUBO"
+ ],
+ "pages": {
+  "AMZN": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-11T23:43:34.574940Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:26:56.656706Z"
+   }
+  },
+  "BRBR": {
+   "base": {
+    "as_filed_by": "2026-11-11",
+    "assembled_at": "2026-11-11T23:43:34.085313Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:26:56.305595Z"
+   }
+  },
+  "BURL": {
+   "base": {
+    "as_filed_by": "2026-11-11",
+    "assembled_at": "2026-11-11T23:43:34.486947Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:26:56.637719Z"
+   }
+  },
+  "CNXC": {
+   "base": {
+    "as_filed_by": "2026-11-11",
+    "assembled_at": "2026-11-11T23:43:34.359440Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:27:07.151924Z"
+   }
+  },
+  "EPAM": {
+   "base": {
+    "as_filed_by": "2026-11-11",
+    "assembled_at": "2026-11-11T23:43:34.561544Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:27:08.318270Z"
+   }
+  },
+  "FUBO": {
+   "base": {
+    "as_filed_by": "2026-11-11",
+    "assembled_at": "2026-11-11T23:43:34.041660Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:26:56.303602Z"
+   }
+  },
+  "GOOGL": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:00:02.537338Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:29:05.262967Z"
+   }
+  },
+  "IT": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:00:02.682533Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:29:23.311473Z"
+   }
+  },
+  "LLY": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:00:02.914461Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:30:44.923611Z"
+   }
+  },
+  "MCK": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:00:07.847335Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:32:07.606121Z"
+   }
+  },
+  "MVST": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:00:21.680788Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:38:13.821623Z"
+   }
+  },
+  "NCNO": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:00:45.701483Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:39:27.574227Z"
+   }
+  },
+  "NFLX": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:00:48.843046Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:41:35.985982Z"
+   }
+  },
+  "NKE": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:00:54.715648Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:43:48.522774Z"
+   }
+  },
+  "ORKA": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:00:58.279081Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:46:56.123776Z"
+   }
+  },
+  "PARR": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:13:41.490153Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:55:48.095037Z"
+   }
+  },
+  "ROST": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:13:55.111310Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T01:58:54.957668Z"
+   }
+  },
+  "SMPL": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:13:55.149215Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:00:49.773984Z"
+   }
+  },
+  "TECX": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:13:54.755522Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:04:57.165798Z"
+   }
+  },
+  "TGT": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:31:14.089553Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:06:21.512737Z"
+   }
+  },
+  "TJX": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T00:31:16.700230Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:06:39.719492Z"
+   }
+  },
+  "UBER": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:37:36.819449Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:07:05.024957Z"
+   }
+  },
+  "V": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:24:01.420793Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:10:52.681813Z"
+   }
+  },
+  "VITL": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:32:15.491681Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:11:34.409625Z"
+   }
+  },
+  "VRRM": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:21:12.106117Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:14:38.017719Z"
+   }
+  },
+  "WERN": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:30:52.452974Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:17:30.256261Z"
+   }
+  },
+  "WLK": {
+   "base": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:34:06.315130Z"
+   },
+   "head": {
+    "as_filed_by": "2026-11-12",
+    "assembled_at": "2026-11-12T02:21:27.275884Z"
+   }
+  }
+ },
+ "source": "the fix-request-2 sweep's impact run of #984 (base 65758333, head a3fc8e1b; stamped 2026-11-12T01:23:36Z): pages/<side>/<T>/built.json, cut to its two dates \u2014 assembled_at and mechanical.financial_summary.statement_reconciliation.as_filed_by"
+}
