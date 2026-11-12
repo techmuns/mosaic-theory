@@ -17,6 +17,7 @@ the dossier writes nothing to the ledger.
 
 from __future__ import annotations
 
+import bisect
 import functools
 import json
 import re
@@ -949,6 +950,10 @@ class _FactNumbers:
     #: by (value, the unit class it is printed in) — the largest where it is printed more than
     #: once; a structured value has none
     halves: dict[tuple[float, str], float] = field(default_factory=dict)
+    #: (W05, b, review round 1) the numbers stated as STRUCTURED values (a JSON number, never a
+    #: string's digits): on the page, what a coarse print is the rounding of — PARR's "21.5
+    #: (latest)" is the 21.54 its estimate table and multiples carry
+    exact: set[float] = field(default_factory=set)
 
     def printed_half(self, x: float, unit: str) -> float:
         """(W05, b) The width ``x`` is printed at, in the unit class ``unit`` or in none: "60%"
@@ -958,6 +963,7 @@ class _FactNumbers:
     def merge(self, other: _FactNumbers) -> None:
         self.unsigned |= other.unsigned
         self.named_windows |= other.named_windows
+        self.exact |= other.exact
         for v, h in other.halves.items():
             self.halves[v] = max(self.halves.get(v, 0.0), h)
         self.values.extend(other.values)
@@ -974,8 +980,10 @@ _WINDOW = re.compile(r"(?<![\d.$])(\d+(?:\.\d+)?)[\s_-]?"
                      r"(d|days?|w|wks?|weeks?|m|mos?|months?|q|qtrs?|quarters?|y|yrs?|years?)"
                      r"(?![a-z])")
 _WINDOW_DAYS = {"d": 1.0, "w": 7.0, "m": 365.25 / 12, "q": 365.25 / 4, "y": 365.25}
-#: text the code writes that states no span, whatever its digits: a URL, a hex hash (W05, e)
-_CODE_TEXT = re.compile(r"(?i)https?://|\b[0-9a-f]{32,}\b")
+#: text the code writes that states no span, whatever its digits: a URL, a hex hash (W05, e). Cut
+#: out of a string before its spans are read, never the whole string: BRBR's cadence ref states
+#: "median 91d gap" before its URL (review round 1)
+_CODE_TEXT = re.compile(r"(?i)https?://\S+|\b[0-9a-f]{32,}\b")
 
 
 #: a field whose name states its time unit: `window_span_years`, `days_to_cover`, `age_days`
@@ -989,23 +997,20 @@ def _windows_in(name: str) -> set[float]:
             for m in _WINDOW.finditer(name)}
 
 
-def _period_key(label: str, fiscal_shift: int = 0) -> str | None:
+def _period_key(label: str) -> str | None:
     """A table column's or a claim's period on one key: "FY25", "FY25 (R)", "FY25E", "fiscal 2025"
     → "FY25"; "Q2-26", "Q2 2026", "FQ2 FY26", "2Q26" → "Q2-26"; "LTM", "TTM", "trailing twelve
     months" → "LTM". None for anything else.
 
-    ``fiscal_shift`` (W05, d) is added to a year written in the company's own words — "fiscal
-    2025", "fiscal year 2025" — never to CIQ's "FY25": for a filer whose year ends in January or
-    February (`_fiscal_shift`), the year ROST calls fiscal 2025 ends 2026-01-31, which CIQ labels
-    FY26."""
+    "fiscal 2025" is CIQ's FY25 for every filer, a January or February year end included (W05, d,
+    DROPPED in review round 1): TJX and nCino name a year by the year it ENDS, as CIQ does, while
+    Ross, Target and Burlington name it by the year it STARTS, and no claim says which it means
+    (`docs/records/2026-11-12-w05-figure-trace-false-flags.md`, "OPEN")."""
     s = label.strip()
     if re.fullmatch(r"(?i)(?:LTM|TTM|trailing[\s-]+(?:twelve|12)[\s-]+months?)", s):
         return "LTM"
     if m := re.fullmatch(r"(?i)(?:F?Y|fiscal(?:\s+year)?)\s?'?((?:19|20)?\d\d)E?(?:\s*\(R\))?", s):
-        yy = int(m.group(1)[-2:])
-        if fiscal_shift and s[:6].lower() == "fiscal":
-            yy = (yy + fiscal_shift) % 100
-        return f"FY{yy:02d}"
+        return f"FY{m.group(1)[-2:]}"
     if m := re.fullmatch(r"(?i)F?Q([1-4])[\s-]?(?:FY\s?)?'?((?:19|20)?\d\d)E?(?:\s*\(R\))?", s):
         return f"Q{m.group(1)}-{m.group(2)[-2:]}"
     if m := re.fullmatch(r"(?i)([1-4])Q'?((?:19|20)?\d\d)", s):
@@ -1018,19 +1023,7 @@ _CLAIM_PERIOD = re.compile(
     r"(?:19|20)?\d\dE?|F?Q[1-4][\s-]?(?:FY\s?)?'?(?:19|20)?\d\dE?|[1-4]Q'?(?:19|20)?\d\d)\b")
 
 
-def _fiscal_shift(mech: MechanicalLayer) -> int:
-    """(W05, d) 1 when the page's fiscal years end in January or February — read off the dates
-    its statement reconciliation states for each year column (CIQ's own period header) — so the
-    company's "fiscal 2025" is CIQ's FY26; else 0, and 0 when the page states no such date."""
-    fs = mech.financial_summary
-    rec = fs.statement_reconciliation if fs is not None else None
-    months = [int(m.group(1)) for r in (rec.rows if rec is not None else [])
-              if not r.is_ltm and (m := re.match(r"\d{4}-(\d{2})-", r.period_end))]
-    return 1 if months and sum(m in (1, 2) for m in months) * 2 > len(months) else 0
-
-
-def _claim_periods(text: str, fig: _ClaimFigure | None = None,
-                   fiscal_shift: int = 0) -> set[str]:
+def _claim_periods(text: str, fig: _ClaimFigure | None = None) -> set[str]:
     """The periods a claim names, on `_period_key`'s key — those beside ``fig`` when one is given:
     with no other figure of the claim between the period and it (`_bound_cells`)."""
     if fig is not None and fig.start < 0:
@@ -1039,7 +1032,7 @@ def _claim_periods(text: str, fig: _ClaimFigure | None = None,
               if fig is not None else [])
     out: set[str] = set()
     for m in _CLAIM_PERIOD.finditer(text):
-        k = _period_key(m.group(), fiscal_shift)
+        k = _period_key(m.group())
         if k is None:
             continue
         if fig is not None:
@@ -1054,9 +1047,18 @@ def _claim_periods(text: str, fig: _ClaimFigure | None = None,
 #: "revenue"), its content words in any order ("Impairment of Goodwill" is a "goodwill
 #: impairment"), and the few other names of an abbreviated or signed label
 _ROW_SYNONYMS = {"fcf": ("free cash flow",), "cfo": ("operating cash flow", "cash from operations"),
-                 "capex": ("capital expenditure",), "d&a": ("depreciation",),
+                 "capex": ("capital expenditure", "capital expenditures"), "d&a": ("depreciation",),
                  "eps": ("earnings per share",),
-                 "net income": ("net loss", "net earnings", "net profit")}
+                 "net income": ("net loss", "net earnings", "net profit"),
+                 # (W05, a, review round 1) the words a claim writes for a row labelled otherwise:
+                 # read as no row at all, "revenues were $7,178M" met TJX's EBIT, and "a $250M
+                 # impairment" TGT's restructuring charge. "sales" alone is no revenue
+                 # ("comparable sales"), nor "profit" any one row: each stays a mention of none
+                 # (`_OTHER_METRICS`)
+                 "revenue": ("revenues", "net sales"),
+                 "ebit": ("operating income", "operating profit"),
+                 "asset writedown": ("impairment", "impairments", "writedown", "writedowns",
+                                     "write down")}
 _ROW_STOP = frozenset({"of", "and", "&", "the", "related", "basis"})
 _WORD = re.compile(r"[a-z0-9&]+(?:\.)?")
 
@@ -1083,10 +1085,10 @@ def _names_metric(tokens: list[str], phrase: str) -> bool:
                for i, tok in enumerate(tokens) if tok == want[0] or tok in want)
 
 
-#: (W05, a) a metric named in words no table row label carries — "revenues" (the row says
-#: "Revenue"), "operating income" (an EBIT row), "capital expenditures" (a Capex row), "profit",
-#: "impairment" (an "Asset Writedown" row). Read as a mention of NO row: a figure whose own metric
-#: is one of these meets the cited fact, never another metric the claim names
+#: (W05, a) a metric named in words no row of THIS table carries — "profit", "sales", or a
+#: synonym above whose row the table lacks ("impairment" where no "Asset Writedown" row is). Read
+#: as a mention of NO row: a figure whose own metric is one of these meets the cited fact, never
+#: another metric the claim names. Where the table has the row, the synonym names it
 _OTHER_METRICS = ("revenues", "net sales", "sales", "operating income", "operating profit",
                   "capital expenditures", "profit", "profits", "impairment", "impairments",
                   "writedown", "write down")
@@ -1106,11 +1108,14 @@ def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -
       no comma, colon, semicolon, dash or full stop ("a $42.5M asset writedown", "$262.3M of FY25
       EBITDA" — but not "FY25 $979, FY27E EBITDA $283"), is its own — but for a percent, "of
       revenue" names the DENOMINATOR ("18% of revenue" is a margin), so it does not bind there;
+    - else, where the claim lists k metrics and then k figures with no metric between them, the
+      k-th figure's is the k-th metric ("FY25 EBITDA and revenues: $262.3M and $1,450.9M", W05,
+      a, review round 1);
     - else the metric written nearest BEFORE it ("FY25 revenue was $262.3M");
     - else the nearest after it.
     (W05, a) A metric written in words no row carries (`_OTHER_METRICS`) is a mention too: where
     it is the figure's own, the figure binds NO row and meets the cited fact — "FY25 EBITDA was
-    $262M while revenues were $1,451M" no longer holds $1,451M to EBITDA."""
+    $262M while profit was $104M" does not hold $104M to EBITDA."""
     if fig is None or fig.start < 0:
         tokens = _words(text)
         return {r for r in metrics
@@ -1119,19 +1124,27 @@ def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -
     tokens = [w for _, w in spans]
     mentions: list[tuple[int, str | None]] = []
     covered: set[int] = set()   # the tokens a row's mention spans
+    # (token index, row, the tokens its mention spans, whether a synonym made it) per hit
+    found: list[tuple[int, str, frozenset[int], bool]] = []
     for r in metrics:
-        for phrase in (r, *_ROW_SYNONYMS.get(r, ())):
+        for k, phrase in enumerate((r, *_ROW_SYNONYMS.get(r, ()))):
             want = [w for w in _words(phrase) if w not in _ROW_STOP]
             if not want:
                 continue
             span = len(want) + 2
-            hits = [i for i, tok in enumerate(tokens)
-                    if tok in want and set(want) <= set(tokens[i:i + span])]
-            mentions += [(spans[i][0], r) for i in hits]
-            # the phrase's own words only, never the two extra its window allows: else "EBITDA
-            # and revenues" hid "revenues" (review round 0)
-            covered.update(j for i in hits for j in range(i, min(i + span, len(tokens)))
-                           if tokens[j] in want)
+            for i, tok in enumerate(tokens):
+                if tok in want and set(want) <= set(tokens[i:i + span]):
+                    # the phrase's own words only, never the two extra its window allows: else
+                    # "EBITDA and revenues" hid "revenues" (review round 0)
+                    own = frozenset(j for j in range(i, min(i + span, len(tokens)))
+                                    if tokens[j] in want)
+                    found.append((i, r, own, k > 0))
+                    covered |= own
+    # a synonym's words inside ANOTHER row's longer mention are that row's: "goodwill impairment"
+    # is the "Impairment of Goodwill" row, never "Asset Writedown" by its synonym "impairment"
+    # (review round 1 of W05)
+    mentions += [(spans[i][0], r) for i, r, own, by_syn in found
+                 if not (by_syn and any(r2 != r and own < own2 for _, r2, own2, _ in found))]
     for phrase in _OTHER_METRICS:
         want = phrase.split()
         mentions += [(spans[i][0], None) for i in range(len(tokens) - len(want) + 1)
@@ -1146,13 +1159,34 @@ def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -
                 w in _BESIDE or _period_key(w) is not None for w in words) and not (
                 fig.unit in ("pct", "bps") and "of" in words):
             at = min(after)
+    if at is None and before:
+        at = max(before)
+        # a list of metrics, then as many figures: the k-th figure is the k-th metric's
+        starts = sorted(g.start for g in _claim_figures_as_written(text))
+        pos_all = sorted({pos for pos, _ in mentions})
+        i = starts.index(fig.start) if fig.start in starts else -1
+        lo = hi = i
+        while lo > 0 and not any(starts[lo - 1] < q < starts[lo] for q in pos_all):
+            lo -= 1
+        while 0 <= hi < len(starts) - 1 and not any(starts[hi] < q < starts[hi + 1]
+                                                   for q in pos_all):
+            hi += 1
+        prev = starts[lo - 1] if lo > 0 else -1
+        run = [q for q in pos_all if prev < q < starts[lo]] if i >= 0 else []
+        if len(run) == hi - lo + 1 >= 2:
+            at = run[i - lo]
     if at is None:
-        at = max(before) if before else min(after) if after else None
+        at = min(after) if after else None
     return {r for pos, r in mentions if pos == at and r is not None} if at is not None else set()
 
 
-def _bound_cells(cells: list[_Cell], claim: str, fig: _ClaimFigure | None = None,
-                 fiscal_shift: int = 0) -> list[_Cell]:
+#: (W05, a, review round 1) words that place a figure in a period other than the one written before
+#: it — a period carried past another metric's figure stops at them (`_bound_cells`)
+_OTHER_PERIOD = re.compile(r"(?i)\b(?:prior|previous|preceding|year[\s-]+(?:ago|earlier|before)|"
+                           r"last\s+year|versus|vs|compared|from)\b")
+
+
+def _bound_cells(cells: list[_Cell], claim: str, fig: _ClaimFigure | None = None) -> list[_Cell]:
     """(RG-D3) The table numbers a claim's figure may be: those in the columns of the periods it
     names and the rows of the metrics it names, each where the table HAS one. A claim that names
     none of the table's periods (or rows) is bound on the other axis alone, or not at all — so a
@@ -1162,12 +1196,36 @@ def _bound_cells(cells: list[_Cell], claim: str, fig: _ClaimFigure | None = None
     A PERIOD BINDS THE FIGURES IT IS WRITTEN BESIDE (``fig``): a period the claim names binds a
     figure only when no other figure of the claim lies between them. In "revenue rose from $1,331M
     to $1,451M in FY25" FY25 binds $1,451M and leaves $1,331M — FY24's, unnamed — to every column
-    (the review of this change: a claim-wide binding flagged FY24's true revenue)."""
+    (the review of this change: a claim-wide binding flagged FY24's true revenue).
+
+    (W05, a, review round 1) A PERIOD CARRIES PAST A FIGURE OF ANOTHER METRIC: a figure that no
+    period is written beside takes the last period written before it when no other figure of the
+    claim is bound to its row ("FY26 EBITDA was $8,425M while revenues were $64,031M": $64,031M
+    is FY26's revenue, never FY27E's). A figure whose row another figure shares is a comparison
+    ("rose from $1,331M to $1,451M in FY25"), and keeps every column."""
     if not cells:
         return []
-    periods = _claim_periods(claim, fig, fiscal_shift) & {c.period for c in cells}
+    columns = {c.period for c in cells}
+    periods = _claim_periods(claim, fig) & columns
     metrics = {c.metric for c in cells}
     rows = _claim_rows(claim, metrics, fig)
+    if not periods and fig is not None and fig.start >= 0:
+        written = [(m.end(), k) for m in _CLAIM_PERIOD.finditer(claim)
+                   if m.end() <= fig.start and (k := _period_key(m.group())) is not None]
+        # never across words that put the figure in ANOTHER period, before it or just after it:
+        # "FY26 EBITDA reached $8,425M versus prior-year revenue of $56,360M" and "… on revenue of
+        # $56,360M a year earlier" are FY25's revenue (review round 1, /code-review)
+        before = [k for end, k in written[-1:] if not _OTHER_PERIOD.search(
+            claim[end:fig.start] + " " + claim[fig.end:fig.end + 30])]
+        others = [g for g in _claim_figures_as_written(claim) if g.start != fig.start]
+
+        def _shares_row(g: _ClaimFigure) -> bool:
+            # the same row, or both bound to none: a comparison, which keeps every column
+            o = _claim_rows(claim, metrics, g)
+            return bool(o & rows) or not (o or rows)
+
+        if before and before[-1] in columns and not any(_shares_row(g) for g in others):
+            periods = {before[-1]}
     # a named metric's own rate rows: "FY25 revenue grew 9%" names "revenue", and its 9% is the
     # "Revenue growth" row's — binding the amount row alone refused the fact as written
     rows |= {m for m in metrics if any(m.startswith(r + " ") for r in rows)}
@@ -1183,6 +1241,14 @@ def _within(a: float, target: float, half: float, fact_half: float = 0.0) -> boo
     (``fact_half``, W05, b): a fact printing "1.5x" states 1.45 to 1.55, so "1.54x" is it."""
     tol = min(max(half, fact_half), max(0.05, target * 0.02))
     return abs(a - target) <= tol + 1e-9 * max(1.0, abs(target))
+
+
+def _signed_as(f: _ClaimFigure, x: float, cited: _FactNumbers) -> bool:
+    """A sign the claim prints is the sign ``x`` states (RG-D1): "+$198.8M" is not a loss of
+    198.8, "+29%" is not a fall of 29%. An unsigned claim, or a value whose sign the fact does not
+    state (``cited.unsigned``), meets either."""
+    return not (f.sign and f.value and x not in cited.unsigned
+                and (x == 0 or (x > 0) != (f.sign > 0)))
 
 
 def _percentile_ranks(p: float) -> set[float]:
@@ -1208,6 +1274,7 @@ def _stated_numbers(o: Any, into: _FactNumbers, name: str = "") -> None:
         return
     if isinstance(o, (int, float)):
         into.values.append(float(o))
+        into.exact.add(float(o))
         if name in _PERCENTILE_FIELDS and 0 <= o <= 1:
             into.ranks |= _percentile_ranks(float(o))
         if s := _SPAN_FIELD.search(name):
@@ -1239,10 +1306,9 @@ def _stated_numbers(o: Any, into: _FactNumbers, name: str = "") -> None:
             if (year := _label_year(m)) is not None:
                 into.years.add(year)
             return " "
-        if not _CODE_TEXT.search(o):
-            # "trailing ~1.7y", "DTC 8.8d", a ref's "39 quarters spanning … (9.5y)": a span it
-            # states — never a URL's or a hash's digits (W05, e)
-            into.windows |= _windows_in(o)
+        # "trailing ~1.7y", "DTC 8.8d", a ref's "39 quarters spanning … (9.5y)": a span it states
+        # — never a URL's or a hash's digits (W05, e): "…/brbrexh991-q2…" is no 991 quarters
+        into.windows |= _windows_in(_CODE_TEXT.sub(" ", o))
         rest = _DATE_OR_ID.sub(label, o)
         into.years.update(float(y) for y in _BARE_YEAR.findall(rest))
         for v, sign, half, unit in _prose_numbers_printed(_BARE_YEAR.sub(" ", rest)):
@@ -1302,6 +1368,11 @@ def _table_cells(t: dict[str, Any]) -> list[_Cell]:
     ("Unnamed", a blank) keys as its label."""
     out: list[_Cell] = []
     cols = [_period_key(str(c)) or str(c) for c in t["columns"]]
+    # (W05, b, review round 1) a margin row prints whole percents ("27%"), and the table holds the
+    # exact one in its own structured rows — "<metric> margin" = <metric> / revenue, as the table
+    # computes it (`ciq_sheets.financial_summary_annual`). NCNO's FY27E "27%" is 175.06 / 644.69 =
+    # 27.15%, so "26.6%" is no figure of it, though inside the print's half a percent
+    series = {_row_metric(str(r["label"])): r.get("values") or [] for r in t["rows"]}
     for r in t["rows"]:
         metric = _row_metric(str(r["label"]))
         u = _AMOUNT_UNIT.search(str(r["label"]))
@@ -1313,6 +1384,10 @@ def _table_cells(t: dict[str, Any]) -> list[_Cell]:
             v = vals[i] if i < len(vals) else None
             if v is not None:
                 out.append(_Cell(metric, col, float(v), amount))
+            elif (metric.endswith(" margin") and i < len(num := series.get(metric[:-7], []))
+                  and i < len(rev := series.get("revenue", [])) and num[i] is not None
+                  and rev[i]):
+                out.append(_Cell(metric, col, float(num[i]) / float(rev[i]) * 100, None))
             elif i < len(r["cells"]):
                 cell = _FactNumbers()
                 _stated_numbers(r["cells"][i], cell, "cells")
@@ -1517,8 +1592,8 @@ def _validate(
     # source_ref (RG-D6) and a duration (RG-D5) are traced against
     page_nums = _FactNumbers()
     _stated_numbers(mech.model_dump(), page_nums)
-    # (W05, d) the company's "fiscal 2025" on CIQ's FY key: one more for a January year end
-    fy_shift = _fiscal_shift(mech)
+    # (W05, b, review round 1) the page's structured values by magnitude, searched per coarse print
+    exact_mags = sorted({abs(v) for v in page_nums.exact})
 
     def _num_traces(f: _ClaimFigure, cited: _FactNumbers, claim: str, *,
                     as_rank: bool = False) -> bool:
@@ -1530,8 +1605,11 @@ def _validate(
         # sign (fix request 2, RG-D20 c); a sign carried in words is compared only for a MATERIAL
         # figure, by `material_direction_flags`, and a computed one by `_recompute`.
         a = f.value
-        if f.named:
-            return True  # (W05, c) "its 2030 financial targets": a year naming a thing, no figure
+        if f.named and page_nums.years and a >= min(page_nums.years):
+            # (W05, c) "its 2030 financial targets": a year naming a thing, no figure — but never
+            # one before every year the page dates, which names nothing the page covers: TGT's
+            # "its 1987 stores" is a count (review round 1)
+            return True
         if f.unit == "plain" and not f.sign and a in cited.years:
             return True  # the year of a date the fact carries — as that year, never rescaled
         if f.year and a in page_nums.years:
@@ -1555,9 +1633,19 @@ def _validate(
             named = cited.named_windows if cited is not page_nums else set()
             spans = cited.windows | named | page_nums.windows
             return any(abs(a - w / per) <= f.half + 1e-9 for w in spans)
-        stated: list[tuple[float, tuple[float, ...], float]] = [
-            (x, _UNIT_SCALES[f.unit], cited.printed_half(x, f.unit)) for x in cited.values]
-        for c in _bound_cells(cited.cells, claim, f, fy_shift):
+        stated: list[tuple[float, tuple[float, ...], float]] = []
+        for x in cited.values:
+            h = cited.printed_half(x, f.unit)
+            # (W05, b, review round 1) a coarse print's width only where the page states no exact
+            # value inside it; where it does, a claim inside the print is that exact value as
+            # written: PARR's "21.5" is the page's 21.54, so "$21.54" traces and "$21.45" is not it
+            lo = bisect.bisect_left(exact_mags, abs(x) - h - 1e-9) if h else 0
+            near = exact_mags[lo:bisect.bisect_right(exact_mags, abs(x) + h + 1e-9)] if h else []
+            if (near and _signed_as(f, x, cited) and _within(a, abs(x), 0.0, h)
+                    and any(_within(a, v, f.half) for v in near)):
+                return True
+            stated.append((x, _UNIT_SCALES[f.unit], 0.0 if near else h))
+        for c in _bound_cells(cited.cells, claim, f):
             if c.amount is None:
                 if f.unit != "money":   # a rate row: no amount is a growth or a margin
                     stated.append((c.value, _UNIT_SCALES[f.unit],
@@ -1574,7 +1662,7 @@ def _validate(
                 stated.append((c.value, (1.0,), c.half if c.printed == "plain" else 0.0))
             # a %, an "x" or a bps figure is no amount
         for x, scales, xhalf in stated:
-            if f.sign and a and x not in cited.unsigned and (x == 0 or (x > 0) != (f.sign > 0)):
+            if not _signed_as(f, x, cited):
                 continue  # "+$198.8M" is not a loss of 198.8; "+29%" is not a fall of 29%
             # (W05, b) the fact's printed width, at the scale it is printed in only: "0.37" is no
             # width for "$375M" read at a thousand (a true flag on CNXC's page cleared that way)
