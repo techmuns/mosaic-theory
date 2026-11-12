@@ -297,6 +297,44 @@ def test_a_fact_states_a_sign_only_where_it_prints_one() -> None:
     assert any(abs(w - 2 * 365.25) < 1e-9 for w in nums.windows)   # "~2y" is a span it states
 
 
+# --- round 2 of #1023 (the coordinator's independent review): three rules no test held --------
+# Each pin fails on the mutant the review ran (the rule removed), on the frozen SMPL page's own
+# facts, beside the figure the same rule must still refuse.
+
+def test_a_percent_traces_at_the_facts_percent_or_fraction_never_a_power_of_a_thousand() -> None:
+    """RG-D2 for "%": a percent traces at scales 1 and 1e2 only. SMPL's 180-day return is stored
+    as −0.2909: "−29.1%" is it; "−290.9%", ten times too large, met it at 1e3 when a percent read
+    every one of the nine scales (the review's mutant, which moved 3 corpus flags)."""
+    mech = _frozen()
+    ret = str(mech.idiosyncratic_vs_shared.name_180d_return.source_ref)
+    assert _caveated(mech, "SMPL's 180-day return was -29.1%.", ret) == []
+    assert _caveated(mech, "SMPL's 180-day return was -290.9%.", ret) == ["-290.9"]
+
+
+def test_a_printed_sign_is_never_checked_against_a_number_whose_sign_the_fact_states_in_words(
+        ) -> None:
+    """RG-D1's `unsigned` exemption, through the trace (the reader's half is pinned above). SMPL's
+    8-K guides gross margin to "decline between 300 and 350 basis points": the fact states the
+    magnitude and puts the sign in a word, so "−350bps" is that fact and traces. With the
+    exemption dropped it was refused as a sign the fact contradicts — a false caveat the record
+    lists as fixed. A magnitude the fact does not state is still refused."""
+    mech = _frozen()
+    guide = str(mech.drawdown_cause.revised_guidance.source_ref)
+    assert _caveated(mech, "SMPL guides gross margin -350bps year over year.", guide) == []
+    assert _caveated(mech, "SMPL guides gross margin -450bps year over year.", guide) == ["-450"]
+
+
+def test_a_bare_year_traces_as_a_year_the_page_dates_something_in() -> None:
+    """RG-D5's page-year pass: "matures in 2028", cited to the 180-day return (which dates only
+    2026), is a year the page dates something in, and traces as that year. With the pass dropped
+    it was refused — a false caveat the record lists as fixed. A year the page never dates is
+    still refused."""
+    mech = _frozen()
+    ret = str(mech.idiosyncratic_vs_shared.name_180d_return.source_ref)
+    assert _caveated(mech, "The term loan matures in 2028.", ret) == []
+    assert _caveated(mech, "The term loan matures in 2041.", ret) == ["2041"]
+
+
 # --- the caveats the reader is shown ------------------------------------------------------------
 
 def test_each_new_flag_shape_is_a_shown_caveat_in_plain_words() -> None:

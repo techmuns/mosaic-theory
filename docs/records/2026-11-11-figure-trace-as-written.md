@@ -108,11 +108,15 @@ audit reproduced each on the frozen SMPL page; every one passed unflagged.
     fact; WLK's "-$2,100M" segment loss met as a −21 restructuring charge at scale 100; MVST's
     "$128M" cash met as 1.3 at scale 100; WLK's "LTM ROIC of only 1.0%" met as FY27 revenue
     growth in an annual table that has no ROIC;
-  - **a duration no fact of the page states** — VRRM's "7-year Avis contract", WERN's "within ~18
-    months" (a maturity distance the model computed), and the three in key unknowns ("101 days
-    stale", "219 days old", TECX's "24-week efficacy result");
+  - **a duration no fact of the page states** — WERN's "within ~18 months", a maturity distance
+    the model computed, in a key unknown;
   - **a figure no fact of the page states, in a key unknown** — GOOGL's "$924B" purchase
-    commitments and CNXC's "$375M term loan" (searched in each layer: absent).
+    commitments and CNXC's "$375M term loan" (searched in each layer: absent). With WERN's, these
+    are the 3 key-unknown flags.
+  - CORRECTED IN PR ROUND 2 (the coordinator's independent review). This list first named VRRM's
+    "7-year Avis contract", IT's "101 days stale" and "219 days old" and TECX's "24-week efficacy
+    result". None of them is emitted at the PR's head: every committed synthesis was re-validated
+    at `8cc8f0a2` on 2026-11-12, 27 pages, 476 flags.
 - **The false caveats found on the corpus, and fixed before this record** — each class seen on a
   committed page and closed: a fact's Unicode minus read as a plus (LLY, MVST); a transcript
   figure's "down" ignored (CNXC's "-3% to -5%"); a fact's unsigned prose number taken as positive;
@@ -128,6 +132,18 @@ audit reproduced each on the frozen SMPL page; every one passed unflagged.
   years`). Five flags clear on the corpus, all of that kind: four decimal durations that are spans
   the page states, cited beside another fact (NCNO's 2.3y, SMPL's 8.8y and V's 9.5y own-history
   spans; MVST's ~1.7y share-count trail), and EPAM's year 2023.
+- **PR round 2: three rules no test held, now pinned.** B adopted the PR under A's handover
+  (#1004, 2026-11-12) for this last round, tests and record only. The coordinator's independent
+  review found three mutants surviving the four trace test files. Each now has a pin on the frozen
+  SMPL page, beside the figure the same rule must still refuse, and each pin fails on its mutant
+  (re-run 2026-11-12):
+  - **RG-D2 for "%":** a percent traces at scales 1 and 1e2. The 180-day return's "−29.1%"
+    traces; "−290.9%", ten times too large, met the stored −0.2909 at 1e3 when a percent read
+    every scale.
+  - **RG-D1's `unsigned` exemption, through the trace:** the 8-K's "decline between 300 and 350
+    basis points" makes "−350bps" trace, while "−450bps" is still refused.
+  - **RG-D5's page-year pass:** "matures in 2028", cited to a fact dating only 2026, traces on a
+    year the page dates; "2041" is still refused.
 - **The panel metrics' inputs are byte-identical**: `_claim_figure_ends` and `_claim_figures` give
   the same output at base and here on all 998 texts the committed syntheses write (27 pages and
   the frozen fixtures) plus 12 edge cases; `_stated_numbers`' years and ranks are the same on all
@@ -147,11 +163,18 @@ audit reproduced each on the frozen SMPL page; every one passed unflagged.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **More caveats on rebuilt pages:** 66 more shown untraceable figures across the 27 pages, about
-  2.4 a page. Each class above was read; the residual false caveats found are two, both accepted:
-  GOOGL's "capex rising to -$159,804M" (an outflow written negative against a fact stating capex
-  positive — a sign convention, 2 flags) and WLK's "revenue growth -0%" (a whole-percent zero for
-  −0.3%, which the old 2% bound refuses). FALSIFIER: an operator reading the next rebuild's caveats
-  finds a class of correct figures flagged that is not one of these two.
+  2.4 a page. Each class above was read. Two residual false caveats were found and accepted:
+  - GOOGL's "capex rising to -$159,804M", an outflow written negative against a fact stating
+    capex positive (a sign convention, 2 flags);
+  - WLK's "revenue growth -0%", a whole-percent zero for −0.3%, which the old 2% bound refuses.
+  - FALSIFIER: an operator reading the next rebuild's caveats finds a class of correct figures
+    flagged that is not one of these two.
+  - **THE FALSIFIER HAS FIRED (PR round 2, the coordinator's independent review).** Two more
+    classes are live on the corpus at `8cc8f0a2`, both re-derived here:
+    - PARR's "$21.54" is flagged: its cited fact prints "21.5", and the page's table holds 21.54.
+    - VITL's "withdrew its 2030 financial targets" is flagged: a year the page never dates.
+  - So "two residuals" no longer holds. Found, not fixed: the follow-up is S2's PR after the
+    12-word guard.
 - **Residuals, not built:** a sign in words ("fell", "a loss of") is not read — MATERIAL-DIRECTION
   covers the material figures; a duration that equals ANY window the page names passes (a page
   names some 30 to 44, and a lowercase "12m" or "3d" in a fact's prose is read as one), so a
@@ -161,5 +184,23 @@ audit reproduced each on the frozen SMPL page; every one passed unflagged.
   the review's finding 7); a period the table lacks restricts nothing; a qualitative claim is
   bound to no fact (fix 5 is delivered for figures only); a table's display cells without a
   structured value (the growth and margin rows) are read from their strings, as before.
+- **Found in PR round 2 (the coordinator's independent review, 2026-11-12), not fixed.** The
+  follow-up for all of these is S2's PR after the 12-word guard. The review measured them; this
+  record states them as it reported.
+  - **Latent false caveats** (not live on the corpus today):
+    - A figure's metric written in a word no row label carries binds to another named metric:
+      "revenues", "net sales", "operating income" against EBIT, "capital expenditures", and
+      "impairment" against "Asset Writedown".
+    - RG-D4's width ignores a display cell's own whole-number precision: "EBITDA margin was
+      18.1%" against an "18%" cell.
+    - `_period_key` takes a Jan/Feb year-end's fiscal label literally: ROST's "fiscal 2025" is
+      CIQ's FY26.
+  - **RG-D6 is weaker than item 6 states.** On frozen SMPL, random key unknowns trace 100% for
+    whole percents, 72% at 1-dp percents, 69% at 1-dp multiples and 64% for integer $M. Across
+    the corpus, 3 of 412 free-field figures are flagged.
+  - **The `_windows_in` residual is worse than stated.** Year counts 1–5 and month counts 1, 2,
+    3, 6, 9, 12, 36 and 60 pass on every page of SMPL, WERN and VRRM. They come from page-wide
+    spans the code itself writes (180d, 52w, `_5y`), and URL digits give VRRM spans of 108–501
+    years.
 - **B's fix 2** (sign, unit, period and basis on every figure the synthesis INPUT digests print)
   changes the request, and so needs a paid panel check: not in this change.
