@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-12.figure-trace-false-flags",
+  "follows": [
+    "2026-11-12.price-stale-note-counts-from-reference-date",
+    "2026-11-12.transcript-runs-cut-to-twelve-words"
+  ],
+  "names": "W05, the follow-up to #1023's figure trace: five classes of correct figure no longer flagged untraceable — (a) a figure whose own metric is written in words no table row carries (revenues, net sales, operating income, capital expenditures, profit, impairment) meets the cited fact instead of another metric the claim names; (b) a figure within the cited fact's own printed width, in the same unit class or none, at the scale it is printed in, traces (PARR's $21.54 against a fact printing 21.5; 18.1% against an 18% cell); (c) a year naming what it dates ('its 2030 financial targets', VITL) is no figure; (d) for a filer whose year ends in January or February, the company's 'fiscal 2025' is CIQ's FY26 (ROST, TJX, TGT, BURL); (e) a field name, an accession, a URL or a hash states no span for the page. On the 27 committed pages two flags clear (PARR, VITL) and none is added"
+}
