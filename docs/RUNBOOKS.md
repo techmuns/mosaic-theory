@@ -551,8 +551,9 @@ spread will ever carry. That holds once `R-VRRM-screen2-20260617` is in the comm
    a minute makes it a multi-hour run.
 
    Do NOT run it in the primary itself. `bin/commit` (step 6) refuses unstaged or untracked files,
-   and the primary carries some (a modified `.claude/launch.json`, `pr*-review-fixes.patch`). Never
-   `git stash` them: the stash is shared across every worktree. From the primary:
+   and the primary carries some (`pr*-review-fixes.patch`; its `.claude/launch.json` no longer
+   counts, git-ignored since 2026-11-12). Never `git stash` them: the stash is shared across every
+   worktree. From the primary:
 
    ```
    git fetch origin main
