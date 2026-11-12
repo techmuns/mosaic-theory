@@ -105,12 +105,14 @@ def _utc_day(at: _dt.datetime) -> Iterator[None]:
 
 
 def _assemble_nke(last_close: _dt.date = _dt.date(2026, 10, 16),
-                  reference: _dt.date | None = None, flags_out: list[str] | None = None) -> Any:
+                  reference: _dt.date | None = None, flags_out: list[str] | None = None,
+                  companyfacts: dict[str, Any] | None = None) -> Any:
     """NIKE's mechanical layer, assembled on its real companyfacts and on its stored bars up to
     ``last_close`` (the page's price date), with the synthetic CIQ exports and no network: every
     other SEC request is refused, as `tests/test_asof_cut.py`'s harness refuses it. The page's
     reference date is ``reference`` (default: the last close itself); the assembly's QA flags, the
-    ones `dossier.json` stores, are appended to ``flags_out`` when given."""
+    ones `dossier.json` stores, are appended to ``flags_out`` when given. ``companyfacts`` serves
+    another filer's real facts in place of NIKE's (`tests/test_nonoperating_earnings.py`)."""
     ref = reference or last_close
     from tests.test_asof_cut import _iwm_bars, _Refused
     from vinci.dossier.ciq import CiqBundle
@@ -122,7 +124,8 @@ def _assemble_nke(last_close: _dt.date = _dt.date(2026, 10, 16),
     from vinci.schemas.market import PriceBar
     from vinci.screens.assemble import build_price_record, enrich_with_fundamentals
 
-    facts = json.loads((FIX / "companyfacts" / "NKE.json").read_text())
+    facts = (companyfacts if companyfacts is not None
+             else json.loads((FIX / "companyfacts" / "NKE.json").read_text()))
     bars = [b for b in (PriceBar(**json.loads(x)) for x in
                         (FIX / "prices" / "NKE.jsonl").read_text().splitlines() if x.strip())
             if b.bar_date <= last_close]

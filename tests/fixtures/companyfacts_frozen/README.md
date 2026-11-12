@@ -25,7 +25,10 @@ a test reads the file here first, and the tracking fixture only when none is her
   (`tests/test_nonoperating_earnings.py`, `tests/test_r4_machine_proposal.py`; #916 review
   round 2). A subfolder, not `<T>.json` here, because GOOGL.json above is a different vintage
   frozen for the CIQ side. Each pin cuts its copy at a stated date (`concepts.facts_as_of`), so
-  these are refrozen only when a pin's own date moves.
+  these are refrozen only when a pin's own date moves. `MVST` and `SMPL` joined on 2026-11-12, the
+  tracking fixtures as committed at main `650057f3` (last changed in `53cbe9fe` and `3e97ee7d`), for
+  the window anchored at the filer's latest filed quarter (STATE row 51 (2)): the two pages whose
+  window moves, each pinned at its page's reference and price dates.
 - `EPAM.json`, `WLK.json` and `VRRM.json` — the tracking fixtures as committed at main `cb8139ee`
   (cash instant 2026-06-30 on each; the date CIQ's frozen EPAM and WLK figures carry). Frozen 2026-11-09,
   when the three pages moved to their September-quarter 10-Qs (fix request 2, order 1). EPAM and WLK are
