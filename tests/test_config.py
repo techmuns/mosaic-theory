@@ -96,10 +96,18 @@ def test_every_preview_server_serves_an_absolute_directory() -> None:
     debugging working code; the reverse case is worse — a broken render previewing as fine because
     the bytes on screen came from a different branch.
 
-    Every other entry already uses an absolute path and names its tree. This keeps it that way."""
+    Every other entry already uses an absolute path and names its tree. This keeps it that way.
+
+    PER-MACHINE SINCE 2026-11-12 (STATE row 49, the coordinator's default 6): the file is
+    git-ignored, so it is read where a checkout has one and skipped, with that reason, where it
+    has none (CI, a fresh worktree). The absolute paths this test requires are why it left git."""
     import json
 
-    cfg = json.loads((Path(__file__).resolve().parents[1] / ".claude" / "launch.json").read_text())
+    launch = Path(__file__).resolve().parents[1] / ".claude" / "launch.json"
+    if not launch.is_file():
+        pytest.skip("no .claude/launch.json in this checkout: it is per-machine and git-ignored "
+                    "(STATE row 49, default 6), so there is no preview config to check here")
+    cfg = json.loads(launch.read_text())
     relative = []
     for c in cfg.get("configurations", []):
         args = c.get("runtimeArgs", [])
