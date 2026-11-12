@@ -747,6 +747,19 @@ first"** — no prompt change or paid rebuild ships unmeasured.
      a path's spelling), so the same design re-registered under a second approval with a new
      `--note` is refused once the first has drawn. A replication names the run it replicates, so
      it is a design of its own, drawn once too. Commit the `drawn` rows with the run's record.
+     Since #1030's review round 2:
+     - **The index derives every row from the registration**, and the draw derives it again:
+       a row that disagrees is refused.
+     - **One design has one spelling.** Pages, targets and gated families given in another order
+       are the same design, and a target given twice is refused.
+     - **One set of request bytes is drawn once across approvals** (operator 2026-11-12: "Refuse
+       by request pins"). A registration whose every request pin another registration already
+       drew is refused, whatever its design, harness commit or kind. The run a replication
+       replicates is the one exemption.
+     - **The judge's TEST read is claimed by `judge.run_half` itself.**
+     - **Two checkouts can still each draw a twin** before either `drawn` row reaches main (an
+       accepted risk). So one agent runs every paid panel, one at a time, announced on #1004
+       first.
    - **M-GAP is never a target** (RG-D13, until an independent coding of the gap types exists):
      it is scored and printed, and no decision reads it.
    - **Six pages are held out** (`vinci/evals/held_out_pages.json`, by a fixed rule): they are

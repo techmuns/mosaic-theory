@@ -93,7 +93,7 @@ def _run(a: argparse.Namespace) -> int:
     approval = registry.approval_id(a.budget_ledger)
 
     def claim() -> object:   # RG-D9: called by run_build after its $0 checks, under its lock
-        return registry.claim_draw(reg.sha, approval=approval, unit=f"{a.ticker}:{a.build}")
+        return registry.claim_draw(reg, approval=approval, unit=f"{a.ticker}:{a.build}")
     raws = bd.run_build(reg, a.ticker, a.build, budget=budget, draws_out=a.draws_out,
                         ciq_root=ciq_root, claim=claim)
     start, end = (bd.build_row(budget, reg, k, a.ticker, a.build)
@@ -279,9 +279,7 @@ def main(argv: list[str] | None = None) -> int:
         import dataclasses
         reg = dataclasses.replace(reg, scorer_ref=scorer_ref)
         cm.write_registration(reg, a.out)
-        registry.record_registered(reg.sha, kind="compare", refs={"base": a.base, "cand": a.cand},
-                                   pages=list(reg.pages), draws=reg.draws, approval=approval,
-                                   design=cm.draw_key(reg))
+        registry.record_registered(reg, approval=approval)   # its key derived from it (round 2)
         print(f"indexed in {registry.INDEX}: merge that row to main in a docs-only PR before "
               "any draw (RG-D14)")
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
@@ -324,7 +322,7 @@ def main(argv: list[str] | None = None) -> int:
         approval = registry.approval_id(a.budget_ledger)
 
         def claim() -> object:   # RG-D9: called by run_compare after its $0 refusals
-            return registry.claim_draw(run.sha, approval=approval)
+            return registry.claim_draw(run, approval=approval)
         cm.run_compare(cap, budget=budget, out_dir=a.out_dir, registration=run, claim=claim)
         print(f"drawn; the approval's spend is now ${budget.spent():.4f} of "
               f"${budget.cap_usd:.2f}; score with `python -m vinci.evals score --out-dir "
@@ -343,9 +341,7 @@ def main(argv: list[str] | None = None) -> int:
                                min_gap_s=a.min_gap_s, ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT,
                                note=a.note)
         bd.write_registration(breg, a.out)
-        registry.record_registered(breg.sha, kind="run", refs={"code": breg.code_ref},
-                                   pages=list(breg.pages), draws=breg.draws, approval=approval,
-                                   design=bd.draw_key(breg))
+        registry.record_registered(breg, approval=approval)   # its key derived from it (round 2)
         print(f"indexed in {registry.INDEX}: merge that row to main in a docs-only PR before "
               "any draw (RG-D14)")
         print(f"registered {breg.sha[:16]}: pages {list(breg.pages)}, {breg.builds} builds of "
@@ -404,9 +400,7 @@ def main(argv: list[str] | None = None) -> int:
         if not _paid(a):
             return 2
         gold = gd.load_gold()
-        if a.half == "test":   # RG-D9: the TEST half is read once, across approvals
-            from vinci.evals import registry
-            registry.claim_judge_test(approval=registry.approval_id(a.budget_ledger))
+        # RG-D9's TEST-once across approvals is claimed by run_half itself (#1030 round 2, F5)
         judged = jg.run_half(a.half, budget=budget, out_dir=a.out_dir, gold=gold,
                              tickers=a.ticker)
         print(jg.calibration_text(jg.calibrate(judged, gold, a.half, tickers=a.ticker)))

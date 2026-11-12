@@ -24,7 +24,7 @@ The operator's rulings, 2026-11-11, verbatim, relayed by the coordinator:
 - **RG-D14 and RG-D9: the registrations index** (`vinci/evals/registry.py`, `docs/evals/registrations.jsonl`).
   - `register` and `register-run` append the registration's row.
   - `run-compare`, `run`, `score` and `score-run` refuse a registration whose row `origin/main` does not hold. The row is merged in a docs-only PR first, so main's own history shows the registration before any draw. That closes RG-D14: the pre-registration commits had lived on branches that squash merges removed.
-  - Each paid draw is a `drawn` row, written before the draw. A comparison is drawn once across approvals. *(Corrected in review round 1, 2026-11-12: keyed on the registration's sha, "once" held per sha, and a new `--note` gives one design a new sha, so a second approval could draw the same design again. The index now keys it on the DESIGN, `compare.draw_key` and `builds.draw_key`; see "Review round 1".)* A `register-run` registration's builds are each drawn once, all under the approval that drew the first.
+  - Each paid draw is a `drawn` row, written before the draw. A comparison is drawn once across approvals. *(Corrected in review round 1, 2026-11-12: keyed on the registration's sha, "once" held per sha, and a new `--note` gives one design a new sha, so a second approval could draw the same design again. The index now keys it on the DESIGN, `compare.draw_key` and `builds.draw_key`; see "Review round 1".)* *(Corrected again in review round 2, 2026-11-12: the CLI passed that key in and the claim trusted it, so a wrong key went unseen. The index now derives the key and the request pins from the registration itself, at the row and again at the claim, and refuses a row that disagrees. One spelling is one design, and one set of request bytes is drawn once too; see "Review round 2".)* A `register-run` registration's builds are each drawn once, all under the approval that drew the first.
   - The judge's read of the gold's TEST half is a `judge_test_read` row, and a second read is refused whichever approval asks. That closes RG-D9, where both rules had held per approval ledger only.
   - The rows hold shas, refs, pages, counts, an approval's sha256 and dates: no path, no text.
 - **RG-D11: the gold is the gold its manifest hashed** (`gold.verify_gold`). `load_gold` checks the five files against `MANIFEST.source_sha256`. Each coder file is checked as its two recorded halves, split at the DEV half's 330 claims; all five match today. An edited label is refused before any metric reads it.
@@ -181,12 +181,79 @@ It found eight items. One commit answers them. The tests are `tests/test_evals_o
 
 **DEFERRED, as the review marked them:**
 - RG-D11 checks the gold only against the working copy's MANIFEST, so editing both passes. That is inherent without a pin held outside the repository.
-- `run_request` accepts any registration string (D2). Every paid path above it now needs its index claim and its RG-D12 check.
+- `run_request` accepts any registration string (D2). Every paid path above it now needs its index claim and its RG-D12 check. *(Corrected in review round 2, 2026-11-12: that was false for the judge. Its TEST read was claimed only by the CLI, and `judge.run_half("test")` under a fresh approval reached the paid client (`judge_test.py`). Since round 2, `run_half` claims the TEST read itself, before any client exists (F5). Its DEV half has no index claim, and the TEST-once rule is TEST's alone. So `run_compare` and `run_build` need their index claim, `run_compare` its RG-D12 check too, and the judge its TEST claim. The judge's DEV half is bounded only by its approval's ledger and cap.)*
 - The git-ref lint cannot see a ref passed by name.
 
 **#953's order.** #1036 (open) edits `schemas.py` and `synthesis.py`, both production files. So #953 registers after #1036 merges, as well as after this PR, #1031 and #1023.
 
 **THE MUTANTS** (20; each applied alone, the evals, RG-D20 and git-ref suites run with `-x`, and the file restored byte for byte): **21 of 21 killed**. M6 survived the 20-mutant run and is now pinned by `test_an_approval_keeps_its_identity_as_its_ledger_grows`, which kills it: an approval's identity is its ledger's FIRST line, so under M6 every draw recorded would change it and a registration bound to it could not be drawn past its first row. Killed: M1 require_on_main reads the working copy, not main; M2 a barred target sits in Holm's family at p=0; M3 a barred-only registration's band is not forced to fail; M4 the BASE production re-check removed; M7 impact request.json wire sha256 not checked; M8 arm_layer skips the recorded CIQ-input check; M9 a build unit may be claimed twice; M11 arm_layer rebuilds BOTH arms at BASE's ref; M12 impact_arm reads BASE's arm for both; M13 fixed_scorer skips the harness-is-main check; M14 claim_judge_test lets any approval resume; M5' run_compare skips the export's manifest check (moved to the library); M10' run_compare's library RG-D12 check removed; D1 score_run's library RG-D12 check removed (no score-time check); R1a claim_draw keys on the sha again (design twins ignored); R1b the index stops recording the design; R1c a run's design includes its words; R1d a replication shares its first run's key; R6 the fingerprint drops vinci/sleeves.py; R7 register writes before it reads its approval; M6.
+
+## Review round 2 (the coordinator's independent review at `3640be07`, 2026-11-12)
+
+Six findings and one note. The operator ruled on two of them on 2026-11-12. One commit answers them, and its tests are in `tests/test_evals_order8_round2.py`.
+- **Every FIX test fails on `3640be07`** for its finding's reason. This was shown by swapping in `3640be07`'s five `vinci/evals` files, running the tests, and restoring the files byte for byte (sha256 checked).
+- **The two PINs pass on `3640be07`,** and fail there under the reviewer's own mutant.
+
+- **F1. FIXED: the CLI's design wiring is pinned end to end, and the claim derives the key.**
+  - **Reproduced:** `mutate_cli.py`. Its mutant makes `register` write `design=reg.sha` instead of `design=cm.draw_key(reg)`, and `register-run` likewise. It survived all 363 evals, git-ref and RG-D20 tests, and `shop_e2e.py` then drew one design under two approvals.
+  - **Why nothing caught it.** The item-1 tests wrote their keys by hand. The CLI's one pin grepped its source. And `claim_draw` never derived the key from the registration it drew.
+  - **The fix.** `registry.identity` derives a registration's sha, design key and request pins from the registration itself. `record_registered` and `claim_draw` now take the registration, not a sha and a key, so no caller hands the index a key. The claim refuses a row whose design or pins are not what the registration derives.
+  - **Pinned end to end** (TEST-LAYER RULE). The CLI registers one design twice, under two approvals and two notes, then draws: through `run-compare`, and through `register-run` and `run`. The first draw reaches the spied client; the second is refused before any client. With the reviewer's mutant applied to `3640be07`, both pins fail.
+  - **The index tests now use the production path.** The ones that wrote rows by hand write them with `record_registered` and claim with the registration. Their `match` strings are tightened to the design rule's own words, so F3's refusal cannot mask a design mutant.
+- **F2. FIXED: one spelling is one design.**
+  - **Reproduced:** `spellings.py`. Each of these respellings was a design of its own: the pages reordered (`NFLX,EPAM` against `EPAM,NFLX`), the targets reordered, a target repeated, and a gated metric's families reordered. `design_differs` named a field, and `draw_key` moved. Reordered pages were drawn twice even under ONE approval, because `run_compare`'s own check read the order as a design field.
+  - **The fix.**
+    - `compare._design` compares the pages and the targets as sets, for `design_differs` and `draw_key` both.
+    - `builds.draw_key` sorts its pages.
+    - `register` sorts a gated metric's families before it writes the rule that names them.
+    - A target given twice is refused (`Registration`). Holm had run on one target, while the decision said "Holm across 2 target(s)".
+  - **The transforms keep their order,** because they are applied in it.
+- **F3. FIXED: one set of request bytes is drawn once across approvals.**
+  - **The ruling** (operator, 2026-11-12, verbatim): **"Refuse by request pins (Recommended)"**. The question was "Should a paid draw also be refused when its whole set of request pins was already drawn under another registration?" The option read: "Closes the gap at the byte level. A replication under the replication rule stays allowed. Built in #1030's round 2 at $0."
+  - **The defect.** The design key carries the scorer's fingerprint and a build's `code_ref` (HEAD by default). So any harness commit, or any change to a design field, gave byte-identical requests a new design, and a second approval could draw them. `prepare_build` refused by request pin, but per ledger only.
+  - **The fix.** Every `registered` row records its request pins. `claim_draw` refuses a registration when EVERY one of its pins was already drawn under other registrations.
+    - A comparison's pins count as drawn as a whole.
+    - A build registration's pins count page by page, as its builds are drawn.
+    - The run a replication replicates is exempt, so a replication is still drawn, once (`test_a_replication_is_its_own_design_and_is_drawn_once_too`).
+  - **The boundary is the ruling's "whole set".**
+    - A registration with even one request not yet drawn is drawn.
+    - A build registration's undrawn page does not count as drawn.
+    - A drawn registration whose row records no pins stops every draw, because its bytes cannot be read.
+  - **It reads bytes, not kinds.** A `register-run` whose every request a comparison has drawn is refused too, and the reverse.
+- **F4. CORRECTED: draw-once across checkouts is an accepted risk.**
+  - **The ruling** (operator, verbatim): **"One drawing machine (Recommended)"**. The option read: "Correct the record to state this as an accepted risk, with a falsifier. Keep the rule that one agent runs every paid panel, one at a time, announced on #1004 first."
+  - **The false claim.** The accepted-risk line said the approval binding closed it. The binding covers one sha, not its twins (`two_checkouts.py`).
+  - **Restated** under "What it costs", with its falsifier.
+  - **No code.** F3 changes which registrations count as twins, not what a checkout can see.
+- **F5. FIXED: the judge's TEST-once rule is in the library.**
+  - **The defect.** `claim_judge_test` was called only by the CLI's `judge` command, so `judge.run_half("test")` under a fresh approval reached the paid client (`judge_test.py`).
+  - **The fix.** For a paid draw (`replay.paid_draw`), `run_half` now claims the read after its own per-approval refusals and before any client exists. The CLI no longer claims it separately.
+  - **D2's deferral reason was false for the judge.** It said "every paid path above it now needs its index claim". It is corrected above and in the follow-ups.
+- **F6. CORRECTED:** "Found, not fixed" still listed the library `score_run`'s scorer check, which round 1 fixed (item 4, D1).
+- **The note: NOT FIXED.** `tests/test_evals_round2.py::test_score_refuses_a_scorer_other_than_the_registered_one` runs under its module's autouse stub (`fingerprint_only`), not production's `refuse_unless_registered_scorer`.
+  - **Why it stays.** Making that one test run production needs the fixture to exempt it, with a `request` parameter and a condition. That is more than one line.
+  - **What still covers it.** Production's fingerprint step is pinned by `test_library_run_compare_refuses_a_scorer_that_is_not_the_registered_one`, and the score-time call by D1's pin.
+
+**THE MUTANTS.** 19 were run on round 2's code, each alone. For each, the evals, RG-D20 and git-ref suites ran with `-x`, and the file was restored byte for byte (sha256 checked); the committed index was unchanged after the run. **19 of 19 are killed.** Each is listed with the first test that failed:
+- **The reviewer's own mutant.** Applied to `3640be07`, it fails both CLI PINs.
+- **R2-1:** `identity` gives a comparison its sha as its design (round 1's design test; the pins rule refuses instead, and the tightened `match` sees it).
+- **R2-2:** the same for a build registration.
+- **R2-3:** `record_registered` writes the sha as the design (`test_a_registration_is_drawn_once_across_approvals`: the claim finds the row disagreeing).
+- **R2-4:** the claim skips the row check (F1's `[design]` case).
+- **R2-5:** the row check compares the design only (F1's `[pins]` case).
+- **R2-6:** no request-pins rule (the builds `--min-gap-s 301` case).
+- **R2-7:** no replication exemption (round 1's replication test).
+- **R2-8:** a build registration's undrawn pages count as drawn (the boundary test).
+- **R2-9:** a drawn row with no pins is skipped (the no-pins test).
+- **R2-10:** "every pin drawn" is read as "the drawn set equals mine" (the boundary test).
+- **R2-11 and R2-12:** `_design` keeps the order of the pages, then of the targets (F2).
+- **R2-13:** `register` keeps the families' order (F2).
+- **R2-14:** `builds.draw_key` keeps the pages' order (F2).
+- **R2-15:** a target given twice is accepted.
+- **R2-16:** `run_half` makes no TEST claim (the structural pin first; F5's own test also fails).
+- **R2-17:** `run_half` claims only an UNPAID draw (`test_evals_judge.py`'s fake-client run, refused by the committed read).
+- **R2-18:** `run_half` claims in this repository's index whatever root it is given (F5's positive pin).
+- **R1a, re-run from round 1:** the claim ignores design twins. The round-1 design test still kills it, because its `match` no longer accepts the pins rule's refusal.
 
 ## What this means for #927's merged result
 
@@ -206,8 +273,8 @@ Its registration and record stay as written, as history. The merged code stays m
 
 - **The independent coding of M-GAP's gap types** (RG-D13's lasting fix) is new gold: coders, not code. It is the operator's to commission. Until then M-GAP is barred.
 - **`register` does not refuse a held-out page as a target page.** The ruling was "never used to build or tune a metric"; measuring a prompt change on a held-out page is neither, so it is left open. Whether held-out pages must also never be drawn is the operator's call.
-- **The library's `score_run` does not check the registered scorer** (B's review, deferred). The CLI's `score` and `score-run` do (`refuse_unless_registered_scorer`), and every documented step scores through the CLI. A library caller with an edited production file would score under it. The fix needs its own PR, because about 40 test call sites score with placeholder scorers.
-- **`run_request`'s RG-D10 guard checks only that a registration string is present** (B's review, deferred). The judge passes `judge:{half}` by design. Every paid path above it now also needs its index claim, so the guard is the last of three, not the only one.
+- **CLOSED, no longer a follow-up: the library's `score_run` checks the registered scorer.** B's review deferred it. Review round 1 fixed it (item 4, D1): the library's `score_run` and `run_compare` run `refuse_unless_registered_scorer` whole. The 44 tests that score under placeholder refs stand in the fingerprint comparison (`tests/evals_scorer_stub.py`). *(Corrected in review round 2, 2026-11-12: this bullet still said the library's `score_run` did not check the registered scorer and that the fix needed its own PR.)*
+- **`run_request`'s RG-D10 guard checks only that a registration string is present** (B's review, deferred). The judge passes `judge:{half}` by design. ~~Every paid path above it now also needs its index claim, so the guard is the last of three, not the only one.~~ *(Corrected in review round 2, 2026-11-12: the judge's paid path needed no index claim in the library until round 2 (F5). Now `run_compare` and `run_build` need their index claim, and the judge's TEST half needs its own. The judge's DEV half needs none, so for DEV this guard and the approval's cap are the only guards.)*
 - **A CAND layer field BASE's schema drops is dropped silently** (round 1, item 8, deferred): see "Review round 1". The falsifier: an arm whose `layer.json` holds a key its parsed layer does not.
 - **RG-D11 checks the gold only against the working copy's MANIFEST** (round 1, deferred): an edit to both passes, which is inherent without a pin held outside the repository.
 - **The lint's rules are syntactic.** A ref handed to git through a wrapper it does not list is not seen. The falsifier is a `gate` red on an unreachable ref this lint passed.
@@ -223,5 +290,10 @@ Its registration and record stay as written, as history. The merged code stays m
 - **Every registration made before this PR can no longer be drawn or scored by this code.** None is in the index, and some were registered by a candidate's scorer. Their results stand as their records state them.
 - **A paid run now needs a docs-only PR merged before its first draw.** That costs a gate run's wait.
 - **A `drawn` row is written after every $0 refusal and before the first paid call** (review round 0). A run that then stops mid-draw (a budget stop, an outage) has drawn, so its registration cannot be drawn again: a new registration is needed. The falsifier: a `drawn` row with no draws in its run folder.
-- **"Drawn once across approvals" across checkouts** is now closed by the approval binding (gap 6). A second draw under the SAME approval in another checkout, not yet committed, is still possible, as it was within one ledger before. That checkout holds the same approval's ledger.
+- ~~**"Drawn once across approvals" across checkouts** is now closed by the approval binding (gap 6). A second draw under the SAME approval in another checkout, not yet committed, is still possible, as it was within one ledger before. That checkout holds the same approval's ledger.~~ *(Corrected in review round 2, 2026-11-12; operator: "One drawing machine (Recommended)".)* **"Drawn once across approvals" across checkouts is an ACCEPTED RISK, not closed.**
+  - **What the binding covers.** The approval binding (gap 6) binds ONE registration: it is drawn only under the approval its row names.
+  - **What it does not cover.** A twin is the same design, or the same request bytes (round 2's rule, F3), registered again under ANOTHER approval. It is a different sha with a binding of its own. A checkout reads only its own index and main's, and a `drawn` row reaches main only with a later PR. So two checkouts can each draw one twin before either `drawn` row is on main (`two_checkouts.py`, at `3640be07`: the second checkout's twin, under the second approval, was allowed). This is what the review found false in the line above. The same holds for a second draw under the SAME approval from another checkout.
+  - **Why it stays open.** Closing it in code needs a lock that every checkout shares outside git, and none exists.
+  - **What holds it.** The rule: one agent runs every paid panel, one at a time, announced on #1004 first.
+  - **The falsifier:** two `drawn` rows on main whose registrations share a design key, or the later of which pins only bytes the earlier had drawn, with neither a replication of the other.
 - **The held-out rule departs from the example rule** given with the ruling, for the reason above, and passes over the two pages a replay cannot draw. Both are stated in the file and in this record. **The `gold` command's TEST figures now cover 178 of the 314 TEST claims.** The historical TEST figures (for example M-LABEL's 22/32 and 22/27) stand as recorded and were measured on all 314.

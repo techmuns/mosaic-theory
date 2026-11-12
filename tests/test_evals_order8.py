@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import shutil
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -258,6 +259,44 @@ def _repo_with_index(tmp_path: Path, rows: list[dict[str, object]]) -> Path:
     return repo
 
 
+def _to_main(repo: Path) -> None:
+    """Commit the working copy and make it origin/main, as a docs-only PR's merge does."""
+    import subprocess
+    for args in (["add", "-A"],
+                 ["-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "merge"],
+                 ["update-ref", "refs/remotes/origin/main", "HEAD"]):
+        subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True)
+
+
+def _indexed(tmp_path: Path, regs: list[tuple[Any, str]]) -> Path:
+    """A repository whose origin/main holds the row `registry.record_registered` writes for each
+    (registration, approval): the index derives each row from its registration (#1030 round 2)."""
+    from vinci.evals import registry
+    repo = _repo_with_index(tmp_path, [])
+    for reg, approval in regs:
+        registry.record_registered(reg, approval=approval, root=repo)
+    _to_main(repo)
+    return repo
+
+
+def _a_comparison(note: str = "one") -> Any:
+    """A registered comparison with request pins (no git ref is read)."""
+    from vinci.evals import compare as cm
+    return cm.Registration(base_ref="a" * 40, cand_ref="b" * 40, transforms=(), pages=("BURL",),
+                           draws=5, targets=("M-LABEL",), held_out=(), scorer="f" * 64,
+                           requests={"BURL:BASE": "1" * 64, "BURL:CAND": "2" * 64}, note=note)
+
+
+def _a_build_run(note: str = "one", **over: Any) -> Any:
+    """A `register-run` registration of one page (no git ref is read)."""
+    from vinci.evals import builds as bd
+    kw: dict[str, Any] = {"code_ref": "0" * 40, "transforms": (), "pages": ("NFLX",),
+                          "draws": 2, "builds": 3, "min_gap_s": 300.0,
+                          "requests": {"NFLX": "1" * 64}, "inputs": {"ciq_root": "/ciq"},
+                          "note": note}
+    return bd.RunRegistration(**{**kw, **over})
+
+
 def test_a_registration_main_does_not_hold_is_not_drawn(tmp_path: Path) -> None:
     """(−) RG-D14: "pre-registered before scoring" could not be checked from main, because squash
     merges removed the pre-registration commits. A registration is now a row of a committed index,
@@ -276,11 +315,11 @@ def test_a_registration_is_drawn_once_across_approvals(tmp_path: Path) -> None:
     again under a second approval. The index records each draw; a second approval is refused."""
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
-    repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64,
-                                         "approval": "approval-1", "design": "d" * 64}])
-    registry.claim_draw("a" * 64, approval="approval-1", root=repo)
+    reg = _a_comparison()
+    repo = _indexed(tmp_path, [(reg, "approval-1")])
+    registry.claim_draw(reg, approval="approval-1", root=repo)
     with pytest.raises(ReplayError, match="drawn once"):
-        registry.claim_draw("a" * 64, approval="approval-2", root=repo)
+        registry.claim_draw(reg, approval="approval-2", root=repo)
     rows = [json.loads(x) for x in (repo / registry.INDEX).read_text().splitlines()]
     assert [r["event"] for r in rows] == ["registered", "drawn"]
 
@@ -291,14 +330,14 @@ def test_a_build_is_drawn_once_and_a_registration_s_builds_share_one_approval(
     build under the approval that drew its first."""
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
-    repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64,
-                                         "approval": "ap-1", "design": "d" * 64}])
-    registry.claim_draw("a" * 64, approval="ap-1", unit="NFLX:1", root=repo)
-    registry.claim_draw("a" * 64, approval="ap-1", unit="NFLX:2", root=repo)   # (+) next build
+    reg = _a_build_run()
+    repo = _indexed(tmp_path, [(reg, "ap-1")])
+    registry.claim_draw(reg, approval="ap-1", unit="NFLX:1", root=repo)
+    registry.claim_draw(reg, approval="ap-1", unit="NFLX:2", root=repo)   # (+) next build
     with pytest.raises(ReplayError, match="drawn once"):
-        registry.claim_draw("a" * 64, approval="ap-1", unit="NFLX:1", root=repo)
+        registry.claim_draw(reg, approval="ap-1", unit="NFLX:1", root=repo)
     with pytest.raises(ReplayError, match="one approval"):
-        registry.claim_draw("a" * 64, approval="ap-2", unit="NFLX:3", root=repo)
+        registry.claim_draw(reg, approval="ap-2", unit="NFLX:3", root=repo)
 
 
 def test_the_judge_s_test_half_is_read_once_across_approvals(tmp_path: Path) -> None:
@@ -315,7 +354,8 @@ def test_the_judge_s_test_half_is_read_once_across_approvals(tmp_path: Path) -> 
 def test_the_cli_checks_the_index_before_it_draws_or_scores() -> None:
     """STRUCTURAL: register and register-run write the row; run-compare and run claim the draw
     after requiring the row on main; score and score-run require it; the judge's TEST half is
-    claimed before it is read."""
+    claimed before it is read — by `run_half` itself since #1030's review round 2 (F5), so the
+    library claims it too."""
     src = (ROOT / "vinci" / "evals" / "__main__.py").read_text()
 
     def before(cmd: str, check: str, act: str) -> None:
@@ -329,7 +369,9 @@ def test_the_cli_checks_the_index_before_it_draws_or_scores() -> None:
     before("def _run(", "registry.claim_draw(", "bd.run_build(")
     before('a.cmd == "score"', "registry.require_on_main(", "cm.score_run(")
     before('a.cmd == "score-run"', "registry.require_on_main(", "ind.score(")
-    before('a.cmd == "judge"', "registry.claim_judge_test(", "jg.run_half(")
+    judge = (ROOT / "vinci" / "evals" / "judge.py").read_text()
+    body = judge[judge.index("def run_half("):]
+    assert "registry.claim_judge_test(" in body[:body.index("rp.run_request(")]
 
 
 def test_the_index_carries_no_path_and_no_text() -> None:
@@ -857,11 +899,11 @@ def test_a_registration_is_drawn_only_under_the_approval_it_is_bound_to(tmp_path
     sha256; a draw under any other approval is refused wherever it runs."""
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
-    repo = _repo_with_index(tmp_path, [{"event": "registered", "registration": "a" * 64,
-                                         "approval": "ap-1", "design": "d" * 64}])
+    reg = _a_comparison()
+    repo = _indexed(tmp_path, [(reg, "ap-1")])
     with pytest.raises(ReplayError, match="bound to approval"):
-        registry.claim_draw("a" * 64, approval="ap-2", root=repo)
-    registry.claim_draw("a" * 64, approval="ap-1", root=repo)        # (+) its own approval
+        registry.claim_draw(reg, approval="ap-2", root=repo)
+    registry.claim_draw(reg, approval="ap-1", root=repo)        # (+) its own approval
 
 
 def test_a_registration_names_its_approval() -> None:
@@ -874,8 +916,10 @@ def test_a_registration_names_its_approval() -> None:
     src = (ROOT / "vinci" / "evals" / "__main__.py").read_text()
     calls = [i for i in range(len(src)) if src.startswith("registry.record_registered(", i)]
     assert len(calls) == 2
-    for i in calls:
-        assert "approval=approval" in src[i:i + 300] and "design=" in src[i:i + 300]
+    for i in calls:   # the registration itself: its key is derived from it (#1030 round 2, F1)
+        call = src[i:src.index(")", i) + 1]
+        assert call in ("registry.record_registered(reg, approval=approval)",
+                        "registry.record_registered(breg, approval=approval)"), call
     for cmd in ('a.cmd == "register"', 'a.cmd == "register-run"'):
         body = src[src.index(cmd):]
         body = body[:body.index("return 0")]

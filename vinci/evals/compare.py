@@ -369,21 +369,35 @@ def ungated(metric: str, families: Sequence[str]) -> str:
     return f"{metric}[reported: {'+'.join(rest)}]"
 
 
+def _as_set(values: Any) -> list[Any]:
+    return sorted(values, key=lambda v: json.dumps(v, sort_keys=True, default=list))
+
+
+def _design(reg: Any) -> dict[str, Any]:
+    """The `DESIGN_FIELDS`, ONE SPELLING PER DESIGN (#1030 review round 2, F2): the pages and the
+    targets are sets — the order they were given in draws and decides nothing different — so
+    they are sorted here (a target given twice is refused, `Registration`), and `register` sorts
+    a gated metric's families before it writes the rule that names them."""
+    view = {k: getattr(reg, k) for k in DESIGN_FIELDS}
+    view["pages"], view["targets"] = _as_set(view["pages"]), _as_set(view["targets"])
+    return view
+
+
 def design_differs(a: Any, b: Any) -> list[str]:
     """The design fields on which ``a`` and ``b`` differ — [] when they are one design."""
-    return [k for k in DESIGN_FIELDS if getattr(a, k) != getattr(b, k)]
+    da, db = _design(a), _design(b)
+    return [k for k in DESIGN_FIELDS if da[k] != db[k]]
 
 
 def draw_key(reg: Registration) -> str:
     """THE DESIGN AS DRAWN, the index's drawn-once key (#1030 review round 1, item 1): the
     `DESIGN_FIELDS` and the replication link. Two registrations of one design differ only in
-    words (`note`) or records (`inputs`), so they share it, and a design drawn under one approval
-    is refused under every other (`registry.claim_draw`); a replication names the run it
-    replicates, so it is a design of its own, drawn once too."""
-    d = json.loads(reg.to_json())
-    return hashlib.sha256(json.dumps(
-        {**{k: d.get(k) for k in DESIGN_FIELDS}, "replicates": reg.replicates},
-        sort_keys=True, default=list).encode()).hexdigest()
+    words (`note`), records (`inputs`) or the order their pages and targets were given in
+    (`_design`), so they share it, and a design drawn under one approval is refused under every
+    other (`registry.claim_draw`); a replication names the run it replicates, so it is a design
+    of its own, drawn once too."""
+    return hashlib.sha256(json.dumps({**_design(reg), "replicates": reg.replicates},
+                                     sort_keys=True, default=list).encode()).hexdigest()
 
 
 def run_registration(out_dir: str | Path) -> Registration:
@@ -473,6 +487,10 @@ class Registration:
             if bad or not self.targets:
                 raise ValueError(f"target(s) {bad or '(none)'} not a deterministic metric "
                                  f"({sorted(mt.UNIT_METRICS)}) — or register no-worsening only")
+            if len(set(self.targets)) != len(self.targets):
+                # #1030 review round 2, F2: Holm ran on the one, and the decision said "Holm across
+                # 2 target(s)"; and the twice-given spelling was a design of its own
+                raise ValueError(f"targets {list(self.targets)}: each target is registered once")
         if self.draws < 2 or not self.pages:
             raise ValueError("a registration needs pages and at least two draws per condition")
         for m, fams in self.no_worsening_families.items():
@@ -594,7 +612,9 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
     named = change_names(base_ref, cand_ref, sorted(p["pages"]))
     rule = (NO_WORSENING_RULE if no_worsening else
             REPLICATION_RULE if ship_alpha is not None else Registration.rule)
-    nwf = {m: list(f) for m, f in (no_worsening_families or {}).items()}
+    # one spelling per design (#1030 review round 2, F2): a family list is a set, and the rule
+    # below names it, so the order it was given in would make the same gate a design of its own
+    nwf = {m: sorted(f) for m, f in (no_worsening_families or {}).items()}
     for m, fams in nwf.items():
         rule += (f"; {m}'s no-worsening check counts only its families {fams}, the rest "
                  "reported, never gated")

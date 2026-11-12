@@ -14,8 +14,14 @@ WHY A COMMITTED INDEX.
   (in the working copy at once, then committed with the run's record); a second one is refused
   whichever approval asks, whether the earlier row is in this checkout or on main.
 
-WHAT A ROW HOLDS: shas, refs, pages, counts, an approval's sha256 and dates. Never a path, a
-transcript or a ledger's contents (the repository is public).
+WHAT A ROW HOLDS: shas, refs, pages, counts, an approval's sha256 and dates — a registration's
+design key and its request pins are sha256s too. Never a path, a transcript or a ledger's
+contents (the repository is public).
+
+WHAT THE INDEX KNOWS OF A REGISTRATION IS DERIVED FROM IT (#1030 review round 2): `identity`
+reads the sha, the design key and the request pins off the registration itself, when its row is
+written and again when it is drawn, and a draw whose registration disagrees with its row is
+refused. A caller never hands the index a key it then trusts.
 """
 from __future__ import annotations
 
@@ -24,9 +30,13 @@ import json
 import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from vinci.evals.replay import ROOT, ReplayError
+
+if TYPE_CHECKING:
+    from vinci.evals.builds import RunRegistration
+    from vinci.evals.compare import Registration
 
 #: The index, relative to the repository root.
 INDEX = Path("docs/evals/registrations.jsonl")
@@ -80,19 +90,38 @@ def approval_id(ledger: Path) -> str:
     return hashlib.sha256(lines[0].encode()).hexdigest()
 
 
-def record_registered(sha: str, *, kind: str, refs: dict[str, str], pages: list[str],
-                      draws: int, approval: str, design: str,
+def identity(reg: Registration | RunRegistration) -> dict[str, Any]:
+    """What the index records of a registration, DERIVED FROM IT (#1030 review round 2, F1): its
+    sha, kind, refs, pages and draws; its ``design``, the drawn-once key (`compare.draw_key`,
+    `builds.draw_key`); and its request ``pins``, each request's sha256 under the name the
+    registration gives it. `record_registered` writes this, and `claim_draw` derives it again from
+    the registration about to be drawn. Before round 2 the CLI passed the key in, and a mutant
+    that passed the registration's sha as its design survived every test."""
+    from vinci.evals import builds as bd
+    if isinstance(reg, bd.RunRegistration):
+        return {"registration": reg.sha, "kind": "run", "refs": {"code": reg.code_ref},
+                "pages": list(reg.pages), "draws": reg.draws, "design": bd.draw_key(reg),
+                "pins": dict(reg.requests)}
+    from vinci.evals import compare as cm
+    return {"registration": reg.sha, "kind": "compare",
+            "refs": {"base": reg.base_ref, "cand": reg.cand_ref}, "pages": list(reg.pages),
+            "draws": reg.draws, "design": cm.draw_key(reg), "pins": dict(reg.requests)}
+
+
+def record_registered(reg: Registration | RunRegistration, *, approval: str,
                       root: Path = ROOT) -> dict[str, Any]:
-    """The registration's row, appended to this checkout's index; it is drawn only once the row
-    is on main (`require_on_main`). ``design`` is its drawn-once key (`compare.draw_key`,
-    `builds.draw_key`): one design is drawn once across approvals, whatever its words."""
+    """The registration's row, appended to this checkout's index: what `identity` derives from
+    it, and the approval that may draw it. It is drawn only once the row is on main
+    (`require_on_main`); one design, and one set of request bytes, is drawn once across
+    approvals, whatever its words (`claim_draw`)."""
+    row = identity(reg)
+    sha = row["registration"]
     if any(r.get("event") == "registered" and r.get("registration") == sha
            for r in working_rows(root)):
         raise ReplayError(f"registration {sha[:12]} is already in the index")
     # BOUND TO ITS APPROVAL (B's check of order 8, gap 6): the row is on main before any draw,
     # so every checkout reads which approval may draw it — a second approval elsewhere cannot
-    return _append({"event": "registered", "registration": sha, "kind": kind, "refs": refs,
-                    "pages": pages, "draws": draws, "approval": approval, "design": design,
+    return _append({"event": "registered", **row, "approval": approval,
                     "registered_at": _now()}, root)
 
 
@@ -117,12 +146,58 @@ def _rows_everywhere(root: Path) -> list[dict[str, Any]]:
     return out
 
 
-def claim_draw(sha: str, *, approval: str, unit: str | None = None,
+def _drawn_pins(rows: list[dict[str, Any]], exempt: set[str | None]) -> dict[str, str]:
+    """Each request pin drawn under a registration outside ``exempt``, mapped to one that drew
+    it: every pin of a drawn comparison (drawn whole), and a build registration's pins of the
+    pages it has drawn a build of. A drawn registration whose row records no pins is refused:
+    which bytes it drew cannot be read, so no draw can be checked against them."""
+    out: dict[str, str] = {}
+    for row in rows:
+        sha = row.get("registration")
+        if row.get("event") != "registered" or sha in exempt:
+            continue
+        units = [r.get("unit") for r in rows
+                 if r.get("event") == "drawn" and r.get("registration") == sha]
+        if not units:
+            continue
+        pins = row.get("pins")
+        if not isinstance(pins, dict) or not pins:
+            raise ReplayError(f"registration {str(sha)[:12]} was drawn, but its indexed row "
+                              "records no request pins: the bytes it drew cannot be read, so no "
+                              "draw is checked against them, and none is made")
+        if row.get("kind") == "run":
+            pages = {str(u).split(":")[0] for u in units if u}
+            drew = [str(pins[p]) for p in sorted(pages) if p in pins]
+        else:
+            drew = [str(p) for p in pins.values()]
+        for p in drew:
+            out.setdefault(p, str(sha))
+    return out
+
+
+def claim_draw(reg: Registration | RunRegistration, *, approval: str, unit: str | None = None,
                root: Path = ROOT) -> dict[str, Any]:
-    """Record a paid draw under registration ``sha`` BEFORE it is made, refusing a second one
-    (RG-D9). ``unit`` is a `register-run` build ("TICKER:k"): each build once, and every build of
-    a registration under the approval that drew its first. A `register` comparison is one unit."""
+    """Record a paid draw under ``reg`` BEFORE it is made, refusing a second one (RG-D9).
+    ``unit`` is a `register-run` build ("TICKER:k"): each build once, and every build of a
+    registration under the approval that drew its first. A `register` comparison is one unit.
+    What it is checked by — its sha, its design, its request pins — is derived from ``reg`` here
+    (`identity`) and must be what its indexed row records (#1030 review round 2, F1)."""
+    me = identity(reg)
+    sha = me["registration"]
     rows = _rows_everywhere(root)
+    mine = [r for r in rows if r.get("event") == "registered" and r.get("registration") == sha]
+    if any(r.get("design") is None for r in mine):
+        raise ReplayError(f"registration {sha[:12]}'s indexed row records no design: it cannot "
+                          "be checked against the designs drawn under other registrations, so "
+                          "it is not drawn")
+    # THE ROW IS THE REGISTRATION DRAWN (#1030 review round 2, F1): the claim read the row's key
+    # as written, so a key written wrong made a twin a design of its own
+    if off := [r for r in mine if (r.get("design"), r.get("pins")) != (me["design"], me["pins"])]:
+        raise ReplayError(f"registration {sha[:12]}'s indexed row records design "
+                          f"{str(off[0].get('design'))[:12]} and its request pins, but the "
+                          f"registration drawn derives design {me['design'][:12]} and its own: "
+                          "the index and the registration disagree, so nothing is drawn — "
+                          "register it again")
     drawn = [r for r in rows if r.get("event") == "drawn" and r.get("registration") == sha]
     if unit is None and drawn:
         raise ReplayError(f"registration {sha[:12]} was already drawn (at "
@@ -139,22 +214,31 @@ def claim_draw(sha: str, *, approval: str, unit: str | None = None,
                               "the one whose ledger scores them (RG-D9)")
     # ONE DESIGN IS DRAWN ONCE ACROSS APPROVALS (#1030 review round 1, item 1): a new `--note`
     # gives one design a new sha, so keying on the sha let a second approval draw it again
-    designs = {r.get("design") for r in rows
-               if r.get("event") == "registered" and r.get("registration") == sha}
-    if None in designs:
-        raise ReplayError(f"registration {sha[:12]}'s indexed row records no design: it cannot "
-                          "be checked against the designs drawn under other registrations, so "
-                          "it is not drawn")
     twins = {r.get("registration") for r in rows if r.get("event") == "registered"
-             and r.get("design") in designs and r.get("registration") != sha}
+             and r.get("design") == me["design"] and r.get("registration") != sha}
     if prior := [r for r in rows if r.get("event") == "drawn" and r.get("registration") in twins]:
         raise ReplayError(f"registration {sha[:12]}'s design was already drawn, as registration "
                           f"{str(prior[0].get('registration'))[:12]} (at "
                           f"{prior[0].get('drawn_at')}): a design is drawn once across approvals, "
                           "whatever its words — a replication names the run it replicates "
                           "(RG-D9)")
-    bound = {r.get("approval") for r in rows
-             if r.get("event") == "registered" and r.get("registration") == sha}
+    # ONE SET OF REQUEST BYTES IS DRAWN ONCE ACROSS APPROVALS (#1030 review round 2, F3; operator
+    # 2026-11-12: "Refuse by request pins"): the design key carries the scorer's fingerprint and a
+    # build's code ref, so a harness commit gave byte-identical requests a new design. The run a
+    # replication replicates drew its bytes too, and is the one exemption.
+    pins = set(me["pins"].values())
+    if not pins:
+        raise ReplayError(f"registration {sha[:12]} pins no request bytes: what it would draw "
+                          "cannot be checked against what was drawn, so nothing is drawn")
+    elsewhere = _drawn_pins(rows, {sha, getattr(reg, "replicates", None)})
+    if pins <= set(elsewhere):
+        by = sorted({elsewhere[p][:12] for p in pins})
+        raise ReplayError(f"every request registration {sha[:12]} pins was already drawn, under "
+                          f"registration(s) {by}: one set of request bytes is drawn once across "
+                          "approvals, whatever registration, design field or harness commit names "
+                          "it — a replication names the run it replicates (RG-D9; operator "
+                          "2026-11-12, \"Refuse by request pins\")")
+    bound = {r.get("approval") for r in mine}
     if bound != {approval}:
         raise ReplayError(f"registration {sha[:12]} is bound to approval "
                           f"{sorted(map(str, bound)) or 'none'}, not {approval[:12]}: it is drawn "

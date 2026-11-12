@@ -25,8 +25,9 @@ The gap is per REQUEST: the prompt cache is keyed by the prompt, so only a build
 request can warm it; builds of other pages may run between. Under one approval's ledger a request
 is drawn under ONE registration (a second registration of the same bytes is refused, whatever its
 note), and one build is checked and claimed at a time (a lock beside the ledger). A build of the
-same bytes under ANOTHER approval's ledger is not visible here; the first draw's recorded
-cache-read tokens are what show whether a build opened uncached.
+same bytes under ANOTHER approval's ledger is not visible here; the index refuses a registration
+whose every request another registration drew (`registry.claim_draw`, #1030 review round 2), and
+the first draw's recorded cache-read tokens are what show whether a build opened uncached.
 """
 from __future__ import annotations
 
@@ -102,8 +103,10 @@ def draw_key(reg: RunRegistration) -> str:
     """A build registration's DESIGN, the index's drawn-once key (#1030 review round 1, item 1):
     everything but its words (`note`) and its record of what was read (`inputs`, a path's
     spelling included), so one design re-registered with new words is refused under a second
-    approval once its first has drawn."""
+    approval once its first has drawn. Its pages are a set: the order they were given in draws
+    nothing different (#1030 review round 2, F2)."""
     d = {k: v for k, v in json.loads(reg.to_json()).items() if k not in ("note", "inputs")}
+    d["pages"] = sorted(d["pages"])
     return hashlib.sha256(json.dumps(d, sort_keys=True).encode()).hexdigest()
 
 

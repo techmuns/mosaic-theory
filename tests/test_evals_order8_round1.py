@@ -19,8 +19,10 @@ import pytest
 from tests.test_evals_order8 import (
     BASE_953,
     CAND_953,
+    _a_build_run,
     _arm_run,
     _impact_export,
+    _indexed,
     _page,
     _repo_with_index,
 )
@@ -73,11 +75,12 @@ def test_a_design_is_drawn_once_across_approvals_whatever_its_note(tmp_path: Pat
     r1 = _first_run()
     r2 = dataclasses.replace(r1, note="first run (re-registered)")
     assert not cm.design_differs(r1, r2) and r1.sha != r2.sha
-    a1, a2, design = "1" * 64, "2" * 64, "d" * 64
-    repo = _repo_with_index(tmp_path, [_registered(r1.sha, a1, design),
-                                       _registered(r2.sha, a2, design), _drawn(r1.sha, a1)])
-    with pytest.raises(ReplayError, match="design"):
-        registry.claim_draw(r2.sha, approval=a2, root=repo)
+    a1, a2 = "1" * 64, "2" * 64
+    repo = _indexed(tmp_path, [(r1, a1), (r2, a2)])
+    registry.claim_draw(r1, approval=a1, root=repo)
+    # "design was already drawn": the design rule's own refusal, not round 2's request-pins one
+    with pytest.raises(ReplayError, match="design was already drawn"):
+        registry.claim_draw(r2, approval=a2, root=repo)
 
 
 def test_a_run_design_is_drawn_once_across_approvals_whatever_its_note(tmp_path: Path) -> None:
@@ -86,34 +89,35 @@ def test_a_run_design_is_drawn_once_across_approvals_whatever_its_note(tmp_path:
     builds were drawn under one registration is refused under any other."""
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
-    a1, a2, design = "1" * 64, "2" * 64, "e" * 64
-    repo = _repo_with_index(tmp_path, [_registered("r" * 64, a1, design, "run"),
-                                       _registered("s" * 64, a2, design, "run"),
-                                       _drawn("r" * 64, a1, "NFLX:1")])
-    with pytest.raises(ReplayError, match="design"):
-        registry.claim_draw("s" * 64, approval=a2, unit="NFLX:2", root=repo)
+    r, s = _a_build_run("one"), _a_build_run("two")
+    a1, a2 = "1" * 64, "2" * 64
+    repo = _indexed(tmp_path, [(r, a1), (s, a2)])
+    registry.claim_draw(r, approval=a1, unit="NFLX:1", root=repo)
+    with pytest.raises(ReplayError, match="design was already drawn"):
+        registry.claim_draw(s, approval=a2, unit="NFLX:2", root=repo)
 
 
 def test_a_replication_is_its_own_design_and_is_drawn_once_too(tmp_path: Path) -> None:
     """(+/−) The replication rule's one other draw survives the design key: a replication of a
     drawn first run shares its design but names it (`replicates`), so its key differs and it is
-    drawn once; a second replication of the same run, new words or not, is refused."""
+    drawn once; a second replication of the same run, new words or not, is refused. (+) Round 2
+    (F3): the replication draws exactly the bytes its first run drew, and the request-pins rule
+    exempts the run it replicates, so it is still drawn."""
     from vinci.evals import compare as cm
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
     r1 = _first_run()
     rep = dataclasses.replace(r1, replicates=r1.sha, note="its replication")
     rep2 = dataclasses.replace(rep, note="its replication, re-registered")
-    assert not cm.design_differs(r1, rep)
+    assert not cm.design_differs(r1, rep) and rep.requests == r1.requests
     assert cm.draw_key(r1) != cm.draw_key(rep) == cm.draw_key(rep2)
     assert cm.draw_key(r1) == cm.draw_key(dataclasses.replace(r1, note="other words"))
     a1, a2 = "1" * 64, "2" * 64
-    repo = _repo_with_index(tmp_path, [
-        _registered(r1.sha, a1, cm.draw_key(r1)), _drawn(r1.sha, a1),
-        _registered(rep.sha, a1, cm.draw_key(rep)), _registered(rep2.sha, a2, cm.draw_key(rep2))])
-    registry.claim_draw(rep.sha, approval=a1, root=repo)
-    with pytest.raises(ReplayError, match="design"):
-        registry.claim_draw(rep2.sha, approval=a2, root=repo)
+    repo = _indexed(tmp_path, [(r1, a1), (rep, a1), (rep2, a2)])
+    registry.claim_draw(r1, approval=a1, root=repo)
+    registry.claim_draw(rep, approval=a1, root=repo)
+    with pytest.raises(ReplayError, match="design was already drawn"):
+        registry.claim_draw(rep2, approval=a2, root=repo)
 
 
 def test_a_run_registration_s_design_ignores_its_words_and_its_paths() -> None:
@@ -129,18 +133,22 @@ def test_a_run_registration_s_design_ignores_its_words_and_its_paths() -> None:
 
 
 def test_the_index_records_each_registration_s_design(tmp_path: Path) -> None:
-    """(+) `record_registered` writes the design key the claim reads, and a registered row with
-    none is refused at the claim rather than read as a design of its own."""
+    """(+) `record_registered` writes the design key the claim reads — derived from the
+    registration since round 2, as are its request pins — and a registered row with none is
+    refused at the claim rather than read as a design of its own."""
+    from vinci.evals import compare as cm
     from vinci.evals import registry
     from vinci.evals.replay import ReplayError
+    t = _first_run()
     repo = _repo_with_index(tmp_path, [])
-    registry.record_registered("t" * 64, kind="compare", refs={}, pages=["BURL"], draws=5,
-                               approval="1" * 64, design="d" * 64, root=repo)
-    assert registry.working_rows(repo)[-1]["design"] == "d" * 64
+    registry.record_registered(t, approval="1" * 64, root=repo)
+    row = registry.working_rows(repo)[-1]
+    assert (row["registration"], row["design"], row["pins"]) == (t.sha, cm.draw_key(t),
+                                                                 t.requests)
     legacy = _repo_with_index(tmp_path / "legacy", [
-        {k: v for k, v in _registered("u" * 64, "1" * 64, "x").items() if k != "design"}])
+        {k: v for k, v in _registered(t.sha, "1" * 64, "x").items() if k != "design"}])
     with pytest.raises(ReplayError, match="no design"):
-        registry.claim_draw("u" * 64, approval="1" * 64, root=legacy)
+        registry.claim_draw(t, approval="1" * 64, root=legacy)
 
 
 # ---------------------------- item 2: drawn only once MAIN holds the registration (mutant M1)
