@@ -61,7 +61,10 @@ def test_an_edit_inside_one_coder_s_half_is_refused(tmp_path: Path) -> None:
 
 
 def _page(t: str = "SMPL") -> dict[str, object]:
-    page: dict[str, object] = json.loads((ROOT / "data/dossiers" / t / "dossier.json").read_text())
+    """The committed page as a replay accepts it: since #1006 a filed transcript row's words are
+    off the page, and the replay refuses such a row (`stripped_pages.replayable` drops them)."""
+    from tests.stripped_pages import committed_page, replayable
+    page: dict[str, object] = replayable(committed_page(t))
     return page
 
 
