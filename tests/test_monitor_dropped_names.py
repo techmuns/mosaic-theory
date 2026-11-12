@@ -156,10 +156,10 @@ def _committed_day(at: str = DAY) -> dict[str, Any]:
     return raw
 
 
-def _dropping(*drops: mon.FreshnessDrop) -> dict[str, Any]:
-    """The committed day with each named row not written and typed as dropped, as the command
-    writes such a day — validated through `MonitorSnapshot`."""
-    raw = _committed_day()
+def _dropping(*drops: mon.FreshnessDrop, at: str = DAY) -> dict[str, Any]:
+    """The committed day ``at`` with each named row not written and typed as dropped, as the
+    command writes such a day — validated through `MonitorSnapshot`."""
+    raw = _committed_day(at)
     gone = {d.ticker for d in drops}
     assert gone <= {f["ticker"] for f in raw["freshness"]}
     day = {**raw, "freshness": [f for f in raw["freshness"] if f["ticker"] not in gone],
@@ -226,3 +226,21 @@ def test_a_voided_call_is_neither_counted_nor_listed_as_dropped(tmp_path: Path) 
     assert "GOOGL" not in html.split('class="ds-dropped"', 1)[1].split("</details>", 1)[0]
     alone = _render(_dropping(_filings("GOOGL")), tmp_path)
     assert "names read" not in alone and "ds-dropped" not in alone
+
+
+def test_a_day_that_drops_every_name_still_prints_the_panel(tmp_path: Path) -> None:
+    """PR round 1 (the coordinator's mutant, which survived): with `if (!rows.length) return "";`
+    in place of the panel's guard, a day that drops EVERY name in its freshness set — a bad SEC
+    day — rendered no panel at all, the exact silence this PR closes. The deployed latest day,
+    2026-11-11 (7 names, the first after GOOGL's void), with every row dropped: the panel prints
+    "0 of 7 names read" and lists every name."""
+    at = "2026-11-11"
+    names = [str(f["ticker"]) for f in _committed_day(at)["freshness"]]
+    assert len(names) == 7
+    html = _render(_dropping(*(_filings(t) for t in names), at=at), tmp_path, at)
+    assert "Trigger &amp; freshness panel" in html
+    assert "0 of 7 names read · " in html
+    line = html.split("names read · ", 1)[1].split("</div>", 1)[0]
+    assert all(f'font-weight:650;">{t}</span> not read' in line for t in names), line
+    tier = html.split('class="ds-dropped"', 1)[1].split("</details>", 1)[0]
+    assert "Why they were not read" in tier and all(f"{t}</span> — " in tier for t in names)

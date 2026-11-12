@@ -2,7 +2,7 @@
 id: 2026-11-12-fix2-s3-row42b-dropped-names
 status: shipped
 date: 2026-11-12
-prs: [1029]
+prs: [1032]
 supersedes:
 superseded-by:
 ---
@@ -44,8 +44,9 @@ had nine reads as a complete book. And "parsers consume structured values": the 
 were a fact carried only in prose, which no reader could take without parsing English.
 
 **HOW VERIFIED.**
-- **`tests/test_monitor_dropped_names.py`, 10 tests.** 8 fail on main `9708fbc0`. The other 2,
-  the committed-day negative pins for 2026-11-02 and 2026-11-11, pass on both.
+- **`tests/test_monitor_dropped_names.py`, 11 tests** (1 added in PR round 1). 9 fail on main
+  `9708fbc0`. The other 2, the committed-day negative pins for 2026-11-02 and 2026-11-11, pass
+  on both.
   - **The day:** the real `vinci monitor` command over the committed ledger, securities and
     assignments (#1020's harness).
     - IT's page -001 as a 404 is a typed `filings_unread` drop, and its FILINGS note is that
@@ -72,6 +73,12 @@ were a fact carried only in prose, which no reader could take without parsing En
     writes from now on carries it, so the first such day would have turned the suite red. It now
     states an invariant over every day.
   - `droppedNames` was exported with no reader, and is now module-private.
+- **PR round 1** (the coordinator's review of `3b16bc69`): 8 mutants, 7 killed. The survivor
+  was the old guard `if (!rows.length) return "";`, under which a day that drops EVERY name
+  (a bad SEC day) renders no panel at all. The code was right but unpinned.
+  `test_a_day_that_drops_every_name_still_prints_the_panel` drops all 7 names of the
+  committed 2026-11-11 day, and requires "0 of 7 names read" with every name listed. It fails
+  on that mutant.
 - **Shots:** six, 1280 wide at 2x, taken with headless Brave over DevTools. Both days, collapsed,
   every `<details>` opened, and print media. They are committed under
   `docs/monitor/dropped-names-2026-11-12/screenshots/` and shown in the PR.
