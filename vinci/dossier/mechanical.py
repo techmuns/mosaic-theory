@@ -14,6 +14,7 @@ import html as htmllib
 import math
 import re
 import statistics
+import sys
 import threading
 import time
 import unicodedata
@@ -6241,24 +6242,47 @@ def _wall_read(filing: FilingSectionExtract | None, panel: list[primary_source.P
 _ASSEMBLY_PRICE_STALE_DAYS = 7  # one weekly refresh cadence + a weekend; older ⇒ refresh was missed
 
 
-def _price_stale_note(last_close: date | None, today: date) -> str | None:
-    """Fail-loud staleness at ASSEMBLY time (vs today, not the reference date): an as-of document
-    may legitimately trail the screen date, but a CMP printed from a close older than one refresh
-    cadence silently misleads. Returns the caveat text, or None when fresh/unknowable."""
+def _price_stale_note(last_close: date | None, reference_date: date) -> str | None:
+    """The page's OWN staleness: a CMP printed from a close older than one refresh cadence before
+    the date the page is as of silently misleads. Returns the caveat text, or None when
+    fresh/unknowable.
+
+    COUNTED FROM THE PAGE'S REFERENCE DATE, NEVER FROM TODAY (operator, 2026-11-12: "Yes, fix it").
+    It was counted to `date.today()` and lands on `stock_info.price.note`, which the synthesis is
+    sent, so the same inputs sent a different request every day — one day more each day (the
+    coordinator's reading of #1031's impact run, 2026-11-12: every head request carried it). The
+    assembly-time check against today keeps its purpose — a build on a store `vinci refresh` has
+    not brought up — as a loud stderr line only (`_warn_stale_at_assembly`), never on the page or
+    in the request."""
     if last_close is None:
         return None
-    gap = (today - last_close).days
+    gap = (reference_date - last_close).days
     if gap <= _ASSEMBLY_PRICE_STALE_DAYS:
         return None
     return (
-        f"PRICE STALE AT ASSEMBLY: last stored close {last_close} is {gap} calendar days before "
-        f"assembly — run `vinci refresh` before assembling"
+        f"PRICE STALE AT THE REFERENCE DATE: last stored close {last_close} is {gap} calendar "
+        f"days before the page's reference date {reference_date} — run `vinci refresh` and "
+        f"re-assemble"
     )
+
+
+def _warn_stale_at_assembly(ticker: str, last_close: date | None, today: date) -> None:
+    """Fail-loud staleness at ASSEMBLY time, against today: the build is reading a store `vinci
+    refresh` has not brought up to date. Printed to stderr when the build runs — never written to
+    `dossier.json`, its frontend mirror or the synthesis request, which `_price_stale_note`
+    counts from the page's own date."""
+    if last_close is None:
+        return
+    gap = (today - last_close).days
+    if gap > _ASSEMBLY_PRICE_STALE_DAYS:
+        print(f"WARNING {ticker}: PRICE STALE AT ASSEMBLY: last stored close {last_close} is {gap} "
+              f"calendar days before today ({today}) — run `vinci refresh` before assembling",
+              file=sys.stderr)
 
 
 def _stock_info(
     record: DataRecord, store: Store, edgar: EdgarClient, bundle: CiqBundle,
-    reference_date: date, market_cap: Sourced[float], *, today: date | None = None,
+    reference_date: date, market_cap: Sourced[float], *,
     http: CachedHttp | None = None, cut: date | None = None,
 ) -> StockInfo:
     """(Phase-2) The market-data 'stock info' box: CMP + 52-week range (EOD price features), shares
@@ -6295,7 +6319,7 @@ def _stock_info(
             shares = bridged.value
             shares_src = bridged.source_ref or "CIQ Comparable Analysis→Financial Data"
     price = _sourced(feats.last, source_ref=f"EOD {sym} last close")
-    stale = _price_stale_note(feats.last.as_of, today or date.today())
+    stale = _price_stale_note(feats.last.as_of, reference_date)
     if stale and price.status is SourceStatus.PRESENT:
         price = price.model_copy(update={"note": stale})
     return StockInfo(
@@ -6607,7 +6631,7 @@ def assemble_mechanical(
         key_ratios=key_ratios,  # (Phase-2) the Motilal-style CIQ Ratios panel
         return_ratios=return_ratios,  # (Phase-4) per-period return-ratio series (chart + table)
         stock_info=_stock_info(  # (Phase-2) CMP + 52wk range + shares + book value + cap
-            record, store, edgar, bundle, reference_date, implied_val.market_cap, today=today,
+            record, store, edgar, bundle, reference_date, implied_val.market_cap,
             http=http, cut=cut),
         # (Brief) 52-week rebased price path — name vs the cap-band benchmark (the idio closes).
         # ...on the window the price box's range reads: the 365 days ending on the price date
@@ -6659,8 +6683,9 @@ def assemble_mechanical(
     flags += op_drivers.qa_flags  # (PR-B) operating-driver per-source honest-miss flags → QA
     flags += calendar.qa_flags  # (catalyst calendar) cadence/maturity honest-miss flags → QA
     si_asof = mech.stock_info.as_of if mech.stock_info is not None else None
-    if (stale := _price_stale_note(si_asof, today)) is not None:
+    if (stale := _price_stale_note(si_asof, reference_date)) is not None:
         flags.append(f"stock-info: {stale}")  # loud twin of the CMP-row note — machine-visible
+    _warn_stale_at_assembly(record.identity.ticker, si_asof, today)
     flags.append(f"primary-source: {len(primary.releases)} EX-99.1 release(s) + "
                  f"{'1' if primary.filing is not None else '0'} 10-Q parsed "
                  f"(+{ps_latency:.1f}s fetch)")

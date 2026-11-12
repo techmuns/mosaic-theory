@@ -4,8 +4,8 @@
 > is HOW IT GOT THAT WAY (one immutable file per entry). `AGENTS.md` points other tools here.
 > docs/engineering.md is the fuller engineering handbook (conventions, practices, workflow).
 > **The operating loops (verification, sacred files, UI rule, followed-name intake, monitor day,
-> data quality, monthly scoring, underwrite, changing the synthesis prompt) live in
-> docs/RUNBOOKS.md — follow them before improvising.** (The theme loops §a–d and the calendar §h
+> data quality, monthly scoring, underwrite, changing the synthesis prompt, cross-setup
+> validation) live in docs/RUNBOOKS.md — follow them before improvising.** (The theme loops §a–d and the calendar §h
 > retired 2026-11-04; their letters stay so citations resolve.)
 > Non-negotiable behavior and the fund guardrails live HERE; project state lives in STATE.md;
 > detailed practice lives in engineering.md. Never duplicate state into this file — they drift.

@@ -167,15 +167,16 @@ synthesis's `transcript`, so it can refuse such a page before it is written.
   - The stale counts (15/14/14) in the code's comments are corrected.
   - The false-positive class is recorded as accepted, with this record's own measurement.
   - STATE row 60 is left to S4's batched bookkeeping.
-- **The impact check** (`python -m vinci.impact run`; base `85152609`, head `1f88e4d2`, VALID):
+- **The impact check** (`python -m vinci.impact run`; last run base `68bd4b33`, head `e8a5060b`,
+  after round 2 and the merge of main; VALID):
   - built 27 of 27, and 0 pages move; the guard refuses and does not write, and the cut is on the
     committed pages, not in the build;
   - 0 of 27 requests differ, and the frozen panel differs on 0 of 6, so the row-53 panel check
     is not owed;
   - 0 committed pages re-render differently, and the ledger, scoring report and monitor are
     identical at both refs;
-  - fail first, over the two changed test files: 15 of 181 tests fail with base's code and none
-    with head's. 138 pass at both (`test_prespend.py`'s other pins among them), and 28 skip
+  - fail first, over the two changed test files: 32 of 196 tests fail with base's code and none
+    with head's. 136 pass at both (`test_prespend.py`'s other pins among them), and 28 skip
     (the corpus check, without the licensed calls).
 
 **BOUNDARY.** "Words" are the guard's: split at whitespace, at every dash form and at a slash
