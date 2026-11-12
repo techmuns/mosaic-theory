@@ -79,9 +79,18 @@ asked for a $0 read-only check of each filing's own words. That check found:
   | MVST Q3 `0001628280-26-072316` | `not_stated` | located $120.8M |
   | MVST Q2 `0001628280-26-055372` | located $104.2M | located $104.2M |
 
-__SWEEP__
+- **Every cached 10-Q/10-K-shaped filing, main against this branch** ($0, offline, read-only caches).
+  - The population: 8,546 primary documents named `<x>-YYYYMMDD.htm` in two SEC caches, the primary checkout's and one session's scratch copy that holds the Q3 10-Qs. Each text was normalized once and both sides' `_maturity_wall` were run on it.
+  - **2 walls move, and only these:** MVST Q3 (`not_stated` → located $120.8M) and WERN Q3 (`not_stated` → located $0.0). Both are among the 27 pages, so **the pages whose walls move at their next build are MVST and WERN**. Neither is on the panel.
+  - At head: 21 located, 2,979 `not_stated`, 5,545 with no wall pattern.
+  - **A's draft and the round-0 fix agree on all 8,546.** The three holes round 0 closed are constructed shapes no cached filing has.
+  - 1 document fails before any wall code runs, at both refs: the text normalizer (`vinci/graph/filings._drop_page_furniture`) raises `ValueError` on 10-K `0001628280-26-028623` (CIK 1876431, not among the 27 pages). This is found, not fixed, and out of scope.
 
-__IMPACT__
+- **The impact check, base `68bd4b33` against head `38bf2768` on ONE UTC day (2026-11-12T16:15Z), $0.** The report reads `VALID` under `vinci.impact verify` after the merges of main.
+  - **Fail first:** 7 of the 8 tests fail on base code and pass on head.
+  - **Pages:** 17 of the 27 were built; the other 10 have no price history in the impact store. **0 of the 17 move.** The impact build cuts at the store's frontier, 2026-08-05, so MVST and WERN read their Q2 10-Qs, whose walls do not move. Their Q3 moves show only at a next build: the full filings and the sweep above show them.
+  - **Requests:** 0 of 17 synthesis requests differ, and the frozen panel replays identically (0 of 6). The row-53 panel check is not owed.
+  - **Rendering:** no committed page re-renders differently. The one frontend file that differs is `snapshots/extraction_versions.json`, the new vintage.
 
 - **A's own verification** (on its base `53e5f26e`; B re-ran the fail-first on main `68bd4b33`:
   the WERN and MVST positive pins and the MVST beside-the-borrowings pin fail there):
@@ -100,6 +109,9 @@ __IMPACT__
 - **Both pages are off the panel.**
 
 **BOUNDARY.**
+- **B's runs:** the full filings and the sweep over 8,546 cached primary documents (two SEC caches,
+  read-only), main `68bd4b33` against this branch after round 0; the impact check over the 27
+  committed pages at `38bf2768`, 17 of them built, against the impact store (frontier 2026-08-05).
 - **Pages:** the 27 committed pages at main `53e5f26e`.
 - **Filings:** their cited 10-Qs, and the 10-Qs each page's $0 build reads today.
 - **Unit:** one filing's `maturity_wall`.
@@ -110,5 +122,7 @@ __IMPACT__
   unit, no date, no long-term debt row, or any other borrowing row means no total.
 - **A 10-Q whose balance sheet names its debt under another label** ("Long-term borrowings",
   "Debt, net") is not read, and the exception then needs the prose total, as before.
+- **Any borrowing word outside the two debt rows refuses the total** (round 0), even one that is
+  no borrowing row ("accrued interest on notes"). That refuses more than it needs to, never less.
 - *Falsifier:* a filing whose balance-sheet long-term debt row equals one instrument's principal
   while other debt sits under a label `_BS_OTHER_DEBT` does not list.
