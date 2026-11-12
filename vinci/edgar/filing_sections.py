@@ -97,6 +97,16 @@ _NOT_STATED_NOTE = "no near-term wall stated in filing — composition table pre
 _DUE_12M = re.compile(
     r"\$\s*([\d,.]+)\s*(million|billion)\s+(?:(?:is|are|will\s+be)\s+)?due\s+"
     r"(?:(?:within|in)\s+(?:the\s+next\s+)?(?:12|twelve)\s+months|within\s+one\s+year)\b", re.I)
+#: The figure whose OWN SUBJECT is the aggregate, named after it (2026-11-12, the #956 follow-up):
+#: Microvast's Q3 10-Q (0001628280-26-072316) says "our bank borrowings were $135.3 million, our
+#: bonds payable were $41.7 million and $120.8 million of our borrowings were due within the next
+#: 12 months". The clause before the figure lists the parts; "of our borrowings" makes the figure
+#: the whole's, so that phrase, not the clause, is what `_whole_debt` reads (group ``subj``).
+_OF_OUR_DEBT_12M = re.compile(
+    r"\$\s*([\d,.]+)\s*(million|billion)\s+"
+    r"(?P<subj>of\s+(?:our|the\s+Company[’']s|its)\s+(?:total\s+)?(?:outstanding\s+)?"
+    r"(?:debt|borrowings|indebtedness))\s+(?:is|are|was|were|will\s+be)\s+due\s+"
+    r"(?:within|in)\s+(?:the\s+next\s+)?(?:12|twelve)\s+months\b", re.I)
 #: A stated ZERO — a KNOWN $0 wall, not an unstated one.
 _NO_PRINCIPAL_12M = re.compile(
     r"\bno\s+principal\s+(?:amounts?\s+|payments?\s+)?(?:(?:is|are)\s+)?"
@@ -195,8 +205,59 @@ def _whole_debt(text: str, lo: int, hi: int) -> bool:
         dated = _dates_stated(_sentence(text, at))
         return bool(dated & when) if (dated or when) else True
 
-    return any(_in_millions(t[1], t[2]) == own[-1] and same_date(t.start())
-               for t in _TOTAL_DEBT.finditer(text) if not lo <= t.start() < hi)
+    if any(_in_millions(t[1], t[2]) == own[-1] and same_date(t.start())
+           for t in _TOTAL_DEBT.finditer(text) if not lo <= t.start() < hi):
+        return True
+    # ...OR THE BALANCE SHEET'S debt total at the same date (2026-11-12, #956's regression on
+    # Werner's Q3, 0000793074-26-000172): its prose total is qualified ("increasing our outstanding
+    # debt under our Credit Facilities to $803.0 million"), but its balance sheet carries no debt
+    # but "Long-term debt, net of current portion 803,000", so the Credit Facilities are the whole.
+    bs = _balance_sheet_debt(text)
+    return bs is not None and abs(bs[1] - own[-1]) < 0.05 and (bs[0] in when if when else True)
+
+
+#: The condensed balance sheet: its heading, its unit, and its first column's date.
+_BS_HEAD = re.compile(r"\bBALANCE\s+SHEETS?\b[^.]{0,80}?\(\s*in\s+(thousands|millions)", re.I)
+#: The rows of its debt: long-term debt net of (or before) its current portion, and that portion.
+_BS_LONG_TERM = re.compile(r"\bLong-term\s+debt(?:,?\s+(?:net|less|excluding)[^0-9$—]{0,40})?"
+                           r"\s+\$?\s*([\d,]+|—)", re.I)
+_BS_CURRENT = re.compile(r"\bCurrent\s+(?:portion|maturities)\s+of\s+long-term\s+debt\s+"
+                         r"\$?\s*([\d,]+|—)", re.I)
+#: Any OTHER borrowing row — with one, the two rows above are not the whole debt and no total is
+#: read. A lease row is never debt (#956).
+_BS_OTHER_DEBT = re.compile(r"\b(?:Short-term\s+(?:debt|borrowings|bank\s+loans)|Notes\s+payable|"
+                            r"Commercial\s+paper|Lines?\s+of\s+credit|Revolving\s+(?:credit|loans?)|"
+                            r"Bank\s+(?:loans|borrowings)|Bonds\s+payable|Convertible\s+notes|"
+                            r"Borrowings)\b(?![^0-9]{0,40}\blease)\s+\$?\s*([\d,]+)", re.I)
+
+
+def _balance_sheet_debt(text: str) -> tuple[tuple[str, str, str], float] | None:
+    """(the balance sheet's own date, its debt total in $M) — long-term debt plus any current
+    portion, as its first column states them — or None. None, never a partial sum, when the
+    balance sheet carries any other borrowing row, states no long-term debt row, or names no unit
+    or date: the total is the WHOLE debt or it is not read."""
+    h = _BS_HEAD.search(text)
+    if h is None:
+        return None
+    end = text.find("Total liabilities", h.end())
+    body = text[h.end():end if end != -1 else h.end() + 6000]
+    first = _DATE.search(body)
+    lt = _BS_LONG_TERM.search(body)
+    if first is None or lt is None or _BS_OTHER_DEBT.search(body):
+        return None
+    cur = _BS_CURRENT.search(body)
+    scale = 0.001 if h[1].lower() == "thousands" else 1.0
+
+    def cell(m: re.Match[str] | None) -> float | None:
+        if m is None or m[1] == "—":
+            return 0.0
+        v = _money(m[1])
+        return None if v is None else v * scale
+
+    a, b = cell(lt), cell(cur)
+    if a is None or b is None:
+        return None
+    return (first[1], first[2], first[3]), a + b
 
 
 #: A balance date as a 10-Q states one: "June 30, 2026", "September 30 , 2026".
@@ -225,6 +286,10 @@ def _statements_12m(text: str) -> list[_Stated12m]:
         if _DEBT_WORD.search(sent) and not _NOT_DEBT.search(sent):
             out.append(_Stated12m(m.start(), _in_millions(m[1], m[2]), BASIS_PRINCIPAL,
                                   _clause_start(text, m.start()), m.start()))
+    for m in _OF_OUR_DEBT_12M.finditer(text):
+        if not _NOT_DEBT.search(_sentence(text, m.start())):
+            out.append(_Stated12m(m.start(), _in_millions(m[1], m[2]), BASIS_PRINCIPAL,
+                                  m.start("subj"), m.end("subj")))
     for m in _NO_PRINCIPAL_12M.finditer(text):
         if not _NOT_DEBT.search(_sentence(text, m.start())):
             out.append(_Stated12m(m.start(), 0.0, BASIS_PRINCIPAL,
