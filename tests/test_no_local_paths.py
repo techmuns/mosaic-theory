@@ -16,7 +16,11 @@ text. So every file under every committed artifact folder — all of `data/`, `f
 the build run records (`data/snapshots/assembly_runs/`), which carry free-text exception messages
 (`run_metrics`) and, since #911, each build's input manifest. Widened in #915's round 2 at a
 cost of nothing: every hit the four folders (1,100 files, 147 MB) held on main c4c9f432 was a
-price-store stamp, and on the cleaned tree they hold none.
+price-store stamp, and on the cleaned tree they hold none. Widened again on 2026-11-12 (STATE row
+49) to the agent config and the local gate, `.claude/` and `bin/`, once their one per-machine file
+was git-ignored: at main 407dc809 the widened scan found 18 hits in 1,441 files, all in the then
+tracked `.claude/launch.json`, and none once it was ignored. The records' prose (`docs/records/`)
+stays outside it, as written, by the same default.
 
     python -m tests.test_no_local_paths     # print every hit, file:line, with the count
 
@@ -42,6 +46,7 @@ the mirrors (`python frontend/build.py`). Any other hit is a new leak: remove it
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -52,8 +57,12 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 #: Every committed artifact folder — pages, mirrors, run records, snapshots, scenarios, the web
-#: app's data — and every test fixture.
-SCANNED = ("data", "frontend", "scenarios", "tests/fixtures")
+#: app's data — and every test fixture. And since 2026-11-12 (STATE row 49, the coordinator's
+#: default 6 — not an operator ruling) the agent config and the local gate: not artifacts, but
+#: where a survey of every other tracked file at main c4c9f432 found per-machine paths outside the
+#: records' prose — `.claude/launch.json` 18 (now git-ignored, so not read) and `bin/commit` 1
+#: (removed by #996, RH-D3).
+SCANNED = ("data", "frontend", "scenarios", "tests/fixtures", ".claude", "bin")
 
 #: An absolute POSIX path under a home, temp or mount root, where it begins. The lookbehind keeps a
 #: URL out: a URL's path follows a host character (`sec.gov/…`, `:8080/…`), a local path follows a
@@ -149,7 +158,7 @@ LEAKED = (
     '"declared_path": "C:\\\\Users\\\\x\\\\mosaic-theory\\\\data\\\\vinci.db",',
     "`D:/a/mosaic-theory/data/vinci.db`",
     "file:///Users/x/report.pdf",
-    # a shell default, the shape `bin/commit` carries (outside this guard's scope)
+    # a shell default, the shape `bin/commit` carried until #996 (RH-D3)
     'VENV="${VENV:-/Users/x/mosaic-theory/.venv/bin/python}"',
     # the other mount and home roots, and WSL's view of a Windows drive (round 2: synthetic — the
     # corpus has held none)
@@ -211,7 +220,14 @@ def test_a_hit_cut_short_says_so_and_a_whole_one_does_not() -> None:
 def _repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, tracked: dict[str, str | bytes],
           untracked: dict[str, str | bytes] | None = None) -> Path:
     """A throwaway git repository the scan is pointed at (`ROOT`), so a killed run leaves nothing
-    in this one."""
+    in this one. The machine's own excludes are switched off for it (`core.excludesFile`, set
+    through git's command-environment config, which outranks every config file): a global ignore
+    of `bin/` or `.claude/` — common ones — would otherwise keep a tracked file out of `git add`
+    and an untracked one out of the scan, and the pins would test that machine, not the repo's
+    `.gitignore`."""
+    for k, v in {"GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "core.excludesFile",
+                 "GIT_CONFIG_VALUE_0": os.devnull}.items():
+        monkeypatch.setenv(k, v)
     repo = tmp_path / "repo"
     repo.mkdir()
     subprocess.run(["git", "init", "-q", str(repo)], check=True)
@@ -233,7 +249,7 @@ def test_every_folder_every_kind_of_file_and_every_line_is_read(
     deep in a page laid out as the writer lays one out (`indent=2`), not on its first line; a
     rendered `.md`; a web mirror under `frontend/`; a scenario record; a build's run record; a
     Windows path in plain text (a binary-only read drops the drive letter); a PDF's metadata (a
-    text-only read drops it). (−) A file outside the four folders is not read."""
+    text-only read drops it). (−) A file outside the scanned folders is not read."""
     page = json.dumps({"ticker": "T", "mechanical": {"a": 1, "b": [1, 2]},
                        "price_store": {"declared_path": "/Users/x/w/data/vinci.db"}}, indent=2)
     _repo(tmp_path, monkeypatch, {
@@ -254,6 +270,31 @@ def test_every_folder_every_kind_of_file_and_every_line_is_read(
                      "data/snapshots/assembly_runs/r.jsonl:2", "frontend/dossiers/T.json:2",
                      "scenarios/T.json:1", "tests/fixtures/meta.pdf:2",
                      "tests/fixtures/win.txt:1"], hits
+
+
+def test_the_agent_config_and_the_local_gate_are_read_and_the_preview_config_is_not(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """STATE row 49, widened 2026-11-12 under the coordinator's default 6 (not an operator
+    ruling). (+) A local path in `.claude/` or `bin/` is a hit, tracked or about to be: on main
+    c4c9f432 `.claude/launch.json` held 18 and `bin/commit` 1 (removed by #996, RH-D3). (−) The
+    per-machine preview config, `.claude/launch.json`, is not read: it names its own checkout's
+    folders by design, so THIS repository's `.gitignore` (copied in, not restated) keeps it out of
+    git and out of the scan. The shared settings beside it are still read (+)."""
+    gitignore = (ROOT / ".gitignore").read_text()
+    _repo(tmp_path, monkeypatch, {
+        ".gitignore": gitignore,
+        ".claude/settings.json": '{"hooks": {"command": "/Users/x/hooks/gate.py"}}\n',
+        "bin/commit": 'VENV="${VENV:-/Users/x/mosaic-theory/.venv/bin/python}"\n',
+    }, {
+        ".claude/launch.json": '{"runtimeArgs": ["--directory", "/Users/x/m/frontend"]}\n',
+        ".claude/hooks/new_hook.py": "# reads /private/tmp/claude-501/x/scratchpad\n",
+    })
+    files, hits = scan()
+    assert ".claude/launch.json" not in {str(f.relative_to(ROOT)) for f in files}, files
+    where = sorted(h.split(": ", 1)[0] for h in hits)
+    assert where == [".claude/hooks/new_hook.py:1", ".claude/settings.json:1",
+                     "bin/commit:1"], hits
 
 
 def test_a_printed_hit_stops_at_its_line() -> None:
@@ -297,8 +338,10 @@ def test_a_tracked_file_deleted_in_the_working_tree_is_skipped_not_a_crash(
 def test_no_committed_page_mirror_or_fixture_carries_an_absolute_local_path() -> None:
     """THE GUARD. On main c4c9f432, over the four folders (1,100 files), it lists 144 hits on 118
     lines of 59 files — every line a price-store stamp, 26 of them carrying both `/private/` and
-    the dashed `-Users-` session folder; on the cleaned tree it lists none. The count is printed
-    beside the full list, never a cut."""
+    the dashed `-Users-` session folder; on the cleaned tree it lists none. Over the six folders
+    at main 407dc809 (1,441 files) it listed 18, every one in the then-tracked
+    `.claude/launch.json`; with that file git-ignored it lists none. The count is printed beside
+    the full list, never a cut."""
     files, hits = scan()
     pages = set((ROOT / "data" / "dossiers").glob("*/dossier.json"))
     assert pages and pages <= set(files), (

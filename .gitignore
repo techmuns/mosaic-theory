@@ -14,6 +14,12 @@ __pycache__/
 
 # Claude Code: `.claude/settings.json` (the shared hooks) is committed; personal permissions are not.
 .claude/settings.local.json
+# The preview servers' config is PER-MACHINE: each entry names its own checkout's absolute folders
+# (`tests/test_config.py` requires that), so a shared copy names other machines' users and session
+# scratchpads in this public repo. Untracked 2026-11-12 (STATE row 49, the coordinator's default 6
+# under the operator's delegation, not an operator ruling); `tests/test_no_local_paths.py` reads
+# `.claude/` and relies on this line to leave each checkout's own copy out.
+.claude/launch.json
 
 # Local working store — durable state is the committed JSON/CSV snapshots, NOT the binary DB.
 *.db

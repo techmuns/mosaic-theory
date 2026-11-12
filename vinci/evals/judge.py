@@ -29,7 +29,7 @@ from typing import Any
 from vinci.evals import gold as gd
 from vinci.evals import replay as rp
 from vinci.evals import report
-from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, DEFAULT_MODEL, Recorder, jsonable
+from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, Recorder, jsonable
 from vinci.graph.llm import AnthropicLlmClient, LlmError
 
 VERDICTS: tuple[str, ...] = ("OK", *gd.CLASSES)
@@ -42,6 +42,10 @@ NOT_FACTS = ("synthesis", "inputs", "price_store")
 #: gold's 46.1% (kappa 0.19) while writing ~1,200 output tokens for ~23 claims — it did not look
 #: the figures up. v2 makes the lookup the first field of every verdict.
 JUDGE_VERSION = 2
+#: THE JUDGE'S OWN MODEL, pinned: the judge is the harness's measuring instrument, calibrated
+#: against the gold, so it must not follow production's `graph_llm_model` (review round 0 of fix
+#: request 2, order 8). The one model ID the harness names.
+JUDGE_MODEL = "claude-opus-4-8"
 
 JUDGE_TOOL: dict[str, Any] = {
     "name": "record_fidelity_verdicts",
@@ -110,10 +114,10 @@ def judge_user(page: dict[str, Any], claims: Sequence[tuple[str, str]]) -> str:
 
 
 def judge_request(page: dict[str, Any], claims: Sequence[tuple[str, str]], *,
-                  model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS) -> rp.Request:
+                  model: str | None = None, max_tokens: int = DEFAULT_MAX_TOKENS) -> rp.Request:
     """The judge's request for one page, built by production's client at $0 (only its SDK object
     replaced by a recorder), exactly as `run_request` will send it."""
-    client = AnthropicLlmClient(model=model, max_tokens=max_tokens,
+    client = AnthropicLlmClient(model=model or JUDGE_MODEL, max_tokens=max_tokens,
                                 api_key="capture-only-not-a-key")
     rec = Recorder()
     client._client = rec  # type: ignore[assignment]
@@ -277,7 +281,8 @@ def calibrate(judged: dict[str, Verdict | None], gold: Sequence[gd.GoldClaim],
 def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = None,
              gold: Sequence[gd.GoldClaim] | None = None,
              pages: dict[str, dict[str, Any]] | None = None,
-             tickers: Sequence[str] | None = None) -> dict[str, Verdict | None]:
+             tickers: Sequence[str] | None = None,
+             root: Path = rp.ROOT) -> dict[str, Verdict | None]:
     """PAID: one judge call per page of ``half`` (each page's claims together, as the coders coded
     a page), behind the guard — or of ``tickers`` within it.
     Raw outputs go to ``out_dir`` (outside the repository). Each stored row carries the judge
@@ -288,7 +293,10 @@ def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = N
 
     TEST IS READ ONCE PER APPROVAL. A TEST run records a marker in the approval's ledger before
     its first call; a TEST run into any other folder is then refused — as it is when the ledger
-    already holds TEST judge calls from before the marker existed."""
+    already holds TEST judge calls from before the marker existed. AND ONCE ACROSS APPROVALS
+    (RG-D9): a paid TEST run claims its read in ``root``'s committed index
+    (`registry.claim_judge_test`) after those refusals and before any client exists — in the
+    library, not only in the CLI (#1030 review round 2, F5)."""
     rp.refuse_inside_repo(out_dir, "the judge's run folder")
     pool = [g for g in (gold or gd.load_gold()) if g.half == half
             and (not tickers or g.page in tickers)]
@@ -330,6 +338,11 @@ def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = N
             seen = sorted(marks) or "judge:test calls in the ledger"
             raise rp.ReplayError(f"TEST has already been read under this approval ({seen}): it "
                                  "is scored ONCE, and a new judge needs fresh gold")
+        if rp.paid_draw(sdk):
+            # RG-D9 IN THE LIBRARY (#1030 review round 2, F5): only the CLI claimed the read, so a
+            # library call under a fresh approval reached the paid client
+            from vinci.evals import registry
+            registry.claim_judge_test(approval=registry.approval_id(budget.ledger), root=root)
         if here not in marks:
             budget.record({"judge_test_read": here, "usd": 0.0})
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -337,7 +350,8 @@ def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = N
     for t, (claims, req) in todo.items():
         if t not in have:
             raw = rp.run_request(req, draws=1, budget=budget, label=f"judge:{half}:{t}",
-                                 draws_out=out_dir / "calls.jsonl", sdk=sdk)[0]
+                                 draws_out=out_dir / "calls.jsonl", sdk=sdk,
+                                 registration=f"judge:{half}")[0]
             have[t] = {"page": t, **stamp(t), "raw": raw}
             with done.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(have[t]) + "\n")

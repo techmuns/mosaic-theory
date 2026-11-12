@@ -39,9 +39,18 @@ from vinci.dossier import synthesis as syn
 from vinci.dossier.schemas import MechanicalLayer
 from vinci.graph.llm import AnthropicLlmClient, LlmError
 
-#: The build's model and budget (``config.graph_llm_model``; the client's default max_tokens).
-DEFAULT_MODEL = "claude-opus-4-8"
+#: The build's budget (the client's default max_tokens).
 DEFAULT_MAX_TOKENS = 16384
+
+
+def production_model() -> str:
+    """THE MODEL IS PRODUCTION'S, read from the configuration of the code under test (fix request
+    2, RG-D15). It was a constant here, a fifth copy of the model ID that no test pinned, so a
+    candidate changing `config.graph_llm_model` was captured, drawn and priced on the old model and
+    a model change could not be measured. In a child (`replay.capture_at`) this `vinci` is the
+    code ref's, so the candidate's own configuration decides."""
+    from vinci.config import get_config
+    return get_config().graph_llm_model
 
 
 def pre_synthesis_mech(page: dict[str, Any], *, unmark_material: bool = False) -> MechanicalLayer:
@@ -126,7 +135,7 @@ def resolve_transforms(names: Sequence[str]) -> list[ContextTransform]:
 
 
 def capture_calls(
-    page: dict[str, Any], transcript: str | None, *, model: str = DEFAULT_MODEL,
+    page: dict[str, Any], transcript: str | None, *, model: str | None = None,
     max_tokens: int = DEFAULT_MAX_TOKENS, draws: int = 5,
     transform: Callable[[MechanicalLayer], MechanicalLayer] | None = None,
     unmark_material: bool = False, transforms: Sequence[str] = (), comps: Path | None = None,
@@ -137,10 +146,24 @@ def capture_calls(
     ``transform`` is the VARIANT hook (#920's V2): a function from the committed layer to the layer
     a candidate's code writes, for a change to the mechanical layer's words, which a replay of the
     committed layer cannot see."""
-    client = AnthropicLlmClient(model=model, max_tokens=max_tokens,
+    client = AnthropicLlmClient(model=model or production_model(), max_tokens=max_tokens,
                                 api_key="capture-only-not-a-key")
     rec = Recorder()
     client._client = rec  # type: ignore[assignment]  # the one swapped object
+    mech = transformed_mech(page, unmark_material=unmark_material, transforms=transforms,
+                            comps=comps, ciq=ciq)
+    if transform is not None:
+        mech = transform(mech)
+    syn.synthesize(mech, llm=client, ticker=str(page["ticker"]), name=str(page["name"]),
+                 transcript=transcript, sleeve=str(page["sleeve"]), draws=draws)
+    return rec.calls
+
+
+def transformed_mech(page: dict[str, Any], *, unmark_material: bool = False,
+                     transforms: Sequence[str] = (), comps: Path | None = None,
+                     ciq: Path | None = None) -> MechanicalLayer:
+    """The layer a capture hands ``synthesize``: the committed one, with the named transforms
+    applied in order by the code this module runs against (`capture_calls`, `--layer-only`)."""
     mech = pre_synthesis_mech(page, unmark_material=unmark_material)
     named = resolve_transforms(transforms)
     if named:
@@ -153,11 +176,7 @@ def capture_calls(
                  if ciq is not None else None))
         for t in named:
             mech = t(mech, ctx)
-    if transform is not None:
-        mech = transform(mech)
-    syn.synthesize(mech, llm=client, ticker=str(page["ticker"]), name=str(page["name"]),
-                 transcript=transcript, sleeve=str(page["sleeve"]), draws=draws)
-    return rec.calls
+    return mech
 
 
 def jsonable(kwargs: dict[str, Any]) -> dict[str, Any]:
@@ -188,7 +207,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--page", required=True, type=Path)
     ap.add_argument("--transcript", type=Path)
     ap.add_argument("--out", required=True, type=Path)
-    ap.add_argument("--model", default=DEFAULT_MODEL)
+    ap.add_argument("--model", help="unset: the model the code under test configures (RG-D15)")
     ap.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS)
     ap.add_argument("--draws", type=int, default=5)
     ap.add_argument("--unmark-material", action="store_true")
@@ -198,6 +217,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--ciq", type=Path, help="the page's own CIQ folder (read only)")
     ap.add_argument("--expect-root", type=Path,
                     help="refuse unless the imported vinci package lives under this folder")
+    ap.add_argument("--layer-only", action="store_true",
+                    help="write the transformed layer, build no request (STATE row 53 item 6)")
     a = ap.parse_args(argv)
     import vinci
     where = Path(vinci.__file__).resolve()
@@ -206,6 +227,11 @@ def main(argv: list[str] | None = None) -> int:
               file=sys.stderr)
         return 2
     page = json.loads(a.page.read_text(encoding="utf-8"))
+    if a.layer_only:
+        mech = transformed_mech(page, unmark_material=a.unmark_material, transforms=a.transform,
+                                comps=a.comps, ciq=a.ciq)
+        a.out.write_text(json.dumps({"layer": mech.model_dump(mode="json")}), encoding="utf-8")
+        return 0
     tx = a.transcript.read_text(encoding="utf-8") if a.transcript else None
     calls = capture_calls(page, tx, model=a.model, max_tokens=a.max_tokens, draws=a.draws,
                           unmark_material=a.unmark_material, transforms=a.transform,
