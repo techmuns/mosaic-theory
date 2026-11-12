@@ -356,7 +356,8 @@ def test_the_filings_are_walked_once_per_registrant_and_date(
                     "accessionNumber": ["0000310158-19-000010"], "primaryDocument": ["k.htm"]}
         got = real(url, ttl_seconds)
         if url == SUBMISSIONS.format(cik="0000310158"):
-            got["filings"]["files"] = [{"name": page, "filingFrom": "2010-01-01"}]
+            # listed as EDGAR lists a page: its span from its oldest row (#878)
+            got["filings"]["files"] = [{"name": page, "filingFrom": "2019-02-27"}]
         return got
     monkeypatch.setattr(http, "get_json", with_page)
     m = mention("Merck", "Merck was named", "drug maker", hint="MRK")
