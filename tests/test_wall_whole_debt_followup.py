@@ -62,6 +62,50 @@ def test_wern_neg_a_total_at_another_date_covers_nothing() -> None:
     assert w is not None and w.state == "not_stated"
 
 
+# --- review round 0 (B, adopting A's draft): the guard reads every borrowing row, whatever its
+# label, and the long-term row is never read inside the current-portion row ------------------------
+
+def _wern_with(row: str, *, long_term: str = "803,000") -> str:
+    """Werner's real balance sheet with one row put in before "Accrued expenses" (CONSTRUCTED:
+    the row only), and its long-term debt row's first column set to ``long_term``."""
+    liab = _WERN_LIAB.replace("Accrued expenses", f"{row} Accrued expenses").replace(
+        "Long-term debt, net of current portion 803,000", f"Long-term debt, net of current "
+        f"portion {long_term}")
+    return " ".join([_WERN_HEAD, liab, _WERN_TOTAL, _WERN_DUE])
+
+
+def test_wern_neg_a_borrowing_row_under_any_label_reads_no_total() -> None:
+    """(-) A borrowing row whose label runs on before its figure is still another borrowing: with
+    "Revolving credit facility 50,000" (or a current notes-payable row, or a current row combining
+    debt and leases) the long-term row is not the whole debt. On A's draft each read 803.0 and a
+    located $0.0 wall beside $50M of other debt."""
+    for row in ("Revolving credit facility 50,000 —", "Notes payable, current 50,000 —",
+                "Current maturities of long-term debt and finance lease obligations 50,000 —"):
+        text = _wern_with(row)
+        assert _balance_sheet_debt(text) is None, row
+        w = _maturity_wall(text, "10-Q x")
+        assert w is not None and w.state == "not_stated", (row, w.state if w else None)
+
+
+def test_wern_a_current_portion_is_summed_not_read_as_the_long_term_row() -> None:
+    """(+) Long-term debt 793,000 and its current portion 10,000 are $803.0M, the facilities'
+    principal: the whole debt, and the wall is located. The current row comes FIRST on a balance
+    sheet, and A's draft read "long-term debt 10,000" inside it as the long-term row — 20.0."""
+    text = _wern_with("Current portion of long-term debt 10,000 —", long_term="793,000")
+    assert _balance_sheet_debt(text) == (("September", "30", "2026"), 803.0)
+    w = _maturity_wall(text, "10-Q x")
+    assert w is not None and w.state == "located" and w.within_12m_total == 0.0
+
+
+def test_wern_an_asset_row_is_not_a_borrowing() -> None:
+    """(-) for the guard: the body read is the LIABILITIES, so an asset's "Notes receivable" is
+    no other borrowing and the total still reads."""
+    head = _WERN_HEAD + " Current assets: Cash and cash equivalents $ 61,047 $ 51,036 Notes " \
+        "receivable 4,512 3,980 Total current assets 650,331 540,118"
+    text = " ".join([head, _WERN_LIAB, _WERN_TOTAL, _WERN_DUE])
+    assert _balance_sheet_debt(text) == (("September", "30", "2026"), 803.0)
+
+
 # --- Microvast (MVST), 10-Q 0001628280-26-072316, verbatim: two sentences [cut] ------------------
 _MVST_BORROWINGS = ("As of September 30, 2026, our bank borrowings were $135.3 million, our "
                     "bonds payable were $41.7 million and $120.8 million of our borrowings were "
@@ -85,6 +129,6 @@ def test_mvst_neg_a_capital_commitment_is_never_the_wall() -> None:
     next 12 months" is a commitment, not debt (#956): alone it reads no wall, and beside the
     borrowings sentence the wall is the borrowings' $120.8M, never $5.6M."""
     alone = _maturity_wall(_MVST_CAPITAL, "10-Q x")
-    assert alone is None or alone.within_12m_total != 5.6
+    assert alone is None or alone.state != "located", (alone.state, alone.within_12m_total)
     both = _maturity_wall(" ".join([_MVST_BORROWINGS, _MVST_CAPITAL]), "10-Q x")
     assert both is not None and both.within_12m_total == 120.8

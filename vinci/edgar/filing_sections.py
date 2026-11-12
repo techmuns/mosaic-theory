@@ -218,17 +218,22 @@ def _whole_debt(text: str, lo: int, hi: int) -> bool:
 
 #: The condensed balance sheet: its heading, its unit, and its first column's date.
 _BS_HEAD = re.compile(r"\bBALANCE\s+SHEETS?\b[^.]{0,80}?\(\s*in\s+(thousands|millions)", re.I)
+#: Where its liabilities start — the body read is the liabilities only, so an asset row ("Notes
+#: receivable") is never taken for a borrowing.
+_BS_LIABILITIES = re.compile(r"\bCurrent\s+liabilities\b", re.I)
 #: The rows of its debt: long-term debt net of (or before) its current portion, and that portion.
-_BS_LONG_TERM = re.compile(r"\bLong-term\s+debt(?:,?\s+(?:net|less|excluding)[^0-9$—]{0,40})?"
-                           r"\s+\$?\s*([\d,]+|—)", re.I)
+#: The long-term row is never read inside the current-portion row ("Current portion OF long-term
+#: debt 10,000"), which a balance sheet lists first (review round 0: it was read as both).
+_BS_LONG_TERM = re.compile(r"(?<![Oo]f\s)\bLong-term\s+debt(?:,?\s+(?:net|less|excluding)"
+                           r"[^0-9$—]{0,40})?\s+\$?\s*([\d,]+|—)", re.I)
 _BS_CURRENT = re.compile(r"\bCurrent\s+(?:portion|maturities)\s+of\s+long-term\s+debt\s+"
                          r"\$?\s*([\d,]+|—)", re.I)
-#: Any OTHER borrowing row — with one, the two rows above are not the whole debt and no total is
-#: read. A lease row is never debt (#956).
-_BS_OTHER_DEBT = re.compile(r"\b(?:Short-term\s+(?:debt|borrowings|bank\s+loans)|Notes\s+payable|"
-                            r"Commercial\s+paper|Lines?\s+of\s+credit|Revolving\s+(?:credit|loans?)|"
-                            r"Bank\s+(?:loans|borrowings)|Bonds\s+payable|Convertible\s+notes|"
-                            r"Borrowings)\b(?![^0-9]{0,40}\blease)\s+\$?\s*([\d,]+)", re.I)
+#: Every word a borrowing row can carry. Each must sit in one of the two rows above, or the two
+#: are not the whole debt and no total is read — whatever the row's label, and however it runs
+#: on before its figure ("Revolving credit facility 50,000", "Notes payable, current", a current
+#: row combining debt and leases: review round 0). A lease row carries none of them (#956).
+_BS_DEBT_WORD = re.compile(r"\b(?:debt|borrowings?|notes|bonds|debentures|commercial\s+paper|"
+                           r"lines?\s+of\s+credit|revolv\w*|credit\s+facilit\w*|loans?)\b", re.I)
 
 
 def _balance_sheet_debt(text: str) -> tuple[tuple[str, str, str], float] | None:
@@ -239,13 +244,18 @@ def _balance_sheet_debt(text: str) -> tuple[tuple[str, str, str], float] | None:
     h = _BS_HEAD.search(text)
     if h is None:
         return None
-    end = text.find("Total liabilities", h.end())
-    body = text[h.end():end if end != -1 else h.end() + 6000]
-    first = _DATE.search(body)
-    lt = _BS_LONG_TERM.search(body)
-    if first is None or lt is None or _BS_OTHER_DEBT.search(body):
+    first = _DATE.search(text, h.end(), h.end() + 400)  # the first column's date, by its heading
+    liab = _BS_LIABILITIES.search(text, h.end(), h.end() + 6000)
+    if first is None or liab is None:
         return None
-    cur = _BS_CURRENT.search(body)
+    end = text.find("Total liabilities", liab.start())
+    body = text[liab.start():end if end != -1 else liab.start() + 6000]
+    lt, cur = _BS_LONG_TERM.search(body), _BS_CURRENT.search(body)
+    if lt is None:
+        return None
+    rows = [m.span() for m in (lt, cur) if m is not None]
+    if any(not any(a <= w.start() < b for a, b in rows) for w in _BS_DEBT_WORD.finditer(body)):
+        return None  # a debt word outside the two rows: another borrowing, so not the whole
     scale = 0.001 if h[1].lower() == "thousands" else 1.0
 
     def cell(m: re.Match[str] | None) -> float | None:
