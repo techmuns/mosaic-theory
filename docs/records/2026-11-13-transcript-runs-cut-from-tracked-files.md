@@ -117,8 +117,8 @@ from the Drive mirror.
 - **The guard on this Mac, at head** (its own boundary print):
   - calls: 91 read, 19 duplicate files by sha256, 0 unreadable;
   - tracked files: 3,084 scanned; skipped: 680 binary (a NUL byte), 1 not UTF-8;
-  - runs of 13+ words shared with a call: 114 (294 distinct windows);
-  - excused by an SEC document in the cache: 105;
+  - runs of 13+ words shared with a call: 113 (294 distinct windows);
+  - excused by an SEC document in the cache: 104;
   - excused by a KD export: 9 (BRBR's driver row and BURL's two, on each page and its mirror, and
     V's, on its page, its mirror and its 2026-10-26 frozen page);
   - unexcused: 0.
@@ -135,7 +135,19 @@ from the Drive mirror.
   - **0** are found in no source.
   - The audit's "71 unconfirmable" were unconfirmable because the SEC cache was offloaded. All
     18,757 cache files are local now (`brctl download`, 0 failed).
-«VERIFIED2»
+- **Review round 0** (`/code-review high --fix`): 10 findings; 7 fixed (2 partly by the review
+  itself), 1 dismissed, 1 deferred, 1 partial. The fixes:
+  - the boundary no longer goes through `capsys`: xlrd, first imported here, kept its closed
+    buffer and broke a later test;
+  - the SEC prefilter reads JSON escapes as spaces, with a pin;
+  - "0 SEC unreadable" is no longer printed after a clean read;
+  - unstaged files are read, with a pin;
+  - a run on a line is dropped only when a longer run holds every window it holds, with a pin;
+  - `_call_words` catches `UnicodeDecodeError`;
+  - the six-record count.
+  Each new pin fails on the code before its fix. The redaction rule's "any span" is recorded below
+  as accepted risk.
+«VERIFIED3»
 
 **BOUNDARY.** 
 - **Words** are the guard's: split at whitespace, at every dash form and at a slash; edge marks
@@ -143,7 +155,8 @@ from the Drive mirror.
   agrees on all 21 counts but GOOGL's.
 - **Calls:** the store `data/manual/ciq` and its `ciq-archive/`, on this Mac, 2026-11-13. That is
   110 call files, 91 distinct; one WERN Q1 2026 call left the Drive folder during the session.
-- **Tracked files:** `git ls-files` at this branch's head, 3,765 files, of which 3,084 are text.
+- **Tracked files:** `git ls-files --cached --others --exclude-standard` at this branch's head:
+  3,765 files, of which 3,084 are text.
 - **SEC cache:** `data/cache/sec`, 18,757 files, all local.
 - **KD:** 63 exports in the store and archive. One GOOGL `.xls` is read by its cells.
 - **The audit:** main `407dc809`, 3,080 text files, and the 361 call files it read from across the
@@ -163,6 +176,11 @@ from the Drive mirror.
   yet, so nothing recorded under the old fingerprint is orphaned. This PR lands before #953's paid
   run registers, as the ruling says. The extraction pin does not move: it hashes tokens without
   comments.
+- **A REDACTION is checked for form, not for meaning** (review round 0). CI cannot tell a cut
+  transcript run from any other cut span, so a redaction that drops a word turning a claim ("not")
+  would pass. Each entry names every cut run by line, length, call and the sha256 of its words, so
+  a reader with the calls re-derives each. Falsifier: a REDACTION whose cut changes what a record
+  claims.
 - **A cut record reads less smoothly.** Each keeps the figure or claim it relies on, and the call is
   named so a reader can check the rest.
 - **An excuse is a computed coincidence, not provenance.** A window found in a filing is excused

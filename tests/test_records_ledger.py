@@ -517,10 +517,16 @@ def _split_amendments(body: str) -> tuple[str, str]:
 #: 2026-11-12, verbatim "Cut all 21 + guard (Recommended)": "Each run is cut to 12 words or fewer.
 #: Each record gets a dated redaction amendment naming count, position and hash only"). CLAUDE.md's
 #: rule: no public field quotes more than 12 consecutive transcript words, and this repo is public.
-#: Five records written before that rule quoted calls at length. An appended correction cannot
+#: Six records written before that rule quoted calls at length. An appended correction cannot
 #: un-publish words the body still carries, so these spans are cut IN PLACE, and nothing else may
 #: move: the record must be its merged self with spans replaced by "…" (`_cut_spans`), the entry
-#: must say how many, and it must be the last thing in the file. Git history keeps the old text.
+#: must say how many, and nothing may be added BEFORE it (an amendment appended after it is an
+#: amendment, permitted as ever). Git history keeps the old text.
+#:
+#: ACCEPTED RISK: CI cannot tell a cut transcript run from any other cut span, so a redaction could
+#: drop a word that turns a claim ("not"). The entry names every cut run by line, length, call and
+#: the sha256 of its words, so a reader with the calls re-derives each, and the local transcript
+#: guard reads the result. Falsifier: a REDACTION whose cut changes what a record claims.
 _REDACTION = re.compile(r"(?m)^\*\*(\d{4}-\d{2}-\d{2}) — REDACTION: (\d+) spans? cut to “…”")
 _ELLIPSIS = "…"
 
@@ -569,7 +575,7 @@ def _redaction_violations(name: str, before: str, now: str) -> list[str] | None:
     cuts = _cut_spans(_body(before).rstrip("\n"), _body(head).rstrip("\n"))
     if cuts is None:
         out.append(f"{name}: a REDACTION may only replace spans of the merged text with “…”, and "
-                   f"its entry must be the last thing in the file; something else moved")
+                   f"nothing may be added before its entry; something else moved")
     elif cuts != int(last.group(2)):
         out.append(f"{name}: the REDACTION entry declares {last.group(2)} span(s) cut; the text "
                    f"shows {cuts}")

@@ -88,6 +88,9 @@ _ESC = re.compile(r"\\u([dD][89abAB][0-9a-fA-F]{2})\\u([dD][c-fC-F][0-9a-fA-F]{2
 _TAG = re.compile(r"<[^>\n]*>")
 #: the letters-only words an excuse source is prefiltered on
 _LETTERS = re.compile(r"[a-z]{5,}")
+#: a JSON escape in a cached body's raw text: read as a space before the prefilter, or the letter
+#: it ends in glues onto the next word (`\nmanagement` and `“management` hide "management")
+_JSON_ESC = re.compile(r"\\(?:u[0-9a-fA-F]{4}|.)")
 _SEC_DOC = re.compile(r"^https://www\.sec\.gov/Archives/edgar/data/")
 #: a file must state its own source to be trusted as a source: the cache's own record shape
 _CACHE_URL = re.compile(r'^\{"url": "([^"]+)"')
@@ -306,12 +309,13 @@ class Run:
 
 
 def group_runs(path: str, hits: list[Hit]) -> list[Run]:
-    """``hits`` as runs. One run read in two views (raw and unescaped) is kept once, the longer;
-    two runs on one line are two runs."""
+    """``hits`` as runs. A run is dropped only when every window it holds is held by a longer run
+    kept on its line (one run read in two views, raw and unescaped), so no window goes unchecked;
+    two runs on one line are two runs, even when they open with the same words."""
     by: dict[int, list[Hit]] = defaultdict(list)
     for hit in hits:
         by[hit.view].append(hit)
-    best: dict[tuple[int, int], Run] = {}
+    found: list[Run] = []
     for vi, hs in by.items():
         hs.sort(key=lambda x: x.pos)
         group = [hs[0]]
@@ -320,13 +324,15 @@ def group_runs(path: str, hits: list[Hit]) -> list[Run]:
             if h is not None and h.pos == group[-1].pos + 1:
                 group.append(h)
                 continue
-            r = Run(path, group[0].line, vi, group[0].pos, [g.window for g in group])
-            k = (r.line, r.windows[0])
-            if k not in best or best[k].length < r.length:
-                best[k] = r
+            found.append(Run(path, group[0].line, vi, group[0].pos, [g.window for g in group]))
             if h is not None:
                 group = [h]
-    return sorted(best.values(), key=lambda r: (r.line, r.pos))
+    kept: list[Run] = []
+    for r in sorted(found, key=lambda r: -r.length):
+        held = {w for k in kept if k.line == r.line for w in k.windows}
+        if not set(r.windows) <= held:
+            kept.append(r)
+    return sorted(kept, key=lambda r: (r.line, r.pos))
 
 
 @dataclass
@@ -337,8 +343,11 @@ class Scan:
 
 
 def tracked_files() -> list[str]:
-    out = subprocess.run(["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, check=True)
-    return [f for f in out.stdout.decode().split("\0") if f]
+    """Every file git tracks, and every file it would offer to (untracked and not ignored): a
+    record written and not yet staged is read before it can be committed, not after."""
+    out = subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+                         cwd=ROOT, capture_output=True, check=True)
+    return sorted({f for f in out.stdout.decode().split("\0") if f})
 
 
 def scan_tracked(calls: Calls, cache: Any, files: list[str] | None = None) -> Scan:
@@ -421,9 +430,11 @@ def _windows_of(text: str) -> set[int]:
 
 
 def _listing(sec_dir: Path) -> str:
-    """The cache's listing (names, sizes): what a full read did not find stays unfound while it
-    holds."""
+    """The cache's listing (names, sizes) and the search's own code: what a full read did not find
+    stays unfound while both hold, so a changed prefilter reads afresh."""
     h = hashlib.sha256()
+    h.update(f"{inspect.getsource(find_outside_calls)}|{_LETTERS.pattern}|{_JSON_ESC.pattern}"
+             .encode())
     for p in sorted(sec_dir.iterdir()):
         h.update(f"{p.name}:{p.stat().st_size};".encode())
     return h.hexdigest()[:20]
@@ -492,7 +503,7 @@ def find_outside_calls(pending: dict[int, list[str]], kd: list[Path], sec_dir: P
             # an ASCII word only: a cached body is JSON, which escapes any other letter
             anchors = {w: max((x for x in pending[w] if x.isascii() and x.isalpha()
                                and len(x) >= 5), key=len, default="") for w in todo}
-            failed = len(unreadable["SEC"])
+            failed = len(unreadable.get("SEC", []))
             for p in sorted(sec_dir.iterdir()):
                 if not todo:
                     break
@@ -500,11 +511,10 @@ def find_outside_calls(pending: dict[int, list[str]], kd: list[Path], sec_dir: P
                 doc = _sec_doc(raw) if raw is not None else None
                 if raw is None or doc is None:
                     continue
-                present = set(_LETTERS.findall(raw.lower()))
+                present = set(_LETTERS.findall(_JSON_ESC.sub(" ", raw).lower()))
                 if any(not a or a in present for w, a in anchors.items() if w in todo):
                     sec_look(raw, doc, todo)
-            want -= set(sec)
-            if len(unreadable["SEC"]) == failed:
+            if len(unreadable.get("SEC", [])) == failed:
                 absent |= todo
             memo["listing"], memo["absent"] = listing, sorted(absent)
     if cache:
@@ -545,8 +555,23 @@ def _cache(request: pytest.FixtureRequest) -> Any:
     return getattr(request.config, "cache", None)
 
 
+def _say(request: pytest.FixtureRequest, *lines: str) -> None:
+    """The boundary, on the terminal whatever the capture mode. NOT through `capsys`: this test is
+    where `xlrd` is first imported (a KD export read as a workbook), and xlrd binds `sys.stdout`
+    as its default log file at import. Under `capsys` that is the fixture's buffer, closed when the
+    test ends, so every later test whose workbook makes xlrd warn raised `ValueError: I/O
+    operation on closed file` in place of its own error."""
+    tr = request.config.pluginmanager.get_plugin("terminalreporter")
+    if tr is None:
+        print("\n".join(lines))
+        return
+    tr.ensure_newline()
+    for line in lines:
+        tr.write_line(line)
+
+
 def test_no_tracked_file_shares_13_consecutive_words_with_a_call(
-        request: pytest.FixtureRequest, capsys: pytest.CaptureFixture[str]) -> None:
+        request: pytest.FixtureRequest) -> None:
     roots = call_roots()
     cache = _cache(request)
     calls = read_calls(roots, cache)
@@ -577,7 +602,8 @@ def test_no_tracked_file_shares_13_consecutive_words_with_a_call(
         f"  calls: {len(calls.calls)} read ({calls.duplicates} duplicate file(s) by sha256), "
         f"{len(calls.unreadable)} unreadable"
         + "".join(f"\n    unreadable: {n} — {why}" for n, why in calls.unreadable)
-        + f"\n  tracked files: {scan.scanned} scanned; skipped: {skipped or 'none'}"
+        + f"\n  tracked files (and untracked, not ignored): {scan.scanned} scanned; skipped: "
+          f"{skipped or 'none'}"
         + f"\n  runs of {N}+ words shared with a call: {len(scan.runs)} "
           f"({len({w for r in scan.runs for w in r.windows})} distinct windows)"
         + f"\n  excused by an SEC document in the cache: {len(sec_runs)} run(s)"
@@ -586,11 +612,8 @@ def test_no_tracked_file_shares_13_consecutive_words_with_a_call(
         + f"\n  excuse sources read: {sources.read or 'none'}; unreadable: "
         + (", ".join(f"{len(v)} {k}" for k, v in sources.unreadable.items()) or "none")
         + f"\n  unexcused: {len(bad)} run(s)")
-    with capsys.disabled():
-        print("\n" + boundary)
-        for r in kd_runs:
-            print(f"    KD-excused: {r.path}:{r.line} ({r.length} words, run sha256 "
-                  f"{run_hash(r.words)})")
+    _say(request, boundary, *(f"    KD-excused: {r.path}:{r.line} ({r.length} words, run sha256 "
+                              f"{run_hash(r.words)})" for r in kd_runs))
     assert not bad, (f"{len(bad)} run(s) of more than {MAX_TRANSCRIPT_RUN} consecutive words of a "
                      "call sit in tracked files, and no non-transcript source on this disk holds "
                      "them (CLAUDE.md's 12-word rule):\n" + _shown(bad) + "\n" + boundary)
@@ -606,12 +629,12 @@ def local_calls(request: pytest.FixtureRequest) -> Calls:
     return calls
 
 
-def _call_words(calls: Calls, roots: list[Path]) -> list[str]:
+def _call_words(roots: list[Path]) -> list[str]:
     """One readable call's words, read at run time and never written anywhere."""
     for p in _files_of_kind(roots, "transcript"):
         try:
             ws = words(read_text(p))[0]
-        except (CiqParseError, OSError):
+        except (CiqParseError, OSError, UnicodeDecodeError):
             continue
         if len(ws) > 400:
             return ws
@@ -625,7 +648,7 @@ _RULE_PLUS_ONE = 13
 def _bites(local_calls: Calls, at: int) -> dict[str, bool]:
     """Each bite pin's outcome by its label, on 13 words of a real call read at run time. The words
     stay in this frame: a failed pin prints its label and a boolean, never a call's word."""
-    ws = _call_words(local_calls, call_roots())[at:at + _RULE_PLUS_ONE]
+    ws = _call_words(call_roots())[at:at + _RULE_PLUS_ONE]
 
     def caught(text: str) -> bool:
         return bool(scan_text(text, local_calls))
@@ -660,19 +683,22 @@ def test_thirteen_words_of_a_call_are_caught_and_twelve_are_not(local_calls: Cal
 def _excused(local_calls: Calls, folder: Path, at: int) -> dict[str, bool]:
     """Each excuse pin's outcome by its label (13 words of a real call, held in this frame only).
     The sources it writes hold a call's words, so they are removed before it returns."""
-    ws = _call_words(local_calls, call_roots())[at:at + _RULE_PLUS_ONE]
+    ws = _call_words(call_roots())[at:at + _RULE_PLUS_ONE]
     w = window_keys([key(x) for x in ws])[0]
     url = "https://www.sec.gov/Archives/edgar/data/1/000000000126000001/ex99.htm"
     name = f"{hashlib.sha256(url.encode()).hexdigest()}.json"
-    sec, short = folder / "sec", folder / "short"
-    sec.mkdir()
-    short.mkdir()
+    sec, short, lined = folder / "sec", folder / "short", folder / "lined"
+    for d in (sec, short, lined):
+        d.mkdir()
     kd = folder / "Acme Inc NYSE ACME Key Developments.rtf"
     try:
         (sec / name).write_text(json.dumps(
             {"url": url, "fetched_at": 0, "text": f"<p>{' '.join(ws)}</p>"}))
         (short / name).write_text(json.dumps(
             {"url": url, "fetched_at": 0, "text": " ".join(ws[:12])}))
+        # every word after a line break: JSON writes `\n` before each, gluing an `n` onto it
+        (lined / name).write_text(json.dumps(
+            {"url": url, "fetched_at": 0, "text": "".join(f"\n“{x}" for x in ws)}))
         kd.write_text("{\\rtf1\\ansi " + " ".join(ws) + "}")
         both = find_outside_calls({w: ws}, [kd], sec, None)
         return {
@@ -684,9 +710,11 @@ def _excused(local_calls: Calls, folder: Path, at: int) -> dict[str, bool]:
             "a KD export excuses it, reported apart":
                 find_outside_calls({w: ws}, [kd], None, None).kd == {w: kd.name},
             "held by both, it is the SEC document's": both.sec == {w: url} and both.kd == {},
+            "an SEC document holding it with each word after a JSON escape excuses it":
+                find_outside_calls({w: ws}, [], lined, None).sec == {w: url},
         }
     finally:
-        for f in (sec / name, short / name, kd):
+        for f in (sec / name, short / name, lined / name, kd):
             f.unlink(missing_ok=True)
 
 
@@ -695,10 +723,12 @@ def test_a_window_is_excused_only_where_a_source_holds_it(local_calls: Calls,
     """The excuse is computed: a window an SEC document in the cache holds is excused and named;
     the same window with no source is not, and a source holding only 12 of its words excuses
     nothing. A Key Developments export excuses too, reported apart, and where an SEC document
-    holds the same window the excuse is the document's (KD's publication is unruled)."""
+    holds the same window the excuse is the document's (KD's publication is unruled). A document
+    whose words each follow a JSON escape (`\\n`, `\\u201c`) still excuses it: the prefilter reads
+    the escape as a space, never as a letter glued to the word."""
     got = _excused(local_calls, tmp_path, 300)
     assert got == dict.fromkeys(got, True)
-    assert len(got) == 5
+    assert len(got) == 6
 
 
 #: #1036's parent, which still held the three synthesis claims #1036 cut: LLY `bull_points[5]`
@@ -731,3 +761,31 @@ def test_the_guard_finds_the_three_runs_1036_cut_in_its_parent(local_calls: Call
         f"the guard missed a run #1036 cut; it found runs against {sorted(hits_then)}")
     now = scan_tracked(local_calls, None, files=list(_FILES_1036))
     assert now.runs == [], [f"{r.path}:{r.line}" for r in now.runs]
+
+
+# --- what is read, and what is reported (no call needed: these run in CI too) ---------------------
+
+def test_two_runs_that_open_alike_are_both_kept_and_one_read_twice_is_one() -> None:
+    """REVIEW ROUND 0. Runs were kept once per (line, first window): two runs on one line opening
+    with the same 13 words collapsed into the longer, and the shorter's later windows were never
+    looked for outside the calls. A run is now dropped only when a longer run kept on its line
+    holds every window it holds — one run read raw and unescaped is still one."""
+    a = [Hit(0, 7, p, w) for p, w in ((0, 101), (1, 102), (2, 103))]
+    b = [Hit(0, 7, p, w) for p, w in ((20, 101), (21, 104))]
+    runs = group_runs("x.md", a + b)
+    assert sorted(tuple(r.windows) for r in runs) == [(101, 102, 103), (101, 104)]
+    same_run_two_views = [Hit(1, 7, p, w) for p, w in ((0, 101), (1, 102))]
+    assert [r.windows for r in group_runs("x.md", a + same_run_two_views)] == [[101, 102, 103]]
+
+
+def test_a_file_written_and_not_yet_staged_is_read(tmp_path: Path,
+                                                   monkeypatch: pytest.MonkeyPatch) -> None:
+    """REVIEW ROUND 0. `git ls-files` alone lists the index, so a record written and not yet
+    staged was never read, and the guard passed it. What git ignores is still not read."""
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    (tmp_path / ".gitignore").write_text("ignored.md\n")
+    for name in ("staged.md", "unstaged.md", "ignored.md"):
+        (tmp_path / name).write_text("x\n")
+    subprocess.run(["git", "-C", str(tmp_path), "add", "staged.md", ".gitignore"], check=True)
+    monkeypatch.setattr(sys.modules[__name__], "ROOT", tmp_path)
+    assert tracked_files() == [".gitignore", "staged.md", "unstaged.md"]
