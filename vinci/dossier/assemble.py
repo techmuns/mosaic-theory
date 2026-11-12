@@ -68,16 +68,19 @@ from vinci.dossier.schemas import (
     PriceStoreStamp,
     Sourced,
     SourceStatus,
+    Synthesis,
     dossier_json,
     write_dossier,
 )
 from vinci.dossier.synthesis import (
+    MAX_TRANSCRIPT_RUN,
     SYNTHESIS_DRAWS,
     contradiction_flags,
     demanded_material_figures,
     gaap_eps_momentum_flags,
     material_direction_flags,
     synthesize,
+    transcript_runs,
     uncited_material_figures,
 )
 from vinci.edgar.asof import page_price_date
@@ -1004,6 +1007,22 @@ def _require_synthesis(synthesis: _S | None, *, ticker: str, flags: list[str]) -
         f"Flags: {'; '.join(flags) or '(none)'}")
 
 
+def _refuse_transcript_runs(synthesis: Synthesis, transcript: str | None, *,
+                            ticker: str) -> None:
+    """REFUSE a page whose synthesis copies more than 12 consecutive words of the build's own
+    transcripts (CLAUDE.md's 12-word rule; operator ruling 2026-11-11, "$0 guard + redaction now").
+    The build has the words; the page would publish them. Keys on the runs themselves
+    (`synthesis.transcript_runs`), never on the flag `_validate` writes for them — the reason
+    `_require_synthesis` gives, kept. The draws are spent by then: the refusal costs a re-run, and
+    publishing would cost the licence."""
+    runs = transcript_runs(synthesis, transcript)
+    if runs:
+        raise DossierAssemblyError(
+            f"{ticker}: the synthesis copies more than {MAX_TRANSCRIPT_RUN} consecutive words of "
+            "its own calls — refusing to write: "
+            + "; ".join(f"{r.where} ({r.words} words)" for r in runs))
+
+
 def store_checkout(db_path: Path) -> str:
     """The checkout a store lives in, by its folder name alone: `<checkout>/data/vinci.db` →
     `<checkout>`. What a page keeps of a store's path (`PriceStoreStamp`), and what
@@ -1332,6 +1351,7 @@ def assemble_one(
         # A null synthesis from a CONFIGURED client is a failed build — refuse the write BEFORE
         # `_write` below. Rationale and the 07-22/07-30 incidents: `_require_synthesis`.
         synthesis = _require_synthesis(synthesis, ticker=ticker, flags=synth_flags)
+        _refuse_transcript_runs(synthesis, transcript, ticker=ticker)
         # (render) attach the structured per-exhibit rows AFTER synthesis (the LLM used the digest).
         if term_rows is not None and mech.capital_structure is not None:
             cs_post = mech.capital_structure.model_copy(update={"covenant_term_rows": term_rows})
