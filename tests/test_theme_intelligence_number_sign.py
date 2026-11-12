@@ -131,3 +131,69 @@ def test_a_multiple_elsewhere_in_the_value_text_does_not_exempt_the_value() -> N
     assert ok is False and any("states a decline" in n for n in notes), notes
     assert _number_check(-27_000_000.0, vt, "USD", q)[0] is True
     assert _number_check(3.0, "3x lower", "x", "Costs were 3x lower.")[0] is True  # still kept
+
+
+# --- the residual (Codex on #987, 4535189339): a decline after a POINTS unit ---------------------
+# The value text carries the number alone ("27") and the unit is stored apart ("percentage
+# points"): the trailing decline word stood past a unit the check could not step over, so
+# +27 passed (the silent wrong value) and −27 was refused. Only a percent unit was skipped.
+
+POINTS = [
+    ("27", 27.0, "percentage points", "Margins posted a 27 percentage point decline"),
+    ("27", 27.0, "percentage points", "a 27 percentage-point drop in share"),
+    ("27", 27.0, "percentage points", "share fell to 40%, a 27 percentage points decline"),
+    ("2.5", 2.5, "pp", "Gross margin saw a 2.5pp decline year over year"),
+    ("2.5", 2.5, "pp", "Gross margin saw a 2.5 pp decline year over year"),
+    ("40", 40.0, "bps", "Spreads saw a 40 bps decline this week"),
+    ("40", 40.0, "bps", "Spreads saw a 40bp decline this week"),
+    ("40", 40.0, "basis points", "a 40 basis point decline in yields"),
+    ("40", 40.0, "basis points", "yields were 40 basis points lower"),
+    # the unit hyphenated onto the figure, the compound-adjective form (review of this residual)
+    ("40", 40.0, "basis points", "a 40-basis-point decline in yields"),
+    ("27", 27.0, "percentage points", "a 27-percentage-point drop in share"),
+    ("27", 27.0, "%", "a 27-percent drop in shipments"),
+    # bare points
+    ("2.5", 2.5, "pts", "Gross margin saw a 2.5 pts decline"),
+    ("300", 300.0, "points", "the index posted a 300 point decline"),
+]
+
+
+@pytest.mark.parametrize(("text", "size", "unit", "quote"), POINTS)
+def test_a_points_decline_read_as_positive_is_refused(text: str, size: float, unit: str,
+                                                      quote: str) -> None:
+    ok, notes = _number_check(size, text, unit, quote)
+    assert ok is False and any("states a decline" in n for n in notes), (quote, notes)
+
+
+@pytest.mark.parametrize(("text", "size", "unit", "quote"), POINTS)
+def test_a_points_decline_read_as_negative_passes(text: str, size: float, unit: str,
+                                                  quote: str) -> None:
+    ok, notes = _number_check(-size, text, unit, quote)
+    assert ok is True, (quote, notes)
+
+
+def test_a_scale_word_in_the_value_text_reads_as_it_did() -> None:
+    """The coordinator's negative pin: '27 million decline' stays as it reads today. With the
+    scale word in the value text the decline already stood beside the whole figure, so +27M was
+    refused and −27M passed — before and after."""
+    q = "EBITDA posted a 27 million decline"
+    ok, notes = _number_check(27e6, "27 million", "USD", q)
+    assert ok is False and any("states a decline" in n for n in notes), notes
+    assert _number_check(-27e6, "27 million", "USD", q)[0] is True
+
+
+def test_a_points_rise_or_level_is_unchanged() -> None:
+    """Real shapes on the registry, each a points figure with no decline: they keep passing."""
+    assert _number_check(100.0, "more than 100 basis points", "basis points",
+                         "CCC spreads are up more than 100 basis points this year")[0] is True
+    assert _number_check(40.0, "40", "bps", "Spreads saw a 40 bps rise this week")[0] is True
+    assert _number_check(6.0, "roughly 6 percentage points", "percentage points",
+                         "would move S&P 500 earnings growth by roughly 6 percentage points in "
+                         "the same direction")[0] is True
+
+
+def test_the_real_points_drop_on_the_registry_keeps_passing() -> None:
+    """C-7f13888d27d72f, the one points figure on the registry worded as a decline, already
+    negative: '–6 to –8 percentage points' read as −8."""
+    q = "occasional drops as low as –6 to –8 percentage points"
+    assert _number_check(-8.0, "–6 to –8 percentage points", "percentage points", q)[0] is True

@@ -47,8 +47,10 @@ def test_parrs_surprise_history_is_read_from_its_own_listings_block() -> None:
     got = cs.surprise_history(_bundle("PARR"))
     assert got.status is SourceStatus.PRESENT and got.value is not None
     eps = got.value.split("; Revenue surprise:")[0]
-    assert eps == ("GAAP-EPS surprise: FY2014 +0%, FY2015 +0%, FY2016 +0%, FY2018 -15%, "
-                   "FY2020 +0%, FY2021 +0%, FY2022 -7%, FY2023 +52%, FY2024 +0%, FY2025 +18%")
+    # (fix request 2, prompt-fix 2) the "+0%" years are CIQ's 0.0 beside an actual and an estimate
+    # of its own that differ — "n/a" now (`tests/test_fix2_digest_figures.py`)
+    assert eps == ("GAAP-EPS surprise: FY2014 n/a, FY2015 n/a, FY2016 n/a, FY2018 -15%, "
+                   "FY2020 n/a, FY2021 n/a, FY2022 -7%, FY2023 +52%, FY2024 n/a, FY2025 +18%")
     assert got.source_ref == ("CIQ Estimates→Surprise (annual; GAAP EPS from the NYSE:PARR (USD) "
                               "block — the sheet's first, OTCPK:DPTR.Q (USD), is another "
                               "listing's)")
@@ -61,7 +63,7 @@ def test_the_company_level_revenue_series_is_unchanged() -> None:
     got = cs.surprise_history(_bundle("PARR"))
     assert got.value is not None
     assert got.value.split("; Revenue surprise: ")[1].startswith(
-        "FY2003 -3%, FY2004 -0%, FY2006 -3%, FY2007 -20%")
+        "FY2003 -3%, FY2004 -0.2%, FY2006 -3%, FY2007 -20%")   # -0.2%, once printed "-0%"
 
 
 def test_a_sheet_whose_blocks_name_no_listing_of_the_company_refuses_the_eps_read() -> None:
@@ -82,26 +84,41 @@ def test_a_sheet_whose_blocks_name_no_listing_of_the_company_refuses_the_eps_rea
 
 
 @pytest.mark.parametrize(("name", "head"), [
-    ("GOOGL", "GAAP-EPS surprise: FY2004 +33%, FY2005 +0%, FY2006 +9%, FY2007 -3%"),
-    ("NFLX", "GAAP-EPS surprise: FY2004 +0%, FY2005 +0%, FY2006 +0%, FY2007 +0%"),
+    ("GOOGL", "GAAP-EPS surprise: FY2004 +33%, FY2005 n/a, FY2006 +9%, FY2007 -3%"),
+    ("NFLX", "GAAP-EPS surprise: FY2004 n/a, FY2005 n/a, FY2006 n/a, FY2007 n/a"),
 ])
 def test_a_sheet_that_opens_with_the_companys_own_listing_reads_as_before(
         name: str, head: str) -> None:
-    """NO MOVE where the first block is the company's own (every export on file but PARR's,
-    swept 2026-11-09 over 36 folders): the stamp is unchanged, and so is the value — the committed
-    page's, whenever it was built from the export the fixture was cut from. GOOGL's sheet repeats
-    its own listing's block and adds GOOG's; the first of its own is read."""
+    """NO MOVE of the block read where the first block is the company's own (every export on
+    file but PARR's, swept 2026-11-09 over 36 folders): the stamp is unchanged. GOOGL's sheet
+    repeats its own listing's block and adds GOOG's; the first of its own is read. (Each "n/a" is
+    fix request 2's prompt-fix 2; the committed page's equality is its own pin below.)"""
     got = cs.surprise_history(_bundle(name))
     assert got.status is SourceStatus.PRESENT and got.value is not None
     assert got.value.startswith(head)
     assert got.source_ref == "CIQ Estimates→Surprise (annual)" and got.note is None
+
+
+_AWAITS_REREAD = pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
+    "fix request 2, prompt-fix 2 — fixed in code; the committed page waits for its $0 re-read "
+    "(`vinci dossier ciq-reread --field surprise_history`) in the combined artifact pass"))
+
+
+@pytest.mark.parametrize("name", [
+    pytest.param("GOOGL", marks=_AWAITS_REREAD), pytest.param("NFLX", marks=_AWAITS_REREAD)])
+def test_the_committed_page_states_what_its_own_export_reads(name: str) -> None:
+    """The committed page's value is the code's read of the export it stamps — whenever it was
+    built from the one the fixture was cut from."""
+    got = cs.surprise_history(_bundle(name))
     page = json.loads((ROOT / "data" / "dossiers" / name / "dossier.json").read_text())
     stamped = {c["kind"]: c["sha256"] for c in (page.get("inputs") or {}).get("ciq", [])}
-    if stamped.get("estimates") == FIX["_about"]["exports"][name]["sha256"]:
-        stored = page["mechanical"]["consensus_context"]["surprise_history"]
-        assert (stored["value"], stored["source_ref"]) == (got.value, got.source_ref)
+    if stamped.get("estimates") != FIX["_about"]["exports"][name]["sha256"]:
+        raise LookupError(f"{name}'s page stamps another Estimates export — re-point this pin")
+    stored = page["mechanical"]["consensus_context"]["surprise_history"]
+    assert (stored["value"], stored["source_ref"]) == (got.value, got.source_ref)
 
 
+@_AWAITS_REREAD
 def test_parrs_committed_page_states_its_own_listings_surprise_history() -> None:
     """END TO END (TEST-LAYER RULE): the defect was observed on PARR's rendered page. Its committed
     record, rendered, prints NYSE:PARR's series and none of the predecessor's years — whenever the
@@ -135,7 +152,7 @@ def test_a_share_class_spelled_with_a_dash_still_finds_its_own_block() -> None:
     wb = CiqWorkbook(kind="estimates", path=path, fmt=CiqFormat.BIFF_XLS, freq=None)
     got = cs.surprise_history(CiqBundle(ticker="PA-RR", workbooks=(wb,),
                                         _cache={path: {"Surprise": rows}}))
-    assert got.value is not None and got.value.startswith("GAAP-EPS surprise: FY2014 +0%")
+    assert got.value is not None and got.value.startswith("GAAP-EPS surprise: FY2014 n/a")
     assert got.note is None
 
 
@@ -213,7 +230,7 @@ def test_the_writer_rereads_the_surprise_history_from_the_stamped_export(
     assert o.status == "written", o
     doc = json.loads(jp.read_text())
     assert doc["mechanical"]["consensus_context"]["surprise_history"]["value"].startswith(
-        "GAAP-EPS surprise: FY2014 +0%")
+        "GAAP-EPS surprise: FY2014 n/a")
     assert doc["layer_refreshes"][-1]["writer"] == "ciq-reread"
     again = ciq_reread.reread(jp, "surprise_history", tmp_path / "ciq")
     assert again.status == "unchanged", again

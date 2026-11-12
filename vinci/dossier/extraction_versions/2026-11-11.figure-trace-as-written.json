@@ -2,7 +2,9 @@
   "id": "2026-11-11.figure-trace-as-written",
   "follows": [
     "2026-11-10.driver-text-filed",
-    "2026-11-11.refresh-backfill-price-date-cut"
+    "2026-11-11.digest-figures-carry-unit-sign-period",
+    "2026-11-11.refresh-backfill-price-date-cut",
+    "2026-11-11.split-adjusted-pe-range"
   ],
   "names": "the synthesis figure trace reads a figure as written (audit RG-D1 to RG-D7): a printed sign must be the fact's, read from the fact's own printed sign or a transcript figure's change word and never checked against a sign the fact does not state; a %, an x and a $ figure trace only at their own unit's scales, a table amount row at the scale word the figure writes; the width is the smaller of half a unit of the last written digit and the old 2% (at least 0.05); a financial table's figure meets only the cells of the periods and the rows the claim names; a duration is a figure, traced as a span the page states; the figures of a key unknown, the decisive question and the evidence balance are traced against everything the page states; and a figure cited to a call that none of the call's validated figures states is a shown UNTRACEABLE caveat naming the call, where it was a hidden note. The panel metrics' figure finder (`_claim_figure_ends`) and stated years and ranks are unchanged"
 }
