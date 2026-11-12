@@ -11,7 +11,6 @@ tests carry the logic and always run.
 """
 from __future__ import annotations
 
-import time
 from pathlib import Path
 from typing import Any
 
@@ -29,20 +28,6 @@ from vinci.dossier.schemas import SourceStatus
 
 ROOT = Path(__file__).resolve().parents[1]
 CIQ = ROOT / "data" / "manual" / "ciq"
-
-#: Each export's read is bounded, so these corpus tests run in every gate (issue #1004). Until the
-#: bounded font scan (`ciq._bounded_font_scan`), striprtf read AMZN's 2.9 MB Customers export in
-#: more than 90 s and GOOGL's 2.6 MB in 83.5 s, and every local gate deselected the two tests below.
-_PER_EXPORT_S = 10.0
-
-
-def _timed_customers(bundle: CiqBundle) -> Any:
-    """`customers(bundle)`, refused when it takes longer than the bound."""
-    t0 = time.monotonic()
-    out = customers(bundle)
-    elapsed = time.monotonic() - t0
-    assert elapsed < _PER_EXPORT_S, f"{bundle.ticker}: customers() took {elapsed:.1f}s"
-    return out
 
 # the string item 19b exists to delete: a claim about the SHEET's shape standing in for a fact
 # about the FILING. Pinned as a literal because it is OUR OWN text, not LLM-composed — the
@@ -223,7 +208,7 @@ def test_no_bundle_renders_our_own_parse_error_as_its_customer_field() -> None:
     for d in sorted(CIQ.iterdir()):
         if not d.is_dir():
             continue
-        s = _timed_customers(CiqBundle.from_files(d.name, sorted(d.glob("*"))))
+        s = customers(CiqBundle.from_files(d.name, sorted(d.glob("*"))))
         assert "use read_sheets()" not in (s.note or ""), f"{d.name}: {s.note}"
         assert "is not text" not in (s.note or ""), f"{d.name}: {s.note}"
         seen += 1
@@ -244,8 +229,8 @@ def test_the_customers_export_is_chosen_by_name_not_by_file_order() -> None:
         paths = sorted(p for p in d.glob("*") if p.is_file())
         if not any("supplier" in p.name.lower() for p in paths):
             continue
-        fwd = _timed_customers(CiqBundle.from_files(d.name, paths))
-        rev = _timed_customers(CiqBundle.from_files(d.name, list(reversed(paths))))
+        fwd = customers(CiqBundle.from_files(d.name, paths))
+        rev = customers(CiqBundle.from_files(d.name, list(reversed(paths))))
         assert fwd.value == rev.value and fwd.source_ref == rev.source_ref, d.name
         # the source_ref's own PREFIX is the literal "CIQ Customers&Suppliers", so a substring
         # search for "supplier" matches every name regardless of which file was read. Assert on

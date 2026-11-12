@@ -103,10 +103,13 @@ def _utc_day(at: _dt.datetime) -> Iterator[None]:
 # --- NIKE's page, assembled offline ---------------------------------------------------------------
 
 
-def _assemble_nke(last_close: _dt.date = _dt.date(2026, 10, 16)) -> Any:
+def _assemble_nke(last_close: _dt.date = _dt.date(2026, 10, 16),
+                  reference: _dt.date | None = None) -> Any:
     """NIKE's mechanical layer, assembled on its real companyfacts and on its stored bars up to
     ``last_close`` (the page's price date), with the synthetic CIQ exports and no network: every
-    other SEC request is refused, as `tests/test_asof_cut.py`'s harness refuses it."""
+    other SEC request is refused, as `tests/test_asof_cut.py`'s harness refuses it. The page's
+    reference date is ``reference`` (default: the last close itself)."""
+    ref = reference or last_close
     from tests.test_asof_cut import _iwm_bars, _Refused
     from vinci.dossier.ciq import CiqBundle
     from vinci.dossier.mechanical import assemble_mechanical
@@ -144,14 +147,14 @@ def _assemble_nke(last_close: _dt.date = _dt.date(2026, 10, 16)) -> Any:
     sec = Sec()
     edgar = EdgarClient(http=cast(CachedHttp, sec))
     rec = build_price_record(ident, price_bars=bars, benchmark_bars=_iwm_bars(),
-                             reference_date=last_close, staleness_days=5)
-    rec = enrich_with_fundamentals(rec, edgar=edgar, price_bars=bars, reference_date=last_close)
+                             reference_date=ref, staleness_days=5)
+    rec = enrich_with_fundamentals(rec, edgar=edgar, price_bars=bars, reference_date=ref)
     bundle = CiqBundle.from_files("NKE", sorted([*(gen.HERE / gen.TICKER).iterdir(),
                                                  gen.HERE / gen.ESTIMATES_XLS]))
     mech, _flags = assemble_mechanical(
         rec, store=cast(Any, Store()), edgar=edgar, http=cast(CachedHttp, sec),
         finra=cast(Any, _Refused()), graph=ExposureGraph(), resolver=cast(Any, None),
-        bundle=bundle, reference_date=last_close)
+        bundle=bundle, reference_date=ref)
     return mech
 
 
@@ -203,13 +206,56 @@ def test_the_same_inputs_built_on_two_utc_days_send_byte_identical_requests(
     assert sent[0] == sent[1]
 
 
-def test_the_faked_day_reaches_a_clock_read_that_is_still_made(_warm: Any) -> None:
+def test_the_faked_day_reaches_a_clock_read_that_is_still_made(
+        _warm: Any, capsys: pytest.CaptureFixture[str]) -> None:
     """(−) The fake is not inert: a close older than the staleness bound on the faked day prints the
-    faked day's gap (`mechanical._price_stale_note`), so the identity above is not a fake that
-    changed nothing."""
+    faked day's gap. CHANGED DELIBERATELY (operator, 2026-11-12: "Yes, fix it"): that clock read is
+    now the assembly-time WARNING on stderr (`mechanical._warn_stale_at_assembly`). It was the
+    page's own `stock_info.price.note`, which the synthesis is sent. The page's note is counted from
+    its reference date, so this fresh close (the reference date itself) carries none."""
     with _utc_day(_dt.datetime(2026, 11, 1, 12, 0, tzinfo=_dt.UTC)):
-        note = _assemble_nke().stock_info.price.note or ""
-    assert "16 calendar days before assembly" in note
+        note = _assemble_nke().stock_info.price.note
+    err = capsys.readouterr().err
+    assert ("WARNING NKE: PRICE STALE AT ASSEMBLY: last stored close 2026-10-16 is 16 calendar "
+            "days before today (2026-11-01)") in err
+    assert note is None
+
+
+# --- the price-staleness note, counted from the page's own date ----------------------------------
+
+
+def test_a_stale_close_sends_the_same_request_on_any_day(_warm: Any) -> None:
+    """THE DEFECT (operator, 2026-11-12: "Yes, fix it"). The stock-info price note counted its gap
+    to `date.today()`: built on 2026-11-01 and on 2026-11-05 from the same inputs, a close of
+    2026-09-30 on a page as of 2026-10-16 read "32" and then "36 calendar days before assembly",
+    and the requests differed by that line. It FAILED at main. Now the note counts from the page's
+    reference date: 16 days on both days, the same request."""
+    close, ref = _dt.date(2026, 9, 30), _dt.date(2026, 10, 16)
+    sent, notes = [], []
+    for day in (_dt.date(2026, 11, 1), _dt.date(2026, 11, 5)):
+        at = _dt.datetime(day.year, day.month, day.day, 12, 0, tzinfo=_dt.UTC)
+        with _utc_day(at):
+            mech = _assemble_nke(close, reference=ref)
+            notes.append(mech.stock_info.price.note)
+            sent.append(_request(mech))
+    assert notes[0] == notes[1] == (
+        "PRICE STALE AT THE REFERENCE DATE: last stored close 2026-09-30 is 16 calendar days "
+        "before the page's reference date 2026-10-16 — run `vinci refresh` and re-assemble")
+    # the stale case is live in the request itself (its ASCII core: the request escapes the dash)
+    assert "16 calendar days before the page's reference date 2026-10-16" in sent[0]
+    assert sent[0] == sent[1]
+
+
+def test_negative_a_fresh_close_carries_no_note_however_late_the_build(
+        _warm: Any, capsys: pytest.CaptureFixture[str]) -> None:
+    """(−) A close within the cadence of the page's reference date carries no note, even built
+    weeks later: the lateness is the build's, and only stderr says so. At main the page carried
+    "45 calendar days before assembly"."""
+    with _utc_day(_dt.datetime(2026, 11, 30, 12, 0, tzinfo=_dt.UTC)):
+        mech = _assemble_nke(_dt.date(2026, 10, 16), reference=_dt.date(2026, 10, 20))
+    assert mech.stock_info.price.note is None
+    assert "PRICE STALE AT ASSEMBLY: last stored close 2026-10-16 is 45 calendar days before " \
+           "today (2026-11-30)" in capsys.readouterr().err
 
 
 # --- the date the block states --------------------------------------------------------------------
