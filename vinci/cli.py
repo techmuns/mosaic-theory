@@ -3109,6 +3109,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # EDGAR window is anchored on the same `known_through` as the bound, so the fetch and the
     # filter cannot drift apart.
     known_through = ref
+    dropped: list[mon.FreshnessDrop] = []
     for name in sorted(set(live) | _watch_tickers(root)):
         rec_path = root / "scenarios" / f"{name}.json"
         if not rec_path.exists():
@@ -3130,9 +3131,11 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
                 # filing", a fabricated no — and the day says so by name, as an unreadable record
                 # date does below. An SEC REFUSAL (`SecRateLimitedError`, not an HttpError) still
                 # stops the run: it is SEC blocking this process, not one name's page.
-                notes.append(f"FILINGS {name}: its EDGAR filings window since {since} could not "
-                             f"be read ({type(exc).__name__}: {exc}) · its freshness row is NOT "
-                             f"written")
+                dropped.append(mon.FreshnessDrop(
+                    ticker=name, cause="filings_unread",
+                    detail=f"its EDGAR filings window since {since} could not be read "
+                           f"({type(exc).__name__}: {exc})"))
+                notes.append(dropped[-1].note())
                 continue
         v = record.get("verdict") or {}
         note = (f"WATCH (not a position) — avoid-priced: {v.get('avoid_priced_note')}"
@@ -3156,7 +3159,9 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         except mon.UnreadableEvidenceDateError as exc:
             # ONE HAND-EDITED RECORD MUST NOT TAKE THE BOOK DOWN — the theme-card doctrine below.
             # The row is not written and the day says so by name; it never passes silently.
-            notes.append(f"RECORD {exc} · its freshness row is NOT written")
+            dropped.append(mon.FreshnessDrop(ticker=name, cause="record_date_unreadable",
+                                             detail=str(exc)))
+            notes.append(dropped[-1].note())
             continue
         # WHAT THE BOUND CANNOT DO, SAID ON THE DAY — rendered from the row's typed field. A record
         # stating NO evidence by `known_through` did not exist on this day in any form this run can
@@ -3183,7 +3188,8 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     notes.extend(str(r["split_note"]) for r in realized if r.get("split_note"))
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
                                return_basis="total", price_basis=mon.RETURN_BASIS,
-                               freshness=fresh, notes=notes, realized=realized_rows)
+                               freshness=fresh, freshness_dropped=dropped, notes=notes,
+                               realized=realized_rows)
     print(mon.render_table(snap))
     # The CLI never writes a day that a later day file sits after — neither a SUPERSEDED day nor a
     # BACK-DATED one: re-running the front of the book is routine, while either would put today's
