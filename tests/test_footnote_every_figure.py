@@ -221,8 +221,9 @@ def test_a_malformed_footnote_from_the_model_is_dropped_and_named() -> None:
 
 def test_the_gd6_draw_is_caught_the_same_with_each_figure_footnoted() -> None:
     """The made-up-figure draw G-D6 pins (seed 20261029, 199 figures in [100, 1000) at 1 dp, cited
-    to the relative return): 195 of 199 flagged with no footnote, and the same 195 with each figure
-    footnoted to that fact — a footnote names the universe; it never widens it."""
+    to the relative return): all 199 flagged with no footnote (195 before RG-D4: 4 traced only
+    inside the old 2% width), and the same 199 with each figure footnoted to that fact — a
+    footnote names the universe; it never widens it."""
     mech = _frozen()
     _, _, rel = _refs()
     random.seed(20261029)
@@ -230,7 +231,7 @@ def test_the_gd6_draw_is_caught_the_same_with_each_figure_footnoted() -> None:
     bare = {f for f in figs if _flagged(mech, _point(f"the figure is {f:,.1f}", rel))}
     noted = {f for f in figs if _flagged(mech, _point(
         f"the figure is {f:,.1f}", rel, [{"figure": f"{f:,.1f}", "source_ref": rel}]))}
-    assert len(figs) == 199 and len(bare) == 195 and noted == bare
+    assert len(figs) == 199 and len(bare) == 199 and noted == bare
 
 
 def test_a_made_up_computed_figure_from_real_inputs_is_flagged() -> None:
@@ -766,10 +767,15 @@ def test_a_footnote_covers_its_own_figure_never_another_of_the_same_magnitude() 
     passed the un-footnoted "16%" beside it — which then escaped the point-ref trace."""
     mech = _frozen()
     _, market, rel = _refs()
-    claim = "SMPL fell -29% while the benchmark rose 16%, on $16M of volume"
+    # "16M shares", not "$16M": a dollar figure is no 16% return (RG-D2), and this pins where a
+    # footnote applies, not what it may trace to
+    claim = "SMPL fell -29% while the benchmark rose 16%, on 16M shares of volume"
     assert _flagged(mech, _point(claim, rel)) == ["-29", "16", "16"]
-    assert _flagged(mech, _point(claim, rel, [{"figure": "$16M", "source_ref": market}])) == [
+    assert _flagged(mech, _point(claim, rel, [{"figure": "16M", "source_ref": market}])) == [
         "-29", "16"]
+    # (RG-D2) the same footnote on a "$16M": the market's 16% return is no amount
+    assert _flagged(mech, _point(claim.replace("16M shares", "$16M"), rel,
+                                 [{"figure": "$16M", "source_ref": market}])) == ["-29", "16", "16"]
     # a figure the claim writes twice is covered twice by its one footnote
     twice = "the benchmark rose +16% and, again, +16%"
     assert _flagged(mech, _point(twice, rel, [{"figure": "+16%", "source_ref": market}])) == []
@@ -783,13 +789,19 @@ def test_a_footnote_is_matched_to_the_occurrence_it_names_not_the_first_of_its_m
     its own figure and the "-16%" is traced to the point's ref (which states the 16)."""
     mech = _frozen()
     name, market, _ = _refs()
-    claim = "SMPL fell -16% while volume ran to $16M"
-    flags = _flags(mech, _point(claim, market, [{"figure": "$16M", "source_ref": name}]))
+    # unsigned and in shares, so the market's +16% return states both figures but for their sign
+    # and unit (RG-D1, RG-D2 — pinned below); this pins which figure a footnote checks
+    claim = "SMPL fell 16% while volume ran to 16M shares"
+    flags = _flags(mech, _point(claim, market, [{"figure": "16M", "source_ref": name}]))
     hard = [f for f in flags if f.startswith("UNTRACEABLE")]
     assert [f.split("'")[1] for f in hard] == ["16"]
     assert f"[cited to {name}]" in hard[0]
-    # the same footnote on the "-16%" instead: that figure is the one checked against `name`
-    flags = _flags(mech, _point(claim, market, [{"figure": "-16%", "source_ref": name}]))
+    # the same footnote on the "16%" instead: that figure is the one checked against `name`
+    flags = _flags(mech, _point(claim, market, [{"figure": "16%", "source_ref": name}]))
+    assert [f.split("'")[1] for f in flags if f.startswith("UNTRACEABLE")] == ["16"]
+    assert f"[cited to {name}]" in next(f for f in flags if f.startswith("UNTRACEABLE"))
+    # (RG-D1) "fell -16%" is no rise of 16%: cited to the market's +16% return, it is flagged
+    flags = _flags(mech, _point("SMPL fell -16% while volume ran to 16M shares", market))
     assert [f.split("'")[1] for f in flags if f.startswith("UNTRACEABLE")] == ["-16"]
 
 
