@@ -1,6 +1,6 @@
 # Dossier — ELI LILLY & Co (NYSE: LLY)
 
-_November 3, 2026 · extraction 2026-11-03.ex-lease-share-cut · layers refreshed to 2026-11-10.driver-text-filed_
+_November 3, 2026 · extraction 2026-11-03.ex-lease-share-cut · layers refreshed to 2026-11-12.transcript-runs-cut-to-twelve-words_
 
 # Brief — first cut
 
@@ -165,7 +165,7 @@ _Reproducibility: all 5 of 5 draws on this build returned the same lean._
 - Lilly holds entrenched share: approximately 6 out of 10 total and more than 7 out of 10 injectable U.S. obesity prescriptions were for a Lilly medicine in Q3, evidencing a durable competitive position. [9]
 - The addressable market is early, not saturated: U.S. obesity incretin total prescriptions grew 82% in Q3, so the reinvestment runway is a market-expansion story rather than a share-rotation one. [9]
 - The oral GLP-1 opens a second leg: approximately 4 in 10 patients starting an obesity medicine chose Foundayo and new Foundayo patients in Q3 doubled from the previous quarter. [9]
-- Access expansion is a fresh demand channel: since the July 1 launch more than 0.5 million people have filled a prescription through the Medicare GLP-1 Bridge program, with about 80% of those treated being incretin-naive. [9]
+- Access expansion is a fresh demand channel: since the July 1 launch more than 0.5 million people have filled… through the Medicare GLP-1 Bridge program, with about 80% of those treated being incretin-naive. [9]
 - Consensus embeds a long EBITDA ramp — FY27E $56,742M rising to FY33 $103,325.5M median — so the price is paying for a multi-year runway the forward multiple ladder prices down from NTM 23.96x to FY33 13.11x. [29]
 - Guidance has been serially raised during the year — revenue outlook moved from $80–83B (Feb) to $85–87B (Aug) to $91–92B (Oct) — a management-delivery signal that the committed trajectory is being beaten. [30]
 - Revenue has compounded from $19,974M (FY17) to $86,462M LTM and EBITDA from $6,264M to $46,489M, with Q3 Sep-30-2026 revenue up +38.6% YoY — a runway-not-trailing pattern grounded in volume-led growth, not price. [31]
@@ -666,6 +666,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
   - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
+  - 2026-11-12 · synthesis — transcript-run-cut at 2026-11-12.transcript-runs-cut-to-twelve-words
 - **Price store:** `busy-goldstine-88c81c` · reaching 2026-11-02
 - **Panel age:** oldest panel 4d old — 2026-10-30 (valuation.implied_expectations.tev_as_of), against a 2026-11-03 build
 - **Consensus age:** consensus 4d old (2026-10-30, valuation.implied_expectations.multiples_as_of) — within the ceiling

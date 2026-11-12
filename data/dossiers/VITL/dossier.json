@@ -9245,7 +9245,7 @@
         "cited": true
       },
       {
-        "claim": "Distribution gains are on the shelf and delivering record share: average selling TDPs are now above 175 and the name posted a record 7.2% dollar share and 2.3% volume share of shell eggs in Circana MULO+ at the end of Q3.",
+        "claim": "Distribution gains are on the shelf and delivering record share: average selling TDPs are now above 175 and the name posted a record 7.2% dollar share and 2.3% volume share of shell eggs in Circana MULO+ at the end… Q3.",
         "source_ref": "CIQ transcript: Vital Farms, Inc., Q3 2026 Earnings Call, Nov 03, 2026.rtf",
         "figures": [
           {
@@ -13270,6 +13270,14 @@
       "writer": "driver-facts-pass",
       "layers": [
         "mechanical.operating_drivers"
+      ]
+    },
+    {
+      "date": "2026-11-12",
+      "extraction_version": "2026-11-12.transcript-runs-cut-to-twelve-words",
+      "writer": "transcript-run-cut",
+      "layers": [
+        "synthesis"
       ]
     }
   ],
