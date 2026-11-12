@@ -157,7 +157,7 @@ def test_assembly_actually_writes_the_field() -> None:
 
     si = mech._stock_info(
         record, store, types.SimpleNamespace(), bundle,  # type: ignore[arg-type]
-        dt.date(2026, 8, 3), _P(909.4, source_ref="CIQ"), today=dt.date(2026, 8, 3))
+        dt.date(2026, 8, 3), _P(909.4, source_ref="CIQ"))
 
     assert si.market_cap_as_of == dt.date(2026, 6, 25), (
         f"assembly did not carry the cap's vintage onto StockInfo (got {si.market_cap_as_of!r}) — "

@@ -8380,15 +8380,23 @@ def test_finalist_carries_ranker_screen_cap_for_benchmark_fallback() -> None:
     assert fin.market_cap_screen == pytest.approx(rows["IT"]["market_cap"])  # threaded, not dropped
 
 
-def test_price_stale_note_fires_only_past_the_cadence() -> None:
-    """Assembly-time staleness guard: a last stored close >7 calendar days behind TODAY (assembly
-    instant, not the reference date) → loud note naming the gap; at/inside the cadence → None."""
-    today = date(2026, 7, 21)
-    note = dm._price_stale_note(date(2026, 7, 8), today)
-    assert note is not None and "PRICE STALE AT ASSEMBLY" in note and "13 calendar days" in note
-    assert dm._price_stale_note(date(2026, 7, 14), today) is None  # exactly the cadence → fresh
-    assert dm._price_stale_note(date(2026, 7, 21), today) is None
-    assert dm._price_stale_note(None, today) is None
+def test_price_stale_note_fires_only_past_the_cadence(capsys: pytest.CaptureFixture[str]) -> None:
+    """The page's note: a last stored close >7 calendar days before the page's REFERENCE DATE → a
+    note naming the gap and that date; at/inside the cadence → None. CHANGED DELIBERATELY
+    (operator, 2026-11-12: "Yes, fix it"): it was counted to TODAY, and the page's note reaches the
+    synthesis request. The assembly-time check against today is a stderr warning only."""
+    ref = date(2026, 7, 21)
+    note = dm._price_stale_note(date(2026, 7, 8), ref)
+    assert note is not None and "PRICE STALE AT THE REFERENCE DATE" in note
+    assert "13 calendar days before the page's reference date 2026-07-21" in note
+    assert "assembly" not in note.split("—")[0]
+    assert dm._price_stale_note(date(2026, 7, 14), ref) is None  # exactly the cadence → fresh
+    assert dm._price_stale_note(date(2026, 7, 21), ref) is None
+    assert dm._price_stale_note(None, ref) is None
+    dm._warn_stale_at_assembly("X", date(2026, 7, 8), date(2026, 7, 21))
+    assert "WARNING X: PRICE STALE AT ASSEMBLY" in capsys.readouterr().err
+    dm._warn_stale_at_assembly("X", date(2026, 7, 14), date(2026, 7, 21))
+    assert capsys.readouterr().err == ""
 
 
 def test_committed_it_dossier_capband_benchmark_and_fresh_price() -> None:
