@@ -1,7 +1,7 @@
 ---
 status: recorded
 date: 2026-11-12
-prs: []
+prs: [1035]
 supersedes:
 superseded-by:
 ---
@@ -50,9 +50,8 @@ defaults as the coordinator's keeps the line CLAUDE.md draws: the operator appro
 runs, and a default adopted under a delegation is not one of those. Item (a) is a paid run and item
 (b) moves a scoring run that writes the ledger, so both went to the operator, not into a default.
 
-**THE SOURCES** the coordinator used for the defaults, as its tracker names them. The tracker
-records no links. The first three are linked here because each name points at one document. The
-other two are not, because their names do not:
+**THE SOURCES** the coordinator used for the defaults, as its tracker names them, with the links
+the coordinator gave in review:
 - dbt's `severity` test config, warn versus error
   (<https://docs.getdbt.com/reference/resource-configs/severity>). Read for defaults 1 and 2: a
   check starts as a warning and is promoted only on a clean record.
@@ -62,9 +61,14 @@ other two are not, because their names do not:
 - Claude Code's settings documentation (<https://code.claude.com/docs/en/settings>), and its
   convention that `.claude/settings.local.json` is personal and not checked in. Read for default 6:
   a per-machine file stays out of git.
-- "the lockfile article" on pinning dependencies, for default 7. No link is recorded.
-- the reports of git repositories corrupted in iCloud-synced folders. They are the background to
-  (b), because `/Users/mac` keeps this repo in a folder iCloud offloads. No link is recorded.
+- Mergify, *Stop Lying to Your Dependency Resolver: The Real Rules for Python Dependency
+  Management*
+  (<https://mergify.com/blog/stop-lying-to-your-dependency-resolver-the-real-rules-for-python-dependency-management>).
+  Read for default 7: an application pins its dependencies with `==` and uses a lockfile.
+- two reports of git repositories damaged in cloud-synced folders
+  (<https://nolongerset.com/version-control-and-cloud-drives/>,
+  <https://hackernoon.com/a-side-effect-of-storing-a-git-repository-in-icloud-drive>). They are
+  the background to (b), because `/Users/mac` keeps this repo in a folder iCloud offloads.
 
 **HOW VERIFIED.** The quotes are the coordinator's, relayed to S1 on 2026-11-12 and matched to the
 coordinator's tracker, which records both quotes verbatim. Nothing in this change runs code. The
