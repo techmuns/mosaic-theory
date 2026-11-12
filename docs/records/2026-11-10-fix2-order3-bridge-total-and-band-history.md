@@ -77,3 +77,8 @@ superseded-by:
   (no quarterly export, no part valued) is still screened by the band alone. Falsifier: a real
   export whose re-read is a unit step from its figure.
 - **Extraction version** `2026-11-10.bridge-total-and-band`; the drift pins are re-pinned.
+## Amendments
+
+- **2026-11-12 — what this PR's next build changes, from A's impact sweep** (operator ruling 3, 2026-11-12, verbatim: "Yes, as appended amendments (Recommended)"). The body above is unchanged. A re-ran this PR with `vinci.impact`: base code against head code on the same inputs, which shows what each page's NEXT build would change (A on #1004, 2026-11-12 09:51Z, 40 of 49 PRs covered: https://github.com/techmuns/mosaic-theory/issues/1004#issuecomment-6820345324).
+  - **#960:** the bridge note reaches 27 pages, not 13. The body says "13 of the 26 committed bridges".
+  - The figure is A's, from that comment; S4 did not re-run the sweep. The sweep's own record, with all 49 rows (base, head, coverage, moves and each body's claim), follows.
