@@ -31,7 +31,7 @@ from pathlib import Path
 import pytest
 
 from vinci.dossier import driver_extract, flags, synthesis
-from vinci.evals.compare import Registration
+from vinci.evals.compare import BARRED_TARGETS, Registration
 from vinci.graph import llm
 from vinci.verbatim import comparison_key
 
@@ -163,8 +163,13 @@ def g_the_gemini_config_is_inert() -> None:
 
 
 def _registers_as_a_target(metric: str) -> bool:
-    """Whether `register` takes `metric` as a target. A ValueError is the refusal; any other
-    error means `Registration`'s shape moved, and this helper must follow it."""
+    """Whether `register` takes `metric` as a target. Two refusals: `register` refuses a target
+    in `BARRED_TARGETS` before it builds anything (order 8, RG-D13), and `Registration` refuses
+    an unknown one with a ValueError; any other error means `Registration`'s shape moved, and
+    this helper must follow it. A barred target still CONSTRUCTS, so #927's registration loads as
+    history, which is why the constructor alone no longer answers the question."""
+    if metric in BARRED_TARGETS:
+        return False
     try:
         Registration(base_ref="a", cand_ref="b", transforms=(), pages=("BURL",), draws=2,
                      targets=(metric,), held_out=(), scorer="s")
@@ -180,6 +185,7 @@ def h_runbooks_names_m_gap_as_a_target_exactly_when_register_takes_it() -> None:
     step1 = _flat(step1[:step1.index("\n2. ")])
     assert "today only `M-LABEL`" not in step1
     assert ("`M-GAP` joined it" in step1) == _registers_as_a_target("M-GAP")
+    assert ("barred as a target" in step1) == (not _registers_as_a_target("M-GAP"))
     assert _registers_as_a_target("M-LABEL") and "`M-LABEL`" in step1
 
 
