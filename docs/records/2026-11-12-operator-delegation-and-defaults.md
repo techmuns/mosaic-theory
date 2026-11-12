@@ -18,7 +18,10 @@ because they carry different authority.
      failed"). The run comes after order 8 merges.
    - **(b)** VRRM's 2026-12-16 scoring runs on B's machine (`/Users/work`) after a fresh price
      refresh, instead of the operator's Mac (`/Users/mac`). This replaces the 2026-11-11 ruling in
-     STATE §5.0 row 38 that named `/Users/mac`'s store.
+     STATE §5.0 row 38 that named `/Users/mac`'s store. The machine can change because the run
+     re-seeds the ledger from the committed snapshot, whose export matched byte for byte in the
+     first rehearsal (`docs/records/2026-11-11-vrrm-run-monthly-rehearsed-on-a-copy.md`), so, in
+     row 38's words before this change, "only the Polygon call count differs".
    - **(c)** RUNBOOKS §o ("cross-setup validation") joins CLAUDE.md's loop list. This change makes
      that edit.
 
@@ -78,6 +81,6 @@ operator approved $35, and the operator's figure governs.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.** Each default is reversible and each is a default, not a
 ruling. If the operator reverses one, the PR that built it is reverted or amended, and a new record
-says so. Two defaults make the corpus check more than a guard would: default 1 promotes nothing
-until 27 clean pages show it is safe, and default 9 moves R4's inputs, so S3's PR shows that run
-before it merges.
+says so. Two defaults rest on a run over the whole corpus. Under default 1 no check turns HARD
+until it has a clean record on all 27 pages. Default 9 moves R4's inputs, a decision-path change,
+so S3's PR shows its run on the 27 pages before it merges.
