@@ -319,3 +319,139 @@ def test_negative_an_sec_refusal_still_stops_the_run(tmp_path: Path) -> None:
     http.get_json = refusing  # type: ignore[method-assign,assignment]
     with pytest.raises(SecRateLimitedError):
         _resolve(tmp_path, _Sec(), http=http)
+
+
+# --- PR round 2 (the coordinator): the third consumer, the enrichment's foreign-filer check -----
+# `is_foreign_private_issuer` returned None both for "no periodic report by then" and for a walk
+# that ended at a page it could not read, and the enrichment step reads `bool(...)`: a 20-F filer
+# was recorded as not foreign, its annual report was never asked for, and the candidate read "no
+# verified US listing — no annual report to read" with the page named nowhere.
+#
+# REAL DATA, RE-CUT: ASML's authentic submissions rows and ticker-map lines from the frozen
+# J.P. Morgan subset (`tests/fixtures/theme_intelligence/jpm_software_shock`: ASML on Nasdaq, ASMLF
+# OTC). With the walk short, the resolution is LISTED_EQUITY with no verified listing, so neither
+# branch that reads the annual report is taken. Its rows are cut where EDGAR cuts a heavy
+# filer's: the recent page keeps those filed after 2025-03-05 (the 20-F of 2026-02-25, after
+# the 2026-02-09 as-of), and page -001 holds the other 30, listed as EDGAR lists a page (count,
+# oldest and newest row). Its
+# newest is the 20-F of 2025-03-05. The rest is the enrichment pipeline of
+# `tests/test_theme_intelligence_enrichment_basis.py`, its model a stand-in naming ASML.
+
+ASML_CIK = "0000937966"
+ASML_PAGE = "CIK0000937966-submissions-001.json"
+ASML_20F_2025 = ARCHIVE_DOC.format(cik=937966, acc="000093796625000009", doc="asml-20241231.htm")
+
+
+def _asml_cut() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    from tests.theme_intelligence_support import JPM_DIR
+    sub = json.loads((JPM_DIR / "sec_subset.json").read_text())["submissions"][ASML_CIK]
+    keys = [k for k, v in sub.items() if isinstance(v, list)]
+    rows = list(zip(*(sub[k] for k in keys), strict=True))
+    i = keys.index("filingDate")
+    recent = {k: [r[j] for r in rows if r[i] > "2025-03-05"] for j, k in enumerate(keys)}
+    older = {k: [r[j] for r in rows if r[i] <= "2025-03-05"] for j, k in enumerate(keys)}
+    listing = {"name": ASML_PAGE, "filingCount": len(older["accessionNumber"]),
+               "filingFrom": min(older["filingDate"]), "filingTo": max(older["filingDate"])}
+    return recent, older, listing
+
+
+class _AsmlSec:
+    """The frozen J.P. Morgan subset, with ASML's document re-cut (above) and its page -001 as
+    ``page`` says (``ok`` or ``404``); ASML's 2025 20-F as a document the basis check can read."""
+
+    def __init__(self, page: str) -> None:
+        from tests.theme_intelligence_support import JPM_DIR, FrozenSecHttp
+        self.frozen = FrozenSecHttp(JPM_DIR)
+        self.page = page
+        self.recent, self.older, self.listing = _asml_cut()
+        self.read: list[str] = []
+
+    def get_json(self, url: str, ttl_seconds: float | None = None) -> Any:
+        from vinci.netcache import HttpNotFoundError
+        if url == SUBMISSIONS.format(cik=ASML_CIK):
+            return {"filings": {"recent": self.recent, "files": [self.listing]}}
+        if url == SUBMISSIONS_PAGE.format(name=ASML_PAGE):
+            self.read.append(url)
+            if self.page == "404":
+                raise HttpNotFoundError(f"Non-retryable 404 from {url}: not served")
+            return self.older
+        return self.frozen.get_json(url, ttl_seconds)
+
+    def get_text(self, url: str, ttl_seconds: float | None = None) -> str:
+        if url == ASML_20F_2025:
+            self.read.append(url)
+            return "<p>ASML annual report, read for the test.</p>"
+        return self.frozen.get_text(url, ttl_seconds)
+
+    def fetched_at(self, url: str, **_kw: Any) -> float | None:
+        return None
+
+
+def _asml_candidate(tmp_path: Path, page: str) -> tuple[Any, _AsmlSec]:
+    """The enrichment candidate for ASML, through the real pipeline."""
+    from tests.test_theme_intelligence_enrichment import LINES, StandIn
+    from tests.test_theme_intelligence_enrichment_basis import STEPS
+    from tests.theme_intelligence_support import (
+        JPM_AS_OF,
+        Hypo,
+        claim,
+        extraction,
+        hyp,
+        ingest,
+        mention,
+    )
+    from vinci.theme_intelligence.budget import GuardedClient
+    from vinci.theme_intelligence.config import load_sources, load_taxonomy
+    from vinci.theme_intelligence.pipeline import Pipeline
+    from vinci.theme_intelligence.schemas import RunStatus
+
+    http = _AsmlSec(page)
+    pipe = Pipeline(tmp_path / "ti", sources=load_sources(), taxonomy=load_taxonomy(), client=None,
+                    resolver=SecResolver(tmp_path / "sec", http=http),  # type: ignore[arg-type]
+                    review=False)
+    pipe.start_run("ingest", as_of=JPM_AS_OF)
+    art = Hypo("enrich-asml", "Test Publisher", JPM_AS_OF, [("paragraph", t) for t in LINES])
+    x = extraction(
+        [claim("c1", "b001", LINES[0].rstrip("."), "Micron HBM revenue up 40%",
+               metric="HBM revenue growth", value=40, value_text="40%", unit="%",
+               period="the quarter")],
+        [hyp("h1", "HBM demand lifts memory makers", node="ai_infrastructure.memory",
+             mechanism="pricing_cycle", supporting=["c1"], step_list=STEPS,
+             affected=[("Micron", "potential_beneficiary")])],
+        mentions=[mention("Micron", "b001", "Micron's HBM revenue rose 40%", ticker="MU")])
+    ingest(pipe, art.doc(), x, as_of=JPM_AS_OF, publisher=art.publisher)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    pipe.client = GuardedClient(StandIn({"companies": [
+        {"name": "ASML Holding", "ticker": "ASMLF", "exchange": "OTC", "direction": "benefit",
+         "step_id": "s03.0", "business": "semiconductor lithography equipment maker",
+         "exposure": "More memory capacity needs more lithography tools.",
+         "revenue_line": "lithography systems", "revenue_model": "product_sales"}]}),
+        pipe.guard)
+    run, done = pipe.run_enrich(as_of=JPM_AS_OF)
+    assert run.status is RunStatus.SUCCEEDED, done
+    (t,) = pipe.store.theses()
+    (es,) = pipe.store.enrichments(t.thesis_id)
+    (c,) = [c for c in es.candidates if c.name == "ASML Holding"]
+    return c, http
+
+
+def test_the_enrichment_names_the_page_its_foreign_filer_check_could_not_read(
+        tmp_path: Path) -> None:
+    """Before (04216aa0): page -001 404s, the foreign-filer check reads None, `bool` makes it
+    False, and the candidate reads "no verified US listing — no annual report to read"."""
+    c, http = _asml_candidate(tmp_path, "404")
+    assert c.listings == () and not c.foreign_filer  # no verified listing, no foreign check
+    assert ASML_20F_2025 not in http.read
+    assert c.basis_note.startswith(f"older submissions page {ASML_PAGE} for CIK{ASML_CIK} could "
+                                   f"not be read"), c.basis_note
+    assert "no verified US listing" not in c.basis_note
+
+
+def test_negative_a_readable_older_page_with_a_20f_still_reads_the_annual_report(
+        tmp_path: Path) -> None:
+    """Page -001 read: its 20-F of 2025-03-05 makes ASML a foreign filer, and that 20-F is the
+    annual report the basis is checked against."""
+    c, http = _asml_candidate(tmp_path, "ok")
+    assert c.foreign_filer is True
+    assert ASML_20F_2025 in http.read
+    assert c.basis_source == "20-F filed 2025-03-05 (0000937966-25-000009)"

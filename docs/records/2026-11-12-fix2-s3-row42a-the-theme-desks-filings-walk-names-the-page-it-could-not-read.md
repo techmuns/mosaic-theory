@@ -31,6 +31,16 @@ superseded-by:
     "no … filing".
   - The resolution's note and every UNVERIFIED listing carry it, the path an unreadable cover
     page already takes. So does the enrichment candidate's basis note.
+  - **The third consumer, the foreign-filer check (PR round 2, the coordinator):**
+    `is_foreign_private_issuer` reads None both for "no periodic report by then" and for a walk
+    that stopped short, and the enrichment step reads it as `bool(...)`.
+    - So a 20-F filer was recorded as not foreign, its annual report was never asked for, and
+      the candidate read "no verified US listing — no annual report to read", with the page
+      named nowhere.
+    - Now the resolver exposes the walk's reason (`filings_unread`), and the enrichment step
+      states it in the candidate's basis note in place of that line.
+    - `foreign_filer` stays a bool, False when the check could not finish. It is a schema field
+      the market step and the cards read, and the note now says why.
 - **A page is held one day, as its document is (`_ONE_DAY`).** It is checked against the
   document's listing of it by `_page_mismatch`, the EDGAR client's #878 check.
   - The check is restated here because the theme desk may import only shared plumbing
@@ -52,10 +62,10 @@ registrant, made from a page that was never read.
 - **(1) Tests on Gartner's committed document and page -001** (#878's fixtures), through a real
   `CachedHttp` served by a mock transport. The document's recent page begins 2021-12-02, so as of
   2021-09-01 the walk must read -001.
-  - `tests/test_theme_intelligence_older_pages.py` has 15 tests, 2 of them added in review
-    round 0. 11 fail on main `53e5f26e`, one of them the parity test, whose function main does
-    not have. The other 4 pass on both: three negative pins, and the round-0 pin on the order of
-    the name check, which main had right.
+  - `tests/test_theme_intelligence_older_pages.py` has 17 tests: 2 added in review round 0 and
+    2 in PR round 2. 12 fail on main `53e5f26e`, one of them the parity test, whose function main
+    does not have. The other 5 pass on both: four negative pins, and the round-0 pin on the order
+    of the name check, which main had right.
   - On main a 404 on -001 read: "listing NOT point-in-time verified as of 2021-09-01: no periodic
     filing on or before 2021-09-01 in the SEC submissions index". Gartner had filed a 10-Q on
     2021-08-03, on that page.
@@ -99,6 +109,15 @@ registrant, made from a page that was never read.
   - NO CHANGE: the fresh walk reads every page fresh, including those that agreed. A re-cut
     moves rows from the newest end, so the newer pages are exactly the ones a fresh document
     re-cuts.
+- **PR round 2** (the coordinator's review of `04216aa0`, MEDIUM, FIXED behind a test that failed
+  first): the foreign-filer consumer above. The test uses ASML's authentic rows and ticker-map
+  lines from the frozen J.P. Morgan subset, re-cut so its recent page keeps only the 20-F of
+  2026-02-25 and page -001 holds the other 30, listed as EDGAR lists a page.
+  - With -001 a 404, the candidate's basis note names it. On `04216aa0` it read "no verified US
+    listing — no annual report to read".
+  - Its negative: with -001 read, ASML's 20-F of 2025-03-05 makes it a foreign filer, and that
+    20-F is the annual report its basis is checked against.
+  - No live instance: 0 of 261 measured pairs walk past their recent page (BOUNDARY).
 - **Two existing tests changed their fixtures.** Each served a page whose listed `filingFrom`
   was not its oldest row: 2024-01-01 for a page from 2025-02-26, and 2010-01-01 for one from
   2019-02-27. EDGAR does not serve that shape: #878 measured 35 of 35 same-run pairs listing the

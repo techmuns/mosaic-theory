@@ -441,6 +441,13 @@ class SecResolver:
             return None
         return max(periodic)[1] in _FOREIGN_FORMS
 
+    def filings_unread(self, cik10: str, as_of: date) -> str:
+        """Why the registrant's filings walk to `as_of` ended short — the page it could not read,
+        named — or "" when it did not (#1024 round 2). The foreign-filer check reads None both
+        for "no periodic report by then" and for a walk that stopped at such a page; a reader
+        that would otherwise state the first states this instead."""
+        return self._filing_rows(cik10, as_of)[1]
+
     def _filing_rows(self, cik10: str,
                      as_of: date) -> tuple[list[tuple[str, date, str, str]], str]:
         """(form, filing date, accession, primary document) — recent first, then older pages
