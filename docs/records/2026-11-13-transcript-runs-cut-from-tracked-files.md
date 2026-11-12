@@ -2,7 +2,7 @@
 id:
 status: shipped
 date: 2026-11-13
-prs: []
+prs: [1046]
 supersedes:
 superseded-by:
 ---
@@ -114,9 +114,11 @@ from the Drive mirror.
     narrow edge set, KD not ceding to SEC, and no scan.
   - CORPUS BEFORE SYNTHETIC: on #1036's parent `68bd4b33` it finds the LLY, VITL and WERN runs
     #1036 cut, and at head nothing in those files.
-- **The guard on this Mac, at head** (its own boundary print):
+- **The guard on this Mac, at `17f4e3be`** (main `98707f29` plus this branch; its own boundary
+  print):
   - calls: 91 read, 19 duplicate files by sha256, 0 unreadable;
-  - tracked files: 3,084 scanned; skipped: 680 binary (a NUL byte), 1 not UTF-8;
+  - tracked files (and untracked, not ignored): 3,095 scanned; skipped: 680 binary (a NUL byte),
+    1 not UTF-8;
   - runs of 13+ words shared with a call: 113 (294 distinct windows);
   - excused by an SEC document in the cache: 104;
   - excused by a KD export: 9 (BRBR's driver row and BURL's two, on each page and its mirror, and
@@ -147,7 +149,23 @@ from the Drive mirror.
   - the six-record count.
   Each new pin fails on the code before its fix. The redaction rule's "any span" is recorded below
   as accepted risk.
-«VERIFIED3»
+- **Gate.**
+  - `ruff check vinci tests` and `mypy --strict vinci` (218 files): clean.
+  - The full `nice pytest -m "not network"`, CI-like (a worktree with no CIQ folder and no cache, as
+    CI has): exit 0 at `17f4e3be`, no failure and no error, 1,198 s. The guard and its three call-reading pins skip, saying so.
+  - Linked mode: `tests/test_driver_facts.py` fails the same two tests on main `407dc809` and on
+    this branch. Both read the operator's local PARR quarterly Financials, which CIQ mislabelled.
+- **Cross-setup validation** (`python -m vinci.impact run`, base `98707f29`, head `17f4e3be`, $0,
+  vendor pulls refused):
+  - 0 of 438 tests fail on base code and pass on head; 0 fail at head;
+  - pages built 26 of 27 (PARR refused at both refs by that mislabelled export), 0 move;
+  - 0 of 26 synthesis requests differ, and 0 of 6 frozen panel pages, so the row-53 panel check is
+    not owed;
+  - 0 of 27 committed pages re-render differently, 0 frontend files differ;
+  - the ledger, scoring report and monitor are identical at both refs.
+  The tool's defaults point at the git common dir. In the `~/dev` clone that dir has no `data/` or
+  `.env`, so `--ciq-root`, `--cache-root` and `--env-file` were named. Without them, 0 of 27 pages
+  build.
 
 **BOUNDARY.** 
 - **Words** are the guard's: split at whitespace, at every dash form and at a slash; edge marks
@@ -156,7 +174,7 @@ from the Drive mirror.
 - **Calls:** the store `data/manual/ciq` and its `ciq-archive/`, on this Mac, 2026-11-13. That is
   110 call files, 91 distinct; one WERN Q1 2026 call left the Drive folder during the session.
 - **Tracked files:** `git ls-files --cached --others --exclude-standard` at this branch's head:
-  3,765 files, of which 3,084 are text.
+  3,776 files, of which 3,095 are text (at `17f4e3be`).
 - **SEC cache:** `data/cache/sec`, 18,757 files, all local.
 - **KD:** 63 exports in the store and archive. One GOOGL `.xls` is read by its cells.
 - **The audit:** main `407dc809`, 3,080 text files, and the 361 call files it read from across the
