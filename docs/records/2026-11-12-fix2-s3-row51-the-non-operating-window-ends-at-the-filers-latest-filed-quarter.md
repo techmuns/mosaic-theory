@@ -2,7 +2,7 @@
 id: 2026-11-12-fix2-s3-row51-nonop-window-anchored-at-latest-filed-quarter
 status: shipped
 date: 2026-11-12
-prs: [1037]
+prs: [1038]
 supersedes:
 superseded-by:
 ---
