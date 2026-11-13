@@ -49,8 +49,9 @@ superseded-by:
 - **Where pytest's time goes.** Measured on one process locally (Apple M-series), at main
   `6a5a28f5`, in a venv installed from the lock. 11,952 tests summed 736 s, inside 760 s of wall
   time.
-  - **Most of it is CPU in this process.** user 586 s plus sys 100 s of 766 s wall. The run is
-    compute-bound, not waiting, so it divides across cores.
+  - **Most of it is CPU.** user 586 s plus sys 100 s of 766 s wall, for the pytest process and
+    the children it waited on together (`/usr/bin/time`). The run is compute-bound, not waiting,
+    so it divides across cores.
   - **No few tests to fix.** The slowest is 28.7 s
     (`test_footnote_every_figure.py::test_the_gd6_draw_is_caught_the_same_with_each_figure_footnoted`).
     The slowest 40 tests sum 234 s (31.5%), and the 128 tests over 1 s sum 363 s (49%).
@@ -60,20 +61,50 @@ superseded-by:
     - `python` children: 99.7 s, 243 of them, in 86 tests;
     - `git`: 93.3 s, 5,077 calls, in 521 tests;
     - `node`: 11.4 s, 165 calls, in 134 tests;
-    - LibreOffice 9.4 s and Brave 4.1 s, local only: CI has neither, and those tests skip there.
+    - LibreOffice 9.4 s and Brave 4.1 s, in four tests. In gate run 43424477388's log (main
+      `6a5a28f5`), three of the four skip on CI: the two Brave tests ("needs a headless Chromium")
+      and `test_vote_rule_confirmation.py:173`, the 8.8 s one ("no licensed CIQ folder"). That
+      run counted 11,270 passed and 671 skipped, against 11,274 and 667 here.
   - **Committed artifacts: 3,174 tests (255 s, 34.7%) open a file under `data/`, `frontend/`,
     `scenarios/`, `docs/` or another committed area** (the same plugin over `open`).
     `data/dossiers/` alone is read by 1,426 tests summing 158.5 s. These tests overlap the
     child-process ones, so the two shares do not add.
 - **So the gain is in spreading the suite, not trimming it.** Two thirds of the time is a long
   tail of ordinary tests; no handful of slow ones accounts for it.
+- **The theme desk's share** (coordinator B asked for it; nothing was removed). At the serial run
+  of `35c35cd6`'s tree, the 73 files `tests/test_theme_intelligence*.py` hold 27,236 lines
+  (27,826 with `tests/theme_intelligence_support.py` and `_stress.py`) of 173,318 in
+  `tests/*.py`. They hold **1,468 of 12,066 tests (12.2%)**, 1,463 passing and 5 skipped, and
+  **101 s of the 722 s summed (13.9%)**. The slowest three files are `_upload` 17.7 s,
+  `_older_pages` 13.9 s and `_desk` 12.9 s.
+- **Tests for retired features** (coordinator B, for the operator's question). Searched:
+  - every module the code retirements deleted from `vinci/`, `scripts/` and `frontend/`: R1 #905,
+    R2 #908, R3 #910, `vinci/ciq` (a71b9f67), the three uncalled modules (5649a650), and the two
+    refresh scripts (#746). That is 20 dotted module names, `from … import` forms and file paths,
+    over the 511 `tests/*.py` files.
+  - **No test exercises deleted code.** Ten files mention one. Each mention is a history comment or
+    a pin that the module is gone: `test_retired_modules`, `test_vinci_ciq_removed`,
+    `test_scripts_call_current_signatures`.
+  - **One test pins live code for a retired caller.**
+    `test_submissions_memo.py::test_the_memo_survives_concurrent_use_of_one_client`, and the lock
+    it pins in `vinci/edgar/client.py:547`, both give `vinci/themes/exposure.py` (deleted in R2)
+    as the caller that shares one `EdgarClient` across threads. None was found now. Of the five
+    `ThreadPoolExecutor` users in `vinci/` and `scripts/`, the dossier cohort builds a client per
+    call. The lock still guards the client; only its stated reason is stale.
+  - **Retired names.** AORT (2026-11-09) and MVST (2026-11-13) have no committed page.
+    - 30 test ids name AORT: 25 pass on frozen pages, 5 skip.
+    - 31 name MVST: 27 pass, 4 skip.
+    - The skips wait for a CIQ bundle (`test_consensus_rows`, `test_consensus_parity`,
+      `test_guidance_metric_coverage`, `test_no_backfill`). MVST's record says its CIQ folder is
+      gone, so its CIQ-keyed cases can no longer run on any machine. AORT's record does not say:
+      unverified.
 
 **HOW VERIFIED.**
 - **Serial against parallel, test by test.** Each run wrote a junit file, compared by test id and
   outcome (passed, skipped, xfailed, failed).
-  - At this branch's head (main `81f97600` plus this change), one process:
+  - At `35c35cd6` (main `81f97600` plus this change's first commit), one process:
     **11,388 passed, 667 skipped, 11 xfailed** in 740 s.
-  - Four parallel runs at the same head, every one **11,388 passed, 667 skipped, 11 xfailed**,
+  - Four parallel runs of the same tree, every one **11,388 passed, 667 skipped, 11 xfailed**,
     the same test ids with the same outcomes as the serial run and as each other:
 
     | run | wall |
@@ -86,6 +117,10 @@ superseded-by:
     The Mac was shared with other sessions' runs (load average 16 to 23 on 4 performance and 4
     efficiency cores), which is why the walls spread and why CI chose the worker count.
     Work-stealing was no faster, so the default distribution stays.
+  - `625f8ebb` then changed `test_cohort_anchoring.py`'s helper (pre-PR review). At `25399521`,
+    with this record and the STATE line added, one `-n auto` run gave **11,389 passed, 667
+    skipped, 11 xfailed**. The one new test id is `test_record_hygiene`'s case for this record;
+    every other id has the serial run's outcome.
   - At main `6a5a28f5`, before these fixes: two runs on one process, in the shared venv
     (anthropic 0.112.0) and in the lock venv (2.6.0), and one at `-n 8`. All three gave
     11,274 passed, 667 skipped, 11 xfailed, every test the same.
@@ -95,7 +130,7 @@ superseded-by:
   findings were noise: `shutil.rmtree`'s directory-relative unlinks of temporary folders, and an
   unlink of a symlink in `test_snapshot_vintage.py`'s own staged copy, read through to its target.
   - A file-time check finds what a child process writes, which the plugin cannot see. After every
-    run (serial or parallel, at this head) no file in the checkout outside the caches is newer
+    run (serial or parallel, of either tree) no file in the checkout outside the caches is newer
     than the run's start. Before the fixes, `scenarios/SMPL.json` and the 14 `frontend/scenarios/`
     files were.
   - Outside the checkout: the SEC pace file is already one per worker (`tests/conftest.py` puts it
@@ -111,7 +146,7 @@ superseded-by:
 - **Local timings:** one Mac, 8 cores (4 performance, 4 efficiency), shared with other sessions,
   wall time from `/usr/bin/time`. They place the time; CI measures the gain.
 - **Counts:** `pytest -m "not network"`, every file under `tests/`; 39 network tests deselected
-  in each run. At `6a5a28f5` 11,952 outcomes; at `81f97600` plus this change 12,066.
+  in each run. At `6a5a28f5` 11,952 outcomes; at `35c35cd6` 12,066; at `25399521` 12,067.
 - **The breakdown's shares** are of summed per-test time (setup, call and teardown) at
   `6a5a28f5`, from one serial run.
 
