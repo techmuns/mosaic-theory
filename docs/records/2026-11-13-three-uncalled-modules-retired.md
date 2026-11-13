@@ -2,7 +2,7 @@
 id:
 status: shipped
 date: 2026-11-13
-prs: [1052]
+prs: [1056]
 supersedes:
 superseded-by:
 ---
@@ -19,7 +19,7 @@ before deletion (the proof is below, per candidate). A module with any live call
 | `vinci/rank/cause.py` (126 lines), with the ranker's read of `cause_class` | **removed** | its one caller was `vinci rank --cause-file`, never fed: all 343 rows of the committed queue read `unclassified` |
 | `vinci/dossier/tagger.py` (159 lines) | **removed** | no caller in code; tests only |
 | `vinci/edgar/segments.py` (335 lines) | **removed** | no caller since #910 retired the monitor panels (2026-11-05); `segment_facts.py` reads segment profit from the XBRL instance |
-| `vinci/graph/extract.py`, `vinci/graph/judge.py` | kept | `vinci graph-coverage` and `vinci graph-rejudge` write `data/graph_coverage.json` (kept by the operator, #905); the judge was fixed 2026-11-10 (#937, RBC-D9, RG-D16), which proposes a paid re-judge |
+| `vinci/graph/extract.py`, `vinci/graph/judge.py` | kept | they have live callers, so the no-caller rule keeps them: `vinci graph-coverage` and `vinci graph-rejudge` write `data/graph_coverage.json` (kept by the operator, #905). The judge was fixed 2026-11-10 (#937, RBC-D9, RG-D16), and `d1a91f0a` re-judged the committed map once under the operator's $3 cap: 339 calls, $2.61 |
 | `vinci/evals/judge.py` | kept | excluded by A: `python -m vinci.evals judge` calls `jg.run_half` (`vinci/evals/__main__.py:397`), RG-D9's draw-once claim |
 | `vinci/dossier/driver_pass.py` | kept | `tests/stripped_pages.py:77` imports its `_calls_on_disk`, and `passage()` / `rows_with_words()` there read a row's words from the call on disk for 6 test modules |
 | `vinci/dossier/transcript_run_pass.py` | kept | `page_transcript` serves `tests/test_transcript_run_guard.py::test_no_committed_synthesis_copies_more_than_12_words_of_its_calls`, the corpus check RG-D19's fixed row cites |
