@@ -134,7 +134,7 @@ from the Drive mirror.
     narrow edge set, KD not ceding to SEC, and no scan.
   - CORPUS BEFORE SYNTHETIC: on #1036's parent `68bd4b33` it finds the LLY, VITL and WERN runs
     #1036 cut, and at head nothing in those files.
-- **The guard on this Mac, at `06019c70`** (main `98707f29` plus this branch after review rounds 1
+- **The guard on this Mac, at `4fd3772e`** (main `98707f29` plus this branch after review rounds 1
   and 2, with the joined and Markdown-link views and the fail-loud read; its own boundary print,
   the same at `17f4e3be` before them):
   - calls: 91 read, 19 duplicate files by sha256, 0 unreadable;
@@ -203,12 +203,14 @@ from the Drive mirror.
 - **Gate.**
   - `ruff check vinci tests` and `mypy --strict vinci` (218 files): clean.
   - The full `nice pytest -m "not network"`, CI-like (a worktree with no CIQ folder and no cache, as
-    CI has): exit 0 at `17f4e3be`, no failure and no error, 1,198 s; exit 0 at `95b3aff9` after
-    round 1, 1,514 s; and exit 0 at `06019c70` after round 2, no failure and no error, 1,434 s. The guard and its call-reading pins skip,
-    saying so; the pins that need no call run.
+    CI has): exit 0 at `17f4e3be`, no failure and no error, 1,198 s; exit 0 after round 1, on code
+    identical to `ad53d5c8`'s, 1,514 s; and exit 0 after round 2, on code identical to `4fd3772e`'s
+    (the same patch-id), no failure and no error, 1,434 s. Each round's run was on its fix commit
+    before the record's figures were added to it, which changes no code. The guard and its
+    call-reading pins skip, saying so; the pins that need no call run.
   - Linked mode: `tests/test_driver_facts.py` fails the same two tests on main `407dc809` and on
     this branch. Both read the operator's local PARR quarterly Financials, which CIQ mislabelled.
-- **Cross-setup validation** (`python -m vinci.impact run`, base `98707f29`, head `06019c70` after
+- **Cross-setup validation** (`python -m vinci.impact run`, base `98707f29`, head `4fd3772e` after
   round 2, $0, vendor pulls refused; the same at `17f4e3be` and at round 1's head, over 438 and
   442 tests):
   - 0 of 445 tests fail on base code and pass on head; 0 fail at head;
@@ -228,13 +230,23 @@ from the Drive mirror.
 - **Calls:** the store `data/manual/ciq` and its `ciq-archive/`, on this Mac, 2026-11-13. That is
   110 call files, 91 distinct; one WERN Q1 2026 call left the Drive folder during the session.
 - **Tracked files:** `git ls-files --cached --others --exclude-standard` at this branch's head:
-  3,776 files, of which 3,095 are text (at `17f4e3be` and at `95b3aff9`).
+  3,776 files, of which 3,095 are text (at `17f4e3be`, `ad53d5c8` and `4fd3772e`).
 - **SEC cache:** `data/cache/sec`, 18,757 files, all local.
 - **KD:** 63 exports in the store and archive. One GOOGL `.xls` is read by its cells.
 - **The audit:** main `407dc809`, 3,080 text files, and the 361 call files it read from across the
   Mac.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
+- **Deferred to a follow-up PR** (the independent re-review of `4fd3772e`, which said MERGE; the
+  bounded process's rounds are spent):
+  - the joined view's wiring into the real scan is unpinned: `scan_tracked` passing `False` for a
+    `.py` file leaves every test green. The fix is a pin running `scan_tracked` over a planted split
+    `.py` file;
+  - the unreadable-call pin can be silenced: reverting only the skip half of the fail-loud change
+    makes it SKIP, not fail, because the skip escapes `pytest.raises(AssertionError)`;
+  - `py_strings` mis-maps a file holding U+2028 or U+2029. `str.splitlines` splits at them too,
+    so `vinci/graph/filings.py`'s joined view drifts from about line 32. The fix is
+    `io.StringIO(text).readlines()`.
 - **Git history keeps the old text**, as the operator accepted. No history is rewritten, and
   `vinci/evals/synthesis_panel.json`'s frozen blobs are untouched.
 - **The guard sees only the calls on its disk.** A store-only default would have missed the two MCK
