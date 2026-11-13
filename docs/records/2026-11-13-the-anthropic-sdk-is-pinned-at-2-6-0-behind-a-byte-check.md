@@ -1,7 +1,7 @@
 ---
 status: shipped
 date: 2026-11-13
-prs: [1046]
+prs: [1049]
 supersedes:
 superseded-by:
 ---
@@ -145,6 +145,9 @@ repo, because the request bodies carry licensed transcript text.
   - **The one failure was the same in both:** the extraction-drift guard, asking for
     `vinci/graph/llm.py` to be re-pinned. The new helper changes no page, so it was re-pinned as
     a refactor (`--repin --refactor`), and that test file then passed 14 of 14 under both SDKs.
+  - **At the merged head** (`052abb9d`, after main `b73bd4ef` was merged in), under each SDK:
+    **11,225 passed, 672 skipped, 12 xfailed, 0 failed**, with `ruff` and `mypy --strict` clean.
+    The mirror is in sync on the 2.6.0 run.
 
 **BOUNDARY.**
 - **"452"** is every request the capture sent, counted from its index, under each SDK at two code
