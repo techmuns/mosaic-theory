@@ -70,19 +70,6 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 
 _Chain (EV/EBITDA):_ EBIT = revenue × op margin → EBITDA = EBIT + D&A → EV = EBITDA × exit multiple (EV/EBITDA) → equity = EV − net debt → value/share = equity ÷ diluted shares
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
-| Mid-cycle margin | 3.9% | 4y history · weak |
-| Median multiple, own history | 6.7x | 33 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $32.67 | spot-independent · EV/EBIT 21.8x · on 59,977,156 shares outstanding |
-| Dilution test / share | $32.53 | + 275,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
-| Overall confidence | weak |  |
-
 ## The case
 _(top points; the full argument is in Analysis)_
 
@@ -306,6 +293,19 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 8.3x as-of 2026-08-18 — trailing range 4.8–9.1x (median 6.7x) over 38 closes → 95%ile → near-ceiling; P/LTM EPS NM (no meaningful trailing P/E at this close) [29]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 3.9% | 4y history · weak |
+| Median multiple, own history | 6.7x | 33 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
+| Screen value / share | $32.67 | spot-independent · EV/EBIT 21.8x · on 59,977,156 shares outstanding |
+| Dilution test / share | $32.53 | + 275,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
+| Overall confidence | weak |  |
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [44]  <!-- ds-table -->

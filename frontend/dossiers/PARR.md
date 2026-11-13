@@ -29,20 +29,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _no scenario record for this name_
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
-| Mid-cycle margin | 2.7% | 9y history · firm |
-| Median multiple, own history | 7.7x | 30 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $47.86 | spot-independent · EV/EBIT 12.4x · on the diluted weighted average |
-| Point-in-time count | refused | the point-in-time count 50,099,627 sits 3.3% above the filer's basic weighted average 48,509,000 (2026-04-01..2026-06-30) — issuance or shares the filer does not count as outstanding for EPS (an employee benefit trust, unvested restricted stock), which the counts cannot tell apart. mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding) |
-| Overall confidence | firm |  |
-
-**Mid-cycle assumption under strain.** The last twelve months' operating margin of 13.2% (CIQ EBIT) sits 10.5 points ABOVE the 9-year median of 2.7% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.3 points on FY2025, so the gap is the business, not the source.
+_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -251,6 +238,21 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 3.5x as-of 2026-09-16 — trailing range 1.8–103.9x (median 6.9x) over 33 closes → 24%ile → near-floor; P/LTM EPS 5.0x [24]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 2.7% | 9y history · firm |
+| Median multiple, own history | 7.7x | 30 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
+| Screen value / share | $47.86 | spot-independent · EV/EBIT 12.4x · on the diluted weighted average |
+| Point-in-time count | refused | the point-in-time count 50,099,627 sits 3.3% above the filer's basic weighted average 48,509,000 (2026-04-01..2026-06-30) — issuance or shares the filer does not count as outstanding for EPS (an employee benefit trust, unvested restricted stock), which the counts cannot tell apart. mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding) |
+| Overall confidence | firm |  |
+
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of 13.2% (CIQ EBIT) sits 10.5 points ABOVE the 9-year median of 2.7% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.3 points on FY2025, so the gap is the business, not the source.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [44]  <!-- ds-table -->

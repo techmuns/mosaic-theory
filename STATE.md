@@ -56,6 +56,10 @@ sealed, so it leaves the monitor's freshness set and the rebuild; it was never a
 the recipe tagger (`vinci/dossier/tagger.py`) and the R-file segment reader (`vinci/edgar/segments.py`, MC2), so every §2 line below naming them describes removed code; the graph extractor and judge,
 `vinci/evals/judge.py` and the four one-off page passes stay, each with a live caller; restore by reverting the PR's squash commit (`docs/records/2026-11-13-three-uncalled-modules-retired.md`).
 
+**THE R1 SCREENING ANCHOR IS OFF THE PAGE HEADLINE (#1004 item 3c; operator, 2026-11-13: "Approve as shown (Recommended)"):** the block moves, unchanged, off the Brief
+to the end of Analysis → Valuation, after "Own-history range position", on all 26 pages; a no-record page keeps a pointer naming no multiple ("Drop that clause"); the 4 operator
+recipe decisions stay on the Brief ("Keep your 4 decisions on Brief"); anchor ÷ price stays unprinted ("Keep it off"). Render only, $0 (`docs/records/2026-11-13-the-r1-anchor-is-off-the-page-headline.md`).
+
 **THE MONTHLY SPEND REPORT (operator, 2026-11-13: "Report only"; issue 1004 lane 4):** `python -m vinci.spend --month YYYY-MM` sums each paid bucket's list-price spend in a UTC month from the records that exist (assembly runs, budget ledgers, the theme desk's state branch, the graph re-judge) and refuses nothing; per-run caps are unchanged.
 The seal-time confirmations and `validate-keys` record no cost, so it names them as left out; November to 2026-11-13 12:08Z reads $363.23 over the four it reads, printing every ledger it read (RUNBOOKS §p; `docs/records/2026-11-13-monthly-spend-report.md`).
 

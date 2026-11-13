@@ -32,29 +32,7 @@ _6 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _no scenario record for this name_
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
-| Mid-cycle margin | 9.8% | 10y history · weak |
-| Median multiple, own history | 8.3x | 28 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $124.03 | spot-independent · EV/EBIT 16.9x · on 127,886,945 shares outstanding |
-| Dilution test / share | $123.90 | + 132,303 dilutive shares (diluted less basic weighted average, latest 10-Q) |
-| Overall confidence | weak |  |
-
-**Mid-cycle assumption under strain.** The last twelve months' operating margin of 2.1% (CIQ EBIT) sits 7.7 points BELOW the 10-year median of 9.8% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. On FY2025 the two sources differ by 12.5 points (GAAP a 14.1% loss vs CIQ a 1.6% loss): GAAP carries charges CIQ's EBIT excludes, and R1's median sits on the GAAP side — which pulls the median down toward the twelve months, so the difference narrows this gap rather than creating it: no reason to discount it, and if anything it understates it.
-
-**data_quality: revenue_tag_conflict**
-- FY2011: Revenues 446M vs SalesRevenueNet 3,620M (88% apart)
-- FY2012: Revenues 320M vs SalesRevenueNet 3,571M (91% apart)
-- FY2013: Revenues 322M vs SalesRevenueNet 3,759M (91% apart)
-- FY2014: Revenues 148M vs SalesRevenueNet 4,415M (97% apart)
-- FY2015: Revenues 108M vs SalesRevenueNet 4,463M (98% apart)
-- lease basis: rent 15.3% of EBITDA (FY ending 2025-12-31: $128M of $834M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $306M — CIQ's rent is the filer's ShortTermLeaseCost, a narrower cost than its total lease cost; the two are not compared
-- recorded-D&A check not run: it tests CIQ's Multiples-sheet ratios, which the ex-lease history does not use
+_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -288,6 +266,30 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 9.1x as-of 2026-11-06 — trailing range 3.1–19.4x (median 7.8x) over 39 closes → 56%ile → above-center; P/LTM EPS NM (no meaningful trailing P/E at this close) [34]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 9.8% | 10y history · weak |
+| Median multiple, own history | 8.3x | 28 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
+| Screen value / share | $124.03 | spot-independent · EV/EBIT 16.9x · on 127,886,945 shares outstanding |
+| Dilution test / share | $123.90 | + 132,303 dilutive shares (diluted less basic weighted average, latest 10-Q) |
+| Overall confidence | weak |  |
+
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of 2.1% (CIQ EBIT) sits 7.7 points BELOW the 10-year median of 9.8% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. On FY2025 the two sources differ by 12.5 points (GAAP a 14.1% loss vs CIQ a 1.6% loss): GAAP carries charges CIQ's EBIT excludes, and R1's median sits on the GAAP side — which pulls the median down toward the twelve months, so the difference narrows this gap rather than creating it: no reason to discount it, and if anything it understates it.
+
+**data_quality: revenue_tag_conflict**
+- FY2011: Revenues 446M vs SalesRevenueNet 3,620M (88% apart)
+- FY2012: Revenues 320M vs SalesRevenueNet 3,571M (91% apart)
+- FY2013: Revenues 322M vs SalesRevenueNet 3,759M (91% apart)
+- FY2014: Revenues 148M vs SalesRevenueNet 4,415M (97% apart)
+- FY2015: Revenues 108M vs SalesRevenueNet 4,463M (98% apart)
+- lease basis: rent 15.3% of EBITDA (FY ending 2025-12-31: $128M of $834M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $306M — CIQ's rent is the filer's ShortTermLeaseCost, a narrower cost than its total lease cost; the two are not compared
+- recorded-D&A check not run: it tests CIQ's Multiples-sheet ratios, which the ex-lease history does not use
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [49]  <!-- ds-table -->

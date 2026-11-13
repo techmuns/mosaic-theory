@@ -72,19 +72,6 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 
 _Chain (EV/EBITDA):_ EBIT = revenue × op margin → EBITDA = EBIT + D&A → EV = EBITDA × exit multiple (EV/EBITDA) → equity = EV − net debt → value/share = equity ÷ diluted shares
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
-| Mid-cycle margin | 16.0% | 8y history · firm |
-| Median multiple, own history | 19.8x | 27 closes · firm · EV/EBITDA |
-| Screen value / share | $57.77 | spot-independent · EV/EBIT 20.7x · on 116,278,194 shares outstanding |
-| Dilution test / share | $57.67 | + 200,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
-| Overall confidence | firm |  |
-
 ## The case
 _(top points; the full argument is in Analysis)_
 
@@ -316,6 +303,19 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 6.4x as-of 2026-09-21 — trailing range 4.3–27.9x (median 19.8x) over 27 closes → 4%ile → near-floor; P/LTM EPS 6.3x [25]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 16.0% | 8y history · firm |
+| Median multiple, own history | 19.8x | 27 closes · firm · EV/EBITDA |
+| Screen value / share | $57.77 | spot-independent · EV/EBIT 20.7x · on 116,278,194 shares outstanding |
+| Dilution test / share | $57.67 | + 200,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
+| Overall confidence | firm |  |
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [39]  <!-- ds-table -->

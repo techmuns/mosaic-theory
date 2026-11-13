@@ -59,19 +59,6 @@ _R3_forward_pe_
 
 _Chain (P/E):_ value/share = EPS × forward P/E multiple
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | R3_forward_pe | R1 screen: applicable |
-| Mid-cycle margin | 26.3% | 9y history · firm |
-| Median multiple, own history | 17.5x | 38 closes · firm · EV/EBITDA |
-| Screen value / share | $225.54 | spot-independent · EV/EBIT 21.5x · on 12,294,000,000 shares outstanding |
-| Dilution test / share | $223.50 | + 112,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
-| Overall confidence | firm |  |
-
 **The operator's decision: R3_forward_pe** — 2026-09-01, operator
 
 ⚠ **The machine reads R4_forward_ev_ebit.** The operator's decision stands; it changes only by hand.
@@ -79,13 +66,6 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 > OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.
 
 _Where this decision is recorded: docs/records/2026-09-01-r3-reaches-the-create-path.md (#557)_
-
-**Mid-cycle assumption under strain.** The last twelve months' operating margin of 33.3% (CIQ EBIT) sits 7.0 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source.
-
-**data_quality: vendor_bridge**
-- vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag
-
-_The machine’s read: EV/NTM EBIT (R4) — all three ratified conditions hold: NTM EBIT > 0: CIQ NTM TEV/EBIT 16.6x · R1 cannot anchor: EBITDA basis divergent: consensus-implied D&A 5.75× the actuals · R3 cannot price it cleanly: CIQ's FY P/E struck on gaap EPS; 4 of the trailing 4 quarters carry material non-operating income (≥2 ruled). R1's own arithmetic is left in this block._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -305,6 +285,26 @@ _No gap is struck for this name: shares unavailable. The consensus side alone st
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 22.9x as-of 2026-09-30 — trailing range 10.9–25.8x (median 17.5x) over 38 closes → 92%ile → near-ceiling; P/LTM EPS 17.3x [26]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | R3_forward_pe | R1 screen: applicable |
+| Mid-cycle margin | 26.3% | 9y history · firm |
+| Median multiple, own history | 17.5x | 38 closes · firm · EV/EBITDA |
+| Screen value / share | $225.54 | spot-independent · EV/EBIT 21.5x · on 12,294,000,000 shares outstanding |
+| Dilution test / share | $223.50 | + 112,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
+| Overall confidence | firm |  |
+
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of 33.3% (CIQ EBIT) sits 7.0 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source.
+
+**data_quality: vendor_bridge**
+- vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag
+
+_The machine’s read: EV/NTM EBIT (R4) — all three ratified conditions hold: NTM EBIT > 0: CIQ NTM TEV/EBIT 16.6x · R1 cannot anchor: EBITDA basis divergent: consensus-implied D&A 5.75× the actuals · R3 cannot price it cleanly: CIQ's FY P/E struck on gaap EPS; 4 of the trailing 4 quarters carry material non-operating income (≥2 ruled). R1's own arithmetic is left in this block._
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [42]  <!-- ds-table -->
