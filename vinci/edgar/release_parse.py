@@ -1904,6 +1904,13 @@ _RESULTS_AFTER = re.compile(r"\s*(?:financial\s+|operating\s+)?(?:results|perfor
 #: year-to-date phrase that reaches results through its own year is the basis too (RE2-D20) — the
 #: header did not stop being one period because it said what the outlook was built on.
 _YEAR_RESULTS_AFTER = re.compile(rf"\s+20\d\d{_RESULTS_AFTER.pattern}", re.I)
+#: A header's BASIS CLAUSE, "Based on …" to its comma: everything in it is what the outlook rests
+#: on, never the period it guides (review of #1027). Verra Mobility's Q3 2025 header "Based on our
+#: year-to-date 2025 results and our outlook for the fourth quarter, we are increasing revenue
+#: guidance as follows" guides the full year, and with "year-to-date 2025" skipped as basis its
+#: "fourth quarter" was the only period left and labelled three full-year guides Q4. A clause with
+#: no comma reaches the end of the header, so it is no answer rather than a guess.
+_BASIS_CLAUSE = re.compile(r"\bbased\s+on\b[^,]*", re.I)
 #: Two quarters joined — Ross's "for both the third and fourth quarters". `_PHRASE` would read the
 #: second alone and label both quarters' bullets with it.
 _TWO_QUARTERS = re.compile(r"\b(?:first|second|third|fourth|Q[1-4])\s+(?:and|&|through|to|-)\s+"
@@ -2042,9 +2049,12 @@ def _named_period(header: str) -> tuple[str | None, bool, set[str]]:
     phrases = list(_PHRASE.finditer(header))
     basis_years = {p.start() for p in phrases
                    if _YEAR_RESULTS_AFTER.match(header, p.end())}
+    basis = [(b.start(), b.end()) for b in _BASIS_CLAUSE.finditer(header)]
     for p in phrases:
         if _RESULTS_AFTER.match(header, p.end()) or p.start() in basis_years:
             continue                   # what was reported is the basis, not the guided period
+        if any(lo <= p.start() < hi for lo, hi in basis):
+            continue                   # inside "Based on …,": what the outlook rests on
         if any(b.start() in basis_years and b.end() < p.start()
                and re.fullmatch(r"\s+", header[b.end():p.start()]) for b in phrases):
             continue                   # the year of "first half 2026 results": the basis too
@@ -2941,9 +2951,38 @@ def _one_off_period(text: str, start: int, amt_end: int, frame: _ReleaseFrame) -
             # every actual (code review)
             if frame.year and int(g["bareyear"]) > int(frame.year):
                 return None
+            # ...nor the release's OWN year in a first-, second- or third-quarter release (review
+            # of #1027): that year is not over, so "in 2026" there is its year to date, never its
+            # full year, and filed as "2026" it would scope annual and stand as the year's
+            # impairment (`_fy_impairment`). Unread, as a span the reader cannot place is
+            if (frame.kind == "quarter" and frame.quarter in (1, 2, 3)
+                    and g["bareyear"] == frame.year):
+                return None
             return str(g["bareyear"])
         break
+    if _after_a_year_to_date_sentence(text, start, amt_end):
+        return None
     return _figure_period(text, start, amt_end, frame, comparison=False) or None
+
+
+def _after_a_year_to_date_sentence(text: str, start: int, end: int) -> bool:
+    """Whether an item whose OWN sentence names no period follows a sentence that names a
+    year-to-date span (review of #1027) — "This change was primarily attributable to …" pointing
+    back at it. Such an item is that span's, and the release's frame would file it as the quarter's,
+    which is RE2-D17's own failure shape: Microvast's Q3 2026 release reads "Gross margin decreased
+    to 24.4% from 36.6% in YTD 2025. This change was primarily attributable to an $11.1 million
+    write-down …", while its quarter's paragraph, "… from 37.6% in Q3 2025. This change …
+    $9.3 million write-down …", is the quarter's. The item is then unread (None), never the
+    quarter: a guess the text does not make."""
+    ends = [m.end() for m in _SENTENCE_END.finditer(text, max(0, start - 600), start)]
+    if not ends:
+        return False
+    nxt = _SENTENCE_END.search(text, end)
+    own = text[ends[-1]:nxt.end() if nxt else min(len(text), end + 240)]
+    if any(_PHRASE.finditer(own)):
+        return False                     # the item's own sentence names a period: read it there
+    prev = text[ends[-2] if len(ends) > 1 else max(0, start - 600):ends[-1]]
+    return any(p.group("ytd") for p in _PHRASE.finditer(prev))
 
 
 def _one_offs(text: str, src: str, frame: _ReleaseFrame | None = None) -> list[OneOffItem]:

@@ -60,12 +60,54 @@ def _sentence(text: str, pos: int, *, cap: int = 400) -> str:
 _PLANS = re.compile(r"(plans?\s+to\s+alleviate[^.]*\.)", re.I)
 
 
-#: The heading of a filing's notes — where ASC 205-40's going-concern evaluation is disclosed. A
-#: filing read with no doubt statement is CHECKED-ABSENT only where the reader saw its notes; text
-#: without them (a fragment, an exhibit) makes no claim either way. All 27 committed pages' cited
-#: 10-Qs carry one (measured 2026-11-11).
-_NOTES_HEADING = re.compile(r"\bnotes\s+to\s+(?:the\s+)?(?:unaudited\s+)?(?:condensed\s+)?"
-                            r"(?:consolidated\s+)?(?:interim\s+)?financial\s+statements\b", re.I)
+#: The TITLE of a filing's notes, where ASC 205-40's going-concern evaluation is disclosed, in the
+#: words the cited 10-Qs use: "Notes to (the) … Financial Statements" with up to five words between
+#: ("Unaudited Condensed Consolidated", Lilly's "Consolidated Condensed", Vital Farms' "CONSOLID
+#: ATED" split by its HTML) and McKesson's "Financial Notes". The title alone says nothing: the
+#: same words are a contents entry, a statement's footer and prose (`_notes_heading` reads which).
+_NOTES_TITLE = re.compile(r"\b(?:notes\s+to\s+(?:the\s+)?(?:[a-z]+\s+){0,5}?financial\s+statements"
+                          r"|financial\s+notes)\b", re.I)
+#: The first note after a heading: "Note 1:", "NOTE 1—", "Note A.", "1. Nature", "(1) BASIS" —
+#: never a contents page's "Item 2.".
+_NOTE_START = re.compile(r"(?<!Item )(?<!ITEM )(?:\b(?:Note|NOTE)\s+(?:\d{1,2}|[A-Z])\b"
+                         r"|(?<![\w$.,])\(?\d{1,2}[.)]\s+[A-Z])")
+#: A bare page number between a title and its first note: a contents entry ("… Statements 7 Item
+#: 2.", McKesson's "Financial Notes 9 Note 1 -"). A date's day ("August 1, 2026") and a year are
+#: not one.
+_PAGE_NO = re.compile(r"(?<![\w$.,-])\d{1,3}(?![\w,.%-])")
+#: An index of notes: a note's title, its page number and the next note ("… Policies 7 NOTE 2").
+_INDEX_NEXT = re.compile(r"(?<![\w$.,])\d{1,3}\s+(?:Note|NOTE)\s+(?:\d{1,2}|[A-Z])\b")
+#: The words before a title that make it a REFERENCE to the notes: "See Notes to …", "The
+#: accompanying Notes …", "… of the Notes to …".
+_REFERENCE_BEFORE = re.compile(r"\b(?:see|accompanying|the|our|these|those|in|to|of|refer|and|with"
+                               r"|within|its|their)\W*$", re.I)
+
+
+def _notes_heading(text: str) -> re.Match[str] | None:
+    """The HEADING of the filing's notes, followed by the notes themselves, or None (review of
+    #1027). Matching the title anywhere read a phrase as a heading: Lilly's and McKesson's only
+    match was ASU 2024-03 prose ("…in the notes to the financial statements"), and in every 10-Q
+    with a table of contents the first match was its contents entry, so a cover-and-contents cut
+    of a 10-Q read CHECKED-ABSENT before any note. A heading here is a capitalised title, not
+    preceded by a word that makes it a reference, whose first note follows within 300 characters
+    with no page number between them, and whose notes carry body text rather than an index's
+    page numbers (Nike's notes open with an index of themselves)."""
+    for m in _NOTES_TITLE.finditer(text):
+        if not m.group(0)[0].isupper():
+            continue                    # prose: "…in the notes to the financial statements"
+        if _REFERENCE_BEFORE.search(text, max(0, m.start() - 24), m.start()):
+            continue                              # "See Notes to …": a statement's footer
+        first = _NOTE_START.search(text, m.end(), m.end() + 300)
+        if first is None:
+            continue
+        between = text[m.end():first.start()]
+        lead = between.strip()[:1]
+        if _PAGE_NO.search(between) or (lead and lead != "(" and not lead.isupper()):
+            continue                              # a contents entry, or the title in a sentence
+        if any(not _INDEX_NEXT.search(text, n.end(), n.end() + 200)
+               for n in _NOTE_START.finditer(text, first.start(), first.start() + 8000)):
+            return m                              # a note with body text: the notes were read
+    return None
 
 
 def _going_concern(text: str, src: str) -> GoingConcern | None:
@@ -78,7 +120,7 @@ def _going_concern(text: str, src: str) -> GoingConcern | None:
     returns the read: no doubt, no verbatim, bound to the filing."""
     hit = find_going_concern_statement(text)
     if hit is None:
-        if not _NOTES_HEADING.search(text):
+        if _notes_heading(text) is None:
             return None
         return GoingConcern(substantial_doubt=False, verbatim="", plans="", source_ref=src)
     pm = _PLANS.search(text, hit.start, hit.start + 900)

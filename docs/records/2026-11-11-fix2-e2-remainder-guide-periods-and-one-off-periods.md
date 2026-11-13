@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# Every guide filed under the next-fy default now reads the period its release states, a one-off item carries its period, a component inside a figure is not its lead, and a filing read with no going-concern doubt is CHECKED-ABSENT (TeamNostra fix request 2: RE2-D20's remainder, RE2-D17, and the residuals of RE2-D6 and RE2-D10) — built 27 of 27 at $0, 27 of 27 pages and requests move at re-assembly, so a panel check is owed
+# Every guide filed under the next-fy default now reads the period its release states, a one-off item carries its period, a component inside a figure is not its lead, and a filing read with no going-concern doubt is CHECKED-ABSENT (TeamNostra fix request 2: RE2-D20's remainder, RE2-D17, and the residuals of RE2-D6 and RE2-D10) — built 27 of 27 at $0 on 2026-11-11 and 25 of 25 on 2026-11-13 (MVST retired; PARR's CIQ export refused); every built page's request moves at re-assembly, so a panel check is owed
 
 **WHAT.**
 - **RE2-D20, the rest** (`vinci/edgar/release_parse`). #976 flagged each guide filed under the
@@ -47,10 +47,11 @@ superseded-by:
   Pacific's "Adjusted Net Loss of $(5.5) million in the third quarter of 2024" is read, signed, not
   set aside silently by `_sub_unit`. A component with no figure before it is still the lead, so the
   sub-unit and quarter-against-a-year refusals hold (review).
-- **RE2-D10's other half** (`filing_sections._going_concern`). A filing whose notes were read (a
-  notes-to-financial-statements heading) and that states no doubt returns the CHECKED-ABSENT state
-  (no doubt, no verbatim, bound to the filing), never None. Text with no notes heading still makes
-  no claim.
+- **RE2-D10's other half** (`filing_sections._going_concern`). A filing whose notes were read and
+  that states no doubt returns the CHECKED-ABSENT state (no doubt, no verbatim, bound to the
+  filing), never None. Text with no notes heading still makes no claim. "Read" means the notes'
+  HEADING followed by notes with body text (`_notes_heading`, since the pre-draw review below):
+  never a sentence that names the notes, and never a contents entry.
 
 **WHY.**
 - **RE2-D20.** A default that hides an absence is what the audit asked to stop. #976 shipped the
@@ -179,6 +180,55 @@ superseded-by:
   (Recommended)". That is $35.28. Nothing is registered or drawn until the operator approves the
   #1004 note.
 
+**THE PRE-DRAW REVIEW (2026-11-13) AND ITS FOUR FIXES.** The coordinator's independent review
+at `23ff180c` (code identical to `32f4d6a4`) said FIX FIRST. Each fix is pinned on real SEC text
+(`tests/fixtures/e2_review/real_text_cuts.json`, cut through the production decode path) in
+`tests/test_e2_review_basis_notes_ytd.py`. Seven positive pins fail on `32f4d6a4` and two negatives
+pass on both.
+1. **A period inside a header's "Based on …" clause is the outlook's basis** (`_BASIS_CLAUSE` in
+   `_named_period`). Verra Mobility's Q3 2025 header (8-K `0001193125-25-256337`) reads "Based on our
+   year-to-date 2025 results and our outlook for the fourth quarter, we are increasing revenue
+   guidance as follows …". The basis-year skip dropped "year-to-date 2025" and left "the fourth
+   quarter" as the only period, so revenue, adjusted EBITDA and adjusted EPS, all full-year guides,
+   read Q4 with their default flag removed. That was a fabricated period. They now stay on the
+   flagged default.
+   - The section's title ("2025 Full Year Guidance") sits sentences earlier, and the reader does not
+     have it cleanly, so it is not read.
+   - Verra Mobility's 2026 headers still read 2026, because their own clauses name the year.
+2. **CHECKED-ABSENT needs the notes' heading** (`_notes_heading`, in place of a title matched
+   anywhere). A heading here is:
+   - a capitalised title, not preceded by a word that makes it a reference ("See Notes to …");
+   - followed within 300 characters by its first note, with no page number between;
+   - followed by notes carrying body text, not an index's page numbers.
+   It reads the forms the cited 10-Qs use, among them Lilly's "Notes to Consolidated Condensed
+   Financial Statements", McKesson's "FINANCIAL NOTES" and Vital Farms' HTML-split "CONSOLID ATED".
+   - **Before:** a cover-and-contents cut of TECX's 10-Q read CHECKED-ABSENT, as did every cited
+     10-Q cut 200 characters past its contents entry. Lilly's and McKesson's only match was an ASU
+     2024-03 sentence.
+   - **Now, on the 26 cited 10-Qs** (the 25 built pages' and PARR's): every one reads CHECKED-ABSENT
+     from its body heading. Every cut 200 characters past its contents entry makes no claim, except
+     WLK, whose first match is its body heading itself. The earlier comment's "all 27 cited 10-Qs
+     carry one" is replaced: what was matched was a phrase.
+3. **An item after a year-to-date comparison sentence, its own sentence silent, is unread**
+   (`_after_a_year_to_date_sentence`). Microvast's $11.1M write-down ("… from 36.6% in YTD 2025.
+   This change was primarily attributable to …") was filed as Q3 2026, RE2-D17's own failure shape.
+   The quarter's $9.3M ("… in Q3 2025. This change …") stays Q3 2026.
+4. **The release's own year in a Q1–Q3 release is unread**, never its full year. There is no case on
+   the corpus; the pin is Gartner's real footnote shape moved into a second-quarter release.
+- **The replay** (every cached EX-99.x exhibit, parsed at `32f4d6a4` and at the fix):
+  - 164 exhibits under 30 CIKs, 0 errors.
+  - **2 move:** Verra Mobility's Q3 2025 release (three guides Q4 → `next-fy`, default flags 0 → 3)
+    and Microvast's Q3 2026 release (the $11.1M, Q3 2026 → unread).
+  - No panel page's exhibit moves, and every panel page reads CHECKED-ABSENT from the same 10-Q, so
+    their requests are expected byte-identical.
+- **Also from the review:**
+  - The titles' 27 of 27 are corrected to the run's 25 of 25.
+  - `OneOffItem.model_json_schema(mode="serialization")` is `{}` because of the wrap serializer,
+    while the validation schema carries `period`. No consumer reads it: `vinci/scenarios.py`
+    references no `OneOffItem`, and the one `MechanicalLayer.model_json_schema()` call
+    (`tests/test_untraceable_rank_and_duration.py`) uses the validation mode. So it is stated here,
+    not changed in `schemas.py`.
+
 **BOUNDARY.**
 - **Pages:** the 27 committed pages at `7edbfa36`.
 - **Exhibits:** their 122 cited EX-99.1s and 27 cited 10-Qs (the replay); each page's own $0-build
@@ -190,11 +240,12 @@ superseded-by:
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **No committed page moves in this PR.** The new readings reach a page at its next assembly or
   release refresh.
-- **The synthesis request moves then on 27 of 27 pages,** all six panel pages included. 26 gain the
-  checked-absent going-concern line, and the rest of the moved lines differ only by a period label.
-  **A six-page panel check is owed before merge,** and is proposed, not run.
-- **The Brief gains "Going concern: not flagged" on 26 pages at re-assembly.** That is a state the
-  renderer and `dossier.js` already print.
+- **The synthesis request moves then on every page built,** all six panel pages included: 27 of 27
+  on 2026-11-11 and 25 of 25 on 2026-11-13. Every page without a stated doubt gains the
+  checked-absent going-concern line (26 then, 25 now), and the rest of the moved lines differ only by
+  a period label. **A six-page panel check is owed before merge,** and is not drawn.
+- **The Brief gains "Going concern: not flagged" at re-assembly** on those pages, 25 on 2026-11-13.
+  That is a state the renderer and `dossier.js` already print.
 - **`compare` replays the committed layer**, so it cannot see this change. The paid check registers
   from an impact export of fresh builds instead (`register --from-impact`, fix request 2 order 8,
   #1030), which needs no transform.
