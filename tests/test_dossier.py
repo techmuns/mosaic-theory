@@ -9916,16 +9916,21 @@ console.log(JSON.stringify({{
 
 
 def test_dated_operating_events_source_d_real_sentence_and_negatives() -> None:
-    """(source D, ratified 2026-07-24 — surfaced by SMPL's September price increase) The REAL Q3
-    transcript sentence yields a month-granular STATED row (2026-09; the event text is the CLAUSE
-    carrying the action, not the sentence's lead-in); past-tense and backward references and
+    """(source D, ratified 2026-07-24 — surfaced by SMPL's September price increase) A sentence of
+    the SMPL Q3 call's shape yields a month-granular STATED row (2026-09; the event text is the
+    CLAUSE carrying the action, not the sentence's lead-in); past-tense and backward references and
     month-free text yield NOTHING; an unstated year resolves to the NEXT occurrence of the month
     (March @ a July reference → next year); an explicit year is honored; duplicate mentions dedup
-    to one row. Frozen real-text fixture — value-level pins are safe here."""
-    smpl = ("Given the significant cost inflation we are experiencing this fiscal year and "
-            "believe will continue into the next year, we recently announced a high "
-            "single-digit price increase across most of our portfolio that will become "
-            "effective in September.")
+    to one row. Frozen fixture — value-level pins are safe here.
+
+    CONSTRUCTED, NOT QUOTED (operator ruling 2026-11-12, "Cut all 21 + guard (Recommended)"). This
+    pin held the call's own sentence, 39 consecutive words of a licensed transcript in a public
+    repo. Its words are replaced and its shape is kept: a lead-in of over 100 characters, a comma,
+    then the clause carrying the action and its month. That length is what the clause rule is for:
+    read from the sentence's start, the 120-character cap cuts the event before it is named."""
+    smpl = ("Given the steep input cost inflation we face this fiscal year and expect to persist "
+            "into the next one, we have now announced a high single-digit price increase on "
+            "most of our products that becomes effective in September.")
 
     def od(*verbatims: str) -> ds.OperatingDriversExtract:
         return ds.OperatingDriversExtract(rows=[
@@ -10008,9 +10013,10 @@ def test_calendar_reads_the_stated_year_and_anchors_an_unstated_one_on_the_row()
         _kd(spectrum, None), date(2026, 6, 1))] == ["2027-04"]
     assert dm._cal_row_month(_kd(spectrum, "Q1 2026").rows[0]) is None  # not a dated row shape
 
-    # a RETROSPECTIVE is not a catalyst: "since" joined the backward vocabulary with this fix
-    googl = ("Since launching at I/O in May, there's been a 40% increase in daily active users, "
-             "creating videos on the Gemini app.")
+    # a RETROSPECTIVE is not a catalyst: "since" joined the backward vocabulary with this fix.
+    # GOOGL's shape, constructed (2026-11-12 ruling): its call's own sentence ran past 12 words.
+    googl = ("Since launching at the spring summit in May, there has been a 40% rise in weekly "
+             "users making clips in the assistant app.")
     assert dm._dated_operating_events(_kd(googl, None), date(2026, 7, 22)) == []
     # the noun form is the same retrospective
     assert dm._dated_operating_events(
