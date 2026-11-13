@@ -11,7 +11,17 @@ dependencies = [
     "httpx>=0.27",
     "python-dotenv>=1.0",  # auto-load repo-root .env locally; no-op in CI (12-factor config)
     "striprtf>=0.0.26",   # CIQ Business Relationships exports (real RTF)
-    "anthropic>=0.112",   # graph-track extraction; top-level `cache_control` (#665) verified on 0.112.0
+    # EXACT, and locked with every other package in requirements.lock (operator, 2026-11-13: "Check,
+    # then pin newest (Recommended)"; coordinator default 7). Every LLM phase sends through this
+    # SDK. A $0 check sent the same request through 0.112.0 and 2.6.0 (every page's synthesis and
+    # confirmation, the judge, the theme desk, validate-keys): 452 bodies, every byte identical.
+    # THE UPGRADE RULE: a bump is a PR that first repeats that $0 check (the record names its
+    # method) and shows every body byte-identical, or names what moved; never a bare edit here.
+    # THE LOCK IS REGENERATED IN PLACE: uv reads the committed requirements.lock as its preferences,
+    # so `--upgrade-package anthropic==<X>` moves the SDK and its own dependencies only. Into an
+    # empty file the same command takes the newest of everything (24 of 52 pins moved, 2026-11-13).
+    # docs/records/2026-11-13-the-anthropic-sdk-is-pinned-at-2-6-0-behind-a-byte-check.md
+    "anthropic==2.6.0",
     "beautifulsoup4>=4.12",  # 10-K HTML → text for the graph extractor
     "xlrd>=2.0",          # legacy .xls (BIFF) CIQ Financials/Estimates workbooks (dossier)
     "openpyxl>=3.1",      # .xlsx CIQ exports — `ciq.read_sheets` has an OOXML branch (audit H-D3)

@@ -146,6 +146,7 @@ def run_labels(reg: bd.RunRegistration, budget: rp.Budget,
         raise rp.ReplayError(f"builds {stopped} stopped: the run is not the registered one")
     rows = [json.loads(x) for x in draws_out.read_text(encoding="utf-8").splitlines() if x.strip()]
     out: dict[str, list[list[str]]] = {}
+    used: list[dict[str, Any]] = []
     for t in reg.pages:
         out[t] = []
         for k in range(1, reg.builds + 1):
@@ -155,6 +156,10 @@ def run_labels(reg: bd.RunRegistration, budget: rp.Budget,
                 raise rp.ReplayError(f"{t} build {k}: draws {[r['draw'] for r in mine]} on file, "
                                      f"not 1..{reg.draws}")
             out[t].append([lean_of(r.get("raw"), stop_reason=r.get("stop_reason")) for r in mine])
+            used += mine
+    # every build of one registration on one SDK: a re-sync between builds would read as
+    # between-build dispersion (review of #1049, round 1)
+    rp.one_sdk(used, f"registration {reg.sha[:12]}")
     return out
 
 

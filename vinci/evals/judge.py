@@ -346,6 +346,17 @@ def run_half(half: str, *, budget: rp.Budget, out_dir: Path, sdk: Any | None = N
         if here not in marks:
             budget.record({"judge_test_read": here, "usd": 0.0})
     out_dir.mkdir(parents=True, exist_ok=True)
+    # ONE SDK PER CALIBRATION (review of #1049, round 2). A resume pools this folder's calls with
+    # the new ones, so calls that went through another SDK, or that state none (drawn before rows
+    # carried one), are refused before the first new call is paid for.
+    calls = out_dir / "calls.jsonl"
+    prior = ([json.loads(x) for x in calls.read_text(encoding="utf-8").splitlines() if x.strip()]
+             if calls.exists() else [])
+    was = rp.one_sdk(prior, str(calls))
+    if prior and any(t not in have for t in todo) and was != rp.sdk_version():
+        raise rp.ReplayError(f"{calls}: its calls went through SDK {was or '(unstated)'} and this "
+                             f"process runs {rp.sdk_version()} — a resume never mixes SDKs; judge "
+                             "into a fresh folder")
     judged: dict[str, Verdict | None] = {}
     for t, (claims, req) in todo.items():
         if t not in have:
