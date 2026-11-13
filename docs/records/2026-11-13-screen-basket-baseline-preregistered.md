@@ -71,3 +71,25 @@ reference dates. "~1,800 names a run": candidate-grain rows per run file, 1,780 
 **WHAT IT COSTS / WHAT IS ACCEPTED.** Price return understates a dividend payer's total return on
 both legs alike. The adding commit is not proof of the code the screen ran on. One cohort is
 noise: the interval is printed so it is read as such.
+
+## Amendments
+
+**2026-11-13 — item 10 (the split basis) amended before merge, on face validity (pr-feedback round 2,
+the coordinator's independent review).** Item 10's premise, *"its basis cannot be checked at
+$0"*, is false. Every cache entry states the instant it was fetched (`fetched_at`), and a bar is
+adjusted for every split that took effect before that instant. So two bars fetched with no US
+market open between them share one adjustment basis, and a split cannot leave a seam between them.
+
+The review found that the cache's 30-day windows were fetched in one batch on 2026-10-27, with
+2026-08-05 re-fetched on 10-28. 15 of the 16 steps that item 10 set apart (the review's count of steps, over 15 name-cohorts)
+fall between bars of one batch, so they are real outcomes; among them are the admitted EYPT's −65% and −89%. Dropping them
+was survivorship bias in a baseline.
+
+**The amended rule:** a ≥1.9x session-to-session step sets a name apart only when its two bars
+come from different fetch batches. A batch is the 13:00-to-13:00 UTC window its fetch fell in;
+13:00 UTC precedes the US open in both EDT and EST. A bar whose fetch time is unstated is in no
+batch. Everything inside one batch is scored.
+
+**The reason is the premise, not the result.** The first reading records the readings under both
+rules side by side, so the change can be checked against its effect. No sign changes. The control
+moves by at most 0.44 percentage points (2026-09-22: −5.98% → −6.42%).

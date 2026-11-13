@@ -22,6 +22,9 @@ from vinci.scoring import screen_baseline as sb
 ROOT = Path(__file__).resolve().parents[1]
 REAL_RUN = ROOT / "data" / "snapshots" / "screen_runs" / "2026-08-12-01.jsonl"
 REF = date(2026, 8, 12)           # the real run's reference date
+#: two fetch instants with a 13:00 UTC mark (so a possible market open) between them
+BATCH_1 = 1_793_000_000.0         # 2026-10-26 07:33 UTC
+BATCH_2 = BATCH_1 + 86_400.0      # a day later
 ENTRY = date(2026, 8, 13)         # its next session
 
 
@@ -71,8 +74,10 @@ def _repo(tmp: Path, runs: dict[str, list[dict[str, Any]]]) -> Path:
     return repo
 
 
-def _cache(tmp: Path, closes: dict[date, dict[str, float]]) -> Path:
-    """The grouped-daily responses, written where production's cache key puts them."""
+def _cache(tmp: Path, closes: dict[date, dict[str, float]],
+           fetched: dict[date, float] | None = None) -> Path:
+    """The grouped-daily responses, written where production's cache key puts them; each fetched
+    at ``fetched[day]`` (epoch seconds; default one instant, so every bar is in one batch)."""
     root = tmp / "cache"
     http = sb._CacheOnly(cache_dir=root, user_agent="t", min_interval_sec=0.0,
                          namespace="polygon")
@@ -82,7 +87,8 @@ def _cache(tmp: Path, closes: dict[date, dict[str, float]]) -> Path:
                 "results": [{"T": t, "o": c, "h": c, "l": c, "c": c, "v": 1e6}
                             for t, c in by.items()]}
         http._cache_path(url).write_text(json.dumps(
-            {"url": url, "fetched_at": 0.0, "text": json.dumps(body)}))
+            {"url": url, "fetched_at": (fetched or {}).get(day, BATCH_1),
+             "text": json.dumps(body)}))
     return root
 
 
@@ -147,6 +153,7 @@ def test_a_dates_runs_collapse_to_its_latest(tmp_path: Path) -> None:
     (c,) = sb.cohorts(sb.committed_runs(repo))
     assert (c.run.run_id, c.collapsed) == ("2026-08-12-02", ("2026-08-12-01",))
     assert "NEW" in {r.ticker for r in c.run.rows}
+    assert "OLD" not in {r.ticker for r in c.run.rows}, "the earlier run's rows were read too"
 
 
 def test_a_horizon_prints_only_once_it_has_fully_passed(tmp_path: Path) -> None:
@@ -182,19 +189,51 @@ def test_a_name_that_stops_trading_is_scored_to_its_last_trade(tmp_path: Path) -
     assert gone.excess == pytest.approx(-0.20), "the benchmark was read past the last trade"
 
 
-def test_a_split_sized_step_sets_the_name_apart_named(tmp_path: Path) -> None:
+def test_a_split_sized_step_across_two_fetch_batches_sets_the_name_apart(tmp_path: Path) -> None:
+    """AMENDED 2026-11-13 (pr-feedback round 2): a ≥1.9x step is set apart only where its two bars
+    were fetched in different batches — a possible split-basis seam. Here 08-25 onward was fetched
+    a day after the rest."""
     adm, rej, _n = _real_rows()
     repo = _repo(tmp_path, {"2026-08-12-01": [_as(adm, "SPLT"), _as(rej, "REJ")]})
     days = _days(REF, 40)
     px = _flat(days, REJ=10.0, IWM=100.0, MDY=100.0)
     for d in days:
         px[d]["SPLT"] = 20.0 if d < date(2026, 8, 25) else 10.0
+    late = {d: BATCH_2 for d in days if d >= date(2026, 8, 25)}
     (run,) = sb.committed_runs(repo)
-    closes = _closes(_cache(tmp_path, px), days[-1])
+    closes = _closes(_cache(tmp_path, px, late), days[-1])
     r = sb.read_horizon(run, closes, 30, days[-1])
     assert r.split_apart == ["SPLT"] and "SPLT" not in {m.ticker for m in r.marks}
     md = "\n".join(sb.cohort_lines(sb.cohorts([run])[0], closes, days[-1]))
-    assert "set apart, a ≥1.9x step (split basis unverified): 1 — SPLT" in md
+    assert ("set apart, a ≥1.9x step across two fetch batches (a possible split-basis seam): "
+            "1 — SPLT") in md
+
+
+def test_a_large_step_inside_one_fetch_batch_is_a_real_outcome_and_scored(tmp_path: Path) -> None:
+    """THE NEGATIVE PIN, and the survivorship the review found: EYPT's −65% and −89% were dropped
+    although every bar of their windows came from one batch, one adjustment basis."""
+    adm, rej, _n = _real_rows()
+    repo = _repo(tmp_path, {"2026-08-12-01": [_as(adm, "CRSH"), _as(rej, "REJ")]})
+    days = _days(REF, 40)
+    px = _flat(days, REJ=10.0, IWM=100.0, MDY=100.0)
+    for d in days:
+        px[d]["CRSH"] = 20.0 if d < date(2026, 8, 25) else 2.0
+    (run,) = sb.committed_runs(repo)
+    r = sb.read_horizon(run, _closes(_cache(tmp_path, px), days[-1]), 30, days[-1])
+    (crash,) = [m for m in r.marks if m.ticker == "CRSH"]
+    assert crash.ret == pytest.approx(-0.90) and r.split_apart == []
+
+
+def test_a_bar_with_no_stated_fetch_time_shares_no_batch() -> None:
+    """Unknown is not one basis: a cache entry with no fetch time is in no batch."""
+    c = sb.Closes((REF, ENTRY), {}, ENTRY, {REF: sb.batch_of(BATCH_1), ENTRY: None})
+    assert not c.same_batch(REF, ENTRY) and sb.batch_of(None) is None
+    both_unknown = sb.Closes((REF, ENTRY), {}, ENTRY, {REF: None, ENTRY: None})
+    assert not both_unknown.same_batch(REF, ENTRY), "two unknown fetch times read as one basis"
+    assert sb.batch_of(BATCH_1) != sb.batch_of(BATCH_2)
+    # 12:59 and 13:01 UTC straddle the window's edge, so they are two batches
+    edge = 1_793_019_600.0      # 2026-10-26 13:00:00 UTC
+    assert sb.batch_of(edge - 60) != sb.batch_of(edge + 60)
 
 
 def test_the_benchmark_is_the_ledgers_cap_band(tmp_path: Path) -> None:
@@ -284,3 +323,105 @@ def test_a_run_beyond_the_prices_held_prints_as_not_yet_priced(tmp_path: Path) -
     assert "## 2026-08-12" in md and "1. control, admitted − rejected" in md
     late_block = md[md.index("## 2026-10-30"):]
     assert "not yet priced" in late_block and "control" not in late_block
+
+
+def test_the_benchmark_is_entered_at_the_entry_close_not_the_run_date(tmp_path: Path) -> None:
+    """IWM moves between the run's reference date and the entry: the benchmark is read from the
+    ENTRY close, as the name is. ADM 10 → 12 (+20%); IWM 105 → 110.25 (+5%): excess +15%."""
+    adm, rej, _n = _real_rows()
+    repo = _repo(tmp_path, {"2026-08-12-01": [_as(adm, "ADM"), _as(rej, "REJ")]})
+    days = _days(REF, 40)
+    px = {d: {"ADM": 10.0 if d < date(2026, 9, 11) else 12.0, "REJ": 10.0,
+              "IWM": 100.0 if d == REF else (105.0 if d < date(2026, 9, 11) else 110.25)}
+          for d in days}
+    (run,) = sb.committed_runs(repo)
+    r = sb.read_horizon(run, _closes(_cache(tmp_path, px), days[-1]), 30, days[-1])
+    (m,) = [m for m in r.marks if m.ticker == "ADM"]
+    assert m.ret == pytest.approx(0.20) and m.excess == pytest.approx(0.15)
+
+
+def test_a_name_with_no_entry_bar_is_named_never_scored_never_imputed(tmp_path: Path) -> None:
+    """NOE trades on the run date and after the entry, but has no bar AT the entry: it is named
+    and not scored — never at 0%, never at a price borrowed from the run date."""
+    adm, rej, _n = _real_rows()
+    repo = _repo(tmp_path, {"2026-08-12-01": [_as(adm, "NOE"), _as(rej, "REJ")]})
+    days = _days(REF, 40)
+    px = _flat(days, REJ=10.0, IWM=100.0, MDY=100.0)
+    for d in days:
+        if d != ENTRY:
+            px[d]["NOE"] = 10.0
+    (run,) = sb.committed_runs(repo)
+    closes = _closes(_cache(tmp_path, px), days[-1])
+    r = sb.read_horizon(run, closes, 30, days[-1])
+    assert r.no_entry == ["NOE"] and "NOE" not in {m.ticker for m in r.marks}
+    md = "\n".join(sb.cohort_lines(sb.cohorts([run])[0], closes, days[-1]))
+    assert "no bar at entry, not scored: 1 — NOE" in md
+
+
+def test_a_long_name_list_prints_its_own_truncation() -> None:
+    names = [f"T{i:02d}" for i in range(12)]
+    out = sb._names(names)
+    assert out.endswith("(showing 10 of 12)") and out.count(",") == 9 and "T10" not in out
+
+
+def test_the_control_prints_before_the_benchmark_reading(tmp_path: Path) -> None:
+    adm, rej, _n = _real_rows()
+    repo = _repo(tmp_path, {"2026-08-12-01": [_as(adm, "A1"), _as(adm, "A2"),
+                                              _as(rej, "R1"), _as(rej, "R2")]})
+    days = _days(REF, 40)
+    closes = _closes(_cache(tmp_path, _flat(days, A1=1.0, A2=2.0, R1=1.0, R2=2.0, IWM=1.0)),
+                     days[-1])
+    (run,) = sb.committed_runs(repo)
+    md = "\n".join(sb.cohort_lines(sb.cohorts([run])[0], closes, days[-1]))
+    assert md.index("1. control, admitted − rejected") < md.index("2. admitted − cap-band")
+
+
+def test_the_first_add_is_read_never_a_later_re_add(tmp_path: Path) -> None:
+    """Deleted and added again: the cohort is the run as FIRST committed."""
+    import hashlib
+    adm, rej, _n = _real_rows()
+    rows = [_as(adm, "ADM"), _as(rej, "REJ")]
+    repo = _repo(tmp_path, {"2026-08-12-01": rows})
+    path = repo / "data" / "snapshots" / "screen_runs" / "2026-08-12-01.jsonl"
+    first = path.read_bytes()
+    _git(repo, "rm", "-q", str(path.relative_to(repo)))
+    _git(repo, "commit", "-qm", "removed")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(rows[0]) + "\n")
+    _git(repo, "add", str(path.relative_to(repo)))
+    _git(repo, "commit", "-qm", "re-added")
+    (run,) = sb.committed_runs(repo)
+    assert run.sha256 == hashlib.sha256(first).hexdigest()
+    assert {r.ticker for r in run.rows} == {"ADM", "REJ"}
+
+
+def test_a_shallow_clone_is_refused(tmp_path: Path) -> None:
+    adm, rej, _n = _real_rows()
+    repo = _repo(tmp_path, {"2026-08-12-01": [_as(adm, "ADM"), _as(rej, "REJ")]})
+    _git(repo, "commit", "-q", "--allow-empty", "-m", "a second commit")
+    shallow = tmp_path / "shallow"
+    subprocess.run(["git", "clone", "-q", "--depth", "1", f"file://{repo}", str(shallow)],
+                   check=True, capture_output=True)
+    with pytest.raises(sb.BaselineError, match="shallow clone"):
+        sb.committed_runs(shallow)
+
+
+def test_a_runs_annotations_print_beside_it_and_exclude_nothing(tmp_path: Path) -> None:
+    """The 2026-10-16 run's committed annotations (SFBS, IESC), in their real shape: printed
+    beside the cohort, and the annotated name is still counted and scored."""
+    adm, rej, _n = _real_rows()
+    real = json.loads((ROOT / "data" / "snapshots" / "screen_runs"
+                       / "2026-10-16-01.annotations.json").read_text())
+    note = {**real, "run_id": "2026-08-12-01", "reference_date": "2026-08-12",
+            "annotations": [{**real["annotations"][0], "ticker": "ADM"}]}
+    repo = _repo(tmp_path, {"2026-08-12-01": [_as(adm, "ADM"), _as(rej, "REJ")]})
+    (repo / "data" / "snapshots" / "screen_runs" / "2026-08-12-01.annotations.json").write_text(
+        json.dumps(note))
+    _git(repo, "add", "data")
+    _git(repo, "commit", "-qm", "annotated")
+    days = _days(REF, 40)
+    closes = _closes(_cache(tmp_path, _flat(days, ADM=1.0, REJ=1.0, IWM=1.0)), days[-1])
+    (run,) = sb.committed_runs(repo)
+    md = "\n".join(sb.cohort_lines(sb.cohorts([run])[0], closes, days[-1]))
+    assert "annotated 2026-10-26 (display only — nothing is excluded): ADM — Passed G1" in md
+    assert "ADM" in {m.ticker for m in sb.read_horizon(run, closes, 30, days[-1]).marks}

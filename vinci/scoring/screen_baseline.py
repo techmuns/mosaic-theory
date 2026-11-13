@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import math
 import statistics
 import subprocess
@@ -51,9 +52,15 @@ from vinci.screens.retention import (
 
 #: The pre-registered horizons, calendar days from the entry session.
 HORIZONS: tuple[int, ...] = (30, 90, 180)
-#: A session-to-session close ratio at or beyond this (or its inverse) sets a name apart: a split
-#: between two cache fetches leaves exactly such a step, and its basis cannot be checked at $0.
+#: A session-to-session close ratio at or beyond this (or its inverse) sets a name apart — but
+#: ONLY across a possible basis seam (`same_batch`), AMENDED 2026-11-13 (pr-feedback round 2): a
+#: split between two cache fetches leaves exactly such a step, while two bars fetched in one batch
+#: share one adjustment basis, so a step between them is a real outcome and is scored.
 SPLIT_STEP = 1.9
+#: A split takes effect at a US market open, and 13:00 UTC precedes the open in both EDT (13:30)
+#: and EST (14:30). Two fetches inside one 13:00-to-13:00 UTC window have no open between them, so
+#: no split can have taken effect between them: their bars share one basis.
+_BATCH_START_UTC_HOUR = 13
 #: Normal-approximation 95% two-sided quantile — the interval the record registers.
 Z95 = 1.96
 #: How many names a line lists before it says how many it left out.
@@ -75,6 +82,9 @@ class RunFile:
     commit: str           # the commit that ADDED the file
     sha256: str           # of the bytes at that commit
     rows: tuple[CandidateRow, ...]
+    #: the run's committed annotations (`<run>.annotations.json`), each (ticker, annotated_on,
+    #: finding) — printed beside the cohort, never used to exclude a name (pr-feedback round 2)
+    annotations: tuple[tuple[str, str, str], ...] = ()
 
 
 def _git(repo: Path, *args: str) -> bytes:
@@ -86,7 +96,13 @@ def _git(repo: Path, *args: str) -> bytes:
 
 def committed_runs(repo: Path) -> list[RunFile]:
     """Every run file tracked at HEAD, each read from the commit that ADDED it (its first add),
-    so a later rewrite of the working file cannot move a cohort. Candidate grain only."""
+    so a later rewrite of the working file cannot move a cohort. Candidate grain only.
+
+    A SHALLOW CLONE IS REFUSED (pr-feedback round 2): its one commit would read as the commit that
+    added every run file."""
+    if _git(repo, "rev-parse", "--is-shallow-repository").decode().strip() == "true":
+        raise BaselineError(f"{repo} is a shallow clone, so the commit that added each run file "
+                            f"cannot be read — fetch its full history (`git fetch --unshallow`)")
     listed = _git(repo, "ls-tree", "--name-only", "HEAD", f"{RUNS_DIR}/").decode().split()
     out: list[RunFile] = []
     for rel in sorted(p for p in listed if p.endswith(".jsonl")):
@@ -105,8 +121,19 @@ def committed_runs(repo: Path) -> list[RunFile]:
         if not cands:
             raise BaselineError(f"{rel} at {commit[:12]} holds no candidate-grain row")
         out.append(RunFile(run_id, cands[0].reference_date, commit,
-                           hashlib.sha256(raw).hexdigest(), cands))
+                           hashlib.sha256(raw).hexdigest(), cands,
+                           _annotations(repo, f"{RUNS_DIR}/{run_id}.annotations.json", listed)))
     return out
+
+
+def _annotations(repo: Path, rel: str, listed: Sequence[str]) -> tuple[tuple[str, str, str], ...]:
+    """A run's committed annotations, read from the commit that added the file, as the run is."""
+    if rel not in listed:
+        return ()
+    commit = _git(repo, "log", "--diff-filter=A", "--format=%H", "--", rel).decode().split()[-1]
+    doc = json.loads(_git(repo, "show", f"{commit}:{rel}"))
+    return tuple((str(a["ticker"]), str(a.get("annotated_on", "")), str(a["finding"]))
+                 for a in doc.get("annotations", []))
 
 
 @dataclass(frozen=True)
@@ -161,6 +188,14 @@ class Closes:
     sessions: tuple[date, ...]
     by_day: Mapping[date, Mapping[str, float]]
     through: date
+    #: each session's fetch batch (`batch_of`), from the cache entry's own `fetched_at`; a session
+    #: whose fetch time the cache does not state is in no batch (None) and shares none
+    batch: Mapping[date, int | None] = field(default_factory=dict)
+
+    def same_batch(self, a: date, b: date) -> bool:
+        """Were the two sessions' bars fetched with no market open between them — one basis?"""
+        x, y = self.batch.get(a), self.batch.get(b)
+        return x is not None and x == y
 
     def close(self, ticker: str, day: date) -> float | None:
         """The close, or None — a non-positive one included: it is no traded price, and a ratio
@@ -177,6 +212,7 @@ def cached_closes(cache_root: Path, start: date, end: date, *, min_results: int 
                       min_interval_sec=0.0, namespace="polygon")
     sessions: list[date] = []
     by_day: dict[date, dict[str, float]] = {}
+    batch: dict[date, int | None] = {}
     day, through = start, start - timedelta(days=1)
     while day <= end:
         if day.weekday() < 5:
@@ -189,11 +225,20 @@ def cached_closes(cache_root: Path, start: date, end: date, *, min_results: int 
             if bars:                                       # an empty day is a holiday
                 sessions.append(day)
                 by_day[day] = {t: b.close for t, b in bars.items()}
+                batch[day] = batch_of(http.fetched_at(_GROUPED.format(day=day.isoformat()),
+                                                      params={"adjusted": "true"}))
         through = day
         day += timedelta(days=1)
     if not sessions:
         raise BaselineError(f"the cache holds no grouped-daily session from {start}")
-    return Closes(tuple(sessions), by_day, through)
+    return Closes(tuple(sessions), by_day, through, batch)
+
+
+def batch_of(fetched_at: float | None) -> int | None:
+    """The 13:00-UTC-to-13:00-UTC window a fetch fell in (`_BATCH_START_UTC_HOUR`), or None."""
+    if fetched_at is None:
+        return None
+    return math.floor((fetched_at - _BATCH_START_UTC_HOUR * 3600) / 86400)
 
 
 # ─── one name, one horizon ───────────────────────────────────────────────────────────────────
@@ -245,8 +290,8 @@ def read_horizon(run: RunFile, px: Closes, horizon: int, as_of: date) -> Reading
             out.no_entry.append(t)
             continue
         held = [(d, c) for d in window if (c := px.close(t, d)) is not None]
-        if any(not (1 / SPLIT_STEP < b / a < SPLIT_STEP)
-               for (_d, a), (_e, b) in zip(held, held[1:], strict=False)):
+        if any(not (1 / SPLIT_STEP < b / a < SPLIT_STEP) and not px.same_batch(d, e)
+               for (d, a), (e, b) in zip(held, held[1:], strict=False)):
             out.split_apart.append(t)
             continue
         last_day, p1 = held[-1]
@@ -311,6 +356,8 @@ def cohort_lines(c: Cohort, px: Closes, as_of: date) -> list[str]:
         f"the nearest stated one",
         f"- admitted {sides.count(True)} · rejected {sides.count(False)} · neither (not admitted, "
         f"not assessed) {sides.count(None)}",
+        *(f"- annotated {on} (display only — nothing is excluded): {t} — {finding}"
+          for t, on, finding in run.annotations),
     ]
     # A RUN THE PRICES HAVE NOT REACHED (pr-feedback round 1): the next weekly run is committed
     # before the cache holds its next session — its cohort says so, and the others still read
@@ -336,7 +383,8 @@ def cohort_lines(c: Cohort, px: Closes, as_of: date) -> list[str]:
         for label, xs in (("scored to their last trade, a bar before the exit session "
                            "(delisted, halted, or no bar that day)", last),
                           ("no bar at entry, not scored", r.no_entry),
-                          ("set apart, a ≥1.9x step (split basis unverified)", r.split_apart),
+                          ("set apart, a ≥1.9x step across two fetch batches (a possible "
+                           "split-basis seam)", r.split_apart),
                           ("admitted with no deciding cap, so no benchmark (control only)",
                            r.no_benchmark)):
             if xs:
