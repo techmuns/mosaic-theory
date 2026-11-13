@@ -56,6 +56,10 @@ sealed, so it leaves the monitor's freshness set and the rebuild; it was never a
 the recipe tagger (`vinci/dossier/tagger.py`) and the R-file segment reader (`vinci/edgar/segments.py`, MC2), so every §2 line below naming them describes removed code; the graph extractor and judge,
 `vinci/evals/judge.py` and the four one-off page passes stay, each with a live caller; restore by reverting the PR's squash commit (`docs/records/2026-11-13-three-uncalled-modules-retired.md`).
 
+**THE R1 SCREENING ANCHOR IS OFF THE PAGE HEADLINE (#1004 item 3c; operator, 2026-11-13: "Approve as shown (Recommended)"):** the block moves, unchanged, off the Brief
+to the end of Analysis → Valuation, after "Own-history range position", on all 26 pages; a no-record page keeps a pointer naming no multiple ("Drop that clause"); the 4 operator
+recipe decisions stay on the Brief ("Keep your 4 decisions on Brief"); anchor ÷ price stays unprinted ("Keep it off"). Render only, $0 (`docs/records/2026-11-13-the-r1-anchor-is-off-the-page-headline.md`).
+
 - **Entity resolver** (`vinci/resolver`) — US SEC CIK↔ticker↔name, fail-loud on unknown/ambiguous —
   *ran `resolve AAPL GOOGL GOOG BRK.B ZZZZZ`: GOOGL/GOOG→one CIK, BRK.B→BRK-B, ZZZZZ fails loud.*
 - **A full-text-search hit on an 8-K/A is an 8-K/A (RE1-D11, 2026-11-10)** (`vinci/edgar/client.py` `parse_fts_hit`, `dossier/mechanical.py` `_covenant_pointers`): efts's own `form` is read before its family, the covenant pointer writes it, and the maturity check still reads a pointer-linked 8-K/A; 1 of 92 pointer rows on the 28 pages frozen at `bcda7ce3` moves (WERN's `0000793074-26-000090`, a label, at its next re-assembly). *Record: `docs/records/2026-11-10-fix2-e1-an-8ka-hit-is-an-8ka.md`.*

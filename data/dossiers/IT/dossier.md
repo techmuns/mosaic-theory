@@ -69,22 +69,6 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 
 _Chain (EV/EBITDA):_ EBIT = revenue × op margin → EBITDA = EBIT + D&A → EV = EBITDA × exit multiple (EV/EBITDA) → equity = EV − net debt → value/share = equity ÷ diluted shares
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
-| Mid-cycle margin | 14.1% | 10y history · firm |
-| Median multiple, own history | 23.4x | 38 closes · firm · EV/EBITDA |
-| Screen value / share | $383.86 | spot-independent · EV/EBIT 28.5x · on 63,148,976 shares outstanding |
-| Dilution test / share | $383.37 | + 80,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
-| Overall confidence | firm |  |
-
-**data_quality: vendor_bridge**
-- vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag
-
 ## The case
 _(top points; the full argument is in Analysis)_
 
@@ -302,6 +286,22 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 8.0x as-of 2026-07-17 — trailing range 7.5–37.8x (median 23.4x) over 38 closes → 3%ile → near-floor; P/LTM EPS 13.9x [25]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 14.1% | 10y history · firm |
+| Median multiple, own history | 23.4x | 38 closes · firm · EV/EBITDA |
+| Screen value / share | $383.86 | spot-independent · EV/EBIT 28.5x · on 63,148,976 shares outstanding |
+| Dilution test / share | $383.37 | + 80,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
+| Overall confidence | firm |  |
+
+**data_quality: vendor_bridge**
+- vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [40]  <!-- ds-table -->
