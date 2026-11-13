@@ -31,7 +31,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _no scenario record for this name_
 
-_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation, beside the own-history multiple it re-rates to._
+_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation._
 
 ## The case
 _(top points; the full argument is in Analysis)_

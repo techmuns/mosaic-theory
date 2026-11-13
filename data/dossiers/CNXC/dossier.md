@@ -29,7 +29,15 @@ _6 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _no scenario record for this name_
 
-_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation, beside the own-history multiple it re-rates to._
+_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation._
+
+**The operator's decision: R1_NOT_ROBUST** — 2026-10-07, operator
+
+⚠ **The machine reads R1_midcycle_margin_evebitda.** The operator's decision stands; it changes only by hand.
+
+> leveraged residual - net debt is 139% of anchor equity; a one-turn move in EV/EBITDA shifts value per share by about 89% of spot ($21.47 at a $24.24 spot), so no R1 grid is robust to a single turn of multiple error. Re-engage when reported net-debt/EBITDA falls below about 3.5x, or when absolute EBITDA has stabilised for two consecutive quarters. Declined for instrument mismatch, not asserted worthless: LTM free cash flow is +$517M against $1.48B of market equity, and deleveraging transfers value to equity at constant enterprise value.
+
+_Where this decision is recorded: docs/records/2026-10-07-four-recipe-re-tags-restored.md (#671) — the re-tag was written 2026-07-21 in 9b9228bc, pending the analyst; the operator's instruction of 2026-10-07 restored it_
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -254,14 +262,6 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Screen value / share | $82.75 | spot-independent · EV/EBIT 14.1x · on 61,105,440 shares outstanding |
 | Dilution test / share | $82.75 | + 0 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
-
-**The operator's decision: R1_NOT_ROBUST** — 2026-10-07, operator
-
-⚠ **The machine reads R1_midcycle_margin_evebitda.** The operator's decision stands; it changes only by hand.
-
-> leveraged residual - net debt is 139% of anchor equity; a one-turn move in EV/EBITDA shifts value per share by about 89% of spot ($21.47 at a $24.24 spot), so no R1 grid is robust to a single turn of multiple error. Re-engage when reported net-debt/EBITDA falls below about 3.5x, or when absolute EBITDA has stabilised for two consecutive quarters. Declined for instrument mismatch, not asserted worthless: LTM free cash flow is +$517M against $1.48B of market equity, and deleveraging transfers value to equity at constant enterprise value.
-
-_Where this decision is recorded: docs/records/2026-10-07-four-recipe-re-tags-restored.md (#671) — the re-tag was written 2026-07-21 in 9b9228bc, pending the analyst; the operator's instruction of 2026-10-07 restored it_
 
 **data_quality: vendor_bridge**
 - vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag

@@ -30,7 +30,13 @@ _8 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _no scenario record for this name_
 
-_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation, beside the own-history multiple it re-rates to._
+_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation._
+
+**The operator's decision: R4_forward_ev_ebit** — 2026-10-09, operator
+
+> OPERATOR RE-TAG 2026-10-09. R3 -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 23.3x); R1 cannot anchor - the EBITDA basis is divergent (consensus-implied D&A 3.14x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. EBIT is the one earnings line with no GAAP/normalized fork. The bridge is CIQ's TEV claims less market cap (ev_bridge). The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.
+
+_Where this decision is recorded: docs/records/2026-10-09-amzn-uber-re-tagged-r4.md (#698)_
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -279,12 +285,6 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Screen value / share | $282.39 | spot-independent · EV/EBIT 74.0x · on 10,813,138,306 shares outstanding |
 | Dilution test / share | $278.99 | + 132,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
-
-**The operator's decision: R4_forward_ev_ebit** — 2026-10-09, operator
-
-> OPERATOR RE-TAG 2026-10-09. R3 -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 23.3x); R1 cannot anchor - the EBITDA basis is divergent (consensus-implied D&A 3.14x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. EBIT is the one earnings line with no GAAP/normalized fork. The bridge is CIQ's TEV claims less market cap (ev_bridge). The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.
-
-_Where this decision is recorded: docs/records/2026-10-09-amzn-uber-re-tagged-r4.md (#698)_
 
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 13.1% (CIQ EBIT) sits 7.8 points ABOVE the 10-year median of 5.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source.
 

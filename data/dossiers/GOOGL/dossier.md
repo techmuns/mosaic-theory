@@ -59,6 +59,14 @@ _R3_forward_pe_
 
 _Chain (P/E):_ value/share = EPS × forward P/E multiple
 
+**The operator's decision: R3_forward_pe** — 2026-09-01, operator
+
+⚠ **The machine reads R4_forward_ev_ebit.** The operator's decision stands; it changes only by hand.
+
+> OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.
+
+_Where this decision is recorded: docs/records/2026-09-01-r3-reaches-the-create-path.md (#557)_
+
 ## The case
 _(top points; the full argument is in Analysis)_
 
@@ -290,14 +298,6 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Screen value / share | $225.54 | spot-independent · EV/EBIT 21.5x · on 12,294,000,000 shares outstanding |
 | Dilution test / share | $223.50 | + 112,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
-
-**The operator's decision: R3_forward_pe** — 2026-09-01, operator
-
-⚠ **The machine reads R4_forward_ev_ebit.** The operator's decision stands; it changes only by hand.
-
-> OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.
-
-_Where this decision is recorded: docs/records/2026-09-01-r3-reaches-the-create-path.md (#557)_
 
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 33.3% (CIQ EBIT) sits 7.0 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source.
 
