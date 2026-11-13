@@ -1,0 +1,139 @@
+---
+id:
+status: shipped
+date: 2026-11-13
+prs: [1028, 1039, 1040, 1043, 1044, 1045, 1046, 1048, 1049, 1050, 1051, 1055]
+supersedes:
+superseded-by:
+---
+
+# Fix request 2 bookkeeping, batch 8 (A, the coordinator): #1039's, #1040's and #1050's residual fixes booked into E2-D15, V2-N1 and RG-D3 to RG-D5 (fix (d) OPEN), RBC-D1's MVST part not fixing, #1028's impact-sweep corrections folded into 14 Pages cells and row 60, four PRs that move no ID recorded, the operator's four rulings of 2026-11-13 recorded and carried into §5.0 rows 10, 28, 30, 34, 35, 41, 51, 52, 54 and 59, two record amendments, and row 60 recounted (of 148 asked: 138 fixed, 1 open, 8 in progress, 1 disagreed; RG-D3 to in progress, its item (d) open)
+
+**WHAT.**
+- **The fix log**, `docs/fix-log-teamnostra-2.md`. Every row it touches read `fixed`, and one moves: RG-D3 to `in progress (#1040)`, because its ask's item (d) is open (below). Each gains the merged PR, its tests, and the residual its record states.
+  - **E2-D15, WERN's half** (#1039, `f676616f`): fixed in code.
+    - Werner's Q3 10-Q (`0000793074-26-000172`) reads located $0.0 from the balance sheet's own debt total, which undoes #956's regression.
+    - The operator ruled on 2026-11-13, verbatim "$0.0 + LSA stated (Recommended)", and the ruling adds no line. The same 10-Q extends the LSA's termination to 2028-03-27, outside the window (#1039's record, round 2).
+    - WERN's page waits for its rebuild, in the active set; its strict xfail stays.
+  - **V2-N1** (#1039, round 1): the in-clause check runs before both routes. A total stated inside the clause and repeated by another sentence at the same date had read located $45.0 for one instrument; it no longer does.
+  - **RG-D3** (#1040, `fd1c97f3`, W05 item (a)): a metric word no row label carries binds the row it names.
+    - **Item (d) is OPEN in the cell:** a January or February year end's "fiscal YYYY". #1040 dropped it in review round 1, because TJX and nCino name their years as CIQ does, while Ross, Target and Burlington name a year by the year it starts. It is pinned strict-xfail, and no committed claim writes it. **So RG-D3 reads `in progress (#1040)`, owner the coordinator (A)** (coordinator 2026-11-13: the fix log tracks it, no §5.0 row). Its Status must not read `fixed` while part of its ask is open.
+    - **#1050** (`0d8a2a43`, merged 2026-11-13 08:37Z, after this branch was cut, and merged in): a bare "sales" names Revenue and a bare "profit" the profit rows. Its accepted residual is that a qualified word or a compound names no row.
+    - No cell had claimed (d). RG-D5's cell had said "S2's false-flag PR takes it as item (e)", which is now replaced by what #1040 did.
+  - **RG-D4** (item (b)): a figure inside the cited fact's printed width traces. PARR's "$21.54" clears at its next build, and PARR is on watch. #1050 pins the inside-the-print guard; that pin passes at its parent by design.
+  - **RG-D5** (items (c) and (e)): a year naming what it dates is no figure, and a field name, an accession, a URL or a hash states no span. VITL's "2030" clears at its rebuild. (e)'s residual stands, as #1040 measured it.
+  - **RBC-D1's MVST part** reads "not fixing: name retired (operator 2026-11-12)", its page off the corpus with #1044 (`12764514`), as AORT's part reads. MVST leaves the "count written at $0" list.
+  - **E2-D15 and V2-N1 gain #1051** (`4d56a361`, the #1039 follow-up, merged 2026-11-13). It names both IDs and asks for no edit, but each row's mechanism moves, so each cell names it:
+    - a "current indebtedness" row is a borrowing (Perrigo's real 10-K, "Current indebtedness 36.6");
+    - a current portion the debt note subtracts under its other wordings refuses the total.
+    - Of 2,049 cached primary documents, 0 walls move and 1 balance-sheet read does (Perrigo's). Werner's Q2 and Q3 still read located $0.0.
+    - Fail-first, re-run here at its parent `01ab6923` with #1051's test file: `test_bs_neg_a_current_indebtedness_row_refuses_the_total` (Werner's sheet plus that row read 803.0), `test_prgo_current_indebtedness_is_a_borrowing_row` (Perrigo read located $0.0) and `test_bs_neg_every_note_wording_of_a_folded_portion_refuses_the_total` all fail on behaviour. All 30 tests in the file pass at main.
+    - Left by #1051: a constructed no-heading layout, a candidate follow-up; and PARR's inventory financing, a definitional question for the operator.
+  - **#1055** (`3d195fcd`) registers #1027's six-page panel on main before any draw (registration `e3a37305c5d819e2`, no-worsening only). It follows RG-D14 and RG-D12, and moves no fix-log cell.
+  - **RG-D19 gains #1046** (`01ab6923`, merged 2026-11-13 09:55Z, after this branch was cut, and merged in). It cuts the transcript runs in tracked files that batch 7 named as pending: **27**, not the 25 batch 7 wrote. They are the audit's 21, the 4 its guard found, and 2 its review found split across string literals, from six records, four tests and a comment. Its local guard, `test_no_tracked_file_shares_13_consecutive_words_with_a_call`, skips in CI. Its fail-first is #1046's own: on `68bd4b33` it finds #1036's three runs, and on the operator's Mac at its head 0 are unexcused. It is not re-run here: it needs the calls and the SEC cache on one disk. Row 60's RG-D19 clause now says #1046 cut them. Its three deferred test gaps wait on a follow-up PR, not yet open.
+  - **No other row naming MVST is open.** Only E2-D11 (batch 7) and RBC-D1 name it, and both are `fixed`.
+  - **RBC-D1's page lists were stale** (review round 0, checked against the committed pages at `b207c8a9`). EPAM, UBER, V and WLK carry a `customers_listed` count from their 2026-11-09 builds, though the cell listed them as having none. NCNO, TECX and BURL carry none, and BURL was in neither list. The cell now says so.
+- **#1028's section, folded in** (#1028, `9fcd4a74`, the fix-request-2 impact sweep, merged 2026-11-13 09:24Z; the coordinator's addition to this batch). Its headline: **12 of 71 PRs moved something their own body did not state**, 7 MISS (#936, #944, #948, #953, #956, #966, #983), 3 a wider count (#960, #962, #965), 1 coverage (#981) and 1 correction (#976) (`docs/records/2026-11-13-fix2-impact-sweep.md`). No status moves; each Pages cell gains what the next build moves:
+  - **RA-D1 (#936):** PARR's synthesis request also moves, in `facts`;
+  - **RE1-D8 (#944):** "0 of 28 move" holds at each page's price date, and at PARR's next build its cadence goes from 37 to 38 results 8-Ks and its request moves in `facts`;
+  - **RE1-D11 (#948):** WERN's synthesis request also moves, in `facts`;
+  - **A-D2 (#960):** all 27 are named in #1028's record, 26 living since MVST retired. The cell's "no merged record names the other 14" is replaced;
+  - **RE2-D2, RE2-D5 (actuals half), RE2-D8 (#962):** 29 notes on 9 pages, not 28 on 10: BRBR 2, BURL 2, EPAM 3, FUBO 1, MVST 8, SMPL 8, TGT 2, TJX 1, VITL 2, WERN 0, so 21 on 8 living pages. **RE2-D6 and E2-D11** cite the same #962 count, and are corrected with them, though #1028's section did not list them;
+  - **RA-D16 (#965):** the 18 pages are named in #1028's record, 17 living; the cell's "no merged record names the rest" is replaced;
+  - **RE2-D9 and RE2-D10 (#966):** at MVST's next build its going-concern quote would move (2 fields) and its request in `primary_source`; MVST is retired, so there is no next build;
+  - **RA-D4 (#983):** #994 did not cover BURL, whose next build adds 9 same-day guide rows and moves its request in `facts`. FACTS-only, so no panel is owed by default (batch 3 item 2); it is an operator question after #953's retrospective run;
+  - **RE2-D7 (#976):** NFLX +3 and VITL +2 refusal notes, as #976 stated, and WERN +2, which it did not; no request moves.
+  - **Row 60:** the #966 and #983 clauses #1028's section gives, verbatim; the #962 and #976 clauses gain the same counts; #953's retrospective is confirmed owed; and #956's number is #1039, which this batch already carried.
+  - **Outside #1028's population by definition:** #932 and #934, which merged before #936, the sweep's lower cut; and #997, the operator's P/E split rule, which merged in the window but names no fix request 2, is cited by no log row, and carries a tool-written section. Batch 5 booked #997 as naming no fix-log ID.
+- **No ID and no row**, each by its own body:
+  - **#1043** (`c0b6a519`): the transcripts design, STATE row 61. Its body: "None: no fix-log ID moves".
+  - **#1045** (`b73bd4ef`): the local-path guard reads the theme desk's committed logs and STATE.md.
+  - **#1048** (`b207c8a9`): coordinator default 3, the replication rule as the default. It closed row 53 item (7) itself. Its body: "not a fix-request ID".
+  - **#1049** (`96d0cfea`, merged 2026-11-13 09:30Z): the anthropic SDK pinned at 2.6.0 with a hashed lock. It is coordinator default 7, not an ID, and its body has no bookkeeping section. It opened STATE row 62 itself (the shared venv still runs 0.112.0).
+  - **#1044** (`12764514`): booked ahead in batch 7. Its bookkeeping section asked for RBC-D1's line, made here.
+- **The operator's four rulings of 2026-11-13**, below, carried into STATE §5.0:
+  - **Rows 28 and 41:** a dated UPDATE each. The rebuild is the 10 active pages; VRRM is active with no rebuild; 15 pages go on watch with no paid rebuild. The unlock cells no longer ask for a watch page's re-export or rebuild.
+  - **Rows 34 and 35:** the six watch pages that keep known errors say so, and say they stay until the name goes active. These are UBER (rows 28 and 34), WLK, PARR, AMZN and NFLX (row 34), and ORKA (row 35).
+  - **Rows 10, 30, 51, 52, 54 and 59:** one clause each, where a row promised a watch page a rebuild:
+    - row 10: FUBO, ORKA and TECX's re-assembly waits until each goes active (the independent review of `0481b75c`);
+    - row 30: UBER is on watch, and its page holds no `next-fy` guide, so its part is not re-measured; the B3 item's FUBO and TGT keep their old rows;
+    - row 51: NFLX, UBER, PARR, ORKA and V keep the old window;
+    - rows 52 and 54: NFLX's one rebuild;
+    - row 59: the pages with no customer count are NCNO, TECX and BURL, not the six the row lists. NCNO is active; TECX and BURL are on watch.
+  - **Row 60:** the batch-8 clause, and its #956 clause: the fix is #1039.
+- **Amendments:**
+  - **#1041's record:** the active set and the descoped watch pages, so its cost line stays true. B asked for this.
+  - **#956's record:** the fix is #1039; WERN's half holds and MVST's does not. #1039's body asked for this.
+
+**THE OPERATOR'S RULINGS OF 2026-11-13** (each verbatim, with its source):
+1. **The coverage marking for the rebuild.**
+   - The source is B's note on issue #1004 (issuecomment-6847554747, 08:05Z). The operator approved it, *"go ahead"*, accepting B's suggested table from issuecomment-6847522000 unchanged.
+   - **Active and rebuilt (10):** GOOGL, NCNO, SMPL, TJX; EPAM, LLY, VITL; IT, WERN; and BRBR after its FY26 10-K and a full re-export.
+   - **Active, no rebuild now:** VRRM.
+   - **Watch, no paid rebuild (15):** AMZN, BURL, CNXC, FUBO, MCK, NFLX, NKE, ORKA, PARR, ROST, TECX, TGT, UBER, V, WLK.
+   - **Cost:** $36.96 at last cost, re-derived here from #1041's per-page table. With the ×1.255 allowance it is $46.38 (36.96 × 1.255 = 46.3848). B's note says about $46.39, which this record could not reproduce: rounding each page half-up gives $46.37. The $170 cap stands; the operator approved it on 2026-11-12, verbatim *"budget 170 approved"*, relayed by B on #1004.
+2. **Group 2's fix-3b losses accepted.** Source: issuecomment-6847662066, verbatim *"accept all three"*. They are EPAM's `buyback_avg_price` for 2023-Q1, LLY's `buyback_shares` for 2021-H1 and VITL's `buyback_shares` for 2019.
+3. **Spend caps.** Source: issuecomment-6847993179, verbatim *"Report only"*.
+   - The monthly spend ledger reports and refuses nothing.
+   - Per-run caps are unchanged: every paid run still needs the operator's approved cap before it spends.
+   - No §5.0 row tracks a monthly cap, so this record holds the ruling.
+4. **E2's panel cap.** Source: A's reply on issue #1004 (issuecomment-6847633111, 2026-11-13 08:09Z), which quotes the operator's ruling of 2026-11-13 verbatim, *"Estimate +20%, max $40 (Recommended)"*, with an expected cost of $29.40 and a cap of $35.28. #1027's record carries it too. #1027 is an open draft, so this is a pointer by PR number, not by path.
+
+The rest of issuecomment-6847522000 quotes further operator answers: no feature freeze, the screen-basket baseline, the recipes, retirement and caps, and the ledger. Each is a lane's own and outside this batch's brief; none is recorded here.
+
+**WHY.**
+- **Batched bookkeeping** (operator 2026-11-10): a fix PR edits neither the log nor row 60, and A writes this batch for the coordinator.
+- **The coverage marking descopes 15 pages from a rebuild** that rows 28, 30, 34, 35, 41, 51, 52, 54 and 59 promised them. A snapshot still promising those rebuilds would state a false current fact.
+- **"Fixed" stays "fixed" only while the ask is whole.** #1039, #1040, #1050 and #1051 fix residuals that rows already `fixed` had named. Rule 3 asks a row to name its PR and its test, so each row gains both. RG-D3 is the exception: (d), part of its ask, is open, so it reads `in progress (#1040)` (coordinator 2026-11-13: the fix log tracks it, no §5.0 row).
+
+**HOW VERIFIED.**
+- **#1039 fails first at its parent `c0b6a519`.** This ran in a throwaway sparse worktree: the parent's `vinci/` with #1039's test file. The worktree was removed after the runs.
+  - As committed, the file fails to import there. `vinci.edgar.filing_sections` has no `_balance_sheet_debt`, the helper #1039 adds.
+  - With that one import made tolerant in the throwaway tree, four nodes were run, and the two the rows name fail on behaviour:
+    - E2-D15's WERN node reads `('not_stated', 'no near-term wall stated in filing for the whole debt — $0.0M due ≤12m is stated for part of it only …')`;
+    - V2-N1's twin reads `('located', 45.0)`;
+    - the undated statement's node fails on its dated positive (behaviour), and the Microvast Q3 node raises `TypeError`, because it calls the helper; neither is named.
+  - #1039's record states the same: 3 of its 22 tests fail on behaviour at main.
+- **#1040 fails first at its parent `f676616f`,** with #1040's test file and frozen pages laid over the parent's tree. The test file has 34 nodes: 20 fail, 11 pass, and 3 XFAIL, the (d) pins.
+  - 18 of the 20 fail on behaviour: PARR's `['21.54']` flagged, a metric word's figure flagged, a field name's span read, and others.
+  - 2 fail only on a missing attribute: `printed_half` and `named_windows`.
+  - The 7 named nodes that are not (d) pins all fail on behaviour. One of them, `test_a_metric_no_row_carries_falls_back_to_the_cited_fact`, has 10 cases: 7 fail and 3, its negative pins, pass. The (d) pins XFAIL at the parent and at main, as strict xfails should.
+- **#1050 fails first at its parent `b207c8a9`,** with #1050's test file over the parent's tree. Both bare-word nodes fail on behaviour: TJX's "FY26 EBITDA was $8,425M while sales were $7,178M." passes there, and should not. The inside-the-print pin passes at the parent; it is a guard pin, which its record shows failing with the guard removed.
+- **At main `b207c8a9`** (this branch before #1050 merged in), the named #1039 and #1040 nodes give 18 passed and 4 xfailed: the three (d) pins and WERN's page pin. At `0d8a2a43`, #1050's three pass.
+- **#1028's items** were each checked against its record's 71-row table (`docs/records/2026-11-13-fix2-impact-sweep.md`): the #944, #962, #965, #966 and #976 rows and the headline's four counts read as the section states. #997 is not named in the record; its exclusion was checked against #997's own body.
+- **The count** is the same script over `tests/test_fix_log.py`'s `parse_log` that batch 7 used.
+- **MVST** is named in exactly 2 log lines, E2-D11 and RBC-D1, both `fixed`.
+- **The cost:** groups of $16.18 + $10.11 + $8.88 + $1.79 = $36.96, from #1041's per-page last costs, with the $4.44 median for NCNO, IT and WERN.
+- **Lints and the full gate:** in the PR.
+
+**BOUNDARY.**
+- **The PRs:** every first-parent commit on `origin/main` from batch 7's base `98707f29` through `96d0cfea`, less batch 7 itself (#1047, `dad8f441`). These are #1043, #1039, #1040, #1045, #1044 and #1048, and then #1050, #1028, #1049, #1046, #1051 and #1055, which merged after this branch was cut from `b207c8a9` and were merged in. Main is `3d195fcd`. They were read on 2026-11-13.
+- **#1028** (`9fcd4a74`), merged 2026-11-13 09:24Z after this batch was first counted, is merged in with no conflict and booked (above), at the coordinator's request. **#1049** (`96d0cfea`) is merged in the same way and moves no ID. Its correction that #956's fix is #1039 agrees with this batch's amendment on #956's record.
+- **The counts:** all 178 fix-log rows by their Status cell, and the 148 asked, which is every Order but `§4`. They are counted on this branch's log, at main `3d195fcd`, on 2026-11-13.
+- **The fail-first runs:** #1039's 4 nodes at `c0b6a519`, #1040's 34-node file at `f676616f` and #1050's 3 nodes at `b207c8a9`, on 2026-11-13.
+- **The page checks:** `mechanical.concentration.customers_listed` and the `next-fy` count, read from the 26 committed `data/dossiers/*/dossier.json` at `b207c8a9`.
+- **The coverage set:** B's table at main `12764514`, as the note states. Last costs are from #1041's record.
+
+**THE COUNT.**
+- Of the 178 rows: 138 fixed, 31 open, 8 in progress, 1 disagreed.
+- Of the 148 asked: 138 fixed, 1 open (RE2-D17), 8 in progress, 1 disagreed.
+- Against batch 7, RG-D3 moved from fixed to in progress (#1040).
+
+**REVIEW ROUND 0** (`/code-review high`, on the first commit). 9 findings: 7 fixed, 1 dismissed, 1 fixed in part.
+- **Fixed:**
+  - row 59's and RBC-D1's customer-count pages, checked against the committed pages;
+  - row 30's unverified UBER claim, and the B3 item's FUBO and TGT;
+  - row 28's unlock: the original text is struck as written, not rewritten, and UBER's comps condition is kept; #1050 is named with its source;
+  - the $46.39 reconciliation;
+  - the fail-first boundary's four nodes;
+  - the record's six-page claim, now attributed to B's note and marked not re-measured.
+- **Fixed in part:** row 34's "keeps the lead below" now reads as B's claim, not re-measured. The leads themselves were not measured.
+- **Dismissed, then reversed:** that item (d) sat inside RG-D3's `fixed` row. It was dismissed in round 0, on batch 6's precedent and the first brief. The coordinator then ruled (coordinator 2026-11-13: the fix log tracks it, no §5.0 row; a Status never reads `fixed` while part of its ask is open), so RG-D3 now reads `in progress (#1040)` and the count shows it.
+
+**WHAT IT COSTS / WHAT IS ACCEPTED.**
+- **#1039's behaviour fail is shown only with its import made tolerant.** As committed, its test file cannot import at the parent. The named nodes assert on `_maturity_wall` before they read the new helper, so the measurement reads the parent's behaviour.
+- **Watch pages keep known errors.** B's note names six with known errors; batch 8 re-measured none of the six, and found UBER's row-30 part not reproducible (its page holds no `next-fy` guide). The other nine keep whatever their committed pages hold, and §5.0 rows 10, 11, 27 and 57 still name watch pages whose moves land "at the next re-assembly", which stays true as a condition. The falsifier: a watch page made active and rebuilt with no row noting what changed. Each row names its pages, so the rebuild's PR can check them.
+- **Item (d) is open, and the coordinator (A) owns it.** #1040's body asks for a §5.0 row or a log line if it needs one. The coordinator ruled on 2026-11-13 that the fix log tracks it and no §5.0 row opens. RG-D3's cell names (d), its owner and its strict-xfail pin, and RG-D3 reads `in progress (#1040)` until (d) is fixed. The falsifier: RG-D3 read `fixed` while the (d) pins still xfail.
+
+**FOUND, NOT FIXED.**
+- **PARR's quarterly Financials export on the Drive** (re-exported 2026-11-12) is a byte copy of its annual one, sha256 `29debc32…` for both (#1028). Every PARR build refuses it. PARR is on watch, so no re-export is owed until it goes active.
