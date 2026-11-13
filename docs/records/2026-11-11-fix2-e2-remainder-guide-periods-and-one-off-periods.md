@@ -152,6 +152,33 @@ superseded-by:
     margin line cannot print on either side, and that proof is unaffected (measured on the 26
     committed pages at `14a57fc5`).
 
+- **The re-run on the fix** (`vinci.impact run --base origin/main --head 32f4d6a4`, base main
+  `12764514`, $0, 653.9 s; the same store copy, `--ciq-root`, `--cache-root` and `--env-file` as
+  the run above; 0 responses fetched live):
+  - **Fail first:** 28 of 142 nodes fail on base code and pass on head; 0 fail at head.
+  - **Pages:** 25 of 26 built (PARR refused at both refs, its CIQ export); 25 of 25 move, with 103
+    field changes. These are the `bf1cfeb8` run's 110 less MVST's seven, row for row: the fix moves
+    no field on the pages built.
+  - **Requests:** 25 of 25 differ, the system prompt and tool schema the same on all. The six panel
+    pages differ, and row 53's check is OWED.
+  - **Readers:** the decision ledger, scoring report and monitor are identical at both refs.
+- **The panel captures** for `register --from-impact` (the six panel pages, base `12764514` and
+  head `32f4d6a4`) are outside the repo, because requests carry licensed transcript text.
+  - Each arm has `request.json`, `layer.json` and `built.json`, plus the manifest (sha256
+    `d5afead0728903a0b582fff12d2dc63faf66911d0c76fbd6ddfe080e696cef66`).
+  - All 12 arms have `recapture_equal` true: the five calls are identical, a re-capture from the
+    built page equals the run's request, and a re-capture from `layer.json` equals it byte for byte.
+  - A $0 dry check from a checkout of main read the export, the fixed scorer and the 12 layers.
+    0 of its 12 request pins were drawn before.
+- **The panel's expected cost: $29.40; plus 20%, $35.28.**
+  - Inputs: each panel request's size at fix 3b's tokens per character for that page, and each
+    page's mean output per draw over the five kept 60-draw ledgers.
+  - Prices: `LLM_PRICE_PER_MTOK`, with each of the 12 page-arms writing its own cache.
+  - The eight recorded 60-draw runs average $29.15.
+- **The cap, ruled by the operator on 2026-11-13, verbatim:** "Estimate +20%, max $40
+  (Recommended)". That is $35.28. Nothing is registered or drawn until the operator approves the
+  #1004 note.
+
 **BOUNDARY.**
 - **Pages:** the 27 committed pages at `7edbfa36`.
 - **Exhibits:** their 122 cited EX-99.1s and 27 cited 10-Qs (the replay); each page's own $0-build
