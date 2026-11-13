@@ -116,7 +116,7 @@ moved out of the commit column.
   - **The four items B finished and passed to A** in that hand-back, all four taken back by A the same day (A on #1004, 17:36Z):
     - order 8, #1030: merged after A's round-1 review and a second round;
     - the rebuild prep, #1041 (`047f4c6b`): merged;
-    - the walls, #1039: open, in A's round 1;
-    - #1023's false flags, #1040: open, in A's round 1.
+    - the walls, #1039: merged as `f676616f` on 2026-11-13 04:21Z, after this read; its IDs, E2-D15's WERN half and V2-N1, are batch 8's;
+    - #1023's false flags, #1040: merged as `fd1c97f3` on 2026-11-13 04:24Z, after this read; its IDs, RG-D3, RG-D4 and RG-D5, are batch 8's.
   - **Also handed back to A:** E2's remainder (#1027, a draft), the #953 retrospective ($35 cap; not registered at `98707f29`), the impact sweep's record (#1028, a draft), the combined rebuild (cap $170, operator 2026-11-12, relayed by B and confirmed to A) and this bookkeeping. B keeps VRRM (row 38).
   - **Not in batch 7's PRs:** fix 4b, the combined rebuild, A's cut of the 25 transcript runs in tracked files, the audit's 21 and 4 its guard found (operator 2026-11-12: "Cut all 21 + guard (Recommended)"; 2026-11-13: "Cut all 25, one PR (Recommended)"), open as #1046, and #1014's other found-not-fixed item (`cross_check_transform`'s cut).
