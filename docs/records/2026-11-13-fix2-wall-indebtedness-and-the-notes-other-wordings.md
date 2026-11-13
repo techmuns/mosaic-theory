@@ -1,8 +1,8 @@
 ---
 id: 2026-11-13-fix2-wall-indebtedness-and-the-notes-other-wordings
-status: open
+status: shipped
 date: 2026-11-13
-prs: []
+prs: [1051]
 supersedes:
 superseded-by:
 ---
