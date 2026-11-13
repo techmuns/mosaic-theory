@@ -56,7 +56,6 @@ from vinci.orchestrator import (
 from vinci.progress import stderr_reporter
 from vinci.rank import (
     load_candidates_from_snapshot,
-    load_cause_annotations,
     render_profile_block,
 )
 from vinci.resolver import EntityResolver, ResolutionError
@@ -414,11 +413,8 @@ def _cmd_rank(args: argparse.Namespace) -> int:
     job takes, so a hand-built queue and a CI-built one are the same object and cannot drift.
     Orders, never decides — see ``vinci.rank``.
     """
-    from pathlib import Path
-
     cfg = get_config()
     snaps = cfg.snapshots_dir
-    annotations = load_cause_annotations(Path(args.cause_file)) if args.cause_file else {}
 
     # CARRY FORWARD WHAT THE OPERATOR ALREADY ESTABLISHED (found while wiring the cohort split).
     #
@@ -433,13 +429,7 @@ def _cmd_rank(args: argparse.Namespace) -> int:
     # Safe in the only direction that matters: the structural channel is DEMOTE-ONLY, so a carried
     # flag can only keep a name down. `--structural` still overrides with a fresh scan, and that
     # scan self-clears a signal that no longer fires.
-    structural_flags, carried_causes = carry_forward_assessment(cfg)
-    # `if not args.cause_file`, NOT `annotations or carried_causes`: an operator who passes a cause
-    # file that annotates NOTHING is clearing the annotations, and a truthiness fallback would
-    # silently resurrect the carried set underneath them — the supplied file having no effect and
-    # saying nothing about it. Explicit file wins, empty or not.
-    if not args.cause_file:
-        annotations = carried_causes
+    structural_flags = carry_forward_assessment(cfg)
     if args.structural:
         from vinci.edgar.client import EdgarClient
         from vinci.rank import scan_structural
@@ -461,7 +451,7 @@ def _cmd_rank(args: argparse.Namespace) -> int:
             ).flags
 
     ranked = rank_from_snapshots(
-        cfg, annotations=annotations, structural_flags=structural_flags or None,
+        cfg, structural_flags=structural_flags or None,
         deep_work_adv_floor=args.deep_work_adv_floor,
     )
     if not ranked:
@@ -477,7 +467,7 @@ def _cmd_rank(args: argparse.Namespace) -> int:
     )
     print(
         f"top {args.top} shown · {n_unknown} carry an UNKNOWN axis (flagged) · "
-        f"{n_gated} tradeability-gated · LLM cause annotations: {len(annotations)}\n"
+        f"{n_gated} tradeability-gated\n"
     )
     if args.structural:
         print(
@@ -3782,10 +3772,6 @@ def build_parser() -> argparse.ArgumentParser:
         dest="deep_work_adv_floor",
         help="ADV($) below which a name is tradeability-gated (default: 3e6 = universe floor, a "
         "no-op re-check; raise to push thin names down)",
-    )
-    p_rank.add_argument(
-        "--cause-file", dest="cause_file",
-        help="optional JSON {ticker_or_id: mean_revert|structural_break} Tier-3 LLM annotations",
     )
     p_rank.add_argument(
         "--structural", action="store_true",

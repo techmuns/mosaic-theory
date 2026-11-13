@@ -834,7 +834,7 @@ function analysisTier(d, m, card) {
     + concentration(m.concentration)                    // business quality — what this IS
     + synthesis(d.synthesis, m, d.sleeve)               // the argument, framed by its book
     + catalystCalendar(m, card)                         // when reality votes on it
-    + valuation(m.valuation)                            // the ONLY home of the full multiples read
+    + valuation(m.valuation, d.anchor)                  // the full multiples read + the screening anchor
     + evGap(m.ev_gap)                                   // (A2) our leg vs the street
     + peerComps(m.peer_comps)                           // peer comps (per-peer grid inside)
     + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
@@ -890,7 +890,9 @@ function isProcessCaveat(c) { return String(c).startsWith("primary-source:"); }
 // AUDIT. Reading guide first, then the full statements + cap-structure provenance + implied-equity
 // reference + mgmt pointer (appendixBlock), then ownership & positioning (insider + short
 // interest, relocated here from "The street"), and Record & reproduce closing the document. (The
-// screening-context panel moved to the Brief's underwrite-detail card — user decision.)
+// screening-context panel left the Appendix for the Brief's underwrite-detail card — user decision
+// — and then the Brief for Analysis → Valuation, #1004 item 3c, 2026-11-13; the operator's recipe
+// decision stays on the Brief.)
 // verdictFooter is GONE — it was a third copy of the pivot statement (beside the decision strip's
 // sealed-proposal suffix and Record & reproduce's verdict row).
 function appendixTier(d, verdict, m, card, followed = {}, voidedCall = null) {
@@ -1087,7 +1089,7 @@ function briefVerdictChip(verdict) {
 //   1 opener — the underwrite masthead + assessment + company identity (one read: the decision
 //     headline and what the business is)
 //   2 underwrite detail — scenarios table + rationale + machine proposal (sealed) + audit blocks
-//     + the screening context (how the name surfaced beside how it was underwritten)
+//     (the screening anchor moved to Analysis → Valuation, #1004 item 3c)
 //   3 what happened — the drawdown events + the decision tiles
 //   4 the case — decisive question + top bull/bear + unknowns
 //   5 financial snapshot — trend exhibit + the compact annual table
@@ -1307,20 +1309,30 @@ function cruxInner(s, m, card) {
 
 // 2 — UNDERWRITE DETAIL (user decision): the scenarios table + range rail, the analyst's rationale,
 // the machine-proposal row (sealed until the verdict — the pivot, placement only), the thesis-break
-// chips, the collapsed audit blocks, and the SCREENING CONTEXT (returned from the Appendix — how
-// the name surfaced belongs beside how it was underwritten). Fail-honest without a record: renders
-// the proposal + screening context alone when either exists.
+// chips and the collapsed audit blocks. Fail-honest without a record: a name with a screening
+// anchor and no record still gets the card, stating the absence and pointing at the anchor.
+// THE SCREENING ANCHOR LEFT THIS CARD (#1004 item 3c, 2026-11-13). R1's screen value read
+// 2.0–10.6× the page price on 8 pages (VRRM, the one AVOID, 10.6×): as the first valuation level
+// on page 1 it flattered exactly the de-rated names. It now renders in Analysis → Valuation, after
+// the own-history range position (valuation() below). THE OPERATOR'S DECISION STAYS HERE (round 1;
+// operator, 2026-11-13: "Keep your 4 decisions on Brief (Recommended)"): it closes this card,
+// record or no record. Twin: render._brief_lines.
 function underwriteDetail(d, verdict, m, card, mark) {
-  const screen = anchorInner(d.anchor);
+  const decision = operatorDecisionInner(d.anchor);
   if (!card) {
-    if (!screen) return "";
+    if (!d.anchor) return "";
     return `<div class="card ds-section"><div class="ds-title">Scenario analysis<span class="ds-route">no scenario record for this name</span></div>
-      ${screen}</div>`;
+      <div class="muted">${escapeHtml(SCREEN_POINTER)}</div>${decision}</div>`;
   }
   const title = `<div class="ds-title">Scenario analysis <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">${escapeHtml(card.multipleBasis || "")}</span><span class="ds-route">every assumption &amp; source recorded below</span></div>`;
   const parts = uwCardParts(card, { mark, rationale: false });
-  return `<div class="card ds-section uw-card">${title}${parts.detail}${screen}</div>`;
+  return `<div class="card ds-section uw-card">${title}${parts.detail}${decision}</div>`;
 }
+
+// Where the screening anchor went, said on the Brief card it left. Twin: render._SCREEN_POINTER
+// (pinned equal by tests/test_anchor_off_headline.py). It names no multiple (operator, 2026-11-13:
+// "Drop that clause (Recommended)"): 6 of the 19 pages carrying it have no screen value.
+const SCREEN_POINTER = "This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation.";
 
 // the company-identity block shared by the opener: one-liner · segments / geography / customer
 // concentration · the key-figures table + 52-week relative path. CIK lives in Record & reproduce.
@@ -1426,17 +1438,29 @@ function anchorInner(a) {
   // the sentence is written ONCE, in vinci/dossier/anchor.py — both renderers print it verbatim
   const mid = a.midcycle_gap
     ? `<div class="notice" style="margin-top:8px;"><b>Mid-cycle assumption under strain.</b> ${escapeHtml(a.midcycle_gap.read)}</div>` : "";
-  // THE OPERATOR'S DECISION FIRST (2026-10-22), the machine's own read beneath it — never one inside
-  // the other; a divergence is stated, never resolved. Twin of _screening_context_lines() in render.py.
-  // The recipe and any divergence lead; the reason follows as the operator's words, quoted. A
-  // placeholder machine hint is a data gap, never a disagreement (anchor.PLACEHOLDER_HINTS — the
-  // two lists are pinned equal by tests/test_operator_decision.py).
-  // Inside the function, not at module scope: tests/test_parity_pins.py evaluates this body alone.
+  // The operator's decision on this name's recipe renders on the Brief (operatorDecisionInner(),
+  // #1004 item 3c round 1); this block keeps the machine's own read, labelled as such when a
+  // decision exists. Twin of _screening_context_lines() in render.py.
+  const why = a.reason ? `<div class="muted" style="margin-top:6px;">${a.operator_decision ? "The machine’s read: " : ""}${escapeHtml(a.reason)}</div>` : "";
+  return `<div class="uw-screen"><div class="ds-title" style="font-size:12px; margin-top:14px;">Screening context — how this name surfaced<span class="ds-route">not a verdict</span></div>
+    <div class="subtitle muted" style="margin:2px 0 8px;">A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite.</div>
+    <table class="data"><tbody>${rows}</tbody></table>${mid}${dq}${why}</div>`;
+}
+
+// THE OPERATOR'S DECISION on this name's recipe (2026-10-22) — the recipe and any divergence lead;
+// the reason follows as the operator's words, quoted; a divergence is stated, never resolved.
+// IT STAYS ON THE BRIEF (#1004 item 3c, round 1; operator, 2026-11-13: "Keep your 4 decisions on
+// Brief (Recommended)"): it renders in the Scenario analysis card (underwriteDetail()), while the
+// screening block it used to sit inside moved to Analysis → Valuation. One home, the Brief. A
+// placeholder machine hint is a data gap, never a disagreement (anchor.PLACEHOLDER_HINTS — the two
+// lists are pinned equal by tests/test_operator_decision.py). Twin of
+// _operator_decision_lines() in render.py.
+function operatorDecisionInner(a) {
+  const od = a && a.operator_decision;
+  if (!od) return "";
   const PLACEHOLDER_HINTS = ["unknown", "ANCHOR_UNRESOLVED"];   // twin of anchor.PLACEHOLDER_HINTS
-  const od = a.operator_decision;
   const mh = a.machine_recipe_hint;
-  const dec = od
-    ? `<div style="margin-top:10px; padding:10px 13px; border:1px solid var(--line-2); border-left:3px solid var(--ink-2); border-radius:var(--r); background:var(--surface);">
+  return `<div class="ds-opdec" style="margin-top:10px; padding:10px 13px; border:1px solid var(--line-2); border-left:3px solid var(--ink-2); border-radius:var(--r); background:var(--surface);">
       <div><b>The operator's decision: ${escapeHtml(od.recipe)}</b> <span class="muted" style="font-size:11.5px;">· ${escapeHtml(od.decided_on)} · ${escapeHtml(od.decided_by)}</span></div>${
         PLACEHOLDER_HINTS.includes(mh)
           ? `<div class="muted" style="margin-top:8px; font-size:12px;">The machine could not read a recipe on this build (${escapeHtml(mh)}) — a data gap, not a disagreement; the operator's decision stands.</div>`
@@ -1444,12 +1468,7 @@ function anchorInner(a) {
           ? `<div class="flag open" style="margin:8px 0 0;"><span class="fi">⚠</span><span><b>The machine reads ${escapeHtml(mh)}.</b> The operator's decision stands; it changes only by hand.</span></div>` : ""}
       <div style="margin-top:8px; padding-left:11px; border-left:2px solid var(--line-2); font-size:12.5px; line-height:1.55; white-space:pre-line;">${escapeHtml(od.reason)}</div>
       <details style="margin-top:6px;"><summary class="muted" style="font-size:11.5px;">Where this decision is recorded</summary><div class="mono" style="font-size:11px; margin-top:2px;">${escapeHtml(od.source_ref)}</div></details>
-    </div>`
-    : "";
-  const why = a.reason ? `<div class="muted" style="margin-top:6px;">${od ? "The machine’s read: " : ""}${escapeHtml(a.reason)}</div>` : "";
-  return `<div class="uw-screen"><div class="ds-title" style="font-size:12px; margin-top:14px;">Screening context — how this name surfaced<span class="ds-route">not a verdict</span></div>
-    <div class="subtitle muted" style="margin:2px 0 8px;">A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite.</div>
-    <table class="data"><tbody>${rows}</tbody></table>${dec}${mid}${dq}${why}</div>`;
+    </div>`;
 }
 
 // (tier redesign) scenarioPanel is GONE — the Brief composes uwCardParts() directly: the masthead
@@ -3490,8 +3509,13 @@ function evGapTail(g, br, consAsOf) {
   return body;
 }
 
-function valuation(v) {
-  if (!v) return "";
+function valuation(v, anchor = null) {
+  // (#1004 item 3c) the SCREENING ANCHOR closes this section, directly after the own-history range
+  // position: that line states today's multiple and the median the anchor re-rates to, so what
+  // the screen value assumes is read beside it. Main body, never collapsed — on a name with no
+  // scenario record it is the document's only valuation level. Twin: _valuation_section_lines.
+  const screen = anchorInner(anchor);
+  if (!v) return screen ? sec("Valuation", "", screen) : "";
   // Mirrors the md render (PR #48): lead with the CROSS-SECTIONAL read (the edge); the own-history
   // percentile barely discriminates across finalists, so it's folded into the range line below.
   // (G) implied expectations slot in AFTER cross-sectional, BEFORE the own-history reads.
@@ -3503,7 +3527,7 @@ function valuation(v) {
     impliedExpectations(v.implied_expectations) +
     fact("EV/adj-EBITDA (forward)", v.ev_ebitda_adjusted_fwd) +
     fact("Adjusted EPS (guide)", v.adjusted_eps) +
-    fact("Own-history range position", v.range_position, null, { hi: true }));
+    fact("Own-history range position", v.range_position, null, { hi: true }) + screen);
 }
 
 // (D1/D2) `quality` split into leverageSurvival + trajectorySection (see renderDossier); the two

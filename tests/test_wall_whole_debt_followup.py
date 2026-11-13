@@ -441,3 +441,169 @@ def test_bs_a_footnote_marker_is_no_note_figure() -> None:
     assert _balance_sheet_debt(text) == (_WERN_DATE, 803.0, 0.0)
     w = _maturity_wall(text, "10-Q x")
     assert w is not None and w.state == "located" and w.within_12m_total == 0.0
+
+
+# --- the #1039 follow-up (2026-11-13, the coordinator's re-review of #1039): "indebtedness" is a
+# borrowing word, and the folded-portion guard reads the debt note's other wordings --------------
+
+# Perrigo (PRGO), 10-K 0001585364-26-000009, verbatim: the balance sheet's heading, its total
+# assets and liabilities, its closing sentence, and Note 13's last rows and footnote (2) [cut]
+_PRGO_BS = ("CONSOLIDATED BALANCE SHEETS (in millions, except per share amounts ) December 31, "
+            "2025 December 31, 2024 Total assets $ 8,535.2 $ 9,647.7 Liabilities and Shareholders’ "
+            "Equity Liabilities Accounts payable $ 474.5 $ 495.2 Payroll and related taxes 112.2 "
+            "123.2 Accrued customer programs 111.4 133.3 Other accrued liabilities 230.6 238.7 "
+            "Accrued income taxes 20.8 17.4 Current indebtedness 36.6 36.4 Current liabilities "
+            "held for sale 26.8 — Total current liabilities 1,012.9 1,044.2 Non-current "
+            "liabilities Long-term debt, less current portion 3,603.6 3,581.7 Deferred income "
+            "taxes 168.9 203.2 Other non-current liabilities 814.3 499.2 Total non-current "
+            "liabilities 4,586.8 4,284.1 Total liabilities 5,599.7 5,328.3 See accompanying Notes "
+            "to Consolidated Financial Statements.")
+_PRGO_NOTE = ("Total borrowings outstanding 3,640.2 3,618.1 Current indebtedness ( 36.6 ) ( 36.4 ) "
+              "Total long-term debt less current portion $ 3,603.6 $ 3,581.7 (2) The coupon rate "
+              "noted above is as of December 31, 2025.")
+#: One instrument stated at the sheet's long-term row, with no principal due (CONSTRUCTED).
+_PRGO_DUE = ("As of December 31, 2025, the aggregate principal amount outstanding under our Senior "
+             "Notes was $3,603.6 million, with no principal amounts due within the next 12 months.")
+
+
+def test_prgo_current_indebtedness_is_a_borrowing_row() -> None:
+    """(-) REAL SHEET: Perrigo lists "Current indebtedness 36.6" beside "Long-term debt, less
+    current portion 3,603.6", and its Note 13 totals them, "Total borrowings outstanding 3,640.2".
+    "Indebtedness" was no borrowing word, so main read 3,603.6 as the whole debt with a current
+    portion of 0.0. With one instrument stated at that figure and no principal due (the
+    CONSTRUCTED sentence), main read a located $0.0 beside $36.6M due within the year."""
+    text = " ".join([_PRGO_BS, _PRGO_NOTE, _PRGO_DUE])
+    w = _maturity_wall(text, "10-K x")
+    assert w is not None and w.state == "not_stated", _k(w)
+    assert _balance_sheet_debt(text) is None
+
+
+def test_bs_neg_a_current_indebtedness_row_refuses_the_total() -> None:
+    """(-) Werner's real sheet with one "Current indebtedness" row (CONSTRUCTED: the row)."""
+    text = _wern_with("Current indebtedness 50,000 —")
+    assert _balance_sheet_debt(text) is None
+    w = _maturity_wall(text, "10-Q x")
+    assert w is not None and w.state == "not_stated", _k(w)
+
+
+def _wern_noted(line: str) -> str:
+    """Werner's real Q3 excerpt with a debt note after it, whose total exceeds the sheet's long-term
+    row by a current portion the note names in ``line`` (CONSTRUCTED: the note)."""
+    return " ".join([_WERN_Q3, "Debt Long-term debt consists of: Credit Facilities 813,000 Total "
+                               f"debt 813,000 {line} Long-term debt $ 803,000."])
+
+
+def test_bs_neg_every_note_wording_of_a_folded_portion_refuses_the_total() -> None:
+    """(-) The debt note's other ways of subtracting a current portion the sheet does not list:
+    no parentheses, a bare "Current maturities", a lettered footnote, and "included in". Only
+    "Less: current portion of long-term debt ( 10,000 )" refused on main; each of these read a
+    located $0.0 beside $10.0M the note puts within the year."""
+    for line in ("Less current portion of long-term debt 10,000",
+                 "Less: Current maturities ( 10,000 )",
+                 "Less: current portion of long-term debt (a) ( 10,000 )",
+                 "Current portion included in accrued expenses ( 10,000 )",
+                 # what main read, kept (code review round 0): a lower-case "less:" and an
+                 # all-caps one before a parenthesised cell, and a spaced colon
+                 "less: current portion of long-term debt ( 10,000 )",
+                 "LESS: CURRENT PORTION OF LONG-TERM DEBT ( 10,000 )",
+                 "Less : current portion of long-term debt ( 10,000 )",
+                 # a caption's own "current maturities" never swallows the line after it
+                 "including current maturities, consisted of: Less: current portion of "
+                 "long-term debt ( 10,000 )"):
+        text = _wern_noted(line)
+        assert _balance_sheet_debt(text) is None, line
+        w = _maturity_wall(text, "10-Q x")
+        assert w is not None and w.state == "not_stated", (line, _k(w))
+
+
+def test_a_lease_or_an_interest_line_is_no_folded_debt_portion() -> None:
+    """(+) What stays OUT of the folded-portion guard and the borrowing words: a lease's current
+    portion, in the note or on the sheet (#956: a lease is not debt), a bare current portion of
+    interest or a tax in the debt note's own table, and a row's own lower-case ", less current
+    maturities" before a bare cell. Werner's sheet still reads its total and its wall.
+    CONSTRUCTED: the lines."""
+    for line in ("Less: current portion of lease liabilities ( 10,000 )",
+                 "Less: current maturities of finance lease liabilities ( 10,000 )",
+                 "Current portion of operating lease liabilities included in accrued expenses "
+                 "( 10,000 )",
+                 "Less: current portion, accrued interest ( 10,000 )",
+                 "Less: current portion, income taxes ( 10,000 )",
+                 "Finance lease liabilities, less current maturities 10,000"):
+        text = _wern_noted(line)
+        assert _balance_sheet_debt(text) == (_WERN_DATE, 803.0, 0.0), line
+        w = _maturity_wall(text, "10-Q x")
+        assert w is not None and w.state == "located" and w.within_12m_total == 0.0, line
+    row = _wern_with("Current portion of operating lease liabilities 5,000 —")
+    assert _balance_sheet_debt(row) == (_WERN_DATE, 803.0, 0.0)
+
+
+def test_aten_a_bare_current_portion_of_deferred_revenue_is_no_folded_debt() -> None:
+    """(+) REAL TEXT: A10 Networks' 10-K (aten-20251231) lists "Long-term debt 218,787" and no other
+    borrowing, and its revenue note subtracts "Less: current portion ( 80,824 )" — of DEFERRED
+    REVENUE ("Total deferred revenue 142,806"). A bare "current portion" takes its subject from
+    its own table, so this one is no folded debt and the sheet still reads its total. The first
+    widening of the note guard refused it (this follow-up's own corpus run)."""
+    aten = " ".join([
+        "CONSOLIDATED BALANCE SHEETS (in thousands, except par value) As of December 31, 2025 As "
+        "of December 31, 2024",
+        "Total assets $ 629,813 $ 432,815 LIABILITIES AND STOCKHOLDERS’ EQUITY Current "
+        "liabilities: Accounts payable $ 11,694 $ 12,542 Accrued and other liabilities 41,132 "
+        "32,696 Deferred revenue, current 80,824 78,335 Total current liabilities 133,650 123,573 "
+        "Deferred revenue, non-current 61,982 69,924 Long-term debt 218,787 — Other non-current "
+        "liabilities 3,848 7,489 Total liabilities 418,267 200,986",
+        "See accompanying notes to consolidated financial statements.",
+        "Deferred revenue consisted of the following (in thousands): As of December 31, 2025 As of "
+        "December 31, 2024 As of December 31, 2023 Deferred revenue: Products $ 2,783 $ 4,405 $ "
+        "14,917 Services 140,023 143,854 126,417 Total deferred revenue 142,806 148,259 141,334 "
+        "Less: current portion ( 80,824 ) ( 78,335 ) ( 82,657 ) Non-current portion $ 61,982 $ "
+        "69,924 $ 58,677"])
+    assert _balance_sheet_debt(aten) == (("December", "31", "2025"), 218.787, 0.0)
+
+
+def test_an_accrued_interest_on_notes_row_is_no_borrowing() -> None:
+    """(+) Accrued interest is not principal: Werner's sheet with an "Accrued interest on notes"
+    row (CONSTRUCTED: the row) still reads its total and its wall. On main the word "notes" made it
+    a borrowing row, so the total was refused (the brief's stay-out pin). A "Notes payable" row
+    is still one (`test_bs_neg_every_borrowing_label_refuses_the_total`)."""
+    text = _wern_with("Accrued interest on notes 5,000 —")
+    assert _balance_sheet_debt(text) == (_WERN_DATE, 803.0, 0.0)
+    w = _maturity_wall(text, "10-Q x")
+    assert w is not None and w.state == "located" and w.within_12m_total == 0.0
+
+
+def test_codex_round_1_a_modifier_of_is_not_the_portions_object() -> None:
+    """(-) Codex P1 (round 1): PARR's Q2 10-Q (0000821483-26-000014, Note 11, verbatim wording)
+    subtracts "Less: current maturities, net of unamortized discount and deferred financing costs
+    ( 1,048 )". Its "of" qualifies the maturities; it is not what they are maturities OF. Split on
+    the first "of", the object read "unamortized discount …", which names no debt, so the guard
+    skipped a real current portion of debt. A sheet that does not list it then read a current
+    portion of 0.0, and Werner's figure located $0.0 beside $10.0M due. Only an "of" right after
+    "current portion" or "current maturities" names the object. CONSTRUCTED: the line's figure,
+    on Werner's sheet."""
+    line = ("Less: current maturities, net of unamortized discount and deferred financing costs "
+            "( 10,000 )")
+    text = _wern_noted(line)
+    assert _balance_sheet_debt(text) is None
+    w = _maturity_wall(text, "10-Q x")
+    assert w is not None and w.state == "not_stated", _k(w)
+
+
+def test_round_2_a_label_that_repeats_its_words_is_still_a_subtraction() -> None:
+    """(-) Round 2 (the coordinator's review of #1051, MEDIUM). Round 0's no-swallow rule kept a
+    label from running through another "less" or "current portion"/"current maturities", and
+    matches never overlapped. So a real subtraction whose label REPEATS either word was never
+    read, and the long-term row read as the whole debt: a located $0.0 beside $10.0M the note puts
+    within the year. A caption's own words must still never use up the line after it
+    (`test_bs_neg_every_note_wording_of_a_folded_portion_refuses_the_total`). CONSTRUCTED: each
+    line, on Werner's real sheet. No real filing in the 2,035-document cache carries these
+    wordings; the rule is general."""
+    for line in ("Less: current portion of long-term debt, net of current portion of unamortized "
+                 "debt issuance costs ( 10,000 )",
+                 "Less: current maturities of long-term debt and current portion of finance lease "
+                 "obligations ( 10,000 )",
+                 "Less: current portion of long-term debt, less unamortized issuance costs "
+                 "( 10,000 )"):
+        text = _wern_noted(line)
+        assert _balance_sheet_debt(text) is None, line
+        w = _maturity_wall(text, "10-Q x")
+        assert w is not None and w.state == "not_stated", (line, _k(w))

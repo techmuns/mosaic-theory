@@ -29,18 +29,7 @@ _8 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _no scenario record for this name_
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | NOT applicable |
-| Mid-cycle margin | 64.4% | 8y history · firm |
-| Median multiple, own history | 23.8x | 39 closes · firm · EV/EBITDA |
-| Overall confidence | firm |  |
-
-_R1 inputs incomplete — see per-input source stamps_
+_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -271,6 +260,19 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 25.2x as-of 2026-11-06 — trailing range 18.6–34.3x (median 23.8x) over 39 closes → 67%ile → above-center; P/LTM EPS 34.6x [28]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | NOT applicable |
+| Mid-cycle margin | 64.4% | 8y history · firm |
+| Median multiple, own history | 23.8x | 39 closes · firm · EV/EBITDA |
+| Overall confidence | firm |  |
+
+_R1 inputs incomplete — see per-input source stamps_
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [46]  <!-- ds-table -->

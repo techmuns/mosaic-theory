@@ -77,3 +77,5 @@ superseded-by:
 ## Amendments
 
 - **2026-11-11 — `status: open` → `shipped`** (the record-status sweep, `docs/records/2026-11-11-record-status-sweep.md`). This record's change merged to `main` as `9f6175db` (#948) on 2026-11-10. `prs:` was left empty at merge; the front matter stays as merged, so this entry names the PR.
+- **2026-11-13 — what this PR's next build changes, from the impact sweep** (operator ruling 3, 2026-11-12, verbatim: "Yes, as appended amendments (Recommended)"). The body above is unchanged. The sweep ran this PR with `vinci.impact` (base `93a50599`, head `9f6175db`, measured 2026-11-11, $0): base code against head code on the same inputs, which shows what each page's NEXT build would change. Its record, with every row of the sweep, is `docs/records/2026-11-13-fix2-impact-sweep.md`.
+  - **#948: WERN's synthesis request moves**, in its `facts` section (the covenant pointer row's form, `8-K` → `8-K/A`). WERN is off the panel. The body names WERN's pointer row and its labels, and says nothing about the request.

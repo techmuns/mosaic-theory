@@ -231,3 +231,17 @@ def test_the_worst_case_has_no_guessed_price() -> None:
     assert rp.worst_case_usd("claude-opus-4-8", 192_000, 16_384) == pytest.approx(1.6096)
     with pytest.raises(rp.ReplayError, match="no list price"):
         rp.worst_case_usd("claude-unpriced", 1, 1)
+
+
+def test_a_paid_draw_row_states_the_sdk_it_went_through(tmp_path: Path,
+                                                         nflx: dict[str, Any]) -> None:
+    """Each priced draw row, in the approval's ledger and the raw draws file alike, names the
+    installed `anthropic` SDK (operator, 2026-11-13: "Check, then pin newest (Recommended)")."""
+    import anthropic
+
+    rp.run_request(rp.capture(nflx, None), draws=2, budget=_budget(tmp_path / "l.jsonl", 20.0),
+                   label="t", draws_out=tmp_path / "d.jsonl", sdk=_FakeSdk())
+    for f in ("l.jsonl", "d.jsonl"):
+        rows = [r for r in (json.loads(x) for x in (tmp_path / f).read_text().splitlines())
+                if "usage" in r]
+        assert len(rows) == 2 and {r["sdk_version"] for r in rows} == {anthropic.__version__}, f

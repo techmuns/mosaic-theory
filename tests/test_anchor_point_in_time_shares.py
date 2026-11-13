@@ -21,7 +21,6 @@ from typing import Any
 import pytest
 
 from vinci.dossier import anchor as an
-from vinci.dossier import tagger
 from vinci.edgar.concepts import points_for_tag
 
 _PAGES = sorted(Path("data/dossiers").glob("*/dossier.json"))
@@ -79,15 +78,6 @@ def test_the_denominator_helper_reads_the_anchor_it_is_given() -> None:
                                 "diluted_shares": {"value": 1.117e9}}) == 1.1e9
     assert an.per_share_shares({"diluted_shares": {"value": 1.117e9}}) == 1.117e9
     assert an.per_share_shares({}) is None
-
-
-def test_the_leverage_read_rebuilds_the_anchors_own_equity() -> None:
-    """`tagger._leverage` multiplies the base back by the count it was divided by — on the
-    point-in-time count, the equity is the anchor's, not one 1.5% larger."""
-    a = {"net_debt": {"value": -3133.0}, "anchor_base_value_per_share": 131.1019,
-         "shares_outstanding": {"value": 1_099_974_061.0}, "diluted_shares": {"value": 1.117e9}}
-    _r, why = tagger._leverage(a)
-    assert f"{131.1019 * 1_099_974_061 / 1e6:,.0f}M" in why, why
 
 
 def _row(s: str, e: str, v: int) -> dict[str, Any]:

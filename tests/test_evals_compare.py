@@ -233,3 +233,37 @@ def _scorer_is_the_fingerprint(monkeypatch: pytest.MonkeyPatch) -> None:
     `tests/test_evals_order8.py` and `tests/test_evals_order8_round1.py`."""
     from tests.evals_scorer_stub import fingerprint_only
     monkeypatch.setattr(cm, "refuse_unless_registered_scorer", fingerprint_only)
+
+
+def _restamp(out: Path, versions: list[str | None]) -> Path:
+    """Row i of the run's draws gets `versions[i]` as its `sdk_version`; None leaves it without
+    one, as a row written before rows carried it (2026-11-13)."""
+    rows = [json.loads(x) for x in (out / "draws.jsonl").read_text().splitlines() if x.strip()]
+    for r, v in zip(rows, versions, strict=True):
+        if v is not None:
+            r["sdk_version"] = v
+    (out / "draws.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    return out
+
+
+def test_a_run_whose_base_and_cand_went_through_two_sdks_is_refused(
+        tmp_path: Path, nflx: dict[str, Any]) -> None:
+    """(−) BASE drawn on 0.112.0, CAND after a re-sync on 2.6.0 (review of #1049, round 1): the
+    API version would be a second difference between the arms. Refused, naming both."""
+    raw = nflx["synthesis"]
+    out = _restamp(_draws(tmp_path, raw, raw), ["0.112.0"] * 5 + ["2.6.0"] * 5)
+    with pytest.raises(rp.ReplayError, match=r"2 SDKs \(0\.112\.0, 2\.6\.0\)"):
+        cm.score_run(out, _reg(), pages={"NFLX": nflx})
+    half = _restamp(_draws(tmp_path, raw, raw, name="half"), ["2.6.0"] * 5 + [None] * 5)
+    with pytest.raises(rp.ReplayError, match="5 of 10 draw rows state no SDK"):
+        cm.score_run(half, _reg(), pages={"NFLX": nflx})
+
+
+def test_a_run_on_one_sdk_scores_as_one_from_before_the_field(
+        tmp_path: Path, nflx: dict[str, Any]) -> None:
+    """(+) Every row on one SDK scores exactly as rows that state none."""
+    raw = nflx["synthesis"]
+    before = cm.score_run(_draws(tmp_path, raw, raw), _reg(), pages={"NFLX": nflx})
+    one = cm.score_run(_restamp(_draws(tmp_path, raw, raw, name="one"), ["2.6.0"] * 10), _reg(),
+                       pages={"NFLX": nflx})
+    assert (one.ships, one.reasons, one.leans) == (before.ships, before.reasons, before.leans)

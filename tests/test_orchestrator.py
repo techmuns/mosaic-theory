@@ -165,7 +165,7 @@ def test_the_weekly_job_ranks_through_the_same_path_as_the_cli() -> None:
     assert "write_queue_snapshots" in bodies["refresh_queue"], (
         "the weekly refresh ranks but never writes the queue snapshots")
     assert "carry_forward_assessment" in bodies["refresh_queue"], (
-        "the weekly refresh no longer carries the last explicit --structural/--cause-file "
+        "the weekly refresh no longer carries the last explicit --structural "
         "assessment forward — an 8-K-disqualified name climbs back to the top on Monday")
     assert "rank_from_snapshots" in bodies["_cmd_rank"], (
         "`vinci rank` no longer shares the weekly job's ranking path — a CI queue and a hand-built "

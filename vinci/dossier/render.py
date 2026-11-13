@@ -3734,12 +3734,46 @@ _SCREEN_SUBTITLE = (
     "A mechanical re-rate to the median multiple of this name's own trading history, on its naive "
     "reported median margin. An attention filter only — it applies no structural adjustment, so a "
     "cheap-looking screen still has to survive the full bear/base/bull underwrite.")
+#: (#1004 item 3c, 2026-11-13) What the Brief's Scenario analysis section says where the screening
+#: anchor went, on a name with no scenario record. Twin: SCREEN_POINTER in dossier.js. It names no
+#: multiple (operator, 2026-11-13: "Drop that clause (Recommended)"): 6 of the 19 pages carrying it
+#: have no screen value, so a clause saying what the anchor re-rates to was untrue there.
+_SCREEN_POINTER = (
+    "This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — "
+    "is in Analysis, under Valuation.")
 
 
 #: An anchor multiple read from the ex-lease history carries this source prefix (anchor.py), and
 #: the screening table names the convention beside it. Twin: anchorInner() in dossier.js.
 _EX_LEASE_SOURCE_PREFIX = "valuation.lease_basis"
 _EX_LEASE_LABEL = " ex-lease (TEV less operating leases; net debt likewise)"
+
+
+def _operator_decision_lines(anchor: Anchor | None) -> list[str]:
+    """THE OPERATOR'S DECISION on this name's recipe (2026-10-22): the recipe and any divergence
+    lead; the reason follows as the operator's words, quoted; a divergence is stated, never
+    resolved, and a placeholder machine hint is a data gap, never a disagreement.
+
+    IT STAYS ON THE BRIEF (#1004 item 3c, round 1; operator, 2026-11-13: "Keep your 4 decisions on
+    Brief (Recommended)"). It renders in the Brief's Scenario analysis section (`_brief_lines`),
+    while the screening block it used to sit inside moved to Analysis → Valuation, where the
+    machine's own read stays, labelled "The machine's read". One home, the Brief. Twin:
+    operatorDecisionInner() in dossier.js."""
+    dec = anchor.operator_decision if anchor is not None else None
+    if anchor is None or dec is None:
+        return []
+    out = [f"**The operator's decision: {_md_cell(dec.recipe)}** — {dec.decided_on}, "
+           f"{dec.decided_by}", ""]
+    machine = anchor.machine_recipe_hint
+    if machine in PLACEHOLDER_HINTS:   # a data gap, never shown as the machine disagreeing
+        out += [f"_The machine could not read a recipe on this build ({machine}) — a data gap, "
+                "not a disagreement; the operator's decision stands._", ""]
+    elif machine and machine != dec.recipe:
+        out += [f"⚠ **The machine reads {machine}.** The operator's "
+                "decision stands; it changes only by hand.", ""]
+    out += [*(f"> {ln}".rstrip() for ln in dec.reason.splitlines()), "",
+            f"_Where this decision is recorded: {dec.source_ref}_", ""]
+    return out
 
 
 def _screening_context_lines(anchor: Anchor | None) -> list[str]:
@@ -3808,22 +3842,10 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     out = ["### Screening context — how this name surfaced — _not a verdict_", "",
            f"_{_SCREEN_SUBTITLE}_", "",
            "| input | value | basis |", "| --- | ---: | --- |", *rows, ""]
-    # THE OPERATOR'S DECISION FIRST (2026-10-22), the machine's own read beneath it — never one
-    # inside the other. A divergence is stated, never resolved. Twin: anchorInner() in dossier.js.
-    # The recipe and any divergence lead; the reason follows as the operator's words, quoted.
+    # The operator's decision on this name's recipe renders on the Brief
+    # (`_operator_decision_lines`, #1004 item 3c round 1); this block keeps the machine's own read,
+    # labelled as such when a decision exists. Twin: anchorInner() in dossier.js.
     dec = anchor.operator_decision
-    if dec is not None:
-        out += [f"**The operator's decision: {_md_cell(dec.recipe)}** — {dec.decided_on}, "
-                f"{dec.decided_by}", ""]
-        machine = anchor.machine_recipe_hint
-        if machine in PLACEHOLDER_HINTS:   # a data gap, never shown as the machine disagreeing
-            out += [f"_The machine could not read a recipe on this build ({machine}) — a data gap, "
-                    "not a disagreement; the operator's decision stands._", ""]
-        elif machine and machine != dec.recipe:
-            out += [f"⚠ **The machine reads {machine}.** The operator's "
-                    "decision stands; it changes only by hand.", ""]
-        out += [*(f"> {ln}".rstrip() for ln in dec.reason.splitlines()), "",
-                f"_Where this decision is recorded: {dec.source_ref}_", ""]
     # the sentence is written ONCE, in vinci/dossier/anchor.py — both renderers print it verbatim
     if anchor.midcycle_gap is not None:
         out += [f"**Mid-cycle assumption under strain.** {anchor.midcycle_gap.read}", ""]
@@ -3941,16 +3963,21 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # SCENARIO ANALYSIS — the recorded bear/base/bull table (+ reasons); the sealed machine
     # proposal joins it only under the operator's explicit --show-proposal peek.
     scen = _scenario_table_lines(card)
-    # The SCREENING ANCHOR closes the section in both twins (underwriteDetail() appends it after
-    # the card detail, and renders the section on the anchor ALONE when no card exists — with the
-    # absence stated rather than the section vanishing). The markdown twin now does the same: a
-    # shorter document is not a substitute for saying "this name has not been underwritten".
-    screen = _screening_context_lines(d.anchor)
+    # THE SCREENING ANCHOR LEFT THIS SECTION (#1004 item 3c, 2026-11-13): R1's screen value read
+    # 2.0–10.6× the page price on 8 pages (VRRM, the one AVOID, 10.6×), so as the first valuation
+    # level on the Brief it flattered the de-rated names. It renders in the Analysis tier's
+    # valuation section now (`_valuation_section_lines`). A name with an anchor and no record
+    # still gets the section, stating the absence and where the anchor went: a shorter document
+    # is not a substitute for saying "this name has not been underwritten". THE OPERATOR'S
+    # DECISION STAYS HERE (round 1; operator, 2026-11-13: "Keep your 4 decisions on Brief
+    # (Recommended)"), after the record or the pointer. Twin: underwriteDetail() in dossier.js.
+    screen = d.anchor is not None
     if scen or screen or show_proposal:
         out.append("## Scenario analysis")
         if not scen and screen:
-            out += ["_no scenario record for this name_", ""]
+            out += ["_no scenario record for this name_", "", f"_{_SCREEN_POINTER}_", ""]
         out += scen
+        out += _operator_decision_lines(d.anchor)
         if show_proposal:
             out += [_machine_proposal_md(
                 derive_proposal(s.evidence_balance if s is not None else None,
@@ -3960,7 +3987,6 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
                                 gate=(s.draw_agreement.gate()
                                       if s is not None and s.draw_agreement else None))),
                 ""]
-        out += screen
     # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
     # cover's CRUX block (buy-side cover), so the question renders once per tier.
     out.append("## The case")
@@ -4507,8 +4533,9 @@ def _ev_gap_tail(g: dict[str, Any], br: dict[str, Any], cons: dict[str, Any],
 
 def _valuation_section_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     """(D1·§4) "Valuation & own-history" — the cross-sectional read (the edge) first, then implied
-    expectations, then the own-history reads; the mid-cycle underwrite block closes it when a
-    record exists. Twin: dossier.js valuation().
+    expectations, then the own-history reads, then the screening anchor (moved off the Brief,
+    #1004 item 3c); the mid-cycle underwrite block closes it when a record exists. Twin:
+    dossier.js valuation().
 
     Extracted verbatim from render_markdown (2026-07-27) so the analysis tier COMPOSES
     like its JS twin instead of running inline — no behaviour change."""
@@ -4532,6 +4559,11 @@ def _valuation_section_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
         _fact("Own-history range position", m.valuation.range_position),
         "",
     ]
+    # (#1004 item 3c, 2026-11-13) the SCREENING ANCHOR, moved here off the Brief — directly after
+    # the own-history range position, which states today's multiple and the median the anchor
+    # re-rates to, so what the screen value assumes is read beside it. Main body, never collapsed.
+    # Twin: valuation() in dossier.js.
+    out += _screening_context_lines(d.anchor)
 
     # (mid-cycle) the cyclical-underwriting section — UNDER the valuation block. Rendered only when
     # the record is present (absent → nothing, so pre-midcycle dossiers are byte-identical).

@@ -29,23 +29,7 @@ _10 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _no scenario record for this name_
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
-| Mid-cycle margin | 29.8% | 10y history · weak |
-| Median multiple, own history | 25.7x | 39 closes · firm · EV/EBITDA |
-| Screen value / share | $752.24 | spot-independent · EV/EBIT 27.8x · on the diluted weighted average |
-| Point-in-time count | refused | the point-in-time count 940,745,031 sits 5.5% above the filer's basic weighted average 891,900,000 (2026-07-01..2026-09-30) — issuance or shares the filer does not count as outstanding for EPS (an employee benefit trust, unvested restricted stock), which the counts cannot tell apart. mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding) |
-| Overall confidence | weak |  |
-
-**Mid-cycle assumption under strain.** The last twelve months' operating margin of 51.3% (CIQ EBIT) sits 21.4 points ABOVE the 10-year median of 29.8% (CIQ EBIT) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, so R1's median already came from the committed panel — and there is no source difference to discount.
-
-**data_quality: vendor_bridge**
-- vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag
+_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -259,6 +243,24 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 27.9x as-of 2026-11-02 — trailing range 13.3–61.9x (median 25.7x) over 39 closes → 59%ile → above-center; P/LTM EPS 45.8x [24]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 29.8% | 10y history · weak |
+| Median multiple, own history | 25.7x | 39 closes · firm · EV/EBITDA |
+| Screen value / share | $752.24 | spot-independent · EV/EBIT 27.8x · on the diluted weighted average |
+| Point-in-time count | refused | the point-in-time count 940,745,031 sits 5.5% above the filer's basic weighted average 891,900,000 (2026-07-01..2026-09-30) — issuance or shares the filer does not count as outstanding for EPS (an employee benefit trust, unvested restricted stock), which the counts cannot tell apart. mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding) |
+| Overall confidence | weak |  |
+
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of 51.3% (CIQ EBIT) sits 21.4 points ABOVE the 10-year median of 29.8% (CIQ EBIT) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, so R1's median already came from the committed panel — and there is no source difference to discount.
+
+**data_quality: vendor_bridge**
+- vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [37]  <!-- ds-table -->

@@ -20,8 +20,8 @@ import httpx
 
 #: the model the pipelines call — `vinci.config.Config.graph_llm_model` and
 #: `vinci.theme_intelligence.config.LLM_MODEL` (this script cannot import `vinci`: the workflow
-#: installs only anthropic and httpx). A test fails when they differ. Pinged until 2026-10-21 was
-#: Haiku, so a key that could use Haiku but not the pipelines' model passed.
+#: installs the lock's packages, never `vinci` itself). A test fails when they differ. Pinged
+#: until 2026-10-21 was Haiku, so a key that could use Haiku but not the pipelines' model passed.
 PIPELINE_MODEL = "claude-opus-4-8"
 
 
@@ -152,9 +152,9 @@ def check_tiingo() -> bool:
 
 def _load_sigv4() -> ModuleType:
     """The fact layer's own SigV4 signer, loaded BY PATH: this script cannot import `vinci` (the
-    workflow installs only anthropic and httpx), and `vinci/facts/sigv4.py` imports the standard
-    library only (tests/test_facts_remote.py holds it to that). One signer for the key check and
-    the uploads, so a check that passes signs the way the uploads sign."""
+    workflow installs the lock's packages, never `vinci` itself), and `vinci/facts/sigv4.py`
+    imports the standard library only (tests/test_facts_remote.py holds it to that). One signer
+    for the key check and the uploads, so a check that passes signs the way the uploads sign."""
     path = Path(__file__).resolve().parents[2] / "vinci" / "facts" / "sigv4.py"
     spec = importlib.util.spec_from_file_location("vinci_facts_sigv4", path)
     if spec is None or spec.loader is None:
@@ -202,8 +202,8 @@ def check_r2() -> bool:
     return False
 
 
-#: `vinci.config.sec_user_agent`'s rule, which this script cannot import (the workflow installs only
-#: anthropic and httpx). A test pins the two equal.
+#: `vinci.config.sec_user_agent`'s rule, which this script cannot import (the workflow installs the
+#: lock's packages, never `vinci` itself). A test pins the two equal.
 SEC_UA_PLACEHOLDER_EMAIL = "your@email.com"
 SEC_UA_EMAIL = re.compile(r"[^@\s]+@[^@\s]+\.[A-Za-z]{2,}")
 
