@@ -229,6 +229,33 @@ pass on both.
     (`tests/test_untraceable_rank_and_duration.py`) uses the validation mode. So it is stated here,
     not changed in `schemas.py`.
 
+**THE RE-RUN ON THE REVIEW'S FIXES (2026-11-13).** The fixes are commit `6f405ebb`, and main
+`0d8a2a43` (#1048, #1050) is merged as `880435fc`: the one conflict was `synthesis.py`'s drift pin
+(rule A), and #1050's figure-trace hunks are reached from `synthesize` only through `_validate`,
+on the chosen draw after the model calls.
+- **The gate:** `bin/commit` green on `6f405ebb`: 11,215 passed, 660 skipped, 11 xfailed, 0
+  failed, counted from every progress line, a line split by a test's print included.
+- **Section D:** `vinci.impact run --base origin/main --head 880435fc`, base `0d8a2a43`, $0, with
+  the same store copy and flags as the runs above, and 0 responses fetched live.
+  - **Fail first:** 34 of 151 nodes fail on main's code and pass on head; 0 fail at head.
+  - **Pages:** 25 of 26 built (PARR refused). The 103 field changes are value for value those of
+    the `32f4d6a4` run, so the review's four fixes move no field on the pages built.
+  - **Requests:** 25 of 25 differ, with the same page lines.
+  - **Readers:** the decision ledger, scoring report and monitor are identical.
+  - **Still valid:** `verify` says VALID after main moved to `9fcd4a74`, which touches only
+    `docs/`.
+- **The panel captures, re-made** from that run (base `0d8a2a43`, head `880435fc`): manifest
+  sha256 `392b5e980a8b480ef1cb5a47e73b3f1869179f55e99012d8302052ea6b9041bd`. All 12 arms are
+  recapture-equal.
+  - **All 12 request pins are byte-identical** to manifest `d5afead0…`'s, base and head arms
+    alike, `request.json` bytes included, and every `layer.json` is identical.
+  - `built.json` differs only in the build clock (`assembled_at`, `anchor.computed_at`), a
+    caveat's fetch time and `extraction_version`.
+  - A $0 dry check from a checkout of main `9fcd4a74` passes: export read, fixed scorer, 0 of 12
+    pins drawn before, 12 layers validate.
+- **The cost:** the requests are unchanged, so it is unchanged: $29.40 expected, $35.28 with 20%.
+  The cap is $35.28 under the operator's ruling, "Estimate +20%, max $40 (Recommended)".
+
 **BOUNDARY.**
 - **Pages:** the 27 committed pages at `7edbfa36`.
 - **Exhibits:** their 122 cited EX-99.1s and 27 cited 10-Qs (the replay); each page's own $0-build
