@@ -6,6 +6,12 @@ Analysis → Valuation, after "Own-history range position"; a page with no scena
 one-line pointer on the Brief; anchor ÷ price stays unprinted (the ImpliedValuation fence,
 `test_parity_pins.test_screening_context_never_differences_the_anchor_against_spot`, unchanged).
 
+Round 1 (operator, 2026-11-13, on review round 0's two deferred findings): the pointer — "Drop that
+clause (Recommended)" — names no multiple, since 6 of the 19 pages carrying it have no screen
+value; the operator's recipe decisions — "Keep your 4 decisions on Brief (Recommended)" — stay on
+the Brief, while the mid-cycle strain and data-quality notices, which qualify the anchor, move with
+it to Valuation.
+
 Why it moved: R1's screen value read 2.0–10.6× the page price on 8 of the 26 committed pages
 (main 12764514; VRRM, the one AVOID, 10.6×). As the first valuation level on page 1 it flattered
 exactly the de-rated names.
@@ -155,6 +161,71 @@ def test_md_inapplicable_reason_moves_with_the_block_e2e() -> None:
     assert seen, "no committed page carries an inapplicable anchor — no live exemplar"
 
 
+# --- round 1 (operator, 2026-11-13): the pointer names no multiple; the decisions stay on the Brief
+
+def test_md_pointer_names_no_multiple_on_any_page_e2e() -> None:
+    """"Drop that clause (Recommended)": no page's Brief says what the anchor re-rates to — 6 of the
+    19 pages carrying the pointer have no screen value — and every no-record page still points."""
+    from vinci.dossier.render import _SCREEN_POINTER
+
+    assert "multiple" not in _SCREEN_POINTER and "re-rate" not in _SCREEN_POINTER, (
+        "the pointer names a multiple, which is untrue on a page with no screen value")
+    pointed = 0
+    for tkr, anchor, has_record, md in _md_pages():
+        brief = _md_tier(md, "Brief")
+        assert _DROPPED_CLAUSE not in brief, (
+            f"{tkr}: the Brief still says what the anchor re-rates to")
+        if anchor is not None and not has_record:
+            pointed += 1
+            assert _SCREEN_POINTER in brief, f"{tkr}: no pointer to the moved screening anchor"
+    assert pointed, "no no-record page carries the pointer — the branch has no live exemplar"
+
+
+def test_md_operator_decisions_stay_on_the_brief_e2e() -> None:
+    """"Keep your 4 decisions on Brief (Recommended)": each recorded recipe decision — its head, the
+    operator's words and where it is recorded — renders in the Brief's Scenario analysis section,
+    once, and nowhere in the screening block (which is under Valuation)."""
+    from vinci.dossier.render import _screening_context_lines
+
+    decided = 0
+    for tkr, anchor, _rec, md in _md_pages():
+        dec = anchor.operator_decision if anchor is not None else None
+        if dec is None:
+            continue
+        decided += 1
+        head = f"**The operator's decision: {dec.recipe}**"
+        scen = _md_section(_md_tier(md, "Brief"), "Scenario analysis")
+        for part in (head, dec.source_ref, dec.reason.splitlines()[0]):
+            assert part in scen, f"{tkr}: the operator's decision is not on the Brief: {part[:60]}"
+        assert md.count(head) == 1, f"{tkr}: the decision renders more than once"
+        assert head not in "\n".join(_screening_context_lines(anchor)), (
+            f"{tkr}: the decision still rides inside the screening block")
+    assert decided >= 4, (
+        f"expected the 4 recorded decisions (AMZN, CNXC, GOOGL, UBER), saw {decided}")
+
+
+def test_md_strain_and_data_quality_notices_move_with_the_anchor_e2e() -> None:
+    """The mid-cycle strain notice and the data-quality notes qualify the anchor, so they render
+    under Valuation with it and not on the Brief. Read from each page's own JSON."""
+    strain = dq = 0
+    for tkr, anchor, _rec, md in _md_pages():
+        if anchor is None:
+            continue
+        val = _md_section(_md_tier(md, "Analysis"), "Valuation & own-history")
+        brief = _md_tier(md, "Brief")
+        texts = []
+        if anchor.midcycle_gap is not None:
+            strain += 1
+            texts.append(anchor.midcycle_gap.read)
+        if anchor.data_quality:
+            dq += 1
+            texts += [f"**data_quality: {anchor.data_quality}**", *anchor.data_quality_detail]
+        for text in texts:
+            assert text in val, f"{tkr}: a notice qualifying the anchor left Valuation: {text[:60]}"
+            assert text not in brief, f"{tkr}: a notice qualifying the anchor is on the Brief"
+    assert strain and dq, f"both notices need a live page: strain {strain}, data quality {dq}"
+
+
 # --- web twin (dossier.js) — the page, and the PDF (window.print() of the same page) -----------
 
 _DRIVER = """
@@ -178,6 +249,13 @@ for (const t of __TICKERS__) {
   out[t] = {
     hasRecord: !!card, applicable: d.anchor ? d.anchor.applicable : null,
     reason: d.anchor && d.anchor.reason ? escapeHtml(d.anchor.reason) : null,
+    decision: d.anchor && d.anchor.operator_decision
+      ? { head: "The operator's decision: " + escapeHtml(d.anchor.operator_decision.recipe),
+          source: escapeHtml(d.anchor.operator_decision.source_ref),
+          reason: escapeHtml(d.anchor.operator_decision.reason) } : null,
+    strain: d.anchor && d.anchor.midcycle_gap ? escapeHtml(d.anchor.midcycle_gap.read) : null,
+    dq: d.anchor && d.anchor.data_quality
+      ? (d.anchor.data_quality_detail || []).map((x) => escapeHtml(x)) : null,
     brief: html.slice(b, a), analysis: html.slice(a, x), appendix: html.slice(x),
     tiersFound: b >= 0 && a > b && x > a,
   };
@@ -187,6 +265,10 @@ console.log(JSON.stringify(out));
 
 #: the screening block's structural root in anchorInner() — a class, not wording
 _BLOCK = '<div class="uw-screen">'
+#: the clause the operator ruled off the pointer (2026-11-13, "Drop that clause (Recommended)").
+#: Matched as the whole clause: a scenario record's own words may say a multiple "re-rates
+#: toward" something (WERN's does), which is the analyst's text, not the pointer.
+_DROPPED_CLAUSE = "beside the own-history multiple it re-rates to"
 
 
 @lru_cache(maxsize=1)
@@ -298,3 +380,58 @@ def test_print_path_places_the_anchor_under_valuation_e2e() -> None:
         # a pointer rather than in full (CLAUDE.md, three-tier rule, T1)
         assert _details_depth(p["analysis"], p["analysis"].index(_BLOCK)) == 0, (
             f"{t}: the block sits inside a <details>, whose print fate is not the main body's")
+
+
+def test_web_pointer_names_no_multiple_on_any_page_e2e() -> None:
+    m = re.search(r'^const SCREEN_POINTER = "([^"]*)";',
+                  (ROOT / "frontend/views/shared/dossier.js").read_text(), re.M)
+    assert m, "dossier.js lost its SCREEN_POINTER copy"
+    assert "multiple" not in m.group(1) and "re-rate" not in m.group(1), (
+        "the web pointer names a multiple, which is untrue on a page with no screen value")
+    for t, p in _web_pages().items():
+        assert _DROPPED_CLAUSE not in p["brief"], (
+            f"{t}: the Brief still says what the anchor re-rates to")
+
+
+def test_web_operator_decisions_stay_on_the_brief_collapsed_force_open_and_print_e2e() -> None:
+    """Each recorded decision renders in the Brief tier — the tier the Brief-scope PDF prints —
+    once, never inside the screening block. Its head and the operator's words sit outside every
+    <details>, so the collapsed page shows them; where it is recorded sits in a <details>, which the
+    force-opened page and the print CSS open."""
+    decided = 0
+    for t, p in _web_pages().items():
+        dec = p["decision"]
+        if dec is None:
+            continue
+        decided += 1
+        brief, full = p["brief"], p["brief"] + p["analysis"] + p["appendix"]
+        for part in (dec["head"], dec["reason"], dec["source"]):
+            assert part in brief, f"{t}: the operator's decision is not on the Brief: {part[:60]}"
+        assert full.count(dec["head"]) == 1, f"{t}: the decision renders more than once"
+        at = brief.index(dec["head"])
+        for shown in (at, brief.index(dec["reason"])):
+            assert _details_depth(brief, shown) == 0, f"{t}: the decision is collapsed on the Brief"
+        assert _details_depth(brief, brief.index(dec["source"])) == 1, (
+            f"{t}: where the decision is recorded is not in its <details>")
+        block = brief.find(_BLOCK)
+        assert block < 0 or at < block, f"{t}: the decision still rides inside the screening block"
+        assert dec["head"] not in p["analysis"], f"{t}: the decision renders under Analysis"
+    assert decided >= 4, (
+        f"expected the 4 recorded decisions (AMZN, CNXC, GOOGL, UBER), saw {decided}")
+
+
+def test_web_strain_and_data_quality_notices_move_with_the_anchor_e2e() -> None:
+    strain = dq = 0
+    for t, p in _web_pages().items():
+        texts = []
+        if p["strain"]:
+            strain += 1
+            texts.append(p["strain"])
+        if p["dq"] is not None:
+            dq += 1
+            texts += p["dq"]
+        val = _valuation_card(p["analysis"]) if texts else ""
+        for text in texts:
+            assert text in val, f"{t}: a notice qualifying the anchor left Valuation: {text[:60]}"
+            assert text not in p["brief"], f"{t}: a notice qualifying the anchor is on the Brief"
+    assert strain and dq, f"both notices need a live page: strain {strain}, data quality {dq}"

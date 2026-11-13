@@ -3735,16 +3735,45 @@ _SCREEN_SUBTITLE = (
     "reported median margin. An attention filter only — it applies no structural adjustment, so a "
     "cheap-looking screen still has to survive the full bear/base/bull underwrite.")
 #: (#1004 item 3c, 2026-11-13) What the Brief's Scenario analysis section says where the screening
-#: anchor went, on a name with no scenario record. Twin: SCREEN_POINTER in dossier.js.
+#: anchor went, on a name with no scenario record. Twin: SCREEN_POINTER in dossier.js. It names no
+#: multiple (operator, 2026-11-13: "Drop that clause (Recommended)"): 6 of the 19 pages carrying it
+#: have no screen value, so a clause saying what the anchor re-rates to was untrue there.
 _SCREEN_POINTER = (
     "This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — "
-    "is in Analysis, under Valuation, beside the own-history multiple it re-rates to.")
+    "is in Analysis, under Valuation.")
 
 
 #: An anchor multiple read from the ex-lease history carries this source prefix (anchor.py), and
 #: the screening table names the convention beside it. Twin: anchorInner() in dossier.js.
 _EX_LEASE_SOURCE_PREFIX = "valuation.lease_basis"
 _EX_LEASE_LABEL = " ex-lease (TEV less operating leases; net debt likewise)"
+
+
+def _operator_decision_lines(anchor: Anchor | None) -> list[str]:
+    """THE OPERATOR'S DECISION on this name's recipe (2026-10-22): the recipe and any divergence
+    lead; the reason follows as the operator's words, quoted; a divergence is stated, never
+    resolved, and a placeholder machine hint is a data gap, never a disagreement.
+
+    IT STAYS ON THE BRIEF (#1004 item 3c, round 1; operator, 2026-11-13: "Keep your 4 decisions on
+    Brief (Recommended)"). It renders in the Brief's Scenario analysis section (`_brief_lines`),
+    while the screening block it used to sit inside moved to Analysis → Valuation, where the
+    machine's own read stays, labelled "The machine's read". One home, the Brief. Twin:
+    operatorDecisionInner() in dossier.js."""
+    dec = anchor.operator_decision if anchor is not None else None
+    if anchor is None or dec is None:
+        return []
+    out = [f"**The operator's decision: {_md_cell(dec.recipe)}** — {dec.decided_on}, "
+           f"{dec.decided_by}", ""]
+    machine = anchor.machine_recipe_hint
+    if machine in PLACEHOLDER_HINTS:   # a data gap, never shown as the machine disagreeing
+        out += [f"_The machine could not read a recipe on this build ({machine}) — a data gap, "
+                "not a disagreement; the operator's decision stands._", ""]
+    elif machine and machine != dec.recipe:
+        out += [f"⚠ **The machine reads {machine}.** The operator's "
+                "decision stands; it changes only by hand.", ""]
+    out += [*(f"> {ln}".rstrip() for ln in dec.reason.splitlines()), "",
+            f"_Where this decision is recorded: {dec.source_ref}_", ""]
+    return out
 
 
 def _screening_context_lines(anchor: Anchor | None) -> list[str]:
@@ -3813,22 +3842,10 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     out = ["### Screening context — how this name surfaced — _not a verdict_", "",
            f"_{_SCREEN_SUBTITLE}_", "",
            "| input | value | basis |", "| --- | ---: | --- |", *rows, ""]
-    # THE OPERATOR'S DECISION FIRST (2026-10-22), the machine's own read beneath it — never one
-    # inside the other. A divergence is stated, never resolved. Twin: anchorInner() in dossier.js.
-    # The recipe and any divergence lead; the reason follows as the operator's words, quoted.
+    # The operator's decision on this name's recipe renders on the Brief
+    # (`_operator_decision_lines`, #1004 item 3c round 1); this block keeps the machine's own read,
+    # labelled as such when a decision exists. Twin: anchorInner() in dossier.js.
     dec = anchor.operator_decision
-    if dec is not None:
-        out += [f"**The operator's decision: {_md_cell(dec.recipe)}** — {dec.decided_on}, "
-                f"{dec.decided_by}", ""]
-        machine = anchor.machine_recipe_hint
-        if machine in PLACEHOLDER_HINTS:   # a data gap, never shown as the machine disagreeing
-            out += [f"_The machine could not read a recipe on this build ({machine}) — a data gap, "
-                    "not a disagreement; the operator's decision stands._", ""]
-        elif machine and machine != dec.recipe:
-            out += [f"⚠ **The machine reads {machine}.** The operator's "
-                    "decision stands; it changes only by hand.", ""]
-        out += [*(f"> {ln}".rstrip() for ln in dec.reason.splitlines()), "",
-                f"_Where this decision is recorded: {dec.source_ref}_", ""]
     # the sentence is written ONCE, in vinci/dossier/anchor.py — both renderers print it verbatim
     if anchor.midcycle_gap is not None:
         out += [f"**Mid-cycle assumption under strain.** {anchor.midcycle_gap.read}", ""]
@@ -3951,14 +3968,16 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # level on the Brief it flattered the de-rated names. It renders in the Analysis tier's
     # valuation section now (`_valuation_section_lines`). A name with an anchor and no record
     # still gets the section, stating the absence and where the anchor went: a shorter document
-    # is not a substitute for saying "this name has not been underwritten".
-    # Twin: underwriteDetail() in dossier.js.
+    # is not a substitute for saying "this name has not been underwritten". THE OPERATOR'S
+    # DECISION STAYS HERE (round 1; operator, 2026-11-13: "Keep your 4 decisions on Brief
+    # (Recommended)"), after the record or the pointer. Twin: underwriteDetail() in dossier.js.
     screen = d.anchor is not None
     if scen or screen or show_proposal:
         out.append("## Scenario analysis")
         if not scen and screen:
             out += ["_no scenario record for this name_", "", f"_{_SCREEN_POINTER}_", ""]
         out += scen
+        out += _operator_decision_lines(d.anchor)
         if show_proposal:
             out += [_machine_proposal_md(
                 derive_proposal(s.evidence_balance if s is not None else None,
