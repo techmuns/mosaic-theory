@@ -2213,8 +2213,20 @@ class OneOffItem(BaseModel):
     description: str  # verbatim, ≤200c
     verbatim: str
     source_ref: str
+    # The period the release places the item in, read as an actual's is ("Q3 2026", "2025") —
+    # None when the release does not say (TeamNostra fix request 2, RE2-D17: a nine-month charge was
+    # stored exactly as a quarter's). ABSENT when unset, so an item read before it round-trips
+    # byte-identically.
+    period: str | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _period_absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("period") is None:
+            out.pop("period", None)
+        return out
 
 
 class EventImpact(BaseModel):

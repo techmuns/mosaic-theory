@@ -564,6 +564,17 @@ _LEAD_AMOUNT = re.compile(rf"\$\s*\(?({_NUM})\)?(?:\s*({_SCALE}))?+", re.I)
 _CHANGE_LEAD = re.compile(
     r"\b(?:(?:an?\s+)?(?:increase|decrease|improvement|decline|growth|reduction|change)\s+of|"
     r"(?:up|down|increased|decreased|grew|declined|rose|fell|improved)(?:\s+by)?)\s*$", re.I)
+#: A COMPONENT amount's lead-in — a part named inside the figure is not the figure its comparison
+#: is about (TeamNostra fix request 2, RE2-D6's residual). Par Pacific: "Third quarter 2025
+#: Adjusted Net Income was $302.6 million, including an SRE impact of $195.9 million, compared to
+#: an Adjusted Net Loss of $(5.5) million in the third quarter of 2024" — the SRE impact was taken
+#: for the current figure, so the comparison read as a sub-unit's and was set aside silently.
+_COMPONENT_LEAD = re.compile(
+    # no comma in the reach (code review): "…$100.0 million and, excluding special items, Adjusted
+    # Net Income of $302.6 million" names the FIGURE after its exclusion, not a part of the one
+    # before, and reading it as a component set the comparison aside as a sub-unit's
+    r"\b(?:including|includes|included|excluding|excludes|excluded|of\s+which)\b[^$.;,]{0,40}$",
+    re.I)
 #: Clause edges — a sentence end or any bullet glyph a release uses. "·" (middle dot) included:
 #: Ribbon's "· Non-GAAP Adjusted EBITDA was $40 million, compared to $55 million for the fourth
 #: quarter of 2024" ran into the bullet before it, whose comparison made the Q4 2025 figure a prior.
@@ -1167,6 +1178,12 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
                 continue
             if _CHANGE_LEAD.search(text, max(lo, a.start() - 30), a.start()):
                 continue  # "…$100.0 million, an increase of $10.0 million, compared to" — a delta
+            if amt is not None and _COMPONENT_LEAD.search(text, max(lo, a.start() - 50),
+                                                          a.start()):
+                # "…$302.6 million, including an SRE impact of $195.9 million" — a part OF the
+                # figure before it; with none before it, "Adjusted EPS, excluding special items,
+                # of $2.44" is the figure itself (code review)
+                continue
             amt = a
         if amt is None or (cv := _money(amt.group(1))) is None:
             return None
@@ -1862,12 +1879,38 @@ _SENTENCE_END = re.compile(r"(?<!\bvs)(?<!\bInc)(?<!\bCo)(?<!\bNo)(?<!\bU\.S)(?<
 #: Longer than any one bullet item measured over the 119 cited releases: Amazon's longest guide item
 #: (net sales, with its Prime Day and FX sentences) is ~420 characters. A longer segment is prose.
 _ITEM_REACH = 600
+#: A list's header written straight after the PREVIOUS list's last bullet, with no stop between
+#: (TeamNostra fix request 2, RE2-D20). Simply Good Foods heads its outlook so in every release:
+#: "• Adjusted EBITDA (3) of $73.9 million versus $71.9 million Updating Fiscal Year 2025 (4)
+#: Outlook: • Net sales expected to increase 8.5% to 9.5%". The walk-back took the whole segment for
+#: the previous list's item and read the header above THAT list ("Third Quarter Summary: (1)"), so
+#: 13 SMPL guides fell to `next-fy`. A trailing run of capitalised words, years and footnote marks
+#: ending in an outlook noun and a colon is the header of the list it opens. A lowercase joiner
+#: between two capitalised words belongs to the run (code review): "Fourth Quarter and Fiscal Year
+#: 2026 Outlook:" cut at its "and" read as one period, the year, for a two-period header.
+#: The lowercase period words belong to the run too (code review): "Fourth quarter 2026 Outlook:"
+#: cut at its "quarter" read as "2026 Outlook:", a quarterly list filed as the year.
+_GLUED_HEADER = re.compile(
+    r"(?:^|(?<=\s))((?:(?:[A-Z][A-Za-z-]*|quarter|year|half|full|fiscal|20\d\d|\(\d{1,2}\))\s+"
+    r"(?:(?:and|&|of|for|the)\s+)?){0,8}(?:Outlook|Guidance|Expectations)\s*:)\s*$")
 #: The words that make a header an OUTLOOK's: `_FORWARD`, plus the noun Concentrix heads its list
 #: with ("Fourth Quarter Fiscal 2026 Expectations:"), which `_FORWARD`'s verb forms do not cover.
 _HEADER_FORWARD = re.compile(rf"{_FORWARD.pattern}|\bexpectations\b", re.I)
 #: A period phrase that names what was REPORTED, not what is guided — "Based on our first quarter
 #: 2026 results … we are reaffirming 2026 full year guidance".
 _RESULTS_AFTER = re.compile(r"\s*(?:financial\s+|operating\s+)?(?:results|performance)\b", re.I)
+#: ...and the same with the year between: "Based on our first half 2026 results" and "Based on
+#: year-to-date 2026 results" (Verra Mobility) name the REPORTED basis, so a relative or
+#: year-to-date phrase that reaches results through its own year is the basis too (RE2-D20) — the
+#: header did not stop being one period because it said what the outlook was built on.
+_YEAR_RESULTS_AFTER = re.compile(rf"\s+20\d\d{_RESULTS_AFTER.pattern}", re.I)
+#: A header's BASIS CLAUSE, "Based on …" to its comma: everything in it is what the outlook rests
+#: on, never the period it guides (review of #1027). Verra Mobility's Q3 2025 header "Based on our
+#: year-to-date 2025 results and our outlook for the fourth quarter, we are increasing revenue
+#: guidance as follows" guides the full year, and with "year-to-date 2025" skipped as basis its
+#: "fourth quarter" was the only period left and labelled three full-year guides Q4. A clause with
+#: no comma reaches the end of the header, so it is no answer rather than a guess.
+_BASIS_CLAUSE = re.compile(r"\bbased\s+on\b[^,]*", re.I)
 #: Two quarters joined — Ross's "for both the third and fourth quarters". `_PHRASE` would read the
 #: second alone and label both quarters' bullets with it.
 _TWO_QUARTERS = re.compile(r"\b(?:first|second|third|fourth|Q[1-4])\s+(?:and|&|through|to|-)\s+"
@@ -1926,8 +1969,16 @@ def _list_header(text: str, start: int) -> str | None:
         seg = text[lo:pos]
         ends = list(_SENTENCE_END.finditer(seg))
         tail = seg[ends[-1].end():].strip() if ends else ""
-        if tail and not _AMOUNT.search(tail):
+        # ...but a tail ending ";" is the rest of the PREVIOUS item, never a header (RE2-D20):
+        # BURL's capex bullet runs "…being evaluated. The timing and amount of such relocation
+        # expenditures are still uncertain; •" and that clause was taken for the list's header
+        if tail and not _AMOUNT.search(tail) and not tail.endswith(";"):
             return tail                                  # text after the last stop: a header
+        # only where no clean tail heads the list (code review): a whole header after a stop
+        # ("For the fourth quarter of 2026, the Company provides the following Outlook:") cut to
+        # its glued run read as "Outlook:" and lost its quarter
+        if item and (glued := _GLUED_HEADER.search(seg)):
+            return glued.group(1)                        # the header, after the last list's item
         if len(seg) > _ITEM_REACH or not item:
             if not ends:
                 return None                              # prose with no sentence to stand alone
@@ -1940,7 +1991,17 @@ def _list_header(text: str, start: int) -> str | None:
 def _header_period(text: str, start: int) -> str | None:
     """The ONE period the guide's bullet-list header states, or None — never a guess. A header
     naming a quarter and a year scope, two quarters or two years, a relative or year-to-date
-    period, or a reported (`… results`) period alone is no answer."""
+    period, or a reported (`… results`) period alone is no answer.
+
+    ...UNLESS ITS FORWARD CLAUSE NAMES ONE (TeamNostra fix request 2, RE2-D20). A header that
+    names several periods because it also says what the outlook rests on is read at the clause
+    its ONE forward VERB opens (two such verbs are no answer), cut at the first comma: Verra
+    Mobility's "2026 Full Year Guidance Based on year-to-date 2026 results and our outlook for
+    the fourth quarter, we are reaffirming 2026 full year guidance for all financial measures,
+    provided in our second quarter earnings announcement…" is 2026, and EPAM's "2025 Outlook -
+    Full Year and Fourth Quarter Full Year EPAM expects the following for the full year:" is the
+    full year, its year the one the header names.
+    A clause naming a quarter gives the quarter, so a quarterly list never reads as annual."""
     header = _list_header(text, start)
     if not header or not (_HEADER_FORWARD.search(header) or header.endswith(":")):
         return None
@@ -1948,16 +2009,59 @@ def _header_period(text: str, start: int) -> str | None:
         return None                    # "Second Quarter 2026 Highlights": a section of results
     if _TWO_QUARTERS.search(header):
         return None                    # "the third and fourth quarters" — `_PHRASE` reads one
+    got, ambiguous, years = _named_period(header)
+    if got is not None or not ambiguous:
+        return got
+    verbs = [m for m in _HEADER_FORWARD.finditer(header)
+             if m.group(0).lower() not in _FORWARD_NOUNS]
+    if len(verbs) != 1:
+        # none, or two forward clauses ("we expect third quarter revenue growth and are
+        # reaffirming full year guidance as follows:") — which one heads the bullets is not
+        # stated, so the last is no answer (code review)
+        return None
+    clause = header[verbs[0].start():].split(",", 1)[0]
+    sub, _amb, own_years = _named_period(clause)
+    if sub is None or own_years:
+        return sub                     # the clause's own period, its year with it, or no answer
+    if len(years) != 1:
+        return None
+    year = next(iter(years))
+    if sub != "FY":
+        return f"{sub} {year}"
+    # the header's year as the header states it: "Fiscal 2025 Outlook - Full Year and Fourth
+    # Quarter …" is "Fiscal 2025", as the one-period header "Fiscal 2025 Outlook:" is (code review)
+    fiscal = any(p["fy"] and (p["fyy"] or p["fyy2"]) == year and "fiscal" in p.group(0).lower()
+                 for p in _PHRASE.finditer(header))
+    return f"Fiscal {year}" if fiscal else year
+
+
+#: The forward words that are NOUNS — an outlook's name, never the verb that opens its clause.
+_FORWARD_NOUNS = frozenset({"outlook", "guidance", "guide", "guides", "expectations", "target",
+                            "targets"})
+
+
+def _named_period(header: str) -> tuple[str | None, bool, set[str]]:
+    """(the one period ``header`` names or None, whether None is because it names SEVERAL, the
+    years it names outside a reported basis) — `_header_period`'s reading of one stretch of text."""
     quarters: set[int] = set()
     years: set[str] = set()
     annual = fiscal = False
-    for p in _PHRASE.finditer(header):
-        if _RESULTS_AFTER.match(header, p.end()):
+    phrases = list(_PHRASE.finditer(header))
+    basis_years = {p.start() for p in phrases
+                   if _YEAR_RESULTS_AFTER.match(header, p.end())}
+    basis = [(b.start(), b.end()) for b in _BASIS_CLAUSE.finditer(header)]
+    for p in phrases:
+        if _RESULTS_AFTER.match(header, p.end()) or p.start() in basis_years:
             continue                   # what was reported is the basis, not the guided period
+        if any(lo <= p.start() < hi for lo, hi in basis):
+            continue                   # inside "Based on …,": what the outlook rests on
+        if any(b.start() in basis_years and b.end() < p.start()
+               and re.fullmatch(r"\s+", header[b.end():p.start()]) for b in phrases):
+            continue                   # the year of "first half 2026 results": the basis too
         g = p.groupdict()              # a date ("ending July 31, 2026") swallows its own year
         if (g["ytd"] or g["ttm"] or g["relq"] or g["relp"] or g["qended"] or g["yended"]
                 or g["quarterly"]):
-            return None
+            return None, False, years
         if g["q"] or g["qs"]:
             quarters.add(_QN[g["qn"].lower()] if g["q"] else int(g["qsn"]))
             if y := g["qy"] or g["qsy"]:
@@ -1970,14 +2074,16 @@ def _header_period(text: str, start: int) -> str | None:
                 annual, fiscal = True, fiscal or "fiscal" in p.group(0).lower()
             if y:
                 years.add(y)
-    if len(years) > 1 or len(quarters) > 1 or (quarters and annual) or not (quarters or annual):
-        return None
+    if len(years) > 1 or len(quarters) > 1 or (quarters and annual):
+        return None, True, years
+    if not (quarters or annual):
+        return None, False, years
     year = next(iter(years), None)
     if quarters:
-        return f"Q{quarters.pop()}" + (f" {year}" if year else "")
+        return f"Q{quarters.pop()}" + (f" {year}" if year else ""), False, years
     if year is None:
-        return "FY"
-    return f"Fiscal {year}" if fiscal else year
+        return "FY", False, years
+    return (f"Fiscal {year}" if fiscal else year), False, years
 
 
 def _guide_unit(metric: str, pct_marker: str | None) -> str:
@@ -2111,7 +2217,50 @@ def _period_for(text: str, start: int, end: int, verbatim: str, *,
         return re.sub(r"\s+", " ", ty.group(1)).strip()
     # LAST, so it can only replace the default: the opener of the run of outlook sentences the
     # guide sits in ("For the third quarter of Fiscal 2027, …" four sentences up — TJX).
-    return _opener_period(text, start, end) or "next-fy"
+    # Then (RE2-D20), still only in place of the default: the period of the partner range this
+    # guide is joined to by "and", and a "full year" its own clause states without a year.
+    return (_opener_period(text, start, end) or _partner_period(text, start)
+            or ("FY" if _FULL_YEAR.search(verbatim) else None) or "next-fy")
+
+
+#: A guide joined by "and" straight after its partner's range (TeamNostra fix request 2, RE2-D20):
+#: Vital Farms' headline "Reiterates Fiscal Year 2026 Net Revenue Outlook of $775 Million to $800
+#: Million and Adjusted EBITDA Outlook of $0 Million to $10 Million" states the year once, for
+#: both, beyond the 60-character lead-in of the second. A RANGE's high end ("… to $800 Million"),
+#: never any number: "in the third quarter of 2025 and adjusted EBITDA is expected …" joins a
+#: comparison's year, not a partner range (code review).
+_AND_AFTER_RANGE = re.compile(
+    r"\bto\s+\$?\s*\d[\d,.]*\s*(?:million|billion|%)?\s+and\s+$", re.I)
+#: "full year" in the guide's own clause with no year beside it — Simply Good Foods' "maintaining
+#: its outlook for full year gross margin to decline approximately 200 basis points": the scope
+#: is stated, so the guide is the full year ("FY", year unstated), never the unread default.
+_FULL_YEAR = re.compile(r"\bfull[- ]year\b", re.I)
+#: How far back a joined guide's partner may state the period — one headline or sentence.
+_PARTNER_REACH = 300
+
+
+def _partner_period(text: str, start: int) -> str | None:
+    """The period stated for the range this guide is joined to by "and", read from the start of
+    their shared sentence (within `_PARTNER_REACH`) to the guide — None unless the guide follows
+    its partner's range with nothing but "and" between.
+
+    The shared clause starts after the last ". " OR "; " (code review): Vital Farms' headline
+    reads "Reports Third Quarter 2026 Financial Results; Reiterates Fiscal Year 2026 …", and a
+    window reaching the results clause took its quarter for the full-year guide's. A comparison in
+    the clause refuses: the partner may be the range compared against."""
+    if not _AND_AFTER_RANGE.search(text, max(0, start - 40), start):
+        return None
+    lo = max(0, start - _PARTNER_REACH)
+    stop = max(text.rfind(". ", lo, start), text.rfind("; ", lo, start))
+    if stop != -1:
+        lo = stop + 2
+    if _CMP.search(text, lo, start):
+        return None
+    tq, ty = _dealless(_QUARTER, text, lo, start), _dealless(_PERIOD, text, lo, start)
+    if tq is not None:
+        yr = re.search(r"20\d\d", ty.group(1)) if ty else None
+        return f"Q{_Q_NUM[tq.group(1).lower()]}" + (f" {yr.group(0)}" if yr else "")
+    return re.sub(r"\s+", " ", ty.group(1)).strip() if ty is not None else None
 
 
 # --- WHAT A RANGE'S OWN SENTENCE SAYS IT IS (audit E2-D2, D7, D13; 2026-10-30) --------------------
@@ -2766,7 +2915,87 @@ _ONEOFF_CAUSE = re.compile(
     r"because\s+of|caused\s+by|reflect(?:s|ed|ing)?|primarily\s+from|offset\s+by)\b", re.I)
 
 
-def _one_offs(text: str, src: str) -> list[OneOffItem]:
+#: A year-to-date span in the release's own words — "six months ended June 30, 2026", "nine months
+#: ended September 30". An actual has no label for one, so a one-off keeps the words (RE2-D17).
+_YTD_ENDED = re.compile(r"(?:six|nine)[- ]months?(?:\s+periods?)?\s+ended\s+[a-z]+\.?\s+\d{1,2}"
+                        r"(?:,?\s+20\d\d)?", re.I)
+
+
+def _one_off_period(text: str, start: int, amt_end: int, frame: _ReleaseFrame) -> str | None:
+    """The period ONE one-off is placed in, from the item's own words first (RE2-D17).
+
+    Read from the AMOUNT's end, so the item's own phrase is the clause's tail: BRBR's "$11.3
+    million inventory-related charge recorded in the second quarter" is the second quarter's in a
+    third-quarter release. Two answers an actual's reader cannot give are taken from those words:
+    a year-to-date span, kept as the release writes it (Verra Mobility's "impairment to goodwill …
+    during the six months ended June 30, 2026"), and a bare year (Gartner's "$150 million of
+    goodwill impairment related to Digital Markets in 2025" — its table shows "—" for the fourth
+    quarter and 155 for the year, so the quarter its section heading names is wrong). Anything else
+    goes to `_figure_period`, as a current item, and None stays None."""
+    lo, hi = _clause(text, start, amt_end)
+    cmp_at = _CMP.search(text, amt_end, hi)
+    for p in _PHRASE.finditer(text, amt_end, min(cmp_at.start() if cmp_at else hi, amt_end + 120)):
+        if not _introduced(text, p):
+            continue
+        g = p.groupdict()
+        if (g["ytd"] or g["bare"]) and _forward_looking(text, lo, start):
+            return None    # a forward item's span or year is no period: `_figure_period`'s guard
+        if g["ytd"]:
+            # the span's own words even when no end date follows ("first nine months", "first
+            # half"): None would read as unread, which says less than the release does (code
+            # review); `_fy_impairment` passes over both, a span and an unread item
+            span = _YTD_ENDED.match(text, p.start())
+            return " ".join((span or p).group(0).split())
+        if g["bare"] and g["bareyear"]:
+            # ...but never one after the release's own: the guard `_figure_period` applies to
+            # every actual (code review)
+            if frame.year and int(g["bareyear"]) > int(frame.year):
+                return None
+            # ...nor the release's OWN year in a first-, second- or third-quarter release (review
+            # of #1027): that year is not over, so "in 2026" there is its year to date, never its
+            # full year, and filed as "2026" it would scope annual and stand as the year's
+            # impairment (`_fy_impairment`). Unread, as a span the reader cannot place is
+            if (frame.kind == "quarter" and frame.quarter in (1, 2, 3)
+                    and g["bareyear"] == frame.year):
+                return None
+            return str(g["bareyear"])
+        break
+    if _after_a_year_to_date_sentence(text, start, amt_end):
+        return None
+    return _figure_period(text, start, amt_end, frame, comparison=False) or None
+
+
+def _after_a_year_to_date_sentence(text: str, start: int, end: int) -> bool:
+    """Whether an item whose OWN sentence names no period follows a sentence that names a
+    year-to-date span (review of #1027) — "This change was primarily attributable to …" pointing
+    back at it. Such an item is that span's, and the release's frame would file it as the quarter's,
+    which is RE2-D17's own failure shape: Microvast's Q3 2026 release reads "Gross margin decreased
+    to 24.4% from 36.6% in YTD 2025. This change was primarily attributable to an $11.1 million
+    write-down …", while its quarter's paragraph, "… from 37.6% in Q3 2025. This change …
+    $9.3 million write-down …", is the quarter's. The item is then unread (None), never the
+    quarter: a guess the text does not make."""
+    ends = [m.end() for m in _SENTENCE_END.finditer(text, max(0, start - 600), start)]
+    if not ends:
+        return False
+    nxt = _SENTENCE_END.search(text, end)
+    own = text[ends[-1]:nxt.end() if nxt else min(len(text), end + 240)]
+    if any(_PHRASE.finditer(own)):
+        return False                     # the item's own sentence names a period: read it there
+    prev = text[ends[-2] if len(ends) > 1 else max(0, start - 600):ends[-1]]
+    return any(p.group("ytd") for p in _PHRASE.finditer(prev))
+
+
+def _one_offs(text: str, src: str, frame: _ReleaseFrame | None = None) -> list[OneOffItem]:
+    """Every one-off item the release states, each with the period it places the item in
+    (TeamNostra fix request 2, RE2-D17) — read by `_figure_period`, the reader an actual's period
+    goes through, so "in the nine months ended September 30" is never filed as the quarter's. An
+    item whose own words name no period takes the release's frame as an actual does (a quarterly
+    release's quarter), and only where that reader gives none does it stay None. Read as a CURRENT
+    item: the prior-period
+    comparatives are dropped below, and a comparison in the sentence is the margin's, not the
+    item's (MVST: "compared to 31.5% in 2024, … attributable to a $32.5 million inventory
+    impairment" is this year's charge)."""
+    frame = frame if frame is not None else _release_frame(text)
     by_key: dict[str, OneOffItem] = {}
     # key → normalized FULL raw desc, for the identical-item (same-scope-two-figures) collapse
     raw_by_key: dict[str, str] = {}
@@ -2842,6 +3071,7 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
             by_key[key] = OneOffItem(
                 amount=amt, description=desc,
                 verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+                period=_one_off_period(text, m.start(), m.end(2), frame),
             )
             raw_by_key[key] = raw_norm
     return list(by_key.values())
@@ -3014,8 +3244,9 @@ def parse_release(text: str, *, source_ref: str) -> ReleaseExtract:
     guidance_notes: list[str] = []
     guidance = _guidance(text, source_ref, guidance_notes)
     recon_notes: list[str] = []
-    reconciliation = _reconciliation(text, source_ref, _release_frame(text), recon_notes)
-    one_offs = _one_offs(text, source_ref)
+    frame = _release_frame(text)
+    reconciliation = _reconciliation(text, source_ref, frame, recon_notes)
+    one_offs = _one_offs(text, source_ref, frame)
     event_impacts = _event_impacts(text, source_ref, recon_notes)
     flags: list[str] = list(guidance_notes) + recon_notes
     if not guidance and not guidance_notes:

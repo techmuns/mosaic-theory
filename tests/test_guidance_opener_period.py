@@ -133,12 +133,14 @@ def test_a_mid_sentence_period_is_not_an_opener_and_a_capitalised_one_is() -> No
 
 def test_a_quarter_opener_never_labels_a_full_year_range() -> None:
     """A run that names the OTHER scope is two periods, and the opener must not win: TJX's own
-    full-year sentence placed under a third-quarter opener is refused, not called Q3."""
+    full-year sentence placed under a third-quarter opener is refused, not called Q3. Its own clause
+    says "full year outlook", so since RE2-D20 it is the full year ("FY", year unstated), never the
+    unread default — and still never Q3."""
     text = ("For the third quarter of Fiscal 2027, the Company is planning consolidated "
             "comparable sales to be up 2% to 3%. Excluding an expected net benefit of $.16 from "
             "tariff refunds, the Company is increasing its full year outlook for adjusted diluted "
             "earnings per share to be in the range of $5.15 to $5.20.")
-    assert _eps(_guidance(text, "x")) == [("next-fy", 5.15, 5.20, "$/sh")]
+    assert _eps(_guidance(text, "x")) == [("FY", 5.15, 5.20, "$/sh")]
 
 
 def test_a_year_opener_never_names_a_range_its_run_ties_to_a_quarter() -> None:

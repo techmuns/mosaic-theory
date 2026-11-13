@@ -1057,7 +1057,9 @@ def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
         # truncation artefact rather than a fact. Prefer the shortest complete noun phrase.
         desc = re.split(r"\s+(?:associated|related\s+to|in\s+the|for\s+the|due\s+to|which)\b",
                         o.description, maxsplit=1)[0].strip(" ,;")
-        parts.append(f"${o.amount:,.1f}M {desc}")
+        # with its period where the release states one (RE2-D17): BRBR's third-quarter release
+        # carries a charge "recorded in the second quarter", and VRRM's a six-month impairment
+        parts.append(f"${o.amount:,.1f}M {desc}" + (f" ({o.period})" if o.period else ""))
     for g in release.guidance:
         if g.qualitative:
             outlook = "stated, no number given"  # honest: the company spoke, without a figure
@@ -5848,11 +5850,23 @@ def _fy_reconciliation(releases: list[ReleaseExtract]) -> dict[str, float]:
 
 
 def _fy_impairment(releases: list[ReleaseExtract]) -> float | None:
-    """The FY one-off impairment amount ($M) — the margin cross-check numerator."""
+    """The FY one-off impairment amount ($M) — the margin cross-check numerator.
+
+    A YEAR'S, NEVER A QUARTER'S (RE2-D17): an impairment the release places in a quarter or a
+    year-to-date span is not the full year's numerator, so it is passed over — including one a
+    quarterly release's frame places in its quarter. NEVER AN UNREAD ONE EITHER: an impairment
+    whose period no reader placed (or one read before the field existed) is passed over too, so
+    the search never falls through to it. Microvast's Q3 2026 release states a $35.8M impairment
+    in its year-to-date paragraph, which the reader leaves unplaced; taken "as before", it stood
+    in Microvast's full-year margin line for a nine-month figure, where its 2025 release's $32.5M,
+    read as 2025, is the year's."""
     for r in releases:
         for oo in r.one_offs:
-            if "impair" in oo.description.lower():
-                return oo.amount
+            if "impair" not in oo.description.lower():
+                continue
+            if not oo.period or primary_source.period_scope(oo.period) != "annual":
+                continue
+            return oo.amount
     return None
 
 

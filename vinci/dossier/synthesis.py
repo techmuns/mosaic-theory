@@ -2550,7 +2550,12 @@ def _primary_source_digest(ps: PrimarySource) -> str:
             out.append(f"reconciliation ({rv.metric} {rv.period}): {rv.value}{moved} → "
                        f"{rv.source_ref}")
         for oo in (r.one_offs if r in recent else []):
-            out.append(f"one-off charge: ${oo.amount}M {oo.description[:44]} → {oo.source_ref}")
+            # ITS PERIOD, as the release places it (TeamNostra fix request 2, RE2-D17): a nine-month
+            # or a prior-year charge read beside this quarter's figures reads as this quarter's
+            # "not read", never "not stated": an item read before the field existed carries none
+            when = oo.period or "period not read"
+            out.append(f"one-off charge ({when}): ${oo.amount}M {oo.description[:44]} → "
+                       f"{oo.source_ref}")
         for ei in (r.event_impacts if r in recent else []):
             # in $M, as the schema states (`EventImpact.low`) — printed, not left implied
             rng = f"{_range(ei.low, ei.high)} $M" if ei.low is not None else "unquantified"
