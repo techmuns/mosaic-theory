@@ -281,13 +281,15 @@ _BS_DEBT_WORD = re.compile(
 #: "Less" opening the note's line ("Less", "LESS", "Less :"), a lower-case "less" before a
 #: parenthesised cell (as main read it), or a portion "included" in another — never a row's own
 #: ", less current maturities" (Werner's "Finance lease liabilities, less current maturities
-#: 19,779"), whose "less" is lower-case before a bare cell and whose subject is a lease. A label
-#: never runs through another "less" or "current portion" (a caption's "including current
-#: maturities, consisted of:" swallowed the "Less: current portion …" line after it: code review
-#: round 0). A year is never the cell.
+#: 19,779"), whose "less" is lower-case before a bare cell and whose subject is a lease. The scan
+#: OVERLAPS — each search resumes one character past the last match's start — so a caption's own
+#: "including current maturities, consisted of:" never uses up the "Less: current portion …" line
+#: after it (code review round 0), while a label may repeat its own words ("Less: current portion
+#: of long-term debt, net of current portion of unamortized debt issuance costs ( 10,000 )"; round
+#: 0's no-swallow lookahead refused to read it: round 2). A year is never the cell.
 _NOTE_CURRENT = re.compile(
     r"\b(?P<less>less\s*:?\s+(?:the\s+)?)?(?P<lbl>current\s+(?:portion|maturities)\b"
-    r"(?:(?!\bless\b|\bcurrent\s+(?:portion|maturities)\b)[^()$\d—;.]){0,80}?)"
+    r"[^()$\d—;.]{0,80}?)"
     r"(?:\s*\([a-z\d]\))?\s*\$?\s*"
     r"(?:\((?![a-z\d]\))\s*(?P<paren>[\d,.]+)\s*\)|(?!(?:19|20)\d\d\b)(?P<bare>\d[\d,]*(?:\.\d+)?))",
     re.I)
@@ -306,7 +308,9 @@ _OBJECT = re.compile(r"current\s+(?:portion|maturities)\s+of\s+(.*)", re.I | re.
 def _note_subtracts_current(text: str) -> bool:
     """Does the filing's debt note subtract a current portion of DEBT — a positive cell, under any
     of the wordings above?"""
-    for m in _NOTE_CURRENT.finditer(text):
+    pos = 0
+    while (m := _NOTE_CURRENT.search(text, pos)) is not None:
+        pos = m.start() + 1  # overlapping: a caption's match never hides the line inside it
         label, less = m["lbl"], m["less"]
         if less and less[0].islower() and m["paren"] is None:
             less = None  # a row's own ", less current maturities 19,779", not a subtraction

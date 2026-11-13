@@ -586,3 +586,24 @@ def test_codex_round_1_a_modifier_of_is_not_the_portions_object() -> None:
     assert _balance_sheet_debt(text) is None
     w = _maturity_wall(text, "10-Q x")
     assert w is not None and w.state == "not_stated", _k(w)
+
+
+def test_round_2_a_label_that_repeats_its_words_is_still_a_subtraction() -> None:
+    """(-) Round 2 (the coordinator's review of #1051, MEDIUM). Round 0's no-swallow rule kept a
+    label from running through another "less" or "current portion"/"current maturities", and
+    matches never overlapped. So a real subtraction whose label REPEATS either word was never
+    read, and the long-term row read as the whole debt: a located $0.0 beside $10.0M the note puts
+    within the year. A caption's own words must still never use up the line after it
+    (`test_bs_neg_every_note_wording_of_a_folded_portion_refuses_the_total`). CONSTRUCTED: each
+    line, on Werner's real sheet. No real filing in the 2,035-document cache carries these
+    wordings; the rule is general."""
+    for line in ("Less: current portion of long-term debt, net of current portion of unamortized "
+                 "debt issuance costs ( 10,000 )",
+                 "Less: current maturities of long-term debt and current portion of finance lease "
+                 "obligations ( 10,000 )",
+                 "Less: current portion of long-term debt, less unamortized issuance costs "
+                 "( 10,000 )"):
+        text = _wern_noted(line)
+        assert _balance_sheet_debt(text) is None, line
+        w = _maturity_wall(text, "10-Q x")
+        assert w is not None and w.state == "not_stated", (line, _k(w))

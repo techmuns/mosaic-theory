@@ -31,7 +31,8 @@ can cover the maturity wall when its principal is the sheet's whole debt:
     must name debt, and the label no lease, interest or tax;
   - a row's own ", less current maturities 19,779" (Werner's finance-lease row) is never a
     subtraction;
-  - a label never runs through another "less" or "current portion";
+  - the scan overlaps, so a caption's own "current maturities" never uses up the line after it,
+    and a label may repeat its own words (round 2);
   - a year is never the cell.
 - **Vintage** `2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings`, following
   `2026-11-12.wall-of-our-borrowings-is-part-of-the-debt`; `filing_sections.py` re-pinned.
@@ -51,8 +52,8 @@ partial sum" contract leaking on a REAL sheet:
   deferred revenue 142,806"). The subject rule above is the fix.
 
 **HOW VERIFIED.**
-- **Fail first, on main `f676616f`** (`tests/test_wall_whole_debt_followup.py`, 29 tests): 5
-  fail on the defect each names, and 24 pass at both. The 5:
+- **Fail first, on main `f676616f`** (`tests/test_wall_whole_debt_followup.py`, 30 tests): 5
+  fail on the defect each names, and 25 pass at both. The 5:
   - `test_prgo_current_indebtedness_is_a_borrowing_row` (Perrigo's real sheet and Note 13; located
     $0.0);
   - `test_bs_neg_a_current_indebtedness_row_refuses_the_total` (it read 803.0);
@@ -74,9 +75,22 @@ partial sum" contract leaking on a REAL sheet:
   it read a current portion of 0.0. Only an "of" right after "current portion" or "current
   maturities" names the object now; a modifier's "of" leaves the label bare, and its table decides.
   Re-run on the fixed code, the sweep and the real texts are unchanged.
-- **Mutants: 11 of 11 killed.** Each guard was removed in turn: the indebtedness word, the
-  interest-on-notes lookbehind, the object right after the label, the bare cell, the lettered footnote, the "included" form, the lower-case row skip, the table subject
-  rule, the of-object rule, the no-swallow rule and the case-insensitive "less".
+- **Round 2 (the coordinator's independent review of `321e86e4`, MEDIUM).** Round 0's no-swallow
+  rule had a cost: a label could not run through another "less" or "current portion/maturities",
+  and matches never overlapped. So a real subtraction whose label repeats either word was never
+  read. Werner's real sheet plus "Less: current portion of long-term debt, net of current portion
+  of unamortized debt issuance costs ( 10,000 )" read a located $0.0 beside $10.0M due (and the
+  same for two more such lines; constructed, since no cached filing carries them). The lookahead
+  is gone, and the scan overlaps instead (each search resumes one character past the last
+  match's start), which keeps the caption case.
+  - `test_round_2_a_label_that_repeats_its_words_is_still_a_subtraction` fails on `321e86e4`.
+  - Re-run on the fixed code against `321e86e4`, over the same 2,049 documents: 0 wall, 0 note and
+    0 balance-sheet differences. The 33 real texts read the same, and Werner's Q2/Q3 still read
+    located $0.0.
+- **Mutants: 12 of 12 killed.** Each guard was removed in turn: the indebtedness word, the
+  interest-on-notes lookbehind, the object right after the label, the overlapping scan, the
+  lookahead's removal, the bare cell, the lettered footnote, the "included" form, the lower-case row skip, the table subject
+  rule, the of-object rule and the case-insensitive "less".
 - **Real texts, main against this code:** 33 normalized 10-Q/10-K texts, among them Werner's
   Q2/Q3, Microvast's, Amazon's, Alphabet's, Uber's, Perrigo's, PARR's and A10's.
   - **Werner's Q2 and Q3 still read located $0.0** (793.0 and 803.0, current 0.0).
@@ -100,7 +114,7 @@ partial sum" contract leaking on a REAL sheet:
     differs is `snapshots/extraction_versions.json`, the new vintage.
 
 **BOUNDARY.**
-- **Fail first and mutants:** `tests/test_wall_whole_debt_followup.py` (29 tests), against main
+- **Fail first and mutants:** `tests/test_wall_whole_debt_followup.py` (30 tests), against main
   `f676616f`'s `filing_sections.py`; the mutants are also scored on `tests/test_wall_part_of_the_debt.py`
   and `tests/test_filing_wall_and_concentration_roles.py`.
 - **Real texts:** the 33 normalized texts in the coordinator's review folder plus Perrigo's, read
@@ -129,6 +143,17 @@ partial sum" contract leaking on a REAL sheet:
   financing agreements 259,245" outside its long-term debt (`parr-20260930`, total read 496.2).
   Whether inventory financing is debt is a definitional question. The read does not count it,
   and PARR's wall reads `not_stated` either way.
+- **Residual misreads of the note's cell (round 2's review, LOW; refusals only, no live effect).**
+  The label stops at an em dash but not at a hyphen, nor at a date or a percentage, so some real
+  cells are misread. None of these documents gets a balance-sheet read at either ref:
+  - ENCR's 10-K "Current portion of debt - Long-term debt $ 109,985" counts 109,985;
+  - MXL's "as of December 31, 2025" takes "31" as the cell;
+  - WLK's coupon "3.60 %" is taken as the cell;
+  - ASYS's lease-only table naming "… finance lease liabilities and long-term debt" counts as debt.
+- **Known gap, older than this PR (round 2's review, INFO):** neither ref reads a note line with no
+  "Less", such as CLVT's "Current portion of long-term debt (1) ( 101.5 )" (and LCID, ARRY, CERT,
+  ENVX, KLC, WAY, PG, FLO, TJX), or NIQ's "Less: Short-term debt and current portion of long-term
+  debt ( 107.5 )". None leaks today (the reviewer's check over the same cache).
 - **Found, not fixed (constructed, outside this brief):** a sheet with no liabilities heading at
   all, whose first "liabilities" is a row ("Accrued liabilities"), skips every row above it. A
   "Short-term debt" row there reads Werner's total and a located $0.0 (the reviewer's probe B1).
