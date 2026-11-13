@@ -2,7 +2,7 @@
 id:
 status: shipped
 date: 2026-11-13
-prs: [«PR»]
+prs: [1058]
 supersedes:
 superseded-by:
 ---
@@ -57,7 +57,17 @@ bounded rounds were spent, so they are closed here as their own small PR rather 
   The counts differ from #1046's (113, 104 and 9) because main moved under it. MVST's pages were
   retired, so fewer runs are SEC-excused. The 2026-10-26 frozen pages of BRBR and BURL carry the
   same four KD-excused runs by hash, so they sit in 12 files rather than 9.
-«VERIFIED»
+- **Gate**, at `18508617`:
+  - `ruff check vinci tests` and `mypy --strict vinci`: clean.
+  - The full `nice pytest -m "not network"`, CI-like (a worktree with no CIQ folder and no cache, as
+    CI has): exit 0, no failure and no error, 1,062 s. The guard's call-reading tests skip, saying
+    so, and the three new pins, which need no call, run.
+- **Cross-setup validation** (`python -m vinci.impact run`, base `01ab6923`, head `18508617`):
+  nothing moves, by construction. Base and head carry byte-identical `vinci/` trees and no frontend
+  source change. Its fail-first part shows no node, because the fixes are pins in the test file
+  itself; the mutation table above shows each failing under its defect.
+- **Review round 0** (`/code-review high --fix`): 7 findings; 6 fixed, 1 dismissed (pinning on
+  `vinci/graph/filings.py`'s real text is deliberate: corpus before synthetic).
 
 **BOUNDARY.** The guard's words, calls and roots are #1046's
 (`docs/records/2026-11-13-transcript-runs-cut-from-tracked-files.md`). The corpus is `git ls-files`
