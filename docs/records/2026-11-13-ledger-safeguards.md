@@ -2,7 +2,7 @@
 id: 2026-11-13-ledger-safeguards
 status: shipped
 date: 2026-11-13
-prs: [1052]
+prs: [1053]
 supersedes:
 superseded-by:
 ---
