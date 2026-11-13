@@ -908,8 +908,10 @@ bucket from the records the paid paths already write.
 1. `git fetch origin theme-intelligence-state` — the theme desk's calls, CI's included, are read
    from that branch.
 2. `PYTHONPATH=$PWD $VENV/python -m vinci.spend --month YYYY-MM --evals-root <each folder holding
-   a budget ledger>` — the ledgers live outside the repo (§n), so name every folder that holds
-   one; a ledger not named is not seen.
+   a budget ledger>`, or set `VINCI_LEDGER_ROOTS` to those folders (`os.pathsep`-joined). The
+   ledgers live outside the repo (§n), so name every folder that holds one: a ledger not under a
+   named root is not seen. The report prints every root it searched and every ledger it read; check
+   that the month's paid runs are all there (on 2026-11-13 E2's ledger sat in a second folder).
 3. Read each bucket's `cannot see:` line before quoting the total. The total names the buckets it
    leaves out: the seal-time confirmations and `validate-keys` record no cost.
 

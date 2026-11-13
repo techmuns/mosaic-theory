@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -240,3 +241,88 @@ def test_the_report_spends_nothing_and_refuses_nothing() -> None:
     forbidden = ("anthropic", "vinci.graph.llm", "vinci.theme_intelligence.llm", "vinci.netcache",
                  "vinci.evals.replay", "urllib", "requests", "httpx")
     assert not [n for n in names if n.startswith(forbidden)], names
+
+
+# --- review round 1 (the independent review of 09913271) -----------------------------------------
+def test_pages_with_no_run_file_is_not_read(tmp_path: Path) -> None:
+    """(-) No assembly run file at all is NOT READ, never $0.00 'read' (round 1, finding 2)."""
+    b = spend.pages(tmp_path, "2026-11")
+    assert b.usd is None and b.note.startswith("NOT READ")
+
+
+def test_the_command_reads_the_repos_data_from_any_folder(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """(+) END TO END from another folder: the config's `data` is relative, and read from the
+    caller's folder it found no run file and printed the repo's pages as $0.00 (round 1, finding
+    2). The command now reads the repo's own `data/`."""
+    files = sorted(RUNS.glob("*.jsonl"))
+    if not files:
+        pytest.skip("no assembly run file is committed")
+    month = files[-1].name[:7]
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv(spend.LEDGER_ROOTS_ENV, raising=False)
+    assert spend.main(["--month", month, "--json"]) == 0
+    got = {b["name"]: b for b in json.loads(capsys.readouterr().out)["buckets"]}
+    assert got["pages"]["usd"] is not None and got["pages"]["usd"] > 0
+    assert got["pages"]["usd"] == spend.pages(SNAPS, month).usd
+
+
+def test_a_map_with_no_judged_by_is_not_read(tmp_path: Path) -> None:
+    """(-) `graph-coverage --json` rewrites the map without `judged_by`; a month then reads NOT
+    READ, never $0.00, since a re-judge's cost may have been overwritten (round 1, finding 3)."""
+    (tmp_path / "graph_coverage.json").write_text(json.dumps({"model": "claude-opus-4-8"}))
+    b = spend.graph_judge(tmp_path, "2026-11")
+    assert b.usd is None and b.note.startswith("NOT READ")
+
+
+def test_the_report_returns_all_six_buckets_by_name() -> None:
+    """(-) A bucket dropped from `report()` reds here (round 1, finding 4). The names are spelled
+    out, so editing `BUCKETS` with it does not hide the drop."""
+    names = [b.name for b in spend.report("2026-11", repo=ROOT, snapshots=SNAPS,
+                                          data_dir=ROOT / "data", ledgers=[])]
+    assert names == ["pages", "confirmations", "evals", "theme desk", "graph judge",
+                     "validate-keys"] == list(spend.BUCKETS)
+
+
+def test_every_root_searched_and_every_ledger_read_is_printed(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """(+) The report prints each root it searched and each ledger it read, a ledger with no row
+    in the month included, never a claim of a wider search (round 1, finding 1). The roots
+    default to `VINCI_LEDGER_ROOTS`. (-) No root and no ledger prints that it searched none."""
+    a = _ledger(tmp_path / "a" / "ledger.jsonl", [_draw(2.0)], opened_at="2026-11-10T10:00:00Z")
+    b = _ledger(tmp_path / "b" / "ledger-oct.jsonl", [_draw(1.0)],
+                opened_at="2026-10-10T10:00:00Z")
+    monkeypatch.setenv(spend.LEDGER_ROOTS_ENV,
+                       os.pathsep.join([str(tmp_path / "a"), str(tmp_path / "b")]))
+    roots = spend.ledger_roots([])
+    assert roots == [str(tmp_path / "a"), str(tmp_path / "b")]
+    out = spend.render("2026-11", [spend.evals(spend._ledgers([], roots), "2026-11",
+                                               roots=roots)])
+    for root in roots:
+        assert f"searched: {root}" in out
+    assert f"read: {a.resolve()} — 1 draw(s) in the month, $2.00" in out
+    assert f"read: {b.resolve()} — 0 draw(s) in the month, $0.00" in out
+    assert spend.ledger_roots(["/given"]) == ["/given"]          # a given root wins
+    none = spend.render("2026-11", [spend.evals([], "2026-11")])
+    assert "searched: no root" in none and "NOT READ" in none
+
+
+def test_draws_are_counted_apart_from_zero_cost_rows(tmp_path: Path) -> None:
+    """(+) The rows column counts every ledger row; the note says how many are draws (round 1,
+    finding 5): a `build_start` row is a zero-cost row, not a draw."""
+    led = _ledger(tmp_path / "l.jsonl", [
+        {"build_start": {"started_at": "2026-11-11T09:00:00+0530"}, "usd": 0.0},
+        _draw(1.0), _draw(2.0)], opened_at="2026-11-10T10:00:00Z")
+    b = spend.evals([led], "2026-11")
+    assert (b.usd, b.rows) == (3.0, 3)
+    assert "2 of the 3 row(s) are draws" in b.note
+
+
+def test_each_bucket_says_what_its_rows_count_and_the_total_is_not_a_floor() -> None:
+    """(+) The units differ by bucket, so each prints what its rows are; and the total says it is
+    neither a floor nor exact for one month (round 1, finding 5)."""
+    out = spend.render("2026-11", spend.report("2026-11", repo=ROOT, snapshots=SNAPS,
+                                               data_dir=ROOT / "data", ledgers=[]))
+    assert out.count("rows: ") == len(spend.BUCKETS)
+    assert "neither a floor nor exact for one month" in out

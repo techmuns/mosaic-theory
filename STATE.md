@@ -57,7 +57,7 @@ the recipe tagger (`vinci/dossier/tagger.py`) and the R-file segment reader (`vi
 `vinci/evals/judge.py` and the four one-off page passes stay, each with a live caller; restore by reverting the PR's squash commit (`docs/records/2026-11-13-three-uncalled-modules-retired.md`).
 
 **THE MONTHLY SPEND REPORT (operator, 2026-11-13: "Report only"; issue 1004 lane 4):** `python -m vinci.spend --month YYYY-MM` sums each paid bucket's list-price spend in a UTC month from the records that exist (assembly runs, budget ledgers, the theme desk's state branch, the graph re-judge) and refuses nothing; per-run caps are unchanged.
-The seal-time confirmations and `validate-keys` record no cost, so it names them as left out; November to the 13th reads $336.39 over the four it reads (RUNBOOKS §p; `docs/records/2026-11-13-monthly-spend-report.md`).
+The seal-time confirmations and `validate-keys` record no cost, so it names them as left out; November to 2026-11-13 12:08Z reads $363.23 over the four it reads, printing every ledger it read (RUNBOOKS §p; `docs/records/2026-11-13-monthly-spend-report.md`).
 
 - **Entity resolver** (`vinci/resolver`) — US SEC CIK↔ticker↔name, fail-loud on unknown/ambiguous —
   *ran `resolve AAPL GOOGL GOOG BRK.B ZZZZZ`: GOOGL/GOOG→one CIK, BRK.B→BRK-B, ZZZZZ fails loud.*
