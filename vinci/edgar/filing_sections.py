@@ -257,10 +257,14 @@ _BS_CURRENT = re.compile(r"\bCurrent\s+(?:portion|maturities)\s+of\s+long-term\s
 #: row combining debt and leases: review round 0), singular or not, under the common labels
 #: round 0 lacked ("Note payable, current", "Bond payable", "Mortgage payable", "Financing
 #: obligations", "Receivables securitization facility", "Floor plan payable", "Current maturities
-#: of long-term obligations", "Bank overdraft", "Credit agreement": round 1). A lease row carries
-#: none of them (#956), and a "(Note 4)" cross-reference is no note payable.
+#: of long-term obligations", "Bank overdraft", "Credit agreement": round 1), and "indebtedness",
+#: as the module's own `_TOTAL_DEBT` and `_AGGREGATE` read it — Perrigo's 10-K lists "Current
+#: indebtedness 36.6" beside "Long-term debt, less current portion 3,603.6" (the #1039 follow-up).
+#: A lease row carries none of them (#956), a "(Note 4)" cross-reference is no note payable, and
+#: "Accrued interest on notes" is interest, not principal (the #1039 follow-up's stay-out pin).
 _BS_DEBT_WORD = re.compile(
-    r"\b(?:debt|borrowings?|(?<!\()notes?|bonds?|debentures?|commercial\s+paper|"
+    r"\b(?:debt|indebtedness|borrowings?|(?<!\()(?<!interest on )notes?|bonds?|debentures?|"
+    r"commercial\s+paper|"
     r"lines?\s+of\s+credit|revolv\w*|credit\s+(?:facilit\w*|agreements?|lines?)|"
     r"facilit(?:y|ies)|loans?|mortgages?|securitization|floor\s*plan|overdrafts?|"
     r"financ\w*\s+(?:obligations?|liabilit\w*)|long-term\s+obligations?)\b", re.I)
@@ -271,10 +275,53 @@ _BS_DEBT_WORD = re.compile(
 #: long-term row is part of the debt (round 1). The label may run on ("… of long-term debt and
 #: finance leases") and the cell may carry its "$" ("$ ( 10,000 )"), never past a figure or a dash.
 #: A footnote marker is never the cell: Alphabet's Q3 "… notes (4) ( 1,996 )" read as a $4 portion.
+#: THE NOTE'S OTHER WORDINGS (the #1039 follow-up): a cell with no parentheses ("Less current
+#: portion of long-term debt 10,000"), a bare "Less: Current maturities ( 10,000 )", a lettered
+#: footnote ("(a)"), and a portion "included in accrued expenses ( 10,000 )". A subtraction is a
+#: "Less" opening the note's line ("Less", "LESS", "Less :"), a lower-case "less" before a
+#: parenthesised cell (as main read it), or a portion "included" in another — never a row's own
+#: ", less current maturities" (Werner's "Finance lease liabilities, less current maturities
+#: 19,779"), whose "less" is lower-case before a bare cell and whose subject is a lease. A label
+#: never runs through another "less" or "current portion" (a caption's "including current
+#: maturities, consisted of:" swallowed the "Less: current portion …" line after it: code review
+#: round 0). A year is never the cell.
 _NOTE_CURRENT = re.compile(
-    r"\bLess:?\s+(?:the\s+)?current\s+(?:portion|maturities)\s+of\s+(?:long-term\s+)?"
-    r"(?:debt|notes|borrowings)\b[^()$\d—;.]{0,60}?(?:\s*\(\d\))?\s*\$?\s*"
-    r"\((?!\d\))\s*([\d,.]+)\s*\)", re.I)
+    r"\b(?P<less>less\s*:?\s+(?:the\s+)?)?(?P<lbl>current\s+(?:portion|maturities)\b"
+    r"(?:(?!\bless\b|\bcurrent\s+(?:portion|maturities)\b)[^()$\d—;.]){0,80}?)"
+    r"(?:\s*\([a-z\d]\))?\s*\$?\s*"
+    r"(?:\((?![a-z\d]\))\s*(?P<paren>[\d,.]+)\s*\)|(?!(?:19|20)\d\d\b)(?P<bare>\d[\d,]*(?:\.\d+)?))",
+    re.I)
+_INCLUDED = re.compile(r"\bincluded\b", re.I)
+#: What a subtracted portion is OF must be debt. A bare label ("Less: current portion") takes its
+#: subject from its own table — the text back to the sentence's start must name debt, and the
+#: label no lease, interest or tax (#956: a lease is not debt; accrued interest is not principal):
+#: A10 Networks' "Total deferred revenue 142,806 … Less: current portion ( 80,824 )" is revenue.
+_NOTE_NOT_DEBT = re.compile(r"\bleases?\b|\binterest\b|\btax", re.I)
+_OF = re.compile(r"\bof\b", re.I)
+
+
+def _note_subtracts_current(text: str) -> bool:
+    """Does the filing's debt note subtract a current portion of DEBT — a positive cell, under any
+    of the wordings above?"""
+    for m in _NOTE_CURRENT.finditer(text):
+        label, less = m["lbl"], m["less"]
+        if less and less[0].islower() and m["paren"] is None:
+            less = None  # a row's own ", less current maturities 19,779", not a subtraction
+        if not (less or _INCLUDED.search(label)):
+            continue  # a row's own label ("net of current portion 138,316"), not a subtraction
+        of = _OF.split(label, maxsplit=1)
+        if len(of) == 2:
+            other = not _BS_DEBT_WORD.search(of[1])
+        else:
+            lo = text.rfind(". ", max(0, m.start() - 300), m.start())
+            table = text[lo + 2 if lo != -1 else max(0, m.start() - 300):m.start()]
+            other = not _BS_DEBT_WORD.search(table) or bool(_NOTE_NOT_DEBT.search(label))
+        if other:
+            continue  # a portion of something else: a lease, deferred revenue, interest, a tax
+        v = _money(m["paren"] or m["bare"] or "")
+        if v is not None and v > 0:
+            return True
+    return False
 
 
 class _BalanceSheetDebt(NamedTuple):
@@ -305,8 +352,7 @@ def _balance_sheet_debt(text: str) -> _BalanceSheetDebt | None:
     rows = [m.span() for m in (lt, cur) if m is not None]
     if any(not any(a <= w.start() < b for a, b in rows) for w in _BS_DEBT_WORD.finditer(body)):
         return None  # a debt word outside the two rows: another borrowing, so not the whole
-    if cur is None and any((v := _money(m[1])) is not None and v > 0
-                           for m in _NOTE_CURRENT.finditer(text)):
+    if cur is None and _note_subtracts_current(text):
         return None  # a current portion folded into another row: the long-term row is part
     scale = 0.001 if h[1].lower() == "thousands" else 1.0
 
