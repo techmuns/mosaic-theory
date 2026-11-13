@@ -511,6 +511,85 @@ def _split_amendments(body: str) -> tuple[str, str]:
     return (parts[0], parts[1]) if len(parts) == 2 else (body, "")
 
 
+#: A REDACTION's own entry: dated, appended last, and stating how many spans it cut to "…".
+#:
+#: THE FOURTH PERMITTED CHANGE, and the only one that edits a merged record's text (operator ruling
+#: 2026-11-12, verbatim "Cut all 21 + guard (Recommended)": "Each run is cut to 12 words or fewer.
+#: Each record gets a dated redaction amendment naming count, position and hash only"). CLAUDE.md's
+#: rule: no public field quotes more than 12 consecutive transcript words, and this repo is public.
+#: Six records written before that rule quoted calls at length. An appended correction cannot
+#: un-publish words the body still carries, so these spans are cut IN PLACE, and nothing else may
+#: move: the record must be its merged self with spans replaced by "…" (`_cut_spans`), the entry
+#: must say how many, and nothing may be added BEFORE it (an amendment appended after it is an
+#: amendment, permitted as ever). Git history keeps the old text.
+#:
+#: ACCEPTED RISK: CI cannot tell a cut transcript run from any other cut span, so a redaction could
+#: drop a word that turns a claim ("not"). The entry names every cut run by line, length, call and
+#: the sha256 of its words, so a reader with the calls re-derives each, and the local transcript
+#: guard reads the result. Falsifier: a REDACTION whose cut changes what a record claims.
+_REDACTION = re.compile(r"(?m)^\*\*(\d{4}-\d{2}-\d{2}) — REDACTION: (\d+) spans? cut to “…”")
+_ELLIPSIS = "…"
+
+
+def _cut_spans(before: str, now: str) -> int | None:
+    """How many spans of ``before`` were replaced by "…" to make ``now``; None when ``now`` is not
+    ``before`` with spans so replaced (a word added, reworded or moved). An "…" that ``before``
+    already carried is not a cut, and an "…" inserted where nothing was removed is refused."""
+    pieces = now.split(_ELLIPSIS)
+    if not before.startswith(pieces[0]):
+        return None
+    pos, cuts = len(pieces[0]), 0
+    for i, piece in enumerate(pieces[1:], 1):
+        if i == len(pieces) - 1:
+            at = len(before) - len(piece)
+            if at < pos or not before.endswith(piece):
+                return None
+        elif before.startswith(_ELLIPSIS + piece, pos):
+            at = pos + len(_ELLIPSIS)
+        else:
+            at = before.find(piece, pos + 1)
+            if at < 0:
+                return None
+        gap = before[pos:at]
+        if not gap:
+            return None
+        cuts += gap != _ELLIPSIS
+        pos = at + len(piece)
+    return cuts
+
+
+def _redaction_violations(name: str, before: str, now: str) -> list[str] | None:
+    """None when ``now`` appends no new REDACTION entry (the other three rules then apply);
+    otherwise every way it breaks the redaction rule (`_REDACTION`). Empty == permitted."""
+    entries = list(_REDACTION.finditer(now))
+    merged = len(_REDACTION.findall(before))
+    if len(entries) <= merged:
+        return None
+    # EVERY entry this change appends is read (review round 1 of #1046: only the last one's count
+    # was): the text before the first of them is the merged record with spans cut, and together
+    # they declare how many
+    appended = entries[merged:]
+    head = now[:appended[0].start()]
+    if not _AMENDMENTS.search(before):
+        # the heading the redaction opened, on a record that had no amendments yet
+        head = re.sub(r"\n*^## Amendments[ \t]*\n*\Z", "", head, flags=re.M)
+    out = []
+    if _front(head) != _front(before):
+        out.append(f"{name}: a REDACTION changed the front matter — it may only cut spans of text")
+    cuts = _cut_spans(_body(before).rstrip("\n"), _body(head).rstrip("\n"))
+    if cuts is None:
+        out.append(f"{name}: a REDACTION may only replace spans of the merged text with “…”, and "
+                   f"nothing may be added before its entry; something else moved")
+    else:
+        declared = [int(m.group(2)) for m in appended]
+        if 0 in declared:
+            out.append(f"{name}: a REDACTION entry declares 0 spans cut; an entry names a cut")
+        elif cuts != sum(declared):
+            out.append(f"{name}: the appended REDACTION entr(ies) declare "
+                       f"{' + '.join(map(str, declared))} span(s) cut; the text shows {cuts}")
+    return out
+
+
 def _violations(name: str, before: str, now: str) -> list[str]:
     """Every way `now` breaks the record contract against its merged `before`. Empty == permitted.
 
@@ -519,6 +598,9 @@ def _violations(name: str, before: str, now: str) -> list[str]:
     """
     if now == before:
         return []
+    redaction = _redaction_violations(name, before, now)
+    if redaction is not None:
+        return redaction
     out = []
     # THE FRONT MATTER IS PART OF THE RECORD. `status:` is the only field the README lets change
     # after merge — the `prs:` trail on 2026-08-25-knowledge-ledger-p0.md was wrong and had to be
@@ -611,6 +693,68 @@ def test_the_permitted_changes_stay_permitted() -> None:
     cited = base.replace("\n## Amendments", "\nSee docs/audits/old.md.\n\n## Amendments", 1)
     repointed = cited.replace("docs/audits/old.md", "docs/records/2026-01-01-new.md")
     assert _violations("x.md", cited, repointed) == []
+
+
+def _entry(spans: int) -> str:
+    return (f"\n**2026-11-13 — REDACTION: {spans} span{'' if spans == 1 else 's'} cut to “…”**, "
+            "under the operator's ruling of 2026-11-12. Each named by line, count and hash only.\n")
+
+
+def _cut_first(text: str, span: str, after: int = 0) -> str:
+    """``text`` with the first ``span`` at or after ``after`` replaced by "…"."""
+    at = text.index(span, after)
+    return text[:at] + _ELLIPSIS + text[at + len(span):]
+
+
+def test_a_redaction_may_cut_spans_to_an_ellipsis_and_nothing_else() -> None:
+    """THE FOURTH PERMITTED CHANGE (operator ruling 2026-11-12; `_REDACTION`), pinned on REAL
+    merged records: a span of the body, or of an existing amendment, cut to "…" under an appended
+    entry that counts it, is permitted, on a record with amendments and on one without. A reworded
+    word, a miscount, an "…" that cut nothing, an entry inside the body and a changed header are
+    each refused, and a cut with no entry is still a rewritten body."""
+    base = _amended_record()
+    body_at = len(base) - len(_body(base))
+    amend_at = body_at + _AMENDMENTS.search(_body(base)).start()  # type: ignore[union-attr]
+    word = re.compile(r"\b[a-z]{7,}\b")
+    in_body = word.search(base, body_at).group()  # type: ignore[union-attr]
+    in_amend = word.search(base, amend_at + 20).group()  # type: ignore[union-attr]
+    one = _cut_first(base, in_body, body_at)
+    assert _violations("x.md", base, one + _entry(1)) == []
+    two = _cut_first(one, in_amend, amend_at)
+    assert _violations("x.md", base, two + _entry(2)) == [], "a cut inside an existing amendment"
+    bare = next(p.read_text() for p in _records() if not _AMENDMENTS.search(p.read_text()))
+    bare_at = len(bare) - len(_body(bare))
+    bare_word = word.search(bare, bare_at).group()  # type: ignore[union-attr]
+    opened = _cut_first(bare, bare_word, bare_at) + "\n## Amendments\n" + _entry(1)
+    assert _violations("x.md", bare, opened) == [], "the heading a redaction opens"
+
+    reworded = base.replace(in_body, "replaced", 1)
+    assert _violations("x.md", base, reworded + _entry(1)), "a word reworded under a redaction"
+    assert _violations("x.md", base, one + _entry(2)), "the entry miscounts its cuts"
+    inserted = base[:body_at + 40] + _ELLIPSIS + base[body_at + 40:]
+    assert _violations("x.md", base, inserted + _entry(1)), "an ellipsis that cut nothing"
+    mid = one[:body_at + 40] + _entry(1) + one[body_at + 40:]
+    assert _violations("x.md", base, mid), "the entry sits inside the body"
+    redated = re.sub(r"(?m)^date:.*$", "date: 2026-01-01", one, count=1)
+    assert _violations("x.md", base, redated + _entry(1)), "the header moved under a redaction"
+    assert _violations("x.md", base, one), "a cut with no entry is a rewritten body"
+
+
+def test_every_appended_redaction_entry_is_counted() -> None:
+    """REVIEW ROUND 1 of #1046: only the LAST appended REDACTION entry's count was read. Every one
+    is now: two entries appended together must declare, between them, the spans the text shows,
+    and an entry declaring none is refused."""
+    base = _amended_record()
+    body_at = len(base) - len(_body(base))
+    word = re.compile(r"\b[a-z]{7,}\b")
+    first = word.search(base, body_at)
+    second = word.search(base, first.end() + 1)  # type: ignore[union-attr]
+    assert first is not None and second is not None
+    two = _cut_first(_cut_first(base, first.group(), body_at), second.group(), body_at)
+    assert _violations("x.md", base, two + _entry(1) + _entry(1)) == []
+    assert _violations("x.md", base, two + _entry(2)) == []
+    assert _violations("x.md", base, two + _entry(1) + _entry(2)), "1 + 2 declared, 2 cut"
+    assert _violations("x.md", base, two + _entry(2) + _entry(0)), "an entry that names no cut"
 
 
 def test_a_merged_records_front_matter_is_frozen_apart_from_status() -> None:
