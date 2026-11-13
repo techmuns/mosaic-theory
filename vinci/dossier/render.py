@@ -3734,6 +3734,11 @@ _SCREEN_SUBTITLE = (
     "A mechanical re-rate to the median multiple of this name's own trading history, on its naive "
     "reported median margin. An attention filter only — it applies no structural adjustment, so a "
     "cheap-looking screen still has to survive the full bear/base/bull underwrite.")
+#: (#1004 item 3c, 2026-11-13) What the Brief's Scenario analysis section says where the screening
+#: anchor went, on a name with no scenario record. Twin: SCREEN_POINTER in dossier.js.
+_SCREEN_POINTER = (
+    "This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — "
+    "is in Analysis, under Valuation, beside the own-history multiple it re-rates to.")
 
 
 #: An anchor multiple read from the ex-lease history carries this source prefix (anchor.py), and
@@ -3941,15 +3946,18 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # SCENARIO ANALYSIS — the recorded bear/base/bull table (+ reasons); the sealed machine
     # proposal joins it only under the operator's explicit --show-proposal peek.
     scen = _scenario_table_lines(card)
-    # The SCREENING ANCHOR closes the section in both twins (underwriteDetail() appends it after
-    # the card detail, and renders the section on the anchor ALONE when no card exists — with the
-    # absence stated rather than the section vanishing). The markdown twin now does the same: a
-    # shorter document is not a substitute for saying "this name has not been underwritten".
-    screen = _screening_context_lines(d.anchor)
+    # THE SCREENING ANCHOR LEFT THIS SECTION (#1004 item 3c, 2026-11-13): R1's screen value read
+    # 2.0–10.6× the page price on 8 pages (VRRM, the one AVOID, 10.6×), so as the first valuation
+    # level on the Brief it flattered the de-rated names. It renders in the Analysis tier's
+    # valuation section now (`_valuation_section_lines`). A name with an anchor and no record
+    # still gets the section, stating the absence and where the anchor went: a shorter document
+    # is not a substitute for saying "this name has not been underwritten".
+    # Twin: underwriteDetail() in dossier.js.
+    screen = d.anchor is not None
     if scen or screen or show_proposal:
         out.append("## Scenario analysis")
         if not scen and screen:
-            out += ["_no scenario record for this name_", ""]
+            out += ["_no scenario record for this name_", "", f"_{_SCREEN_POINTER}_", ""]
         out += scen
         if show_proposal:
             out += [_machine_proposal_md(
@@ -3960,7 +3968,6 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
                                 gate=(s.draw_agreement.gate()
                                       if s is not None and s.draw_agreement else None))),
                 ""]
-        out += screen
     # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
     # cover's CRUX block (buy-side cover), so the question renders once per tier.
     out.append("## The case")
@@ -4532,6 +4539,11 @@ def _valuation_section_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
         _fact("Own-history range position", m.valuation.range_position),
         "",
     ]
+    # (#1004 item 3c, 2026-11-13) the SCREENING ANCHOR, moved here off the Brief — directly after
+    # the own-history range position, which states today's multiple and the median the anchor
+    # re-rates to, so what the screen value assumes is read beside it. Main body, never collapsed.
+    # Twin: valuation() in dossier.js.
+    out += _screening_context_lines(d.anchor)
 
     # (mid-cycle) the cyclical-underwriting section — UNDER the valuation block. Rendered only when
     # the record is present (absent → nothing, so pre-midcycle dossiers are byte-identical).

@@ -834,7 +834,7 @@ function analysisTier(d, m, card) {
     + concentration(m.concentration)                    // business quality — what this IS
     + synthesis(d.synthesis, m, d.sleeve)               // the argument, framed by its book
     + catalystCalendar(m, card)                         // when reality votes on it
-    + valuation(m.valuation)                            // the ONLY home of the full multiples read
+    + valuation(m.valuation, d.anchor)                  // the full multiples read + the screening anchor
     + evGap(m.ev_gap)                                   // (A2) our leg vs the street
     + peerComps(m.peer_comps)                           // peer comps (per-peer grid inside)
     + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
@@ -1087,7 +1087,7 @@ function briefVerdictChip(verdict) {
 //   1 opener — the underwrite masthead + assessment + company identity (one read: the decision
 //     headline and what the business is)
 //   2 underwrite detail — scenarios table + rationale + machine proposal (sealed) + audit blocks
-//     + the screening context (how the name surfaced beside how it was underwritten)
+//     (the screening anchor moved to Analysis → Valuation, #1004 item 3c)
 //   3 what happened — the drawdown events + the decision tiles
 //   4 the case — decisive question + top bull/bear + unknowns
 //   5 financial snapshot — trend exhibit + the compact annual table
@@ -1307,20 +1307,26 @@ function cruxInner(s, m, card) {
 
 // 2 — UNDERWRITE DETAIL (user decision): the scenarios table + range rail, the analyst's rationale,
 // the machine-proposal row (sealed until the verdict — the pivot, placement only), the thesis-break
-// chips, the collapsed audit blocks, and the SCREENING CONTEXT (returned from the Appendix — how
-// the name surfaced belongs beside how it was underwritten). Fail-honest without a record: renders
-// the proposal + screening context alone when either exists.
+// chips and the collapsed audit blocks. Fail-honest without a record: a name with a screening
+// anchor and no record still gets the card, stating the absence and pointing at the anchor.
+// THE SCREENING ANCHOR LEFT THIS CARD (#1004 item 3c, 2026-11-13). R1's screen value read
+// 2.0–10.6× the page price on 8 pages (VRRM, the one AVOID, 10.6×): as the first valuation level
+// on page 1 it flattered exactly the de-rated names. It now renders in Analysis → Valuation,
+// beside the own-history multiple it re-rates to (valuation() below). Twin: render._brief_lines.
 function underwriteDetail(d, verdict, m, card, mark) {
-  const screen = anchorInner(d.anchor);
   if (!card) {
-    if (!screen) return "";
+    if (!d.anchor) return "";
     return `<div class="card ds-section"><div class="ds-title">Scenario analysis<span class="ds-route">no scenario record for this name</span></div>
-      ${screen}</div>`;
+      <div class="muted">${escapeHtml(SCREEN_POINTER)}</div></div>`;
   }
   const title = `<div class="ds-title">Scenario analysis <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">${escapeHtml(card.multipleBasis || "")}</span><span class="ds-route">every assumption &amp; source recorded below</span></div>`;
   const parts = uwCardParts(card, { mark, rationale: false });
-  return `<div class="card ds-section uw-card">${title}${parts.detail}${screen}</div>`;
+  return `<div class="card ds-section uw-card">${title}${parts.detail}</div>`;
 }
+
+// Where the screening anchor went, said on the Brief card it left. Twin: render._SCREEN_POINTER
+// (pinned equal by tests/test_parity_pins.py).
+const SCREEN_POINTER = "This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation, beside the own-history multiple it re-rates to.";
 
 // the company-identity block shared by the opener: one-liner · segments / geography / customer
 // concentration · the key-figures table + 52-week relative path. CIK lives in Record & reproduce.
@@ -3490,8 +3496,13 @@ function evGapTail(g, br, consAsOf) {
   return body;
 }
 
-function valuation(v) {
-  if (!v) return "";
+function valuation(v, anchor = null) {
+  // (#1004 item 3c) the SCREENING ANCHOR closes this section, directly after the own-history range
+  // position: that line states today's multiple and the median the anchor re-rates to, so what
+  // the screen value assumes is read beside it. Main body, never collapsed — on a name with no
+  // scenario record it is the document's only valuation level. Twin: _valuation_section_lines.
+  const screen = anchorInner(anchor);
+  if (!v) return screen ? sec("Valuation", "", screen) : "";
   // Mirrors the md render (PR #48): lead with the CROSS-SECTIONAL read (the edge); the own-history
   // percentile barely discriminates across finalists, so it's folded into the range line below.
   // (G) implied expectations slot in AFTER cross-sectional, BEFORE the own-history reads.
@@ -3503,7 +3514,7 @@ function valuation(v) {
     impliedExpectations(v.implied_expectations) +
     fact("EV/adj-EBITDA (forward)", v.ev_ebitda_adjusted_fwd) +
     fact("Adjusted EPS (guide)", v.adjusted_eps) +
-    fact("Own-history range position", v.range_position, null, { hi: true }));
+    fact("Own-history range position", v.range_position, null, { hi: true }) + screen);
 }
 
 // (D1/D2) `quality` split into leverageSurvival + trajectorySection (see renderDossier); the two

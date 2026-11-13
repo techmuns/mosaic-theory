@@ -8013,9 +8013,10 @@ def test_exhibits_cite_via_endnotes_not_inline_source_caption() -> None:
 
 
 def test_dossier_page_logs_anchor_and_scenario_panels() -> None:
-    """(log · tier redesign) The dossier Brief carries the committed screening context (inside the
-    Scenario analysis card) for any dossier that has one, and the underwrite masthead/detail ONLY
-    when a scenario record is passed.
+    """(log · tier redesign) The dossier page carries the committed screening context for any
+    dossier that has one (in Analysis → Valuation since #1004 item 3c — its placement is pinned in
+    tests/test_anchor_off_headline.py), and the underwrite masthead/detail ONLY when a scenario
+    record is passed.
 
     Additive both ways: a dossier with no `anchor` renders no screening block (pre-anchor JSON is
     untouched), and the stat band never appears from the 2-arg call the other node pins use — it
