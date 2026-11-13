@@ -517,8 +517,9 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names(
 ) -> None:
     """REVIEW FINDING — the fix has TWO consumers and only one was measured.
 
-    `anchor_base_value_per_share` is `equity ÷ dil.value` (anchor.py), and `tagger._leverage` and
-    `audit_r1.check_leverage` read it — so correcting the period moves a value committed in
+    `anchor_base_value_per_share` is `equity ÷ dil.value` (anchor.py), and `audit_r1.check_leverage`
+    reads it (`tagger._leverage` did too, until its retirement on 2026-11-13) — so correcting the
+    period moves a value committed in
     `dossier.json`, not just the scenario engine's reward:risk. The PR measured the engine and said
     nothing about the anchor.
 

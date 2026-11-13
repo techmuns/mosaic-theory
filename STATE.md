@@ -52,6 +52,10 @@ corpus (28 → 27 pages; last held at `6fbbb4a2`), its 2026-07-22 WATCH record i
 corpus (27 → 26 pages; last held at `047f4c6b`), its 2026-07-22 WATCH record is archived intact as `scenarios/archive/MVST-2026-07-22.json`, still
 sealed, so it leaves the monitor's freshness set and the rebuild; it was never a followed name; nothing keeps it out of the screen (`docs/records/2026-11-13-mvst-retired.md`).
 
+**THREE UNCALLED MODULES ARE RETIRED (operator, 2026-11-13, on B's design: "yes need to do this reliably"; issue 1004 lane 4):** the ranker's unfed LLM cause channel (`vinci/rank/cause.py`, `vinci rank --cause-file` and the ranker's read of `cause_class`; the queue keeps the field and its "· LLM: —" label as constants and re-ranks byte-identical),
+the recipe tagger (`vinci/dossier/tagger.py`) and the R-file segment reader (`vinci/edgar/segments.py`, MC2), so every §2 line below naming them describes removed code; the graph extractor and judge,
+`vinci/evals/judge.py` and the four one-off page passes stay, each with a live caller; restore by reverting the PR's squash commit (`docs/records/2026-11-13-three-uncalled-modules-retired.md`).
+
 - **Entity resolver** (`vinci/resolver`) — US SEC CIK↔ticker↔name, fail-loud on unknown/ambiguous —
   *ran `resolve AAPL GOOGL GOOG BRK.B ZZZZZ`: GOOGL/GOOG→one CIK, BRK.B→BRK-B, ZZZZZ fails loud.*
 - **A full-text-search hit on an 8-K/A is an 8-K/A (RE1-D11, 2026-11-10)** (`vinci/edgar/client.py` `parse_fts_hit`, `dossier/mechanical.py` `_covenant_pointers`): efts's own `form` is read before its family, the covenant pointer writes it, and the maturity check still reads a pointer-linked 8-K/A; 1 of 92 pointer rows on the 28 pages frozen at `bcda7ce3` moves (WERN's `0000793074-26-000090`, a label, at its next re-assembly). *Record: `docs/records/2026-11-10-fix2-e1-an-8ka-hit-is-an-8ka.md`.*
@@ -668,7 +672,7 @@ sealed, so it leaves the monitor's freshness set and the rebuild; it was never a
   swallowing its own failures** (`vinci/calls/`, `frontend/views/calls/tape.js`, PR *calls-tape*).
   **RETIRED 2026-11-04 (operator; R1, #905)** with graph Test 0/1's code, the CIQ scale back-fill and
   the triage pass — code, tests and data removed; restore by reverting #905's squash commit (`docs/records/2026-11-04-retire-calls-graph-tests-scale-backfill-triage.md`).
-  §5.0's LLM cause tier — Withdrawn 2026-11-04 by the operator: triage is retired; the ranker's cause slot (vinci/rank/cause.py, `cause_class`) stays and is unfed; reopen only if cause classification becomes needed.
+  §5.0's LLM cause tier — Withdrawn 2026-11-04 by the operator: triage is retired; the ranker's cause slot (vinci/rank/cause.py, `cause_class`) ~~stays and is unfed~~ — RETIRED 2026-11-13 (operator, on B's design): the module and the ranker's read are removed, the queue's `cause_class` stays as a constant (`docs/records/2026-11-13-three-uncalled-modules-retired.md`).
   A RESEARCH INPUT ONLY: it touches no screen, ranker, ledger or spread, and gates nothing. The
   build carries four decisions the operator made explicitly after a design review.
   *(detail: `docs/records/2026-08-26-capability-the-calls-tape-scoring-a-public-commentator-s.md`)*
@@ -679,7 +683,7 @@ sealed, so it leaves the monitor's freshness set and the rebuild; it was never a
   `gate_regime: None`, GOOGL included — written through `scenario-create` the same day the tiers were asked for. *FIFTH unwired capability; found by asking what a record reads
   under the ladder, not by a test.* Sealed records stay frozen (#489's rule) — pinned both ways, corpus provably unmoved. | GOOGL under the ladder: `below_target` /
   `minimum_met` / not eligible at its frozen $345.90, and `preferred` / `preferred` / eligible at the verified 2026-08-31 close of $339.35.
-- **MC2 — segment ECONOMICS reach the machine, via the only route that carries them** (`vinci/edgar/segments.py`). MC2's premise was partly stale: `concentration.segment_ebitda` already works for the two names whose CIQ export holds an EBITDA row (UBER, VRRM). The gap is the FIVE multi-segment names with segmented revenue and no earnings — GOOGL, IT, EPAM,
+- **MC2 — segment ECONOMICS reach the machine, via the only route that carries them** (`vinci/edgar/segments.py`). **RETIRED 2026-11-13 with its tests: no caller since #910; `vinci/edgar/segment_facts.py` reads segment profit from the XBRL instance (`docs/records/2026-11-13-three-uncalled-modules-retired.md`).** MC2's premise was partly stale: `concentration.segment_ebitda` already works for the two names whose CIQ export holds an EBITDA row (UBER, VRRM). The gap is the FIVE multi-segment names with segmented revenue and no earnings — GOOGL, IT, EPAM,
   AORT, WERN — and companyfacts cannot fill it: measured on the committed fixtures, NOT ONE row carries a dimensional qualifier, so segment operating income is absent from the source already pulled. The filing's own rendered R-files do carry it. *Verified by RECONCILIATION on GOOGL's FY2025 10-K (acc 0001652044-26-000018), both sides to the dollar: segment revenue
   402,963 + hedging (127) = 402,836 = disclosed Total revenues; 139,404 + 13,910 - 7,515 - 16,760 = 129,039 = disclosed Total income from operations — the second also proves the parenthesised-negative sign, which read positive breaks that sum by twice its size.* NOTE two presentations in one table: Services/Cloud state revenue AND costs (income is the
   difference) while Other Bets and reconciling items state income DIRECTLY under a dimensional heading; reading one shape loses half the table. Pinned offline on the filing frozen byte-for-byte; mutation-tested on the sign and on report selection. **SCOPE: the EXTRACTOR only — wiring it into assembly for those five names is not done.**
