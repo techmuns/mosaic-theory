@@ -44,13 +44,16 @@ fields are optional and written only when set; no committed row is rewritten.
    `V-SMPL-screen2-20260706` (BUY 2026-07-21, entry 2026-07-20, closed 07-24 and still scored to
    2027-01-16) and `V-SMPL-screen2-20260729` (BUY 2026-08-05, entry 2026-08-04). A later decision
    with the opposite call inside the window is a reversal, not covered: no row is in that state.
-5. **The reading floor** (`READING_FLOOR = 20`): a book's curve in the per-sleeve section prints
-   only once the book holds 20 resolved observations; below it the count prints and nothing else.
+5. **The reading floor** (`READING_FLOOR = 20`): a book's curve in the per-sleeve section, and
+   each per-sector cut, prints only once it holds 20 resolved observations; below it the count
+   prints and nothing else. The primary line is never withheld and prints its count beside it
+   ("3 of 20 resolved").
    **Why 20, recorded at coin time:** with a handful of names one outcome moves a mean by tens of
    points; at 20 each name carries a twentieth of an equal-weight mean, the face-validity point at
    which no single outcome is the reading. Set by face validity with no resolved outcome in
    existence. A display rule: `ScoreReport` and its JSON keep every number, and **the primary line
-   is unchanged** — it prints at any count, as A's note asks ("the primary metric is unchanged").
+   is never withheld** — A's note: "the primary metric is unchanged"; the coordinator, asked
+   before build: "it never withholds the primary BUY−AVOID line".
 
 **WHY.** B's read-only diagnosis (at `dad8f441`, re-derived at `12764514`): no ledger row linked to
 its underwrite — `underwrite_ref` and `ratio_at_entry` existed and no code wrote them; a followed
@@ -58,16 +61,19 @@ name's candidate id was its bare ticker; any reason could void a decision; SMPL 
 twice; and a curve on three names would read as a result.
 
 **HOW VERIFIED.**
-- **Fail-first pins**, `tests/test_ledger_safeguards.py` (26 nodes), at the seats (`log_verdict`,
+- **Fail-first pins**, `tests/test_ledger_safeguards.py` (31 nodes), at the seats (`log_verdict`,
   `void_decision`, `_cmd_void_decision`, `score_ledger` → `to_markdown`), on the real committed
   records (SMPL, IT) and the real committed ledger, each refusal with its negative pin.
-- **Mutation: 17 of 17 killed** (each a one-line mutant of production, run against the new file
-  in a copy of the tree): the no-record refusal, the ratio struck at the entry, the horizon refusal,
-  the blob check, the screen book stamp, the followed-origin refusal, the void code (writer,
-  command, schema), the window's end, the call in the key, the reaffirmation skip, the reading
-  floor, the void line, the omit-while-unset list, voids ending the window, and a reason beside a
-  record. The first run left one survivor (the writer's void-code check, backstopped by the
-  schema); a pin that the code is asked before the decision is looked up now kills it.
+- **Mutation: 22 of 22 killed** (each a one-line mutant of production, run against the new file
+  in a copy of the tree). The first 17: the no-record refusal, the ratio struck at the entry, the
+  horizon refusal, the blob check, the screen book stamp, the followed-origin refusal, the void code
+  (writer, command, schema), the window's end, the call in the key, the reaffirmation skip, the
+  per-sleeve floor, the void line, the omit-while-unset list, voids ending the window, and a reason
+  beside a record; one survived (the writer's void-code check, backstopped by the schema) until a
+  pin that the code is asked before the decision is looked up. Five after review round 0: the
+  per-sector floor, the primary's count, the repository-root resolution, a passed origin on a
+  screen candidate, and the no-reason fallback; one survived (the fallback: no committed record
+  reaches it) until a pin on the recipe's own `Result` with both fields cleared.
 - **The scoring report, before and after, on the committed 10-row ledger.** Base `origin/main`
   `0d8a2a43` against head, the same inputs, `score_ledger` with no dividends and no splits (both
   sides identical), three cuts:
@@ -87,7 +93,7 @@ twice; and a curve on three names would read as a result.
 - **The spread's N, before and after:** the screen book's observations are 4 (IT, SMPL-0706,
   SMPL-0729, VRRM) at base and 3 at head; BUY leg 3 → 2, AVOID leg 1 → 1.
 
-**BOUNDARY.** "26 nodes": `tests/test_ledger_safeguards.py` at this PR's head. "17 of 17": the
+**BOUNDARY.** "31 nodes": `tests/test_ledger_safeguards.py` at this PR's head. "22 of 22": the
 mutants listed above, each run against that file alone, in a copy of the tree at this PR's head.
 "10-row ledger": `data/snapshots/decision_ledger.jsonl` at `0d8a2a43` (5 decisions, 2 closes, 2
 corrections, 1 void). Pending counts: SCREEN-ORIGIN decision rows not voided (and, at head, not
@@ -104,8 +110,7 @@ reading. Spread +1.88%: mean BUY return minus mean AVOID return on those flat ba
   after the rebuild states a horizon with a verdict, or moves the name to watch.
 - **The monitor's interim spread** (a diagnostic, never the result) does not apply the
   reaffirmation rule yet: its BUY leg still holds both SMPL rows. Recorded on STATE row 5.
-- **The reading floor covers the per-sleeve curves, not the primary line.** The coordinator was
-  asked before build which of the two readings the design meant; this is the one that leaves the
-  primary metric's line unchanged, built pending its answer and reversible under the delegation
-  record. Below the floor the per-sleeve overshoot row prints a count while the primary above it
-  prints a figure — by design, since the primary is exempt.
+- **The reading floor covers the per-sleeve and per-sector curves, never the primary line**
+  (coordinator, 2026-11-13: "Build (b)"; reversible under the delegation record). Below the floor
+  the per-sleeve overshoot row prints a count while the primary above it prints a figure with its
+  count against the floor — by design, since the primary is exempt.

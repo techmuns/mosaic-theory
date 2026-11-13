@@ -409,10 +409,25 @@ def test_a_book_at_the_floor_is_read() -> None:
     assert "below the reading floor" not in book.split("_\n")[-1]
 
 
-def test_the_primary_line_is_unchanged_by_the_floor() -> None:
-    """The primary metric is unchanged: its line prints the spread at any count."""
+def test_the_primary_line_is_never_withheld_and_states_its_count() -> None:
+    """The primary metric is unchanged: its line prints the spread at any count (coordinator,
+    2026-11-13: "it never withholds the primary BUY−AVOID line"), with its count against the
+    floor beside it."""
     md = aggregate(_scores(2, 1), cost_bps=25.0, n_pending=0).to_markdown()
-    assert "**BUY−AVOID spread (primary): +15.0%**" in md
+    assert "**BUY−AVOID spread (primary): +15.0%** (3 of 20 resolved)" in md
+
+
+def test_a_sector_below_the_floor_prints_its_count_and_no_spread() -> None:
+    """The per-sector cuts are curves too. Two per leg cleared the old `sufficient` rule; below
+    the floor the sector prints its count, and above it the spread as before."""
+    below = [VerdictScore(s.entry_id, s.ticker, s.verdict, True, s.name_return, 0.0,
+                          sector="Tech") for s in _scores(2, 2)]
+    md = aggregate(below, cost_bps=25.0, n_pending=0).to_markdown()
+    assert "- Tech: 4 resolved (2 buy / 2 avoid) — below the reading floor of 20" in md
+    above = [VerdictScore(s.entry_id, s.ticker, s.verdict, True, s.name_return, 0.0,
+                          sector="Tech") for s in _scores(10, 10)]
+    md = aggregate(above, cost_bps=25.0, n_pending=0).to_markdown()
+    assert "- Tech: spread +15.0% (10 buy / 10 avoid)" in md
 
 
 
@@ -443,3 +458,16 @@ def test_a_screen_candidate_refuses_a_passed_origin(tmp_path: Path) -> None:
             log_verdict(store, candidate_id=cid, verdict=Verdict.BUY,
                         decided_at=datetime(2026, 6, 15, 10, 0),
                         origin_ref=follow_origin("ACME", date(2026, 1, 1)), **NO_RECORD, **KW)
+
+
+def test_a_ratio_with_no_reason_is_sealed_with_one(tmp_path: Path,
+                                                  monkeypatch: pytest.MonkeyPatch) -> None:
+    """No committed record returns a None ratio without its reason, so the recipe is stood in
+    by its own Result with both cleared: the seal still says why, never a silent None."""
+    link = read_underwrite("SMPL", root=_repo_with(tmp_path, "SMPL"))
+    assert link is not None
+    rec = sc.read_record("SMPL", root=ROOT)
+    blank = rec.model_copy(update={"result": rec.result.model_copy(
+        update={"ratio": None, "ratio_undefined": None})})
+    monkeypatch.setattr(sc, "run_recipe", lambda _r: blank)
+    assert link.ratio_at(12.0) == (None, "the recipe returned no ratio and no reason")

@@ -312,7 +312,11 @@ class ScoreReport:
             f"- Resolved verdicts: **{self.n_resolved_buy} BUY**, "
             f"**{self.n_resolved_avoid} AVOID** ({self.n_pending} pending)",
             *(f"  - {n}" for n in self.row_notes),
-            f"- **BUY−AVOID spread (primary): {pct(self.buy_avoid_spread)}**",
+            # THE PRIMARY IS NEVER WITHHELD (coordinator, 2026-11-13: "it never withholds the
+            # primary BUY−AVOID line"); its count against the reading floor prints beside it, so a
+            # reading below the floor is seen as one without the number being hidden
+            f"- **BUY−AVOID spread (primary): {pct(self.buy_avoid_spread)}** "
+            f"({self.n_resolved_buy + self.n_resolved_avoid} of {self.reading_floor} resolved)",
             "  _Screen-origin overshoot ONLY — the discriminator measured on the $300M–$10B "
             "hunting ground it claims to measure. Other books are below, never pooled in._",
             f"  _Return basis: {self.return_basis}._",
@@ -358,7 +362,13 @@ class ScoreReport:
         if self.reaffirmation_notes:
             lines += ["- **Reaffirmations** — not new observations (one observation per name):",
                       *(f"  - {n}" for n in self.reaffirmation_notes)]
+        # THE READING FLOOR binds the per-sector cuts too: a sector's spread prints only once the
+        # sector holds `reading_floor` resolved rows; below it, its count. `by_sector` keeps every
+        # number, and the two-per-leg `sufficient` rule still applies above the floor.
         sector_lines = [
+            f"- {v.sector}: {n} resolved ({v.n_buy} buy / {v.n_avoid} avoid) — below the reading "
+            f"floor of {self.reading_floor}"
+            if (n := v.n_buy + v.n_avoid) < self.reading_floor else
             f"- {v.sector}: {('spread ' + pct(v.spread)) if v.sufficient else 'insufficient data'} "
             f"({v.n_buy} buy / {v.n_avoid} avoid)"
             for v in self.by_sector.values()
